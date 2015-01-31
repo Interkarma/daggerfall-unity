@@ -473,6 +473,8 @@ namespace DaggerfallWorkshop
         {
             switch (record)
             {
+                case 8:
+                    return EditorFlatTypes.Enter;
                 case 10:
                     return EditorFlatTypes.Start;
                 default:

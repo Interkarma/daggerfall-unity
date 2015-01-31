@@ -7,25 +7,18 @@
 
 using UnityEngine;
 using System.Collections;
-using System.IO;
-using DaggerfallConnect;
-using DaggerfallConnect.Utility;
-using DaggerfallConnect.Arena2;
 
-namespace DaggerfallWorkshop
+namespace DaggerfallWorkshop.Demo
 {
-    public class DaggerfallBlock : MonoBehaviour
+    /// <summary>
+    /// Constrains rotation.
+    /// Used to stop particle effects from rotating with player.
+    /// </summary>
+    public class ConstrainRotation : MonoBehaviour
     {
-        GameObject[] startMarkers = null;
-
-        public GameObject[] StartMarkers
+        void Update()
         {
-            get { return startMarkers; }
-        }
-
-        public void SetStartMarkers(GameObject[] startMarkers)
-        {
-            this.startMarkers = startMarkers;
+            transform.rotation = Quaternion.identity;
         }
     }
 }

@@ -33,8 +33,7 @@ namespace DaggerfallWorkshop
 
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
-
-        bool restartAnims;
+        bool restartAnims = true;
 
         // Just using a simple animation speed for simple billboard anims
         // You can adjust this or extend as needed
@@ -81,10 +80,6 @@ namespace DaggerfallWorkshop
                 // Get component references
                 mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
                 meshFilter = GetComponent<MeshFilter>();
-
-                // Start animation coroutine
-                if (summary.AnimatedMaterial)
-                    StartCoroutine(AnimateBillboard());
             }
         }
 
@@ -93,7 +88,7 @@ namespace DaggerfallWorkshop
             restartAnims = true;
         }
 
-        void OnEnable()
+        void Update()
         {
             // Restart animation coroutine if not running
             if (restartAnims && summary.AnimatedMaterial)
@@ -101,10 +96,7 @@ namespace DaggerfallWorkshop
                 StartCoroutine(AnimateBillboard());
                 restartAnims = false;
             }
-        }
 
-        void Update()
-        {
             // Rotate to face camera in game
             if (mainCamera && Application.isPlaying)
             {

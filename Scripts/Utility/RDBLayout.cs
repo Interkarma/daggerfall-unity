@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Utility
         ModelCombiner combiner = new ModelCombiner();
         DaggerfallUnity dfUnity;
         DFBlock blockData;
+        List<GameObject> startMarkers = new List<GameObject>();
 
         int groupIndex = 0;                     // Keeps count of RDB group index during build to reference action records
 
@@ -69,7 +70,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Create gameobject
             GameObject go = new GameObject(string.Format("DaggerfallBlock [Name={0}]", blockName));
-            go.AddComponent<DaggerfallBlock>();
+            DaggerfallBlock dfBlock = go.AddComponent<DaggerfallBlock>();
 
             // Start new layout
             RDBLayout layout = new RDBLayout(dfUnity, blockName);
@@ -138,6 +139,9 @@ namespace DaggerfallWorkshop.Utility
             // Some enemies are floating in air or sunk into ground
             // Can only adjust this after geometry instantiated
             layout.FixEnemyStanding(go);
+
+            // Store start markers in block
+            dfBlock.SetStartMarkers(layout.startMarkers.ToArray());
 
             return go;
         }
@@ -322,14 +326,20 @@ namespace DaggerfallWorkshop.Utility
             // Set transform
             go.transform.position = billboardPosition;
 
-            // Handle importing enemies in place with editor markers
+            // Handle supported editor flats
             if (dfUnity.Option_ImportEnemies && archive == 199)
             {
                 switch (record)
                 {
-                    case 16:
+                    case 10:                        // Start marker
+                        startMarkers.Add(go);
+                        break;
+                    case 15:                        // Random enemy
+                        // TODO:
+                        break;
+                    case 16:                        // Fixed enemy
                         AddFixedRDBEnemy(obj);
-                        go.SetActive(false);        // Disable marker
+                        go.SetActive(false);
                         break;
                 }
             }
@@ -489,7 +499,7 @@ namespace DaggerfallWorkshop.Utility
             c.AudioSource.dopplerLevel = 0;
             c.AudioSource.rolloffMode = AudioRolloffMode.Linear;
             c.AudioSource.maxDistance = 4f;
-            c.AudioSource.volume = 0.3f;
+            c.AudioSource.volume = 0.4f;
             c.SetSound(SoundClips.Burning, AudioPresets.LoopIfPlayerNear);
         }
 

@@ -26,20 +26,17 @@ namespace DaggerfallWorkshop
         DaggerfallUnity dfUnity;
         bool lastCityLightsFlag;
 
-        float Variance = 1.5f;              // Maximum amount radius can vary per cycle
-        float Speed = 0.6f;                 // Speed radius will shrink or grow towards varied radius
-        float FramesPerSecond = 16f;        // Number of times per second animation will tick
+        float Variance = 1.0f;              // Maximum amount radius can vary per cycle
+        float Speed = 0.4f;                 // Speed radius will shrink or grow towards varied radius
+        float FramesPerSecond = 14f;        // Number of times per second animation will tick
 
         float startRange;
         float targetRange;
         bool stepping;
-        bool restartAnims;
+        bool restartAnims = true;
 
         void Start()
         {
-            // Start animation coroutine
-            if (light != null && Animate)
-                StartCoroutine(AnimateLight());
         }
 
         void OnDisable()
@@ -47,7 +44,7 @@ namespace DaggerfallWorkshop
             restartAnims = true;
         }
 
-        void OnEnable()
+        void Update()
         {
             // Restart animation coroutine if not running
             if (restartAnims)
@@ -56,10 +53,7 @@ namespace DaggerfallWorkshop
                     StartCoroutine(AnimateLight());
                 restartAnims = false;
             }
-        }
 
-        void Update()
-        {
             // Do nothing if not ready
             if (!ReadyCheck())
                 return;

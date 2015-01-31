@@ -43,8 +43,7 @@ namespace DaggerfallWorkshop
         float enemyFacingAngle;
         int lastOrientation;
         int currentFrame;
-
-        bool restartAnims;
+        bool restartAnims = true;
 
         public MobileUnitSummary Summary
         {
@@ -70,9 +69,6 @@ namespace DaggerfallWorkshop
                 // Get component references
                 mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
                 meshFilter = GetComponent<MeshFilter>();
-
-                // Start animation coroutine
-                StartCoroutine(AnimateEnemy());
             }
         }
 
@@ -81,7 +77,7 @@ namespace DaggerfallWorkshop
             restartAnims = true;
         }
 
-        void OnEnable()
+        void Update()
         {
             // Restart animation coroutine if not running
             if (restartAnims)
@@ -89,10 +85,7 @@ namespace DaggerfallWorkshop
                 StartCoroutine(AnimateEnemy());
                 restartAnims = false;
             }
-        }
 
-        void Update()
-        {
             // Rotate to face camera in game
             if (mainCamera && Application.isPlaying)
             {

@@ -447,6 +447,7 @@ namespace DaggerfallWorkshop
                 return;
 
             myCamera.enabled = true;
+            myCamera.renderingPath = mainCamera.renderingPath;
             myCamera.depth = mainCamera.depth - 1;
             myCamera.cullingMask = 0;
             myCamera.clearFlags = CameraClearFlags.SolidColor;

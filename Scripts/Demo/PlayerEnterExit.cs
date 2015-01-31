@@ -23,6 +23,7 @@ namespace DaggerfallWorkshop.Demo
         DaggerfallUnity dfUnity;
         CharacterController controller;
         bool isPlayerInside = false;
+        bool isPlayerInsideDungeon = false;
         DaggerfallInterior interior;
         GameObject mainCamera;
         PlayerGPS playerGPS;
@@ -32,11 +33,19 @@ namespace DaggerfallWorkshop.Demo
         public GameObject DungeonParent;
 
         /// <summary>
-        /// True when player is inside, otherwise false.
+        /// True when player is inside any structure.
         /// </summary>
         public bool IsPlayerInside
         {
             get { return isPlayerInside; }
+        }
+
+        /// <summary>
+        /// True only when player is inside a dungeon.
+        /// </summary>
+        public bool IsPlayerInsideDungeon
+        {
+            get { return isPlayerInsideDungeon; }
         }
 
         void Start()
@@ -69,6 +78,7 @@ namespace DaggerfallWorkshop.Demo
             // Layout interior
             // This needs to be done first so we know where the enter markers are
             GameObject newInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex));
+            //newInterior.hideFlags = HideFlags.HideAndDontSave;
             interior = newInterior.AddComponent<DaggerfallInterior>();
             interior.DoLayout(doorOwner, door, climateBase);
 
@@ -176,15 +186,16 @@ namespace DaggerfallWorkshop.Demo
 
             // Layout dungeon
             GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform);
+            //newDungeon.hideFlags = HideFlags.HideAndDontSave;
+            DaggerfallDungeon dfDungeon = newDungeon.GetComponent<DaggerfallDungeon>();
 
-            //// Position player above closest enter marker
-            //Vector3 marker;
-            //if (!interior.FindClosestEnterMarker(transform.position, out marker))
-            //{
-            //    // Could not find an enter marker, probably not a valid interior
-            //    Destroy(newInterior);
-            //    return;
-            //}
+            // Position player above closest start marker
+            if (!dfDungeon.StartMarker)
+            {
+                // Could not find a start marker
+                Destroy(newDungeon);
+                return;
+            }
 
             // Disable exterior parent
             if (ExteriorParent != null)
@@ -194,14 +205,15 @@ namespace DaggerfallWorkshop.Demo
             if (DungeonParent != null)
                 DungeonParent.SetActive(true);
 
-            //// Set player to marker position
-            //// Not sure how to set facing here as player transitions to a marker, not a door
-            //// Could always find closest door and use that
-            //transform.position = marker + Vector3.up * (controller.height * 0.6f);
-            //SetStanding();
+            // Set player to start position
+            // Not sure how to set facing here as player transitions to a marker, not a door
+            // Could always find closest door and use that
+            transform.position = dfDungeon.StartMarker.transform.position + Vector3.up * (controller.height * 0.6f);
+            SetStanding();
 
             // Player is now inside dungeon
             isPlayerInside = true;
+            isPlayerInsideDungeon = true;
         }
 
         #endregion

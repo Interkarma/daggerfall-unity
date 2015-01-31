@@ -30,9 +30,16 @@ namespace DaggerfallWorkshop
         public DungeonTextureUse DungeonTextureUse = DungeonTextureUse.Disabled;
         public int[] DungeonTextureTable = new int[] { 119, 120, 122, 123, 124, 168 };
 
+        GameObject startMarker = null;
+
         public DungeonSummary Summary
         {
             get { return summary; }
+        }
+
+        public GameObject StartMarker
+        {
+            get { return startMarker; }
         }
 
         [Serializable]
@@ -67,6 +74,7 @@ namespace DaggerfallWorkshop
             summary.DungeonType = location.MapTableData.DungeonType;
 
             // Perform layout
+            startMarker = null;
             if (location.Name == "Orsinium")
                 LayoutOrsinium(ref location);
             else
@@ -135,6 +143,8 @@ namespace DaggerfallWorkshop
                 GameObject go = RDBLayout.CreateGameObject(dfUnity, block.BlockName);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
+                if (block.IsStartingBlock)
+                    FindStartMarker(go.GetComponent<DaggerfallBlock>());
             }
 
             // Show timer
@@ -154,7 +164,30 @@ namespace DaggerfallWorkshop
                 GameObject go = RDBLayout.CreateGameObject(dfUnity, block.BlockName);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
+                if (block.IsStartingBlock)
+                    FindStartMarker(go.GetComponent<DaggerfallBlock>());
             }
+        }
+
+        // Finds start marker, should only be called for starting block
+        private void FindStartMarker(DaggerfallBlock dfBlock)
+        {
+            if (!dfBlock)
+                throw new Exception("DaggerfallDungeon: dfBlock cannot be null.");
+            if (dfBlock.StartMarkers.Length == 0)
+            {
+                DaggerfallUnity.LogMessage("DaggerfallDungeon: No start markers found in block.", true);
+                return;
+            }
+
+            // There should only be one start marker per start block
+            // This message will let us know if more than one is found
+            if (dfBlock.StartMarkers.Length > 1)
+            {
+                DaggerfallUnity.LogMessage("DaggerfallDungeon: Multiple start markers found. Using first marker.", true);
+            }
+
+            startMarker = dfBlock.StartMarkers[0];
         }
 
         private bool ReadyCheck()
