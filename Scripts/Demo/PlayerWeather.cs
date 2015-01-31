@@ -9,64 +9,58 @@ using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Demo;
 
-/// <summary>
-/// Script to play weather effects over player.
-/// Allows weather to be attached elsewhere than a child of player (such as exterior parent).
-/// In multiplayer do not sync weather to other players.
-/// </summary>
-[RequireComponent(typeof(AmbientEffectsPlayer))]
-public class PlayerWeather : MonoBehaviour
+namespace DaggerfallWorkshop.Demo
 {
-    public GameObject LocalPlayer;
-    public Vector3 VerticalOffset = new Vector3(0, 50f, 0);
-    public GameObject RainParticles;
-    public GameObject SnowParticles;
-    public WeatherTypes WeatherType = WeatherTypes.None;
-
-    WeatherTypes lastWeatherType = WeatherTypes.None;
-
-    public enum WeatherTypes
+    /// <summary>
+    /// Script to play weather effects over player.
+    /// Allows weather to be attached elsewhere than a child of player (such as exterior parent).
+    /// In multiplayer do not sync weather particle effects to other players.
+    /// </summary>
+    public class PlayerWeather : MonoBehaviour
     {
-        None,
-        Rain_Normal,
-        Snow_Normal,
-    }
+        public GameObject RainParticles;
+        public GameObject SnowParticles;
+        public WeatherTypes WeatherType = WeatherTypes.None;
 
-    void Start()
-    {
-        if (!LocalPlayer)
-            LocalPlayer = GameObject.FindGameObjectWithTag("Player");
+        WeatherTypes lastWeatherType = WeatherTypes.None;
 
-        if (RainParticles) RainParticles.SetActive(false);
-        if (SnowParticles) SnowParticles.SetActive(false);
-    }
-
-    void Update()
-    {
-        if (LocalPlayer)
-            transform.position = LocalPlayer.transform.position + VerticalOffset;
-
-        if (WeatherType != lastWeatherType)
-            SetWeather();
-    }
-
-    void SetWeather()
-    {
-        switch (WeatherType)
+        public enum WeatherTypes
         {
-            case WeatherTypes.None:
-                if (RainParticles) RainParticles.SetActive(false);
-                if (SnowParticles) SnowParticles.SetActive(false);
-                break;
-            case WeatherTypes.Rain_Normal:
-                if (RainParticles) RainParticles.SetActive(true);
-                if (SnowParticles) SnowParticles.SetActive(false);
-                break;
-            case WeatherTypes.Snow_Normal:
-                if (RainParticles) RainParticles.SetActive(false);
-                if (SnowParticles) SnowParticles.SetActive(true);
-                break;
+            None,
+            Rain_Normal,
+            Snow_Normal,
         }
-        lastWeatherType = WeatherType;
+
+        void Start()
+        {
+            if (RainParticles) RainParticles.SetActive(false);
+            if (SnowParticles) SnowParticles.SetActive(false);
+        }
+
+        void Update()
+        {
+            if (WeatherType != lastWeatherType)
+                SetWeather();
+        }
+
+        void SetWeather()
+        {
+            switch (WeatherType)
+            {
+                case WeatherTypes.None:
+                    if (RainParticles) RainParticles.SetActive(false);
+                    if (SnowParticles) SnowParticles.SetActive(false);
+                    break;
+                case WeatherTypes.Rain_Normal:
+                    if (RainParticles) RainParticles.SetActive(true);
+                    if (SnowParticles) SnowParticles.SetActive(false);
+                    break;
+                case WeatherTypes.Snow_Normal:
+                    if (RainParticles) RainParticles.SetActive(false);
+                    if (SnowParticles) SnowParticles.SetActive(true);
+                    break;
+            }
+            lastWeatherType = WeatherType;
+        }
     }
 }
