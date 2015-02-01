@@ -23,6 +23,9 @@ namespace DaggerfallWorkshop.Utility
     {
         public static float RDBSide = 2048f * MeshReader.GlobalScale;
 
+        int dungeonID;
+        int[] textureTable = null;
+        DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold;
         ModelCombiner combiner = new ModelCombiner();
         DaggerfallUnity dfUnity;
         DFBlock blockData;
@@ -45,27 +48,37 @@ namespace DaggerfallWorkshop.Utility
             public int prevKey;
         }
 
-        public RDBLayout(DaggerfallUnity dfUnity, string blockName)
+        public RDBLayout(string blockName)
         {
+            this.dfUnity = DaggerfallUnity.Instance;
             blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
             if (blockData.Type != DFBlock.BlockTypes.Rdb)
                 throw new Exception(string.Format("Could not load RDB block {0}", blockName), null);
-
-            this.dfUnity = dfUnity;
         }
 
         /// <summary>
         /// Creates a new RDB GameObject and performs block layout.
+        /// Can pass information about dungeon for texture swaps and random enemies.
         /// </summary>
         /// <param name="dfUnity">DaggerfallUnity singleton. Required for content readers and settings.</param>
         /// <param name="blockName">Name of RDB block to build.</param>
+        /// <param name="textureTable">Dungeon texture table.</param>
+        /// <param name="dungeonType">Type of dungeon for random encounter tables.</param>
+        /// <param name="dungeonID">Dungeon ID for random encounter seed.</param>
         /// <returns>GameObject.</returns>
-        public static GameObject CreateGameObject(DaggerfallUnity dfUnity, string blockName)
+        public static GameObject CreateGameObject(
+            string blockName,
+            int[] textureTable = null,
+            DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold,
+            int dungeonID = 0)
         {
             // Validate
             if (string.IsNullOrEmpty(blockName))
                 return null;
             if (!blockName.ToUpper().EndsWith(".RDB"))
+                return null;
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
                 return null;
 
             // Create gameobject
@@ -73,7 +86,10 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallBlock dfBlock = go.AddComponent<DaggerfallBlock>();
 
             // Start new layout
-            RDBLayout layout = new RDBLayout(dfUnity, blockName);
+            RDBLayout layout = new RDBLayout(blockName);
+            layout.textureTable = textureTable;
+            layout.dungeonType = dungeonType;
+            layout.dungeonID = dungeonID;
             layout.staticModelsNode = new GameObject("Static Models");
             layout.actionModelsNode = new GameObject("Action Models");
             layout.doorsNode = new GameObject("Doors");
@@ -91,6 +107,9 @@ namespace DaggerfallWorkshop.Utility
 
             // List to receive any exit doors found
             List<StaticDoor> allDoors = new List<StaticDoor>();
+
+            // Seed random generator
+            UnityEngine.Random.seed = dungeonID;
             
             // Iterate object groups
             layout.groupIndex = 0;
@@ -137,7 +156,8 @@ namespace DaggerfallWorkshop.Utility
             if (dfUnity.Option_CombineRDB)
             {
                 layout.combiner.Apply();
-                GameObjectHelper.CreateCombinedMeshGameObject(layout.combiner, "CombinedMeshes", layout.staticModelsNode.transform, dfUnity.Option_SetStaticFlags);
+                GameObject cgo = GameObjectHelper.CreateCombinedMeshGameObject(layout.combiner, "CombinedMeshes", layout.staticModelsNode.transform, dfUnity.Option_SetStaticFlags);
+                cgo.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
             }
 
             // Fix enemy standing positions for this block
@@ -295,6 +315,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Spawn mesh gameobject
                 GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, parent, isStatic);
+                go.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
 
                 // Apply transforms
                 go.transform.Rotate(0, degreesY, 0, Space.World);
@@ -346,7 +367,8 @@ namespace DaggerfallWorkshop.Utility
                         startMarkers.Add(go);
                         break;
                     case 15:                        // Random enemy
-                        // TODO:
+                        AddRandomRDBEnemy(obj);
+                        go.SetActive(false);
                         break;
                     case 16:                        // Fixed enemy
                         AddFixedRDBEnemy(obj);
@@ -404,6 +426,26 @@ namespace DaggerfallWorkshop.Utility
             // Cast to enum
             MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionMobileId & 0xff);
 
+            AddEnemy(obj, type);
+        }
+
+        private void AddRandomRDBEnemy(DFBlock.RdbObject obj)
+        {
+            // Get dungeon type index
+            int index = (int)dungeonType >> 8;
+
+            // Get encounter table
+            RandomEncounterTable table = RandomEncounters.EncounterTables[index];
+
+            // Get random monster from table
+            // Normally this would be weighted by player level
+            MobileTypes type = table.Enemies[UnityEngine.Random.Range(0, table.Enemies.Length)];
+
+            AddEnemy(obj, type);
+        }
+
+        private void AddEnemy(DFBlock.RdbObject obj, MobileTypes type)
+        {
             // Get default reaction
             MobileReactions reaction = MobileReactions.Hostile;
             if (obj.Resources.FlatResource.FlatData.Reaction == (int)DFBlock.EnemyReactionTypes.Passive)

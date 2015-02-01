@@ -334,7 +334,7 @@ namespace DaggerfallWorkshop
 
                                 // Add block and yield
                                 string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
-                                GameObject go = RMBLayout.CreateGameObject(dfUnity, blockName, true, natureBatch);
+                                GameObject go = RMBLayout.CreateGameObject(blockName, true, natureBatch);
                                 go.hideFlags = HideFlags.HideAndDontSave;
                                 go.transform.parent = locationObject.transform;
                                 go.transform.localPosition = blockOrigin;

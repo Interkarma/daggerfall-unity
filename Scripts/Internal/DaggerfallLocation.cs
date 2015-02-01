@@ -278,7 +278,7 @@ namespace DaggerfallWorkshop
                 for (int x = 0; x < width; x++)
                 {
                     string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
-                    GameObject go = RMBLayout.CreateGameObject(dfUnity, blockName);
+                    GameObject go = RMBLayout.CreateGameObject(blockName);
                     go.transform.parent = this.transform;
                     go.transform.position = new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
                 }

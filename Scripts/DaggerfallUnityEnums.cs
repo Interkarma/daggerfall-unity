@@ -114,8 +114,8 @@ namespace DaggerfallWorkshop
     {
         /// <summary>Don't change dungeon textures.</summary>
         Disabled,
-        /// <summary>Use dungeon location textures. Not implemented.</summary>
-        UseLocation_NotImplemented,
+        /// <summary>Use dungeon location textures. Partially implemented.</summary>
+        UseLocation_PartiallyImplemented,
         /// <summary>Use custom dungeon texture.</summary>
         Custom,
     }

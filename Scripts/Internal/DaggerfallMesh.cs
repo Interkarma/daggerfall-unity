@@ -106,11 +106,14 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Apply dungeon texture table.
         /// </summary>
-        /// <param name="dfUnity">DaggerfallUnity singleton. Required for content readers and settings.</param>
         /// <param name="dungeonTextureTable">Dungeon texture table changes to apply.</param>
-        public void SetDungeonTextures(DaggerfallUnity dfUnity, int[] dungeonTextureTable)
+        public void SetDungeonTextures(int[] dungeonTextureTable)
         {
             if (defaultTextures.Count == 0)
+                return;
+
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
                 return;
 
             // Get new material array

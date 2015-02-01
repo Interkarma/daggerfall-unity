@@ -176,6 +176,7 @@ namespace DaggerfallConnect
             Crypt = 51,
             OrcStronghold = 307,
             HumanStronghold = 563,
+            Palace = 648,
             Prison = 819,
             DesecratedTemple = 1075,
             Mine = 1331,

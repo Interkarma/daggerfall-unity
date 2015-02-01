@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop
                 {
                     propDungeonTextureUse.enumValueIndex = (int)(DungeonTextureUse)EditorGUILayout.EnumPopup(new GUIContent("Usage"), (DungeonTextureUse)propDungeonTextureUse.enumValueIndex);
                     if (propDungeonTextureUse.enumValueIndex == (int)DungeonTextureUse.Disabled ||
-                        propDungeonTextureUse.enumValueIndex == (int)DungeonTextureUse.UseLocation_NotImplemented)
+                        propDungeonTextureUse.enumValueIndex == (int)DungeonTextureUse.UseLocation_PartiallyImplemented)
                         return;
 
                     dfDungeon.DungeonTextureTable[0] = EditorGUILayout.IntField("119 is ->", dfDungeon.DungeonTextureTable[0]);

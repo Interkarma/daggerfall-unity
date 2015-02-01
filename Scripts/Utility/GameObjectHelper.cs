@@ -356,17 +356,15 @@ namespace DaggerfallWorkshop.Utility
 
         public static GameObject CreateDaggerfallBlockGameObject(string blockName, Transform parent)
         {
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-
             if (string.IsNullOrEmpty(blockName))
                 return null;
 
             blockName = blockName.ToUpper();
             GameObject go = null;
             if (blockName.EndsWith(".RMB"))
-                go = RMBLayout.CreateGameObject(dfUnity, blockName);
+                go = RMBLayout.CreateGameObject(blockName);
             else if (blockName.EndsWith(".RDB"))
-                go = RDBLayout.CreateGameObject(dfUnity, blockName);
+                go = RDBLayout.CreateGameObject(blockName);
             else
                 return null;
 

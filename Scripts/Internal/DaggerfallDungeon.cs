@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop
         private DungeonSummary summary;
 
         // Dungeon texture swaps
-        public DungeonTextureUse DungeonTextureUse = DungeonTextureUse.Disabled;
+        public DungeonTextureUse DungeonTextureUse = DungeonTextureUse.UseLocation_PartiallyImplemented;
         public int[] DungeonTextureTable = new int[] { 119, 120, 122, 123, 124, 168 };
 
         GameObject startMarker = null;
@@ -73,6 +73,10 @@ namespace DaggerfallWorkshop
             summary.LocationType = location.MapTableData.Type;
             summary.DungeonType = location.MapTableData.DungeonType;
 
+            // Set texture table from location
+            if (DungeonTextureUse == DaggerfallWorkshop.DungeonTextureUse.UseLocation_PartiallyImplemented)
+                UseLocationDungeonTextureTable();
+
             // Perform layout
             startMarker = null;
             if (location.Name == "Orsinium")
@@ -97,19 +101,49 @@ namespace DaggerfallWorkshop
 
         public void RandomiseDungeonTextureTable()
         {
-            // Valid dungeon textures table indices
-            int[] valids = new int[]
-            {
-                019, 020, 022, 023, 024, 068,
-                119, 120, 122, 123, 124, 168,
-                319, 320, 322, 323, 324, 368,
-                419, 420, 422, 423, 424, 468,
-            };
+            DungeonTextureTable = StaticTextureTables.RandomTextureTable(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
+            ApplyDungeonTextureTable();
+        }
 
-            // Repopulate table
-            for (int i = 0; i < DungeonTextureTable.Length; i++)
+        public void UseLocationDungeonTextureTable()
+        {
+            // Hard-coding location texture tables as missing information to generate at runtime
+            // This will be replaced with true implementation when possible
+            switch (Summary.ID)
             {
-                DungeonTextureTable[i] = valids[UnityEngine.Random.Range(0, valids.Length)];
+                case 187853213:         // Daggerfall/Privateer's Hold
+                    DungeonTextureTable = StaticTextureTables.PrivateersHold;
+                    break;
+                case 630439035:         // Wayrest/Wayrest
+                    DungeonTextureTable = StaticTextureTables.Wayrest;
+                    break;
+                case 1291010263:        // Daggerfall/Daggerfall
+                    DungeonTextureTable = StaticTextureTables.Daggerfall;
+                    break;
+                case 6634853:           // Sentinel/Sentinel
+                    DungeonTextureTable = StaticTextureTables.Sentinel;
+                    break;
+                case 19021260:          // Orsinium Area/Orsinium
+                    DungeonTextureTable = StaticTextureTables.Orsinium;
+                    break;
+                case 728811286:         // Wrothgarian Mountains/Shedungent
+                    DungeonTextureTable = StaticTextureTables.Shedungent;
+                    break;
+                case 701948302:         // Dragontail Mountains/Scourg Barrow
+                    DungeonTextureTable = StaticTextureTables.ScourgBarrow;
+                    break;
+                case 83032363:          // Wayrest/Woodborne Hall
+                    DungeonTextureTable = StaticTextureTables.WoodborneHall;
+                    break;
+                case 1001:              // High Rock sea coast/Mantellan Crux
+                    DungeonTextureTable = StaticTextureTables.MantellanCrux;
+                    break;
+                case 207828842:         // Menevia/Lysandus' Tomb
+                    DungeonTextureTable = StaticTextureTables.LysandusTomb;
+                    break;
+                default:                // Everywhere else - random table seeded from ID
+                    DungeonTextureTable = StaticTextureTables.RandomTextureTable(Summary.ID);
+                    break;
             }
 
             ApplyDungeonTextureTable();
@@ -125,7 +159,7 @@ namespace DaggerfallWorkshop
             DaggerfallMesh[] meshArray = GetComponentsInChildren<DaggerfallMesh>();
             foreach (var dm in meshArray)
             {
-                dm.SetDungeonTextures(dfUnity, DungeonTextureTable);
+                dm.SetDungeonTextures(DungeonTextureTable);
             }
         }
 
@@ -140,7 +174,7 @@ namespace DaggerfallWorkshop
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
             {
-                GameObject go = RDBLayout.CreateGameObject(dfUnity, block.BlockName);
+                GameObject go = RDBLayout.CreateGameObject(block.BlockName, DungeonTextureTable, Summary.DungeonType, Summary.ID);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
                 if (block.IsStartingBlock)
@@ -161,7 +195,7 @@ namespace DaggerfallWorkshop
                 if (block.X == -1 && block.Z == -1 && block.BlockName == "N0000065.RDB")
                     continue;
 
-                GameObject go = RDBLayout.CreateGameObject(dfUnity, block.BlockName);
+                GameObject go = RDBLayout.CreateGameObject(block.BlockName, DungeonTextureTable, Summary.DungeonType, Summary.ID);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
                 if (block.IsStartingBlock)
