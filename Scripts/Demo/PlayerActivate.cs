@@ -94,7 +94,9 @@ namespace DaggerfallWorkshop.Demo
                                 }
                                 else if (door.doorType == DoorTypes.DungeonExit && playerEnterExit.IsPlayerInside)
                                 {
-                                    // TODO: Hit dungeon exit while inside, transtion outside
+                                    // Hit dungeon exit while inside, transtion outside
+                                    playerEnterExit.TransitionDungeonExterior();
+                                    return;
                                 }
                             }
                         }

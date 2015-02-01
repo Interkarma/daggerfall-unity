@@ -88,6 +88,9 @@ namespace DaggerfallWorkshop.Utility
             layout.flatsNode.transform.parent = go.transform;
             layout.lightsNode.transform.parent = go.transform;
             layout.enemiesNode.transform.parent = go.transform;
+
+            // List to receive any exit doors found
+            List<StaticDoor> allDoors = new List<StaticDoor>();
             
             // Iterate object groups
             layout.groupIndex = 0;
@@ -102,13 +105,15 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Iterate objects in this group
+                List<StaticDoor> modelDoors;
                 foreach (DFBlock.RdbObject obj in group.RdbObjects)
                 {
                     // Handle by object type
                     switch (obj.Type)
                     {
                         case DFBlock.RdbResourceTypes.Model:
-                            layout.AddRDBModel(obj, layout.staticModelsNode.transform);
+                            layout.AddRDBModel(obj, out modelDoors, layout.staticModelsNode.transform);
+                            if (modelDoors.Count > 0) allDoors.AddRange(modelDoors);
                             break;
                         case DFBlock.RdbResourceTypes.Flat:
                             layout.AddRDBFlat(obj, layout.flatsNode.transform);
@@ -142,6 +147,10 @@ namespace DaggerfallWorkshop.Utility
 
             // Store start markers in block
             dfBlock.SetStartMarkers(layout.startMarkers.ToArray());
+
+            // Add doors
+            if (allDoors.Count > 0)
+                layout.AddDoors(allDoors.ToArray(), go);
 
             return go;
         }
@@ -223,8 +232,10 @@ namespace DaggerfallWorkshop.Utility
 
         #region Private Methods
 
-        private void AddRDBModel(DFBlock.RdbObject obj, Transform parent)
+        private void AddRDBModel(DFBlock.RdbObject obj, out List<StaticDoor> doorsOut, Transform parent)
         {
+            doorsOut = new List<StaticDoor>();
+
             // Get model reference index and id
             int modelReference = obj.Resources.ModelResource.ModelIndex;
             uint modelId = blockData.RdbBlock.ModelReferenceList[modelReference].ModelIdNum;
@@ -251,9 +262,9 @@ namespace DaggerfallWorkshop.Utility
             ModelData modelData;
             dfUnity.MeshReader.GetModelData(modelId, out modelData);
 
-            //// Find dungeon exits
-            //if (dfUnity.Option_AddDoorTriggers)
-            //    AddDoorTriggers(ref modelData, modelMatrix, doorsNode.transform);
+            // Does this model have doors?
+            if (modelData.Doors != null)
+                doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
 
             // Hinged doors
             bool isActionDoor = IsActionDoor(blockData, obj, modelReference);
@@ -516,6 +527,15 @@ namespace DaggerfallWorkshop.Utility
         {
             DaggerfallAudioSource c = go.AddComponent<DaggerfallAudioSource>();
             c.Preset = AudioPresets.OnDemand;
+        }
+
+        private void AddDoors(StaticDoor[] doors, GameObject target)
+        {
+            if (doors != null && target != null)
+            {
+                DaggerfallStaticDoors c = target.AddComponent<DaggerfallStaticDoors>();
+                c.Doors = doors;
+            }
         }
 
         #endregion
