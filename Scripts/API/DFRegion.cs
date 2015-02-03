@@ -176,7 +176,7 @@ namespace DaggerfallConnect
             Crypt = 51,
             OrcStronghold = 307,
             HumanStronghold = 563,
-            Palace = 648,
+            Palace = 648,               // Palace also >> 8 to index 2 (HumanStronghold)
             Prison = 819,
             DesecratedTemple = 1075,
             Mine = 1331,
@@ -192,6 +192,7 @@ namespace DaggerfallConnect
             BarbarianStronghold = 3891,
             VolcanicCaves = 4147,
             ScorpionNest = 4403,
+            Cemetery = 4659,
             NoDungeon = 65399,
         }
 
@@ -218,6 +219,7 @@ namespace DaggerfallConnect
             "Barbarian Stronghold",
             "Volcanic Caves",
             "Scorpion Nest",
+            "Cemetery",
         };
 
         /// <summary>

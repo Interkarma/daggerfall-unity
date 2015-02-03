@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Utility
         {
             // Create gameobject
             GameObject go = new GameObject(string.Format("DaggerfallBlock [Name={0}]", blockData.Name));
-            go.AddComponent<DaggerfallBlock>();
+            //go.AddComponent<DaggerfallBlock>();
 
             // Setup combiner
             ModelCombiner combiner = null;

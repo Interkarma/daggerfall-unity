@@ -36,6 +36,9 @@ namespace DaggerfallWorkshop.Demo
         public GameObject InteriorParent;
         public GameObject DungeonParent;
 
+        int lastPlayerDungeonBlockIndex = -1;
+        DFLocation.DungeonBlock playerDungeonBlockData = new DFLocation.DungeonBlock();
+
         /// <summary>
         /// True when player is inside any structure.
         /// </summary>
@@ -52,11 +55,44 @@ namespace DaggerfallWorkshop.Demo
             get { return isPlayerInsideDungeon; }
         }
 
+        /// <summary>
+        /// True only when player inside palace blocks of a dungeon.
+        /// For example, main hall in Daggerfall castle.
+        /// </summary>
+        public bool IsPlayerInsidePalace
+        {
+            get { return PalaceCheck(); }
+        }
+
+        /// <summary>
+        /// Gets information about current dungeon block.
+        /// Only valid when player is inside a dungeon.
+        /// </summary>
+        public DFLocation.DungeonBlock PlayerDungeonBlockData
+        {
+            get { return playerDungeonBlockData; }
+        }
+
         void Start()
         {
             dfUnity = DaggerfallUnity.Instance;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             playerGPS = GetComponent<PlayerGPS>();
+        }
+
+        void Update()
+        {
+            // Track which dungeon block player is inside of
+            if (dungeon && isPlayerInsideDungeon)
+            {
+                int playerBlockIndex = dungeon.GetPlayerBlockIndex(transform.position);
+                if (playerBlockIndex != lastPlayerDungeonBlockIndex)
+                {
+                    dungeon.GetBlockData(playerBlockIndex, out playerDungeonBlockData);
+                    lastPlayerDungeonBlockIndex = playerBlockIndex;
+                    //Debug.Log(string.Format("Player is now inside block {0}", playerDungeonBlockData.BlockName));
+                }
+            }
         }
 
         #region Building Transitions
@@ -214,9 +250,20 @@ namespace DaggerfallWorkshop.Demo
                 DungeonParent.SetActive(true);
 
             // Set player to start position
-            // Not sure how to set facing here as player transitions to a marker, not a door
-            // Could always find closest exit door and use that
             transform.position = dungeon.StartMarker.transform.position + Vector3.up * (controller.height * 0.6f);
+
+            //// TODO: Find closest exit door to orient player
+            //DaggerfallStaticDoors doors = newDungeon.GetComponent<DaggerfallStaticDoors>();
+            //if (doors)
+            //{
+            //    Vector3 doorPos;
+            //    int doorIndex;
+            //    if (doors.FindClosestDoorToPlayer(transform.position, 0, out doorPos, out doorIndex))
+            //    {
+            //    }
+            //}
+
+            // Fix player standing
             SetStanding();
 
             // Player is now inside dungeon
@@ -252,11 +299,33 @@ namespace DaggerfallWorkshop.Demo
             // Player is now outside dungeon
             isPlayerInside = false;
             isPlayerInsideDungeon = false;
-
-            //Debug.Log("Player attempted to leave dungeon.");
+            lastPlayerDungeonBlockIndex = -1;
+            playerDungeonBlockData = new DFLocation.DungeonBlock();
         }
 
         #endregion
+
+        // Checks is current block is a palace block
+        // Currently matching by name, unknown if Daggerfall exposes this in RDB format
+        private bool PalaceCheck()
+        {
+            if (!isPlayerInsideDungeon)
+                return false;
+
+            switch (playerDungeonBlockData.BlockName)
+            {
+                case "S0000020.RDB":    // Orsinium palace area
+                case "S0000040.RDB":    // Sentinel palace area
+                case "S0000041.RDB":
+                case "S0000042.RDB":
+                case "S0000080.RDB":    // Wayrest palace area
+                case "S0000081.RDB":
+                case "S0000160.RDB":    // Daggerfall palace area
+                    return true;
+                default:
+                    return false;
+            }
+        }
 
         private void SetFacing(Vector3 forward)
         {

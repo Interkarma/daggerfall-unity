@@ -452,6 +452,26 @@ namespace DaggerfallWorkshop.Utility
                     MobileTypes.DaedraLord,
                 },
             },
+
+            // Cemetery - Index18
+            new RandomEncounterTable()
+            {
+                DungeonType = DFRegion.DungeonTypes.Cemetery,
+                Enemies = new MobileTypes[]
+                {
+                    MobileTypes.Rat,
+                    MobileTypes.SkeletalWarrior,
+                    MobileTypes.GiantBat,
+                    MobileTypes.Mummy,
+                    MobileTypes.Spider,
+                    MobileTypes.Zombie,
+                    MobileTypes.Ghost,
+                    MobileTypes.Wraith,
+                    MobileTypes.Vampire,
+                    MobileTypes.VampireAncient,
+                    MobileTypes.Lich,
+                },
+            },
         };
     }
 }

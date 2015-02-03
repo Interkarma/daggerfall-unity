@@ -23,13 +23,13 @@ namespace DaggerfallWorkshop.Utility
     {
         public static float RDBSide = 2048f * MeshReader.GlobalScale;
 
-        int dungeonID;
         int[] textureTable = null;
         DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold;
         ModelCombiner combiner = new ModelCombiner();
         DaggerfallUnity dfUnity;
         DFBlock blockData;
         List<GameObject> startMarkers = new List<GameObject>();
+        bool isStartingBlock;
 
         int groupIndex = 0;                     // Keeps count of RDB group index during build to reference action records
 
@@ -62,15 +62,17 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="dfUnity">DaggerfallUnity singleton. Required for content readers and settings.</param>
         /// <param name="blockName">Name of RDB block to build.</param>
+        /// <param name="isStartingBlock">True if this is the starting block. Controls exit doors.</param>
         /// <param name="textureTable">Dungeon texture table.</param>
         /// <param name="dungeonType">Type of dungeon for random encounter tables.</param>
-        /// <param name="dungeonID">Dungeon ID for random encounter seed.</param>
+        /// <param name="seed">Seed for random encounters.</param>
         /// <returns>GameObject.</returns>
         public static GameObject CreateGameObject(
             string blockName,
+            bool isStartingBlock,
             int[] textureTable = null,
             DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold,
-            int dungeonID = 0)
+            int seed = 0)
         {
             // Validate
             if (string.IsNullOrEmpty(blockName))
@@ -83,13 +85,13 @@ namespace DaggerfallWorkshop.Utility
 
             // Create gameobject
             GameObject go = new GameObject(string.Format("DaggerfallBlock [Name={0}]", blockName));
-            DaggerfallBlock dfBlock = go.AddComponent<DaggerfallBlock>();
+            DaggerfallRDBBlock dfBlock = go.AddComponent<DaggerfallRDBBlock>();
 
             // Start new layout
             RDBLayout layout = new RDBLayout(blockName);
+            layout.isStartingBlock = isStartingBlock;
             layout.textureTable = textureTable;
             layout.dungeonType = dungeonType;
-            layout.dungeonID = dungeonID;
             layout.staticModelsNode = new GameObject("Static Models");
             layout.actionModelsNode = new GameObject("Action Models");
             layout.doorsNode = new GameObject("Doors");
@@ -109,7 +111,7 @@ namespace DaggerfallWorkshop.Utility
             List<StaticDoor> allDoors = new List<StaticDoor>();
 
             // Seed random generator
-            UnityEngine.Random.seed = dungeonID;
+            UnityEngine.Random.seed = seed;
             
             // Iterate object groups
             layout.groupIndex = 0;
@@ -254,6 +256,7 @@ namespace DaggerfallWorkshop.Utility
 
         private void AddRDBModel(DFBlock.RdbObject obj, out List<StaticDoor> doorsOut, Transform parent)
         {
+            bool overrideCombine = false;
             doorsOut = new List<StaticDoor>();
 
             // Get model reference index and id
@@ -282,7 +285,18 @@ namespace DaggerfallWorkshop.Utility
             ModelData modelData;
             dfUnity.MeshReader.GetModelData(modelId, out modelData);
 
-            // Does this model have doors?
+            // Discard static exit doors not in starting block
+            // Exit doors are just a model slapped over wall or doorway
+            // This allows Daggerfall to toggle exits on and off
+            if (modelData.DFMesh.ObjectId == 70300)
+            {
+                if (!isStartingBlock)
+                    return;
+                else
+                    overrideCombine = true;
+            }
+
+            // Static doors
             if (modelData.Doors != null)
                 doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
 
@@ -298,7 +312,6 @@ namespace DaggerfallWorkshop.Utility
 
             // Flags
             bool isStatic = dfUnity.Option_SetStaticFlags;
-            bool overrideCombine = false;
             if (isActionDoor || hasAction)
             {
                 // Moving objects are never static or combined
@@ -433,15 +446,22 @@ namespace DaggerfallWorkshop.Utility
         {
             // Get dungeon type index
             int index = (int)dungeonType >> 8;
+            if (index < RandomEncounters.EncounterTables.Length)
+            {
+                // Get encounter table
+                RandomEncounterTable table = RandomEncounters.EncounterTables[index];
 
-            // Get encounter table
-            RandomEncounterTable table = RandomEncounters.EncounterTables[index];
+                // Get random monster from table
+                // Normally this would be weighted by player level
+                MobileTypes type = table.Enemies[UnityEngine.Random.Range(0, table.Enemies.Length)];
 
-            // Get random monster from table
-            // Normally this would be weighted by player level
-            MobileTypes type = table.Enemies[UnityEngine.Random.Range(0, table.Enemies.Length)];
-
-            AddEnemy(obj, type);
+                // Add enemy
+                AddEnemy(obj, type);
+            }
+            else
+            {
+                DaggerfallUnity.LogMessage(string.Format("RDBLayout: Dungeon type {0} is out of range or unknown.", dungeonType), true);
+            }
         }
 
         private void AddEnemy(DFBlock.RdbObject obj, MobileTypes type)
@@ -471,9 +491,21 @@ namespace DaggerfallWorkshop.Utility
             Vector3 actionRotation = Vector3.zero;
             Vector3 actionTranslation = Vector3.zero;
             if ((action.Flags & (int)DFBlock.RdbActionFlags.Rotation) == (int)DFBlock.RdbActionFlags.Rotation)
-                actionRotation = -(GetActionVector(ref action) / BlocksFile.RotationDivisor);
+                actionRotation = (GetActionVector(ref action) / BlocksFile.RotationDivisor);
             if ((action.Flags & (int)DFBlock.RdbActionFlags.Translation) == (int)DFBlock.RdbActionFlags.Translation)
                 actionTranslation = GetActionVector(ref action) * MeshReader.GlobalScale;
+
+            // A quick hack to fix special-case rotation issues.
+            // Currently unknown if there is data indicating different rotation behaviour or if something else is happening.
+            switch (description)
+            {
+                case "LID":
+                    actionRotation = new Vector3(0, 0, -90f);       // Coffin lids in Scourg barrow
+                    break;
+                case "WHE":
+                    actionRotation = new Vector3(0, -360f, 0);      // Wheels in Direnni Tower
+                    break;
+            }
 
             // Create action component
             DaggerfallAction c = go.AddComponent<DaggerfallAction>();

@@ -14,8 +14,14 @@ using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop
 {
-    public class DaggerfallBlock : MonoBehaviour
+    /// <summary>
+    /// Attached to a dungeon block.
+    /// </summary>
+    public class DaggerfallRDBBlock : MonoBehaviour
     {
+        public Vector2 RDBPosition = new Vector2();
+        public Bounds RDBBounds = new Bounds();
+
         GameObject[] startMarkers = null;
 
         public GameObject[] StartMarkers

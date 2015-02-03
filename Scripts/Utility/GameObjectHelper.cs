@@ -364,7 +364,7 @@ namespace DaggerfallWorkshop.Utility
             if (blockName.EndsWith(".RMB"))
                 go = RMBLayout.CreateGameObject(blockName);
             else if (blockName.EndsWith(".RDB"))
-                go = RDBLayout.CreateGameObject(blockName);
+                go = RDBLayout.CreateGameObject(blockName, false);
             else
                 return null;
 

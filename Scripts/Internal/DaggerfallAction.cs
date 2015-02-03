@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop
         public bool PlaySound = true;                               // Play sound if present (ActionSound > 0)
         public string ModelDescription = string.Empty;              // Description string for this model
         public int ActionFlags = 0;                                 // Action flag value
-        public int ActionSoundID = 0;                                 // Action sound ID
+        public int ActionSoundID = 0;                               // Action sound ID
         public Vector3 ActionRotation = Vector3.zero;               // Rotation to perform
         public Vector3 ActionTranslation = Vector3.zero;            // Translation to perform
         public float ActionDuration = 0;                            // Time to reach final state
@@ -53,11 +53,6 @@ namespace DaggerfallWorkshop
         {
             currentState = ActionState.Start;
             startPosition = transform.position;
-
-            // Post-fix "LID" action for unrotated coffin lids in Scourg Barrow.
-            // The game data seems to be wrong here.
-            if (ModelDescription == "LID" && transform.eulerAngles.y == 0)
-                ActionRotation.z = 90f;
         }
 
         void Update()
@@ -124,7 +119,7 @@ namespace DaggerfallWorkshop
         {
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
                 "amount", new Vector3(ActionRotation.x / 360f, ActionRotation.y / 360f, ActionRotation.z / 360f),
-                "space", Space.World,
+                "space", Space.Self,
                 "time", ActionDuration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear);
 
@@ -143,7 +138,7 @@ namespace DaggerfallWorkshop
         {
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
                 "amount", new Vector3(-ActionRotation.x / 360f, -ActionRotation.y / 360f, -ActionRotation.z / 360f),
-                "space", Space.World,
+                "space", Space.Self,
                 "time", ActionDuration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear);
 
