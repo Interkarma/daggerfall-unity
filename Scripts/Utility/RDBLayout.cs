@@ -292,18 +292,14 @@ namespace DaggerfallWorkshop.Utility
             {
                 if (!isStartingBlock)
                     return;
-                else
-                    overrideCombine = true;
             }
 
-            // Static doors
-            if (modelData.Doors != null)
-                doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
-
-            // Hinged doors
+            // Doors - there are no working static building doors inside dungeons, just the exits and action doors
             bool isActionDoor = IsActionDoor(blockData, obj, modelReference);
             if (isActionDoor)
                 parent = doorsNode.transform;
+            else if (modelData.Doors != null)
+                doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
 
             // Action records
             bool hasAction = HasAction(blockData, obj, modelReference);

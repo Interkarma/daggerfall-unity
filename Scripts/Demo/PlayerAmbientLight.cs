@@ -17,10 +17,10 @@ namespace DaggerfallWorkshop.Demo
     /// </summary>
     public class PlayerAmbientLight : MonoBehaviour
     {
-        public Color ExteriorAmbientLight = new Color(0.09f, 0.09f, 0.09f);
+        public Color ExteriorAmbientLight = new Color(0.12f, 0.12f, 0.12f);
         public Color InteriorAmbientLight = new Color(0.18f, 0.18f, 0.18f);
         public Color DungeonAmbientLight = new Color(0.12f, 0.12f, 0.12f);
-        public Color PalaceAmbientLight = new Color(0.55f, 0.55f, 0.55f);
+        public Color PalaceAmbientLight = new Color(0.58f, 0.58f, 0.58f);
         public float FadeDuration = 3f;
         public float FadeStep = 0.1f;
 

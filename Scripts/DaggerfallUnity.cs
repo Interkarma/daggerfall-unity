@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.2.34";
+        public const string Version = "1.2.35";
 
         #region Fields
 
@@ -315,7 +315,7 @@ namespace DaggerfallWorkshop
 
         public static void LogMessage(string message, bool showInEditor = false)
         {
-            if (showInEditor || Application.isPlaying) Debug.Log(string.Format("DaggerfallUnity {0}: {1}", Version, message));
+            if (showInEditor || Application.isPlaying) Debug.Log(string.Format("DFTFU {0}: {1}", Version, message));
         }
 
         public static bool FindDaggerfallUnity(out DaggerfallUnity dfUnityOut)
