@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Demo
         CharacterController controller;
         bool isPlayerInside = false;
         bool isPlayerInsideDungeon = false;
+        bool isPlayerInsideDungeonPalace = false;
         DaggerfallInterior interior;
         DaggerfallDungeon dungeon;
         GameObject mainCamera;
@@ -38,6 +39,8 @@ namespace DaggerfallWorkshop.Demo
 
         int lastPlayerDungeonBlockIndex = -1;
         DFLocation.DungeonBlock playerDungeonBlockData = new DFLocation.DungeonBlock();
+
+        DFLocation.BuildingTypes buildingType;
 
         /// <summary>
         /// True when player is inside any structure.
@@ -59,18 +62,45 @@ namespace DaggerfallWorkshop.Demo
         /// True only when player inside palace blocks of a dungeon.
         /// For example, main hall in Daggerfall castle.
         /// </summary>
-        public bool IsPlayerInsidePalace
+        public bool IsPlayerInsideDungeonPalace
         {
-            get { return PalaceCheck(); }
+            get { return isPlayerInsideDungeonPalace; }
         }
 
         /// <summary>
-        /// Gets information about current dungeon block.
+        /// Gets current player dungeon.
         /// Only valid when player is inside a dungeon.
         /// </summary>
-        public DFLocation.DungeonBlock PlayerDungeonBlockData
+        public DaggerfallDungeon Dungeon
+        {
+            get { return dungeon; }
+        }
+
+        /// <summary>
+        /// Gets information about current player dungeon block.
+        /// Only valid when player is inside a dungeon.
+        /// </summary>
+        public DFLocation.DungeonBlock DungeonBlock
         {
             get { return playerDungeonBlockData; }
+        }
+
+        /// <summary>
+        /// Gets current building interior.
+        /// Only valid when player inside building.
+        /// </summary>
+        public DaggerfallInterior Interior
+        {
+            get { return interior; }
+        }
+
+        /// <summary>
+        /// Gets current building type.
+        /// Only valid when player inside building.
+        /// </summary>
+        public DFLocation.BuildingTypes BuildingType
+        {
+            get { return buildingType; }
         }
 
         void Start()
@@ -90,6 +120,7 @@ namespace DaggerfallWorkshop.Demo
                 {
                     dungeon.GetBlockData(playerBlockIndex, out playerDungeonBlockData);
                     lastPlayerDungeonBlockIndex = playerBlockIndex;
+                    PalaceCheck();
                     //Debug.Log(string.Format("Player is now inside block {0}", playerDungeonBlockData.BlockName));
                 }
             }
@@ -147,6 +178,9 @@ namespace DaggerfallWorkshop.Demo
             // Enable interior parent
             if (InteriorParent != null)
                 InteriorParent.SetActive(true);
+
+            // Cache some information about this interior
+            buildingType = interior.BuildingData.BuildingType;
 
             // Set player to marker position
             // Not sure how to set facing here as player transitions to a marker, not a door
@@ -299,6 +333,7 @@ namespace DaggerfallWorkshop.Demo
             // Player is now outside dungeon
             isPlayerInside = false;
             isPlayerInsideDungeon = false;
+            isPlayerInsideDungeonPalace = false;
             lastPlayerDungeonBlockIndex = -1;
             playerDungeonBlockData = new DFLocation.DungeonBlock();
         }
@@ -307,10 +342,13 @@ namespace DaggerfallWorkshop.Demo
 
         // Checks is current block is a palace block
         // Currently matching by name, unknown if Daggerfall exposes this in RDB format
-        private bool PalaceCheck()
+        private void PalaceCheck()
         {
             if (!isPlayerInsideDungeon)
-                return false;
+            {
+                isPlayerInsideDungeonPalace = false;
+                return;
+            }
 
             switch (playerDungeonBlockData.BlockName)
             {
@@ -321,9 +359,11 @@ namespace DaggerfallWorkshop.Demo
                 case "S0000080.RDB":    // Wayrest palace area
                 case "S0000081.RDB":
                 case "S0000160.RDB":    // Daggerfall palace area
-                    return true;
+                    isPlayerInsideDungeonPalace = true;
+                    break;
                 default:
-                    return false;
+                    isPlayerInsideDungeonPalace = false;
+                    break;
             }
         }
 

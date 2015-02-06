@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Demo
         DaggerfallUnity dfUnity;
         StreamingWorld streamingWorld;
         ShowTitleScreen titleScreen;
-        DaggerfallSongPlayer songPlayer;
+        //DaggerfallSongPlayer songPlayer;
 
         int timeScaleControl = 1;
         int minTimeScaleControl = 1;
@@ -30,9 +30,9 @@ namespace DaggerfallWorkshop.Demo
         int timeScaleStep = 25;
         float timeScaleMultiplier = 10f;
 
-        int songIndex = (int)SongFilesGM.song_03;
-        int minSongIndex = 0;
-        int maxSongIndex = SongFilesGM.GetValues(typeof(SongFilesGM)).Length - 1;
+        //int songIndex = (int)SongFiles.song_03;
+        //int minSongIndex = 0;
+        //int maxSongIndex = SongFilesGM.GetValues(typeof(SongFilesGM)).Length - 1;
 
         PlayerEnterExit playerEnterExit;
 
@@ -41,11 +41,11 @@ namespace DaggerfallWorkshop.Demo
             dfUnity = DaggerfallUnity.Instance;
             streamingWorld = GameObject.FindObjectOfType<StreamingWorld>();
             titleScreen = GameObject.FindObjectOfType<ShowTitleScreen>();
-            songPlayer = GameObject.FindObjectOfType<DaggerfallSongPlayer>();
+            //songPlayer = GameObject.FindObjectOfType<DaggerfallSongPlayer>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
 
-            if (songPlayer)
-                songPlayer.Song = SongFilesAll.song_03;
+            //if (songPlayer)
+            //    songPlayer.Song = SongFilesAll.song_03;
         }
 
         void Update()
@@ -95,43 +95,43 @@ namespace DaggerfallWorkshop.Demo
             }
 
             // Music control
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                if (!songPlayer)
-                    return;
+            //if (Input.GetKeyDown(KeyCode.P))
+            //{
+            //    if (!songPlayer)
+            //        return;
 
-                SongFilesGM songFile = (SongFilesGM)songIndex;
-                if (!songPlayer.IsPlaying)
-                    songPlayer.Play(songFile.ToString());
-            }
-            if (Input.GetKeyDown(KeyCode.RightBracket))
-            {
-                if (!songPlayer)
-                    return;
+            //    SongFilesGM songFile = (SongFilesGM)songIndex;
+            //    if (!songPlayer.IsPlaying)
+            //        songPlayer.Play(songFile.ToString());
+            //}
+            //if (Input.GetKeyDown(KeyCode.RightBracket))
+            //{
+            //    if (!songPlayer)
+            //        return;
 
-                int lastSongIndex = songIndex;
-                songIndex++;
-                if (songIndex > maxSongIndex)
-                    songIndex = maxSongIndex;
+            //    int lastSongIndex = songIndex;
+            //    songIndex++;
+            //    if (songIndex > maxSongIndex)
+            //        songIndex = maxSongIndex;
 
-                SongFilesGM songFile = (SongFilesGM)songIndex;
-                if (songIndex != lastSongIndex)
-                    songPlayer.Play(songFile.ToString());
-            }
-            if (Input.GetKeyDown(KeyCode.LeftBracket))
-            {
-                if (!songPlayer)
-                    return;
+            //    SongFilesGM songFile = (SongFilesGM)songIndex;
+            //    if (songIndex != lastSongIndex)
+            //        songPlayer.Play(songFile.ToString());
+            //}
+            //if (Input.GetKeyDown(KeyCode.LeftBracket))
+            //{
+            //    if (!songPlayer)
+            //        return;
 
-                int lastSongIndex = songIndex;
-                songIndex--;
-                if (songIndex < minSongIndex)
-                    songIndex = minSongIndex;
+            //    int lastSongIndex = songIndex;
+            //    songIndex--;
+            //    if (songIndex < minSongIndex)
+            //        songIndex = minSongIndex;
 
-                SongFilesGM songFile = (SongFilesGM)songIndex;
-                if (songIndex != lastSongIndex)
-                    songPlayer.Play(songFile.ToString());
-            }
+            //    SongFilesGM songFile = (SongFilesGM)songIndex;
+            //    if (songIndex != lastSongIndex)
+            //        songPlayer.Play(songFile.ToString());
+            //}
         }
 
         // Teleport player to any location by name

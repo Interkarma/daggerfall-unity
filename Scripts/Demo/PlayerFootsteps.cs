@@ -22,10 +22,12 @@ namespace DaggerfallWorkshop.Demo
         public float PitchVariance = 0.3f;
         public float GroundDistance = 1.8f;
         public float FootstepVolumeScale = 0.5f;
-        public SoundClips FootstepSound = SoundClips.PlayerFootstepNormal;
+        public SoundClips FootstepSoundNormal = SoundClips.PlayerFootstepNormal;
+        public SoundClips FootstepSoundSnow = SoundClips.PlayerFootstepSnow;
         public SoundClips FallHardSound = SoundClips.FallHard;
         public SoundClips FallDamageSound = SoundClips.FallDamage;
 
+        DaggerfallUnity dfUnity;
         DaggerfallAudioSource dfAudioSource;
         PlayerMotor playerMotor;
         AudioSource customAudioSource;
@@ -34,30 +36,49 @@ namespace DaggerfallWorkshop.Demo
         bool lostGrounding;
         float distance;
 
+        SoundClips currentFootstepSound = SoundClips.None;
+        WorldTime.Seasons lastSeason = WorldTime.Seasons.Summer;
+
         void Start()
         {
             // Store references
+            dfUnity = DaggerfallUnity.Instance;
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
             playerMotor = GetComponent<PlayerMotor>();
 
             // Add our own custom audio source at runtime as we need to change the pitch of footsteps.
             // We don't want that affecting to other sounds on this game object.
             customAudioSource = gameObject.AddComponent<AudioSource>();
+            customAudioSource.hideFlags = HideFlags.HideInInspector;
             customAudioSource.playOnAwake = false;
             customAudioSource.loop = false;
             customAudioSource.dopplerLevel = 0f;
 
             // Set start position
             lastPosition = GetHorizontalPosition();
+
+            // Set starting footsteps
+            currentFootstepSound = FootstepSoundNormal;
         }
 
         void FixedUpdate()
         {
-            // Load clip
-            // Check this here as dynamic clip may need to be reloaded
+            // Change footstep sounds between winter/summer variants
+            if (dfUnity.WorldTime.SeasonValue != lastSeason)
+            {
+                lastSeason = dfUnity.WorldTime.SeasonValue;
+                if (lastSeason == WorldTime.Seasons.Winter)
+                    currentFootstepSound = FootstepSoundSnow;
+                else
+                    currentFootstepSound = FootstepSoundNormal;
+
+                dfAudioSource.GetAudioClip((int)currentFootstepSound, false);
+            }
+
+            // Always check clip is loaded
             if (clip == null)
             {
-                clip = dfAudioSource.GetAudioClip((int)FootstepSound, false);
+                clip = dfAudioSource.GetAudioClip((int)currentFootstepSound, false);
             }
 
             // Check if player is grounded

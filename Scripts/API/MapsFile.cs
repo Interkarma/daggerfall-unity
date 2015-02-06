@@ -23,6 +23,7 @@ namespace DaggerfallConnect.Arena2
 
         public const float WorldMapTerrainDim = 32768;
         public const float WorldMapTileDim = 128;
+        public const float WorldMapRMBDim = 4096;
         public const int MinWorldCoordX = 0;
         public const int MinWorldCoordZ = 0;
         public const int MaxWorldCoordX = 32768000;
@@ -945,7 +946,7 @@ namespace DaggerfallConnect.Arena2
                 dfLocation.Exterior.Buildings[building].FactionId = reader.ReadUInt16();
                 dfLocation.Exterior.Buildings[building].Sector = reader.ReadInt16();
                 dfLocation.Exterior.Buildings[building].LocationId = reader.ReadUInt16();
-                dfLocation.Exterior.Buildings[building].BuildingType = reader.ReadByte();
+                dfLocation.Exterior.Buildings[building].BuildingType = (DFLocation.BuildingTypes)reader.ReadByte();
                 dfLocation.Exterior.Buildings[building].Quality = reader.ReadByte();
             }
 

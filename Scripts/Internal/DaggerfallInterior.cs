@@ -39,6 +39,11 @@ namespace DaggerfallWorkshop
             get { return doorOwner; }
         }
 
+        public DFLocation.BuildingData BuildingData
+        {
+            get { return blockData.RmbBlock.FldHeader.BuildingDataList[entryDoor.recordIndex]; }
+        }
+
         /// <summary>
         /// Gets door array from owner.
         /// </summary>

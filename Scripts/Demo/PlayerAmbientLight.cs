@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Demo
                 }
                 else if (playerEnterExit.IsPlayerInside && playerEnterExit.IsPlayerInsideDungeon)
                 {
-                    if (playerEnterExit.IsPlayerInsidePalace)
+                    if (playerEnterExit.IsPlayerInsideDungeonPalace)
                         targetAmbientLight = PalaceAmbientLight;
                     else
                         targetAmbientLight = DungeonAmbientLight;

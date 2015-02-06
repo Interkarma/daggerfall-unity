@@ -77,6 +77,46 @@ namespace DaggerfallConnect
 
         #endregion
 
+        #region Building Enumerations
+
+        /// <summary>
+        /// Building types within cities.
+        /// </summary>
+        public enum BuildingTypes
+        {
+            Alchemist,
+            HouseForSale,
+            Armorer,
+            Bank,
+            Town4,
+            Bookseller,
+            ClothingStore,
+            FurnitureStore,
+            GemStore,
+            GeneralStore,
+            Library,
+            GuildHall,
+            PawnShop,
+            WeaponSmith,
+            Temple,
+            Tavern,
+            Palace,
+            House1,                 // Always has locked entry doors
+            House2,                 // Has unlocked doors from 0600-1800
+            House3,
+            House4,
+            House5,
+            House6,
+            Town23,
+            Ship,                   // Never displayed on automap
+            Special1 = 0x74,        // Special1-4 never displayed on automap
+            Special2 = 0xdf,
+            Special3 = 0xf9,
+            Special4 = 0xfa,
+        }
+
+        #endregion
+
         #region Climate Enumerations
 
         /// <summary>
@@ -389,7 +429,7 @@ namespace DaggerfallConnect
             public UInt16 LocationId;
 
             /// <summary>Type of building.</summary>
-            public Byte BuildingType;
+            public BuildingTypes BuildingType;
 
             /// <summary>Specifies quality of building from 1-20.</summary>
             public Byte Quality;

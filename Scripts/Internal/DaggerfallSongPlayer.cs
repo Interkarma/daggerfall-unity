@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop
         public float Gain = 5.0f;
         public string SoundBank = "chorium.sf2";
         public string SongFolder = "Songs/";
-        public SongFilesAll Song = SongFilesAll.song_oversnow;
+        public SongFiles Song = SongFiles.song_none;
 
         AudioSource audioSource;
         Synthesizer midiSynthesizer = null;
@@ -101,17 +101,16 @@ namespace DaggerfallWorkshop
 
         public void Play()
         {
-            Play(Song.ToString());
-        }
+            if (Song == SongFiles.song_none)
+                return;
 
-        public void SetSong(string enumName)
-        {
+            Play(Song);
         }
 
         /// <summary>
         /// Play current song.
         /// </summary>
-        public void Play(string enumName)
+        public void Play(SongFiles song)
         {
             if (!InitSynth())
                 return;
@@ -123,13 +122,13 @@ namespace DaggerfallWorkshop
             audioSource.enabled = true;
 
             // Load song data
-            string filename = EnumToFilename(enumName);
+            string filename = EnumToFilename(song);
             byte[] songData = LoadSong(filename);
             if (songData == null)
                 return;
 
             // Create song
-            MidiFile midiFile = new MidiFile(new MyMemoryFile(songData, enumName));
+            MidiFile midiFile = new MidiFile(new MyMemoryFile(songData, filename));
             if (midiSequencer.LoadMidi(midiFile))
             {
                 midiSequencer.Play();
@@ -213,8 +212,9 @@ namespace DaggerfallWorkshop
             return true;
         }
 
-        private string EnumToFilename(string enumName)
+        private string EnumToFilename(SongFiles song)
         {
+            string enumName = song.ToString();
             return enumName.Remove(0, "song_".Length) + ".mid";
         }
 
@@ -323,6 +323,89 @@ namespace DaggerfallWorkshop
             public Stream OpenResourceForRead() { return new MemoryStream(file); }
             public Stream OpenResourceForWrite() { return null; }
         }
+
+        #endregion
+
+        #region Static Song Arrays
+
+        /// <summary>
+        /// Just the GM songs.
+        /// </summary>
+        public static SongFiles[] Songs_GM = new SongFiles[]
+        {
+            SongFiles.song_02,
+            SongFiles.song_03,
+            SongFiles.song_04,
+            SongFiles.song_05,
+            SongFiles.song_06,
+            SongFiles.song_07,
+            SongFiles.song_08,
+            SongFiles.song_09,
+            SongFiles.song_10,
+            SongFiles.song_11,
+            SongFiles.song_12,
+            SongFiles.song_13,
+            SongFiles.song_15,
+            SongFiles.song_16,
+            SongFiles.song_17,
+            SongFiles.song_18,
+            SongFiles.song_20,
+            SongFiles.song_21,
+            SongFiles.song_22,
+            SongFiles.song_23,
+            SongFiles.song_25,
+            SongFiles.song_28,
+            SongFiles.song_29,
+            SongFiles.song_30,
+            SongFiles.song_d1,
+            SongFiles.song_d10,
+            SongFiles.song_d2,
+            SongFiles.song_d3,
+            SongFiles.song_d4,
+            SongFiles.song_d5,
+            SongFiles.song_d6,
+            SongFiles.song_d7,
+            SongFiles.song_d8,
+            SongFiles.song_d9,
+            SongFiles.song_dungeon,
+            SongFiles.song_dungeon5,
+            SongFiles.song_dungeon6,
+            SongFiles.song_dungeon7,
+            SongFiles.song_dungeon8,
+            SongFiles.song_dungeon9,
+            SongFiles.song_folk1,
+            SongFiles.song_folk2,
+            SongFiles.song_folk3,
+            SongFiles.song_gbad,
+            SongFiles.song_gcurse,
+            SongFiles.song_gday___d,
+            SongFiles.song_gdngn10,
+            SongFiles.song_gdngn11,
+            SongFiles.song_gdungn4,
+            SongFiles.song_gdungn9,
+            SongFiles.song_geerie,
+            SongFiles.song_ggood,
+            SongFiles.song_gmage_3,
+            SongFiles.song_gneut,
+            SongFiles.song_gpalac,
+            SongFiles.song_gruins,
+            SongFiles.song_gshop,
+            SongFiles.song_gsneak2,
+            SongFiles.song_gsnow__b,
+            SongFiles.song_gsunny2,
+            SongFiles.song_magic_2,
+            SongFiles.song_overcast,
+            SongFiles.song_overlong,
+            SongFiles.song_oversnow,
+            SongFiles.song_raining,
+            SongFiles.song_sneaking,
+            SongFiles.song_sneakng2,
+            SongFiles.song_snowing,
+            SongFiles.song_square_2,
+            SongFiles.song_sunnyday,
+            SongFiles.song_swimming,
+            SongFiles.song_tavern,
+        };
 
         #endregion
     }
