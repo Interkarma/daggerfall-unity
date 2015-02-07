@@ -17,17 +17,21 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class WorldTime : MonoBehaviour
     {
-        public static int DawnHour = 6;
-        public static int DuskHour = 18;
-        public static int LightsOffHour = 8;
-        public static int LightsOnHour = 17;
+        public const int DawnHour = 6;
+        public const int DuskHour = 18;
+        public const int LightsOffHour = 8;
+        public const int LightsOnHour = 17;
+        public const int MiddayHour = 12;
+        public const int MidnightHour = 0;
+        public const int MidMorningHour = 10;
+        public const int MidAfternoonHour = 15;
 
-        public static int SecondsPerMinute = 60;
-        public static int MinutesPerHour = 60;
-        public static int HoursPerDay = 24;
-        public static int DaysPerWeek = 7;
-        public static int DaysPerMonth = 30;
-        public static int MonthsPerYear = 12;
+        public const int SecondsPerMinute = 60;
+        public const int MinutesPerHour = 60;
+        public const int HoursPerDay = 24;
+        public const int DaysPerWeek = 7;
+        public const int DaysPerMonth = 30;
+        public const int MonthsPerYear = 12;
 
         public int Year = 405;
         public int Month = 5;

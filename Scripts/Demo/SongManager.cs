@@ -83,6 +83,18 @@ namespace DaggerfallWorkshop.Demo
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Gets song player.
+        /// </summary>
+        public DaggerfallSongPlayer SongPlayer
+        {
+            get { return songPlayer; }
+        }
+
+        #endregion
+
         #region Unity
 
         void Start()
@@ -127,10 +139,19 @@ namespace DaggerfallWorkshop.Demo
 
             // Switch playlists if context changes or if not playing then select a new song
             bool overrideSong = false;
-            if (currentPlayerMusicEnvironment != lastPlayerMusicEnvironment ||
+            if (currentPlayerMusicEnvironment != lastPlayerMusicEnvironment || 
                 currentPlayerMusicWeather != lastPlayerMusicWeather ||
                 (!songPlayer.IsPlaying && playSong))
             {
+                // Keep song if playing the same weather, but not when entering dungeons
+                if (currentPlayerMusicWeather != PlayerMusicWeather.Normal &&
+                    currentPlayerMusicWeather == lastPlayerMusicWeather &&
+                    currentPlayerMusicEnvironment != PlayerMusicEnvironment.DungeonInterior)
+                {
+                    return;
+                }
+
+                // Change song
                 lastPlayerMusicEnvironment = currentPlayerMusicEnvironment;
                 lastPlayerMusicWeather = currentPlayerMusicWeather;
                 AssignPlaylist();
@@ -153,7 +174,7 @@ namespace DaggerfallWorkshop.Demo
         public void StartPlaying()
         {
             playSong = true;
-            PlayCurrentSong();
+            PlayCurrentSong(true);
         }
 
         /// <summary>
@@ -224,16 +245,16 @@ namespace DaggerfallWorkshop.Demo
             if (currentPlaylist == null)
                 return;
 
-            UnityEngine.Random.seed = Time.renderedFrameCount;
+            UnityEngine.Random.seed = System.DateTime.Now.Millisecond;
             int index = UnityEngine.Random.Range(0, currentPlaylist.Length);
             currentSong = currentPlaylist[index];
             currentSongIndex = index;
         }
 
-        void PlayCurrentSong()
+        void PlayCurrentSong(bool forcePlay = false)
         {
             // Do nothing if already playing this song or play disabled
-            if (songPlayer.Song == currentSong || !playSong)
+            if ((songPlayer.Song == currentSong || !playSong) && !forcePlay)
                 return;
 
             songPlayer.Song = currentSong;
@@ -352,30 +373,31 @@ namespace DaggerfallWorkshop.Demo
 
         void AssignPlaylist()
         {
-            // Cities have the most variety
-            // Mainly for simplicity - and this is where players spend most of their time
+            // Weather music in cities and wilderness at day
+            if (!dfUnity.WorldTime.IsNight &&
+                currentPlayerMusicWeather != PlayerMusicWeather.Normal &&
+                (currentPlayerMusicEnvironment == PlayerMusicEnvironment.City || currentPlayerMusicEnvironment == PlayerMusicEnvironment.Wilderness))
+            {
+                switch (currentPlayerMusicWeather)
+                {
+                    case PlayerMusicWeather.Rain:
+                        currentPlaylist = WeatherRainSongs;
+                        break;
+                    case PlayerMusicWeather.Snow:
+                        currentPlaylist = WeatherSnowSongs;
+                        break;
+                }
+                return;
+            }
+
+            // Cities
             if (currentPlayerMusicEnvironment == PlayerMusicEnvironment.City)
             {
                 // Day/night
                 if (!dfUnity.WorldTime.IsNight)
-                {
-                    switch (currentPlayerMusicWeather)
-                    {
-                        case PlayerMusicWeather.Rain:
-                            currentPlaylist = WeatherRainSongs;
-                            break;
-                        case PlayerMusicWeather.Snow:
-                            currentPlaylist = WeatherSnowSongs;
-                            break;
-                        default:
-                            currentPlaylist = CityDaySongs;
-                            break;
-                    }
-                }
+                    currentPlaylist = CityDaySongs;
                 else
-                {
                     currentPlaylist = CityNightSongs;
-                }
 
                 return;
             }
@@ -542,7 +564,6 @@ namespace DaggerfallWorkshop.Demo
         static SongFiles[] _weatherSnowSongs = new SongFiles[]
         {
             SongFiles.song_08,
-            SongFiles.song_18,
             SongFiles.song_gsnow__b,
             SongFiles.song_snowing,
             SongFiles.song_oversnow,

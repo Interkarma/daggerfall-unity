@@ -278,17 +278,8 @@ namespace DaggerfallWorkshop.Utility
             // Add mobile enemy
             Vector2 size = Vector2.one;
             DaggerfallMobileUnit dfMobile = mobileObject.AddComponent<DaggerfallMobileUnit>();
-            try
-            {
-                dfMobile.SetEnemy(dfUnity, enemyDict[(int)type], reaction);
-                size = dfMobile.Summary.RecordSizes[0];
-            }
-            catch(System.Exception e)
-            {
-                string message = string.Format("Failed to set enemy type (int)type={0}. '{1}'", (int)type, e.Message);
-                DaggerfallUnity.LogMessage(message);
-                GameObject.DestroyImmediate(dfMobile);
-            }
+            dfMobile.SetEnemy(dfUnity, enemyDict[(int)type], reaction);
+            size = dfMobile.Summary.RecordSizes[0];
 
             // Add character controller
             if (dfUnity.Option_EnemyCharacterController || dfUnity.Option_EnemyExampleAI)

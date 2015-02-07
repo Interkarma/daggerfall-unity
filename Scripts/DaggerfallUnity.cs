@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.2.38";
+        public const string Version = "1.2.39";
 
         #region Fields
 
@@ -283,13 +283,13 @@ namespace DaggerfallWorkshop
             }
         }
 
-#if UNITY_EDITOR && !UNITY_WEBPLAYER
+#if UNITY_EDITOR
         private void LoadDeveloperArena2Path()
         {
             const string devArena2Path = "devArena2Path";
 
-            // Do nothing if path already set
-            if (!string.IsNullOrEmpty(Arena2Path))
+            // Do nothing if path already set or playing
+            if (!string.IsNullOrEmpty(Arena2Path) || Application.isPlaying)
                 return;
 
             // Attempt to load persistent dev path from Resources

@@ -185,7 +185,7 @@ namespace DaggerfallWorkshop
             if (summary.StateAnims == null)
             {
                 // Log error message
-                DaggerfallUnity.LogMessage(string.Format("Enemy does not have animation for {0} state. Defaulting to Idle state.", summary.EnemyState.ToString()), true);
+                DaggerfallUnity.LogMessage(string.Format("DaggerfalMobileUnit: Enemy does not have animation for {0} state. Defaulting to Idle state.", summary.EnemyState.ToString()), true);
 
                 // Set back to idle (which every enemy has in one form or another)
                 summary.EnemyState = MobileStates.Idle;
@@ -390,7 +390,7 @@ namespace DaggerfallWorkshop
         {
             // Open texture file
             string path = Path.Combine(dfUnity.Arena2Path, TextureFile.IndexToFileName(archive));
-            TextureFile textureFile = new TextureFile(path, FileUsage.UseDisk, true);
+            TextureFile textureFile = new TextureFile(path, FileUsage.UseMemory, true);
 
             // Cache size and scale for each record
             summary.RecordSizes = new Vector2[textureFile.RecordCount];

@@ -813,7 +813,7 @@ namespace DaggerfallWorkshop
             // Randomly pick one side of location to spawn
             // A better implementation would base on previous coordinates
             // e.g. if new location is east of old location then player starts at west edge of new location
-            UnityEngine.Random.seed = UnityEngine.Time.renderedFrameCount;
+            UnityEngine.Random.seed = System.DateTime.Now.Millisecond;
             int side = UnityEngine.Random.Range(0, 4);
 
             // Get half width and height

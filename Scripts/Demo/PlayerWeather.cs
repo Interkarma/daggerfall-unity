@@ -70,11 +70,12 @@ namespace DaggerfallWorkshop.Demo
                 return;
             }
 
-            // Always disable snow in desert climates
-            if (currentClimateType == DFLocation.ClimateBaseType.Desert)
+            // Always snow in desert climate
+            if (currentClimateType == DFLocation.ClimateBaseType.Desert &&
+                currentWeatherType == WeatherTypes.Snow_Normal)
             {
-                if (SnowParticles) SnowParticles.SetActive(false);
-                return;
+                currentWeatherType = WeatherTypes.None;
+                WeatherType = WeatherTypes.None;
             }
 
             switch (WeatherType)

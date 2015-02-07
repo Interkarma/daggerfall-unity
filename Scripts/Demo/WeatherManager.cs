@@ -30,9 +30,25 @@ namespace DaggerfallWorkshop.Demo
         public float WinterSunlightScale = 0.65f;
 
         DaggerfallUnity dfUnity;
-        bool isRaining;
-        bool isStorming;
-        bool isSnowing;
+        bool isRaining = false;
+        bool isStorming = false;
+        bool isSnowing = false;
+        bool isOvercast = false;
+
+        public bool IsRaining
+        {
+            get { return isRaining; }
+        }
+
+        public bool IsSnowing
+        {
+            get { return isSnowing; }
+        }
+
+        public bool IsOvercast
+        {
+            get { return isOvercast; }
+        }
         
         void Start()
         {
@@ -40,17 +56,25 @@ namespace DaggerfallWorkshop.Demo
             SetSunlightScale();
         }
 
-        void SetSunny()
+        public void SetSunny()
         {
             StopRaining();
             StopSnowing();
             ClearOvercast();
         }
 
-        void ClearOvercast()
+        public void ClearOvercast()
         {
             if (DaggerfallSky)
                 DaggerfallSky.WeatherStyle = WeatherStyle.Normal;
+            isOvercast = false;
+        }
+
+        public void ClearAllWeather()
+        {
+            StopRaining();
+            StopSnowing();
+            ClearOvercast();
         }
 
         #region Rain
@@ -69,6 +93,7 @@ namespace DaggerfallWorkshop.Demo
                 DaggerfallSky.WeatherStyle = WeatherStyle.Normal;
             }
 
+            isOvercast = true;
             SetSunlightScale();
         }
 
@@ -122,6 +147,7 @@ namespace DaggerfallWorkshop.Demo
                 DaggerfallSky.WeatherStyle = WeatherStyle.Normal;
             }
 
+            isOvercast = true;
             SetSunlightScale();
         }
 

@@ -65,6 +65,7 @@ namespace DaggerfallWorkshop
         Rect westRect, eastRect;
         CameraClearFlags initialClearFlags;
         System.Random random = new System.Random(0);
+        bool showNightSky = true;
 
         SkyColors skyColors = new SkyColors();
         float starChance = 0.004f;
@@ -275,7 +276,7 @@ namespace DaggerfallWorkshop
             Destroy(eastTexture);
 
             // Create new textures
-            if (!IsNight)
+            if (!IsNight || !showNightSky)
             {
                 westTexture = new Texture2D(dayWidth, dayHeight, TextureFormat.RGB24, false);
                 eastTexture = new Texture2D(dayWidth, dayHeight, TextureFormat.RGB24, false);
@@ -355,6 +356,12 @@ namespace DaggerfallWorkshop
             // Set night flag
             IsNight = dfUnity.WorldTime.IsNight;
 
+            // Disable clear night sky for bad weather
+            if (WeatherStyle != DaggerfallWorkshop.WeatherStyle.Normal)
+                showNightSky = false;
+            else
+                showNightSky = true;
+
             // Adjust sky frame by time of day
             if (!IsNight)
             {
@@ -371,7 +378,7 @@ namespace DaggerfallWorkshop
 
         private void LoadCurrentSky(int targetFrame)
         {
-            if (!IsNight)
+            if (!IsNight || !showNightSky)
                 LoadDaySky(targetFrame);
             else
                 LoadNightSky();

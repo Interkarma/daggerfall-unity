@@ -211,7 +211,14 @@ namespace DaggerfallWorkshop
             // Get location type
             if (hasCurrentLocation)
             {
-                currentLocationType = currentRegion.MapTable[mapSummary.MapIndex].Type;
+                if (currentRegion.MapTable == null)
+                {
+                    DaggerfallUnity.LogMessage(string.Format("PlayerGPS: Location {0} in region{1} has a null MapTable.", currentLocation.Name, currentLocation.RegionName));
+                }
+                else
+                {
+                    currentLocationType = currentRegion.MapTable[mapSummary.MapIndex].Type;
+                }
             }
         }
 
