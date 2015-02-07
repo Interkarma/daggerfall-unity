@@ -45,9 +45,13 @@ namespace DaggerfallWorkshop.Utility
                 }
             }
 
-            // Handle climate sets with missing winter textures
-            if (climate == ClimateBases.Desert ||
-                climate == ClimateBases.Swamp)
+            // Bypass winter swaps in desert climates entirely
+            // There are too many bad swaps, and you never see this variant in game
+            if (climate == ClimateBases.Desert)
+                ci.supportsWinter = false;
+
+            // Handle swamp climate sets with missing winter textures
+            if (climate == ClimateBases.Swamp)
             {
                 switch (ci.textureSet)
                 {
@@ -348,6 +352,16 @@ namespace DaggerfallWorkshop.Utility
                 default:
                     return ClimateNatureSets.TemperateWoodland;
             }
+        }
+
+        public static int GetNatureArchive(DFLocation.ClimateTextureSet climateTextureSet, WorldTime.Seasons worldSeason)
+        {
+            ClimateNatureSets natureSet = FromAPITextureSet(climateTextureSet);
+            ClimateSeason climateSeason = ClimateSeason.Summer;
+            if (worldSeason == WorldTime.Seasons.Winter)
+                climateSeason = ClimateSeason.Winter;
+
+            return GetNatureArchive(natureSet, climateSeason);
         }
 
         public static int GetNatureArchive(ClimateNatureSets natureSet, ClimateSeason climateSeason)

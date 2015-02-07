@@ -83,6 +83,10 @@ namespace DaggerfallWorkshop.Utility
             if (!dfUnity.IsReady)
                 return null;
 
+            // Use default texture table if one not specified
+            if (textureTable == null)
+                textureTable = StaticTextureTables.DefaultTextureTable;
+
             // Create gameobject
             GameObject go = new GameObject(string.Format("DaggerfallBlock [Name={0}]", blockName));
             DaggerfallRDBBlock dfBlock = go.AddComponent<DaggerfallRDBBlock>();
@@ -181,7 +185,13 @@ namespace DaggerfallWorkshop.Utility
 
         private static bool IsActionDoor(DFBlock blockData, DFBlock.RdbObject obj, int modelReference)
         {
-            // Check if this is a door (DOR) or double-door (DDR)
+            const uint redBrickDoor = 72100;
+
+            // Always reject red brick doors, they are not action doors despite having "DOR" attached
+            if (blockData.RdbBlock.ModelReferenceList[modelReference].ModelIdNum == redBrickDoor)
+                return false;
+
+            // Otherwise Check if this is a door (DOR) or double-door (DDR)
             string description = blockData.RdbBlock.ModelReferenceList[modelReference].Description;
             if (description == "DOR" || description == "DDR")
                 return true;

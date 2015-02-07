@@ -31,6 +31,9 @@ namespace DaggerfallWorkshop
         public static int[] LysandusTomb = new int[] { 23, 23, 23, 23, 23, 168 };
         public static int[] DirenniTower = new int[] { 19, 20, 23, 19, 20, 168 };
 
+        // Default texture table at linear offset 0x28617C
+        public static int[] DefaultTextureTable = new int[] { 119, 120, 122, 123, 124, 168 };
+
         // Helper to generate valid texture table from random seed
         public static int[] RandomTextureTable(int seed)
         {

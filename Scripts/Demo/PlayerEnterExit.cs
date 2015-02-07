@@ -283,26 +283,39 @@ namespace DaggerfallWorkshop.Demo
             if (DungeonParent != null)
                 DungeonParent.SetActive(true);
 
+            // Player is now inside dungeon
+            isPlayerInside = true;
+            isPlayerInsideDungeon = true;
+
+            // Set to start position
+            MovePlayerToDungeonStart();
+        }
+
+        public void MovePlayerToDungeonStart(bool setFacing = false)
+        {
+            if (!isPlayerInsideDungeon)
+                return;
+
             // Set player to start position
             transform.position = dungeon.StartMarker.transform.position + Vector3.up * (controller.height * 0.6f);
-
-            //// TODO: Find closest exit door to orient player
-            //DaggerfallStaticDoors doors = newDungeon.GetComponent<DaggerfallStaticDoors>();
-            //if (doors)
-            //{
-            //    Vector3 doorPos;
-            //    int doorIndex;
-            //    if (doors.FindClosestDoorToPlayer(transform.position, 0, out doorPos, out doorIndex))
-            //    {
-            //    }
-            //}
 
             // Fix player standing
             SetStanding();
 
-            // Player is now inside dungeon
-            isPlayerInside = true;
-            isPlayerInsideDungeon = true;
+            // TODO: Set player facing away from dungeon exit
+            if (setFacing)
+            {
+                //// Find closest exit door
+                //DaggerfallStaticDoors doors = newDungeon.GetComponent<DaggerfallStaticDoors>();
+                //if (doors)
+                //{
+                //    Vector3 doorPos;
+                //    int doorIndex;
+                //    if (doors.FindClosestDoorToPlayer(transform.position, 0, out doorPos, out doorIndex))
+                //    {
+                //    }
+                //}
+            }
         }
 
         /// <summary>
@@ -340,8 +353,7 @@ namespace DaggerfallWorkshop.Demo
 
         #endregion
 
-        // Checks is current block is a palace block
-        // Currently matching by name, unknown if Daggerfall exposes this in RDB format
+        // Check if current block is a palace block
         private void PalaceCheck()
         {
             if (!isPlayerInsideDungeon)

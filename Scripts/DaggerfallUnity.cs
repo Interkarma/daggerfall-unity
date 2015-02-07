@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.2.37";
+        public const string Version = "1.2.38";
 
         #region Fields
 

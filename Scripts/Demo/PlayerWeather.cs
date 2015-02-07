@@ -8,6 +8,7 @@
 using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Demo;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Demo
 {
@@ -16,13 +17,19 @@ namespace DaggerfallWorkshop.Demo
     /// Allows weather to be attached elsewhere than a child of player (such as exterior parent).
     /// In multiplayer do not sync weather particle effects to other players.
     /// </summary>
+    [RequireComponent(typeof(PlayerGPS))]
+    [RequireComponent(typeof(PlayerEnterExit))]
     public class PlayerWeather : MonoBehaviour
     {
         public GameObject RainParticles;
         public GameObject SnowParticles;
         public WeatherTypes WeatherType = WeatherTypes.None;
 
-        WeatherTypes lastWeatherType = WeatherTypes.None;
+        PlayerGPS playerGPS;
+        PlayerEnterExit playerEnterExit;
+        WeatherTypes currentWeatherType = WeatherTypes.None;
+        DFLocation.ClimateBaseType currentClimateType = DFLocation.ClimateBaseType.None;
+        bool isInside = false;
 
         public enum WeatherTypes
         {
@@ -33,18 +40,43 @@ namespace DaggerfallWorkshop.Demo
 
         void Start()
         {
+            playerGPS = GetComponent<PlayerGPS>();
+            playerEnterExit = GetComponent<PlayerEnterExit>();
             if (RainParticles) RainParticles.SetActive(false);
             if (SnowParticles) SnowParticles.SetActive(false);
         }
 
         void Update()
         {
-            if (WeatherType != lastWeatherType)
+            // Update weather if context changes
+            if (WeatherType != currentWeatherType ||
+                playerEnterExit.IsPlayerInside != isInside ||
+                playerGPS.ClimateSettings.ClimateType != currentClimateType)
+            {
+                isInside = playerEnterExit.IsPlayerInside;
+                currentClimateType = playerGPS.ClimateSettings.ClimateType;
+                currentWeatherType = WeatherType;
                 SetWeather();
+            }
         }
 
         void SetWeather()
         {
+            // Always disable weather inside
+            if (isInside)
+            {
+                if (RainParticles) RainParticles.SetActive(false);
+                if (SnowParticles) SnowParticles.SetActive(false);
+                return;
+            }
+
+            // Always disable snow in desert climates
+            if (currentClimateType == DFLocation.ClimateBaseType.Desert)
+            {
+                if (SnowParticles) SnowParticles.SetActive(false);
+                return;
+            }
+
             switch (WeatherType)
             {
                 case WeatherTypes.None:
@@ -60,7 +92,6 @@ namespace DaggerfallWorkshop.Demo
                     if (SnowParticles) SnowParticles.SetActive(true);
                     break;
             }
-            lastWeatherType = WeatherType;
         }
     }
 }

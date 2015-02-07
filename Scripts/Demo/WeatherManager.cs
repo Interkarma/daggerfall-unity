@@ -11,7 +11,7 @@ using System.Collections;
 namespace DaggerfallWorkshop.Demo
 {
     /// <summary>
-    /// Helper component to manage time and weather settings across several other components.
+    /// Helper component to assign weather settings across multiple components.
     /// </summary>
     public class WeatherManager : MonoBehaviour
     {
@@ -29,11 +29,10 @@ namespace DaggerfallWorkshop.Demo
         [Range(0, 1)]
         public float WinterSunlightScale = 0.65f;
 
+        DaggerfallUnity dfUnity;
         bool isRaining;
         bool isStorming;
         bool isSnowing;
-
-        DaggerfallUnity dfUnity;
         
         void Start()
         {
@@ -41,8 +40,11 @@ namespace DaggerfallWorkshop.Demo
             SetSunlightScale();
         }
 
-        void Update()
+        void SetSunny()
         {
+            StopRaining();
+            StopSnowing();
+            ClearOvercast();
         }
 
         void ClearOvercast()
@@ -94,6 +96,10 @@ namespace DaggerfallWorkshop.Demo
         {
             isRaining = false;
             isStorming = false;
+
+            if (PlayerWeather)
+                PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.None;
+
             SetSunlightScale();
             SetAmbientEffects();
         }
@@ -132,46 +138,13 @@ namespace DaggerfallWorkshop.Demo
 
         public void StopSnowing()
         {
-        }
+            isSnowing = false;
 
-        #endregion
+            if (PlayerWeather)
+                PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.None;
 
-        #region Seasons
-
-        public void SetFall()
-        {
-        }
-
-        public void SetSpring()
-        {
-        }
-
-        public void SetSummer()
-        {
-        }
-
-        public void SetWinter()
-        {
-        }
-
-        #endregion
-
-        #region Time of Day
-
-        public void SetDawn()
-        {
-        }
-
-        public void SetMidday()
-        {
-        }
-
-        public void SetDusk()
-        {
-        }
-
-        public void SetMidnight()
-        {
+            SetSunlightScale();
+            SetAmbientEffects();
         }
 
         #endregion

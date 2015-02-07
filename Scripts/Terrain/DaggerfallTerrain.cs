@@ -103,13 +103,13 @@ namespace DaggerfallWorkshop
         public void UpdateClimateMaterial()
         {
             // Update atlas texture if world climate changed
-            // TODO: Support season
             if (currentWorldClimate != MapData.worldClimate || dfUnity.WorldTime.SeasonValue != season)
             {
                 // Get current climate and ground archive
                 DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(MapData.worldClimate);
                 int groundArchive = climate.GroundArchive;
-                if (dfUnity.WorldTime.SeasonValue == WorldTime.Seasons.Winter)
+                if (climate.ClimateType != DFLocation.ClimateBaseType.Desert &&
+                    dfUnity.WorldTime.SeasonValue == WorldTime.Seasons.Winter)
                 {
                     // Offset to snow textures
                     groundArchive++;

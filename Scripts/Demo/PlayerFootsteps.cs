@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Demo
         public SoundClips FallDamageSound = SoundClips.FallDamage;
 
         DaggerfallUnity dfUnity;
+        PlayerEnterExit playerEnterExit;
         DaggerfallAudioSource dfAudioSource;
         PlayerMotor playerMotor;
         AudioSource customAudioSource;
@@ -37,7 +38,8 @@ namespace DaggerfallWorkshop.Demo
         float distance;
 
         SoundClips currentFootstepSound = SoundClips.None;
-        WorldTime.Seasons lastSeason = WorldTime.Seasons.Summer;
+        WorldTime.Seasons currentSeason = WorldTime.Seasons.Summer;
+        bool isInside = false;
 
         void Start()
         {
@@ -45,6 +47,7 @@ namespace DaggerfallWorkshop.Demo
             dfUnity = DaggerfallUnity.Instance;
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
             playerMotor = GetComponent<PlayerMotor>();
+            playerEnterExit = GetComponent<PlayerEnterExit>();
 
             // Add our own custom audio source at runtime as we need to change the pitch of footsteps.
             // We don't want that affecting to other sounds on this game object.
@@ -64,18 +67,20 @@ namespace DaggerfallWorkshop.Demo
         void FixedUpdate()
         {
             // Change footstep sounds between winter/summer variants
-            if (dfUnity.WorldTime.SeasonValue != lastSeason)
+            // or when player enters/exits an interior space
+            if (dfUnity.WorldTime.SeasonValue != currentSeason || isInside != playerEnterExit.IsPlayerInside)
             {
-                lastSeason = dfUnity.WorldTime.SeasonValue;
-                if (lastSeason == WorldTime.Seasons.Winter)
+                currentSeason = dfUnity.WorldTime.SeasonValue;
+                isInside = playerEnterExit.IsPlayerInside;
+                if (currentSeason == WorldTime.Seasons.Winter && !isInside)
                     currentFootstepSound = FootstepSoundSnow;
                 else
                     currentFootstepSound = FootstepSoundNormal;
 
-                dfAudioSource.GetAudioClip((int)currentFootstepSound, false);
+                clip = null;
             }
 
-            // Always check clip is loaded
+            // Reload clip if needed
             if (clip == null)
             {
                 clip = dfAudioSource.GetAudioClip((int)currentFootstepSound, false);

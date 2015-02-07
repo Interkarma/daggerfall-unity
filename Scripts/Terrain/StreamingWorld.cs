@@ -309,9 +309,7 @@ namespace DaggerfallWorkshop
                         natureBatchObject.transform.parent = locationObject.transform;
                         natureBatchObject.transform.localPosition = Vector3.zero;
                         DaggerfallBillboardBatch natureBatch = natureBatchObject.AddComponent<DaggerfallBillboardBatch>();
-                        int natureArchive = location.Climate.NatureArchive;
-                        if (dfUnity.WorldTime.SeasonValue == WorldTime.Seasons.Winter)
-                            natureArchive++;
+                        int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.SeasonValue);
                         natureBatch.SetMaterial(natureArchive);
 
                         // RMB blocks are laid out in centre of terrain to align with ground
@@ -731,14 +729,7 @@ namespace DaggerfallWorkshop
             if (dfTerrain && dfBillboardBatch)
             {
                 // Get current climate and nature archive
-                DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(dfTerrain.MapData.worldClimate);
-                int natureArchive = climate.NatureArchive;
-                if (dfUnity.WorldTime.SeasonValue == WorldTime.Seasons.Winter)
-                {
-                    // Offset to snow textures
-                    natureArchive++;
-                }
-
+                int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.SeasonValue);
                 dfBillboardBatch.SetMaterial(natureArchive);
                 TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale);
             }
@@ -830,7 +821,8 @@ namespace DaggerfallWorkshop
             float halfHeight = (float)mapHeight * 0.5f * RMBLayout.RMBSide;
             Vector3 centre = origin + new Vector3(halfWidth, 0, halfHeight);
 
-            // Extra distance is a fraction of one block
+            // Sometimes buildings are right up to edge of block
+            // Extra distance places player a little bit outside location area
             float extraDistance = RMBLayout.RMBSide * 0.1f;
 
             // Start player in position

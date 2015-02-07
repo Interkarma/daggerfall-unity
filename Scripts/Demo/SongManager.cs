@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Demo
         #region Fields
 
         public PlayerGPS LocalPlayerGPS;            // Must be peered with PlayerWeather and PlayerEnterExit for full support
+        public StreamingWorld StreamingWorld;
 
         public SongFiles[] CityDaySongs = _cityDaySongs;
         public SongFiles[] CityNightSongs = _cityNightSongs;
@@ -52,6 +53,8 @@ namespace DaggerfallWorkshop.Demo
 
         SongFiles[] currentPlaylist;
         SongFiles currentSong;
+        int currentSongIndex = 0;
+        bool playSong = true;
 
         #endregion
 
@@ -110,6 +113,14 @@ namespace DaggerfallWorkshop.Demo
             if (!songPlayer)
                 return;
 
+            // If streaming world is set, we can ignore track changes before init complete
+            // This helps prevent music starting during first load or on wrong playlist
+            if (StreamingWorld)
+            {
+                if (StreamingWorld.IsInit)
+                    return;
+            }
+
             // Update context
             UpdatePlayerMusicEnvironment();
             UpdatePlayerMusicWeather();
@@ -118,7 +129,7 @@ namespace DaggerfallWorkshop.Demo
             bool overrideSong = false;
             if (currentPlayerMusicEnvironment != lastPlayerMusicEnvironment ||
                 currentPlayerMusicWeather != lastPlayerMusicWeather ||
-                !songPlayer.IsPlaying)
+                (!songPlayer.IsPlaying && playSong))
             {
                 lastPlayerMusicEnvironment = currentPlayerMusicEnvironment;
                 lastPlayerMusicWeather = currentPlayerMusicWeather;
@@ -135,6 +146,65 @@ namespace DaggerfallWorkshop.Demo
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Start playing.
+        /// </summary>
+        public void StartPlaying()
+        {
+            playSong = true;
+            PlayCurrentSong();
+        }
+
+        /// <summary>
+        /// Stop playing.
+        /// </summary>
+        public void StopPlaying()
+        {
+            playSong = false;
+            songPlayer.Stop();
+        }
+
+        /// <summary>
+        /// Toggle play state.
+        /// </summary>
+        public void TogglePlay()
+        {
+            if (playSong)
+                StopPlaying();
+            else
+                StartPlaying();
+        }
+
+        /// <summary>
+        /// Play next song in current playlist.
+        /// </summary>
+        public void PlayNextSong()
+        {
+            if (currentPlaylist == null)
+                return;
+
+            if (++currentSongIndex >= currentPlaylist.Length)
+                currentSongIndex = 0;
+
+            currentSong = currentPlaylist[currentSongIndex];
+            PlayCurrentSong();
+        }
+
+        /// <summary>
+        /// Play previous song in current playlist.
+        /// </summary>
+        public void PlayPreviousSong()
+        {
+            if (currentPlaylist == null)
+                return;
+
+            if (--currentSongIndex < 0)
+                currentSongIndex = currentPlaylist.Length - 1;
+
+            currentSong = currentPlaylist[currentSongIndex];
+            PlayCurrentSong();
+        }
 
         /// <summary>
         /// Plays a random song from the current playlist.
@@ -154,12 +224,18 @@ namespace DaggerfallWorkshop.Demo
             if (currentPlaylist == null)
                 return;
 
+            UnityEngine.Random.seed = Time.renderedFrameCount;
             int index = UnityEngine.Random.Range(0, currentPlaylist.Length);
             currentSong = currentPlaylist[index];
+            currentSongIndex = index;
         }
 
         void PlayCurrentSong()
         {
+            // Do nothing if already playing this song or play disabled
+            if (songPlayer.Song == currentSong || !playSong)
+                return;
+
             songPlayer.Song = currentSong;
             songPlayer.Play();
         }
@@ -192,6 +268,7 @@ namespace DaggerfallWorkshop.Demo
                         case DFRegion.LocationTypes.TownCity:
                         case DFRegion.LocationTypes.TownHamlet:
                         case DFRegion.LocationTypes.TownVillage:
+                        case DFRegion.LocationTypes.ReligionTemple:
                             currentPlayerMusicEnvironment = PlayerMusicEnvironment.City;
                             break;
                         default:
@@ -361,6 +438,7 @@ namespace DaggerfallWorkshop.Demo
         // City - night
         static SongFiles[] _cityNightSongs = new SongFiles[]
         {
+            SongFiles.song_07,
             SongFiles.song_10,
             SongFiles.song_11,
             SongFiles.song_13,
@@ -378,6 +456,7 @@ namespace DaggerfallWorkshop.Demo
             SongFiles.song_13,
             SongFiles.song_18,
             SongFiles.song_21,
+            SongFiles.song_gcurse,
             SongFiles.song_gruins,
         };
 
@@ -395,11 +474,6 @@ namespace DaggerfallWorkshop.Demo
             SongFiles.song_d8,
             SongFiles.song_d9,
             SongFiles.song_dungeon,
-            SongFiles.song_dungeon5,
-            SongFiles.song_dungeon6,
-            SongFiles.song_dungeon7,
-            SongFiles.song_dungeon8,
-            SongFiles.song_dungeon9,
             SongFiles.song_gdngn10,
             SongFiles.song_gdngn11,
             SongFiles.song_gdungn4,
@@ -482,7 +556,6 @@ namespace DaggerfallWorkshop.Demo
             SongFiles.song_18,
             SongFiles.song_21,
             SongFiles.song_gcurse,
-            SongFiles.song_geerie,
             SongFiles.song_gruins,
         };
 
@@ -497,6 +570,11 @@ namespace DaggerfallWorkshop.Demo
         //    SongFiles.song_sneaking,        // unknown
         //    SongFiles.song_gsneak2,         // unknown
         //    SongFiles.song_sneakng2,        // unknown
+        //    SongFiles.song_dungeon5,        // Not sure these dungeont tracks fit the mood (or if Daggerfall uses)
+        //    SongFiles.song_dungeon6,
+        //    SongFiles.song_dungeon7,
+        //    SongFiles.song_dungeon8,
+        //    SongFiles.song_dungeon9,
         //};
 
         #endregion

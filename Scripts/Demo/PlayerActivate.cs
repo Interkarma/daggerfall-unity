@@ -47,22 +47,6 @@ namespace DaggerfallWorkshop.Demo
                     // Check each hit in range for action, exit on first valid action processed
                     for (int i = 0; i < hits.Length; i++)
                     {
-                        // Check for an action door hit
-                        DaggerfallActionDoor actionDoor;
-                        if (ActionDoorCheck(hits[i], out actionDoor))
-                        {
-                            actionDoor.ToggleDoor();
-                            return;
-                        }
-
-                        // Check for action record hit
-                        DaggerfallAction action;
-                        if (ActionCheck(hits[i], out action))
-                        {
-                            action.Play();
-                            return;
-                        }
-
                         // Check for a static door hit
                         Transform doorOwner;
                         DaggerfallStaticDoors doors = GetDoors(hits[i].transform, out doorOwner);
@@ -99,6 +83,22 @@ namespace DaggerfallWorkshop.Demo
                                     return;
                                 }
                             }
+                        }
+
+                        // Check for an action door hit
+                        DaggerfallActionDoor actionDoor;
+                        if (ActionDoorCheck(hits[i], out actionDoor))
+                        {
+                            actionDoor.ToggleDoor();
+                            return;
+                        }
+
+                        // Check for action record hit
+                        DaggerfallAction action;
+                        if (ActionCheck(hits[i], out action))
+                        {
+                            action.Play();
+                            return;
                         }
                     }
                 }

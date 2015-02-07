@@ -385,7 +385,7 @@ namespace DaggerfallConnect.Arena2
                 case 223:   // Ocean
                     settings.ClimateType = DFLocation.ClimateBaseType.Swamp;
                     settings.GroundArchive = 402;
-                    settings.NatureArchive = 502;
+                    settings.NatureArchive = 504;
                     settings.SkyBase = 24;
                     break;
                 case 224:
@@ -748,10 +748,6 @@ namespace DaggerfallConnect.Arena2
         /// <param name="mapPixelY">Map pixel Y position.</param>
         public int GetClimateIndex(int mapPixelX, int mapPixelY)
         {
-            // Climate map data appears to be offset X-1 relative to other maps
-            // Add +1 to X coordinate to line up with location
-            mapPixelX += 1;
-
             return climatePak.GetValue(mapPixelX, mapPixelY);
         }
 

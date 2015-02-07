@@ -19,20 +19,17 @@ namespace DaggerfallWorkshop.Demo
     /// </summary>
     public class ExplorerMode : MonoBehaviour
     {
+        public SongManager SongManager;
+
         DaggerfallUnity dfUnity;
         StreamingWorld streamingWorld;
         ShowTitleScreen titleScreen;
-        //DaggerfallSongPlayer songPlayer;
 
         int timeScaleControl = 1;
         int minTimeScaleControl = 1;
         int maxTimeScaleControl = 150;
         int timeScaleStep = 25;
         float timeScaleMultiplier = 10f;
-
-        //int songIndex = (int)SongFiles.song_03;
-        //int minSongIndex = 0;
-        //int maxSongIndex = SongFilesGM.GetValues(typeof(SongFilesGM)).Length - 1;
 
         PlayerEnterExit playerEnterExit;
 
@@ -41,11 +38,7 @@ namespace DaggerfallWorkshop.Demo
             dfUnity = DaggerfallUnity.Instance;
             streamingWorld = GameObject.FindObjectOfType<StreamingWorld>();
             titleScreen = GameObject.FindObjectOfType<ShowTitleScreen>();
-            //songPlayer = GameObject.FindObjectOfType<DaggerfallSongPlayer>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
-
-            //if (songPlayer)
-            //    songPlayer.Song = SongFilesAll.song_03;
         }
 
         void Update()
@@ -57,7 +50,13 @@ namespace DaggerfallWorkshop.Demo
             // Must have playerEnterExit reference
             if (Input.GetKeyDown(KeyCode.R))
             {
-                StartCoroutine(TeleportRandomLocation());
+                if (!playerEnterExit)
+                    return;
+
+                if (playerEnterExit.IsPlayerInsideDungeon)
+                    playerEnterExit.MovePlayerToDungeonStart();
+                else
+                    StartCoroutine(TeleportRandomLocation());
             }
 
             // Preset locations
@@ -95,43 +94,15 @@ namespace DaggerfallWorkshop.Demo
             }
 
             // Music control
-            //if (Input.GetKeyDown(KeyCode.P))
-            //{
-            //    if (!songPlayer)
-            //        return;
-
-            //    SongFilesGM songFile = (SongFilesGM)songIndex;
-            //    if (!songPlayer.IsPlaying)
-            //        songPlayer.Play(songFile.ToString());
-            //}
-            //if (Input.GetKeyDown(KeyCode.RightBracket))
-            //{
-            //    if (!songPlayer)
-            //        return;
-
-            //    int lastSongIndex = songIndex;
-            //    songIndex++;
-            //    if (songIndex > maxSongIndex)
-            //        songIndex = maxSongIndex;
-
-            //    SongFilesGM songFile = (SongFilesGM)songIndex;
-            //    if (songIndex != lastSongIndex)
-            //        songPlayer.Play(songFile.ToString());
-            //}
-            //if (Input.GetKeyDown(KeyCode.LeftBracket))
-            //{
-            //    if (!songPlayer)
-            //        return;
-
-            //    int lastSongIndex = songIndex;
-            //    songIndex--;
-            //    if (songIndex < minSongIndex)
-            //        songIndex = minSongIndex;
-
-            //    SongFilesGM songFile = (SongFilesGM)songIndex;
-            //    if (songIndex != lastSongIndex)
-            //        songPlayer.Play(songFile.ToString());
-            //}
+            if (SongManager)
+            {
+                if (Input.GetKeyDown(KeyCode.P))
+                    SongManager.TogglePlay();
+                if (Input.GetKeyDown(KeyCode.LeftBracket))
+                    SongManager.PlayPreviousSong();
+                if (Input.GetKeyDown(KeyCode.RightBracket))
+                    SongManager.PlayNextSong();
+            }
         }
 
         // Teleport player to any location by name
@@ -198,8 +169,6 @@ namespace DaggerfallWorkshop.Demo
 
         private bool CanTeleport()
         {
-            if (!playerEnterExit)
-                return false;
             if (playerEnterExit.IsPlayerInside)
                 return false;
 
