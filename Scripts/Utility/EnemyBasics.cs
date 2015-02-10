@@ -1315,9 +1315,9 @@ namespace DaggerfallWorkshop.Utility
                 HasRangedAttack2 = false,
                 Health = 100,
                 CanOpenDoors = true,
-                MoveSound = (int)SoundClips.EnemyHumanMove,
+                MoveSound = (int)SoundClips.None,
                 BarkSound = (int)SoundClips.Halt,
-                AttackSound = (int)SoundClips.EnemyHumanAttack,
+                AttackSound = (int)SoundClips.None,
             },
         };
 
