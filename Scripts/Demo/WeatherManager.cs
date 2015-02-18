@@ -7,6 +7,7 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Demo
 {
@@ -54,13 +55,6 @@ namespace DaggerfallWorkshop.Demo
         {
             dfUnity = DaggerfallUnity.Instance;
             SetSunlightScale();
-        }
-
-        public void SetSunny()
-        {
-            StopRaining();
-            StopSnowing();
-            ClearOvercast();
         }
 
         public void ClearOvercast()
@@ -183,7 +177,7 @@ namespace DaggerfallWorkshop.Demo
             float scale = SunlightManager.defaultScaleFactor;
 
             // Apply winter
-            if (dfUnity.WorldTime.SeasonValue == WorldTime.Seasons.Winter)
+            if (dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter)
                 scale = WinterSunlightScale;
 
             // Apply rain, storm, snow light scale

@@ -19,9 +19,10 @@ namespace DaggerfallWorkshop
     /// <summary>
     /// Atlas editor window for quickly finding locations.
     /// </summary>
-    public class DaggerfallAtlas : EditorWindow
+    public class AtlasEditorWindow : EditorWindow
     {
         const string windowTitle = "Atlas";
+        const string menuPath = "Daggerfall Tools/Atlas";
 
         [SerializeField]
         int selectedRegion = 0;
@@ -46,10 +47,10 @@ namespace DaggerfallWorkshop
             Temples,
         }
 
-        [MenuItem("Daggerfall Tools/Atlas")]
+        [MenuItem(menuPath)]
         static void Init()
         {
-            DaggerfallAtlas window = (DaggerfallAtlas)EditorWindow.GetWindow(typeof(DaggerfallAtlas));
+            AtlasEditorWindow window = (AtlasEditorWindow)EditorWindow.GetWindow(typeof(AtlasEditorWindow));
             window.title = windowTitle;
         }
 

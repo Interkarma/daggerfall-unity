@@ -374,7 +374,7 @@ namespace DaggerfallWorkshop.Demo
         void AssignPlaylist()
         {
             // Weather music in cities and wilderness at day
-            if (!dfUnity.WorldTime.IsNight &&
+            if (!dfUnity.WorldTime.Now.IsNight &&
                 currentPlayerMusicWeather != PlayerMusicWeather.Normal &&
                 (currentPlayerMusicEnvironment == PlayerMusicEnvironment.City || currentPlayerMusicEnvironment == PlayerMusicEnvironment.Wilderness))
             {
@@ -394,7 +394,7 @@ namespace DaggerfallWorkshop.Demo
             if (currentPlayerMusicEnvironment == PlayerMusicEnvironment.City)
             {
                 // Day/night
-                if (!dfUnity.WorldTime.IsNight)
+                if (!dfUnity.WorldTime.Now.IsNight)
                     currentPlaylist = CityDaySongs;
                 else
                     currentPlaylist = CityNightSongs;

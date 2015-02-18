@@ -1,0 +1,412 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SmartLocalization_Runtime</name>
+    </assembly>
+    <members>
+        <member name="T:SmartLocalization.ChangeLanguageEventHandler">
+            <summary>
+            Change language event handler.
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.LanguageManager">
+            <summary>
+            The language worker class for runtime language handling
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.LanguageManager.Instance">
+            <summary>
+            Returns an instance of the language manager. Creates a new one if no one exist.
+            If you don't want to create a new one, check the LanguageManager.HasInstance variable first.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.SetDontDestroyOnLoad">
+            <summary>
+            Sets DontDestroyOnLoad flag on the LanguageManager object.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.LanguageManager.HasInstance">
+            <summary>
+            Returns if there is an active instance of the language manager in the game.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.LanguageManager.OnChangeLanguage">
+            <summary>
+            Occurs when a new language is loaded and initialized
+            create a delegate method(ChangeLanguage(LanguageManager thisLanguage)) and subscribe
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.LanguageManager.defaultLanguage">
+            <summary>
+            The default language
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.LanguageManager.loadedLanguage">
+            <summary>
+            The loaded language.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.LanguageManager.LanguageDatabase">
+            <summary>
+            The loaded language values of the currently loaded language
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.LanguageManager.RawTextDatabase">
+            <summary>
+            Gets all the language values in raw text. NOTE: Potentially performance expensive. Use with caution.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.LanguageManager.NumberOfSupportedLanguages">
+            <summary>
+            The number of supported languages in this project
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.LanguageManager.LoadedLanguage">
+            <summary>
+            The language code of the currently loaded language
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.LanguageManager.CurrentlyLoadedCulture">
+            <summary>
+            Gets the currently loaded SmartCultureInfo.
+            </summary>
+            <value>The currently loaded culture.</value>
+        </member>
+        <member name="P:SmartLocalization.LanguageManager.VerboseLogging">
+            <summary>
+            Set this to true if you want extensive error logging
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.ChangeLanguage(SmartLocalization.SmartCultureInfo)">
+            <summary>
+            Change the language into a specified culture
+            </summary>
+            <param name="cultureInfo">The culture to change to</param>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.ChangeLanguage(System.String)">
+            <summary>
+            Change the language into a specified culture
+            </summary>
+            <param name="languageCode">The culture to change to</param>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.ChangeLanguageWithData(System.String,System.String)">
+            <summary>
+            Tries to load a language with the specified data. Loading data from outside the project currently only supports text unless
+            the asset is apparent(and correctly named in the right folder) in the workspace.
+            </summary>
+            <param name="languageDataInResX">The language data to load in the .resx format</param>
+            <param name="languageCode">The ISO-639 code of the language to load</param>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.AppendLanguageWithTextData(System.String)">
+            <summary>
+            Appends the current language with text data. The method does not support appending localized assets.
+            If duplicates are found, the old value <b>will be overwritten</b> with the new one.
+            </summary>
+            <param name="languageDataInResX">The language data to append in the .resx format</param>
+            <returns>Returns if the operation was a success</returns>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.IsLanguageSupported(System.String)">
+            <summary>
+            Checks if the language is supported by this application
+            languageName = strings like "en", "es", "sv"
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.IsLanguageSupportedEnglishName(System.String)">
+            <summary>
+            Checks if the language is supported with the english name. i.e. "English" "French" etc.
+            </summary>
+            <param name="englishName">The english name of the language</param>
+            <returns>If the language is supported</returns>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.IsLanguageSupported(SmartLocalization.SmartCultureInfo)">
+            <summary>
+            Checks if a language is supported with a culture info class
+            </summary>
+            <param name="cultureInfo">The culture info to check</param>
+            <returns>If the language is supported</returns>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetCultureInfo(System.String)">
+            <summary>
+            Gets the culture info from the available languages list. If the language is not supported it will return null
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetSystemLanguageEnglishName">
+            <summary>
+            Gets the name of the system language in an english name.
+            If its SystemLanguage.Unknown, a string with the value "Unknown" will be returned.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetSupportedSystemLanguage">
+            <summary>
+            Gets the smart culture info of the system language if it is supported. otherwise it will return null
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetSupportedSystemLanguageCode">
+            <summary>
+            Gets the language code of the system language if it is supported. otherwise it will return an empty string.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetSupportedLanguages">
+            <summary> Returns a list of all the supported languages in the project </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetTextValue(System.String)">
+            <summary>
+            Returns a text value in the current language for the key. Returns null if nothing is found.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetAudioClip(System.String)">
+            <summary>
+            Gets the audio clip for the current language, returns null if nothing is found
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetPrefab(System.String)">
+            <summary>
+            Gets the prefab game object for the current language, returns null if nothing is found
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetTexture(System.String)">
+            <summary>
+            Gets a texture for the current language, returns null if nothing is found
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetTextAsset(System.String)">
+            <summary>
+            Gets a text asset for the current language, returns null if nothing is found
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.HasKey(System.String)">
+            <summary>
+            Returns whether or not the key is available in the system.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageManager.GetLocalizedObject(System.String)">
+            <summary>
+            Gets the localized object from the localizedObjectDataBase
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.LanguageParser">
+            <summary>
+            Helper class that parses a Smart Localization language file at runtime.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageParser.LoadLanguage(System.String)">
+            <summary>
+            Loads and initializes a language file
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.LanguageRuntimeData">
+            <summary>
+            An information class containing runtime data.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageRuntimeData.LanguageFilePath(System.String)">
+            <summary>
+            Gets the relative language file path for a certain language. Mostly used with Resources.Load as a TextAsset.
+            </summary>
+            <param name="languageCode">The language code of the culture</param>
+            <returns>The relative language file path</returns>
+        </member>
+        <member name="M:SmartLocalization.LanguageRuntimeData.AvailableCulturesFilePath">
+            <summary>
+            Gets the relative file path for the AvailableCultures xml. Use with Resources.Load as a TextAsset.
+            </summary>
+            <returns>The AvailableCultures.xml relative file path</returns>
+        </member>
+        <member name="M:SmartLocalization.LanguageRuntimeData.AudioFilesFolderPath(System.String)">
+            <summary>
+            Gets the relative folder path for the audio files by a specific language
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LanguageRuntimeData.TexturesFolderPath(System.String)">
+            <summary>
+            Gets the relative folder path for the texture files by a specific language
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.LocalizedObjectType">
+            <summary>
+            The type of the localized object
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.LocalizedObject">
+            <summary>
+            The localized object, used to determine what type the string value from the .resx file is
+            </summary>
+        </member>
+        <!--FIXME: Invalid documentation markup was found for member F:SmartLocalization.LocalizedObject.keyTypeIdentifier-->
+        <member name="F:SmartLocalization.LocalizedObject.objectType">
+            <summary> The type of the localizedObject.</summary>
+        </member>
+        <member name="F:SmartLocalization.LocalizedObject.textValue">
+            <summary>
+            The text value of the object, all objects are converted into string values in the end, whether it's a
+            file path or a simple string value
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.LocalizedObject.thisGameObject">
+            <summary>
+            Variable if this object type is GAME_OBJECT
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.LocalizedObject.thisAudioClip">
+            <summary>
+            Variable if this object type is AUDIO
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.LocalizedObject.thisTexture">
+            <summary>
+            Variable if this object type is TEXTURE
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.LocalizedObject.thisTextAsset">
+            <summary>
+            Variable if this object type is TEXT_ASSET
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.LocalizedObject.ObjectType">
+            <summary> Gets or sets the LocalizedObjectType of the object.</summary>
+        </member>
+        <member name="P:SmartLocalization.LocalizedObject.TextValue">
+            <summary>
+            Gets or sets the text value.
+            </summary>
+            <value>
+            The text value of the object, all objects are converted into string values in the end, whether it's a
+            file path or a simple string value.
+            </value>
+        </member>
+        <member name="P:SmartLocalization.LocalizedObject.ThisGameObject">
+            <summary>
+            Variable if this object type is GAME_OBJECT. Gets or sets the this game object.
+            </summary>
+            <value>
+            The this game object.
+            </value>
+        </member>
+        <member name="P:SmartLocalization.LocalizedObject.ThisAudioClip">
+            <summary>
+            Variable if this object type is AUDIO. Gets or sets the this AudioClip.
+            </summary>
+            <value>
+            This AudioClip.
+            </value>
+        </member>
+        <member name="P:SmartLocalization.LocalizedObject.ThisTexture">
+            <summary>
+            Variable if this object type is TEXTURE. Gets or sets the this Texture.
+            Can be used with MovieTexture(Pro-only feature)
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LocalizedObject.#ctor">
+            <summary>
+            Creates a new Localized Object
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.LocalizedObject.#ctor(SmartLocalization.LocalizedObject)">
+            <summary>
+            Creates a new Localized Object from another
+            </summary>
+            <param name="other">The object to copy</param>
+        </member>
+        <member name="M:SmartLocalization.LocalizedObject.GetLocalizedObjectType(System.String)">
+            <summary>
+            Gets the LocalizedObjectType of the localized object.
+            </summary>
+            <returns>
+            The LocalizedObjectType of the key value
+            </returns>
+            <param name="key">
+            The language key from the .resx file
+            </param>
+        </member>
+        <!--FIXME: Invalid documentation markup was found for member M:SmartLocalization.LocalizedObject.GetCleanKey(System.String,SmartLocalization.LocalizedObjectType)-->
+        <!--FIXME: Invalid documentation markup was found for member M:SmartLocalization.LocalizedObject.GetCleanKey(System.String)-->
+        <member name="M:SmartLocalization.LocalizedObject.GetFullKey(System.String)">
+            <summary>
+            Gets the full key value with identifiers and everything
+            </summary>
+            <returns>
+            The full key.
+            </returns>
+            <param name="parsedKey">
+            Parsed key. (Clean key originally from GetCleanKey)
+            </param>
+        </member>
+        <member name="M:SmartLocalization.LocalizedObject.GetFullKey(System.String,SmartLocalization.LocalizedObjectType)">
+            <summary>
+            Gets the full key value with identifiers and everything
+            </summary>
+            <returns>
+            The full key.
+            </returns>
+            <param name="parsedKey">
+            Parsed key. (Clean key originally from GetCleanKey)
+            </param>
+        </member>
+        <member name="T:SmartLocalization.SmartCultureInfoCollection">
+            <summary>
+            A Serializeable Collection containing a list of Smart Culture Infos
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.SmartCultureInfoCollection.RemoveCultureInfo(SmartLocalization.SmartCultureInfo)">
+            <summary>
+            Removes a culture info from the collection
+            </summary>
+            <param name="cultureInfo">The reference to the culture info to remove</param>
+        </member>
+        <member name="M:SmartLocalization.SmartCultureInfoCollection.AddCultureInfo(SmartLocalization.SmartCultureInfo)">
+            <summary>
+            Adds a culture info to the collection
+            </summary>
+            <param name="cultureInfo">The culture info to add</param>
+        </member>
+        <member name="M:SmartLocalization.SmartCultureInfoCollection.Deserialize(UnityEngine.TextAsset)">
+            <summary>
+            Deserializes and creates a SmartCultureInfoCollection from a text asset.
+            </summary>
+            <param name="xmlFile">The textasset containing the serialized xml data</param>
+            <returns>The deserialized SmartCultureInfoCollection</returns>
+        </member>
+        <member name="M:SmartLocalization.SmartCultureInfoCollection.FindCulture(SmartLocalization.SmartCultureInfo)">
+            <summary>
+            Finds a culture info from the list. Compares the englishname and the language code
+            </summary>
+            <param name="cultureInfo">The culture info to find</param>
+            <returns>The culture info, returns null if not found</returns>
+        </member>
+        <member name="M:SmartLocalization.SmartCultureInfoCollection.IsCultureInCollection(SmartLocalization.SmartCultureInfo)">
+            <summary>
+            Checks if a specific culture info is in this collection
+            </summary>
+            <param name="cultureInfo">The culture info to check</param>
+            <returns>If the specified culture info was in the collection</returns>
+        </member>
+        <member name="T:SmartLocalization.SmartCultureInfo">
+            <summary>
+            A serializable class containing the basic information about a culture.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.SmartCultureInfo.languageCode">
+            <summary> The language code of the culture. (e.g. sv, en, de, fr)</summary>
+        </member>
+        <member name="F:SmartLocalization.SmartCultureInfo.englishName">
+            <summary> The english name of the culture</summary>
+        </member>
+        <member name="F:SmartLocalization.SmartCultureInfo.nativeName">
+            <summary> The native name of the culture</summary>
+        </member>
+        <member name="F:SmartLocalization.SmartCultureInfo.isRightToLeft">
+            <summary> If the language is written and read from right to left </summary>
+        </member>
+        <member name="M:SmartLocalization.SmartCultureInfo.#ctor">
+            <summary> Creates a new instance of SmartCultureInfo</summary>
+        </member>
+        <member name="M:SmartLocalization.SmartCultureInfo.#ctor(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a new instance of SmartCultureInfo
+            </summary>
+            <param name="languageCode">The language code of the culture. (e.g. sv, en, de, fr)</param>
+            <param name="englishName">The english name of the culture</param>
+            <param name="nativeName">The native name of the culture</param>
+        </member>
+    </members>
+</doc>

@@ -7,6 +7,7 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Demo
 {
@@ -42,7 +43,7 @@ namespace DaggerfallWorkshop.Demo
                 return;
 
             // Change to night
-            if (dfUnity.WorldTime.IsNight && light.enabled)
+            if (dfUnity.WorldTime.Now.IsNight && light.enabled)
             {
                 light.enabled = false;
                 if (OtherLights != null)
@@ -53,7 +54,7 @@ namespace DaggerfallWorkshop.Demo
             }
 
             // Change to day
-            if (!dfUnity.WorldTime.IsNight && !light.enabled)
+            if (!dfUnity.WorldTime.Now.IsNight && !light.enabled)
             {
                 light.enabled = true;
                 if (OtherLights != null)
@@ -67,9 +68,9 @@ namespace DaggerfallWorkshop.Demo
             if (light.enabled)
             {
                 // Get value 0-1 for dawn through dusk
-                float dawn = WorldTime.DawnHour * WorldTime.MinutesPerHour;
-                float dayRange = WorldTime.DuskHour * WorldTime.MinutesPerHour - dawn;
-                float lerp = (dfUnity.WorldTime.MinuteOfDay - dawn) / dayRange;
+                float dawn = DaggerfallDateTime.DawnHour * DaggerfallDateTime.MinutesPerHour;
+                float dayRange = DaggerfallDateTime.DuskHour * DaggerfallDateTime.MinutesPerHour - dawn;
+                float lerp = (dfUnity.WorldTime.Now.MinuteOfDay - dawn) / dayRange;
 
                 // Set angle of rotation based on time of day and user value
                 float xrot = 180f * lerp;

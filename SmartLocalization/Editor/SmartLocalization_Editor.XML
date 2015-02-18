@@ -1,0 +1,2310 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SmartLocalization_Editor</name>
+    </assembly>
+    <members>
+        <member name="T:SmartLocalization.Editor.SerializableStringPair">
+            <summary> Serializable string pair. Helper class for a string pair that is serializeable(for the undo functionality)</summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.SerializableLocalizationObjectPair">
+            <summary>Serializable localization object pair. Helper class for a string pair that is serializeable(for the undo functionality)</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.EditRootLanguageFileWindow.changedRootKeys">
+            <summary>Containing the original keys and the changes to them, if any.</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.EditRootLanguageFileWindow.changedRootValues">
+            <summary>Containing the original values and any changes to them</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.EditRootLanguageFileWindow.scrollPosition">
+            <summary>The scroll view position</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.EditRootLanguageFileWindow.guiChanged">
+            <summary>Did the GUI change?</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.EditRootLanguageFileWindow.searchText">
+            <summary>Search field.</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.EditRootLanguageFileWindow.undoManager">
+            <summary>The Undo Manager</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.EditRootLanguageFileWindow.parsedRootValues">
+            <summary>The parsed root values. This is used to check root key duplicates</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.EditRootLanguageFileWindow.keyTypes">
+            <summary>The key types</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.EditRootLanguageFileWindow.SetRootValues(System.Collections.Generic.Dictionary{System.String,SmartLocalization.LocalizedObject})">
+            <summary>
+            Sets the dictionaries necessary to change them within the extension
+            </summary>
+            <param name="rootValues">
+            Root values.
+            </param>
+        </member>
+        <member name="M:SmartLocalization.Editor.SmartLocalizationWindow.SaveMicrosoftTranslatorSettings">
+            <summary>
+            Saves the microsoft translator settings in EditorPrefs
+            Keys = cws_mtCliendID, cws_mtCliendSecret
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.TranslateLanguageWindow.translateFromDictionary">
+            <summary> The language dictionary to translate from</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.TranslateLanguageWindow.InitializeLanguage(SmartLocalization.SmartCultureInfo,System.Collections.Generic.Dictionary{System.String,SmartLocalization.LocalizedObject},System.Collections.Generic.Dictionary{System.String,SmartLocalization.LocalizedObject})">
+            <summary>
+            Initializes the Language
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.TranslateLanguageWindow.CheckIfCanBeTranslated">
+            <summary> Checks if this language can be translated by the automatic translator </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.TranslateLanguageWindow.ShowWindow(SmartLocalization.SmartCultureInfo,SmartLocalization.Editor.SmartLocalizationWindow)">
+            <summary> Shows the translate window window. </summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.CustomResxImporter">
+            <summary>
+            Resx importer that detects if a resx file changed or was added to the project
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.CustomResxImporter.OnPostprocessAllAssets(System.String[],System.String[],System.String[],System.String[])">
+            <summary>
+            Checks .resx files and converts them into text assets that can be used at runtime
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.LanguageHandlerEditor">
+            <summary>
+            Utility class for handling language files in the editor
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.GetNonAvailableLanguages(SmartLocalization.SmartCultureInfoCollection)">
+            <summary>
+            Gets a SmartCultureInfoCollection with all the cultures not available in this workspace
+            </summary>
+            <param name="allCultures">The list of all the available cultures</param>
+            <returns>A SmartCultureInfoCollection with all the cultures not available in this workspace</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.CheckAndSaveAvailableLanguages(SmartLocalization.SmartCultureInfoCollection)">
+            <summary>
+            Checks all the created languages and Saves the AvailableCultures xml.
+            </summary>
+            <param name="allCultures">A list of all the available cultures</param>
+            <returns>A list of all the created languages</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.CreateRootResourceFile">
+            <summary>
+            Creates the initial root language file
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.CreateNewLanguage(System.String,System.Collections.Generic.List{System.Collections.Generic.List{System.String}})">
+            <summary>
+            Creates a new language
+            </summary>
+            <param name="languageName">The language code of the language to create</param>
+            <param name="fromFile">Base language values to create a language from where each list of strings is a row.</param>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.CreateSerializableLocalizationList(System.Collections.Generic.Dictionary{System.String,SmartLocalization.LocalizedObject})">
+            <summary>
+            Creates the serializable localization list from the parsed LocalizedObjects
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.SaveRootLanguageFile(System.Collections.Generic.Dictionary{System.String,System.String},System.Collections.Generic.Dictionary{System.String,System.String},SmartLocalization.SmartCultureInfoCollection)">
+            <summary>
+            Saves the root language file and updates all the available languages.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.SaveLanguageFile(System.Collections.Generic.Dictionary{System.String,System.String},System.String)">
+            <summary>
+            Saves a language file(.resx) at the specified path containing the values in the languageValueDictionary
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.LoadParsedLanguageFile(System.String,System.Boolean)">
+            <summary>
+            Loads the parsed language file.(without the type identifiers)
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.LoadLanguageFile(System.String,System.Boolean)">
+            <summary>
+            Loads the language file and returns the RAW values
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.LoadAllLanguageFiles">
+            <summary>
+            Loads all the language files with their raw values
+            </summary>
+            <returns>A dictionary with all the language dictionaries. The language codes are being used as keys</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.DeleteLanguage(SmartLocalization.SmartCultureInfo)">
+            <summary> Deletes the language. </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.LoadAllAssets(System.Collections.Generic.List{SmartLocalization.Editor.SerializableLocalizationObjectPair})">
+            <summary> Loads all assets in language values if they have a valid file path </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.CopyFileIntoResources(SmartLocalization.Editor.SerializableLocalizationObjectPair,SmartLocalization.SmartCultureInfo)">
+            <summary> Copies the file into the resources folder. Naming the new asset to KEY </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.DeleteFileFromResources(System.String,SmartLocalization.SmartCultureInfo)">
+            <summary> Deletes the localized file from resources.</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LanguageHandlerEditor.RenameFileFromResources(System.String,System.String,SmartLocalization.SmartCultureInfo)">
+            <summary>Renames the localized file from resources.</summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.LocalizationWorkspace">
+            <summary>
+            Contains and creates all the directory and file information about the workspace
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LocalizationWorkspace.resXFileEnding">
+            <summary>The .resx file ending as a string</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LocalizationWorkspace.txtFileEnding">
+            <summary>The .txt file ending as a string</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LocalizationWorkspace.metaFileEnding">
+            <summary>The .meta file ending as a string</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LocalizationWorkspace.prefabFileEnding">
+            <summary>The .prefab file ending as a string</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LocalizationWorkspace.rootLanguageName">
+            <summary>The name of the root language file</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.Create">
+            <summary>
+            Creates a new workspace. Returns false if a workspace already exists
+            </summary>
+            <returns>If the creation was a success.</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.GenerateCultureInfoCollection">
+            <summary>
+            Generates the SmartCultureInfoCollection xml with all the available language infos
+            </summary>
+            <returns>
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.Exists">
+            <summary>
+            Checks if there is an existing workspace
+            </summary>
+            <returns>If the workspace exists</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.WorkspaceFolderPath">
+            <summary> Returns the path to the workspace folder</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.AutoGeneratedFolderPath">
+            <summary> Returns the path to the AutoGenerated folder</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.DataFolderPath">
+            <summary> Returns the path to the Data folder</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.LanguageDataFolderPath">
+            <summary> Returns the path to the LanguageData folder</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.CultureInfoDataFolderPath">
+            <summary> Returns the path to the CultureInfoData folder</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.CultureInfoCollectionFilePath">
+            <summary> Returns the path to the CultureInfoCollection</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.RootLanguageFilePath">
+            <summary> Returns the path to the root language file</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.LanguageFilePath(System.String)">
+            <summary>
+            Returns the file path to a specified language file
+            </summary>
+            <param name="languageCode">The language code of the file to retrieve</param>
+            <returns>The full path to the language</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.ResourcesFolderFilePath">
+            <summary> Returns the path to the Resources folder used at runtime</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.AvailableCulturesFilePath">
+            <summary> Returns the path to the AvailableCultures xml file</summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.LanguageRuntimeFolderPath(System.String)">
+            <summary>
+            Returns the base directory path for a specified language, where you can find the localized assets(textures, audio, etc)
+            </summary>
+            <param name="languageCode">The language code of the culture</param>
+            <returns>The directory path for the language</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.LanguageAudioFolderPath(System.String)">
+            <summary>
+            Returns the audio directory path for a specified language, where you can find the localized audio assets
+            </summary>
+            <param name="languageCode">The language code of the culture</param>
+            <returns>The audio directory path for the language</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.LanguageTexturesFolderPath(System.String)">
+            <summary>
+            Returns the textures directory path for a specified language, where you can find the localized texture assets
+            </summary>
+            <param name="languageCode">The language code of the culture</param>
+            <returns>The textures directory path for the language</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.LanguagePrefabsFolderPath(System.String)">
+            <summary>
+            Returns the prefabs directory path for a specified language, where you can find the localized prefab assets
+            </summary>
+            <param name="languageCode">The language code of the culture</param>
+            <returns>The prefabs directory path for the language</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.ResourcesFolderFilePathRelative">
+            <summary>
+            Gets the relative path to the resource folder used at runtime.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.LanguageRuntimeFolderPathRelative(System.String)">
+            <summary>
+            Gets the relative path to the folder used at runtime for a specific language.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.LanguageAudioFolderPathRelative(System.String)">
+            <summary>
+            Gets the relative path to the audio folder used at runtime for a specific language.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.LanguageTexturesFolderPathRelative(System.String)">
+            <summary>
+            Gets the relative path to the textures folder used at runtime for a specific language.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.LanguagePrefabsFolderPathRelative(System.String)">
+            <summary>
+            Gets the relative path to the prefabs folder used at runtime for a specific language.
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.CSVDelimiter">
+            <summary>
+            The delimiter type for CSV
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.CSVDelimiter.COMMA">
+            <summary> COMMA</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.CSVDelimiter.SEMI_COLON">
+            <summary> SEMI_COLON</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.CSVDelimiter.TAB">
+            <summary> TAB</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.CSVDelimiter.VERTICAL_BAR">
+            <summary> VERTICAL_BAR</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.CSVDelimiter.CARET">
+            <summary> CARET</summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.CSVExporter">
+            <summary>
+            A CSV Exporter
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.CSVExporter.GetDelimiter(SmartLocalization.Editor.CSVDelimiter)">
+            <summary>
+            Gets the actual delimiter char based on the CSVDelimiter type
+            </summary>
+            <param name="delimiter">The delimiter type</param>
+            <returns>the delimiter</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.CSVExporter.WriteCSV(System.String,System.Char,System.Collections.Generic.List{System.Collections.Generic.List{System.String}})">
+            <summary>
+            Write the csv to file
+            </summary>
+            <param name="path">The destination path</param>
+            <param name="delimiter">The delimiter to separate values with</param>
+            <param name="input">The Values</param>
+        </member>
+        <member name="M:SmartLocalization.Editor.CSVExporter.WriteCSV(System.String,System.Char,System.Collections.Generic.List{System.String},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.String}})">
+            <summary>
+            Write a combined CSV to File
+            </summary>
+            <param name="path">The destination path</param>
+            <param name="delimiter">The delimiter to separate values with</param>
+        </member>
+        <member name="M:SmartLocalization.Editor.CSVExporter.ReadCSV(System.String,System.Char)">
+            <summary>
+            Read a csv file
+            </summary>
+            <param name="path">The path to the file</param>
+            <param name="delimiter">The delimiter used in the file</param>
+            <returns>The parsed csv values</returns>
+        </member>
+        <member name="T:SmartLocalization.Editor.DirectoryUtility">
+            <summary>
+            Utility class for handling Directories
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.DirectoryUtility.Exists(System.String)">
+            <summary>
+            Checks if a directory exists
+            </summary>
+            <param name="fullPath">The full path to the directory</param>
+            <returns>If the directory exists</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.DirectoryUtility.ExistsRelative(System.String)">
+            <summary> Checks if a directory exists. Appends the relativePath to Application.dataPath </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.DirectoryUtility.GetFiles(System.String)">
+            <summary> Returns the names of files(including their paths) in the directory </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.DirectoryUtility.GetFilesRelative(System.String)">
+            <summary> Appends the relativePath to Application.dataPath </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.DirectoryUtility.Create(System.String)">
+            <summary>
+            Creates a directory
+            </summary>
+            <param name="fullPath">The path where the directory should be created</param>
+            <returns>If the directory was created</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.DirectoryUtility.CheckAndCreate(System.String)">
+            <summary>
+            Checks the folder and creates it if it does not exist, only returns false if the directory failed to create
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.DirectoryUtility.CreateRelative(System.String)">
+            <summary> Appends the relativePath to Application.dataPath </summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.FileUtility">
+            <summary>
+            Utility class for handling files
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.FileUtility.Exists(System.String)">
+            <summary>
+            Checks if a file exists
+            </summary>
+            <param name="fullPath">The path to the file</param>
+            <returns>If the file exists</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.FileUtility.GetFileExtension(System.String,System.String)">
+            <summary>
+            Gets the file extension for the file at the specified path
+            </summary>
+            <param name="fileName">
+            The file name without the extension. If the full name is for example hello.png, this parameter
+            should be only "hello"
+            </param>
+            <param name="relativeFolderPath">
+            The relative path to the folder containing the asset file
+            relativeFolderPath should be relative to the project folder. Like: "Assets/MyTextures/".
+            </param>
+        </member>
+        <member name="M:SmartLocalization.Editor.FileUtility.ExistsRelative(System.String)">
+            <summary> Appends the relativePath to Application.dataPath </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.FileUtility.GetFileExtension(System.String)">
+            <summary>
+            Gets a file extension of a file
+            </summary>
+            <param name="fullPath">The full path to the file</param>
+            <returns>The file extension of a file</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.FileUtility.RemoveExtension(System.String)">
+            <summary>
+            Returns the file name without the extension
+            </summary>
+            <param name="fullPath">The full path to the file</param>
+            <returns>The file name without the extension</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.FileUtility.Delete(System.String)">
+            <summary>
+            Deletes a file
+            </summary>
+            <param name="fullPath">The full path to the file to delete</param>
+            <returns>If the file was deleted</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.FileUtility.WriteToFile(System.String,System.String)">
+            <summary>
+            Writes string data to a file
+            </summary>
+            <param name="fullPath">The full path to the file to write to</param>
+            <param name="data">The string data to write</param>
+            <returns>If the writing operation was a success</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.FileUtility.ReadFromFile(System.String,System.String@)">
+            <summary>
+            Reads string data from a file
+            </summary>
+            <param name="fullPath">The full path to the file to read from</param>
+            <param name="data">The data that was read from the file</param>
+            <returns>If the operation was a success</returns>
+        </member>
+        <member name="T:SmartLocalization.Editor.StringExtensions">
+            <summary>
+            Contains extension methods for string
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.StringExtensions.RemoveWhitespace(System.String)">
+            <summary>
+            Removes all the whitespaces in a string
+            </summary>
+            <param name="input">The string to remove whitespaces from</param>
+            <returns>The string with the removed whitespaces</returns>
+        </member>
+        <member name="T:SmartLocalization.Editor.LocalizedAudioSourceInspector">
+            <summary>
+            Editor class for a localized Audio Source
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizedAudioSourceInspector.OnInspectorGUI">
+            <summary>
+            Override of the OnInspectorGUI method
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.LocalizedGUITextInspector">
+            <summary>
+            Editor class for a localized GUIText
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizedGUITextInspector.OnInspectorGUI">
+            <summary>
+            Override of the OnInspectorGUI method
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.LocalizedGUITextureInspector">
+            <summary>
+            Editor class for a localized GUITexture
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizedGUITextureInspector.OnInspectorGUI">
+            <summary>
+            Override of the OnInspectorGUI method
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.AndroidStorePresenceGenerator">
+            <summary>
+            Class that handles the generation of files so the list of localized languages will be shown in the Google Play store.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.Editor.AndroidStorePresenceGenerator.GenerateStorePresence">
+            <summary>
+            Gets or sets if the files should be generated on post-build to Android
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.Editor.AndroidStorePresenceGenerator.HasStorePresence">
+            <summary>
+            Returns if the project has a generated store presence for android
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.AndroidStorePresenceGenerator.GeneratePresence">
+            <summary>
+            Generates all the files for store presence
+            </summary>
+            <returns>If the operation was successful</returns>
+        </member>
+        <member name="T:SmartLocalization.Editor.IOSStorePresenceGenerator">
+            <summary>
+            Class that handles the generation of files so the list of localized languages will be shown in the App Store.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.Editor.IOSStorePresenceGenerator.GenerateStorePresence">
+            <summary>
+            Gets or sets if the files should be generated on post-building to iOS
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.IOSStorePresenceGenerator.OnPostProcessBuild(UnityEditor.BuildTarget,System.String)">
+            <summary>
+            Post Process build method that handles the generation of store files.
+            </summary>
+            <param name="target">The build target</param>
+            <param name="path">The path to the build</param>
+        </member>
+        <member name="T:SmartLocalization.Editor.HOEditorUndoManager">
+            <summary>
+            Editor undo manager.
+            To use it:
+            <list type="number"><item><description>Store an instance in the related Editor Class (instantiate it inside the <code>OnEnable</code> method).</description></item><item><description>Call <code>undoManagerInstance.CheckUndo()</code> BEFORE the first UnityGUI call in <code>OnInspectorGUI</code>.</description></item><item><description>Call <code>undoManagerInstance.CheckDirty()</code> AFTER the last UnityGUI call in <code>OnInspectorGUI</code>.</description></item></list></summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.#ctor(UnityEngine.Object,System.String)">
+            <summary>
+            Creates a new HOEditorUndoManager,
+            setting it so that the target is marked as dirty each time a new undo is stored.
+            </summary>
+            <param name="p_target">
+            The default <see cref="T:UnityEngine.Object" /> you want to save undo info for.
+            </param>
+            <param name="p_name">
+            The default name of the thing to undo (displayed as "Undo [name]" in the main menu).
+            </param>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.#ctor(UnityEngine.Object,System.String,System.Boolean)">
+            <summary>
+            Creates a new HOEditorUndoManager.
+            </summary>
+            <param name="p_target">
+            The default <see cref="T:UnityEngine.Object" /> you want to save undo info for.
+            </param>
+            <param name="p_name">
+            The default name of the thing to undo (displayed as "Undo [name]" in the main menu).
+            </param>
+            <param name="p_autoSetDirty">
+            If TRUE, marks the target as dirty each time a new undo is stored.
+            </param>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.CheckUndo">
+            <summary>
+            Call this method BEFORE any undoable UnityGUI call.
+            Manages undo for the default target, with the default name.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.CheckUndo(UnityEngine.Object)">
+            <summary>
+            Call this method BEFORE any undoable UnityGUI call.
+            Manages undo for the given target, with the default name.
+            </summary>
+            <param name="p_target">
+            The <see cref="T:UnityEngine.Object" /> you want to save undo info for.
+            </param>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.CheckUndo(UnityEngine.Object,System.String)">
+            <summary>
+            Call this method BEFORE any undoable UnityGUI call.
+            Manages undo for the given target, with the given name.
+            </summary>
+            <param name="p_target">
+            The <see cref="T:UnityEngine.Object" /> you want to save undo info for.
+            </param>
+            <param name="p_name">
+            The name of the thing to undo (displayed as "Undo [name]" in the main menu).
+            </param>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.CheckDirty">
+            <summary>
+            Call this method AFTER any undoable UnityGUI call.
+            Manages undo for the default target, with the default name,
+            and returns a value of TRUE if the target is marked as dirty.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.CheckDirty(UnityEngine.Object)">
+            <summary>
+            Call this method AFTER any undoable UnityGUI call.
+            Manages undo for the given target, with the default name,
+            and returns a value of TRUE if the target is marked as dirty.
+            </summary>
+            <param name="p_target">
+            The <see cref="T:UnityEngine.Object" /> you want to save undo info for.
+            </param>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.CheckDirty(UnityEngine.Object,System.String)">
+            <summary>
+            Call this method AFTER any undoable UnityGUI call.
+            Manages undo for the given target, with the given name,
+            and returns a value of TRUE if the target is marked as dirty.
+            </summary>
+            <param name="p_target">
+            The <see cref="T:UnityEngine.Object" /> you want to save undo info for.
+            </param>
+            <param name="p_name">
+            The name of the thing to undo (displayed as "Undo [name]" in the main menu).
+            </param>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.ForceDirty">
+            <summary>
+            Call this method AFTER any undoable UnityGUI call.
+            Forces undo for the default target, with the default name.
+            Used to undo operations that are performed by pressing a button,
+            which doesn't set the GUI to a changed state.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.ForceDirty(UnityEngine.Object)">
+            <summary>
+            Call this method AFTER any undoable UnityGUI call.
+            Forces undo for the given target, with the default name.
+            Used to undo operations that are performed by pressing a button,
+            which doesn't set the GUI to a changed state.
+            </summary>
+            <param name="p_target">
+            The <see cref="T:UnityEngine.Object" /> you want to save undo info for.
+            </param>
+        </member>
+        <member name="M:SmartLocalization.Editor.HOEditorUndoManager.ForceDirty(UnityEngine.Object,System.String)">
+            <summary>
+            Call this method AFTER any undoable UnityGUI call.
+            Forces undo for the given target, with the given name.
+            Used to undo operations that are performed by pressing a button,
+            which doesn't set the GUI to a changed state.
+            </summary>
+            <param name="p_target">
+            The <see cref="T:UnityEngine.Object" /> you want to save undo info for.
+            </param>
+            <param name="p_name">
+            The name of the thing to undo (displayed as "Undo [name]" in the main menu).
+            </param>
+        </member>
+        <member name="T:SmartLocalization.Editor.MiniJSON.Json">
+            <summary>
+            This class encodes and decodes JSON strings.
+            Spec. details, see http://www.json.org/
+            JSON uses Arrays and Objects. These correspond here to the datatypes IList and IDictionary.
+            All numbers are parsed to doubles.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.MiniJSON.Json.Deserialize(System.String)">
+            <summary>
+            Parses the string json into a value
+            </summary>
+            <param name="json">A JSON string.</param>
+            <returns>An List&lt;object&gt;, a Dictionary&lt;string, object&gt;, a double, an integer,a string, null, true, or false</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.MiniJSON.Json.Serialize(System.Object)">
+            <summary>
+            Converts a IDictionary / IList object or a simple type (string, int, etc.) into a JSON string
+            </summary>
+            <param name="json">A Dictionary&lt;string, object&gt; / List&lt;object&gt;</param>
+            <returns>A JSON encoded string, or null if object 'json' is not serializable</returns>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.GenericListAdaptor`1">
+            <summary>
+            Reorderable list adaptor for generic list.
+            </summary>
+            <remarks>
+                <para>This adaptor can be subclassed to add special logic to item height calculation.
+            You may want to implement a custom adaptor class where specialised functionality
+            is needed.</para>
+            </remarks>
+            <typeparam name="T">Type of list element.</typeparam>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.GenericListAdaptor`1.fixedItemHeight">
+            <summary>
+            Fixed height of each list item.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.GenericListAdaptor`1.List">
+            <summary>
+            Gets the underlying list data structure.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.GenericListAdaptor`1.Item(System.Int32)">
+            <summary>
+            Gets element from list.
+            </summary>
+            <param name="index">Zero-based index of element.</param>
+            <returns>
+            The element.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.#ctor(System.Collections.Generic.IList{`0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{`0},System.Single)">
+            <summary>
+            Initializes a new instance of <see cref="T:SmartLocalization.ReorderableList.GenericListAdaptor`1" />.
+            </summary>
+            <param name="list">The list which can be reordered.</param>
+            <param name="itemDrawer">Callback to draw list item.</param>
+            <param name="itemHeight">Height of list item in pixels.</param>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.GenericListAdaptor`1.Count">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.CanDrag(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.CanRemove(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.Add">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.Insert(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.Duplicate(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.Remove(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.Move(System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.Clear">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.DrawItem(UnityEngine.Rect,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.GenericListAdaptor`1.GetItemHeight(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.IReorderableListAdaptor">
+            <summary>
+            Adaptor allowing reorderable list control to interface with list data.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.IReorderableListAdaptor.Count">
+            <summary>
+            Gets count of elements in list.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.IReorderableListAdaptor.CanDrag(System.Int32)">
+            <summary>
+            Determines whether an item can be reordered by dragging mouse.
+            </summary>
+            <remarks>
+                <para>This should be a light-weight method since it will be used to determine
+            whether grab handle should be included for each item in a reorderable list.</para>
+                <para>Please note that returning a value of <c>false</c> does not prevent movement
+            on list item since other draggable items can be moved around it.</para>
+            </remarks>
+            <param name="index">Zero-based index for list element.</param>
+            <returns>
+            A value of <c>true</c> if item can be dragged; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.IReorderableListAdaptor.CanRemove(System.Int32)">
+            <summary>
+            Determines whether an item can be removed from list.
+            </summary>
+            <remarks>
+                <para>This should be a light-weight method since it will be used to determine
+            whether remove button should be included for each item in list.</para>
+                <para>This is redundant when <see cref="F:SmartLocalization.ReorderableList.ReorderableListFlags.HideRemoveButtons" />
+            is specified.</para>
+            </remarks>
+            <param name="index">Zero-based index for list element.</param>
+            <returns>
+            A value of <c>true</c> if item can be removed; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.IReorderableListAdaptor.Add">
+            <summary>
+            Add new element at end of list.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.IReorderableListAdaptor.Insert(System.Int32)">
+            <summary>
+            Insert new element at specified index.
+            </summary>
+            <param name="index">Zero-based index for list element.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.IReorderableListAdaptor.Duplicate(System.Int32)">
+            <summary>
+            Duplicate existing element.
+            </summary>
+            <param name="index">Zero-based index of list element.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.IReorderableListAdaptor.Remove(System.Int32)">
+            <summary>
+            Remove element at specified index.
+            </summary>
+            <param name="index">Zero-based index of list element.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.IReorderableListAdaptor.Move(System.Int32,System.Int32)">
+            <summary>
+            Move element from source index to destination index.
+            </summary>
+            <param name="sourceIndex">Zero-based index of source element.</param>
+            <param name="destIndex">Zero-based index of destination element.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.IReorderableListAdaptor.Clear">
+            <summary>
+            Clear all elements from list.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.IReorderableListAdaptor.DrawItem(UnityEngine.Rect,System.Int32)">
+            <summary>
+            Draw interface for list element.
+            </summary>
+            <param name="position">Position in GUI.</param>
+            <param name="index">Zero-based index of array element.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.IReorderableListAdaptor.GetItemHeight(System.Int32)">
+            <summary>
+            Gets height of list item in pixels.
+            </summary>
+            <param name="index">Zero-based index of array element.</param>
+            <returns>
+            Measurement in pixels.
+            </returns>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.ItemInsertedEventArgs">
+            <summary>
+            Arguments which are passed to <see cref="T:SmartLocalization.ReorderableList.ItemInsertedEventHandler" />.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ItemInsertedEventArgs.adaptor">
+            <summary>
+            Gets adaptor to reorderable list container which contains element.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ItemInsertedEventArgs.itemIndex">
+            <summary>
+            Gets zero-based index of item which was inserted.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ItemInsertedEventArgs.wasDuplicated">
+            <summary>
+            Indicates if inserted item was duplicated from another item.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ItemInsertedEventArgs.#ctor(SmartLocalization.ReorderableList.IReorderableListAdaptor,System.Int32,System.Boolean)">
+            <summary>
+            Initializes a new instance of <see cref="T:SmartLocalization.ReorderableList.ItemInsertedEventArgs" />.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="itemIndex">Zero-based index of item.</param>
+            <param name="wasDuplicated">Indicates if inserted item was duplicated from another item.</param>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.ItemInsertedEventHandler">
+            <summary>
+            An event handler which is invoked after new list item is inserted.
+            </summary>
+            <param name="sender">Object which raised event.</param>
+            <param name="args">Event arguments.</param>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.ItemRemovingEventArgs">
+            <summary>
+            Arguments which are passed to <see cref="T:SmartLocalization.ReorderableList.ItemRemovingEventHandler" />.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ItemRemovingEventArgs.adaptor">
+            <summary>
+            Gets adaptor to reorderable list container which contains element.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ItemRemovingEventArgs.itemIndex">
+            <summary>
+            Gets zero-based index of item which was inserted.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ItemRemovingEventArgs.#ctor(SmartLocalization.ReorderableList.IReorderableListAdaptor,System.Int32)">
+            <summary>
+            Initializes a new instance of <see cref="T:SmartLocalization.ReorderableList.ItemInsertedEventArgs" />.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="itemIndex">Zero-based index of item.</param>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.ItemRemovingEventHandler">
+            <summary>
+            An event handler which is invoked before a list item is removed.
+            </summary>
+            <remarks>
+                <para>Item removal can be cancelled by setting <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" />
+            to <c>true</c>.</para>
+            </remarks>
+            <param name="sender">Object which raised event.</param>
+            <param name="args">Event arguments.</param>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.ReorderableListControl">
+            <summary>
+            Base class for custom reorderable list control.
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer`1">
+            <summary>
+            Invoked to draw list item.
+            </summary>
+            <remarks>
+                <para>GUI controls must be positioned absolutely within the given rectangle since
+            list items must be sized consistently.</para>
+            </remarks>
+            <example>
+                <para>The following listing presents a text field for each list item:</para>
+                <code language="csharp"><![CDATA[
+            using UnityEngine;
+            using UnityEditor;
+            using System.Collections.Generic;
+            public class ExampleWindow : EditorWindow {
+            public List<string> wishlist = new List<string>();
+            private void OnGUI() {
+            ReorderableListGUI.ListField(wishlist, DrawListItem);
+            }
+            private string DrawListItem(Rect position, string value) {
+            // Text fields do not like `null` values!
+            if (value == null)
+            value = "";
+            return EditorGUI.TextField(position, value);
+            }
+            }
+            ]]></code>
+                <code language="unityscript"><![CDATA[
+            import System.Collections.Generic;
+            class ExampleWindow extends EditorWindow {
+            var wishlist:List.<String>;
+            function OnGUI() {
+            ReorderableListGUI.ListField(wishlist, DrawListItem);
+            }
+            function DrawListItem(position:Rect, value:String):String {
+            // Text fields do not like `null` values!
+            if (value == null)
+            value = '';
+            return EditorGUI.TextField(position, value);
+            }
+            }
+            ]]></code>
+            </example>
+            <typeparam name="T">Type of item list.</typeparam>
+            <param name="position">Position of list item.</param>
+            <param name="item">The list item.</param>
+            <returns>
+            The modified value.
+            </returns>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty">
+            <summary>
+            Invoked to draw content for empty list.
+            </summary>
+            <remarks>
+                <para>Callback should make use of <c>GUILayout</c> to present controls.</para>
+            </remarks>
+            <example>
+                <para>The following listing displays a label for empty list control:</para>
+                <code language="csharp"><![CDATA[
+            using UnityEngine;
+            using UnityEditor;
+            using System.Collections.Generic;
+            public class ExampleWindow : EditorWindow {
+            private List<string> _list;
+            private void OnEnable() {
+            _list = new List<string>();
+            }
+            private void OnGUI() {
+            ReorderableListGUI.ListField(_list, ReorderableListGUI.TextFieldItemDrawer, DrawEmptyMessage);
+            }
+            private string DrawEmptyMessage() {
+            GUILayout.Label("List is empty!", EditorStyles.miniLabel);
+            }
+            }
+            ]]></code>
+                <code language="unityscript"><![CDATA[
+            import System.Collections.Generic;
+            class ExampleWindow extends EditorWindow {
+            private var _list:List.<String>;
+            function OnEnable() {
+            _list = new List.<String>();
+            }
+            function OnGUI() {
+            ReorderableListGUI.ListField(_list, ReorderableListGUI.TextFieldItemDrawer, DrawEmptyMessage);
+            }
+            function DrawEmptyMessage() {
+            GUILayout.Label('List is empty!', EditorStyles.miniLabel);
+            }
+            }
+            ]]></code>
+            </example>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute">
+            <summary>
+            Invoked to draw content for empty list with absolute positioning.
+            </summary>
+            <param name="position">Position of empty content.</param>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.AnchorBackgroundColor">
+            <summary>
+            Background color of anchor list item.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.TargetBackgroundColor">
+            <summary>
+            Background color of target slot when dragging list item.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.s_RightAlignedLabelStyle">
+            <summary>
+            Style for right-aligned label for element number prefix.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DrawControlFromState(SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Generate and draw control from state object.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="drawEmpty">Delegate for drawing empty list.</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DrawControlFromState(UnityEngine.Rect,SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Generate and draw control from state object.
+            </summary>
+            <param name="position">Position of control.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="drawEmpty">Delegate for drawing empty list.</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.s_AnchorMouseOffset">
+            <summary>
+            Position of mouse upon anchoring item for drag.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.s_AnchorIndex">
+            <summary>
+            Zero-based index of anchored list item.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.s_TargetIndex">
+            <summary>
+            Zero-based index of target list item for reordering.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.s_AutoFocusControlID">
+            <summary>
+            Unique ID of list control which should be automatically focused. A value
+            of zero indicates that no control is to be focused.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.s_AutoFocusIndex">
+            <summary>
+            Zero-based index of item which should be focused.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.s_CurrentItemIndex">
+            <summary>
+            Zero-based index of list item which is currently being drawn.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListControl.currentItemIndex">
+            <summary>
+            Gets zero-based index of list item which is currently being drawn;
+            or a value of -1 if no item is currently being drawn.
+            </summary>
+            <remarks>
+                <para>Use <see cref="P:SmartLocalization.ReorderableList.ReorderableListGUI.currentItemIndex" /> instead.</para>
+            </remarks>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListControl.flags">
+            <summary>
+            Gets or sets flags which affect behavior of control.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListControl.hasAddButton">
+            <summary>
+            Gets a value indicating whether add button is shown.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListControl.hasRemoveButtons">
+            <summary>
+            Gets a value indicating whether remove buttons are shown.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListControl.containerStyle">
+            <summary>
+            Gets or sets style used to draw background of list control.
+            </summary>
+            <seealso cref="P:SmartLocalization.ReorderableList.ReorderableListGUI.defaultContainerStyle" />
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListControl.addButtonStyle">
+            <summary>
+            Gets or sets style used to draw add button.
+            </summary>
+            <seealso cref="P:SmartLocalization.ReorderableList.ReorderableListGUI.defaultAddButtonStyle" />
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListControl.removeButtonStyle">
+            <summary>
+            Gets or sets style used to draw remove button.
+            </summary>
+            <seealso cref="P:SmartLocalization.ReorderableList.ReorderableListGUI.defaultRemoveButtonStyle" />
+        </member>
+        <member name="E:SmartLocalization.ReorderableList.ReorderableListControl.ItemInserted">
+            <summary>
+            Occurs after list item is inserted or duplicated.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.OnItemInserted(SmartLocalization.ReorderableList.ItemInsertedEventArgs)">
+            <summary>
+            Raises event after list item is inserted or duplicated.
+            </summary>
+            <param name="args">Event arguments.</param>
+        </member>
+        <member name="E:SmartLocalization.ReorderableList.ReorderableListControl.ItemRemoving">
+            <summary>
+            Occurs before list item is removed and allows removal to be cancelled.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.OnItemRemoving(SmartLocalization.ReorderableList.ItemRemovingEventArgs)">
+            <summary>
+            Raises event before list item is removed and provides oppertunity to cancel.
+            </summary>
+            <param name="args">Event arguments.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:SmartLocalization.ReorderableList.ReorderableListControl" />.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.#ctor(SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Initializes a new instance of <see cref="T:SmartLocalization.ReorderableList.ReorderableListControl" />.
+            </summary>
+            <param name="flags">Optional flags which affect behavior of control.</param>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl._controlID">
+            <summary>
+            Unique Id of control.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl._visibleRect">
+            <summary>
+            Visible rectangle of control.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl._indexLabelWidth">
+            <summary>
+            Width of index label in pixels (zero indicates no label).
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl._tracking">
+            <summary>
+            Indicates whether item is currently being dragged within control.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl._allowReordering">
+            <summary>
+            Indicates if reordering is allowed.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.PrepareState(System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Prepare initial state for list control.
+            </summary>
+            <param name="controlID">Unique ID of list control.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.AutoFocusItem(System.Int32,System.Int32)">
+            <summary>
+            Indicate that first control of list item should be automatically focused
+            if possible.
+            </summary>
+            <param name="controlID">Unique ID of list control.</param>
+            <param name="itemIndex">Zero-based index of list item.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DoAddButton(UnityEngine.Rect,System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Draw add item button.
+            </summary>
+            <param name="position">Position of button.</param>
+            <param name="controlID">Unique ID of list control.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DoRemoveButton(UnityEngine.Rect,System.Boolean)">
+            <summary>
+            Draw remove button.
+            </summary>
+            <param name="position">Position of button.</param>
+            <param name="visible">Indicates if control is visible within GUI.</param>
+            <returns>
+            A value of <c>true</c> if clicked; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.BeginTrackingReorderDrag(System.Int32,System.Int32)">
+            <summary>
+            Begin tracking drag and drop within list.
+            </summary>
+            <param name="controlID">Unique ID of list control.</param>
+            <param name="itemIndex">Zero-based index of item which is going to be dragged.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.StopTrackingReorderDrag">
+            <summary>
+            Stop tracking drag and drop.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.IsTrackingControl(System.Int32)">
+            <summary>
+            Gets a value indicating whether item in current list is currently being tracked.
+            </summary>
+            <param name="controlID">Unique ID of list control.</param>
+            <returns>
+            A value of <c>true</c> if item is being tracked; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.AcceptReorderDrag(SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Accept reordering.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DrawListContainerAndItems(UnityEngine.Rect,System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Draw list container and items.
+            </summary>
+            <param name="position">Position of list control in GUI.</param>
+            <param name="controlID">Unique ID of list control.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.CheckForAutoFocusControl(System.Int32)">
+            <summary>
+            Checks to see if list control needs to be automatically focused.
+            </summary>
+            <param name="controlID">Unique ID of list control.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DrawFooterControls(UnityEngine.Rect,System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Draw additional controls below list control and highlight drop target.
+            </summary>
+            <param name="position">Position of list control in GUI.</param>
+            <param name="controlID">Unique ID of list control.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.s_ContainerHeightCache">
+            <summary>
+            Cache of container heights mapped by control ID.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DrawLayoutListField(System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Do layout version of list field.
+            </summary>
+            <param name="controlID">Unique ID of list control.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <returns>
+            Position of list container area in GUI (excludes footer area).
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DrawLayoutEmptyList(SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty)">
+            <summary>
+            Draw content for empty list (layout version).
+            </summary>
+            <param name="drawEmpty">Callback to draw empty content.</param>
+            <returns>
+            Position of list container area in GUI (excludes footer area).
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyListControl(UnityEngine.Rect,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute)">
+            <summary>
+            Draw content for empty list (layout version).
+            </summary>
+            <param name="position">Position of list control in GUI.</param>
+            <param name="drawEmpty">Callback to draw empty content.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.FixStyles">
+            <summary>
+            Correct if for some reason one or more styles are missing!
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.Draw(System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty)">
+            <summary>
+            Draw layout version of list control.
+            </summary>
+            <param name="controlID">Unique ID of list control.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="drawEmpty">Delegate for drawing empty list.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.Draw(SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty)">
+            <inheritdoc cref="Draw(int, IReorderableListAdaptor, DrawEmpty)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.Draw(SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <inheritdoc cref="Draw(int, IReorderableListAdaptor, DrawEmpty)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.Draw(UnityEngine.Rect,System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute)">
+            <summary>
+            Draw list control with absolute positioning.
+            </summary>
+            <param name="position">Position of list control in GUI.</param>
+            <param name="controlID">Unique ID of list control.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="drawEmpty">Delegate for drawing empty list.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.Draw(UnityEngine.Rect,SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute)">
+            <summary>
+            Draw list control with absolute positioning.
+            </summary>
+            <param name="position">Position of list control in GUI.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="drawEmpty">Delegate for drawing empty list.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.Draw(UnityEngine.Rect,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <inheritdoc cref="Draw(Rect, IReorderableListAdaptor, DrawEmptyAbsolute)" />
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.commandMoveToTop">
+            <summary>
+            Content for "Move to Top" command.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.commandMoveToBottom">
+            <summary>
+            Content for "Move to Bottom" command.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.commandInsertAbove">
+            <summary>
+            Content for "Insert Above" command.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.commandInsertBelow">
+            <summary>
+            Content for "Insert Below" command.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.commandDuplicate">
+            <summary>
+            Content for "Duplicate" command.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.commandRemove">
+            <summary>
+            Content for "Remove" command.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.commandClearAll">
+            <summary>
+            Content for "Clear All" command.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListControl.defaultContextHandler">
+            <summary>
+            Default functionality to handle context command.
+            </summary>
+            <example>
+                <para>Can be used when adding custom items to the context menu:</para>
+                <code language="csharp"><![CDATA[
+            protected override void AddItemsToMenu(GenericMenu menu, int itemIndex, IReorderableListAdaptor adaptor) {
+            var specialCommand = new GUIContent("Special Command");
+            menu.AddItem(specialCommand, false, defaultContextHandler, specialCommand);
+            }
+            ]]></code>
+                <code language="unityscript"><![CDATA[
+            function AddItemsToMenu(menu:GenericMenu, itemIndex:int, list:IReorderableListAdaptor) {
+            var specialCommand = new GUIContent('Special Command');
+            menu.AddItem(specialCommand, false, defaultContextHandler, specialCommand);
+            }
+            ]]></code>
+            </example>
+            <seealso cref="M:SmartLocalization.ReorderableList.ReorderableListControl.AddItemsToMenu(UnityEditor.GenericMenu,System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.AddItemsToMenu(UnityEditor.GenericMenu,System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Invoked to generate context menu for list item.
+            </summary>
+            <param name="menu">Menu which can be populated.</param>
+            <param name="itemIndex">Zero-based index of item which was right-clicked.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.HandleCommand(System.String,System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Invoked to handle context command.
+            </summary>
+            <remarks>
+                <para>It is important to set the value of <c>GUI.changed</c> to <c>true</c> if any
+            changes are made by command handler.</para>
+                <para>Default command handling functionality can be inherited:</para>
+                <code language="csharp"><![CDATA[
+            protected override bool HandleCommand(string commandName, int itemIndex, IReorderableListAdaptor adaptor) {
+            if (base.HandleCommand(itemIndex, adaptor))
+            return true;
+            // Place custom command handling code here...
+            switch (commandName) {
+            case "Your Command":
+            return true;
+            }
+            return false;
+            }
+            ]]></code>
+                <code language="unityscript"><![CDATA[
+            function HandleCommand(commandName:String, itemIndex:int, adaptor:IReorderableListAdaptor):boolean {
+            if (base.HandleCommand(itemIndex, adaptor))
+            return true;
+            // Place custom command handling code here...
+            switch (commandName) {
+            case 'Your Command':
+            return true;
+            }
+            return false;
+            }
+            ]]></code>
+            </remarks>
+            <param name="commandName">Name of command. This is the text shown in the context menu.</param>
+            <param name="itemIndex">Zero-based index of item which was right-clicked.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <returns>
+            A value of <c>true</c> if command was known; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DoCommand(System.String,System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Call to manually perform command.
+            </summary>
+            <remarks>
+                <para>Warning message is logged to console if attempted to execute unknown command.</para>
+            </remarks>
+            <param name="commandName">Name of command. This is the text shown in the context menu.</param>
+            <param name="itemIndex">Zero-based index of item which was right-clicked.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <returns>
+            A value of <c>true</c> if command was known; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DoCommand(UnityEngine.GUIContent,System.Int32,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Call to manually perform command.
+            </summary>
+            <remarks>
+                <para>Warning message is logged to console if attempted to execute unknown command.</para>
+            </remarks>
+            <param name="command">Content representing command.</param>
+            <param name="itemIndex">Zero-based index of item which was right-clicked.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <returns>
+            A value of <c>true</c> if command was known; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.CalculateListHeight(SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Calculate height of list control in pixels.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <returns>
+            Required list height in pixels.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.CalculateListHeight(System.Int32,System.Single)">
+            <summary>
+            Calculate height of list control in pixels.
+            </summary>
+            <param name="itemCount">Count of items in list.</param>
+            <param name="itemHeight">Fixed height of list item.</param>
+            <returns>
+            Required list height in pixels.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.MoveItem(SmartLocalization.ReorderableList.IReorderableListAdaptor,System.Int32,System.Int32)">
+            <summary>
+            Move item from source index to destination index.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="sourceIndex">Zero-based index of source item.</param>
+            <param name="destIndex">Zero-based index of destination index.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.AddItem(SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Add item at end of list and raises the event <see cref="E:SmartLocalization.ReorderableList.ReorderableListControl.ItemInserted" />.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.InsertItem(SmartLocalization.ReorderableList.IReorderableListAdaptor,System.Int32)">
+            <summary>
+            Insert item at specified index and raises the event <see cref="E:SmartLocalization.ReorderableList.ReorderableListControl.ItemInserted" />.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="itemIndex">Zero-based index of item.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.DuplicateItem(SmartLocalization.ReorderableList.IReorderableListAdaptor,System.Int32)">
+            <summary>
+            Duplicate specified item and raises the event <see cref="E:SmartLocalization.ReorderableList.ReorderableListControl.ItemInserted" />.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="itemIndex">Zero-based index of item.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.RemoveItem(SmartLocalization.ReorderableList.IReorderableListAdaptor,System.Int32)">
+            <summary>
+            Remove specified item.
+            </summary>
+            <remarks>
+                <para>The event <see cref="E:SmartLocalization.ReorderableList.ReorderableListControl.ItemRemoving" /> is raised prior to removing item
+            and allows removal to be cancelled.</para>
+            </remarks>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="itemIndex">Zero-based index of item.</param>
+            <returns>
+            Returns a value of <c>false</c> if operation was cancelled.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListControl.ClearAll(SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <summary>
+            Remove all items from list.
+            </summary>
+            <remarks>
+                <para>The event <see cref="E:SmartLocalization.ReorderableList.ReorderableListControl.ItemRemoving" /> is raised for each item prior to
+            clearing array and allows entire operation to be cancelled.</para>
+            </remarks>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <returns>
+            Returns a value of <c>false</c> if operation was cancelled.
+            </returns>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.ReorderableListFlags">
+            <summary>
+            Additional flags which can be passed into reorderable list field.
+            </summary>
+            <example>
+                <para>Multiple flags can be specified if desired:</para>
+                <code language="csharp"><![CDATA[
+            var flags = ReorderableListFlags.HideAddButton | ReorderableListFlags.HideRemoveButtons;
+            ReorderableListGUI.ListField(list, flags);
+            ]]></code>
+            </example>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListFlags.DisableReordering">
+            <summary>
+            Hide grab handles and disable reordering of list items.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListFlags.HideAddButton">
+            <summary>
+            Hide add button at base of control.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListFlags.HideRemoveButtons">
+            <summary>
+            Hide remove buttons from list items.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListFlags.DisableContextMenu">
+            <summary>
+            Do not display context menu upon right-clicking grab handle.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListFlags.DisableDuplicateCommand">
+            <summary>
+            Hide "Duplicate" option from context menu.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListFlags.DisableAutoFocus">
+            <summary>
+            Do not automatically focus first control of newly added items.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListFlags.ShowIndices">
+            <summary>
+            Show zero-based index of array elements.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListFlags.DisableClipping">
+            <summary>
+            Do not attempt to clip items which are out of view.
+            </summary>
+            <remarks>
+                <para>Clipping helps to boost performance, though may lead to issues on
+            some interfaces.</para>
+            </remarks>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.ReorderableListGUI">
+            <summary>
+            Utility class for drawing reorderable lists.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.ReorderableListGUI.DefaultItemHeight">
+            <summary>
+            Default list item height is 18 pixels.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListGUI.indexOfChangedItem">
+            <summary>
+            Gets or sets zero-based index of last item which was changed. A value of -1
+            indicates that no item was changed by list.
+            </summary>
+            <remarks>
+                <para>This property should not be set when items are added or removed.</para>
+            </remarks>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListGUI.currentItemIndex">
+            <summary>
+            Gets zero-based index of list item which is currently being drawn;
+            or a value of -1 if no item is currently being drawn.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.DefaultItemDrawer``1(UnityEngine.Rect,``0)">
+            <summary>
+            Default list item drawer implementation.
+            </summary>
+            <remarks>
+                <para>Always presents the label "Item drawer not implemented.".</para>
+            </remarks>
+            <param name="position">Position to draw list item control(s).</param>
+            <param name="item">Value of list item.</param>
+            <returns>
+            Unmodified value of list item.
+            </returns>
+            <typeparam name="T">Type of list item.</typeparam>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.TextFieldItemDrawer(UnityEngine.Rect,System.String)">
+            <summary>
+            Draws text field allowing list items to be edited.
+            </summary>
+            <remarks>
+                <para>Null values are automatically changed to empty strings since null
+            values cannot be edited using a text field.</para>
+                <para>Value of <c>GUI.changed</c> is set to <c>true</c> if value of item
+            is modified.</para>
+            </remarks>
+            <param name="position">Position to draw list item control(s).</param>
+            <param name="item">Value of list item.</param>
+            <returns>
+            Modified value of list item.
+            </returns>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListGUI.defaultListControl">
+            <summary>
+            Gets the default list control implementation.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListGUI.defaultTitleStyle">
+            <summary>
+            Gets default style for title header.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListGUI.defaultContainerStyle">
+            <summary>
+            Gets default style for background of list control.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListGUI.defaultAddButtonStyle">
+            <summary>
+            Gets default style for add item button.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.ReorderableListGUI.defaultRemoveButtonStyle">
+            <summary>
+            Gets default style for remove item button.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.Title(UnityEngine.GUIContent)">
+            <summary>
+            Draw title control for list field.
+            </summary>
+            <remarks>
+                <para>When needed, should be shown immediately before list field.</para>
+            </remarks>
+            <example>
+                <code language="csharp"><![CDATA[
+            ReorderableListGUI.Title(titleContent);
+            ReorderableListGUI.ListField(list, DynamicListGU.TextFieldItemDrawer);
+            ]]></code>
+                <code language="unityscript"><![CDATA[
+            ReorderableListGUI.Title(titleContent);
+            ReorderableListGUI.ListField(list, DynamicListGU.TextFieldItemDrawer);
+            ]]></code>
+            </example>
+            <param name="title">Content for title control.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.Title(System.String)">
+            <summary>
+            Draw title control for list field.
+            </summary>
+            <remarks>
+                <para>When needed, should be shown immediately before list field.</para>
+            </remarks>
+            <example>
+                <code language="csharp"><![CDATA[
+            ReorderableListGUI.Title("Your Title");
+            ReorderableListGUI.ListField(list, DynamicListGU.TextFieldItemDrawer);
+            ]]></code>
+                <code language="unityscript"><![CDATA[
+            ReorderableListGUI.Title('Your Title');
+            ReorderableListGUI.ListField(list, DynamicListGU.TextFieldItemDrawer);
+            ]]></code>
+            </example>
+            <param name="title">Text for title control.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.Title(UnityEngine.Rect,UnityEngine.GUIContent)">
+            <summary>
+            Draw title control for list field with absolute positioning.
+            </summary>
+            <param name="position">Position of control.</param>
+            <param name="title">Content for title control.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.Title(UnityEngine.Rect,System.String)">
+            <summary>
+            Draw title control for list field with absolute positioning.
+            </summary>
+            <param name="position">Position of control.</param>
+            <param name="text">Text for title control.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.DoListField``1(System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty,System.Single,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Draw list field control.
+            </summary>
+            <param name="list">The list which can be reordered.</param>
+            <param name="drawItem">Callback to draw list item.</param>
+            <param name="drawEmpty">Callback to draw custom content for empty list (optional).</param>
+            <param name="itemHeight">Height of a single list item.</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+            <typeparam name="T">Type of list item.</typeparam>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.DoListFieldAbsolute``1(UnityEngine.Rect,System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute,System.Single,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Draw list field control with absolute positioning.
+            </summary>
+            <param name="position">Position of control.</param>
+            <param name="list">The list which can be reordered.</param>
+            <param name="drawItem">Callback to draw list item.</param>
+            <param name="drawEmpty">Callback to draw custom content for empty list (optional).</param>
+            <param name="itemHeight">Height of a single list item.</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+            <typeparam name="T">Type of list item.</typeparam>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField``1(System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty,System.Single,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListField{T}(IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmpty, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute``1(UnityEngine.Rect,System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute,System.Single,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListFieldAbsolute{T}(Rect, IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmptyAbsolute, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField``1(System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty,System.Single)">
+            <inheritdoc cref="DoListField{T}(IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmpty, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute``1(UnityEngine.Rect,System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute,System.Single)">
+            <inheritdoc cref="DoListFieldAbsolute{T}(Rect, IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmptyAbsolute, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField``1(System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListField{T}(IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmpty, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute``1(UnityEngine.Rect,System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListFieldAbsolute{T}(Rect, IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmptyAbsolute, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField``1(System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty)">
+            <inheritdoc cref="DoListField{T}(IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmpty, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute``1(UnityEngine.Rect,System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute)">
+            <inheritdoc cref="DoListFieldAbsolute{T}(Rect, IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmptyAbsolute, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField``1(System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},System.Single,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListField{T}(IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmpty, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute``1(UnityEngine.Rect,System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},System.Single,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListFieldAbsolute{T}(Rect, IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmptyAbsolute, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField``1(System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},System.Single)">
+            <inheritdoc cref="DoListField{T}(IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmpty, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute``1(UnityEngine.Rect,System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},System.Single)">
+            <inheritdoc cref="DoListFieldAbsolute{T}(Rect, IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmptyAbsolute, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField``1(System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListField{T}(IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmpty, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute``1(UnityEngine.Rect,System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0},SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListFieldAbsolute{T}(Rect, IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmptyAbsolute, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField``1(System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0})">
+            <inheritdoc cref="DoListField{T}(IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmpty, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute``1(UnityEngine.Rect,System.Collections.Generic.IList{``0},SmartLocalization.ReorderableList.ReorderableListControl.ItemDrawer{``0})">
+            <inheritdoc cref="DoListFieldAbsolute{T}(Rect, IList{T}, ReorderableListControl.ItemDrawer{T}, ReorderableListControl.DrawEmptyAbsolute, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.CalculateListFieldHeight(System.Int32,System.Single,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Calculate height of list field for absolute positioning.
+            </summary>
+            <param name="itemCount">Count of items in list.</param>
+            <param name="itemHeight">Fixed height of list item.</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+            <returns>
+            Required list height in pixels.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.CalculateListFieldHeight(System.Int32,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="CalculateListFieldHeight(int, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.CalculateListFieldHeight(System.Int32,System.Single)">
+            <inheritdoc cref="CalculateListFieldHeight(int, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.CalculateListFieldHeight(System.Int32)">
+            <inheritdoc cref="CalculateListFieldHeight(int, float, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.DoListField(UnityEditor.SerializedProperty,System.Single,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Draw list field control for serializable property array.
+            </summary>
+            <param name="arrayProperty">Serializable property.</param>
+            <param name="fixedItemHeight">Use fixed height for items rather than <see cref="M:UnityEditor.EditorGUI.GetPropertyHeight(UnityEditor.SerializedProperty)" />.</param>
+            <param name="drawEmpty">Callback to draw custom content for empty list (optional).</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.DoListFieldAbsolute(UnityEngine.Rect,UnityEditor.SerializedProperty,System.Single,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Draw list field control for serializable property array.
+            </summary>
+            <param name="position">Position of control.</param>
+            <param name="arrayProperty">Serializable property.</param>
+            <param name="fixedItemHeight">Use fixed height for items rather than <see cref="M:UnityEditor.EditorGUI.GetPropertyHeight(UnityEditor.SerializedProperty)" />.</param>
+            <param name="drawEmpty">Callback to draw custom content for empty list (optional).</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(UnityEditor.SerializedProperty,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListField(SerializedProperty, float, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,UnityEditor.SerializedProperty,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, SerializedProperty, float, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(UnityEditor.SerializedProperty,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty)">
+            <inheritdoc cref="DoListField(SerializedProperty, float, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,UnityEditor.SerializedProperty,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, SerializedProperty, float, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(UnityEditor.SerializedProperty,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListField(SerializedProperty, float, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,UnityEditor.SerializedProperty,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, SerializedProperty, float, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(UnityEditor.SerializedProperty)">
+            <inheritdoc cref="DoListField(SerializedProperty, float, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,UnityEditor.SerializedProperty)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, SerializedProperty, float, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.CalculateListFieldHeight(UnityEditor.SerializedProperty,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Calculate height of list field for absolute positioning.
+            </summary>
+            <param name="arrayProperty">Serializable property.</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+            <returns>
+            Required list height in pixels.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.CalculateListFieldHeight(UnityEditor.SerializedProperty)">
+            <inheritdoc cref="CalculateListFieldHeight(SerializedProperty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(UnityEditor.SerializedProperty,System.Single,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListField(SerializedProperty, float, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,UnityEditor.SerializedProperty,System.Single,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, SerializedProperty, float, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(UnityEditor.SerializedProperty,System.Single,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty)">
+            <inheritdoc cref="DoListField(SerializedProperty, float, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,UnityEditor.SerializedProperty,System.Single,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, SerializedProperty, float, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(UnityEditor.SerializedProperty,System.Single,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListField(SerializedProperty, float, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,UnityEditor.SerializedProperty,System.Single,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, SerializedProperty, float, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(UnityEditor.SerializedProperty,System.Single)">
+            <inheritdoc cref="DoListField(SerializedProperty, float, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,UnityEditor.SerializedProperty,System.Single)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, SerializedProperty, float, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.DoListField(SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Draw list field control for adapted collection.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="drawEmpty">Callback to draw custom content for empty list (optional).</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.DoListFieldAbsolute(UnityEngine.Rect,SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Draw list field control for adapted collection.
+            </summary>
+            <param name="position">Position of control.</param>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="drawEmpty">Callback to draw custom content for empty list (optional).</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListField(IReorderableListAdaptor, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, IReorderableListAdaptor, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmpty)">
+            <inheritdoc cref="DoListField(IReorderableListAdaptor, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListControl.DrawEmptyAbsolute)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, IReorderableListAdaptor, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListField(IReorderableListAdaptor, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, IReorderableListAdaptor, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListField(SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <inheritdoc cref="DoListField(IReorderableListAdaptor, ReorderableListControl.DrawEmpty, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.ListFieldAbsolute(UnityEngine.Rect,SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <inheritdoc cref="DoListFieldAbsolute(Rect, IReorderableListAdaptor, ReorderableListControl.DrawEmptyAbsolute, ReorderableListFlags)" />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.CalculateListFieldHeight(SmartLocalization.ReorderableList.IReorderableListAdaptor,SmartLocalization.ReorderableList.ReorderableListFlags)">
+            <summary>
+            Calculate height of list field for adapted collection.
+            </summary>
+            <param name="adaptor">Reorderable list adaptor.</param>
+            <param name="flags">Optional flags to pass into list field.</param>
+            <returns>
+            Required list height in pixels.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.ReorderableListGUI.CalculateListFieldHeight(SmartLocalization.ReorderableList.IReorderableListAdaptor)">
+            <inheritdoc cref="CalculateListFieldHeight(IReorderableListAdaptor, ReorderableListFlags)" />
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.SerializedPropertyAdaptor">
+            <summary>
+            Reorderable list adaptor for serialized array property.
+            </summary>
+            <remarks>
+                <para>This adaptor can be subclassed to add special logic to item height calculation.
+            You may want to implement a custom adaptor class where specialised functionality
+            is needed.</para>
+            </remarks>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.fixedItemHeight">
+            <summary>
+            Fixed height of each list item.
+            </summary>
+            <remarks>
+                <para>Non-zero value overrides property drawer height calculation
+            which is more efficient.</para>
+            </remarks>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.Item(System.Int32)">
+            <summary>
+            Gets element from list.
+            </summary>
+            <param name="index">Zero-based index of element.</param>
+            <returns>
+            Serialized property wrapper for array element.
+            </returns>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.arrayProperty">
+            <summary>
+            Gets the underlying serialized array property.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.#ctor(UnityEditor.SerializedProperty,System.Single)">
+            <summary>
+            Initializes a new instance of <see cref="T:SmartLocalization.ReorderableList.SerializedPropertyAdaptor" />.
+            </summary>
+            <param name="arrayProperty">Serialized property for entire array.</param>
+            <param name="fixedItemHeight">Non-zero height overrides property drawer height calculation.</param>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.#ctor(UnityEditor.SerializedProperty)">
+            <summary>
+            Initializes a new instance of <see cref="T:SmartLocalization.ReorderableList.SerializedPropertyAdaptor" />.
+            </summary>
+            <param name="arrayProperty">Serialized property for entire array.</param>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.Count">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.CanDrag(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.CanRemove(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.Add">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.Insert(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.Duplicate(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.Remove(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.Move(System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.Clear">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.DrawItem(UnityEngine.Rect,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.GetItemHeight(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.SerializedPropertyAdaptor.ResetValue(UnityEditor.SerializedProperty)">
+            <summary>
+            Reset value of array element.
+            </summary>
+            <param name="element">Serializd property for array element.</param>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.Internal.GUIHelper">
+            <summary>
+            Utility functions to assist with GUIs.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.Internal.GUIHelper.VisibleRect">
+            <summary>
+            Gets visible rectangle within GUI.
+            </summary>
+            <remarks>
+                <para>VisibleRect = TopmostRect + scrollViewOffsets</para>
+            </remarks>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.Internal.GUIHelper.FocusTextInControl">
+            <summary>
+            Focus control and text editor where applicable.
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.ReorderableList.Internal.ReorderableListResources">
+            <summary>
+            Resources to assist with reorderable list control.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.Internal.ReorderableListResources.s_LightSkin">
+            <summary>
+            Resource assets for light skin.
+            </summary>
+            <remarks>
+                <para>Resource assets are PNG images which have been encoded using a base-64
+            string so that actual asset files are not necessary.</para>
+            </remarks>
+        </member>
+        <member name="F:SmartLocalization.ReorderableList.Internal.ReorderableListResources.s_DarkSkin">
+            <summary>
+            Resource assets for dark skin.
+            </summary>
+            <remarks>
+                <para>Resource assets are PNG images which have been encoded using a base-64
+            string so that actual asset files are not necessary.</para>
+            </remarks>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.Internal.ReorderableListResources.texAddButton">
+            <summary>
+            Gets light or dark texture "add_button.png".
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.Internal.ReorderableListResources.texAddButtonActive">
+            <summary>
+            Gets light or dark texture "add_button_active.png".
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.Internal.ReorderableListResources.texContainerBackground">
+            <summary>
+            Gets light or dark texture "container_background.png".
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.Internal.ReorderableListResources.texGrabHandle">
+            <summary>
+            Gets light or dark texture "grab_handle.png".
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.Internal.ReorderableListResources.texRemoveButton">
+            <summary>
+            Gets light or dark texture "remove_button.png".
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.Internal.ReorderableListResources.texRemoveButtonActive">
+            <summary>
+            Gets light or dark texture "remove_button_active.png".
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.ReorderableList.Internal.ReorderableListResources.texTitleBackground">
+            <summary>
+            Gets light or dark texture "title_background.png".
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.Internal.ReorderableListResources.GenerateSpecialTextures">
+            <summary>
+            Generate special textures.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.Internal.ReorderableListResources.CreatePixelTexture(System.String,UnityEngine.Color)">
+            <summary>
+            Create 1x1 pixel texture of specified color.
+            </summary>
+            <param name="name">Name for texture object.</param>
+            <param name="color">Pixel color.</param>
+            <returns>
+            The new <c>Texture2D</c> instance.
+            </returns>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.Internal.ReorderableListResources.LoadResourceAssets">
+            <summary>
+            Read textures from base-64 encoded strings. Automatically selects assets based
+            upon whether the light or dark (pro) skin is active.
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.ReorderableList.Internal.ReorderableListResources.GetImageSize(System.Byte[],System.Int32@,System.Int32@)">
+            <summary>
+            Read width and height if PNG file in pixels.
+            </summary>
+            <param name="imageData">PNG image data.</param>
+            <param name="width">Width of image in pixels.</param>
+            <param name="height">Height of image in pixels.</param>
+        </member>
+        <member name="T:SmartLocalization.Editor.InitializeTranslatorEventHandler">
+            <summary>
+            Event handler for initializing an automatic translator
+            </summary>
+            <param name="success">If the translator was initialized</param>
+        </member>
+        <member name="T:SmartLocalization.Editor.GetAvailableLanguagesEventHandler">
+            <summary>
+            Event handler for getting the available translation languages for an Automatic Translator
+            </summary>
+            <param name="success">If the fetching operation was a success</param>
+            <param name="availableLanguages">A list of all the available languages</param>
+        </member>
+        <member name="T:SmartLocalization.Editor.TranslateTextEventHandler">
+            <summary>
+            Event handler for translating a single string with an Automatic Translator
+            </summary>
+            <param name="success">If the translation was a successful operation</param>
+            <param name="key">The key of the translated text. Used for identification</param>
+            <param name="translatedText">The translated text</param>
+        </member>
+        <member name="T:SmartLocalization.Editor.TranslateTextArrayEventHandler">
+            <summary>
+            Event handler for translating an array of strings with an Automatic Translator
+            </summary>
+            <param name="success">If the translation was a successful operation</param>
+            <param name="keys">A list of the translated keys. The indices in this list correspond with the list of translated values.</param>
+            <param name="translatedValues">A list of the translated values. The indices in this list correspond with the list of keys.</param>
+        </member>
+        <member name="T:SmartLocalization.Editor.IAutomaticTranslator">
+            <summary>
+            Generic Interface for Automatic Translators
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.Editor.IAutomaticTranslator.IsInitializing">
+            <summary>
+            Returns if the Automatic Translator is currently in the process of initializing
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.Editor.IAutomaticTranslator.IsInitialized">
+            <summary>
+            Returns if the Automatic Translator is initialized
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.Editor.IAutomaticTranslator.InitializationDidExpire">
+            <summary>
+            Returns if the Translator is not Initialized anymore due to an expiration of an access token
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.IAutomaticTranslator.Initialize(SmartLocalization.Editor.InitializeTranslatorEventHandler,System.String,System.String)">
+            <summary>
+            Initializes the Automatic Translator
+            </summary>
+            <param name="eventHandler">The Event handler returning success/failure of the operation</param>
+            <param name="cliendID">The client API ID</param>
+            <param name="clientSecret">The client API Secret</param>
+        </member>
+        <member name="M:SmartLocalization.Editor.IAutomaticTranslator.GetAvailableTranslationLanguages(SmartLocalization.Editor.GetAvailableLanguagesEventHandler)">
+            <summary>
+            Gets all the available languages that can be translated.
+            </summary>
+            <param name="eventHandler">Event handler returning the success/failure along with a list of available languages</param>
+        </member>
+        <member name="M:SmartLocalization.Editor.IAutomaticTranslator.TranslateText(SmartLocalization.Editor.TranslateTextEventHandler,System.String,System.String,System.String,System.String)">
+            <summary>
+            Translate a single string
+            </summary>
+            <param name="eventHandler">The event handler returning the translated value</param>
+            <param name="key">The key used for identification</param>
+            <param name="textToTranslate">The text to translate</param>
+            <param name="languageFrom">The language code to translate from</param>
+            <param name="languageTo">The language code to translate to</param>
+        </member>
+        <member name="M:SmartLocalization.Editor.IAutomaticTranslator.TranslateTextArray(SmartLocalization.Editor.TranslateTextArrayEventHandler,System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String)">
+            <summary>
+            Translate an array of texts to a specific language. Note: the event handler can be called multiple times if splitting of the array is necessary
+            </summary>
+            <param name="eventHandler">The event handler returning the translated values. Can be called multiple times.</param>
+            <param name="keys">A list of keys used for identification. Make sure the indices correspond with the list of translated values.</param>
+            <param name="textsToTranslate">A list of strings to translate. Make sure the indices correspond with the list of keys.</param>
+            <param name="languageFrom">The language code to translate from</param>
+            <param name="languageTo">The language code to translate to</param>
+        </member>
+        <member name="T:SmartLocalization.Editor.MicrosoftAutomaticTranslator">
+            <summary>
+            Handles the connection with the Microsoft Translation API
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.Editor.MicrosoftAutomaticTranslator.IsInitialized">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartLocalization.Editor.MicrosoftAutomaticTranslator.InitializationDidExpire">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartLocalization.Editor.MicrosoftAutomaticTranslator.IsInitializing">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.Editor.MicrosoftAutomaticTranslator.#ctor">
+            <summary>
+            ctor
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.MicrosoftAutomaticTranslator.Initialize(SmartLocalization.Editor.InitializeTranslatorEventHandler,System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.Editor.MicrosoftAutomaticTranslator.GetAvailableTranslationLanguages(SmartLocalization.Editor.GetAvailableLanguagesEventHandler)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.Editor.MicrosoftAutomaticTranslator.TranslateText(SmartLocalization.Editor.TranslateTextEventHandler,System.String,System.String,System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartLocalization.Editor.MicrosoftAutomaticTranslator.TranslateTextArray(SmartLocalization.Editor.TranslateTextArrayEventHandler,System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <!--FIXME: Invalid documentation markup was found for member T:SmartLocalization.Editor.LanguageDictionaryHelper-->
+        <!--FIXME: Invalid documentation markup was found for member M:SmartLocalization.Editor.LanguageDictionaryHelper.AddNewKeyPersistent(System.Collections.Generic.Dictionary{System.String,System.String},System.String,System.String)-->
+        <!--FIXME: Invalid documentation markup was found for member M:SmartLocalization.Editor.LanguageDictionaryHelper.AddNewKeyPersistent(System.Collections.Generic.Dictionary{System.String,SmartLocalization.LocalizedObject},System.String,SmartLocalization.LocalizedObject)-->
+        <member name="T:SmartLocalization.Editor.LanguageSearchType">
+            <summary>The different search types for a language</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LanguageSearchType.KEY">
+            <summary>Search by key</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LanguageSearchType.VALUE">
+            <summary>Search by value</summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.LanguageSortType">
+            <summary>The different sort types for a language</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LanguageSortType.KEY">
+            <summary>Sort by keys</summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LanguageSortType.VALUE">
+            <summary> Sort by values </summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LanguageSortType.TYPE">
+            <summary> Sort by type</summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.LocalizationWindowUtility">
+            <summary>
+            A Utility class with helper methods for editor windows using Smart Localization
+            </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWindowUtility.ShouldShowWindow(System.Boolean)">
+            <summary>
+            Returns true if the window should show, returns false if not.
+            If false, it will draw an editor label that says the window is unavailable
+            </summary>
+        </member>
+        <member name="T:SmartLocalization.Editor.LocalizedKeySelector">
+            <summary>
+            A class providing a simple GUI for selecting a key from the root.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.Editor.LocalizedKeySelector.autoRefresh">
+            <summary>If the SelectKeyGUI should continously refresh the key list. </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizedKeySelector.SelectKeyGUI(System.String,System.Boolean,SmartLocalization.LocalizedObjectType)">
+            <summary>
+            Call this from OnInspectorGUI in your own editor class. It will create buttons and a selectable popup with all the keys available.
+            </summary>
+            <param name="currentKey">The currently chosen key</param>
+            <param name="sort">If the select key GUI should filter keys with a certain type</param>
+            <param name="sortType">If sort is true, this is the type of keys that will be shown.</param>
+            <returns>The currently chosen key</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizedKeySelector.ShouldShowKeySelector">
+            <summary>
+            Returns if the key selector should be shown.
+            </summary>
+            <returns>Returns if the key selector should be shown.</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizedKeySelector.RefreshList(System.Boolean,SmartLocalization.LocalizedObjectType)">
+            <summary>
+            Refreshes the list containing the selectable keys
+            </summary>
+            <param name="sort">If the refreshed list should be sorted and filtered with a certain key type</param>
+            <param name="sortType">The key type to use as filter</param>
+        </member>
+        <member name="M:SmartLocalization.Editor.SmartCultureInfoEx.Deserialize(System.String)">
+            <summary>
+            Extension method to deserialize a SmartCultureInfoCollection
+            </summary>
+            <param name="fullPath">The full path where the serialized SmartCultureInfoCollection can be found</param>
+            <returns>The deserialized SmartCultureInfoCollection</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.SmartCultureInfoEx.Serialize(SmartLocalization.SmartCultureInfoCollection,System.String)">
+            <summary>
+            Extension method to serialize a SmartCultureInfoCollection to a given file path using XMLSerializer.
+            </summary>
+            <param name="info">The collection to serialize</param>
+            <param name="fullPath">The full path where the collection will be saved</param>
+        </member>
+    </members>
+</doc>

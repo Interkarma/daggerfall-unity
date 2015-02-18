@@ -10,6 +10,7 @@ using System.Collections;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Demo
 {
@@ -201,26 +202,26 @@ namespace DaggerfallWorkshop.Demo
             if (Random.value < 0.4f)
             {
                 // Set depth of winter
-                dfUnity.WorldTime.Month = (int)WorldTime.Months.MorningStar;
+                dfUnity.WorldTime.Now.Month = (int)DaggerfallDateTime.Months.MorningStar;
             }
             else
             {
                 // Just randomise any other month, remember that int range is exclusive of upper value
-                dfUnity.WorldTime.Month = Random.Range((int)WorldTime.Months.FirstSeed, (int)WorldTime.Months.EveningStar);
+                dfUnity.WorldTime.Now.Month = Random.Range((int)DaggerfallDateTime.Months.FirstSeed, (int)DaggerfallDateTime.Months.EveningStar);
             }
 
             // Randomise time of day, weighted towards daylight hours
             float value = Random.value;
             if (value < 0.1f)
-                dfUnity.WorldTime.Hour = WorldTime.MidnightHour;
+                dfUnity.WorldTime.Now.Hour = DaggerfallDateTime.MidnightHour;
             else if (value < 0.6f)
-                dfUnity.WorldTime.Hour = WorldTime.MidMorningHour;
+                dfUnity.WorldTime.Now.Hour = DaggerfallDateTime.MidMorningHour;
             else if (value < 0.8f)
-                dfUnity.WorldTime.Hour = WorldTime.MidAfternoonHour;
+                dfUnity.WorldTime.Now.Hour = DaggerfallDateTime.MidAfternoonHour;
             else if (value < 0.9f)
-                dfUnity.WorldTime.Hour = WorldTime.LightsOffHour;
+                dfUnity.WorldTime.Now.Hour = DaggerfallDateTime.LightsOffHour;
             else
-                dfUnity.WorldTime.Hour = WorldTime.LightsOnHour;
+                dfUnity.WorldTime.Now.Hour = DaggerfallDateTime.LightsOnHour;
 
             // Randomise weather
             // Just hardcoding chances here for demo purposes.
@@ -228,7 +229,7 @@ namespace DaggerfallWorkshop.Demo
             if (WeatherManager)
             {
                 WeatherManager.ClearAllWeather();
-                bool isWinter = dfUnity.WorldTime.SeasonValue == WorldTime.Seasons.Winter;
+                bool isWinter = dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter;
                 bool isDesert = playerGPS.ClimateSettings.ClimateType == DFLocation.ClimateBaseType.Desert;
 
                 // Assign weather effects based on location

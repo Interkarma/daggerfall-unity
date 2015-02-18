@@ -349,12 +349,12 @@ namespace DaggerfallWorkshop
                     break;
                 default:
                     // Season value enum ordered same as sky indices
-                    SkyIndex = LocalPlayerGPS.ClimateSettings.SkyBase + (int)dfUnity.WorldTime.SeasonValue;
+                    SkyIndex = LocalPlayerGPS.ClimateSettings.SkyBase + (int)dfUnity.WorldTime.Now.SeasonValue;
                     break;
             }
 
             // Set night flag
-            IsNight = dfUnity.WorldTime.IsNight;
+            IsNight = dfUnity.WorldTime.Now.IsNight;
 
             // Disable clear night sky for bad weather
             if (WeatherStyle != DaggerfallWorkshop.WeatherStyle.Normal)
@@ -365,8 +365,8 @@ namespace DaggerfallWorkshop
             // Adjust sky frame by time of day
             if (!IsNight)
             {
-                float minute = dfUnity.WorldTime.MinuteOfDay - WorldTime.DawnHour * WorldTime.MinutesPerHour;
-                float divisor = ((WorldTime.DuskHour - WorldTime.DawnHour) * WorldTime.MinutesPerHour) / 64f;   // Total of 64 steps in daytime cycle
+                float minute = dfUnity.WorldTime.Now.MinuteOfDay - DaggerfallDateTime.DawnHour * DaggerfallDateTime.MinutesPerHour;
+                float divisor = ((DaggerfallDateTime.DuskHour - DaggerfallDateTime.DawnHour) * DaggerfallDateTime.MinutesPerHour) / 64f;   // Total of 64 steps in daytime cycle
                 float frame = minute / divisor;
                 SkyFrame = (int)frame;
             }

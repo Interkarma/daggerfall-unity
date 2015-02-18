@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.2.41";
+        public const string Version = "1.3.0";
 
         #region Fields
 
@@ -182,9 +182,20 @@ namespace DaggerfallWorkshop
 
         void Start()
         {
+#if UNITY_EDITOR
+            // Check for missing or invalid Arena2 path on game start in editor
+            // Only builds should run from local resources
+            if (Application.isPlaying)
+            {
+                if (!ValidateArena2Path(Arena2Path))
+                    throw new Exception("Arena2Path is not valid!");
+            }
+#else
+            // Startup
             Setup();
             SetupSingleton();
             SetupContentReaders();
+#endif
         }
 
         void Update()

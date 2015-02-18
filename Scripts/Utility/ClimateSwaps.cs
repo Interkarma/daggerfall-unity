@@ -354,11 +354,11 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        public static int GetNatureArchive(DFLocation.ClimateTextureSet climateTextureSet, WorldTime.Seasons worldSeason)
+        public static int GetNatureArchive(DFLocation.ClimateTextureSet climateTextureSet, DaggerfallDateTime.Seasons worldSeason)
         {
             ClimateNatureSets natureSet = FromAPITextureSet(climateTextureSet);
             ClimateSeason climateSeason = ClimateSeason.Summer;
-            if (worldSeason == WorldTime.Seasons.Winter)
+            if (worldSeason == DaggerfallDateTime.Seasons.Winter)
                 climateSeason = ClimateSeason.Winter;
 
             return GetNatureArchive(natureSet, climateSeason);

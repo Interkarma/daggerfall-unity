@@ -309,7 +309,7 @@ namespace DaggerfallWorkshop
                         natureBatchObject.transform.parent = locationObject.transform;
                         natureBatchObject.transform.localPosition = Vector3.zero;
                         DaggerfallBillboardBatch natureBatch = natureBatchObject.AddComponent<DaggerfallBillboardBatch>();
-                        int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.SeasonValue);
+                        int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
                         natureBatch.SetMaterial(natureArchive);
 
                         // RMB blocks are laid out in centre of terrain to align with ground
@@ -729,7 +729,7 @@ namespace DaggerfallWorkshop
             if (dfTerrain && dfBillboardBatch)
             {
                 // Get current climate and nature archive
-                int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.SeasonValue);
+                int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
                 dfBillboardBatch.SetMaterial(natureArchive);
                 TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale);
             }

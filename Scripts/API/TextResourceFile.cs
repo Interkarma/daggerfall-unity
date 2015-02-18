@@ -7,6 +7,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
 
@@ -40,7 +41,44 @@ namespace DaggerfallConnect.Arena2
 
         #endregion
 
+        #region Enums
+
+        /// <summary>
+        /// Special Text Resource formatting bytes.
+        /// http://www.uesp.net/wiki/Daggerfall:Text_Record_Format
+        /// </summary>
+        public enum Formatting
+        {
+            NewLineOffset = 0x00,
+            SameLineOffset = 0x01,
+            PullPreceeding = 0x02,
+
+            FirstCharacter = 0x20,
+            LastCharacter = 0x7f,
+
+            PositionPrefix = 0xfb,
+            FontPrefix = 0xf9,
+            JustifyPreceedingLeft = 0xfc,
+            CenterPreceeding = 0xfd,
+            NewLine = 0x00,
+            EndOfPage = 0xf6,
+            SubrecordSeparator = 0xff,
+            EndOfRecord = 0xfe,
+        }
+
+        #endregion
+
         #region Structures
+
+        /// <summary>
+        /// Stores a specially parsed text record with all control bytes in format [0x00-0xFF].
+        /// Otherwise, text is returned in original format with all control bytes intact.
+        /// </summary>
+        public struct TextRecord
+        {
+            public int id;
+            public string text;
+        }
 
         private struct TextRecordDatabaseHeader
         {
@@ -54,9 +92,6 @@ namespace DaggerfallConnect.Arena2
             public UInt32 Offset;
         }
 
-        #endregion
-
-        #region Formatting
         #endregion
 
         #region Constructors
@@ -103,9 +138,31 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
-        /// Gets raw text record bytes by index with all special bytes intact, such as terminating 0xfe.
+        /// Converts index to id. Invalid index returns -1.
         /// </summary>
-        public byte[] GetRawTextRecordByIndex(int index)
+        public int IndexToId(int index)
+        {
+            if (!isLoaded)
+                return -1;
+
+            return header.TextRecordHeaders[index].TextRecordId;
+        }
+
+        /// <summary>
+        /// Converts id to index. Invalid id returns -1.
+        /// </summary>
+        public int IdToIndex(int id)
+        {
+            if (!isLoaded || !recordIdToIndexDict.ContainsKey(id))
+                return -1;
+
+            return recordIdToIndexDict[id];
+        }
+
+        /// <summary>
+        /// Gets raw bytes by index with all special bytes intact, such as terminating 0xfe.
+        /// </summary>
+        public byte[] GetBytesByIndex(int index)
         {
             if (!isLoaded)
                 return null;
@@ -115,20 +172,37 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
-        /// Gets raw text record bytes by id with all special bytes intact, such as terminating 0xfe.
+        /// Gets raw bytes by id with all special bytes intact, such as terminating 0xfe.
         /// </summary>
-        public byte[] GetRawTextRecordById(int id)
+        public byte[] GetBytesById(int id)
         {
-            if (!isLoaded || !recordIdToIndexDict.ContainsKey(id))
+            int index = IdToIndex(id);
+            if (index == -1)
                 return null;
 
-            int index = recordIdToIndexDict[id];
-            return GetRawTextRecordByIndex(index);
+            return GetBytesByIndex(index);
+        }
+
+        /// <summary>
+        /// Gets TextRecord data by index.
+        /// Special formatting characters are parsed into %x00 format.
+        /// </summary>
+        public TextRecord GetTextRecordByIndex(int index)
+        {
+            TextRecord textRecord = new TextRecord();
+
+            if (isLoaded)
+            {
+                textRecord.id = header.TextRecordHeaders[index].TextRecordId;
+                textRecord.text = ParseBytes(GetBytesByIndex(index));
+            }
+
+            return textRecord;
         }
 
         #endregion
 
-        #region Private Methods
+        #region Reading Methods
 
         void ReadHeader(BinaryReader reader)
         {
@@ -169,6 +243,30 @@ namespace DaggerfallConnect.Arena2
             reader.BaseStream.Position = startPosition;
 
             return recordLength;
+        }
+
+        #endregion
+
+        #region Parsing Methods
+
+        string ParseBytes(byte[] buffer)
+        {
+            string dst = string.Empty;
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                byte b = buffer[i];
+                if (b >= (byte)Formatting.FirstCharacter && b <= (byte)Formatting.LastCharacter)
+                {
+                    dst += Encoding.UTF8.GetString(buffer, i, 1);           // Pass-through character bytes to string
+                }
+                else
+                {
+                    dst += string.Format("[0x{0}]", b.ToString("X2"));      // Format control bytes in [0x00] format
+                }
+            }
+            
+            return dst;
         }
 
         #endregion

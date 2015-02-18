@@ -62,11 +62,11 @@ namespace DaggerfallWorkshop
             if (dfUnity.Option_AutomateCityLights && light)
             {
                 // Only change if day/night flag changes
-                if (lastCityLightsFlag != dfUnity.WorldTime.CityLightsOn)
+                if (lastCityLightsFlag != dfUnity.WorldTime.Now.IsCityLightsOn)
                 {
                     // Set light
-                    light.enabled = dfUnity.WorldTime.CityLightsOn;
-                    lastCityLightsFlag = dfUnity.WorldTime.CityLightsOn;
+                    light.enabled = dfUnity.WorldTime.Now.IsCityLightsOn;
+                    lastCityLightsFlag = dfUnity.WorldTime.Now.IsCityLightsOn;
                 }
             }
         }
@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop
                 dfUnity = DaggerfallUnity.Instance;
 
                 // Force first update to set lights
-                lastCityLightsFlag = !dfUnity.WorldTime.CityLightsOn;
+                lastCityLightsFlag = !dfUnity.WorldTime.Now.IsCityLightsOn;
             }
 
             // Do nothing if DaggerfallUnity not ready

@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop
         float[,] heights;
         Color32[] tileMap;
         int currentWorldClimate = -1;
-        WorldTime.Seasons season = WorldTime.Seasons.Summer;
+        DaggerfallDateTime.Seasons season = DaggerfallDateTime.Seasons.Summer;
         bool ready;
         
         void Start()
@@ -103,13 +103,13 @@ namespace DaggerfallWorkshop
         public void UpdateClimateMaterial()
         {
             // Update atlas texture if world climate changed
-            if (currentWorldClimate != MapData.worldClimate || dfUnity.WorldTime.SeasonValue != season)
+            if (currentWorldClimate != MapData.worldClimate || dfUnity.WorldTime.Now.SeasonValue != season)
             {
                 // Get current climate and ground archive
                 DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(MapData.worldClimate);
                 int groundArchive = climate.GroundArchive;
                 if (climate.ClimateType != DFLocation.ClimateBaseType.Desert &&
-                    dfUnity.WorldTime.SeasonValue == WorldTime.Seasons.Winter)
+                    dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter)
                 {
                     // Offset to snow textures
                     groundArchive++;

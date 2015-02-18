@@ -7,6 +7,7 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Demo
 {
@@ -38,7 +39,7 @@ namespace DaggerfallWorkshop.Demo
         float distance;
 
         SoundClips currentFootstepSound = SoundClips.None;
-        WorldTime.Seasons currentSeason = WorldTime.Seasons.Summer;
+        DaggerfallDateTime.Seasons currentSeason = DaggerfallDateTime.Seasons.Summer;
         bool isInside = false;
 
         void Start()
@@ -68,11 +69,11 @@ namespace DaggerfallWorkshop.Demo
         {
             // Change footstep sounds between winter/summer variants
             // or when player enters/exits an interior space
-            if (dfUnity.WorldTime.SeasonValue != currentSeason || isInside != playerEnterExit.IsPlayerInside)
+            if (dfUnity.WorldTime.Now.SeasonValue != currentSeason || isInside != playerEnterExit.IsPlayerInside)
             {
-                currentSeason = dfUnity.WorldTime.SeasonValue;
+                currentSeason = dfUnity.WorldTime.Now.SeasonValue;
                 isInside = playerEnterExit.IsPlayerInside;
-                if (currentSeason == WorldTime.Seasons.Winter && !isInside)
+                if (currentSeason == DaggerfallDateTime.Seasons.Winter && !isInside)
                     currentFootstepSound = FootstepSoundSnow;
                 else
                     currentFootstepSound = FootstepSoundNormal;

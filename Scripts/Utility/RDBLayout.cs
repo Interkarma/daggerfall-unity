@@ -378,7 +378,7 @@ namespace DaggerfallWorkshop.Utility
             go.transform.position = billboardPosition;
 
             // Handle supported editor flats
-            if (dfUnity.Option_ImportEnemies && archive == 199)
+            if (archive == 199)
             {
                 switch (record)
                 {
@@ -386,12 +386,18 @@ namespace DaggerfallWorkshop.Utility
                         startMarkers.Add(go);
                         break;
                     case 15:                        // Random enemy
-                        AddRandomRDBEnemy(obj);
-                        go.SetActive(false);
+                        if (dfUnity.Option_ImportEnemies)
+                        {
+                            AddRandomRDBEnemy(obj);
+                            go.SetActive(false);
+                        }
                         break;
                     case 16:                        // Fixed enemy
-                        AddFixedRDBEnemy(obj);
-                        go.SetActive(false);
+                        if (dfUnity.Option_ImportEnemies)
+                        {
+                            AddFixedRDBEnemy(obj);
+                            go.SetActive(false);
+                        }
                         break;
                 }
             }
