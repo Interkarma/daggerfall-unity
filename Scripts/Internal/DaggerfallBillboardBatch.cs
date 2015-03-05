@@ -6,6 +6,7 @@
 // Project Page:    https://github.com/Interkarma/daggerfall-unity
 
 using UnityEngine;
+using UnityEngine.Rendering;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -49,7 +50,7 @@ namespace DaggerfallWorkshop
 
         [Range(500, 511)]
         public int NatureMaterial = 504;
-        public bool CastShadows = true;
+        public ShadowCastingMode ShadowCasting = ShadowCastingMode.On;
         [Range(1, 127)]
         public int RandomWidth = 16;
         [Range(1, 127)]
@@ -58,6 +59,7 @@ namespace DaggerfallWorkshop
 
         DaggerfallUnity dfUnity;
         int currentArchive = -1;
+        MeshRenderer meshRenderer;
 
         [Serializable]
         struct BillboardItem
@@ -111,9 +113,9 @@ namespace DaggerfallWorkshop
 
             // Assign renderer properties
             // Turning off receive shadows to prevent self-shadowing
-            renderer.sharedMaterial = atlasMaterial;
-            renderer.castShadows = CastShadows;
-            renderer.receiveShadows = false;
+            meshRenderer.sharedMaterial = atlasMaterial;
+            meshRenderer.shadowCastingMode = ShadowCasting;
+            meshRenderer.receiveShadows = false;
 
             NatureMaterial = archive;
             currentArchive = archive;
@@ -317,6 +319,9 @@ namespace DaggerfallWorkshop
                 DaggerfallUnity.LogMessage("DaggerfallBillboardBatch: DaggerfallUnity component is not ready. Have you set your Arena2 path?");
                 return false;
             }
+
+            // Save references
+            meshRenderer = GetComponent<MeshRenderer>();
 
             return true;
         }

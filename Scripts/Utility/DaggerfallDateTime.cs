@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Utility
         public const int DaysPerWeek = 7;
         public const int DaysPerMonth = 30;
         public const int MonthsPerYear = 12;
+        public const int DaysPerYear = DaysPerMonth * MonthsPerYear;
         public const int SecondsPerHour = SecondsPerMinute * MinutesPerHour;
         public const int SecondsPerDay = SecondsPerHour * HoursPerDay;
         public const int SecondsPerWeek = SecondsPerDay * DaysPerWeek;
@@ -47,7 +48,7 @@ namespace DaggerfallWorkshop.Utility
         // Time values by unit for easy use
         public int Year = 405;
         public int Month = 5;
-        public int Day = 0;
+        public int Day = 0; // Day of the month
         public int Hour = 12;
         public int Minute = 0;
         public float Second = 0;
@@ -95,7 +96,7 @@ namespace DaggerfallWorkshop.Utility
         {
             get { return GetBirthSignName(); }
         }
-        
+
         /// <summary>
         /// Gets current birth sign enum value.
         /// </summary>
@@ -328,19 +329,48 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets current time in seconds.
+        /// Gets the current time in seconds since year zero.
         /// </summary>
-        public long ToSeconds()
+        public ulong ToSeconds()
         {
             long final =
-                SecondsPerYear * Year +
+                Convert.ToInt64(SecondsPerYear) * Year +
                 SecondsPerMonth * Month +
                 SecondsPerDay * Day +
                 SecondsPerHour * Hour +
                 SecondsPerMinute * Minute +
                 (int)Second;
 
-            return final;
+            return (ulong)final;
+        }
+
+        /// <summary>
+        /// Sets the time using a time expressed in seconds since year zero.
+        /// </summary>
+        public void FromSeconds(ulong time)
+        {
+            ulong dayclock, dayno;
+            Month = 0;
+            Year = 0;
+
+            dayclock = time % SecondsPerDay;
+            dayno = time / SecondsPerDay;
+
+            Second = dayclock % SecondsPerMinute;
+            Minute = (int)(dayclock % SecondsPerHour) / SecondsPerMinute;
+            Hour = (int)dayclock / SecondsPerHour;
+            while (dayno >= DaysPerYear)
+            {
+                dayno -= DaysPerYear;
+                Year++;
+            }
+            while (dayno >= DaysPerMonth)
+            {
+                dayno -= DaysPerMonth;
+                Month++;
+            }
+
+            Day = (int)dayno;
         }
 
         /// <summary>

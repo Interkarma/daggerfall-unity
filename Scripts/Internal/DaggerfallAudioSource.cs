@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop
             {
                 PreviewID = (int)dfUnity.SoundReader.GetSoundID(PreviewIndex);
                 PreviewClip = (SoundClips)PreviewIndex;
-                audioSource.PlayOneShot(dfUnity.SoundReader.GetAudioClip(PreviewIndex, false));
+                audioSource.PlayOneShot(dfUnity.SoundReader.GetAudioClip(PreviewIndex));
             }
         }
 
@@ -135,71 +135,74 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Quick set from index.
         /// </summary>
-        public void SetSound(int soundIndex, AudioPresets preset = AudioPresets.OnDemand, bool _3D = true)
+        public void SetSound(int soundIndex, AudioPresets preset = AudioPresets.OnDemand, float spatialBlend = 1)
         {
             SoundIndex = soundIndex;
             Preset = preset;
-            Apply(_3D);
+            Apply(spatialBlend);
         }
 
         /// <summary>
         /// Quick set from clip name.
         /// </summary>
-        public void SetSound(SoundClips soundClip, AudioPresets preset = AudioPresets.OnDemand, bool _3D = true)
+        public void SetSound(SoundClips soundClip, AudioPresets preset = AudioPresets.OnDemand, float spatialBlend = 1)
         {
             SoundIndex = (int)soundClip;
             Preset = preset;
-            Apply(_3D);
+            Apply(spatialBlend);
         }
 
         /// <summary>
         /// Quick set from ID.
         /// </summary>
-        public void SetSound(uint soundID, AudioPresets preset = AudioPresets.OnDemand, bool _3D = true)
+        public void SetSound(uint soundID, AudioPresets preset = AudioPresets.OnDemand, float spatialBlend = 1)
         {
             if (ReadyCheck())
             {
                 int soundIndex = dfUnity.SoundReader.GetSoundIndex(soundID);
                 SoundIndex = soundIndex;
                 Preset = preset;
-                Apply(_3D);
+                Apply(spatialBlend);
             }
         }
 
         /// <summary>
         /// Plays sound index once without changing clip on AudioSource.
         /// </summary>
-        public void PlayOneShot(int soundIndex, bool _3D = true, float volumeScale = 1f)
+        public void PlayOneShot(int soundIndex, float spatialBlend = 1, float volumeScale = 1f)
         {
             if (enabled && ReadyCheck())
             {
-                AudioClip clip = dfUnity.SoundReader.GetAudioClip(soundIndex, _3D);
+                AudioClip clip = dfUnity.SoundReader.GetAudioClip(soundIndex);
                 if (clip)
+                {
+                    audioSource.spatialBlend = spatialBlend;
                     audioSource.PlayOneShot(clip, volumeScale);
+                }
             }
         }
 
         /// <summary>
         /// Plays sound clip once without changing clip on AudioSource.
         /// </summary>
-        public void PlayOneShot(SoundClips soundClip, bool _3D = true, float volumeScale = 1f)
+        public void PlayOneShot(SoundClips soundClip, float spatialBlend = 1, float volumeScale = 1f)
         {
-            PlayOneShot((int)soundClip, _3D, volumeScale);
+            PlayOneShot((int)soundClip, spatialBlend, volumeScale);
         }
 
         /// <summary>
         /// Plays sound ID once without changing clip on AudioSource.
         /// </summary>
-        public void PlayOneShot(uint soundID, bool _3D = true, float volumeScale = 1f)
+        public void PlayOneShot(uint soundID, float spatialBlend = 1, float volumeScale = 1f)
         {
             int soundIndex = dfUnity.SoundReader.GetSoundIndex(soundID);
-            PlayOneShot(soundIndex, _3D, volumeScale);
+            PlayOneShot(soundIndex, spatialBlend, volumeScale);
         }
 
-        public AudioClip GetAudioClip(int soundIndex, bool _3D = true)
+        public AudioClip GetAudioClip(int soundIndex)
         {
             if (ReadyCheck())
-                return dfUnity.SoundReader.GetAudioClip(soundIndex, _3D);
+                return dfUnity.SoundReader.GetAudioClip(soundIndex);
             else
                 return null;
         }
@@ -209,7 +212,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Apply current sound index and behaviour to AudioSource.
         /// </summary>
-        private void Apply(bool _3D = true)
+        private void Apply(float spatialBlend = 1)
         {
             // Do nothing if not ready
             if (!ReadyCheck() || !audioSource.enabled)
@@ -220,12 +223,15 @@ namespace DaggerfallWorkshop
                 return;
 
             // Get new clip
-            audioClip = dfUnity.SoundReader.GetAudioClip(SoundIndex, _3D);
+            audioClip = dfUnity.SoundReader.GetAudioClip(SoundIndex);
             if (audioClip == null)
             {
                 DaggerfallUnity.LogMessage("Failed to load Daggerfall audio clip.");
                 return;
             }
+
+            // Set spatial blend
+            audioSource.spatialBlend = spatialBlend;
 
             // Apply preset
             switch (Preset)

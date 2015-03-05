@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Demo
             dfAudioSource.AudioSource.maxDistance = AttractRadius;
             if (LinearRolloff)
                 dfAudioSource.AudioSource.rolloffMode = AudioRolloffMode.Linear;
+            dfAudioSource.AudioSource.spatialBlend = 1;
 
             // Assign sounds from mobile
             if (SoundsFromMobile && mobile)

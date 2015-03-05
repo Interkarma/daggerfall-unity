@@ -18,6 +18,8 @@ namespace DaggerfallWorkshop
     /// <summary>
     /// Specialised action component for hinged doors in builings and interiors.
     /// </summary>
+    [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(MeshCollider))]
     public class DaggerfallActionDoor : MonoBehaviour
     {
         public bool StartOpen = false;                  // Door should start in open state
@@ -37,6 +39,8 @@ namespace DaggerfallWorkshop
         bool isOpen = false;
         bool isMoving = false;
         Vector3 closedTransform;
+        AudioSource audioSource;
+        MeshCollider meshCollider;
 
         public bool IsOpen
         {
@@ -46,6 +50,8 @@ namespace DaggerfallWorkshop
         public void Start()
         {
             closedTransform = transform.rotation.eulerAngles;
+            audioSource = GetComponent<AudioSource>();
+            meshCollider = GetComponent<MeshCollider>();
 
             if (StartOpen)
                 Open(0, true);
@@ -64,7 +70,7 @@ namespace DaggerfallWorkshop
             if (!isOpen)
             {
                 // Play bash sound if flagged and ready
-                if (PlaySounds && BashSound > 0 && audio)
+                if (PlaySounds && BashSound > 0 && audioSource)
                 {
                     DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
                     dfAudioSource.PlayOneShot(BashSound);
@@ -109,7 +115,7 @@ namespace DaggerfallWorkshop
             if (((IsLocked || IsMagicallyHeld) && !ignoreLocks) || isOpen || isMoving)
             {
                 // Play open sound if flagged and ready
-                if (PlaySounds && LockedSound > 0 && duration > 0 && audio)
+                if (PlaySounds && LockedSound > 0 && duration > 0 && audioSource)
                 {
                     DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
                     dfAudioSource.PlayOneShot(LockedSound);
@@ -129,11 +135,14 @@ namespace DaggerfallWorkshop
             isMoving = true;
 
             // Set collider to trigger only
-            if (DisableColliderWhenOpen && collider)
-                collider.isTrigger = true;
+            if (DisableColliderWhenOpen && meshCollider)
+            {
+                meshCollider.convex = true;
+                meshCollider.isTrigger = true;
+            }
 
             // Play open sound if flagged and ready
-            if (PlaySounds && OpenSound > 0 && duration > 0 && audio)
+            if (PlaySounds && OpenSound > 0 && duration > 0 && audioSource)
             {
                 DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
                 dfAudioSource.PlayOneShot(OpenSound);
@@ -173,15 +182,15 @@ namespace DaggerfallWorkshop
             isMoving = false;
 
             // Play close sound if flagged and ready
-            if (PlaySounds && CloseSound > 0 && duration > 0 && audio)
+            if (PlaySounds && CloseSound > 0 && duration > 0 && audioSource)
             {
                 DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
                 dfAudioSource.PlayOneShot(CloseSound);
             }
 
             // Set collider back to a solid object
-            if (DisableColliderWhenOpen && collider)
-                collider.isTrigger = false;
+            if (DisableColliderWhenOpen && meshCollider)
+                meshCollider.isTrigger = false;
         }
 
         #endregion

@@ -748,6 +748,9 @@ namespace DaggerfallConnect.Arena2
         /// <param name="mapPixelY">Map pixel Y position.</param>
         public int GetClimateIndex(int mapPixelX, int mapPixelY)
         {
+            // Add +1 to X coordinate to line up with height map
+            mapPixelX += 1;
+
             return climatePak.GetValue(mapPixelX, mapPixelY);
         }
 

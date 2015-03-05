@@ -73,9 +73,10 @@ namespace DaggerfallWorkshop.Demo
             // Start rain loop if not running
             if ((Presets == AmbientSoundPresets.Rain || Presets == AmbientSoundPresets.Storm) && rainLoop == null)
             {
-                rainLoop = dfAudioSource.GetAudioClip((int)SoundClips.AmbientRaining, false);
+                rainLoop = dfAudioSource.GetAudioClip((int)SoundClips.AmbientRaining);
                 dfAudioSource.AudioSource.clip = rainLoop;
                 dfAudioSource.AudioSource.loop = true;
+                dfAudioSource.AudioSource.spatialBlend = 0;
                 dfAudioSource.AudioSource.Play();
             }
 
@@ -108,7 +109,7 @@ namespace DaggerfallWorkshop.Demo
             else
             {
                 // Play ambient sound as a one-shot 2D sound
-                dfAudioSource.PlayOneShot((int)ambientSounds[index], false);
+                dfAudioSource.PlayOneShot((int)ambientSounds[index], 0);
             }
         }
 
@@ -150,7 +151,7 @@ namespace DaggerfallWorkshop.Demo
             else
             {
                 // Unknown clip, just play as one-shot and exit
-                dfAudioSource.PlayOneShot((int)clip, false);
+                dfAudioSource.PlayOneShot((int)clip, 0);
                 yield break;
             }
 
@@ -182,7 +183,7 @@ namespace DaggerfallWorkshop.Demo
                 yield return new WaitForSeconds(1f / soundDelay);
 
             // Play sound effect
-            dfAudioSource.PlayOneShot((int)clip, false);
+            dfAudioSource.PlayOneShot((int)clip, 0);
 
             yield break;
         }
@@ -231,7 +232,7 @@ namespace DaggerfallWorkshop.Demo
             }
 
             lastPresets = Presets;
-            dfAudioSource.SetSound(0, AudioPresets.OnDemand, false);
+            dfAudioSource.SetSound(0, AudioPresets.OnDemand, 0);
         }
 
         #endregion

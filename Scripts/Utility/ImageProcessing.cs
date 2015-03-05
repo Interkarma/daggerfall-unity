@@ -8,6 +8,7 @@
 using UnityEngine;
 using System.Collections;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 
 namespace DaggerfallWorkshop.Utility
@@ -250,7 +251,7 @@ namespace DaggerfallWorkshop.Utility
         {
             Texture2D texture = new Texture2D(width, height, textureFormat, mipMaps);
             texture.SetPixels32(src);
-            texture.Apply(true);
+            texture.Apply(mipMaps);
 
             return texture;
         }
@@ -323,6 +324,89 @@ namespace DaggerfallWorkshop.Utility
             }
 
             return indices;
+        }
+
+        // Gets a glyph from FntFile as Color32 array
+        public static Color32[] GetGlyphColors(FntFile fntFile, int index, Color backColor, Color textColor, out Rect sizeOut)
+        {
+            // Get actual glyph rect
+            sizeOut = new Rect(0, 0, fntFile.GetGlyphWidth(index), fntFile.FixedHeight);
+
+            // Get glyph byte data as color array
+            byte[] data = fntFile.GetGlyphPixels(index);
+            Color32[] colors = new Color32[data.Length];
+            for (int y = 0; y < FntFile.GlyphFixedDimension; y++)
+            {
+                for (int x = 0; x < FntFile.GlyphFixedDimension; x++)
+                {
+                    int pos = y * FntFile.GlyphFixedDimension + x;
+                    if (data[pos] > 0)
+                        colors[pos] = textColor;
+                    else
+                        colors[pos] = backColor;
+                }
+            }
+
+            return colors;
+        }
+
+        // Creates a font atlas from FntFile
+        public static void CreateFontAtlas(FntFile fntFile, Color backColor, Color textColor, out Texture2D atlasTextureOut, out Rect[] atlasRectsOut)
+        {
+            const int atlasDim = 256;
+
+            // Create atlas colors array
+            Color32[] atlasColors = new Color32[atlasDim * atlasDim];
+
+            // Add Daggerfall glyphs
+            int xpos = 0, ypos = 0;
+            Rect[] rects = new Rect[FntFile.MaxGlyphCount];
+            for (int i = 0; i < FntFile.MaxGlyphCount; i++)
+            {
+                // Get glyph colors
+                Rect rect;
+                Color32[] glyphColors = GetGlyphColors(fntFile, i, backColor, textColor, out rect);
+
+                // Offset pixel rect
+                rect.x += xpos;
+                rect.y += ypos;
+
+                // Flip pixel rect top-bottom
+                float top = rect.yMin;
+                float bottom = rect.yMax;
+                rect.yMin = bottom;
+                rect.yMax = top;
+
+                // Convert to UV coords and store
+                rect.xMin /= atlasDim;
+                rect.yMin /= atlasDim;
+                rect.xMax /= atlasDim;
+                rect.yMax /= atlasDim;
+                rects[i] = rect;
+
+                // Insert into atlas
+                InsertColors(
+                    ref glyphColors,
+                    ref atlasColors,
+                    xpos,
+                    ypos,
+                    FntFile.GlyphFixedDimension,
+                    FntFile.GlyphFixedDimension,
+                    atlasDim,
+                    atlasDim);
+
+                // Offset position
+                xpos += FntFile.GlyphFixedDimension;
+                if (xpos >= atlasDim)
+                {
+                    xpos = 0;
+                    ypos += FntFile.GlyphFixedDimension;
+                }
+            }
+
+            // Create texture from colors array
+            atlasTextureOut = MakeTexture2D(ref atlasColors, atlasDim, atlasDim, TextureFormat.ARGB32, false);
+            atlasRectsOut = rects;
         }
 
         #region Private Methods

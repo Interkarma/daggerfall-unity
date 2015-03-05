@@ -28,8 +28,7 @@ namespace DaggerfallWorkshop
         DaggerfallUnity dfUnity;
         SndFile soundFile;
 
-        Dictionary<int, AudioClip> clipDict2D = new Dictionary<int, AudioClip>();
-        Dictionary<int, AudioClip> clipDict3D = new Dictionary<int, AudioClip>();
+        Dictionary<int, AudioClip> clipDict = new Dictionary<int, AudioClip>();
 
         #endregion
 
@@ -49,12 +48,10 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Gets AudioClip based on Daggerfall sound index.
-        /// Caches 2D and 3D sounds independently.
         /// </summary>
         /// <param name="soundIndex">Sound index.</param>
-        /// <param name="_3D">True for a 3D sound, otherwise sound is 2D.</param>
         /// <returns>AudioClip or null.</returns>
-        public AudioClip GetAudioClip(int soundIndex, bool _3D = true)
+        public AudioClip GetAudioClip(int soundIndex)
         {
             const float divisor = 1.0f / 128.0f;
 
@@ -62,7 +59,7 @@ namespace DaggerfallWorkshop
                 return null;
 
             // Look for clip in cache
-            AudioClip cachedClip = GetCachedClip(soundIndex, _3D);
+            AudioClip cachedClip = GetCachedClip(soundIndex);
             if (cachedClip)
                 return cachedClip;
 
@@ -74,13 +71,7 @@ namespace DaggerfallWorkshop
             // Create audio clip
             AudioClip clip;
             string name = string.Format("DaggerfallClip [Index={0}, ID={1}]", soundIndex, (int)soundFile.BsaFile.GetRecordId(soundIndex));
-#if UNITY_5_0
-			clip = AudioClip.Create (name, dfSound.WaveData.Length, 1, SndFile.SampleRate, false);
-            // TODO: Set AudioSource.spatialBlend property where appropriate.
-
-#else
-            clip = AudioClip.Create(name, dfSound.WaveData.Length, 1, SndFile.SampleRate, _3D, false);
-#endif
+            clip = AudioClip.Create(name, dfSound.WaveData.Length, 1, SndFile.SampleRate, false);
 
             // Create data array
             float[] data = new float[dfSound.WaveData.Length];
@@ -91,7 +82,7 @@ namespace DaggerfallWorkshop
             clip.SetData(data, 0);
 
             // Cache the clip
-            CacheClip(soundIndex, _3D, clip);
+            CacheClip(soundIndex, clip);
 
             return clip;
         }
@@ -100,9 +91,8 @@ namespace DaggerfallWorkshop
         /// Gets AudioClip based on Daggerfall SoundID.
         /// </summary>
         /// <param name="soundID">Sound ID.</param>
-        /// <param name="_3D">True for a 3D sound, otherwise sound is 2D.</param>
         /// <returns>AudioClip or null.</returns>
-        public AudioClip GetAudioClip(uint soundID, bool _3D = true)
+        public AudioClip GetAudioClip(uint soundID)
         {
             if (!ReadyCheck())
                 return null;
@@ -114,9 +104,8 @@ namespace DaggerfallWorkshop
         /// Gets AudioClip based on Daggerfall SoundClip enum.
         /// </summary>
         /// <param name="soundClip">SoundClip enum.</param>
-        /// <param name="_3D">True for a 3D sound, otherwise sound is 2D.</param>
         /// <returns>AudioClip or null.</returns>
-        public AudioClip GetAudioClip(SoundClips soundClip, bool _3D = true)
+        public AudioClip GetAudioClip(SoundClips soundClip)
         {
             if (!ReadyCheck())
                 return null;
@@ -154,22 +143,17 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
-        private AudioClip GetCachedClip(int key, bool _3D)
+        private AudioClip GetCachedClip(int key)
         {
-            if (_3D && clipDict3D.ContainsKey(key))
-                return clipDict3D[key];
-            else if (!_3D && clipDict2D.ContainsKey(key))
-                return clipDict2D[key];
+            if (clipDict.ContainsKey(key))
+                return clipDict[key];
             else
                 return null;
         }
 
-        private void CacheClip(int key, bool _3D, AudioClip clip)
+        private void CacheClip(int key, AudioClip clip)
         {
-            if (_3D)
-                clipDict3D.Add(key, clip);
-            else
-                clipDict2D.Add(key, clip);
+            clipDict.Add(key, clip);
         }
 
         private bool ReadyCheck()

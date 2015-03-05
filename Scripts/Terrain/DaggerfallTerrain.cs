@@ -240,7 +240,7 @@ namespace DaggerfallWorkshop
 
                 // Apply terrain data
                 terrain.terrainData = terrainData;
-                (terrain.collider as TerrainCollider).terrainData = terrainData;
+                terrain.GetComponent<TerrainCollider>().terrainData = terrainData;
                 terrain.basemapDistance = basemapDistance;
             }
 
@@ -250,6 +250,7 @@ namespace DaggerfallWorkshop
 
             // Promote material
             terrain.materialTemplate = terrainMaterial;
+            terrain.materialType = Terrain.MaterialType.Custom;
 
             // Promote heights
             Vector3 size = terrain.terrainData.size;

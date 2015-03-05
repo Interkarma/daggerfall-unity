@@ -33,8 +33,7 @@ namespace DaggerfallWorkshop.Demo
         void Update()
         {
             // Ensure the cursor is always locked when set
-#if UNITY_5_0
-			if (lockCursor)
+			if (lockCursor && enableMouseLook)
 			{
 				Cursor.lockState = CursorLockMode.Locked;
 				Cursor.visible = false;
@@ -44,9 +43,6 @@ namespace DaggerfallWorkshop.Demo
 				Cursor.lockState = CursorLockMode.None;
 				Cursor.visible = true;
 			}
-#else
-            Screen.lockCursor = lockCursor;
-#endif
 
             // Enable/disable mouse look when capturing/uncapturing mouse
             // Thanks LypyL!
@@ -100,7 +96,7 @@ namespace DaggerfallWorkshop.Demo
             // If there's a character body that acts as a parent to the camera
             if (characterBody)
             {
-                var yRotation = Quaternion.AngleAxis(_mouseAbsolute.x, characterBody.transform.up);
+                var yRotation = Quaternion.AngleAxis(_mouseAbsolute.x, Vector3.up);
                 characterBody.transform.localRotation = yRotation;
                 characterBody.transform.localRotation *= targetCharacterOrientation;
             }

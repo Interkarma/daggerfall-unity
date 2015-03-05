@@ -479,7 +479,7 @@ namespace DaggerfallWorkshop
                 Shader.Find(dfUnity.MaterialReader.DefaultBillboardShaderName));
 
             // Set new enemy material
-            renderer.sharedMaterial = material;
+            GetComponent<MeshRenderer>().sharedMaterial = material;
         }
 
         /// <summary>

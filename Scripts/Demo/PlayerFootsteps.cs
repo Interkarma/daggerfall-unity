@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Demo
         public float RunStepInterval = 1.8f;
         public float PitchVariance = 0.3f;
         public float GroundDistance = 1.8f;
-        public float FootstepVolumeScale = 0.5f;
+        public float FootstepVolumeScale = 0.7f;
         public SoundClips FootstepSoundNormal = SoundClips.PlayerFootstepNormal;
         public SoundClips FootstepSoundSnow = SoundClips.PlayerFootstepSnow;
         public SoundClips FallHardSound = SoundClips.FallHard;
@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Demo
             customAudioSource.playOnAwake = false;
             customAudioSource.loop = false;
             customAudioSource.dopplerLevel = 0f;
+            customAudioSource.spatialBlend = 0f;
 
             // Set start position
             lastPosition = GetHorizontalPosition();
@@ -84,7 +85,7 @@ namespace DaggerfallWorkshop.Demo
             // Reload clip if needed
             if (clip == null)
             {
-                clip = dfAudioSource.GetAudioClip((int)currentFootstepSound, false);
+                clip = dfAudioSource.GetAudioClip((int)currentFootstepSound);
             }
 
             // Check if player is grounded
@@ -149,7 +150,7 @@ namespace DaggerfallWorkshop.Demo
         {
             // Play falling damage one-shot through normal audio source
             if (dfAudioSource)
-                dfAudioSource.PlayOneShot((int)FallDamageSound, false, FootstepVolumeScale);
+                dfAudioSource.PlayOneShot((int)FallDamageSound, 0, FootstepVolumeScale);
         }
 
         // Capture this message so we can play hard fall sound
@@ -157,7 +158,7 @@ namespace DaggerfallWorkshop.Demo
         {
             // Play hard fall one-shot through normal audio source
             if (dfAudioSource)
-                dfAudioSource.PlayOneShot((int)FallHardSound, false, FootstepVolumeScale);
+                dfAudioSource.PlayOneShot((int)FallHardSound, 0, FootstepVolumeScale);
         }
 
         #endregion

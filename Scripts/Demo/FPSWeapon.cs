@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Demo
             if (dfAudioSource)
             {
                 dfAudioSource.AudioSource.pitch = 1f;// *AttackSpeedScale;
-                dfAudioSource.PlayOneShot(DrawWeaponSound, false);
+                dfAudioSource.PlayOneShot(DrawWeaponSound, 0);
             }
         }
 
@@ -140,7 +140,7 @@ namespace DaggerfallWorkshop.Demo
             if (dfAudioSource)
             {
                 dfAudioSource.AudioSource.pitch = 1f * AttackSpeedScale;
-                dfAudioSource.PlayOneShot(SwingWeaponSound, false);
+                dfAudioSource.PlayOneShot(SwingWeaponSound, 0);
             }
         }
 
@@ -150,7 +150,7 @@ namespace DaggerfallWorkshop.Demo
             {
                 dfAudioSource.AudioSource.pitch = 1f;
                 int sound = (int)SoundClips.Hit1 + UnityEngine.Random.Range(0, 5);
-                dfAudioSource.PlayOneShot(sound, false);
+                dfAudioSource.PlayOneShot(sound, 0);
             }
         }
 
@@ -160,7 +160,7 @@ namespace DaggerfallWorkshop.Demo
             {
                 dfAudioSource.AudioSource.pitch = 1f;
                 int sound = (int)SoundClips.Parry1 + UnityEngine.Random.Range(0, 9);
-                dfAudioSource.PlayOneShot(sound, false);
+                dfAudioSource.PlayOneShot(sound, 0);
             }
         }
 

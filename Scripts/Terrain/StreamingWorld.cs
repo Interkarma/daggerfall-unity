@@ -677,7 +677,7 @@ namespace DaggerfallWorkshop
             float height = dfTerrain.MapData.averageHeight * TerrainScale;
             GameObject locationObject = new GameObject(string.Format("DaggerfallLocation [Region={0}, Name={1}]", locationOut.RegionName, locationOut.Name));
             locationObject.transform.parent = this.transform;
-            //locationObject.hideFlags = HideFlags.HideAndDontSave;
+            locationObject.hideFlags = HideFlags.HideAndDontSave;
             locationObject.transform.position = terrainArray[terrain].terrainObject.transform.position + new Vector3(0, height, 0);
             DaggerfallLocation dfLocation = locationObject.AddComponent<DaggerfallLocation>() as DaggerfallLocation;
             dfLocation.SetLocation(locationOut, false);

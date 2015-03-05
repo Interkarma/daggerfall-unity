@@ -34,9 +34,11 @@ namespace DaggerfallWorkshop
         float targetRange;
         bool stepping;
         bool restartAnims = true;
+        Light myLight;
 
         void Start()
         {
+            myLight = GetComponent<Light>();
         }
 
         void OnDisable()
@@ -49,7 +51,7 @@ namespace DaggerfallWorkshop
             // Restart animation coroutine if not running
             if (restartAnims)
             {
-                if (light != null && Animate)
+                if (myLight != null && Animate)
                     StartCoroutine(AnimateLight());
                 restartAnims = false;
             }
@@ -59,13 +61,13 @@ namespace DaggerfallWorkshop
                 return;
 
             // Handle automated light enable/disable
-            if (dfUnity.Option_AutomateCityLights && light)
+            if (dfUnity.Option_AutomateCityLights && myLight)
             {
                 // Only change if day/night flag changes
                 if (lastCityLightsFlag != dfUnity.WorldTime.Now.IsCityLightsOn)
                 {
                     // Set light
-                    light.enabled = dfUnity.WorldTime.Now.IsCityLightsOn;
+                    myLight.enabled = dfUnity.WorldTime.Now.IsCityLightsOn;
                     lastCityLightsFlag = dfUnity.WorldTime.Now.IsCityLightsOn;
                 }
             }
@@ -75,22 +77,22 @@ namespace DaggerfallWorkshop
 
         IEnumerator AnimateLight()
         {
-            startRange = light.range;
+            startRange = myLight.range;
 
             while (Animate)
             {
                 if (stepping)
                 {
-                    if (targetRange <= light.range)
+                    if (targetRange <= myLight.range)
                     {
-                        light.range -= Speed;
-                        if (light.range <= targetRange)
+                        myLight.range -= Speed;
+                        if (myLight.range <= targetRange)
                             stepping = false;
                     }
                     else
                     {
-                        light.range += Speed;
-                        if (light.range >= targetRange)
+                        myLight.range += Speed;
+                        if (myLight.range >= targetRange)
                             stepping = false;
                     }
                 }
@@ -104,7 +106,7 @@ namespace DaggerfallWorkshop
                 yield return new WaitForSeconds(1f / FramesPerSecond);
             }
 
-            light.range = startRange;
+            myLight.range = startRange;
         }
 
         private bool ReadyCheck()
@@ -127,6 +129,10 @@ namespace DaggerfallWorkshop
 
             // Get billboard component
             if (ParentBillboard == null)
+                return false;
+
+            // Must have a light component added
+            if (!myLight)
                 return false;
 
             return true;

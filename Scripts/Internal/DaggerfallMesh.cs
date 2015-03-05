@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop
 
             // Assign material array
             if (materials != null)
-                renderer.sharedMaterials = materials;
+                GetComponent<MeshRenderer>().sharedMaterials = materials;
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop
 
             // Assign material array
             if (materials != null)
-                renderer.sharedMaterials = materials;
+                GetComponent<MeshRenderer>().sharedMaterials = materials;
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop
 
             // Assign material array
             if (materials != null)
-                renderer.sharedMaterials = materials;
+                GetComponent<MeshRenderer>().sharedMaterials = materials;
         }
     }
 }

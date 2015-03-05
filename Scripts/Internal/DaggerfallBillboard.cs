@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
         bool restartAnims = true;
+        MeshRenderer meshRenderer;
 
         // Just using a simple animation speed for simple billboard anims
         // You can adjust this or extend as needed
@@ -80,6 +81,7 @@ namespace DaggerfallWorkshop
                 // Get component references
                 mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
                 meshFilter = GetComponent<MeshFilter>();
+                meshRenderer = GetComponent<MeshRenderer>();
             }
         }
 
@@ -176,6 +178,9 @@ namespace DaggerfallWorkshop
             else
                 shader = Shader.Find(dfUnity.MaterialReader.DefaultBillboardShaderName);
 
+            // Get references
+            meshRenderer = GetComponent<MeshRenderer>();
+
             Vector2 size;
             Mesh mesh = null;
             Material material = null;
@@ -243,7 +248,7 @@ namespace DaggerfallWorkshop
             if (mesh)
             {
                 meshFilter.sharedMesh = mesh;
-                renderer.sharedMaterial = material;
+                meshRenderer.sharedMaterial = material;
             }
             if (oldMesh)
             {

@@ -596,7 +596,7 @@ namespace DaggerfallWorkshop.Utility
             c.AudioSource.dopplerLevel = 0;
             c.AudioSource.rolloffMode = AudioRolloffMode.Linear;
             c.AudioSource.maxDistance = 4f;
-            c.AudioSource.volume = 0.4f;
+            c.AudioSource.volume = 0.6f;
             c.SetSound(SoundClips.Burning, AudioPresets.LoopIfPlayerNear);
         }
 

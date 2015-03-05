@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Demo
         public float ScaleFactor = defaultScaleFactor;      // Scale all lights by this amount
         public Light[] OtherLights;                         // Other lights to scale and enable/disable
 
+        Light myLight;
         float keyLightIntensity;
         float[] otherLightsIntensity;
 
@@ -31,6 +32,9 @@ namespace DaggerfallWorkshop.Demo
 
         void Start()
         {
+            // Save reference to light
+            myLight = GetComponent<Light>();
+
             // Save initial intensity of all lights at start
             // This is the value our daily operates against
             SaveLightIntensity();
@@ -43,9 +47,9 @@ namespace DaggerfallWorkshop.Demo
                 return;
 
             // Change to night
-            if (dfUnity.WorldTime.Now.IsNight && light.enabled)
+            if (dfUnity.WorldTime.Now.IsNight && myLight.enabled)
             {
-                light.enabled = false;
+                myLight.enabled = false;
                 if (OtherLights != null)
                 {
                     for (int i = 0; i < OtherLights.Length; i++)
@@ -54,9 +58,9 @@ namespace DaggerfallWorkshop.Demo
             }
 
             // Change to day
-            if (!dfUnity.WorldTime.Now.IsNight && !light.enabled)
+            if (!dfUnity.WorldTime.Now.IsNight && !myLight.enabled)
             {
-                light.enabled = true;
+                myLight.enabled = true;
                 if (OtherLights != null)
                 {
                     for (int i = 0; i < OtherLights.Length; i++)
@@ -65,7 +69,7 @@ namespace DaggerfallWorkshop.Demo
             }
 
             // Set sun direction and scale
-            if (light.enabled)
+            if (myLight.enabled)
             {
                 // Get value 0-1 for dawn through dusk
                 float dawn = DaggerfallDateTime.DawnHour * DaggerfallDateTime.MinutesPerHour;
@@ -74,7 +78,7 @@ namespace DaggerfallWorkshop.Demo
 
                 // Set angle of rotation based on time of day and user value
                 float xrot = 180f * lerp;
-                light.transform.rotation = Quaternion.Euler(xrot, Angle, 0);
+                myLight.transform.rotation = Quaternion.Euler(xrot, Angle, 0);
 
                 // Set light intensity
                 float scale;
@@ -99,7 +103,7 @@ namespace DaggerfallWorkshop.Demo
                 dfUnity = DaggerfallUnity.Instance;
 
             // Must have a light component
-            if (!light)
+            if (!myLight)
                 return false;
 
             // Do nothing if DaggerfallUnity not ready
@@ -114,8 +118,8 @@ namespace DaggerfallWorkshop.Demo
 
         private void SaveLightIntensity()
         {
-            if (light)
-                keyLightIntensity = light.intensity;
+            if (myLight)
+                keyLightIntensity = myLight.intensity;
 
             if (OtherLights != null)
             {
@@ -131,8 +135,8 @@ namespace DaggerfallWorkshop.Demo
 
         void SetLightIntensity(float scale)
         {
-            if (light)
-                light.intensity = keyLightIntensity * scale;
+            if (myLight)
+                myLight.intensity = keyLightIntensity * scale;
 
             if (OtherLights != null)
             {

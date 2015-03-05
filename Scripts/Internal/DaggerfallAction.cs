@@ -19,6 +19,7 @@ namespace DaggerfallWorkshop
     /// <summary>
     /// Defines and executes Daggerfall action records.
     /// </summary>
+    [RequireComponent(typeof(AudioSource))]
     public class DaggerfallAction : MonoBehaviour
     {
         public bool ActionEnabled = false;                          // Enable/disable action
@@ -33,6 +34,7 @@ namespace DaggerfallWorkshop
         public GameObject NextObject;                               // Next object in action chain
         public GameObject PreviousObject;                           // Previous object in action chain
 
+        AudioSource audioSource;
         ActionState currentState;
         Vector3 startPosition;
 
@@ -53,6 +55,7 @@ namespace DaggerfallWorkshop
         {
             currentState = ActionState.Start;
             startPosition = transform.position;
+            audioSource = GetComponent<AudioSource>();
         }
 
         void Update()
@@ -78,9 +81,9 @@ namespace DaggerfallWorkshop
             currentState = ActionState.Playing;
 
             // Start playing sound if flagged and ready
-            if (PlaySound && ActionSoundID > 0 && audio)
+            if (PlaySound && ActionSoundID > 0 && audioSource)
             {
-                audio.Play();
+                audioSource.Play();
             }
 
             // Play next action in chain

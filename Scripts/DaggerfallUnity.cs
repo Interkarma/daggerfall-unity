@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.3.0";
+        public const string Version = "1.3.5";
 
         #region Fields
 
@@ -189,6 +189,7 @@ namespace DaggerfallWorkshop
             {
                 if (!ValidateArena2Path(Arena2Path))
                     throw new Exception("Arena2Path is not valid!");
+                Setup();
             }
 #else
             // Startup

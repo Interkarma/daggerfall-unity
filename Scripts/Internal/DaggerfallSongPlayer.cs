@@ -20,7 +20,7 @@ namespace DaggerfallWorkshop
     [RequireComponent(typeof(AudioSource))]
     public class DaggerfallSongPlayer : MonoBehaviour
     {
-        const int sampleRate = 44100;
+        const int sampleRate = 48000;
         const int polyphony = 100;
 
         [NonSerialized, HideInInspector]
@@ -60,7 +60,6 @@ namespace DaggerfallWorkshop
         void Start()
         {
             InitSynth();
-            audioSource.enabled = false;
         }
 
         void Update()
@@ -118,9 +117,6 @@ namespace DaggerfallWorkshop
             // Stop if playing another song
             Stop();
 
-            // Ensure audio source is enabled
-            audioSource.enabled = true;
-
             // Load song data
             string filename = EnumToFilename(song);
             byte[] songData = LoadSong(filename);
@@ -144,12 +140,6 @@ namespace DaggerfallWorkshop
         {
             if (!InitSynth())
                 return;
-
-            // Disable audio source
-            // This is done to reduce number of active audio sources in scene
-            // If there are too many audio sources then playback will stall
-            // This is common in dungeons which have many audio sources
-            audioSource.enabled = false;
 
             // Stop if playing a song
             if (midiSequencer.IsPlaying)
@@ -178,7 +168,7 @@ namespace DaggerfallWorkshop
             if (midiSynthesizer == null)
             {
                 // Get number of channels
-                if (AudioSettings.driverCaps.ToString() == "Stereo")
+                if (AudioSettings.driverCapabilities.ToString() == "Stereo")
                     channels = 2;
                 else
                     channels = 1;
