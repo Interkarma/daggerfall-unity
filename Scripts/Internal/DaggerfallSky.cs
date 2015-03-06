@@ -433,7 +433,7 @@ namespace DaggerfallWorkshop
             }
 
             // Get sky colour array
-            Color32[] colors = imgFile.GetColors32(ref dfBitmap);
+            Color32[] colors = imgFile.GetColors32(dfBitmap);
 
             // Fix seam on right side of night skies
             for (int y = 0; y < height; y++)

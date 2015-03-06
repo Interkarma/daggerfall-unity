@@ -29,7 +29,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// The image data for this image. Each IMG file only contains a single image.
         /// </summary>
-        private DFBitmap imgRecord;
+        private DFBitmap imgRecord = new DFBitmap();
 
         /// <summary>
         /// Specifies if this IMG file defines its own palette.

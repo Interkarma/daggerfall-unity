@@ -192,7 +192,7 @@ namespace DaggerfallConnect.Arena2
             DFBitmap srcBitmap = GetDFBitmap(record, frame);
 
             DFSize sz;
-            return GetColors32(ref srcBitmap, alphaIndex, 0, out sz);
+            return GetColors32(srcBitmap, alphaIndex, 0, out sz);
         }
 
         /// <summary>
@@ -201,10 +201,10 @@ namespace DaggerfallConnect.Arena2
         /// <param name="srcBitmap">Source DFBitmap.</param>
         /// <param name="alphaIndex">Index to receive transparent alpha.</param>
         /// <returns>Color32 array.</returns>
-        public Color32[] GetColors32(ref DFBitmap srcBitmap, int alphaIndex = -1)
+        public Color32[] GetColors32(DFBitmap srcBitmap, int alphaIndex = -1)
         {
             DFSize sz;
-            return GetColors32(ref srcBitmap, alphaIndex, 0, out sz);
+            return GetColors32(srcBitmap, alphaIndex, 0, out sz);
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace DaggerfallConnect.Arena2
             // Get source bitmap
             DFBitmap srcBitmap = GetDFBitmap(record, frame);
 
-            return GetColors32(ref srcBitmap, alphaIndex, border, out sizeOut);
+            return GetColors32(srcBitmap, alphaIndex, border, out sizeOut);
         }
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace DaggerfallConnect.Arena2
         /// <param name="border">Number of pixels border to add around image.</param>
         /// <param name="sizeOut">Receives image dimensions with borders included.</param>
         /// <returns>Color32 array.</returns>
-        public Color32[] GetColors32(ref DFBitmap srcBitmap, int alphaIndex, int border, out DFSize sizeOut)
+        public Color32[] GetColors32(DFBitmap srcBitmap, int alphaIndex, int border, out DFSize sizeOut)
         {
             // Calculate dimensions
             int srcWidth = srcBitmap.Width;
@@ -361,18 +361,6 @@ namespace DaggerfallConnect.Arena2
                     // Write colour values
                     switch (format)
                     {
-                        case DFBitmap.Formats.BGRA:
-                            dstBitmap.Data[dstPos++] = b;
-                            dstBitmap.Data[dstPos++] = g;
-                            dstBitmap.Data[dstPos++] = r;
-                            dstBitmap.Data[dstPos++] = a;
-                            break;
-                        case DFBitmap.Formats.ABGR:
-                            dstBitmap.Data[dstPos++] = a;
-                            dstBitmap.Data[dstPos++] = b;
-                            dstBitmap.Data[dstPos++] = g;
-                            dstBitmap.Data[dstPos++] = r;
-                            break;
                         case DFBitmap.Formats.RGBA:
                             dstBitmap.Data[dstPos++] = r;
                             dstBitmap.Data[dstPos++] = g;

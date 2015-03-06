@@ -235,9 +235,10 @@ namespace DaggerfallConnect.Arena2
         private bool ReadImageData(int index)
         {
             // Read image if not already stored
-            if (null == bitmaps[index].Data)
+            if (null == bitmaps[index])
             {
                 BinaryReader Reader = managedFile.GetReader(imageDataPosition + (frameDataLength * index));
+                bitmaps[index] = new DFBitmap();
                 bitmaps[index].Width = frameWidth;
                 bitmaps[index].Height = frameHeight;
                 bitmaps[index].Stride = frameWidth;

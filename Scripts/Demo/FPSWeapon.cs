@@ -421,11 +421,11 @@ namespace DaggerfallWorkshop.Demo
             // Tint based on metal type
             // But not for steel as that is default colour in files
             if (metalType != MetalTypes.Steel)
-                ImageProcessing.TintWeaponImage(ref dfBitmap, metalType);
+                ImageProcessing.TintWeaponImage(dfBitmap, metalType);
 
             // Get Color32 array
             DFSize sz;
-            Color32[] colors = cifFile.GetColors32(ref dfBitmap, 0, border, out sz);
+            Color32[] colors = cifFile.GetColors32(dfBitmap, 0, border, out sz);
 
             // Dilate edges
             if (border > 0 && dilate)

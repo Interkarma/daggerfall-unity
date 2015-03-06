@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Demo
         {
             DFBitmap bitmap = img.GetDFBitmap();
             Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
-            texture.SetPixels32(img.GetColors32(ref bitmap, 0));
+            texture.SetPixels32(img.GetColors32(bitmap, 0));
             texture.Apply(false, true);
 
             return texture;

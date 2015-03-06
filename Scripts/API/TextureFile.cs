@@ -672,7 +672,7 @@ namespace DaggerfallConnect.Arena2
         private bool ReadImageData(int record, int frame)
         {
             // Exit if this image already read
-            if (records[record].Frames[frame].Data != null)
+            if (records[record].Frames[frame] != null)
                 return true;
 
             // Handle solid types
@@ -717,6 +717,7 @@ namespace DaggerfallConnect.Arena2
                 colourIndex = (byte)(128 + record);
 
             // Create buffer to hold extracted image
+            records[record].Frames[0] = new DFBitmap();
             records[record].Frames[0].Width = solidSize;
             records[record].Frames[0].Height = solidSize;
             records[record].Frames[0].Data = new byte[solidSize * solidSize];
@@ -757,6 +758,7 @@ namespace DaggerfallConnect.Arena2
         private bool ReadImage(int record, int frame)
         {
             // Create buffer to hold extracted image
+            records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].Width;
             records[record].Frames[frame].Height = records[record].Height;
             records[record].Frames[frame].Stride = records[record].Width;

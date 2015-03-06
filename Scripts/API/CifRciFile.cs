@@ -462,7 +462,7 @@ namespace DaggerfallConnect.Arena2
         private bool ReadImageData(int record, int frame)
         {
             // Exit if this image already read
-            if (records[record].Frames[frame].Data != null)
+            if (records[record].Frames[frame] != null)
                 return true;
 
             // Handle weapon-type records
@@ -490,6 +490,7 @@ namespace DaggerfallConnect.Arena2
         private bool ReadImage(int record, int frame)
         {
             // Setup frame to hold extracted image
+            records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].Header.Width;
             records[record].Frames[frame].Height = records[record].Header.Height;
             records[record].Frames[frame].Stride = records[record].Header.Width;
@@ -515,6 +516,7 @@ namespace DaggerfallConnect.Arena2
         {
             // Setup frame to hold extracted image
             int length = records[record].AnimHeader.Width * records[record].AnimHeader.Height;
+            records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].AnimHeader.Width;
             records[record].Frames[frame].Height = records[record].AnimHeader.Height;
             records[record].Frames[frame].Stride = records[record].AnimHeader.Width;
