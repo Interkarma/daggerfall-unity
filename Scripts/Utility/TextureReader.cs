@@ -23,6 +23,10 @@ namespace DaggerfallWorkshop.Utility
         TextureFile textureFile;
         bool mipMaps = true;
 
+        //Dictionary<int, Texture2D> albedoDict = new Dictionary<int, Texture2D>();
+        //Dictionary<int, Texture2D> normalDict = new Dictionary<int, Texture2D>();
+        //Dictionary<int, Texture2D> emissionDict = new Dictionary<int, Texture2D>();
+
         /// <summary>
         /// Gets or sets Arena2 path.
         /// Path must be set before attempting to load textures.

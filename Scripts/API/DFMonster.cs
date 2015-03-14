@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Text;
+using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 #endregion
 
@@ -19,6 +20,23 @@ namespace DaggerfallConnect
     /// </summary>
     public struct DFMonster
     {
+        public MonsterFile.MonsterCFG MonsterCFG;
+
         public string Name;
+        public byte ResistanceFlags;
+        public byte ImmunityFlags;
+        public byte LowToleranceFlags;
+        public byte CriticalWeaknessFlags;
+
+        public bool AcuteHearing;
+        public bool Athleticism;
+        public bool AdrenalineRush;
+        public bool NoRegenSpellPoints;
+        public bool SunDamage;
+        public bool HolyDamage;
+
+        public int SpellPointsInDark;
+        public int SpellPointsInLight;
+        public float SpellPointMultiplier;
     }
 }

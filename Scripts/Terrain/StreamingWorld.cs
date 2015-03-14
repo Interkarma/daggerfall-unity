@@ -72,6 +72,9 @@ namespace DaggerfallWorkshop
         Dictionary<int, GameObject> locationDict = new Dictionary<int, GameObject>();
         List<int> locationKeysToDestroy = new List<int>();
 
+        // Compensation for floating origin
+        Vector3 worldCompensation = Vector3.zero;
+
         Vector3 playerStartPos;
         Vector3 lastPlayerPos;
 
@@ -90,6 +93,8 @@ namespace DaggerfallWorkshop
 
         public bool IsReady { get { return ReadyCheck(); } }
         public bool IsInit { get { return init; } }
+        public Transform PlayerTerrainTransform { get { return GetPlayerTerrainTransform(); } }
+        public Vector3 WorldCompensation { get { return worldCompensation; } }
 
         #endregion
 
@@ -186,6 +191,14 @@ namespace DaggerfallWorkshop
             InitWorld(true);
         }
 
+        // Offset world compensation for floating origin world
+        public void OffsetWorldCompensation(Vector3 change, bool offsetLastPlayerPos = true)
+        {
+            worldCompensation += change;
+            if (offsetLastPlayerPos)
+                lastPlayerPos += change;
+        }
+
         #endregion
 
         #region World Setup Methods
@@ -199,6 +212,7 @@ namespace DaggerfallWorkshop
 
             // Init streaming world
             ClearStreamingWorld();
+            worldCompensation = Vector3.zero;
             mapOrigin = LocalPlayerGPS.CurrentMapPixel;
             MapPixelX = mapOrigin.X;
             MapPixelY = mapOrigin.Y;
@@ -437,7 +451,7 @@ namespace DaggerfallWorkshop
             float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
             int xdif = mapPixelX - mapOrigin.X;
             int ydif = mapPixelY - mapOrigin.Y;
-            Vector3 localPosition = new Vector3(xdif * scale, 0, -ydif * scale);
+            Vector3 localPosition = new Vector3(xdif * scale, 0, -ydif * scale) + WorldCompensation;
             terrainArray[nextTerrain].terrainObject.transform.localPosition = localPosition;
 
             // Add new terrain index to dictionary
@@ -647,7 +661,7 @@ namespace DaggerfallWorkshop
             // Create new terrain object parented to streaming world
             terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(this.transform);
             terrainObject.name = string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
-            terrainObject.hideFlags = HideFlags.HideAndDontSave;
+            //terrainObject.hideFlags = HideFlags.HideAndDontSave;
 
             // Create new billboard batch object parented to terrain
             billboardBatchObject = new GameObject();
@@ -791,6 +805,7 @@ namespace DaggerfallWorkshop
                 // Move player to this position and align to ground using raycast
                 LocalPlayerGPS.transform.position = pos;
                 FixStanding(LocalPlayerGPS.transform, collider.height);
+                InitFloatingOrigin(LocalPlayerGPS.transform);
             }
             else
             {
@@ -894,6 +909,16 @@ namespace DaggerfallWorkshop
             return false;
         }
 
+        // If using FloatingOrigin on player, we must sometimes reinitialize so it does not get out of sync
+        private void InitFloatingOrigin(Transform playerTransform)
+        {
+            FloatingOrigin fo = playerTransform.GetComponent<FloatingOrigin>();
+            if (fo)
+            {
+                fo.Initialize();
+            }
+        }
+
         #endregion
 
         #region Startup/Shutdown Methods
@@ -933,9 +958,11 @@ namespace DaggerfallWorkshop
 
         private string GetDebugString()
         {
-            string final = string.Format("[{0},{1}] You are in the {2} region with a {3} climate.",
+            string final = string.Format("[{0},{1}] [{2},{3}] You are in the {4} region with a {5} climate.",
                 MapPixelX,
                 MapPixelY,
+                LocalPlayerGPS.WorldX,
+                LocalPlayerGPS.WorldZ,
                 LocalPlayerGPS.CurrentRegionName,
                 LocalPlayerGPS.ClimateSettings.ClimateType.ToString());
             if (LocalPlayerGPS.CurrentLocation.Loaded)
