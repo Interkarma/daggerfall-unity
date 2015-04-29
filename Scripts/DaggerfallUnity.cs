@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -33,7 +37,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.3.7";
+        public const string Version = "1.3.10";
 
         #region Fields
 
@@ -254,6 +258,7 @@ namespace DaggerfallWorkshop
                     SetupContentReaders();
                 }
 #else
+                LoadRuntimeApplicationDataArena2Path();
                 SetupSingleton();
                 SetupContentReaders();
 #endif
@@ -291,7 +296,10 @@ namespace DaggerfallWorkshop
             if (isReady)
             {
                 if (reader == null)
+                {
+                    DaggerfallUnity.LogMessage(string.Format("Setting up content readers with arena2 path '{0}'.", Arena2Path));
                     reader = new ContentReader(Arena2Path, this);
+                }
             }
         }
 
@@ -340,6 +348,32 @@ namespace DaggerfallWorkshop
             }
 
             return true;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        // Looks for valid arena2 folder in Application.dataPath at runtime (not in editor).
+        // This provides developers with option to supply own Arena2 folder rather than use Resources for builds.
+        private void LoadRuntimeApplicationDataArena2Path()
+        {
+            string path = Path.Combine(Application.dataPath, "arena2");
+            LogMessage(string.Format("Looking for valid runtime arena2 path at '{0}'.", path));
+
+            if (Directory.Exists(path))
+            {
+                // If it looks valid set this is as our path
+                if (ValidateArena2Path(path))
+                {
+                    Arena2Path = path;
+                    LogMessage(string.Format("Found valid arena2 path at '{0}'.", path));
+                }
+            }
+            else
+            {
+                LogMessage(string.Format("Did not find valid arena2 path at '{0}'. You can ignore this error unless you expected a path to be here.", path));
+            }
         }
 
         #endregion
