@@ -56,8 +56,18 @@
             Initializes the Language
             </summary>
         </member>
+        <member name="M:SmartLocalization.Editor.TranslateLanguageWindow.DrawMainTranslationView">
+            <summary>
+            Draws the settings window and the main translation view where all the keys are.
+            </summary>
+        </member>
         <member name="M:SmartLocalization.Editor.TranslateLanguageWindow.CheckIfCanBeTranslated">
             <summary> Checks if this language can be translated by the automatic translator </summary>
+        </member>
+        <member name="M:SmartLocalization.Editor.TranslateLanguageWindow.DrawAvailableAutoTranslationGUI(System.Single,UnityEngine.Rect)">
+            <summary>
+            Draws the GUI for when the automatic translator is initialized and available for translation
+            </summary>
         </member>
         <member name="M:SmartLocalization.Editor.TranslateLanguageWindow.ShowWindow(SmartLocalization.SmartCultureInfo,SmartLocalization.Editor.SmartLocalizationWindow)">
             <summary> Shows the translate window window. </summary>
@@ -169,11 +179,24 @@
         <member name="F:SmartLocalization.Editor.LocalizationWorkspace.rootLanguageName">
             <summary>The name of the root language file</summary>
         </member>
+        <member name="F:SmartLocalization.Editor.LocalizationWorkspace.ExtraCultureInfos">
+            <summary>
+            Array that contains SmartCultureInfo instances of cultures that should be in the main
+            Smart Localization package(and is not a part of the System.Globalization namespace)
+            </summary>
+        </member>
         <member name="M:SmartLocalization.Editor.LocalizationWorkspace.Create">
             <summary>
             Creates a new workspace. Returns false if a workspace already exists
             </summary>
             <returns>If the creation was a success.</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.LocalizationWorkspace.GenerateCultureInfoCollection(SmartLocalization.SmartCultureInfoCollection)">
+            <summary>
+            Generates the SmartCultureInfoCollection xml with all the available language infos and keeps any difference in old data
+            as well.
+            </summary>
+            <returns>If the operation was successful</returns>
         </member>
         <member name="M:SmartLocalization.Editor.LocalizationWorkspace.GenerateCultureInfoCollection">
             <summary>
@@ -391,15 +414,15 @@
             relativeFolderPath should be relative to the project folder. Like: "Assets/MyTextures/".
             </param>
         </member>
-        <member name="M:SmartLocalization.Editor.FileUtility.ExistsRelative(System.String)">
-            <summary> Appends the relativePath to Application.dataPath </summary>
-        </member>
         <member name="M:SmartLocalization.Editor.FileUtility.GetFileExtension(System.String)">
             <summary>
             Gets a file extension of a file
             </summary>
             <param name="fullPath">The full path to the file</param>
             <returns>The file extension of a file</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.FileUtility.ExistsRelative(System.String)">
+            <summary> Appends the relativePath to Application.dataPath </summary>
         </member>
         <member name="M:SmartLocalization.Editor.FileUtility.RemoveExtension(System.String)">
             <summary>
@@ -493,6 +516,13 @@
             Generates all the files for store presence
             </summary>
             <returns>If the operation was successful</returns>
+        </member>
+        <member name="M:SmartLocalization.Editor.AndroidStorePresenceGenerator.IsLanguageSupported(System.String)">
+            <summary>
+            Returns whether or not the language/locale is supported by Google Play
+            Source: https://support.google.com/googleplay/android-developer/table/4419860?hl=en
+            </summary>
+            <returns>If the Language(Locale) is supported</returns>
         </member>
         <member name="T:SmartLocalization.Editor.IOSStorePresenceGenerator">
             <summary>

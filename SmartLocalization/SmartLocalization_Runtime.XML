@@ -33,7 +33,7 @@
         <member name="F:SmartLocalization.LanguageManager.OnChangeLanguage">
             <summary>
             Occurs when a new language is loaded and initialized
-            create a delegate method(ChangeLanguage(LanguageManager thisLanguage)) and subscribe
+            create a delegate method(ChangeLanguage(LanguageManager languageManager)) and subscribe
             </summary>
         </member>
         <member name="F:SmartLocalization.LanguageManager.defaultLanguage">
@@ -169,9 +169,10 @@
             Gets a texture for the current language, returns null if nothing is found
             </summary>
         </member>
-        <member name="M:SmartLocalization.LanguageManager.GetTextAsset(System.String)">
+        <member name="M:SmartLocalization.LanguageManager.CheckLanguageOverrideCode(SmartLocalization.LocalizedObject)">
             <summary>
-            Gets a text asset for the current language, returns null if nothing is found
+            Helper method that checks and gets the language override code of the object is overridden.
+            If it's not - it will return the currently loaded language.
             </summary>
         </member>
         <member name="M:SmartLocalization.LanguageManager.HasKey(System.String)">
@@ -262,6 +263,16 @@
             Variable if this object type is TEXT_ASSET
             </summary>
         </member>
+        <member name="F:SmartLocalization.LocalizedObject.overrideLocalizedObject">
+            <summary>
+            If this object should use an asset from a different language.
+            </summary>
+        </member>
+        <member name="F:SmartLocalization.LocalizedObject.overrideObjectLanguageCode">
+            <summary>
+            If overrideLocalizedObject is true, this is the language code that it will use to get the other language.
+            </summary>
+        </member>
         <member name="P:SmartLocalization.LocalizedObject.ObjectType">
             <summary> Gets or sets the LocalizedObjectType of the object.</summary>
         </member>
@@ -296,6 +307,16 @@
             Can be used with MovieTexture(Pro-only feature)
             </summary>
         </member>
+        <member name="P:SmartLocalization.LocalizedObject.OverrideLocalizedObject">
+            <summary>
+            Gets or sets if this object should use an asset from a different language.
+            </summary>
+        </member>
+        <member name="P:SmartLocalization.LocalizedObject.OverrideObjectLanguageCode">
+            <summary>
+            If overrideLocalizedObject is true, this gets or sets the language code that it will use to get the other language.
+            </summary>
+        </member>
         <member name="M:SmartLocalization.LocalizedObject.#ctor">
             <summary>
             Creates a new Localized Object
@@ -319,7 +340,17 @@
             </param>
         </member>
         <!--FIXME: Invalid documentation markup was found for member M:SmartLocalization.LocalizedObject.GetCleanKey(System.String,SmartLocalization.LocalizedObjectType)-->
-        <!--FIXME: Invalid documentation markup was found for member M:SmartLocalization.LocalizedObject.GetCleanKey(System.String)-->
+        <member name="M:SmartLocalization.LocalizedObject.GetCleanKey(System.String)">
+            <summary>
+            Gets the clean key. i.e the key without a type identifier "[type=TEXTURE]" etc.
+            </summary>
+            <returns>
+            The clean key without the type identifier
+            </returns>
+            <param name="key">
+            The full key with the type identifier
+            </param>
+        </member>
         <member name="M:SmartLocalization.LocalizedObject.GetFullKey(System.String)">
             <summary>
             Gets the full key value with identifiers and everything
@@ -341,6 +372,14 @@
             <param name="parsedKey">
             Parsed key. (Clean key originally from GetCleanKey)
             </param>
+        </member>
+        <member name="M:SmartLocalization.LocalizedObject.GetLocalizedObjectTypeStringValue(SmartLocalization.LocalizedObjectType)">
+            <summary>
+            Performs a manual ToString() on a LocalizedObjectType enum since ToString() is not
+            allowed on WebPlayer platforms.
+            </summary>
+            <param name="objectType">The enumeration to get the string value from.</param>
+            <returns>The string value of the localized object type enumeration</returns>
         </member>
         <member name="T:SmartLocalization.SmartCultureInfoCollection">
             <summary>
@@ -372,6 +411,13 @@
             </summary>
             <param name="cultureInfo">The culture info to find</param>
             <returns>The culture info, returns null if not found</returns>
+        </member>
+        <member name="M:SmartLocalization.SmartCultureInfoCollection.FindCulture(System.String)">
+            <summary>
+            Finds a culture info from the list by the ISO-639 language code.
+            </summary>
+            <param name="languageCode">The ISO-639 language code</param>
+            <returns>The found SmartCultureInfo. Returns null if nothing was found.</returns>
         </member>
         <member name="M:SmartLocalization.SmartCultureInfoCollection.IsCultureInCollection(SmartLocalization.SmartCultureInfo)">
             <summary>

@@ -1,11 +1,11 @@
 ﻿// SL_NGUISpriteName.cs
 //
-// Copyright (c) 2013-2014 Niklas Borglund, Jakob Hillerström
+// Written by Niklas Borglund and Jakob Hillerström
 //
 
-//#define SMART_LOC_NGUI //<--- UNCOMMENT THIS FOR NGUI CLASSES
+//#define SMARTLOC_NGUI //<--- UNCOMMENT THIS FOR NGUI CLASSES
 
-#if SMART_LOC_NGUI
+#if SMARTLOC_NGUI
 using UnityEngine;
 using System.Collections;
 using SmartLocalization;
@@ -23,21 +23,23 @@ public class SL_NGUISpriteName : MonoBehaviour
 	void Start () 
 	{
 		//Subscribe to the change language event
-		LanguageManager thisLanguageManager = LanguageManager.Instance;
-		thisLanguageManager.OnChangeLanguage += OnChangeLanguage;
+		LanguageManager languageManager = LanguageManager.Instance;
+		languageManager.OnChangeLanguage += OnChangeLanguage;
 		
-		OnChangeLanguage(thisLanguageManager);
+		OnChangeLanguage(languageManager);
 	}
 	
 	void OnDestroy()
 	{
 		if(LanguageManager.HasInstance)
+		{
 			LanguageManager.Instance.OnChangeLanguage -= OnChangeLanguage;
+		}
 	}
 	
-	void OnChangeLanguage(LanguageManager thisLanguageManager)
+	void OnChangeLanguage(LanguageManager languageManager)
 	{
-		uiSprite.spriteName = thisLanguageManager.GetTextValue(localizedKey);
+		uiSprite.spriteName = languageManager.GetTextValue(localizedKey);
 	}	
 }
 #endif

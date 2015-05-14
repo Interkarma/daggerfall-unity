@@ -2,7 +2,7 @@
 //  LoadAllLanguages.cs
 //
 //
-// Copyright (c) 2013-2014 Niklas Borglund, Jakob Hillerström
+// Written by Niklas Borglund and Jakob HillerstrÃ¶m
 //
 
 namespace SmartLocalization
@@ -14,24 +14,24 @@ public class LoadAllLanguages : MonoBehaviour
 {
 	private Dictionary<string,string> currentLanguageValues;
 	private List<SmartCultureInfo> availableLanguages;
-	private LanguageManager thisLanguageManager;
+	private LanguageManager languageManager;
 	private Vector2 valuesScrollPosition = Vector2.zero;
 	private Vector2 languagesScrollPosition = Vector2.zero;
 
 	void Start () 
 	{
-		thisLanguageManager = LanguageManager.Instance;
+		languageManager = LanguageManager.Instance;
 		
-		SmartCultureInfo systemLanguage = thisLanguageManager.GetSupportedSystemLanguage();
+		SmartCultureInfo systemLanguage = languageManager.GetSupportedSystemLanguage();
 		if(systemLanguage != null)
 		{
-			thisLanguageManager.ChangeLanguage(systemLanguage);	
+			languageManager.ChangeLanguage(systemLanguage);	
 		}
 		
-		if(thisLanguageManager.NumberOfSupportedLanguages > 0)
+		if(languageManager.NumberOfSupportedLanguages > 0)
 		{
-			currentLanguageValues = thisLanguageManager.RawTextDatabase;
-			availableLanguages = thisLanguageManager.GetSupportedLanguages();
+			currentLanguageValues = languageManager.RawTextDatabase;
+			availableLanguages = languageManager.GetSupportedLanguages();
 		}
 		else
 		{
@@ -44,20 +44,24 @@ public class LoadAllLanguages : MonoBehaviour
 	void OnDestroy()
 	{
 		if(LanguageManager.HasInstance)
+		{
 			LanguageManager.Instance.OnChangeLanguage -= OnLanguageChanged;
+		}
 	}
 
-	void OnLanguageChanged(LanguageManager thisLanguageManager)
+	void OnLanguageChanged(LanguageManager languageManager)
 	{
-		currentLanguageValues = thisLanguageManager.RawTextDatabase;
+		currentLanguageValues = languageManager.RawTextDatabase;
 	}
 	
 	void OnGUI() 
 	{
-		if(thisLanguageManager.NumberOfSupportedLanguages > 0)
+		if(languageManager.NumberOfSupportedLanguages > 0)
 		{
-			if(thisLanguageManager.CurrentlyLoadedCulture != null)
-				GUILayout.Label("Current Language:" + thisLanguageManager.CurrentlyLoadedCulture.ToString());
+			if(languageManager.CurrentlyLoadedCulture != null)
+			{
+				GUILayout.Label("Current Language:" + languageManager.CurrentlyLoadedCulture.ToString());
+			}
 			
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Keys:", GUILayout.Width(460));
@@ -79,7 +83,7 @@ public class LoadAllLanguages : MonoBehaviour
 			{
 				if(GUILayout.Button(language.nativeName, GUILayout.Width(960)))
 				{
-					thisLanguageManager.ChangeLanguage(language);
+					languageManager.ChangeLanguage(language);
 				}
 			}
 

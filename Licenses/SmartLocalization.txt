@@ -1,21 +1,8 @@
-Smart Localization
----------------------------------------
-Copyright (c) 2013-2014 Niklas Borglund, Jakob Hillerström. All rights reserved.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
 Third Party Libraries
 -----------------------------
 Smart Localization is utilizing the following third party libraries:
 
 Reorderable List GUI for Unity - Copyright (c) 2013, Rotorz Limited.
-LICENSE-ROTORZ
 ----------------
 Copyright (c) 2013, Rotorz Limited
 All rights reserved.
@@ -44,4 +31,3 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 --------------
-LICENSE-ROTORZ
