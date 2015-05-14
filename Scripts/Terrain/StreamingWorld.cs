@@ -956,6 +956,7 @@ namespace DaggerfallWorkshop
 
             // Raise ready flag
             isReady = true;
+            RaiseOnReadyEvent();
 
             return true;
         }
@@ -1021,6 +1022,19 @@ namespace DaggerfallWorkshop
         }
 
 #endif
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnReady
+        public delegate void OnReadyEventHandler();
+        public static event OnReadyEventHandler OnReady;
+        protected virtual void RaiseOnReadyEvent()
+        {
+            if (OnReady != null)
+                OnReady();
+        }
 
         #endregion
     }

@@ -116,6 +116,12 @@ namespace DaggerfallWorkshop.Demo
             ExecuteAttacks();
         }
 
+        public void SheathWeapons()
+        {
+            Sheathed = true;
+            ShowWeapons(false);
+        }
+
         #region Private Methods
 
         private void TrackMouseAttack()

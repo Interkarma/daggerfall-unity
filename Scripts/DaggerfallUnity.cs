@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.3.10";
+        public const string Version = "1.3.11";
 
         #region Fields
 
@@ -264,6 +264,7 @@ namespace DaggerfallWorkshop
 #endif
 
                 isReady = true;
+                RaiseOnReadyEvent();
             }
 
             return true;
@@ -378,7 +379,20 @@ namespace DaggerfallWorkshop
 
         #endregion
 
-//        #region Editor Asset Export
+        #region Event Handlers
+
+        // OnReady
+        public delegate void OnReadyEventHandler();
+        public static event OnReadyEventHandler OnReady;
+        protected virtual void RaiseOnReadyEvent()
+        {
+            if (OnReady != null)
+                OnReady();
+        }
+
+        #endregion
+
+        //        #region Editor Asset Export
 //#if UNITY_EDITOR && !UNITY_WEBPLAYER
 //        public void ExportTerrainTextureAtlases()
 //        {
