@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop
     [CustomEditor(typeof(MeshReader))]
     public class MeshReaderEditor : Editor
     {
-        private MeshReader materialReader { get { return target as MeshReader; } }
+        private MeshReader meshReader { get { return target as MeshReader; } }
 
         SerializedProperty Prop(string name)
         {
@@ -52,6 +52,12 @@ namespace DaggerfallWorkshop
             EditorGUILayout.Space();
             propAddMeshTangents.boolValue = EditorGUILayout.Toggle(new GUIContent("Add Mesh Tangents", "Add tangent to mesh data for normal mapping."), propAddMeshTangents.boolValue);
             propAddMeshLightmapUVs.boolValue = EditorGUILayout.Toggle(new GUIContent("Add Lightmap UVs", "Add secondary UV set for lightmapping. Will greatly increase import time."), propAddMeshLightmapUVs.boolValue);
+
+            EditorGUILayout.Space();
+            if (GUILayout.Button("Clear Mesh Cache"))
+            {
+                meshReader.ClearCache();
+            }
         }
     }
 }

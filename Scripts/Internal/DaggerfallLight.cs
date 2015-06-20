@@ -23,8 +23,6 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaggerfallLight : MonoBehaviour
     {
-        public DaggerfallBillboard ParentBillboard;
-
         public bool Animate = false;
 
         DaggerfallUnity dfUnity;
@@ -130,10 +128,6 @@ namespace DaggerfallWorkshop
                 DaggerfallUnity.LogMessage("DaggerfallLight: DaggerfallUnity component is not ready. Have you set your Arena2 path?");
                 return false;
             }
-
-            // Get billboard component
-            if (ParentBillboard == null)
-                return false;
 
             // Must have a light component added
             if (!myLight)

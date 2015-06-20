@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Demo
             if (DaggerfallSky)
                 DaggerfallSky.WeatherStyle = WeatherStyle.Normal;
             isOvercast = false;
+            RaiseOnClearOvercastEvent();
         }
 
         public void ClearAllWeather()
@@ -93,6 +94,7 @@ namespace DaggerfallWorkshop.Demo
 
             isOvercast = true;
             SetSunlightScale();
+            RaiseOnSetRainOvercastEvent();
         }
 
         public void StartRaining()
@@ -106,6 +108,7 @@ namespace DaggerfallWorkshop.Demo
 
             SetSunlightScale();
             SetAmbientEffects();
+            RaiseOnStartRainingEvent();
         }
 
         public void StartStorming()
@@ -113,6 +116,7 @@ namespace DaggerfallWorkshop.Demo
             StartRaining();
             isStorming = true;
             SetAmbientEffects();
+            RaiseOnStartStormingEvent();
         }
 
         public void StopRaining()
@@ -125,6 +129,7 @@ namespace DaggerfallWorkshop.Demo
 
             SetSunlightScale();
             SetAmbientEffects();
+            RaiseOnStopRainingEvent();
         }
 
         #endregion
@@ -147,6 +152,7 @@ namespace DaggerfallWorkshop.Demo
 
             isOvercast = true;
             SetSunlightScale();
+            RaiseOnSetSnowOvercastEvent();
         }
 
         public void StartSnowing()
@@ -158,6 +164,8 @@ namespace DaggerfallWorkshop.Demo
 
             if (PlayerWeather)
                 PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.Snow_Normal;
+
+            RaiseOnStartSnowingEvent();
         }
 
         public void StopSnowing()
@@ -169,6 +177,7 @@ namespace DaggerfallWorkshop.Demo
 
             SetSunlightScale();
             SetAmbientEffects();
+            RaiseOnStopSnowingEvent();
         }
 
         #endregion
@@ -209,6 +218,82 @@ namespace DaggerfallWorkshop.Demo
                 WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.Storm;
             else
                 WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.None;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnSetRainOvercast
+        public delegate void OnSetRainOvercastEventHandler();
+        public static event OnSetRainOvercastEventHandler OnSetRainOvercast;
+        protected virtual void RaiseOnSetRainOvercastEvent()
+        {
+            if (OnSetRainOvercast != null)
+                OnSetRainOvercast();
+        }
+
+        // OnSetSnowOvercast
+        public delegate void OnSetSnowOvercastEventHandler();
+        public static event OnSetSnowOvercastEventHandler OnSetSnowOvercast;
+        protected virtual void RaiseOnSetSnowOvercastEvent()
+        {
+            if (OnSetSnowOvercast != null)
+                OnSetSnowOvercast();
+        }
+
+        // OnClearOvercast
+        public delegate void OnClearOvercastEventHandler();
+        public static event OnClearOvercastEventHandler OnClearOvercast;
+        protected virtual void RaiseOnClearOvercastEvent()
+        {
+            if (OnClearOvercast != null)
+                OnClearOvercast();
+        }
+
+        // OnStartRaining
+        public delegate void OnStartRainingEventHandler();
+        public static event OnStartRainingEventHandler OnStartRaining;
+        protected virtual void RaiseOnStartRainingEvent()
+        {
+            if (OnStartRaining != null)
+                OnStartRaining();
+        }
+
+        // OnStartStorming
+        public delegate void OnStartStormingEventHandler();
+        public static event OnStartStormingEventHandler OnStartStorming;
+        protected virtual void RaiseOnStartStormingEvent()
+        {
+            if (OnStartStorming != null)
+                OnStartStorming();
+        }
+
+        // OnStopRaining
+        public delegate void OnStopRainingEventHandler();
+        public static event OnStopRainingEventHandler OnStopRaining;
+        protected virtual void RaiseOnStopRainingEvent()
+        {
+            if (OnStopRaining != null)
+                OnStopRaining();
+        }
+
+        // OnStartSnowing
+        public delegate void OnStartSnowingEventHandler();
+        public static event OnStartSnowingEventHandler OnStartSnowing;
+        protected virtual void RaiseOnStartSnowingEvent()
+        {
+            if (OnStartSnowing != null)
+                OnStartSnowing();
+        }
+
+        // OnStopSnowing
+        public delegate void OnStopSnowingEventHandler();
+        public static event OnStopSnowingEventHandler OnStopSnowing;
+        protected virtual void RaiseOnStopSnowingEvent()
+        {
+            if (OnStopSnowing != null)
+                OnStopSnowing();
         }
 
         #endregion

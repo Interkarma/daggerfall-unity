@@ -243,8 +243,8 @@ namespace DaggerfallConnect
             /// <summary>Longitude value read from bitfield.</summary>
             public UInt32 Longitude;
 
-            /// <summary>Type value read from bitfield.</summary>
-            public LocationTypes Type;
+            /// <summary>Locaton type value read from bitfield.</summary>
+            public LocationTypes LocationType;
 
             /// <summary>Latitude of this location.</summary>
             public UInt16 Latitude;

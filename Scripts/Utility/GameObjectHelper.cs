@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Utility
     {
         static Dictionary<int, MobileEnemy> enemyDict;
 
-        public static void AssignAnimateTextureComponent(CachedMaterial[] cachedMaterials, GameObject go)
+        public static void AssignAnimatedMaterialComponent(CachedMaterial[] cachedMaterials, GameObject go)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
@@ -32,24 +32,24 @@ namespace DaggerfallWorkshop.Utility
             for (int i = 0; i < cachedMaterials.Length; i++)
             {
                 CachedMaterial cm = cachedMaterials[i];
-                int frameCount = cm.recordFrameCount;
+                int frameCount = cm.singleFrameCount;
                 if (frameCount > 1)
                 {
                     // Add texture animation component
-                    Demo.AnimateTexture c = go.AddComponent<Demo.AnimateTexture>();
+                    AnimatedMaterial c = go.AddComponent<AnimatedMaterial>();
 
-                    // Get texture for each frame
-                    Texture[] textures = new Texture[frameCount];
+                    // Store material for each frame
+                    CachedMaterial[] materials = new CachedMaterial[frameCount];
                     for (int frame = 0; frame < frameCount; frame++)
                     {
                         int archiveOut, recordOut, frameOut;
                         MaterialReader.ReverseTextureKey(cm.key, out archiveOut, out recordOut, out frameOut, cm.keyGroup);
-                        textures[frame] = dfUnity.MaterialReader.GetMaterial(archiveOut, recordOut, frame).mainTexture;
+                        dfUnity.MaterialReader.GetCachedMaterial(archiveOut, recordOut, frame, out materials[frame]);
                     }
 
                     // Assign animation properties
                     c.TargetMaterial = cm.material;
-                    c.TextureArray = textures;
+                    c.AnimationFrames = materials;
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Assign animated materials component if required
             if (hasAnimations)
-                AssignAnimateTextureComponent(cachedMaterials, go);
+                AssignAnimatedMaterialComponent(cachedMaterials, go);
 
             // Assign mesh and materials
             if (mesh)
@@ -155,7 +155,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Assign animated materials component if required
             if (hasAnimations)
-                AssignAnimateTextureComponent(cachedMaterials, go);
+                AssignAnimatedMaterialComponent(cachedMaterials, go);
 
             // Assign mesh and materials array
             if (mesh)
@@ -204,51 +204,63 @@ namespace DaggerfallWorkshop.Utility
             go.transform.position = new Vector3(hit.point.x, hit.point.y + size.y * 0.52f, hit.point.z);
         }
 
-        public static GameObject CreateDaggerfallRMBPointLight(Transform parent)
+        public static GameObject InstantiatePrefab(GameObject prefab, Transform parent, Vector3 position)
         {
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            GameObject go = null;
+            if (prefab != null)
+            {
+                go = GameObject.Instantiate(prefab);
+                if (parent != null)
+                    go.transform.parent = parent;
+                go.transform.position = position;
 
-            GameObject go = new GameObject("DaggerfallLight [RMB]");
-            if (parent) go.transform.parent = parent;
-            go.tag = dfUnity.Option_PointLightTag;
-#if UNITY_EDITOR
-            if (dfUnity.Option_CustomPointLightScript != null)
-                go.AddComponent(dfUnity.Option_CustomPointLightScript.GetClass());
-#endif
-
-            Light light = go.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.range = 18f;
+            }
 
             return go;
         }
 
-        public static GameObject CreateDaggerfallRDBPointLight(float range, Transform parent)
-        {
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+//        public static GameObject CreateDaggerfallRMBPointLight(Transform parent)
+//        {
+//            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
-            GameObject go = new GameObject("DaggerfallLight [RDB]");
-            if (parent) go.transform.parent = parent;
-            go.tag = dfUnity.Option_PointLightTag;
-#if UNITY_EDITOR
-            if (dfUnity.Option_CustomPointLightScript != null)
-                go.AddComponent(dfUnity.Option_CustomPointLightScript.GetClass());
-#endif
+//            GameObject go = new GameObject("DaggerfallLight [RMB]");
+//            if (parent) go.transform.parent = parent;
+//            go.tag = dfUnity.Option_PointLightTag;
+//#if UNITY_EDITOR
+//            if (dfUnity.Option_CustomPointLightScript != null)
+//                go.AddComponent(dfUnity.Option_CustomPointLightScript.GetClass());
+//#endif
 
-            Light light = go.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.range = range * 3f;
+//            Light light = go.AddComponent<Light>();
+//            light.type = LightType.Point;
+//            light.range = 18f;
 
-            return go;
-        }
+//            return go;
+//        }
+
+//        public static GameObject CreateDaggerfallRDBPointLight(float range, Transform parent)
+//        {
+//            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+
+//            GameObject go = new GameObject("DaggerfallLight [RDB]");
+//            if (parent) go.transform.parent = parent;
+//            go.tag = dfUnity.Option_PointLightTag;
+//#if UNITY_EDITOR
+//            if (dfUnity.Option_CustomPointLightScript != null)
+//                go.AddComponent(dfUnity.Option_CustomPointLightScript.GetClass());
+//#endif
+
+//            Light light = go.AddComponent<Light>();
+//            light.type = LightType.Point;
+//            light.range = range * 3f;
+
+//            return go;
+//        }
 
         public static GameObject CreateDaggerfallInteriorPointLight(float range, Transform parent)
         {
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-
             GameObject go = new GameObject("DaggerfallLight [Interior]");
             if (parent) go.transform.parent = parent;
-            go.tag = dfUnity.Option_PointLightTag;
             Light light = go.AddComponent<Light>();
             light.type = LightType.Point;
             light.range = range;

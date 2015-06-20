@@ -37,8 +37,7 @@ namespace DaggerfallWorkshop.Utility
 
         public static GameObject CreateGameObject(
             string blockName,
-            bool disableGround = false,
-            DaggerfallBillboardBatch natureBatch = null)
+            bool disableGround = false)
         {
             // Validate
             if (string.IsNullOrEmpty(blockName))
@@ -52,18 +51,16 @@ namespace DaggerfallWorkshop.Utility
             // Get block data
             DFBlock blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
 
-            return CreateGameObject(dfUnity, ref blockData, disableGround, natureBatch);
+            return CreateGameObject(dfUnity, ref blockData, disableGround);
         }
 
         public static GameObject CreateGameObject(
             DaggerfallUnity dfUnity,
             ref DFBlock blockData,
-            bool disableGround = false,
-            DaggerfallBillboardBatch natureBatch = null)
+            bool disableGround)
         {
             // Create gameobject
             GameObject go = new GameObject(string.Format("DaggerfallBlock [Name={0}]", blockData.Name));
-            //go.AddComponent<DaggerfallBlock>();
 
             // Setup combiner
             ModelCombiner combiner = null;
@@ -87,16 +84,22 @@ namespace DaggerfallWorkshop.Utility
             if (allDoors.Count > 0)
                 AddDoors(allDoors.ToArray(), go);
 
-            // Add block flats
+            // Create flats node
             GameObject flatsNode = new GameObject("Flats");
             flatsNode.transform.parent = go.transform;
-            AddBlockFlats(dfUnity, ref blockData, flatsNode.transform);
 
-            // Add nature flats
-            if (natureBatch == null)
-                AddNatureFlats(dfUnity, ref blockData, flatsNode.transform);
-            else
-                AddNatureFlatsToBatch(natureBatch, ref blockData);
+            // Create lights node
+            GameObject lightsNode = new GameObject("Lights");
+            lightsNode.transform.parent = go.transform;
+
+            //// Add nature flats
+            //if (dfUnity.Option_BatchBillboards && billboardBatchRefs.natureBatch != null)
+            //    AddNatureFlatsToBatch(ref blockData, billboardBatchRefs.natureBatch);
+            //else
+            //    AddNatureFlats(dfUnity, ref blockData, flatsNode.transform);
+
+            //// Add block flats
+            //AddBlockFlats(dfUnity, ref blockData, flatsNode.transform, lightsNode.transform, billboardBatchRefs);
 
             // Add ground plane
             if (dfUnity.Option_SimpleGroundPlane && !disableGround)
@@ -198,100 +201,91 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        public static void AddBlockFlats(
-            DaggerfallUnity dfUnity,
-            ref DFBlock blockData,
-            Transform parent = null)
-        {
-            // Add block flats
-            foreach (DFBlock.RmbBlockFlatObjectRecord obj in blockData.RmbBlock.MiscFlatObjectRecords)
-            {
-                // Spawn billboard gameobject
-                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, parent);
-                go.transform.position = new Vector3(
-                    obj.XPos,
-                    -obj.YPos + BlockFlatsOffsetY,
-                    obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
+        //public static void AddBlockFlats(
+        //    DaggerfallUnity dfUnity,
+        //    ref DFBlock blockData,
+        //    Transform flatsParent,
+        //    Transform lightsParent,
+        //    BillboardBatchRefs billboardBatchRefs)
+        //{
+        //    // Add block flats
+        //    foreach (DFBlock.RmbBlockFlatObjectRecord obj in blockData.RmbBlock.MiscFlatObjectRecords)
+        //    {
+        //        // Calculate position
+        //        Vector3 billboardPosition = new Vector3(
+        //            obj.XPos,
+        //            -obj.YPos + BlockFlatsOffsetY,
+        //            obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
-                // Add lights
-                if (obj.TextureArchive == 210 && dfUnity.Option_ImportPointLights)
-                {
-                    // Spawn light gameobject
-                    Vector2 size = dfUnity.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord);
-                    GameObject lightgo = GameObjectHelper.CreateDaggerfallRMBPointLight(go.transform);
-                    lightgo.transform.position = new Vector3(
-                        obj.XPos,
-                        -obj.YPos + size.y,
-                        obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
+        //        // Add standalone billboard gameobject
+        //        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+        //        go.transform.position = billboardPosition;
 
-                    // Animate light
-                    DaggerfallLight c = lightgo.AddComponent<DaggerfallLight>();
-                    c.ParentBillboard = go.GetComponent<DaggerfallBillboard>();
-                    if (dfUnity.Option_AnimatedPointLights)
-                    {
-                        c.Animate = true;
-                    }
-                }
-            }
-        }
+        //        // Add point lights
+        //        if (obj.TextureArchive == MaterialReader.LightsTextureArchive && dfUnity.Option_ImportPointLights)
+        //        {
+        //            AddPointLight(dfUnity, obj, lightsParent);
+        //        }
+        //    }
+        //}
 
-        public static void AddNatureFlats(
-            DaggerfallUnity dfUnity,
-            ref DFBlock blockData,
-            Transform parent = null,
-            ClimateNatureSets climateNature = ClimateNatureSets.SubTropical,
-            ClimateSeason climateSeason = ClimateSeason.Summer)
-        {
-            int archive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
+        //public static void AddNatureFlats(
+        //    DaggerfallUnity dfUnity,
+        //    ref DFBlock blockData,
+        //    Transform parent = null,
+        //    ClimateNatureSets climateNature = ClimateNatureSets.SubTropical,
+        //    ClimateSeason climateSeason = ClimateSeason.Summer)
+        //{
+        //    int archive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
 
-            // Add block scenery
-            for (int y = 0; y < 16; y++)
-            {
-                for (int x = 0; x < 16; x++)
-                {
-                    // Get scenery item
-                    DFBlock.RmbGroundScenery scenery = blockData.RmbBlock.FldHeader.GroundData.GroundScenery[x, 15 - y];
+        //    // Add block scenery
+        //    for (int y = 0; y < 16; y++)
+        //    {
+        //        for (int x = 0; x < 16; x++)
+        //        {
+        //            // Get scenery item
+        //            DFBlock.RmbGroundScenery scenery = blockData.RmbBlock.FldHeader.GroundData.GroundScenery[x, 15 - y];
 
-                    // Ignore 0 as this appears to be a marker/waypoint of some kind
-                    if (scenery.TextureRecord > 0)
-                    {
-                        // Spawn billboard gameobject
-                        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, scenery.TextureRecord, parent);
-                        Vector3 billboardPosition = new Vector3(
-                            x * BlocksFile.TileDimension,
-                            NatureFlatsOffsetY,
-                            y * BlocksFile.TileDimension + BlocksFile.TileDimension) * MeshReader.GlobalScale;
+        //            // Ignore 0 as this appears to be a marker/waypoint of some kind
+        //            if (scenery.TextureRecord > 0)
+        //            {
+        //                // Spawn billboard gameobject
+        //                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, scenery.TextureRecord, parent);
+        //                Vector3 billboardPosition = new Vector3(
+        //                    x * BlocksFile.TileDimension,
+        //                    NatureFlatsOffsetY,
+        //                    y * BlocksFile.TileDimension + BlocksFile.TileDimension) * MeshReader.GlobalScale;
 
-                        // Set transform
-                        go.transform.position = billboardPosition;
-                    }
-                }
-            }
-        }
+        //                // Set transform
+        //                go.transform.position = billboardPosition;
+        //            }
+        //        }
+        //    }
+        //}
 
-        public static void AddNatureFlatsToBatch(
-            DaggerfallBillboardBatch batch,
-            ref DFBlock blockData)
-        {
-            for (int y = 0; y < 16; y++)
-            {
-                for (int x = 0; x < 16; x++)
-                {
-                    // Get scenery item
-                    DFBlock.RmbGroundScenery scenery = blockData.RmbBlock.FldHeader.GroundData.GroundScenery[x, 15 - y];
+        //public static void AddNatureFlatsToBatch(
+        //    ref DFBlock blockData,
+        //    DaggerfallBillboardBatch batch)
+        //{
+        //    for (int y = 0; y < 16; y++)
+        //    {
+        //        for (int x = 0; x < 16; x++)
+        //        {
+        //            // Get scenery item
+        //            DFBlock.RmbGroundScenery scenery = blockData.RmbBlock.FldHeader.GroundData.GroundScenery[x, 15 - y];
 
-                    // Ignore 0 as this appears to be a marker/waypoint of some kind
-                    if (scenery.TextureRecord > 0)
-                    {
-                        Vector3 billboardPosition = new Vector3(
-                            x * BlocksFile.TileDimension,
-                            NatureFlatsOffsetY,
-                            y * BlocksFile.TileDimension + BlocksFile.TileDimension) * MeshReader.GlobalScale;
-                        batch.AddItem(scenery.TextureRecord, billboardPosition);
-                    }
-                }
-            }
-        }
+        //            // Ignore 0 as this appears to be a marker/waypoint of some kind
+        //            if (scenery.TextureRecord > 0)
+        //            {
+        //                Vector3 billboardPosition = new Vector3(
+        //                    x * BlocksFile.TileDimension,
+        //                    NatureFlatsOffsetY,
+        //                    y * BlocksFile.TileDimension + BlocksFile.TileDimension) * MeshReader.GlobalScale;
+        //                batch.AddItem(scenery.TextureRecord, billboardPosition);
+        //            }
+        //        }
+        //    }
+        //}
 
         public static GameObject AddSimpleGroundPlane(
             DaggerfallUnity dfUnity,
@@ -360,6 +354,17 @@ namespace DaggerfallWorkshop.Utility
             }
 
             return go;
+        }
+
+        private static void AddPointLight(DaggerfallUnity dfUnity, DFBlock.RmbBlockFlatObjectRecord obj, Transform parent = null)
+        {
+            Vector2 size = dfUnity.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord);
+            Vector3 position = new Vector3(
+                obj.XPos,
+                -obj.YPos + size.y,
+                obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
+
+            GameObjectHelper.InstantiatePrefab(dfUnity.Option_CityLightsPrefab, parent, position);
         }
 
         private static void AddDoors(StaticDoor[] doors, GameObject target)

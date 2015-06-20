@@ -99,6 +99,9 @@ namespace DaggerfallWorkshop
                 terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTerrainTilemapShaderName));
                 UpdateClimateMaterial();
             }
+
+            // Raise event
+            RaiseOnInstantiateTerrainEvent();
         }
 
         /// <summary>
@@ -242,6 +245,9 @@ namespace DaggerfallWorkshop
                 terrainData.alphamapResolution = detailResolution;
                 terrainData.baseMapResolution = detailResolution;
 
+                // Raise event
+                RaiseOnPromoteTerrainDataEvent(terrainData);
+
                 // Apply terrain data
                 terrain.terrainData = terrainData;
                 terrain.GetComponent<TerrainCollider>().terrainData = terrainData;
@@ -324,6 +330,28 @@ namespace DaggerfallWorkshop
             ready = true;
 
             return true;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnInstantiateTerrain
+        public delegate void OnInstantiateTerrainEventHandler(DaggerfallTerrain sender);
+        public static event OnInstantiateTerrainEventHandler OnInstantiateTerrain;
+        protected virtual void RaiseOnInstantiateTerrainEvent()
+        {
+            if (OnInstantiateTerrain != null)
+                OnInstantiateTerrain(this);
+        }
+
+        // OnPromoteTerrainData
+        public delegate void OnPromoteTerrainDataEventHandler(DaggerfallTerrain sender, TerrainData terrainData);
+        public static event OnPromoteTerrainDataEventHandler OnPromoteTerrainData;
+        protected virtual void RaiseOnPromoteTerrainDataEvent(TerrainData terrainData)
+        {
+            if (OnPromoteTerrainData != null)
+                OnPromoteTerrainData(this, terrainData);
         }
 
         #endregion

@@ -101,6 +101,9 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void GenerateSamples(ContentReader contentReader, ref MapPixelData mapPixel)
         {
+            // Raise start event
+            RaiseOnGenerateSamplesStartEvent();
+
             // Divisor ensures continuous 0-1 range of tile samples
             float div = (float)terrainTileDim / 3f;
 
@@ -109,6 +112,9 @@ namespace DaggerfallWorkshop
             int my = mapPixel.mapPixelY;
             byte[,] shm = contentReader.WoodsFileReader.GetHeightMapValuesRange(mx - 2, my - 2, 4);
             byte[,] lhm = contentReader.WoodsFileReader.GetLargeHeightMapValuesRange(mx - 1, my, 3);
+
+            // Raise new samples event
+            RaiseOnNewHeightSamplesEvent();
 
             // Extract height samples for all chunks
             float averageHeight = 0;
@@ -181,6 +187,9 @@ namespace DaggerfallWorkshop
             // Average and max heights are passed back for locations
             mapPixel.averageHeight = averageHeight /= (float)(dim * dim);
             mapPixel.maxHeight = maxHeight;
+
+            // Raise end event
+            RaiseOnGenerateSamplesEndEvent();
         }
 
         // Clear all sample tiles to same base index
@@ -648,10 +657,10 @@ namespace DaggerfallWorkshop
             samples[y * terrainSampleDim + x].scaledHeight = height;
         }
 
-        #region Private Methods
+        #region Helper Methods
 
         // Bilinear interpolation of values
-        private static float BilinearInterpolator(float valx0y0, float valx0y1, float valx1y0, float valx1y1, float u, float v)
+        public static float BilinearInterpolator(float valx0y0, float valx0y1, float valx1y0, float valx1y1, float u, float v)
         {
             float result =
                         (1 - u) * ((1 - v) * valx0y0 +
@@ -663,7 +672,7 @@ namespace DaggerfallWorkshop
         }
 
         // Cubic interpolation of values
-        private static float CubicInterpolator(float v0, float v1, float v2, float v3, float fracy)
+        public static float CubicInterpolator(float v0, float v1, float v2, float v3, float fracy)
         {
             float A = (v3 - v2) - (v0 - v1);
             float B = (v0 - v1) - A;
@@ -693,6 +702,37 @@ namespace DaggerfallWorkshop
             }
 
             return Mathf.Clamp(finalValue, -1, 1);
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnGenerateSamplesStart
+        public delegate void OnGenerateSamplesStartEventHandler();
+        public static event OnGenerateSamplesStartEventHandler OnGenerateSamplesStart;
+        private static void RaiseOnGenerateSamplesStartEvent()
+        {
+            if (OnGenerateSamplesStart != null)
+                OnGenerateSamplesStart();
+        }
+
+        // OnGenerateSamplesEnd
+        public delegate void OnGenerateSamplesEndEventHandler();
+        public static event OnGenerateSamplesEndEventHandler OnGenerateSamplesEnd;
+        private static void RaiseOnGenerateSamplesEndEvent()
+        {
+            if (OnGenerateSamplesEnd != null)
+                OnGenerateSamplesEnd();
+        }
+
+        // OnNewHeightSamples
+        public delegate void OnNewHeightSamplesEventHandler();
+        public static event OnNewHeightSamplesEventHandler OnNewHeightSamples;
+        private static void RaiseOnNewHeightSamplesEvent()
+        {
+            if (OnNewHeightSamples != null)
+                OnNewHeightSamples();
         }
 
         #endregion

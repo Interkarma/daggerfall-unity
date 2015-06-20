@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop
         static void Init()
         {
             AtlasEditorWindow window = (AtlasEditorWindow)EditorWindow.GetWindow(typeof(AtlasEditorWindow));
-            window.title = windowTitle;
+            window.titleContent = new GUIContent(windowTitle);
         }
 
         void OnGUI()
@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < regionData.LocationCount; i++)
             {
                 bool addName = false;
-                DFRegion.LocationTypes type = regionData.MapTable[i].Type;
+                DFRegion.LocationTypes type = regionData.MapTable[i].LocationType;
                 switch (pattern)
                 {
                     case SearchPatterns.All:

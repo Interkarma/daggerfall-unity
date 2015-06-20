@@ -151,7 +151,7 @@ namespace DaggerfallWorkshop
             summary.RegionName = location.RegionName;
             summary.LocationName = location.Name;
             summary.WorldClimate = location.Climate.WorldClimate;
-            summary.LocationType = location.MapTableData.Type;
+            summary.LocationType = location.MapTableData.LocationType;
             summary.DungeonType = location.MapTableData.DungeonType;
             summary.HasDungeon = location.HasDungeon;
             summary.Climate = ClimateSwaps.FromAPIClimateBase(location.Climate.ClimateType);
@@ -217,20 +217,7 @@ namespace DaggerfallWorkshop
             }
 
             // Determine correct nature archive
-            int natureArchive;
-            switch (ClimateUse)
-            {
-                case LocationClimateUse.UseLocation:
-                    natureArchive = ClimateSwaps.GetNatureArchive(summary.Nature, CurrentSeason);
-                    break;
-                case LocationClimateUse.Custom:
-                    natureArchive = ClimateSwaps.GetNatureArchive(CurrentNatureSet, CurrentSeason);
-                    break;
-                case LocationClimateUse.Disabled:
-                default:
-                    natureArchive = ClimateSwaps.GetNatureArchive(ClimateNatureSets.TemperateWoodland, ClimateSeason.Summer);
-                    break;
-            }
+            int natureArchive = GetNatureArchive();
 
             // Process all DaggerfallBillboard child components
             DaggerfallBillboard[] billboardArray = GetComponentsInChildren<DaggerfallBillboard>();
@@ -268,23 +255,68 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
+        private int GetNatureArchive()
+        {
+            int natureArchive;
+            switch (ClimateUse)
+            {
+                case LocationClimateUse.UseLocation:
+                    natureArchive = ClimateSwaps.GetNatureArchive(summary.Nature, CurrentSeason);
+                    break;
+                case LocationClimateUse.Custom:
+                    natureArchive = ClimateSwaps.GetNatureArchive(CurrentNatureSet, CurrentSeason);
+                    break;
+                case LocationClimateUse.Disabled:
+                default:
+                    natureArchive = ClimateSwaps.GetNatureArchive(ClimateNatureSets.TemperateWoodland, ClimateSeason.Summer);
+                    break;
+            }
+
+            return natureArchive;
+        }
+
         private void LayoutLocation(ref DFLocation location)
         {
             // Get city dimensions
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
 
+            //// Create billboard batch game objects for this location
+            //if (dfUnity.Option_BatchBillboards)
+            //{
+            //    // Nature billboards batch
+            //    GameObject natureBatchObject = new GameObject("NatureBillboardBatch");
+            //    natureBatchObject.transform.parent = this.transform;
+            //    natureBatchObject.transform.localPosition = Vector3.zero;
+            //    bb.natureBatch = natureBatchObject.AddComponent<DaggerfallBillboardBatch>();
+            //    bb.natureBatch.SetMaterial(GetNatureArchive());
+            //}
+
             // Import blocks
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
+                    if (dfUnity.Option_BatchBillboards)
+                    {
+                        //Vector3 blockOrigin = new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
+                        //bb.natureBatch.origin = blockOrigin;
+                        //bb.lightsBatch.origin = blockOrigin;
+                    }
+
                     string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
                     GameObject go = RMBLayout.CreateGameObject(blockName);
                     go.transform.parent = this.transform;
                     go.transform.position = new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
                 }
             }
+
+            //// Apply batches
+            //if (dfUnity.Option_BatchBillboards)
+            //{
+            //    if (bb.natureBatch) bb.natureBatch.Apply();
+            //    if (bb.lightsBatch) bb.lightsBatch.Apply();
+            //}
 
             // Enumerate start marker game objects
             EnumerateStartMarkers();

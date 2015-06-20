@@ -427,22 +427,22 @@ namespace DaggerfallWorkshop.Utility
 
         private void AddRDBLight(DFBlock.RdbObject obj, Transform parent)
         {
-            // Do nothing if import option not enabled
-            if (!dfUnity.Option_ImportPointLights)
-                return;
+            //// Do nothing if import option not enabled
+            //if (!dfUnity.Option_ImportPointLights)
+            //    return;
 
-            // Spawn light gameobject
-            float radius = obj.Resources.LightResource.Radius * MeshReader.GlobalScale;
-            GameObject go = GameObjectHelper.CreateDaggerfallRDBPointLight(radius, parent);
-            Vector3 lightPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+            //// Spawn light gameobject
+            //float radius = obj.Resources.LightResource.Radius * MeshReader.GlobalScale;
+            //GameObject go = GameObjectHelper.CreateDaggerfallRDBPointLight(radius, parent);
+            //Vector3 lightPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
 
-            // Add component
-            DaggerfallLight c = go.AddComponent<DaggerfallLight>();
-            if (dfUnity.Option_AnimatedPointLights)
-                c.Animate = true;
+            //// Add component
+            //DaggerfallLight c = go.AddComponent<DaggerfallLight>();
+            //if (dfUnity.Option_AnimatedPointLights)
+            //    c.Animate = true;
 
-            // Set transform
-            go.transform.position = lightPosition;
+            //// Set transform
+            //go.transform.position = lightPosition;
         }
 
         private void AddFixedRDBEnemy(DFBlock.RdbObject obj)

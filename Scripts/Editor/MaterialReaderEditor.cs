@@ -50,12 +50,14 @@ namespace DaggerfallWorkshop
             var propCompressSkyTextures = Prop("CompressSkyTextures");
             var propMainFilterMode = Prop("MainFilterMode");
             var propSkyFilterMode = Prop("SkyFilterMode");
+            var propGenerateNormals = Prop("GenerateNormals");
+            var propNormalTextureStrength = Prop("NormalTextureStrength");
             var propMipMaps = Prop("MipMaps");
-            var propDefaultShaderName = Prop("DefaultShaderName");
-            var propDefaultBillboardShaderName = Prop("DefaultBillboardShaderName");
-            var propDefaultUnlitBillboardShaderName = Prop("DefaultUnlitBillboardShaderName");
-            var propDefaultUnlitTextureShaderName = Prop("DefaultUnlitTextureShaderName");
-            var propDefaultSelfIlluminShaderName = Prop("DefaultSelfIlluminShaderName");
+            var propSharpen = Prop("Sharpen");
+            //var propDefaultBillboardShaderName = Prop("DefaultBillboardShaderName");
+            //var propDefaultUnlitBillboardShaderName = Prop("DefaultUnlitBillboardShaderName");
+            //var propDefaultUnlitTextureShaderName = Prop("DefaultUnlitTextureShaderName");
+            //var propDefaultSelfIlluminShaderName = Prop("DefaultSelfIlluminShaderName");
             var propDayWindowColor = Prop("DayWindowColor");
             var propNightWindowColor = Prop("NightWindowColor");
             var propFogWindowColor = Prop("FogWindowColor");
@@ -68,16 +70,23 @@ namespace DaggerfallWorkshop
             EditorGUILayout.Space();
             propAtlasTextures.boolValue = EditorGUILayout.Toggle(new GUIContent("Atlas Textures", "Combine billboards and ground textures into an atlas."), propAtlasTextures.boolValue);
             propMipMaps.boolValue = EditorGUILayout.Toggle(new GUIContent("MipMaps", "Enable mipmaps for textures. Sky and weapon textures never use mipmaps as they are always drawn 1:1."), propMipMaps.boolValue);
+            propSharpen.boolValue = EditorGUILayout.Toggle(new GUIContent("Sharpen", "Sharpen image on import. Increases time to import textures."), propSharpen.boolValue);
+            propGenerateNormals.boolValue = EditorGUILayout.Toggle(new GUIContent("Normal Textures", "Generate normal textures. Increases time to import textures."), propGenerateNormals.boolValue);
+            if (propGenerateNormals.boolValue)
+            {
+                propNormalTextureStrength.floatValue = EditorGUILayout.Slider(new GUIContent("Normal Strength", "Power of generated normals."), propNormalTextureStrength.floatValue, 0, 1);
+            }
             propCompressSkyTextures.boolValue = EditorGUILayout.Toggle(new GUIContent("Compress Sky Textures", "Enable lossy texture compression for skies."), propCompressSkyTextures.boolValue);
 
             EditorGUILayout.Space();
             propMainFilterMode.enumValueIndex = (int)(FilterMode)EditorGUILayout.EnumPopup(new GUIContent("Main Filter Mode", "Filter mode for materials. Will be applied on next import or climate change."), (FilterMode)propMainFilterMode.enumValueIndex);
             propSkyFilterMode.enumValueIndex = (int)(FilterMode)EditorGUILayout.EnumPopup(new GUIContent("Sky Filter Mode", "Filter mode for the sky."), (FilterMode)propSkyFilterMode.enumValueIndex);
-            propDefaultShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Default Shader", "Name of default mesh shader."), propDefaultShaderName.stringValue);
-            propDefaultBillboardShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Billboard Shader", "Name of default billboard shader. Used for general mesh materials."), propDefaultBillboardShaderName.stringValue);
-            propDefaultSelfIlluminShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Self-Illumin Shader", "Name of default self-illumin shader. Used for windows."), propDefaultSelfIlluminShaderName.stringValue);
-            propDefaultUnlitBillboardShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Unlit Billboard Shader", "Name of default unlit billboard shader. Used for light billboards."), propDefaultUnlitBillboardShaderName.stringValue);
-            propDefaultUnlitTextureShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Unlit Texture Shader", "Name of default unlit texture shader. Used for textures like the fireplace."), propDefaultUnlitTextureShaderName.stringValue);
+
+            //EditorGUILayout.Space();
+            //propDefaultBillboardShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Billboard Shader", "Name of default billboard shader. Used for general mesh materials."), propDefaultBillboardShaderName.stringValue);
+            //propDefaultSelfIlluminShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Self-Illumin Shader", "Name of default self-illumin shader. Used for windows."), propDefaultSelfIlluminShaderName.stringValue);
+            //propDefaultUnlitBillboardShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Unlit Billboard Shader", "Name of default unlit billboard shader. Used for light billboards."), propDefaultUnlitBillboardShaderName.stringValue);
+            //propDefaultUnlitTextureShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Unlit Texture Shader", "Name of default unlit texture shader. Used for textures like the fireplace."), propDefaultUnlitTextureShaderName.stringValue);
 
             EditorGUILayout.Space();
             propDayWindowColor.colorValue = EditorGUILayout.ColorField(new GUIContent("Day Window Colour", "The colour of windows by day."), propDayWindowColor.colorValue);
@@ -94,6 +103,12 @@ namespace DaggerfallWorkshop
             EditorGUILayout.Space();
             propCustomWindowColor.colorValue = EditorGUILayout.ColorField(new GUIContent("Custom Window Colour", "Colour of custom windows."), propCustomWindowColor.colorValue);
             propCustomWindowIntensity.floatValue = EditorGUILayout.Slider(new GUIContent("Custom Window Brightness", "Brightness of custom windows."), propCustomWindowIntensity.floatValue, 0, 1);
+
+            EditorGUILayout.Space();
+            if (GUILayout.Button("Clear Material Cache"))
+            {
+                materialReader.ClearCache();
+            }
         }
     }
 }

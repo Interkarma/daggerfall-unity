@@ -150,7 +150,7 @@ namespace DaggerfallConnect.Arena2
         /// <returns>True if successful, otherwise false.</returns>
         public bool Load(string filePath, FileUsage usage, bool readOnly)
         {
-            // Ensure filename ends with .BSA
+            // Ensure filename ends with .BSA or .SND
             filePath = filePath.ToUpper();
             if (!filePath.EndsWith(".BSA") &&
                 !filePath.EndsWith(".SND"))

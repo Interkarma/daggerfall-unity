@@ -37,15 +37,18 @@ namespace DaggerfallWorkshop
         // General settings
         public bool AtlasTextures = true;
         public bool CompressSkyTextures = false;
+        public bool Sharpen = false;
+        public bool GenerateNormals = false;
+        public float NormalTextureStrength = 0.2f;
         public FilterMode MainFilterMode = FilterMode.Point;
         public FilterMode SkyFilterMode = FilterMode.Point;
         public bool MipMaps = true;
-        public string DefaultShaderName = "Diffuse";
-        public string DefaultSelfIlluminShaderName = "Self-Illumin/Diffuse";
+        //public string DefaultSelfIlluminShaderName = "Self-Illumin/Diffuse";
         public string DefaultBillboardShaderName = "Transparent/Diffuse";
         public string DefaultUnlitBillboardShaderName = "Unlit/Transparent";
         public string DefaultUnlitTextureShaderName = "Unlit/Texture";
-        public string DefaultWeaponShaderName = "Unlit/Transparent";
+        //public string DefaultWeaponShaderName = "Unlit/Transparent";
+        public const string _StandardShaderName = "Standard";
         public const string _DaggerfallTilemapShaderName = "Daggerfall/Tilemap";
         public const string _DaggerfallTerrainTilemapShaderName = "Daggerfall/TerrainTilemap";
         public const string _DaggerfallBillboardBatchShaderName = "Daggerfall/BillboardBatch/TransparentCutoutForceForward";
@@ -55,23 +58,22 @@ namespace DaggerfallWorkshop
         public Color NightWindowColor = new Color32(255, 182, 56, 0xff);
         public Color FogWindowColor = new Color32(117, 117, 117, 0xff);
         public Color CustomWindowColor = new Color32(200, 0, 200, 0xff);
-        public float DayWindowIntensity = 0.3f;
-        public float NightWindowIntensity = 0.6f;
-        public float FogWindowIntensity = 0.1f;
-        public float CustomWindowIntensity = 0.5f;
+        public float DayWindowIntensity = 0.5f;
+        public float NightWindowIntensity = 0.8f;
+        public float FogWindowIntensity = 0.5f;
+        public float CustomWindowIntensity = 1.0f;
 
         // Keys groups use increments of 512 as this the total number of texture file indices.
         // Groups allow the same material to be uniquely cached based on usage.
         // There can be a maximum of 128 unique groups of materials in cache.
         public const int MainKeyGroup = 0;
         public const int AtlasKeyGroup = 512;
-        public const int DayWindowKeyGroup = 1024;
-        public const int NightWindowKeyGroup = 1536;
-        public const int FogWindowKeyGroup = 2048;
-        public const int CustomWindowKeyGroup = 2560;
-        public const int TileMapKeyGroup = 3072;
-        public const int UnusedKeyGroup2 = 3584;
-        public const int UnusedKeyGroup3 = 4096;
+        public const int TileMapKeyGroup = 1024;
+        //public const int UnusedKeyGroup1 = 1536;
+        //public const int UnusedKeyGroup2 = 2048;
+        //public const int UnusedKeyGroup3 = 2560;
+        //public const int UnusedKeyGroup4 = 3584;
+        //public const int UnusedKeyGroup5 = 4096;
 
         DaggerfallUnity dfUnity;
         TextureReader textureReader;
@@ -99,6 +101,27 @@ namespace DaggerfallWorkshop
 
         #endregion
 
+        #region Material Creation
+
+        /// <summary>
+        /// Creates a Standard material with properties suited for most Daggerfall textures.
+        /// </summary>
+        /// <returns></returns>
+        public Material CreateStandardMaterial()
+        {
+            // Create material
+            Shader shader = Shader.Find(_StandardShaderName);
+            Material material = new Material(shader);
+
+            // Set properties
+            material.SetFloat("_Metallic", 0);
+            material.SetFloat("_Glossiness", 0);
+
+            return material;
+        }
+
+        #endregion
+
         #region Material Loading
 
         /// <summary>
@@ -108,12 +131,11 @@ namespace DaggerfallWorkshop
         /// <param name="record">Record index.</param>
         /// <param name="frame">Frame index.</param>
         /// <param name="alphaIndex">Index to receive transparent alpha.</param>
-        /// <param name="shader">Shader for material. If null, DefaultShaderName will be applied.</param>
         /// <returns>Material or null.</returns>
-        public Material GetMaterial(int archive, int record, int frame = 0, int alphaIndex = -1, Shader shader = null)
+        public Material GetMaterial(int archive, int record, int frame = 0, int alphaIndex = -1)
         {
             Rect rect;
-            return GetMaterial(archive, record, frame, alphaIndex, out rect, 0, false, shader);
+            return GetMaterial(archive, record, frame, alphaIndex, out rect, 0, false);
         }
 
         /// <summary>
@@ -123,9 +145,8 @@ namespace DaggerfallWorkshop
         /// <param name="record">Record index.</param>
         /// <param name="frame">Frame index.</param>
         /// <param name="rectOut">Receives UV rect for texture inside border.</param>
-        /// <param name="border">Number of pixels internal border around each texture.</param>
+        /// <param name="borderSize">Number of pixels internal border around each texture.</param>
         /// <param name="dilate">Blend texture into surrounding empty pixels.</param>
-        /// <param name="shader">Shader for material. If null, DefaultShaderName will be applied.</param>
         /// <returns>Material or null.</returns>
         public Material GetMaterial(
             int archive,
@@ -133,9 +154,8 @@ namespace DaggerfallWorkshop
             int frame,
             int alphaIndex,
             out Rect rectOut,
-            int border = 0,
-            bool dilate = false,
-            Shader shader = null)
+            int borderSize = 0,
+            bool dilate = false)
         {
             // Ready check
             if (!IsReady)
@@ -144,42 +164,69 @@ namespace DaggerfallWorkshop
                 return null;
             }
 
-            // HACK: Override shader for unlit textures
-            // TODO: Find a better way to do this
-            if (archive == 356 && (record == 0 || record == 2 || record == 3) ||
-                archive == 87 && record == 0)
-            {
-                // Only override if not specified
-                if (shader == null)
-                    shader = Shader.Find(dfUnity.MaterialReader.DefaultUnlitTextureShaderName);
-            }
-
+            // Try to retrieve from cache
             int key = MakeTextureKey((short)archive, (byte)record, (byte)frame);
             if (materialDict.ContainsKey(key))
             {
                 CachedMaterial cm = materialDict[key];
-                if (cm.filterMode == MainFilterMode)
-                {
-                    // Properties are the same
-                    rectOut = cm.singleRect;
-                    return cm.material;
-                }
-                else
-                {
-                    // Properties don't match, remove material and reload
-                    materialDict.Remove(key);
-                }
+                rectOut = cm.singleRect;
+                return cm.material;
             }
 
-            if (shader == null)
-                shader = Shader.Find(DefaultShaderName);
+            // Create new texture settings
+            GetTextureSettings settings = TextureReader.CreateTextureSettings(archive, record, frame, alphaIndex, borderSize, dilate);
+            settings.treatWindowsAsEmissive = true;
+            settings.sharpen = Sharpen;
+            if (GenerateNormals)
+            {
+                settings.createNormalMap = true;
+                settings.normalStrength = NormalTextureStrength;
+            }
 
-            Material material = new Material(shader);
+            // Set emissive for self-illuminated textures
+            // TODO: This should be set by a user-managed list somewhere
+            if (archive == 356 && (record == 0 || record == 2 || record == 3) ||
+                archive == 87 && record == 0)
+            {
+                settings.createEmissionMap = true;
+                settings.emissionIndex = -1;
+            }
+
+            // Get texture
+            GetTextureResults results = textureReader.GetTexture2D(settings);
+            rectOut = results.singleRect;
+
+            // Setup material
+            Material material = CreateStandardMaterial();
             material.name = FormatName(archive, record);
-            Texture2D texture = textureReader.GetTexture2D(archive, record, frame, alphaIndex, out rectOut, border, dilate);
-            material.mainTexture = texture;
+            material.mainTexture = results.albedoMap;
             material.mainTexture.filterMode = MainFilterMode;
 
+            // Setup normal map
+            if (GenerateNormals)
+            {
+                results.normalMap.filterMode = MainFilterMode;
+                material.SetTexture("_BumpMap", results.normalMap);
+                material.EnableKeyword("_NORMALMAP");
+            }
+
+            // Setup emission map
+            if (settings.createEmissionMap)
+            {
+                results.emissionMap.filterMode = MainFilterMode;
+                material.SetTexture("_EmissionMap", results.emissionMap);
+                material.SetColor("_EmissionColor", Color.white);
+                material.EnableKeyword("_EMISSION");
+            }
+            else if (settings.treatWindowsAsEmissive && results.isWindow)
+            {
+                results.emissionMap.filterMode = MainFilterMode;
+                material.SetTexture("_EmissionMap", results.emissionMap);
+                material.SetColor("_EmissionColor", DayWindowColor * DayWindowIntensity);
+                material.EnableKeyword("_EMISSION");
+            }
+
+            // Setup cached material
             DFSize size = textureReader.TextureFile.GetSize(record);
             DFSize scale = textureReader.TextureFile.GetScale(record);
             DFSize offset = textureReader.TextureFile.GetOffset(record);
@@ -190,14 +237,17 @@ namespace DaggerfallWorkshop
             {
                 key = key,
                 keyGroup = 0,
+                albedoMap = results.albedoMap,
+                normalMap = results.normalMap,
+                emissionMap = results.emissionMap,
                 singleRect = rectOut,
                 material = material,
                 filterMode = MainFilterMode,
-                isWindow = ClimateSwaps.IsExteriorWindow(archive, record),
+                isWindow = results.isWindow,
                 recordSizes = recordSizes,
                 recordScales = recordScales,
                 recordOffsets = recordOffsets,
-                recordFrameCount = textureReader.TextureFile.GetFrameCount(record),
+                singleFrameCount = textureReader.TextureFile.GetFrameCount(record),
             };
             materialDict.Add(key, newcm);
 
@@ -249,7 +299,7 @@ namespace DaggerfallWorkshop
                 {
                     // Properties are the same
                     rectsOut = cm.atlasRects;
-                    indicesOut = cm.indices;
+                    indicesOut = cm.atlasIndices;
                     return cm.material;
                 }
                 else
@@ -259,39 +309,46 @@ namespace DaggerfallWorkshop
                 }
             }
 
+            // Create material
+            Material material;
             if (shader == null)
-                shader = Shader.Find(DefaultShaderName);
+                material = CreateStandardMaterial();
+            else
+                material = new Material(shader);
 
-            Vector2[] sizesOut, scalesOut, offsetsOut;
-            Material material = new Material(shader);
+            // Create settings
+            GetTextureSettings settings = TextureReader.CreateTextureSettings(archive, 0, 0, alphaIndex, border, dilate);
+            settings.atlasShrinkUVs = shrinkUVs;
+            settings.atlasPadding = padding;
+            settings.atlasMaxSize = maxAtlasSize;
+            settings.copyToOppositeBorder = copyToOppositeBorder;
+
+            // Setup material
             material.name = string.Format("TEXTURE.{0:000} [Atlas]", archive);
-            Texture2D texture = textureReader.GetTexture2DAtlas(
-                archive,
-                alphaIndex,
-                padding,
-                maxAtlasSize,
-                out rectsOut,
-                out indicesOut,
-                out sizesOut,
-                out scalesOut,
-                out offsetsOut,
-                border,
-                dilate,
-                shrinkUVs,
-                copyToOppositeBorder);
-            material.mainTexture = texture;
+            GetTextureResults results = textureReader.GetTexture2DAtlas(settings);
+            material.mainTexture = results.albedoMap;
             material.mainTexture.filterMode = MainFilterMode;
 
+            // TEMP: Bridging between legacy out params and GetTextureResults for now
+            Vector2[] sizesOut, scalesOut, offsetsOut;
+            sizesOut = results.atlasSizes.ToArray();
+            scalesOut = results.atlasScales.ToArray();
+            offsetsOut = results.atlasOffsets.ToArray();
+            rectsOut = results.atlasRects.ToArray();
+            indicesOut = results.atlasIndices.ToArray();
+
+            // Setup cached material
             CachedMaterial newcm = new CachedMaterial();
             newcm.key = key;
             newcm.keyGroup = AtlasKeyGroup;
             newcm.atlasRects = rectsOut;
-            newcm.indices = indicesOut;
+            newcm.atlasIndices = indicesOut;
             newcm.material = material;
             newcm.filterMode = MainFilterMode;
             newcm.recordSizes = sizesOut;
             newcm.recordScales = scalesOut;
             newcm.recordOffsets = offsetsOut;
+            newcm.atlasFrameCounts = results.atlasFrameCounts.ToArray();
             materialDict.Add(key, newcm);
 
             return material;
@@ -361,9 +418,8 @@ namespace DaggerfallWorkshop
         /// <param name="frame">Frame index.</param>
         /// <param name="cachedMaterialOut">CachedMaterial out.</param>
         /// <param name="alphaIndex">Alpha index used if material needs to be loaded.</param>
-        /// <param name="shader">Shader used if material needs to be loaded.</param>
         /// <returns>True if CachedMaterial found or loaded successfully.</returns>
-        public bool GetCachedMaterial(int archive, int record, int frame, out CachedMaterial cachedMaterialOut, int alphaIndex = -1, Shader shader = null)
+        public bool GetCachedMaterial(int archive, int record, int frame, out CachedMaterial cachedMaterialOut, int alphaIndex = -1)
         {
             int key = MakeTextureKey((short)archive, (byte)record, (byte)frame);
             if (materialDict.ContainsKey(key))
@@ -373,8 +429,8 @@ namespace DaggerfallWorkshop
             }
             else
             {
-                // Not in cache, try to load material
-                if (GetMaterial(archive, record, frame, alphaIndex, shader) == null)
+                // Not in cache - try to load material
+                if (GetMaterial(archive, record, frame, alphaIndex) == null)
                 {
                     cachedMaterialOut = new CachedMaterial();
                     return false;
@@ -431,9 +487,46 @@ namespace DaggerfallWorkshop
 
             // Handle windows
             if (cm.isWindow)
-                material = GetWindowMaterial(cm.key, windowStyle);
+            {
+                ChangeWindowEmissionColor(material, windowStyle);
+            }
 
             return material;
+        }
+
+        /// <summary>
+        /// Change emission colour of window materials.
+        /// </summary>
+        /// <param name="material">Source material to change.</param>
+        /// <param name="windowStyle">New window style.</param>
+        public void ChangeWindowEmissionColor(Material material, WindowStyle windowStyle)
+        {
+            switch (windowStyle)
+            {
+                case WindowStyle.Day:
+                    material.SetColor("_EmissionColor", DayWindowColor * DayWindowIntensity);
+                    break;
+                case WindowStyle.Night:
+                    material.SetColor("_EmissionColor", NightWindowColor * NightWindowIntensity);
+                    break;
+                case WindowStyle.Fog:
+                    material.SetColor("_EmissionColor", FogWindowColor * FogWindowIntensity);
+                    break;
+                case WindowStyle.Custom:
+                    material.SetColor("_EmissionColor", CustomWindowColor * CustomWindowIntensity);
+                    break;
+                case WindowStyle.Disabled:
+                    material.SetColor("_EmissionColor", Color.black);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Clears material cache dictionary, forcing material to reload.
+        /// </summary>
+        public void ClearCache()
+        {
+            materialDict.Clear();
         }
 
         #endregion
@@ -530,106 +623,6 @@ namespace DaggerfallWorkshop
         private string FormatImageName(string filename, int record)
         {
             return string.Format("{0} [Index={1}]", filename, record);
-        }
-
-        private Material GetWindowMaterial(int key, WindowStyle windowStyle)
-        {
-            // Reverse key (input must be a MainKeyGroup key)
-            int archive, record, frame;
-            ReverseTextureKey(key, out archive, out record, out frame);
-
-            // Determine new key group based on style
-            int group;
-            Color color;
-            float intensity;
-            switch (windowStyle)
-            {
-                case WindowStyle.Day:
-                    group = DayWindowKeyGroup;
-                    color = dfUnity.MaterialReader.DayWindowColor;
-                    intensity = dfUnity.MaterialReader.DayWindowIntensity;
-                    break;
-                case WindowStyle.Night:
-                    group = NightWindowKeyGroup;
-                    color = dfUnity.MaterialReader.NightWindowColor;
-                    intensity = dfUnity.MaterialReader.NightWindowIntensity;
-                    break;
-                case WindowStyle.Fog:
-                    group = FogWindowKeyGroup;
-                    color = dfUnity.MaterialReader.FogWindowColor;
-                    intensity = dfUnity.MaterialReader.FogWindowIntensity;
-                    break;
-                case WindowStyle.Custom:
-                    group = CustomWindowKeyGroup;
-                    color = dfUnity.MaterialReader.CustomWindowColor;
-                    intensity = dfUnity.MaterialReader.CustomWindowIntensity;
-                    break;
-                default:
-                    return GetMaterial(archive, record);    // Just get base material with no processing
-            }
-
-            // Make new key based on group
-            int newkey = MakeTextureKey((short)archive, (byte)record, (byte)0, group);
-
-            // Check if material is already in cache
-            CachedMaterial cm;
-            if (materialDict.TryGetValue(newkey, out cm))
-            {
-                // Return same if settings have not changed since last time
-                if (cm.windowColor == color &&
-                    cm.windowIntensity == intensity &&
-                    cm.filterMode == MainFilterMode)
-                {
-                    // Properties are the same
-                    return cm.material;
-                }
-                else
-                {
-                    materialDict.Remove(newkey);
-                }
-            }
-
-            // Load texture file and get colour arrays
-            textureReader.TextureFile.Load(Path.Combine(dfUnity.Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
-            Color32 alpha = new Color32(0, 0, 0, (byte)(255f / intensity));
-            Color32[] diffuseColors, alphaColors;
-            DFSize sz = textureReader.TextureFile.GetWindowColors32(record, color, alpha, out diffuseColors, out alphaColors);
-
-            // Create diffuse texture
-            Texture2D diffuse = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, MipMaps);
-            diffuse.SetPixels32(diffuseColors);
-            diffuse.Apply(true);
-
-            // Create illumin texture
-            Texture2D illumin = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, MipMaps);
-            illumin.SetPixels32(alphaColors);
-            illumin.Apply(true);
-
-            // Create new material with a self-illuminating shader
-            Shader shader = Shader.Find(DefaultSelfIlluminShaderName);
-            Material material = new Material(shader);
-            material.name = FormatName(archive, record);
-
-            // Set material textures
-            material.SetTexture("_MainTex", diffuse);
-            material.SetTexture("_Illum", illumin);
-            material.mainTexture.filterMode = MainFilterMode;
-
-            // Cache this window material
-            CachedMaterial newcm = new CachedMaterial()
-            {
-                key = newkey,
-                keyGroup = group,
-                singleRect = new Rect(0, 0, sz.Width, sz.Height),
-                material = material,
-                filterMode = MainFilterMode,
-                isWindow = true,
-                windowColor = color,
-                windowIntensity = intensity,
-            };
-            materialDict.Add(newkey, newcm);
-
-            return material;
         }
 
         #endregion

@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop
             summary.RegionName = location.RegionName;
             summary.LocationName = location.Name;
             summary.LocationData = location;
-            summary.LocationType = location.MapTableData.Type;
+            summary.LocationType = location.MapTableData.LocationType;
             summary.DungeonType = location.MapTableData.DungeonType;
 
             // Set texture table from location

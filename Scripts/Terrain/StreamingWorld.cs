@@ -193,6 +193,7 @@ namespace DaggerfallWorkshop
             LocalPlayerGPS.WorldX = worldPos.X;
             LocalPlayerGPS.WorldZ = worldPos.Y;
             InitWorld(true);
+            RaiseOnTeleportToCoordinatesEvent(worldPos);
         }
 
         // Offset world compensation for floating origin world
@@ -233,6 +234,7 @@ namespace DaggerfallWorkshop
 
             init = true;
             this.repositionPlayer = repositionPlayer;
+            RaiseOnInitWorldEvent();
         }
 
         // Place terrain tiles when player changes map pixels
@@ -257,6 +259,8 @@ namespace DaggerfallWorkshop
         // Only yields after initial init complete
         private IEnumerator UpdateTerrains()
         {
+            RaiseOnUpdateTerrainsStartEvent();
+
             // First stage updates terrain heightmaps
             for (int i = 0; i < terrainArray.Length; i++)
             {
@@ -322,13 +326,14 @@ namespace DaggerfallWorkshop
 
                         // Add one nature batch for entire location
                         // This is parented to location and shares its lifetime
+                        //RMBLayout.BillboardBatchRefs bb = new RMBLayout.BillboardBatchRefs();
                         GameObject natureBatchObject = new GameObject("NatureBatch");
                         natureBatchObject.hideFlags = HideFlags.HideAndDontSave;
                         natureBatchObject.transform.parent = locationObject.transform;
                         natureBatchObject.transform.localPosition = Vector3.zero;
-                        DaggerfallBillboardBatch natureBatch = natureBatchObject.AddComponent<DaggerfallBillboardBatch>();
-                        int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
-                        natureBatch.SetMaterial(natureArchive);
+                        //bb.natureBatch = natureBatchObject.AddComponent<DaggerfallBillboardBatch>();
+                        //int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
+                        //bb.natureBatch.SetMaterial(natureArchive);
 
                         // RMB blocks are laid out in centre of terrain to align with ground
                         int width = location.Exterior.ExteriorData.Width;
@@ -346,11 +351,11 @@ namespace DaggerfallWorkshop
                                 // Set origin for billboard batch add
                                 // This causes next additions to be offset by this position
                                 Vector3 blockOrigin = origin + new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
-                                natureBatch.origin = blockOrigin;
+                                //bb.natureBatch.origin = blockOrigin;
 
                                 // Add block and yield
                                 string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
-                                GameObject go = RMBLayout.CreateGameObject(blockName, true, natureBatch);
+                                GameObject go = RMBLayout.CreateGameObject(blockName, true);
                                 go.hideFlags = HideFlags.HideAndDontSave;
                                 go.transform.parent = locationObject.transform;
                                 go.transform.localPosition = blockOrigin;
@@ -368,8 +373,8 @@ namespace DaggerfallWorkshop
                             repositionPlayer = false;
                         }
 
-                        // Apply nature batch
-                        natureBatch.Apply();
+                        //// Apply nature batch
+                        //bb.natureBatch.Apply();
                     }
                 }
                 else if (terrainArray[i].active)
@@ -393,6 +398,8 @@ namespace DaggerfallWorkshop
             CollectTerrains();
             CollectLocations();
             UpdateNeighbours();
+
+            RaiseOnUpdateTerrainsEndEvent();
         }
 
         // Place a single terrain and mark it for update
@@ -533,6 +540,9 @@ namespace DaggerfallWorkshop
             // Clear dictionaries
             terrainIndexDict.Clear();
             locationDict.Clear();
+
+            // Raise event
+            RaiseOnClearStreamingWorldEvent();
         }
 
         // Mark inactive any terrains outside of range
@@ -699,6 +709,9 @@ namespace DaggerfallWorkshop
             locationObject.transform.position = terrainArray[terrain].terrainObject.transform.position + new Vector3(0, height, 0);
             DaggerfallLocation dfLocation = locationObject.AddComponent<DaggerfallLocation>() as DaggerfallLocation;
             dfLocation.SetLocation(locationOut, false);
+
+            // Raise event
+            RaiseOnCreateLocationGameObjectEvent(dfLocation);
 
             return locationObject;
         }
@@ -1034,6 +1047,60 @@ namespace DaggerfallWorkshop
         {
             if (OnReady != null)
                 OnReady();
+        }
+
+        // OnTeleportToCoordinates
+        public delegate void OnTeleportToCoordinatesEventHandler(DFPosition worldPos);
+        public static event OnTeleportToCoordinatesEventHandler OnTeleportToCoordinates;
+        protected virtual void RaiseOnTeleportToCoordinatesEvent(DFPosition worldPos)
+        {
+            if (OnTeleportToCoordinates != null)
+                OnTeleportToCoordinates(worldPos);
+        }
+
+        // OnInitWorld
+        public delegate void OnInitWorldEventHandler();
+        public static event OnInitWorldEventHandler OnInitWorld;
+        protected virtual void RaiseOnInitWorldEvent()
+        {
+            if (OnInitWorld != null)
+                OnInitWorld();
+        }
+
+        // OnUpdateTerrainsStart
+        public delegate void OnUpdateTerrainsStartEventHandler();
+        public static event OnUpdateTerrainsStartEventHandler OnUpdateTerrainsStart;
+        protected virtual void RaiseOnUpdateTerrainsStartEvent()
+        {
+            if (OnUpdateTerrainsStart != null)
+                OnUpdateTerrainsStart();
+        }
+
+        // OnUpdateTerrainsEnd
+        public delegate void OnUpdateTerrainsEndEventHandler();
+        public static event OnUpdateTerrainsEndEventHandler OnUpdateTerrainsEnd;
+        protected virtual void RaiseOnUpdateTerrainsEndEvent()
+        {
+            if (OnUpdateTerrainsEnd != null)
+                OnUpdateTerrainsEnd();
+        }
+
+        // OnClearStreamingWorld
+        public delegate void OnClearStreamingWorldEventHandler();
+        public static event OnClearStreamingWorldEventHandler OnClearStreamingWorld;
+        protected virtual void RaiseOnClearStreamingWorldEvent()
+        {
+            if (OnClearStreamingWorld != null)
+                OnClearStreamingWorld();
+        }
+
+        // OnCreateLocationGameObject
+        public delegate void OnCreateLocationGameObjectEventHandler(DaggerfallLocation dfLocation);
+        public static event OnCreateLocationGameObjectEventHandler OnCreateLocationGameObject;
+        protected virtual void RaiseOnCreateLocationGameObjectEvent(DaggerfallLocation dfLocation)
+        {
+            if (OnCreateLocationGameObject != null)
+                OnCreateLocationGameObject(dfLocation);
         }
 
         #endregion

@@ -39,6 +39,8 @@ namespace DaggerfallWorkshop.Utility
             public int ID;
             public int RegionIndex;
             public int MapIndex;
+            public DFRegion.LocationTypes LocationType;
+            public DFRegion.DungeonTypes DungeonType;
         }
 
         public bool IsReady
@@ -73,7 +75,7 @@ namespace DaggerfallWorkshop.Utility
 
         #region Constructors
 
-        public ContentReader(string arena2Path, DaggerfallUnity dfUnity)
+        public ContentReader(string arena2Path)
         {
             this.arena2Path = arena2Path;
             SetupReaders();
@@ -166,7 +168,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         private void SetupReaders()
         {
-            // Setup general content readers
+            // Try to setup Arena2-dependent content readers
             if (blockFileReader == null)
                 blockFileReader = new BlocksFile(Path.Combine(arena2Path, BlocksFile.Filename), FileUsage.UseMemory, true);
             if (mapFileReader == null)
@@ -175,13 +177,16 @@ namespace DaggerfallWorkshop.Utility
                 monsterFileReader = new MonsterFile(Path.Combine(arena2Path, MonsterFile.Filename), FileUsage.UseMemory, true);
             if (woodsFileReader == null)
                 woodsFileReader = new WoodsFile(Path.Combine(arena2Path, WoodsFile.Filename), FileUsage.UseMemory, true);
+
+            // Build map lookup dictionary
+            if (mapDict == null && mapFileReader != null)
+                EnumerateMaps();
+            
+            // Setup noise generator
             if (noise == null)
                 noise = new Noise();
 
-            // Build map lookup dictionary
-            if (mapDict == null)
-                EnumerateMaps();
-
+            // Raise ready flag
             isReady = true;
         }
 
@@ -201,6 +206,8 @@ namespace DaggerfallWorkshop.Utility
                     summary.ID = mapTable.MapId & 0x000fffff;
                     summary.RegionIndex = region;
                     summary.MapIndex = location;
+                    summary.LocationType = mapTable.LocationType;
+                    summary.DungeonType = mapTable.DungeonType;
                     mapDict.Add(summary.ID, summary);
                 }
             }

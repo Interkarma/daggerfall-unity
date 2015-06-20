@@ -21,6 +21,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallUnity.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -37,11 +38,12 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.3.11";
+        public const string Version = "1.3.15";
 
         #region Fields
 
         bool isReady = false;
+        bool isPathValidated = false;
         ContentReader reader;
 
         WorldTime worldTime;
@@ -62,7 +64,6 @@ namespace DaggerfallWorkshop
         // Performance options
         public bool Option_CombineRMB = true;
         public bool Option_CombineRDB = true;
-        //public bool Option_CombineLocations = true;
         public bool Option_BatchBillboards = true;
 
         // Import options
@@ -74,12 +75,9 @@ namespace DaggerfallWorkshop
         public bool Option_CloseCityGates = false;
 
         // Light options
-        public bool Option_ImportPointLights = true;
-        public bool Option_AnimatedPointLights = true;
-        public string Option_PointLightTag = "Untagged";
-#if UNITY_EDITOR
-        public MonoScript Option_CustomPointLightScript = null;
-#endif
+        public GameObject Option_CityLightsPrefab = null;
+        public GameObject Option_DungeonLightsPrefab = null;
+        public GameObject Option_InteriorLightsPrefab = null;
 
         // Enemy options
         public bool Option_ImportEnemies = true;
@@ -105,12 +103,6 @@ namespace DaggerfallWorkshop
         public bool Option_AutomateCityLights = true;
         public bool Option_AutomateCityGates = false;
 
-        // Resource export options
-#if UNITY_EDITOR
-        public string Option_MyResourcesFolder = "Daggerfall Unity/Resources";
-        public string Option_TerrainAtlasesSubFolder = "TerrainAtlases";
-#endif
-
         #endregion
 
         #region Class Properties
@@ -118,6 +110,11 @@ namespace DaggerfallWorkshop
         public bool IsReady
         {
             get { return isReady; }
+        }
+
+        public bool IsPathValidated
+        {
+            get { return isPathValidated; }
         }
 
         public MaterialReader MaterialReader
@@ -142,12 +139,7 @@ namespace DaggerfallWorkshop
 
         public ContentReader ContentReader
         {
-            get
-            {
-                if (reader == null)
-                    SetupContentReaders();
-                return reader;
-            }
+            get { return reader; }
         }
 
         #endregion
@@ -186,149 +178,109 @@ namespace DaggerfallWorkshop
 
         void Start()
         {
-#if UNITY_EDITOR
-            // Check for missing or invalid Arena2 path on game start in editor
-            // Only builds should run from local resources
-            if (Application.isPlaying)
-            {
-                if (!ValidateArena2Path(Arena2Path))
-                    throw new Exception("Arena2Path is not valid!");
-                Setup();
-            }
-#else
-            // Startup
-            Setup();
             SetupSingleton();
+            SetupArena2Path();
             SetupContentReaders();
-#endif
         }
 
         void Update()
         {
-            // Instance must be set up
-            if (!Setup())
-                return;
-
 #if UNITY_EDITOR
-            // Content readers must be ready
-            // This is checked every update in editor as
-            // code changes can reset singleton fields
-            SetupContentReaders();
+            // Check ready every update in editor as code changes can de-instantiate local objects
+            if (!isReady) SetupArena2Path();
+            if (reader == null) SetupContentReaders();
 #endif
         }
 
         #endregion
 
+        #region Editor-Only Methods
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Setup path and content readers again.
+        /// Used by editor when setting new Arena2Path.
+        /// </summary>
+        public void EditorResetArena2Path()
+        {
+            SetupArena2Path();
+            SetupContentReaders(true);
+        }
+
+        /// <summary>
+        /// Clear Arena2 path in editor.
+        /// Used when you wish to decouple from Arena2 for certain builds.
+        /// </summary>
+        public void EditorClearArena2Path()
+        {
+            Arena2Path = string.Empty;
+            EditorResetArena2Path();
+        }
+#endif
+
+        #endregion
+
         #region Startup and Shutdown
 
-        public bool Setup()
+        private void SetupArena2Path()
         {
-            // Full validation is only performed in editor mode
-            // This is to allow standalone builds to start with
-            // no Arena2 data, or partial Arena2 data in Resources
-            if (!isReady)
+            // Allow implementor to set own Arena2 path (e.g. from custom settings file)
+            RaiseOnSetArena2SourceEvent();
+
+            // Check path is valid
+            if (ValidateArena2Path(Arena2Path))
             {
-#if UNITY_EDITOR
-                if (!Application.isPlaying)
+                isReady = true;
+                isPathValidated = true;
+                LogMessage("Arena2 path validated.", true);
+                return;
+            }
+            else
+            {
+                // Look for arena2 folder in Application.dataPath at runtime
+                if (Application.isPlaying)
                 {
-                    // Attempt to autoload path
-                    LoadDeveloperArena2Path();
-
-                    // Must have a path set
-                    if (string.IsNullOrEmpty(Arena2Path))
-                        return false;
-
-                    // Validate current path
-                    if (ValidateArena2Path(Arena2Path))
+                    string path = Path.Combine(Application.dataPath, "arena2");
+                    if (Directory.Exists(path))
                     {
-                        isReady = true;
-                        LogMessage("Arena2 path validated.", true);
-                        SetupSingleton();
-                        SetupContentReaders();
+                        // If it appears valid set this is as our path
+                        if (ValidateArena2Path(path))
+                        {
+                            Arena2Path = path;
+                            isReady = true;
+                            isPathValidated = true;
+                            LogMessage(string.Format("Found valid arena2 path at '{0}'.", path));
+                            return;
+                        }
                     }
-                    else
-                    {
-                        isReady = false;
-                        return false;
-                    }
+                }
+            }
+
+            // No path was found but we can try to carry on without one
+            isReady = true;
+            isPathValidated = false;
+
+            // Singleton is now ready
+            RaiseOnReadyEvent();
+        }
+
+        private void SetupContentReaders(bool force = false)
+        {
+            if (reader == null || force)
+            {
+                // Ensure content readers available even when path not valid
+                if (isPathValidated)
+                {
+                    DaggerfallUnity.LogMessage(string.Format("Setting up content readers with arena2 path '{0}'.", Arena2Path));
+                    reader = new ContentReader(Arena2Path);
                 }
                 else
                 {
-                    SetupSingleton();
-                    SetupContentReaders();
-                }
-#else
-                LoadRuntimeApplicationDataArena2Path();
-                SetupSingleton();
-                SetupContentReaders();
-#endif
-
-                isReady = true;
-                RaiseOnReadyEvent();
-            }
-
-            return true;
-        }
-
-        public bool ValidateArena2Path(string path)
-        {
-            DFValidator.ValidationResults results;
-            DFValidator.ValidateArena2Folder(path, out results);
-
-            return results.AppearsValid;
-        }
-
-        private void SetupSingleton()
-        {
-            if (instance == null)
-                instance = this;
-            else if (instance != this)
-            {
-                if (Application.isPlaying)
-                {
-                    LogMessage("Multiple DaggerfallUnity instances detected!", true);
-                    Destroy(gameObject);
+                    DaggerfallUnity.LogMessage(string.Format("Setting up content readers without arena2 path. Not all features will be available."));
+                    reader = new ContentReader(string.Empty);
                 }
             }
         }
-
-        private void SetupContentReaders()
-        {
-            if (isReady)
-            {
-                if (reader == null)
-                {
-                    DaggerfallUnity.LogMessage(string.Format("Setting up content readers with arena2 path '{0}'.", Arena2Path));
-                    reader = new ContentReader(Arena2Path, this);
-                }
-            }
-        }
-
-#if UNITY_EDITOR
-        private void LoadDeveloperArena2Path()
-        {
-            const string devArena2Path = "devArena2Path";
-
-            // Do nothing if path already set or playing
-            if (!string.IsNullOrEmpty(Arena2Path) || Application.isPlaying)
-                return;
-
-            // Attempt to load persistent dev path from Resources
-            TextAsset path = Resources.Load<TextAsset>(devArena2Path);
-            if (path)
-            {
-                if (Directory.Exists(path.text))
-                {
-                    // If it looks valid set this is as our path
-                    if (ValidateArena2Path(path.text))
-                    {
-                        Arena2Path = path.text;
-                        EditorUtility.SetDirty(this);
-                    }
-                }
-            }
-        }
-#endif
 
         #endregion
 
@@ -351,29 +303,29 @@ namespace DaggerfallWorkshop
             return true;
         }
 
+        public static bool ValidateArena2Path(string path)
+        {
+            DFValidator.ValidationResults results;
+            DFValidator.ValidateArena2Folder(path, out results);
+
+            return results.AppearsValid;
+        }
+
         #endregion
 
         #region Private Methods
 
-        // Looks for valid arena2 folder in Application.dataPath at runtime (not in editor).
-        // This provides developers with option to supply own Arena2 folder rather than use Resources for builds.
-        private void LoadRuntimeApplicationDataArena2Path()
+        private void SetupSingleton()
         {
-            string path = Path.Combine(Application.dataPath, "arena2");
-            LogMessage(string.Format("Looking for valid runtime arena2 path at '{0}'.", path));
-
-            if (Directory.Exists(path))
+            if (instance == null)
+                instance = this;
+            else if (instance != this)
             {
-                // If it looks valid set this is as our path
-                if (ValidateArena2Path(path))
+                if (Application.isPlaying)
                 {
-                    Arena2Path = path;
-                    LogMessage(string.Format("Found valid arena2 path at '{0}'.", path));
+                    LogMessage("Multiple DaggerfallUnity instances detected in scene!", true);
+                    Destroy(gameObject);
                 }
-            }
-            else
-            {
-                LogMessage(string.Format("Did not find valid arena2 path at '{0}'. You can ignore this error unless you expected a path to be here.", path));
             }
         }
 
@@ -390,18 +342,64 @@ namespace DaggerfallWorkshop
                 OnReady();
         }
 
+        // OnSetArena2Source
+        public delegate void OnSetArena2SourceEventHandler();
+        public static event OnSetArena2SourceEventHandler OnSetArena2Source;
+        protected virtual void RaiseOnSetArena2SourceEvent()
+        {
+            if (OnSetArena2Source != null)
+                OnSetArena2Source();
+        }
+
         #endregion
 
-        //        #region Editor Asset Export
-//#if UNITY_EDITOR && !UNITY_WEBPLAYER
-//        public void ExportTerrainTextureAtlases()
-//        {
-//            if (MaterialReader.IsReady)
-//            {
-//                TerrainAtlasBuilder.ExportTerrainAtlasTextureResources(materialReader.TextureReader, Option_MyResourcesFolder, Option_TerrainAtlasesSubFolder);
-//            }
-//        }
-//#endif
-//        #endregion
+        public void BigTestButton()
+        {
+            // Must be ready
+            if (!MaterialReader.IsReady)
+                return;
+
+            // Create builder
+            TextureAtlasBuilder builder = new TextureAtlasBuilder();
+
+            // Assign the archives we want to pack into atlas
+            int[] archiveArray = new int[] { 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 491, 398, 210, 96, 97, 98, 100, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 211, 212, 213, 214, 216, 218 };
+
+            // Assign texture settings
+            GetTextureSettings settings = new GetTextureSettings();
+            settings.dilate = true;
+            settings.stayReadable = true;
+
+            // Add all items to builder
+            TextureFile textureFile = new TextureFile();
+            for (int i = 0; i < archiveArray.Length; i++)
+            {
+                settings.archive = archiveArray[i];
+
+                // Load texture file for this archive so we can get counts
+                textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archiveArray[i])), FileUsage.UseMemory, true);
+
+                // Iterate records
+                for (int record = 0; record < textureFile.RecordCount; record++)
+                {
+                    settings.record = record;
+
+                    // Iterate frames
+                    int frameCount = textureFile.GetFrameCount(record);
+                    for (int frame = 0; frame < frameCount; frame++)
+                    {
+                        settings.frame = frame;
+                        GetTextureResults results = materialReader.TextureReader.GetTexture2D(settings);
+                        builder.AddTextureItem(results.albedoMap, archiveArray[i], record, frame, frameCount);
+                    }
+                }
+            }
+
+            // Rebuild atlas
+            builder.Rebuild();
+
+            // Save atlas to file
+            materialReader.TextureReader.SaveTextureToPNG(builder.AtlasTexture, "d:\\test\\SuperAtlas.png");
+        }
     }
 }

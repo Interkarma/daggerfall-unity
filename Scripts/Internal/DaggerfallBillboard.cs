@@ -223,8 +223,7 @@ namespace DaggerfallWorkshop
                     0,
                     out summary.Rect,
                     4,
-                    true,
-                    shader);
+                    true);
                 mesh = dfUnity.MeshReader.GetBillboardMesh(
                     summary.Rect,
                     archive,

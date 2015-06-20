@@ -29,11 +29,6 @@ namespace DaggerfallConnect.Arena2
         #region Class Variables
 
         /// <summary>
-        /// Index of window bytes when reading textures.
-        /// </summary>
-        protected const int windowIndex = 0xff;
-
-        /// <summary>
         /// Palette for building image data
         /// </summary>
         protected DFPalette myPalette = new DFPalette();
@@ -238,6 +233,13 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Color32 array.</returns>
         public Color32[] GetColors32(DFBitmap srcBitmap, int alphaIndex, int border, out DFSize sizeOut)
         {
+            // Must be an indexed format
+            if (srcBitmap.Format != DFBitmap.Formats.Indexed)
+            {
+                sizeOut = new DFSize();
+                return null;
+            }
+
             // Calculate dimensions
             int srcWidth = srcBitmap.Width;
             int srcHeight = srcBitmap.Height;
@@ -273,54 +275,39 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
-        /// Gets a Color32 array with window indices tinted a custom colour.
+        /// Gets a Color32 array as emission map based for window textures.
         /// </summary>
-        /// <param name="record">Record index.</param>
-        /// <param name="color">New colour for window parts.</param>
-        /// <param name="alpha">New alpha for window parts.</param>
-        /// <param name="diffuseColors">Receives new window texture with custom colour.</param>
-        /// <param name="alphaColors">Receives alpha of window parts.</param>
-        public DFSize GetWindowColors32(int record, Color32 color, Color32 alpha, out Color32[] diffuseColors, out Color32[] alphaColors)
+        /// <param name="srcBitmap">Source bitmap.</param>
+        /// <param name="emissionIndex">Index to receive emission colour.</param>
+        /// <returns>Color32 array.</returns>
+        public Color32[] GetWindowColors32(DFBitmap srcBitmap, int emissionIndex = 0xff)
         {
-            // Get source bitmap
-            DFBitmap srcBitmap = GetDFBitmap(record, 0);
+            // Must be an indexed format
+            if (srcBitmap.Format != DFBitmap.Formats.Indexed)
+                return null;
 
             // Create target array
             DFSize sz = new DFSize(srcBitmap.Width, srcBitmap.Height);
-            diffuseColors = new Color32[sz.Width * sz.Height];
-            alphaColors = new Color32[sz.Width * sz.Height];
+            Color32[] emissionColors = new Color32[sz.Width * sz.Height];
 
-            byte r, g, b;
+            // Generate emissive parts of texture based on index
             int index, srcRow, dstRow;
             for (int y = 0; y < sz.Height; y++)
             {
                 // Get row position
                 srcRow = y * sz.Width;
-                dstRow = (sz.Height - 1 - y) * sz.Width; ;
+                dstRow = (sz.Height - 1 - y) * sz.Width;
 
                 // Write data for this row
                 for (int x = 0; x < sz.Width; x++)
                 {
                     index = srcBitmap.Data[srcRow + x];
-                    if (index == windowIndex)
-                    {
-                        // Set window parts
-                        diffuseColors[dstRow + x] = color;
-                        alphaColors[dstRow + x] = alpha;
-                    }
-                    else
-                    {
-                        // Set everthing else
-                        r = myPalette.GetRed(index);
-                        g = myPalette.GetGreen(index);
-                        b = myPalette.GetBlue(index);
-                        diffuseColors[dstRow + x] = new Color32(r, g, b, 0xff);
-                        alphaColors[dstRow + x] = new Color32(0, 0, 0, 0);
-                    }
+                    if (index == emissionIndex)
+                        emissionColors[dstRow + x] = Color.white;
                 }
             }
 
-            return sz;
+            return emissionColors;
         }
 
         /// <summary>

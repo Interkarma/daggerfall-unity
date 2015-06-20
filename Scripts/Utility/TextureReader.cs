@@ -27,10 +27,6 @@ namespace DaggerfallWorkshop.Utility
         TextureFile textureFile;
         bool mipMaps = true;
 
-        //Dictionary<int, Texture2D> albedoDict = new Dictionary<int, Texture2D>();
-        //Dictionary<int, Texture2D> normalDict = new Dictionary<int, Texture2D>();
-        //Dictionary<int, Texture2D> emissionDict = new Dictionary<int, Texture2D>();
-
         /// <summary>
         /// Gets or sets Arena2 path.
         /// Path must be set before attempting to load textures.
@@ -57,6 +53,24 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Creates common texture settings.
+        /// </summary>
+        /// <returns>GetTextureSettings.</returns>
+        public static GetTextureSettings CreateTextureSettings(int archive, int record, int frame = 0, int alphaIndex = 0, int borderSize = 0, bool dilate = false, int maxAtlasSize = 2048)
+        {
+            GetTextureSettings settings = new GetTextureSettings();
+            settings.archive = archive;
+            settings.record = record;
+            settings.frame = frame;
+            settings.alphaIndex = alphaIndex;
+            settings.borderSize = borderSize;
+            settings.dilate = dilate;
+            settings.atlasMaxSize = maxAtlasSize;
+
+            return settings;
+        }
+
+        /// <summary>
         /// Constructor to set Arena2Path.
         /// </summary>
         /// <param name="arena2Path">Path to Arena2 folder.</param>
@@ -66,137 +80,220 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets Unity Texture2D from Daggerfall texture.
+        /// Gets Unity albedo texture from Daggerfall texture with minimum options.
         /// </summary>
         /// <param name="archive">Archive index.</param>
         /// <param name="record">Record index.</param>
         /// <param name="frame">Frame index.</param>
         /// <param name="alphaIndex">Index to receive transparent alpha.</param>
         /// <returns>Texture2D or null.</returns>
-        public Texture2D GetTexture2D(int archive, int record, int frame = 0, int alphaIndex = -1)
+        public Texture2D GetTexture2D(int archive, int record, int frame = 0, int alphaIndex = 0)
         {
-            Rect rect;
-            return GetTexture2D(archive, record, frame, alphaIndex, out rect);
+            GetTextureSettings settings = new GetTextureSettings();
+            settings.archive = archive;
+            settings.record = record;
+            settings.frame = frame;
+            settings.alphaIndex = alphaIndex;
+            GetTextureResults results = GetTexture2D(settings);
+
+            return results.albedoMap;
         }
 
         /// <summary>
-        /// Gets Unity Texture2D from Daggerfall texture with more options.
+        /// Gets Unity textures from Daggerfall texture with all options.
+        /// Returns all supported texture maps for Standard shader in one call.
         /// </summary>
-        /// <param name="archive">Archive index.</param>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index.</param>
-        /// <param name="alphaIndex">Index to receive transparent alpha.</param>
-        /// <param name="rectOut">Receives UV rect for texture inside border.</param>
-        /// <param name="border">Number of pixels border to add around image.</param>
-        /// <param name="dilate">Blend texture into surrounding empty pixels. Requires border.</param>
-        /// <param name="copyToOppositeBorder">Copy texture edges to opposite border. Requires border, will overwrite dilate.</param>
-        /// <returns>Texture2D or null.</returns>
-        public Texture2D GetTexture2D(
-            int archive,
-            int record,
-            int frame,
-            int alphaIndex,
-            out Rect rectOut,
-            int border = 0,
-            bool dilate = false,
-            bool copyToOppositeBorder = false,
-            bool makeNoLongerReadable = true)
+        /// <param name="settings">Get texture settings.</param>
+        /// <returns>GetTextureResults.</returns>
+        public GetTextureResults GetTexture2D(GetTextureSettings settings)
         {
+            GetTextureResults results = new GetTextureResults();
+
             // Ready check
             if (!ReadyCheck())
-            {
-                rectOut = new Rect();
-                return null;
-            }
+                return results;
+
+            // Determine if this is a window texture
+            bool isWindow = ClimateSwaps.IsExteriorWindow(settings.archive, settings.record);
 
             // Load texture file
-            textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
+            textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
 
-            // Get Color32 array
+            // Get starting DFBitmap and albedo Color32 array
             DFSize sz;
-            Color32[] colors = textureFile.GetColors32(record, frame, alphaIndex, border, out sz);
+            DFBitmap srcBitmap = textureFile.GetDFBitmap(settings.record, settings.frame);
+            Color32[] albedoColors = textureFile.GetColors32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
+
+            // Sharpen source image
+            if (settings.sharpen)
+                albedoColors = ImageProcessing.Sharpen(ref albedoColors, sz.Width, sz.Height);
 
             // Dilate edges
-            if (border > 0 && dilate && !copyToOppositeBorder)
-                ImageProcessing.DilateColors(ref colors, sz);
+            if (settings.borderSize > 0 && settings.dilate && !settings.copyToOppositeBorder)
+                ImageProcessing.DilateColors(ref albedoColors, sz);
 
             // Copy to opposite border
-            if (border > 0 && copyToOppositeBorder)
-                ImageProcessing.WrapBorder(ref colors, sz, border);
+            if (settings.borderSize > 0 && settings.copyToOppositeBorder)
+                ImageProcessing.WrapBorder(ref albedoColors, sz, settings.borderSize);
 
-            // Create Texture2D
-            Texture2D texture;
-            if (alphaIndex < 0)
-                texture = new Texture2D(sz.Width, sz.Height, TextureFormat.RGB24, MipMaps);
+            // Create albedo texture
+            Texture2D albedoMap = null;
+            if (settings.alphaIndex < 0)
+                albedoMap = new Texture2D(sz.Width, sz.Height, TextureFormat.RGB24, MipMaps);
             else
-                texture = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, MipMaps);
-            texture.SetPixels32(colors);
-            texture.Apply(true, makeNoLongerReadable);
+                albedoMap = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, MipMaps);
+            albedoMap.SetPixels32(albedoColors);
+            albedoMap.Apply(true, !settings.stayReadable);
+
+            // Create normal texture - must be ARGB32
+            Texture2D normalMap = null;
+            if (settings.createNormalMap)
+            {
+                Color32[] normalColors;
+                normalColors = ImageProcessing.GetBumpMap(ref albedoColors, sz.Width, sz.Height);
+                normalColors = ImageProcessing.ConvertBumpToNormals(ref normalColors, sz.Width, sz.Height, settings.normalStrength);
+                normalMap = new Texture2D(sz.Width, sz.Height, TextureFormat.ARGB32, MipMaps);
+                normalMap.SetPixels32(normalColors);
+                normalMap.Apply(true, !settings.stayReadable);
+            }
+
+            // Create emissive texture
+            Texture2D emissionMap = null;
+            if (settings.createEmissionMap)
+            {
+                emissionMap = albedoMap;
+            }
+            else if (settings.treatWindowsAsEmissive && isWindow)
+            {
+                Color32[] emissionColors = textureFile.GetWindowColors32(srcBitmap);
+                emissionMap = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, MipMaps);
+                emissionMap.SetPixels32(emissionColors);
+                emissionMap.Apply(true, !settings.stayReadable);
+            }
 
             // Shrink UV rect to compensate for internal border
             float ru = 1f / sz.Width;
             float rv = 1f / sz.Height;
-            rectOut = new Rect(border * ru, border * rv, (sz.Width - border * 2) * ru, (sz.Height - border * 2) * rv);
+            results.singleRect = new Rect(
+                settings.borderSize * ru,
+                settings.borderSize * rv,
+                (sz.Width - settings.borderSize * 2) * ru,
+                (sz.Height - settings.borderSize * 2) * rv);
 
-            return texture;
+            // Store results
+            results.albedoMap = albedoMap;
+            results.normalMap = normalMap;
+            results.emissionMap = emissionMap;
+            results.isWindow = isWindow;
+
+            return results;
         }
 
         /// <summary>
         /// Gets Texture2D atlas from Daggerfall texture archive.
         /// Every record and frame in the archive will be added to atlas.
         /// An array of rects will be returned with sub-texture rect for each record index and frame.
-        /// Used for non-tiling textures like flats and ground tiles.
         /// </summary>
-        /// <param name="archive">Archive index to create atlas from.</param>
-        /// <param name="alphaIndex">Index to receive transparent alpha.</param>
-        /// <param name="padding">Number of pixels padding around each sub-texture.</param>
-        /// <param name="maxAtlasSize">Max size of atlas.</param>
-        /// <param name="rectsOut">Array of rects, one for each record sub-texture and frame.</param>
-        /// <param name="indicesOut">Array of record indices into rect array, accounting for animation frames.</param>
-        /// <param name="border">Number of pixels internal border around each texture.</param>
-        /// <param name="dilate">Blend texture into surrounding empty pixels.</param>
-        /// <param name="shrinkUVs">Number of extra pixels to shrink UV rect.</param>
-        /// <param name="copyToOppositeBorder">Copy texture edges to opposite border. Requires border, will overwrite dilate.</param>
-        /// <returns>Texture2D atlas or null.</returns>
-        public Texture2D GetTexture2DAtlas(
-            int archive,
-            int alphaIndex,
-            int padding,
-            int maxAtlasSize,
-            out Rect[] rectsOut,
-            out RecordIndex[] indicesOut,
-            out Vector2[] sizesOut,
-            out Vector2[] scalesOut,
-            out Vector2[] offsetsOut,
-            int border,
-            bool dilate,
-            int shrinkUVs = 0,
-            bool copyToOppositeBorder = false,
-            bool makeNoLongerReadable = true)
+        /// <param name="settings">Get texture settings.</param>
+        /// <returns>GetTextureResults.</returns>
+        public GetTextureResults GetTexture2DAtlas(GetTextureSettings settings)
         {
+            GetTextureResults results = new GetTextureResults();
+
             // Ready check
             if (!ReadyCheck())
-            {
-                rectsOut = null;
-                indicesOut = null;
-                sizesOut = null;
-                scalesOut = null;
-                offsetsOut = null;
-                return null;
-            }
+                return results;
 
             // Load texture file
-            textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
+            textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
 
-            // Read every texture in archive
-            Rect rect;
+            // Get individual textures
             List<Texture2D> textures = new List<Texture2D>();
             List<RecordIndex> indices = new List<RecordIndex>();
-            sizesOut = new Vector2[textureFile.RecordCount];
-            scalesOut = new Vector2[textureFile.RecordCount];
-            offsetsOut = new Vector2[textureFile.RecordCount];
+            AddToTextureArrays(settings, textures, indices, ref results);
+
+            // Pack textures into atlas
+            Texture2D atlas = new Texture2D(settings.atlasMaxSize, settings.atlasMaxSize, TextureFormat.RGBA32, MipMaps);
+            Rect[] rects = atlas.PackTextures(textures.ToArray(), settings.atlasPadding, settings.atlasMaxSize, !settings.stayReadable);
+
+            // Add to results
+            if (results.atlasRects == null) results.atlasRects = new List<Rect>(rects.Length);
+            if (results.atlasIndices == null) results.atlasIndices = new List<RecordIndex>(indices.Count);
+            results.atlasRects.AddRange(rects);
+            results.atlasIndices.AddRange(indices);
+
+            // Shrink UV rect to compensate for internal border
+            float ru = 1f / atlas.width;
+            float rv = 1f / atlas.height;
+            int finalBorder = settings.borderSize + settings.atlasShrinkUVs;
+            for (int i = 0; i < results.atlasRects.Count; i++)
+            {
+                Rect rct = results.atlasRects[i];
+                rct.xMin += finalBorder * ru;
+                rct.xMax -= finalBorder * ru;
+                rct.yMin += finalBorder * rv;
+                rct.yMax -= finalBorder * rv;
+                results.atlasRects[i] = rct;
+            }
+
+            // Store results
+            // Atlas texture currently does not return normal or emissive maps
+            results.albedoMap = atlas;
+
+            return results;
+        }
+
+        ///// <summary>
+        ///// Gets Texture2D super-atlas from one or more texture archives.
+        ///// </summary>
+        ///// <param name="settings">Get texture settings.</param>
+        ///// <param name="archiveArray">Array of valid archive indices to pack into super-atlas.</param>
+        ///// <returns>GetTextureResults</returns>
+        //public GetTextureResults GetTexture2DAtlas(GetTextureSettings settings, int[] archiveArray)
+        //{
+        //    GetTextureResults results = new GetTextureResults();
+
+        //    // Ready check
+        //    if (!ReadyCheck())
+        //        return results;
+
+        //    // Iterate through archive array
+        //    for (int i = 0; i < archiveArray.Length; i++)
+        //    {
+        //        // Load texture file
+        //        textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
+
+        //        // Add individual textures
+        //        List<Texture2D> textures = new List<Texture2D>();
+        //        List<RecordIndex> indices = new List<RecordIndex>();
+        //        AddToTextureArrays(settings, textures, indices);
+        //    }
+            
+        //    return results;
+        //}
+
+        /// <summary>
+        /// Gets an array of textures for atlas packing methods.
+        /// </summary>
+        /// <param name="settings">GetTextureSettings.</param>
+        /// <param name="textures">List to receive individual textures.</param>
+        /// <param name="indices">List to receive individual indices.</param>
+        /// <param name="results">Results to receive list data.</param>
+        private void AddToTextureArrays(GetTextureSettings settings, List<Texture2D> textures, List<RecordIndex> indices, ref GetTextureResults results)
+        {
+            // Individual textures must remain readable to pack into atlas
+            settings.stayReadable = true;
+
+            // Create initial lists if not present
+            if (results.atlasSizes == null) results.atlasSizes = new List<Vector2>(textureFile.RecordCount);
+            if (results.atlasScales == null) results.atlasScales = new List<Vector2>(textureFile.RecordCount);
+            if (results.atlasOffsets == null) results.atlasOffsets = new List<Vector2>(textureFile.RecordCount);
+            if (results.atlasFrameCounts == null) results.atlasFrameCounts = new List<int>(textureFile.RecordCount);
+
+            // Read every texture in archive
             for (int record = 0; record < textureFile.RecordCount; record++)
             {
+                settings.record = record;
                 int frames = textureFile.GetFrameCount(record);
                 DFSize size = textureFile.GetSize(record);
                 DFSize scale = textureFile.GetScale(record);
@@ -211,34 +308,16 @@ namespace DaggerfallWorkshop.Utility
                 indices.Add(ri);
                 for (int frame = 0; frame < frames; frame++)
                 {
-                    textures.Add(GetTexture2D(archive, record, frame, alphaIndex, out rect, border, dilate, copyToOppositeBorder, false));
+                    settings.frame = frame;
+                    GetTextureResults nextTextureResults = GetTexture2D(settings);
+                    textures.Add(nextTextureResults.albedoMap);
                 }
 
-                sizesOut[record] = new Vector2(size.Width, size.Height);
-                scalesOut[record] = new Vector2(scale.Width, scale.Height);
-                offsetsOut[record] = new Vector2(offset.Width, offset.Height);
+                results.atlasSizes.Add(new Vector2(size.Width, size.Height));
+                results.atlasScales.Add(new Vector2(scale.Width, scale.Height));
+                results.atlasOffsets.Add(new Vector2(offset.Width, offset.Height));
+                results.atlasFrameCounts.Add(frames);
             }
-
-            // Pack textures into atlas
-            Texture2D atlas = new Texture2D(maxAtlasSize, maxAtlasSize, TextureFormat.RGBA32, MipMaps);
-            rectsOut = atlas.PackTextures(textures.ToArray(), padding, maxAtlasSize, makeNoLongerReadable);
-            indicesOut = indices.ToArray();
-
-            // Shrink UV rect to compensate for internal border
-            float ru = 1f / atlas.width;
-            float rv = 1f / atlas.height;
-            border += shrinkUVs;
-            for (int i = 0; i < rectsOut.Length; i++)
-            {
-                Rect rct = rectsOut[i];
-                rct.xMin += border * ru;
-                rct.xMax -= border * ru;
-                rct.yMin += border * rv;
-                rct.yMax -= border * rv;
-                rectsOut[i] = rct;
-            }
-
-            return atlas;
         }
 
         /// <summary>

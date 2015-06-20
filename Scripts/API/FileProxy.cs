@@ -464,6 +464,12 @@ namespace DaggerfallConnect.Utility
         /// <returns>True if successful, otherwise false.</returns>
         private bool LoadMemory(string filePath, FileAccess fileAccess, FileShare fileShare)
         {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // Unity cannot use Resources.Load in WebGL
+            // TODO: Implement WWW resource loading
+            return false;
+#else
+
             // Attempt to locate in Unity Resources folder first
             string fileName = Path.GetFileName(filePath);
             TextAsset asset = Resources.Load<TextAsset>(fileName);
@@ -503,6 +509,7 @@ namespace DaggerfallConnect.Utility
             fileUsage = FileUsage.UseMemory;
 
             return true;
+#endif
         }
 
         /// <summary>
