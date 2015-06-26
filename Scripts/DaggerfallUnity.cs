@@ -21,7 +21,6 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
-using DaggerfallUnity.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -38,7 +37,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.3.15";
+        public const string Version = "1.3.17";
 
         #region Fields
 
@@ -62,22 +61,25 @@ namespace DaggerfallWorkshop
         public string DungeonImporter_DungeonName = "Daggerfall/Privateer's Hold";
 
         // Performance options
+        public bool Option_SetStaticFlags = true;
         public bool Option_CombineRMB = true;
         public bool Option_CombineRDB = true;
         public bool Option_BatchBillboards = true;
 
         // Import options
-        public bool Option_SetStaticFlags = true;
         public bool Option_AddMeshColliders = true;
         public bool Option_AddNavmeshAgents = true;
-        public bool Option_DefaultSounds = true;
         public bool Option_SimpleGroundPlane = true;
         public bool Option_CloseCityGates = false;
 
-        // Light options
-        public GameObject Option_CityLightsPrefab = null;
-        public GameObject Option_DungeonLightsPrefab = null;
-        public GameObject Option_InteriorLightsPrefab = null;
+        // Prefab options
+        public bool Option_ImportLightPrefabs = true;
+        public Light Option_CityLightPrefab = null;
+        public Light Option_DungeonLightPrefab = null;
+        public Light Option_InteriorLightPrefab = null;
+        public bool Option_ImportDoorPrefabs = true;
+        public DaggerfallActionDoor Option_DungeonDoorPrefab = null;
+        public DaggerfallActionDoor Option_InteriorDoorPrefab = null;
 
         // Enemy options
         public bool Option_ImportEnemies = true;
@@ -352,54 +354,5 @@ namespace DaggerfallWorkshop
         }
 
         #endregion
-
-        public void BigTestButton()
-        {
-            // Must be ready
-            if (!MaterialReader.IsReady)
-                return;
-
-            // Create builder
-            TextureAtlasBuilder builder = new TextureAtlasBuilder();
-
-            // Assign the archives we want to pack into atlas
-            int[] archiveArray = new int[] { 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 491, 398, 210, 96, 97, 98, 100, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 211, 212, 213, 214, 216, 218 };
-
-            // Assign texture settings
-            GetTextureSettings settings = new GetTextureSettings();
-            settings.dilate = true;
-            settings.stayReadable = true;
-
-            // Add all items to builder
-            TextureFile textureFile = new TextureFile();
-            for (int i = 0; i < archiveArray.Length; i++)
-            {
-                settings.archive = archiveArray[i];
-
-                // Load texture file for this archive so we can get counts
-                textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archiveArray[i])), FileUsage.UseMemory, true);
-
-                // Iterate records
-                for (int record = 0; record < textureFile.RecordCount; record++)
-                {
-                    settings.record = record;
-
-                    // Iterate frames
-                    int frameCount = textureFile.GetFrameCount(record);
-                    for (int frame = 0; frame < frameCount; frame++)
-                    {
-                        settings.frame = frame;
-                        GetTextureResults results = materialReader.TextureReader.GetTexture2D(settings);
-                        builder.AddTextureItem(results.albedoMap, archiveArray[i], record, frame, frameCount);
-                    }
-                }
-            }
-
-            // Rebuild atlas
-            builder.Rebuild();
-
-            // Save atlas to file
-            materialReader.TextureReader.SaveTextureToPNG(builder.AtlasTexture, "d:\\test\\SuperAtlas.png");
-        }
     }
 }

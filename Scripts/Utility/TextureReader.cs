@@ -27,6 +27,11 @@ namespace DaggerfallWorkshop.Utility
         TextureFile textureFile;
         bool mipMaps = true;
 
+        // Special texture indices
+        public const int AnimalsTextureArchive = 201;
+        public const int LightsTextureArchive = 210;
+        public int[] MiscFlatsTextureArchives = new int[] { 97, 205, 211, 212, 213 };
+
         /// <summary>
         /// Gets or sets Arena2 path.
         /// Path must be set before attempting to load textures.
@@ -56,7 +61,7 @@ namespace DaggerfallWorkshop.Utility
         /// Creates common texture settings.
         /// </summary>
         /// <returns>GetTextureSettings.</returns>
-        public static GetTextureSettings CreateTextureSettings(int archive, int record, int frame = 0, int alphaIndex = 0, int borderSize = 0, bool dilate = false, int maxAtlasSize = 2048)
+        public static GetTextureSettings CreateTextureSettings(int archive = 0, int record = 0, int frame = 0, int alphaIndex = 0, int borderSize = 0, bool dilate = false, int maxAtlasSize = 2048)
         {
             GetTextureSettings settings = new GetTextureSettings();
             settings.archive = archive;
@@ -113,8 +118,9 @@ namespace DaggerfallWorkshop.Utility
             if (!ReadyCheck())
                 return results;
 
-            // Determine if this is a window texture
+            // Check if window or auto-emissive
             bool isWindow = ClimateSwaps.IsExteriorWindow(settings.archive, settings.record);
+            bool isEmissive = (settings.autoEmission) ? IsEmissive(settings.archive, settings.record) : false;
 
             // Load texture file
             textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
@@ -157,18 +163,40 @@ namespace DaggerfallWorkshop.Utility
                 normalMap.Apply(true, !settings.stayReadable);
             }
 
-            // Create emissive texture
+            // Create basic emissive texture
             Texture2D emissionMap = null;
-            if (settings.createEmissionMap)
+            bool resultEmissive = false;
+            if (settings.createEmissionMap || (settings.autoEmission && isEmissive) && !isWindow)
             {
+                // Just reuse albedo map for basic colour emission
                 emissionMap = albedoMap;
+                resultEmissive = true;
             }
-            else if (settings.treatWindowsAsEmissive && isWindow)
+
+            // Windows need special handling as only glass parts are emissive
+            if ((settings.createEmissionMap || settings.autoEmissionForWindows) && isWindow)
             {
+                // Create custom emission texture for glass area of windows
                 Color32[] emissionColors = textureFile.GetWindowColors32(srcBitmap);
                 emissionMap = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, MipMaps);
                 emissionMap.SetPixels32(emissionColors);
                 emissionMap.Apply(true, !settings.stayReadable);
+                resultEmissive = true;
+            }
+
+            // Lights need special handling as this archive contains a mix of emissive and non-emissive flats
+            // This can cause problems with atlas packing due to mismatch between albedo and emissive texture counts
+            if ((settings.createEmissionMap || settings.autoEmission) && settings.archive == LightsTextureArchive)
+            {
+                // For the unlit flats we create a null-emissive black texture
+                if (!isEmissive)
+                {
+                    Color32[] emissionColors = new Color32[sz.Width * sz.Height];
+                    emissionMap = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, MipMaps);
+                    emissionMap.SetPixels32(emissionColors);
+                    emissionMap.Apply(true, !settings.stayReadable);
+                    resultEmissive = true;
+                }
             }
 
             // Shrink UV rect to compensate for internal border
@@ -185,6 +213,7 @@ namespace DaggerfallWorkshop.Utility
             results.normalMap = normalMap;
             results.emissionMap = emissionMap;
             results.isWindow = isWindow;
+            results.isEmissive = resultEmissive;
 
             return results;
         }
@@ -193,6 +222,7 @@ namespace DaggerfallWorkshop.Utility
         /// Gets Texture2D atlas from Daggerfall texture archive.
         /// Every record and frame in the archive will be added to atlas.
         /// An array of rects will be returned with sub-texture rect for each record index and frame.
+        /// Currently supports one archive per atlas. Super-atlas packing (multiple archives) is in the works.
         /// </summary>
         /// <param name="settings">Get texture settings.</param>
         /// <returns>GetTextureResults.</returns>
@@ -204,17 +234,91 @@ namespace DaggerfallWorkshop.Utility
             if (!ReadyCheck())
                 return results;
 
+            // Individual textures must remain readable to pack into atlas
+            bool stayReadable = settings.stayReadable;
+            settings.stayReadable = true;
+
             // Load texture file
             textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
 
-            // Get individual textures
-            List<Texture2D> textures = new List<Texture2D>();
-            List<RecordIndex> indices = new List<RecordIndex>();
-            AddToTextureArrays(settings, textures, indices, ref results);
+            // Create lists
+            results.atlasSizes = new List<Vector2>(textureFile.RecordCount);
+            results.atlasScales = new List<Vector2>(textureFile.RecordCount);
+            results.atlasOffsets = new List<Vector2>(textureFile.RecordCount);
+            results.atlasFrameCounts = new List<int>(textureFile.RecordCount);
 
-            // Pack textures into atlas
-            Texture2D atlas = new Texture2D(settings.atlasMaxSize, settings.atlasMaxSize, TextureFormat.RGBA32, MipMaps);
-            Rect[] rects = atlas.PackTextures(textures.ToArray(), settings.atlasPadding, settings.atlasMaxSize, !settings.stayReadable);
+            // Read every texture in archive
+            bool hasNormalMaps = false;
+            bool hasEmissionMaps = false;
+            bool hasAnimation = false;
+            List<Texture2D> albedoTextures = new List<Texture2D>();
+            List<Texture2D> normalTextures = new List<Texture2D>();
+            List<Texture2D> emissionTextures = new List<Texture2D>();
+            List<RecordIndex> indices = new List<RecordIndex>();
+            for (int record = 0; record < textureFile.RecordCount; record++)
+            {
+                // Get record index and frame count
+                settings.record = record;
+                int frames = textureFile.GetFrameCount(record);
+                if (frames > 1)
+                    hasAnimation = true;
+
+                // Get record information
+                DFSize size = textureFile.GetSize(record);
+                DFSize scale = textureFile.GetScale(record);
+                DFSize offset = textureFile.GetOffset(record);
+                RecordIndex ri = new RecordIndex()
+                {
+                    startIndex = albedoTextures.Count,
+                    frameCount = frames,
+                    width = size.Width,
+                    height = size.Height,
+                };
+                indices.Add(ri);
+                for (int frame = 0; frame < frames; frame++)
+                {
+                    settings.frame = frame;
+                    GetTextureResults nextTextureResults = GetTexture2D(settings);
+                    albedoTextures.Add(nextTextureResults.albedoMap);
+                    if (nextTextureResults.normalMap != null)
+                    {
+                        normalTextures.Add(nextTextureResults.normalMap);
+                        hasNormalMaps = true;
+                    }
+                    if (nextTextureResults.emissionMap != null)
+                    {
+                        emissionTextures.Add(nextTextureResults.emissionMap);
+                        hasEmissionMaps = true;
+                    }
+                }
+
+                results.atlasSizes.Add(new Vector2(size.Width, size.Height));
+                results.atlasScales.Add(new Vector2(scale.Width, scale.Height));
+                results.atlasOffsets.Add(new Vector2(offset.Width, offset.Height));
+                results.atlasFrameCounts.Add(frames);
+            }
+
+            // Pack albedo textures into atlas and get our rects
+            Texture2D atlasAlbedoMap = new Texture2D(settings.atlasMaxSize, settings.atlasMaxSize, TextureFormat.RGBA32, MipMaps);
+            Rect[] rects = atlasAlbedoMap.PackTextures(albedoTextures.ToArray(), settings.atlasPadding, settings.atlasMaxSize, !stayReadable);
+
+            // Pack normal textures into atlas
+            Texture2D atlasNormalMap = null;
+            if (hasNormalMaps)
+            {
+                // Normals must be ARGB32
+                atlasNormalMap = new Texture2D(settings.atlasMaxSize, settings.atlasMaxSize, TextureFormat.ARGB32, MipMaps);
+                atlasNormalMap.PackTextures(normalTextures.ToArray(), settings.atlasPadding, settings.atlasMaxSize, !stayReadable);
+            }
+
+            // Pack emission textures into atlas
+            Texture2D atlasEmissionMap = null;
+            if (hasEmissionMaps)
+            {
+                // Repacking to ensure correct mix of lit and unlit
+                atlasEmissionMap = new Texture2D(settings.atlasMaxSize, settings.atlasMaxSize, TextureFormat.RGBA32, MipMaps);
+                atlasEmissionMap.PackTextures(emissionTextures.ToArray(), settings.atlasPadding, settings.atlasMaxSize, !stayReadable);
+            }
 
             // Add to results
             if (results.atlasRects == null) results.atlasRects = new List<Rect>(rects.Length);
@@ -223,8 +327,8 @@ namespace DaggerfallWorkshop.Utility
             results.atlasIndices.AddRange(indices);
 
             // Shrink UV rect to compensate for internal border
-            float ru = 1f / atlas.width;
-            float rv = 1f / atlas.height;
+            float ru = 1f / atlasAlbedoMap.width;
+            float rv = 1f / atlasAlbedoMap.height;
             int finalBorder = settings.borderSize + settings.atlasShrinkUVs;
             for (int i = 0; i < results.atlasRects.Count; i++)
             {
@@ -237,109 +341,82 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Store results
-            // Atlas texture currently does not return normal or emissive maps
-            results.albedoMap = atlas;
+            results.albedoMap = atlasAlbedoMap;
+            results.normalMap = atlasNormalMap;
+            results.emissionMap = atlasEmissionMap;
+            results.isAtlasAnimated = hasAnimation;
+            results.isEmissive = hasEmissionMaps;
 
             return results;
         }
 
-        ///// <summary>
-        ///// Gets Texture2D super-atlas from one or more texture archives.
-        ///// </summary>
-        ///// <param name="settings">Get texture settings.</param>
-        ///// <param name="archiveArray">Array of valid archive indices to pack into super-atlas.</param>
-        ///// <returns>GetTextureResults</returns>
-        //public GetTextureResults GetTexture2DAtlas(GetTextureSettings settings, int[] archiveArray)
-        //{
-        //    GetTextureResults results = new GetTextureResults();
-
-        //    // Ready check
-        //    if (!ReadyCheck())
-        //        return results;
-
-        //    // Iterate through archive array
-        //    for (int i = 0; i < archiveArray.Length; i++)
-        //    {
-        //        // Load texture file
-        //        textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
-
-        //        // Add individual textures
-        //        List<Texture2D> textures = new List<Texture2D>();
-        //        List<RecordIndex> indices = new List<RecordIndex>();
-        //        AddToTextureArrays(settings, textures, indices);
-        //    }
-            
-        //    return results;
-        //}
-
         /// <summary>
-        /// Gets an array of textures for atlas packing methods.
+        /// TEMP: Creates super-atlas populated with all archives in array.
+        /// Currently does not support animated textures, normal map, or emission map.
+        /// TODO: Integrate this feature fully with material system.
         /// </summary>
-        /// <param name="settings">GetTextureSettings.</param>
-        /// <param name="textures">List to receive individual textures.</param>
-        /// <param name="indices">List to receive individual indices.</param>
-        /// <param name="results">Results to receive list data.</param>
-        private void AddToTextureArrays(GetTextureSettings settings, List<Texture2D> textures, List<RecordIndex> indices, ref GetTextureResults results)
+        /// <param name="archives">Archive array.</param>
+        /// <param name="borderSize">Number of pixels border to add around image.</param>
+        /// <param name="dilate">Blend texture into surrounding empty pixels. Requires border.</param>
+        /// <returns>TextureAtlasBuilder.</returns>
+        public TextureAtlasBuilder CreateTextureAtlasBuilder(int[] archives, int borderSize = 0, bool dilate = false, int maxAtlasSize = 2048)
         {
-            // Individual textures must remain readable to pack into atlas
+            // Ready check
+            if (!ReadyCheck())
+                return null;
+
+            // Iterate archives
+            TextureAtlasBuilder builder = new TextureAtlasBuilder();
+            GetTextureSettings settings = TextureReader.CreateTextureSettings(0, 0, 0, 0, borderSize, dilate, maxAtlasSize);
             settings.stayReadable = true;
-
-            // Create initial lists if not present
-            if (results.atlasSizes == null) results.atlasSizes = new List<Vector2>(textureFile.RecordCount);
-            if (results.atlasScales == null) results.atlasScales = new List<Vector2>(textureFile.RecordCount);
-            if (results.atlasOffsets == null) results.atlasOffsets = new List<Vector2>(textureFile.RecordCount);
-            if (results.atlasFrameCounts == null) results.atlasFrameCounts = new List<int>(textureFile.RecordCount);
-
-            // Read every texture in archive
-            for (int record = 0; record < textureFile.RecordCount; record++)
+            for (int i = 0; i < archives.Length; i++)
             {
-                settings.record = record;
-                int frames = textureFile.GetFrameCount(record);
-                DFSize size = textureFile.GetSize(record);
-                DFSize scale = textureFile.GetScale(record);
-                DFSize offset = textureFile.GetOffset(record);
-                RecordIndex ri = new RecordIndex()
-                {
-                    startIndex = textures.Count,
-                    frameCount = frames,
-                    width = size.Width,
-                    height = size.Height,
-                };
-                indices.Add(ri);
-                for (int frame = 0; frame < frames; frame++)
-                {
-                    settings.frame = frame;
-                    GetTextureResults nextTextureResults = GetTexture2D(settings);
-                    textures.Add(nextTextureResults.albedoMap);
-                }
+                // Load texture file
+                settings.archive = archives[i];
+                textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
 
-                results.atlasSizes.Add(new Vector2(size.Width, size.Height));
-                results.atlasScales.Add(new Vector2(scale.Width, scale.Height));
-                results.atlasOffsets.Add(new Vector2(offset.Width, offset.Height));
-                results.atlasFrameCounts.Add(frames);
+                // Add all records for this archive - single frame only
+                for (int record = 0; record < textureFile.RecordCount; record++)
+                {
+                    settings.record = record;
+                    GetTextureResults results = GetTexture2D(settings);
+                    DFSize size = textureFile.GetSize(record);
+                    DFSize scale = textureFile.GetScale(record);
+                    builder.AddTextureItem(
+                        results.albedoMap,
+                        settings.archive,
+                        settings.record,
+                        0, 1,
+                        new Vector2(size.Width, size.Height),
+                        new Vector2(scale.Width, scale.Height));
+                }
             }
+
+            // Apply the builder
+            builder.Rebuild(borderSize);
+            
+            return builder;
         }
 
         /// <summary>
         /// Gets specially packed tileset atlas for terrains.
         /// This needs to be improved to create each mip level manually to further reduce artifacts.
         /// </summary>
-        /// <param name="archive">Archive index of terrain tiles (e.g. 302).</param>
-        /// <param name="makeNoLongerReadable"></param>
-        /// <returns>Texture2D.</returns>
-        public Texture2D GetTerrainTilesetTexture(int archive, bool makeNoLongerReadable = true)
+        public GetTextureResults GetTerrainTilesetTexture(int archive, bool stayReadable = false)
         {
             const int atlasDim = 2048;
             const int gutterSize = 32;
 
+            GetTextureResults results = new GetTextureResults();
+
             // Ready check
             if (!ReadyCheck())
-                return null;
+                return results;
 
             // Load texture file and check count matches terrain tiles
             textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
             if (textureFile.RecordCount != 56)
-                return null;
+                return results;
 
             // Rollout tiles into atlas.
             // This is somewhat inefficient, but fortunately atlases only
@@ -351,7 +428,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Create base image with gutter
                 DFSize sz;
-                Color32[] normal = textureFile.GetColors32(record, 0, -1, gutterSize, out sz);
+                Color32[] albedo = textureFile.GetColors32(record, 0, -1, gutterSize, out sz);
 
                 // Wrap and clamp textures based on tile
                 switch (record)
@@ -389,7 +466,7 @@ namespace DaggerfallWorkshop.Utility
                     case 52:
                     case 53:
                     case 55:
-                        ImageProcessing.ClampBorder(ref normal, sz, gutterSize);
+                        ImageProcessing.ClampBorder(ref albedo, sz, gutterSize);
                         break;
 
                     // Textures that clamp horizontally and tile vertically
@@ -399,23 +476,23 @@ namespace DaggerfallWorkshop.Utility
                     case 21:
                     case 26:
                     case 31:
-                        ImageProcessing.WrapBorder(ref normal, sz, gutterSize, false);
-                        ImageProcessing.ClampBorder(ref normal, sz, gutterSize, true, false);
+                        ImageProcessing.WrapBorder(ref albedo, sz, gutterSize, false);
+                        ImageProcessing.ClampBorder(ref albedo, sz, gutterSize, true, false);
                         break;
 
                     // Textures that tile in all directions
                     default:
-                        ImageProcessing.WrapBorder(ref normal, sz, gutterSize);
+                        ImageProcessing.WrapBorder(ref albedo, sz, gutterSize);
                         break;
                 }
 
                 // Create variants
-                Color32[] rotate = ImageProcessing.RotateColors(ref normal, sz.Width, sz.Height);
-                Color32[] flip = ImageProcessing.FlipColors(ref normal, sz.Width, sz.Height);
+                Color32[] rotate = ImageProcessing.RotateColors(ref albedo, sz.Width, sz.Height);
+                Color32[] flip = ImageProcessing.FlipColors(ref albedo, sz.Width, sz.Height);
                 Color32[] rotateFlip = ImageProcessing.RotateColors(ref flip, sz.Width, sz.Height);
 
                 // Insert into atlas
-                ImageProcessing.InsertColors(ref normal, ref atlasColors, x, y, sz.Width, sz.Height, atlasDim, atlasDim);
+                ImageProcessing.InsertColors(ref albedo, ref atlasColors, x, y, sz.Width, sz.Height, atlasDim, atlasDim);
                 ImageProcessing.InsertColors(ref rotate, ref atlasColors, x + sz.Width, y, sz.Width, sz.Height, atlasDim, atlasDim);
                 ImageProcessing.InsertColors(ref flip, ref atlasColors, x + sz.Width * 2, y, sz.Width, sz.Height, atlasDim, atlasDim);
                 ImageProcessing.InsertColors(ref rotateFlip, ref atlasColors, x + sz.Width * 3, y, sz.Width, sz.Height, atlasDim, atlasDim);
@@ -430,15 +507,79 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Create Texture2D
-            Texture2D atlas = new Texture2D(atlasDim, atlasDim, TextureFormat.RGB24, MipMaps);
-            atlas.SetPixels32(atlasColors);
-            atlas.Apply(true, makeNoLongerReadable);
+            Texture2D albedoAtlas = new Texture2D(atlasDim, atlasDim, TextureFormat.RGB24, MipMaps);
+            albedoAtlas.SetPixels32(atlasColors);
+            albedoAtlas.Apply(true, !stayReadable);
 
-            // Change settings for this texture
-            atlas.wrapMode = TextureWrapMode.Clamp;
-            atlas.anisoLevel = 8;
+            // Change settings for these textures
+            albedoAtlas.wrapMode = TextureWrapMode.Clamp;
+            albedoAtlas.anisoLevel = 8;
 
-            return atlas;
+            // Store results
+            results.albedoMap = albedoAtlas;
+
+            return results;
+        }
+
+        #region Helpers
+
+        // Textures that should receive emission map
+        // TODO: This should be set by a user-managed list somewhere
+        DaggerfallTextureIndex[] emissiveTextures = new DaggerfallTextureIndex[]
+        {
+            // Mantellan Crux fire textures
+            new DaggerfallTextureIndex() { archive = 356, record = 0 },
+            new DaggerfallTextureIndex() { archive = 356, record = 2 },
+            new DaggerfallTextureIndex() { archive = 356, record = 3 },
+
+            // Fireplace
+            new DaggerfallTextureIndex() { archive = 87, record = 0 },
+
+            // Lights (which are on/lit)
+            new DaggerfallTextureIndex() { archive = 210, record = 0 },
+            new DaggerfallTextureIndex() { archive = 210, record = 1 },
+            new DaggerfallTextureIndex() { archive = 210, record = 2 },
+            new DaggerfallTextureIndex() { archive = 210, record = 3 },
+            new DaggerfallTextureIndex() { archive = 210, record = 4 },
+            new DaggerfallTextureIndex() { archive = 210, record = 5 },
+            new DaggerfallTextureIndex() { archive = 210, record = 6 },
+            new DaggerfallTextureIndex() { archive = 210, record = 8 },
+            new DaggerfallTextureIndex() { archive = 210, record = 9 },
+            new DaggerfallTextureIndex() { archive = 210, record = 11 },
+            new DaggerfallTextureIndex() { archive = 210, record = 13 },
+            new DaggerfallTextureIndex() { archive = 210, record = 14 },
+            new DaggerfallTextureIndex() { archive = 210, record = 15 },
+            new DaggerfallTextureIndex() { archive = 210, record = 16 },
+            new DaggerfallTextureIndex() { archive = 210, record = 17 },
+            new DaggerfallTextureIndex() { archive = 210, record = 18 },
+            new DaggerfallTextureIndex() { archive = 210, record = 19 },
+            new DaggerfallTextureIndex() { archive = 210, record = 20 },
+            new DaggerfallTextureIndex() { archive = 210, record = 21 },
+            new DaggerfallTextureIndex() { archive = 210, record = 22 },
+            new DaggerfallTextureIndex() { archive = 210, record = 23 },
+            new DaggerfallTextureIndex() { archive = 210, record = 24 },
+            new DaggerfallTextureIndex() { archive = 210, record = 25 },
+            new DaggerfallTextureIndex() { archive = 210, record = 26 },
+            new DaggerfallTextureIndex() { archive = 210, record = 27 },
+            new DaggerfallTextureIndex() { archive = 210, record = 28 },
+            new DaggerfallTextureIndex() { archive = 210, record = 29 },
+        };
+
+        public bool IsEmissive(int archive, int record)
+        {
+            // Check emissive list for this texture
+            // TODO: Replace this with a dictionary/hash lookup
+            bool emissiveFound = false;
+            for (int i = 0; i < emissiveTextures.Length; i++)
+            {
+                if (emissiveTextures[i].archive == archive && emissiveTextures[i].record == record)
+                {
+                    emissiveFound = true;
+                    break;
+                }
+            }
+
+            return emissiveFound;
         }
 
 #if UNITY_EDITOR && !UNITY_WEBPLAYER
@@ -448,6 +589,8 @@ namespace DaggerfallWorkshop.Utility
             File.WriteAllBytes(path, bytes);
         }
 #endif
+
+        #endregion
 
         #region Private Methods
 

@@ -226,12 +226,12 @@ namespace DaggerfallWorkshop
                 if (db.Summary.FlatType == FlatTypes.Nature)
                 {
                     // Apply recalculated nature archive
-                    db.SetMaterial(dfUnity, natureArchive, db.Summary.Record, 0, db.Summary.InDungeon);
+                    db.SetMaterial(natureArchive, db.Summary.Record, 0, db.Summary.InDungeon);
                 }
                 else
                 {
                     // All other flats are just reapplied to handle any other changes
-                    db.SetMaterial(dfUnity, db.Summary.Archive, db.Summary.Record, 0, db.Summary.InDungeon);
+                    db.SetMaterial(db.Summary.Archive, db.Summary.Record, 0, db.Summary.InDungeon);
                 }
             }
         }
@@ -275,22 +275,31 @@ namespace DaggerfallWorkshop
             return natureArchive;
         }
 
+        /// <summary>
+        /// Performs a fully standalone in-place location layout.
+        /// This method is used only by editor layouts, not by streaming world.
+        /// </summary>
         private void LayoutLocation(ref DFLocation location)
         {
             // Get city dimensions
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
 
-            //// Create billboard batch game objects for this location
-            //if (dfUnity.Option_BatchBillboards)
-            //{
-            //    // Nature billboards batch
-            //    GameObject natureBatchObject = new GameObject("NatureBillboardBatch");
-            //    natureBatchObject.transform.parent = this.transform;
-            //    natureBatchObject.transform.localPosition = Vector3.zero;
-            //    bb.natureBatch = natureBatchObject.AddComponent<DaggerfallBillboardBatch>();
-            //    bb.natureBatch.SetMaterial(GetNatureArchive());
-            //}
+            // Create billboard batch game objects for this location
+            TextureAtlasBuilder miscBillboardAtlas = null;
+            DaggerfallBillboardBatch natureBillboardBatch = null;
+            DaggerfallBillboardBatch lightsBillboardBatch = null;
+            DaggerfallBillboardBatch animalsBillboardBatch = null;
+            DaggerfallBillboardBatch miscBillboardBatch = null;
+            if (dfUnity.Option_BatchBillboards)
+            {
+                miscBillboardAtlas = dfUnity.MaterialReader.MiscBillboardAtlas;
+                int natureArchive = ClimateSwaps.GetNatureArchive(CurrentNatureSet, CurrentSeason);
+                natureBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(natureArchive, transform);
+                lightsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.LightsTextureArchive, transform);
+                animalsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.AnimalsTextureArchive, transform);
+                miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, transform);
+            }
 
             // Import blocks
             for (int y = 0; y < height; y++)
@@ -299,24 +308,34 @@ namespace DaggerfallWorkshop
                 {
                     if (dfUnity.Option_BatchBillboards)
                     {
-                        //Vector3 blockOrigin = new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
-                        //bb.natureBatch.origin = blockOrigin;
-                        //bb.lightsBatch.origin = blockOrigin;
+                        Vector3 blockOrigin = new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
+                        natureBillboardBatch.origin = blockOrigin;
+                        lightsBillboardBatch.origin = blockOrigin;
+                        animalsBillboardBatch.origin = blockOrigin;
+                        miscBillboardBatch.origin = blockOrigin;
                     }
 
                     string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
-                    GameObject go = RMBLayout.CreateGameObject(blockName);
+                    GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
+                        blockName,
+                        true,
+                        natureBillboardBatch,
+                        lightsBillboardBatch,
+                        animalsBillboardBatch,
+                        miscBillboardAtlas,
+                        miscBillboardBatch,
+                        CurrentNatureSet,
+                        CurrentSeason);
                     go.transform.parent = this.transform;
                     go.transform.position = new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
                 }
             }
 
-            //// Apply batches
-            //if (dfUnity.Option_BatchBillboards)
-            //{
-            //    if (bb.natureBatch) bb.natureBatch.Apply();
-            //    if (bb.lightsBatch) bb.lightsBatch.Apply();
-            //}
+            // Apply batches
+            if (natureBillboardBatch) natureBillboardBatch.Apply();
+            if (lightsBillboardBatch) lightsBillboardBatch.Apply();
+            if (animalsBillboardBatch) animalsBillboardBatch.Apply();
+            if (miscBillboardBatch) miscBillboardBatch.Apply();
 
             // Enumerate start marker game objects
             EnumerateStartMarkers();

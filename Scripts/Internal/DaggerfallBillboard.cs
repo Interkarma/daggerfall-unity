@@ -13,6 +13,7 @@
 using UnityEditor;
 #endif
 using UnityEngine;
+using UnityEngine.Rendering;
 using System.Collections;
 using System;
 using System.IO;
@@ -116,8 +117,8 @@ namespace DaggerfallWorkshop
             while (true)
             {
                 float speed = FramesPerSecond;
-                if (summary.Archive == 201) speed = animalFps;
-                else if (summary.Archive == 210) speed = lightFps;
+                if (summary.Archive == Utility.TextureReader.AnimalsTextureArchive) speed = animalFps;
+                else if (summary.Archive == Utility.TextureReader.LightsTextureArchive) speed = lightFps;
                 if (meshFilter != null)
                 {
                     summary.CurrentFrame++;
@@ -173,14 +174,12 @@ namespace DaggerfallWorkshop
         /// <param name="frame">Frame index.</param>
         /// <param name="dungeon">This is a dungeon billboard.</param>
         /// <returns>Material.</returns>
-        public Material SetMaterial(DaggerfallUnity dfUnity, int archive, int record, int frame, bool dungeon)
+        public Material SetMaterial(int archive, int record, int frame, bool dungeon)
         {
-            Shader shader;
-            //if (archive == 210 && dungeon) // Dungeon light billboards use unlit billboard shader
-            if (archive == 210) // All light billboards use unlit billboard shader
-                shader = Shader.Find(dfUnity.MaterialReader.DefaultUnlitBillboardShaderName);
-            else
-                shader = Shader.Find(dfUnity.MaterialReader.DefaultBillboardShaderName);
+            // Get DaggerfallUnity
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return null;
 
             // Get references
             meshRenderer = GetComponent<MeshRenderer>();
@@ -200,8 +199,7 @@ namespace DaggerfallWorkshop
                     4,
                     true,
                     0,
-                    false,
-                    shader);
+                    false);
                 mesh = dfUnity.MeshReader.GetBillboardMesh(
                     summary.AtlasRects[summary.AtlasIndices[record].startIndex],
                     archive,
@@ -234,6 +232,9 @@ namespace DaggerfallWorkshop
                 summary.AnimatedMaterial = false;
             }
 
+            // Update material properties
+            MaterialReader.SetBlendMode(material, MaterialReader.CustomBlendMode.Cutout);
+
             // Set summary
             summary.InDungeon = dungeon;
             summary.FlatType = MaterialReader.GetFlatType(archive);
@@ -258,6 +259,9 @@ namespace DaggerfallWorkshop
                 // The old mesh is no longer required
                 DestroyImmediate(oldMesh);
             }
+
+            // Standalone billboards never cast shadows
+            meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
 
             return material;
         }

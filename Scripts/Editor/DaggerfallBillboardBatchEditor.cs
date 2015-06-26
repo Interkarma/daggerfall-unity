@@ -46,6 +46,12 @@ namespace DaggerfallWorkshop
 
         public void DisplayGUI()
         {
+            if (dfBillboardBatch.IsCustom)
+            {
+                EditorGUILayout.HelpBox("Cannot set properties of a custom batch material from editor at this time.", MessageType.Info);
+                return;
+            }
+
             DrawDefaultInspector();
 
             GUILayoutHelper.Horizontal(() =>

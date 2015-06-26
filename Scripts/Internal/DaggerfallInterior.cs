@@ -286,33 +286,33 @@ namespace DaggerfallWorkshop
                 DaggerfallActionDoor c = go.AddComponent<DaggerfallActionDoor>();
                 c.OpenAngle = -obj.OpenRotation;
 
-                // Add sounds
-                if (dfUnity.Option_DefaultSounds)
-                {
-                    go.AddComponent<DaggerfallAudioSource>();
-                    c.SetInteriorDoorSounds();
-                }
+                //// Add sounds
+                //if (dfUnity.Option_DefaultSounds)
+                //{
+                //    go.AddComponent<DaggerfallAudioSource>();
+                //    c.SetInteriorDoorSounds();
+                //}
             }
         }
 
-        /// <summary>
-        /// Add interior lights to parent transform.
-        /// </summary>
-        private void AddLights()
-        {
-            GameObject node = new GameObject("Lights");
-            node.transform.parent = this.transform;
+        ///// <summary>
+        ///// Add interior lights to parent transform.
+        ///// </summary>
+        //private void AddLights()
+        //{
+        //    GameObject node = new GameObject("Lights");
+        //    node.transform.parent = this.transform;
 
-            // Add block lights based on light billboard positions
-            foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
-            {
-                if (obj.TextureArchive == 210)
-                {
-                    GameObject go = GameObjectHelper.CreateDaggerfallInteriorPointLight(8f, node.transform);
-                    go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-                }
-            }
-        }
+        //    // Add block lights based on light billboard positions
+        //    foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
+        //    {
+        //        if (obj.TextureArchive == 210)
+        //        {
+        //            GameObject go = GameObjectHelper.CreateDaggerfallInteriorPointLight(8f, node.transform);
+        //            go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+        //        }
+        //    }
+        //}
 
         #endregion
     }

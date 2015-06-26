@@ -324,16 +324,20 @@ namespace DaggerfallWorkshop
                             locationMarker.transform.localPosition = new Vector3(beaconOffset, beaconHeight, beaconOffset);
                         }
 
-                        // Add one nature batch for entire location
-                        // This is parented to location and shares its lifetime
-                        //RMBLayout.BillboardBatchRefs bb = new RMBLayout.BillboardBatchRefs();
-                        GameObject natureBatchObject = new GameObject("NatureBatch");
-                        natureBatchObject.hideFlags = HideFlags.HideAndDontSave;
-                        natureBatchObject.transform.parent = locationObject.transform;
-                        natureBatchObject.transform.localPosition = Vector3.zero;
-                        //bb.natureBatch = natureBatchObject.AddComponent<DaggerfallBillboardBatch>();
-                        //int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
-                        //bb.natureBatch.SetMaterial(natureArchive);
+                        // Create billboard batch game objects for this location
+                        // Streaming world always batches for performance, regardless of options
+                        int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
+                        TextureAtlasBuilder miscBillboardAtlas = dfUnity.MaterialReader.MiscBillboardAtlas;
+                        DaggerfallBillboardBatch natureBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(natureArchive, locationObject.transform);
+                        DaggerfallBillboardBatch lightsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.LightsTextureArchive, locationObject.transform);
+                        DaggerfallBillboardBatch animalsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.AnimalsTextureArchive, locationObject.transform);
+                        DaggerfallBillboardBatch miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, locationObject.transform);
+                        
+                        // Set hide flags
+                        natureBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
+                        lightsBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
+                        animalsBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
+                        miscBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
 
                         // RMB blocks are laid out in centre of terrain to align with ground
                         int width = location.Exterior.ExteriorData.Width;
@@ -348,14 +352,25 @@ namespace DaggerfallWorkshop
                         {
                             for (int x = 0; x < width; x++)
                             {
-                                // Set origin for billboard batch add
+                                // Set origin for billboard batches
                                 // This causes next additions to be offset by this position
                                 Vector3 blockOrigin = origin + new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
-                                //bb.natureBatch.origin = blockOrigin;
+                                natureBillboardBatch.origin = blockOrigin;
+                                lightsBillboardBatch.origin = blockOrigin;
+                                animalsBillboardBatch.origin = blockOrigin;
+                                miscBillboardBatch.origin = blockOrigin;
 
                                 // Add block and yield
                                 string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
-                                GameObject go = RMBLayout.CreateGameObject(blockName, true);
+                                GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
+                                    blockName,
+                                    false,
+                                    natureBillboardBatch,
+                                    lightsBillboardBatch,
+                                    animalsBillboardBatch,
+                                    miscBillboardAtlas,
+                                    miscBillboardBatch);
+                                //GameObject go = RMBLayout.CreateBaseGameObject(blockName);
                                 go.hideFlags = HideFlags.HideAndDontSave;
                                 go.transform.parent = locationObject.transform;
                                 go.transform.localPosition = blockOrigin;
@@ -373,8 +388,11 @@ namespace DaggerfallWorkshop
                             repositionPlayer = false;
                         }
 
-                        //// Apply nature batch
-                        //bb.natureBatch.Apply();
+                        // Apply billboard batches
+                        natureBillboardBatch.Apply();
+                        lightsBillboardBatch.Apply();
+                        animalsBillboardBatch.Apply();
+                        miscBillboardBatch.Apply();
                     }
                 }
                 else if (terrainArray[i].active)

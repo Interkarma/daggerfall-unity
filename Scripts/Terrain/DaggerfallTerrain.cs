@@ -96,7 +96,7 @@ namespace DaggerfallWorkshop
             // Create terrain material
             if (terrainMaterial == null)
             {
-                terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTerrainTilemapShaderName));
+                terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTilemapShaderName));
                 UpdateClimateMaterial();
             }
 
@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop
                 currentWorldClimate = MapData.worldClimate;
 
                 // Assign textures
-                terrainMaterial.SetTexture("_TileAtlasTex", tileSetMaterial.mainTexture);
+                terrainMaterial.SetTexture("_TileAtlasTex", tileSetMaterial.GetTexture("_TileAtlasTex"));
                 terrainMaterial.SetTexture("_TilemapTex", tileMapTexture);
                 terrainMaterial.SetInt("_TilemapDim", tileMapDim);
             }

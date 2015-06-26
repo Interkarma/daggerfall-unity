@@ -37,6 +37,8 @@ namespace DaggerfallWorkshop
         const int maxBillboardCount = 16250;
 
         [SerializeField, HideInInspector]
+        Material customMaterial = null;
+        [SerializeField, HideInInspector]
         CachedMaterial cachedMaterial;
         [SerializeField, HideInInspector]
         List<BillboardItem> billboardItems = new List<BillboardItem>();
@@ -51,7 +53,7 @@ namespace DaggerfallWorkshop
         [Range(0, 511)]
         public int TextureArchive = 504;
         [Range(0, 30)]
-        public float FramesPerSecond = 10;
+        public float FramesPerSecond = 0;
         public bool RandomStartFrame = true;
         public ShadowCastingMode ShadowCasting = ShadowCastingMode.On;
         [Range(1, 127)]
@@ -69,6 +71,11 @@ namespace DaggerfallWorkshop
         const int vertsPerQuad = 4;
         const int indicesPerQuad = 6;
 
+        // Just using a simple animation speed for simple billboard anims
+        // You can adjust this or extend as needed
+        const int animalFps = 5;
+        const int lightFps = 12;
+
         [Serializable]
         struct BillboardItem
         {
@@ -76,6 +83,14 @@ namespace DaggerfallWorkshop
             public Vector3 position;            // Position from origin to render billboard
             public int totalFrames;             // Total animation frames
             public int currentFrame;            // Current animation frame
+            public Rect customRect;             // Rect for custom material path
+            public Vector2 customSize;          // Size for custom material path
+            public Vector2 customScale;         // Scale for custom material path
+        }
+
+        public bool IsCustom
+        {
+            get { return (customMaterial == null) ? false : true; }
         }
 
         void Start()
@@ -99,7 +114,7 @@ namespace DaggerfallWorkshop
             lastFramesPerSecond = FramesPerSecond;
 
             // Restart animation coroutine if not running and frames per second greater than 0
-            if (restartAnims && cachedMaterial.key != 0 && FramesPerSecond > 0)
+            if (restartAnims && cachedMaterial.key != 0 && FramesPerSecond > 0 && customMaterial == null)
             {
                 StartCoroutine(AnimateBillboards());
                 restartAnims = false;
@@ -110,31 +125,36 @@ namespace DaggerfallWorkshop
         {
             while (true)
             {
-                //if (FramesPerSecond > 0 && cachedMaterial.key != 0)
-                //{
-                //    // Look for animated billboards
-                //    for (int billboard = 0; billboard < billboardItems.Count; billboard++)
-                //    {
-                //        // Increment billboard frame
-                //        BillboardItem bi = billboardItems[billboard];
-                //        if (++bi.currentFrame >= bi.totalFrames)
-                //        {
-                //            bi.currentFrame = 0;
-                //        }
-                //        billboardItems[billboard] = bi;
+                // Tick animation when valid
+                if (FramesPerSecond > 0 && cachedMaterial.key != 0 && customMaterial == null)
+                {
+                    // Look for animated billboards
+                    for (int billboard = 0; billboard < billboardItems.Count; billboard++)
+                    {
+                        // Get billboard and do nothing if single frame
+                        BillboardItem bi = billboardItems[billboard];
+                        if (bi.totalFrames > 1)
+                        {
+                            // Increment current billboard frame
+                            if (++bi.currentFrame >= bi.totalFrames)
+                            {
+                                bi.currentFrame = 0;
+                            }
+                            billboardItems[billboard] = bi;
 
-                //        // Set new UV properties based on current frame
-                //        Rect rect = cachedMaterial.atlasRects[cachedMaterial.atlasIndices[bi.record].startIndex + bi.currentFrame];
-                //        int offset = billboard * vertsPerQuad;
-                //        uvs[offset] = new Vector2(rect.x, rect.yMax);
-                //        uvs[offset + 1] = new Vector2(rect.xMax, rect.yMax);
-                //        uvs[offset + 2] = new Vector2(rect.x, rect.y);
-                //        uvs[offset + 3] = new Vector2(rect.xMax, rect.y);
-                //    }
+                            // Set new UV properties based on current frame
+                            Rect rect = cachedMaterial.atlasRects[cachedMaterial.atlasIndices[bi.record].startIndex + bi.currentFrame];
+                            int offset = billboard * vertsPerQuad;
+                            uvs[offset] = new Vector2(rect.x, rect.yMax);
+                            uvs[offset + 1] = new Vector2(rect.xMax, rect.yMax);
+                            uvs[offset + 2] = new Vector2(rect.x, rect.y);
+                            uvs[offset + 3] = new Vector2(rect.xMax, rect.y);
+                        }
+                    }
 
-                //    // Store new mesh UV set
-                //    billboardMesh.uv = uvs;
-                //}
+                    // Store new mesh UV set
+                    billboardMesh.uv = uvs;
+                }
 
                 yield return new WaitForSeconds(1f / FramesPerSecond);
             }
@@ -145,6 +165,7 @@ namespace DaggerfallWorkshop
         /// This material is always atlased.
         /// </summary>
         /// <param name="archive">Archive index.</param>
+        /// <param name="force">Force new archive, even if already set.</param>
         public void SetMaterial(int archive, bool force = false)
         {
             if (!ReadyCheck())
@@ -169,26 +190,83 @@ namespace DaggerfallWorkshop
                     4,
                     true,
                     0,
-                    false,
-                    Shader.Find(dfUnity.MaterialReader.DefaultBillboardShaderName));
+                    false);
 
             // Serialize cached material information
             dfUnity.MaterialReader.GetCachedMaterialAtlas(archive, out cachedMaterial);
+
+            // Steal textures from source material
+            Texture albedoMap = material.mainTexture;
+            Texture normalMap = material.GetTexture("_BumpMap");
+            Texture emissionMap = material.GetTexture("_EmissionMap");
 
             // Create local material
             // TODO: This should be created by MaterialReader
             Shader shader = Shader.Find(MaterialReader._DaggerfallBillboardBatchShaderName);
             Material atlasMaterial = new Material(shader);
-            atlasMaterial.mainTexture = material.mainTexture;
+            atlasMaterial.mainTexture = albedoMap;
+
+            // Assign other maps
+            if (normalMap != null)
+            {
+                atlasMaterial.SetTexture("_BumpMap", normalMap);
+                atlasMaterial.EnableKeyword("_NORMALMAP");
+            }
+            if (emissionMap != null)
+            {
+                atlasMaterial.SetTexture("_EmissionMap", emissionMap);
+                atlasMaterial.SetColor("_EmissionColor", material.GetColor("_EmissionColor"));
+                atlasMaterial.EnableKeyword("_EMISSION");
+            }
 
             // Assign renderer properties
             // Turning off receive shadows to prevent self-shadowing
             meshRenderer.sharedMaterial = atlasMaterial;
-            meshRenderer.shadowCastingMode = ShadowCasting;
             meshRenderer.receiveShadows = false;
+
+            // Set shadow casting mode - force off for lights
+            if (archive == Utility.TextureReader.LightsTextureArchive)
+                meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            else
+                meshRenderer.shadowCastingMode = ShadowCasting;
+
+            // Set animation speed for supported archives
+            if (archive == Utility.TextureReader.AnimalsTextureArchive)
+                FramesPerSecond = animalFps;
+            else if (archive == Utility.TextureReader.LightsTextureArchive)
+                FramesPerSecond = lightFps;
+            else
+                FramesPerSecond = 0;
+
+            // Clear custom material
+            customMaterial = null;
 
             TextureArchive = archive;
             currentArchive = archive;
+        }
+
+        /// <summary>
+        /// Directly set custom atlas material all billboards in batch will share.
+        /// Custom material allows you to directly set item rects in batch.
+        /// </summary>
+        /// <param name="material"></param>
+        public void SetMaterial(Material material)
+        {
+            if (!ReadyCheck())
+                return;
+
+            // Custom material does not support animation for now
+            customMaterial = material;
+
+            // Create local material from source
+            Shader shader = Shader.Find(MaterialReader._DaggerfallBillboardBatchShaderName);
+            Material atlasMaterial = new Material(shader);
+            atlasMaterial.mainTexture = customMaterial.mainTexture;
+
+            // Assign renderer properties
+            meshRenderer.sharedMaterial = atlasMaterial;
+            meshRenderer.receiveShadows = false;
+            FramesPerSecond = 0;
         }
 
         /// <summary>
@@ -204,6 +282,10 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void AddItem(int record, Vector3 localPosition)
         {
+            // Cannot use with a custom material
+            if (customMaterial != null)
+                throw new Exception("Cannot use with custom material. Use AddItem(Rect rect, Vector2 size, Vector2 scale, Vector3 localPosition) overload instead.");
+
             // Must have set a material
             if (cachedMaterial.key == 0)
             {
@@ -236,13 +318,37 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Add a billboard to batch.
+        /// Use this overload for custom atlas material.
+        /// </summary>
+        public void AddItem(Rect rect, Vector2 size, Vector2 scale, Vector3 localPosition)
+        {
+            // Cannot use with auto material
+            if (customMaterial == null)
+                throw new Exception("Cannot use with auto material. Use AddItem(int record, Vector3 localPosition) overload instead.");
+
+            // Add new billboard to batch
+            BillboardItem bi = new BillboardItem()
+            {
+                position = origin + localPosition,
+                customRect = rect,
+                customSize = size,
+                customScale = scale,
+            };
+            billboardItems.Add(bi);
+        }
+
+        /// <summary>
         /// Apply items to batch.
         /// Must be called once all items added.
         /// You can add more items later, but will need to apply again.
         /// </summary>
         public void Apply()
         {
-            CreateMesh();
+            if (customMaterial != null)
+                CreateMeshForCustomMaterial();
+            else
+                CreateMesh();
         }
 
         #region Editor Support
@@ -277,6 +383,105 @@ namespace DaggerfallWorkshop
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// TEMP: Create mesh for custom material path.
+        /// This can be improved as it's mostly the same as CreateMesh().
+        /// Keeping separate for now until super-atlases are better integrated.
+        /// </summary>
+        private void CreateMeshForCustomMaterial()
+        {
+            // Using half way between forward and up for billboard normal
+            // Workable for most lighting but will need a better system eventually
+            Vector3 normalTemplate = Vector3.Normalize(Vector3.up + Vector3.forward);
+
+            // Create billboard data
+            Bounds newBounds = new Bounds();
+            int vertexCount = billboardItems.Count * vertsPerQuad;
+            int indexCount = billboardItems.Count * indicesPerQuad;
+            Vector3[] vertices = new Vector3[vertexCount];
+            Vector3[] normals = new Vector3[vertexCount];
+            Vector4[] tangents = new Vector4[vertexCount];
+            uvs = new Vector2[vertexCount];
+            int[] indices = new int[indexCount];
+            int currentIndex = 0;
+            for (int billboard = 0; billboard < billboardItems.Count; billboard++)
+            {
+                int offset = billboard * vertsPerQuad;
+                BillboardItem bi = billboardItems[billboard];
+
+                // Billboard size and origin
+                Vector2 finalSize = GetScaledBillboardSize(bi.customSize, bi.customScale);
+                float hy = (finalSize.y / 2);
+                Vector3 position = bi.position + new Vector3(0, hy, 0);
+
+                // Billboard UVs
+                Rect rect = bi.customRect;
+                uvs[offset] = new Vector2(rect.x, rect.yMax);
+                uvs[offset + 1] = new Vector2(rect.xMax, rect.yMax);
+                uvs[offset + 2] = new Vector2(rect.x, rect.y);
+                uvs[offset + 3] = new Vector2(rect.xMax, rect.y);
+
+                // Tangent data for shader is used to size billboard
+                tangents[offset] = new Vector4(finalSize.x, finalSize.y, 0, 1);
+                tangents[offset + 1] = new Vector4(finalSize.x, finalSize.y, 1, 1);
+                tangents[offset + 2] = new Vector4(finalSize.x, finalSize.y, 0, 0);
+                tangents[offset + 3] = new Vector4(finalSize.x, finalSize.y, 1, 0);
+
+                // Other data for shader
+                for (int vertex = 0; vertex < vertsPerQuad; vertex++)
+                {
+                    vertices[offset + vertex] = position;
+                    normals[offset + vertex] = normalTemplate;
+                }
+
+                // Assign index data
+                indices[currentIndex] = offset;
+                indices[currentIndex + 1] = offset + 1;
+                indices[currentIndex + 2] = offset + 2;
+                indices[currentIndex + 3] = offset + 3;
+                indices[currentIndex + 4] = offset + 2;
+                indices[currentIndex + 5] = offset + 1;
+                currentIndex += indicesPerQuad;
+
+                // Update bounds tracking using actual position and size
+                // This can be a little wonky with single billboards side-on as AABB does not rotate
+                // But it generally works well for large batches as intended
+                // Multiply finalSize * 2f if culling problems with standalone billboards
+                Bounds currentBounds = new Bounds(position, finalSize);
+                newBounds.Encapsulate(currentBounds);
+            }
+
+            // Create mesh
+            if (billboardMesh == null)
+            {
+                // New mesh
+                billboardMesh = new Mesh();
+                billboardMesh.name = "BillboardBatchMesh [CustomPath]";
+            }
+            else
+            {
+                // Existing mesh
+                if (billboardMesh.vertexCount == vertices.Length)
+                    billboardMesh.Clear(true);      // Same vertex layout
+                else
+                    billboardMesh.Clear(false);     // New vertex layout
+            }
+
+            // Assign mesh data
+            billboardMesh.vertices = vertices;              // Each vertex is positioned at billboard origin
+            billboardMesh.tangents = tangents;              // Tangent stores corners and size
+            billboardMesh.triangles = indices;              // Standard indices
+            billboardMesh.normals = normals;                // Standard normals
+            billboardMesh.uv = uvs;                         // Standard uv coordinates into atlas
+
+            // Manually update bounds to account for max billboard height
+            billboardMesh.bounds = newBounds;
+
+            // Assign mesh
+            MeshFilter filter = GetComponent<MeshFilter>();
+            filter.sharedMesh = billboardMesh;
+        }
 
         // Packs all billboards into single mesh
         private void CreateMesh()
@@ -382,6 +587,12 @@ namespace DaggerfallWorkshop
             Vector2 size = cachedMaterial.recordSizes[record];
             Vector2 scale = cachedMaterial.recordScales[record];
 
+            return GetScaledBillboardSize(size, scale);
+        }
+
+        // Gets scaled billboard size to properly size billboard in world
+        private Vector2 GetScaledBillboardSize(Vector2 size, Vector2 scale)
+        {
             // Apply scale
             Vector2 finalSize;
             int xChange = (int)(size.x * (scale.x / BlocksFile.ScaleDivisor));

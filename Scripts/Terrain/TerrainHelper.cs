@@ -157,6 +157,9 @@ namespace DaggerfallWorkshop
                     noiseHeight = CubicInterpolator(x1, x2, x3, x4, fracy);
                     scaledHeight += noiseHeight * noiseMapScale;
 
+                    // TODO: Developers must be able to override above settings via event or some other mechanism
+                    // Will implement this before final 1.3 version
+
                     // Additional noise mask for small terrain features at ground level
                     float latitude = mapPixel.mapPixelX * MapsFile.WorldMapTileDim + x;
                     float longitude = MapsFile.MaxWorldTileCoordZ - mapPixel.mapPixelY * MapsFile.WorldMapTileDim + y;

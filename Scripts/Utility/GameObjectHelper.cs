@@ -69,13 +69,16 @@ namespace DaggerfallWorkshop.Utility
         public static GameObject CreateDaggerfallMeshGameObject(
             uint modelID,
             Transform parent,
-            bool makeStatic = false)
+            bool makeStatic = false,
+            GameObject useExistingObject = null)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
             // Create gameobject
-            GameObject go = new GameObject(string.Format("DaggerfallMesh [ID={0}]", modelID));
-            if (parent)
+            GameObject go = useExistingObject;
+            if (go == null)
+                go = new GameObject(string.Format("DaggerfallMesh [ID={0}]", modelID));
+            if (parent != null)
                 go.transform.parent = parent;
 
             // Assign components
@@ -108,10 +111,11 @@ namespace DaggerfallWorkshop.Utility
                 dfMesh.SetDefaultTextures(textureKeys);
             }
 
-            // Assign collider
+            // Assign mesh to collider
             if (dfUnity.Option_AddMeshColliders)
             {
-                MeshCollider collider = go.AddComponent<MeshCollider>();
+                MeshCollider collider = go.GetComponent<MeshCollider>();
+                if (collider == null) collider = go.AddComponent<MeshCollider>();
                 collider.sharedMesh = mesh;
             }
 
@@ -181,13 +185,11 @@ namespace DaggerfallWorkshop.Utility
 
         public static GameObject CreateDaggerfallBillboardGameObject(int archive, int record, Transform parent, bool dungeon = false)
         {
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-
             GameObject go = new GameObject(string.Format("DaggerfallBillboard [TEXTURE.{0:000}, Index={1}]", archive, record));
             if (parent) go.transform.parent = parent;
 
             DaggerfallBillboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
-            dfBillboard.SetMaterial(dfUnity, archive, record, 0, dungeon);
+            dfBillboard.SetMaterial(archive, record, 0, dungeon);
 
             return go;
         }
@@ -219,24 +221,112 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
-//        public static GameObject CreateDaggerfallRMBPointLight(Transform parent)
-//        {
-//            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+        #region RMB & RDB Block Helpers
 
-//            GameObject go = new GameObject("DaggerfallLight [RMB]");
-//            if (parent) go.transform.parent = parent;
-//            go.tag = dfUnity.Option_PointLightTag;
-//#if UNITY_EDITOR
-//            if (dfUnity.Option_CustomPointLightScript != null)
-//                go.AddComponent(dfUnity.Option_CustomPointLightScript.GetClass());
-//#endif
+        /// <summary>
+        /// Layout a complete RMB block game object.
+        /// Can be used standalone or as part of a city build.
+        /// </summary>
+        public static GameObject CreateRMBBlockGameObject(
+            string blockName,
+            bool addGroundPlane = true,
+            DaggerfallBillboardBatch natureBillboardBatch = null,
+            DaggerfallBillboardBatch lightsBillboardBatch = null,
+            DaggerfallBillboardBatch animalsBillboardBatch = null,
+            TextureAtlasBuilder miscBillboardAtlas = null,
+            DaggerfallBillboardBatch miscBillboardBatch = null,
+            ClimateNatureSets climateNature = ClimateNatureSets.TemperateWoodland,
+            ClimateSeason climateSeason = ClimateSeason.Summer)
+        {
+            // Get DaggerfallUnity
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return null;
 
-//            Light light = go.AddComponent<Light>();
-//            light.type = LightType.Point;
-//            light.range = 18f;
+            // Create base object
+            DFBlock blockData;
+            GameObject go = RMBLayout.CreateBaseGameObject(blockName, out blockData);
 
-//            return go;
-//        }
+            // Create flats node
+            GameObject flatsNode = new GameObject("Flats");
+            flatsNode.transform.parent = go.transform;
+
+            // Create lights node
+            GameObject lightsNode = new GameObject("Lights");
+            lightsNode.transform.parent = go.transform;
+
+            // If billboard batching is enabled but user has not specified
+            // a batch, then make our own auto batch for this block
+            bool autoLightsBatch = false;
+            bool autoNatureBatch = false;
+            bool autoAnimalsBatch = false;
+            if (dfUnity.Option_BatchBillboards)
+            {
+                if (natureBillboardBatch == null)
+                {
+                    autoNatureBatch = true;
+                    int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
+                    natureBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(natureArchive, flatsNode.transform);
+                }
+                if (lightsBillboardBatch == null)
+                {
+                    autoLightsBatch = true;
+                    lightsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.LightsTextureArchive, flatsNode.transform);
+                }
+                if (animalsBillboardBatch == null)
+                {
+                    autoAnimalsBatch = true;
+                    animalsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.AnimalsTextureArchive, flatsNode.transform);
+                }
+            }
+
+            // Layout light billboards and gameobjects
+            RMBLayout.AddLights(ref blockData, flatsNode.transform, lightsNode.transform, lightsBillboardBatch);
+
+            // Layout nature billboards
+            RMBLayout.AddNatureFlats(ref blockData, flatsNode.transform, natureBillboardBatch, climateNature, climateSeason);
+
+            // Layout all other flats
+            RMBLayout.AddMiscBlockFlats(ref blockData, flatsNode.transform, animalsBillboardBatch, miscBillboardAtlas, miscBillboardBatch);
+
+            // Add ground plane
+            if (addGroundPlane)
+                RMBLayout.AddGroundPlane(ref blockData, go.transform);
+
+            // Apply auto batches
+            if (autoNatureBatch) natureBillboardBatch.Apply();
+            if (autoLightsBatch) lightsBillboardBatch.Apply();
+            if (autoAnimalsBatch) animalsBillboardBatch.Apply();
+
+            return go;
+        }
+
+        /// <summary>
+        /// /// Layout a complete RDB block game object.
+        /// </summary>
+        public static GameObject CreateRDBBlockGameObject(
+            string blockName)
+        {
+            // Get DaggerfallUnity
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return null;
+
+            // Create base object
+            DFBlock blockData;
+            GameObject go = RDBLayout.CreateBaseGameObject(blockName, out blockData);
+
+            // Add exit doors
+            List<StaticDoor> doorsOut;
+            RDBLayout.AddExitDoors(go, ref blockData, out doorsOut);
+
+            // Add action doors
+            RDBLayout.AddActionDoors(go, ref blockData);
+
+            return go;
+        }
+
+        #endregion
 
 //        public static GameObject CreateDaggerfallRDBPointLight(float range, Transform parent)
 //        {
@@ -257,16 +347,16 @@ namespace DaggerfallWorkshop.Utility
 //            return go;
 //        }
 
-        public static GameObject CreateDaggerfallInteriorPointLight(float range, Transform parent)
-        {
-            GameObject go = new GameObject("DaggerfallLight [Interior]");
-            if (parent) go.transform.parent = parent;
-            Light light = go.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.range = range;
+        //public static GameObject CreateDaggerfallInteriorPointLight(float range, Transform parent)
+        //{
+        //    GameObject go = new GameObject("DaggerfallLight [Interior]");
+        //    if (parent) go.transform.parent = parent;
+        //    Light light = go.AddComponent<Light>();
+        //    light.type = LightType.Point;
+        //    light.range = range;
 
-            return go;
-        }
+        //    return go;
+        //}
 
         public static GameObject CreateDaggerfallEnemyGameObject(MobileTypes type, Transform parent, MobileReactions reaction)
         {
@@ -361,23 +451,46 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
-        public static GameObject CreateDaggerfallBlockGameObject(string blockName, Transform parent)
+        /// <summary>
+        /// Create a billboard batch.
+        /// </summary>
+        /// <param name="archive">Archive this batch is to use.</param>
+        /// <param name="parent">Parent transform.</param>
+        /// <returns>Billboard batch GameObject.</returns>
+        public static DaggerfallBillboardBatch CreateBillboardBatchGameObject(int archive, Transform parent = null)
         {
-            if (string.IsNullOrEmpty(blockName))
-                return null;
+            // Create new billboard batch object parented to terrain
+            GameObject billboardBatchObject = new GameObject();
+            billboardBatchObject.name = string.Format("DaggerfallBillboardBatch [{0}]", archive);
+            billboardBatchObject.transform.parent = parent;
+            billboardBatchObject.transform.localPosition = Vector3.zero;
+            DaggerfallBillboardBatch c = billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
 
-            blockName = blockName.ToUpper();
-            GameObject go = null;
-            if (blockName.EndsWith(".RMB"))
-                go = RMBLayout.CreateGameObject(blockName);
-            else if (blockName.EndsWith(".RDB"))
-                go = RDBLayout.CreateGameObject(blockName, false);
-            else
-                return null;
+            // Setup batch
+            c.SetMaterial(archive);
 
-            if (parent) go.transform.parent = parent;
+            return c;
+        }
 
-            return go;
+        /// <summary>
+        /// Create a billboard batch with custom material/
+        /// </summary>
+        /// <param name="material">Custom atlas material.</param>
+        /// <param name="parent">Parent transform.</param>
+        /// <returns>Billboard batch GameObject.</returns>
+        public static DaggerfallBillboardBatch CreateBillboardBatchGameObject(Material material, Transform parent = null)
+        {
+            // Create new billboard batch object parented to terrain
+            GameObject billboardBatchObject = new GameObject();
+            billboardBatchObject.name = string.Format("DaggerfallBillboardBatch [CustomMaterial]");
+            billboardBatchObject.transform.parent = parent;
+            billboardBatchObject.transform.localPosition = Vector3.zero;
+            DaggerfallBillboardBatch c = billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
+
+            // Setup batch
+            c.SetMaterial(material);
+
+            return c;
         }
 
         public static bool FindMultiNameLocation(string multiName, out DFLocation locationOut)

@@ -479,8 +479,10 @@ namespace DaggerfallWorkshop
                 4,
                 true,
                 0,
-                false,
-                Shader.Find(dfUnity.MaterialReader.DefaultBillboardShaderName));
+                false);
+
+            // Update material properties
+            MaterialReader.SetBlendMode(material, MaterialReader.CustomBlendMode.Cutout);
 
             // Set new enemy material
             GetComponent<MeshRenderer>().sharedMaterial = material;

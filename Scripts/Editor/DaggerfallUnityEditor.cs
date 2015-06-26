@@ -112,12 +112,6 @@ namespace DaggerfallWorkshop
                 return;
             }
 
-            // BIG TEST BUTTON
-            if (GUILayout.Button("BIG TEST BUTTON"))
-            {
-                dfUnity.BigTestButton();
-            }
-
             // Display other GUI items
             DisplayOptionsGUI();
             DisplayImporterGUI();
@@ -133,47 +127,76 @@ namespace DaggerfallWorkshop
             EditorGUILayout.Space();
             ShowOptionsFoldout = GUILayoutHelper.Foldout(ShowOptionsFoldout, new GUIContent("Options"), () =>
             {
-                // Combining options
+                // Performance options
+                var propSetStaticFlags = Prop("Option_SetStaticFlags");
                 var propCombineRMB = Prop("Option_CombineRMB");
                 var propCombineRDB = Prop("Option_CombineRDB");
                 var propBatchBillboards = Prop("Option_BatchBillboards");
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Performance");
+                if (!propSetStaticFlags.boolValue ||
+                    !propCombineRMB.boolValue ||
+                    !propCombineRDB.boolValue ||
+                    !propBatchBillboards.boolValue)
+                {
+                    EditorGUILayout.HelpBox("Performance options should only be disabled for testing.", MessageType.Warning);
+                }
                 GUILayoutHelper.Indent(() =>
                 {
+                    propSetStaticFlags.boolValue = EditorGUILayout.Toggle(new GUIContent("Set Static Flags", "Apply static flag where appropriate when building scenes. Billboards and dynamic objects are not marked static."), propSetStaticFlags.boolValue);
                     propCombineRMB.boolValue = EditorGUILayout.Toggle(new GUIContent("Combine RMB", "Combine city-block meshes together."), propCombineRMB.boolValue);
                     propCombineRDB.boolValue = EditorGUILayout.Toggle(new GUIContent("Combine RDB", "Combine dungeon-block meshes together."), propCombineRDB.boolValue);
                     propBatchBillboards.boolValue = EditorGUILayout.Toggle(new GUIContent("Batch Billboards", "Combine billboards into batches. Some billboards are never batched, such as editor markers."), propBatchBillboards.boolValue);
                 });
 
                 // Import options
-                var propSetStaticFlags = Prop("Option_SetStaticFlags");
                 var propAddMeshColliders = Prop("Option_AddMeshColliders");
-                var propDefaultSounds = Prop("Option_DefaultSounds");
                 var propSimpleGroundPlane = Prop("Option_SimpleGroundPlane");
                 var propCloseCityGates = Prop("Option_CloseCityGates");
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Import Options");
                 GUILayoutHelper.Indent(() =>
                 {
-                    propSetStaticFlags.boolValue = EditorGUILayout.Toggle(new GUIContent("Set Static Flags", "Apply static flag where appropriate when building scenes. Billboards and dynamic objects are not marked static."), propSetStaticFlags.boolValue);
                     propAddMeshColliders.boolValue = EditorGUILayout.Toggle(new GUIContent("Add Colliders", "Add colliders where appropriate when building scenes. Decorative billboards will not receive colliders."), propAddMeshColliders.boolValue);
-                    propDefaultSounds.boolValue = EditorGUILayout.Toggle(new GUIContent("Default Sounds", "Adds DaggerfallAudioSource and setup default sounds for noise-making scene objects."), propDefaultSounds.boolValue);
                     propSimpleGroundPlane.boolValue = EditorGUILayout.Toggle(new GUIContent("Simple Ground Plane", "Adds simple quad ground plane to imported exterior locations (ignored by terrain system)."), propSimpleGroundPlane.boolValue);
                     propCloseCityGates.boolValue = EditorGUILayout.Toggle(new GUIContent("Close City Gates", "In walled cities use this flag to start city gates in closed position."), propCloseCityGates.boolValue);
                 });
 
-                // Light options
-                var propCityLightsPrefab = Prop("Option_CityLightsPrefab");
-                var propDungeonLightsPrefab = Prop("Option_DungeonLightsPrefab");
-                var propInteriorLightsPrefab = Prop("Option_InteriorLightsPrefab");
+                // Prefab options
+                var propImportLightPrefabs = Prop("Option_ImportLightPrefabs");
+                var propImportDoorPrefabs = Prop("Option_ImportDoorPrefabs");
+                var propCityLightPrefab = Prop("Option_CityLightPrefab");
+                var propDungeonLightPrefab = Prop("Option_DungeonLightPrefab");
+                var propInteriorLightPrefab = Prop("Option_InteriorLightPrefab");
+                var propDungeonDoorPrefab = Prop("Option_DungeonDoorPrefab");
+                var propInteriorDoorPrefab = Prop("Option_InteriorDoorPrefab");
                 EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Lights");
+                EditorGUILayout.LabelField("Prefabs");
                 GUILayoutHelper.Indent(() =>
                 {
-                    propCityLightsPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("City Lights Prefab", "Prefab for city lights."), propCityLightsPrefab.objectReferenceValue, typeof(GameObject), false);
-                    propDungeonLightsPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Lights Prefab", "Prefab for dungeon lights."), propDungeonLightsPrefab.objectReferenceValue, typeof(GameObject), false);
-                    propInteriorLightsPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Interior Lights Prefab", "Prefab for building interior lights."), propInteriorLightsPrefab.objectReferenceValue, typeof(GameObject), false);
+                    // Lights
+                    propImportLightPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Light Prefabs", "Import light prefabs into scene."), propImportLightPrefabs.boolValue);
+                    GUILayoutHelper.EnableGroup(propImportLightPrefabs.boolValue, () =>
+                    {
+                        GUILayoutHelper.Indent(() =>
+                        {
+                            propCityLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("City Lights", "Prefab for city lights."), propCityLightPrefab.objectReferenceValue, typeof(Light), false);
+                            propDungeonLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Lights", "Prefab for dungeon lights."), propDungeonLightPrefab.objectReferenceValue, typeof(Light), false);
+                            propInteriorLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Interior Lights", "Prefab for building interior lights."), propInteriorLightPrefab.objectReferenceValue, typeof(Light), false);
+                        });
+                    });
+
+                    // Doors
+                    EditorGUILayout.Space();
+                    propImportDoorPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Door Prefabs", "Import door prefabs into scene."), propImportDoorPrefabs.boolValue);
+                    GUILayoutHelper.EnableGroup(propImportDoorPrefabs.boolValue, () =>
+                    {
+                        GUILayoutHelper.Indent(() =>
+                        {
+                            propDungeonDoorPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Doors", "Prefab for dungeon doors."), propDungeonDoorPrefab.objectReferenceValue, typeof(DaggerfallActionDoor), false);
+                            propInteriorDoorPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Interior Doors", "Prefab for building interior doors."), propInteriorDoorPrefab.objectReferenceValue, typeof(DaggerfallActionDoor), false);
+                        });
+                    });
                 });
 
                 // Enemy options
@@ -269,7 +292,11 @@ namespace DaggerfallWorkshop
                         propBlockName.stringValue = EditorGUILayout.TextField(propBlockName.stringValue.Trim().ToUpper());
                         if (GUILayout.Button("Import"))
                         {
-                            GameObjectHelper.CreateDaggerfallBlockGameObject(propBlockName.stringValue, null);
+                            // Create block
+                            if (propBlockName.stringValue.EndsWith(".RMB"))
+                                GameObjectHelper.CreateRMBBlockGameObject(propBlockName.stringValue);
+                            else if (propBlockName.stringValue.EndsWith(".RDB"))
+                                GameObjectHelper.CreateRDBBlockGameObject(propBlockName.stringValue);
                         }
                     });
 

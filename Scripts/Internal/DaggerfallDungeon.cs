@@ -85,10 +85,11 @@ namespace DaggerfallWorkshop
 
             // Perform layout
             startMarker = null;
-            if (location.Name == "Orsinium")
-                LayoutOrsinium(ref location);
-            else
-                LayoutDungeon(ref location);
+            LayoutDungeon(ref location);
+            //if (location.Name == "Orsinium")
+            //    LayoutOrsinium(ref location);
+            //else
+            //    LayoutDungeon(ref location);
 
             // Seal location
             isSet = true;
@@ -219,13 +220,14 @@ namespace DaggerfallWorkshop
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
             {
-                GameObject go = RDBLayout.CreateGameObject(block.BlockName, block.IsStartingBlock, DungeonTextureTable, Summary.DungeonType, Summary.ID);
-                go.transform.parent = this.transform;
-                go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
+                GameObjectHelper.CreateRDBBlockGameObject(block.BlockName);
+                //GameObject go = RDBLayout.CreateGameObjectDeprecated(block.BlockName, block.IsStartingBlock, DungeonTextureTable, Summary.DungeonType, Summary.ID);
+                //go.transform.parent = this.transform;
+                //go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
-                DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
-                if (block.IsStartingBlock)
-                    FindStartMarker(daggerfallBlock);
+                //DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
+                //if (block.IsStartingBlock)
+                //    FindStartMarker(daggerfallBlock);
             }
 
             //// Show timer
@@ -233,24 +235,24 @@ namespace DaggerfallWorkshop
             //DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
         }
 
-        // Orsinium defines two blocks at [-1,-1]
-        private void LayoutOrsinium(ref DFLocation location)
-        {
-            // Create dungeon layout and handle misplaced block
-            foreach (var block in location.Dungeon.Blocks)
-            {
-                if (block.X == -1 && block.Z == -1 && block.BlockName == "N0000065.RDB")
-                    continue;
+        //// Orsinium defines two blocks at [-1,-1]
+        //private void LayoutOrsinium(ref DFLocation location)
+        //{
+        //    // Create dungeon layout and handle misplaced block
+        //    foreach (var block in location.Dungeon.Blocks)
+        //    {
+        //        if (block.X == -1 && block.Z == -1 && block.BlockName == "N0000065.RDB")
+        //            continue;
 
-                GameObject go = RDBLayout.CreateGameObject(block.BlockName, block.IsStartingBlock, DungeonTextureTable, Summary.DungeonType, Summary.ID);
-                go.transform.parent = this.transform;
-                go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
+        //        GameObject go = RDBLayout.CreateGameObjectDeprecated(block.BlockName, block.IsStartingBlock, DungeonTextureTable, Summary.DungeonType, Summary.ID);
+        //        go.transform.parent = this.transform;
+        //        go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
-                DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
-                if (block.IsStartingBlock)
-                    FindStartMarker(daggerfallBlock);
-            }
-        }
+        //        DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
+        //        if (block.IsStartingBlock)
+        //            FindStartMarker(daggerfallBlock);
+        //    }
+        //}
 
         // Finds start marker, should only be called for starting block
         private void FindStartMarker(DaggerfallRDBBlock dfBlock)

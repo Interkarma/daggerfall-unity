@@ -19,6 +19,17 @@ using DaggerfallConnect.Utility;
 namespace DaggerfallWorkshop
 {
     /// <summary>
+    /// Index of a single Daggerfall texture.
+    /// </summary>
+    [Serializable]
+    public struct DaggerfallTextureIndex
+    {
+        public int archive;
+        public int record;
+        public int frame;
+    }
+
+    /// <summary>
     /// Settings in for GetTexture methods.
     /// </summary>
     public struct GetTextureSettings
@@ -39,7 +50,8 @@ namespace DaggerfallWorkshop
         public int atlasPadding;                        // Number of pixels padding around each sub-texture
         public int atlasMaxSize;                        // Max size of atlas
         public int atlasShrinkUVs;                      // Number of extra pixels to shrink UV rect
-        public bool treatWindowsAsEmissive;             // Flag to treat all windows as emissive
+        public bool autoEmission;                       // Automatically create emission map for known textures
+        public bool autoEmissionForWindows;             // Automatically create emission map for window textures
     }
 
     /// <summary>
@@ -49,7 +61,7 @@ namespace DaggerfallWorkshop
     {
         public Texture2D albedoMap;                     // Albedo texture out for all colour textures
         public Texture2D normalMap;                     // Normal texture out when normals are enabled
-        public Texture2D emissionMap;                   // Emission texture out for emissive textures (e.g. windows)
+        public Texture2D emissionMap;                   // Emission texture out for emissive textures
         public List<int> atlasFrameCounts;              // List of atlas frame counts for each texture
         public Rect singleRect;                         // Receives UV rect for texture inside border
         public List<Rect> atlasRects;                   // List of rects, one for each record sub-texture and frame
@@ -58,13 +70,8 @@ namespace DaggerfallWorkshop
         public List<Vector2> atlasScales;               // List of scales for each texture
         public List<Vector2> atlasOffsets;              // List of offsets for each texture
         public bool isWindow;                           // Flag is raised if this is a window texture, for single textures only
-    }
-
-    public struct BillboardBatchReferences
-    {
-        public DaggerfallBillboardBatch natureBatch;
-        public DaggerfallBillboardBatch animalBatch;
-        public DaggerfallBillboardBatch miscBatch;
+        public bool isEmissive;                         // Flag is raised is this texture is emissive
+        public bool isAtlasAnimated;                    // Atlas texture has one or more animations
     }
 
     /// <summary>

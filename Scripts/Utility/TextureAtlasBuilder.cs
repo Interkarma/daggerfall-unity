@@ -3,10 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DaggerfallUnity.Utility
+namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
     /// Builds an atlas from any combination of texture archives.
+    /// Does not yet integrate with main material system.
+    /// Currently some limitations around caching and serialization.
+    /// At this time used only for static misc billboards in cities.
+    /// Will be enhanced in future.
     /// </summary>
     public class TextureAtlasBuilder
     {
@@ -15,10 +19,11 @@ namespace DaggerfallUnity.Utility
         Dictionary<int, TextureItem> textureItems = new Dictionary<int, TextureItem>();
         Dictionary<int, AtlasItem> atlasItems = new Dictionary<int, AtlasItem>();
         Texture2D atlasTexture = null;
+        Material atlasMaterial = null;
         int maxAtlasDim = 2048;
         bool mipMaps = true;
         int padding = 4;
-        bool stayReadable = true;
+        bool stayReadable = false;
 
         #endregion
 
@@ -62,6 +67,14 @@ namespace DaggerfallUnity.Utility
         }
 
         /// <summary>
+        /// Gets the atlas material generated from texture.
+        /// </summary>
+        public Material AtlasMaterial
+        {
+            get { return (atlasMaterial != null) ? atlasMaterial : GetMaterial(); }
+        }
+
+        /// <summary>
         /// Gets or sets max dimensions of texture atlas.
         /// </summary>
         public int MaxAtlasDim
@@ -101,7 +114,7 @@ namespace DaggerfallUnity.Utility
         /// <param name="record">Record index of this texture.</param>
         /// <param name="frame">Frame index of this texture.</param>
         /// <param name="frameCount">Number of frames in this set.</param>
-        public void AddTextureItem(Texture2D texture, int archive, int record, int frame, int frameCount)
+        public void AddTextureItem(Texture2D texture, int archive, int record, int frame, int frameCount, Vector2 size, Vector2 scale)
         {
             // Create texture item
             int key = MakeTextureKey((short)archive, (byte)record, (byte)frame);
@@ -113,6 +126,8 @@ namespace DaggerfallUnity.Utility
                 record = record,
                 frame = frame,
                 frameCount = frameCount,
+                size = size,
+                scale = scale,
             };
             textureItems.Add(key, item);
         }
@@ -120,7 +135,7 @@ namespace DaggerfallUnity.Utility
         /// <summary>
         /// Rebuilds source textures into new atlas.
         /// </summary>
-        public void Rebuild()
+        public void Rebuild(int borderSize)
         {
             // Create sequential array of texture references
             int index = 0;
@@ -133,6 +148,22 @@ namespace DaggerfallUnity.Utility
             // Create atlas texture
             atlasTexture = new Texture2D(maxAtlasDim, maxAtlasDim, TextureFormat.RGBA32, mipMaps);
             Rect[] rects = atlasTexture.PackTextures(textureRefs, padding, maxAtlasDim, !stayReadable);
+
+            // Shrink UV rect to compensate for internal border
+            if (borderSize > 0)
+            {
+                float ru = 1f / atlasTexture.width;
+                float rv = 1f / atlasTexture.height;
+                for (int i = 0; i < rects.Length; i++)
+                {
+                    Rect rct = rects[i];
+                    rct.xMin += borderSize * ru;
+                    rct.xMax -= borderSize * ru;
+                    rct.yMin += borderSize * rv;
+                    rct.yMax -= borderSize * rv;
+                    rects[i] = rct;
+                }
+            }
 
             // Rebuild dict
             index = 0;
@@ -149,6 +180,26 @@ namespace DaggerfallUnity.Utility
                 atlasItems.Add(ti.Key, item);
                 index++;
             }
+
+            // Promote to new material
+            GetMaterial();
+        }
+
+        /// <summary>
+        /// Gets a Standard material from current atlas texture.
+        /// Does not return normal or emission map.
+        /// </summary>
+        /// <param name="blendMode">Blend mode of material.</param>
+        /// <returns>Material.</returns>
+        public Material GetMaterial(MaterialReader.CustomBlendMode blendMode = MaterialReader.CustomBlendMode.Cutout)
+        {
+            Material material = MaterialReader.CreateStandardMaterial(blendMode);
+            material.name = "SuperAtlas Material";
+            material.mainTexture = atlasTexture;
+            material.mainTexture.filterMode = DaggerfallUnity.Instance.MaterialReader.MainFilterMode;
+            atlasMaterial = material;
+
+            return material;
         }
 
         /// <summary>
@@ -158,7 +209,7 @@ namespace DaggerfallUnity.Utility
         /// <param name="archive">Archive index of texture.</param>
         /// <param name="record">Record index of texture.</param>
         /// <param name="frame">Frame index of texture.</param>
-        /// <returns>AtlasItem.</returns>
+        /// <returns>AtlasItem. Key member contains -1 if item not present.</returns>
         public AtlasItem GetAtlasItem(int archive, int record, int frame = 0)
         {
             int key = MakeTextureKey((short)archive, (byte)record, (byte)frame);
@@ -171,11 +222,12 @@ namespace DaggerfallUnity.Utility
         /// If texture does not exist in atlas an empty item is returned.
         /// </summary>
         /// <param name="key">Key of item.</param>
-        /// <returns>AtlasItem.</returns>
+        /// <returns>AtlasItem. Key member contains -1 if item not present.</returns>
         public AtlasItem GetAtlasItem(int key)
         {
             AtlasItem item = new AtlasItem();
-            atlasItems.TryGetValue(key, out item);
+            if (!atlasItems.TryGetValue(key, out item))
+                item.key = -1;
 
             return item;
         }
@@ -205,6 +257,7 @@ namespace DaggerfallUnity.Utility
             textureItems.Clear();
             atlasItems.Clear();
             atlasTexture = null;
+            atlasMaterial = null;
         }
 
         #endregion
