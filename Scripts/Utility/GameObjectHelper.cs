@@ -229,6 +229,18 @@ namespace DaggerfallWorkshop.Utility
             go.transform.position = new Vector3(hit.point.x, hit.point.y + size.y * 0.52f, hit.point.z);
         }
 
+        public static void AlignControllerToGround(CharacterController controller, float distance = 3f)
+        {
+            // Cast ray down from slightly above midpoint to find ground below
+            RaycastHit hit;
+            Ray ray = new Ray(controller.transform.position + new Vector3(0, 0.2f, 0), Vector3.down);
+            if (!Physics.Raycast(ray, out hit, distance))
+                return;
+
+            // Position bottom just above ground by adjusting parent gameobject
+            controller.transform.position = new Vector3(hit.point.x, hit.point.y + controller.height * 0.52f, hit.point.z);
+        }
+
         /// <summary>
         /// Instantiate a GameObject from prefab.
         /// </summary>
@@ -490,7 +502,6 @@ namespace DaggerfallWorkshop.Utility
         {
             // Create new billboard batch object parented to terrain
             GameObject billboardBatchObject = new GameObject();
-            billboardBatchObject.name = string.Format("DaggerfallBillboardBatch [{0}]", archive);
             billboardBatchObject.transform.parent = parent;
             billboardBatchObject.transform.localPosition = Vector3.zero;
             DaggerfallBillboardBatch c = billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
@@ -511,7 +522,6 @@ namespace DaggerfallWorkshop.Utility
         {
             // Create new billboard batch object parented to terrain
             GameObject billboardBatchObject = new GameObject();
-            billboardBatchObject.name = string.Format("DaggerfallBillboardBatch [CustomMaterial]");
             billboardBatchObject.transform.parent = parent;
             billboardBatchObject.transform.localPosition = Vector3.zero;
             DaggerfallBillboardBatch c = billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();

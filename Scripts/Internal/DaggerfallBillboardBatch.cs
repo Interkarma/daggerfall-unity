@@ -345,10 +345,14 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void Apply()
         {
+            // Apply material
             if (customMaterial != null)
                 CreateMeshForCustomMaterial();
             else
                 CreateMesh();
+           
+            // Update name
+            UpdateName();
         }
 
         #region Editor Support
@@ -601,6 +605,17 @@ namespace DaggerfallWorkshop
             finalSize.y = (size.y + yChange);
 
             return finalSize * MeshReader.GlobalScale;
+        }
+
+        /// <summary>
+        /// Apply new name based on archive index.
+        /// </summary>
+        private void UpdateName()
+        {
+            if (customMaterial != null)
+                this.name = "DaggerfallBillboardBatch [CustomMaterial]";
+            else
+                this.name = string.Format("DaggerfallBillboardBatch [{0}]", TextureArchive);
         }
 
         private bool ReadyCheck()

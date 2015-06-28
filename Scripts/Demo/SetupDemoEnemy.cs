@@ -53,10 +53,11 @@ namespace DaggerfallWorkshop.Demo
                     if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying)
                         controller.height /= 2f;
 
-                    // Limit maximum height to ensure controller can fit through doors
-                    // Some particularly tall sprites (e.g. barbarians) require this hack
-                    if (controller.height > 1.9f)
-                        controller.height = 1.9f;
+                    // Uncomment below lines to limit maximum controller height
+                    // Some particularly tall sprites (e.g. giants) require this hack to get through doors
+                    // However they will appear sunken into ground as a result
+                    //if (controller.height > 1.9f)
+                    //    controller.height = 1.9f;
                 }
 
                 // Setup sounds

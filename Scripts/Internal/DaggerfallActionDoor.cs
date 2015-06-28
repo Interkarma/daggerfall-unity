@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop
         public bool IsMagicallyHeld = false;            // Magically held locks can be opened by spells only
         public float OpenAngle = -90f;                  // Angle to swing door on axis when opening
         public float OpenDuration = 1.5f;               // How long in seconds for door to open
-        public bool DisableColliderWhenOpen = true;     // Collider is disabled when door opens
+        public bool IsTriggerWhenOpen = true;           // Collider is disabled when door opens
         public float ChanceToBash = 0.25f;              // Chance of successfully bashing open door (0=no chance, 1=first time)
         public bool PlaySounds = true;                  // Play open and close sounds if present (OpenSound > 0, CloseSound > 0)
 
@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop
             isMoving = true;
 
             // Set collider to trigger only
-            if (DisableColliderWhenOpen && boxCollider != null)
+            if (IsTriggerWhenOpen && boxCollider != null)
                 boxCollider.isTrigger = true;
 
             // Play open sound if flagged and ready
@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop
             }
 
             // Set collider back to a solid object
-            if (DisableColliderWhenOpen && boxCollider != null)
+            if (IsTriggerWhenOpen && boxCollider != null)
                 boxCollider.isTrigger = false;
         }
 

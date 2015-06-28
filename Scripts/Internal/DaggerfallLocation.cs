@@ -82,6 +82,7 @@ namespace DaggerfallWorkshop
             public ClimateBases Climate;
             public ClimateNatureSets Nature;
             public int SkyBase;
+            public DaggerfallBillboardBatch NatureBillboardBatch;
         }
 
         void Start()
@@ -234,6 +235,13 @@ namespace DaggerfallWorkshop
                     db.SetMaterial(db.Summary.Archive, db.Summary.Record, 0, db.Summary.InDungeon);
                 }
             }
+
+            // Process nature billboard batch
+            if (summary.NatureBillboardBatch != null)
+            {
+                summary.NatureBillboardBatch.SetMaterial(natureArchive, true);
+                summary.NatureBillboardBatch.Apply();
+            }
         }
 
         /// <summary>
@@ -287,7 +295,7 @@ namespace DaggerfallWorkshop
 
             // Create billboard batch game objects for this location
             TextureAtlasBuilder miscBillboardAtlas = null;
-            DaggerfallBillboardBatch natureBillboardBatch = null;
+            summary.NatureBillboardBatch = null;
             DaggerfallBillboardBatch lightsBillboardBatch = null;
             DaggerfallBillboardBatch animalsBillboardBatch = null;
             DaggerfallBillboardBatch miscBillboardBatch = null;
@@ -295,7 +303,7 @@ namespace DaggerfallWorkshop
             {
                 miscBillboardAtlas = dfUnity.MaterialReader.MiscBillboardAtlas;
                 int natureArchive = ClimateSwaps.GetNatureArchive(CurrentNatureSet, CurrentSeason);
-                natureBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(natureArchive, transform);
+                summary.NatureBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(natureArchive, transform);
                 lightsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.LightsTextureArchive, transform);
                 animalsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.AnimalsTextureArchive, transform);
                 miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, transform);
@@ -309,7 +317,7 @@ namespace DaggerfallWorkshop
                     if (dfUnity.Option_BatchBillboards)
                     {
                         Vector3 blockOrigin = new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
-                        natureBillboardBatch.origin = blockOrigin;
+                        summary.NatureBillboardBatch.origin = blockOrigin;
                         lightsBillboardBatch.origin = blockOrigin;
                         animalsBillboardBatch.origin = blockOrigin;
                         miscBillboardBatch.origin = blockOrigin;
@@ -320,7 +328,7 @@ namespace DaggerfallWorkshop
                         blockName,
                         dfUnity.Option_RMBGroundPlane,
                         dfUnity.Option_CityBlockPrefab,
-                        natureBillboardBatch,
+                        summary.NatureBillboardBatch,
                         lightsBillboardBatch,
                         animalsBillboardBatch,
                         miscBillboardAtlas,
@@ -333,7 +341,7 @@ namespace DaggerfallWorkshop
             }
 
             // Apply batches
-            if (natureBillboardBatch) natureBillboardBatch.Apply();
+            if (summary.NatureBillboardBatch) summary.NatureBillboardBatch.Apply();
             if (lightsBillboardBatch) lightsBillboardBatch.Apply();
             if (animalsBillboardBatch) animalsBillboardBatch.Apply();
             if (miscBillboardBatch) miscBillboardBatch.Apply();

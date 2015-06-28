@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.Collections;
 using DaggerfallWorkshop.Demo;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -26,6 +27,14 @@ namespace DaggerfallWorkshop
                 setupDemoEnemy.ApplyEnemySettings();
                 EditorUtility.SetDirty(setupDemoEnemy);
                 EditorUtility.SetDirty(setupDemoEnemy.GetMobileBillboardChild());
+            }
+            if (GUILayout.Button("Align To Ground"))
+            {
+                CharacterController controller = setupDemoEnemy.GetComponent<CharacterController>();
+                if (controller != null)
+                {
+                    GameObjectHelper.AlignControllerToGround(controller);
+                }
             }
 
             // Save modified properties
