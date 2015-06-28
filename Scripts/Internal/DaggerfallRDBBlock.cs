@@ -19,7 +19,7 @@ using DaggerfallConnect.Arena2;
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// Attached to a dungeon block.
+    /// Attached to dungeon blocks.
     /// </summary>
     public class DaggerfallRDBBlock : MonoBehaviour
     {

@@ -23,7 +23,6 @@ namespace DaggerfallWorkshop
     /// <summary>
     /// Defines and executes Daggerfall action records.
     /// </summary>
-    [RequireComponent(typeof(AudioSource))]
     public class DaggerfallAction : MonoBehaviour
     {
         public bool ActionEnabled = false;                          // Enable/disable action

@@ -18,6 +18,7 @@ namespace DaggerfallWorkshop
     /// Enum for Daggerfall sound clips.
     /// This will be filled out over time.
     /// </summary>
+    [Serializable]
     public enum SoundClips
     {
         None = -1,

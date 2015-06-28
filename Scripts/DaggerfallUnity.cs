@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.3.17";
+        public const string Version = "1.3.18";
 
         #region Fields
 
@@ -69,7 +69,7 @@ namespace DaggerfallWorkshop
         // Import options
         public bool Option_AddMeshColliders = true;
         public bool Option_AddNavmeshAgents = true;
-        public bool Option_SimpleGroundPlane = true;
+        public bool Option_RMBGroundPlane = true;
         public bool Option_CloseCityGates = false;
 
         // Prefab options
@@ -80,23 +80,10 @@ namespace DaggerfallWorkshop
         public bool Option_ImportDoorPrefabs = true;
         public DaggerfallActionDoor Option_DungeonDoorPrefab = null;
         public DaggerfallActionDoor Option_InteriorDoorPrefab = null;
-
-        // Enemy options
-        public bool Option_ImportEnemies = true;
-        public bool Option_EnemyCharacterController = false;
-        public bool Option_EnemyRigidbody = false;
-        public bool Option_EnemyCapsuleCollider = false;
-        public bool Option_EnemyNavMeshAgent = false;
-        public bool Option_EnemyExampleAI = true;
-        public string Option_EnemyTag = "Untagged";
-        public float Option_EnemyRadius = 0.4f;
-        public float Option_EnemySlopeLimit = 80f;
-        public float Option_EnemyStepOffset = 0.4f;
-        public bool Option_EnemyUseGravity = false;
-        public bool Option_EnemyIsKinematic = true;
-#if UNITY_EDITOR
-        public MonoScript Option_CustomEnemyScript = null;
-#endif
+        public DaggerfallRMBBlock Option_CityBlockPrefab = null;
+        public DaggerfallRDBBlock Option_DungeonBlockPrefab = null;
+        public bool Option_ImportEnemyPrefabs = true;
+        public DaggerfallEnemy Option_EnemyPrefab = null;
 
         // Time and space options
         public bool Option_AutomateTextureSwaps = true;

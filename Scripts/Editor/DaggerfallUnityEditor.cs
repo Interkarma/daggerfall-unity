@@ -151,30 +151,27 @@ namespace DaggerfallWorkshop
 
                 // Import options
                 var propAddMeshColliders = Prop("Option_AddMeshColliders");
-                var propSimpleGroundPlane = Prop("Option_SimpleGroundPlane");
+                var propRMBGroundPlane = Prop("Option_RMBGroundPlane");
                 var propCloseCityGates = Prop("Option_CloseCityGates");
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Import Options");
                 GUILayoutHelper.Indent(() =>
                 {
                     propAddMeshColliders.boolValue = EditorGUILayout.Toggle(new GUIContent("Add Colliders", "Add colliders where appropriate when building scenes. Decorative billboards will not receive colliders."), propAddMeshColliders.boolValue);
-                    propSimpleGroundPlane.boolValue = EditorGUILayout.Toggle(new GUIContent("Simple Ground Plane", "Adds simple quad ground plane to imported exterior locations (ignored by terrain system)."), propSimpleGroundPlane.boolValue);
+                    propRMBGroundPlane.boolValue = EditorGUILayout.Toggle(new GUIContent("RMB Ground Plane", "Adds RMB ground plane to imported city block (ignored by terrain system)."), propRMBGroundPlane.boolValue);
                     propCloseCityGates.boolValue = EditorGUILayout.Toggle(new GUIContent("Close City Gates", "In walled cities use this flag to start city gates in closed position."), propCloseCityGates.boolValue);
                 });
 
                 // Prefab options
-                var propImportLightPrefabs = Prop("Option_ImportLightPrefabs");
-                var propImportDoorPrefabs = Prop("Option_ImportDoorPrefabs");
-                var propCityLightPrefab = Prop("Option_CityLightPrefab");
-                var propDungeonLightPrefab = Prop("Option_DungeonLightPrefab");
-                var propInteriorLightPrefab = Prop("Option_InteriorLightPrefab");
-                var propDungeonDoorPrefab = Prop("Option_DungeonDoorPrefab");
-                var propInteriorDoorPrefab = Prop("Option_InteriorDoorPrefab");
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Prefabs");
                 GUILayoutHelper.Indent(() =>
                 {
                     // Lights
+                    var propImportLightPrefabs = Prop("Option_ImportLightPrefabs");
+                    var propCityLightPrefab = Prop("Option_CityLightPrefab");
+                    var propDungeonLightPrefab = Prop("Option_DungeonLightPrefab");
+                    var propInteriorLightPrefab = Prop("Option_InteriorLightPrefab");
                     propImportLightPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Light Prefabs", "Import light prefabs into scene."), propImportLightPrefabs.boolValue);
                     GUILayoutHelper.EnableGroup(propImportLightPrefabs.boolValue, () =>
                     {
@@ -187,6 +184,9 @@ namespace DaggerfallWorkshop
                     });
 
                     // Doors
+                    var propImportDoorPrefabs = Prop("Option_ImportDoorPrefabs");
+                    var propDungeonDoorPrefab = Prop("Option_DungeonDoorPrefab");
+                    var propInteriorDoorPrefab = Prop("Option_InteriorDoorPrefab");
                     EditorGUILayout.Space();
                     propImportDoorPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Door Prefabs", "Import door prefabs into scene."), propImportDoorPrefabs.boolValue);
                     GUILayoutHelper.EnableGroup(propImportDoorPrefabs.boolValue, () =>
@@ -197,50 +197,29 @@ namespace DaggerfallWorkshop
                             propInteriorDoorPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Interior Doors", "Prefab for building interior doors."), propInteriorDoorPrefab.objectReferenceValue, typeof(DaggerfallActionDoor), false);
                         });
                     });
-                });
 
-                // Enemy options
-                var propImportEnemies = Prop("Option_ImportEnemies");
-                var propEnemyCharacterController = Prop("Option_EnemyCharacterController");
-                var propEnemyRigidbody = Prop("Option_EnemyRigidbody");
-                var propEnemyCapsuleCollider = Prop("Option_EnemyCapsuleCollider");
-                var propEnemyNavMeshAgent = Prop("Option_EnemyNavMeshAgent");
-                var propEnemyExampleAI = Prop("Option_EnemyExampleAI");
-                var propEnemyTag = Prop("Option_EnemyTag");
-                var propCustomEnemyScript = Prop("Option_CustomEnemyScript");
-                var propEnemyRadius = Prop("Option_EnemyRadius");
-                var propEnemySlopeLimit = Prop("Option_EnemySlopeLimit");
-                var propEnemyStepOffset = Prop("Option_EnemyStepOffset");
-                var propEnemyUseGravity = Prop("Option_EnemyUseGravity");
-                var propEnemyIsKinematic = Prop("Option_EnemyIsKinematic");
-                EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Enemies");
-                GUILayoutHelper.Indent(() =>
-                {
-                    propImportEnemies.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Enemies", "Import fixed and random enemies from dungeon blocks."), propImportEnemies.boolValue);
-                    GUILayoutHelper.EnableGroup(propImportEnemies.boolValue, () =>
+                    // Enemies
+                    var propImportEnemyPrefabs = Prop("Option_ImportEnemyPrefabs");
+                    var propEnemyPrefab = Prop("Option_EnemyPrefab");
+                    EditorGUILayout.Space();
+                    propImportEnemyPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Enemy Prefabs", "Import enemy prefabs into scene."), propImportEnemyPrefabs.boolValue);
+                    GUILayoutHelper.EnableGroup(propImportEnemyPrefabs.boolValue, () =>
                     {
                         GUILayoutHelper.Indent(() =>
                         {
-                            propEnemyCharacterController.boolValue = EditorGUILayout.Toggle(new GUIContent("CharacterController", "Add a CharacterController to every enemy."), propEnemyCharacterController.boolValue);
-                            propEnemyRigidbody.boolValue = EditorGUILayout.Toggle(new GUIContent("Rigidbody", "Add a Rigidbody to every enemy."), propEnemyRigidbody.boolValue);
-                            propEnemyCapsuleCollider.boolValue = EditorGUILayout.Toggle(new GUIContent("CapsuleCollider", "Add a CapsuleCollider to every enemy."), propEnemyCapsuleCollider.boolValue);
-                            propEnemyNavMeshAgent.boolValue = EditorGUILayout.Toggle(new GUIContent("NavMeshAgent", "Add a NavMeshAgent to every enemy."), propEnemyNavMeshAgent.boolValue);
-                            propEnemyExampleAI.boolValue = EditorGUILayout.Toggle(new GUIContent("Example AI", "Add example AI scripts to every enemy. Adds CharacterController."), propEnemyExampleAI.boolValue);
-                            propEnemyTag.stringValue = EditorGUILayout.TagField(new GUIContent("Tag", "Custom tag to assign enemies."), propEnemyTag.stringValue);
-                            propCustomEnemyScript.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Custom Script", "Custom script to assign enemies."), propCustomEnemyScript.objectReferenceValue, typeof(MonoScript), false);
-                            ShowEnemyAdvancedFoldout = GUILayoutHelper.Foldout(ShowEnemyAdvancedFoldout, new GUIContent("Advanced"), () =>
-                            {
-                                GUILayoutHelper.Indent(() =>
-                                {
-                                    propEnemyRadius.floatValue = EditorGUILayout.FloatField(new GUIContent("Radius", "Enemy radius for CharacterController, CapsuleCollider, NavMeshAgent."), propEnemyRadius.floatValue);
-                                    propEnemySlopeLimit.floatValue = EditorGUILayout.FloatField(new GUIContent("Slope Limit", "Slope limit for CharacterController."), propEnemySlopeLimit.floatValue);
-                                    propEnemyStepOffset.floatValue = EditorGUILayout.FloatField(new GUIContent("Step Offset", "Step offset for CharacterController."), propEnemyStepOffset.floatValue);
-                                    propEnemyUseGravity.boolValue = EditorGUILayout.Toggle(new GUIContent("Use Gravity", "Rigidbody should use gravity."), propEnemyUseGravity.boolValue);
-                                    propEnemyIsKinematic.boolValue = EditorGUILayout.Toggle(new GUIContent("Is Kinematic", "Rigidbody should be kinematic."), propEnemyIsKinematic.boolValue);
-                                });
-                            });
+                            propEnemyPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Enemies", "Prefab for enemies."), propEnemyPrefab.objectReferenceValue, typeof(DaggerfallEnemy), false);
                         });
+                    });
+
+                    // Optional
+                    var propCityBlockPrefab = Prop("Option_CityBlockPrefab");
+                    var propDungeonBlockPrefab = Prop("Option_DungeonBlockPrefab");
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField("Optional");
+                    GUILayoutHelper.Indent(() =>
+                    {
+                        propCityBlockPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("City Blocks", "Prefab for city blocks."), propCityBlockPrefab.objectReferenceValue, typeof(DaggerfallRMBBlock), false);
+                        propDungeonBlockPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Blocks", "Prefab for dungeon blocks."), propDungeonBlockPrefab.objectReferenceValue, typeof(DaggerfallRDBBlock), false);
                     });
                 });
 
@@ -294,9 +273,9 @@ namespace DaggerfallWorkshop
                         {
                             // Create block
                             if (propBlockName.stringValue.EndsWith(".RMB"))
-                                GameObjectHelper.CreateRMBBlockGameObject(propBlockName.stringValue);
+                                GameObjectHelper.CreateRMBBlockGameObject(propBlockName.stringValue, dfUnity.Option_RMBGroundPlane, dfUnity.Option_CityBlockPrefab);
                             else if (propBlockName.stringValue.EndsWith(".RDB"))
-                                GameObjectHelper.CreateRDBBlockGameObject(propBlockName.stringValue);
+                                GameObjectHelper.CreateRDBBlockGameObject(propBlockName.stringValue, dfUnity.Option_DungeonBlockPrefab);
                         }
                     });
 

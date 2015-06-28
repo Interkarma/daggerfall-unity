@@ -23,6 +23,15 @@ namespace DaggerfallWorkshop.Utility
     public static class GameObjectHelper
     {
         static Dictionary<int, MobileEnemy> enemyDict;
+        public static Dictionary<int, MobileEnemy> EnemyDict
+        {
+            get
+            {
+                if (enemyDict == null)
+                    enemyDict = EnemyBasics.BuildEnemyDict();
+                return enemyDict;
+            }
+        }
 
         public static void AssignAnimatedMaterialComponent(CachedMaterial[] cachedMaterials, GameObject go)
         {
@@ -66,23 +75,37 @@ namespace DaggerfallWorkshop.Utility
             return materials;
         }
 
+        /// <summary>
+        /// Adds a single DaggerfallMesh game object to scene.
+        /// </summary>
+        /// <param name="modelID">ModelID of mesh to add.</param>
+        /// <param name="parent">Optional parent of this object.</param>
+        /// <param name="makeStatic">Flag to set object static flag.</param>
+        /// <param name="useExistingObject">Add mesh to existing object rather than create new.</param>
+        /// <param name="ignoreCollider">Force disable collider.</param>
+        /// <returns>GameObject.</returns>
         public static GameObject CreateDaggerfallMeshGameObject(
             uint modelID,
             Transform parent,
             bool makeStatic = false,
-            GameObject useExistingObject = null)
+            GameObject useExistingObject = null,
+            bool ignoreCollider = false)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
             // Create gameobject
-            GameObject go = useExistingObject;
-            if (go == null)
-                go = new GameObject(string.Format("DaggerfallMesh [ID={0}]", modelID));
+            string name = string.Format("DaggerfallMesh [ID={0}]", modelID);
+            GameObject go = (useExistingObject != null) ? useExistingObject : new GameObject();
             if (parent != null)
                 go.transform.parent = parent;
+            go.name = name;
 
-            // Assign components
-            DaggerfallMesh dfMesh = go.AddComponent<DaggerfallMesh>();
+            // Add DaggerfallMesh component
+            DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
+            if (dfMesh == null)
+                dfMesh = go.AddComponent<DaggerfallMesh>();
+
+            // Get mesh filter and renderer components
             MeshFilter meshFilter = go.GetComponent<MeshFilter>();
             MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
 
@@ -112,7 +135,7 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Assign mesh to collider
-            if (dfUnity.Option_AddMeshColliders)
+            if (dfUnity.Option_AddMeshColliders && !ignoreCollider)
             {
                 MeshCollider collider = go.GetComponent<MeshCollider>();
                 if (collider == null) collider = go.AddComponent<MeshCollider>();
@@ -206,14 +229,22 @@ namespace DaggerfallWorkshop.Utility
             go.transform.position = new Vector3(hit.point.x, hit.point.y + size.y * 0.52f, hit.point.z);
         }
 
-        public static GameObject InstantiatePrefab(GameObject prefab, Transform parent, Vector3 position)
+        /// <summary>
+        /// Instantiate a GameObject from prefab.
+        /// </summary>
+        /// <param name="prefab">The source GameObject prefab to clone.</param>
+        /// <param name="name">Optional name to set. Use string.Empty for default.</param>
+        /// <param name="parent">Optional parent to set. Use null for default.</param>
+        /// <param name="position">Optional position to set. Use Vector3.zero for default.</param>
+        /// <returns>GameObject.</returns>
+        public static GameObject InstantiatePrefab(GameObject prefab, string name, Transform parent, Vector3 position)
         {
             GameObject go = null;
             if (prefab != null)
             {
                 go = GameObject.Instantiate(prefab);
-                if (parent != null)
-                    go.transform.parent = parent;
+                if (!string.IsNullOrEmpty(name)) go.name = name;
+                if (parent != null) go.transform.parent = parent;
                 go.transform.position = position;
 
             }
@@ -230,6 +261,7 @@ namespace DaggerfallWorkshop.Utility
         public static GameObject CreateRMBBlockGameObject(
             string blockName,
             bool addGroundPlane = true,
+            DaggerfallRMBBlock cloneFrom = null,
             DaggerfallBillboardBatch natureBillboardBatch = null,
             DaggerfallBillboardBatch lightsBillboardBatch = null,
             DaggerfallBillboardBatch animalsBillboardBatch = null,
@@ -245,7 +277,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Create base object
             DFBlock blockData;
-            GameObject go = RMBLayout.CreateBaseGameObject(blockName, out blockData);
+            GameObject go = RMBLayout.CreateBaseGameObject(blockName, out blockData, cloneFrom);
 
             // Create flats node
             GameObject flatsNode = new GameObject("Flats");
@@ -305,7 +337,8 @@ namespace DaggerfallWorkshop.Utility
         /// /// Layout a complete RDB block game object.
         /// </summary>
         public static GameObject CreateRDBBlockGameObject(
-            string blockName)
+            string blockName,
+            DaggerfallRDBBlock cloneFrom = null)
         {
             // Get DaggerfallUnity
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -314,7 +347,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Create base object
             DFBlock blockData;
-            GameObject go = RDBLayout.CreateBaseGameObject(blockName, out blockData);
+            GameObject go = RDBLayout.CreateBaseGameObject(blockName, out blockData, cloneFrom);
 
             // Add exit doors
             List<StaticDoor> doorsOut;
@@ -358,98 +391,94 @@ namespace DaggerfallWorkshop.Utility
         //    return go;
         //}
 
-        public static GameObject CreateDaggerfallEnemyGameObject(MobileTypes type, Transform parent, MobileReactions reaction)
-        {
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+//        public static GameObject CreateDaggerfallEnemyGameObject(MobileTypes type, Transform parent, MobileReactions reaction)
+//        {
+//            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
-            // Ensure enemy dict is loaded
-            if (enemyDict == null)
-                enemyDict = EnemyBasics.GetEnemyDict();
+//            GameObject go = new GameObject(string.Format("DaggerfallEnemy [{0}]", type.ToString()));
+//            if (parent) go.transform.parent = parent;
+//            go.transform.forward = Vector3.forward;
 
-            GameObject go = new GameObject(string.Format("DaggerfallEnemy [{0}]", type.ToString()));
-            if (parent) go.transform.parent = parent;
-            go.transform.forward = Vector3.forward;
+//            // Add custom tag and script
+//            go.tag = dfUnity.Option_EnemyTag;
+//#if UNITY_EDITOR
+//            if (dfUnity.Option_CustomEnemyScript != null)
+//                go.AddComponent(dfUnity.Option_CustomEnemyScript.GetClass());
+//#endif
 
-            // Add custom tag and script
-            go.tag = dfUnity.Option_EnemyTag;
-#if UNITY_EDITOR
-            if (dfUnity.Option_CustomEnemyScript != null)
-                go.AddComponent(dfUnity.Option_CustomEnemyScript.GetClass());
-#endif
+//            // Add child object for enemy billboard
+//            GameObject mobileObject = new GameObject("DaggerfallMobileUnit");
+//            mobileObject.transform.parent = go.transform;
 
-            // Add child object for enemy billboard
-            GameObject mobileObject = new GameObject("DaggerfallMobileUnit");
-            mobileObject.transform.parent = go.transform;
+//            // Add mobile enemy
+//            Vector2 size = Vector2.one;
+//            DaggerfallMobileUnit dfMobile = mobileObject.AddComponent<DaggerfallMobileUnit>();
+//            dfMobile.SetEnemy(dfUnity, EnemyDict[(int)type], reaction);
+//            size = dfMobile.Summary.RecordSizes[0];
 
-            // Add mobile enemy
-            Vector2 size = Vector2.one;
-            DaggerfallMobileUnit dfMobile = mobileObject.AddComponent<DaggerfallMobileUnit>();
-            dfMobile.SetEnemy(dfUnity, enemyDict[(int)type], reaction);
-            size = dfMobile.Summary.RecordSizes[0];
+//            // Add character controller
+//            if (dfUnity.Option_EnemyCharacterController || dfUnity.Option_EnemyExampleAI)
+//            {
+//                CharacterController controller = go.AddComponent<CharacterController>();
+//                controller.radius = dfUnity.Option_EnemyRadius;
+//                controller.height = size.y;
+//                controller.slopeLimit = dfUnity.Option_EnemySlopeLimit;
+//                controller.stepOffset = dfUnity.Option_EnemyStepOffset;
 
-            // Add character controller
-            if (dfUnity.Option_EnemyCharacterController || dfUnity.Option_EnemyExampleAI)
-            {
-                CharacterController controller = go.AddComponent<CharacterController>();
-                controller.radius = dfUnity.Option_EnemyRadius;
-                controller.height = size.y;
-                controller.slopeLimit = dfUnity.Option_EnemySlopeLimit;
-                controller.stepOffset = dfUnity.Option_EnemyStepOffset;
+//                // Reduce height of flying creatures as their wing animation makes them taller than desired
+//                // This helps them get through doors while aiming for player eye height
+//                if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying)
+//                    controller.height /= 2f;
 
-                // Reduce height of flying creatures as their wing animation makes them taller than desired
-                // This helps them get through doors while aiming for player eye height
-                if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying)
-                    controller.height /= 2f;
+//                // Limit maximum height to ensure controller can fit through doors
+//                // For some reason Unity 4.5 doesn't let you set SkinWidth from code >.<
+//                if (controller.height > 1.9f)
+//                    controller.height = 1.9f;
+//            }
 
-                // Limit maximum height to ensure controller can fit through doors
-                // For some reason Unity 4.5 doesn't let you set SkinWidth from code >.<
-                if (controller.height > 1.9f)
-                    controller.height = 1.9f;
-            }
+//            // Add rigidbody
+//            if (dfUnity.Option_EnemyRigidbody)
+//            {
+//                Rigidbody rigidbody = go.AddComponent<Rigidbody>();
+//                rigidbody.useGravity = dfUnity.Option_EnemyUseGravity;
+//                rigidbody.isKinematic = dfUnity.Option_EnemyIsKinematic;
+//            }
 
-            // Add rigidbody
-            if (dfUnity.Option_EnemyRigidbody)
-            {
-                Rigidbody rigidbody = go.AddComponent<Rigidbody>();
-                rigidbody.useGravity = dfUnity.Option_EnemyUseGravity;
-                rigidbody.isKinematic = dfUnity.Option_EnemyIsKinematic;
-            }
+//            // Add capsule collider
+//            if (dfUnity.Option_EnemyCapsuleCollider)
+//            {
+//                CapsuleCollider collider = go.AddComponent<CapsuleCollider>();
+//                collider.radius = dfUnity.Option_EnemyRadius;
+//                collider.height = size.y;
+//            }
 
-            // Add capsule collider
-            if (dfUnity.Option_EnemyCapsuleCollider)
-            {
-                CapsuleCollider collider = go.AddComponent<CapsuleCollider>();
-                collider.radius = dfUnity.Option_EnemyRadius;
-                collider.height = size.y;
-            }
+//            // Add navmesh agent
+//            if (dfUnity.Option_EnemyNavMeshAgent)
+//            {
+//                NavMeshAgent agent = go.AddComponent<NavMeshAgent>();
+//                agent.radius = dfUnity.Option_EnemyRadius;
+//                agent.height = size.y;
+//                agent.baseOffset = size.y * 0.5f;
+//            }
 
-            // Add navmesh agent
-            if (dfUnity.Option_EnemyNavMeshAgent)
-            {
-                NavMeshAgent agent = go.AddComponent<NavMeshAgent>();
-                agent.radius = dfUnity.Option_EnemyRadius;
-                agent.height = size.y;
-                agent.baseOffset = size.y * 0.5f;
-            }
+//            // Add example AI
+//            if (dfUnity.Option_EnemyExampleAI)
+//            {
+//                // EnemyMotor will also add other required components
+//                go.AddComponent<Demo.EnemyMotor>();
 
-            // Add example AI
-            if (dfUnity.Option_EnemyExampleAI)
-            {
-                // EnemyMotor will also add other required components
-                go.AddComponent<Demo.EnemyMotor>();
+//                // Set sounds
+//                Demo.EnemySounds enemySounds = go.GetComponent<Demo.EnemySounds>();
+//                if (enemySounds)
+//                {
+//                    enemySounds.MoveSound = (SoundClips)dfMobile.Summary.Enemy.MoveSound;
+//                    enemySounds.BarkSound = (SoundClips)dfMobile.Summary.Enemy.BarkSound;
+//                    enemySounds.AttackSound = (SoundClips)dfMobile.Summary.Enemy.AttackSound;
+//                }
+//            }
 
-                // Set sounds
-                Demo.EnemySounds enemySounds = go.GetComponent<Demo.EnemySounds>();
-                if (enemySounds)
-                {
-                    enemySounds.MoveSound = (SoundClips)dfMobile.Summary.Enemy.MoveSound;
-                    enemySounds.BarkSound = (SoundClips)dfMobile.Summary.Enemy.BarkSound;
-                    enemySounds.AttackSound = (SoundClips)dfMobile.Summary.Enemy.AttackSound;
-                }
-            }
-
-            return go;
-        }
+//            return go;
+//        }
 
         /// <summary>
         /// Create a billboard batch.

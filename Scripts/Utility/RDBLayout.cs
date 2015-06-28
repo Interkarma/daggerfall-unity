@@ -29,6 +29,8 @@ namespace DaggerfallWorkshop.Utility
 
         const int exitDoorModelID = 70300;
         const int redBrickDoorModelID = 72100;
+        const int minTapestryID = 42500;
+        const int maxTapestryID = 42571;
 
         //int[] textureTable = null;
         //DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold;
@@ -56,10 +58,10 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="blockName">Name of block.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(string blockName)
+        public static GameObject CreateBaseGameObject(string blockName, DaggerfallRDBBlock cloneFrom = null)
         {
             DFBlock blockData;
-            return CreateBaseGameObject(blockName, out blockData);
+            return CreateBaseGameObject(blockName, out blockData, cloneFrom);
         }
 
         /// <summary>
@@ -68,7 +70,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="blockName">Name of block.</param>
         /// <param name="blockDataOut">DFBlock data out.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(string blockName, out DFBlock blockDataOut)
+        public static GameObject CreateBaseGameObject(string blockName, out DFBlock blockDataOut, DaggerfallRDBBlock cloneFrom = null)
         {
             blockDataOut = new DFBlock();
 
@@ -84,7 +86,7 @@ namespace DaggerfallWorkshop.Utility
             // Get block data
             blockDataOut = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
 
-            return CreateBaseGameObject(ref blockDataOut);
+            return CreateBaseGameObject(ref blockDataOut, cloneFrom);
         }
 
         /// <summary>
@@ -92,15 +94,24 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="blockData">Block data.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(ref DFBlock blockData, bool addActions = true)
+        public static GameObject CreateBaseGameObject(ref DFBlock blockData, DaggerfallRDBBlock cloneFrom = null)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return null;
 
             // Create gameobject
-            GameObject go = new GameObject(string.Format("DaggerfallBlock [Name={0}]", blockData.Name));
-            go.AddComponent<DaggerfallRDBBlock>();
+            GameObject go;
+            string name = string.Format("DaggerfallBlock [{0}]", blockData.Name);
+            if (cloneFrom != null)
+            {
+                go = GameObjectHelper.InstantiatePrefab(cloneFrom.gameObject, name, null, Vector3.zero);
+            }
+            else
+            {
+                go = new GameObject(name);
+                go.AddComponent<DaggerfallRDBBlock>();
+            }
 
             // Setup combiner
             ModelCombiner combiner = null;
@@ -112,7 +123,7 @@ namespace DaggerfallWorkshop.Utility
             GameObject actionModelsNode = new GameObject("Action Models");
             modelsNode.transform.parent = go.transform;
             actionModelsNode.transform.parent = go.transform;
-            AddModels(dfUnity, ref blockData, combiner, modelsNode.transform, actionModelsNode.transform, addActions);
+            AddModels(dfUnity, ref blockData, combiner, modelsNode.transform, actionModelsNode.transform);
 
             // Apply combiner
             if (combiner != null)
@@ -169,7 +180,11 @@ namespace DaggerfallWorkshop.Utility
                             ModelData modelData;
                             dfUnity.MeshReader.GetModelData(modelId, out modelData);
                             Matrix4x4 modelMatrix = GetModelMatrix(obj);
-                            GameObject exitDoorObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, exitDoorsNode.transform, false);
+                            GameObject exitDoorObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, exitDoorsNode.transform, false, true);
+
+                            // Add box collider
+                            BoxCollider boxCollider = exitDoorObject.AddComponent<BoxCollider>();
+                            boxCollider.isTrigger = true;
 
                             // Add static doors
                             doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
@@ -226,8 +241,7 @@ namespace DaggerfallWorkshop.Utility
             ref DFBlock blockData,
             ModelCombiner combiner = null,
             Transform modelsParent = null,
-            Transform actionModelsParent = null,
-            bool addActions = true)
+            Transform actionModelsParent = null)
         {
             // Action record linkages
             Dictionary<int, ActionLink> actionLinkDict = new Dictionary<int, ActionLink>();
@@ -271,7 +285,17 @@ namespace DaggerfallWorkshop.Utility
                         dfUnity.MeshReader.GetModelData(modelId, out modelData);
 
                         // Check if model has an action record
-                        bool hasAction = (HasAction(obj) && addActions) ? true : false;
+                        bool hasAction = HasAction(obj);
+
+                        // Special handling for tapestries and banners
+                        // Some of these are so far out from wall player can become stuck behind them
+                        // Adding model invidually without collider to avoid problem
+                        // Not sure if these object ever actions, but bypass this hack if they do
+                        if (modelId >= minTapestryID && modelId <= maxTapestryID && !hasAction)
+                        {
+                            AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, hasAction, true);
+                            continue;
+                        }
 
                         // Add or combine
                         GameObject standaloneObject = null;
@@ -329,14 +353,15 @@ namespace DaggerfallWorkshop.Utility
             ref ModelData modelData,
             Matrix4x4 matrix,
             Transform parent,
-            bool overrideStatic = false)
+            bool overrideStatic = false,
+            bool ignoreCollider = false)
         {
             // Determine static flag
             bool isStatic = (dfUnity.Option_SetStaticFlags && !overrideStatic) ? true : false;
 
             // Add GameObject
             uint modelID = (uint)modelData.DFMesh.ObjectId;
-            GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelID, parent, isStatic);
+            GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelID, parent, isStatic, null, ignoreCollider);
             go.transform.position = matrix.GetColumn(3);
             go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
 
@@ -529,8 +554,17 @@ namespace DaggerfallWorkshop.Utility
             Matrix4x4 modelMatrix = GetModelMatrix(obj);
 
             // Instantiate door prefab and add model
-            GameObject go = GameObjectHelper.InstantiatePrefab(dfUnity.Option_DungeonDoorPrefab.gameObject, parent, Vector3.zero);
-            GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, parent, false, go);
+            GameObject go = GameObjectHelper.InstantiatePrefab(dfUnity.Option_DungeonDoorPrefab.gameObject, string.Empty, parent, Vector3.zero);
+            GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, parent, false, go, true);
+
+            // Resize box collider to new mesh bounds
+            BoxCollider boxCollider = go.GetComponent<BoxCollider>();
+            MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
+            if (boxCollider != null && meshRenderer != null)
+            {
+                boxCollider.center = meshRenderer.bounds.center;
+                boxCollider.size = meshRenderer.bounds.size;
+            }
 
             // Get rotation angle for each axis
             float degreesX = -obj.Resources.ModelResource.XRotation / BlocksFile.RotationDivisor;

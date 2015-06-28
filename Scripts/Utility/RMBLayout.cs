@@ -40,10 +40,10 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="blockName">Name of block.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(string blockName)
+        public static GameObject CreateBaseGameObject(string blockName, DaggerfallRMBBlock cloneFrom = null)
         {
             DFBlock blockData;
-            return CreateBaseGameObject(blockName, out blockData);
+            return CreateBaseGameObject(blockName, out blockData, cloneFrom);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="blockName">Name of block.</param>
         /// <param name="blockDataOut">DFBlock data out.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(string blockName, out DFBlock blockDataOut)
+        public static GameObject CreateBaseGameObject(string blockName, out DFBlock blockDataOut, DaggerfallRMBBlock cloneFrom = null)
         {
             blockDataOut = new DFBlock();
 
@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Utility
             // Get block data
             blockDataOut = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
 
-            return CreateBaseGameObject(ref blockDataOut);
+            return CreateBaseGameObject(ref blockDataOut, cloneFrom);
         }
 
         /// <summary>
@@ -76,14 +76,24 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="blockData">Block data.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(ref DFBlock blockData)
+        public static GameObject CreateBaseGameObject(ref DFBlock blockData, DaggerfallRMBBlock cloneFrom = null)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return null;
 
             // Create gameobject
-            GameObject go = new GameObject(string.Format("DaggerfallBlock [Name={0}]", blockData.Name));
+            GameObject go;
+            string name = string.Format("DaggerfallBlock [{0}]", blockData.Name);
+            if (cloneFrom != null)
+            {
+                go = GameObjectHelper.InstantiatePrefab(cloneFrom.gameObject, name, null, Vector3.zero);
+            }
+            else
+            {
+                go = new GameObject(name);
+                go.AddComponent<DaggerfallRMBBlock>();
+            }
 
             // Setup combiner
             ModelCombiner combiner = null;
@@ -429,16 +439,16 @@ namespace DaggerfallWorkshop.Utility
                 -obj.YPos + size.y,
                 obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
-            GameObjectHelper.InstantiatePrefab(dfUnity.Option_CityLightPrefab.gameObject, parent, position);
+            GameObjectHelper.InstantiatePrefab(dfUnity.Option_CityLightPrefab.gameObject, string.Empty, parent, position);
         }
 
         private static void AddStaticDoors(StaticDoor[] doors, GameObject target)
         {
+            DaggerfallStaticDoors c = target.GetComponent<DaggerfallStaticDoors>();
+            if (c == null)
+                c = target.AddComponent<DaggerfallStaticDoors>();
             if (doors != null && target != null)
-            {
-                DaggerfallStaticDoors c = target.AddComponent<DaggerfallStaticDoors>();
                 c.Doors = doors;
-            }
         }
 
         private static bool IsCityGate(uint modelID)

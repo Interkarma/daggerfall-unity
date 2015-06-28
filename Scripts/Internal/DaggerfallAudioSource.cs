@@ -203,6 +203,9 @@ namespace DaggerfallWorkshop
             PlayOneShot(soundIndex, spatialBlend, volumeScale);
         }
 
+        /// <summary>
+        /// Get AudioClip from sound index.
+        /// </summary>
         public AudioClip GetAudioClip(int soundIndex)
         {
             if (ReadyCheck())

@@ -365,6 +365,7 @@ namespace DaggerfallWorkshop
                                 GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
                                     blockName,
                                     false,
+                                    dfUnity.Option_CityBlockPrefab,
                                     natureBillboardBatch,
                                     lightsBillboardBatch,
                                     animalsBillboardBatch,
