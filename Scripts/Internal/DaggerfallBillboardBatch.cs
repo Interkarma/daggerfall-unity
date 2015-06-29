@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop
         Vector2[] uvs;
 
         [NonSerialized, HideInInspector]
-        public Vector3 origin = Vector3.zero;
+        public Vector3 BlockOrigin = Vector3.zero;
 
         [Range(0, 511)]
         public int TextureArchive = 504;
@@ -310,7 +310,7 @@ namespace DaggerfallWorkshop
             BillboardItem bi = new BillboardItem()
             {
                 record = record,
-                position = origin + localPosition,
+                position = BlockOrigin + localPosition,
                 totalFrames = frameCount,
                 currentFrame = startFrame,
             };
@@ -330,7 +330,7 @@ namespace DaggerfallWorkshop
             // Add new billboard to batch
             BillboardItem bi = new BillboardItem()
             {
-                position = origin + localPosition,
+                position = BlockOrigin + localPosition,
                 customRect = rect,
                 customSize = size,
                 customScale = scale,

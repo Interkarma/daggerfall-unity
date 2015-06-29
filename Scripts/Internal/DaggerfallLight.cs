@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallLight : MonoBehaviour
     {
         public bool Animate = false;
+        public bool InteriorLight = false;
 
         DaggerfallUnity dfUnity;
         bool lastCityLightsFlag;
@@ -62,8 +63,8 @@ namespace DaggerfallWorkshop
             if (!ReadyCheck())
                 return;
 
-            // Handle automated light enable/disable
-            if (dfUnity.Option_AutomateCityLights && myLight)
+            // Handle automated light enable/disable outside
+            if (dfUnity.Option_AutomateCityLights && myLight != null && !InteriorLight)
             {
                 // Only change if day/night flag changes
                 if (lastCityLightsFlag != dfUnity.WorldTime.Now.IsCityLightsOn)

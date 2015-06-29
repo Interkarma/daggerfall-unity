@@ -17,6 +17,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Demo;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -27,10 +28,15 @@ namespace DaggerfallWorkshop.Utility
     {
         public const float RDBSide = 2048f * MeshReader.GlobalScale;
 
+        // Special model IDs
         const int exitDoorModelID = 70300;
         const int redBrickDoorModelID = 72100;
         const int minTapestryID = 42500;
         const int maxTapestryID = 42571;
+
+        // Torch audio range and volume
+        const float torchMaxDistance = 5f;
+        const float torchVolume = 0.7f;
 
         //int[] textureTable = null;
         //DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold;
@@ -147,9 +153,10 @@ namespace DaggerfallWorkshop.Utility
         /// Any block can have several exit doors, which are just a quad slapped onto a wall.
         /// Only the starting block should add exit doors.
         /// </summary>
-        public static void AddExitDoors(GameObject go, ref DFBlock blockData, out List<StaticDoor> doorsOut)
+        public static void AddExitDoors(GameObject go, ref DFBlock blockData, out StaticDoor[] doorsOut)
         {
-            doorsOut = new List<StaticDoor>();
+            List<StaticDoor> staticDoors = new List<StaticDoor>();
+            doorsOut = null;
 
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -187,11 +194,14 @@ namespace DaggerfallWorkshop.Utility
                             boxCollider.isTrigger = true;
 
                             // Add static doors
-                            doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
+                            staticDoors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
                         }
                     }
                 }
             }
+
+            // Output doors
+            doorsOut = staticDoors.ToArray();
         }
 
         /// <summary>
@@ -225,6 +235,127 @@ namespace DaggerfallWorkshop.Utility
                         if (IsActionDoor(ref blockData, obj, modelReference))
                             AddActionDoor(dfUnity, modelId, obj, actionDoorsNode.transform);
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add light prefabs.
+        /// </summary>
+        public static void AddLights(GameObject go, ref DFBlock blockData)
+        {
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Do nothing if import option not enabled or missing prefab
+            if (!dfUnity.Option_ImportLightPrefabs || dfUnity.Option_DungeonLightPrefab == null)
+                return;
+
+            // Add parent node
+            GameObject lightsNode = new GameObject("Lights");
+            lightsNode.transform.parent = go.transform;
+
+            // Iterate all groups
+            foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
+            {
+                // Skip empty object groups
+                if (null == group.RdbObjects)
+                    continue;
+
+                // Look for lights in this group
+                foreach (DFBlock.RdbObject obj in group.RdbObjects)
+                {
+                    if (obj.Type == DFBlock.RdbResourceTypes.Light)
+                        AddLight(dfUnity, obj, lightsNode.transform);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add all block flats.
+        /// </summary>
+        public static void AddFlats(
+            GameObject go,
+            ref DFBlock blockData,
+            out DFBlock.RdbObject[] editorObjectsOut)
+        {
+            List<DFBlock.RdbObject> editorObjects = new List<DFBlock.RdbObject>();
+            editorObjectsOut = null;
+
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Add parent node
+            GameObject flatsNode = new GameObject("Flats");
+            flatsNode.transform.parent = go.transform;
+
+            // Iterate all groups
+            foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
+            {
+                // Skip empty object groups
+                if (null == group.RdbObjects)
+                    continue;
+
+                // Look for flat in this group
+                foreach (DFBlock.RdbObject obj in group.RdbObjects)
+                {
+                    if (obj.Type == DFBlock.RdbResourceTypes.Flat)
+                    {
+                        if (obj.Resources.FlatResource.TextureArchive == TextureReader.EditorFlatsTextureArchive)
+                            editorObjects.Add(obj);
+                        
+                        AddFlat(obj, flatsNode.transform);
+                    }
+                }
+            }
+
+            // Output editor objects
+            editorObjectsOut = editorObjects.ToArray();
+        }
+
+        /// <summary>
+        /// Add all enemies.
+        /// Dungeon type can be provided to simulate random encounters.
+        /// If dungeon type not given then random enemies will be omitted.
+        /// </summary>
+        public static void AddEnemies(
+            GameObject go,
+            DFBlock.RdbObject[] editorObjects,
+            DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold)
+        {
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Must have import enabled and prefab set
+            if (!dfUnity.Option_ImportEnemyPrefabs || dfUnity.Option_EnemyPrefab == null)
+                return;
+
+            // Editor objects array must be populated
+            if (editorObjects == null)
+                return;
+            if (editorObjects.Length == 0)
+                return;
+
+            // Add parent node
+            GameObject enemiesNode = new GameObject("Enemies");
+            enemiesNode.transform.parent = go.transform;
+
+            // Iterate editor flats for enemies
+            for (int i = 0; i < editorObjects.Length; i++)
+            {
+                // Add enemy objects
+                int record = editorObjects[i].Resources.FlatResource.TextureRecord;
+                switch (record)
+                {
+                    case 15:                        // Random enemy
+                        AddRandomRDBEnemy(editorObjects[i], dungeonType, enemiesNode.transform);
+                        break;
+                    case 16:                        // Fixed enemy
+                        AddFixedRDBEnemy(editorObjects[i], enemiesNode.transform);
+                        break;
                 }
             }
         }
@@ -578,402 +709,138 @@ namespace DaggerfallWorkshop.Utility
             go.transform.localPosition = modelMatrix.GetColumn(3);
         }
 
-        #endregion
+        private static void AddLight(DaggerfallUnity dfUnity, DFBlock.RdbObject obj, Transform parent)
+        {
+            // Spawn light gameobject
+            float range = obj.Resources.LightResource.Radius * MeshReader.GlobalScale;
+            Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+            GameObject go = GameObjectHelper.InstantiatePrefab(dfUnity.Option_DungeonLightPrefab.gameObject, string.Empty, parent, position);
+            Light light = go.GetComponent<Light>();
+            if (light != null)
+            {
+                light.range = range * 3;
+            }
+        }
 
-        #region Deprecated Methods
+        private static void AddFlat(DFBlock.RdbObject obj, Transform parent)
+        {
+            int archive = obj.Resources.FlatResource.TextureArchive;
+            int record = obj.Resources.FlatResource.TextureRecord;
 
-        ///// <summary>
-        ///// Creates a new RDB GameObject and performs block layout.
-        ///// Can pass information about dungeon for texture swaps and random enemies.
-        ///// </summary>
-        ///// <param name="dfUnity">DaggerfallUnity singleton. Required for content readers and settings.</param>
-        ///// <param name="blockName">Name of RDB block to build.</param>
-        ///// <param name="isStartingBlock">True if this is the starting block. Controls exit doors.</param>
-        ///// <param name="textureTable">Dungeon texture table.</param>
-        ///// <param name="dungeonType">Type of dungeon for random encounter tables.</param>
-        ///// <param name="seed">Seed for random encounters.</param>
-        ///// <returns>GameObject.</returns>
-        //public static GameObject CreateGameObjectDeprecated(
-        //    string blockName,
-        //    bool isStartingBlock,
-        //    int[] textureTable = null,
-        //    DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold,
-        //    int seed = 0)
-        //{
-        //    // Validate
-        //    if (string.IsNullOrEmpty(blockName))
-        //        return null;
-        //    if (!blockName.ToUpper().EndsWith(".RDB"))
-        //        return null;
-        //    DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-        //    if (!dfUnity.IsReady)
-        //        return null;
+            // Spawn billboard gameobject
+            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent, true);
+            Vector3 billboardPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
 
-        //    // Use default texture table if one not specified
-        //    if (textureTable == null)
-        //        textureTable = StaticTextureTables.DefaultTextureTable;
+            // Add RDB data to billboard
+            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            dfBillboard.SetResourceData(obj.Resources.FlatResource);
 
-        //    // Create gameobject
-        //    GameObject go = new GameObject(string.Format("DaggerfallBlock [Name={0}]", blockName));
-        //    DaggerfallRDBBlock dfBlock = go.AddComponent<DaggerfallRDBBlock>();
+            // Set transform
+            go.transform.position = billboardPosition;
 
-        //    // Start new layout
-        //    RDBLayout layout = new RDBLayout(blockName);
-        //    layout.isStartingBlock = isStartingBlock;
-        //    layout.textureTable = textureTable;
-        //    layout.dungeonType = dungeonType;
-        //    layout.staticModelsNode = new GameObject("Static Models");
-        //    layout.actionModelsNode = new GameObject("Action Models");
-        //    layout.doorsNode = new GameObject("Doors");
-        //    layout.flatsNode = new GameObject("Flats");
-        //    layout.lightsNode = new GameObject("Lights");
-        //    layout.enemiesNode = new GameObject("Enemies");
+            // Disable enemy flats
+            if (archive == TextureReader.EditorFlatsTextureArchive && (record == 15 || record == 16))
+                go.SetActive(false);   
 
-        //    // Parent child game objects
-        //    layout.staticModelsNode.transform.parent = go.transform;
-        //    layout.actionModelsNode.transform.parent = go.transform;
-        //    layout.doorsNode.transform.parent = go.transform;
-        //    layout.flatsNode.transform.parent = go.transform;
-        //    layout.lightsNode.transform.parent = go.transform;
-        //    layout.enemiesNode.transform.parent = go.transform;
+            // Add torch burning sound
+            if (archive == TextureReader.LightsTextureArchive)
+            {
+                switch (record)
+                {
+                    case 0:
+                    case 1:
+                    case 6:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                        AddTorchAudioSource(go);
+                        break;
+                }
+            }
+        }
 
-        //    // List to receive any exit doors found
-        //    List<StaticDoor> allDoors = new List<StaticDoor>();
+        private static void AddTorchAudioSource(GameObject go)
+        {
+            // Apply looping burning sound to flaming torches and fires
+            // Set to linear rolloff or the burning sound is audible almost everywhere
+            DaggerfallAudioSource c = go.AddComponent<DaggerfallAudioSource>();
+            c.AudioSource.dopplerLevel = 0;
+            c.AudioSource.rolloffMode = AudioRolloffMode.Linear;
+            c.AudioSource.maxDistance = torchMaxDistance;
+            c.AudioSource.volume = torchVolume;
+            c.SetSound(SoundClips.Burning, AudioPresets.LoopIfPlayerNear);
+        }
 
-        //    // Seed random generator
-        //    UnityEngine.Random.seed = seed;
+        private static void AddRandomRDBEnemy(
+            DFBlock.RdbObject obj,
+            DFRegion.DungeonTypes dungeonType,
+            Transform parent)
+        {
+            // Must have a dungeon type
+            if (dungeonType == DFRegion.DungeonTypes.NoDungeon)
+                return;
 
-        //    // Iterate object groups
-        //    layout.groupIndex = 0;
-        //    DFBlock blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
-        //    foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
-        //    {
-        //        // Skip empty object groups
-        //        if (null == group.RdbObjects)
-        //        {
-        //            layout.groupIndex++;
-        //            continue;
-        //        }
+            // Get dungeon type index
+            int index = (int)dungeonType >> 8;
+            if (index < RandomEncounters.EncounterTables.Length)
+            {
+                // Get encounter table
+                RandomEncounterTable table = RandomEncounters.EncounterTables[index];
 
-        //        // Iterate objects in this group
-        //        List<StaticDoor> modelDoors;
-        //        foreach (DFBlock.RdbObject obj in group.RdbObjects)
-        //        {
-        //            // Handle by object type
-        //            switch (obj.Type)
-        //            {
-        //                case DFBlock.RdbResourceTypes.Model:
-        //                    layout.AddRDBModel(obj, out modelDoors, layout.staticModelsNode.transform);
-        //                    if (modelDoors.Count > 0) allDoors.AddRange(modelDoors);
-        //                    break;
-        //                case DFBlock.RdbResourceTypes.Flat:
-        //                    layout.AddRDBFlat(obj, layout.flatsNode.transform);
-        //                    break;
-        //                case DFBlock.RdbResourceTypes.Light:
-        //                    layout.AddRDBLight(obj, layout.lightsNode.transform);
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //        }
+                // Get random monster from table
+                // Normally this would be weighted by player level
+                MobileTypes type = table.Enemies[UnityEngine.Random.Range(0, table.Enemies.Length)];
 
-        //        // Increment group index
-        //        layout.groupIndex++;
-        //    }
+                // Add enemy
+                AddEnemy(obj, type, parent);
+            }
+            else
+            {
+                DaggerfallUnity.LogMessage(string.Format("RDBLayout: Dungeon type {0} is out of range or unknown.", dungeonType), true);
+            }
+        }
 
-        //    // Link action nodes
-        //    layout.LinkActionNodes();
+        private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent)
+        {
+            // Get type value and ignore known invalid types
+            int typeValue = (int)(obj.Resources.FlatResource.FactionMobileId & 0xff);
+            if (typeValue == 99)
+                return;
 
-        //    // Combine meshes
-        //    if (dfUnity.Option_CombineRDB)
-        //    {
-        //        layout.combiner.Apply();
-        //        GameObject cgo = GameObjectHelper.CreateCombinedMeshGameObject(layout.combiner, "CombinedMeshes", layout.staticModelsNode.transform, dfUnity.Option_SetStaticFlags);
-        //        cgo.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
-        //    }
+            // Cast to enum
+            MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionMobileId & 0xff);
 
-        //    // Fix enemy standing positions for this block
-        //    // Some enemies are floating in air or sunk into ground
-        //    // Can only adjust this after geometry instantiated
-        //    layout.FixEnemyStanding(go);
+            AddEnemy(obj, type, parent);
+        }
 
-        //    // Store start markers in block
-        //    dfBlock.SetStartMarkers(layout.startMarkers.ToArray());
+        private static void AddEnemy(
+            DFBlock.RdbObject obj,
+            MobileTypes type,
+            Transform parent = null,
+            DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold)
+        {
+            // Get default reaction
+            MobileReactions reaction = MobileReactions.Hostile;
+            if (obj.Resources.FlatResource.FlatData.Reaction == (int)DFBlock.EnemyReactionTypes.Passive)
+                reaction = MobileReactions.Passive;
 
-        //    // Add doors
-        //    if (allDoors.Count > 0)
-        //        layout.AddDoors(allDoors.ToArray(), go);
+            // Just setup demo enemies at this time
+            Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+            GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, null, parent, position);
+            SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
+            if (setupEnemy != null)
+            {
+                // Configure enemy
+                setupEnemy.ApplyEnemySettings(type, reaction);
 
-        //    return go;
-        //}
-
-        //private void AddRDBModel(DFBlock.RdbObject obj, out List<StaticDoor> doorsOut, Transform parent)
-        //{
-        //    bool overrideCombine = false;
-        //    doorsOut = new List<StaticDoor>();
-
-        //    // Get model reference index and id
-        //    int modelReference = obj.Resources.ModelResource.ModelIndex;
-        //    uint modelId = blockData.RdbBlock.ModelReferenceList[modelReference].ModelIdNum;
-
-        //    // Get rotation angle for each axis
-        //    float degreesX = -obj.Resources.ModelResource.XRotation / BlocksFile.RotationDivisor;
-        //    float degreesY = -obj.Resources.ModelResource.YRotation / BlocksFile.RotationDivisor;
-        //    float degreesZ = -obj.Resources.ModelResource.ZRotation / BlocksFile.RotationDivisor;
-
-        //    // Calcuate transform
-        //    Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-
-        //    // Calculate matrix
-        //    Vector3 rx = new Vector3(degreesX, 0, 0);
-        //    Vector3 ry = new Vector3(0, degreesY, 0);
-        //    Vector3 rz = new Vector3(0, 0, degreesZ);
-        //    Matrix4x4 modelMatrix = Matrix4x4.identity;
-        //    modelMatrix *= Matrix4x4.TRS(position, Quaternion.identity, Vector3.one);
-        //    modelMatrix *= Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(rz), Vector3.one);
-        //    modelMatrix *= Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(rx), Vector3.one);
-        //    modelMatrix *= Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(ry), Vector3.one);
-
-        //    // Get model data
-        //    ModelData modelData;
-        //    dfUnity.MeshReader.GetModelData(modelId, out modelData);
-
-        //    // Discard static exit doors not in starting block
-        //    // Exit doors are just a model slapped over wall or doorway
-        //    // This allows Daggerfall to toggle exits on and off
-        //    if (modelData.DFMesh.ObjectId == 70300)
-        //    {
-        //        if (!isStartingBlock)
-        //            return;
-        //    }
-
-        //    // Doors - there are no working static building doors inside dungeons, just the exits and action doors
-        //    bool isActionDoor = IsActionDoor(blockData, obj, modelReference);
-        //    if (isActionDoor)
-        //        parent = doorsNode.transform;
-        //    else if (modelData.Doors != null)
-        //        doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
-
-        //    // Action records
-        //    bool hasAction = HasAction(blockData, obj, modelReference);
-        //    if (hasAction)
-        //        parent = actionModelsNode.transform;
-
-        //    // Flags
-        //    bool isStatic = dfUnity.Option_SetStaticFlags;
-        //    if (isActionDoor || hasAction)
-        //    {
-        //        // Moving objects are never static or combined
-        //        isStatic = false;
-        //        overrideCombine = true;
-        //    }
-
-        //    // Add to scene
-        //    if (dfUnity.Option_CombineRDB && !overrideCombine)
-        //    {
-        //        combiner.Add(ref modelData, modelMatrix);
-        //    }
-        //    else
-        //    {
-        //        // Spawn mesh gameobject
-        //        GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelId, parent, isStatic);
-        //        go.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
-
-        //        // Apply transforms
-        //        go.transform.Rotate(0, degreesY, 0, Space.World);
-        //        go.transform.Rotate(degreesX, 0, 0, Space.World);
-        //        go.transform.Rotate(0, 0, degreesZ, Space.World);
-        //        go.transform.localPosition = position;
-
-        //        // Add action door
-        //        if (isActionDoor)
-        //        { 
-        //            DaggerfallActionDoor dfActionDoor = go.AddComponent<DaggerfallActionDoor>();
-
-        //            // Add action door audio
-        //            if (dfUnity.Option_DefaultSounds)
-        //            {
-        //                AddActionDoorAudioSource(go);
-        //                dfActionDoor.SetDungeonDoorSounds();
-        //            }
-        //        }
-
-        //        // Add action component
-        //        if (hasAction && !isActionDoor)
-        //            AddAction(go, blockData, obj, modelReference);
-        //    }
-        //}
-
-        //private void AddRDBFlat(DFBlock.RdbObject obj, Transform parent)
-        //{
-        //    int archive = obj.Resources.FlatResource.TextureArchive;
-        //    int record = obj.Resources.FlatResource.TextureRecord;
-
-        //    // Spawn billboard gameobject
-        //    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent, true);
-        //    Vector3 billboardPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-
-        //    // Add RDB data to billboard
-        //    DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-        //    dfBillboard.SetResourceData(obj.Resources.FlatResource);
-
-        //    // Set transform
-        //    go.transform.position = billboardPosition;
-
-        //    // Handle supported editor flats
-        //    if (archive == 199)
-        //    {
-        //        switch (record)
-        //        {
-        //            case 10:                        // Start marker
-        //                startMarkers.Add(go);
-        //                break;
-        //            case 15:                        // Random enemy
-        //                if (dfUnity.Option_ImportEnemies)
-        //                {
-        //                    AddRandomRDBEnemy(obj);
-        //                    go.SetActive(false);
-        //                }
-        //                break;
-        //            case 16:                        // Fixed enemy
-        //                if (dfUnity.Option_ImportEnemies)
-        //                {
-        //                    AddFixedRDBEnemy(obj);
-        //                    go.SetActive(false);
-        //                }
-        //                break;
-        //        }
-        //    }
-
-        //    // Add torch burning sound
-        //    if (dfUnity.Option_DefaultSounds && archive == 210)
-        //    {
-        //        switch (record)
-        //        {
-        //            case 0:
-        //            case 1:
-        //            case 6:
-        //            case 16:
-        //            case 17:
-        //            case 18:
-        //            case 19:
-        //            case 20:
-        //                AddTorchAudioSource(go);
-        //                break;
-        //        }
-        //    }
-        //}
-
-        //private void AddRDBLight(DFBlock.RdbObject obj, Transform parent)
-        //{
-        //    //// Do nothing if import option not enabled
-        //    //if (!dfUnity.Option_ImportPointLights)
-        //    //    return;
-
-        //    //// Spawn light gameobject
-        //    //float radius = obj.Resources.LightResource.Radius * MeshReader.GlobalScale;
-        //    //GameObject go = GameObjectHelper.CreateDaggerfallRDBPointLight(radius, parent);
-        //    //Vector3 lightPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-
-        //    //// Add component
-        //    //DaggerfallLight c = go.AddComponent<DaggerfallLight>();
-        //    //if (dfUnity.Option_AnimatedPointLights)
-        //    //    c.Animate = true;
-
-        //    //// Set transform
-        //    //go.transform.position = lightPosition;
-        //}
-
-        //private void AddFixedRDBEnemy(DFBlock.RdbObject obj)
-        //{
-        //    // Get type value and ignore known invalid types
-        //    int typeValue = (int)(obj.Resources.FlatResource.FactionMobileId & 0xff);
-        //    if (typeValue == 99)
-        //        return;
-
-        //    // Cast to enum
-        //    MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionMobileId & 0xff);
-
-        //    AddEnemy(obj, type);
-        //}
-
-        //private void AddRandomRDBEnemy(DFBlock.RdbObject obj)
-        //{
-        //    // Get dungeon type index
-        //    int index = (int)dungeonType >> 8;
-        //    if (index < RandomEncounters.EncounterTables.Length)
-        //    {
-        //        // Get encounter table
-        //        RandomEncounterTable table = RandomEncounters.EncounterTables[index];
-
-        //        // Get random monster from table
-        //        // Normally this would be weighted by player level
-        //        MobileTypes type = table.Enemies[UnityEngine.Random.Range(0, table.Enemies.Length)];
-
-        //        // Add enemy
-        //        AddEnemy(obj, type);
-        //    }
-        //    else
-        //    {
-        //        DaggerfallUnity.LogMessage(string.Format("RDBLayout: Dungeon type {0} is out of range or unknown.", dungeonType), true);
-        //    }
-        //}
-
-        //private void AddEnemy(DFBlock.RdbObject obj, MobileTypes type)
-        //{
-        //    // Get default reaction
-        //    MobileReactions reaction = MobileReactions.Hostile;
-        //    if (obj.Resources.FlatResource.FlatData.Reaction == (int)DFBlock.EnemyReactionTypes.Passive)
-        //        reaction = MobileReactions.Passive;
-
-        //    // Spawn enemy gameobject
-        //    GameObject go = GameObjectHelper.CreateDaggerfallEnemyGameObject(type, enemiesNode.transform, reaction);
-        //    if (go == null)
-        //        return;
-
-        //    // Set transform
-        //    Vector3 enemyPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-        //    go.transform.position = enemyPosition;
-        //}
-
-        //private void FixEnemyStanding(GameObject go)
-        //{
-        //    Component[] mobiles = go.GetComponentsInChildren(typeof(DaggerfallMobileUnit));
-        //    if (mobiles == null)
-        //        return;
-
-        //    foreach (DaggerfallMobileUnit enemy in mobiles)
-        //    {
-        //        // Don't change for flying enemies
-        //        if (enemy.Summary.Enemy.Behaviour == MobileBehaviour.Flying)
-        //            continue;
-
-        //        // Align to ground
-        //        Vector2 size = enemy.Summary.RecordSizes[0];
-        //        GameObjectHelper.AlignBillboardToGround(enemy.transform.parent.gameObject, size);
-        //    }
-        //}
-
-        //private void AddTorchAudioSource(GameObject go)
-        //{
-        //    // Apply looping burning sound to flaming torches and fires
-        //    // Set to linear rolloff or the burning sound is audible almost everywhere
-        //    DaggerfallAudioSource c = go.AddComponent<DaggerfallAudioSource>();
-        //    c.AudioSource.dopplerLevel = 0;
-        //    c.AudioSource.rolloffMode = AudioRolloffMode.Linear;
-        //    c.AudioSource.maxDistance = 4f;
-        //    c.AudioSource.volume = 0.6f;
-        //    c.SetSound(SoundClips.Burning, AudioPresets.LoopIfPlayerNear);
-        //}
-
-        //private void AddDoors(StaticDoor[] doors, GameObject target)
-        //{
-        //    if (doors != null && target != null)
-        //    {
-        //        DaggerfallStaticDoors c = target.AddComponent<DaggerfallStaticDoors>();
-        //        c.Doors = doors;
-        //    }
-        //}
+                // Align non-flying units with ground
+                DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
+                if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
+                    GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
+            }
+        }
 
         #endregion
     }

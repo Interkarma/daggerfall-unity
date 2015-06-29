@@ -191,6 +191,10 @@ namespace DaggerfallWorkshop.Utility
             if (!dfUnity.IsReady)
                 return;
 
+            // Do nothing if import option not enabled or missing prefab
+            if (!dfUnity.Option_ImportLightPrefabs || dfUnity.Option_CityLightPrefab == null)
+                return;
+
             // Iterate block flats for lights
             foreach (DFBlock.RmbBlockFlatObjectRecord obj in blockData.RmbBlock.MiscFlatObjectRecords)
             {
@@ -215,8 +219,7 @@ namespace DaggerfallWorkshop.Utility
                     }
 
                     // Import light prefab
-                    if (dfUnity.Option_ImportLightPrefabs)
-                        AddLight(dfUnity, obj, lightsParent);
+                    AddLight(dfUnity, obj, lightsParent);
                 }
             }
         }

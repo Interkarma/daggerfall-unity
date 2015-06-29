@@ -231,6 +231,10 @@ namespace DaggerfallWorkshop.Utility
 
         public static void AlignControllerToGround(CharacterController controller, float distance = 3f)
         {
+            // Exit if no controller specified
+            if (controller == null)
+                return;
+
             // Cast ray down from slightly above midpoint to find ground below
             RaycastHit hit;
             Ray ray = new Ray(controller.transform.position + new Vector3(0, 0.2f, 0), Vector3.down);
@@ -346,10 +350,11 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// /// Layout a complete RDB block game object.
+        /// Layout a complete RDB block game object.
         /// </summary>
         public static GameObject CreateRDBBlockGameObject(
             string blockName,
+            DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold,
             DaggerfallRDBBlock cloneFrom = null)
         {
             // Get DaggerfallUnity
@@ -362,35 +367,26 @@ namespace DaggerfallWorkshop.Utility
             GameObject go = RDBLayout.CreateBaseGameObject(blockName, out blockData, cloneFrom);
 
             // Add exit doors
-            List<StaticDoor> doorsOut;
+            StaticDoor[] doorsOut;
             RDBLayout.AddExitDoors(go, ref blockData, out doorsOut);
 
             // Add action doors
             RDBLayout.AddActionDoors(go, ref blockData);
 
+            // Add lights
+            RDBLayout.AddLights(go, ref blockData);
+
+            // Add flats
+            DFBlock.RdbObject[] editorObjectsOut;
+            RDBLayout.AddFlats(go, ref blockData, out editorObjectsOut);
+
+            // Add enemies
+            RDBLayout.AddEnemies(go, editorObjectsOut, dungeonType);
+
             return go;
         }
 
         #endregion
-
-//        public static GameObject CreateDaggerfallRDBPointLight(float range, Transform parent)
-//        {
-//            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-
-//            GameObject go = new GameObject("DaggerfallLight [RDB]");
-//            if (parent) go.transform.parent = parent;
-//            go.tag = dfUnity.Option_PointLightTag;
-//#if UNITY_EDITOR
-//            if (dfUnity.Option_CustomPointLightScript != null)
-//                go.AddComponent(dfUnity.Option_CustomPointLightScript.GetClass());
-//#endif
-
-//            Light light = go.AddComponent<Light>();
-//            light.type = LightType.Point;
-//            light.range = range * 3f;
-
-//            return go;
-//        }
 
         //public static GameObject CreateDaggerfallInteriorPointLight(float range, Transform parent)
         //{
@@ -402,95 +398,6 @@ namespace DaggerfallWorkshop.Utility
 
         //    return go;
         //}
-
-//        public static GameObject CreateDaggerfallEnemyGameObject(MobileTypes type, Transform parent, MobileReactions reaction)
-//        {
-//            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-
-//            GameObject go = new GameObject(string.Format("DaggerfallEnemy [{0}]", type.ToString()));
-//            if (parent) go.transform.parent = parent;
-//            go.transform.forward = Vector3.forward;
-
-//            // Add custom tag and script
-//            go.tag = dfUnity.Option_EnemyTag;
-//#if UNITY_EDITOR
-//            if (dfUnity.Option_CustomEnemyScript != null)
-//                go.AddComponent(dfUnity.Option_CustomEnemyScript.GetClass());
-//#endif
-
-//            // Add child object for enemy billboard
-//            GameObject mobileObject = new GameObject("DaggerfallMobileUnit");
-//            mobileObject.transform.parent = go.transform;
-
-//            // Add mobile enemy
-//            Vector2 size = Vector2.one;
-//            DaggerfallMobileUnit dfMobile = mobileObject.AddComponent<DaggerfallMobileUnit>();
-//            dfMobile.SetEnemy(dfUnity, EnemyDict[(int)type], reaction);
-//            size = dfMobile.Summary.RecordSizes[0];
-
-//            // Add character controller
-//            if (dfUnity.Option_EnemyCharacterController || dfUnity.Option_EnemyExampleAI)
-//            {
-//                CharacterController controller = go.AddComponent<CharacterController>();
-//                controller.radius = dfUnity.Option_EnemyRadius;
-//                controller.height = size.y;
-//                controller.slopeLimit = dfUnity.Option_EnemySlopeLimit;
-//                controller.stepOffset = dfUnity.Option_EnemyStepOffset;
-
-//                // Reduce height of flying creatures as their wing animation makes them taller than desired
-//                // This helps them get through doors while aiming for player eye height
-//                if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying)
-//                    controller.height /= 2f;
-
-//                // Limit maximum height to ensure controller can fit through doors
-//                // For some reason Unity 4.5 doesn't let you set SkinWidth from code >.<
-//                if (controller.height > 1.9f)
-//                    controller.height = 1.9f;
-//            }
-
-//            // Add rigidbody
-//            if (dfUnity.Option_EnemyRigidbody)
-//            {
-//                Rigidbody rigidbody = go.AddComponent<Rigidbody>();
-//                rigidbody.useGravity = dfUnity.Option_EnemyUseGravity;
-//                rigidbody.isKinematic = dfUnity.Option_EnemyIsKinematic;
-//            }
-
-//            // Add capsule collider
-//            if (dfUnity.Option_EnemyCapsuleCollider)
-//            {
-//                CapsuleCollider collider = go.AddComponent<CapsuleCollider>();
-//                collider.radius = dfUnity.Option_EnemyRadius;
-//                collider.height = size.y;
-//            }
-
-//            // Add navmesh agent
-//            if (dfUnity.Option_EnemyNavMeshAgent)
-//            {
-//                NavMeshAgent agent = go.AddComponent<NavMeshAgent>();
-//                agent.radius = dfUnity.Option_EnemyRadius;
-//                agent.height = size.y;
-//                agent.baseOffset = size.y * 0.5f;
-//            }
-
-//            // Add example AI
-//            if (dfUnity.Option_EnemyExampleAI)
-//            {
-//                // EnemyMotor will also add other required components
-//                go.AddComponent<Demo.EnemyMotor>();
-
-//                // Set sounds
-//                Demo.EnemySounds enemySounds = go.GetComponent<Demo.EnemySounds>();
-//                if (enemySounds)
-//                {
-//                    enemySounds.MoveSound = (SoundClips)dfMobile.Summary.Enemy.MoveSound;
-//                    enemySounds.BarkSound = (SoundClips)dfMobile.Summary.Enemy.BarkSound;
-//                    enemySounds.AttackSound = (SoundClips)dfMobile.Summary.Enemy.AttackSound;
-//                }
-//            }
-
-//            return go;
-//        }
 
         /// <summary>
         /// Create a billboard batch.

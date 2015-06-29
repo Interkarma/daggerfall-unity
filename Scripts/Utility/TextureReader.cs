@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Utility
         bool mipMaps = true;
 
         // Special texture indices
+        public const int EditorFlatsTextureArchive = 199;
         public const int AnimalsTextureArchive = 201;
         public const int LightsTextureArchive = 210;
         public int[] MiscFlatsTextureArchives = new int[] { 97, 205, 211, 212, 213 };

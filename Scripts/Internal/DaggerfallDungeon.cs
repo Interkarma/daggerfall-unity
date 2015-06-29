@@ -213,26 +213,26 @@ namespace DaggerfallWorkshop
 
         private void LayoutDungeon(ref DFLocation location)
         {
-            //// Start timing
-            //Stopwatch stopwatch = Stopwatch.StartNew();
-            //long startTime = stopwatch.ElapsedMilliseconds;
+            // Start timing
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
 
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
             {
-                GameObjectHelper.CreateRDBBlockGameObject(block.BlockName);
+                GameObject go = GameObjectHelper.CreateRDBBlockGameObject(block.BlockName);
                 //GameObject go = RDBLayout.CreateGameObjectDeprecated(block.BlockName, block.IsStartingBlock, DungeonTextureTable, Summary.DungeonType, Summary.ID);
-                //go.transform.parent = this.transform;
-                //go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
+                go.transform.parent = this.transform;
+                go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
                 //DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
                 //if (block.IsStartingBlock)
                 //    FindStartMarker(daggerfallBlock);
             }
 
-            //// Show timer
-            //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            //DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
+            // Show timer
+            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
         }
 
         //// Orsinium defines two blocks at [-1,-1]

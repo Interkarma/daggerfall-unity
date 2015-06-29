@@ -352,13 +352,13 @@ namespace DaggerfallWorkshop
                         {
                             for (int x = 0; x < width; x++)
                             {
-                                // Set origin for billboard batches
+                                // Set block origin for billboard batches
                                 // This causes next additions to be offset by this position
                                 Vector3 blockOrigin = origin + new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
-                                natureBillboardBatch.origin = blockOrigin;
-                                lightsBillboardBatch.origin = blockOrigin;
-                                animalsBillboardBatch.origin = blockOrigin;
-                                miscBillboardBatch.origin = blockOrigin;
+                                natureBillboardBatch.BlockOrigin = blockOrigin;
+                                lightsBillboardBatch.BlockOrigin = blockOrigin;
+                                animalsBillboardBatch.BlockOrigin = blockOrigin;
+                                miscBillboardBatch.BlockOrigin = blockOrigin;
 
                                 // Add block and yield
                                 string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
