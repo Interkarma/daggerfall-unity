@@ -220,14 +220,14 @@ namespace DaggerfallWorkshop
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
             {
-                GameObject go = GameObjectHelper.CreateRDBBlockGameObject(block.BlockName);
+                GameObject go = GameObjectHelper.CreateRDBBlockGameObject(block.BlockName, block.IsStartingBlock, Summary.DungeonType, Summary.ID);
                 //GameObject go = RDBLayout.CreateGameObjectDeprecated(block.BlockName, block.IsStartingBlock, DungeonTextureTable, Summary.DungeonType, Summary.ID);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
-                //DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
-                //if (block.IsStartingBlock)
-                //    FindStartMarker(daggerfallBlock);
+                DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
+                if (block.IsStartingBlock)
+                    FindStartMarker(daggerfallBlock);
             }
 
             // Show timer

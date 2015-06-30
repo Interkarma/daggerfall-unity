@@ -262,7 +262,6 @@ namespace DaggerfallWorkshop.Utility
                 if (!string.IsNullOrEmpty(name)) go.name = name;
                 if (parent != null) go.transform.parent = parent;
                 go.transform.position = position;
-
             }
 
             return go;
@@ -354,7 +353,9 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public static GameObject CreateRDBBlockGameObject(
             string blockName,
+            bool isStartBlock,
             DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold,
+            int seed = 0,
             DaggerfallRDBBlock cloneFrom = null)
         {
             // Get DaggerfallUnity
@@ -367,8 +368,11 @@ namespace DaggerfallWorkshop.Utility
             GameObject go = RDBLayout.CreateBaseGameObject(blockName, out blockData, cloneFrom);
 
             // Add exit doors
-            StaticDoor[] doorsOut;
-            RDBLayout.AddExitDoors(go, ref blockData, out doorsOut);
+            if (isStartBlock)
+            {
+                StaticDoor[] doorsOut;
+                RDBLayout.AddExitDoors(go, ref blockData, out doorsOut);
+            }
 
             // Add action doors
             RDBLayout.AddActionDoors(go, ref blockData);
@@ -378,7 +382,13 @@ namespace DaggerfallWorkshop.Utility
 
             // Add flats
             DFBlock.RdbObject[] editorObjectsOut;
-            RDBLayout.AddFlats(go, ref blockData, out editorObjectsOut);
+            GameObject[] startMarkersOut;
+            RDBLayout.AddFlats(go, ref blockData, out editorObjectsOut, out startMarkersOut);
+
+            // Set start markers
+            DaggerfallRDBBlock dfBlock = (cloneFrom != null) ? cloneFrom : go.GetComponent<DaggerfallRDBBlock>();
+            if (dfBlock != null)
+                dfBlock.SetStartMarkers(startMarkersOut);
 
             // Add enemies
             RDBLayout.AddEnemies(go, editorObjectsOut, dungeonType);

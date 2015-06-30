@@ -202,6 +202,13 @@ namespace DaggerfallWorkshop.Utility
 
             // Output doors
             doorsOut = staticDoors.ToArray();
+
+            // Assign exit doors component
+            if (doorsOut.Length > 0)
+            {
+                DaggerfallStaticDoors c = go.AddComponent<DaggerfallStaticDoors>();
+                c.Doors = doorsOut;
+            }
         }
 
         /// <summary>
@@ -278,10 +285,13 @@ namespace DaggerfallWorkshop.Utility
         public static void AddFlats(
             GameObject go,
             ref DFBlock blockData,
-            out DFBlock.RdbObject[] editorObjectsOut)
+            out DFBlock.RdbObject[] editorObjectsOut,
+            out GameObject[] startMarkersOut)
         {
             List<DFBlock.RdbObject> editorObjects = new List<DFBlock.RdbObject>();
+            List<GameObject> startMarkers = new List<GameObject>();
             editorObjectsOut = null;
+            startMarkersOut = null;
 
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -303,16 +313,25 @@ namespace DaggerfallWorkshop.Utility
                 {
                     if (obj.Type == DFBlock.RdbResourceTypes.Flat)
                     {
-                        if (obj.Resources.FlatResource.TextureArchive == TextureReader.EditorFlatsTextureArchive)
+                        // Add flat
+                        GameObject flatObject = AddFlat(obj, flatsNode.transform);
+
+                        // Store editor objects and start markers
+                        int archive = obj.Resources.FlatResource.TextureArchive;
+                        int record = obj.Resources.FlatResource.TextureRecord;
+                        if (archive == TextureReader.EditorFlatsTextureArchive)
+                        {
                             editorObjects.Add(obj);
-                        
-                        AddFlat(obj, flatsNode.transform);
+                            if (record == 10)
+                                startMarkers.Add(flatObject);
+                        }
                     }
                 }
             }
 
             // Output editor objects
             editorObjectsOut = editorObjects.ToArray();
+            startMarkersOut = startMarkers.ToArray();
         }
 
         /// <summary>
@@ -674,10 +693,10 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Adds action door to scene.
         /// </summary>
-        private static void AddActionDoor(DaggerfallUnity dfUnity, uint modelId, DFBlock.RdbObject obj, Transform parent)
+        private static GameObject AddActionDoor(DaggerfallUnity dfUnity, uint modelId, DFBlock.RdbObject obj, Transform parent)
         {
             if (dfUnity.Option_DungeonDoorPrefab == null)
-                return;
+                return null;
 
             // Get model data and matrix
             ModelData modelData;
@@ -707,9 +726,11 @@ namespace DaggerfallWorkshop.Utility
             go.transform.Rotate(degreesX, 0, 0, Space.World);
             go.transform.Rotate(0, 0, degreesZ, Space.World);
             go.transform.localPosition = modelMatrix.GetColumn(3);
+
+            return go;
         }
 
-        private static void AddLight(DaggerfallUnity dfUnity, DFBlock.RdbObject obj, Transform parent)
+        private static GameObject AddLight(DaggerfallUnity dfUnity, DFBlock.RdbObject obj, Transform parent)
         {
             // Spawn light gameobject
             float range = obj.Resources.LightResource.Radius * MeshReader.GlobalScale;
@@ -720,9 +741,11 @@ namespace DaggerfallWorkshop.Utility
             {
                 light.range = range * 3;
             }
+
+            return go;
         }
 
-        private static void AddFlat(DFBlock.RdbObject obj, Transform parent)
+        private static GameObject AddFlat(DFBlock.RdbObject obj, Transform parent)
         {
             int archive = obj.Resources.FlatResource.TextureArchive;
             int record = obj.Resources.FlatResource.TextureRecord;
@@ -759,6 +782,8 @@ namespace DaggerfallWorkshop.Utility
                         break;
                 }
             }
+
+            return go;
         }
 
         private static void AddTorchAudioSource(GameObject go)
@@ -827,8 +852,9 @@ namespace DaggerfallWorkshop.Utility
                 reaction = MobileReactions.Passive;
 
             // Just setup demo enemies at this time
+            string name = string.Format("DaggerfallEnemy [{0}]", type.ToString());
             Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-            GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, null, parent, position);
+            GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, parent, position);
             SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
             if (setupEnemy != null)
             {

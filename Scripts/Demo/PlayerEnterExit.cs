@@ -313,7 +313,7 @@ namespace DaggerfallWorkshop.Demo
             RaiseOnTransitionDungeonInteriorEvent(door, dungeon);
         }
 
-        public void MovePlayerToDungeonStart(bool setFacing = false)
+        public void MovePlayerToDungeonStart()
         {
             if (!isPlayerInsideDungeon)
                 return;
@@ -324,23 +324,8 @@ namespace DaggerfallWorkshop.Demo
             // Fix player standing
             SetStanding();
 
-            // TODO: Set player facing away from dungeon exit
-            if (setFacing)
-            {
-                //// Find closest exit door
-                //DaggerfallStaticDoors doors = newDungeon.GetComponent<DaggerfallStaticDoors>();
-                //if (doors)
-                //{
-                //    Vector3 doorPos;
-                //    int doorIndex;
-                //    if (doors.FindClosestDoorToPlayer(transform.position, 0, out doorPos, out doorIndex))
-                //    {
-                //    }
-                //}
-            }
-
             // Raise event
-            OnMovePlayerToDungeonStart();
+            RaiseOnMovePlayerToDungeonStartEvent();
         }
 
         /// <summary>

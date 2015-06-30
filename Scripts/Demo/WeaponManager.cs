@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Demo
         public FPSWeapon LeftHandWeapon;            // Weapon in left hand
         public FPSWeapon RightHandWeapon;           // Weapon in right hand
         public bool Sheathed;                       // Weapon (or weapons) are sheathed
-        public float SphereCastRadius = 0.35f;      // Radius of SphereCast used to target attacks
+        public float SphereCastRadius = 0.4f;       // Radius of SphereCast used to target attacks
         public float HorizontalThreshold = 0.8f;    // Horizontal mouse delta threshold for action to register
         public float VerticalThreshold = 0.8f;      // Vertical mouse delta threshold for action to register
         public int TriggerCount = 3;                // Minimum number of times action must register before triggering attack
@@ -273,7 +273,7 @@ namespace DaggerfallWorkshop.Demo
 
             // Fire ray along player facing using weapon range
             RaycastHit hit;
-            Ray ray = new Ray(mainCamera.transform.position + mainCamera.transform.forward * 0.1f, mainCamera.transform.forward);
+            Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Range - SphereCastRadius))
             {
                 // Check if hit has an DaggerfallActionDoor component
