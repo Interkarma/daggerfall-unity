@@ -62,7 +62,14 @@ namespace DaggerfallWorkshop.Utility
         /// Creates common texture settings.
         /// </summary>
         /// <returns>GetTextureSettings.</returns>
-        public static GetTextureSettings CreateTextureSettings(int archive = 0, int record = 0, int frame = 0, int alphaIndex = 0, int borderSize = 0, bool dilate = false, int maxAtlasSize = 2048)
+        public static GetTextureSettings CreateTextureSettings(
+            int archive = 0,
+            int record = 0,
+            int frame = 0,
+            int alphaIndex = 0,
+            int borderSize = 0,
+            bool dilate = false,
+            int maxAtlasSize = 2048)
         {
             GetTextureSettings settings = new GetTextureSettings();
             settings.archive = archive;
@@ -93,7 +100,11 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="frame">Frame index.</param>
         /// <param name="alphaIndex">Index to receive transparent alpha.</param>
         /// <returns>Texture2D or null.</returns>
-        public Texture2D GetTexture2D(int archive, int record, int frame = 0, int alphaIndex = 0)
+        public Texture2D GetTexture2D(
+            int archive,
+            int record,
+            int frame = 0,
+            int alphaIndex = 0)
         {
             GetTextureSettings settings = new GetTextureSettings();
             settings.archive = archive;
@@ -110,8 +121,13 @@ namespace DaggerfallWorkshop.Utility
         /// Returns all supported texture maps for Standard shader in one call.
         /// </summary>
         /// <param name="settings">Get texture settings.</param>
+        /// <param name="alphaTextureFormat">Alpha TextureFormat.</param>
+        /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
         /// <returns>GetTextureResults.</returns>
-        public GetTextureResults GetTexture2D(GetTextureSettings settings)
+        public GetTextureResults GetTexture2D(
+            GetTextureSettings settings,
+            SupportedAlphaTextureFormats alphaTextureFormat = SupportedAlphaTextureFormats.RGBA32,
+            SupportedNonAlphaTextureFormats nonAlphaFormat = SupportedNonAlphaTextureFormats.RGB24)
         {
             GetTextureResults results = new GetTextureResults();
 
@@ -146,9 +162,9 @@ namespace DaggerfallWorkshop.Utility
             // Create albedo texture
             Texture2D albedoMap = null;
             if (settings.alphaIndex < 0)
-                albedoMap = new Texture2D(sz.Width, sz.Height, TextureFormat.RGB24, MipMaps);
+                albedoMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(nonAlphaFormat), MipMaps);
             else
-                albedoMap = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, MipMaps);
+                albedoMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
             albedoMap.SetPixels32(albedoColors);
             albedoMap.Apply(true, !settings.stayReadable);
 
@@ -179,7 +195,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Create custom emission texture for glass area of windows
                 Color32[] emissionColors = textureFile.GetWindowColors32(srcBitmap);
-                emissionMap = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, MipMaps);
+                emissionMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
                 emissionMap.SetPixels32(emissionColors);
                 emissionMap.Apply(true, !settings.stayReadable);
                 resultEmissive = true;
@@ -193,7 +209,7 @@ namespace DaggerfallWorkshop.Utility
                 if (!isEmissive)
                 {
                     Color32[] emissionColors = new Color32[sz.Width * sz.Height];
-                    emissionMap = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, MipMaps);
+                    emissionMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
                     emissionMap.SetPixels32(emissionColors);
                     emissionMap.Apply(true, !settings.stayReadable);
                     resultEmissive = true;
@@ -226,8 +242,13 @@ namespace DaggerfallWorkshop.Utility
         /// Currently supports one archive per atlas. Super-atlas packing (multiple archives) is in the works.
         /// </summary>
         /// <param name="settings">Get texture settings.</param>
+        /// <param name="alphaTextureFormat">Alpha TextureFormat.</param>
+        /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
         /// <returns>GetTextureResults.</returns>
-        public GetTextureResults GetTexture2DAtlas(GetTextureSettings settings)
+        public GetTextureResults GetTexture2DAtlas(
+            GetTextureSettings settings,
+            SupportedAlphaTextureFormats alphaTextureFormat = SupportedAlphaTextureFormats.RGBA32,
+            SupportedNonAlphaTextureFormats nonAlphaFormat = SupportedNonAlphaTextureFormats.RGB24)
         {
             GetTextureResults results = new GetTextureResults();
 
@@ -279,7 +300,7 @@ namespace DaggerfallWorkshop.Utility
                 for (int frame = 0; frame < frames; frame++)
                 {
                     settings.frame = frame;
-                    GetTextureResults nextTextureResults = GetTexture2D(settings);
+                    GetTextureResults nextTextureResults = GetTexture2D(settings, alphaTextureFormat, nonAlphaFormat);
                     albedoTextures.Add(nextTextureResults.albedoMap);
                     if (nextTextureResults.normalMap != null)
                     {
@@ -300,7 +321,7 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Pack albedo textures into atlas and get our rects
-            Texture2D atlasAlbedoMap = new Texture2D(settings.atlasMaxSize, settings.atlasMaxSize, TextureFormat.RGBA32, MipMaps);
+            Texture2D atlasAlbedoMap = new Texture2D(settings.atlasMaxSize, settings.atlasMaxSize, ParseTextureFormat(alphaTextureFormat), MipMaps);
             Rect[] rects = atlasAlbedoMap.PackTextures(albedoTextures.ToArray(), settings.atlasPadding, settings.atlasMaxSize, !stayReadable);
 
             // Pack normal textures into atlas
@@ -313,11 +334,12 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Pack emission textures into atlas
+            // TODO: Change this as packing not consistent
             Texture2D atlasEmissionMap = null;
             if (hasEmissionMaps)
             {
                 // Repacking to ensure correct mix of lit and unlit
-                atlasEmissionMap = new Texture2D(settings.atlasMaxSize, settings.atlasMaxSize, TextureFormat.RGBA32, MipMaps);
+                atlasEmissionMap = new Texture2D(settings.atlasMaxSize, settings.atlasMaxSize, ParseTextureFormat(alphaTextureFormat), MipMaps);
                 atlasEmissionMap.PackTextures(emissionTextures.ToArray(), settings.atlasPadding, settings.atlasMaxSize, !stayReadable);
             }
 
@@ -359,8 +381,17 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="archives">Archive array.</param>
         /// <param name="borderSize">Number of pixels border to add around image.</param>
         /// <param name="dilate">Blend texture into surrounding empty pixels. Requires border.</param>
+        /// <param name="maxAtlasSize">Maximum atlas size.</param>
+        /// <param name="alphaTextureFormat">Alpha TextureFormat.</param>
+        /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
         /// <returns>TextureAtlasBuilder.</returns>
-        public TextureAtlasBuilder CreateTextureAtlasBuilder(int[] archives, int borderSize = 0, bool dilate = false, int maxAtlasSize = 2048)
+        public TextureAtlasBuilder CreateTextureAtlasBuilder(
+            int[] archives,
+            int borderSize = 0,
+            bool dilate = false,
+            int maxAtlasSize = 2048,
+            SupportedAlphaTextureFormats alphaTextureFormat = SupportedAlphaTextureFormats.RGBA32,
+            SupportedNonAlphaTextureFormats nonAlphaFormat = SupportedNonAlphaTextureFormats.RGB24)
         {
             // Ready check
             if (!ReadyCheck())
@@ -380,7 +411,7 @@ namespace DaggerfallWorkshop.Utility
                 for (int record = 0; record < textureFile.RecordCount; record++)
                 {
                     settings.record = record;
-                    GetTextureResults results = GetTexture2D(settings);
+                    GetTextureResults results = GetTexture2D(settings, alphaTextureFormat, nonAlphaFormat);
                     DFSize size = textureFile.GetSize(record);
                     DFSize scale = textureFile.GetScale(record);
                     builder.AddTextureItem(
@@ -403,7 +434,14 @@ namespace DaggerfallWorkshop.Utility
         /// Gets specially packed tileset atlas for terrains.
         /// This needs to be improved to create each mip level manually to further reduce artifacts.
         /// </summary>
-        public GetTextureResults GetTerrainTilesetTexture(int archive, bool stayReadable = false)
+        /// <param name="archive">Archive index.</param>
+        /// <param name="stayReadable">Texture should stay readable.</param>
+        /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
+        /// <returns></returns>
+        public GetTextureResults GetTerrainTilesetTexture(
+            int archive,
+            bool stayReadable = false,
+            SupportedNonAlphaTextureFormats nonAlphaFormat = SupportedNonAlphaTextureFormats.RGB24)
         {
             const int atlasDim = 2048;
             const int gutterSize = 32;
@@ -508,7 +546,7 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Create Texture2D
-            Texture2D albedoAtlas = new Texture2D(atlasDim, atlasDim, TextureFormat.RGB24, MipMaps);
+            Texture2D albedoAtlas = new Texture2D(atlasDim, atlasDim, ParseTextureFormat(nonAlphaFormat), MipMaps);
             albedoAtlas.SetPixels32(atlasColors);
             albedoAtlas.Apply(true, !stayReadable);
 
@@ -595,15 +633,36 @@ namespace DaggerfallWorkshop.Utility
 
         #region Private Methods
 
+        private TextureFormat ParseTextureFormat(SupportedAlphaTextureFormats format)
+        {
+            switch (format)
+            {
+                default:
+                case SupportedAlphaTextureFormats.RGBA32:
+                    return TextureFormat.RGBA32;
+                case SupportedAlphaTextureFormats.ARGB32:
+                    return TextureFormat.ARGB32;
+                case SupportedAlphaTextureFormats.ARGB444:
+                    return TextureFormat.ARGB4444;
+                case SupportedAlphaTextureFormats.RGBA444:
+                    return TextureFormat.RGBA4444;
+            }
+        }
+
+        private TextureFormat ParseTextureFormat(SupportedNonAlphaTextureFormats format)
+        {
+            switch (format)
+            {
+                default:
+                case SupportedNonAlphaTextureFormats.RGB24:
+                    return TextureFormat.RGB24;
+                case SupportedNonAlphaTextureFormats.RGB565:
+                    return TextureFormat.RGB565;
+            }
+        }
+
         private bool ReadyCheck()
         {
-            // Arena2 path must be set
-            if (string.IsNullOrEmpty(Arena2Path))
-            {
-                DaggerfallUnity.LogMessage("TextureReader: Arena2Path not set.", true);
-                return false;
-            }
-
             // Ensure texture reader is ready
             if (textureFile == null)
             {

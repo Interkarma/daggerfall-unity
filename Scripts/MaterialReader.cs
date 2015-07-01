@@ -43,9 +43,8 @@ namespace DaggerfallWorkshop
         public FilterMode MainFilterMode = FilterMode.Point;
         public FilterMode SkyFilterMode = FilterMode.Point;
         public bool MipMaps = true;
-        public const string _StandardShaderName = "Standard";
-        public const string _DaggerfallTilemapShaderName = "Daggerfall/Tilemap";
-        public const string _DaggerfallBillboardBatchShaderName = "Daggerfall/BillboardBatch";
+        public SupportedAlphaTextureFormats AlphaTextureFormat = SupportedAlphaTextureFormats.RGBA32;
+        public SupportedNonAlphaTextureFormats NonAlphaTextureFormat = SupportedNonAlphaTextureFormats.RGB24;
 
         // Window settings
         public Color DayWindowColor = new Color32(89, 154, 178, 0xff);
@@ -68,6 +67,11 @@ namespace DaggerfallWorkshop
         //public const int UnusedKeyGroup3 = 2560;
         //public const int UnusedKeyGroup4 = 3584;
         //public const int UnusedKeyGroup5 = 4096;
+
+        // Shader names
+        public const string _StandardShaderName = "Standard";
+        public const string _DaggerfallTilemapShaderName = "Daggerfall/Tilemap";
+        public const string _DaggerfallBillboardBatchShaderName = "Daggerfall/BillboardBatch";
 
         DaggerfallUnity dfUnity;
         TextureReader textureReader;
@@ -123,7 +127,14 @@ namespace DaggerfallWorkshop
                     if (!IsReady)
                         return null;
 
-                    miscBillboardsAtlas = textureReader.CreateTextureAtlasBuilder(textureReader.MiscFlatsTextureArchives, 2, true);
+                    miscBillboardsAtlas = textureReader.CreateTextureAtlasBuilder(
+                        textureReader.MiscFlatsTextureArchives,
+                        2,
+                        true,
+                        2048,
+                        AlphaTextureFormat,
+                        NonAlphaTextureFormat);
+
                     return miscBillboardsAtlas;
                 }
                 else
@@ -273,7 +284,7 @@ namespace DaggerfallWorkshop
             }
 
             // Get texture
-            GetTextureResults results = textureReader.GetTexture2D(settings);
+            GetTextureResults results = textureReader.GetTexture2D(settings, AlphaTextureFormat, NonAlphaTextureFormat);
             rectOut = results.singleRect;
 
             // Setup material
@@ -402,7 +413,7 @@ namespace DaggerfallWorkshop
 
             // Setup material
             material.name = string.Format("TEXTURE.{0:000} [Atlas]", archive);
-            GetTextureResults results = textureReader.GetTexture2DAtlas(settings);
+            GetTextureResults results = textureReader.GetTexture2DAtlas(settings, AlphaTextureFormat, NonAlphaTextureFormat);
             material.mainTexture = results.albedoMap;
             material.mainTexture.filterMode = MainFilterMode;
 

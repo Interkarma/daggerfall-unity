@@ -354,6 +354,7 @@ namespace DaggerfallWorkshop.Utility
         public static GameObject CreateRDBBlockGameObject(
             string blockName,
             bool isStartBlock,
+            int[] textureTable = null,
             DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold,
             int seed = 0,
             DaggerfallRDBBlock cloneFrom = null)
@@ -365,7 +366,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Create base object
             DFBlock blockData;
-            GameObject go = RDBLayout.CreateBaseGameObject(blockName, out blockData, cloneFrom);
+            GameObject go = RDBLayout.CreateBaseGameObject(blockName, out blockData, textureTable, cloneFrom);
 
             // Add exit doors
             if (isStartBlock)
@@ -375,7 +376,7 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Add action doors
-            RDBLayout.AddActionDoors(go, ref blockData);
+            RDBLayout.AddActionDoors(go, ref blockData, textureTable);
 
             // Add lights
             RDBLayout.AddLights(go, ref blockData);

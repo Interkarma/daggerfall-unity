@@ -14,6 +14,26 @@ using System;
 namespace DaggerfallWorkshop
 {
     /// <summary>
+    /// Supported non-alpha texture formats for texture reader.
+    /// </summary>
+    public enum SupportedNonAlphaTextureFormats
+    {
+        RGB565,
+        RGB24,
+    }
+
+    /// <summary>
+    /// Supported alpha texture formats for texure reader.
+    /// </summary>
+    public enum SupportedAlphaTextureFormats
+    {
+        RGBA444,
+        ARGB444,
+        RGBA32,
+        ARGB32,
+    }
+
+    /// <summary>
     /// Types of billboard flats in Daggerfall blocks.
     /// </summary>
     public enum FlatTypes

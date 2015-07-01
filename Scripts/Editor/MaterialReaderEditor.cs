@@ -54,10 +54,6 @@ namespace DaggerfallWorkshop
             var propNormalTextureStrength = Prop("NormalTextureStrength");
             var propMipMaps = Prop("MipMaps");
             var propSharpen = Prop("Sharpen");
-            //var propDefaultBillboardShaderName = Prop("DefaultBillboardShaderName");
-            //var propDefaultUnlitBillboardShaderName = Prop("DefaultUnlitBillboardShaderName");
-            //var propDefaultUnlitTextureShaderName = Prop("DefaultUnlitTextureShaderName");
-            //var propDefaultSelfIlluminShaderName = Prop("DefaultSelfIlluminShaderName");
             var propDayWindowColor = Prop("DayWindowColor");
             var propNightWindowColor = Prop("NightWindowColor");
             var propFogWindowColor = Prop("FogWindowColor");
@@ -66,6 +62,8 @@ namespace DaggerfallWorkshop
             var propNightWindowIntensity = Prop("NightWindowIntensity");
             var propFogWindowIntensity = Prop("FogWindowIntensity");
             var propCustomWindowIntensity = Prop("CustomWindowIntensity");
+            var propAlphaTextureFormat = Prop("AlphaTextureFormat");
+            var propNonAlphaTextureFormat = Prop("NonAlphaTextureFormat");
 
             EditorGUILayout.Space();
             propAtlasTextures.boolValue = EditorGUILayout.Toggle(new GUIContent("Atlas Textures", "Combine billboards and ground textures into an atlas."), propAtlasTextures.boolValue);
@@ -82,11 +80,9 @@ namespace DaggerfallWorkshop
             propMainFilterMode.enumValueIndex = (int)(FilterMode)EditorGUILayout.EnumPopup(new GUIContent("Main Filter Mode", "Filter mode for materials. Will be applied on next import or climate change."), (FilterMode)propMainFilterMode.enumValueIndex);
             propSkyFilterMode.enumValueIndex = (int)(FilterMode)EditorGUILayout.EnumPopup(new GUIContent("Sky Filter Mode", "Filter mode for the sky."), (FilterMode)propSkyFilterMode.enumValueIndex);
 
-            //EditorGUILayout.Space();
-            //propDefaultBillboardShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Billboard Shader", "Name of default billboard shader. Used for general mesh materials."), propDefaultBillboardShaderName.stringValue);
-            //propDefaultSelfIlluminShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Self-Illumin Shader", "Name of default self-illumin shader. Used for windows."), propDefaultSelfIlluminShaderName.stringValue);
-            //propDefaultUnlitBillboardShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Unlit Billboard Shader", "Name of default unlit billboard shader. Used for light billboards."), propDefaultUnlitBillboardShaderName.stringValue);
-            //propDefaultUnlitTextureShaderName.stringValue = EditorGUILayout.TextField(new GUIContent("Unlit Texture Shader", "Name of default unlit texture shader. Used for textures like the fireplace."), propDefaultUnlitTextureShaderName.stringValue);
+            EditorGUILayout.Space();
+            propAlphaTextureFormat.enumValueIndex = (int)(SupportedAlphaTextureFormats)EditorGUILayout.EnumPopup(new GUIContent("Alpha Texture Format", "TextureFormat of alpha-enabled textures such as billboard cutouts."), (SupportedAlphaTextureFormats)propAlphaTextureFormat.enumValueIndex);
+            propNonAlphaTextureFormat.enumValueIndex = (int)(SupportedNonAlphaTextureFormats)EditorGUILayout.EnumPopup(new GUIContent("Non-Alpha Texture Format", "TextureFormat of non-alpha textures."), (SupportedNonAlphaTextureFormats)propNonAlphaTextureFormat.enumValueIndex);
 
             EditorGUILayout.Space();
             propDayWindowColor.colorValue = EditorGUILayout.ColorField(new GUIContent("Day Window Colour", "The colour of windows by day."), propDayWindowColor.colorValue);

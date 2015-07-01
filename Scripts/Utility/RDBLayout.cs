@@ -38,11 +38,6 @@ namespace DaggerfallWorkshop.Utility
         const float torchMaxDistance = 5f;
         const float torchVolume = 0.7f;
 
-        //int[] textureTable = null;
-        //DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold;
-        //List<GameObject> startMarkers = new List<GameObject>();
-        //bool isStartingBlock;
-
         #region Structs & Enums
 
         /// <summary>
@@ -64,10 +59,10 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="blockName">Name of block.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(string blockName, DaggerfallRDBBlock cloneFrom = null)
+        public static GameObject CreateBaseGameObject(string blockName, int[] textureTable, DaggerfallRDBBlock cloneFrom = null)
         {
             DFBlock blockData;
-            return CreateBaseGameObject(blockName, out blockData, cloneFrom);
+            return CreateBaseGameObject(blockName, out blockData, textureTable, cloneFrom);
         }
 
         /// <summary>
@@ -76,7 +71,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="blockName">Name of block.</param>
         /// <param name="blockDataOut">DFBlock data out.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(string blockName, out DFBlock blockDataOut, DaggerfallRDBBlock cloneFrom = null)
+        public static GameObject CreateBaseGameObject(string blockName, out DFBlock blockDataOut, int[] textureTable, DaggerfallRDBBlock cloneFrom = null)
         {
             blockDataOut = new DFBlock();
 
@@ -92,7 +87,7 @@ namespace DaggerfallWorkshop.Utility
             // Get block data
             blockDataOut = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
 
-            return CreateBaseGameObject(ref blockDataOut, cloneFrom);
+            return CreateBaseGameObject(ref blockDataOut, textureTable, cloneFrom);
         }
 
         /// <summary>
@@ -100,11 +95,15 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="blockData">Block data.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(ref DFBlock blockData, DaggerfallRDBBlock cloneFrom = null)
+        public static GameObject CreateBaseGameObject(ref DFBlock blockData, int[] textureTable, DaggerfallRDBBlock cloneFrom = null)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return null;
+
+            // Use default texture table if one not specified
+            if (textureTable == null)
+                textureTable = StaticTextureTables.DefaultTextureTable;
 
             // Create gameobject
             GameObject go;
@@ -129,7 +128,7 @@ namespace DaggerfallWorkshop.Utility
             GameObject actionModelsNode = new GameObject("Action Models");
             modelsNode.transform.parent = go.transform;
             actionModelsNode.transform.parent = go.transform;
-            AddModels(dfUnity, ref blockData, combiner, modelsNode.transform, actionModelsNode.transform);
+            AddModels(dfUnity, ref blockData, textureTable, combiner, modelsNode.transform, actionModelsNode.transform);
 
             // Apply combiner
             if (combiner != null)
@@ -137,11 +136,12 @@ namespace DaggerfallWorkshop.Utility
                 if (combiner.VertexCount > 0)
                 {
                     combiner.Apply();
-                    GameObjectHelper.CreateCombinedMeshGameObject(
+                    GameObject cgo = GameObjectHelper.CreateCombinedMeshGameObject(
                         combiner,
                         "CombinedModels",
                         modelsNode.transform,
                         dfUnity.Option_SetStaticFlags);
+                    cgo.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
                 }
             }
 
@@ -214,11 +214,15 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Add actions doors to block.
         /// </summary>
-        public static void AddActionDoors(GameObject go, ref DFBlock blockData)
+        public static void AddActionDoors(GameObject go, ref DFBlock blockData, int[] textureTable)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return;
+
+            // Use default texture table if one not specified
+            if (textureTable == null)
+                textureTable = StaticTextureTables.DefaultTextureTable;
 
             // Add parent node
             GameObject actionDoorsNode = new GameObject("Action Doors");
@@ -240,7 +244,10 @@ namespace DaggerfallWorkshop.Utility
                         int modelReference = obj.Resources.ModelResource.ModelIndex;
                         uint modelId = blockData.RdbBlock.ModelReferenceList[modelReference].ModelIdNum;
                         if (IsActionDoor(ref blockData, obj, modelReference))
-                            AddActionDoor(dfUnity, modelId, obj, actionDoorsNode.transform);
+                        {
+                            GameObject cgo = AddActionDoor(dfUnity, modelId, obj, actionDoorsNode.transform);
+                            cgo.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
+                        }
                     }
                 }
             }
@@ -389,6 +396,7 @@ namespace DaggerfallWorkshop.Utility
         private static void AddModels(
             DaggerfallUnity dfUnity,
             ref DFBlock blockData,
+            int[] textureTable,
             ModelCombiner combiner = null,
             Transform modelsParent = null,
             Transform actionModelsParent = null)
@@ -451,9 +459,14 @@ namespace DaggerfallWorkshop.Utility
                         GameObject standaloneObject = null;
                         Transform parent = (hasAction) ? actionModelsParent : modelsParent;
                         if (combiner == null || hasAction)
+                        {
                             standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
+                            standaloneObject.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
+                        }
                         else
+                        {
                             combiner.Add(ref modelData, modelMatrix);
+                        }
 
                         // Add action
                         if (hasAction && standaloneObject != null)
