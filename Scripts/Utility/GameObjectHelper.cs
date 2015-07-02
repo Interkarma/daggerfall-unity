@@ -399,17 +399,6 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
-        //public static GameObject CreateDaggerfallInteriorPointLight(float range, Transform parent)
-        //{
-        //    GameObject go = new GameObject("DaggerfallLight [Interior]");
-        //    if (parent) go.transform.parent = parent;
-        //    Light light = go.AddComponent<Light>();
-        //    light.type = LightType.Point;
-        //    light.range = range;
-
-        //    return go;
-        //}
-
         /// <summary>
         /// Create a billboard batch.
         /// </summary>

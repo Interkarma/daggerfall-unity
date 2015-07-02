@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    LypyL
 // 
 // Notes:
 //
@@ -43,6 +43,29 @@ namespace DaggerfallConnect.Utility
         {
             X = x;
             Y = y;
+        }
+
+        public override string ToString()//##Lypyl
+        {
+            return string.Format("{0}, {1}", X, Y);
+        }
+
+        /// <summary>
+        /// Get distance between 2 world points represented by DFPosition objects
+        /// Returns -1 on error
+        /// </summary>
+        public double Distance(DFPosition pos)//##Lypyl
+        {
+            double dist = -1;
+            try
+            {
+                dist = Math.Sqrt(Math.Pow(Math.Abs(X - pos.X), 2) + Math.Pow(Math.Abs(Y - pos.Y), 2));
+            }
+            catch (Exception ex)
+            {
+                DaggerfallWorkshop.DaggerfallUnity.LogMessage(ex.Message, true);
+            }
+            return dist;
         }
 
         #endregion

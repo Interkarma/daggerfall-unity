@@ -81,6 +81,11 @@ namespace DaggerfallWorkshop.Demo
             get { return (speed == runSpeed); }
         }
 
+        public Transform ActivePlatform
+        {
+            get { return activePlatform; }
+        }
+
         void Start()
         {
             controller = GetComponent<CharacterController>();

@@ -153,7 +153,8 @@ namespace DaggerfallWorkshop
                     }
 
                     // Store new mesh UV set
-                    billboardMesh.uv = uvs;
+                    if (uvs.Length > 0)
+                        billboardMesh.uv = uvs;
                 }
 
                 yield return new WaitForSeconds(1f / FramesPerSecond);

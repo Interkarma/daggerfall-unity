@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    LypyL
 // 
 // Notes:
 //
@@ -120,26 +120,9 @@ namespace DaggerfallWorkshop
 
         #region Unity
 
-        void Start()
-        {
-            dfUnity = DaggerfallUnity.Instance;
-
-            // Check we have PlayerGPS
-            if (!LocalPlayerGPS)
-            {
-                DaggerfallUnity.LogMessage("StreamingWorld: Missing PlayerGPS reference.", true);
-                if (Application.isEditor)
-                    Debug.Break();
-                else
-                    Application.Quit();
-            }
-
-            // Init world
-            InitWorld(true);
-        }
-
         void Update()
         {
+            // Cannot proceed until ready and player is set
             if (!ReadyCheck())
                 return;
 
@@ -204,6 +187,30 @@ namespace DaggerfallWorkshop
                 lastPlayerPos += change;
         }
 
+        /// <summary>
+        /// Returns terrain GameObject from mapPixel, or null if
+        /// no terrain objects are mapped to that pixel
+        /// </summary>
+        public GameObject GetTerrainFromPixel(DFPosition mapPixel)
+        {
+            return GetTerrainFromPixel(mapPixel.X, mapPixel.Y);
+        }
+
+        /// <summary>
+        /// Returns terrain GameObject from mapPixel, or null if
+        /// no terrain objects are mapped to that pixel
+        /// </summary>
+        public GameObject GetTerrainFromPixel(int mapPixelX, int mapPixelY)//##Lypyl
+        {
+            //Get Key for terrain lookup
+            int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
+
+            if (terrainIndexDict.ContainsKey(key))
+                return terrainArray[terrainIndexDict[key]].terrainObject;
+            else
+                return null;
+        }
+
         #endregion
 
         #region World Setup Methods
@@ -211,6 +218,10 @@ namespace DaggerfallWorkshop
         // Init world at startup or when player teleports
         private void InitWorld(bool repositionPlayer = false)
         {
+            // Cannot init world without a player, as world positions around player
+            if (LocalPlayerGPS == null)
+                return;
+
             // Player must be at origin on init for proper world sync
             // Starting position will be assigned when terrain ready
             LocalPlayerGPS.transform.position = Vector3.zero;
@@ -969,6 +980,11 @@ namespace DaggerfallWorkshop
                 dfUnity = DaggerfallUnity.Instance;
             }
 
+            if (LocalPlayerGPS == null)
+                return false;
+            else
+                InitWorld(true);
+
             // Do nothing if DaggerfallUnity not ready
             if (!dfUnity.IsReady)
             {
@@ -1035,7 +1051,7 @@ namespace DaggerfallWorkshop
 
         public void __EditorGetFromPlayerGPS()
         {
-            if (LocalPlayerGPS)
+            if (LocalPlayerGPS != null)
             {
                 DFPosition pos = MapsFile.WorldCoordToMapPixel(LocalPlayerGPS.WorldX, LocalPlayerGPS.WorldZ);
                 MapPixelX = pos.X;
@@ -1045,7 +1061,7 @@ namespace DaggerfallWorkshop
 
         public void __EditorApplyToPlayerGPS()
         {
-            if (LocalPlayerGPS)
+            if (LocalPlayerGPS != null)
             {
                 DFPosition pos = MapsFile.MapPixelToWorldCoord(MapPixelX, MapPixelY);
                 LocalPlayerGPS.WorldX = pos.X;

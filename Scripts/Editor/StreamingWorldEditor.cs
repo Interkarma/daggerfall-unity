@@ -47,11 +47,15 @@ namespace DaggerfallWorkshop
 
         private void DisplayGUI()
         {
-            if (!streamingWorld.IsReady)
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (dfUnity == null || string.IsNullOrEmpty(dfUnity.Arena2Path))
             {
                 EditorGUILayout.HelpBox("Requires DaggerfallUnity singleton with Arena2 path set.", MessageType.Info);
                 return;
             }
+
+            DrawTravelMap();
+            DrawDefaultInspector();
 
             if (!streamingWorld.LocalPlayerGPS)
             {
@@ -60,9 +64,6 @@ namespace DaggerfallWorkshop
                 propLocalPlayerGPS.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("", ""), propLocalPlayerGPS.objectReferenceValue, typeof(PlayerGPS), true);
                 return;
             }
-
-            DrawTravelMap();
-            DrawDefaultInspector();
 
             EditorGUILayout.Space();
             var propFindLocationString = Prop("EditorFindLocationString");
