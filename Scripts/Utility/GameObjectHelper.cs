@@ -351,10 +351,16 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Layout a complete RDB block game object.
         /// </summary>
+        /// <param name="blockName">Name of block to create.</param>
+        /// <param name="textureTable">Optional texture table for dungeon.</param>
+        /// <param name="allowExitDoors">Add exit doors to block (for start blocks).</param>
+        /// <param name="dungeonType">Dungeon type for random encounters.</param>
+        /// <param name="seed">Seed for random encounters.</param>
+        /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
         public static GameObject CreateRDBBlockGameObject(
             string blockName,
-            bool isStartBlock,
             int[] textureTable = null,
+            bool allowExitDoors = true,
             DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold,
             int seed = 0,
             DaggerfallRDBBlock cloneFrom = null)
@@ -364,16 +370,12 @@ namespace DaggerfallWorkshop.Utility
             if (!dfUnity.IsReady)
                 return null;
 
+            // Seed random generator
+            UnityEngine.Random.seed = seed;
+
             // Create base object
             DFBlock blockData;
-            GameObject go = RDBLayout.CreateBaseGameObject(blockName, out blockData, textureTable, cloneFrom);
-
-            // Add exit doors
-            if (isStartBlock)
-            {
-                StaticDoor[] doorsOut;
-                RDBLayout.AddExitDoors(go, ref blockData, out doorsOut);
-            }
+            GameObject go = RDBLayout.CreateBaseGameObject(blockName, out blockData, textureTable, allowExitDoors, cloneFrom);
 
             // Add action doors
             RDBLayout.AddActionDoors(go, ref blockData, textureTable);
@@ -387,7 +389,7 @@ namespace DaggerfallWorkshop.Utility
             RDBLayout.AddFlats(go, ref blockData, out editorObjectsOut, out startMarkersOut);
 
             // Set start markers
-            DaggerfallRDBBlock dfBlock = (cloneFrom != null) ? cloneFrom : go.GetComponent<DaggerfallRDBBlock>();
+            DaggerfallRDBBlock dfBlock = go.GetComponent<DaggerfallRDBBlock>();
             if (dfBlock != null)
                 dfBlock.SetStartMarkers(startMarkersOut);
 
@@ -542,7 +544,7 @@ namespace DaggerfallWorkshop.Utility
                 Vector3 v2 = door.Vert2;
 
                 // Get door size
-                const float thickness = 0.025f;
+                const float thickness = 0.05f;
                 Vector3 size = new Vector3(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z) + door.Normal * thickness;
 
                 // Add door to array

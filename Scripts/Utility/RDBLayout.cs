@@ -58,11 +58,18 @@ namespace DaggerfallWorkshop.Utility
         /// Create base RDB block by name.
         /// </summary>
         /// <param name="blockName">Name of block.</param>
+        /// <param name="textureTable">Optional texture table for dungeon.</param>
+        /// <param name="allowExitDoors">Add exit doors to block.</param>
+        /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(string blockName, int[] textureTable, DaggerfallRDBBlock cloneFrom = null)
+        public static GameObject CreateBaseGameObject(
+            string blockName,
+            int[] textureTable = null,
+            bool allowExitDoors = true,
+            DaggerfallRDBBlock cloneFrom = null)
         {
             DFBlock blockData;
-            return CreateBaseGameObject(blockName, out blockData, textureTable, cloneFrom);
+            return CreateBaseGameObject(blockName, out blockData, textureTable, allowExitDoors, cloneFrom);
         }
 
         /// <summary>
@@ -70,8 +77,16 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="blockName">Name of block.</param>
         /// <param name="blockDataOut">DFBlock data out.</param>
+        /// <param name="textureTable">Optional texture table for dungeon.</param>
+        /// <param name="allowExitDoors">Add exit doors to block.</param>
+        /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(string blockName, out DFBlock blockDataOut, int[] textureTable, DaggerfallRDBBlock cloneFrom = null)
+        public static GameObject CreateBaseGameObject(
+            string blockName,
+            out DFBlock blockDataOut,
+            int[] textureTable = null,
+            bool allowExitDoors = true,
+            DaggerfallRDBBlock cloneFrom = null)
         {
             blockDataOut = new DFBlock();
 
@@ -87,15 +102,22 @@ namespace DaggerfallWorkshop.Utility
             // Get block data
             blockDataOut = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
 
-            return CreateBaseGameObject(ref blockDataOut, textureTable, cloneFrom);
+            return CreateBaseGameObject(ref blockDataOut, textureTable, allowExitDoors, cloneFrom);
         }
 
         /// <summary>
         /// Instantiate base RDB block by DFBlock data.
         /// </summary>
         /// <param name="blockData">Block data.</param>
+        /// <param name="textureTable">Optional texture table for dungeon.</param>
+        /// <param name="allowExitDoors">Add exit doors to block.</param>
+        /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(ref DFBlock blockData, int[] textureTable, DaggerfallRDBBlock cloneFrom = null)
+        public static GameObject CreateBaseGameObject(
+            ref DFBlock blockData,
+            int[] textureTable = null,
+            bool allowExitDoors = true,
+            DaggerfallRDBBlock cloneFrom = null)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -123,12 +145,23 @@ namespace DaggerfallWorkshop.Utility
             if (dfUnity.Option_CombineRDB)
                 combiner = new ModelCombiner();
 
-            // Add parent nodes
+            // Add parent node
             GameObject modelsNode = new GameObject("Models");
             GameObject actionModelsNode = new GameObject("Action Models");
             modelsNode.transform.parent = go.transform;
             actionModelsNode.transform.parent = go.transform;
-            AddModels(dfUnity, ref blockData, textureTable, combiner, modelsNode.transform, actionModelsNode.transform);
+
+            // Add models
+            List<StaticDoor> exitDoors;
+            AddModels(
+                dfUnity,
+                ref blockData,
+                textureTable,
+                allowExitDoors,
+                out exitDoors,
+                combiner,
+                modelsNode.transform,
+                actionModelsNode.transform);
 
             // Apply combiner
             if (combiner != null)
@@ -145,70 +178,14 @@ namespace DaggerfallWorkshop.Utility
                 }
             }
 
-            return go;
-        }
-
-        /// <summary>
-        /// Add exit doors to block.
-        /// Any block can have several exit doors, which are just a quad slapped onto a wall.
-        /// Only the starting block should add exit doors.
-        /// </summary>
-        public static void AddExitDoors(GameObject go, ref DFBlock blockData, out StaticDoor[] doorsOut)
-        {
-            List<StaticDoor> staticDoors = new List<StaticDoor>();
-            doorsOut = null;
-
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-            if (!dfUnity.IsReady)
-                return;
-
-            // Add parent node
-            GameObject exitDoorsNode = new GameObject("Exit Doors");
-            exitDoorsNode.transform.parent = go.transform;
-
-            // Iterate all groups
-            foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
-            {
-                // Skip empty object groups
-                if (null == group.RdbObjects)
-                    continue;
-
-                // Look for models in this group
-                foreach (DFBlock.RdbObject obj in group.RdbObjects)
-                {
-                    if (obj.Type == DFBlock.RdbResourceTypes.Model)
-                    {
-                        // Look for exit doors
-                        int modelReference = obj.Resources.ModelResource.ModelIndex;
-                        uint modelId = blockData.RdbBlock.ModelReferenceList[modelReference].ModelIdNum;
-                        if (modelId == exitDoorModelID)
-                        {
-                            // Get model data and matrix
-                            ModelData modelData;
-                            dfUnity.MeshReader.GetModelData(modelId, out modelData);
-                            Matrix4x4 modelMatrix = GetModelMatrix(obj);
-                            GameObject exitDoorObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, exitDoorsNode.transform, false, true);
-
-                            // Add box collider
-                            BoxCollider boxCollider = exitDoorObject.AddComponent<BoxCollider>();
-                            boxCollider.isTrigger = true;
-
-                            // Add static doors
-                            staticDoors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
-                        }
-                    }
-                }
-            }
-
-            // Output doors
-            doorsOut = staticDoors.ToArray();
-
-            // Assign exit doors component
-            if (doorsOut.Length > 0)
+            // Add exit doors
+            if (exitDoors.Count > 0)
             {
                 DaggerfallStaticDoors c = go.AddComponent<DaggerfallStaticDoors>();
-                c.Doors = doorsOut;
+                c.Doors = exitDoors.ToArray();
             }
+
+            return go;
         }
 
         /// <summary>
@@ -345,6 +322,7 @@ namespace DaggerfallWorkshop.Utility
         /// Add all enemies.
         /// Dungeon type can be provided to simulate random encounters.
         /// If dungeon type not given then random enemies will be omitted.
+        /// TODO: Split out fixed and random enemies so developer has more control over spawns.
         /// </summary>
         public static void AddEnemies(
             GameObject go,
@@ -397,10 +375,14 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallUnity dfUnity,
             ref DFBlock blockData,
             int[] textureTable,
+            bool allowExitDoors,
+            out List<StaticDoor> exitDoorsOut,
             ModelCombiner combiner = null,
             Transform modelsParent = null,
             Transform actionModelsParent = null)
         {
+            exitDoorsOut = new List<StaticDoor>();
+
             // Action record linkages
             Dictionary<int, ActionLink> actionLinkDict = new Dictionary<int, ActionLink>();
 
@@ -425,9 +407,8 @@ namespace DaggerfallWorkshop.Utility
                         int modelReference = obj.Resources.ModelResource.ModelIndex;
                         uint modelId = blockData.RdbBlock.ModelReferenceList[modelReference].ModelIdNum;
 
-                        // Filter exit door models
-                        // These must be added by AddExitDoors()
-                        if (modelId == exitDoorModelID)
+                        // Filter exit door models where flag not set
+                        if (modelId == exitDoorModelID && !allowExitDoors)
                             continue;
 
                         // Filter action door models
@@ -441,6 +422,9 @@ namespace DaggerfallWorkshop.Utility
                         // Get model data
                         ModelData modelData;
                         dfUnity.MeshReader.GetModelData(modelId, out modelData);
+
+                        // Add to static doors
+                        exitDoorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
 
                         // Check if model has an action record
                         bool hasAction = HasAction(obj);

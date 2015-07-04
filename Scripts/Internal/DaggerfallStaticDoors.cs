@@ -74,15 +74,10 @@ namespace DaggerfallWorkshop
             {
                 // Setup single trigger position and size over each door in turn
                 // This method plays nice with transforms
-                go.transform.position = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre);
                 c.size = GameObjectHelper.QuaternionFromMatrix(Doors[i].buildingMatrix) * Doors[i].size;
+                go.transform.position = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre);
                 go.transform.position += transform.position;
                 go.transform.rotation = transform.rotation;
-
-                // Deprecated: Bounds checking method.
-                //Vector3 centre = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre) + transform.position;
-                //Vector3 size = new Vector3(50, 90, 50) * MeshReader.GlobalScale; // Native door fit
-                //Bounds bounds = new Bounds(centre, size);
 
                 // Check if hit was inside trigger
                 if (c.bounds.Contains(point))

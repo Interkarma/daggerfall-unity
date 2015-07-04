@@ -94,7 +94,6 @@ namespace DaggerfallWorkshop.Demo
                         if (ActionDoorCheck(hits[i], out actionDoor))
                         {
                             actionDoor.ToggleDoor();
-                            return;
                         }
 
                         // Check for action record hit
@@ -102,7 +101,6 @@ namespace DaggerfallWorkshop.Demo
                         if (ActionCheck(hits[i], out action))
                         {
                             action.Play();
-                            return;
                         }
                     }
                 }

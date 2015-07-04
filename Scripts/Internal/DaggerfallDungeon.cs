@@ -220,7 +220,13 @@ namespace DaggerfallWorkshop
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
             {
-                GameObject go = GameObjectHelper.CreateRDBBlockGameObject(block.BlockName, block.IsStartingBlock, DungeonTextureTable, Summary.DungeonType, Summary.ID);
+                GameObject go = GameObjectHelper.CreateRDBBlockGameObject(
+                    block.BlockName,
+                    DungeonTextureTable,
+                    block.IsStartingBlock,
+                    Summary.DungeonType,
+                    Summary.ID,
+                    dfUnity.Option_DungeonBlockPrefab);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
