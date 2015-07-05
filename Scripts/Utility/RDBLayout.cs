@@ -292,7 +292,7 @@ namespace DaggerfallWorkshop.Utility
                 if (null == group.RdbObjects)
                     continue;
 
-                // Look for flat in this group
+                // Look for flats in this group
                 foreach (DFBlock.RdbObject obj in group.RdbObjects)
                 {
                     if (obj.Type == DFBlock.RdbResourceTypes.Flat)
@@ -319,16 +319,16 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Add all enemies.
-        /// Dungeon type can be provided to simulate random encounters.
-        /// If dungeon type not given then random enemies will be omitted.
-        /// TODO: Split out fixed and random enemies so developer has more control over spawns.
+        /// Add fixed enemies.
         /// </summary>
-        public static void AddEnemies(
+        /// <param name="go">GameObject to add monsters to.</param>
+        /// <param name="editorObjects">Editor objects containing flats.</param>
+        public static void AddFixedEnemies(
             GameObject go,
-            DFBlock.RdbObject[] editorObjects,
-            DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold)
+            DFBlock.RdbObject[] editorObjects)
         {
+            const int fixedMonsterFlatIndex = 16;
+
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return;
@@ -338,29 +338,66 @@ namespace DaggerfallWorkshop.Utility
                 return;
 
             // Editor objects array must be populated
-            if (editorObjects == null)
-                return;
-            if (editorObjects.Length == 0)
+            if (editorObjects == null || editorObjects.Length == 0)
                 return;
 
             // Add parent node
-            GameObject enemiesNode = new GameObject("Enemies");
-            enemiesNode.transform.parent = go.transform;
+            GameObject fixedEnemiesNode = new GameObject("Fixed Enemies");
+            fixedEnemiesNode.transform.parent = go.transform;
 
             // Iterate editor flats for enemies
             for (int i = 0; i < editorObjects.Length; i++)
             {
-                // Add enemy objects
-                int record = editorObjects[i].Resources.FlatResource.TextureRecord;
-                switch (record)
-                {
-                    case 15:                        // Random enemy
-                        AddRandomRDBEnemy(editorObjects[i], dungeonType, enemiesNode.transform);
-                        break;
-                    case 16:                        // Fixed enemy
-                        AddFixedRDBEnemy(editorObjects[i], enemiesNode.transform);
-                        break;
-                }
+                // Add fixed enemy objects
+                if (editorObjects[i].Resources.FlatResource.TextureRecord == fixedMonsterFlatIndex)
+                    AddFixedRDBEnemy(editorObjects[i], fixedEnemiesNode.transform);
+            }
+        }
+
+        /// <summary>
+        /// Add random enemies from encounter tables based on dungeon type, monster power, and seed.
+        /// </summary>
+        /// <param name="go">GameObject to add monsters to.</param>
+        /// <param name="editorObjects">Editor objects containing flats.</param>
+        /// <param name="dungeonType">Dungeon type selects the encounter table.</param>
+        /// <param name="monsterPower">Value between 0-1 for lowest monster power to highest.</param>
+        /// ?<param name="monsterVariance">Adjust final index +/- this value in encounter table.</param>
+        /// <param name="seed">Random seed for encounters.</param>
+        public static void AddRandomEnemies(
+            GameObject go,
+            DFBlock.RdbObject[] editorObjects,
+            DFRegion.DungeonTypes dungeonType,
+            float monsterPower,
+            int monsterVariance = 4,
+            int seed = 0)
+        {
+            const int randomMonsterFlatIndex = 15;
+
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Must have import enabled and prefab set
+            if (!dfUnity.Option_ImportEnemyPrefabs || dfUnity.Option_EnemyPrefab == null)
+                return;
+
+            // Editor objects array must be populated
+            if (editorObjects == null || editorObjects.Length == 0)
+                return;
+
+            // Add parent node
+            GameObject randomEnemiesNode = new GameObject("Random Enemies");
+            randomEnemiesNode.transform.parent = go.transform;
+
+            // Seed random generator
+            UnityEngine.Random.seed = seed;
+
+            // Iterate editor flats for enemies
+            for (int i = 0; i < editorObjects.Length; i++)
+            {
+                // Add random enemy objects
+                if (editorObjects[i].Resources.FlatResource.TextureRecord == randomMonsterFlatIndex)
+                    AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform);
             }
         }
 
@@ -798,6 +835,8 @@ namespace DaggerfallWorkshop.Utility
         private static void AddRandomRDBEnemy(
             DFBlock.RdbObject obj,
             DFRegion.DungeonTypes dungeonType,
+            float monsterPower,
+            int monsterVariance,
             Transform parent)
         {
             // Must have a dungeon type
@@ -805,15 +844,27 @@ namespace DaggerfallWorkshop.Utility
                 return;
 
             // Get dungeon type index
-            int index = (int)dungeonType >> 8;
-            if (index < RandomEncounters.EncounterTables.Length)
+            int dungeonIndex = (int)dungeonType >> 8;
+            if (dungeonIndex < RandomEncounters.EncounterTables.Length)
             {
                 // Get encounter table
-                RandomEncounterTable table = RandomEncounters.EncounterTables[index];
+                RandomEncounterTable table = RandomEncounters.EncounterTables[dungeonIndex];
+
+                // Get base monster index into table
+                int baseMonsterIndex = (int)((float)table.Enemies.Length * monsterPower);
+
+                // Set min index
+                int minMonsterIndex = baseMonsterIndex - monsterVariance;
+                if (minMonsterIndex < 0)
+                    minMonsterIndex = 0;
+
+                // Set max index
+                int maxMonsterIndex = baseMonsterIndex + monsterVariance;
+                if (maxMonsterIndex >= table.Enemies.Length)
+                    maxMonsterIndex = table.Enemies.Length;
 
                 // Get random monster from table
-                // Normally this would be weighted by player level
-                MobileTypes type = table.Enemies[UnityEngine.Random.Range(0, table.Enemies.Length)];
+                MobileTypes type = table.Enemies[UnityEngine.Random.Range(minMonsterIndex, maxMonsterIndex)];
 
                 // Add enemy
                 AddEnemy(obj, type, parent);

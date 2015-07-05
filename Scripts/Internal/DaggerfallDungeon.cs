@@ -34,6 +34,10 @@ namespace DaggerfallWorkshop
         public DungeonTextureUse DungeonTextureUse = DungeonTextureUse.UseLocation_PartiallyImplemented;
         public int[] DungeonTextureTable = new int[] { 119, 120, 122, 123, 124, 168 };
 
+        // Random monsters
+        public float RandomMonsterPower = 0.5f;
+        public int RandomMonsterVariance = 4;
+
         GameObject startMarker = null;
 
         public DungeonSummary Summary
@@ -85,11 +89,10 @@ namespace DaggerfallWorkshop
 
             // Perform layout
             startMarker = null;
-            LayoutDungeon(ref location);
-            //if (location.Name == "Orsinium")
-            //    LayoutOrsinium(ref location);
-            //else
-            //    LayoutDungeon(ref location);
+            if (location.Name == "Orsinium")
+                LayoutOrsinium(ref location);
+            else
+                LayoutDungeon(ref location);
 
             // Seal location
             isSet = true;
@@ -213,9 +216,9 @@ namespace DaggerfallWorkshop
 
         private void LayoutDungeon(ref DFLocation location)
         {
-            // Start timing
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            long startTime = stopwatch.ElapsedMilliseconds;
+            //// Start timing
+            //Stopwatch stopwatch = Stopwatch.StartNew();
+            //long startTime = stopwatch.ElapsedMilliseconds;
 
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
@@ -225,7 +228,9 @@ namespace DaggerfallWorkshop
                     DungeonTextureTable,
                     block.IsStartingBlock,
                     Summary.DungeonType,
-                    Summary.ID,
+                    RandomMonsterPower,
+                    RandomMonsterVariance,
+                    (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
                     dfUnity.Option_DungeonBlockPrefab);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
@@ -235,29 +240,37 @@ namespace DaggerfallWorkshop
                     FindStartMarker(daggerfallBlock);
             }
 
-            // Show timer
-            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
+            //// Show timer
+            //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            //DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
         }
 
-        //// Orsinium defines two blocks at [-1,-1]
-        //private void LayoutOrsinium(ref DFLocation location)
-        //{
-        //    // Create dungeon layout and handle misplaced block
-        //    foreach (var block in location.Dungeon.Blocks)
-        //    {
-        //        if (block.X == -1 && block.Z == -1 && block.BlockName == "N0000065.RDB")
-        //            continue;
+        // Orsinium defines two blocks at [-1,-1]
+        private void LayoutOrsinium(ref DFLocation location)
+        {
+            // Create dungeon layout and handle misplaced block
+            foreach (var block in location.Dungeon.Blocks)
+            {
+                if (block.X == -1 && block.Z == -1 && block.BlockName == "N0000065.RDB")
+                    continue;
 
-        //        GameObject go = RDBLayout.CreateGameObjectDeprecated(block.BlockName, block.IsStartingBlock, DungeonTextureTable, Summary.DungeonType, Summary.ID);
-        //        go.transform.parent = this.transform;
-        //        go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
+                GameObject go = GameObjectHelper.CreateRDBBlockGameObject(
+                    block.BlockName,
+                    DungeonTextureTable,
+                    block.IsStartingBlock,
+                    Summary.DungeonType,
+                    RandomMonsterPower,
+                    RandomMonsterVariance,
+                    (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
+                    dfUnity.Option_DungeonBlockPrefab);
+                go.transform.parent = this.transform;
+                go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
-        //        DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
-        //        if (block.IsStartingBlock)
-        //            FindStartMarker(daggerfallBlock);
-        //    }
-        //}
+                DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
+                if (block.IsStartingBlock)
+                    FindStartMarker(daggerfallBlock);
+            }
+        }
 
         // Finds start marker, should only be called for starting block
         private void FindStartMarker(DaggerfallRDBBlock dfBlock)

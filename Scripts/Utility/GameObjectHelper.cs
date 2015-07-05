@@ -362,6 +362,8 @@ namespace DaggerfallWorkshop.Utility
             int[] textureTable = null,
             bool allowExitDoors = true,
             DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold,
+            float monsterPower = 0.5f,
+            int monsterVariance = 4,
             int seed = 0,
             DaggerfallRDBBlock cloneFrom = null)
         {
@@ -369,9 +371,6 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return null;
-
-            // Seed random generator
-            UnityEngine.Random.seed = seed;
 
             // Create base object
             DFBlock blockData;
@@ -384,17 +383,18 @@ namespace DaggerfallWorkshop.Utility
             RDBLayout.AddLights(go, ref blockData);
 
             // Add flats
-            DFBlock.RdbObject[] editorObjectsOut;
-            GameObject[] startMarkersOut;
-            RDBLayout.AddFlats(go, ref blockData, out editorObjectsOut, out startMarkersOut);
+            DFBlock.RdbObject[] editorObjects;
+            GameObject[] startMarkers;
+            RDBLayout.AddFlats(go, ref blockData, out editorObjects, out startMarkers);
 
             // Set start markers
             DaggerfallRDBBlock dfBlock = go.GetComponent<DaggerfallRDBBlock>();
             if (dfBlock != null)
-                dfBlock.SetStartMarkers(startMarkersOut);
+                dfBlock.SetStartMarkers(startMarkers);
 
             // Add enemies
-            RDBLayout.AddEnemies(go, editorObjectsOut, dungeonType);
+            RDBLayout.AddFixedEnemies(go, editorObjects);
+            RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, monsterVariance, seed);
 
             return go;
         }

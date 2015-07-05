@@ -273,9 +273,21 @@ namespace DaggerfallWorkshop
                         {
                             // Create block
                             if (propBlockName.stringValue.EndsWith(".RMB"))
+                            {
                                 GameObjectHelper.CreateRMBBlockGameObject(propBlockName.stringValue, dfUnity.Option_RMBGroundPlane, dfUnity.Option_CityBlockPrefab);
+                            }
                             else if (propBlockName.stringValue.EndsWith(".RDB"))
-                                GameObjectHelper.CreateRDBBlockGameObject(propBlockName.stringValue, null, true, DFRegion.DungeonTypes.HumanStronghold, 0, dfUnity.Option_DungeonBlockPrefab);
+                            {
+                                GameObjectHelper.CreateRDBBlockGameObject(
+                                    propBlockName.stringValue,
+                                    null,
+                                    true,
+                                    DFRegion.DungeonTypes.HumanStronghold,
+                                    0.5f,
+                                    4,
+                                    (int)DateTime.Now.Ticks,
+                                    dfUnity.Option_DungeonBlockPrefab);
+                            }
                         }
                     });
 
