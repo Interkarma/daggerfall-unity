@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop
             while (true)
             {
                 // Tick animation when valid
-                if (FramesPerSecond > 0 && cachedMaterial.key != 0 && customMaterial == null)
+                if (FramesPerSecond > 0 && cachedMaterial.key != 0 && customMaterial == null && uvs != null)
                 {
                     // Look for animated billboards
                     for (int billboard = 0; billboard < billboardItems.Count; billboard++)
@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop
                     }
 
                     // Store new mesh UV set
-                    if (uvs.Length > 0)
+                    if (uvs != null && uvs.Length > 0)
                         billboardMesh.uv = uvs;
                 }
 

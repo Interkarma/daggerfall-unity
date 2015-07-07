@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop
     public class FontExporterWindow : EditorWindow
     {
         const string windowTitle = "Font Exporter";
-        const string menuPath = "Daggerfall Tools/Font Exporter";
+        const string menuPath = "Daggerfall Tools/Font Exporter [Beta]";
 
         public FontSelection fontSelection = FontSelection.FONT0001;
         public Color BackgroundColor = Color.clear;

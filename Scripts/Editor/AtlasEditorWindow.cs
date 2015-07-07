@@ -60,8 +60,6 @@ namespace DaggerfallWorkshop
 
         void OnGUI()
         {
-            //const int previewDimension = 256;
-
             if (!IsReady())
             {
                 EditorGUILayout.HelpBox("DaggerfallUnity instance not ready. Have you set your Arena2 path?", MessageType.Info);
@@ -110,14 +108,6 @@ namespace DaggerfallWorkshop
                 search = true;
             }
 
-            // This is virtual rect of scroll area
-            // Saved for later use
-            //Rect virtualRect = new Rect();
-            //virtualRect.xMin = 0;
-            //virtualRect.xMax = position.width;
-            //virtualRect.yMin = scrollPos.y;
-            //virtualRect.yMax = scrollPos.y + position.height;
-
             int totalLocations = 0;
             string regionSlash = regionNames[selectedRegion] + "/";
             scrollPos = GUILayoutHelper.ScrollView(scrollPos, () =>
@@ -142,8 +132,6 @@ namespace DaggerfallWorkshop
                 }
             });
 
-            //Rect rect = EditorGUILayout.GetControlRect(false, previewDimension);
-
             EditorGUILayout.LabelField("Total locations found: " + totalLocations);
         }
 
@@ -151,12 +139,13 @@ namespace DaggerfallWorkshop
         {
             if (!dfUnity)
                 dfUnity = DaggerfallUnity.Instance;
-            if (!dfUnity.IsReady)
+
+            if (!dfUnity.IsReady || string.IsNullOrEmpty(dfUnity.Arena2Path))
                 return false;
 
             if (regionNames.Length == 0)
             {
-                regionNames = dfUnity.ContentReader.MapFileReader.RegionNames;
+                regionNames = (string[])dfUnity.ContentReader.MapFileReader.RegionNames.Clone();
                 System.Array.Sort(regionNames);
             }
 
@@ -243,30 +232,5 @@ namespace DaggerfallWorkshop
 
             locationNames.Sort();
         }
-
-        //void DrawPreview(string multiName)
-        //{
-        //    const int previewHeight = 128;
-
-        //    Rect rect = EditorGUILayout.GetControlRect(false, previewHeight);
-
-        //    Rect virtualRect = new Rect(0, scrollPos.y, position.width, scrollPos.y + position.height);
-
-        //    ////GUI.Label(rect, virtualRect.ToString());
-        //    //if (virtualRect.Overlaps(rect))
-        //    //{
-        //    //    //GUI.Label(rect, "I am visible.");
-        //    //    //DFLocation location = dfUnity.ContentReader.MapFileReader.GetLocation(0, 0);
-        //    //    //if (GameObjectHelper.FindMultiNameLocation(multiName, out location))
-        //    //    //{
-        //    //    //    //GUI.Label(rect, "Found location.");
-        //    //    //    //EditorGUILayout.LabelField("Found location.");
-        //    //    //}
-        //    //}
-        //    //else
-        //    //{
-        //    //    GUI.Label(rect, "I am NOT visible.");
-        //    //}
-        //}
     }
 }
