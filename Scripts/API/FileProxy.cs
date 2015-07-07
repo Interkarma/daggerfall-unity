@@ -372,6 +372,28 @@ namespace DaggerfallConnect.Utility
         }
 
         /// <summary>
+        /// Find a string pattern inside file.
+        /// </summary>
+        /// <param name="pattern">String pattern to search for. Converted to UTF8 and is case sensitive.</param>
+        /// <param name="position">Position to begin search.</param>
+        /// <returns>Index of pattern found or -1 if not found.</returns>
+        public int FindString(string pattern, int position = 0)
+        {
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(pattern);
+
+            for (int i = position; i < Buffer.Length; i++)
+            {
+                if (Buffer[i] == bytes[0])
+                {
+                    if (ReadCString(i, pattern.Length) == pattern)
+                        return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Reads next 2 bytes as a big-endian Int16.
         /// </summary>
         /// <param name="reader">Source reader.</param>
