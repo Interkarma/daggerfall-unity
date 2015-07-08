@@ -74,6 +74,7 @@ namespace DaggerfallConnect.FallExe
         const string rubyString = "Ruby";
         const string fallExeFilename = "FALL.EXE";
         const int defaultItemsOffset = 1776954;
+        const int nameLength = 24;
         const int recordLength = 48;
         const int totalItems = 288;
 
@@ -173,9 +174,10 @@ namespace DaggerfallConnect.FallExe
         /// Opens FALL.EXE file.
         /// </summary>
         /// <param name="fallExePath">Path to FALL.EXE file.</param>
+        /// <param name="fileUsage">How to load file</param>
         /// <param name="readOnly">Open file read-only</param>
         /// <returns>True if successful.</returns>
-        public bool OpenFallExeFile(string fallExePath, bool readOnly = true)
+        public bool OpenFallExeFile(string fallExePath, FileUsage fileUsage = FileUsage.UseMemory, bool readOnly = true)
         {
             isOpen = false;
             items.Clear();
@@ -185,7 +187,7 @@ namespace DaggerfallConnect.FallExe
                 return false;
 
             // Open file
-            if (!fallExeFile.Load(fallExePath, FileUsage.UseMemory, readOnly))
+            if (!fallExeFile.Load(fallExePath, fileUsage, readOnly))
                 return false;
 
             // Read file
@@ -198,32 +200,78 @@ namespace DaggerfallConnect.FallExe
         }
 
         /// <summary>
-        /// Gets an item template pre-formatted into friendly data.
+        /// Gets native item data as read from FALL.EXE.
+        /// </summary>
+        /// <param name="index">index of item.</param>
+        /// <returns>DFItem</returns>
+        public DFItem GetItem(int index)
+        {
+            DFItem item = new DFItem();
+            if (items.Count > 0 && index >= 0 && index < items.Count)
+            {
+                item = items[index];
+            }
+
+            return item;
+        }
+
+        /// <summary>
+        /// Gets a item description pre-formatted into friendly data.
         /// </summary>
         /// <param name="index">Index of item.</param>
         /// <returns>ItemTemplate</returns>
         public ItemDescription GetItemDescription(int index)
         {
-            ItemDescription template = new ItemDescription();
+            ItemDescription desc = new ItemDescription();
             if (items.Count > 0 && index >= 0 && index < items.Count)
             {
                 DFItem item = items[index];
-                template.name = Encoding.UTF8.GetString(item.name).TrimEnd('\0');
-                template.baseWeight = (float)item.baseWeightUnits * 0.25f;
-                template.hitPoints = item.hitPoints;
-                template.Unknown1 = item.Unknown1;
-                template.enchantmentPoints = item.enchantmentPoints;
-                template.Unknown2 = item.Unknown2;
-                template.drawOrder = item.drawOrder;
-                template.Unknown3 = item.Unknown3;
-                template.isIngredient = ((item.Unknown3 & 1) == 1) ? true : false;
-                template.inventoryTextureArchive = item.inventoryTextureBitfield >> 7;
-                template.inventoryTextureRecord = item.inventoryTextureBitfield & 0x7f;
-                template.paperDollTextureArchive = item.paperDollTextureBitfield >> 7;
-                template.paperDollTextureRecord = item.paperDollTextureBitfield & 0x7f;
+                desc.name = Encoding.UTF8.GetString(item.name).TrimEnd('\0');
+                desc.baseWeight = (float)item.baseWeightUnits * 0.25f;
+                desc.hitPoints = item.hitPoints;
+                desc.Unknown1 = item.Unknown1;
+                desc.enchantmentPoints = item.enchantmentPoints;
+                desc.Unknown2 = item.Unknown2;
+                desc.drawOrder = item.drawOrder;
+                desc.Unknown3 = item.Unknown3;
+                desc.isIngredient = ((item.Unknown3 & 1) == 1) ? true : false;
+                desc.inventoryTextureArchive = item.inventoryTextureBitfield >> 7;
+                desc.inventoryTextureRecord = item.inventoryTextureBitfield & 0x7f;
+                desc.paperDollTextureArchive = item.paperDollTextureBitfield >> 7;
+                desc.paperDollTextureRecord = item.paperDollTextureBitfield & 0x7f;
             }
             
-            return template;
+            return desc;
+        }
+
+        #endregion
+
+        #region Research
+
+        /// <summary>
+        /// Rewrites item data back into disk file.
+        /// Must have been opened with FileUsage.UseDisk and readOnly flag false.
+        /// </summary>
+        /// <param name="item">Item to rewrite.</param>
+        public void RewriteItem(DFItem item)
+        {
+            if (isOpen && fallExeFile.Usage == FileUsage.UseDisk && fallExeFile.ReadOnly == false)
+            {
+                BinaryWriter writer = fallExeFile.GetWriter();
+                writer.BaseStream.Position = item.position;
+                writer.Write(item.name);
+                writer.Write(item.baseWeightUnits);
+                writer.Write(item.hitPoints);
+                writer.Write(item.Unknown1);
+                writer.Write(item.baseCost);
+                writer.Write(item.enchantmentPoints);
+                writer.Write(item.Unknown2);
+                writer.Write(item.drawOrder);
+                writer.Write(item.Unknown3);
+                writer.Write(item.inventoryTextureBitfield);
+                writer.Write(item.paperDollTextureBitfield);
+                writer.Close();
+            }
         }
 
         #endregion
@@ -280,7 +328,8 @@ namespace DaggerfallConnect.FallExe
         private DFItem ReadNextItem(BinaryReader reader)
         {
             DFItem item = new DFItem();
-            item.name = reader.ReadBytes(24);
+            item.position = reader.BaseStream.Position;
+            item.name = reader.ReadBytes(nameLength);
             item.baseWeightUnits = reader.ReadInt32();
             item.hitPoints = reader.ReadInt16();
             item.Unknown1 = reader.ReadInt32();
