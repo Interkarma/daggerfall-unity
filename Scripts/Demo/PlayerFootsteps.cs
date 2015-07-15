@@ -72,12 +72,15 @@ namespace DaggerfallWorkshop.Demo
 
         void FixedUpdate()
         {
-            // Change footstep sounds between winter/summer variants
-            // or when player enters/exits an interior space
-            if (dfUnity.WorldTime.Now.SeasonValue != currentSeason || isInside != playerEnterExit.IsPlayerInside)
+            // Get player inside flag
+            // Can only do this when PlayerEnterExit is available, otherwise default to true
+            bool playerInside = (playerEnterExit == null) ? true : playerEnterExit.IsPlayerInside;
+
+            // Change footstep sounds between winter/summer variants or when player enters/exits an interior space
+            if (dfUnity.WorldTime.Now.SeasonValue != currentSeason || isInside != playerInside)
             {
                 currentSeason = dfUnity.WorldTime.Now.SeasonValue;
-                isInside = playerEnterExit.IsPlayerInside;
+                isInside = playerInside;
                 if (currentSeason == DaggerfallDateTime.Seasons.Winter && !isInside)
                     currentFootstepSound = FootstepSoundSnow;
                 else
