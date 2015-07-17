@@ -9,6 +9,8 @@
 // Notes:
 //
 
+//#define KEEP_PREFAB_LINKS
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -296,6 +298,17 @@ namespace DaggerfallWorkshop.Utility
         public static GameObject InstantiatePrefab(GameObject prefab, string name, Transform parent, Vector3 position)
         {
             GameObject go = null;
+
+#if UNITY_EDITOR && KEEP_PREFAB_LINKS
+            if (prefab != null)
+            {
+                //go = GameObject.Instantiate(prefab);
+                go = UnityEditor.PrefabUtility.InstantiatePrefab(prefab as GameObject) as GameObject;
+                if (!string.IsNullOrEmpty(name)) go.name = name;
+                if (parent != null) go.transform.parent = parent;
+                go.transform.position = position;
+            }
+#else
             if (prefab != null)
             {
                 go = GameObject.Instantiate(prefab);
@@ -303,6 +316,7 @@ namespace DaggerfallWorkshop.Utility
                 if (parent != null) go.transform.parent = parent;
                 go.transform.position = position;
             }
+#endif
 
             return go;
         }
