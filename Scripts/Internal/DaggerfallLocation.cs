@@ -188,10 +188,10 @@ namespace DaggerfallWorkshop
                 switch (ClimateUse)
                 {
                     case LocationClimateUse.UseLocation:
-                        dm.SetClimate(dfUnity, Summary.Climate, CurrentSeason, WindowTextureStyle);
+                        dm.SetClimate(Summary.Climate, CurrentSeason, WindowTextureStyle);
                         break;
                     case LocationClimateUse.Custom:
-                        dm.SetClimate(dfUnity, CurrentClimate, CurrentSeason, WindowTextureStyle);
+                        dm.SetClimate(CurrentClimate, CurrentSeason, WindowTextureStyle);
                         break;
                     case LocationClimateUse.Disabled:
                         dm.DisableClimate(dfUnity);

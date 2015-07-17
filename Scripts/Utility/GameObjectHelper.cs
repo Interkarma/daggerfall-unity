@@ -149,6 +149,46 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
+        // TEMP: Changes a Daggerfall mesh to another ID
+        // This will eventually be integrated with a future self-assembling mesh prefab
+        public static void ChangeDaggerfallMeshGameObject(DaggerfallMesh dfMesh, uint newModelID)
+        {
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+
+            // Get new mesh
+            CachedMaterial[] cachedMaterials;
+            int[] textureKeys;
+            bool hasAnimations;
+            Mesh mesh = dfUnity.MeshReader.GetMesh(
+                dfUnity,
+                newModelID,
+                out cachedMaterials,
+                out textureKeys,
+                out hasAnimations,
+                dfUnity.MeshReader.AddMeshTangents,
+                dfUnity.MeshReader.AddMeshLightmapUVs);
+
+            // Get mesh filter and renderer components
+            MeshFilter meshFilter = dfMesh.GetComponent<MeshFilter>();
+            MeshRenderer meshRenderer = dfMesh.GetComponent<MeshRenderer>();
+
+            // Update mesh
+            if (mesh && meshFilter && meshRenderer)
+            {
+                meshFilter.sharedMesh = mesh;
+                meshRenderer.sharedMaterials = GetMaterialArray(cachedMaterials);
+            }
+
+            // Update collider
+            MeshCollider collider = dfMesh.GetComponent<MeshCollider>();
+            {
+                collider.sharedMesh = mesh;
+            }
+
+            // Update name
+            dfMesh.name = string.Format("DaggerfallMesh [ID={0}]", newModelID);
+        }
+
         public static GameObject CreateCombinedMeshGameObject(
             ModelCombiner combiner,
             string meshName,

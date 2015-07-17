@@ -26,6 +26,30 @@ namespace DaggerfallWorkshop
     {
         [SerializeField]
         private List<int> defaultTextures = new List<int>();
+        [SerializeField]
+        private ClimateBases currentClimate;
+        [SerializeField]
+        private ClimateSeason currentSeason;
+        [SerializeField]
+        private WindowStyle currentWindowStyle;
+
+        public ClimateBases Climate
+        {
+            get { return currentClimate; }
+            set { currentClimate = value; }
+        }
+
+        public ClimateSeason Season
+        {
+            get { return currentSeason; }
+            set { currentSeason = value; }
+        }
+
+        public WindowStyle WindowStyle
+        {
+            get { return currentWindowStyle; }
+            set { currentWindowStyle = value; }
+        }
 
         /// <summary>
         /// Gets number of default textures on model.
@@ -67,8 +91,10 @@ namespace DaggerfallWorkshop
         /// <param name="climate">Climate to set.</param>
         /// <param name="season">Season to set.</param>
         /// <param name="windowStyle">Style of window to set.</param>
-        public void SetClimate(DaggerfallUnity dfUnity, ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+        public void SetClimate(ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
         {
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+
             if (defaultTextures.Count == 0)
                 return;
 
@@ -82,6 +108,19 @@ namespace DaggerfallWorkshop
             // Assign material array
             if (materials != null)
                 GetComponent<MeshRenderer>().sharedMaterials = materials;
+
+            // Store climate settings
+            currentClimate = climate;
+            currentSeason = season;
+            currentWindowStyle = windowStyle;
+        }
+
+        /// <summary>
+        /// Applies current climate settings to model.
+        /// </summary>
+        public void ApplyCurrentClimate()
+        {
+            SetClimate(currentClimate, currentSeason, currentWindowStyle);
         }
 
         /// <summary>
