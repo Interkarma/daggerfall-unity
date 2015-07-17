@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Demo
         public GameObject ExteriorParent;
         public GameObject InteriorParent;
         public GameObject DungeonParent;
+        public DaggerfallLocation OverrideLocation;
 
         int lastPlayerDungeonBlockIndex = -1;
         DFLocation.DungeonBlock playerDungeonBlockData = new DFLocation.DungeonBlock();
@@ -146,9 +147,13 @@ namespace DaggerfallWorkshop.Demo
             // Raise event
             RaiseOnPreTransitionEvent(TransitionType.ToBuildingInterior, door);
 
-            // Get current climate
+            // Get climate
             ClimateBases climateBase = ClimateBases.Temperate;
-            if (playerGPS)
+            if (OverrideLocation)
+            {
+                climateBase = OverrideLocation.Summary.Climate;
+            }
+            else if (playerGPS)
             {
                 climateBase = ClimateSwaps.FromAPIClimateBase(playerGPS.ClimateSettings.ClimateType);
             }
@@ -273,6 +278,14 @@ namespace DaggerfallWorkshop.Demo
             // Ensure we have component references
             if (!ReferenceComponents())
                 return;
+
+            // Override location if specified
+            if (OverrideLocation != null)
+            {
+                DFLocation overrideLocation = dfUnity.ContentReader.MapFileReader.GetLocation(OverrideLocation.Summary.RegionName, OverrideLocation.Summary.LocationName);
+                if (overrideLocation.Loaded)
+                    location = overrideLocation;
+            }
 
             // Raise event
             RaiseOnPreTransitionEvent(TransitionType.ToDungeonInterior, door);
