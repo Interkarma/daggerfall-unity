@@ -9,7 +9,7 @@
 // Notes:
 //
 
-//#define KEEP_PREFAB_LINKS
+#define KEEP_PREFAB_LINKS
 
 using UnityEngine;
 using System.Collections;
