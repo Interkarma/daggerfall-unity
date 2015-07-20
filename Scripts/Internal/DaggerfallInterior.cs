@@ -197,7 +197,7 @@ namespace DaggerfallWorkshop
 
                     // Update climate
                     DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
-                    dfMesh.SetClimate(dfUnity, climateBase, climateSeason, WindowStyle.Disabled);
+                    dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
                 }
             }
 
@@ -211,7 +211,7 @@ namespace DaggerfallWorkshop
 
                     // Update climate
                     DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
-                    dfMesh.SetClimate(dfUnity, climateBase, climateSeason, WindowStyle.Disabled);
+                    dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
                 }
             }
 

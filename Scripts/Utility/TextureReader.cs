@@ -169,8 +169,9 @@ namespace DaggerfallWorkshop.Utility
             albedoMap.Apply(true, !settings.stayReadable);
 
             // Create normal texture - must be ARGB32
+            // Normal maps are bypassed for solid-colour textures
             Texture2D normalMap = null;
-            if (settings.createNormalMap)
+            if (settings.createNormalMap && textureFile.SolidType == TextureFile.SolidTypes.None)
             {
                 Color32[] normalColors;
                 normalColors = ImageProcessing.GetBumpMap(ref albedoColors, sz.Width, sz.Height);

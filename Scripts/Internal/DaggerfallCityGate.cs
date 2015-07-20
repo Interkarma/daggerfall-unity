@@ -15,23 +15,39 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop
 {
     public class DaggerfallCityGate : MonoBehaviour
     {
-        bool isOpen;
+        bool isOpen = true;
 
         public void SetOpen(bool open)
         {
-            // Do nothing if no change
-            if (open == isOpen)
-                return;
-
-            // TODO: Change model
-
             // Save new state
             isOpen = open;
+
+            // Change model
+            DaggerfallMesh mesh = GetComponent<DaggerfallMesh>();
+            if (mesh != null)
+            {
+                // Get current climate
+
+                // Set open/closed
+                if (isOpen)
+                    GameObjectHelper.ChangeDaggerfallMeshGameObject(mesh, RMBLayout.CityGateOpenModelID);
+                else
+                    GameObjectHelper.ChangeDaggerfallMeshGameObject(mesh, RMBLayout.CityGateClosedModelID);
+
+                // Update climate
+                mesh.ApplyCurrentClimate();
+            }
+        }
+
+        public void Toggle()
+        {
+            SetOpen(!isOpen);
         }
     }
 }

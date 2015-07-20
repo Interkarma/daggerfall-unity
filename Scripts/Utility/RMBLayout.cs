@@ -30,8 +30,8 @@ namespace DaggerfallWorkshop.Utility
         const float propsOffsetY = -4f;
         const float blockFlatsOffsetY = -6f;
         const float natureFlatsOffsetY = -2f;
-        const uint cityGateOpenModelId = 446;
-        const uint cityGateClosedModelId = 447;
+        public const uint CityGateOpenModelID = 446;
+        public const uint CityGateClosedModelID = 447;
 
         #region Layout Methods
 
@@ -456,7 +456,7 @@ namespace DaggerfallWorkshop.Utility
 
         private static bool IsCityGate(uint modelID)
         {
-            if (modelID == cityGateOpenModelId || modelID == cityGateClosedModelId)
+            if (modelID == CityGateOpenModelID || modelID == CityGateClosedModelID)
                 return true;
             else
                 return false;

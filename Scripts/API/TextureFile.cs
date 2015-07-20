@@ -66,7 +66,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Solid types enumeration.
         /// </summary>
-        private enum SolidTypes
+        public enum SolidTypes
         {
             None,
             SolidColoursA,
@@ -234,6 +234,14 @@ namespace DaggerfallConnect.Arena2
         public override int RecordCount
         {
             get { return header.RecordCount; }
+        }
+
+        /// <summary>
+        /// Gets texture solid type for flat-colour textures.
+        /// </summary>
+        public SolidTypes SolidType
+        {
+            get { return solidType; }
         }
 
         #endregion
