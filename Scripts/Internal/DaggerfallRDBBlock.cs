@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System.Collections;
@@ -15,7 +19,7 @@ using DaggerfallConnect.Arena2;
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// Attached to a dungeon block.
+    /// Attached to dungeon blocks.
     /// </summary>
     public class DaggerfallRDBBlock : MonoBehaviour
     {

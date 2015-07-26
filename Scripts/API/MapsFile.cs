@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 #region Using Statements
 using System;
@@ -900,7 +904,7 @@ namespace DaggerfallConnect.Arena2
                 bitfield = reader.ReadUInt32();
                 regions[region].DFRegion.MapTable[i].LongitudeTypeBitfield = bitfield;
                 regions[region].DFRegion.MapTable[i].Longitude = bitfield & 0x1ffff;
-                regions[region].DFRegion.MapTable[i].Type = (DFRegion.LocationTypes)(bitfield >> 17);
+                regions[region].DFRegion.MapTable[i].LocationType = (DFRegion.LocationTypes)(bitfield >> 17);
                 regions[region].DFRegion.MapTable[i].Latitude = reader.ReadUInt16();
                 regions[region].DFRegion.MapTable[i].DungeonType = (DFRegion.DungeonTypes)reader.ReadUInt16();
                 regions[region].DFRegion.MapTable[i].Unknown3 = reader.ReadUInt32();

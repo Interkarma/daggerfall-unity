@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -33,11 +37,12 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.3.7";
+        public const string Version = "1.3.31";
 
         #region Fields
 
         bool isReady = false;
+        bool isPathValidated = false;
         ContentReader reader;
 
         WorldTime worldTime;
@@ -56,43 +61,29 @@ namespace DaggerfallWorkshop
         public string DungeonImporter_DungeonName = "Daggerfall/Privateer's Hold";
 
         // Performance options
+        public bool Option_SetStaticFlags = true;
         public bool Option_CombineRMB = true;
         public bool Option_CombineRDB = true;
-        //public bool Option_CombineLocations = true;
         public bool Option_BatchBillboards = true;
 
         // Import options
-        public bool Option_SetStaticFlags = true;
         public bool Option_AddMeshColliders = true;
         public bool Option_AddNavmeshAgents = true;
-        public bool Option_DefaultSounds = true;
-        public bool Option_SimpleGroundPlane = true;
+        public bool Option_RMBGroundPlane = true;
         public bool Option_CloseCityGates = false;
 
-        // Light options
-        public bool Option_ImportPointLights = true;
-        public bool Option_AnimatedPointLights = true;
-        public string Option_PointLightTag = "Untagged";
-#if UNITY_EDITOR
-        public MonoScript Option_CustomPointLightScript = null;
-#endif
-
-        // Enemy options
-        public bool Option_ImportEnemies = true;
-        public bool Option_EnemyCharacterController = false;
-        public bool Option_EnemyRigidbody = false;
-        public bool Option_EnemyCapsuleCollider = false;
-        public bool Option_EnemyNavMeshAgent = false;
-        public bool Option_EnemyExampleAI = true;
-        public string Option_EnemyTag = "Untagged";
-        public float Option_EnemyRadius = 0.4f;
-        public float Option_EnemySlopeLimit = 80f;
-        public float Option_EnemyStepOffset = 0.4f;
-        public bool Option_EnemyUseGravity = false;
-        public bool Option_EnemyIsKinematic = true;
-#if UNITY_EDITOR
-        public MonoScript Option_CustomEnemyScript = null;
-#endif
+        // Prefab options
+        public bool Option_ImportLightPrefabs = true;
+        public Light Option_CityLightPrefab = null;
+        public Light Option_DungeonLightPrefab = null;
+        public Light Option_InteriorLightPrefab = null;
+        public bool Option_ImportDoorPrefabs = true;
+        public DaggerfallActionDoor Option_DungeonDoorPrefab = null;
+        public DaggerfallActionDoor Option_InteriorDoorPrefab = null;
+        public DaggerfallRMBBlock Option_CityBlockPrefab = null;
+        public DaggerfallRDBBlock Option_DungeonBlockPrefab = null;
+        public bool Option_ImportEnemyPrefabs = true;
+        public DaggerfallEnemy Option_EnemyPrefab = null;
 
         // Time and space options
         public bool Option_AutomateTextureSwaps = true;
@@ -101,12 +92,6 @@ namespace DaggerfallWorkshop
         public bool Option_AutomateCityLights = true;
         public bool Option_AutomateCityGates = false;
 
-        // Resource export options
-#if UNITY_EDITOR
-        public string Option_MyResourcesFolder = "Daggerfall Unity/Resources";
-        public string Option_TerrainAtlasesSubFolder = "TerrainAtlases";
-#endif
-
         #endregion
 
         #region Class Properties
@@ -114,6 +99,11 @@ namespace DaggerfallWorkshop
         public bool IsReady
         {
             get { return isReady; }
+        }
+
+        public bool IsPathValidated
+        {
+            get { return isPathValidated; }
         }
 
         public MaterialReader MaterialReader
@@ -138,12 +128,7 @@ namespace DaggerfallWorkshop
 
         public ContentReader ContentReader
         {
-            get
-            {
-                if (reader == null)
-                    SetupContentReaders();
-                return reader;
-            }
+            get { return reader; }
         }
 
         #endregion
@@ -182,144 +167,109 @@ namespace DaggerfallWorkshop
 
         void Start()
         {
-#if UNITY_EDITOR
-            // Check for missing or invalid Arena2 path on game start in editor
-            // Only builds should run from local resources
-            if (Application.isPlaying)
-            {
-                if (!ValidateArena2Path(Arena2Path))
-                    throw new Exception("Arena2Path is not valid!");
-                Setup();
-            }
-#else
-            // Startup
-            Setup();
             SetupSingleton();
+            SetupArena2Path();
             SetupContentReaders();
-#endif
         }
 
         void Update()
         {
-            // Instance must be set up
-            if (!Setup())
-                return;
-
 #if UNITY_EDITOR
-            // Content readers must be ready
-            // This is checked every update in editor as
-            // code changes can reset singleton fields
-            SetupContentReaders();
+            // Check ready every update in editor as code changes can de-instantiate local objects
+            if (!isReady) SetupArena2Path();
+            if (reader == null) SetupContentReaders();
 #endif
         }
 
         #endregion
 
+        #region Editor-Only Methods
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Setup path and content readers again.
+        /// Used by editor when setting new Arena2Path.
+        /// </summary>
+        public void EditorResetArena2Path()
+        {
+            SetupArena2Path();
+            SetupContentReaders(true);
+        }
+
+        /// <summary>
+        /// Clear Arena2 path in editor.
+        /// Used when you wish to decouple from Arena2 for certain builds.
+        /// </summary>
+        public void EditorClearArena2Path()
+        {
+            Arena2Path = string.Empty;
+            EditorResetArena2Path();
+        }
+#endif
+
+        #endregion
+
         #region Startup and Shutdown
 
-        public bool Setup()
+        private void SetupArena2Path()
         {
-            // Full validation is only performed in editor mode
-            // This is to allow standalone builds to start with
-            // no Arena2 data, or partial Arena2 data in Resources
-            if (!isReady)
+            // Allow implementor to set own Arena2 path (e.g. from custom settings file)
+            RaiseOnSetArena2SourceEvent();
+
+            // Check path is valid
+            if (ValidateArena2Path(Arena2Path))
             {
-#if UNITY_EDITOR
-                if (!Application.isPlaying)
+                isReady = true;
+                isPathValidated = true;
+                LogMessage("Arena2 path validated.", true);
+                return;
+            }
+            else
+            {
+                // Look for arena2 folder in Application.dataPath at runtime
+                if (Application.isPlaying)
                 {
-                    // Attempt to autoload path
-                    LoadDeveloperArena2Path();
-
-                    // Must have a path set
-                    if (string.IsNullOrEmpty(Arena2Path))
-                        return false;
-
-                    // Validate current path
-                    if (ValidateArena2Path(Arena2Path))
+                    string path = Path.Combine(Application.dataPath, "arena2");
+                    if (Directory.Exists(path))
                     {
-                        isReady = true;
-                        LogMessage("Arena2 path validated.", true);
-                        SetupSingleton();
-                        SetupContentReaders();
+                        // If it appears valid set this is as our path
+                        if (ValidateArena2Path(path))
+                        {
+                            Arena2Path = path;
+                            isReady = true;
+                            isPathValidated = true;
+                            LogMessage(string.Format("Found valid arena2 path at '{0}'.", path));
+                            return;
+                        }
                     }
-                    else
-                    {
-                        isReady = false;
-                        return false;
-                    }
+                }
+            }
+
+            // No path was found but we can try to carry on without one
+            isReady = true;
+            isPathValidated = false;
+
+            // Singleton is now ready
+            RaiseOnReadyEvent();
+        }
+
+        private void SetupContentReaders(bool force = false)
+        {
+            if (reader == null || force)
+            {
+                // Ensure content readers available even when path not valid
+                if (isPathValidated)
+                {
+                    DaggerfallUnity.LogMessage(string.Format("Setting up content readers with arena2 path '{0}'.", Arena2Path));
+                    reader = new ContentReader(Arena2Path);
                 }
                 else
                 {
-                    SetupSingleton();
-                    SetupContentReaders();
-                }
-#else
-                SetupSingleton();
-                SetupContentReaders();
-#endif
-
-                isReady = true;
-            }
-
-            return true;
-        }
-
-        public bool ValidateArena2Path(string path)
-        {
-            DFValidator.ValidationResults results;
-            DFValidator.ValidateArena2Folder(path, out results);
-
-            return results.AppearsValid;
-        }
-
-        private void SetupSingleton()
-        {
-            if (instance == null)
-                instance = this;
-            else if (instance != this)
-            {
-                if (Application.isPlaying)
-                {
-                    LogMessage("Multiple DaggerfallUnity instances detected!", true);
-                    Destroy(gameObject);
+                    DaggerfallUnity.LogMessage(string.Format("Setting up content readers without arena2 path. Not all features will be available."));
+                    reader = new ContentReader(string.Empty);
                 }
             }
         }
-
-        private void SetupContentReaders()
-        {
-            if (isReady)
-            {
-                if (reader == null)
-                    reader = new ContentReader(Arena2Path, this);
-            }
-        }
-
-#if UNITY_EDITOR
-        private void LoadDeveloperArena2Path()
-        {
-            const string devArena2Path = "devArena2Path";
-
-            // Do nothing if path already set or playing
-            if (!string.IsNullOrEmpty(Arena2Path) || Application.isPlaying)
-                return;
-
-            // Attempt to load persistent dev path from Resources
-            TextAsset path = Resources.Load<TextAsset>(devArena2Path);
-            if (path)
-            {
-                if (Directory.Exists(path.text))
-                {
-                    // If it looks valid set this is as our path
-                    if (ValidateArena2Path(path.text))
-                    {
-                        Arena2Path = path.text;
-                        EditorUtility.SetDirty(this);
-                    }
-                }
-            }
-        }
-#endif
 
         #endregion
 
@@ -342,18 +292,54 @@ namespace DaggerfallWorkshop
             return true;
         }
 
+        public static bool ValidateArena2Path(string path)
+        {
+            DFValidator.ValidationResults results;
+            DFValidator.ValidateArena2Folder(path, out results);
+
+            return results.AppearsValid;
+        }
+
         #endregion
 
-//        #region Editor Asset Export
-//#if UNITY_EDITOR && !UNITY_WEBPLAYER
-//        public void ExportTerrainTextureAtlases()
-//        {
-//            if (MaterialReader.IsReady)
-//            {
-//                TerrainAtlasBuilder.ExportTerrainAtlasTextureResources(materialReader.TextureReader, Option_MyResourcesFolder, Option_TerrainAtlasesSubFolder);
-//            }
-//        }
-//#endif
-//        #endregion
+        #region Private Methods
+
+        private void SetupSingleton()
+        {
+            if (instance == null)
+                instance = this;
+            else if (instance != this)
+            {
+                if (Application.isPlaying)
+                {
+                    LogMessage("Multiple DaggerfallUnity instances detected in scene!", true);
+                    Destroy(gameObject);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnReady
+        public delegate void OnReadyEventHandler();
+        public static event OnReadyEventHandler OnReady;
+        protected virtual void RaiseOnReadyEvent()
+        {
+            if (OnReady != null)
+                OnReady();
+        }
+
+        // OnSetArena2Source
+        public delegate void OnSetArena2SourceEventHandler();
+        public static event OnSetArena2SourceEventHandler OnSetArena2Source;
+        protected virtual void RaiseOnSetArena2SourceEvent()
+        {
+            if (OnSetArena2Source != null)
+                OnSetArena2Source();
+        }
+
+        #endregion
     }
 }

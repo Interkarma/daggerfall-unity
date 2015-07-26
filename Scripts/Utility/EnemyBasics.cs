@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using System;
 using System.Collections.Generic;
@@ -1337,11 +1341,11 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets a dictionary of enemies keyed by ID.
+        /// Build a dictionary of enemies keyed by ID.
         /// Use this once and store for faster enemy lookups.
         /// </summary>
         /// <returns>Dictionary<int, MobileEnemy></returns>
-        public static Dictionary<int, MobileEnemy> GetEnemyDict()
+        public static Dictionary<int, MobileEnemy> BuildEnemyDict()
         {
             Dictionary<int, MobileEnemy> enemyDict = new Dictionary<int, MobileEnemy>();
             foreach (var enemy in Enemies)

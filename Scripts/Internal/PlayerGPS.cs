@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System.Collections;
@@ -43,6 +47,10 @@ namespace DaggerfallWorkshop
         int locationWorldRectMaxX;
         int locationWorldRectMinZ;
         int locationWorldRectMaxZ;
+
+        int lastRegionIndex;
+        int lastClimateIndex;
+        int lastPoliticIndex;
 
         /// <summary>
         /// Gets current player map pixel.
@@ -154,6 +162,10 @@ namespace DaggerfallWorkshop
 
         void Start()
         {
+            // Init change trackers for event system
+            lastRegionIndex = CurrentRegionIndex;
+            lastClimateIndex = CurrentClimateIndex;
+            lastPoliticIndex = CurrentPoliticIndex;
         }
 
         void Update()
@@ -166,10 +178,14 @@ namespace DaggerfallWorkshop
             DFPosition pos = CurrentMapPixel;
             if (pos.X != lastMapPixelX || pos.Y != lastMapPixelY)
             {
+                RaiseOnMapPixelChangedEvent(pos);
                 UpdateWorldInfo(pos.X, pos.Y);
                 lastMapPixelX = pos.X;
                 lastMapPixelY = pos.Y;
             }
+
+            // Raise other events
+            RaiseEvents();
 
             // Check if player is inside actual location rect
             PlayerLocationRectCheck();
@@ -177,8 +193,36 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
+        private void RaiseEvents()
+        {
+            // Region index changed
+            if (CurrentRegionIndex != lastRegionIndex)
+            {
+                RaiseOnRegionIndexChangedEvent(CurrentRegionIndex);
+                lastRegionIndex = CurrentRegionIndex;
+            }
+
+            // Climate index changed
+            if (CurrentClimateIndex != lastClimateIndex)
+            {
+                RaiseOnClimateIndexChangedEvent(CurrentClimateIndex);
+                lastClimateIndex = CurrentClimateIndex;
+            }
+
+            // Politic index changed
+            if (CurrentPoliticIndex != lastPoliticIndex)
+            {
+                RaiseOnPoliticIndexChangedEvent(CurrentPoliticIndex);
+                lastPoliticIndex = CurrentPoliticIndex;
+            }
+        }
+
         private void UpdateWorldInfo(int x, int y)
         {
+            // Requires MAPS.BSA connection
+            if (dfUnity.ContentReader.MapFileReader == null)
+                return;
+
             // Get climate and politic data
             currentClimateIndex = dfUnity.ContentReader.MapFileReader.GetClimateIndex(x, y);
             currentPoliticIndex = dfUnity.ContentReader.MapFileReader.GetPoliticIndex(x, y);
@@ -217,7 +261,7 @@ namespace DaggerfallWorkshop
                 }
                 else
                 {
-                    currentLocationType = currentRegion.MapTable[mapSummary.MapIndex].Type;
+                    currentLocationType = currentRegion.MapTable[mapSummary.MapIndex].LocationType;
                 }
             }
         }
@@ -261,7 +305,11 @@ namespace DaggerfallWorkshop
         {
             if (!hasCurrentLocation)
             {
-                isPlayerInLocationRect = false;
+                if (isPlayerInLocationRect)
+                {
+                    RaiseOnExitLocationRectEvent();
+                    isPlayerInLocationRect = false;
+                }
                 return;
             }
 
@@ -271,11 +319,13 @@ namespace DaggerfallWorkshop
             {
                 //if (!isPlayerInLocationRect) Debug.Log("Player entered location rect of " + CurrentLocation.Name);
                 isPlayerInLocationRect = true;
+                RaiseOnEnterLocationRectEvent(CurrentLocation);
             }
             else
             {
                 //if (isPlayerInLocationRect) Debug.Log("Player left location rect.");
                 isPlayerInLocationRect = false;
+                RaiseOnExitLocationRectEvent();
             }
         }
 
@@ -287,14 +337,69 @@ namespace DaggerfallWorkshop
                 dfUnity = DaggerfallUnity.Instance;
             }
 
-            // Do nothing if DaggerfallUnity not ready
+            // Do nothing until DaggerfallUnity is ready
             if (!dfUnity.IsReady)
-            {
-                DaggerfallUnity.LogMessage("PlayerGPS: DaggerfallUnity component is not ready. Have you set your Arena2 path?");
                 return false;
-            }
 
             return true;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnMapPixelChanged
+        public delegate void OnMapPixelChangedEventHandler(DFPosition mapPixel);
+        public static event OnMapPixelChangedEventHandler OnMapPixelChanged;
+        protected virtual void RaiseOnMapPixelChangedEvent(DFPosition mapPixel)
+        {
+            if (OnMapPixelChanged != null)
+                OnMapPixelChanged(mapPixel);
+        }
+
+        // OnRegionIndexChanged
+        public delegate void OnRegionIndexChangedEventHandler(int regionIndex);
+        public static event OnRegionIndexChangedEventHandler OnRegionIndexChanged;
+        protected virtual void RaiseOnRegionIndexChangedEvent(int regionIndex)
+        {
+            if (OnRegionIndexChanged != null)
+                OnRegionIndexChanged(regionIndex);
+        }
+
+        // OnClimateIndexChanged
+        public delegate void OnClimateIndexChangedEventHandler(int climateIndex);
+        public static event OnClimateIndexChangedEventHandler OnClimateIndexChanged;
+        protected virtual void RaiseOnClimateIndexChangedEvent(int climateIndex)
+        {
+            if (OnClimateIndexChanged != null)
+                OnClimateIndexChanged(climateIndex);
+        }
+
+        // OnPoliticIndexChanged
+        public delegate void OnPoliticIndexChangedEventHandler(int politicIndex);
+        public static event OnPoliticIndexChangedEventHandler OnPoliticIndexChanged;
+        protected virtual void RaiseOnPoliticIndexChangedEvent(int politicIndex)
+        {
+            if (OnPoliticIndexChanged != null)
+                OnPoliticIndexChanged(politicIndex);
+        }
+
+        // OnEnterLocationRect
+        public delegate void OnEnterLocationRectEventHandler(DFLocation location);
+        public static event OnEnterLocationRectEventHandler OnEnterLocationRect;
+        protected virtual void RaiseOnEnterLocationRectEvent(DFLocation location)
+        {
+            if (OnEnterLocationRect != null)
+                OnEnterLocationRect(location);
+        }
+
+        // OnExitLocationRect
+        public delegate void OnExitLocationRectEventHandler();
+        public static event OnExitLocationRectEventHandler OnExitLocationRect;
+        protected virtual void RaiseOnExitLocationRectEvent()
+        {
+            if (OnExitLocationRect != null)
+                OnExitLocationRect();
         }
 
         #endregion

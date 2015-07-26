@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 #if UNITY_EDITOR
@@ -52,7 +56,7 @@ namespace DaggerfallWorkshop
         // NOTE: You must set scale before generating/importing any scene assets. Existing scenes will need to be recreated.
         //
         public const float GlobalScale = 0.025f;       // Default scale
-        //public static float GlobalScale = 0.0254f;      // True scale
+        //public const float GlobalScale = 0.0254f;      // True scale
 
         public bool AddMeshTangents = true;
         public bool AddMeshLightmapUVs = false;
@@ -169,7 +173,7 @@ namespace DaggerfallWorkshop
                 cachedMaterialsOut[i] = cachedMaterial;
 
                 // Set animation flag
-                if (cachedMaterial.recordFrameCount > 1 && !hasAnimationsOut)
+                if (cachedMaterial.singleFrameCount > 1 && !hasAnimationsOut)
                     hasAnimationsOut = true;
             }
 
@@ -250,7 +254,7 @@ namespace DaggerfallWorkshop
                 cachedMaterialsOut[i] = cachedMaterial;
 
                 // Set animation flag
-                if (cachedMaterial.recordFrameCount > 1 && !hasAnimationsOut)
+                if (cachedMaterial.singleFrameCount > 1 && !hasAnimationsOut)
                     hasAnimationsOut = true;
             }
 
@@ -508,6 +512,20 @@ namespace DaggerfallWorkshop
             finalSize.y = (size.y + yChange);
 
             return finalSize;
+        }
+
+        #endregion
+
+        #region Support
+
+        /// <summary>
+        /// Clears model cache dictionary, forcing models to reload.
+        /// </summary>
+        public void ClearCache()
+        {
+            modelDict.Clear();
+            if (arch3dFile != null)
+                arch3dFile.DiscardAllRecords();
         }
 
         #endregion

@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System.Collections;
@@ -36,6 +40,7 @@ namespace DaggerfallWorkshop.Demo
         public GameObject ExteriorParent;
         public GameObject InteriorParent;
         public GameObject DungeonParent;
+        public DaggerfallLocation OverrideLocation;
 
         int lastPlayerDungeonBlockIndex = -1;
         DFLocation.DungeonBlock playerDungeonBlockData = new DFLocation.DungeonBlock();
@@ -139,9 +144,16 @@ namespace DaggerfallWorkshop.Demo
             if (!ReferenceComponents())
                 return;
 
-            // Get current climate
+            // Raise event
+            RaiseOnPreTransitionEvent(TransitionType.ToBuildingInterior, door);
+
+            // Get climate
             ClimateBases climateBase = ClimateBases.Temperate;
-            if (playerGPS)
+            if (OverrideLocation)
+            {
+                climateBase = OverrideLocation.Summary.Climate;
+            }
+            else if (playerGPS)
             {
                 climateBase = ClimateSwaps.FromAPIClimateBase(playerGPS.ClimateSettings.ClimateType);
             }
@@ -190,6 +202,9 @@ namespace DaggerfallWorkshop.Demo
 
             // Player is now inside building
             isPlayerInside = true;
+
+            // Raise event
+            RaiseOnTransitionInteriorEvent(door, interior);
         }
 
         /// <summary>
@@ -201,6 +216,9 @@ namespace DaggerfallWorkshop.Demo
             // Exit if missing required components or not currently inside
             if (!ReferenceComponents() || !interior || !isPlayerInside)
                 return;
+
+            // Raise event
+            RaiseOnPreTransitionEvent(TransitionType.ToBuildingExterior);
 
             // Find closest exterior door
             Vector3 exitDoorPos = Vector3.zero;
@@ -241,6 +259,9 @@ namespace DaggerfallWorkshop.Demo
 
             // Player is now outside building
             isPlayerInside = false;
+
+            // Fire event
+            RaiseOnTransitionExteriorEvent();
         }
 
         #endregion
@@ -257,6 +278,17 @@ namespace DaggerfallWorkshop.Demo
             // Ensure we have component references
             if (!ReferenceComponents())
                 return;
+
+            // Override location if specified
+            if (OverrideLocation != null)
+            {
+                DFLocation overrideLocation = dfUnity.ContentReader.MapFileReader.GetLocation(OverrideLocation.Summary.RegionName, OverrideLocation.Summary.LocationName);
+                if (overrideLocation.Loaded)
+                    location = overrideLocation;
+            }
+
+            // Raise event
+            RaiseOnPreTransitionEvent(TransitionType.ToDungeonInterior, door);
 
             // Layout dungeon
             GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform);
@@ -289,9 +321,12 @@ namespace DaggerfallWorkshop.Demo
 
             // Set to start position
             MovePlayerToDungeonStart();
+
+            // Raise event
+            RaiseOnTransitionDungeonInteriorEvent(door, dungeon);
         }
 
-        public void MovePlayerToDungeonStart(bool setFacing = false)
+        public void MovePlayerToDungeonStart()
         {
             if (!isPlayerInsideDungeon)
                 return;
@@ -302,20 +337,8 @@ namespace DaggerfallWorkshop.Demo
             // Fix player standing
             SetStanding();
 
-            // TODO: Set player facing away from dungeon exit
-            if (setFacing)
-            {
-                //// Find closest exit door
-                //DaggerfallStaticDoors doors = newDungeon.GetComponent<DaggerfallStaticDoors>();
-                //if (doors)
-                //{
-                //    Vector3 doorPos;
-                //    int doorIndex;
-                //    if (doors.FindClosestDoorToPlayer(transform.position, 0, out doorPos, out doorIndex))
-                //    {
-                //    }
-                //}
-            }
+            // Raise event
+            RaiseOnMovePlayerToDungeonStartEvent();
         }
 
         /// <summary>
@@ -325,6 +348,9 @@ namespace DaggerfallWorkshop.Demo
         {
             if (!ReferenceComponents() || !dungeon || !isPlayerInsideDungeon)
                 return;
+
+            // Raise event
+            RaiseOnPreTransitionEvent(TransitionType.ToDungeonExterior);
 
             // Enable exterior parent
             if (ExteriorParent != null)
@@ -349,6 +375,9 @@ namespace DaggerfallWorkshop.Demo
             isPlayerInsideDungeonPalace = false;
             lastPlayerDungeonBlockIndex = -1;
             playerDungeonBlockData = new DFLocation.DungeonBlock();
+
+            // Raise event
+            RaiseOnTransitionDungeonExteriorEvent();
         }
 
         #endregion
@@ -416,5 +445,136 @@ namespace DaggerfallWorkshop.Demo
 
             return true;
         }
+
+        #region Event Arguments
+
+        /// <summary>
+        /// Types of transition encountered by event system.
+        /// </summary>
+        public enum TransitionType
+        {
+            NotDefined,
+            ToBuildingInterior,
+            ToBuildingExterior,
+            ToDungeonInterior,
+            ToDungeonExterior,
+        }
+
+        /// <summary>
+        /// Arguments for PlayerEnterExit events.
+        /// All interior/exterior/dungeon transitions use these arguments.
+        /// Valid members will depend on which transition event was fired.
+        /// </summary>
+        public class TransitionEventArgs : System.EventArgs
+        {
+            /// <summary>The type of transition.</summary>
+            public TransitionType TransitionType { get; set; }
+
+            /// <summary>The exterior StaticDoor clicked to initiate transition. For exterior to interior transitions only.</summary>
+            public StaticDoor StaticDoor { get; set; }
+
+            /// <summary>The newly instanced building interior. For building interior transitions only.</summary>
+            public DaggerfallInterior DaggerfallInterior { get; set; }
+
+            /// <summary>The newly instanced dungeon interior. For dungeon interior transitions only.</summary>
+            public DaggerfallDungeon DaggerfallDungeon { get; set; }
+
+            /// <summary>Constructor.</summary>
+            public TransitionEventArgs()
+            {
+                TransitionType = PlayerEnterExit.TransitionType.NotDefined;
+                StaticDoor = new StaticDoor();
+                DaggerfallInterior = null;
+                DaggerfallDungeon = null;
+            }
+
+            /// <summary>Constructor helper.</summary>
+            public TransitionEventArgs(TransitionType transitionType)
+                : base()
+            {
+                this.TransitionType = transitionType;
+            }
+
+            /// <summary>Constructor helper.</summary>
+            public TransitionEventArgs(TransitionType transitionType, StaticDoor staticDoor, DaggerfallInterior daggerfallInterior = null, DaggerfallDungeon daggerfallDungeon = null)
+                : base()
+            {
+                this.TransitionType = transitionType;
+                this.StaticDoor = staticDoor;
+                this.DaggerfallInterior = daggerfallInterior;
+                this.DaggerfallDungeon = daggerfallDungeon;
+            }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnPreTransition - Called PRIOR to any transition, other events called AFTER transition.
+        public delegate void OnPreTransitionEventHandler(TransitionEventArgs args);
+        public static event OnPreTransitionEventHandler OnPreTransition;
+        protected virtual void RaiseOnPreTransitionEvent(TransitionType transitionType)
+        {
+            TransitionEventArgs args = new TransitionEventArgs(TransitionType.ToBuildingInterior);
+            if (OnPreTransition != null)
+                OnPreTransition(args);
+        }
+        protected virtual void RaiseOnPreTransitionEvent(TransitionType transitionType, StaticDoor staticDoor)
+        {
+            TransitionEventArgs args = new TransitionEventArgs(TransitionType.ToBuildingInterior, staticDoor);
+            if (OnPreTransition != null)
+                OnPreTransition(args);
+        }
+
+        // OnTransitionInterior
+        public delegate void OnTransitionInteriorEventHandler(TransitionEventArgs args);
+        public static event OnTransitionInteriorEventHandler OnTransitionInterior;
+        protected virtual void RaiseOnTransitionInteriorEvent(StaticDoor staticDoor, DaggerfallInterior daggerfallInterior)
+        {
+            TransitionEventArgs args = new TransitionEventArgs(TransitionType.ToBuildingInterior, staticDoor, daggerfallInterior);
+            if (OnTransitionInterior != null)
+                OnTransitionInterior(args);
+        }
+
+        // OnTransitionExterior
+        public delegate void OnTransitionExteriorEventHandler(TransitionEventArgs args);
+        public static event OnTransitionExteriorEventHandler OnTransitionExterior;
+        protected virtual void RaiseOnTransitionExteriorEvent()
+        {
+            TransitionEventArgs args = new TransitionEventArgs(TransitionType.ToBuildingExterior);
+            if (OnTransitionExterior != null)
+                OnTransitionExterior(args);
+        }
+
+        // OnTransitionDungeonInterior
+        public delegate void OnTransitionDungeonInteriorEventHandler(TransitionEventArgs args);
+        public static event OnTransitionDungeonInteriorEventHandler OnTransitionDungeonInterior;
+        protected virtual void RaiseOnTransitionDungeonInteriorEvent(StaticDoor staticDoor, DaggerfallDungeon daggerfallDungeon)
+        {
+            TransitionEventArgs args = new TransitionEventArgs(TransitionType.ToDungeonInterior, staticDoor, null, daggerfallDungeon);
+            if (OnTransitionDungeonInterior != null)
+                OnTransitionDungeonInterior(args);
+        }
+
+        // OnTransitionDungeonExterior
+        public delegate void OnTransitionDungeonExteriorEventHandler(TransitionEventArgs args);
+        public static event OnTransitionDungeonExteriorEventHandler OnTransitionDungeonExterior;
+        protected virtual void RaiseOnTransitionDungeonExteriorEvent()
+        {
+            TransitionEventArgs args = new TransitionEventArgs(TransitionType.ToDungeonExterior);
+            if (OnTransitionDungeonExterior != null)
+                OnTransitionDungeonExterior(args);
+        }
+
+        // OnMovePlayerToDungeonStart
+        public delegate void OnMovePlayerToDungeonStartEventHandler();
+        public static event OnMovePlayerToDungeonStartEventHandler OnMovePlayerToDungeonStart;
+        protected virtual void RaiseOnMovePlayerToDungeonStartEvent()
+        {
+            if (OnMovePlayerToDungeonStart != null)
+                OnMovePlayerToDungeonStart();
+        }
+
+        #endregion
     }
 }

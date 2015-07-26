@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System.Collections;
@@ -13,6 +17,7 @@ namespace DaggerfallWorkshop.Demo
     /// <summary>
     /// Plays different ambient effects, both audible and visual, at random intervals.
     /// Certain effects such as lightning are timed to each other.
+    /// NOTE: Lightning sky effects are deprecated for now.
     /// </summary>
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class AmbientEffectsPlayer : MonoBehaviour
@@ -21,7 +26,7 @@ namespace DaggerfallWorkshop.Demo
         public int MaxWaitTime = 35;            // Max wait time in seconds before next sound
         public AmbientSoundPresets Presets;     // Ambient sound preset
         public bool PlayLightningEffect;        // Play a lightning effect where appropriate
-        public DaggerfallSky SkyForEffects;     // Sky to receive effects
+        //public DaggerfallSky SkyForEffects;     // Sky to receive effects
         public Light LightForEffects;           // Light to receive effects
 
         System.Random random;
@@ -109,7 +114,9 @@ namespace DaggerfallWorkshop.Demo
             else
             {
                 // Play ambient sound as a one-shot 2D sound
-                dfAudioSource.PlayOneShot((int)ambientSounds[index], 0);
+                SoundClips clip = ambientSounds[index];
+                dfAudioSource.PlayOneShot((int)clip, 0);
+                RaiseOnPlayEffectEvent(clip);
             }
         }
 
@@ -123,9 +130,9 @@ namespace DaggerfallWorkshop.Demo
             float randomSkip = 0.6f;
 
             // Store starting values
-            float startSkyScale = 1f;
+            //float startSkyScale = 1f;
             float startLightIntensity = 1f;
-            if (SkyForEffects) startSkyScale = SkyForEffects.SkyColorScale;
+            //if (SkyForEffects) startSkyScale = SkyForEffects.SkyColorScale;
             if (LightForEffects) startLightIntensity = LightForEffects.intensity;
 
             SoundClips clip = ambientSounds[index];
@@ -152,6 +159,7 @@ namespace DaggerfallWorkshop.Demo
             {
                 // Unknown clip, just play as one-shot and exit
                 dfAudioSource.PlayOneShot((int)clip, 0);
+                RaiseOnPlayEffectEvent(clip);
                 yield break;
             }
 
@@ -163,19 +171,19 @@ namespace DaggerfallWorkshop.Demo
                 if (Random.value < randomSkip)
                 {
                     // Flash on
-                    if (SkyForEffects) SkyForEffects.SkyColorScale = 2f;
+                    //if (SkyForEffects) SkyForEffects.SkyColorScale = 2f;
                     if (LightForEffects) LightForEffects.intensity = 2f;
                     yield return new WaitForEndOfFrame();
                 }
 
                 // Flash off
-                if (SkyForEffects) SkyForEffects.SkyColorScale = startSkyScale;
+                //if (SkyForEffects) SkyForEffects.SkyColorScale = startSkyScale;
                 if (LightForEffects) LightForEffects.intensity = startLightIntensity;
                 yield return new WaitForEndOfFrame();
             }
 
             // Reset values just to be sure
-            if (SkyForEffects) SkyForEffects.SkyColorScale = startSkyScale;
+            //if (SkyForEffects) SkyForEffects.SkyColorScale = startSkyScale;
             if (LightForEffects) LightForEffects.intensity = startLightIntensity;
 
             // Delay for sound effect
@@ -184,6 +192,9 @@ namespace DaggerfallWorkshop.Demo
 
             // Play sound effect
             dfAudioSource.PlayOneShot((int)clip, 0);
+
+            // Raise event
+            RaiseOnPlayEffectEvent(clip);
 
             yield break;
         }
@@ -233,6 +244,46 @@ namespace DaggerfallWorkshop.Demo
 
             lastPresets = Presets;
             dfAudioSource.SetSound(0, AudioPresets.OnDemand, 0);
+        }
+
+        #endregion
+
+        #region Event Arguments
+
+        /// <summary>
+        /// Arguments for AmbientEffectsPlayer events.
+        /// </summary>
+        public class AmbientEffectsEventArgs : System.EventArgs
+        {
+            /// <summary>The clip just played.</summary>
+            SoundClips Clip { get; set; }
+
+            /// <summary>Constructor.</summary>
+            public AmbientEffectsEventArgs()
+            {
+                this.Clip = SoundClips.None;
+            }
+
+            /// <summary>Constructor helper.</summary>
+            public AmbientEffectsEventArgs(SoundClips clip)
+                : base()
+            {
+                this.Clip = clip;
+            }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnPlayEffect
+        public delegate void OnPlayEffectEventHandler(AmbientEffectsEventArgs args);
+        public static event OnPlayEffectEventHandler OnPlayEffect;
+        protected virtual void RaiseOnPlayEffectEvent(SoundClips clip)
+        {
+            AmbientEffectsEventArgs args = new AmbientEffectsEventArgs(clip);
+            if (OnPlayEffect != null)
+                OnPlayEffect(args);
         }
 
         #endregion

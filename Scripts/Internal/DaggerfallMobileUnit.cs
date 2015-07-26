@@ -1,9 +1,14 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+// NPCs not currently supported. Will be added in a later version.
+//
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -20,7 +25,7 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// A multi-orientation mobile unit.
+    /// A billboard class for classic Daggerfall mobile sprites with 8 orientations.
     /// Handles loading resources and rendering billboard based on orientation and state.
     /// Will rotate and scale based on camera angle and texture, so this component should
     /// only be attached to a child GameObject.
@@ -53,6 +58,7 @@ namespace DaggerfallWorkshop
         [Serializable]
         public struct MobileUnitSummary
         {
+            public bool IsSetup;                                // Flagged true when mobile settings are populated
             public Rect[] AtlasRects;                           // Array of rectangles for atlased materials
             public RecordIndex[] AtlasIndices;                  // Indices into rect array for atlased materials, supports animations
             public Vector2[] RecordSizes;                       // Size and scale of individual records
@@ -115,7 +121,13 @@ namespace DaggerfallWorkshop
             int archive = GetTextureArchive();
             CacheRecordSizesAndFrames(dfUnity, archive);
             AssignMeshAndMaterial(dfUnity, archive);
+
+            // Apply enemy state and update orientation
+            lastOrientation = -1;
             ApplyEnemyState();
+
+            // Raise setup flag
+            summary.IsSetup = true;
         }
 
         /// <summary>
@@ -134,6 +146,10 @@ namespace DaggerfallWorkshop
                 currentFrame = 0;
                 ApplyEnemyState();
             }
+
+            // Cannot set anims is not setup
+            if (!summary.IsSetup)
+                return 0;
 
             return summary.StateAnims[(int)summary.EnemyState].FramePerSecond;
         }
@@ -201,6 +217,10 @@ namespace DaggerfallWorkshop
         /// </summary>
         private void UpdateOrientation()
         {
+            Transform parent = transform.parent;
+            if (parent == null)
+                return;
+
             // Get direction normal to camera, ignore y axis
             Vector3 dir = Vector3.Normalize(
                 new Vector3(cameraPosition.x, 0, cameraPosition.z) -
@@ -252,6 +272,9 @@ namespace DaggerfallWorkshop
         /// <param name="orientation">New orientation index.</param>
         private void OrientEnemy(int orientation)
         {
+            if (summary.StateAnims == null || summary.StateAnims.Length == 0)
+                return;
+
             // Get mesh filter
             if (meshFilter == null)
                 meshFilter = GetComponent<MeshFilter>();
@@ -327,10 +350,10 @@ namespace DaggerfallWorkshop
 
         IEnumerator AnimateEnemy()
         {
+            float fps = 10;
             while (true)
             {
-                float fps = 10;
-                if (summary.StateAnims != null)
+                if (summary.IsSetup && summary.StateAnims != null && summary.StateAnims.Length > 0)
                 {
                     // Step frame
                     currentFrame++;
@@ -475,8 +498,10 @@ namespace DaggerfallWorkshop
                 4,
                 true,
                 0,
-                false,
-                Shader.Find(dfUnity.MaterialReader.DefaultBillboardShaderName));
+                false);
+
+            // Update material properties
+            MaterialReader.SetBlendMode(material, MaterialReader.CustomBlendMode.Cutout);
 
             // Set new enemy material
             GetComponent<MeshRenderer>().sharedMaterial = material;

@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 #region Using Statements
 using System;
@@ -239,8 +243,8 @@ namespace DaggerfallConnect
             /// <summary>Longitude value read from bitfield.</summary>
             public UInt32 Longitude;
 
-            /// <summary>Type value read from bitfield.</summary>
-            public LocationTypes Type;
+            /// <summary>Locaton type value read from bitfield.</summary>
+            public LocationTypes LocationType;
 
             /// <summary>Latitude of this location.</summary>
             public UInt16 Latitude;

@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 #if UNITY_EDITOR
@@ -70,114 +74,114 @@ namespace DaggerfallWorkshop.Utility
         #region Editor Methods
 
 #if UNITY_EDITOR && !UNITY_WEBPLAYER
-        /// <summary>
-        /// Exports terrain atlas textures to Resources folder.
-        /// </summary>
-        public static bool ExportTerrainAtlasTextureResources(TextureReader textureReader, string resourcesPath, string subFolder)
-        {
-            if (textureReader == null)
-            {
-                DaggerfallUnity.LogMessage("TerrainAtlasBuilder: textureReader cannot be null.", true);
-                return false;
-            }
+        ///// <summary>
+        ///// Exports terrain atlas textures to Resources folder.
+        ///// </summary>
+        //public static bool ExportTerrainAtlasTextureResources(TextureReader textureReader, string resourcesPath, string subFolder)
+        //{
+        //    if (textureReader == null)
+        //    {
+        //        DaggerfallUnity.LogMessage("TerrainAtlasBuilder: textureReader cannot be null.", true);
+        //        return false;
+        //    }
 
-            // Start timing
-            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            long startTime = stopwatch.ElapsedMilliseconds;
-            int totalSteps = 11;
-            int stepCount = 0;
+        //    // Start timing
+        //    System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        //    long startTime = stopwatch.ElapsedMilliseconds;
+        //    int totalSteps = 11;
+        //    int stepCount = 0;
 
-            try
-            {
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, desertTextureArchive, desertTerrainAtlasFilename);
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, desertTextureArchive + 1, desertTerrainAtlasWinterFilename);
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, desertTextureArchive + 2, desertTerrainAtlasRainFilename);
+        //    try
+        //    {
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, desertTextureArchive, desertTerrainAtlasFilename);
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, desertTextureArchive + 1, desertTerrainAtlasWinterFilename);
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, desertTextureArchive + 2, desertTerrainAtlasRainFilename);
 
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, mountainTextureArchive, mountainTerrainAtlasFilename);
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, mountainTextureArchive + 1, mountainTerrainAtlasWinterFilename);
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, mountainTextureArchive + 2, mountainTerrainAtlasRainFilename);
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, mountainTextureArchive, mountainTerrainAtlasFilename);
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, mountainTextureArchive + 1, mountainTerrainAtlasWinterFilename);
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, mountainTextureArchive + 2, mountainTerrainAtlasRainFilename);
 
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, temperateTextureArchive, temperateTerrainAtlasFilename);
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, temperateTextureArchive + 1, temperateTerrainAtlasWinterFilename);
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, temperateTextureArchive + 2, temperateTerrainAtlasRainFilename);
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, temperateTextureArchive, temperateTerrainAtlasFilename);
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, temperateTextureArchive + 1, temperateTerrainAtlasWinterFilename);
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, temperateTextureArchive + 2, temperateTerrainAtlasRainFilename);
 
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, swampTextureArchive, swampTerrainAtlasFilename);
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, swampTextureArchive + 1, swampTerrainAtlasWinterFilename);
-                stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
-                CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, swampTextureArchive + 2, swampTerrainAtlasRainFilename);
-            }
-            catch (Exception ex)
-            {
-                DaggerfallUnity.LogMessage(string.Format("Export failed with exception '{0}'", ex.Message), true);
-            }
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, swampTextureArchive, swampTerrainAtlasFilename);
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, swampTextureArchive + 1, swampTerrainAtlasWinterFilename);
+        //        stepCount = UpdateTextureExportStatus(stepCount, totalSteps);
+        //        CreateTerrainAtlasResource(textureReader, resourcesPath, subFolder, swampTextureArchive + 2, swampTerrainAtlasRainFilename);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        DaggerfallUnity.LogMessage(string.Format("Export failed with exception '{0}'", ex.Message), true);
+        //    }
 
-            // Show timer and clear status
-            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            DaggerfallUnity.LogMessage(string.Format("Time to create texture assets: {0}ms", totalTime), true);
-            EditorUtility.ClearProgressBar();
+        //    // Show timer and clear status
+        //    long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+        //    DaggerfallUnity.LogMessage(string.Format("Time to create texture assets: {0}ms", totalTime), true);
+        //    EditorUtility.ClearProgressBar();
 
-            return true;
-        }
+        //    return true;
+        //}
 
-        // Create atlas texture from terrain tiles
-        private static void CreateTerrainAtlasResource(TextureReader textureReader, string resourcesPath, string subFolder, int archive, string filename)
-        {
-            // Load atlas texture and cache properties
-            Texture2D texture = textureReader.GetTerrainTilesetTexture(archive, false);
-            int maxTextureSize = (texture.width > texture.height) ? texture.width : texture.height;
-            int anisoLevel = texture.anisoLevel;
-            TextureWrapMode wrapMode = texture.wrapMode;
-            float mipMapBias = texture.mipMapBias;
-            bool mipmapEnabled = (texture.mipmapCount > 0) ? true : false;
+        //// Create atlas texture from terrain tiles
+        //private static void CreateTerrainAtlasResource(TextureReader textureReader, string resourcesPath, string subFolder, int archive, string filename)
+        //{
+        //    // Load atlas texture and cache properties
+        //    Texture2D texture = textureReader.GetTerrainTilesetTextureA(archive, false);
+        //    int maxTextureSize = (texture.width > texture.height) ? texture.width : texture.height;
+        //    int anisoLevel = texture.anisoLevel;
+        //    TextureWrapMode wrapMode = texture.wrapMode;
+        //    float mipMapBias = texture.mipMapBias;
+        //    bool mipmapEnabled = (texture.mipmapCount > 0) ? true : false;
 
-            // Compose paths based on user-specified Resources folder
-            string assetFolderPath = Path.Combine(Application.dataPath, resourcesPath);
-            assetFolderPath = Path.Combine(assetFolderPath, subFolder);
-            string filePath = Path.Combine(assetFolderPath, filename + ".png");
+        //    // Compose paths based on user-specified Resources folder
+        //    string assetFolderPath = Path.Combine(Application.dataPath, resourcesPath);
+        //    assetFolderPath = Path.Combine(assetFolderPath, subFolder);
+        //    string filePath = Path.Combine(assetFolderPath, filename + ".png");
 
-            // Save texture file to user-specified Resources folder
-            byte[] pngData = texture.EncodeToPNG();
-            File.WriteAllBytes(filePath, pngData);
+        //    // Save texture file to user-specified Resources folder
+        //    byte[] pngData = texture.EncodeToPNG();
+        //    File.WriteAllBytes(filePath, pngData);
 
-            // Loading back asset to modify importer properties
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            Texture2D assetTexture = Resources.Load<Texture2D>(GetAssetPath(subFolder, filename));
-            string assetTexturePath = AssetDatabase.GetAssetPath(assetTexture);
+        //    // Loading back asset to modify importer properties
+        //    AssetDatabase.SaveAssets();
+        //    AssetDatabase.Refresh();
+        //    Texture2D assetTexture = Resources.Load<Texture2D>(GetAssetPath(subFolder, filename));
+        //    string assetTexturePath = AssetDatabase.GetAssetPath(assetTexture);
 
-            // Modify asset importer properties
-            TextureImporter importer = AssetImporter.GetAtPath(assetTexturePath) as TextureImporter;
-            if (importer == null)
-            {
-                DaggerfallUnity.LogMessage("MaterialReader: Failed to get TextureImporter.", true);
-                return;
-            }
-            importer.maxTextureSize = maxTextureSize;
-            importer.anisoLevel = anisoLevel;
-            importer.mipMapBias = mipMapBias;
-            importer.mipmapEnabled = mipmapEnabled;
-            importer.wrapMode = wrapMode;
-            importer.isReadable = false;
-            importer.textureFormat = TextureImporterFormat.AutomaticCompressed;
+        //    // Modify asset importer properties
+        //    TextureImporter importer = AssetImporter.GetAtPath(assetTexturePath) as TextureImporter;
+        //    if (importer == null)
+        //    {
+        //        DaggerfallUnity.LogMessage("MaterialReader: Failed to get TextureImporter.", true);
+        //        return;
+        //    }
+        //    importer.maxTextureSize = maxTextureSize;
+        //    importer.anisoLevel = anisoLevel;
+        //    importer.mipMapBias = mipMapBias;
+        //    importer.mipmapEnabled = mipmapEnabled;
+        //    importer.wrapMode = wrapMode;
+        //    importer.isReadable = false;
+        //    importer.textureFormat = TextureImporterFormat.AutomaticCompressed;
 
-            // Reimport asset with new importer settings
-            AssetDatabase.ImportAsset(assetTexturePath, ImportAssetOptions.ForceUpdate);
+        //    // Reimport asset with new importer settings
+        //    AssetDatabase.ImportAsset(assetTexturePath, ImportAssetOptions.ForceUpdate);
 
-            // Finish up
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
+        //    // Finish up
+        //    AssetDatabase.SaveAssets();
+        //    AssetDatabase.Refresh();
+        //}
 
         private static int UpdateTextureExportStatus(int count, int total)
         {

@@ -1,14 +1,38 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using System;
 
 namespace DaggerfallWorkshop
 {
+    /// <summary>
+    /// Supported non-alpha texture formats for texture reader.
+    /// </summary>
+    public enum SupportedNonAlphaTextureFormats
+    {
+        RGB565,
+        RGB24,
+    }
+
+    /// <summary>
+    /// Supported alpha texture formats for texure reader.
+    /// </summary>
+    public enum SupportedAlphaTextureFormats
+    {
+        RGBA444,
+        ARGB444,
+        RGBA32,
+        ARGB32,
+    }
+
     /// <summary>
     /// Types of billboard flats in Daggerfall blocks.
     /// </summary>

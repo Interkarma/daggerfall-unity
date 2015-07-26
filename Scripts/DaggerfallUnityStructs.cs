@@ -1,17 +1,79 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using DaggerfallConnect;
 using UnityEngine;
 using DaggerfallConnect.Utility;
 
 namespace DaggerfallWorkshop
 {
+    /// <summary>
+    /// Index of a single Daggerfall texture.
+    /// </summary>
+    [Serializable]
+    public struct DaggerfallTextureIndex
+    {
+        public int archive;
+        public int record;
+        public int frame;
+    }
+
+    /// <summary>
+    /// Settings in for GetTexture methods.
+    /// </summary>
+    public struct GetTextureSettings
+    {
+        public int archive;                             // Texture archive index (e.g. 210 for TEXTURE.210)
+        public int record;                              // Texture record index
+        public int frame;                               // Texture frame index for animated textures
+        public int alphaIndex;                          // Native index to receive transparent alpha (-1 to disable)
+        public int emissionIndex;                       // Native index to become emissive on emission maps when enabled
+        public int borderSize;                          // Number of pixels border to add around image
+        public bool copyToOppositeBorder;               // Copy texture edges to opposite border. Requires border, mutually exclusive with dilate
+        public bool dilate;                             // Blend texture into surrounding empty pixels. Requires border
+        public bool stayReadable;                       // Texture will remain in memory and can be read after creation
+        public bool sharpen;                            // Sharpen image
+        public bool createNormalMap;                    // Normal map will be created based on strength
+        public bool createEmissionMap;                  // Emission map will also be created based on emissionIndex
+        public float normalStrength;                    // Strength of generated normals
+        public int atlasPadding;                        // Number of pixels padding around each sub-texture
+        public int atlasMaxSize;                        // Max size of atlas
+        public int atlasShrinkUVs;                      // Number of extra pixels to shrink UV rect
+        public bool autoEmission;                       // Automatically create emission map for known textures
+        public bool autoEmissionForWindows;             // Automatically create emission map for window textures
+    }
+
+    /// <summary>
+    /// Results out for GetTexture methods.
+    /// </summary>
+    public struct GetTextureResults
+    {
+        public Texture2D albedoMap;                     // Albedo texture out for all colour textures
+        public Texture2D normalMap;                     // Normal texture out when normals are enabled
+        public Texture2D emissionMap;                   // Emission texture out for emissive textures
+        public List<int> atlasFrameCounts;              // List of atlas frame counts for each texture
+        public Rect singleRect;                         // Receives UV rect for texture inside border
+        public List<Rect> atlasRects;                   // List of rects, one for each record sub-texture and frame
+        public List<RecordIndex> atlasIndices;          // List of record indices into rect array, accounting for animation frames
+        public List<Vector2> atlasSizes;                // List of sizes for each texture
+        public List<Vector2> atlasScales;               // List of scales for each texture
+        public List<Vector2> atlasOffsets;              // List of offsets for each texture
+        public bool isWindow;                           // Flag is raised if this is a window texture, for single textures only
+        public bool isEmissive;                         // Flag is raised is this texture is emissive
+        public bool isAtlasAnimated;                    // Atlas texture has one or more animations
+    }
+
     /// <summary>
     /// Some information about a climate texture, returned by climate parser.
     /// </summary>
@@ -25,27 +87,39 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
-    /// Defines a single cached material.
+    /// Defines a single cached material and related properties.
     /// Marked as serializable but not currently serialized.
-    /// This may change at a later date.
     /// </summary>
     [Serializable]
     public struct CachedMaterial
     {
+        // Keys
         public int key;                         // Key of this material
         public int keyGroup;                    // Group of this material
+
+        // Textures
+        public Texture2D albedoMap;             // Albedo texture of material
+        public Texture2D normalMap;             // Normal texture of material
+        public Texture2D emissionMap;           // Emission texture of material
+
+        // Material
         public Material material;               // Shared material
         public Rect singleRect;                 // Rect for single material
         public Rect[] atlasRects;               // Array of rects for atlased materials
-        public RecordIndex[] indices;           // Array of record indices into atlas rect array
+        public RecordIndex[] atlasIndices;      // Array of record indices into atlas rect array
         public FilterMode filterMode;           // Filter mode of this material
+        public int singleFrameCount;            // Number of frames in single animated material
+        public int[] atlasFrameCounts;          // Array of frame counts for animated materials
+
+        // Windows
         public bool isWindow;                   // True if this is a window material
         public Color windowColor;               // Colour of this window
         public float windowIntensity;           // Intensity of this window
+
+        // Size and scale
         public Vector2[] recordSizes;           // Size of texture records
         public Vector2[] recordScales;          // Scale of texture records
         public Vector2[] recordOffsets;         // Offset of texture records
-        public int recordFrameCount;            // Number of frames in this textures record
     }
 
     /// <summary>

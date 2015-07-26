@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System;
@@ -22,6 +26,30 @@ namespace DaggerfallWorkshop
     {
         [SerializeField]
         private List<int> defaultTextures = new List<int>();
+        [SerializeField]
+        private ClimateBases currentClimate;
+        [SerializeField]
+        private ClimateSeason currentSeason;
+        [SerializeField]
+        private WindowStyle currentWindowStyle;
+
+        public ClimateBases Climate
+        {
+            get { return currentClimate; }
+            set { currentClimate = value; }
+        }
+
+        public ClimateSeason Season
+        {
+            get { return currentSeason; }
+            set { currentSeason = value; }
+        }
+
+        public WindowStyle WindowStyle
+        {
+            get { return currentWindowStyle; }
+            set { currentWindowStyle = value; }
+        }
 
         /// <summary>
         /// Gets number of default textures on model.
@@ -63,8 +91,10 @@ namespace DaggerfallWorkshop
         /// <param name="climate">Climate to set.</param>
         /// <param name="season">Season to set.</param>
         /// <param name="windowStyle">Style of window to set.</param>
-        public void SetClimate(DaggerfallUnity dfUnity, ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+        public void SetClimate(ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
         {
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+
             if (defaultTextures.Count == 0)
                 return;
 
@@ -78,6 +108,19 @@ namespace DaggerfallWorkshop
             // Assign material array
             if (materials != null)
                 GetComponent<MeshRenderer>().sharedMaterials = materials;
+
+            // Store climate settings
+            currentClimate = climate;
+            currentSeason = season;
+            currentWindowStyle = windowStyle;
+        }
+
+        /// <summary>
+        /// Applies current climate settings to model.
+        /// </summary>
+        public void ApplyCurrentClimate()
+        {
+            SetClimate(currentClimate, currentSeason, currentWindowStyle);
         }
 
         /// <summary>

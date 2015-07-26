@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using UnityEditor;
@@ -51,13 +55,15 @@ namespace DaggerfallWorkshop
         static void Init()
         {
             AtlasEditorWindow window = (AtlasEditorWindow)EditorWindow.GetWindow(typeof(AtlasEditorWindow));
+#if UNITY_5_0
             window.title = windowTitle;
+#elif UNITY_5_1
+            window.titleContent = new GUIContent(windowTitle);
+#endif
         }
 
         void OnGUI()
         {
-            //const int previewDimension = 256;
-
             if (!IsReady())
             {
                 EditorGUILayout.HelpBox("DaggerfallUnity instance not ready. Have you set your Arena2 path?", MessageType.Info);
@@ -106,14 +112,6 @@ namespace DaggerfallWorkshop
                 search = true;
             }
 
-            // This is virtual rect of scroll area
-            // Saved for later use
-            //Rect virtualRect = new Rect();
-            //virtualRect.xMin = 0;
-            //virtualRect.xMax = position.width;
-            //virtualRect.yMin = scrollPos.y;
-            //virtualRect.yMax = scrollPos.y + position.height;
-
             int totalLocations = 0;
             string regionSlash = regionNames[selectedRegion] + "/";
             scrollPos = GUILayoutHelper.ScrollView(scrollPos, () =>
@@ -138,8 +136,6 @@ namespace DaggerfallWorkshop
                 }
             });
 
-            //Rect rect = EditorGUILayout.GetControlRect(false, previewDimension);
-
             EditorGUILayout.LabelField("Total locations found: " + totalLocations);
         }
 
@@ -147,12 +143,13 @@ namespace DaggerfallWorkshop
         {
             if (!dfUnity)
                 dfUnity = DaggerfallUnity.Instance;
-            if (!dfUnity.IsReady)
+
+            if (!dfUnity.IsReady || string.IsNullOrEmpty(dfUnity.Arena2Path))
                 return false;
 
             if (regionNames.Length == 0)
             {
-                regionNames = dfUnity.ContentReader.MapFileReader.RegionNames;
+                regionNames = (string[])dfUnity.ContentReader.MapFileReader.RegionNames.Clone();
                 System.Array.Sort(regionNames);
             }
 
@@ -180,7 +177,7 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < regionData.LocationCount; i++)
             {
                 bool addName = false;
-                DFRegion.LocationTypes type = regionData.MapTable[i].Type;
+                DFRegion.LocationTypes type = regionData.MapTable[i].LocationType;
                 switch (pattern)
                 {
                     case SearchPatterns.All:
@@ -239,30 +236,5 @@ namespace DaggerfallWorkshop
 
             locationNames.Sort();
         }
-
-        //void DrawPreview(string multiName)
-        //{
-        //    const int previewHeight = 128;
-
-        //    Rect rect = EditorGUILayout.GetControlRect(false, previewHeight);
-
-        //    Rect virtualRect = new Rect(0, scrollPos.y, position.width, scrollPos.y + position.height);
-
-        //    ////GUI.Label(rect, virtualRect.ToString());
-        //    //if (virtualRect.Overlaps(rect))
-        //    //{
-        //    //    //GUI.Label(rect, "I am visible.");
-        //    //    //DFLocation location = dfUnity.ContentReader.MapFileReader.GetLocation(0, 0);
-        //    //    //if (GameObjectHelper.FindMultiNameLocation(multiName, out location))
-        //    //    //{
-        //    //    //    //GUI.Label(rect, "Found location.");
-        //    //    //    //EditorGUILayout.LabelField("Found location.");
-        //    //    //}
-        //    //}
-        //    //else
-        //    //{
-        //    //    GUI.Label(rect, "I am NOT visible.");
-        //    //}
-        //}
     }
 }

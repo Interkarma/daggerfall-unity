@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using UnityEditor;
@@ -75,14 +79,14 @@ namespace DaggerfallWorkshop
             EditorGUILayout.Space();
             GUILayoutHelper.Horizontal(() =>
             {
-                EditorGUILayout.LabelField("Arena2 Path", GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.LabelField(new GUIContent("Arena2 Path", "The local Arena2 path used for development only."), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
                 EditorGUILayout.SelectableLabel(dfUnity.Arena2Path, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                 if (GUILayout.Button("Browse..."))
                 {
                     string path = EditorUtility.OpenFolderPanel("Locate Arena2 Path", "", "");
                     if (!string.IsNullOrEmpty(path))
                     {
-                        if (!dfUnity.ValidateArena2Path(path))
+                        if (!DaggerfallUnity.ValidateArena2Path(path))
                         {
                             EditorUtility.DisplayDialog("Invalid Path", "The selected Arena2 path is invalid", "Close");
                         }
@@ -90,8 +94,14 @@ namespace DaggerfallWorkshop
                         {
                             dfUnity.Arena2Path = path;
                             propArena2Path.stringValue = path;
+                            dfUnity.EditorResetArena2Path();
                         }
                     }
+                }
+                if (GUILayout.Button("Clear"))
+                {
+                    dfUnity.EditorClearArena2Path();
+                    EditorUtility.SetDirty(target);
                 }
             });
 
@@ -103,7 +113,6 @@ namespace DaggerfallWorkshop
             }
 
             // Display other GUI items
-            //DisplayAssetExporterGUI();
             DisplayOptionsGUI();
             DisplayImporterGUI();
 
@@ -118,101 +127,99 @@ namespace DaggerfallWorkshop
             EditorGUILayout.Space();
             ShowOptionsFoldout = GUILayoutHelper.Foldout(ShowOptionsFoldout, new GUIContent("Options"), () =>
             {
-                // Combining options
+                // Performance options
+                var propSetStaticFlags = Prop("Option_SetStaticFlags");
                 var propCombineRMB = Prop("Option_CombineRMB");
                 var propCombineRDB = Prop("Option_CombineRDB");
-                //var propCombineLocations = Prop("Option_CombineLocations");
-                //var propBatchBillboards = Prop("Option_BatchBillboards");
+                var propBatchBillboards = Prop("Option_BatchBillboards");
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Performance");
+                if (!propSetStaticFlags.boolValue ||
+                    !propCombineRMB.boolValue ||
+                    !propCombineRDB.boolValue ||
+                    !propBatchBillboards.boolValue)
+                {
+                    EditorGUILayout.HelpBox("Performance options should only be disabled for testing.", MessageType.Warning);
+                }
                 GUILayoutHelper.Indent(() =>
                 {
+                    propSetStaticFlags.boolValue = EditorGUILayout.Toggle(new GUIContent("Set Static Flags", "Apply static flag where appropriate when building scenes. Billboards and dynamic objects are not marked static."), propSetStaticFlags.boolValue);
                     propCombineRMB.boolValue = EditorGUILayout.Toggle(new GUIContent("Combine RMB", "Combine city-block meshes together."), propCombineRMB.boolValue);
                     propCombineRDB.boolValue = EditorGUILayout.Toggle(new GUIContent("Combine RDB", "Combine dungeon-block meshes together."), propCombineRDB.boolValue);
-                    //propBatchBillboards.boolValue = EditorGUILayout.Toggle(new GUIContent("Batch Billboards", "Use a fast vertex shader and batched data to draw billboards."), propBatchBillboards.boolValue);
-                    //propCombineLocations.boolValue = EditorGUILayout.Toggle(new GUIContent("Combine Locations", "Super-combine location RMB blocks together. First combines RMB then chunks those together."), propCombineLocations.boolValue);
+                    propBatchBillboards.boolValue = EditorGUILayout.Toggle(new GUIContent("Batch Billboards", "Combine billboards into batches. Some billboards are never batched, such as editor markers."), propBatchBillboards.boolValue);
                 });
 
                 // Import options
-                var propSetStaticFlags = Prop("Option_SetStaticFlags");
                 var propAddMeshColliders = Prop("Option_AddMeshColliders");
-                var propDefaultSounds = Prop("Option_DefaultSounds");
-                var propSimpleGroundPlane = Prop("Option_SimpleGroundPlane");
+                var propRMBGroundPlane = Prop("Option_RMBGroundPlane");
                 var propCloseCityGates = Prop("Option_CloseCityGates");
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Import Options");
                 GUILayoutHelper.Indent(() =>
                 {
-                    propSetStaticFlags.boolValue = EditorGUILayout.Toggle(new GUIContent("Set Static Flags", "Apply static flag where appropriate when building scenes. Billboards and dynamic objects are not marked static."), propSetStaticFlags.boolValue);
                     propAddMeshColliders.boolValue = EditorGUILayout.Toggle(new GUIContent("Add Colliders", "Add colliders where appropriate when building scenes. Decorative billboards will not receive colliders."), propAddMeshColliders.boolValue);
-                    propDefaultSounds.boolValue = EditorGUILayout.Toggle(new GUIContent("Default Sounds", "Adds DaggerfallAudioSource and setup default sounds for noise-making scene objects."), propDefaultSounds.boolValue);
-                    propSimpleGroundPlane.boolValue = EditorGUILayout.Toggle(new GUIContent("Simple Ground Plane", "Adds simple quad ground plane to imported exterior locations (ignored by terrain system)."), propSimpleGroundPlane.boolValue);
+                    propRMBGroundPlane.boolValue = EditorGUILayout.Toggle(new GUIContent("RMB Ground Plane", "Adds RMB ground plane to imported city block (ignored by terrain system)."), propRMBGroundPlane.boolValue);
                     propCloseCityGates.boolValue = EditorGUILayout.Toggle(new GUIContent("Close City Gates", "In walled cities use this flag to start city gates in closed position."), propCloseCityGates.boolValue);
                 });
 
-                // Light options
-                var propImportPointLights = Prop("Option_ImportPointLights");
-                var propAnimatedPointLights = Prop("Option_AnimatedPointLights");
-                var propPointLightTag = Prop("Option_PointLightTag");
-                var propCustomPointLightScript = Prop("Option_CustomPointLightScript");
+                // Prefab options
                 EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Lights");
+                EditorGUILayout.LabelField("Prefabs");
                 GUILayoutHelper.Indent(() =>
                 {
-                    propImportPointLights.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Point Lights", "Import point lights with city and dungeon blocks."), propImportPointLights.boolValue);
-                    GUILayoutHelper.EnableGroup(propImportPointLights.boolValue, () =>
+                    // Lights
+                    var propImportLightPrefabs = Prop("Option_ImportLightPrefabs");
+                    var propCityLightPrefab = Prop("Option_CityLightPrefab");
+                    var propDungeonLightPrefab = Prop("Option_DungeonLightPrefab");
+                    var propInteriorLightPrefab = Prop("Option_InteriorLightPrefab");
+                    propImportLightPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Light Prefabs", "Import light prefabs into scene."), propImportLightPrefabs.boolValue);
+                    GUILayoutHelper.EnableGroup(propImportLightPrefabs.boolValue, () =>
                     {
                         GUILayoutHelper.Indent(() =>
                         {
-                            propAnimatedPointLights.boolValue = EditorGUILayout.Toggle(new GUIContent("Animated", "Adds a script to make point lights flicker like Daggerfall. Works best with deferred rendering path"), propAnimatedPointLights.boolValue);
-                            propPointLightTag.stringValue = EditorGUILayout.TagField(new GUIContent("Tag", "Custom tag to assign point lights."), propPointLightTag.stringValue);
-                            propCustomPointLightScript.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Custom Script", "Custom script to assign point lights."), propCustomPointLightScript.objectReferenceValue, typeof(MonoScript), false);
+                            propCityLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("City Lights", "Prefab for city lights."), propCityLightPrefab.objectReferenceValue, typeof(Light), false);
+                            propDungeonLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Lights", "Prefab for dungeon lights."), propDungeonLightPrefab.objectReferenceValue, typeof(Light), false);
+                            propInteriorLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Interior Lights", "Prefab for building interior lights."), propInteriorLightPrefab.objectReferenceValue, typeof(Light), false);
                         });
                     });
-                });
 
-                // Enemy options
-                var propImportEnemies = Prop("Option_ImportEnemies");
-                var propEnemyCharacterController = Prop("Option_EnemyCharacterController");
-                var propEnemyRigidbody = Prop("Option_EnemyRigidbody");
-                var propEnemyCapsuleCollider = Prop("Option_EnemyCapsuleCollider");
-                var propEnemyNavMeshAgent = Prop("Option_EnemyNavMeshAgent");
-                var propEnemyExampleAI = Prop("Option_EnemyExampleAI");
-                var propEnemyTag = Prop("Option_EnemyTag");
-                var propCustomEnemyScript = Prop("Option_CustomEnemyScript");
-                var propEnemyRadius = Prop("Option_EnemyRadius");
-                var propEnemySlopeLimit = Prop("Option_EnemySlopeLimit");
-                var propEnemyStepOffset = Prop("Option_EnemyStepOffset");
-                var propEnemyUseGravity = Prop("Option_EnemyUseGravity");
-                var propEnemyIsKinematic = Prop("Option_EnemyIsKinematic");
-                EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Enemies");
-                GUILayoutHelper.Indent(() =>
-                {
-                    propImportEnemies.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Enemies", "Import fixed and random enemies from dungeon blocks."), propImportEnemies.boolValue);
-                    GUILayoutHelper.EnableGroup(propImportEnemies.boolValue, () =>
+                    // Doors
+                    var propImportDoorPrefabs = Prop("Option_ImportDoorPrefabs");
+                    var propDungeonDoorPrefab = Prop("Option_DungeonDoorPrefab");
+                    var propInteriorDoorPrefab = Prop("Option_InteriorDoorPrefab");
+                    EditorGUILayout.Space();
+                    propImportDoorPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Door Prefabs", "Import door prefabs into scene."), propImportDoorPrefabs.boolValue);
+                    GUILayoutHelper.EnableGroup(propImportDoorPrefabs.boolValue, () =>
                     {
                         GUILayoutHelper.Indent(() =>
                         {
-                            propEnemyCharacterController.boolValue = EditorGUILayout.Toggle(new GUIContent("CharacterController", "Add a CharacterController to every enemy."), propEnemyCharacterController.boolValue);
-                            propEnemyRigidbody.boolValue = EditorGUILayout.Toggle(new GUIContent("Rigidbody", "Add a Rigidbody to every enemy."), propEnemyRigidbody.boolValue);
-                            propEnemyCapsuleCollider.boolValue = EditorGUILayout.Toggle(new GUIContent("CapsuleCollider", "Add a CapsuleCollider to every enemy."), propEnemyCapsuleCollider.boolValue);
-                            propEnemyNavMeshAgent.boolValue = EditorGUILayout.Toggle(new GUIContent("NavMeshAgent", "Add a NavMeshAgent to every enemy."), propEnemyNavMeshAgent.boolValue);
-                            propEnemyExampleAI.boolValue = EditorGUILayout.Toggle(new GUIContent("Example AI", "Add example AI scripts to every enemy. Adds CharacterController."), propEnemyExampleAI.boolValue);
-                            propEnemyTag.stringValue = EditorGUILayout.TagField(new GUIContent("Tag", "Custom tag to assign enemies."), propEnemyTag.stringValue);
-                            propCustomEnemyScript.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Custom Script", "Custom script to assign enemies."), propCustomEnemyScript.objectReferenceValue, typeof(MonoScript), false);
-                            ShowEnemyAdvancedFoldout = GUILayoutHelper.Foldout(ShowEnemyAdvancedFoldout, new GUIContent("Advanced"), () =>
-                            {
-                                GUILayoutHelper.Indent(() =>
-                                {
-                                    propEnemyRadius.floatValue = EditorGUILayout.FloatField(new GUIContent("Radius", "Enemy radius for CharacterController, CapsuleCollider, NavMeshAgent."), propEnemyRadius.floatValue);
-                                    propEnemySlopeLimit.floatValue = EditorGUILayout.FloatField(new GUIContent("Slope Limit", "Slope limit for CharacterController."), propEnemySlopeLimit.floatValue);
-                                    propEnemyStepOffset.floatValue = EditorGUILayout.FloatField(new GUIContent("Step Offset", "Step offset for CharacterController."), propEnemyStepOffset.floatValue);
-                                    propEnemyUseGravity.boolValue = EditorGUILayout.Toggle(new GUIContent("Use Gravity", "Rigidbody should use gravity."), propEnemyUseGravity.boolValue);
-                                    propEnemyIsKinematic.boolValue = EditorGUILayout.Toggle(new GUIContent("Is Kinematic", "Rigidbody should be kinematic."), propEnemyIsKinematic.boolValue);
-                                });
-                            });
+                            propDungeonDoorPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Doors", "Prefab for dungeon doors."), propDungeonDoorPrefab.objectReferenceValue, typeof(DaggerfallActionDoor), false);
+                            propInteriorDoorPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Interior Doors", "Prefab for building interior doors."), propInteriorDoorPrefab.objectReferenceValue, typeof(DaggerfallActionDoor), false);
                         });
+                    });
+
+                    // Enemies
+                    var propImportEnemyPrefabs = Prop("Option_ImportEnemyPrefabs");
+                    var propEnemyPrefab = Prop("Option_EnemyPrefab");
+                    EditorGUILayout.Space();
+                    propImportEnemyPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Enemy Prefabs", "Import enemy prefabs into scene."), propImportEnemyPrefabs.boolValue);
+                    GUILayoutHelper.EnableGroup(propImportEnemyPrefabs.boolValue, () =>
+                    {
+                        GUILayoutHelper.Indent(() =>
+                        {
+                            propEnemyPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Enemies", "Prefab for enemies."), propEnemyPrefab.objectReferenceValue, typeof(DaggerfallEnemy), false);
+                        });
+                    });
+
+                    // Optional
+                    var propCityBlockPrefab = Prop("Option_CityBlockPrefab");
+                    var propDungeonBlockPrefab = Prop("Option_DungeonBlockPrefab");
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField("Optional");
+                    GUILayoutHelper.Indent(() =>
+                    {
+                        propCityBlockPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("City Blocks", "Prefab for city blocks."), propCityBlockPrefab.objectReferenceValue, typeof(DaggerfallRMBBlock), false);
+                        propDungeonBlockPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Blocks", "Prefab for dungeon blocks."), propDungeonBlockPrefab.objectReferenceValue, typeof(DaggerfallRDBBlock), false);
                     });
                 });
 
@@ -264,7 +271,23 @@ namespace DaggerfallWorkshop
                         propBlockName.stringValue = EditorGUILayout.TextField(propBlockName.stringValue.Trim().ToUpper());
                         if (GUILayout.Button("Import"))
                         {
-                            GameObjectHelper.CreateDaggerfallBlockGameObject(propBlockName.stringValue, null);
+                            // Create block
+                            if (propBlockName.stringValue.EndsWith(".RMB"))
+                            {
+                                GameObjectHelper.CreateRMBBlockGameObject(propBlockName.stringValue, dfUnity.Option_RMBGroundPlane, dfUnity.Option_CityBlockPrefab);
+                            }
+                            else if (propBlockName.stringValue.EndsWith(".RDB"))
+                            {
+                                GameObjectHelper.CreateRDBBlockGameObject(
+                                    propBlockName.stringValue,
+                                    null,
+                                    true,
+                                    DFRegion.DungeonTypes.HumanStronghold,
+                                    0.5f,
+                                    4,
+                                    (int)DateTime.Now.Ticks,
+                                    dfUnity.Option_DungeonBlockPrefab);
+                            }
                         }
                     });
 

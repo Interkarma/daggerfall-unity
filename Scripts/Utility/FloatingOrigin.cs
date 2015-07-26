@@ -1,12 +1,17 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net), LypyL
+// Contributors:    LypyL - major overhaul and support for floating vertical offset
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -21,15 +26,31 @@ namespace DaggerfallWorkshop.Utility
 
         // Must specify streaming world component
         public StreamingWorld StreamingWorld;
+        public GameObject player;
+        public static FloatingOrigin instance;
+        private Vector3 _totalOffset;
+        private Vector3 _lastOffset;
 
-        // The children of each additional parent will be moved
-        public GameObject[] OtherParents;
+        public Vector3 totalOffset
+        {
+            get { return _totalOffset; }
+        }
+        public Vector3 lastOffset
+        {
+            get { return _lastOffset; }
+        }
 
-        Vector3 lastPlayerPos;
+        void Awake()
+        {
+            instance = this;
 
+        }
         void Start()
         {
-            Initialize();
+            if (!player)
+                player = GameObject.FindGameObjectWithTag("Player");
+            if (!StreamingWorld)
+                StreamingWorld = GameObject.Find("StreamingWorld").GetComponent<StreamingWorld>();
         }
 
         void FixedUpdate()
@@ -37,41 +58,45 @@ namespace DaggerfallWorkshop.Utility
             // Must have streaming world reference
             if (!StreamingWorld)
                 return;
-
             // Do nothing during streaming world init
             if (StreamingWorld.IsInit)
                 return;
 
-            // Check if player movements greater than threshold magnitude from start position
-            Vector3 playerPos = GetXZPosition();
-            Vector3 change = lastPlayerPos - playerPos;
-            if (change.magnitude > threshold)
+
+            if (CheckPosition())
             {
+                Vector3 change = GetOffset(player.transform.position);
+                _totalOffset += change;
+                _lastOffset = change;
+
                 // Offset streaming world
                 OffsetChildren(StreamingWorld.gameObject, change);
                 StreamingWorld.OffsetWorldCompensation(change);
 
-                // Offset children of specified parent game objects
-                // This gives more control than just moving everything in world
-                if (OtherParents != null)
-                {
-                    for (int i = 0; i < OtherParents.Length; i++)
-                    {
-                        OffsetChildren(OtherParents[i], change);
-                    }
-                }
-
-                // Offset player
-                OffsetPlayerController(change);
-
                 // Update last position
-                lastPlayerPos = GetXZPosition();
+                RaiseOnPositionUpdateEvent(change);             //##trigger position update
+
             }
         }
 
-        public void Initialize()
+
+        public bool CheckPosition()
         {
-            lastPlayerPos = GetXZPosition();
+            return (Vector3.Distance(Vector3.zero, player.transform.position) > threshold);
+        }
+
+        /// <summary>
+        /// Get negating vector to place player back at origin
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        Vector3 GetOffset(Vector3 pos)
+        {
+            return new Vector3(
+                -(pos.x),
+                -(pos.y),
+                -(pos.z)
+                );
         }
 
         void OffsetChildren(GameObject go, Vector3 offset)
@@ -81,24 +106,52 @@ namespace DaggerfallWorkshop.Utility
                 transform.position += offset;
             }
 
-            // TODO: Offset particles from particle emitters
-
             // TODO: Offset physic properties
         }
 
-        void OffsetPlayerController(Vector3 offset)
+        public void OffsetPlayerController()
         {
             // Clear moving platform from player controller to prevent player moving improperly with world
             // You should implement ClearActivePlatform() or similar when using your own controller
-            SendMessage("ClearActivePlatform", SendMessageOptions.DontRequireReceiver);
-
-            // Offset player
-            transform.position += offset;
+            if (player)
+                player.SendMessage("ClearActivePlatform", SendMessageOptions.DontRequireReceiver);
         }
 
-        Vector3 GetXZPosition()
+        public void ChangeTargetPlayer(GameObject newPlayer)
         {
-            return new Vector3(transform.position.x, 0, transform.position.z);
+            if (newPlayer == null)
+            {
+                Debug.LogError("newPlayer invalid gameobject");
+                return;
+            }
+
+            //Debug.Log("Changing player " + newPlayer.name);
+            this.player = newPlayer;
         }
+
+        /// <summary>
+        /// Does nothing anymore - remove reference from StreamingWorld and delete this if you want.
+        /// </summary>
+        public void Initialize()
+        {
+            return;
+
+        }
+
+        #region Event Handlers
+
+        // OnPositionUpdate
+        public delegate void OnPositionUpdateEventHandler(Vector3 offset);
+        public static event OnPositionUpdateEventHandler OnPositionUpdate;
+        public void RaiseOnPositionUpdateEvent(Vector3 offset)
+        {
+            if (OnPositionUpdate != null)
+            {
+                OffsetPlayerController();
+                OnPositionUpdate(offset);
+            }
+        }
+
+        #endregion
     }
 }

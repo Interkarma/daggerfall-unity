@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System;
@@ -53,6 +57,10 @@ namespace DaggerfallWorkshop
         public Terrain RightNeighbour;
         public Terrain BottomNeighbour;
 
+        // The tile map
+        [NonSerialized]
+        public Color32[] TileMap;
+
         // Required for material properties
         [SerializeField, HideInInspector]
         Texture2D tileMapTexture;
@@ -61,7 +69,6 @@ namespace DaggerfallWorkshop
 
         DaggerfallUnity dfUnity;
         float[,] heights;
-        Color32[] tileMap;
         int currentWorldClimate = -1;
         DaggerfallDateTime.Seasons season = DaggerfallDateTime.Seasons.Summer;
         bool ready;
@@ -92,9 +99,12 @@ namespace DaggerfallWorkshop
             // Create terrain material
             if (terrainMaterial == null)
             {
-                terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTerrainTilemapShaderName));
+                terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTilemapShaderName));
                 UpdateClimateMaterial();
             }
+
+            // Raise event
+            RaiseOnInstantiateTerrainEvent();
         }
 
         /// <summary>
@@ -121,7 +131,7 @@ namespace DaggerfallWorkshop
                 currentWorldClimate = MapData.worldClimate;
 
                 // Assign textures
-                terrainMaterial.SetTexture("_TileAtlasTex", tileSetMaterial.mainTexture);
+                terrainMaterial.SetTexture("_TileAtlasTex", tileSetMaterial.GetTexture("_TileAtlasTex"));
                 terrainMaterial.SetTexture("_TilemapTex", tileMapTexture);
                 terrainMaterial.SetInt("_TilemapDim", tileMapDim);
             }
@@ -160,12 +170,12 @@ namespace DaggerfallWorkshop
         public void UpdateTileMapData()
         {
             // Create tileMap array if not present
-            if (tileMap == null)
-                tileMap = new Color32[tileMapDim * tileMapDim];
+            if (TileMap == null)
+                TileMap = new Color32[tileMapDim * tileMapDim];
 
             // Also recreate if not sized appropriately
-            if (tileMap.Length != tileMapDim * tileMapDim)
-                tileMap = new Color32[tileMapDim * tileMapDim];
+            if (TileMap.Length != tileMapDim * tileMapDim)
+                TileMap = new Color32[tileMapDim * tileMapDim];
 
             // Assign tile data to tilemap
             Color32 tileColor = new Color32(0, 0, 0, 0);
@@ -187,7 +197,7 @@ namespace DaggerfallWorkshop
 
                     // Assign to tileMap
                     tileColor.r = record;
-                    tileMap[y * tileMapDim + x] = tileColor;
+                    TileMap[y * tileMapDim + x] = tileColor;
                 }
             }
         }
@@ -245,7 +255,7 @@ namespace DaggerfallWorkshop
             }
 
             // Promote tileMap
-            tileMapTexture.SetPixels32(tileMap);
+            tileMapTexture.SetPixels32(TileMap);
             tileMapTexture.Apply(false);
 
             // Promote material
@@ -256,6 +266,9 @@ namespace DaggerfallWorkshop
             Vector3 size = terrain.terrainData.size;
             terrain.terrainData.size = new Vector3(size.x, TerrainHelper.maxTerrainHeight * TerrainScale, size.z);
             terrain.terrainData.SetHeights(0, 0, heights);
+
+            // Raise event
+            RaiseOnPromoteTerrainDataEvent(terrain.terrainData);
         }
 
         /// <summary>
@@ -320,6 +333,28 @@ namespace DaggerfallWorkshop
             ready = true;
 
             return true;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        // OnInstantiateTerrain
+        public delegate void OnInstantiateTerrainEventHandler(DaggerfallTerrain sender);
+        public static event OnInstantiateTerrainEventHandler OnInstantiateTerrain;
+        protected virtual void RaiseOnInstantiateTerrainEvent()
+        {
+            if (OnInstantiateTerrain != null)
+                OnInstantiateTerrain(this);
+        }
+
+        // OnPromoteTerrainData
+        public delegate void OnPromoteTerrainDataEventHandler(DaggerfallTerrain sender, TerrainData terrainData);
+        public static event OnPromoteTerrainDataEventHandler OnPromoteTerrainData;
+        protected virtual void RaiseOnPromoteTerrainDataEvent(TerrainData terrainData)
+        {
+            if (OnPromoteTerrainData != null)
+                OnPromoteTerrainData(this, terrainData);
         }
 
         #endregion

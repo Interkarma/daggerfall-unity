@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System.Collections;
@@ -15,15 +19,19 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop.Demo
 {
     /// <summary>
-    /// Some basic methods for dfworkshop.net demos.
-    /// Should be attached to Player game object.
+    /// Some basic methods for dfworkshop.net demos. Should be attached to Player game object.
+    /// Input is hardcoded so project settings do not need to be distributed with library.
+    /// Should use normal Unity Input setup in a real project.
     /// </summary>
     public class ExplorerMode : MonoBehaviour
     {
         const float hiRunSpeedValue = 240f;
+        const float hiTorchRangeValue = 25f;
 
         public SongManager SongManager;
         public WeatherManager WeatherManager;
+        public Light PlayerTorch;
+        public WeaponManager WeaponManager;
 
         DaggerfallUnity dfUnity;
         StreamingWorld streamingWorld;
@@ -39,9 +47,11 @@ namespace DaggerfallWorkshop.Demo
         int timeScaleStep = 25;
         float timeScaleMultiplier = 10f;
         float startRunSpeed;
+        float startTorchRange;
         bool showDebugStrings = false;
         bool invertMouse = false;
         bool hiRunSpeed = false;
+        bool hiTorchRange = false;
 
         void Start()
         {
@@ -56,12 +66,25 @@ namespace DaggerfallWorkshop.Demo
             // Get starting run speed
             if (playerMotor)
                 startRunSpeed = playerMotor.runSpeed;
+
+            // Get starting torch range
+            if (PlayerTorch != null)
+                startTorchRange = PlayerTorch.range;
         }
 
         void Update()
         {
-            if (!streamingWorld.IsInit && titleScreen)
-                titleScreen.ShowTitle = false;
+            if (streamingWorld.IsInit)
+            {
+                // Exit while loading world
+                return;
+            }
+            else
+            {
+                // Stop showing title screen
+                if (titleScreen)
+                    titleScreen.ShowTitle = false;
+            }
 
             // Random location
             // Must have playerEnterExit reference
@@ -69,6 +92,12 @@ namespace DaggerfallWorkshop.Demo
             {
                 if (!playerEnterExit)
                     return;
+
+                // Sheate weapons
+                if (WeaponManager)
+                {
+                    WeaponManager.SheathWeapons();
+                }
 
                 if (playerEnterExit.IsPlayerInsideDungeon)
                 {
@@ -158,6 +187,16 @@ namespace DaggerfallWorkshop.Demo
                     else
                         playerMotor.runSpeed = startRunSpeed;
                 }
+            }
+
+            // Brighter torch
+            if (Input.GetKeyDown(KeyCode.T) && PlayerTorch != null)
+            {
+                hiTorchRange = !hiTorchRange;
+                if (hiTorchRange)
+                    PlayerTorch.range = hiTorchRangeValue;
+                else
+                    PlayerTorch.range = startTorchRange;
             }
 
             // Debug strings

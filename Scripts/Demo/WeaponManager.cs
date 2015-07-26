@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System.Collections;
@@ -19,7 +23,7 @@ namespace DaggerfallWorkshop.Demo
         public FPSWeapon LeftHandWeapon;            // Weapon in left hand
         public FPSWeapon RightHandWeapon;           // Weapon in right hand
         public bool Sheathed;                       // Weapon (or weapons) are sheathed
-        public float SphereCastRadius = 0.35f;      // Radius of SphereCast used to target attacks
+        public float SphereCastRadius = 0.4f;       // Radius of SphereCast used to target attacks
         public float HorizontalThreshold = 0.8f;    // Horizontal mouse delta threshold for action to register
         public float VerticalThreshold = 0.8f;      // Vertical mouse delta threshold for action to register
         public int TriggerCount = 3;                // Minimum number of times action must register before triggering attack
@@ -110,6 +114,12 @@ namespace DaggerfallWorkshop.Demo
 
             // Time for attacks
             ExecuteAttacks();
+        }
+
+        public void SheathWeapons()
+        {
+            Sheathed = true;
+            ShowWeapons(false);
         }
 
         #region Private Methods
@@ -263,7 +273,7 @@ namespace DaggerfallWorkshop.Demo
 
             // Fire ray along player facing using weapon range
             RaycastHit hit;
-            Ray ray = new Ray(mainCamera.transform.position + mainCamera.transform.forward * 0.1f, mainCamera.transform.forward);
+            Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Range - SphereCastRadius))
             {
                 // Check if hit has an DaggerfallActionDoor component

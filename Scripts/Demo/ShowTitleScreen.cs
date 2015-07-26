@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System;
@@ -17,9 +21,32 @@ namespace DaggerfallWorkshop.Demo
     public class ShowTitleScreen : MonoBehaviour
     {
         public Texture2D TitleScreenTexture;
-        public bool ShowTitle = false;
 
         Texture2D blackTexture;
+        public bool showTitle = false;
+        bool lastShowTitle = false;
+
+        public bool ShowTitle
+        {
+            get
+            {
+                return showTitle;
+            }
+            set
+            {
+                showTitle = value;
+
+                // Start event
+                if (showTitle == true && lastShowTitle == false)
+                    RaiseOnStartDisplayTitleScreenEvent();
+
+                // End event
+                if (showTitle == false && lastShowTitle == true)
+                    RaiseOnEndDisplayTitleScreenEvent();
+
+                lastShowTitle = showTitle;
+            }
+        }
 
         void Awake()
         {
@@ -46,5 +73,27 @@ namespace DaggerfallWorkshop.Demo
                 GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), TitleScreenTexture, ScaleMode.ScaleToFit, false, 1.6f);
             }
         }
+
+        #region Event Handlers
+
+        // OnStartDisplayTitleScreen
+        public delegate void OnStartDisplayTitleScreenHandler();
+        public static event OnStartDisplayTitleScreenHandler OnStartDisplayTitleScreen;
+        protected virtual void RaiseOnStartDisplayTitleScreenEvent()
+        {
+            if (OnStartDisplayTitleScreen != null)
+                OnStartDisplayTitleScreen();
+        }
+
+        // OnEndDisplayTitleScreen
+        public delegate void OnEndDisplayTitleScreenHandler();
+        public static event OnEndDisplayTitleScreenHandler OnEndDisplayTitleScreen;
+        protected virtual void RaiseOnEndDisplayTitleScreenEvent()
+        {
+            if (OnEndDisplayTitleScreen != null)
+                OnEndDisplayTitleScreen();
+        }
+
+        #endregion
     }
 }

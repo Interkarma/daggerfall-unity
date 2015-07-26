@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System;
@@ -98,7 +102,6 @@ namespace DaggerfallWorkshop
             AddFlats();
             AddPeople();
             AddActionDoors();
-            //AddLights();
 
             return true;
         }
@@ -194,7 +197,7 @@ namespace DaggerfallWorkshop
 
                     // Update climate
                     DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
-                    dfMesh.SetClimate(dfUnity, climateBase, climateSeason, WindowStyle.Disabled);
+                    dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
                 }
             }
 
@@ -208,7 +211,7 @@ namespace DaggerfallWorkshop
 
                     // Update climate
                     DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
-                    dfMesh.SetClimate(dfUnity, climateBase, climateSeason, WindowStyle.Disabled);
+                    dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
                 }
             }
 
@@ -237,7 +240,7 @@ namespace DaggerfallWorkshop
                 // Sometimes marker 199.4 is used where the 199.8 enter marker should be
                 // Being a little forgiving and also accepting 199.4 as enter marker
                 // Will add more of these cases if I find them
-                if (obj.TextureArchive == 199 && (obj.TextureRecord == 8 || obj.TextureRecord == 4))
+                if (obj.TextureArchive == TextureReader.EditorFlatsTextureArchive && (obj.TextureRecord == 8 || obj.TextureRecord == 4))
                     markers.Add(go);
             }
         }
@@ -264,8 +267,8 @@ namespace DaggerfallWorkshop
         /// </summary>
         private void AddActionDoors()
         {
-            GameObject node = new GameObject("ActionDoors");
-            node.transform.parent = this.transform;
+            GameObject actionDoorsNode = new GameObject("Action Doors");
+            actionDoorsNode.transform.parent = this.transform;
 
             foreach (DFBlock.RmbBlockDoorRecord obj in recordData.Interior.BlockDoorRecords)
             {
@@ -273,40 +276,22 @@ namespace DaggerfallWorkshop
                 Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);
                 Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
 
-                // Add GameObject
-                GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(doorModelId, node.transform);
+                // Instantiate door prefab and add model
+                GameObject go = GameObjectHelper.InstantiatePrefab(dfUnity.Option_InteriorDoorPrefab.gameObject, string.Empty, actionDoorsNode.transform, Vector3.zero);
+                GameObjectHelper.CreateDaggerfallMeshGameObject(doorModelId, actionDoorsNode.transform, false, go, true);
+
+                // Resize box collider to new mesh bounds
+                BoxCollider boxCollider = go.GetComponent<BoxCollider>();
+                MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
+                if (boxCollider != null && meshRenderer != null)
+                {
+                    boxCollider.center = meshRenderer.bounds.center;
+                    boxCollider.size = meshRenderer.bounds.size;
+                }
+
+                // Apply transforms
                 go.transform.rotation = Quaternion.Euler(modelRotation);
                 go.transform.position = modelPosition;
-
-                // Add component
-                DaggerfallActionDoor c = go.AddComponent<DaggerfallActionDoor>();
-                c.OpenAngle = -obj.OpenRotation;
-
-                // Add sounds
-                if (dfUnity.Option_DefaultSounds)
-                {
-                    go.AddComponent<DaggerfallAudioSource>();
-                    c.SetInteriorDoorSounds();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Add interior lights to parent transform.
-        /// </summary>
-        private void AddLights()
-        {
-            GameObject node = new GameObject("Lights");
-            node.transform.parent = this.transform;
-
-            // Add block lights based on light billboard positions
-            foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
-            {
-                if (obj.TextureArchive == 210)
-                {
-                    GameObject go = GameObjectHelper.CreateDaggerfallInteriorPointLight(8f, node.transform);
-                    go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-                }
             }
         }
 

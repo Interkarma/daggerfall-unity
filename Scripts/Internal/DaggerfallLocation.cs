@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 #if UNITY_EDITOR
@@ -78,6 +82,7 @@ namespace DaggerfallWorkshop
             public ClimateBases Climate;
             public ClimateNatureSets Nature;
             public int SkyBase;
+            public DaggerfallBillboardBatch NatureBillboardBatch;
         }
 
         void Start()
@@ -147,7 +152,7 @@ namespace DaggerfallWorkshop
             summary.RegionName = location.RegionName;
             summary.LocationName = location.Name;
             summary.WorldClimate = location.Climate.WorldClimate;
-            summary.LocationType = location.MapTableData.Type;
+            summary.LocationType = location.MapTableData.LocationType;
             summary.DungeonType = location.MapTableData.DungeonType;
             summary.HasDungeon = location.HasDungeon;
             summary.Climate = ClimateSwaps.FromAPIClimateBase(location.Climate.ClimateType);
@@ -183,10 +188,10 @@ namespace DaggerfallWorkshop
                 switch (ClimateUse)
                 {
                     case LocationClimateUse.UseLocation:
-                        dm.SetClimate(dfUnity, Summary.Climate, CurrentSeason, WindowTextureStyle);
+                        dm.SetClimate(Summary.Climate, CurrentSeason, WindowTextureStyle);
                         break;
                     case LocationClimateUse.Custom:
-                        dm.SetClimate(dfUnity, CurrentClimate, CurrentSeason, WindowTextureStyle);
+                        dm.SetClimate(CurrentClimate, CurrentSeason, WindowTextureStyle);
                         break;
                     case LocationClimateUse.Disabled:
                         dm.DisableClimate(dfUnity);
@@ -213,20 +218,7 @@ namespace DaggerfallWorkshop
             }
 
             // Determine correct nature archive
-            int natureArchive;
-            switch (ClimateUse)
-            {
-                case LocationClimateUse.UseLocation:
-                    natureArchive = ClimateSwaps.GetNatureArchive(summary.Nature, CurrentSeason);
-                    break;
-                case LocationClimateUse.Custom:
-                    natureArchive = ClimateSwaps.GetNatureArchive(CurrentNatureSet, CurrentSeason);
-                    break;
-                case LocationClimateUse.Disabled:
-                default:
-                    natureArchive = ClimateSwaps.GetNatureArchive(ClimateNatureSets.TemperateWoodland, ClimateSeason.Summer);
-                    break;
-            }
+            int natureArchive = GetNatureArchive();
 
             // Process all DaggerfallBillboard child components
             DaggerfallBillboard[] billboardArray = GetComponentsInChildren<DaggerfallBillboard>();
@@ -235,13 +227,20 @@ namespace DaggerfallWorkshop
                 if (db.Summary.FlatType == FlatTypes.Nature)
                 {
                     // Apply recalculated nature archive
-                    db.SetMaterial(dfUnity, natureArchive, db.Summary.Record, 0, db.Summary.InDungeon);
+                    db.SetMaterial(natureArchive, db.Summary.Record, 0, db.Summary.InDungeon);
                 }
                 else
                 {
                     // All other flats are just reapplied to handle any other changes
-                    db.SetMaterial(dfUnity, db.Summary.Archive, db.Summary.Record, 0, db.Summary.InDungeon);
+                    db.SetMaterial(db.Summary.Archive, db.Summary.Record, 0, db.Summary.InDungeon);
                 }
+            }
+
+            // Process nature billboard batch
+            if (summary.NatureBillboardBatch != null)
+            {
+                summary.NatureBillboardBatch.SetMaterial(natureArchive, true);
+                summary.NatureBillboardBatch.Apply();
             }
         }
 
@@ -264,23 +263,90 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
+        private int GetNatureArchive()
+        {
+            int natureArchive;
+            switch (ClimateUse)
+            {
+                case LocationClimateUse.UseLocation:
+                    natureArchive = ClimateSwaps.GetNatureArchive(summary.Nature, CurrentSeason);
+                    break;
+                case LocationClimateUse.Custom:
+                    natureArchive = ClimateSwaps.GetNatureArchive(CurrentNatureSet, CurrentSeason);
+                    break;
+                case LocationClimateUse.Disabled:
+                default:
+                    natureArchive = ClimateSwaps.GetNatureArchive(ClimateNatureSets.TemperateWoodland, ClimateSeason.Summer);
+                    break;
+            }
+
+            return natureArchive;
+        }
+
+        /// <summary>
+        /// Performs a fully standalone in-place location layout.
+        /// This method is used only by editor layouts, not by streaming world.
+        /// </summary>
         private void LayoutLocation(ref DFLocation location)
         {
             // Get city dimensions
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
 
+            // Create billboard batch game objects for this location
+            TextureAtlasBuilder miscBillboardAtlas = null;
+            summary.NatureBillboardBatch = null;
+            DaggerfallBillboardBatch lightsBillboardBatch = null;
+            DaggerfallBillboardBatch animalsBillboardBatch = null;
+            DaggerfallBillboardBatch miscBillboardBatch = null;
+            if (dfUnity.Option_BatchBillboards)
+            {
+                miscBillboardAtlas = dfUnity.MaterialReader.MiscBillboardAtlas;
+                int natureArchive = ClimateSwaps.GetNatureArchive(CurrentNatureSet, CurrentSeason);
+                summary.NatureBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(natureArchive, transform);
+                lightsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.LightsTextureArchive, transform);
+                animalsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.AnimalsTextureArchive, transform);
+                miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, transform);
+            }
+
             // Import blocks
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
+                    if (dfUnity.Option_BatchBillboards)
+                    {
+                        // Set block origin for billboard batches
+                        // This causes next additions to be offset by this position
+                        Vector3 blockOrigin = new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
+                        summary.NatureBillboardBatch.BlockOrigin = blockOrigin;
+                        lightsBillboardBatch.BlockOrigin = blockOrigin;
+                        animalsBillboardBatch.BlockOrigin = blockOrigin;
+                        miscBillboardBatch.BlockOrigin = blockOrigin;
+                    }
+
                     string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
-                    GameObject go = RMBLayout.CreateGameObject(blockName);
+                    GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
+                        blockName,
+                        dfUnity.Option_RMBGroundPlane,
+                        dfUnity.Option_CityBlockPrefab,
+                        summary.NatureBillboardBatch,
+                        lightsBillboardBatch,
+                        animalsBillboardBatch,
+                        miscBillboardAtlas,
+                        miscBillboardBatch,
+                        CurrentNatureSet,
+                        CurrentSeason);
                     go.transform.parent = this.transform;
                     go.transform.position = new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
                 }
             }
+
+            // Apply batches
+            if (summary.NatureBillboardBatch) summary.NatureBillboardBatch.Apply();
+            if (lightsBillboardBatch) lightsBillboardBatch.Apply();
+            if (animalsBillboardBatch) animalsBillboardBatch.Apply();
+            if (miscBillboardBatch) miscBillboardBatch.Apply();
 
             // Enumerate start marker game objects
             EnumerateStartMarkers();

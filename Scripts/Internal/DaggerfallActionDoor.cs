@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System.Collections;
@@ -19,7 +23,7 @@ namespace DaggerfallWorkshop
     /// Specialised action component for hinged doors in builings and interiors.
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
-    [RequireComponent(typeof(MeshCollider))]
+    [RequireComponent(typeof(BoxCollider))]
     public class DaggerfallActionDoor : MonoBehaviour
     {
         public bool StartOpen = false;                  // Door should start in open state
@@ -27,7 +31,7 @@ namespace DaggerfallWorkshop
         public bool IsMagicallyHeld = false;            // Magically held locks can be opened by spells only
         public float OpenAngle = -90f;                  // Angle to swing door on axis when opening
         public float OpenDuration = 1.5f;               // How long in seconds for door to open
-        public bool DisableColliderWhenOpen = true;     // Collider is disabled when door opens
+        public bool IsTriggerWhenOpen = true;           // Collider is disabled when door opens
         public float ChanceToBash = 0.25f;              // Chance of successfully bashing open door (0=no chance, 1=first time)
         public bool PlaySounds = true;                  // Play open and close sounds if present (OpenSound > 0, CloseSound > 0)
 
@@ -40,7 +44,7 @@ namespace DaggerfallWorkshop
         bool isMoving = false;
         Vector3 closedTransform;
         AudioSource audioSource;
-        MeshCollider meshCollider;
+        BoxCollider boxCollider;
 
         public bool IsOpen
         {
@@ -51,7 +55,7 @@ namespace DaggerfallWorkshop
         {
             closedTransform = transform.rotation.eulerAngles;
             audioSource = GetComponent<AudioSource>();
-            meshCollider = GetComponent<MeshCollider>();
+            boxCollider = GetComponent<BoxCollider>();
 
             if (StartOpen)
                 Open(0, true);
@@ -73,7 +77,8 @@ namespace DaggerfallWorkshop
                 if (PlaySounds && BashSound > 0 && audioSource)
                 {
                     DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
-                    dfAudioSource.PlayOneShot(BashSound);
+                    if (dfAudioSource != null)
+                        dfAudioSource.PlayOneShot(BashSound);
                 }
 
                 // Cannot bash magically held doors
@@ -118,7 +123,8 @@ namespace DaggerfallWorkshop
                 if (PlaySounds && LockedSound > 0 && duration > 0 && audioSource)
                 {
                     DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
-                    dfAudioSource.PlayOneShot(LockedSound);
+                    if (dfAudioSource != null)
+                        dfAudioSource.PlayOneShot(LockedSound);
                 }
 
                 return;
@@ -135,17 +141,15 @@ namespace DaggerfallWorkshop
             isMoving = true;
 
             // Set collider to trigger only
-            if (DisableColliderWhenOpen && meshCollider)
-            {
-                meshCollider.convex = true;
-                meshCollider.isTrigger = true;
-            }
+            if (IsTriggerWhenOpen && boxCollider != null)
+                boxCollider.isTrigger = true;
 
             // Play open sound if flagged and ready
             if (PlaySounds && OpenSound > 0 && duration > 0 && audioSource)
             {
                 DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
-                dfAudioSource.PlayOneShot(OpenSound);
+                if (dfAudioSource != null)
+                    dfAudioSource.PlayOneShot(OpenSound);
             }
 
             // Set flag
@@ -189,8 +193,8 @@ namespace DaggerfallWorkshop
             }
 
             // Set collider back to a solid object
-            if (DisableColliderWhenOpen && meshCollider)
-                meshCollider.isTrigger = false;
+            if (IsTriggerWhenOpen && boxCollider != null)
+                boxCollider.isTrigger = false;
         }
 
         #endregion

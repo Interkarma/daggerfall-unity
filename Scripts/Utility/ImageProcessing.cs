@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System.IO;
@@ -40,6 +44,19 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        // Copies a subset of Color32 array into XY position of another Color32 array
+        public static void CopyColors(ref Color32[] src, ref Color32[] dst, DFSize srcSize, DFSize dstSize, DFPosition srcPos, DFPosition dstPos, DFSize copySize)
+        {
+            for (int y = 0; y < copySize.Height; y++)
+            {
+                for (int x = 0; x < copySize.Width; x++)
+                {
+                    Color32 col = src[(srcPos.Y + y) * srcSize.Width + (srcPos.X + x)];
+                    dst[(dstPos.Y + y) * dstSize.Width + (dstPos.X + x)] = col;
+                }
+            }
+        }
+
         /// <summary>
         /// Converts full colour DFBitmap to Color32 array.
         /// </summary>
@@ -48,8 +65,8 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Color32 array.</returns>
         public static Color32[] ConvertToColor32(DFBitmap bitmap, bool flipY = true)
         {
-            // Must not be indexed
-            if (bitmap.Format == DFBitmap.Formats.Indexed)
+            // Must be RGBA format
+            if (bitmap.Format != DFBitmap.Formats.RGBA)
                 return null;
 
             // Create destination array
@@ -86,6 +103,7 @@ namespace DaggerfallWorkshop.Utility
             return texture;
         }
 
+#if UNITY_EDITOR && !UNITY_WEBPLAYER
         // Helper to save Texture2D to a PNG file
         public static void SaveTextureAsPng(Texture2D texture, string path)
         {
@@ -97,6 +115,7 @@ namespace DaggerfallWorkshop.Utility
             byte[] buffer = texture.EncodeToPNG();
             File.WriteAllBytes(path, buffer);
         }
+#endif
 
         #endregion
 
@@ -110,7 +129,7 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>SnapBitmap mipmap.</returns>
         public static DFBitmap ResizeBicubic(DFBitmap bitmap, int newWidth, int newHeight)
         {
-            // Must be a colour format
+            // Must be colour format
             if (bitmap.Format == DFBitmap.Formats.Indexed)
                 return null;
 
@@ -269,73 +288,25 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Creates average intensity bitmap.
+        /// Creates average intensity Color32 array.
         /// </summary>
-        /// <param name="bitmap">Source DFBitmap.</param>
-        /// <returns>Average intensity DFBitmap.</returns>
-        public static DFBitmap MakeAverageIntensityBitmap(DFBitmap bitmap)
+        /// <param name="colors">Source Color32 array.</param>
+        /// <returns>Average intensity Color32 array.</returns>
+        public static Color32[] MakeAverageIntensity(Color32[] colors)
         {
-            // Must be a colour format
-            if (bitmap.Format == DFBitmap.Formats.Indexed)
-                return null;
-
-            DFBitmap newBitmap = new DFBitmap();
-            newBitmap.Format = bitmap.Format;
-            newBitmap.Initialise(bitmap.Width, bitmap.Height);
+            Color32[] newColors = (Color32[])colors.Clone();
 
             // Make each pixel grayscale based on average intensity
-            int srcPos = 0, dstPos = 0;
-            for (int i = 0; i < bitmap.Width * bitmap.Height; i++)
+            for (int i = 0; i < colors.Length; i++)
             {
-                // Get source color
-                byte r = bitmap.Data[srcPos++];
-                byte g = bitmap.Data[srcPos++];
-                byte b = bitmap.Data[srcPos++];
-                byte a = bitmap.Data[srcPos++];
-
                 // Get average intensity
-                int intensity = (r + g + b) / 3;
-                DFBitmap.DFColor dstColor = DFBitmap.DFColor.FromRGBA((byte)intensity, (byte)intensity, (byte)intensity, a);
-
-                // Write destination pixel
-                newBitmap.Data[dstPos++] = dstColor.r;
-                newBitmap.Data[dstPos++] = dstColor.g;
-                newBitmap.Data[dstPos++] = dstColor.b;
-                newBitmap.Data[dstPos++] = dstColor.a;
+                Color32 srcColor = colors[i];
+                int intensity = (srcColor.r + srcColor.g + srcColor.b) / 3;
+                Color32 dstColor = new Color32((byte)intensity, (byte)intensity, (byte)intensity, srcColor.a);
+                newColors[i] = dstColor;
             }
 
-            return newBitmap;
-        }
-
-        #endregion
-
-        #region PreMultiply Alpha
-
-        /// <summary>
-        /// Pre-multiply bitmap alpha.
-        /// </summary>
-        /// <param name="bitmap">DFBitmap.</param>
-        public static void PreMultiplyAlpha(DFBitmap bitmap)
-        {
-            // Must be a colour format
-            if (bitmap.Format == DFBitmap.Formats.Indexed)
-                return;
-
-            // Pre-multiply alpha for each pixel
-            int pos;
-            float multiplier;
-            for (int y = 0; y < bitmap.Height; y++)
-            {
-                pos = y * bitmap.Stride;
-                for (int x = 0; x < bitmap.Width; x++)
-                {
-                    multiplier = bitmap.Data[pos + 3] / 256f;
-                    bitmap.Data[pos] = (byte)(bitmap.Data[pos] * multiplier);
-                    bitmap.Data[pos + 1] = (byte)(bitmap.Data[pos + 1] * multiplier);
-                    bitmap.Data[pos + 2] = (byte)(bitmap.Data[pos + 2] * multiplier);
-                    pos += bitmap.FormatWidth;
-                }
-            }
+            return newColors;
         }
 
         #endregion
@@ -407,6 +378,23 @@ namespace DaggerfallWorkshop.Utility
                         MixColor(ref colors, ref size, color, x + 1, y + 1);
                     }
                 }
+            }
+        }
+
+        #endregion
+
+        #region Negative
+
+        /// <summary>
+        /// Creates a negative of image.
+        /// </summary>
+        /// <param name="colors">Source Color32 array.</param>
+        public static void Negative(ref Color32[] colors)
+        {
+            for (int i = 0; i < colors.Length; i++)
+            {
+                Color32 pixel = colors[i];
+                colors[i] = new Color32((byte)(255 - pixel.r), (byte)(255 - pixel.g), (byte)(255 - pixel.b), pixel.a);
             }
         }
 
@@ -645,78 +633,6 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
-        #region Edge Detection
-
-        /*
-         * Based on Craig's Utility Library (CUL) by James Craig.
-         * http://www.gutgames.com/post/Edge-detection-in-C.aspx
-         * MIT License (http://www.opensource.org/licenses/mit-license.php)
-         */
-
-        /// <summary>
-        /// Gets a new bitmap containing edges detected in source bitmap.
-        /// The source bitmap is unchanged.
-        /// </summary>
-        /// <param name="bitmap">DFBitmap source.</param>
-        /// <param name="threshold">Edge detection threshold.</param>
-        /// <param name="edgeColor">Edge colour to write.</param>
-        /// <returns>DFBitmap containing edges.</returns>
-        private static DFBitmap FindEdges(DFBitmap bitmap, float threshold, DFBitmap.DFColor edgeColor)
-        {
-            // Must be a colour format
-            if (bitmap.Format == DFBitmap.Formats.Indexed)
-                return null;
-
-            // Clone bitmap settings
-            DFBitmap newBitmap = DFBitmap.CloneDFBitmap(bitmap);
-
-            for (int x = 0; x < bitmap.Width; x++)
-            {
-                for (int y = 0; y < bitmap.Height; y++)
-                {
-                    DFBitmap.DFColor currentColor = DFBitmap.GetPixel(bitmap, x, y);
-                    if (y < newBitmap.Height - 1 && x < newBitmap.Width - 1)
-                    {
-                        DFBitmap.DFColor tempColor = DFBitmap.GetPixel(bitmap, x + 1, y + 1);
-                        if (ColorDistance(currentColor, tempColor) > threshold)
-                            DFBitmap.SetPixel(newBitmap, x, y, edgeColor);
-                    }
-                    else if (y < newBitmap.Height - 1)
-                    {
-                        DFBitmap.DFColor tempColor = DFBitmap.GetPixel(bitmap, x, y + 1);
-                        if (ColorDistance(currentColor, tempColor) > threshold)
-                            DFBitmap.SetPixel(newBitmap, x, y, edgeColor);
-                    }
-                    else if (x < newBitmap.Width - 1)
-                    {
-                        DFBitmap.DFColor tempColor = DFBitmap.GetPixel(bitmap, x + 1, y);
-                        if (ColorDistance(currentColor, tempColor) > threshold)
-                            DFBitmap.SetPixel(newBitmap, x, y, edgeColor);
-                    }
-                }
-            }
-
-            return newBitmap;
-        }
-
-        /// <summary>
-        /// Gets distance between two colours using Euclidean distance function.
-        /// Distance = SQRT( (R1-R2)2 + (G1-G2)2 + (B1-B2)2 )
-        /// </summary>
-        /// <param name="color1">First Color.</param>
-        /// <param name="color2">Second Color.</param>
-        /// <returns>Distance between colours.</returns>
-        private static float ColorDistance(DFBitmap.DFColor color1, DFBitmap.DFColor color2)
-        {
-            float r = color1.r - color2.r;
-            float g = color1.g - color2.g;
-            float b = color1.b - color2.b;
-
-            return (float)Mathf.Sqrt((r * r) + (g * g) + (b * b));
-        }
-
-        #endregion
-
         #region Matrix Convolution Filter
 
         /*
@@ -737,8 +653,8 @@ namespace DaggerfallWorkshop.Utility
             public Filter()
             {
                 MyFilter = new int[3, 3];
-                Width = 3;
-                Height = 3;
+                FilterWidth = 3;
+                FilterHeight = 3;
                 Offset = 0;
                 Absolute = false;
             }
@@ -751,8 +667,8 @@ namespace DaggerfallWorkshop.Utility
             public Filter(int Width, int Height)
             {
                 MyFilter = new int[Width, Height];
-                this.Width = Width;
-                this.Height = Height;
+                FilterWidth = Width;
+                FilterHeight = Height;
                 Offset = 0;
                 Absolute = false;
             }
@@ -767,12 +683,12 @@ namespace DaggerfallWorkshop.Utility
             /// <summary>
             /// Width of the filter box
             /// </summary>
-            public int Width { get; set; }
+            public int FilterWidth { get; set; }
 
             /// <summary>
             /// Height of the filter box
             /// </summary>
-            public int Height { get; set; }
+            public int FilterHeight { get; set; }
 
             /// <summary>
             /// Amount to add to the red, blue, and green values
@@ -786,76 +702,77 @@ namespace DaggerfallWorkshop.Utility
             #endregion
 
             #region Public Methods
-            /// <summary>
-            /// Applies the filter to the input image
-            /// </summary>
-            /// <param name="Input">input image</param>
-            /// <returns>Returns a separate image with the filter applied</returns>
-            public DFBitmap ApplyFilter(DFBitmap Input)
-            {
-                // Must be a colour format
-                if (Input.Format == DFBitmap.Formats.Indexed)
-                    return null;
 
-                DFBitmap NewBitmap = DFBitmap.CloneDFBitmap(Input);
-                for (int x = 0; x < Input.Width; ++x)
+            /// <summary>
+            /// Applies filter to input Color32 array.
+            /// </summary>
+            /// <param name="colors">Source Color32 array.</param>
+            /// <param name="width">Image width.</param>
+            /// <param name="height">Image height.</param>
+            /// <returns>New Color32 array with filter applied.</returns>
+            public Color32[] ApplyFilter(Color32[] colors, int width, int height)
+            {
+                Color32[] newColors = (Color32[])colors.Clone();
+                for (int x = 0; x < width; ++x)
                 {
-                    for (int y = 0; y < Input.Height; ++y)
+                    for (int y = 0; y < height; ++y)
                     {
-                        int RValue = 0;
-                        int GValue = 0;
-                        int BValue = 0;
-                        int AValue = 0;
-                        int Weight = 0;
-                        int XCurrent = -Width / 2;
-                        for (int x2 = 0; x2 < Width; ++x2)
+                        int weight = 0;
+                        int r = 0, g = 0, b = 0, a = 0;
+
+                        int curX = -FilterWidth / 2;
+                        for (int x2 = 0; x2 < FilterWidth; ++x2)
                         {
-                            if (XCurrent + x < Input.Width && XCurrent + x >= 0)
+                            int sampleX = curX + x;                     // Sample point is wrapped to avoid seams in edge-finding filters
+                            if (sampleX < 0) sampleX = width - 1;
+                            if (sampleX >= width) sampleX = 0;
+
+                            int curY = -FilterHeight / 2;
+                            for (int y2 = 0; y2 < FilterHeight; ++y2)
                             {
-                                int YCurrent = -Height / 2;
-                                for (int y2 = 0; y2 < Height; ++y2)
-                                {
-                                    if (YCurrent + y < Input.Height && YCurrent + y >= 0)
-                                    {
-                                        DFBitmap.DFColor Pixel = DFBitmap.GetPixel(Input, XCurrent + x, YCurrent + y);
-                                        RValue += MyFilter[x2, y2] * Pixel.r;
-                                        GValue += MyFilter[x2, y2] * Pixel.g;
-                                        BValue += MyFilter[x2, y2] * Pixel.b;
-                                        AValue = Pixel.a;
-                                        Weight += MyFilter[x2, y2];
-                                    }
-                                    ++YCurrent;
-                                }
+                                int sampleY = curY + y;                 // Sample point is wrapped to avoid seams in edge-finding filters
+                                if (sampleY < 0) sampleY = height - 1;
+                                if (sampleY >= height) sampleY = 0;
+
+                                Color32 pixel = colors[sampleY * width + sampleX];
+                                r += MyFilter[x2, y2] * pixel.r;
+                                g += MyFilter[x2, y2] * pixel.g;
+                                b += MyFilter[x2, y2] * pixel.b;
+                                a = pixel.a;
+                                weight += MyFilter[x2, y2];
+
+                                ++curY;
                             }
-                            ++XCurrent;
+
+                            ++curX;
                         }
 
-                        DFBitmap.DFColor MeanPixel = DFBitmap.GetPixel(Input, x, y);
-                        if (Weight == 0)
-                            Weight = 1;
-                        if (Weight > 0)
+                        Color32 meanPixel = colors[y * width + x];
+                        if (weight == 0)
+                            weight = 1;
+                        if (weight > 0)
                         {
                             if (Absolute)
                             {
-                                RValue = System.Math.Abs(RValue);
-                                GValue = System.Math.Abs(GValue);
-                                BValue = System.Math.Abs(BValue);
+                                r = System.Math.Abs(r);
+                                g = System.Math.Abs(g);
+                                b = System.Math.Abs(b);
                             }
 
-                            RValue = (RValue / Weight) + Offset;
-                            RValue = Clamp(RValue, 0, 255);
-                            GValue = (GValue / Weight) + Offset;
-                            GValue = Clamp(GValue, 0, 255);
-                            BValue = (BValue / Weight) + Offset;
-                            BValue = Clamp(BValue, 0, 255);
-                            MeanPixel = DFBitmap.DFColor.FromRGBA((byte)RValue, (byte)GValue, (byte)BValue, (byte)AValue);
+                            r = (r / weight) + Offset;
+                            r = Clamp(r, 0, 255);
+                            g = (g / weight) + Offset;
+                            g = Clamp(g, 0, 255);
+                            b = (b / weight) + Offset;
+                            b = Clamp(b, 0, 255);
+                            meanPixel = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
                         }
 
-                        DFBitmap.SetPixel(NewBitmap, x, y, MeanPixel);
+                        newColors[y * width + x] = meanPixel;
                     }
                 }
 
-                return NewBitmap;
+                return newColors;
             }
             #endregion
         }
@@ -867,34 +784,25 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Sharpen a DFBitmap.
         /// </summary>
-        /// <param name="bitmap">Source DFBitmap.</param>
-        /// <param name="passes">Number of sharpen passes.</param>
-        /// <returns>Sharpened DFBitmap.</returns>
-        public static DFBitmap Sharpen(DFBitmap bitmap, int passes = 1)
+        /// <param name="colors">Source Color32 array.</param>
+        /// <param name="width">Image width.</param>
+        /// <param name="height">Image height.</param>
+        /// <returns>Sharpened image.</returns>
+        public static Color32[] Sharpen(ref Color32[] colors, int width, int height)
         {
-            // Must be a colour format
-            if (bitmap.Format == DFBitmap.Formats.Indexed)
-                return null;
+            // Create sharpen matrix
+            Filter sharpenMatrix = new Filter(3, 3);
+            sharpenMatrix.MyFilter[0, 0] = -1;
+            sharpenMatrix.MyFilter[0, 1] = -1;
+            sharpenMatrix.MyFilter[0, 2] = -1;
+            sharpenMatrix.MyFilter[1, 0] = 1;
+            sharpenMatrix.MyFilter[1, 1] = 12;
+            sharpenMatrix.MyFilter[1, 2] = 1;
+            sharpenMatrix.MyFilter[2, 0] = -1;
+            sharpenMatrix.MyFilter[2, 1] = -1;
+            sharpenMatrix.MyFilter[2, 2] = -1;
 
-            DFBitmap newBitmap = DFBitmap.CloneDFBitmap(bitmap);
-
-            for (int i = 0; i < passes; i++)
-            {
-                // Create horizontal sobel matrix
-                Filter sharpenMatrix = new Filter(3, 3);
-                sharpenMatrix.MyFilter[0, 0] = -1;
-                sharpenMatrix.MyFilter[1, 0] = -1;
-                sharpenMatrix.MyFilter[2, 0] = -1;
-                sharpenMatrix.MyFilter[0, 1] = 1;
-                sharpenMatrix.MyFilter[1, 1] = 12;
-                sharpenMatrix.MyFilter[2, 1] = 1;
-                sharpenMatrix.MyFilter[0, 2] = -1;
-                sharpenMatrix.MyFilter[1, 2] = -1;
-                sharpenMatrix.MyFilter[2, 2] = -1;
-                newBitmap = sharpenMatrix.ApplyFilter(newBitmap);
-            }
-
-            return newBitmap;
+            return sharpenMatrix.ApplyFilter(colors, width, height);
         }
 
         #endregion
@@ -902,65 +810,53 @@ namespace DaggerfallWorkshop.Utility
         #region Bump Map
 
         /// <summary>
-        /// Gets a bump map from the source DFBitmap.
+        /// Gets a bump map from source Color32 array.
         /// </summary>
-        /// <param name="bitmap">Source colour image.</param>
+        /// <param name="colors">Source Color32 array.</param>
+        /// <param name="width">Image width.</param>
+        /// <param name="height">Image height.</param>
         /// <returns>DFBitmap bump image.</returns>
-        public static DFBitmap GetBumpMap(DFBitmap bitmap)
+        public static Color32[] GetBumpMap(ref Color32[] colors, int width, int height)
         {
-            // Must be a colour format
-            if (bitmap.Format == DFBitmap.Formats.Indexed)
-                return null;
+            // Convert to average intensity
+            Color32[] newColors = MakeAverageIntensity(colors);
 
             // Create horizontal sobel matrix
             Filter horizontalMatrix = new Filter(3, 3);
             horizontalMatrix.MyFilter[0, 0] = -1;
-            horizontalMatrix.MyFilter[1, 0] = 0;
-            horizontalMatrix.MyFilter[2, 0] = 1;
-            horizontalMatrix.MyFilter[0, 1] = -2;
+            horizontalMatrix.MyFilter[0, 1] = 0;
+            horizontalMatrix.MyFilter[0, 2] = 1;
+            horizontalMatrix.MyFilter[1, 0] = -2;
             horizontalMatrix.MyFilter[1, 1] = 0;
-            horizontalMatrix.MyFilter[2, 1] = 2;
-            horizontalMatrix.MyFilter[0, 2] = -1;
-            horizontalMatrix.MyFilter[1, 2] = 0;
+            horizontalMatrix.MyFilter[1, 2] = 2;
+            horizontalMatrix.MyFilter[2, 0] = -1;
+            horizontalMatrix.MyFilter[2, 1] = 0;
             horizontalMatrix.MyFilter[2, 2] = 1;
 
             // Create vertical sobel matrix
             Filter verticalMatrix = new Filter(3, 3);
             verticalMatrix.MyFilter[0, 0] = 1;
-            verticalMatrix.MyFilter[1, 0] = 2;
-            verticalMatrix.MyFilter[2, 0] = 1;
-            verticalMatrix.MyFilter[0, 1] = 0;
+            verticalMatrix.MyFilter[0, 1] = 2;
+            verticalMatrix.MyFilter[0, 2] = 1;
+            verticalMatrix.MyFilter[1, 0] = 0;
             verticalMatrix.MyFilter[1, 1] = 0;
-            verticalMatrix.MyFilter[2, 1] = 0;
-            verticalMatrix.MyFilter[0, 2] = -1;
-            verticalMatrix.MyFilter[1, 2] = -2;
+            verticalMatrix.MyFilter[1, 2] = 0;
+            verticalMatrix.MyFilter[2, 0] = -1;
+            verticalMatrix.MyFilter[2, 1] = -2;
             verticalMatrix.MyFilter[2, 2] = -1;
 
-            // Get filtered images
-            DFBitmap horz = MakeAverageIntensityBitmap(horizontalMatrix.ApplyFilter(bitmap));
-            DFBitmap vert = MakeAverageIntensityBitmap(verticalMatrix.ApplyFilter(bitmap));
-
-            // Create target bitmap
-            DFBitmap result = new DFBitmap();
-            result.Format = bitmap.Format;
-            result.Initialise(horz.Width, horz.Height);
+            // Apply filters
+            Color32[] horz = horizontalMatrix.ApplyFilter(newColors, width, height);
+            Color32[] vert = verticalMatrix.ApplyFilter(newColors, width, height);
 
             // Merge
-            int pos = 0;
-            for (int i = 0; i < bitmap.Width * bitmap.Height; i++)
+            Color32[] result = new Color32[colors.Length];
+            for (int i = 0; i < colors.Length; i++)
             {
-                // Merge average intensity
-                int r = (horz.Data[pos + 0] + vert.Data[pos + 0]) / 2;
-                int g = (horz.Data[pos + 1] + vert.Data[pos + 1]) / 2;
-                int b = (horz.Data[pos + 2] + vert.Data[pos + 2]) / 2;
-
-                // Write destination pixel
-                result.Data[pos + 0] = (byte)((r > 255) ? 255 : r);
-                result.Data[pos + 1] = (byte)((g > 255) ? 255 : g);
-                result.Data[pos + 2] = (byte)((b > 255) ? 255 : b);
-                result.Data[pos + 3] = 255;
-
-                pos += bitmap.FormatWidth;
+                int r = Clamp((horz[i].r + vert[i].r), 0, 255);
+                int g = Clamp((horz[i].g + vert[i].g), 0, 255);
+                int b = Clamp((horz[i].b + vert[i].b), 0, 255);
+                result[i] = new Color32((byte)r, (byte)g, (byte)b, 255);
             }
 
             return result;
@@ -971,30 +867,23 @@ namespace DaggerfallWorkshop.Utility
         #region Normal Map
 
         /// <summary>
-        /// Converts a bump map to a normal map.
+        /// Converts bump map to normal map.
         /// </summary>
-        /// <param name="bitmap">Source bump map image.</param>
+        /// <param name="colors">Source Color32 array.</param>
         /// <param name="strength">Normal strength.</param>
-        /// <returns>DFBitmap normal image.</returns>
-        public static DFBitmap ConvertBumpToNormals(DFBitmap bitmap, float strength = 1)
+        /// <returns>Color32[] normal map.</returns>
+        public static Color32[] ConvertBumpToNormals(ref Color32[] colors, int width, int height, float strength = 1)
         {
-            // Must be a colour format
-            if (bitmap.Format == DFBitmap.Formats.Indexed)
-                return null;
-
-            DFBitmap newBitmap = new DFBitmap(bitmap.Width, bitmap.Height);
-            newBitmap.Format = bitmap.Format;
-            newBitmap.Initialise(bitmap.Width, bitmap.Height);
-
-            for (int y = 0; y < bitmap.Height; y++)
+            Color32[] newColors = (Color32[])colors.Clone();
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                for (int x = 0; x < width; x++)
                 {
                     // Look up the heights to either side of this pixel
-                    float left = GetIntensity(bitmap, x - 1, y);
-                    float right = GetIntensity(bitmap, x + 1, y);
-                    float top = GetIntensity(bitmap, x, y - 1);
-                    float bottom = GetIntensity(bitmap, x, y + 1);
+                    float left = GetIntensity(ref colors, x - 1, y, width, height);
+                    float right = GetIntensity(ref colors, x + 1, y, width, height);
+                    float top = GetIntensity(ref colors, x, y - 1, width, height);
+                    float bottom = GetIntensity(ref colors, x, y + 1, width, height);
 
                     // Compute gradient vectors, then cross them to get the normal
                     Vector3 dx = new Vector3(1, 0, (right - left) * strength);
@@ -1002,16 +891,21 @@ namespace DaggerfallWorkshop.Utility
                     Vector3 normal = Vector3.Cross(dx, dy);
                     normal.Normalize();
 
-                    // Store result
-                    int pos = y * bitmap.Stride + x * bitmap.FormatWidth;
-                    newBitmap.Data[pos + 0] = (byte)((normal.x + 1.0f) * 127.5f);
-                    newBitmap.Data[pos + 1] = (byte)((normal.y + 1.0f) * 127.5f);
-                    newBitmap.Data[pos + 2] = (byte)((normal.z + 1.0f) * 127.5f);
-                    newBitmap.Data[pos + 3] = 0xff;
+                    // Store result packed for Unity
+                    byte r = (byte)((normal.x + 1.0f) * 127.5f);
+                    byte g = (byte)(255 - ((normal.y + 1.0f) * 127.5f));
+                    newColors[y * width + x] = new Color32(g, g, g, r);
+
+                    //// This is a standard normal texture without Unity packing
+                    //newColors[y * width + x] = new Color32(
+                    //    (byte)((normal.x + 1.0f) * 127.5f),
+                    //    (byte)(255 - ((normal.y + 1.0f) * 127.5f)),
+                    //    (byte)((normal.z + 1.0f) * 127.5f),
+                    //    0xff);
                 }
             }
 
-            return newBitmap;
+            return newColors;
         }
 
         #endregion
@@ -1140,25 +1034,25 @@ namespace DaggerfallWorkshop.Utility
             return colors[y * size.Width + x];
         }
 
-        private static float GetIntensity(DFBitmap bitmap, int x, int y)
+        private static float GetIntensity(ref Color32[] colors, int x, int y, int width, int height)
         {
             // Clamp X
             if (x < 0)
                 x = 0;
-            else if (x >= bitmap.Width)
-                x = bitmap.Width - 1;
+            else if (x >= width)
+                x = width - 1;
 
             // Clamp Y
             if (y < 0)
                 y = 0;
-            else if (y >= bitmap.Height)
-                y = bitmap.Height - 1;
+            else if (y >= height)
+                y = height - 1;
 
-            // Get position
-            int pos = y * bitmap.Stride + x * bitmap.FormatWidth;
+            // Get pixel
+            Color32 pixel = colors[y * width + x];
 
             // Average intensity
-            float intensity = ((bitmap.Data[pos + 0] + bitmap.Data[pos + 1] + bitmap.Data[pos + 2]) / 3) / 255f;
+            float intensity = ((pixel.r + pixel.g + pixel.b) / 3) / 255f;
 
             return intensity;
         }

@@ -1,9 +1,13 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Gavin Clayton
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
-// Contact:         Gavin Clayton (interkarma@dfworkshop.net)
-// Project Page:    https://github.com/Interkarma/daggerfall-unity
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
 
 using UnityEngine;
 using System;
@@ -29,6 +33,10 @@ namespace DaggerfallWorkshop
         // Dungeon texture swaps
         public DungeonTextureUse DungeonTextureUse = DungeonTextureUse.UseLocation_PartiallyImplemented;
         public int[] DungeonTextureTable = new int[] { 119, 120, 122, 123, 124, 168 };
+
+        // Random monsters
+        public float RandomMonsterPower = 0.5f;
+        public int RandomMonsterVariance = 4;
 
         GameObject startMarker = null;
 
@@ -72,7 +80,7 @@ namespace DaggerfallWorkshop
             summary.RegionName = location.RegionName;
             summary.LocationName = location.Name;
             summary.LocationData = location;
-            summary.LocationType = location.MapTableData.Type;
+            summary.LocationType = location.MapTableData.LocationType;
             summary.DungeonType = location.MapTableData.DungeonType;
 
             // Set texture table from location
@@ -215,7 +223,15 @@ namespace DaggerfallWorkshop
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
             {
-                GameObject go = RDBLayout.CreateGameObject(block.BlockName, block.IsStartingBlock, DungeonTextureTable, Summary.DungeonType, Summary.ID);
+                GameObject go = GameObjectHelper.CreateRDBBlockGameObject(
+                    block.BlockName,
+                    DungeonTextureTable,
+                    block.IsStartingBlock,
+                    Summary.DungeonType,
+                    RandomMonsterPower,
+                    RandomMonsterVariance,
+                    (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
+                    dfUnity.Option_DungeonBlockPrefab);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
@@ -238,7 +254,15 @@ namespace DaggerfallWorkshop
                 if (block.X == -1 && block.Z == -1 && block.BlockName == "N0000065.RDB")
                     continue;
 
-                GameObject go = RDBLayout.CreateGameObject(block.BlockName, block.IsStartingBlock, DungeonTextureTable, Summary.DungeonType, Summary.ID);
+                GameObject go = GameObjectHelper.CreateRDBBlockGameObject(
+                    block.BlockName,
+                    DungeonTextureTable,
+                    block.IsStartingBlock,
+                    Summary.DungeonType,
+                    RandomMonsterPower,
+                    RandomMonsterVariance,
+                    (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
+                    dfUnity.Option_DungeonBlockPrefab);
                 go.transform.parent = this.transform;
                 go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
