@@ -97,11 +97,7 @@ namespace DaggerfallWorkshop.Demo
                         }
 
                         // Check for action record hit
-                        DaggerfallAction action;
-                        if (ActionCheck(hits[i], out action))
-                        {
-                            action.Play();
-                        }
+                        ActionCheck(hits[i]);
                     }
                 }
             }
@@ -147,21 +143,18 @@ namespace DaggerfallWorkshop.Demo
         }
 
         // Check if raycast hit a generic action component
-        private bool ActionCheck(RaycastHit hitInfo, out DaggerfallAction action)
+        private bool ActionCheck(RaycastHit hitInfo)
         {
             // Look for action
-            action = hitInfo.transform.GetComponent<DaggerfallAction>();
-            if (action == null)
-                return false;
-
-            // Must be root action of chain (no parent)
-            if (action.PreviousObject != null)
+            DaggerfallAction action = hitInfo.transform.GetComponent<DaggerfallAction>();
+            if (action != null)
             {
-                action = null;
-                return false;
+                action.Receive(this.gameObject, true);
+                return true;
             }
+            else
+                return false;
 
-            return true;
         }
     }
 }

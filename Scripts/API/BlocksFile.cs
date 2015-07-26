@@ -1033,7 +1033,7 @@ namespace DaggerfallConnect.Arena2
                 objectRoot.RdbObjects[index].ZPos = reader.ReadInt32();
                 objectRoot.RdbObjects[index].Type = (DFBlock.RdbResourceTypes)reader.ReadByte();
                 objectRoot.RdbObjects[index].ResourceOffset = reader.ReadUInt32();
-                objectRoot.RdbObjects[index].Resources.ModelResource.ActionResource.PreviousObjectIndex = -1;
+                objectRoot.RdbObjects[index].Resources.ModelResource.ActionResource.PreviousObjectOffset = -1; //##
                 objectRoot.RdbObjects[index].Resources.ModelResource.ActionResource.NextObjectIndex = -1;
 
                 // Exit if finished
@@ -1116,7 +1116,7 @@ namespace DaggerfallConnect.Arena2
                 {
                     // Set target and and parent indices
                     rdbObject.Resources.ModelResource.ActionResource.NextObjectIndex = index;
-                    rdbObjects[index].Resources.ModelResource.ActionResource.PreviousObjectIndex = rdbObject.Index;
+                    rdbObjects[index].Resources.ModelResource.ActionResource.PreviousObjectOffset = rdbObject.This; //##
                     break;
                 }
                 index++;

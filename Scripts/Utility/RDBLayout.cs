@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Supports linked list of action objects.
         /// </summary>
-        private struct ActionLink
+        public struct ActionLink
         {
             public GameObject gameObject;
             public int nextKey;
@@ -64,12 +64,13 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Block GameObject.</returns>
         public static GameObject CreateBaseGameObject(
             string blockName,
+            ref Dictionary<int, ActionLink> actionLinkDict,
             int[] textureTable = null,
             bool allowExitDoors = true,
             DaggerfallRDBBlock cloneFrom = null)
         {
             DFBlock blockData;
-            return CreateBaseGameObject(blockName, out blockData, textureTable, allowExitDoors, cloneFrom);
+            return CreateBaseGameObject(blockName, ref actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom);
         }
 
         /// <summary>
@@ -83,6 +84,7 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Block GameObject.</returns>
         public static GameObject CreateBaseGameObject(
             string blockName,
+            ref Dictionary<int, ActionLink> actionLinkDict,
             out DFBlock blockDataOut,
             int[] textureTable = null,
             bool allowExitDoors = true,
@@ -102,7 +104,7 @@ namespace DaggerfallWorkshop.Utility
             // Get block data
             blockDataOut = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
 
-            return CreateBaseGameObject(ref blockDataOut, textureTable, allowExitDoors, cloneFrom);
+            return CreateBaseGameObject(ref blockDataOut, ref actionLinkDict, textureTable, allowExitDoors, cloneFrom);
         }
 
         /// <summary>
@@ -115,6 +117,7 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Block GameObject.</returns>
         public static GameObject CreateBaseGameObject(
             ref DFBlock blockData,
+            ref Dictionary<int, ActionLink> actionLinkDict,
             int[] textureTable = null,
             bool allowExitDoors = true,
             DaggerfallRDBBlock cloneFrom = null)
@@ -156,6 +159,7 @@ namespace DaggerfallWorkshop.Utility
             AddModels(
                 dfUnity,
                 ref blockData,
+                ref actionLinkDict,
                 textureTable,
                 allowExitDoors,
                 out exitDoors,
@@ -191,7 +195,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Add actions doors to block.
         /// </summary>
-        public static void AddActionDoors(GameObject go, ref DFBlock blockData, int[] textureTable)
+        public static void AddActionDoors(GameObject go, ref Dictionary<int, RDBLayout.ActionLink> actionLinkDict, ref DFBlock blockData, int[] textureTable)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -224,6 +228,13 @@ namespace DaggerfallWorkshop.Utility
                         {
                             GameObject cgo = AddActionDoor(dfUnity, modelId, obj, actionDoorsNode.transform);
                             cgo.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
+
+                            //add DFAction component to door if it also has an action
+                            if (HasAction(obj))
+                            {
+                                AddAction(cgo, ref actionLinkDict, blockData, obj, modelReference);
+                            }
+
                         }
                     }
                 }
@@ -268,6 +279,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public static void AddFlats(
             GameObject go,
+            ref Dictionary<int, ActionLink> actionLinkDict,
             ref DFBlock blockData,
             out DFBlock.RdbObject[] editorObjectsOut,
             out GameObject[] startMarkersOut)
@@ -309,7 +321,19 @@ namespace DaggerfallWorkshop.Utility
                             if (record == 10)
                                 startMarkers.Add(flatObject);
                         }
+
+                        //might only need to add editor markers in future
+                        if (!actionLinkDict.ContainsKey(obj.This))
+                        {
+                            ActionLink link;
+                            GetActionLink(ref flatObject, obj.Resources.ModelResource.ActionResource, out link);
+                            actionLinkDict.Add(obj.This, link);
+                        }
+                    
                     }
+
+                    
+
                 }
             }
 
@@ -411,6 +435,7 @@ namespace DaggerfallWorkshop.Utility
         private static void AddModels(
             DaggerfallUnity dfUnity,
             ref DFBlock blockData,
+            ref Dictionary<int, ActionLink> actionLinkDict,
             int[] textureTable,
             bool allowExitDoors,
             out List<StaticDoor> exitDoorsOut,
@@ -420,17 +445,14 @@ namespace DaggerfallWorkshop.Utility
         {
             exitDoorsOut = new List<StaticDoor>();
 
-            // Action record linkages
-            Dictionary<int, ActionLink> actionLinkDict = new Dictionary<int, ActionLink>();
-
             // Iterate object groups
-            int groupIndex = 0;
+            //int groupIndex = 0;
             foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
             {
                 // Skip empty object groups
                 if (null == group.RdbObjects)
                 {
-                    groupIndex++;
+                    //groupIndex++;
                     continue;
                 }
 
@@ -491,16 +513,15 @@ namespace DaggerfallWorkshop.Utility
 
                         // Add action
                         if (hasAction && standaloneObject != null)
-                            AddAction(standaloneObject, blockData, obj, modelReference, groupIndex, actionLinkDict);
+                            AddAction(standaloneObject, ref actionLinkDict, blockData, obj, modelReference);
                     }
                 }
 
                 // Increment group index
-                groupIndex++;
+               // groupIndex++;
             }
 
-            // Link action nodes
-            LinkActionNodes(actionLinkDict);
+
         }
 
         /// <summary>
@@ -569,6 +590,8 @@ namespace DaggerfallWorkshop.Utility
             return false;
         }
 
+
+
         /// <summary>
         /// Check is model has action record.
         /// </summary>
@@ -581,13 +604,13 @@ namespace DaggerfallWorkshop.Utility
             return false;
         }
 
-        /// <summary>
-        /// Creates action key unique within group.
-        /// </summary>
-        private static int GetActionKey(int groupIndex, int objIndex)
+        //Create a link
+        static void GetActionLink(ref GameObject go, DFBlock.RdbActionResource obj, out ActionLink link)
         {
-            // Create action key for this object
-            return groupIndex * 1000 + objIndex;
+            link = new ActionLink();
+            link.gameObject = go;
+            link.nextKey = obj.NextObjectOffset;
+            link.prevKey = obj.PreviousObjectOffset;
         }
 
         /// <summary>
@@ -627,28 +650,40 @@ namespace DaggerfallWorkshop.Utility
             return vector;
         }
 
-        /// <summary>
-        /// Add action to model.
-        /// </summary>
         private static void AddAction(
             GameObject go,
+            ref Dictionary<int, ActionLink> actionLinkDict,
             DFBlock blockData,
             DFBlock.RdbObject obj,
-            int modelReference,
-            int groupIndex,
-            Dictionary<int, ActionLink> actionLinkDict)
+
+            int modelReference)
         {
-            // Get model action record and description
             DFBlock.RdbActionResource action = obj.Resources.ModelResource.ActionResource;
             string description = blockData.RdbBlock.ModelReferenceList[modelReference].Description;
+
 
             // Check for known action types
             Vector3 actionRotation = Vector3.zero;
             Vector3 actionTranslation = Vector3.zero;
-            if ((action.Flags & (int)DFBlock.RdbActionFlags.Rotation) == (int)DFBlock.RdbActionFlags.Rotation)
-                actionRotation = (GetActionVector(ref action) / BlocksFile.RotationDivisor);
-            if ((action.Flags & (int)DFBlock.RdbActionFlags.Translation) == (int)DFBlock.RdbActionFlags.Translation)
-                actionTranslation = GetActionVector(ref action) * MeshReader.GlobalScale;
+
+            try
+            {
+                if ((action.Flags & (int)DFBlock.RdbActionFlags.Rotation) == (int)DFBlock.RdbActionFlags.Rotation)
+                    actionRotation = (GetActionVector(ref action) / BlocksFile.RotationDivisor);
+                else if ((action.Flags & (int)DFBlock.RdbActionFlags.Translation) == (int)DFBlock.RdbActionFlags.Translation)
+                    actionTranslation = GetActionVector(ref action) * MeshReader.GlobalScale;
+                else if ((action.Flags & (int)DFBlock.RdbActionFlags.TranslateAndRotate) == (int)DFBlock.RdbActionFlags.TranslateAndRotate)
+                {
+                    actionRotation = (GetActionVector(ref action) / BlocksFile.RotationDivisor);
+                    actionTranslation = GetActionVector(ref action) * MeshReader.GlobalScale;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Debug.LogError(ex.Message);
+
+            }
 
             // A quick hack to fix special-case rotation issues.
             // Currently unknown if there is data indicating different rotation behaviour or if something else is happening.
@@ -664,29 +699,49 @@ namespace DaggerfallWorkshop.Utility
 
             // Create action component
             DaggerfallAction c = go.AddComponent<DaggerfallAction>();
-            c.ActionEnabled = true;
-            c.ModelDescription = description;
             c.ActionRotation = actionRotation;
             c.ActionTranslation = actionTranslation;
-            c.ActionSoundID = obj.Resources.ModelResource.SoundId;
+            c.actionSoundID = obj.Resources.ModelResource.SoundId;
 
             // Using 1/20 of native value in seconds
             // This seems to match game very closely
             c.ActionDuration = (float)action.Duration / 20f;
-            c.ActionFlags = action.Flags;
 
-            // Create action links
-            ActionLink link;
-            link.gameObject = go;
-            link.nextKey = GetActionKey(groupIndex, action.NextObjectIndex);
-            link.prevKey = GetActionKey(groupIndex, action.PreviousObjectIndex);
-            actionLinkDict.Add(GetActionKey(groupIndex, obj.Index), link);
+            //set action flag if valid / known, else set to none
+            if (Enum.IsDefined(typeof(DFBlock.RdbActionFlags), (DFBlock.RdbActionFlags)action.Flags))
+                c.actionFlag = (DFBlock.RdbActionFlags)action.Flags;
+            else
+                c.actionFlag = DFBlock.RdbActionFlags.None;
+            
+            //set trigger flag if valid / known, else set to none
+            if (Enum.IsDefined(typeof(DaggerfallAction.TriggerType), (DaggerfallAction.TriggerType)obj.Resources.ModelResource.Unknown1))
+                c.triggerType = (DaggerfallAction.TriggerType)obj.Resources.ModelResource.Unknown1;
+            else
+                c.triggerType = DaggerfallAction.TriggerType.none;
 
-            // Add sound
-            AddActionAudioSource(go, (uint)c.ActionSoundID);
+            //if a collision type, add DFActionCollision component.  This will add a non-Kinematic Rigidbody and check for collisions
+            //with player.  It's possible (and likely) that some of these trigger flags aren't actually collisions, but more like
+            //proximity / bounds checking.
+            if (c.triggerType == DaggerfallAction.TriggerType.collide || c.triggerType == DaggerfallAction.TriggerType.collide3 ||
+                c.triggerType == DaggerfallAction.TriggerType.collide9)
+            {
+                DFActionCollision coll = go.AddComponent<DFActionCollision>();
+            }
 
-            return;
+            //add action node to actionLink dictionary
+            if (!actionLinkDict.ContainsKey(obj.This))
+            {
+                ActionLink link;
+                GetActionLink(ref go, action, out link);
+                actionLinkDict.Add(obj.This, link);
+            }
+
+            //Add audio
+            AddActionAudioSource(go, (uint)c.actionSoundID);
         }
+
+
+        
 
         /// <summary>
         /// Adds action audio.
@@ -703,7 +758,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Links action chains together.
         /// </summary>
-        private static void LinkActionNodes(Dictionary<int, ActionLink> actionLinkDict)
+        public static void LinkActionNodes(Dictionary<int, ActionLink> actionLinkDict)
         {
             // Exit if no actions
             if (actionLinkDict.Count == 0)
@@ -713,14 +768,17 @@ namespace DaggerfallWorkshop.Utility
             foreach (var item in actionLinkDict)
             {
                 ActionLink link = item.Value;
-
-                // Link to next node
+                DaggerfallAction action = link.gameObject.GetComponent<DaggerfallAction>();
+                if (action == null) //not gameobjects in action nodes have action script
+                {
+                    continue;
+                }
                 if (actionLinkDict.ContainsKey(link.nextKey))
                     link.gameObject.GetComponent<DaggerfallAction>().NextObject = actionLinkDict[link.nextKey].gameObject;
-
-                // Link to previous node
                 if (actionLinkDict.ContainsKey(link.prevKey))
+                {
                     link.gameObject.GetComponent<DaggerfallAction>().PreviousObject = actionLinkDict[link.prevKey].gameObject;
+                }
             }
         }
 

@@ -593,32 +593,66 @@ namespace DaggerfallConnect
         [Flags]
         public enum RdbActionFlags
         {
-            /// <summary>Action unspecified.</summary>
+
+            //0 <summary>Action unspecified.</summary>
             None = 0x00,
 
-            /// <summary>Translation.</summary>
+            //1 <summary>Translation.</summary>
             Translation = 0x01,
 
-            /// <summary>Unknown.</summary>
-            Unknown1 = 0x02,
+            //2 <summary>Unknown.</summary>
+            Unknown2 = 0x02,
 
-            /// <summary>Unknown.</summary>
-            unknown2 = 0x04,
+            //4 <summary>Unknown.</summary>
+            Unknown4 = 0x04,
 
-            /// <summary>Rotation.</summary>
+            //8 <summary>Rotation.</summary>
             Rotation = 0x08,
 
-            /// <summary>Unknown.</summary>
-            Unknown3 = 0x10,
+            //9 according to wiki, this is translate + rotate. Not confirmed
+            TranslateAndRotate = 0x09,
 
-            /// <summary>Unknown.</summary>
-            Unknown4 = 0x20,
+            //11 Appears to be display a text box on activation (without input)
+            TextBox = 0x0B,
 
-            /// <summary>Unknown.</summary>
-            Unknown5 = 0x40,
+            //12 Shows text and gets input, the guard in castle daggerfall, the bannger in Shedugant etc.
+            TextBoxWithInput = 0x0C,
 
-            /// <summary>Unknown.</summary>
-            Unknown6 = 0x80,
+            //14 Needs target object, most seem to use TeleportMarker flats
+            Teleport = 0x0E,
+
+            //16 <summary>Unknown.</summary>
+            Unknown16 = 0x10,
+
+            //17 Unlocks a door
+            Unlock = 0x11,
+
+            //22
+            Unknown22 = 0x16,
+
+            //23 - damages player on activation
+            Hurt = 0x17,
+
+            //24 Play sound - this is a best guess
+            PlaySound = 0x18,
+
+            //25
+            Unknown25 = 0x19,
+
+            //29
+            Unknown29 = 0x1D,
+
+            //30
+            Activate = 0x1E,
+
+            //32 <summary>Unknown.</summary>
+            Unknown32 = 0x20,
+
+            //64 <summary>Unknown.</summary>
+            Unknown64 = 0x40,
+
+            //128 <summary>Unknown.</summary>
+            Unknown128 = 0x80,
         }
 
         /// <summary>
@@ -919,11 +953,15 @@ namespace DaggerfallConnect
             internal Int32 NextObjectOffset;
 
             /// <summary>
+            /// TODO: Update description
             /// Index of previous model in RdbObject array that linked to this model
             ///  in an action chain. This allows action records to be chained
             ///  backwards to the root action.
             /// </summary>
-            public int PreviousObjectIndex;
+            //public int PreviousObjectIndex;
+            
+            //##Previous index not being used
+            public Int32 PreviousObjectOffset;
 
             /// <summary>
             /// Index of model in RdbObject array that should be activated
