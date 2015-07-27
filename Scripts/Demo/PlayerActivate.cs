@@ -143,17 +143,15 @@ namespace DaggerfallWorkshop.Demo
         }
 
         // Check if raycast hit a generic action component
-        private bool ActionCheck(RaycastHit hitInfo)
+        private void ActionCheck(RaycastHit hitInfo)
         {
             // Look for action
             DaggerfallAction action = hitInfo.transform.GetComponent<DaggerfallAction>();
             if (action != null)
             {
                 action.Receive(this.gameObject, true);
-                return true;
             }
-            else
-                return false;
+
 
         }
     }

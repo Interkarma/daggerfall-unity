@@ -229,7 +229,7 @@ namespace DaggerfallWorkshop.Utility
                             GameObject cgo = AddActionDoor(dfUnity, modelId, obj, actionDoorsNode.transform);
                             cgo.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
 
-                            //add DFAction component to door if it also has an action
+                            //add DaggerfallAction component to door if it also has an action
                             if (HasAction(obj))
                             {
                                 AddAction(cgo, ref actionLinkDict, blockData, obj, modelReference);
@@ -701,7 +701,8 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallAction c = go.AddComponent<DaggerfallAction>();
             c.ActionRotation = actionRotation;
             c.ActionTranslation = actionTranslation;
-            c.actionSoundID = obj.Resources.ModelResource.SoundId;
+            c.ActionSoundID = obj.Resources.ModelResource.SoundId;
+            c.ModelDescription = description;
 
             // Using 1/20 of native value in seconds
             // This seems to match game very closely
@@ -709,21 +710,21 @@ namespace DaggerfallWorkshop.Utility
 
             //set action flag if valid / known, else set to none
             if (Enum.IsDefined(typeof(DFBlock.RdbActionFlags), (DFBlock.RdbActionFlags)action.Flags))
-                c.actionFlag = (DFBlock.RdbActionFlags)action.Flags;
+                c.ActionFlag = (DFBlock.RdbActionFlags)action.Flags;
             else
-                c.actionFlag = DFBlock.RdbActionFlags.None;
+                c.ActionFlag = DFBlock.RdbActionFlags.None;
             
             //set trigger flag if valid / known, else set to none
             if (Enum.IsDefined(typeof(DaggerfallAction.TriggerType), (DaggerfallAction.TriggerType)obj.Resources.ModelResource.Unknown1))
-                c.triggerType = (DaggerfallAction.TriggerType)obj.Resources.ModelResource.Unknown1;
+                c.TriggerFlag = (DaggerfallAction.TriggerType)obj.Resources.ModelResource.Unknown1;
             else
-                c.triggerType = DaggerfallAction.TriggerType.none;
+                c.TriggerFlag = DaggerfallAction.TriggerType.none;
 
             //if a collision type, add DFActionCollision component.  This will add a non-Kinematic Rigidbody and check for collisions
             //with player.  It's possible (and likely) that some of these trigger flags aren't actually collisions, but more like
             //proximity / bounds checking.
-            if (c.triggerType == DaggerfallAction.TriggerType.collide || c.triggerType == DaggerfallAction.TriggerType.collide3 ||
-                c.triggerType == DaggerfallAction.TriggerType.collide9)
+            if (c.TriggerFlag == DaggerfallAction.TriggerType.collide || c.TriggerFlag == DaggerfallAction.TriggerType.collide3 ||
+                c.TriggerFlag == DaggerfallAction.TriggerType.collide9)
             {
                 DFActionCollision coll = go.AddComponent<DFActionCollision>();
             }
@@ -737,7 +738,7 @@ namespace DaggerfallWorkshop.Utility
             }
 
             //Add audio
-            AddActionAudioSource(go, (uint)c.actionSoundID);
+            AddActionAudioSource(go, (uint)c.ActionSoundID);
         }
 
 

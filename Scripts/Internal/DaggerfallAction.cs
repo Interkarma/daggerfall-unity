@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using UnityEditor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,39 +26,129 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaggerfallAction : MonoBehaviour
     {
-        public Vector3 ActionRotation = Vector3.zero;               // Rotation to perform
-        public Vector3 ActionTranslation = Vector3.zero;            // Translation to perform
-        public Vector3 startPosition = Vector3.zero;
-        public float ActionDuration = 0;                            // Time to reach final state
-        public string ModelDescription = string.Empty;              // Description string for this model
-        public int actionSoundID = 0;                               // Action sound ID
+        [SerializeField]
+        private Vector3 _actionRoation;
 
-        public GameObject NextObject;                               // Next object in action chain
-        public GameObject PreviousObject;                           // Previous object in action chain, not always set
-       
-        public ActionState currentState;
-        public DFBlock.RdbActionFlags actionFlag;                   //action type
-        public TriggerType triggerType;                             //trigger type
+        [SerializeField]
+        private Vector3 _actionTranslation;
+
+        [SerializeField]
+        private Vector3 _startPosition;
+
+        [SerializeField]
+        private float _actionDuration;
+
+        [SerializeField]
+        private string _modelDescription;
+
+        [SerializeField]
+        private int _actionSoundID;
+
+        [SerializeField]
+        private GameObject _nextObject;
+
+        [SerializeField]
+        private GameObject _previousObject;
+
+        [SerializeField]
+        private DFBlock.RdbActionFlags _actionFlag;
         
-        private bool soundSet = false;                               //if true, sound is ready to be played
-        AudioSource audioSource;
+        [SerializeField]
+        private ActionState _currentState;
+        
+        [SerializeField]
+        private TriggerType _triggerFlag;
+
+        private bool _soundSet;
+
+        private AudioSource _actionAudioSource;
+
         private bool debugMessages = false;
 
         //will trigger action in update if set to true, uncomment the update block to use in inspector
         //public bool triggerAction = false;
+        
+        
+        #region poperties
 
-        //Action flag -> Action Delegate lookup
-        private delegate void Delegate(GameObject obj, DaggerfallAction thisAction);
-        static Dictionary<DFBlock.RdbActionFlags, Delegate> actionFunctions = new Dictionary<DFBlock.RdbActionFlags, Delegate>()
-    {
-        {DFBlock.RdbActionFlags.Translation, new Delegate(Move)},
-        {DFBlock.RdbActionFlags.Rotation, new Delegate(Move)},
-        {DFBlock.RdbActionFlags.Unlock, new Delegate(Unlock)},
-        {DFBlock.RdbActionFlags.Teleport, new Delegate(Teleport)},
-        {DFBlock.RdbActionFlags.Activate, new Delegate(Activate)},
-        {DFBlock.RdbActionFlags.PlaySound, new Delegate(Activate)},
-    };
+        public Vector3 ActionRotation
+        {
+            get { return _actionRoation; }
+            set { _actionRoation = value; }
+        }
 
+        public Vector3 ActionTranslation
+        {
+            get { return _actionTranslation; }
+            set { _actionTranslation = value; }
+        }
+
+        public Vector3 StartPosition
+        {
+            get { return _startPosition; }
+            set { _startPosition = value; }
+        }
+
+        public float ActionDuration
+        {
+            get { return _actionDuration; }
+            set { _actionDuration = value; }
+        }
+
+        public string ModelDescription
+        {
+            get { return _modelDescription; }
+            set { _modelDescription = value; }
+        }
+
+        public GameObject NextObject
+        {
+            get { return _nextObject; }
+            set { _nextObject = value; }
+        }
+
+        public GameObject PreviousObject
+        {
+            get { return _previousObject; }
+            set { _previousObject = value; }
+        }
+
+        public DFBlock.RdbActionFlags ActionFlag
+        {
+            get { return _actionFlag; }
+            set { _actionFlag = value; }
+        }
+
+        public ActionState CurrentState
+        {
+            get { return _currentState; }
+            set { _currentState = value; }
+        }
+
+        public TriggerType TriggerFlag
+        {
+            get { return _triggerFlag; }
+            set { _triggerFlag = value; }
+        }
+
+        public bool SoundSet
+        {
+            get { return _soundSet; }
+            private set { _soundSet = value; }
+        }
+
+        public int ActionSoundID
+        {
+            get { return _actionSoundID; }
+            set { _actionSoundID = value; }
+        }
+
+        public AudioSource ActionAudioSource
+        {
+            get { return _actionAudioSource; }
+            private set { _actionAudioSource = value; }
+        }
+        #endregion
 
         #region enums
         //how the action is triggered. unknown1 field
@@ -75,7 +166,8 @@ namespace DaggerfallWorkshop
             unknown10 = 10, //on the door leading to Cysandra in Daggerfall castle.
         }
 
-       
+
+
         public enum ActionState
         {
             Start,
@@ -85,16 +177,28 @@ namespace DaggerfallWorkshop
 
         #endregion
 
-       
+        //Action flag -> Action Delegate lookup
+        private delegate void ActionDelegate(GameObject obj, DaggerfallAction thisAction);
+
+        static Dictionary<DFBlock.RdbActionFlags, ActionDelegate> actionFunctions = new Dictionary<DFBlock.RdbActionFlags, ActionDelegate>()
+        {
+        {DFBlock.RdbActionFlags.Translation, new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.Rotation, new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.Unlock, new ActionDelegate(Unlock)},
+        {DFBlock.RdbActionFlags.Teleport, new ActionDelegate(Teleport)},
+        {DFBlock.RdbActionFlags.Activate, new ActionDelegate(Activate)},
+        {DFBlock.RdbActionFlags.PlaySound, new ActionDelegate(Activate)},
+        };
 
         void Start()
         {
-            startPosition = transform.position;
-            audioSource = GetComponent<AudioSource>();
+            StartPosition = transform.position;
+            ActionAudioSource = GetComponent<AudioSource>();
 
-            if (actionSoundID > 0 && audioSource)
-                soundSet = true;
+            if (ActionSoundID > 0 && ActionAudioSource)
+                SoundSet = true;
 
+         
         }
 
         /*
@@ -111,6 +215,7 @@ namespace DaggerfallWorkshop
         }
         */
 
+
         /// <summary>
         /// Handles incoming activations.  
         /// </summary>
@@ -120,9 +225,9 @@ namespace DaggerfallWorkshop
         {
             DaggerfallUnity.LogMessage(string.Format("{0} Recieved activation, playerTriggered: {1}", gameObject.name, playerTriggered), debugMessages);
 
-            if (playerTriggered && triggerType != TriggerType.direct)
+            if (playerTriggered && TriggerFlag != TriggerType.direct)
             {
-                DaggerfallUnity.LogMessage(string.Format("This action can't be triggered by player directly {0}", triggerType), debugMessages);
+                DaggerfallUnity.LogMessage(string.Format("This action can't be triggered by player directly {0}", TriggerFlag), debugMessages);
                 return false;
             }
 
@@ -146,7 +251,7 @@ namespace DaggerfallWorkshop
         public bool IsPlaying()
         {
             // Check if this action or any chained action is playing
-            if (currentState == ActionState.Playing)
+            if (CurrentState == ActionState.Playing)
             {
                 return true;
             }
@@ -167,7 +272,7 @@ namespace DaggerfallWorkshop
 
         public void SetState(ActionState state)
         {
-            currentState = state;
+            CurrentState = state;
         }
 
 
@@ -202,16 +307,16 @@ namespace DaggerfallWorkshop
         private void Play(GameObject prev)
         {
             DaggerfallUnity.LogMessage(string.Format("Playing"), debugMessages);
-            Delegate d = null;
-            if (actionFunctions.ContainsKey(actionFlag))
+            ActionDelegate d = null;
+            if (actionFunctions.ContainsKey(ActionFlag))
             {
-                d = actionFunctions[actionFlag];
+                d = actionFunctions[ActionFlag];
             }
 
             //if failed to get valid delegate from lookup, stop
             if (d == null)
             {
-                DaggerfallUnity.LogMessage(string.Format("No delegate found for this action flag: {0}", actionFlag), debugMessages);
+                DaggerfallUnity.LogMessage(string.Format("No delegate found for this action flag: {0}", ActionFlag), debugMessages);
                 return;
             }
 
@@ -223,10 +328,10 @@ namespace DaggerfallWorkshop
         //Play sound if set
         private void PlaySound()
         {
-            DaggerfallUnity.LogMessage(string.Format("Playing Sound: {0}", actionSoundID), debugMessages);
+            DaggerfallUnity.LogMessage(string.Format("Playing Sound: {0}", ActionSoundID), debugMessages);
 
-            if (soundSet)
-                audioSource.Play();
+            if (SoundSet)
+                ActionAudioSource.Play();
         }
 
         #region Actions
@@ -241,14 +346,14 @@ namespace DaggerfallWorkshop
             DaggerfallUnity.LogMessage(string.Format("Move action"), thisAction.debugMessages);
 
 
-            if (thisAction.currentState == ActionState.Start)
+            if (thisAction.CurrentState == ActionState.Start)
             {
-                thisAction.currentState = ActionState.Playing;
+                thisAction.CurrentState = ActionState.Playing;
                 thisAction.TweenToEnd();
             }
-            else if (thisAction.currentState == ActionState.End)
+            else if (thisAction.CurrentState == ActionState.End)
             {
-                thisAction.currentState = ActionState.Playing;
+                thisAction.CurrentState = ActionState.Playing;
                 thisAction.TweenToStart();
             }
             else
@@ -257,7 +362,7 @@ namespace DaggerfallWorkshop
 
         public void TweenToEnd()
         {
-            currentState = ActionState.Playing;
+            CurrentState = ActionState.Playing;
             DaggerfallUnity.LogMessage(string.Format("Tweening to end"), debugMessages);
 
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
@@ -267,7 +372,7 @@ namespace DaggerfallWorkshop
                 "easetype", __ExternalAssets.iTween.EaseType.linear);
 
             Hashtable moveParams = __ExternalAssets.iTween.Hash(
-                "position", startPosition + ActionTranslation,
+                "position", StartPosition + ActionTranslation,
                 "time", ActionDuration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
@@ -279,7 +384,7 @@ namespace DaggerfallWorkshop
 
         private void TweenToStart()
         {
-            currentState = ActionState.Playing;
+            CurrentState = ActionState.Playing;
             DaggerfallUnity.LogMessage(string.Format("Tweening to start"), debugMessages);
 
 
@@ -290,7 +395,7 @@ namespace DaggerfallWorkshop
                     "easetype", __ExternalAssets.iTween.EaseType.linear);
 
             Hashtable moveParams = __ExternalAssets.iTween.Hash(
-                "position", startPosition,
+                "position", StartPosition,
                 "time", ActionDuration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",

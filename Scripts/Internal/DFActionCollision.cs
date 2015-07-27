@@ -5,25 +5,24 @@
 namespace DaggerfallWorkshop
 {
 
-/// <summary>
-/// Detects collisions between player object and whatever object this is attached to.
-/// Currently some objects are bugged and won't properly trigger collisions.
-/// </summary>
-[RequireComponent(typeof(Rigidbody))]
-
+    /// <summary>
+    /// Detects collisions between player object and whatever object this is attached to.
+    /// Currently some objects are bugged and won't properly trigger collisions.
+    /// </summary>
+    [RequireComponent(typeof(Rigidbody))]
     public class DFActionCollision : MonoBehaviour 
     {
-        //public DFAction.TriggerType triggerType = DFAction.TriggerType.none;
+        [SerializeField]
+        private bool readyToPlayAgain = true;
         private DaggerfallAction thisAction = null;
         private Rigidbody rigBody = null;
-        private bool readyToPlayAgain = true;
-  
-    
+
         public void Awake()
         {
             rigBody = this.GetComponent<Rigidbody>();
             rigBody.isKinematic = true;
             rigBody.useGravity = false;
+            rigBody.hideFlags = HideFlags.NotEditable;
         }
 
 
