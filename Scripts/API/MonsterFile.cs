@@ -93,35 +93,6 @@ namespace DaggerfallConnect.Arena2
             public Byte[] UnknownRange2;
         }
 
-        /// <summary>
-        /// Flags for special abilities.
-        /// </summary>
-        [Flags]
-        public enum SpecialAbilityFlags
-        {
-            AcuteHearing = 1,
-            Athleticism = 2,
-            AdrenalineRush = 4,
-            NoRegenSpellPoints = 8,
-            SunDamage = 16,
-            HolyDamage = 32,
-        }
-
-        /// <summary>
-        /// Flags for magic effects.
-        /// </summary>
-        [Flags]
-        public enum MagicEffectFlags
-        {
-            Paralysis = 1,
-            Magic = 2,
-            Poison = 4,
-            Fire = 8,
-            Frost = 16,
-            Shock = 64,
-            Disease = 128,
-        }
-
         #endregion
 
         #region Constructors
