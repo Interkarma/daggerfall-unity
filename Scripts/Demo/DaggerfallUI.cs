@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Demo
         {
             dfStartWindow = new DaggerfallStartWindow(uiManager);
             dfLoadGameWindow = new DaggerfallLoadSavedGameWindow(uiManager);
-            uiManager.SendMessage(DaggerfallUIMessages.dfuiInitGame);
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiInitGame);
         }
 
         void Update()
@@ -57,12 +57,12 @@ namespace DaggerfallWorkshop.Demo
             }
         }
 
-        public static void SendWindowMessage(string message)
+        public static void PostMessage(string message)
         {
             DaggerfallUI dfui = GameObject.FindObjectOfType<DaggerfallUI>();
             if (dfui)
             {
-                dfui.uiManager.SendMessage(message);
+                dfui.uiManager.PostMessage(message);
             }
         }
 
@@ -70,7 +70,7 @@ namespace DaggerfallWorkshop.Demo
 
         void ProcessMessageQueue()
         {
-            // Handle support messages
+            // Process messages
             string message = uiManager.PeekMessage();
             switch (message)
             {
@@ -81,7 +81,7 @@ namespace DaggerfallWorkshop.Demo
                     uiManager.PushWindow(dfLoadGameWindow);
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
-                    // TODO: Exit game
+                    Application.Quit();
                     break;
                 case WindowMessages.wmCloseWindow:
                     uiManager.PopWindow();

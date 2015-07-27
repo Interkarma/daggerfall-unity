@@ -273,6 +273,33 @@ namespace DaggerfallConnect.Utility
         }
 
         /// <summary>
+        /// Gets a byte array from file.
+        /// </summary>
+        /// <returns></returns>
+        public byte[] GetBytes()
+        {
+            if (Usage == FileUsage.UseMemory)
+                return fileBuffer;
+            else
+                return GetBytes(0, Length);
+        }
+
+        /// <summary>
+        /// Gets a byte array from file.
+        /// </summary>
+        /// <param name="position">Start position.</param>
+        /// <param name="length">Read length.</param>
+        /// <returns></returns>
+        public byte[] GetBytes(int position, int length)
+        {
+            BinaryReader reader = GetReader(position);
+            if (reader == null)
+                return null;
+            
+            return reader.ReadBytes(length);
+        }
+
+        /// <summary>
         /// Get a binary reader to managed file starting at the specified position.
         /// </summary>
         /// <param name="position">Position to start in stream (number of bytes from start of file).</param>

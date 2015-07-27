@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
         {
             if (!string.IsNullOrEmpty(ClickMessage))
             {
-                DaggerfallUI.SendWindowMessage(ClickMessage);
+                DaggerfallUI.PostMessage(ClickMessage);
                 //Debug.Log("Sending click message " + ClickMessage);
             }
         }
@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
         {
             if (!string.IsNullOrEmpty(DoubleClickMessage))
             {
-                DaggerfallUI.SendWindowMessage(DoubleClickMessage);
+                DaggerfallUI.PostMessage(DoubleClickMessage);
                 //Debug.Log("Sending double-click message " + DoubleClickMessage);
             }
         }

@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
         bool ContainsWindow(UserInterfaceWindow window);
         void ChangeWindow(UserInterfaceWindow newWindow);
         int MessageCount { get; }
-        void SendMessage(string message);
+        void PostMessage(string message);
         string PopMessage();
         string PeekMessage();
     }
@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
         /// <summary>
         /// Push message to stack.
         /// </summary>
-        public void SendMessage(string message)
+        public void PostMessage(string message)
         {
             if (MessageCount < maxMessageCount)
             {
@@ -179,6 +179,28 @@ namespace DaggerfallWorkshop.Demo.UserInterface
                 OnWindowChange -= oldWindow.WindowChanged;
                 windows.Pop();
             }
+        }
+
+        /// <summary>
+        /// Builds a parameter dictionary from message string.
+        /// </summary>
+        public static Dictionary<string, string> BuildParamDict(string message)
+        {
+            char[] paramDelimiter = { '?' };
+            char[] equalDelimiter = { '=' };
+
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+            string[] parameters = message.Split(paramDelimiter, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                string[] parts = parameters[i].Split(equalDelimiter);
+                if (parts.Length != 2)
+                    continue;
+                else
+                    dict.Add(parts[0].Trim(), parts[1].Trim());
+            }
+
+            return dict;
         }
     }
 }

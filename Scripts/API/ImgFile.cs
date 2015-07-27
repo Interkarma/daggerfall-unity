@@ -423,8 +423,6 @@ namespace DaggerfallConnect.Arena2
             // Setup frame to hold extracted image
             imgRecord.Width = header.Width;
             imgRecord.Height = header.Height;
-            imgRecord.Stride = header.Width;
-            imgRecord.Format = DFBitmap.Formats.Indexed;
             imgRecord.Data = new byte[header.Width * header.Height];
 
             // Create reader

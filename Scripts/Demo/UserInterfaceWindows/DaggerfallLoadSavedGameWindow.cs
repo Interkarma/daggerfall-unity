@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Demo.UserInterface;
 
 namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
@@ -13,6 +14,17 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
         const string nativeImgName = "LOAD00I0.IMG";
 
         Texture2D nativeTexture;
+        int selectedSaveGame = 0;
+
+        Vector4[] saveButtons = new Vector4[]
+        {
+            new Vector4(40, 4, 80, 50),
+            new Vector4(40, 69, 80, 50),
+            new Vector4(40, 134, 80, 50),
+            new Vector4(200, 4, 80, 50),
+            new Vector4(200, 69, 80, 50),
+            new Vector4(200, 134, 80, 50),
+        };
 
         public DaggerfallLoadSavedGameWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -29,19 +41,44 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
-            // Set game select buttons
-            AddButton(new Vector2(40, 4), new Vector2(80, 50), DaggerfallUIMessages.dfuiSelectSaveGame0, DaggerfallUIMessages.dfuiOpenSaveGame0);
-            AddButton(new Vector2(40, 69), new Vector2(80, 50), DaggerfallUIMessages.dfuiSelectSaveGame1, DaggerfallUIMessages.dfuiOpenSaveGame1);
-            AddButton(new Vector2(40, 134), new Vector2(80, 50), DaggerfallUIMessages.dfuiSelectSaveGame2, DaggerfallUIMessages.dfuiOpenSaveGame2);
-            AddButton(new Vector2(200, 4), new Vector2(80, 50), DaggerfallUIMessages.dfuiSelectSaveGame3, DaggerfallUIMessages.dfuiOpenSaveGame3);
-            AddButton(new Vector2(200, 69), new Vector2(80, 50), DaggerfallUIMessages.dfuiSelectSaveGame4, DaggerfallUIMessages.dfuiOpenSaveGame4);
-            AddButton(new Vector2(200, 134), new Vector2(80, 50), DaggerfallUIMessages.dfuiSelectSaveGame5, DaggerfallUIMessages.dfuiOpenSaveGame5);
+            // Setup game select buttons
+            for (int i = 0; i < saveButtons.Length; i++)
+            {
+                ButtonScreenComponent button = AddButton(saveButtons[i]);
+                button.ClickMessage = string.Format("{0}?i={1}", DaggerfallUIMessages.dfuiSelectSaveGame, i);
+                button.DoubleClickMessage = DaggerfallUIMessages.dfuiOpenSelectedSaveGame;
+            }
 
-            // Setup load and exit buttons
+            // Setup load game and exit buttons
             AddButton(new Vector2(126, 5), new Vector2(68, 11), DaggerfallUIMessages.dfuiOpenSelectedSaveGame);
             AddButton(new Vector2(133, 150), new Vector2(56, 19), WindowMessages.wmCloseWindow);
 
             IsSetup = true;
+        }
+
+        protected override void ProcessMessageQueue()
+        {
+            string message = uiManager.PeekMessage();
+            Dictionary<string, string> paramDict = UserInterfaceManager.BuildParamDict(message);
+            
+            // Select save game
+            if (message.StartsWith(DaggerfallUIMessages.dfuiSelectSaveGame))
+            {
+                selectedSaveGame = int.Parse(paramDict["i"]);
+            }
+
+            // Other messages
+            switch (message)
+            {
+                case DaggerfallUIMessages.dfuiOpenSelectedSaveGame:
+                    // TODO: Open selected save game
+                    break;
+                default:
+                    return;
+            }
+
+            // Message was handled, pop from stack
+            uiManager.PopMessage();
         }
     }
 }

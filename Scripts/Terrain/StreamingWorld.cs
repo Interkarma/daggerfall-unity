@@ -272,6 +272,10 @@ namespace DaggerfallWorkshop
         {
             RaiseOnUpdateTerrainsStartEvent();
 
+            // Start timing
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
+
             // First stage updates terrain heightmaps
             for (int i = 0; i < terrainArray.Length; i++)
             {
@@ -428,6 +432,13 @@ namespace DaggerfallWorkshop
             CollectTerrains();
             CollectLocations();
             UpdateNeighbours();
+
+            // Show timer
+            if (init)
+            {
+                long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+                DaggerfallUnity.LogMessage(string.Format("Time to init StreamingWorld: {0}ms", totalTime), true);
+            }
 
             RaiseOnUpdateTerrainsEndEvent();
         }

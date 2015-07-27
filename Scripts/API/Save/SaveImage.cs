@@ -88,9 +88,7 @@ namespace DaggerfallConnect.Save
 
                 DFSize sz = GetSize(0);
                 result.Width = sz.Width;
-                result.Stride = sz.Width;
                 result.Height = sz.Height;
-                result.Format = DFBitmap.Formats.Indexed;
                 result.Data = data;
             }
 

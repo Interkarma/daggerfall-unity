@@ -13,8 +13,8 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
     {
         bool isSetup;
         DaggerfallUnity dfUnity;
-        PanelScreenComponent screenPanel = new PanelScreenComponent();      // Screen panel fits to entire viewport
-        PanelScreenComponent nativePanel = new PanelScreenComponent();      // Native panel is 320x200 child panel scaled to fit viewport
+        PanelScreenComponent screenPanel = new PanelScreenComponent();      // Parent screen panel fits to entire viewport
+        PanelScreenComponent nativePanel = new PanelScreenComponent();      // Native panel is 320x200 child panel scaled to fit parent
 
         public DaggerfallBaseWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -57,6 +57,10 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
                 return;
             }
 
+            // Process messages in queue
+            if (uiManager.MessageCount > 0)
+                ProcessMessageQueue();
+
             screenPanel.Update();
         }
 
@@ -69,6 +73,14 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
 
         #region Protected Methods
 
+        protected virtual void ProcessMessageQueue()
+        {
+        }
+
+        #endregion
+
+        #region Setup Helpers
+
         protected ButtonScreenComponent AddButton(Vector2 position, Vector2 size)
         {
             ButtonScreenComponent button = new ButtonScreenComponent();
@@ -77,6 +89,13 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             NativePanel.Components.Add(button);
 
             return button;
+        }
+
+        protected ButtonScreenComponent AddButton(Vector4 positionAndSize)
+        {
+            return AddButton(
+                new Vector2(positionAndSize.x, positionAndSize.y),
+                new Vector2(positionAndSize.z, positionAndSize.w));
         }
 
         protected ButtonScreenComponent AddButton(Vector2 position, Vector2 size, string clickMessage)

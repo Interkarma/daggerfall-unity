@@ -233,13 +233,6 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Color32 array.</returns>
         public Color32[] GetColors32(DFBitmap srcBitmap, int alphaIndex, int border, out DFSize sizeOut)
         {
-            // Must be an indexed format
-            if (srcBitmap.Format != DFBitmap.Formats.Indexed)
-            {
-                sizeOut = new DFSize();
-                return null;
-            }
-
             // Calculate dimensions
             int srcWidth = srcBitmap.Width;
             int srcHeight = srcBitmap.Height;
@@ -282,10 +275,6 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Color32 array.</returns>
         public Color32[] GetWindowColors32(DFBitmap srcBitmap, int emissionIndex = 0xff)
         {
-            // Must be an indexed format
-            if (srcBitmap.Format != DFBitmap.Formats.Indexed)
-                return null;
-
             // Create target array
             DFSize sz = new DFSize(srcBitmap.Width, srcBitmap.Height);
             Color32[] emissionColors = new Color32[sz.Width * sz.Height];
@@ -308,74 +297,6 @@ namespace DaggerfallConnect.Arena2
             }
 
             return emissionColors;
-        }
-
-        /// <summary>
-        /// Get raw bytes for specified record and frame using a custom pixel format.
-        /// </summary>
-        /// <param name="record">Index of record.</param>
-        /// <param name="frame">Index of frame.</param>
-        /// <param name="alphaIndex">Index of alpha colour.</param>
-        /// <param name="format">Specified pixel format to use.</param>
-        /// <returns>DFBitmap object.</returns>
-        public DFBitmap GetBitmapFormat(int record, int frame, byte alphaIndex, DFBitmap.Formats format)
-        {
-            // Get as indexed image
-            if (format == DFBitmap.Formats.Indexed)
-                return GetDFBitmap(record, frame);
-
-            // Create new bitmap
-            const int formatWidth = 4;
-            DFBitmap srcBitmap = GetDFBitmap(record, frame);
-            DFBitmap dstBitmap = new DFBitmap();
-            dstBitmap.Format = format;
-            dstBitmap.Width = srcBitmap.Width;
-            dstBitmap.Height = srcBitmap.Height;
-            dstBitmap.Stride = dstBitmap.Width * formatWidth;
-            dstBitmap.Data = new byte[dstBitmap.Stride * dstBitmap.Height];
-
-            // Write pixel data to array
-            byte a, r, g, b;
-            int srcPos = 0, dstPos = 0;
-            for (int i = 0; i < dstBitmap.Width * dstBitmap.Height; i++)
-            {
-                // Write colour values
-                byte index = srcBitmap.Data[srcPos++];
-                if (index != alphaIndex)
-                {
-                    // Get colour values
-                    a = 0xff;
-                    r = myPalette.GetRed(index);
-                    g = myPalette.GetGreen(index);
-                    b = myPalette.GetBlue(index);
-
-                    // Write colour values
-                    switch (format)
-                    {
-                        case DFBitmap.Formats.RGBA:
-                            dstBitmap.Data[dstPos++] = r;
-                            dstBitmap.Data[dstPos++] = g;
-                            dstBitmap.Data[dstPos++] = b;
-                            dstBitmap.Data[dstPos++] = a;
-                            break;
-                        case DFBitmap.Formats.ARGB:
-                            dstBitmap.Data[dstPos++] = a;
-                            dstBitmap.Data[dstPos++] = r;
-                            dstBitmap.Data[dstPos++] = g;
-                            dstBitmap.Data[dstPos++] = b;
-                            break;
-                        default:
-                            throw new Exception("Unknown output format.");
-                    }
-                }
-                else
-                {
-                    // Step over alpha pixels
-                    dstPos += formatWidth;
-                }
-            }
-
-            return dstBitmap;
         }
 
         #endregion

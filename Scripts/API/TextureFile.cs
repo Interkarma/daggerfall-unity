@@ -770,22 +770,22 @@ namespace DaggerfallConnect.Arena2
         private bool ReadImage(int record, int frame)
         {
             // Create buffer to hold extracted image
+            byte[] data = new byte[records[record].Width * records[record].Height];
             records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].Width;
             records[record].Frames[frame].Height = records[record].Height;
-            records[record].Frames[frame].Stride = records[record].Width;
-            records[record].Frames[frame].Format = DFBitmap.Formats.Indexed;
-            records[record].Frames[frame].Data = new byte[records[record].Width * records[record].Height];
-
+            
             if (records[record].FrameCount == 1)
             {
                 // Extract image bytes
+                int dataPos = 0;
                 long position = records[record].Position + records[record].DataOffset;
                 BinaryReader reader = managedFile.GetReader(position);
-                BinaryWriter writer = new BinaryWriter(new MemoryStream(records[record].Frames[frame].Data));
                 for (int y = 0; y < records[record].Height; y++)
                 {
-                    writer.Write(reader.ReadBytes(records[record].Width));
+                    byte[] nextBytes = reader.ReadBytes(records[record].Width);
+                    Array.Copy(nextBytes, 0, data, dataPos, nextBytes.Length);
+                    dataPos += nextBytes.Length;
                     reader.BaseStream.Position += (256 - records[record].Width);
                 }
             }
@@ -804,18 +804,18 @@ namespace DaggerfallConnect.Arena2
                 int cy = reader.ReadInt16();
 
                 // Extract image bytes
-                BinaryWriter writer = new BinaryWriter(new MemoryStream(records[record].Frames[frame].Data));
+                int dataPos = 0;
                 for (int y = 0; y < cy; y++)
                 {
                     int x = 0;
                     while (x < cx)
                     {
-                        // Write transparant bytes
+                        // Write transparent bytes
                         byte pixel = reader.ReadByte();
                         int run = x + pixel;
                         for (; x < run; x++)
                         {
-                            writer.Write((byte)0);
+                            data[dataPos++] = 0;
                         }
 
                         // Write image bytes
@@ -824,7 +824,7 @@ namespace DaggerfallConnect.Arena2
                         for (; x < run; x++)
                         {
                             pixel = reader.ReadByte();
-                            writer.Write(pixel);
+                            data[dataPos++] = pixel;
                         }
                     }
                 }
@@ -834,6 +834,9 @@ namespace DaggerfallConnect.Arena2
                 // No frames
                 return false;
             }
+
+            // Assign complete data to image
+            records[record].Frames[frame].Data = data;
 
             return true;
         }
@@ -847,11 +850,9 @@ namespace DaggerfallConnect.Arena2
         private bool ReadRle(int record, int frame)
         {
             // Create buffer to hold extracted image
+            byte[] data = new byte[records[record].Width * records[record].Height];
             records[record].Frames[frame].Width = records[record].Width;
             records[record].Frames[frame].Height = records[record].Height;
-            records[record].Frames[frame].Stride = records[record].Width;
-            records[record].Frames[frame].Format = DFBitmap.Formats.Indexed;
-            records[record].Frames[frame].Data = new byte[records[record].Width * records[record].Height];
 
             // Find offset to special row headers for this frame
             long position = records[record].Position + records[record].DataOffset;
@@ -866,10 +867,8 @@ namespace DaggerfallConnect.Arena2
                 SpecialRowHeaders[i].RowEncoding = (RowEncoding)Reader.ReadUInt16();
             }
 
-            // Create row memory writer
-            BinaryWriter writer = new BinaryWriter(new MemoryStream(records[record].Frames[frame].Data));
-
             // Extract all rows of image
+            int dataPos = 0;
             foreach(SpecialRowHeader header in SpecialRowHeaders)
             {
                 // Get offset to row relative to record data offset
@@ -893,13 +892,15 @@ namespace DaggerfallConnect.Arena2
                             pixel = Reader.ReadByte();
                             for (int i = 0; i < probe; i++)
                             {
-                                writer.Write(pixel);
+                                data[dataPos++] = pixel;
                                 rowPos++;
                             }
                         }
                         else if (0 < probe)
                         {
-                            writer.Write(Reader.ReadBytes(probe));
+                            byte[] nextBytes = Reader.ReadBytes(probe);
+                            Array.Copy(nextBytes, 0, data, dataPos, nextBytes.Length);
+                            dataPos += nextBytes.Length;
                             rowPos += probe;
                         }
                     } while (rowPos < rowWidth);
@@ -907,9 +908,14 @@ namespace DaggerfallConnect.Arena2
                 else
                 {
                     // Just copy bytes
-                    writer.Write(Reader.ReadBytes(records[record].Width));
+                    byte[] nextBytes = Reader.ReadBytes(records[record].Width);
+                    Array.Copy(nextBytes, 0, data, dataPos, nextBytes.Length);
+                    dataPos += nextBytes.Length;
                 }
             }
+
+            // Assign complete data to image
+            records[record].Frames[frame].Data = data;
 
             return true;
         }
