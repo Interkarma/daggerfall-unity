@@ -420,8 +420,6 @@ namespace DaggerfallConnect.Arena2
             dfBitmap.Data = dfBlock.RmbBlock.FldHeader.AutoMapData;
             dfBitmap.Width = 64;
             dfBitmap.Height = 64;
-            dfBitmap.Stride = 64;
-            dfBitmap.Format = DFBitmap.Formats.Indexed;
 
             // Filter ground flats if specified
             if (removeGroundFlats)

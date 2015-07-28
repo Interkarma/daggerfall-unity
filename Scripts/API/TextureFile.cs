@@ -310,6 +310,10 @@ namespace DaggerfallConnect.Arena2
             if (!managedFile.Load(filePath, usage, readOnly))
                 return false;
 
+            // Attempt to load palette file from same path
+            string arena2Path = Path.GetDirectoryName(filePath);
+            LoadPalette(Path.Combine(arena2Path, PaletteName));
+
             // Read file
             if (!Read())
                 return false;
@@ -452,131 +456,6 @@ namespace DaggerfallConnect.Arena2
         public static string IndexToFileName(int archiveIndex)
         {
             return string.Format("TEXTURE.{0:000}", archiveIndex);
-        }
-
-        /// <summary>
-        /// Gets size of an unloaded texture quickly with minimum overhead.
-        ///  This is useful for mesh loading where the texture dimensions need to be known,
-        ///  but you may not need to load the entire texture file at that time.
-        /// </summary>
-        /// <param name="filePath">Absolute path to TEXTURE.* file</param>
-        /// <param name="record">Index of record.</param>
-        /// <returns>DFSize.</returns>
-        public static DFSize QuickSize(string filePath, int record)
-        {
-            FileStream fs;
-            try
-            {
-                fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return new DFSize(0, 0);
-            }
-
-            // Read record count and check range
-            BinaryReader reader = new BinaryReader(fs);
-            int recordCount = reader.ReadInt16();
-            if (record < 0 || record >= recordCount)
-                return new DFSize(0, 0);
-
-            // Offset to width and height
-            reader.BaseStream.Position = 26 + 20 * record + 2;
-            reader.BaseStream.Position = reader.ReadInt32() + 4;
-
-            // Read width and height
-            int width = reader.ReadInt16();
-            int height = reader.ReadInt16();
-
-            // Close reader and stream
-            reader.Close();
-
-            // Return size
-            return new DFSize(width, height);
-        }
-
-        /// <summary>
-        /// Gets scale of an unloaded texture quickly with minimum overhead.
-        ///  This is useful for flat loading where the texture scale needs to be known,
-        ///  but you may not need to load the entire texture file at that time.
-        /// </summary>
-        /// <param name="filePath">Absolute path to TEXTURE.* file</param>
-        /// <param name="record">Index of record.</param>
-        /// <returns>Size.</returns>
-        public static DFSize QuickScale(string filePath, int record)
-        {
-            FileStream fs;
-            try
-            {
-                fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return new DFSize(0, 0);
-            }
-
-            // Read record count and check range
-            BinaryReader reader = new BinaryReader(fs);
-            int recordCount = reader.ReadInt16();
-            if (record < 0 || record >= recordCount)
-                return new DFSize(0, 0);
-
-            // Offset to scale
-            reader.BaseStream.Position = 26 + 20 * record + 2;
-            reader.BaseStream.Position = reader.ReadInt32() + 24;
-
-            // Read xscale and yscale
-            int xscale = reader.ReadInt16();
-            int yscale = reader.ReadInt16();
-
-            // Close reader and stream
-            reader.Close();
-
-            // Return size
-            return new DFSize(xscale, yscale);
-        }
-
-        /// <summary>
-        /// Gets frame of an unloaded texture quickly with minimum overhead.
-        /// This is useful when the number of animation frames needs to be
-        /// known before loading texture.
-        /// </summary>
-        /// <param name="filePath">Absolute path to TEXTURE.* file</param>
-        /// <param name="record">Index of record.</param>
-        /// <returns>Frame count or 0 on error.</returns>
-        public static int QuickFrameCount(string filePath, int record)
-        {
-            FileStream fs;
-            try
-            {
-                fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return 0;
-            }
-
-            // Read record count and check range
-            BinaryReader reader = new BinaryReader(fs);
-            int recordCount = reader.ReadInt16();
-            if (record < 0 || record >= recordCount)
-                return 0;
-
-            // Offset to scale
-            reader.BaseStream.Position = 26 + 20 * record + 2;
-            reader.BaseStream.Position = reader.ReadInt32() + 20;
-
-            // Read frame count
-            int frameCount = reader.ReadInt16();
-
-            // Close reader and stream
-            reader.Close();
-
-            // Return size
-            return frameCount;
         }
 
         #endregion
@@ -770,30 +649,28 @@ namespace DaggerfallConnect.Arena2
         private bool ReadImage(int record, int frame)
         {
             // Create buffer to hold extracted image
+            byte[] data = new byte[records[record].Width * records[record].Height];
             records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].Width;
             records[record].Frames[frame].Height = records[record].Height;
-            records[record].Frames[frame].Stride = records[record].Width;
-            records[record].Frames[frame].Format = DFBitmap.Formats.Indexed;
-            records[record].Frames[frame].Data = new byte[records[record].Width * records[record].Height];
 
+            byte[] fileBytes = managedFile.GetBytes();
+            long position = records[record].Position + records[record].DataOffset;
             if (records[record].FrameCount == 1)
             {
                 // Extract image bytes
-                long position = records[record].Position + records[record].DataOffset;
-                BinaryReader reader = managedFile.GetReader(position);
-                BinaryWriter writer = new BinaryWriter(new MemoryStream(records[record].Frames[frame].Data));
+                int srcPos = (int)position, dstPos = 0;
                 for (int y = 0; y < records[record].Height; y++)
                 {
-                    writer.Write(reader.ReadBytes(records[record].Width));
-                    reader.BaseStream.Position += (256 - records[record].Width);
+                    Array.Copy(fileBytes, srcPos, data, dstPos, records[record].Width);
+                    srcPos += records[record].Width + (256 - records[record].Width);
+                    dstPos += records[record].Width;
                 }
             }
             else if (records[record].FrameCount > 1)
             {
                 // Get frame offset list
                 Int32[] offsets = new Int32[records[record].FrameCount];
-                long position = records[record].Position + records[record].DataOffset;
                 BinaryReader reader = managedFile.GetReader(position);
                 for (int offset = 0; offset < records[record].FrameCount; offset++)
                     offsets[offset] = reader.ReadInt32();
@@ -804,27 +681,27 @@ namespace DaggerfallConnect.Arena2
                 int cy = reader.ReadInt16();
 
                 // Extract image bytes
-                BinaryWriter writer = new BinaryWriter(new MemoryStream(records[record].Frames[frame].Data));
+                int srcPos = (int)reader.BaseStream.Position, dstPos = 0;
                 for (int y = 0; y < cy; y++)
                 {
                     int x = 0;
                     while (x < cx)
                     {
-                        // Write transparant bytes
-                        byte pixel = reader.ReadByte();
+                        // Write transparent bytes
+                        byte pixel = fileBytes[srcPos++];
                         int run = x + pixel;
                         for (; x < run; x++)
                         {
-                            writer.Write((byte)0);
+                            data[dstPos++] = 0;
                         }
 
                         // Write image bytes
-                        pixel = reader.ReadByte();
+                        pixel = fileBytes[srcPos++];
                         run = x + pixel;
                         for (; x < run; x++)
                         {
-                            pixel = reader.ReadByte();
-                            writer.Write(pixel);
+                            pixel = fileBytes[srcPos++];
+                            data[dstPos++] = pixel;
                         }
                     }
                 }
@@ -834,6 +711,9 @@ namespace DaggerfallConnect.Arena2
                 // No frames
                 return false;
             }
+
+            // Assign complete data to image
+            records[record].Frames[frame].Data = data;
 
             return true;
         }
@@ -847,34 +727,30 @@ namespace DaggerfallConnect.Arena2
         private bool ReadRle(int record, int frame)
         {
             // Create buffer to hold extracted image
+            byte[] data = new byte[records[record].Width * records[record].Height];
             records[record].Frames[frame].Width = records[record].Width;
             records[record].Frames[frame].Height = records[record].Height;
-            records[record].Frames[frame].Stride = records[record].Width;
-            records[record].Frames[frame].Format = DFBitmap.Formats.Indexed;
-            records[record].Frames[frame].Data = new byte[records[record].Width * records[record].Height];
 
             // Find offset to special row headers for this frame
             long position = records[record].Position + records[record].DataOffset;
             position += (records[record].Height * frame) * 4;
-            BinaryReader Reader = managedFile.GetReader(position);
+            BinaryReader reader = managedFile.GetReader(position);
 
             // Read special row headers for this frame
             SpecialRowHeader[] SpecialRowHeaders = new SpecialRowHeader[records[record].Height];
             for (int i = 0; i < records[record].Height; i++)
             {
-                SpecialRowHeaders[i].RowOffset = Reader.ReadInt16();
-                SpecialRowHeaders[i].RowEncoding = (RowEncoding)Reader.ReadUInt16();
+                SpecialRowHeaders[i].RowOffset = reader.ReadInt16();
+                SpecialRowHeaders[i].RowEncoding = (RowEncoding)reader.ReadUInt16();
             }
 
-            // Create row memory writer
-            BinaryWriter writer = new BinaryWriter(new MemoryStream(records[record].Frames[frame].Data));
-
             // Extract all rows of image
+            int dstPos = 0;
             foreach(SpecialRowHeader header in SpecialRowHeaders)
             {
                 // Get offset to row relative to record data offset
                 position = records[record].Position + header.RowOffset;
-                Reader.BaseStream.Position = position;
+                reader.BaseStream.Position = position;
 
                 // Handle row data based on compression
                 if (RowEncoding.IsRleEncoded == header.RowEncoding)
@@ -883,23 +759,25 @@ namespace DaggerfallConnect.Arena2
                     byte pixel = 0;
                     int probe = 0;
                     int rowPos = 0;
-                    int rowWidth = Reader.ReadUInt16();
+                    int rowWidth = reader.ReadUInt16();
                     do
                     {
-                        probe = Reader.ReadInt16();
+                        probe = reader.ReadInt16();
                         if (probe < 0)
                         {
                             probe = -probe;
-                            pixel = Reader.ReadByte();
+                            pixel = reader.ReadByte();
                             for (int i = 0; i < probe; i++)
                             {
-                                writer.Write(pixel);
+                                data[dstPos++] = pixel;
                                 rowPos++;
                             }
                         }
                         else if (0 < probe)
                         {
-                            writer.Write(Reader.ReadBytes(probe));
+                            byte[] nextBytes = reader.ReadBytes(probe);
+                            Array.Copy(nextBytes, 0, data, dstPos, nextBytes.Length);
+                            dstPos += nextBytes.Length;
                             rowPos += probe;
                         }
                     } while (rowPos < rowWidth);
@@ -907,9 +785,14 @@ namespace DaggerfallConnect.Arena2
                 else
                 {
                     // Just copy bytes
-                    writer.Write(Reader.ReadBytes(records[record].Width));
+                    byte[] nextBytes = reader.ReadBytes(records[record].Width);
+                    Array.Copy(nextBytes, 0, data, dstPos, nextBytes.Length);
+                    dstPos += nextBytes.Length;
                 }
             }
+
+            // Assign complete data to image
+            records[record].Frames[frame].Data = data;
 
             return true;
         }

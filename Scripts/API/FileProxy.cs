@@ -273,6 +273,33 @@ namespace DaggerfallConnect.Utility
         }
 
         /// <summary>
+        /// Gets a byte array from file.
+        /// </summary>
+        /// <returns></returns>
+        public byte[] GetBytes()
+        {
+            if (Usage == FileUsage.UseMemory)
+                return fileBuffer;
+            else
+                return GetBytes(0, Length);
+        }
+
+        /// <summary>
+        /// Gets a byte array from file.
+        /// </summary>
+        /// <param name="position">Start position.</param>
+        /// <param name="length">Read length.</param>
+        /// <returns></returns>
+        public byte[] GetBytes(long position, int length)
+        {
+            BinaryReader reader = GetReader(position);
+            if (reader == null)
+                return null;
+            
+            return reader.ReadBytes(length);
+        }
+
+        /// <summary>
         /// Get a binary reader to managed file starting at the specified position.
         /// </summary>
         /// <param name="position">Position to start in stream (number of bytes from start of file).</param>
@@ -369,6 +396,28 @@ namespace DaggerfallConnect.Utility
             reader.BaseStream.Position = pos + skipLength;
 
             return str;
+        }
+
+        /// <summary>
+        /// Find a string pattern inside file.
+        /// </summary>
+        /// <param name="pattern">String pattern to search for. Converted to UTF8 and is case sensitive.</param>
+        /// <param name="position">Position to begin search.</param>
+        /// <returns>Index of pattern found or -1 if not found.</returns>
+        public int FindString(string pattern, int position = 0)
+        {
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(pattern);
+
+            for (int i = position; i < Buffer.Length; i++)
+            {
+                if (Buffer[i] == bytes[0])
+                {
+                    if (ReadCString(i, pattern.Length) == pattern)
+                        return i;
+                }
+            }
+
+            return -1;
         }
 
         /// <summary>

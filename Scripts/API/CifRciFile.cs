@@ -497,8 +497,6 @@ namespace DaggerfallConnect.Arena2
             records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].Header.Width;
             records[record].Frames[frame].Height = records[record].Header.Height;
-            records[record].Frames[frame].Stride = records[record].Header.Width;
-            records[record].Frames[frame].Format = DFBitmap.Formats.Indexed;
             records[record].Frames[frame].Data = new byte[records[record].Header.PixelDataLength];
 
             // Read image bytes
@@ -523,8 +521,6 @@ namespace DaggerfallConnect.Arena2
             records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].AnimHeader.Width;
             records[record].Frames[frame].Height = records[record].AnimHeader.Height;
-            records[record].Frames[frame].Stride = records[record].AnimHeader.Width;
-            records[record].Frames[frame].Format = DFBitmap.Formats.Indexed;
             records[record].Frames[frame].Data = new byte[length];
 
             // Extract image data from frame RLE
@@ -548,8 +544,6 @@ namespace DaggerfallConnect.Arena2
             int length = records[record].Header.Width * records[record].Header.Height;
             records[record].Frames[frame].Width = records[record].Header.Width;
             records[record].Frames[frame].Height = records[record].Header.Height;
-            records[record].Frames[frame].Stride = records[record].Header.Width;
-            records[record].Frames[frame].Format = DFBitmap.Formats.Indexed;
             records[record].Frames[frame].Data = new byte[length];
 
             // Extract image data from RLE

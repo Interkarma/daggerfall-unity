@@ -148,10 +148,8 @@ namespace DaggerfallConnect.Arena2
         public DFBitmap GetDFBitmap()
         {
             DFBitmap DFBitmap = new DFBitmap();
-            DFBitmap.Format = DFBitmap.Formats.Indexed;
             DFBitmap.Width = pakWidthValue;
             DFBitmap.Height = PakRowCount;
-            DFBitmap.Stride = pakWidthValue;
             DFBitmap.Data = pakExtractedBuffer;
             return DFBitmap;
         }

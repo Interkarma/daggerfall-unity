@@ -12,8 +12,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using DaggerfallConnect;
 using UnityEngine;
+using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 
 namespace DaggerfallWorkshop
@@ -52,6 +53,7 @@ namespace DaggerfallWorkshop
         public int atlasShrinkUVs;                      // Number of extra pixels to shrink UV rect
         public bool autoEmission;                       // Automatically create emission map for known textures
         public bool autoEmissionForWindows;             // Automatically create emission map for window textures
+        public TextureFile textureFile;                 // Provide an already open texture file to save time
     }
 
     /// <summary>
@@ -72,6 +74,7 @@ namespace DaggerfallWorkshop
         public bool isWindow;                           // Flag is raised if this is a window texture, for single textures only
         public bool isEmissive;                         // Flag is raised is this texture is emissive
         public bool isAtlasAnimated;                    // Atlas texture has one or more animations
+        public TextureFile textureFile;                 // Texture file used for last read operation.
     }
 
     /// <summary>

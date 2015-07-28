@@ -9,6 +9,8 @@
 // Notes:
 //
 
+//#define SHOW_LAYOUT_TIMES
+
 using UnityEngine;
 using System;
 using System.Collections;
@@ -23,7 +25,7 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// Manages terrain for streaming world at runtime.
+    /// Manages terrains for streaming world at runtime.
     /// At runtime only coordinates from LocalPlayerGPS will be used. Be sure to apply desired preview to PlayerGPS.
     /// Terrain tiles are spread outwards from a centre tile up to TerrainDistance around player.
     /// Terrains will be marked inactive once they pass beyond TerrainDistance.
@@ -67,14 +69,12 @@ namespace DaggerfallWorkshop
 
         // List of terrain objects
         // Terrains all have the same format and will be endlessly recycled
-        [NonSerialized]
         TerrainDesc[] terrainArray = new TerrainDesc[maxTerrainArray];
         Dictionary<int, int> terrainIndexDict = new Dictionary<int, int>();
 
-        // Dictionary of location objects
-        // Locations are unique and will be created/destroyed
-        Dictionary<int, GameObject> locationDict = new Dictionary<int, GameObject>();
-        List<int> locationKeysToDestroy = new List<int>();
+        // List of location objects
+        // Locations are unique and will be created/destroyed as needed
+        List<LocationDesc> locationList = new List<LocationDesc>();
 
         // Compensation for floating origin
         Vector3 worldCompensation = Vector3.zero;
@@ -88,8 +88,11 @@ namespace DaggerfallWorkshop
         double worldX, worldZ;
         TerrainTexturing terrainTexturing = new TerrainTexturing();
         bool isReady = false;
-        bool init;
         bool repositionPlayer;
+
+        bool init;
+        bool terrainUpdateRunning;
+        bool updateLocatations;
 
         #endregion
 
@@ -107,11 +110,19 @@ namespace DaggerfallWorkshop
         struct TerrainDesc
         {
             public bool active;
-            public bool updateHeights;
+            public bool updateData;
             public bool updateNature;
+            public bool updateLocation;
             public bool hasLocation;
             public GameObject terrainObject;
             public GameObject billboardBatchObject;
+            public int mapPixelX;
+            public int mapPixelY;
+        }
+
+        struct LocationDesc
+        {
+            public GameObject locationObject;
             public int mapPixelX;
             public int mapPixelY;
         }
@@ -136,8 +147,25 @@ namespace DaggerfallWorkshop
                 MapPixelX = curMapPixel.X;
                 MapPixelY = curMapPixel.Y;
                 UpdateWorld();
+                InitPlayerTerrain();
                 StartCoroutine(UpdateTerrains());
                 init = false;
+            }
+
+            // Exit if terrain data still updating
+            // Raise location update flag any time terrain updates
+            if (terrainUpdateRunning)
+            {
+                updateLocatations = true;
+                return;
+            }
+
+            // Update locations when terrain data finished
+            // This flag is raised during terrain update
+            if (updateLocatations)
+            {
+                UpdateLocations();
+                updateLocatations = false;
             }
 
             // Get distance player has moved in world map units and apply to world position
@@ -263,156 +291,62 @@ namespace DaggerfallWorkshop
             }
         }
 
-        // Update terrain data
-        // Spreads loading across several frames to reduce gameplay stalls
-        // This can also be done using true multi-threading, but at much greater
-        // complexity for only minor visible gains.
-        // Only yields after initial init complete
+        // Fully init central terrain so player can be dropped into world as soon as possible
+        private void InitPlayerTerrain()
+        {
+            if (!init)
+                return;
+
+#if SHOW_LAYOUT_TIMES
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
+#endif
+
+            CollectLocations(true);
+            int playerTerrainIndex = terrainIndexDict[TerrainHelper.MakeTerrainKey(MapPixelX, MapPixelY)];
+
+            UpdateTerrainData(terrainArray[playerTerrainIndex]);
+            terrainArray[playerTerrainIndex].updateData = false;
+
+            UpdateTerrainNature(terrainArray[playerTerrainIndex]);
+            terrainArray[playerTerrainIndex].updateNature = false;
+
+            StartCoroutine(UpdateLocation(playerTerrainIndex, false));
+            terrainArray[playerTerrainIndex].updateLocation = false;
+
+#if SHOW_LAYOUT_TIMES
+            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            DaggerfallUnity.LogMessage(string.Format("Time to init player terrain: {0}ms", totalTime), true);
+#endif
+        }
+
         private IEnumerator UpdateTerrains()
         {
             RaiseOnUpdateTerrainsStartEvent();
+            terrainUpdateRunning = true;
 
-            // First stage updates terrain heightmaps
+#if SHOW_LAYOUT_TIMES
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
+#endif
+
+            // Update terrain heights and nature billboards
+            CollectTerrains();
             for (int i = 0; i < terrainArray.Length; i++)
             {
-                if (terrainArray[i].active && terrainArray[i].updateHeights)
+                if (terrainArray[i].active)
                 {
-                    UpdateTerrainHeights(terrainArray[i]);
-                    terrainArray[i].updateHeights = false;
-                    if (!init) yield return new WaitForEndOfFrame();
-                }
-            }
-
-            // Wait for physics update when streaming
-            if (!init)
-                yield return new WaitForFixedUpdate();
-
-            // Second stage updates terrain nature
-            for (int i = 0; i < terrainArray.Length; i++)
-            {
-                if (terrainArray[i].active && terrainArray[i].updateNature)
-                {
-                    UpdateTerrainNature(terrainArray[i]);
-                    terrainArray[i].updateNature = false;
-                    if (!init) yield return new WaitForEndOfFrame();
-                }
-            }
-
-            // Get key for central player terrain
-            int playerKey = TerrainHelper.MakeTerrainKey(MapPixelX, MapPixelY);
-
-            // Third stage updates location if present
-            // Vast majority of terrains will not have a location
-            // Locations are not optimised as yet and are quite heavy on drawcalls
-            for (int i = 0; i < terrainArray.Length; i++)
-            {
-                // Get key for this terrain
-                int key = TerrainHelper.MakeTerrainKey(terrainArray[i].mapPixelX, terrainArray[i].mapPixelY);
-
-                if (terrainArray[i].active && terrainArray[i].hasLocation)
-                {
-                    // Create location if not present
-                    if (!locationDict.ContainsKey(key))
+                    if (terrainArray[i].updateData)
                     {
-                        // Create location object
-                        DFLocation location;
-                        GameObject locationObject = CreateLocationGameObject(i, out location);
-                        if (!locationObject)
-                            continue;
-
-                        // Add location object to dictionary
-                        locationDict.Add(key, locationObject);
-
-                        // Create location beacon
-                        // This is parented to location and shares its lifetime
-                        if (AddLocationBeacon)
-                        {
-                            const float beaconHeight = 900f;
-                            const float beaconOffset = (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale) / 2f;
-                            GameObject locationMarker = (GameObject)GameObject.Instantiate(Resources.Load<GameObject>("LocationBeacon"));
-                            locationMarker.hideFlags = HideFlags.HideAndDontSave;
-                            locationMarker.transform.parent = locationObject.transform;
-                            locationMarker.transform.localPosition = new Vector3(beaconOffset, beaconHeight, beaconOffset);
-                        }
-
-                        // Create billboard batch game objects for this location
-                        // Streaming world always batches for performance, regardless of options
-                        int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
-                        TextureAtlasBuilder miscBillboardAtlas = dfUnity.MaterialReader.MiscBillboardAtlas;
-                        DaggerfallBillboardBatch natureBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(natureArchive, locationObject.transform);
-                        DaggerfallBillboardBatch lightsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.LightsTextureArchive, locationObject.transform);
-                        DaggerfallBillboardBatch animalsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.AnimalsTextureArchive, locationObject.transform);
-                        DaggerfallBillboardBatch miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, locationObject.transform);
-                        
-                        // Set hide flags
-                        natureBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
-                        lightsBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
-                        animalsBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
-                        miscBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
-
-                        // RMB blocks are laid out in centre of terrain to align with ground
-                        int width = location.Exterior.ExteriorData.Width;
-                        int height = location.Exterior.ExteriorData.Height;
-                        float offsetX = ((8 * RMBLayout.RMBSide) - (width * RMBLayout.RMBSide)) / 2;
-                        float offsetZ = ((8 * RMBLayout.RMBSide) - (height * RMBLayout.RMBSide)) / 2;
-                        Vector3 origin = new Vector3(offsetX, 2.0f * MeshReader.GlobalScale, offsetZ);
-
-                        // Perform layout and yield after each block is placed
-                        DaggerfallLocation dfLocation = locationObject.GetComponent<DaggerfallLocation>();
-                        for (int y = 0; y < height; y++)
-                        {
-                            for (int x = 0; x < width; x++)
-                            {
-                                // Set block origin for billboard batches
-                                // This causes next additions to be offset by this position
-                                Vector3 blockOrigin = origin + new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
-                                natureBillboardBatch.BlockOrigin = blockOrigin;
-                                lightsBillboardBatch.BlockOrigin = blockOrigin;
-                                animalsBillboardBatch.BlockOrigin = blockOrigin;
-                                miscBillboardBatch.BlockOrigin = blockOrigin;
-
-                                // Add block and yield
-                                string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
-                                GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
-                                    blockName,
-                                    false,
-                                    dfUnity.Option_CityBlockPrefab,
-                                    natureBillboardBatch,
-                                    lightsBillboardBatch,
-                                    animalsBillboardBatch,
-                                    miscBillboardAtlas,
-                                    miscBillboardBatch);
-                                //GameObject go = RMBLayout.CreateBaseGameObject(blockName);
-                                go.hideFlags = HideFlags.HideAndDontSave;
-                                go.transform.parent = locationObject.transform;
-                                go.transform.localPosition = blockOrigin;
-                                dfLocation.ApplyClimateSettings();
-                                if (!init) yield return new WaitForEndOfFrame();
-                            }
-                        }
-
-                        // If this is the player terrain we may need to reposition player
-                        if (playerKey == key && repositionPlayer)
-                        {
-                            // Position to location and use start marker for large cities
-                            bool useStartMarker = (dfLocation.Summary.LocationType == DFRegion.LocationTypes.TownCity);
-                            PositionPlayerToLocation(MapPixelX, MapPixelY, dfLocation, origin, width, height, useStartMarker);
-                            repositionPlayer = false;
-                        }
-
-                        // Apply billboard batches
-                        natureBillboardBatch.Apply();
-                        lightsBillboardBatch.Apply();
-                        animalsBillboardBatch.Apply();
-                        miscBillboardBatch.Apply();
+                        UpdateTerrainData(terrainArray[i]);
+                        terrainArray[i].updateData = false;
+                        yield return new WaitForEndOfFrame();
                     }
-                }
-                else if (terrainArray[i].active)
-                {
-                    if (playerKey == key && repositionPlayer)
+                    if (terrainArray[i].updateNature)
                     {
-                        PositionPlayerToTerrain(MapPixelX, MapPixelY, Vector3.zero);
-                        repositionPlayer = false;
+                        UpdateTerrainNature(terrainArray[i]);
+                        terrainArray[i].updateNature = false;
+                        yield return new WaitForEndOfFrame();
                     }
                 }
             }
@@ -420,16 +354,134 @@ namespace DaggerfallWorkshop
             // If this is an init we can use the load time to unload unused assets
             // Keeps memory usage much lower over time
             if (init)
-            {
                 Resources.UnloadUnusedAssets();
-            }
 
-            // Finish by collecting stale data and setting neighbours
-            CollectTerrains();
-            CollectLocations();
+            // Set terrain neighbours
             UpdateNeighbours();
 
+#if SHOW_LAYOUT_TIMES
+            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            DaggerfallUnity.LogMessage(string.Format("Time to update terrains: {0}ms", totalTime), true);
+#endif
+
+            terrainUpdateRunning = false;
             RaiseOnUpdateTerrainsEndEvent();
+        }
+
+        private void UpdateLocations()
+        {
+            CollectLocations();
+            for (int i = 0; i < terrainArray.Length; i++)
+            {
+                if (terrainArray[i].active)
+                    StartCoroutine(UpdateLocation(i, true));
+            }
+        }
+
+        private IEnumerator UpdateLocation(int index, bool allowYield)
+        {
+            int key = TerrainHelper.MakeTerrainKey(terrainArray[index].mapPixelX, terrainArray[index].mapPixelY);
+            int playerKey = TerrainHelper.MakeTerrainKey(MapPixelX, MapPixelY);
+            bool isPlayerTerrain = (key == playerKey);
+
+            if (terrainArray[index].active && terrainArray[index].hasLocation && terrainArray[index].updateLocation)
+            {
+                // Disable update flag
+                terrainArray[index].updateLocation = false;
+
+                // Create location object
+                DFLocation location;
+                GameObject locationObject = CreateLocationGameObject(index, out location);
+                if (locationObject)
+                {
+                    // Add location object to dictionary
+                    LocationDesc locationDesc = new LocationDesc();
+                    locationDesc.locationObject = locationObject;
+                    locationDesc.mapPixelX = terrainArray[index].mapPixelX;
+                    locationDesc.mapPixelY = terrainArray[index].mapPixelY;
+                    locationList.Add(locationDesc);
+
+                    // Create billboard batch game objects for this location
+                    // Streaming world always batches for performance, regardless of options
+                    int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
+                    TextureAtlasBuilder miscBillboardAtlas = dfUnity.MaterialReader.MiscBillboardAtlas;
+                    DaggerfallBillboardBatch natureBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(natureArchive, locationObject.transform);
+                    DaggerfallBillboardBatch lightsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.LightsTextureArchive, locationObject.transform);
+                    DaggerfallBillboardBatch animalsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.AnimalsTextureArchive, locationObject.transform);
+                    DaggerfallBillboardBatch miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, locationObject.transform);
+
+                    // Set hide flags
+                    natureBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
+                    lightsBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
+                    animalsBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
+                    miscBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
+
+                    // RMB blocks are laid out in centre of terrain to align with ground
+                    int width = location.Exterior.ExteriorData.Width;
+                    int height = location.Exterior.ExteriorData.Height;
+                    float offsetX = ((8 * RMBLayout.RMBSide) - (width * RMBLayout.RMBSide)) / 2;
+                    float offsetZ = ((8 * RMBLayout.RMBSide) - (height * RMBLayout.RMBSide)) / 2;
+                    Vector3 origin = new Vector3(offsetX, 2.0f * MeshReader.GlobalScale, offsetZ);
+
+                    // Get location data
+                    DaggerfallLocation dfLocation = locationObject.GetComponent<DaggerfallLocation>();
+
+                    // Perform layout and yield after each block is placed
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            // Set block origin for billboard batches
+                            // This causes next additions to be offset by this position
+                            Vector3 blockOrigin = origin + new Vector3((x * RMBLayout.RMBSide), 0, (y * RMBLayout.RMBSide));
+                            natureBillboardBatch.BlockOrigin = blockOrigin;
+                            lightsBillboardBatch.BlockOrigin = blockOrigin;
+                            animalsBillboardBatch.BlockOrigin = blockOrigin;
+                            miscBillboardBatch.BlockOrigin = blockOrigin;
+
+                            // Add block and yield
+                            string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
+                            GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
+                                blockName,
+                                false,
+                                dfUnity.Option_CityBlockPrefab,
+                                natureBillboardBatch,
+                                lightsBillboardBatch,
+                                animalsBillboardBatch,
+                                miscBillboardAtlas,
+                                miscBillboardBatch);
+                            go.hideFlags = HideFlags.HideAndDontSave;
+                            go.transform.parent = locationObject.transform;
+                            go.transform.localPosition = blockOrigin;
+                            dfLocation.ApplyClimateSettings();
+                            if (allowYield) yield return new WaitForEndOfFrame();
+                        }
+                    }
+
+                    // If this is the player terrain we may need to reposition player
+                    if (isPlayerTerrain && repositionPlayer)
+                    {
+                        // Position to location and use start marker for large cities
+                        bool useStartMarker = (dfLocation.Summary.LocationType == DFRegion.LocationTypes.TownCity);
+                        PositionPlayerToLocation(MapPixelX, MapPixelY, dfLocation, origin, width, height, useStartMarker);
+                        repositionPlayer = false;
+                    }
+
+                    // Apply billboard batches
+                    natureBillboardBatch.Apply();
+                    lightsBillboardBatch.Apply();
+                    animalsBillboardBatch.Apply();
+                    miscBillboardBatch.Apply();
+                }
+            }
+            else if (terrainArray[index].active)
+            {
+                if (playerKey == key && repositionPlayer)
+                {
+                    PositionPlayerToTerrain(MapPixelX, MapPixelY, Vector3.zero);
+                    repositionPlayer = false;
+                }
+            }
         }
 
         // Place a single terrain and mark it for update
@@ -473,7 +525,7 @@ namespace DaggerfallWorkshop
 
             // Setup new terrain
             terrainArray[nextTerrain].active = true;
-            terrainArray[nextTerrain].updateHeights = true;
+            terrainArray[nextTerrain].updateData = true;
             terrainArray[nextTerrain].updateNature = true;
             terrainArray[nextTerrain].mapPixelX = mapPixelX;
             terrainArray[nextTerrain].mapPixelY = mapPixelY;
@@ -500,8 +552,8 @@ namespace DaggerfallWorkshop
 
             // Check if terrain has a location, if so it will be added on next update
             ContentReader.MapSummary mapSummary;
-            if (dfUnity.ContentReader.HasLocation(mapPixelX, mapPixelY, out mapSummary))
-                terrainArray[nextTerrain].hasLocation = true;
+            terrainArray[nextTerrain].hasLocation = dfUnity.ContentReader.HasLocation(mapPixelX, mapPixelY, out mapSummary);
+            terrainArray[nextTerrain].updateLocation = terrainArray[nextTerrain].hasLocation;
         }
 
         // Finds next available terrain in array
@@ -567,9 +619,8 @@ namespace DaggerfallWorkshop
             CollectTerrains(true);
             CollectLocations(true);
 
-            // Clear dictionaries
+            // Clear lists
             terrainIndexDict.Clear();
-            locationDict.Clear();
 
             // Raise event
             RaiseOnClearStreamingWorldEvent();
@@ -601,6 +652,7 @@ namespace DaggerfallWorkshop
                     {
                         terrainArray[i].mapPixelX = int.MinValue;
                         terrainArray[i].mapPixelY = int.MinValue;
+                        terrainArray[i].updateLocation = false;
                     }
                 }
             }
@@ -609,26 +661,13 @@ namespace DaggerfallWorkshop
         // Destroy any locations outside of range
         private void CollectLocations(bool collectAll = false)
         {
-            // Determine which terrains need to be destroyed
-            int mapPixelX, mapPixelY;
-            locationKeysToDestroy.Clear();
-            foreach (var keyValuePair in locationDict)
+            for (int i = 0; i < locationList.Count; i++)
             {
-                TerrainHelper.ReverseTerrainKey(keyValuePair.Key, out mapPixelX, out mapPixelY);
-                if (!IsInRange(mapPixelX, mapPixelY) || collectAll)
+                if (!IsInRange(locationList[i].mapPixelX, locationList[i].mapPixelY) || collectAll)
                 {
-                    locationKeysToDestroy.Add(keyValuePair.Key);
+                    StartCoroutine(DestroyLocationIterative(locationList[i].locationObject));
+                    locationList.RemoveAt(i);
                 }
-            }
-
-            // Destroy the terrains
-            for (int i = 0; i < locationKeysToDestroy.Count; i++)
-            {
-                int key = locationKeysToDestroy[i];
-                GameObject locationObject = locationDict[key];
-                locationObject.SetActive(false);
-                StartCoroutine(DestroyLocationIterative(locationObject));
-                locationDict.Remove(key);
             }
         }
 
@@ -705,7 +744,7 @@ namespace DaggerfallWorkshop
             // Create new terrain object parented to streaming world
             terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(this.transform);
             terrainObject.name = string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
-            //terrainObject.hideFlags = HideFlags.HideAndDontSave;
+            terrainObject.hideFlags = HideFlags.HideAndDontSave;
 
             // Create new billboard batch object parented to terrain
             billboardBatchObject = new GameObject();
@@ -735,7 +774,7 @@ namespace DaggerfallWorkshop
             float height = dfTerrain.MapData.averageHeight * TerrainScale;
             GameObject locationObject = new GameObject(string.Format("DaggerfallLocation [Region={0}, Name={1}]", locationOut.RegionName, locationOut.Name));
             locationObject.transform.parent = this.transform;
-            locationObject.hideFlags = HideFlags.HideAndDontSave;
+            //locationObject.hideFlags = HideFlags.HideAndDontSave;
             locationObject.transform.position = terrainArray[terrain].terrainObject.transform.position + new Vector3(0, height, 0);
             DaggerfallLocation dfLocation = locationObject.AddComponent<DaggerfallLocation>() as DaggerfallLocation;
             dfLocation.SetLocation(locationOut, false);
@@ -747,7 +786,7 @@ namespace DaggerfallWorkshop
         }
 
         // Update terrain data
-        private void UpdateTerrainHeights(TerrainDesc terrainDesc)
+        private void UpdateTerrainData(TerrainDesc terrainDesc)
         {
             //System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
             //long startTime = stopwatch.ElapsedMilliseconds;
@@ -781,9 +820,6 @@ namespace DaggerfallWorkshop
         // Update terrain nature
         private void UpdateTerrainNature(TerrainDesc terrainDesc)
         {
-            //System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            //long startTime = stopwatch.ElapsedMilliseconds;
-
             // Setup billboards
             DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
             DaggerfallBillboardBatch dfBillboardBatch = terrainDesc.billboardBatchObject.GetComponent<DaggerfallBillboardBatch>();
@@ -797,9 +833,6 @@ namespace DaggerfallWorkshop
 
             // Only set active again once complete
             terrainDesc.billboardBatchObject.SetActive(true);
-
-            //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            //DaggerfallUnity.LogMessage(string.Format("Time to update terrain nature: {0}ms", totalTime), true);
         }
 
         // Gets terrain at map pixel coordinates, or null if not found

@@ -207,10 +207,8 @@ namespace DaggerfallConnect.Arena2
         public DFBitmap GetHeightMapDFBitmap()
         {
             DFBitmap DFBitmap = new DFBitmap();
-            DFBitmap.Format = DFBitmap.Formats.Indexed;
             DFBitmap.Width = mapWidthValue;
             DFBitmap.Height = mapHeightValue;
-            DFBitmap.Stride = mapWidthValue;
             DFBitmap.Data = heightMapBuffer;
 
             return DFBitmap;
