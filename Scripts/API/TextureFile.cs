@@ -660,7 +660,6 @@ namespace DaggerfallConnect.Arena2
             {
                 // Extract image bytes
                 int srcPos = (int)position, dstPos = 0;
-                BinaryReader reader = managedFile.GetReader(position);
                 for (int y = 0; y < records[record].Height; y++)
                 {
                     Array.Copy(fileBytes, srcPos, data, dstPos, records[record].Width);

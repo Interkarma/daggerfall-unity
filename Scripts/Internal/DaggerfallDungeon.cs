@@ -9,6 +9,8 @@
 // Notes:
 //
 
+#define SHOW_LAYOUT_TIMES
+
 using UnityEngine;
 using System;
 using System.Collections;
@@ -215,9 +217,11 @@ namespace DaggerfallWorkshop
 
         private void LayoutDungeon(ref DFLocation location)
         {
+#if SHOW_LAYOUT_TIMES
             // Start timing
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
             long startTime = stopwatch.ElapsedMilliseconds;
+#endif
 
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
@@ -239,9 +243,11 @@ namespace DaggerfallWorkshop
                     FindStartMarker(daggerfallBlock);
             }
 
+#if SHOW_LAYOUT_TIMES
             // Show timer
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
             DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
+#endif
         }
 
         // Orsinium defines two blocks at [-1,-1]

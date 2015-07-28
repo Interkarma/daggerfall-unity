@@ -239,12 +239,11 @@ namespace DaggerfallConnect.Arena2
             int dstWidth = srcWidth + border * 2;
             int dstHeight = srcHeight + border * 2;
 
-            // Create target array
             Color32[] colors = new Color32[dstWidth * dstHeight];
 
-            DFColor c;
-            byte a;
-            int index, srcRow, dstRow;
+            Color32 c = new Color32();
+            int index, offset, srcRow, dstRow;
+            byte[] paletteData = myPalette.PaletteBuffer;
             for (int y = 0; y < srcHeight; y++)
             {
                 // Get row position
@@ -255,10 +254,12 @@ namespace DaggerfallConnect.Arena2
                 for (int x = 0; x < srcWidth; x++)
                 {
                     index = srcBitmap.Data[srcRow + x];
-                    c = myPalette.Get(index);
-                    if (alphaIndex == index) a = 0x00; else a = 0xff;
-                    
-                    colors[dstRow + border + x] = new Color32(c.R, c.G, c.B, a);
+                    offset = myPalette.HeaderLength + index * 3;
+                    c.r = paletteData[offset];
+                    c.g = paletteData[offset + 1];
+                    c.b = paletteData[offset + 2];
+                    c.a = (alphaIndex == index) ? (byte)0 : (byte)255;
+                    colors[dstRow + border + x] = c;
                 }
             }
 

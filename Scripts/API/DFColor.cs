@@ -36,6 +36,13 @@ namespace DaggerfallConnect.Utility
         #region Constructors
 
         /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public DFColor()
+        {
+        }
+
+        /// <summary>
         /// Value constructor RGB.
         /// </summary>
         public DFColor(byte r, byte g, byte b)

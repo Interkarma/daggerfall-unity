@@ -9,6 +9,8 @@
 // Notes:
 //
 
+#define SHOW_LAYOUT_TIMES
+
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -289,9 +291,11 @@ namespace DaggerfallWorkshop
         /// </summary>
         private void LayoutLocation(ref DFLocation location)
         {
+#if SHOW_LAYOUT_TIMES
             // Start timing
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
             long startTime = stopwatch.ElapsedMilliseconds;
+#endif
 
             // Get city dimensions
             int width = location.Exterior.ExteriorData.Width;
@@ -355,9 +359,11 @@ namespace DaggerfallWorkshop
             // Enumerate start marker game objects
             EnumerateStartMarkers();
 
+#if SHOW_LAYOUT_TIMES
             // Show timer
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
             DaggerfallUnity.LogMessage(string.Format("Time to layout location: {0}ms", totalTime), true);
+#endif
         }
 
         private bool ReadyCheck()

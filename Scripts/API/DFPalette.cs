@@ -24,17 +24,37 @@ namespace DaggerfallConnect
     /// </summary>
     public class DFPalette
     {
-        #region Class Variables
+        #region Fields
 
         /// <summary>
         /// Length of header in bytes for supporting .COL files.
         /// </summary>
-        private int HeaderLength = 0;
+        private int headerLength = 0;
 
         /// <summary>
         /// Array of 256x RGB values. Includes 8-byte header for supporting .COL files.
         /// </summary>
-        private byte[] PaletteBuffer = new byte[776];
+        private byte[] paletteBuffer = new byte[776];
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets palette memory buffer.
+        /// </summary>
+        public byte[] PaletteBuffer
+        {
+            get { return paletteBuffer; }
+        }
+
+        /// <summary>
+        /// Gets palette header length;
+        /// </summary>
+        public int HeaderLength
+        {
+            get { return headerLength; }
+        }
 
         #endregion
 
@@ -69,10 +89,10 @@ namespace DaggerfallConnect
             switch (fileProxy.Length)
             {
                 case 768:
-                    HeaderLength = 0;
+                    headerLength = 0;
                     break;
                 case 776:
-                    HeaderLength = 8;
+                    headerLength = 8;
                     break;
                 default:
                     return false;
@@ -80,7 +100,7 @@ namespace DaggerfallConnect
 
             // Read palette
             BinaryReader reader = fileProxy.GetReader();
-            if (fileProxy.Length != reader.Read(PaletteBuffer, 0, (int)fileProxy.Length))
+            if (fileProxy.Length != reader.Read(paletteBuffer, 0, (int)fileProxy.Length))
                 return false;
 
             return true;
@@ -95,11 +115,11 @@ namespace DaggerfallConnect
         public bool Read(ref BinaryReader Reader)
         {
             // Read palette bytes
-            if (768 != Reader.Read(PaletteBuffer, 8, 768))
+            if (768 != Reader.Read(paletteBuffer, 8, 768))
                 return false;
 
             // Set header length
-            HeaderLength = 8;
+            headerLength = 8;
 
             return true;
         }
@@ -112,12 +132,12 @@ namespace DaggerfallConnect
         /// <param name="B">Blue component.</param>
         public void Fill(byte R, byte G, byte B)
         {
-            int offset = HeaderLength;
+            int offset = headerLength;
             for (int i = 0; i < 256; i++)
             {
-                PaletteBuffer[offset++] = R;
-                PaletteBuffer[offset++] = G;
-                PaletteBuffer[offset++] = B;
+                paletteBuffer[offset++] = R;
+                paletteBuffer[offset++] = G;
+                paletteBuffer[offset++] = B;
             }
         }
 
@@ -126,12 +146,12 @@ namespace DaggerfallConnect
         /// </summary>
         public void MakeGrayscale()
         {
-            int offset = HeaderLength;
+            int offset = headerLength;
             for (int i = 0; i < 256; i++)
             {
-                PaletteBuffer[offset++] = (byte)i;
-                PaletteBuffer[offset++] = (byte)i;
-                PaletteBuffer[offset++] = (byte)i;
+                paletteBuffer[offset++] = (byte)i;
+                paletteBuffer[offset++] = (byte)i;
+                paletteBuffer[offset++] = (byte)i;
             }
         }
 
@@ -181,8 +201,8 @@ namespace DaggerfallConnect
         /// <returns>DFColor object.</returns>
         public DFColor Get(int Index)
         {
-            int offset = HeaderLength + Index * 3;
-            DFColor col = new DFColor(PaletteBuffer[offset], PaletteBuffer[offset + 1], PaletteBuffer[offset + 2]);
+            int offset = headerLength + Index * 3;
+            DFColor col = new DFColor(paletteBuffer[offset], paletteBuffer[offset + 1], paletteBuffer[offset + 2]);
 
             return col;
         }
@@ -194,8 +214,8 @@ namespace DaggerfallConnect
         /// <returns>Red value byte.</returns>
         public byte GetRed(int Index)
         {
-            int offset = HeaderLength + Index * 3;
-            return PaletteBuffer[offset];
+            int offset = headerLength + Index * 3;
+            return paletteBuffer[offset];
         }
 
         /// <summary>
@@ -205,8 +225,8 @@ namespace DaggerfallConnect
         /// <returns>Green value byte.</returns>
         public byte GetGreen(int Index)
         {
-            int offset = HeaderLength + Index * 3;
-            return PaletteBuffer[offset + 1];
+            int offset = headerLength + Index * 3;
+            return paletteBuffer[offset + 1];
         }
 
         /// <summary>
@@ -216,8 +236,8 @@ namespace DaggerfallConnect
         /// <returns>Blue value byte.</returns>
         public byte GetBlue(int Index)
         {
-            int offset = HeaderLength + Index * 3;
-            return PaletteBuffer[offset + 2];
+            int offset = headerLength + Index * 3;
+            return paletteBuffer[offset + 2];
         }
 
         /// <summary>
@@ -229,10 +249,10 @@ namespace DaggerfallConnect
         /// <param name="B">Blue component.</param>
         public void Set(int Index, byte R, byte G, byte B)
         {
-            int offset = HeaderLength + Index * 3;
-            PaletteBuffer[offset] = R;
-            PaletteBuffer[offset + 1] = G;
-            PaletteBuffer[offset + 2]  = B;
+            int offset = headerLength + Index * 3;
+            paletteBuffer[offset] = R;
+            paletteBuffer[offset + 1] = G;
+            paletteBuffer[offset + 2]  = B;
         }
 
         /// <summary>
@@ -244,11 +264,11 @@ namespace DaggerfallConnect
         /// <returns>Index of found RGB value.</returns>
         public int Find(byte R, byte G, byte B)
         {
-            int offset = HeaderLength;
+            int offset = headerLength;
             for (int i = 0; i < 256; i++)
             {
                 // Check for match
-                if (PaletteBuffer[offset] == R && PaletteBuffer[offset + 1] == G && PaletteBuffer[offset + 2] == B)
+                if (paletteBuffer[offset] == R && paletteBuffer[offset + 1] == G && paletteBuffer[offset + 2] == B)
                     return i;
                 
                 // Increment offset
