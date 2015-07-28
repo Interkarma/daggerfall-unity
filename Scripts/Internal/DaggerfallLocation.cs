@@ -289,6 +289,10 @@ namespace DaggerfallWorkshop
         /// </summary>
         private void LayoutLocation(ref DFLocation location)
         {
+            // Start timing
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
+
             // Get city dimensions
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
@@ -350,6 +354,10 @@ namespace DaggerfallWorkshop
 
             // Enumerate start marker game objects
             EnumerateStartMarkers();
+
+            // Show timer
+            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            DaggerfallUnity.LogMessage(string.Format("Time to layout location: {0}ms", totalTime), true);
         }
 
         private bool ReadyCheck()

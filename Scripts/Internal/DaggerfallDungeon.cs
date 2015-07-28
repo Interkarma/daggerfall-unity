@@ -14,7 +14,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Diagnostics;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
@@ -216,9 +215,9 @@ namespace DaggerfallWorkshop
 
         private void LayoutDungeon(ref DFLocation location)
         {
-            //// Start timing
-            //Stopwatch stopwatch = Stopwatch.StartNew();
-            //long startTime = stopwatch.ElapsedMilliseconds;
+            // Start timing
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
 
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
@@ -240,9 +239,9 @@ namespace DaggerfallWorkshop
                     FindStartMarker(daggerfallBlock);
             }
 
-            //// Show timer
-            //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            //DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
+            // Show timer
+            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
         }
 
         // Orsinium defines two blocks at [-1,-1]

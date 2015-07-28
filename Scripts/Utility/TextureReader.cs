@@ -24,7 +24,6 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public class TextureReader
     {
-        TextureFile textureFile;
         bool mipMaps = true;
 
         // Special texture indices
@@ -38,16 +37,6 @@ namespace DaggerfallWorkshop.Utility
         /// Path must be set before attempting to load textures.
         /// </summary>
         public string Arena2Path { get; set; }
-
-        /// <summary>
-        /// Gets managed API TextureFile.
-        /// Used for accessing more properties about texture just loaded
-        /// or when manual control over texture loading is required.
-        /// </summary>
-        public TextureFile TextureFile
-        {
-            get { return textureFile; }
-        }
 
         /// <summary>
         /// Gets or sets flag to generate mipmaps for textures.
@@ -131,21 +120,21 @@ namespace DaggerfallWorkshop.Utility
         {
             GetTextureResults results = new GetTextureResults();
 
-            // Ready check
-            if (!ReadyCheck())
-                return results;
-
             // Check if window or auto-emissive
             bool isWindow = ClimateSwaps.IsExteriorWindow(settings.archive, settings.record);
             bool isEmissive = (settings.autoEmission) ? IsEmissive(settings.archive, settings.record) : false;
 
-            // Load texture file
-            textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
+            // Assign texture file
+            TextureFile textureFile;
+            if (settings.textureFile == null)
+                textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
+            else
+                textureFile = settings.textureFile;
 
             // Get starting DFBitmap and albedo Color32 array
             DFSize sz;
             DFBitmap srcBitmap = textureFile.GetDFBitmap(settings.record, settings.frame);
-            Color32[] albedoColors = textureFile.GetColors32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
+            Color32[] albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
 
             // Sharpen source image
             if (settings.sharpen)
@@ -232,6 +221,7 @@ namespace DaggerfallWorkshop.Utility
             results.emissionMap = emissionMap;
             results.isWindow = isWindow;
             results.isEmissive = resultEmissive;
+            results.textureFile = textureFile;
 
             return results;
         }
@@ -253,16 +243,19 @@ namespace DaggerfallWorkshop.Utility
         {
             GetTextureResults results = new GetTextureResults();
 
-            // Ready check
-            if (!ReadyCheck())
-                return results;
-
             // Individual textures must remain readable to pack into atlas
             bool stayReadable = settings.stayReadable;
             settings.stayReadable = true;
 
-            // Load texture file
-            textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
+            // Assign texture file
+            TextureFile textureFile;
+            if (settings.textureFile == null)
+            {
+                textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
+                settings.textureFile = textureFile;
+            }
+            else
+                textureFile = settings.textureFile;
 
             // Create lists
             results.atlasSizes = new List<Vector2>(textureFile.RecordCount);
@@ -319,6 +312,7 @@ namespace DaggerfallWorkshop.Utility
                 results.atlasScales.Add(new Vector2(scale.Width, scale.Height));
                 results.atlasOffsets.Add(new Vector2(offset.Width, offset.Height));
                 results.atlasFrameCounts.Add(frames);
+                results.textureFile = textureFile;
             }
 
             // Pack albedo textures into atlas and get our rects
@@ -394,11 +388,8 @@ namespace DaggerfallWorkshop.Utility
             SupportedAlphaTextureFormats alphaTextureFormat = SupportedAlphaTextureFormats.RGBA32,
             SupportedNonAlphaTextureFormats nonAlphaFormat = SupportedNonAlphaTextureFormats.RGB24)
         {
-            // Ready check
-            if (!ReadyCheck())
-                return null;
-
             // Iterate archives
+            TextureFile textureFile = new TextureFile();
             TextureAtlasBuilder builder = new TextureAtlasBuilder();
             GetTextureSettings settings = TextureReader.CreateTextureSettings(0, 0, 0, 0, borderSize, dilate, maxAtlasSize);
             settings.stayReadable = true;
@@ -449,12 +440,8 @@ namespace DaggerfallWorkshop.Utility
 
             GetTextureResults results = new GetTextureResults();
 
-            // Ready check
-            if (!ReadyCheck())
-                return results;
-
             // Load texture file and check count matches terrain tiles
-            textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
+            TextureFile textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
             if (textureFile.RecordCount != 56)
                 return results;
 
@@ -660,23 +647,6 @@ namespace DaggerfallWorkshop.Utility
                 case SupportedNonAlphaTextureFormats.RGB565:
                     return TextureFormat.RGB565;
             }
-        }
-
-        private bool ReadyCheck()
-        {
-            // Ensure texture reader is ready
-            if (textureFile == null)
-            {
-                textureFile = new TextureFile();
-                if (!textureFile.Palette.Load(Path.Combine(Arena2Path, textureFile.PaletteName)))
-                {
-                    DaggerfallUnity.LogMessage("TextureReader: Failed to load palette file, is Arena2Path correct?", true);
-                    textureFile = null;
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         #endregion

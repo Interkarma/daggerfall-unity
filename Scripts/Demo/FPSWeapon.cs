@@ -429,7 +429,7 @@ namespace DaggerfallWorkshop.Demo
 
             // Get Color32 array
             DFSize sz;
-            Color32[] colors = cifFile.GetColors32(dfBitmap, 0, border, out sz);
+            Color32[] colors = cifFile.GetColor32(dfBitmap, 0, border, out sz);
 
             // Dilate edges
             if (border > 0 && dilate)

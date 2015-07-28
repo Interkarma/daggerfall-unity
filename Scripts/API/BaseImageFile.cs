@@ -191,7 +191,7 @@ namespace DaggerfallConnect.Arena2
             DFBitmap srcBitmap = GetDFBitmap(record, frame);
 
             DFSize sz;
-            return GetColors32(srcBitmap, alphaIndex, 0, out sz);
+            return GetColor32(srcBitmap, alphaIndex, 0, out sz);
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace DaggerfallConnect.Arena2
         public Color32[] GetColors32(DFBitmap srcBitmap, int alphaIndex = -1)
         {
             DFSize sz;
-            return GetColors32(srcBitmap, alphaIndex, 0, out sz);
+            return GetColor32(srcBitmap, alphaIndex, 0, out sz);
         }
 
         /// <summary>
@@ -220,18 +220,18 @@ namespace DaggerfallConnect.Arena2
             // Get source bitmap
             DFBitmap srcBitmap = GetDFBitmap(record, frame);
 
-            return GetColors32(srcBitmap, alphaIndex, border, out sizeOut);
+            return GetColor32(srcBitmap, alphaIndex, border, out sizeOut);
         }
 
         /// <summary>
-        /// Gets a Color32 array for engine with a border.
+        /// Gets a Color32 array for engine.
         /// </summary>
         /// <param name="srcBitmap">Source DFBitmap.</param>
         /// <param name="alphaIndex">Index to receive transparent alpha.</param>
         /// <param name="border">Number of pixels border to add around image.</param>
         /// <param name="sizeOut">Receives image dimensions with borders included.</param>
         /// <returns>Color32 array.</returns>
-        public Color32[] GetColors32(DFBitmap srcBitmap, int alphaIndex, int border, out DFSize sizeOut)
+        public Color32[] GetColor32(DFBitmap srcBitmap, int alphaIndex, int border, out DFSize sizeOut)
         {
             // Calculate dimensions
             int srcWidth = srcBitmap.Width;

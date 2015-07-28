@@ -290,7 +290,7 @@ namespace DaggerfallConnect.Utility
         /// <param name="position">Start position.</param>
         /// <param name="length">Read length.</param>
         /// <returns></returns>
-        public byte[] GetBytes(int position, int length)
+        public byte[] GetBytes(long position, int length)
         {
             BinaryReader reader = GetReader(position);
             if (reader == null)
