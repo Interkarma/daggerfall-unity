@@ -56,7 +56,6 @@ namespace DaggerfallWorkshop
             if (GUILayout.Button("Big Test Button"))
             {
                 //SaveTree saveTree = new SaveTree(saveTreePath);
-                ProfileTests.ProfileEnemyImportTime();
             }
         }
 
