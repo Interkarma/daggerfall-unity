@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.3.36";
+        public const string Version = "1.3.37";
 
         #region Fields
 
@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop
         public ITerrainSampler TerrainSampler
         {
             get { return terrainSampler; }
-            set { terrainSampler = null; }
+            set { terrainSampler = value; }
         }
 
         #endregion
