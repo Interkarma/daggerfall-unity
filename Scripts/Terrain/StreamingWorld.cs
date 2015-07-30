@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop
     {
         #region Fields
 
-        const int maxTerrainArray = 100;        // Maximum terrains in memory at any time
+        const int maxTerrainArray = 256;        // Maximum terrains in memory at any time
 
         // Local player GPS for tracking player virtual position
         public PlayerGPS LocalPlayerGPS;
@@ -44,8 +44,10 @@ namespace DaggerfallWorkshop
         // Number of terrains tiles to load around central terrain tile
         // Each terrain is equivalent to one full city area of 8x8 RMB blocks
         // 1 : ( 2 * 1 + 1 ) * ( 2 * 1 + 1 ) = 9 tiles
+        // 2 : ( 2 * 2 + 1 ) * ( 2 * 2 + 1 ) = 25 tiles
         // 3 : ( 2 * 3 + 1 ) * ( 2 * 3 + 1 ) = 49 tiles
-        [Range(1, 3)]
+        // 4 : ( 2 * 4 + 1 ) * ( 2 * 4 + 1 ) = 81 tiles
+        [Range(1, 4)]
         public int TerrainDistance = 3;
 
         // This controls central map pixel for streaming world
@@ -665,6 +667,7 @@ namespace DaggerfallWorkshop
             {
                 if (!IsInRange(locationList[i].mapPixelX, locationList[i].mapPixelY) || collectAll)
                 {
+                    locationList[i].locationObject.SetActive(false);
                     StartCoroutine(DestroyLocationIterative(locationList[i].locationObject));
                     locationList.RemoveAt(i);
                 }
@@ -770,8 +773,16 @@ namespace DaggerfallWorkshop
             if (!locationOut.Loaded)
                 return null;
 
+            // Get sampled position of height as more accurate than scaled average - thanks Nystul!
+            Terrain terrainInstance = dfTerrain.gameObject.GetComponent<Terrain>();
+            float scale = terrainInstance.terrainData.heightmapScale.x;
+            float xSamplePos = (TerrainHelper.terrainTileDim - 1) / 2.0f; // get center terrain tile of block
+            float ySamplePos = (TerrainHelper.terrainTileDim - 1) / 2.0f; // get center terrain tile of block
+            Vector3 pos = new Vector3(xSamplePos * scale, 0, ySamplePos * scale);
+            float height = terrainInstance.SampleHeight(pos + terrainArray[terrain].terrainObject.transform.position);
+
             // Spawn parent game object for new location
-            float height = dfTerrain.MapData.averageHeight * TerrainScale;
+            //float height = dfTerrain.MapData.averageHeight * TerrainScale;
             GameObject locationObject = new GameObject(string.Format("DaggerfallLocation [Region={0}, Name={1}]", locationOut.RegionName, locationOut.Name));
             locationObject.transform.parent = this.transform;
             //locationObject.hideFlags = HideFlags.HideAndDontSave;

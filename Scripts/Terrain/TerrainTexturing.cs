@@ -48,10 +48,10 @@ namespace DaggerfallWorkshop
         // Very basic marching squares for water > dirt > grass > stone transitions.
         // Cannot handle water > grass or water > stone, etc.
         // Will improve this at later date to use a wider range of transitions.
-        public void AssignTiles(ref MapPixelData mapData, bool march = true)
+        public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelData mapData, bool march = true)
         {
             // Cache tile data to minimise noise sampling
-            CacheTileData(ref mapData);
+            CacheTileData(terrainSampler, ref mapData);
 
             // Assign tile data to terrain
             int dim = TerrainHelper.terrainSampleDim;
@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop
             }
         }
 
-        void CacheTileData(ref MapPixelData mapData)
+        void CacheTileData(ITerrainSampler terrainSampler, ref MapPixelData mapData)
         {
             // Create array if required
             int dim = TerrainHelper.terrainSampleDim + 1;
@@ -107,7 +107,7 @@ namespace DaggerfallWorkshop
                     float height = TerrainHelper.GetClampedHeight(ref mapData.samples, x, y);
 
                     // Ocean texture
-                    if (height <= TerrainHelper.scaledOceanElevation)
+                    if (height <= terrainSampler.OceanElevation)
                     {
                         tileData[x, y] = water;
                         continue;
@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop
                     // Beach texture
                     // Adds a little +/- randomness to threshold so beach line isn't too regular
                     // Might look better with perlin noise instead
-                    if (height <= TerrainHelper.scaledBeachElevation + UnityEngine.Random.Range(-1.5f, 1.5f))
+                    if (height <= terrainSampler.BeachElevation + UnityEngine.Random.Range(-1.5f, 1.5f))
                     {
                         tileData[x, y] = dirt;
                         continue;

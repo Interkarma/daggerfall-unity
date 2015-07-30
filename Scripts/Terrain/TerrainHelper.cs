@@ -27,19 +27,6 @@ namespace DaggerfallWorkshop
         public const int terrainTileDim = 128;                          // Terrain tile dimension is 128x128 ground tiles
         public const int terrainSampleDim = terrainTileDim + 1;         // Terrain height sample dimension has 1 extra point for end vertex
 
-        // Maximum terrain height is determined by scaled max input values
-        // This can be further increased by global scale on terrain itself
-        // Formula is (128 * baseHeightScale) + (128 * noiseMapScale) + extraNoiseScale
-        // Do not change these unless necessary, use DaggerfallTerrain.TerrainScale from editor instead
-        public const float baseHeightScale = 8f;        // 8 * 128 +
-        public const float noiseMapScale = 4f;          // 4 * 128 + 
-        public const float extraNoiseScale = 3f;        // 3 =
-        public const float maxTerrainHeight = 1539f;    // 1539
-
-        // Elevation of ocean and beach
-        public const float scaledOceanElevation = 3.4f * baseHeightScale;
-        public const float scaledBeachElevation = 5.0f * baseHeightScale;
-
         // Ranges and defaults for editor
         // Map pixel ranges are slightly smaller to allow for interpolation of neighbours
         public const int minMapPixelX = 3;
@@ -49,7 +36,7 @@ namespace DaggerfallWorkshop
         public const int defaultMapPixelX = 207;
         public const int defaultMapPixelY = 213;
         public const float minTerrainScale = 1.0f;
-        public const float maxTerrainScale = 6.0f;
+        public const float maxTerrainScale = 10.0f;
         public const float defaultTerrainScale = 1.5f;
 
         /// <summary>
@@ -93,106 +80,6 @@ namespace DaggerfallWorkshop
             };
 
             return mapPixel;
-        }
-
-        /// <summary>
-        /// Generate initial samples from any map pixel coordinates in world range.
-        /// Also sets location height in mapPixelData for location positioning.
-        /// </summary>
-        public static void GenerateSamples(ContentReader contentReader, ref MapPixelData mapPixel)
-        {
-            // Raise start event
-            RaiseOnGenerateSamplesStartEvent();
-
-            // Divisor ensures continuous 0-1 range of tile samples
-            float div = (float)terrainTileDim / 3f;
-
-            // Read neighbouring height samples for this map pixel
-            int mx = mapPixel.mapPixelX;
-            int my = mapPixel.mapPixelY;
-            byte[,] shm = contentReader.WoodsFileReader.GetHeightMapValuesRange(mx - 2, my - 2, 4);
-            byte[,] lhm = contentReader.WoodsFileReader.GetLargeHeightMapValuesRange(mx - 1, my, 3);
-
-            // Raise new samples event
-            RaiseOnNewHeightSamplesEvent();
-
-            // Extract height samples for all chunks
-            float averageHeight = 0;
-            float maxHeight = float.MinValue;
-            float baseHeight, noiseHeight;
-            float x1, x2, x3, x4;
-            int dim = terrainSampleDim;
-            mapPixel.samples = new WorldSample[dim * dim];
-            for (int y = 0; y < dim; y++)
-            {
-                for (int x = 0; x < dim; x++)
-                {
-                    float rx = (float)x / div;
-                    float ry = (float)y / div;
-                    int ix = Mathf.FloorToInt(rx);
-                    int iy = Mathf.FloorToInt(ry);
-                    float sfracx = (float)x / (float)(dim - 1);
-                    float sfracy = (float)y / (float)(dim - 1);
-                    float fracx = (float)(x - ix * div) / div;
-                    float fracy = (float)(y - iy * div) / div;
-                    float scaledHeight = 0;
-
-                    //// TEST: Point sample small height map for base terrain
-                    //baseHeight = shm[2, 2];
-                    //scaledHeight += baseHeight * baseHeightScale;
-
-                    // Bicubic sample small height map for base terrain elevation
-                    x1 = CubicInterpolator(shm[0, 3], shm[1, 3], shm[2, 3], shm[3, 3], sfracx);
-                    x2 = CubicInterpolator(shm[0, 2], shm[1, 2], shm[2, 2], shm[3, 2], sfracx);
-                    x3 = CubicInterpolator(shm[0, 1], shm[1, 1], shm[2, 1], shm[3, 1], sfracx);
-                    x4 = CubicInterpolator(shm[0, 0], shm[1, 0], shm[2, 0], shm[3, 0], sfracx);
-                    baseHeight = CubicInterpolator(x1, x2, x3, x4, sfracy);
-                    scaledHeight += baseHeight * baseHeightScale;
-
-                    // Bicubic sample large height map for noise mask over terrain features
-                    x1 = CubicInterpolator(lhm[ix, iy + 0], lhm[ix + 1, iy + 0], lhm[ix + 2, iy + 0], lhm[ix + 3, iy + 0], fracx);
-                    x2 = CubicInterpolator(lhm[ix, iy + 1], lhm[ix + 1, iy + 1], lhm[ix + 2, iy + 1], lhm[ix + 3, iy + 1], fracx);
-                    x3 = CubicInterpolator(lhm[ix, iy + 2], lhm[ix + 1, iy + 2], lhm[ix + 2, iy + 2], lhm[ix + 3, iy + 2], fracx);
-                    x4 = CubicInterpolator(lhm[ix, iy + 3], lhm[ix + 1, iy + 3], lhm[ix + 2, iy + 3], lhm[ix + 3, iy + 3], fracx);
-                    noiseHeight = CubicInterpolator(x1, x2, x3, x4, fracy);
-                    scaledHeight += noiseHeight * noiseMapScale;
-
-                    // TODO: Developers must be able to override above settings via event or some other mechanism
-                    // Will implement this before final 1.3 version
-
-                    // Additional noise mask for small terrain features at ground level
-                    float latitude = mapPixel.mapPixelX * MapsFile.WorldMapTileDim + x;
-                    float longitude = MapsFile.MaxWorldTileCoordZ - mapPixel.mapPixelY * MapsFile.WorldMapTileDim + y;
-                    float lowFreq = GetNoise(contentReader, latitude, longitude, 0.1f, 0.5f, 0.5f, 1);
-                    float highFreq = GetNoise(contentReader, latitude, longitude, 6f, 0.5f, 0.5f, 1);
-                    scaledHeight += (lowFreq * highFreq) * extraNoiseScale;
-
-                    // Clamp lower values to ocean elevation
-                    if (scaledHeight < scaledOceanElevation)
-                        scaledHeight = scaledOceanElevation;
-
-                    // Accumulate average height
-                    averageHeight += scaledHeight;
-
-                    // Get max height
-                    if (scaledHeight > maxHeight)
-                        maxHeight = scaledHeight;
-
-                    // Set sample
-                    mapPixel.samples[y * dim + x] = new WorldSample()
-                    {
-                        scaledHeight = scaledHeight,
-                        record = 2,
-                    };
-                }
-            }
-
-            // Average and max heights are passed back for locations
-            mapPixel.averageHeight = averageHeight /= (float)(dim * dim);
-            mapPixel.maxHeight = maxHeight;
-
-            // Raise end event
-            RaiseOnGenerateSamplesEndEvent();
         }
 
         // Clear all sample tiles to same base index
@@ -276,7 +163,7 @@ namespace DaggerfallWorkshop
 
         // Flattens location terrain and blends flat area with surrounding terrain
         // Not entirely happy with this, need to revisit later
-        public static void FlattenLocationTerrain(ContentReader contentReader, ref MapPixelData mapPixel)
+        public static void FlattenLocationTerrain(ContentReader contentReader, ref MapPixelData mapPixel, float noiseStrength = 3f)
         {
             // Get range between bounds of sample data and interior location rect
             // The location rect is always smaller than the sample area
@@ -336,8 +223,7 @@ namespace DaggerfallWorkshop
                     }
 
                     // Apply a little noise to gradient so it doesn't look perfectly smooth
-                    // Noise strength is the inverse of scalemap strength
-                    float extraNoise = GetNoise(contentReader, x, y, 0.1f, 0.5f, 0.5f, 1) * extraNoiseScale * (1f - strength);
+                    float extraNoise = GetNoise(contentReader.Noise, x, y, 0.1f, 0.5f, 0.5f, 1) * noiseStrength * (1f - strength);
 
                     int offset = y * terrainSampleDim + x;
                     float curHeight = mapPixel.samples[offset].scaledHeight;
@@ -554,8 +440,8 @@ namespace DaggerfallWorkshop
                     pos.y = height;
 
                     // Reject if too close to water
-                    float beachLine = TerrainHelper.scaledBeachElevation * terrainScale;
-                    if (height < beachLine - beachLine * 0.1f)
+                    float beachLine = DaggerfallUnity.Instance.TerrainSampler.BeachElevation * terrainScale;
+                    if (height < beachLine)
                         continue;
 
                     // Add to batch
@@ -687,8 +573,8 @@ namespace DaggerfallWorkshop
         }
 
         // Get noise sample at coordinates
-        private static float GetNoise(
-            ContentReader reader,
+        public static float GetNoise(
+            Noise noise,
             float x,
             float y,
             float frequency,
@@ -699,43 +585,12 @@ namespace DaggerfallWorkshop
             float finalValue = 0f;
             for (int i = 0; i < octaves; ++i)
             {
-                finalValue += reader.Noise.Generate(x * frequency, y * frequency) * amplitude;
+                finalValue += noise.Generate(x * frequency, y * frequency) * amplitude;
                 frequency *= 2.0f;
                 amplitude *= persistance;
             }
 
             return Mathf.Clamp(finalValue, -1, 1);
-        }
-
-        #endregion
-
-        #region Event Handlers
-
-        // OnGenerateSamplesStart
-        public delegate void OnGenerateSamplesStartEventHandler();
-        public static event OnGenerateSamplesStartEventHandler OnGenerateSamplesStart;
-        private static void RaiseOnGenerateSamplesStartEvent()
-        {
-            if (OnGenerateSamplesStart != null)
-                OnGenerateSamplesStart();
-        }
-
-        // OnGenerateSamplesEnd
-        public delegate void OnGenerateSamplesEndEventHandler();
-        public static event OnGenerateSamplesEndEventHandler OnGenerateSamplesEnd;
-        private static void RaiseOnGenerateSamplesEndEvent()
-        {
-            if (OnGenerateSamplesEnd != null)
-                OnGenerateSamplesEnd();
-        }
-
-        // OnNewHeightSamples
-        public delegate void OnNewHeightSamplesEventHandler();
-        public static event OnNewHeightSamplesEventHandler OnNewHeightSamples;
-        private static void RaiseOnNewHeightSamplesEvent()
-        {
-            if (OnNewHeightSamples != null)
-                OnNewHeightSamples();
         }
 
         #endregion

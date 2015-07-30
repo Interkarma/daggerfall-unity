@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop
 
             // Get basic terrain data
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
-            TerrainHelper.GenerateSamples(dfUnity.ContentReader, ref MapData);
+            dfUnity.TerrainSampler.GenerateSamples(ref MapData);
 
             // Handle terrain with location
             if (MapData.hasLocation)
@@ -160,7 +160,7 @@ namespace DaggerfallWorkshop
             // Set textures
             if (terrainTexturing != null)
             {
-                terrainTexturing.AssignTiles(ref MapData);
+                terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref MapData);
             }
         }
 
@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop
                 for (int x = 0; x < heightmapResolution; x++)
                 {
                     float sampleHeight = MapData.samples[y * TerrainHelper.terrainSampleDim + x].scaledHeight;
-                    heights[y, x] = Mathf.Clamp01(sampleHeight / TerrainHelper.maxTerrainHeight);
+                    heights[y, x] = Mathf.Clamp01(sampleHeight / dfUnity.TerrainSampler.MaxTerrainHeight);
                 }
             }
         }
@@ -243,7 +243,7 @@ namespace DaggerfallWorkshop
                 TerrainData terrainData = new TerrainData();
                 terrainData.name = "TerrainData";
                 terrainData.heightmapResolution = heightmapResolution;
-                terrainData.size = new Vector3(terrainSize, TerrainHelper.maxTerrainHeight, terrainSize);
+                terrainData.size = new Vector3(terrainSize, dfUnity.TerrainSampler.MaxTerrainHeight, terrainSize);
                 terrainData.SetDetailResolution(detailResolution, resolutionPerPatch);
                 terrainData.alphamapResolution = detailResolution;
                 terrainData.baseMapResolution = detailResolution;
@@ -264,7 +264,7 @@ namespace DaggerfallWorkshop
 
             // Promote heights
             Vector3 size = terrain.terrainData.size;
-            terrain.terrainData.size = new Vector3(size.x, TerrainHelper.maxTerrainHeight * TerrainScale, size.z);
+            terrain.terrainData.size = new Vector3(size.x, dfUnity.TerrainSampler.MaxTerrainHeight * TerrainScale, size.z);
             terrain.terrainData.SetHeights(0, 0, heights);
 
             // Raise event
