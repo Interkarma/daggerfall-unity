@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallUnity : MonoBehaviour
     {
         [NonSerialized]
-        public const string Version = "1.3.35";
+        public const string Version = "1.3.36";
 
         #region Fields
 
@@ -49,11 +49,13 @@ namespace DaggerfallWorkshop
         MaterialReader materialReader;
         MeshReader meshReader;
         SoundReader soundReader;
+        ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         
         #endregion
 
         #region Public Fields
 
+        // General
         public string Arena2Path;
         public int ModelImporter_ModelID = 456;
         public string BlockImporter_BlockName = "MAGEAA01.RMB";
@@ -129,6 +131,12 @@ namespace DaggerfallWorkshop
         public ContentReader ContentReader
         {
             get { return reader; }
+        }
+
+        public ITerrainSampler TerrainSampler
+        {
+            get { return terrainSampler; }
+            set { terrainSampler = null; }
         }
 
         #endregion
@@ -268,6 +276,9 @@ namespace DaggerfallWorkshop
                     DaggerfallUnity.LogMessage(string.Format("Setting up content readers without arena2 path. Not all features will be available."));
                     reader = new ContentReader(string.Empty);
                 }
+
+                // Allow external code to set their own terrain sampler at start
+                RaiseOnSetTerrainSamplerEvent();
             }
         }
 
@@ -338,6 +349,15 @@ namespace DaggerfallWorkshop
         {
             if (OnSetArena2Source != null)
                 OnSetArena2Source();
+        }
+
+        // OnSetTerrainSampler
+        public delegate void OnSetTerrainSamplerEventHandler();
+        public static event OnSetTerrainSamplerEventHandler OnSetTerrainSampler;
+        protected virtual void RaiseOnSetTerrainSamplerEvent()
+        {
+            if (OnSetTerrainSampler != null)
+                OnSetTerrainSampler();
         }
 
         #endregion
