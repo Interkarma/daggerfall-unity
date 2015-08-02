@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop
         // Scale factors for this sampler implementation
         const float baseHeightScale = 8f;
         const float noiseMapScale = 4f;
-        const float extraNoiseScale = 3f;
+        const float extraNoiseScale = 10f;
         const float scaledOceanElevation = 3.4f * baseHeightScale;
         const float scaledBeachElevation = 5.0f * baseHeightScale;
 
@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop
 
         public DefaultTerrainSampler()
         {
+            HeightmapDimension = defaultHeightmapDimension;
             MaxTerrainHeight = maxTerrainHeight;
             OceanElevation = scaledOceanElevation;
             BeachElevation = scaledBeachElevation;
@@ -44,8 +45,12 @@ namespace DaggerfallWorkshop
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
-            // Divisor ensures continuous 0-1 range of tile samples
-            float div = (float)TerrainHelper.terrainTileDim / 3f;
+            // Create samples arrays
+            mapPixel.tilemapSamples = new TilemapSample[MapsFile.WorldMapTileDim, MapsFile.WorldMapTileDim];
+            mapPixel.heightmapSamples = new float[HeightmapDimension, HeightmapDimension];
+
+            // Divisor ensures continuous 0-1 range of height samples
+            float div = (float)(HeightmapDimension - 1) / 3f;
 
             // Read neighbouring height samples for this map pixel
             int mx = mapPixel.mapPixelX;
@@ -58,8 +63,8 @@ namespace DaggerfallWorkshop
             float maxHeight = float.MinValue;
             float baseHeight, noiseHeight;
             float x1, x2, x3, x4;
-            int dim = TerrainHelper.terrainSampleDim;
-            mapPixel.samples = new WorldSample[dim * dim];
+            int dim = HeightmapDimension;
+            mapPixel.heightmapSamples = new float[dim, dim];
             for (int y = 0; y < dim; y++)
             {
                 for (int x = 0; x < dim; x++)
@@ -91,29 +96,24 @@ namespace DaggerfallWorkshop
                     scaledHeight += noiseHeight * noiseMapScale;
 
                     // Additional noise mask for small terrain features at ground level
-                    float latitude = mapPixel.mapPixelX * MapsFile.WorldMapTileDim + x;
-                    float longitude = MapsFile.MaxWorldTileCoordZ - mapPixel.mapPixelY * MapsFile.WorldMapTileDim + y;
-                    float lowFreq = TerrainHelper.GetNoise(dfUnity.ContentReader.Noise, latitude, longitude, 0.1f, 0.5f, 0.5f, 1);
-                    float highFreq = TerrainHelper.GetNoise(dfUnity.ContentReader.Noise, latitude, longitude, 6f, 0.5f, 0.5f, 1);
+                    int noisex = mapPixel.mapPixelX * (HeightmapDimension - 1) + x;
+                    int noisey = (MapsFile.MaxMapPixelY - mapPixel.mapPixelY) * (HeightmapDimension - 1) + y;
+                    float lowFreq = TerrainHelper.GetNoise(noisex, noisey, 0.3f, 0.5f, 0.5f, 1);
+                    float highFreq = TerrainHelper.GetNoise(noisex, noisey, 0.9f, 0.5f, 0.5f, 1);
                     scaledHeight += (lowFreq * highFreq) * extraNoiseScale;
 
                     // Clamp lower values to ocean elevation
                     if (scaledHeight < scaledOceanElevation)
                         scaledHeight = scaledOceanElevation;
 
-                    // Accumulate average height
-                    averageHeight += scaledHeight;
-
-                    // Get max height
-                    if (scaledHeight > maxHeight)
-                        maxHeight = scaledHeight;
-
                     // Set sample
-                    mapPixel.samples[y * dim + x] = new WorldSample()
-                    {
-                        scaledHeight = scaledHeight,
-                        record = 2,
-                    };
+                    float height = Mathf.Clamp01(scaledHeight / MaxTerrainHeight);
+                    mapPixel.heightmapSamples[y, x] = height;
+
+                    // Accumulate averages and max height
+                    averageHeight += height;
+                    if (height > maxHeight)
+                        maxHeight = height;
                 }
             }
 

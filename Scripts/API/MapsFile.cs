@@ -25,9 +25,9 @@ namespace DaggerfallConnect.Arena2
     {
         #region Class Variables
 
-        public const float WorldMapTerrainDim = 32768;
-        public const float WorldMapTileDim = 128;
-        public const float WorldMapRMBDim = 4096;
+        public const int WorldMapTerrainDim = 32768;
+        public const int WorldMapTileDim = 128;
+        public const int WorldMapRMBDim = 4096;
         public const int MinWorldCoordX = 0;
         public const int MinWorldCoordZ = 0;
         public const int MaxWorldCoordX = 32768000;

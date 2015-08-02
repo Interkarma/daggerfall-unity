@@ -32,7 +32,6 @@ namespace DaggerfallWorkshop.Utility
         MonsterFile monsterFileReader;
         WoodsFile woodsFileReader;
         Dictionary<int, MapSummary> mapDict;
-        Noise noise;
 
         public struct MapSummary
         {
@@ -66,11 +65,6 @@ namespace DaggerfallWorkshop.Utility
         public WoodsFile WoodsFileReader
         {
             get { return woodsFileReader; }
-        }
-
-        public Noise Noise
-        {
-            get { return noise; }
         }
 
         #region Constructors
@@ -181,10 +175,6 @@ namespace DaggerfallWorkshop.Utility
             // Build map lookup dictionary
             if (mapDict == null && mapFileReader != null)
                 EnumerateMaps();
-            
-            // Setup noise generator
-            if (noise == null)
-                noise = new Noise();
 
             // Raise ready flag
             isReady = true;

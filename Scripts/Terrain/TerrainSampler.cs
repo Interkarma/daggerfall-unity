@@ -23,6 +23,11 @@ namespace DaggerfallWorkshop
     /// </summary>
     public interface ITerrainSampler
     {
+        // Terrain heightmap dimension (+1 extra point for end vertex)
+        // Example settings are 129, 257, 513, 1023, etc.
+        // Do not set to a value less than MapsFile.WorldMapTileDim
+        int HeightmapDimension { get; set; }
+
         /// <summary>
         /// Maximum height of terrain. Used for clamping max height and setting Unity's TerrainData.size Y axis.
         /// </summary>
@@ -51,6 +56,9 @@ namespace DaggerfallWorkshop
     /// </summary>
     public abstract class TerrainSampler : ITerrainSampler
     {
+        protected int defaultHeightmapDimension = 129;
+
+        public virtual int HeightmapDimension { get; set; }
         public virtual float MaxTerrainHeight { get; set; }
         public virtual float OceanElevation { get; set; }
         public virtual float BeachElevation { get; set; }

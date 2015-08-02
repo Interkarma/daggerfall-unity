@@ -31,10 +31,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallTerrain : MonoBehaviour
     {
         // Settings are tuned for Daggerfall and fast procedural layout
-        // May change at a later date
-        const int tileMapDim = TerrainHelper.terrainTileDim;
-        const int heightmapResolution = TerrainHelper.terrainSampleDim;
-        const int detailResolution = TerrainHelper.terrainTileDim;
+        const int tilemapDimension = MapsFile.WorldMapTileDim;
         const int resolutionPerPatch = 16;
 
         // This controls which map pixel the terrain will represent
@@ -68,7 +65,6 @@ namespace DaggerfallWorkshop
         Material terrainMaterial;
 
         DaggerfallUnity dfUnity;
-        float[,] heights;
         int currentWorldClimate = -1;
         DaggerfallDateTime.Seasons season = DaggerfallDateTime.Seasons.Summer;
         bool ready;
@@ -91,7 +87,7 @@ namespace DaggerfallWorkshop
             // Create tileMap texture
             if (tileMapTexture == null)
             {
-                tileMapTexture = new Texture2D(tileMapDim, tileMapDim, TextureFormat.RGB24, false);
+                tileMapTexture = new Texture2D(tilemapDimension, tilemapDimension, TextureFormat.RGB24, false);
                 tileMapTexture.filterMode = FilterMode.Point;
                 tileMapTexture.wrapMode = TextureWrapMode.Clamp;
             }
@@ -133,7 +129,7 @@ namespace DaggerfallWorkshop
                 // Assign textures
                 terrainMaterial.SetTexture("_TileAtlasTex", tileSetMaterial.GetTexture("_TileAtlasTex"));
                 terrainMaterial.SetTexture("_TilemapTex", tileMapTexture);
-                terrainMaterial.SetInt("_TilemapDim", tileMapDim);
+                terrainMaterial.SetInt("_TilemapDim", tilemapDimension);
             }
         }
 
@@ -146,6 +142,9 @@ namespace DaggerfallWorkshop
             if (!ReadyCheck())
                 return;
 
+            //System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            //long startTime = stopwatch.ElapsedMilliseconds;
+
             // Get basic terrain data
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
             dfUnity.TerrainSampler.GenerateSamples(ref MapData);
@@ -153,8 +152,8 @@ namespace DaggerfallWorkshop
             // Handle terrain with location
             if (MapData.hasLocation)
             {
-                TerrainHelper.SetLocationTiles(dfUnity.ContentReader, ref MapData);
-                TerrainHelper.FlattenLocationTerrain(dfUnity.ContentReader, ref MapData);
+                TerrainHelper.SetLocationTiles(ref MapData);
+                TerrainHelper.BlendLocationTerrain(ref MapData);
             }
 
             // Set textures
@@ -162,29 +161,32 @@ namespace DaggerfallWorkshop
             {
                 terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref MapData);
             }
+
+            //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            //DaggerfallUnity.LogMessage(string.Format("Time to update map pixel data: {0}ms", totalTime), true);
         }
 
         /// <summary>
-        /// Update tile map data based on current map pixel data.
+        /// Update tile map based on current samples.
         /// </summary>
         public void UpdateTileMapData()
         {
             // Create tileMap array if not present
             if (TileMap == null)
-                TileMap = new Color32[tileMapDim * tileMapDim];
+                TileMap = new Color32[tilemapDimension * tilemapDimension];
 
             // Also recreate if not sized appropriately
-            if (TileMap.Length != tileMapDim * tileMapDim)
-                TileMap = new Color32[tileMapDim * tileMapDim];
+            if (TileMap.Length != tilemapDimension * tilemapDimension)
+                TileMap = new Color32[tilemapDimension * tilemapDimension];
 
             // Assign tile data to tilemap
             Color32 tileColor = new Color32(0, 0, 0, 0);
-            for (int y = 0; y < tileMapDim; y++)
+            for (int y = 0; y < tilemapDimension; y++)
             {
-                for (int x = 0; x < tileMapDim; x++)
+                for (int x = 0; x < tilemapDimension; x++)
                 {
                     // Get sample tile data
-                    WorldSample sample = MapData.samples[y * TerrainHelper.terrainSampleDim + x];
+                    TilemapSample sample = MapData.tilemapSamples[x, y];
 
                     // Calculate tile index
                     byte record = (byte)(sample.record * 4);
@@ -197,27 +199,7 @@ namespace DaggerfallWorkshop
 
                     // Assign to tileMap
                     tileColor.r = record;
-                    TileMap[y * tileMapDim + x] = tileColor;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Update heights from current map pixel data.
-        /// </summary>
-        public void UpdateHeightData()
-        {
-            // Create target height array if not present
-            if (heights == null)
-                heights = new float[heightmapResolution, heightmapResolution];
-
-            // Set new height data from world samples
-            for (int y = 0; y < heightmapResolution; y++)
-            {
-                for (int x = 0; x < heightmapResolution; x++)
-                {
-                    float sampleHeight = MapData.samples[y * TerrainHelper.terrainSampleDim + x].scaledHeight;
-                    heights[y, x] = Mathf.Clamp01(sampleHeight / dfUnity.TerrainSampler.MaxTerrainHeight);
+                    TileMap[y * tilemapDimension + x] = tileColor;
                 }
             }
         }
@@ -230,6 +212,8 @@ namespace DaggerfallWorkshop
         {
             // Basemap not used and is just pushed far away
             const float basemapDistance = 10000f;
+            int heightmapDimension = dfUnity.TerrainSampler.HeightmapDimension;
+            int detailResolution = heightmapDimension;
 
             // Ensure TerrainData is created
             Terrain terrain = GetComponent<Terrain>();
@@ -242,7 +226,7 @@ namespace DaggerfallWorkshop
                 // Must set terrainData.heightmapResolution before size (thanks Nystul!)
                 TerrainData terrainData = new TerrainData();
                 terrainData.name = "TerrainData";
-                terrainData.heightmapResolution = heightmapResolution;
+                terrainData.heightmapResolution = heightmapDimension;
                 terrainData.size = new Vector3(terrainSize, dfUnity.TerrainSampler.MaxTerrainHeight, terrainSize);
                 terrainData.SetDetailResolution(detailResolution, resolutionPerPatch);
                 terrainData.alphamapResolution = detailResolution;
@@ -265,7 +249,7 @@ namespace DaggerfallWorkshop
             // Promote heights
             Vector3 size = terrain.terrainData.size;
             terrain.terrainData.size = new Vector3(size.x, dfUnity.TerrainSampler.MaxTerrainHeight * TerrainScale, size.z);
-            terrain.terrainData.SetHeights(0, 0, heights);
+            terrain.terrainData.SetHeights(0, 0, MapData.heightmapSamples);
 
             // Raise event
             RaiseOnPromoteTerrainDataEvent(terrain.terrainData);
@@ -282,30 +266,30 @@ namespace DaggerfallWorkshop
 
         #region Editor Support
 
-#if UNITY_EDITOR
-        /// <summary>
-        /// Allows editor to set terrain independently of StreamingWorld. 
-        /// Mainly for testing purposes, but could be used for static scenes.
-        /// Also shows full terrain setup procedure for reference.
-        /// </summary>
-        public void __EditorUpdateTerrain()
-        {
-            // Setup terrain
-            InstantiateTerrain();
+//#if UNITY_EDITOR
+//        /// <summary>
+//        /// Allows editor to set terrain independently of StreamingWorld. 
+//        /// Mainly for testing purposes, but could be used for static scenes.
+//        /// Also shows full terrain setup procedure for reference.
+//        /// </summary>
+//        public void __EditorUpdateTerrain()
+//        {
+//            // Setup terrain
+//            InstantiateTerrain();
 
-            // Update data for terrain
-            UpdateMapPixelData();
-            UpdateTileMapData();
-            UpdateHeightData();
+//            // Update data for terrain
+//            UpdateMapPixelData();
+//            UpdateTileMapData();
+//            //UpdateHeightData();
 
-            // Promote data to live terrain
-            UpdateClimateMaterial();
-            PromoteTerrainData();
+//            // Promote data to live terrain
+//            UpdateClimateMaterial();
+//            PromoteTerrainData();
 
-            // Set neighbours
-            UpdateNeighbours();
-        }
-#endif
+//            // Set neighbours
+//            UpdateNeighbours();
+//        }
+//#endif
 
         #endregion
 

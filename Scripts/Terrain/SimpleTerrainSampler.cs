@@ -24,37 +24,18 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class SimpleTerrainSampler : TerrainSampler
     {
-        const float height = 100;
-
         public SimpleTerrainSampler()
         {
-            MaxTerrainHeight = 10;
-            OceanElevation = 0;
-            BeachElevation = 0;
+            HeightmapDimension = defaultHeightmapDimension;
+            MaxTerrainHeight = 1;
+            OceanElevation = -1;
+            BeachElevation = -1;
         }
 
         public override void GenerateSamples(ref MapPixelData mapPixel)
         {
-            // Create samples array
-            int dim = TerrainHelper.terrainSampleDim;
-            mapPixel.samples = new WorldSample[dim * dim];
-
-            // Populate samples
-            for (int y = 0; y < dim; y++)
-            {
-                for (int x = 0; x < dim; x++)
-                {
-                    // Set sample 
-                    mapPixel.samples[y * dim + x] = new WorldSample()
-                    {
-                        scaledHeight = height,
-                    };
-                }
-            }
-
-            // Average and max heights are passed back for flattening location areas
-            mapPixel.averageHeight = height;
-            mapPixel.maxHeight = height;
+            mapPixel.tilemapSamples = new TilemapSample[MapsFile.WorldMapTileDim, MapsFile.WorldMapTileDim];
+            mapPixel.heightmapSamples = new float[HeightmapDimension, HeightmapDimension];
         }
     }
 }

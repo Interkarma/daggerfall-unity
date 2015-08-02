@@ -23,10 +23,6 @@ namespace DaggerfallWorkshop
     /// </summary>
     public static class TerrainHelper
     {
-        // Terrain setup constants
-        public const int terrainTileDim = 128;                          // Terrain tile dimension is 128x128 ground tiles
-        public const int terrainSampleDim = terrainTileDim + 1;         // Terrain height sample dimension has 1 extra point for end vertex
-
         // Ranges and defaults for editor
         // Map pixel ranges are slightly smaller to allow for interpolation of neighbours
         public const int minMapPixelX = 3;
@@ -82,23 +78,28 @@ namespace DaggerfallWorkshop
             return mapPixel;
         }
 
-        // Clear all sample tiles to same base index
-        public static void ClearSampleTiles(ref MapPixelData mapPixel, byte record)
+        // Set all sample tiles to same base index
+        public static void FillTilemapSamples(ref MapPixelData mapPixel, byte record)
         {
-            for (int i = 0; i < mapPixel.samples.Length; i++)
+            for (int y = 0; y < MapsFile.WorldMapTileDim; y++)
             {
-                mapPixel.samples[i].record = record;
+                for (int x = 0; x < MapsFile.WorldMapTileDim; x++)
+                {
+                    mapPixel.tilemapSamples[x, y].record = record;
+                }
             }
         }
 
-        // Set texture and height data for city tiles
-        public static void SetLocationTiles(ContentReader contentReader, ref MapPixelData mapPixel)
+        // Set location tilemap data
+        public static void SetLocationTiles(ref MapPixelData mapPixel)
         {
             const int tileDim = 16;
             const int chunkDim = 8;
 
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+
             // Get location
-            DFLocation location = contentReader.MapFileReader.GetLocation(mapPixel.mapRegionIndex, mapPixel.mapLocationIndex);
+            DFLocation location = dfUnity.ContentReader.MapFileReader.GetLocation(mapPixel.mapRegionIndex, mapPixel.mapLocationIndex);
 
             // Centre location tiles inside terrain area
             int startX = ((chunkDim * tileDim) - location.Exterior.ExteriorData.Width * tileDim) / 2;
@@ -107,7 +108,7 @@ namespace DaggerfallWorkshop
             // Full 8x8 locations have "terrain blend space" around walls to smooth down random terrain towards flat area.
             // This is indicated by texture index > 55 (ground texture range is 0-55), larger values indicate blend space.
             // We need to know rect of actual city area so we can use blend space outside walls.
-            int xmin = terrainSampleDim, ymin = terrainSampleDim;
+            int xmin = int.MaxValue, ymin = int.MaxValue;
             int xmax = 0, ymax = 0;
 
             // Iterate blocks of this location
@@ -117,8 +118,8 @@ namespace DaggerfallWorkshop
                 {
                     // Get block data
                     DFBlock block;
-                    string blockName = contentReader.MapFileReader.GetRmbBlockName(ref location, blockX, blockY);
-                    if (!contentReader.GetBlock(blockName, out block))
+                    string blockName = dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, blockX, blockY);
+                    if (!dfUnity.ContentReader.GetBlock(blockName, out block))
                         continue;
 
                     // Copy ground tile info
@@ -129,7 +130,6 @@ namespace DaggerfallWorkshop
                             DFBlock.RmbGroundTiles tile = block.RmbBlock.FldHeader.GroundData.GroundTiles[tileX, (tileDim - 1) - tileY];
                             int xpos = startX + blockX * tileDim + tileX;
                             int ypos = startY + blockY * tileDim + tileY;
-                            int offset = (ypos * terrainSampleDim) + xpos;
 
                             int record = tile.TextureRecord;
                             if (tile.TextureRecord < 56)
@@ -141,10 +141,10 @@ namespace DaggerfallWorkshop
                                 if (ypos > ymax) ymax = ypos;
 
                                 // Store texture data from block
-                                mapPixel.samples[offset].record = record;
-                                mapPixel.samples[offset].flip = tile.IsFlipped;
-                                mapPixel.samples[offset].rotate = tile.IsRotated;
-                                mapPixel.samples[offset].location = true;
+                                mapPixel.tilemapSamples[xpos, ypos].record = record;
+                                mapPixel.tilemapSamples[xpos, ypos].flip = tile.IsFlipped;
+                                mapPixel.tilemapSamples[xpos, ypos].rotate = tile.IsRotated;
+                                mapPixel.tilemapSamples[xpos, ypos].location = true;
                             }
                         }
                     }
@@ -161,80 +161,63 @@ namespace DaggerfallWorkshop
             mapPixel.locationRect = locationRect;
         }
 
-        // Flattens location terrain and blends flat area with surrounding terrain
-        // Not entirely happy with this, need to revisit later
-        public static void FlattenLocationTerrain(ContentReader contentReader, ref MapPixelData mapPixel, float noiseStrength = 3f)
+        // Flattens location terrain and blends with surrounding terrain
+        public static void BlendLocationTerrain(ref MapPixelData mapPixel, float noiseStrength = 4f)
         {
-            // Get range between bounds of sample data and interior location rect
-            // The location rect is always smaller than the sample area
-            float leftRange = 1f / (mapPixel.locationRect.xMin);
-            float topRange = 1f / (mapPixel.locationRect.yMin);
-            float rightRange = 1f / (terrainSampleDim - mapPixel.locationRect.xMax);
-            float bottomRange = 1f / (terrainSampleDim - mapPixel.locationRect.yMax);
+            int heightmapDimension = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
 
-            float desiredHeight = mapPixel.averageHeight;
+            // Convert from rect in tilemap space to interior corners in 0-1 range
+            float xMin = mapPixel.locationRect.xMin / MapsFile.WorldMapTileDim;
+            float xMax = mapPixel.locationRect.xMax / MapsFile.WorldMapTileDim;
+            float yMin = mapPixel.locationRect.yMin / MapsFile.WorldMapTileDim;
+            float yMax = mapPixel.locationRect.yMax / MapsFile.WorldMapTileDim;
+
+            // Scale values for converting blend space into 0-1 range
+            float leftScale = 1 / xMin;
+            float rightScale = 1 / (1 - xMax);
+            float topScale = 1 / yMin;
+            float bottomScale = 1 / (1 - yMax);
+
+            // Flatten location area and blend with surrounding heights
             float strength = 0;
-            float u, v;
-            for (int y = 1; y < terrainSampleDim - 1; y++)
+            float targetHeight = mapPixel.averageHeight;
+            for (int y = 0; y < heightmapDimension; y++)
             {
-                for (int x = 1; x < terrainSampleDim - 1; x++)
+                float v = (float)y / (float)(heightmapDimension - 1);
+                bool insideY = (v >= yMin && v <= yMax);
+
+                for (int x = 0; x < heightmapDimension; x++)
                 {
-                    // Create a height scale from location to edge of terrain using
-                    // linear interpolation on straight edges and bilinear in corners
-                    if (x <= mapPixel.locationRect.xMin && y >= mapPixel.locationRect.yMin && y <= mapPixel.locationRect.yMax)
-                    {
-                        strength = x * leftRange;
-                    }
-                    else if (x >= mapPixel.locationRect.xMax && y >= mapPixel.locationRect.yMin && y <= mapPixel.locationRect.yMax)
-                    {
-                        strength = (terrainSampleDim - x) * rightRange;
-                    }
-                    else if (y <= mapPixel.locationRect.yMin && x >= mapPixel.locationRect.xMin && x <= mapPixel.locationRect.xMax)
-                    {
-                        strength = y * topRange;
-                    }
-                    else if (y >= mapPixel.locationRect.yMax && x >= mapPixel.locationRect.xMin && x <= mapPixel.locationRect.xMax)
-                    {
-                        strength = (terrainSampleDim - y) * bottomRange;
-                    }
-                    else if (x <= mapPixel.locationRect.xMin && y <= mapPixel.locationRect.yMin)
-                    {
-                        u = x * leftRange;
-                        v = y * topRange;
-                        strength = BilinearInterpolator(0, 0, 0, 1, u, v);
-                    }
-                    else if (x >= mapPixel.locationRect.xMax && y <= mapPixel.locationRect.yMin)
-                    {
-                        u = (terrainSampleDim - x) * rightRange;
-                        v = y * topRange;
-                        strength = BilinearInterpolator(0, 0, 0, 1, u, v);
-                    }
-                    else if (x <= mapPixel.locationRect.xMin && y >= mapPixel.locationRect.yMax)
-                    {
-                        u = x * leftRange;
-                        v = (terrainSampleDim - y) * bottomRange;
-                        strength = BilinearInterpolator(0, 0, 0, 1, u, v);
-                    }
-                    else if (x >= mapPixel.locationRect.xMax && y >= mapPixel.locationRect.yMax)
-                    {
-                        u = (terrainSampleDim - x) * rightRange;
-                        v = (terrainSampleDim - y) * bottomRange;
-                        strength = BilinearInterpolator(0, 0, 0, 1, u, v);
-                    }
+                    float u = (float)x / (float)(heightmapDimension - 1);
+                    bool insideX = (u >= xMin && u <= xMax);
 
-                    // Apply a little noise to gradient so it doesn't look perfectly smooth
-                    float extraNoise = GetNoise(contentReader.Noise, x, y, 0.1f, 0.5f, 0.5f, 1) * noiseStrength * (1f - strength);
+                    float height = mapPixel.heightmapSamples[y, x];
 
-                    int offset = y * terrainSampleDim + x;
-                    float curHeight = mapPixel.samples[offset].scaledHeight;
-                    if (!mapPixel.samples[offset].location)
+                    if (insideX || insideY)
                     {
-                        mapPixel.samples[offset].scaledHeight = (desiredHeight * strength) + (curHeight * (1 - strength)) + extraNoise;
+                        if (insideY && u <= xMin)
+                            strength = u * leftScale;
+                        else if (insideY && u >= xMax)
+                            strength = (1 - u) * rightScale;
+                        else if (insideX && v <= yMin)
+                            strength = v * topScale;
+                        else if (insideX && v >= yMax)
+                            strength = (1 - v) * bottomScale;
                     }
                     else
                     {
-                        mapPixel.samples[offset].scaledHeight = desiredHeight;
+                        float xs = 0, ys = 0;
+                        if (u <= xMin) xs = u * leftScale; else if (u >= xMax) xs = (1 - u) * rightScale;
+                        if (v <= yMin) ys = v * topScale; else if (v >= yMax) ys = (1 - v) * bottomScale;
+                        strength = BilinearInterpolator(0, 0, 0, 1, xs, ys);
                     }
+
+                    if (insideX && insideY)
+                        height = targetHeight;
+                    else
+                        height = Mathf.Lerp(height, targetHeight, strength);
+
+                    mapPixel.heightmapSamples[y, x] = height;
                 }
             }
         }
@@ -346,6 +329,8 @@ namespace DaggerfallWorkshop
             const float chanceOnGrass = 0.9f;       // 0.4
             const float chanceOnStone = 0.05f;      // 0.05
 
+            int heightmapDimension = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
+
             // Get terrain
             Terrain terrain = dfTerrain.gameObject.GetComponent<Terrain>();
             if (!terrain)
@@ -363,10 +348,10 @@ namespace DaggerfallWorkshop
             UnityEngine.Random.seed = MakeTerrainKey(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
 
             // Just layout some random flats spread evenly across entire map pixel area
-            // Flats are aligned with tiles, max 127x127 in billboard batch
+            // Flats are aligned with tiles, max 16129 billboards per batch
             Vector2 tilePos = Vector2.zero;
-            float scale = terrainData.heightmapScale.x;
-            int dim = TerrainHelper.terrainTileDim - 1;
+            int dim = MapsFile.WorldMapTileDim;
+            float scale = terrainData.heightmapScale.x * (float)heightmapDimension / (float)dim;
             for (int y = 0; y < dim; y++)
             {
                 for (int x = 0; x < dim; x++)
@@ -385,7 +370,7 @@ namespace DaggerfallWorkshop
                     if (rect.x > 0 && rect.y > 0)
                     {
                         rect.xMin -= natureClearance;
-                        rect.xMin += natureClearance;
+                        rect.xMax += natureClearance;
                         rect.yMin -= natureClearance;
                         rect.yMax += natureClearance;
                         if (rect.Contains(tilePos))
@@ -409,7 +394,7 @@ namespace DaggerfallWorkshop
                     }
 
                     // Chance also determined by tile type
-                    WorldSample sample = TerrainHelper.GetSample(ref dfTerrain.MapData.samples, x, y);
+                    TilemapSample sample = dfTerrain.MapData.tilemapSamples[x, y];
                     if (sample.record == 1)
                     {
                         // Dirt
@@ -502,48 +487,12 @@ namespace DaggerfallWorkshop
             }
         }
 
-        /// <summary>
-        /// Gets sample data at coordinate.
-        /// </summary>
-        public static WorldSample GetSample(ref WorldSample[] samples, int x, int y)
+        public static float GetClampedHeight(ref MapPixelData mapPixel, int heightmapDimension, float u, float v)
         {
-            return samples[y * terrainSampleDim + x];
-        }
+            int x = (int)Mathf.Clamp(heightmapDimension * u, 0, heightmapDimension - 1);
+            int y = (int)Mathf.Clamp(heightmapDimension * v, 0, heightmapDimension - 1);
 
-        /// <summary>
-        /// Get height value at coordinates.
-        /// </summary>
-        public static float GetHeight(ref WorldSample[] samples, int x, int y)
-        {
-            return samples[y * terrainSampleDim + x].scaledHeight;
-        }
-
-        /// <summary>
-        /// Set height value at coordinates.
-        /// </summary>
-        public static void SetHeight(ref WorldSample[] samples, int x, int y, float height)
-        {
-            samples[y * terrainSampleDim + x].scaledHeight = height;
-        }
-
-        /// <summary>
-        /// Get clamped height value at coordinates.
-        /// </summary>
-        public static float GetClampedHeight(ref WorldSample[] samples, int x, int y)
-        {
-            x = Mathf.Clamp(x, 0, terrainTileDim - 1);
-            y = Mathf.Clamp(y, 0, terrainTileDim - 1);
-            return samples[y * terrainSampleDim + x].scaledHeight;
-        }
-
-        /// <summary>
-        /// Set clamped height value at coordinates.
-        /// </summary>
-        public static void SetClampedHeight(ref WorldSample[] samples, int x, int y, float height)
-        {
-            x = Mathf.Clamp(x, 0, terrainTileDim - 1);
-            y = Mathf.Clamp(y, 0, terrainTileDim - 1);
-            samples[y * terrainSampleDim + x].scaledHeight = height;
+            return mapPixel.heightmapSamples[y, x];
         }
 
         #region Helper Methods
@@ -574,23 +523,23 @@ namespace DaggerfallWorkshop
 
         // Get noise sample at coordinates
         public static float GetNoise(
-            Noise noise,
-            float x,
-            float y,
+            int x,
+            int y,
             float frequency,
             float amplitude,
             float persistance,
-            int octaves)
+            int octaves,
+            int seed = 0)
         {
             float finalValue = 0f;
             for (int i = 0; i < octaves; ++i)
             {
-                finalValue += noise.Generate(x * frequency, y * frequency) * amplitude;
+                finalValue += Mathf.PerlinNoise(seed + x * frequency, seed + y * frequency) * amplitude;
                 frequency *= 2.0f;
                 amplitude *= persistance;
             }
 
-            return Mathf.Clamp(finalValue, -1, 1);
+            return Mathf.Clamp01(finalValue);
         }
 
         #endregion

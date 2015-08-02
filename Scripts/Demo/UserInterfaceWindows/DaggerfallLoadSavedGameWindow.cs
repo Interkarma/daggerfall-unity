@@ -26,6 +26,11 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             new Vector4(200, 134, 80, 50),
         };
 
+        public int SelectedSaveGame
+        {
+            get { return selectedSaveGame; }
+        }
+
         public DaggerfallLoadSavedGameWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {

@@ -151,6 +151,7 @@ namespace DaggerfallWorkshop
                 UpdateWorld();
                 InitPlayerTerrain();
                 StartCoroutine(UpdateTerrains());
+                updateLocatations = true;
                 init = false;
             }
 
@@ -342,13 +343,15 @@ namespace DaggerfallWorkshop
                     {
                         UpdateTerrainData(terrainArray[i]);
                         terrainArray[i].updateData = false;
-                        yield return new WaitForEndOfFrame();
+                        if (!init)
+                            yield return new WaitForEndOfFrame();
                     }
                     if (terrainArray[i].updateNature)
                     {
                         UpdateTerrainNature(terrainArray[i]);
                         terrainArray[i].updateNature = false;
-                        yield return new WaitForEndOfFrame();
+                        if (!init)
+                            yield return new WaitForEndOfFrame();
                     }
                 }
             }
@@ -375,7 +378,7 @@ namespace DaggerfallWorkshop
             CollectLocations();
             for (int i = 0; i < terrainArray.Length; i++)
             {
-                if (terrainArray[i].active)
+                if (terrainArray[i].active && terrainArray[i].hasLocation)
                     StartCoroutine(UpdateLocation(i, true));
             }
         }
@@ -776,8 +779,8 @@ namespace DaggerfallWorkshop
             // Get sampled position of height as more accurate than scaled average - thanks Nystul!
             Terrain terrainInstance = dfTerrain.gameObject.GetComponent<Terrain>();
             float scale = terrainInstance.terrainData.heightmapScale.x;
-            float xSamplePos = (TerrainHelper.terrainTileDim - 1) / 2.0f; // get center terrain tile of block
-            float ySamplePos = (TerrainHelper.terrainTileDim - 1) / 2.0f; // get center terrain tile of block
+            float xSamplePos = dfUnity.TerrainSampler.HeightmapDimension * 0.5f;
+            float ySamplePos = dfUnity.TerrainSampler.HeightmapDimension * 0.5f;
             Vector3 pos = new Vector3(xSamplePos * scale, 0, ySamplePos * scale);
             float height = terrainInstance.SampleHeight(pos + terrainArray[terrain].terrainObject.transform.position);
 
@@ -799,9 +802,6 @@ namespace DaggerfallWorkshop
         // Update terrain data
         private void UpdateTerrainData(TerrainDesc terrainDesc)
         {
-            //System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            //long startTime = stopwatch.ElapsedMilliseconds;
-
             // Instantiate Daggerfall terrain
             DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
             if (dfTerrain)
@@ -813,9 +813,9 @@ namespace DaggerfallWorkshop
             }
 
             // Update data for terrain
-            dfTerrain.UpdateMapPixelData(terrainTexturing);         // This is most expensive single operation, ~20ms on dev pc
+            dfTerrain.UpdateMapPixelData(terrainTexturing);
+
             dfTerrain.UpdateTileMapData();
-            dfTerrain.UpdateHeightData();
 
             // Promote data to live terrain
             dfTerrain.UpdateClimateMaterial();
@@ -823,9 +823,6 @@ namespace DaggerfallWorkshop
 
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);
-
-            //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            //DaggerfallUnity.LogMessage(string.Format("Time to update terrain heights: {0}ms", totalTime), true);
         }
 
         // Update terrain nature
