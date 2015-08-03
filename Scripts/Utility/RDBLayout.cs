@@ -606,7 +606,7 @@ namespace DaggerfallWorkshop.Utility
                     vector.y = -magnitude;
                     break;
                 case DFBlock.RdbActionAxes.NegativeZ:
-                    vector.z = -magnitude;
+                    vector.z = magnitude;
                     break;
 
                 case DFBlock.RdbActionAxes.PositiveX:
@@ -616,7 +616,7 @@ namespace DaggerfallWorkshop.Utility
                     vector.y = magnitude;
                     break;
                 case DFBlock.RdbActionAxes.PositiveZ:
-                    vector.z = magnitude;
+                    vector.z = -magnitude;
                     break;
 
                 default:
@@ -645,6 +645,7 @@ namespace DaggerfallWorkshop.Utility
             // Check for known action types
             Vector3 actionRotation = Vector3.zero;
             Vector3 actionTranslation = Vector3.zero;
+            Space actionSpace = Space.World;
             if ((action.Flags & (int)DFBlock.RdbActionFlags.Rotation) == (int)DFBlock.RdbActionFlags.Rotation)
                 actionRotation = (GetActionVector(ref action) / BlocksFile.RotationDivisor);
             if ((action.Flags & (int)DFBlock.RdbActionFlags.Translation) == (int)DFBlock.RdbActionFlags.Translation)
@@ -656,9 +657,11 @@ namespace DaggerfallWorkshop.Utility
             {
                 case "LID":
                     actionRotation = new Vector3(0, 0, -90f);       // Coffin lids (e.g. Scourg barrow)
+                    actionSpace = Space.Self;
                     break;
                 case "WHE":
                     actionRotation = new Vector3(0, -360f, 0);      // Wheels (e.g. Direnni Tower)
+                    actionSpace = Space.Self;
                     break;
             }
 
@@ -668,6 +671,7 @@ namespace DaggerfallWorkshop.Utility
             c.ModelDescription = description;
             c.ActionRotation = actionRotation;
             c.ActionTranslation = actionTranslation;
+            c.ActionSpace = actionSpace;
             c.ActionSoundID = obj.Resources.ModelResource.SoundId;
 
             // Using 1/20 of native value in seconds
