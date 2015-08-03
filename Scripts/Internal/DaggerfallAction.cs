@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop
         public int ActionSoundID = 0;                               // Action sound ID
         public Vector3 ActionRotation = Vector3.zero;               // Rotation to perform
         public Vector3 ActionTranslation = Vector3.zero;            // Translation to perform
-        public Space ActionSpace = Space.World;                     // Relative space to perform action in (self or world)
+        public Space ActionSpace = Space.Self;                      // Relative space to perform action in (self or world)
         public float ActionDuration = 0;                            // Time to reach final state
         public GameObject NextObject;                               // Next object in action chain
         public GameObject PreviousObject;                           // Previous object in action chain

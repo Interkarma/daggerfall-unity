@@ -593,7 +593,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Constructs a Vector3 from magnitude and direction in RDB action resource.
         /// </summary>
-        private static Vector3 GetActionVector(ref DFBlock.RdbActionResource resource)
+        private static Vector3 GetRotationActionVector(ref DFBlock.RdbActionResource resource)
         {
             Vector3 vector = Vector3.zero;
             float magnitude = resource.Magnitude;
@@ -606,11 +606,48 @@ namespace DaggerfallWorkshop.Utility
                     vector.y = -magnitude;
                     break;
                 case DFBlock.RdbActionAxes.NegativeZ:
-                    vector.z = magnitude;
+                    vector.z = -magnitude;
                     break;
 
                 case DFBlock.RdbActionAxes.PositiveX:
                     vector.x = magnitude;
+                    break;
+                case DFBlock.RdbActionAxes.PositiveY:
+                    vector.y = magnitude;
+                    break;
+                case DFBlock.RdbActionAxes.PositiveZ:
+                    vector.z = magnitude;
+                    break;
+
+                default:
+                    magnitude = 0f;
+                    break;
+            }
+
+            return vector;
+        }
+
+        /// <summary>
+        /// Constructs a Vector3 from magnitude and direction in RDB action resource.
+        /// </summary>
+        private static Vector3 GetTranslationActionVector(ref DFBlock.RdbActionResource resource)
+        {
+            Vector3 vector = Vector3.zero;
+            float magnitude = resource.Magnitude;
+            switch (resource.Axis)
+            {
+                case DFBlock.RdbActionAxes.NegativeX:
+                    vector.x = magnitude;
+                    break;
+                case DFBlock.RdbActionAxes.NegativeY:
+                    vector.y = -magnitude;
+                    break;
+                case DFBlock.RdbActionAxes.NegativeZ:
+                    vector.z = magnitude;
+                    break;
+
+                case DFBlock.RdbActionAxes.PositiveX:
+                    vector.x = -magnitude;
                     break;
                 case DFBlock.RdbActionAxes.PositiveY:
                     vector.y = magnitude;
@@ -645,11 +682,11 @@ namespace DaggerfallWorkshop.Utility
             // Check for known action types
             Vector3 actionRotation = Vector3.zero;
             Vector3 actionTranslation = Vector3.zero;
-            Space actionSpace = Space.World;
+            Space actionSpace = Space.Self;
             if ((action.Flags & (int)DFBlock.RdbActionFlags.Rotation) == (int)DFBlock.RdbActionFlags.Rotation)
-                actionRotation = (GetActionVector(ref action) / BlocksFile.RotationDivisor);
+                actionRotation = (GetRotationActionVector(ref action) / BlocksFile.RotationDivisor);
             if ((action.Flags & (int)DFBlock.RdbActionFlags.Translation) == (int)DFBlock.RdbActionFlags.Translation)
-                actionTranslation = GetActionVector(ref action) * MeshReader.GlobalScale;
+                actionTranslation = GetTranslationActionVector(ref action) * MeshReader.GlobalScale;
 
             // A quick hack to fix special-case rotation issues.
             // Currently unknown if there is data indicating different rotation behaviour or if something else is happening.
