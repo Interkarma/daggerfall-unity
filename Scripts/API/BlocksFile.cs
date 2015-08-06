@@ -971,6 +971,7 @@ namespace DaggerfallConnect.Arena2
             // Read all objects starting from each root position
             for (int i = 0; i < blocks[block].DFBlock.RdbBlock.ObjectRootList.Length; i++)
             {
+
                 // Skip if no data present
                 if (blocks[block].DFBlock.RdbBlock.ObjectRootList[i].RootOffset < 0)
                     continue;
@@ -1031,7 +1032,7 @@ namespace DaggerfallConnect.Arena2
                 objectRoot.RdbObjects[index].ZPos = reader.ReadInt32();
                 objectRoot.RdbObjects[index].Type = (DFBlock.RdbResourceTypes)reader.ReadByte();
                 objectRoot.RdbObjects[index].ResourceOffset = reader.ReadUInt32();
-                objectRoot.RdbObjects[index].Resources.ModelResource.ActionResource.PreviousObjectIndex = -1;
+                objectRoot.RdbObjects[index].Resources.ModelResource.ActionResource.PreviousObjectOffset = -1;
                 objectRoot.RdbObjects[index].Resources.ModelResource.ActionResource.NextObjectIndex = -1;
 
                 // Exit if finished
@@ -1079,7 +1080,7 @@ namespace DaggerfallConnect.Arena2
             rdbObject.Resources.ModelResource.YRotation = reader.ReadInt32();
             rdbObject.Resources.ModelResource.ZRotation = reader.ReadInt32();
             rdbObject.Resources.ModelResource.ModelIndex = reader.ReadUInt16();
-            rdbObject.Resources.ModelResource.Unknown1 = reader.ReadUInt32();
+            rdbObject.Resources.ModelResource.TriggerFlag_StartingLock = reader.ReadUInt32();
             rdbObject.Resources.ModelResource.SoundId = reader.ReadByte();
             rdbObject.Resources.ModelResource.ActionOffset = reader.ReadInt32();
 
@@ -1114,7 +1115,7 @@ namespace DaggerfallConnect.Arena2
                 {
                     // Set target and and parent indices
                     rdbObject.Resources.ModelResource.ActionResource.NextObjectIndex = index;
-                    rdbObjects[index].Resources.ModelResource.ActionResource.PreviousObjectIndex = rdbObject.Index;
+                    rdbObjects[index].Resources.ModelResource.ActionResource.PreviousObjectOffset = rdbObject.This;
                     break;
                 }
                 index++;
@@ -1132,11 +1133,8 @@ namespace DaggerfallConnect.Arena2
             rdbObject.Resources.FlatResource.TextureRecord = rdbObject.Resources.FlatResource.TextureBitfield & 0x7f;
             rdbObject.Resources.FlatResource.Gender = (DFBlock.RdbFlatGenders)reader.ReadUInt16();
             rdbObject.Resources.FlatResource.FactionMobileId = reader.ReadUInt16();
-            rdbObject.Resources.FlatResource.FlatData.Unknown1 = reader.ReadByte();
-            rdbObject.Resources.FlatResource.FlatData.Unknown2 = reader.ReadByte();
-            rdbObject.Resources.FlatResource.FlatData.Unknown3 = reader.ReadByte();
-            rdbObject.Resources.FlatResource.FlatData.Unknown4 = reader.ReadByte();
-            rdbObject.Resources.FlatResource.FlatData.Reaction = reader.ReadByte();
+            rdbObject.Resources.FlatResource.FlatData.NextObject = reader.ReadInt32();
+            rdbObject.Resources.FlatResource.FlatData.Action = reader.ReadByte();
         }
 
         private void ReadRdbLightResource(BinaryReader reader, ref DFBlock.RdbObject rdbObject)

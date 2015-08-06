@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop
     public class DaggerfallActionDoor : MonoBehaviour
     {
         public bool StartOpen = false;                  // Door should start in open state
-        public bool IsLocked = false;                   // Normally locked doors must be unlocked by keys, spells, or force
+        public int currentLockValue = 0;           //if > 0, door is locked. Can check w. IsLocked prop
         public bool IsMagicallyHeld = false;            // Magically held locks can be opened by spells only
         public float OpenAngle = -90f;                  // Angle to swing door on axis when opening
         public float OpenDuration = 1.5f;               // How long in seconds for door to open
@@ -42,9 +42,30 @@ namespace DaggerfallWorkshop
 
         bool isOpen = false;
         bool isMoving = false;
+        int _startingLockValue = 0;                    //if > 0, is locked.
+        
         Vector3 closedTransform;
         AudioSource audioSource;
         BoxCollider boxCollider;
+
+        public int StartingLockValue                      //use to set starting lock value, will set current lock value as well
+        {
+            get
+            {
+                return _startingLockValue;
+            }
+            set
+            {
+                _startingLockValue = value;
+                currentLockValue = StartingLockValue;
+            }
+        }
+
+       
+        public bool IsLocked
+        {
+            get { return currentLockValue > 0; }
+        }
 
         public bool IsOpen
         {
@@ -89,7 +110,7 @@ namespace DaggerfallWorkshop
                     float roll = Random.Range(0f, 1f);
                     if (roll >= (1f - ChanceToBash))
                     {
-                        IsLocked = false;
+                        currentLockValue = 0;
                         ToggleDoor();
                     }
                 }

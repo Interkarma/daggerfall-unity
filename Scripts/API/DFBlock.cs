@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Lypyl (lypyl@dfworkshop.net)
 // 
 // Notes:
 //
@@ -589,36 +589,142 @@ namespace DaggerfallConnect
 
         /// <summary>
         /// Action flags enumeration.
+        /// These are Still being researched, and will be updated/changed in future.
         /// </summary>
         [Flags]
         public enum RdbActionFlags
         {
-            /// <summary>Action unspecified.</summary>
+
+            ///<summary>None </summary>
             None = 0x00,
 
-            /// <summary>Translation.</summary>
+            ///<summary>1 Translation. </summary>
             Translation = 0x01,
 
-            /// <summary>Unknown.</summary>
-            Unknown1 = 0x02,
+            ///<summary>2 Unknown. </summary>
+            Unknown2 = 0x02,
 
-            /// <summary>Unknown.</summary>
-            unknown2 = 0x04,
+            ///<summary>3 Unknown </summary>
+            Unknown3 = 0x03,
 
-            /// <summary>Rotation.</summary>
+            ///<summary>4 Unknown - seems to just be translation?</summary>
+            Unknown4 = 0x04,
+
+            ///<summary>5 Unknown </summary>
+            Unknown5 = 0x05,
+
+            ///<summary>6 Unknown </summary>
+            Unknown6 = 0x06,
+
+            ///<summary>7 Unknown </summary>
+            Unknown7 = 0x07,
+
+            ///<summary>8 Rotation. </summary>
             Rotation = 0x08,
 
-            /// <summary>Unknown.</summary>
-            Unknown3 = 0x10,
+            ///<summary>9 Cast spell / create spell effect. </summary>
+            CreateSpell = 0x09,
 
-            /// <summary>Unknown.</summary>
-            Unknown4 = 0x20,
+            ///<summary>11 Appears to display a text on activation </summary>
+            ShowText = 0x0B,
 
-            /// <summary>Unknown.</summary>
-            Unknown5 = 0x40,
+            ///<summary>12 Shows text and gets input, the guard in castle daggerfall, the banner in Shedugant </summary>
+            ShowTextWithInput = 0x0C,
 
-            /// <summary>Unknown.</summary>
-            Unknown6 = 0x80,
+            ///<summary>14 Teleport - needs target object </summary>
+            Teleport = 0x0E,
+
+            ///<summary>16 Unknown </summary>
+            Unknown16 = 0x10,
+
+            ///<summary>17 Unlock door - only activates once? </summary>
+            Unlock = 0x11,
+
+            ///<summary>18 Unlock + open door, like the first 2 doors in Daggerfall Castle - only activates once? </summary>
+            OpenDoor = 0x12,
+
+            ///<summary>20 Close door, lock if it has a starting lock value </summary>
+            CloseDoor = 0x14,
+
+            ///<summary>21 Unknown - Partially understood </summary>
+            Unknown21 = 0x15,
+
+            ///<summary>22 Hurt Player </summary>
+            Hurt22 = 0x16,
+
+            ///<summary>23 Hurt player </summary>
+            Hurt23 = 0x17,
+
+            ///<summary>24 Unknown </summary>
+            Unknown24 = 0x18,
+
+            ///<summary>25 Unknown, on trap door in NX05</summary>
+            Unknown25 = 0x19,
+
+            ///<summary>27 Unknown</summary>
+            Unknown27 = 0x1B,
+
+            ///<summary>28 Unknown purpose, occurs on the bottom of many pits </summary>
+            Unknown28 = 0x1C,
+
+            ///<summary>29 Dialogue - best guess, needs to be confirmed </summary>
+            Dialogue = 0x1D,
+
+            ///<summary>30 Activate </summary>
+            Activate = 0x1E,
+
+            ///<summary>31 Unknown - only on 2 objects, Main quest related </summary>
+            Unknown31 = 0x1F,
+
+            ///<summary>32  Unknown, only on 4 objects </summary>
+            Unknown32 = 0x20,
+
+            ///<summary>50 Unknown </summary>
+            Unknown50 = 0x32,
+
+            ///<summary>99 Unknown - seems to be releated to enemy hostility in special blocks</summary>
+            Unknown99 = 0x63,
+
+            ///<summary>100 Unknown, only on 2 objects</summary>
+            Unknown100 = 0x64,
+        }
+
+        /// <summary>
+        /// Control how actions are activated. 
+        /// These are Still being researched, and will be updated/changed in future.
+        /// </summary>
+        [Flags]
+        public enum RdbTriggerFlags
+        {
+            /// <summary> None      </summary>
+            None = -0x01,
+
+            /// <summary> Can't be activated by player directly </summary>
+            Indirect = 0x00,
+
+            /// <summary> Activated by collision / walking on </summary>
+            Collision01 = 0x01,
+
+            /// <summary> Activated by clicking on </summary>
+            Direct = 0x02,
+
+            /// <summary> Activated by collision / walking on </summary>
+            Collision03 = 0x03,
+
+            /// <summary>       </summary>
+            Unknown5 = 0x05,
+
+            /// <summary>       </summary>
+            Unknown6 = 0x06,
+
+            /// <summary> Activated by clicking on and collisions</summary>
+            DualTrigger = 0x08,
+
+            /// <summary> Activated by collision / walking on </summary>
+            Collision09 = 0x09,
+
+            /// <summary>       </summary>
+            Unknown10 = 0x0A,
         }
 
         /// <summary>
@@ -826,7 +932,7 @@ namespace DaggerfallConnect
             public UInt16 ModelIndex;
 
             /// <summary>Unknown.</summary>
-            internal UInt32 Unknown1;
+            internal UInt32 TriggerFlag_StartingLock;
 
             /// <summary>ID of sound to play when action is executed.</summary>
             public Byte SoundId;
@@ -886,13 +992,10 @@ namespace DaggerfallConnect
         /// </summary>
         public struct RdbFlatData
         {
-            public Byte Unknown1;
-            public Byte Unknown2;
-            public Byte Unknown3;
-            public Byte Unknown4;
-
-            /// <summary>0 = Hostile, 99 = Passive (e.g. guards in castles).</summary>
-            public Byte Reaction;
+            /// <summary>Next object in action chain.</summary>
+            public Int32 NextObject;
+            /// <summary>Action flag.</summary>
+            public Byte Action;
         }
 
         /// <summary>
@@ -918,12 +1021,8 @@ namespace DaggerfallConnect
             /// </summary>
             internal Int32 NextObjectOffset;
 
-            /// <summary>
-            /// Index of previous model in RdbObject array that linked to this model
-            ///  in an action chain. This allows action records to be chained
-            ///  backwards to the root action.
-            /// </summary>
-            public int PreviousObjectIndex;
+            /// <summary>Offset from start of RDB record to an object that should be activated before this object</summary>
+            internal Int32 PreviousObjectOffset;
 
             /// <summary>
             /// Index of model in RdbObject array that should be activated

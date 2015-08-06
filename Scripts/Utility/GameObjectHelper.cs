@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Lypyl (lypyl@dfworkshop.net)
 // 
 // Notes:
 //
@@ -426,12 +426,13 @@ namespace DaggerfallWorkshop.Utility
             if (!dfUnity.IsReady)
                 return null;
 
+            Dictionary<int, RDBLayout.ActionLink> actionLinkDict = new Dictionary<int, RDBLayout.ActionLink>();
+
             // Create base object
             DFBlock blockData;
-            GameObject go = RDBLayout.CreateBaseGameObject(blockName, out blockData, textureTable, allowExitDoors, cloneFrom);
-
+            GameObject go = RDBLayout.CreateBaseGameObject(blockName, ref actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom);
             // Add action doors
-            RDBLayout.AddActionDoors(go, ref blockData, textureTable);
+            RDBLayout.AddActionDoors(go, ref actionLinkDict, ref blockData, textureTable);
 
             // Add lights
             RDBLayout.AddLights(go, ref blockData);
@@ -439,7 +440,7 @@ namespace DaggerfallWorkshop.Utility
             // Add flats
             DFBlock.RdbObject[] editorObjects;
             GameObject[] startMarkers;
-            RDBLayout.AddFlats(go, ref blockData, out editorObjects, out startMarkers);
+            RDBLayout.AddFlats(go, ref actionLinkDict, ref blockData, out editorObjects, out startMarkers);
 
             // Set start markers
             DaggerfallRDBBlock dfBlock = go.GetComponent<DaggerfallRDBBlock>();
@@ -450,6 +451,8 @@ namespace DaggerfallWorkshop.Utility
             RDBLayout.AddFixedEnemies(go, editorObjects);
             RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, monsterVariance, seed);
 
+            // Link action nodes
+            RDBLayout.LinkActionNodes(actionLinkDict);
             return go;
         }
 

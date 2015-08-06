@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Demo
                         DaggerfallAction action;
                         if (ActionCheck(hits[i], out action))
                         {
-                            action.Play();
+                            action.Receive(this.gameObject, true);
                         }
                     }
                 }
@@ -153,15 +153,8 @@ namespace DaggerfallWorkshop.Demo
             action = hitInfo.transform.GetComponent<DaggerfallAction>();
             if (action == null)
                 return false;
-
-            // Must be root action of chain (no parent)
-            if (action.PreviousObject != null)
-            {
-                action = null;
-                return false;
-            }
-
-            return true;
+            else
+                return true;
         }
     }
 }
