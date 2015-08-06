@@ -36,9 +36,6 @@ namespace DaggerfallWorkshop
     [RequireComponent(typeof(SoundReader))]
     public class DaggerfallUnity : MonoBehaviour
     {
-        [NonSerialized]
-        public const string Version = "1.4.10";
-
         #region Fields
 
         bool isReady = false;
@@ -288,7 +285,7 @@ namespace DaggerfallWorkshop
 
         public static void LogMessage(string message, bool showInEditor = false)
         {
-            if (showInEditor || Application.isPlaying) Debug.Log(string.Format("DFTFU {0}: {1}", Version, message));
+            if (showInEditor || Application.isPlaying) Debug.Log(string.Format("DFTFU {0}: {1}", VersionInfo.Version, message));
         }
 
         public static bool FindDaggerfallUnity(out DaggerfallUnity dfUnityOut)
