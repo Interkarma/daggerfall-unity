@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
     /// <summary>
     /// A screen component that contains other screen components.
     /// </summary>
-    public class PanelScreenComponent : BaseScreenComponent
+    public class Panel : BaseScreenComponent
     {
         ScreenComponentCollection components;
         public ScreenComponentCollection Components
@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
             get { return components; }
         }
 
-        public PanelScreenComponent()
+        public Panel()
             :base()
         {
             this.components = new ScreenComponentCollection(this);

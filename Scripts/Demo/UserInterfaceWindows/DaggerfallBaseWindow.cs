@@ -13,8 +13,8 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
     {
         bool isSetup;
         DaggerfallUnity dfUnity;
-        PanelScreenComponent screenPanel = new PanelScreenComponent();      // Parent screen panel fits to entire viewport
-        PanelScreenComponent nativePanel = new PanelScreenComponent();      // Native panel is 320x200 child panel scaled to fit parent
+        Panel screenPanel = new Panel();      // Parent screen panel fits to entire viewport
+        Panel nativePanel = new Panel();      // Native panel is 320x200 child panel scaled to fit parent
 
         public DaggerfallBaseWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             set { isSetup = value; }
         }
 
-        protected PanelScreenComponent NativePanel
+        protected Panel NativePanel
         {
             get { return nativePanel; }
         }
@@ -81,9 +81,9 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
 
         #region Setup Helpers
 
-        protected ButtonScreenComponent AddButton(Vector2 position, Vector2 size)
+        protected Button AddButton(Vector2 position, Vector2 size)
         {
-            ButtonScreenComponent button = new ButtonScreenComponent();
+            Button button = new Button();
             button.Position = position;
             button.Size = size;
             NativePanel.Components.Add(button);
@@ -91,28 +91,40 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             return button;
         }
 
-        protected ButtonScreenComponent AddButton(Vector4 positionAndSize)
+        protected Button AddButton(Vector4 positionAndSize)
         {
             return AddButton(
                 new Vector2(positionAndSize.x, positionAndSize.y),
                 new Vector2(positionAndSize.z, positionAndSize.w));
         }
 
-        protected ButtonScreenComponent AddButton(Vector2 position, Vector2 size, string clickMessage)
+        protected Button AddButton(Vector2 position, Vector2 size, string clickMessage)
         {
-            ButtonScreenComponent button = AddButton(position, size);
+            Button button = AddButton(position, size);
             button.ClickMessage = clickMessage;
             
             return button;
         }
 
-        protected ButtonScreenComponent AddButton(Vector2 position, Vector2 size, string clickMessage, string doubleClickMessage)
+        protected Button AddButton(Vector2 position, Vector2 size, string clickMessage, string doubleClickMessage)
         {
-            ButtonScreenComponent button = AddButton(position, size);
+            Button button = AddButton(position, size);
             button.ClickMessage = clickMessage;
             button.DoubleClickMessage = doubleClickMessage;
 
             return button;
+        }
+
+        protected TextLabel AddTextLabel(PixelFont font, Vector2 position, string text)
+        {
+            TextLabel textLabel = new TextLabel();
+            textLabel.Font = font;
+            textLabel.Position = position;
+            textLabel.Text = text;
+            textLabel.Texture.filterMode = dfUnity.MaterialReader.MainFilterMode;
+            NativePanel.Components.Add(textLabel);
+
+            return textLabel;
         }
 
         protected Texture2D GetTextureFromImg(string name, TextureFormat format = TextureFormat.ARGB32)

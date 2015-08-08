@@ -883,16 +883,16 @@ namespace DaggerfallWorkshop
             Terrain terrain = terrainArray[terrainIndexDict[key]].terrainObject.GetComponent<Terrain>();
 
             // Sample height at this position
-            CapsuleCollider collider = LocalPlayerGPS.gameObject.GetComponent<CapsuleCollider>();
-            if (collider)
+            CharacterController controller = LocalPlayerGPS.gameObject.GetComponent<CharacterController>();
+            if (controller)
             {
                 Vector3 pos = new Vector3(position.x, 0, position.z);
                 float height = terrain.SampleHeight(pos + terrain.transform.position);
-                pos.y = height + collider.height * 1.5f;
+                pos.y = height + controller.height * 1.5f;
 
                 // Move player to this position and align to ground using raycast
                 LocalPlayerGPS.transform.position = pos;
-                FixStanding(LocalPlayerGPS.transform, collider.height);
+                FixStanding(LocalPlayerGPS.transform, controller.height);
                 InitFloatingOrigin(LocalPlayerGPS.transform);
             }
             else

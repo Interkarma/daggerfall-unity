@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             // Setup game select buttons
             for (int i = 0; i < saveButtons.Length; i++)
             {
-                ButtonScreenComponent button = AddButton(saveButtons[i]);
+                Button button = AddButton(saveButtons[i]);
                 button.ClickMessage = string.Format("{0}?i={1}", DaggerfallUIMessages.dfuiSelectSaveGame, i);
                 button.DoubleClickMessage = DaggerfallUIMessages.dfuiOpenSelectedSaveGame;
             }

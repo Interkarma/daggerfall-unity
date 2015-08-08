@@ -20,12 +20,12 @@ namespace DaggerfallWorkshop.Demo.UserInterface
     /// <summary>
     /// A simple button component.
     /// </summary>
-    public class ButtonScreenComponent : BaseScreenComponent
+    public class Button : BaseScreenComponent
     {
         public string ClickMessage { get; set; }
         public string DoubleClickMessage { get; set; }
 
-        public ButtonScreenComponent()
+        public Button()
             : base()
         {
             OnMouseClick += ClickHandler;
