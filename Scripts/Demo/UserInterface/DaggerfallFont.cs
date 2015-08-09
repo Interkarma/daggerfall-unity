@@ -102,7 +102,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
 
         GlyphInfo CreateSpaceGlyph()
         {
-            int width = fntFile.FixedWidth / 2;
+            int width = fntFile.FixedWidth - 1;
             int height = fntFile.FixedHeight;
             Color32[] colors = new Color32[width * height];
             for (int i = 0; i < colors.Length; i++)

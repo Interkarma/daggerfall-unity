@@ -81,14 +81,15 @@ namespace DaggerfallWorkshop.Demo.UserInterface
         /// <param name="component">Component to add.</param>
         public void Add(BaseScreenComponent component)
         {
-            // Add component
             components.Add(component);
-
-            // Assign new parent
             component.Parent = parent;
-
-            // Raise event
             RaiseComponentAddedEvent(component);
+        }
+
+        public void Remove(BaseScreenComponent component)
+        {
+            components.Remove(component);
+            RaiseComponentRemovedEvent(component);
         }
 
         /// <summary>
@@ -117,36 +118,60 @@ namespace DaggerfallWorkshop.Demo.UserInterface
         #region ComponentAdded Event
 
         /// <summary>
-        /// This event is fired whenever a component is added, allowing the entity to overlay
-        ///  any special handling required.
+        /// This event is fired whenever a component is added.
         /// </summary>
-        public event ComponentAddedEventHandler ComponentAdded;
-        public delegate void ComponentAddedEventHandler(object sender, ComponentAddedEventArgs e);
+        public event ComponentAddedEventHandler OnComponentAdded;
+        public delegate void ComponentAddedEventHandler(object sender, ComponentEventArgs e);
+
+        /// <summary>
+        /// This event is fired whenever a component is removed.
+        /// </summary>
+        public event ComponentAddedEventHandler OnComponentRemoved;
+        public delegate void ComponentRemovedEventHandler(object sender, ComponentEventArgs e);
 
         /// <summary>
         /// Event arguments.
         /// </summary>
-        public class ComponentAddedEventArgs : EventArgs
+        public class ComponentEventArgs : EventArgs
         {
             public object Component;
         }
 
         /// <summary>
-        /// Raise event.
+        /// Raise component added event.
         /// </summary>
         protected virtual void RaiseComponentAddedEvent(BaseScreenComponent component)
         {
             // Raise event
-            if (null != ComponentAdded)
+            if (OnComponentAdded != null)
             {
                 // Popuate event arguments
-                ComponentAddedEventArgs e = new ComponentAddedEventArgs()
+                ComponentEventArgs e = new ComponentEventArgs()
                 {
                     Component = component,
                 };
 
                 // Raise event
-                ComponentAdded(this, e);
+                OnComponentAdded(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Raise component removed event.
+        /// </summary>
+        protected virtual void RaiseComponentRemovedEvent(BaseScreenComponent component)
+        {
+            // Raise event
+            if (OnComponentRemoved != null)
+            {
+                // Popuate event arguments
+                ComponentEventArgs e = new ComponentEventArgs()
+                {
+                    Component = component,
+                };
+
+                // Raise event
+                OnComponentRemoved(this, e);
             }
         }
 

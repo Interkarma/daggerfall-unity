@@ -1,4 +1,15 @@
-﻿using UnityEngine;
+﻿// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
+// Web Site:        http://www.dfworkshop.net
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
+
+using UnityEngine;
 using System;
 using System.IO;
 using System.Collections;
@@ -11,6 +22,9 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
 {
     public abstract class DaggerfallBaseWindow : UserInterfaceWindow
     {
+        public const int nativeScreenWidth = 320;
+        public const int nativeScreenHeight = 200;
+
         bool isSetup;
         DaggerfallUnity dfUnity;
         Panel screenPanel = new Panel();      // Parent screen panel fits to entire viewport
@@ -23,7 +37,7 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             nativePanel.Scaling = Scaling.ScaleToFit;
             nativePanel.HorizontalAlignment = HorizontalAlignment.Center;
             nativePanel.BackgroundTextureLayout = TextureLayout.StretchToFill;
-            nativePanel.Size = new Vector2(NativeScreenWidth, NativeScreenHeight);
+            nativePanel.Size = new Vector2(nativeScreenWidth, nativeScreenHeight);
         }
 
         protected DaggerfallUnity DaggerfallUnity
@@ -115,13 +129,15 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             return button;
         }
 
-        protected TextLabel AddTextLabel(PixelFont font, Vector2 position, string text)
+        protected TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, int glyphSpacing = 1)
         {
             TextLabel textLabel = new TextLabel();
+            textLabel.Scaling = Scaling.None;
             textLabel.Font = font;
             textLabel.Position = position;
+            textLabel.FilterMode = dfUnity.MaterialReader.MainFilterMode;
+            textLabel.GlyphSpacing = glyphSpacing;
             textLabel.Text = text;
-            textLabel.Texture.filterMode = dfUnity.MaterialReader.MainFilterMode;
             NativePanel.Components.Add(textLabel);
 
             return textLabel;

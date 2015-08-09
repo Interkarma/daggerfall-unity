@@ -23,12 +23,16 @@ namespace DaggerfallWorkshop.Demo.UserInterface
     public class TextLabel : BaseScreenComponent
     {
         PixelFont font;
-        int glyphSpacing = 1;
         string text = string.Empty;
         byte[] asciiBytes;
         int totalWidth;
         int totalHeight;
         Texture2D labelTexture;
+        int glyphSpacing = 1;
+        Vector2 shadowPosition = Vector2.zero;
+        Color textColor = Color.white;
+        Color shadowColor = Color.black;
+        FilterMode filterMode = FilterMode.Point;
 
         public PixelFont Font
         {
@@ -42,23 +46,80 @@ namespace DaggerfallWorkshop.Demo.UserInterface
             set { SetText(value); }
         }
 
+        public int GlyphSpacing
+        {
+            get { return glyphSpacing; }
+            set { SetGlyphSpacing(value); }
+        }
+
+        public Vector2 ShadowPosition
+        {
+            get { return shadowPosition; }
+            set { shadowPosition = value; }
+        }
+
+        public Color TextColor
+        {
+            get { return textColor; }
+            set { textColor = value; }
+        }
+
+        public Color ShadowColor
+        {
+            get { return shadowColor; }
+            set { shadowColor = value; }
+        }
+
         public Texture2D Texture
         {
             get { return labelTexture; }
         }
 
+        public FilterMode FilterMode
+        {
+            get { return filterMode; }
+            set { SetFilterMode(value); }
+        }
+
         public override void Draw()
         {
             base.Draw();
-            GUI.DrawTexture(Rectangle, labelTexture, ScaleMode.StretchToFill);
+            Rect rect = Rectangle;
+
+            // Draw shadow
+            if (shadowPosition != Vector2.zero)
+            {
+                Rect shadowRect = rect;
+                shadowRect.x += shadowPosition.x * LocalScale.x;
+                shadowRect.y += shadowPosition.y * LocalScale.y;
+                GUI.color = shadowColor;
+                GUI.DrawTexture(shadowRect, labelTexture, ScaleMode.StretchToFill);
+            }
+
+            // Draw text
+            GUI.color = textColor;
+            GUI.DrawTexture(rect, labelTexture, ScaleMode.StretchToFill);
         }
 
         #region Private Methods
+
+        void SetGlyphSpacing(int value)
+        {
+            this.glyphSpacing = value;
+            CreateLabelTexture();
+        }
 
         void SetText(string value)
         {
             this.text = value;
             CreateLabelTexture();
+        }
+
+        void SetFilterMode(FilterMode value)
+        {
+            filterMode = value;
+            if (labelTexture)
+                labelTexture.filterMode = filterMode;
         }
 
         void CreateLabelTexture()
@@ -96,6 +157,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
                 xpos += glyph.width + glyphSpacing;
             }
             labelTexture.Apply(false, true);
+            labelTexture.filterMode = filterMode;
             this.Size = new Vector2(totalWidth, totalHeight);
         }
 

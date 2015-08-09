@@ -26,5 +26,10 @@ namespace DaggerfallWorkshop.Demo
         // "Load Saved Game" window messages
         public const string dfuiSelectSaveGame = "dfuiSelectSaveGame";
         public const string dfuiOpenSelectedSaveGame = "dfuiOpenSelectedSaveGame";
+
+        // "Book Reader" window messages
+        public const string dfuiOpenBookReaderWindow = "dfuiOpenBookReaderWindow";
+        public const string dfuiBookReaderPreviousPage = "dfuiBookReaderPreviousPage";
+        public const string dfuiBookReaderNextPage = "dfuiBookReaderNextPage";
     }
 }

@@ -53,6 +53,8 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         public enum Formatting
         {
+            Text = -1,
+
             NewLineOffset = 0x00,
             SameLineOffset = 0x01,
             PullPreceeding = 0x02,
@@ -62,8 +64,10 @@ namespace DaggerfallConnect.Arena2
 
             PositionPrefix = 0xfb,
             FontPrefix = 0xf9,
-            JustifyPreceedingLeft = 0xfc,
-            CenterPreceeding = 0xfd,
+
+            JustifyLeft = 0xfc,
+            JustifyCenter = 0xfd,
+
             NewLine = 0x00,
             EndOfPage = 0xf6,
             SubrecordSeparator = 0xff,
@@ -82,6 +86,14 @@ namespace DaggerfallConnect.Arena2
         {
             public int id;
             public string text;
+        }
+
+        public struct Token
+        {
+            public Formatting formatting;
+            public string text;
+            public int x;
+            public int y;
         }
 
         private struct TextRecordDatabaseHeader

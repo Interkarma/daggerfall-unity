@@ -473,7 +473,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
             switch (scaling)
             {
                 case Scaling.None:
-                    localScale = Vector2.one;
+                    localScale = (parent != null) ? parent.LocalScale : Vector2.one;
                     break;
                 case Scaling.StretchToFill:
                     rectangle = StretchToFill(rectangle);

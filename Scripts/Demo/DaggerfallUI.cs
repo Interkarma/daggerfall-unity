@@ -27,11 +27,14 @@ namespace DaggerfallWorkshop.Demo
         UserInterfaceManager uiManager = new UserInterfaceManager();
         DaggerfallStartWindow dfStartWindow;
         DaggerfallLoadSavedGameWindow dfLoadGameWindow;
+        DaggerfallBookReaderWindow dfBookReaderWindow;
 
         void Awake()
         {
             dfStartWindow = new DaggerfallStartWindow(uiManager);
             dfLoadGameWindow = new DaggerfallLoadSavedGameWindow(uiManager);
+            dfBookReaderWindow = new DaggerfallBookReaderWindow(uiManager);
+            //uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
             uiManager.PostMessage(DaggerfallUIMessages.dfuiInitGame);
         }
 
@@ -76,6 +79,9 @@ namespace DaggerfallWorkshop.Demo
             {
                 case DaggerfallUIMessages.dfuiInitGame:
                     uiManager.PushWindow(dfStartWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenBookReaderWindow:
+                    uiManager.PushWindow(dfBookReaderWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow:
                     uiManager.PushWindow(dfLoadGameWindow);

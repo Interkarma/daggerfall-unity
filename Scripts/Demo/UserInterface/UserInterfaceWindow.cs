@@ -30,9 +30,6 @@ namespace DaggerfallWorkshop.Demo.UserInterface
     /// </summary>
     public abstract class UserInterfaceWindow : IUserInterfaceWindow
     {
-        public const int NativeScreenWidth = 320;
-        public const int NativeScreenHeight = 200;
-
         protected IUserInterfaceManager uiManager;
 
         public UserInterfaceWindow Value
