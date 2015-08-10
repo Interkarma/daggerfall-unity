@@ -105,11 +105,11 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             return button;
         }
 
-        protected Button AddButton(Vector4 positionAndSize)
+        protected Button AddButton(Rect rect)
         {
             return AddButton(
-                new Vector2(positionAndSize.x, positionAndSize.y),
-                new Vector2(positionAndSize.z, positionAndSize.w));
+                new Vector2(rect.x, rect.y),
+                new Vector2(rect.width, rect.height));
         }
 
         protected Button AddButton(Vector2 position, Vector2 size, string clickMessage)
@@ -141,6 +141,18 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             NativePanel.Components.Add(textLabel);
 
             return textLabel;
+        }
+
+        protected Outline AddOutline(Rect rect, Color color)
+        {
+            Outline outline = new Outline();
+            outline.Scaling = Scaling.None;
+            outline.Color = color;
+            outline.Position = new Vector2(rect.x, rect.y);
+            outline.Size = new Vector2(rect.width, rect.height);
+            NativePanel.Components.Add(outline);
+
+            return outline;
         }
 
         protected Texture2D GetTextureFromImg(string name, TextureFormat format = TextureFormat.ARGB32)

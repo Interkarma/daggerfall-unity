@@ -132,6 +132,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
             else
             {
                 // Clear message queue on overflow as not all handlers implemented yet
+                // TODO: Implement a more suitable collection for messaging
                 messages.Clear();
                 messages.Push(message);
             }

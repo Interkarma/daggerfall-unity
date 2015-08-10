@@ -52,13 +52,15 @@ namespace DaggerfallWorkshop.Demo.UserInterface
     /// <summary>
     /// Defines sides for various operations.
     /// </summary>
+    [Flags]
     public enum Sides
     {
-        None,
-        Top,
-        Bottom,
-        Left,
-        Right,
+        None = 0,
+        Top = 1,
+        Bottom = 2,
+        Left = 4,
+        Right = 8,
+        All = 15,
     }
 
     /// <summary>

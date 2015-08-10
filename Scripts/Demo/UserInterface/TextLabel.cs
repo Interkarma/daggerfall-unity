@@ -84,9 +84,15 @@ namespace DaggerfallWorkshop.Demo.UserInterface
         public override void Draw()
         {
             base.Draw();
-            Rect rect = Rectangle;
+
+            if (string.IsNullOrEmpty(text) || labelTexture == null)
+                return;
+
+            // Store starting colour
+            Color guiColor = GUI.color;
 
             // Draw shadow
+            Rect rect = Rectangle;
             if (shadowPosition != Vector2.zero)
             {
                 Rect shadowRect = rect;
@@ -99,6 +105,9 @@ namespace DaggerfallWorkshop.Demo.UserInterface
             // Draw text
             GUI.color = textColor;
             GUI.DrawTexture(rect, labelTexture, ScaleMode.StretchToFill);
+
+            // Restore starting colour
+            GUI.color = guiColor;
         }
 
         #region Private Methods
@@ -125,7 +134,7 @@ namespace DaggerfallWorkshop.Demo.UserInterface
         void CreateLabelTexture()
         {
             if (font == null)
-                throw new Exception("TextLabel has no Font set.");
+                font = DaggerfallUI.Instance.DefaultFont;
 
             // First pass encodes ASCII and calculates final dimensions
             int width = 0;

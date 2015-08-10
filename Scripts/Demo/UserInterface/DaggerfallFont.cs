@@ -64,16 +64,6 @@ namespace DaggerfallWorkshop.Demo.UserInterface
 
         #endregion
 
-        #region Public Methods
-
-        public bool ChangeFont(FontName font)
-        {
-            this.font = font;
-            return LoadFont();
-        }
-
-        #endregion
-
         #region Private Methods
 
         bool LoadFont()

@@ -23,16 +23,8 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
         const string nativeImgName = "BOOK00I0.IMG";
         const int extraLeading = 0;
 
-        Color textColor = new Color32(243, 239, 44, 255);
-        Color shadowColor = new Color32(93, 77, 12, 255);
-
         DaggerfallUnity dfUnity;
         Texture2D nativeTexture;
-        DaggerfallFont font1;
-        DaggerfallFont font2;
-        DaggerfallFont font3;
-        DaggerfallFont font4;
-        DaggerfallFont font5;
         DaggerfallFont currentFont;
         BookFile bookFile = new BookFile();
 
@@ -56,10 +48,8 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
-            // Load default pixel fonts
-            font2 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0001);
-            font4 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0003);
-            currentFont = font4;
+            // Load default pixel font
+            ChangeFont(4);
 
             // Add buttons
             AddButton(new Vector2(181, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderPreviousPage);
@@ -129,9 +119,9 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
                     case TextResourceFile.Formatting.Text:
                         TextLabel label = AddTextLabel(currentFont, new Vector2(x, y), token.text);
                         label.HorizontalAlignment = horizontalAlignment;
-                        label.TextColor = textColor;
-                        label.ShadowColor = shadowColor;
-                        label.ShadowPosition = Vector2.one;
+                        label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
+                        label.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
+                        label.ShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
                         pageLabels.Add(label);
                         break;
                     default:
@@ -154,30 +144,7 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
 
         void ChangeFont(int index)
         {
-            switch (index)
-            {
-                case 1:
-                    if (font1 == null) font1 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0000);
-                    currentFont = font1;
-                    break;
-                case 2:
-                    if (font2 == null) font2 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0001);
-                    currentFont = font2;
-                    break;
-                case 3:
-                    if (font3 == null) font3 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0002);
-                    currentFont = font3;
-                    break;
-                case 4:
-                    if (font4 == null) font4 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0003);
-                    currentFont = font4;
-                    break;
-                case 5:
-                default:
-                    if (font5 == null) font5 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0004);
-                    currentFont = font5;
-                    break;
-            }
+            currentFont = DaggerfallUI.Instance.GetFont(index);
         }
 
         #endregion
