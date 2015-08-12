@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Demo.UserInterface;
@@ -20,6 +21,7 @@ namespace DaggerfallWorkshop.Demo
     /// <summary>
     /// Implements Daggerfall's user interface with internal UI system.
     /// </summary>
+    [RequireComponent(typeof(AudioSource))]
     public class DaggerfallUI : MonoBehaviour
     {
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
@@ -27,10 +29,12 @@ namespace DaggerfallWorkshop.Demo
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
         DaggerfallUnity dfUnity;
+        AudioSource audioSource;
         UserInterfaceManager uiManager = new UserInterfaceManager();
         DaggerfallStartWindow dfStartWindow;
         DaggerfallLoadSavedGameWindow dfLoadGameWindow;
         DaggerfallBookReaderWindow dfBookReaderWindow;
+        DaggerfallVidPlayerWindow dfVidPlayerWindow;
 
         DaggerfallFont font1;
         DaggerfallFont font2;
@@ -45,15 +49,25 @@ namespace DaggerfallWorkshop.Demo
         public DaggerfallFont Font5 { get { return GetFont(5); } }
         public DaggerfallFont DefaultFont { get { return GetFont(4); } }
 
+        public AudioSource AudioSource
+        {
+            get { return audioSource; }
+        }
+
         void Awake()
         {
             dfUnity = DaggerfallUnity.Instance;
+            audioSource = GetComponent<AudioSource>();
             dfStartWindow = new DaggerfallStartWindow(uiManager);
             dfLoadGameWindow = new DaggerfallLoadSavedGameWindow(uiManager);
             dfBookReaderWindow = new DaggerfallBookReaderWindow(uiManager);
+            dfVidPlayerWindow = new DaggerfallVidPlayerWindow(uiManager);
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenVIDPlayerWindow);
             //uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
-            uiManager.PostMessage(DaggerfallUIMessages.dfuiInitGame);
+            //uiManager.PostMessage(DaggerfallUIMessages.dfuiInitGame);
             SetupSingleton();
+
+            audioSource.spatialBlend = 0;
         }
 
         void Update()
@@ -120,6 +134,9 @@ namespace DaggerfallWorkshop.Demo
             {
                 case DaggerfallUIMessages.dfuiInitGame:
                     uiManager.PushWindow(dfStartWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenVIDPlayerWindow:
+                    uiManager.PushWindow(dfVidPlayerWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenBookReaderWindow:
                     uiManager.PushWindow(dfBookReaderWindow);

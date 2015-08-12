@@ -28,7 +28,7 @@ namespace DaggerfallConnect.Arena2
 
         #region Class Variables
 
-        public static int SampleRate = 11025;
+        public const int SampleRate = 11025;
 
         /// <summary>
         /// Auto-discard behaviour enabled or disabled.

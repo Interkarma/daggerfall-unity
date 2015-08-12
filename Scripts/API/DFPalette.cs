@@ -256,6 +256,19 @@ namespace DaggerfallConnect
         }
 
         /// <summary>
+        /// Sets 768-byte palette buffer directly.
+        /// </summary>
+        /// <param name="data">Data to set.</param>
+        public void Set(byte[] data)
+        {
+            if (data.Length != 768)
+                throw new Exception("DFPalette: Invalid buffer length. Must be 768 bytes for direct set.");
+
+            headerLength = 0;
+            Array.Copy(data, paletteBuffer, 768);
+        }
+
+        /// <summary>
         /// Finds index with specified RGB values.
         /// </summary>
         /// <param name="R">Red component.</param>

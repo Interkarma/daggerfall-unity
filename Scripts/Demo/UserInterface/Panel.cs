@@ -35,23 +35,31 @@ namespace DaggerfallWorkshop.Demo.UserInterface
 
         public override void Update()
         {
+            if (!Enabled)
+                return;
+
             base.Update();
 
             // Update child components
             foreach (BaseScreenComponent component in components)
             {
-                component.Update();
+                if (component.Enabled)
+                    component.Update();
             }
         }
 
         public override void Draw()
         {
+            if (!Enabled)
+                return;
+
             base.Draw();
 
             // Draw child components
             foreach (BaseScreenComponent component in components)
             {
-                component.Draw();
+                if (component.Enabled)
+                    component.Draw();
             }
         }
     }

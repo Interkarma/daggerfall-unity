@@ -25,14 +25,17 @@ namespace DaggerfallConnect.Save
     /// </summary>
     public class SaveGames
     {
+        public const string SaveNameTxt = "SAVENAME.TXT";
+
         string savesPath = string.Empty;
         bool isPathOpen = false;
         bool isReadOnly = true;
         Exception lastException;
-        List<string> saveGameList = new List<string>();
 
+        Dictionary<int, string> saveGameDict = new Dictionary<int, string>();
         SaveTree saveTree = new SaveTree();
         SaveImage saveImage = new SaveImage();
+        string saveName = string.Empty;
 
         #region Properties
 
@@ -84,6 +87,14 @@ namespace DaggerfallConnect.Save
             get { return saveImage; }
         }
 
+        /// <summary>
+        /// Gets name of currently open save.
+        /// </summary>
+        public string SaveName
+        {
+            get { return saveName; }
+        }
+
         #endregion
 
         #region Constructors
@@ -123,6 +134,22 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
+        /// Determines if the specified save index exists.
+        /// </summary>
+        /// <param name="save">Save index.</param>
+        /// <returns>True if save index present.</returns>
+        public bool HasSave(int save)
+        {
+            if (!isPathOpen)
+                throw new Exception("Save games folder is not open.");
+
+            if (!saveGameDict.ContainsKey(save))
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
         /// Opens the save game index specified.
         /// </summary>
         /// <param name="save">Save index</param>
@@ -131,17 +158,17 @@ namespace DaggerfallConnect.Save
         {
             try
             {
-                if (!isPathOpen)
-                    throw new Exception("Save games folder is not open.");
+                if (!HasSave(save))
+                    return false;
 
-                if (save < 0 || save >= saveGameList.Count)
-                    throw new IndexOutOfRangeException("Save game index out of range.");
-
-                if (!saveTree.Open(Path.Combine(saveGameList[save], SaveTree.Filename)))
+                if (!saveTree.Open(Path.Combine(saveGameDict[save], SaveTree.Filename)))
                     throw new Exception("Could not open SaveTree for index " + save);
 
                 if (!LoadSaveImage(save))
-                    throw new Exception("Could not open SaveImage for index" + save);
+                    throw new Exception("Could not open SaveImage for index " + save);
+
+                if (!LoadSaveName(save))
+                    throw new Exception("Could not open SaveName for index " + save);
             }
             catch (Exception ex)
             {
@@ -174,7 +201,7 @@ namespace DaggerfallConnect.Save
                 return 0;
 
             // Test each directory
-            saveGameList.Clear();
+            saveGameDict.Clear();
             for (int i = 0; i < saves.Length; i++)
             {
                 if (!File.Exists(Path.Combine(saves[i], SaveTree.Filename)) ||
@@ -183,19 +210,34 @@ namespace DaggerfallConnect.Save
                     continue;
                 }
 
-                saveGameList.Add(saves[i]);
+                saveGameDict.Add(i, saves[i]);
             }
 
-            return saveGameList.Count;
+            return saveGameDict.Count;
         }
 
         bool LoadSaveImage(int save)
         {
+            if (!saveGameDict.ContainsKey(save))
+                return false;
+
             saveImage = new SaveImage();
-            if (!saveImage.Load(Path.Combine(saveGameList[save], SaveImage.Filename), FileUsage.UseMemory, true))
+            if (!saveImage.Load(Path.Combine(saveGameDict[save], SaveImage.Filename), FileUsage.UseMemory, true))
                 return false;
             if (!saveImage.LoadPalette(Path.Combine(GetArena2Path(), saveImage.PaletteName)))
                 return false;
+
+            return true;
+        }
+
+        bool LoadSaveName(int save)
+        {
+            if (!saveGameDict.ContainsKey(save))
+                return false;
+
+            FileProxy file = new FileProxy(Path.Combine(saveGameDict[save], SaveNameTxt), FileUsage.UseMemory, true);
+            saveName = file.ReadCString(0, 0);
+            file.Close();
 
             return true;
         }

@@ -393,8 +393,8 @@ namespace DaggerfallWorkshop
             skyFile = new SkyFile(Path.Combine(dfUnity.Arena2Path, SkyFile.IndexToFileName(SkyIndex)), FileUsage.UseMemory, true);
 
             skyFile.Palette = skyFile.GetDFPalette(frame);
-            skyColors.east = skyFile.GetColors32(0, frame);
-            skyColors.west = skyFile.GetColors32(1, frame);
+            skyColors.east = skyFile.GetColor32(0, frame);
+            skyColors.west = skyFile.GetColor32(1, frame);
             skyColors.clearColor = skyColors.west[0];
         }
 
@@ -437,7 +437,7 @@ namespace DaggerfallWorkshop
             }
 
             // Get sky colour array
-            Color32[] colors = imgFile.GetColors32(dfBitmap);
+            Color32[] colors = imgFile.GetColor32(dfBitmap);
 
             // Fix seam on right side of night skies
             for (int y = 0; y < height; y++)

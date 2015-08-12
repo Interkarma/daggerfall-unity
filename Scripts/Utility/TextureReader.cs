@@ -73,6 +73,37 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Creates a simple texture from any base API image.
+        /// </summary>
+        public static Texture2D CreateFromAPIImage(BaseImageFile image, int record = 0, int frame = 0, bool createMipMaps = false, bool makeNoLongerReadable = true)
+        {
+            DFSize sz;
+            Color32[] colors = image.GetColor32(record, frame, -1, 0, out sz);
+            Texture2D texture = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, createMipMaps);
+            texture.SetPixels32(colors);
+            texture.Apply(createMipMaps, makeNoLongerReadable);
+
+            return texture;
+        }
+
+        /// <summary>
+        /// Creates a simple solid-colour texture.
+        /// </summary>
+        public static Texture2D CreateFromSolidColor(int width, int height, Color color, bool createMipMaps = false, bool makeNoLongerReadable = true)
+        {
+            Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, createMipMaps);
+            Color32[] colors = new Color32[width * height];
+            for (int i = 0; i < colors.Length; i++)
+            {
+                colors[i] = color;
+            }
+            texture.SetPixels32(colors);
+            texture.Apply(createMipMaps, makeNoLongerReadable);
+
+            return texture;
+        }
+
+        /// <summary>
         /// Constructor to set Arena2Path.
         /// </summary>
         /// <param name="arena2Path">Path to Arena2 folder.</param>
@@ -455,7 +486,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Create base image with gutter
                 DFSize sz;
-                Color32[] albedo = textureFile.GetColors32(record, 0, -1, gutterSize, out sz);
+                Color32[] albedo = textureFile.GetColor32(record, 0, -1, gutterSize, out sz);
 
                 // Wrap and clamp textures based on tile
                 switch (record)

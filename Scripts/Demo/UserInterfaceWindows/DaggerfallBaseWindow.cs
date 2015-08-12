@@ -173,7 +173,7 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
         {
             DFBitmap bitmap = img.GetDFBitmap();
             Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
-            texture.SetPixels32(img.GetColors32(bitmap, 0));
+            texture.SetPixels32(img.GetColor32(bitmap, 0));
             texture.Apply(false, true);
 
             return texture;
@@ -187,7 +187,7 @@ namespace DaggerfallWorkshop.Demo.UserInterfaceWindows
 
             DFBitmap bitmap = image.GetDFBitmap();
             Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
-            texture.SetPixels32(image.GetColors32(bitmap, 0));
+            texture.SetPixels32(image.GetColor32(bitmap, 0));
             texture.Apply(false, true);
             texture.filterMode = dfUnity.MaterialReader.MainFilterMode;
 
