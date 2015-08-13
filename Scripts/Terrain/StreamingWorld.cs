@@ -19,7 +19,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
-using DaggerfallWorkshop.Demo;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop

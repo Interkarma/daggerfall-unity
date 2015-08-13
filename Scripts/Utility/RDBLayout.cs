@@ -17,7 +17,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Demo;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop.Utility
 {
