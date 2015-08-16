@@ -59,6 +59,7 @@ namespace DaggerfallConnect.Arena2
         public int CurrentBlock { get { return currentBlock; } }
         public VidBlockTypes LastBlockType { get { return lastBlockType; } }
         public bool EndOfFile { get { return endOfFileReached; } }
+        public int LastDelay { get { return lastDelay; } }
 
         /// <summary>
         /// Default constructor.

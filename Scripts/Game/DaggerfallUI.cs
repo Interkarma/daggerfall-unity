@@ -11,8 +11,12 @@
 
 using UnityEngine;
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
@@ -21,9 +25,13 @@ namespace DaggerfallWorkshop.Game
     /// <summary>
     /// Implements Daggerfall's user interface with internal UI system.
     /// </summary>
-    [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(DaggerfallAudioSource))]
     public class DaggerfallUI : MonoBehaviour
     {
+        const string popupBorderRCIFile = "SPOP.RCI";
+        const string splashVideo = "ANIM0001.VID";
+        const string uiBootstrapMessage = DaggerfallUIMessages.dfuiStartNewGame;
+
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
         public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
@@ -31,10 +39,14 @@ namespace DaggerfallWorkshop.Game
         DaggerfallUnity dfUnity;
         AudioSource audioSource;
         UserInterfaceManager uiManager = new UserInterfaceManager();
+
         DaggerfallStartWindow dfStartWindow;
         DaggerfallLoadSavedGameWindow dfLoadGameWindow;
         DaggerfallBookReaderWindow dfBookReaderWindow;
         DaggerfallVidPlayerWindow dfVidPlayerWindow;
+        DaggerfallRaceSelectWindow dfRaceSelectWindow;
+
+        Texture2D[] daggerfallPopupTextures;
 
         DaggerfallFont font1;
         DaggerfallFont font2;
@@ -58,16 +70,16 @@ namespace DaggerfallWorkshop.Game
         {
             dfUnity = DaggerfallUnity.Instance;
             audioSource = GetComponent<AudioSource>();
+            audioSource.spatialBlend = 0;
+
             dfStartWindow = new DaggerfallStartWindow(uiManager);
             dfLoadGameWindow = new DaggerfallLoadSavedGameWindow(uiManager);
             dfBookReaderWindow = new DaggerfallBookReaderWindow(uiManager);
             dfVidPlayerWindow = new DaggerfallVidPlayerWindow(uiManager);
-            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenVIDPlayerWindow);
-            //uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
-            //uiManager.PostMessage(DaggerfallUIMessages.dfuiInitGame);
-            SetupSingleton();
+            dfRaceSelectWindow = new DaggerfallRaceSelectWindow(uiManager);
+            uiManager.PostMessage(uiBootstrapMessage);
 
-            audioSource.spatialBlend = 0;
+            SetupSingleton();
         }
 
         void Update()
@@ -124,6 +136,50 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public Texture2D GetDaggerfallPopupSlice(Slices slice)
+        {
+            LoadDaggerfallPopupTextures();
+
+            switch (slice)
+            {
+                case Slices.TopLeft:
+                    return daggerfallPopupTextures[0];
+                case Slices.Top:
+                    return daggerfallPopupTextures[1];
+                case Slices.TopRight:
+                    return daggerfallPopupTextures[2];
+                case Slices.Left:
+                    return daggerfallPopupTextures[3];
+                default:
+                case Slices.Fill:
+                    return daggerfallPopupTextures[4];
+                case Slices.Right:
+                    return daggerfallPopupTextures[5];
+                case Slices.BottomLeft:
+                    return daggerfallPopupTextures[6];
+                case Slices.Bottom:
+                    return daggerfallPopupTextures[7];
+                case Slices.BottomRight:
+                    return daggerfallPopupTextures[8];
+            }
+        }
+
+        public void SetDaggerfallPopupStyle(Panel panel)
+        {
+            panel.BackgroundTexture = GetDaggerfallPopupSlice(Slices.Fill);
+            panel.BackgroundTextureLayout = TextureLayout.Tile;
+
+            panel.SetBorderTextures(
+                GetDaggerfallPopupSlice(Slices.TopLeft),
+                GetDaggerfallPopupSlice(Slices.Top),
+                GetDaggerfallPopupSlice(Slices.TopRight),
+                GetDaggerfallPopupSlice(Slices.Left),
+                GetDaggerfallPopupSlice(Slices.Right),
+                GetDaggerfallPopupSlice(Slices.BottomLeft),
+                GetDaggerfallPopupSlice(Slices.Bottom),
+                GetDaggerfallPopupSlice(Slices.BottomRight));
+        }
+
         #region Private Methods
 
         void ProcessMessageQueue()
@@ -134,6 +190,8 @@ namespace DaggerfallWorkshop.Game
             {
                 case DaggerfallUIMessages.dfuiInitGame:
                     uiManager.PushWindow(dfStartWindow);
+                    uiManager.PushWindow(dfVidPlayerWindow);
+                    dfVidPlayerWindow.PlayOnStart = splashVideo;
                     break;
                 case DaggerfallUIMessages.dfuiOpenVIDPlayerWindow:
                     uiManager.PushWindow(dfVidPlayerWindow);
@@ -143,6 +201,10 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow:
                     uiManager.PushWindow(dfLoadGameWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiStartNewGame:
+                case DaggerfallUIMessages.dfuiOpenRaceSelectWindow:
+                    uiManager.PushWindow(dfRaceSelectWindow);
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
                     Application.Quit();
@@ -156,6 +218,22 @@ namespace DaggerfallWorkshop.Game
 
             // Message was handled, pop from stack
             uiManager.PopMessage();
+        }
+
+        void LoadDaggerfallPopupTextures()
+        {
+            // Load borders on first call
+            if (daggerfallPopupTextures == null || daggerfallPopupTextures.Length == 0)
+            {
+                CifRciFile cif = new CifRciFile(Path.Combine(dfUnity.Arena2Path, popupBorderRCIFile), FileUsage.UseMemory, true);
+                cif.LoadPalette(Path.Combine(dfUnity.Arena2Path, cif.PaletteName));
+
+                daggerfallPopupTextures = new Texture2D[cif.RecordCount];
+                for (int i = 0; i < cif.RecordCount; i++)
+                {
+                    daggerfallPopupTextures[i] = TextureReader.CreateFromAPIImage(cif, i);
+                }
+            }
         }
 
         #endregion

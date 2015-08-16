@@ -23,9 +23,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallVidPlayerWindow : DaggerfallBaseWindow
     {
-        const string testFile = "DAG2.VID";
-
         DaggerfallVideo video;
+        bool hideCursor = true;
+        bool endOnAnyKey = true;
+
+        public string PlayOnStart { get; set; }
+
+        public bool HideCursor
+        {
+            get { return hideCursor; }
+            set { hideCursor = value; }
+        }
+
+        public DaggerfallVideo Video
+        {
+            get { return video; }
+        }
 
         public DaggerfallVidPlayerWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -40,11 +53,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             video.Size = new Vector2(nativeScreenWidth, nativeScreenHeight);
             NativePanel.Components.Add(video);
 
-            // Open and play a video
-            video.Open(testFile);
-            video.Playing = true;
-            
-            IsSetup = true;
+            // Start playing
+            if (!string.IsNullOrEmpty(PlayOnStart))
+            {
+                video.Open(PlayOnStart);
+                video.Playing = true;
+            }
         }
+
+        public override void Update()
+        {
+            base.Update();
+
+            // Handle exit any key or end of video
+            if (endOnAnyKey && Input.anyKeyDown ||
+                video.VidFile.EndOfFile && video.Playing)
+            {
+                video.Playing = false;
+                RaiseOnVideoFinishedHandler();
+                uiManager.PostMessage(WindowMessages.wmCloseWindow);
+            }
+        }
+
+        #region Event Handlers
+
+        // OnVideoFinished
+        public delegate void OnVideoFinishedHandler();
+        public event OnVideoFinishedHandler OnVideoFinished;
+        protected virtual void RaiseOnVideoFinishedHandler()
+        {
+            if (OnVideoFinished != null)
+                OnVideoFinished();
+        }
+
+        #endregion
     }
 }

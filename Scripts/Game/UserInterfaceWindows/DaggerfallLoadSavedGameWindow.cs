@@ -89,8 +89,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             OpenSaveGames();
             AddControls();
-
-            IsSetup = true;
         }
 
         protected override void ProcessMessageQueue()

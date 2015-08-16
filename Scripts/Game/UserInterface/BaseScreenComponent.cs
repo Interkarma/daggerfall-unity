@@ -50,10 +50,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected TextureLayout backgroundTextureLayout = TextureLayout.Tile;
 
         bool mouseOverComponent = false;
-        public event EventHandler OnMouseEnter;
-        public event EventHandler OnMouseLeave;
-        public event EventHandler OnMouseClick;
-        public event EventHandler OnMouseDoubleClick;
+
+        public delegate void OnMouseEnterHandler();
+        public event OnMouseEnterHandler OnMouseEnter;
+
+        public delegate void OnMouseLeaveHandler();
+        public event OnMouseLeaveHandler OnMouseLeave;
+
+        public delegate void OnMouseClickHandler(Vector2 position);
+        public event OnMouseClickHandler OnMouseClick;
+
+        public delegate void OnMouseDoubleClickHandler(Vector2 position);
+        public event OnMouseDoubleClickHandler OnMouseDoubleClick;
 
         #endregion
 
@@ -265,7 +273,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     // Raise mouse entered event
                     if (OnMouseEnter != null)
-                        OnMouseEnter(this, null);
+                        OnMouseEnter();
 
                     mouseOverComponent = true;
                 }
@@ -276,7 +284,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     // Raise mouse leaving event
                     if (OnMouseLeave != null)
-                        OnMouseLeave(this, null);
+                        OnMouseLeave();
 
                     mouseOverComponent = false;
                 }
@@ -286,9 +294,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             bool leftMouseDown = Input.GetMouseButtonDown(0);
             if (mouseOverComponent && leftMouseDown)
             {
+                // Calculate scaled click position relative to top-left corner
+                Vector2 topLeft = new Vector2(myRect.xMin, myRect.yMin);
+                Vector2 clickPosition = mousePosition - topLeft;
+                clickPosition.x *= 1f / localScale.x;
+                clickPosition.y *= 1f / localScale.y;
+
                 // Single click event
                 if (OnMouseClick != null)
-                    OnMouseClick(this, null);
+                    OnMouseClick(clickPosition);
 
                 // Double-click event
                 if (firstClickTime == 0)
@@ -302,7 +316,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     {
                         firstClickTime = 0;
                         if (OnMouseDoubleClick != null)
-                            OnMouseDoubleClick(this, null);
+                            OnMouseDoubleClick(clickPosition);
                     }
                     else
                     {

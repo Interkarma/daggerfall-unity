@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int clipQueueLength = 2;
 
         VidFile vidFile = new VidFile();
-        Texture2D vidTexture = new Texture2D(1, 1);
+        Texture2D vidTexture;
 
         GameObject audioPlayer;
         AudioClip[] clips = new AudioClip[clipQueueLength];
@@ -50,6 +50,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 audioSources[i] = audioPlayer.AddComponent<AudioSource>();
             }
             nextEventTime = AudioSettings.dspTime;
+
+            // Init empty texture
+            vidTexture = TextureReader.CreateFromSolidColor(1, 1, Color.black, false, false);
         }
 
         public void Open(string name)
@@ -59,6 +62,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             vidTexture = TextureReader.CreateFromSolidColor(vidFile.FrameWidth, vidFile.FrameHeight, Color.black, false, false);
+        }
+
+        public void Play(string name)
+        {
+            Open(name);
+            Playing = true;
         }
 
         public void Next()

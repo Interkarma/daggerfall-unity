@@ -61,8 +61,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //LoadBook("BOK00101.TXT");               // Kind Edward, Part 2
             //LoadBook("BOK00008.TXT");               // The Pig Children
             LayoutPage(currentPage);
-
-            IsSetup = true;
         }
 
         protected override void ProcessMessageQueue()
@@ -94,7 +92,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void LayoutPage(int page)
         {
             ClearPage();
-            TextResourceFile.Token[] tokens = bookFile.GetPageTokens(page);
+            TextFile.Token[] tokens = bookFile.GetPageTokens(page);
 
             int x = 10, y = 20;
             HorizontalAlignment horizontalAlignment = HorizontalAlignment.None;
@@ -102,21 +100,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 switch (token.formatting)
                 {
-                    case TextResourceFile.Formatting.NewLine:
+                    case TextFile.Formatting.NewLine:
                         // Daggerfall books appear to reset horizontal alignment after newline
                         y += currentFont.GlyphHeight + extraLeading;
                         horizontalAlignment = HorizontalAlignment.None;
                         break;
-                    case TextResourceFile.Formatting.FontPrefix:
+                    case TextFile.Formatting.FontPrefix:
                         ChangeFont(token.x);
                         break;
-                    case TextResourceFile.Formatting.JustifyLeft:
+                    case TextFile.Formatting.JustifyLeft:
                         horizontalAlignment = HorizontalAlignment.None;
                         break;
-                    case TextResourceFile.Formatting.JustifyCenter:
+                    case TextFile.Formatting.JustifyCenter:
                         horizontalAlignment = HorizontalAlignment.Center;
                         break;
-                    case TextResourceFile.Formatting.Text:
+                    case TextFile.Formatting.Text:
                         TextLabel label = AddTextLabel(currentFont, new Vector2(x, y), token.text);
                         label.HorizontalAlignment = horizontalAlignment;
                         label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;

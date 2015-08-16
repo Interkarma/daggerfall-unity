@@ -145,6 +145,24 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
+    /// Defines core races.
+    /// The races have these indices in race picker image "TAMRIEL2.IMG"
+    /// This is also the order their bodies appear in the game files
+    /// </summary>
+    public enum Races
+    {
+        None = 0,
+        Breton = 1,
+        Redguard = 2,
+        Nord = 3,
+        DarkElf = 4,
+        HighElf = 5,
+        WoodElf = 6,
+        Khajiit = 7,
+        Argonian = 8,
+    }
+
+    /// <summary>
     /// A list of mobile enemy types with ID range 0-42 (monsters) and 128-146 (humanoids).
     /// </summary>
     public enum MobileTypes

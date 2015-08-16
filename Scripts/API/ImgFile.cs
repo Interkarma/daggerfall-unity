@@ -123,16 +123,24 @@ namespace DaggerfallConnect.Arena2
                 if (IsPalettized)
                     return string.Empty;
 
-                // Return based on source filename
                 string fn = Path.GetFileName(managedFile.FilePath);
-                if (fn == "DANK02I0.IMG")
-                    return "DANKBMAP.COL";
-                else if (fn.Substring(0, 4) == "FMAP")
+
+                // Handle special palettes
+                if (fn.Substring(0, 4) == "FMAP")
                     return "FMAP_PAL.COL";
                 else if (fn.Substring(0, 4) == "NITE")
                     return "NIGHTSKY.COL";
-                else
-                    return "ART_PAL.COL";
+
+                // Select palette based on filename
+                switch (fn)
+                {
+                    case "DANK02I0.IMG":
+                        return "DANKBMAP.COL";
+                    case "TMAP00I0.IMG":
+                        return "MAP.PAL";
+                    default:
+                        return "ART_PAL.COL";
+                }
             }
         }
 

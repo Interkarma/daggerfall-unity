@@ -49,8 +49,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //DaggerfallFont font = new DaggerfallFont(DaggerfallUnity.Instance.Arena2Path, DaggerfallFont.FontName.FONT0000);
             //TextLabel textLabel = AddTextLabel(font, new Vector2(0, 20), "This is a Daggerfall-native ASCII text field!");
             //textLabel.HorizontalAlignment = HorizontalAlignment.Center;
-
-            IsSetup = true;
         }
     }
 }

@@ -17,9 +17,14 @@ using DaggerfallConnect.Utility;
 
 namespace DaggerfallConnect.Arena2
 {
-    public class TextResourceFile
+    /// <summary>
+    /// Connects to and reads text from the TEXT.RSC file.
+    /// Also provides helpers for other classes using the text resource format.
+    /// </summary>
+    public class TextFile
     {
-        string[] supportedFileNames = { "TEXT.RSC" };
+        public const string Filename = "TEXT.RSC";
+
         FileProxy fileProxy;
         bool isLoaded = false;
         TextRecordDatabaseHeader header;
@@ -50,6 +55,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Special Text Resource formatting bytes.
         /// http://www.uesp.net/wiki/Daggerfall:Text_Record_Format
+        /// This is a work in progress.
         /// </summary>
         public enum Formatting
         {
@@ -112,11 +118,11 @@ namespace DaggerfallConnect.Arena2
 
         #region Constructors
 
-        public TextResourceFile()
+        public TextFile()
         {
         }
 
-        public TextResourceFile(string arena2Path, string fileName, FileUsage usage = FileUsage.UseMemory, bool readOnly = true)
+        public TextFile(string arena2Path, string fileName, FileUsage usage = FileUsage.UseMemory, bool readOnly = true)
         {
             Load(arena2Path, fileName, usage, readOnly);
         }
@@ -128,12 +134,12 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Load a text resource file.
         /// </summary>
-        public void Load(string arena2Path, string fileName, FileUsage usage = FileUsage.UseMemory, bool readOnly = true)
+        public void Load(string arena2Path, string filename, FileUsage usage = FileUsage.UseMemory, bool readOnly = true)
         {
             // Check text resource file is supported
-            if (!IsFileNameSupported(fileName))
+            if (filename != Filename)
             {
-                throw new Exception(string.Format("File '{0}' is not a supported text file.", fileName));
+                throw new Exception(string.Format("TextFile: File '{0}' is not a supported text file.", filename));
             }
 
             // Setup new file
@@ -142,7 +148,7 @@ namespace DaggerfallConnect.Arena2
             isLoaded = false;
 
             // Load file
-            fileProxy = new FileProxy(Path.Combine(arena2Path, fileName), usage, readOnly);
+            fileProxy = new FileProxy(Path.Combine(arena2Path, filename), usage, readOnly);
 
             // Read file
             BinaryReader reader = fileProxy.GetReader();
@@ -201,7 +207,7 @@ namespace DaggerfallConnect.Arena2
 
         /// <summary>
         /// Gets TextRecord data by index.
-        /// Special formatting characters are parsed into %x00 format.
+        /// Special formatting characters are parsed into [0x00] format.
         /// </summary>
         public TextRecord GetTextRecordByIndex(int index)
         {
@@ -210,10 +216,33 @@ namespace DaggerfallConnect.Arena2
             if (isLoaded)
             {
                 textRecord.id = header.TextRecordHeaders[index].TextRecordId;
-                textRecord.text = ParseBytes(GetBytesByIndex(index));
+                textRecord.text = ParseBytesToString(GetBytesByIndex(index));
             }
 
             return textRecord;
+        }
+
+        /// <summary>
+        /// Dumps entire text database to CSV.
+        /// </summary>
+        /// <param name="path">Full path to output file.</param>
+        public void DumpToCSV(string path)
+        {
+            if (!isLoaded)
+                return;
+
+            StreamWriter writer = File.CreateText(path);
+
+            writer.WriteLine("sep=\t");
+            writer.WriteLine("\"ID\"\t\"DATA\"");
+
+            for (int i = 0; i < RecordCount; i++)
+            {
+                TextRecord record = GetTextRecordByIndex(i);
+                writer.WriteLine("\"{0}\"\t\"{1}\"", record.id, record.text);
+            }
+
+            writer.Close();
         }
 
         #endregion
@@ -238,17 +267,6 @@ namespace DaggerfallConnect.Arena2
             }
         }
 
-        bool IsFileNameSupported(string fileName)
-        {
-            for (int i = 0; i < supportedFileNames.Length; i++)
-            {
-                if (string.Compare(fileName, supportedFileNames[i], true) == 0)
-                    return true;
-            }
-
-            return false;
-        }
-
         int GetRecordLength(BinaryReader reader)
         {
             long startPosition = reader.BaseStream.Position;
@@ -265,7 +283,7 @@ namespace DaggerfallConnect.Arena2
 
         #region Parsing Methods
 
-        string ParseBytes(byte[] buffer)
+        string ParseBytesToString(byte[] buffer)
         {
             string dst = string.Empty;
 

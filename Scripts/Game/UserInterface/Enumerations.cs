@@ -64,6 +64,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
     }
 
     /// <summary>
+    /// Defines slices for bitmap windows.
+    /// </summary>
+    public enum Slices
+    {
+        None,
+        TopLeft,
+        Top,
+        TopRight,
+        Left,
+        Fill,
+        Right,
+        BottomLeft,
+        Bottom,
+        BottomRight,
+    }
+
+    /// <summary>
     /// Defines layout of certain textures, such as backgrounds.
     /// </summary>
     public enum TextureLayout

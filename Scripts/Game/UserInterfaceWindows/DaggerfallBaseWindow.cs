@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         public const int nativeScreenWidth = 320;
         public const int nativeScreenHeight = 200;
+        public const KeyCode exitKey = KeyCode.Escape;
 
         bool isSetup;
         DaggerfallUnity dfUnity;
@@ -55,6 +56,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { isSetup = value; }
         }
 
+        protected Panel ScreenPanel
+        {
+            get { return screenPanel; }
+        }
+
         protected Panel NativePanel
         {
             get { return nativePanel; }
@@ -72,6 +78,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!isSetup)
             {
                 Setup();
+                isSetup = true;
                 return;
             }
 
@@ -171,6 +178,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             texture.filterMode = dfUnity.MaterialReader.MainFilterMode;
 
             return texture;
+        }
+
+        protected DFBitmap GetImgBitmap(string name)
+        {
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return null;
+
+            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
+            return imgFile.GetDFBitmap();
         }
 
         protected Texture2D GetTextureFromImg(ImgFile img, TextureFormat format = TextureFormat.ARGB32)
