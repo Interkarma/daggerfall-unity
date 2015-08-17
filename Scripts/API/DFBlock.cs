@@ -585,6 +585,7 @@ namespace DaggerfallConnect
 
             /// <summary>Positive Z axis.</summary>
             PositiveZ = 0x06,
+
         }
 
         /// <summary>
@@ -602,22 +603,22 @@ namespace DaggerfallConnect
             Translation = 0x01,
 
             ///<summary>2 Unknown. </summary>
-            Unknown2 = 0x02,
+            PositiveX = 0x02,
 
             ///<summary>3 Unknown </summary>
-            Unknown3 = 0x03,
+            NegativeX = 0x03,
 
             ///<summary>4 Unknown - seems to just be translation?</summary>
-            Unknown4 = 0x04,
+            PositiveY = 0x04,
 
             ///<summary>5 Unknown </summary>
-            Unknown5 = 0x05,
+            NegativeY = 0x05,
 
             ///<summary>6 Unknown </summary>
-            Unknown6 = 0x06,
+            PositiveZ = 0x06,
 
             ///<summary>7 Unknown </summary>
-            Unknown7 = 0x07,
+            NegativeZ = 0x07,
 
             ///<summary>8 Rotation. </summary>
             Rotation = 0x08,
@@ -634,11 +635,11 @@ namespace DaggerfallConnect
             ///<summary>14 Teleport - needs target object </summary>
             Teleport = 0x0E,
 
-            ///<summary>16 Unknown </summary>
-            Unknown16 = 0x10,
+            ///<summary>16 Locks door on activation, doesn't close.</summary>
+            LockDoor = 0x10,
 
             ///<summary>17 Unlock door - only activates once? </summary>
-            Unlock = 0x11,
+            UnlockDoor = 0x11,
 
             ///<summary>18 Unlock + open door, like the first 2 doors in Daggerfall Castle - only activates once? </summary>
             OpenDoor = 0x12,
@@ -646,28 +647,28 @@ namespace DaggerfallConnect
             ///<summary>20 Close door, lock if it has a starting lock value </summary>
             CloseDoor = 0x14,
 
-            ///<summary>21 Unknown - Partially understood </summary>
-            Unknown21 = 0x15,
+            ///<summary>21 Hurt Player, large amount of damage, 1 time activate </summary>
+            Hurt21 = 0x15,
 
-            ///<summary>22 Hurt Player </summary>
+            ///<summary>22 Hurt player, damage = level * magnitude </summary>
             Hurt22 = 0x16,
 
-            ///<summary>23 Hurt player </summary>
+            ///<summary>23 Hurt player, damage = level * magnitude</summary>
             Hurt23 = 0x17,
 
-            ///<summary>24 Unknown </summary>
-            Unknown24 = 0x18,
+            ///<summary>24 Hurt player, damage = level * magnitude</summary>
+            Hurt24 = 0x18,
 
-            ///<summary>25 Unknown, on trap door in NX05</summary>
-            Unknown25 = 0x19,
+            ///<summary>25 Hurt player, damage = level * magnitude</summary>
+            Hurt25 = 0x19,
 
             ///<summary>27 Unknown</summary>
             Unknown27 = 0x1B,
 
-            ///<summary>28 Unknown purpose, occurs on the bottom of many pits </summary>
-            Unknown28 = 0x1C,
+            ///<summary>28 drain magicka. 1 magnitude = 1 pt magica </summary>
+            DrainMagicka28 = 0x1C,
 
-            ///<summary>29 Dialogue - best guess, needs to be confirmed </summary>
+            ///<summary>29 Dialogue. Seems to ignore trigger flag</summary>
             Dialogue = 0x1D,
 
             ///<summary>30 Activate </summary>
@@ -696,11 +697,9 @@ namespace DaggerfallConnect
         [Flags]
         public enum RdbTriggerFlags
         {
-            /// <summary> None      </summary>
-            None = -0x01,
 
-            /// <summary> Can't be activated by player directly </summary>
-            Indirect = 0x00,
+            /// <summary> None</summary>
+            None = 0x00,
 
             /// <summary> Activated by collision / walking on </summary>
             Collision01 = 0x01,
@@ -711,10 +710,10 @@ namespace DaggerfallConnect
             /// <summary> Activated by collision / walking on </summary>
             Collision03 = 0x03,
 
-            /// <summary>       </summary>
+            /// <summary>  Unknown      </summary>
             Unknown5 = 0x05,
 
-            /// <summary>       </summary>
+            /// <summary> Unknown       </summary>
             Unknown6 = 0x06,
 
             /// <summary> Activated by clicking on and collisions</summary>
@@ -723,7 +722,7 @@ namespace DaggerfallConnect
             /// <summary> Activated by collision / walking on </summary>
             Collision09 = 0x09,
 
-            /// <summary>       </summary>
+            /// <summary> Mostly on doors in palaces </summary>
             Unknown10 = 0x0A,
         }
 
@@ -934,8 +933,8 @@ namespace DaggerfallConnect
             /// <summary>Unknown.</summary>
             internal UInt32 TriggerFlag_StartingLock;
 
-            /// <summary>ID of sound to play when action is executed.</summary>
-            public Byte SoundId;
+            /// <summary>ID of sound to play when action is executed. Also used for spell & text index.</summary>
+            public Byte SoundIndex;
 
             /// <summary>Offset to action resource from start of RDB record. Not required unless you are extending the block reader.</summary>
             internal Int32 ActionOffset;
@@ -973,8 +972,17 @@ namespace DaggerfallConnect
             /// <summary>Texture record from bitfield. Used to determine which texture record to load from archive.</summary>
             public int TextureRecord;
 
+            /// <summary> trigger flag of action flat </summary>
+            public UInt16 TriggerFlag;
+
             /// <summary>NPC gender (if any).</summary>
             public RdbFlatGenders Gender;
+
+            /// <summary> damage, distance to move etc.</summary>
+            public byte Magnitude;
+
+            /// <summary> sound index, also used for spell & text index</summary>
+            public byte Sound_index;
 
             /// <summary>
             /// FactionID/MobileID bitfield. (ID & 0xFF for mobile ID).
@@ -983,19 +991,11 @@ namespace DaggerfallConnect
             /// </summary>
             public UInt16 FactionMobileId;
 
-            /// <summary>Further data about this flat resource.</summary>
-            public RdbFlatData FlatData;
-        }
-
-        /// <summary>
-        /// Mostly unknown data about an RDB flat resource.
-        /// </summary>
-        public struct RdbFlatData
-        {
             /// <summary>Next object in action chain.</summary>
-            public Int32 NextObject;
+            public Int32 NextObjectOffset;
             /// <summary>Action flag.</summary>
             public Byte Action;
+
         }
 
         /// <summary>
@@ -1006,8 +1006,11 @@ namespace DaggerfallConnect
             /// <summary>Position in stream to find this data.</summary>
             public long Position;
 
-            /// <summary>About which the object should rotate or translate.</summary>
-            public RdbActionAxes Axis;
+            /// <summary> 
+            ///  About which the object should rotate or translate.
+            ///  used for distance in action types 2-7, as well as damage calculations
+            /// </summary>
+            public byte Axis;
 
             /// <summary>Length of time the object takes to reach its final state.</summary>
             public UInt16 Duration;
@@ -1029,7 +1032,7 @@ namespace DaggerfallConnect
             ///  directly after this object. This allows actions to be chained
             ///  forwards through multiple objects.
             /// </summary>
-            public Int32 NextObjectIndex;
+            public Int32 NextObjectIndex;       //unused?
 
             /// <summary>Actions to perform.</summary>
             public int Flags;

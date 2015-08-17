@@ -142,7 +142,7 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         static public float RotationDivisor
         {
-            get { return 5.68888888888889f;}
+            get { return 5.68888888888889f; }
         }
 
         /// <summary>
@@ -296,7 +296,7 @@ namespace DaggerfallConnect.Arena2
                 return false;
 
             // Exit if file has already been opened
-            if (blocks[block].MemoryFile != null )
+            if (blocks[block].MemoryFile != null)
                 return true;
 
             // Auto discard previous record
@@ -913,7 +913,7 @@ namespace DaggerfallConnect.Arena2
         {
             // Store current reader position
             long position = reader.BaseStream.Position;
-            
+
             // Go to first unknown object
             reader.BaseStream.Position = blocks[block].DFBlock.RdbBlock.ObjectHeader.UnknownOffset;
 
@@ -954,7 +954,7 @@ namespace DaggerfallConnect.Arena2
         {
             // Handle improper position in stream
             if (reader.BaseStream.Position != blocks[block].DFBlock.RdbBlock.Header.ObjectRootOffset)
-                throw(new Exception("Start of ObjectRoot section does not match header offset."));
+                throw (new Exception("Start of ObjectRoot section does not match header offset."));
 
             // Read object section root list
             UInt32 width = blocks[block].DFBlock.RdbBlock.Header.Width;
@@ -996,7 +996,7 @@ namespace DaggerfallConnect.Arena2
 
             // Count objects in list
             int objectCount = 0;
-            while(true)
+            while (true)
             {
                 // Increment object count
                 objectCount++;
@@ -1081,7 +1081,7 @@ namespace DaggerfallConnect.Arena2
             rdbObject.Resources.ModelResource.ZRotation = reader.ReadInt32();
             rdbObject.Resources.ModelResource.ModelIndex = reader.ReadUInt16();
             rdbObject.Resources.ModelResource.TriggerFlag_StartingLock = reader.ReadUInt32();
-            rdbObject.Resources.ModelResource.SoundId = reader.ReadByte();
+            rdbObject.Resources.ModelResource.SoundIndex = reader.ReadByte();
             rdbObject.Resources.ModelResource.ActionOffset = reader.ReadInt32();
 
             // Read action data
@@ -1096,7 +1096,7 @@ namespace DaggerfallConnect.Arena2
 
             // Read action data
             rdbObject.Resources.ModelResource.ActionResource.Position = reader.BaseStream.Position;
-            rdbObject.Resources.ModelResource.ActionResource.Axis = (DFBlock.RdbActionAxes)reader.ReadByte();
+            rdbObject.Resources.ModelResource.ActionResource.Axis = reader.ReadByte();
             rdbObject.Resources.ModelResource.ActionResource.Duration = reader.ReadUInt16();
             rdbObject.Resources.ModelResource.ActionResource.Magnitude = reader.ReadUInt16();
             rdbObject.Resources.ModelResource.ActionResource.NextObjectOffset = reader.ReadInt32();
@@ -1131,10 +1131,13 @@ namespace DaggerfallConnect.Arena2
             rdbObject.Resources.FlatResource.TextureBitfield = reader.ReadUInt16();
             rdbObject.Resources.FlatResource.TextureArchive = rdbObject.Resources.FlatResource.TextureBitfield >> 7;
             rdbObject.Resources.FlatResource.TextureRecord = rdbObject.Resources.FlatResource.TextureBitfield & 0x7f;
-            rdbObject.Resources.FlatResource.Gender = (DFBlock.RdbFlatGenders)reader.ReadUInt16();
-            rdbObject.Resources.FlatResource.FactionMobileId = reader.ReadUInt16();
-            rdbObject.Resources.FlatResource.FlatData.NextObject = reader.ReadInt32();
-            rdbObject.Resources.FlatResource.FlatData.Action = reader.ReadByte();
+            rdbObject.Resources.FlatResource.TriggerFlag = reader.ReadUInt16();
+            rdbObject.Resources.FlatResource.Magnitude = reader.ReadByte();
+            rdbObject.Resources.FlatResource.Sound_index = reader.ReadByte();
+            rdbObject.Resources.FlatResource.Gender = (DFBlock.RdbFlatGenders)rdbObject.Resources.FlatResource.TriggerFlag;
+            rdbObject.Resources.FlatResource.FactionMobileId = BitConverter.ToUInt16(new byte[] { rdbObject.Resources.FlatResource.Magnitude, rdbObject.Resources.FlatResource.Sound_index }, 0);
+            rdbObject.Resources.FlatResource.NextObjectOffset = reader.ReadInt32();
+            rdbObject.Resources.FlatResource.Action = reader.ReadByte();
         }
 
         private void ReadRdbLightResource(BinaryReader reader, ref DFBlock.RdbObject rdbObject)
