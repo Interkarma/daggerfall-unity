@@ -9,9 +9,19 @@
 // Notes:
 //
 
-using System;
+using UnityEngine;
+using System.Collections;
+using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop;
+using DaggerfallWorkshop.Utility;
 
-public static class VersionInfo
+namespace DaggerfallWorkshop.Utility
 {
-    public const string Version = "1.4.19";
+    /// <summary>
+    /// Implements default text provider.
+    /// </summary>
+    public class DefaultTextProvider : TextProvider
+    {
+    }
 }

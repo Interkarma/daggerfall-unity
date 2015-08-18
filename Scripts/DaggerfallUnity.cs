@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop
         MeshReader meshReader;
         SoundReader soundReader;
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
+        ITextProvider textProvider = new DefaultTextProvider();
         
         #endregion
 
@@ -134,6 +135,12 @@ namespace DaggerfallWorkshop
         {
             get { return terrainSampler; }
             set { terrainSampler = value; }
+        }
+
+        public ITextProvider TextProvider
+        {
+            get { return textProvider; }
+            set { textProvider = value; }
         }
 
         #endregion
@@ -274,8 +281,9 @@ namespace DaggerfallWorkshop
                     reader = new ContentReader(string.Empty);
                 }
 
-                // Allow external code to set their own terrain sampler at start
+                // Allow external code to set their own interfaces at start
                 RaiseOnSetTerrainSamplerEvent();
+                RaiseOnSetTextProviderEvent();
             }
         }
 
@@ -355,6 +363,15 @@ namespace DaggerfallWorkshop
         {
             if (OnSetTerrainSampler != null)
                 OnSetTerrainSampler();
+        }
+
+        // OnSetTextProvider
+        public delegate void OnSetTextProviderEventHandler();
+        public static event OnSetTextProviderEventHandler OnSetTextProvider;
+        protected virtual void RaiseOnSetTextProviderEvent()
+        {
+            if (OnSetTextProvider != null)
+                OnSetTextProvider();
         }
 
         #endregion

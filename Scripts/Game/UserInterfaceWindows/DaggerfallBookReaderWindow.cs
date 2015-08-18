@@ -26,10 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallUnity dfUnity;
         Texture2D nativeTexture;
         DaggerfallFont currentFont;
-        BookFile bookFile = new BookFile();
-
         List<TextLabel> pageLabels = new List<TextLabel>();
-        int currentPage = 0;
 
         public DaggerfallBookReaderWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -57,10 +54,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //AddButton(new Vector2(277, 187), new Vector2(32, 10), WindowMessages.wmCloseWindow);
 
             // Test book
-            LoadBook("BOK00043.TXT");               // The Real Barenziah
-            //LoadBook("BOK00101.TXT");               // Kind Edward, Part 2
-            //LoadBook("BOK00008.TXT");               // The Pig Children
-            LayoutPage(currentPage);
+            dfUnity.TextProvider.OpenBook("BOK00043.TXT");      // The Real Barenziah
+            //dfUnity.TextProvider.OpenBook("BOK00101.TXT");      // Kind Edward, Part 2
+            //dfUnity.TextProvider.OpenBook("BOK00008.TXT");      // The Pig Children
+            LayoutPage();
         }
 
         protected override void ProcessMessageQueue()
@@ -69,12 +66,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (message)
             {
                 case DaggerfallUIMessages.dfuiBookReaderPreviousPage:
-                    if (--currentPage < 0) currentPage = 0;
-                    LayoutPage(currentPage);
+                    if (dfUnity.TextProvider.MovePreviousPage())
+                        LayoutPage();
                     break;
                 case DaggerfallUIMessages.dfuiBookReaderNextPage:
-                    if (++currentPage >= bookFile.PageCount) currentPage = bookFile.PageCount - 1;
-                    LayoutPage(currentPage);
+                    if (dfUnity.TextProvider.MoveNextPage())
+                        LayoutPage();
                     break;
                 default:
                     return;
@@ -84,15 +81,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PopMessage();
         }
 
-        void LoadBook(string name)
-        {
-            bookFile.OpenBook(dfUnity.Arena2Path, name);
-        }
-
-        void LayoutPage(int page)
+        void LayoutPage()
         {
             ClearPage();
-            TextFile.Token[] tokens = bookFile.GetPageTokens(page);
+            TextFile.Token[] tokens = dfUnity.TextProvider.PageTokens;
 
             int x = 10, y = 20;
             HorizontalAlignment horizontalAlignment = HorizontalAlignment.None;
@@ -138,13 +130,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             pageLabels.Clear();
         }
 
-        #region Private Methods
-
         void ChangeFont(int index)
         {
             currentFont = DaggerfallUI.Instance.GetFont(index);
         }
-
-        #endregion
     }
 }

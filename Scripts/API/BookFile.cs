@@ -102,7 +102,9 @@ namespace DaggerfallConnect.Arena2
             if (page < 0 || page >= PageCount)
                 throw new IndexOutOfRangeException("BookFile: Invalid page index.");
 
-            return ReadTokens((int)header.PageOffsets[page]);
+            byte[] buffer = bookFile.GetBytes();
+
+            return TextFile.ReadTokens(ref buffer, (int)header.PageOffsets[page], TextFile.Formatting.EndOfPage);
         }
 
         #endregion
@@ -128,72 +130,6 @@ namespace DaggerfallConnect.Arena2
             {
                 header.PageOffsets[i] = reader.ReadUInt32();
             }
-        }
-
-        TextFile.Token[] ReadTokens(int offset, byte terminatorByte = 0xf6)
-        {
-            List<TextFile.Token> tokens = new List<TextFile.Token>();
-
-            byte[] buffer = bookFile.GetBytes();
-            int position = offset;
-            while (position < buffer.Length)
-            {
-                byte nextByte = buffer[position];
-                if (nextByte == terminatorByte)
-                    break;
-
-                if (nextByte >= (byte)TextFile.Formatting.FirstCharacter && nextByte <= (byte)TextFile.Formatting.LastCharacter)
-                    tokens.Add(ReadTextToken(ref buffer, position, out position));
-                else
-                    tokens.Add(ReadFormattingToken(ref buffer, position, out position));
-            }
-
-            return tokens.ToArray();
-        }
-
-        TextFile.Token ReadTextToken(ref byte[] buffer, int position, out int endPosition)
-        {
-            // Find length of text data
-            int start = position;
-            int count = 0;
-            while (position < buffer.Length)
-            {
-                byte nextByte = buffer[position++];
-                if (nextByte >= (byte)TextFile.Formatting.FirstCharacter && nextByte <= (byte)TextFile.Formatting.LastCharacter)
-                    count++;
-                else
-                    break;
-            }
-
-            // Create token
-            TextFile.Token token = new TextFile.Token();
-            token.formatting = TextFile.Formatting.Text;
-            token.text = Encoding.UTF8.GetString(buffer, start, count);
-            endPosition = start + count;
-
-            return token;
-        }
-
-        TextFile.Token ReadFormattingToken(ref byte[] buffer, int position, out int endPosition)
-        {
-            TextFile.Formatting formatting = (TextFile.Formatting)buffer[position++];
-
-            int x = 0, y = 0;
-            TextFile.Token token = new TextFile.Token();
-            token.formatting = formatting;
-            switch (token.formatting)
-            {
-                case TextFile.Formatting.NewLineOffset:
-                    break;
-                case TextFile.Formatting.FontPrefix:
-                    x = buffer[position++];
-                    break;
-            }
-            token.x = x;
-            token.y = y;
-            endPosition = position;
-
-            return token;
         }
 
         #endregion

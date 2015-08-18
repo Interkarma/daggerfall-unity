@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game
     {
         const string popupBorderRCIFile = "SPOP.RCI";
         const string splashVideo = "ANIM0001.VID";
-        const string uiBootstrapMessage = DaggerfallUIMessages.dfuiStartNewGame;
+        const string uiBootstrapMessage = DaggerfallUIMessages.dfuiOpenBookReaderWindow;
 
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
         public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
