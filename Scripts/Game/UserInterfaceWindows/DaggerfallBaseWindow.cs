@@ -106,62 +106,72 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Setup Helpers
 
-        protected Button AddButton(Vector2 position, Vector2 size)
+        protected Button AddButton(Vector2 position, Vector2 size, Panel panel = null)
         {
+            if (panel == null)
+                panel = NativePanel;
+
             Button button = new Button();
             button.Position = position;
             button.Size = size;
-            NativePanel.Components.Add(button);
+            panel.Components.Add(button);
 
             return button;
         }
 
-        protected Button AddButton(Rect rect)
+        protected Button AddButton(Rect rect, Panel panel = null)
         {
             return AddButton(
                 new Vector2(rect.x, rect.y),
-                new Vector2(rect.width, rect.height));
+                new Vector2(rect.width, rect.height),
+                panel);
         }
 
-        protected Button AddButton(Vector2 position, Vector2 size, string clickMessage)
+        protected Button AddButton(Vector2 position, Vector2 size, string clickMessage, Panel panel = null)
         {
-            Button button = AddButton(position, size);
+            Button button = AddButton(position, size, panel);
             button.ClickMessage = clickMessage;
             
             return button;
         }
 
-        protected Button AddButton(Vector2 position, Vector2 size, string clickMessage, string doubleClickMessage)
+        protected Button AddButton(Vector2 position, Vector2 size, string clickMessage, string doubleClickMessage, Panel panel = null)
         {
-            Button button = AddButton(position, size);
+            Button button = AddButton(position, size, panel);
             button.ClickMessage = clickMessage;
             button.DoubleClickMessage = doubleClickMessage;
 
             return button;
         }
 
-        protected TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, int glyphSpacing = 1)
+        protected TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, int glyphSpacing = 1, Panel panel = null)
         {
+            if (panel == null)
+                panel = NativePanel;
+
             TextLabel textLabel = new TextLabel();
             textLabel.Scaling = Scaling.None;
             textLabel.Font = font;
             textLabel.Position = position;
-            textLabel.FilterMode = dfUnity.MaterialReader.MainFilterMode;
+            textLabel.FilterMode = uiManager.FilterMode;
             textLabel.GlyphSpacing = glyphSpacing;
             textLabel.Text = text;
-            NativePanel.Components.Add(textLabel);
+            panel.Components.Add(textLabel);
 
             return textLabel;
         }
 
-        protected Outline AddOutline(Rect rect, Color color)
+        protected Outline AddOutline(Rect rect, Color color, Panel panel = null)
         {
+            if (panel == null)
+                panel = NativePanel;
+
             Outline outline = new Outline();
             outline.Scaling = Scaling.None;
             outline.Color = color;
             outline.Position = new Vector2(rect.x, rect.y);
             outline.Size = new Vector2(rect.width, rect.height);
-            NativePanel.Components.Add(outline);
+            panel.Components.Add(outline);
 
             return outline;
         }
@@ -175,7 +185,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
             imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
             Texture2D texture = GetTextureFromImg(imgFile, format);
-            texture.filterMode = dfUnity.MaterialReader.MainFilterMode;
+            texture.filterMode = uiManager.FilterMode;
 
             return texture;
         }
@@ -196,6 +206,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
             texture.SetPixels32(img.GetColor32(bitmap, 0));
             texture.Apply(false, true);
+            texture.filterMode = uiManager.FilterMode;
+
+            return texture;
+        }
+
+        protected Texture2D GetTextureFromCifRci(string name, int record, int frame = 0, TextureFormat format = TextureFormat.ARGB32)
+        {
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return null;
+
+            CifRciFile cifRciFile = new CifRciFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
+            cifRciFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cifRciFile.PaletteName));
+            DFBitmap bitmap = cifRciFile.GetDFBitmap(record, frame);
+            Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
+            texture.SetPixels32(cifRciFile.GetColor32(bitmap, 0));
+            texture.Apply(false, true);
+            texture.filterMode = uiManager.FilterMode;
 
             return texture;
         }
@@ -210,7 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
             texture.SetPixels32(image.GetColor32(bitmap, 0));
             texture.Apply(false, true);
-            texture.filterMode = dfUnity.MaterialReader.MainFilterMode;
+            texture.filterMode = uiManager.FilterMode;
 
             return texture;
         }

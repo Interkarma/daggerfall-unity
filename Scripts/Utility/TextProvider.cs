@@ -29,6 +29,13 @@ namespace DaggerfallWorkshop.Utility
     public interface ITextProvider
     {
         /// <summary>
+        /// Gets tokens from a TEXT.RSC record.
+        /// </summary>
+        /// <param name="id">Text resource ID.</param>
+        /// <returns>Text resource tokens.</returns>
+        TextFile.Token[] GetRSCTokens(int id);
+        
+        /// <summary>
         /// Opens a new book.
         /// </summary>
         /// <param name="name">Filename of book.</param>
@@ -74,7 +81,7 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public abstract class TextProvider : ITextProvider
     {
-        TextFile textFile = new TextFile();
+        TextFile rscFile = new TextFile();
         BookFile bookFile = new BookFile();
         int currentPage = -1;
         bool isBookOpen = false;
@@ -150,5 +157,26 @@ namespace DaggerfallWorkshop.Utility
 
             currentPage = index;
         }
+
+        public virtual TextFile.Token[] GetRSCTokens(int id)
+        {
+            if (!rscFile.IsLoaded)
+                OpenTextRSCFile();
+
+            byte[] buffer = rscFile.GetBytesById(id);
+            if (buffer == null)
+                return null;
+
+            return TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
+        }
+
+        #region Protected Methods
+
+        protected void OpenTextRSCFile()
+        {
+            rscFile.Load(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
+        }
+
+        #endregion
     }
 }

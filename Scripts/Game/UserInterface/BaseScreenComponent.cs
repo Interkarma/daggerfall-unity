@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color backgroundColor = Color.clear;
         Texture2D backgroundColorTexture;
         protected Texture2D backgroundTexture;
-        protected TextureLayout backgroundTextureLayout = TextureLayout.Tile;
+        protected TextureLayout backgroundTextureLayout = TextureLayout.StretchToFill;
 
         bool mouseOverComponent = false;
 
@@ -57,10 +57,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public delegate void OnMouseLeaveHandler();
         public event OnMouseLeaveHandler OnMouseLeave;
 
-        public delegate void OnMouseClickHandler(Vector2 position);
+        public delegate void OnMouseClickHandler(BaseScreenComponent sender, Vector2 position);
         public event OnMouseClickHandler OnMouseClick;
 
-        public delegate void OnMouseDoubleClickHandler(Vector2 position);
+        public delegate void OnMouseDoubleClickHandler(BaseScreenComponent sender, Vector2 position);
         public event OnMouseDoubleClickHandler OnMouseDoubleClick;
 
         #endregion
@@ -302,7 +302,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Single click event
                 if (OnMouseClick != null)
-                    OnMouseClick(clickPosition);
+                    OnMouseClick(this, clickPosition);
 
                 // Double-click event
                 if (firstClickTime == 0)
@@ -316,7 +316,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     {
                         firstClickTime = 0;
                         if (OnMouseDoubleClick != null)
-                            OnMouseDoubleClick(clickPosition);
+                            OnMouseDoubleClick(this, clickPosition);
                     }
                     else
                     {
@@ -479,8 +479,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Other panels are scaled within parent area
                 rectangle.x = (int)parentRect.xMin;
                 rectangle.y = (int)parentRect.yMin;
-                rectangle.width = (int)size.x;
-                rectangle.height = (int)size.y;
+                rectangle.width = (int)size.x + LeftMargin + RightMargin;
+                rectangle.height = (int)size.y + TopMargin + BottomMargin;
             }
 
             // Apply scaling
@@ -509,11 +509,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Apply horizontal alignment
                 switch (horizontalAlignment)
                 {
+                    case HorizontalAlignment.None:
+                        rectangle.x = parentRect.xMin + (Parent.LeftMargin + position.x) * parentScale.x;
+                        break;
                     case HorizontalAlignment.Left:
-                        rectangle.x = parentRect.xMin + Parent.LeftMargin;
+                        rectangle.x = parentRect.xMin + (Parent.LeftMargin * parentScale.x);
                         break;
                     case HorizontalAlignment.Right:
-                        rectangle.x = parentRect.xMax - Parent.RightMargin - rectangle.width;
+                        rectangle.x = parentRect.xMax - (Parent.RightMargin * parentScale.x) - rectangle.width;
                         break;
                     case HorizontalAlignment.Center:
                         rectangle.x = parentRect.xMin + parentRect.width / 2 - rectangle.width / 2;
@@ -523,11 +526,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Set vertical position based on alignment
                 switch (verticalAlignment)
                 {
+                    case VerticalAlignment.None:
+                        rectangle.y = parentRect.yMin + (Parent.TopMargin + position.y) * parentScale.y;
+                        break;
                     case VerticalAlignment.Top:
-                        rectangle.y = parentRect.yMin + Parent.TopMargin;
+                        rectangle.y = parentRect.yMin + (Parent.TopMargin * parentScale.y);
                         break;
                     case VerticalAlignment.Bottom:
-                        rectangle.y = parentRect.yMax - Parent.BottomMargin - rectangle.height;
+                        rectangle.y = parentRect.yMax - (Parent.BottomMargin * parentScale.y) - rectangle.height;
                         break;
                     case VerticalAlignment.Middle:
                         rectangle.y = parentRect.yMin + parentRect.height / 2 - rectangle.height / 2;

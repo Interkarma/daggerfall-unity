@@ -21,6 +21,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         event EventHandler OnWindowChange;
         UserInterfaceWindow TopWindow { get; }
+        FilterMode FilterMode { get; set; }
         void PopWindow();
         void PushWindow(UserInterfaceWindow window);
         bool ContainsWindow(UserInterfaceWindow window);
@@ -41,6 +42,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Stack<string> messages = new Stack<string>();
         Stack<UserInterfaceWindow> windows = new Stack<UserInterfaceWindow>();
+        FilterMode filterMode = FilterMode.Point;
         public event EventHandler OnWindowChange;
 
         /// <summary>
@@ -56,6 +58,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public UserInterfaceWindow TopWindow
         {
             get { return (windows.Count > 0) ? windows.Peek() : null; }
+        }
+
+        public FilterMode FilterMode
+        {
+            get { return filterMode; }
+            set { filterMode = value; }
         }
 
         /// <summary>

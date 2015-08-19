@@ -47,10 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             if (Input.GetKeyDown(exitKey))
-            {
-                OnClose();
-                uiManager.PostMessage(WindowMessages.wmCloseWindow);
-            }
+                CloseWindow();
         }
 
         public override void Draw()
@@ -62,6 +59,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             base.Draw();
+        }
+
+        public void CloseWindow()
+        {
+            OnClose();
+            uiManager.PostMessage(WindowMessages.wmCloseWindow);
         }
 
         #region Event Handlers

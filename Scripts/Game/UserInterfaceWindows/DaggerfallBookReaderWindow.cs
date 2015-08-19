@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add buttons
             AddButton(new Vector2(181, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderPreviousPage);
             AddButton(new Vector2(208, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderNextPage);
-            //AddButton(new Vector2(277, 187), new Vector2(32, 10), WindowMessages.wmCloseWindow);
+            //CreateButton(new Vector2(277, 187), new Vector2(32, 10), WindowMessages.wmCloseWindow);
 
             // Test book
             dfUnity.TextProvider.OpenBook("BOK00043.TXT");      // The Real Barenziah
@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         pageLabels.Add(label);
                         break;
                     default:
-                        Debug.Log("Unknown formatting token: " + (int)token.formatting);
+                        Debug.Log("DaggerfallBookReaderWindow: Unknown formatting token: " + (int)token.formatting);
                         break;
                 }
             }

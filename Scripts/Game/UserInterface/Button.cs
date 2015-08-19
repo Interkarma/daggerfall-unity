@@ -65,7 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             label.Draw();
         }
 
-        void ClickHandler(Vector2 position)
+        void ClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             if (!string.IsNullOrEmpty(ClickMessage))
             {
@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        void DoubleClickHandler(Vector2 position)
+        void DoubleClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             if (!string.IsNullOrEmpty(DoubleClickMessage))
             {

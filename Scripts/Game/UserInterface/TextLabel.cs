@@ -110,28 +110,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
             GUI.color = guiColor;
         }
 
-        #region Private Methods
+        #region Protected Methods
 
-        void SetGlyphSpacing(int value)
+        protected virtual void SetGlyphSpacing(int value)
         {
             this.glyphSpacing = value;
             CreateLabelTexture();
         }
 
-        void SetText(string value)
+        protected virtual void SetText(string value)
         {
             this.text = value;
             CreateLabelTexture();
         }
 
-        void SetFilterMode(FilterMode value)
+        protected virtual void SetFilterMode(FilterMode value)
         {
             filterMode = value;
             if (labelTexture)
                 labelTexture.filterMode = filterMode;
         }
 
-        void CreateLabelTexture()
+        protected virtual void CreateLabelTexture()
         {
             if (font == null)
                 font = DaggerfallUI.Instance.DefaultFont;
@@ -170,7 +170,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             this.Size = new Vector2(totalWidth, totalHeight);
         }
 
-        Texture2D CreateLabelTexture(int width, int height)
+        protected virtual Texture2D CreateLabelTexture(int width, int height)
         {
             // Create target texture and init to clear
             Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);

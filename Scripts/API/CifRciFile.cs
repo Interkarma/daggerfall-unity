@@ -233,17 +233,17 @@ namespace DaggerfallConnect.Arena2
         /// <param name="record">Index of record.</param>
         /// <param name="frame">Index of frame.</param>
         /// <returns>DFBitmap object.</returns>
-        public override DFBitmap GetDFBitmap(int fecord, int frame)
+        public override DFBitmap GetDFBitmap(int record, int frame)
         {
             // Validate
-            if (fecord < 0 || fecord >= RecordCount || frame >= GetFrameCount(fecord))
+            if (record < 0 || record >= RecordCount || frame >= GetFrameCount(record))
                 return new DFBitmap();
 
             // Read raw data from file
-            if (!ReadImageData(fecord, frame))
+            if (!ReadImageData(record, frame))
                 return new DFBitmap();
 
-            return records[fecord].Frames[frame];
+            return records[record].Frames[frame];
         }
 
         #endregion

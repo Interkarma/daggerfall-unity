@@ -140,7 +140,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Get save texture
                 Texture2D saveTexture = TextureReader.CreateFromAPIImage(saveGames.SaveImage);
-                saveTexture.filterMode = DaggerfallUnity.Instance.MaterialReader.MainFilterMode;
+                saveTexture.filterMode = uiManager.FilterMode;
 
                 // Setup image button
                 saveImageButtons[i] = AddButton(saveImageButtonDims[i]);

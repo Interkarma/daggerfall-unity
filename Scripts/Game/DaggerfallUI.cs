@@ -30,11 +30,13 @@ namespace DaggerfallWorkshop.Game
     {
         const string popupBorderRCIFile = "SPOP.RCI";
         const string splashVideo = "ANIM0001.VID";
-        const string uiBootstrapMessage = DaggerfallUIMessages.dfuiOpenBookReaderWindow;
+        const string uiBootstrapMessage = DaggerfallUIMessages.dfuiInitGame;
 
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
         public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
+
+        public FilterMode filterMode = FilterMode.Point;
 
         DaggerfallUnity dfUnity;
         AudioSource audioSource;
@@ -72,6 +74,7 @@ namespace DaggerfallWorkshop.Game
             audioSource = GetComponent<AudioSource>();
             audioSource.spatialBlend = 0;
 
+            uiManager.FilterMode = filterMode;
             dfStartWindow = new DaggerfallStartWindow(uiManager);
             dfLoadGameWindow = new DaggerfallLoadSavedGameWindow(uiManager);
             dfBookReaderWindow = new DaggerfallBookReaderWindow(uiManager);
@@ -166,18 +169,24 @@ namespace DaggerfallWorkshop.Game
 
         public void SetDaggerfallPopupStyle(Panel panel)
         {
-            panel.BackgroundTexture = GetDaggerfallPopupSlice(Slices.Fill);
-            panel.BackgroundTextureLayout = TextureLayout.Tile;
+            panel.BackgroundTexture = null;
+            panel.BackgroundColor = Color.clear;
+            //panel.BackgroundTexture = GetDaggerfallPopupSlice(Slices.Fill);
+            //panel.BackgroundTextureLayout = TextureLayout.Tile;
 
             panel.SetBorderTextures(
                 GetDaggerfallPopupSlice(Slices.TopLeft),
                 GetDaggerfallPopupSlice(Slices.Top),
                 GetDaggerfallPopupSlice(Slices.TopRight),
                 GetDaggerfallPopupSlice(Slices.Left),
+                GetDaggerfallPopupSlice(Slices.Fill),
                 GetDaggerfallPopupSlice(Slices.Right),
                 GetDaggerfallPopupSlice(Slices.BottomLeft),
                 GetDaggerfallPopupSlice(Slices.Bottom),
-                GetDaggerfallPopupSlice(Slices.BottomRight));
+                GetDaggerfallPopupSlice(Slices.BottomRight),
+                filterMode);
+
+            panel.SetMargins(Margins.All, 16);
         }
 
         #region Private Methods
@@ -231,7 +240,7 @@ namespace DaggerfallWorkshop.Game
                 daggerfallPopupTextures = new Texture2D[cif.RecordCount];
                 for (int i = 0; i < cif.RecordCount; i++)
                 {
-                    daggerfallPopupTextures[i] = TextureReader.CreateFromAPIImage(cif, i);
+                    daggerfallPopupTextures[i] = TextureReader.CreateFromAPIImage(cif, i, 0, 0);
                 }
             }
         }

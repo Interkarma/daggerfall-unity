@@ -13,9 +13,12 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Races;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -31,6 +34,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel promptLabel;
         DFBitmap racePickerBitmap;
 
+        Dictionary<int, RaceTemplate> raceDict = new Dictionary<int, RaceTemplate>();
+
         public DaggerfallRaceSelectWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
@@ -42,6 +47,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             nativeTexture = GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
                 throw new Exception("RaceSelectWindow: Could not load native texture.");
+
+            // Populates race dictionary
+            PopulateRaceDict();
 
             // Load picker colours
             racePickerBitmap = GetImgBitmap(racePickerImgName);
@@ -69,60 +77,71 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 uiManager.PostMessage(WindowMessages.wmCloseWindow);
         }
 
-        void ClickHandler(Vector2 position)
+        void ClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             int offset = (int)position.y * racePickerBitmap.Width + (int)position.x;
             if (offset < 0 || offset >= racePickerBitmap.Data.Length)
                 return;
 
-            Races selectedRace = (Races)racePickerBitmap.Data[offset];
-
-            string selectedText;
-            switch (selectedRace)
+            int id = racePickerBitmap.Data[offset];
+            if (raceDict.ContainsKey(id))
             {
-                default:
-                case Races.None:
-                    selectedText = HardStrings.pleaseSelectYourHomeProvince;
-                    break;
-                case Races.Breton:
-                    selectedText = "High Rock (Breton)";
-                    break;
-                case Races.Redguard:
-                    selectedText = "Hammerfell (Redguard)";
-                    break;
-                case Races.Nord:
-                    selectedText = "Skyrim (Nord)";
-                    break;
-                case Races.DarkElf:
-                    selectedText = "Morrowind (Dark Elf)";
-                    break;
-                case Races.HighElf:
-                    selectedText = "Sumurset Isle (High Elf)";
-                    break;
-                case Races.WoodElf:
-                    selectedText = "Valenwood (Wood Elf)";
-                    break;
-                case Races.Khajiit:
-                    selectedText = "Elsweyr (Khajiit)";
-                    break;
-                case Races.Argonian:
-                    selectedText = "Black Marsh (Argonian)";
-                    break;
-            }
-            promptLabel.Text = selectedText;
+                RaceTemplate raceTemplate = raceDict[id];
+                TextFile.Token[] raceDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(raceTemplate.DescriptionID);
 
-            if (selectedRace > 0)
-            {
                 promptLabel.Enabled = false;
-                DaggerfallPopupWindow popup = new DaggerfallPopupWindow(uiManager, this);
-                popup.OnClose += ConfirmRacePopup_OnClose;
-                uiManager.PushWindow(popup);
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(raceDescription);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.OnButtonClick += ConfirmRacePopup_OnButtonClick;
+                messageBox.OnClose += ConfirmRacePopup_OnClose;
+                uiManager.PushWindow(messageBox);
+                AudioClip clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip((uint)raceTemplate.ClipID);
+                DaggerfallUI.Instance.AudioSource.PlayOneShot(clip);
             }
+        }
+
+        void ConfirmRacePopup_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+                Debug.Log("Race confirmed.");
+            else if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
+                sender.CloseWindow();
         }
 
         void ConfirmRacePopup_OnClose()
         {
             promptLabel.Enabled = true;
         }
+
+        #region Private Method
+
+        // Manually populates race dictionary.
+        // This is only temporary until loading race definitions from file is implemented.
+        void PopulateRaceDict()
+        {
+            // Instantiate race templates
+            Breton breton = new Breton();
+            Redguard redguard = new Redguard();
+            Nord nord = new Nord();
+            DarkElf darkElf = new DarkElf();
+            HighElf highElf = new HighElf();
+            WoodElf woodElf = new WoodElf();
+            Khajiit khajiit = new Khajiit();
+            Argonian argonian = new Argonian();
+
+            // Populate dictionary
+            raceDict.Add(breton.ID, breton);
+            raceDict.Add(redguard.ID, redguard);
+            raceDict.Add(nord.ID, nord);
+            raceDict.Add(darkElf.ID, darkElf);
+            raceDict.Add(highElf.ID, highElf);
+            raceDict.Add(woodElf.ID, woodElf);
+            raceDict.Add(khajiit.ID, khajiit);
+            raceDict.Add(argonian.ID, argonian);
+        }
+
+        #endregion
     }
 }

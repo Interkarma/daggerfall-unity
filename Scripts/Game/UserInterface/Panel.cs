@@ -22,8 +22,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class Panel : BaseScreenComponent
     {
         bool bordersSet = false;
-        Texture2D topBorder, bottomBorder, leftBorder, rightBorder;
-        Texture2D tlBorder, trBorder, blBorder, brBorder;
+        Texture2D fillBordersTexture;
+        Texture2D topBorderTexture, bottomBorderTexture;
+        Texture2D leftBorderTexture, rightBorderTexture;
+        Texture2D topLeftBorderTexture, topRightBorderTexture;
+        Texture2D bottomLeftBorderTexture, bottomRightBorderTexture;
+
+        Rect lastDrawRect;
+        Rect fillBordersRect = new Rect();
+        Rect topLeftBorderRect = new Rect();
+        Rect topRightBorderRect = new Rect();
+        Rect bottomLeftBorderRect = new Rect();
+        Rect bottomRightBorderRect = new Rect();
+        Rect topBorderRect = new Rect();
+        Rect leftBorderRect = new Rect();
+        Rect rightBorderRect = new Rect();
+        Rect bottomBorderRect = new Rect();
 
         ScreenComponentCollection components;
         public ScreenComponentCollection Components
@@ -85,20 +99,41 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Texture2D top,
             Texture2D topRight,
             Texture2D left,
+            Texture2D fill,
             Texture2D right,
             Texture2D bottomLeft,
             Texture2D bottom,
-            Texture2D bottomRight)
+            Texture2D bottomRight,
+            FilterMode filterMode)
         {
             // Save texture references
-            tlBorder = topLeft;
-            topBorder = top;
-            trBorder = topRight;
-            leftBorder = left;
-            rightBorder = right;
-            blBorder = bottomLeft;
-            bottomBorder = bottom;
-            brBorder = bottomRight;
+            topLeftBorderTexture = topLeft;
+            topBorderTexture = top;
+            topRightBorderTexture = topRight;
+            leftBorderTexture = left;
+            fillBordersTexture = fill;
+            rightBorderTexture = right;
+            bottomLeftBorderTexture = bottomLeft;
+            bottomBorderTexture = bottom;
+            bottomRightBorderTexture = bottomRight;
+
+            // Set texture filtering
+            topLeftBorderTexture.filterMode = filterMode;
+            topBorderTexture.filterMode = filterMode;
+            topRightBorderTexture.filterMode = filterMode;
+            leftBorderTexture.filterMode = filterMode;
+            fillBordersTexture.filterMode = filterMode;
+            rightBorderTexture.filterMode = filterMode;
+            bottomLeftBorderTexture.filterMode = filterMode;
+            bottomBorderTexture.filterMode = filterMode;
+            bottomRightBorderTexture.filterMode = filterMode;
+
+            // Set texture wrap modes
+            topBorderTexture.wrapMode = TextureWrapMode.Repeat;
+            bottomBorderTexture.wrapMode = TextureWrapMode.Repeat;
+            leftBorderTexture.wrapMode = TextureWrapMode.Repeat;
+            rightBorderTexture.wrapMode = TextureWrapMode.Repeat;
+            fillBordersTexture.wrapMode = TextureWrapMode.Repeat;
 
             // Set flags
             bordersSet = true;
@@ -110,73 +145,86 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Draws border using textures provided.
         /// </summary>
-        private void DrawBorder()
+        void DrawBorder()
         {
-            // Set linear wrap
-            //spriteBatch.GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-
-            // Get draw area
             Rect drawRect = Rectangle;
+            if (drawRect != lastDrawRect)
+            {
+                UpdateBorderDrawRects(drawRect);
+                lastDrawRect = drawRect;
+            }
 
-            // Top-left
-            Vector2 tl;
-            tl.x = drawRect.x;
-            tl.y = drawRect.y;
-
-            // Top-right
-            Vector2 tr;
-            tr.x = drawRect.xMax - trBorder.width;
-            tr.y = drawRect.y;
-
-            // Bottom-left
-            Vector2 bl;
-            bl.x = drawRect.x;
-            bl.y = drawRect.yMin - brBorder.height;
-
-            // Bottom-right
-            Vector2 br;
-            br.x = drawRect.xMax - brBorder.width;
-            br.y = drawRect.yMax - brBorder.height;
-
-            // Top
-            Rect top = new Rect();
-            top.x = drawRect.x + tlBorder.width;
-            top.y = drawRect.y;
-            top.width = drawRect.width - tlBorder.width - trBorder.width;
-            top.height = topBorder.height;
-
-            // Left
-            Rect left = new Rect();
-            left.x = drawRect.x;
-            left.y = drawRect.y + tlBorder.height;
-            left.width = leftBorder.width;
-            left.height = drawRect.height - tlBorder.height - blBorder.height;
-
-            // Right
-            Rect right = new Rect();
-            right.x = drawRect.xMax - rightBorder.width;
-            right.y = drawRect.y + trBorder.height;
-            right.width = rightBorder.width;
-            right.height = drawRect.height - trBorder.height - brBorder.height;
-
-            // Bottom
-            Rect bottom = new Rect();
-            bottom.x = drawRect.x + blBorder.width;
-            bottom.y = drawRect.yMax - bottomBorder.height;
-            bottom.width = drawRect.width - blBorder.width - brBorder.width;
-            bottom.height = bottomBorder.height;
+            // Draw fill
+            GUI.DrawTextureWithTexCoords(fillBordersRect, fillBordersTexture, new Rect(0, 0, fillBordersRect.width / fillBordersTexture.width, fillBordersRect.height / fillBordersTexture.height));
 
             // Draw corners
-            //spriteBatch.Draw(tlBorder, tl, Color.White);
-            //spriteBatch.Draw(trBorder, tr, Color.White);
-            //spriteBatch.Draw(blBorder, bl, Color.White);
-            //spriteBatch.Draw(brBorder, br, Color.White);
+            GUI.DrawTexture(topLeftBorderRect, topLeftBorderTexture);
+            GUI.DrawTexture(topRightBorderRect, topRightBorderTexture);
+            GUI.DrawTexture(bottomLeftBorderRect, bottomLeftBorderTexture);
+            GUI.DrawTexture(bottomRightBorderRect, bottomRightBorderTexture);
 
             // Draw edges
-            //spriteBatch.Draw(topBorder, top, top, Color.White);
-            //spriteBatch.Draw(leftBorder, left, left, Color.White);
-            //spriteBatch.Draw(rightBorder, right, right, Color.White);
-            //spriteBatch.Draw(bottomBorder, bottom, bottom, Color.White);
+            GUI.DrawTextureWithTexCoords(topBorderRect, topBorderTexture, new Rect(0, 0, (topBorderRect.width / LocalScale.x) / topBorderTexture.width, 1));
+            GUI.DrawTextureWithTexCoords(leftBorderRect, leftBorderTexture, new Rect(0, 0, 1, (leftBorderRect.height / LocalScale.y) / leftBorderTexture.height));
+            GUI.DrawTextureWithTexCoords(rightBorderRect, rightBorderTexture, new Rect(0, 0, 1, (rightBorderRect.height / LocalScale.y) / rightBorderTexture.height));
+            GUI.DrawTextureWithTexCoords(bottomBorderRect, bottomBorderTexture, new Rect(0, 0, (bottomBorderRect.width / LocalScale.y) / bottomBorderTexture.width, 1));
+        }
+
+        void UpdateBorderDrawRects(Rect drawRect)
+        {
+            // Top-left
+            topLeftBorderRect.x = drawRect.x;
+            topLeftBorderRect.y = drawRect.y;
+            topLeftBorderRect.width = topLeftBorderTexture.width * LocalScale.x;
+            topLeftBorderRect.height = topLeftBorderTexture.height * LocalScale.y;
+
+            // Top-right
+            topRightBorderRect.x = drawRect.xMax - topRightBorderTexture.width * LocalScale.x;
+            topRightBorderRect.y = drawRect.y;
+            topRightBorderRect.width = topRightBorderTexture.width * LocalScale.x;
+            topRightBorderRect.height = topRightBorderTexture.height * LocalScale.y;
+
+            // Bottom-left
+            bottomLeftBorderRect.x = drawRect.x;
+            bottomLeftBorderRect.y = drawRect.yMax - bottomLeftBorderTexture.height * LocalScale.y;
+            bottomLeftBorderRect.width = bottomLeftBorderTexture.width * LocalScale.x;
+            bottomLeftBorderRect.height = bottomLeftBorderTexture.height * LocalScale.y;
+
+            // Bottom-right
+            bottomRightBorderRect.x = drawRect.xMax - bottomRightBorderTexture.width * LocalScale.x;
+            bottomRightBorderRect.y = drawRect.yMax - bottomRightBorderTexture.height * LocalScale.y;
+            bottomRightBorderRect.width = bottomRightBorderTexture.width * LocalScale.x;
+            bottomRightBorderRect.height = bottomRightBorderTexture.height * LocalScale.y;
+
+            // Top
+            topBorderRect.x = drawRect.x + topLeftBorderTexture.width * LocalScale.x;
+            topBorderRect.y = drawRect.y;
+            topBorderRect.width = drawRect.width - topLeftBorderTexture.width * LocalScale.x - topRightBorderTexture.width * LocalScale.x;
+            topBorderRect.height = topBorderTexture.height * LocalScale.y;
+
+            // Left
+            leftBorderRect.x = drawRect.x;
+            leftBorderRect.y = drawRect.y + topLeftBorderTexture.height * LocalScale.y;
+            leftBorderRect.width = leftBorderTexture.width * LocalScale.x;
+            leftBorderRect.height = drawRect.height - topLeftBorderTexture.height * LocalScale.y - bottomLeftBorderTexture.height * LocalScale.y;
+
+            // Right
+            rightBorderRect.x = drawRect.xMax - rightBorderTexture.width * LocalScale.x;
+            rightBorderRect.y = drawRect.y + topRightBorderTexture.height * LocalScale.y;
+            rightBorderRect.width = rightBorderTexture.width * LocalScale.x;
+            rightBorderRect.height = drawRect.height - topRightBorderTexture.height * LocalScale.y - bottomRightBorderTexture.height * LocalScale.y;
+
+            // Bottom
+            bottomBorderRect.x = drawRect.x + bottomLeftBorderTexture.width * LocalScale.x;
+            bottomBorderRect.y = drawRect.yMax - bottomBorderTexture.height * LocalScale.y;
+            bottomBorderRect.width = drawRect.width - bottomLeftBorderTexture.width * LocalScale.x - bottomRightBorderTexture.width * LocalScale.x;
+            bottomBorderRect.height = bottomBorderTexture.height * LocalScale.y;
+
+            // Fill
+            fillBordersRect.xMin = drawRect.xMin + leftBorderTexture.width * LocalScale.x;
+            fillBordersRect.yMin = drawRect.yMin + topBorderTexture.height * LocalScale.y;
+            fillBordersRect.xMax = drawRect.xMax - rightBorderTexture.width * LocalScale.x;
+            fillBordersRect.yMax = drawRect.yMax - bottomBorderTexture.height * LocalScale.y;
         }
 
         #endregion

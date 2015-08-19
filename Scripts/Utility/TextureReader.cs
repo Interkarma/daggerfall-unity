@@ -75,10 +75,10 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Creates a simple texture from any base API image.
         /// </summary>
-        public static Texture2D CreateFromAPIImage(BaseImageFile image, int record = 0, int frame = 0, bool createMipMaps = false, bool makeNoLongerReadable = true)
+        public static Texture2D CreateFromAPIImage(BaseImageFile image, int record = 0, int frame = 0, int alphaIndex = -1, bool createMipMaps = false, bool makeNoLongerReadable = true)
         {
             DFSize sz;
-            Color32[] colors = image.GetColor32(record, frame, -1, 0, out sz);
+            Color32[] colors = image.GetColor32(record, frame, alphaIndex, 0, out sz);
             Texture2D texture = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, createMipMaps);
             texture.SetPixels32(colors);
             texture.Apply(createMipMaps, makeNoLongerReadable);
