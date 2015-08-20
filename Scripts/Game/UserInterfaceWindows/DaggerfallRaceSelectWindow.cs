@@ -18,7 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Races;
+using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -33,8 +33,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeTexture;
         TextLabel promptLabel;
         DFBitmap racePickerBitmap;
+        RaceTemplate selectedRace;
 
         Dictionary<int, RaceTemplate> raceDict = new Dictionary<int, RaceTemplate>();
+
+        public RaceTemplate SelectedRace
+        {
+            get { return selectedRace; }
+        }
 
         public DaggerfallRaceSelectWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -74,7 +80,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             if (Input.GetKeyDown(exitKey))
-                uiManager.PostMessage(WindowMessages.wmCloseWindow);
+                CloseWindow();
+        }
+
+        public void Clear()
+        {
+            selectedRace = null;
         }
 
         void ClickHandler(BaseScreenComponent sender, Vector2 position)
@@ -86,18 +97,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int id = racePickerBitmap.Data[offset];
             if (raceDict.ContainsKey(id))
             {
-                RaceTemplate raceTemplate = raceDict[id];
-                TextFile.Token[] raceDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(raceTemplate.DescriptionID);
-
                 promptLabel.Enabled = false;
+                selectedRace = raceDict[id];
+
+                TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(selectedRace.DescriptionID);
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                messageBox.SetTextTokens(raceDescription);
+                messageBox.SetTextTokens(textTokens);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.OnButtonClick += ConfirmRacePopup_OnButtonClick;
-                messageBox.OnClose += ConfirmRacePopup_OnClose;
                 uiManager.PushWindow(messageBox);
-                AudioClip clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip((uint)raceTemplate.ClipID);
+
+                AudioClip clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip((uint)selectedRace.ClipID);
                 DaggerfallUI.Instance.AudioSource.PlayOneShot(clip);
             }
         }
@@ -105,14 +116,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ConfirmRacePopup_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
-                Debug.Log("Race confirmed.");
+                CloseWindow();
             else if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
-                sender.CloseWindow();
-        }
-
-        void ConfirmRacePopup_OnClose()
-        {
-            promptLabel.Enabled = true;
+            {
+                selectedRace = null;
+                promptLabel.Enabled = true;
+            }
         }
 
         #region Private Method

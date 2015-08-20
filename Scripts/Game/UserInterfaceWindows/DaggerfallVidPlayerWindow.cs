@@ -45,6 +45,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
         }
 
+        public DaggerfallVidPlayerWindow(IUserInterfaceManager uiManager, string playOnStart)
+            : base(uiManager)
+        {
+            PlayOnStart = playOnStart;
+        }
+
         protected override void Setup()
         {
             // Add video player control
@@ -71,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 video.Playing = false;
                 RaiseOnVideoFinishedHandler();
-                uiManager.PostMessage(WindowMessages.wmCloseWindow);
+                CloseWindow();
             }
         }
 

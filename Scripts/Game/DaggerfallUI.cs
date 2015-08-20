@@ -30,31 +30,21 @@ namespace DaggerfallWorkshop.Game
     {
         const string popupBorderRCIFile = "SPOP.RCI";
         const string splashVideo = "ANIM0001.VID";
-        const string uiBootstrapMessage = DaggerfallUIMessages.dfuiInitGame;
 
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
         public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
         public FilterMode filterMode = FilterMode.Point;
+        public string startupMessage = string.Empty;
 
         DaggerfallUnity dfUnity;
         AudioSource audioSource;
         UserInterfaceManager uiManager = new UserInterfaceManager();
-
-        DaggerfallStartWindow dfStartWindow;
-        DaggerfallLoadSavedGameWindow dfLoadGameWindow;
-        DaggerfallBookReaderWindow dfBookReaderWindow;
-        DaggerfallVidPlayerWindow dfVidPlayerWindow;
-        DaggerfallRaceSelectWindow dfRaceSelectWindow;
+        bool showSplashVideo = false;
 
         Texture2D[] daggerfallPopupTextures;
-
-        DaggerfallFont font1;
-        DaggerfallFont font2;
-        DaggerfallFont font3;
-        DaggerfallFont font4;
-        DaggerfallFont font5;
+        DaggerfallFont[] daggerfallFonts = new DaggerfallFont[4];
 
         public DaggerfallFont Font1 { get { return GetFont(1); } }
         public DaggerfallFont Font2 { get { return GetFont(2); } }
@@ -73,23 +63,22 @@ namespace DaggerfallWorkshop.Game
             dfUnity = DaggerfallUnity.Instance;
             audioSource = GetComponent<AudioSource>();
             audioSource.spatialBlend = 0;
-
             uiManager.FilterMode = filterMode;
-            dfStartWindow = new DaggerfallStartWindow(uiManager);
-            dfLoadGameWindow = new DaggerfallLoadSavedGameWindow(uiManager);
-            dfBookReaderWindow = new DaggerfallBookReaderWindow(uiManager);
-            dfVidPlayerWindow = new DaggerfallVidPlayerWindow(uiManager);
-            dfRaceSelectWindow = new DaggerfallRaceSelectWindow(uiManager);
-            uiManager.PostMessage(uiBootstrapMessage);
 
             SetupSingleton();
+            PostMessage(startupMessage);
         }
 
         void Update()
         {
-            // Process messages in queue
+            // Route messages to top window or handle locally
             if (uiManager.MessageCount > 0)
-                ProcessMessageQueue();
+            {
+                if (uiManager.TopWindow != null)
+                    uiManager.TopWindow.ProcessMessages();
+                else
+                    ProcessMessages();
+            }
 
             // Update top window
             if (uiManager.TopWindow != null)
@@ -107,13 +96,30 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        void ProcessMessages()
+        {
+            switch (uiManager.GetMessage())
+            {
+                case DaggerfallUIMessages.dfuiInitGame:
+                    uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
+                    if (showSplashVideo)
+                        uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, splashVideo));
+                    break;
+                case DaggerfallUIMessages.dfuiOpenCharacterWizard:
+                    uiManager.PushWindow(new StartNewGameWizard(uiManager));
+                    break;
+                case DaggerfallUIMessages.dfuiExitGame:
+                    Application.Quit();
+                    break;
+            }
+        }
+
+        #region Helpers
+
         public static void PostMessage(string message)
         {
-            DaggerfallUI dfui = GameObject.FindObjectOfType<DaggerfallUI>();
-            if (dfui)
-            {
-                dfui.uiManager.PostMessage(message);
-            }
+            if (Instance.uiManager != null)
+                Instance.uiManager.PostMessage(message);
         }
 
         public DaggerfallFont GetFont(int index)
@@ -121,21 +127,21 @@ namespace DaggerfallWorkshop.Game
             switch (index)
             {
                 case 1:
-                    if (font1 == null) font1 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0000);
-                    return font1;
+                    if (daggerfallFonts[0] == null) daggerfallFonts[0] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0000);
+                    return daggerfallFonts[0];
                 case 2:
-                    if (font2 == null) font2 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0001);
-                    return font2;
+                    if (daggerfallFonts[1] == null) daggerfallFonts[1] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0001);
+                    return daggerfallFonts[1];
                 case 3:
-                    if (font3 == null) font3 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0002);
-                    return font3;
+                    if (daggerfallFonts[2] == null) daggerfallFonts[2] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0002);
+                    return daggerfallFonts[2];
                 case 4:
                 default:
-                    if (font4 == null) font4 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0003);
-                    return font4;
+                    if (daggerfallFonts[3] == null) daggerfallFonts[3] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0003);
+                    return daggerfallFonts[3];
                 case 5:
-                    if (font5 == null) font5 = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0004);
-                    return font5;
+                    if (daggerfallFonts[4] == null) daggerfallFonts[4] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0004);
+                    return daggerfallFonts[4];
             }
         }
 
@@ -171,8 +177,6 @@ namespace DaggerfallWorkshop.Game
         {
             panel.BackgroundTexture = null;
             panel.BackgroundColor = Color.clear;
-            //panel.BackgroundTexture = GetDaggerfallPopupSlice(Slices.Fill);
-            //panel.BackgroundTextureLayout = TextureLayout.Tile;
 
             panel.SetBorderTextures(
                 GetDaggerfallPopupSlice(Slices.TopLeft),
@@ -187,46 +191,6 @@ namespace DaggerfallWorkshop.Game
                 filterMode);
 
             panel.SetMargins(Margins.All, 16);
-        }
-
-        #region Private Methods
-
-        void ProcessMessageQueue()
-        {
-            // Process messages
-            string message = uiManager.PeekMessage();
-            switch (message)
-            {
-                case DaggerfallUIMessages.dfuiInitGame:
-                    uiManager.PushWindow(dfStartWindow);
-                    uiManager.PushWindow(dfVidPlayerWindow);
-                    dfVidPlayerWindow.PlayOnStart = splashVideo;
-                    break;
-                case DaggerfallUIMessages.dfuiOpenVIDPlayerWindow:
-                    uiManager.PushWindow(dfVidPlayerWindow);
-                    break;
-                case DaggerfallUIMessages.dfuiOpenBookReaderWindow:
-                    uiManager.PushWindow(dfBookReaderWindow);
-                    break;
-                case DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow:
-                    uiManager.PushWindow(dfLoadGameWindow);
-                    break;
-                case DaggerfallUIMessages.dfuiStartNewGame:
-                case DaggerfallUIMessages.dfuiOpenRaceSelectWindow:
-                    uiManager.PushWindow(dfRaceSelectWindow);
-                    break;
-                case DaggerfallUIMessages.dfuiExitGame:
-                    Application.Quit();
-                    break;
-                case WindowMessages.wmCloseWindow:
-                    uiManager.PopWindow();
-                    break;
-                default:
-                    return;
-            }
-
-            // Message was handled, pop from stack
-            uiManager.PopMessage();
         }
 
         void LoadDaggerfallPopupTextures()

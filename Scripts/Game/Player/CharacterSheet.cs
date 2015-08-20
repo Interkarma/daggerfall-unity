@@ -11,13 +11,14 @@
 
 using System;
 
-namespace DaggerfallWorkshop.Game.Classes
+namespace DaggerfallWorkshop.Game.Player
 {
     /// <summary>
-    /// Every class is defined by a common template.
-    /// This is only used during character creation.
+    /// The character sheet is a document filled in by the character creation process.
     /// </summary>
-    public class ClassTemplate
+    public class CharacterSheet
     {
+        RaceTemplate race;
+        PlayerGender gender;
     }
 }

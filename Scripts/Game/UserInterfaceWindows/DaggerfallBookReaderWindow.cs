@@ -60,26 +60,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             LayoutPage();
         }
 
-        protected override void ProcessMessageQueue()
-        {
-            string message = uiManager.PeekMessage();
-            switch (message)
-            {
-                case DaggerfallUIMessages.dfuiBookReaderPreviousPage:
-                    if (dfUnity.TextProvider.MovePreviousPage())
-                        LayoutPage();
-                    break;
-                case DaggerfallUIMessages.dfuiBookReaderNextPage:
-                    if (dfUnity.TextProvider.MoveNextPage())
-                        LayoutPage();
-                    break;
-                default:
-                    return;
-            }
+        //protected override void ProcessMessageQueue()
+        //{
+        //    string message = uiManager.PeekMessage();
+        //    switch (message)
+        //    {
+        //        case DaggerfallUIMessages.dfuiBookReaderPreviousPage:
+        //            if (dfUnity.TextProvider.MovePreviousPage())
+        //                LayoutPage();
+        //            break;
+        //        case DaggerfallUIMessages.dfuiBookReaderNextPage:
+        //            if (dfUnity.TextProvider.MoveNextPage())
+        //                LayoutPage();
+        //            break;
+        //        default:
+        //            return;
+        //    }
 
-            // Message was handled, pop from stack
-            uiManager.PopMessage();
-        }
+        //    // Message was handled, pop from stack
+        //    uiManager.PopMessage();
+        //}
 
         void LayoutPage()
         {

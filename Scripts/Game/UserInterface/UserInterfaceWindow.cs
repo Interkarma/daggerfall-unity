@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -22,6 +23,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         UserInterfaceWindow Value { get; }
         void Update();
         void Draw();
+        void ProcessMessages();
     }
 
     /// <summary>
@@ -50,11 +52,40 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
         }
 
+        public virtual void ProcessMessages()
+        {
+            string message = uiManager.PeekMessage();
+            if (message == WindowMessages.wmCloseWindow)
+            {
+                uiManager.GetMessage();     // Eat message
+                uiManager.PopWindow();      // Close window
+            }
+        }
+
+        public void CloseWindow()
+        {
+            uiManager.PopWindow();
+            RaiseOnCloseHandler();
+        }
+
         internal protected virtual void WindowChanged(object sender, EventArgs e)
         {
             if (uiManager.TopWindow == this.Value)
             {
             }
         }
+
+        #region Event Handlers
+
+        // OnClose
+        public delegate void OnCloseHandler();
+        public event OnCloseHandler OnClose;
+        protected virtual void RaiseOnCloseHandler()
+        {
+            if (OnClose != null)
+                OnClose();
+        }
+
+        #endregion
     }
 }

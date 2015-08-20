@@ -14,7 +14,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Effects;
 
-namespace DaggerfallWorkshop.Game.Races
+namespace DaggerfallWorkshop.Game.Player
 {
     /// <summary>
     /// Every race is defined by a common template.

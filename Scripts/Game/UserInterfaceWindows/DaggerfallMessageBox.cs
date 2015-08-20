@@ -32,6 +32,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<Button> buttons = new List<Button>();
         int buttonSpacing = 32;
         int buttonTextDistance = 4;
+        MessageBoxButtons selectedButton = MessageBoxButtons.Cancel;
+        bool cancelled = false;
 
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
@@ -73,6 +75,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { buttonTextDistance = value; }
         }
 
+        public MessageBoxButtons SelectedButton
+        {
+            get { return selectedButton; }
+        }
+
+        public bool Cancelled
+        {
+            get { return cancelled; }
+        }
+
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
@@ -99,6 +111,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messagePanel.Components.Add(buttonPanel);
 
             IsSetup = true;
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            if (Input.GetKeyDown(exitKey))
+            {
+                cancelled = true;
+                CloseWindow();
+            }
         }
 
         public void AddButton(MessageBoxButtons messageBoxButton)
@@ -128,8 +151,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void ButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
-            MessageBoxButtons buttonClicked = (MessageBoxButtons)sender.Tag;
-            RaiseOnButtonClickEvent(this, buttonClicked);
+            CloseWindow();
+            selectedButton = (MessageBoxButtons)sender.Tag;
+            RaiseOnButtonClickEvent(this, selectedButton);
         }
 
         void UpdatePanelSizes()
@@ -155,6 +179,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Events
 
+        // OnButtonClick
         public delegate void OnButtonClickHandler(DaggerfallMessageBox sender, MessageBoxButtons messageBoxButton);
         public event OnButtonClickHandler OnButtonClick;
         void RaiseOnButtonClickEvent(DaggerfallMessageBox sender, MessageBoxButtons messageBoxButton)

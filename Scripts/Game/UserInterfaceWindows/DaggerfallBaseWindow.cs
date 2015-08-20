@@ -82,10 +82,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            // Process messages in queue
-            if (uiManager.MessageCount > 0)
-                ProcessMessageQueue();
-
             screenPanel.Update();
         }
 
@@ -95,14 +91,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         protected abstract void Setup();
-
-        #region Protected Methods
-
-        protected virtual void ProcessMessageQueue()
-        {
-        }
-
-        #endregion
 
         #region Setup Helpers
 

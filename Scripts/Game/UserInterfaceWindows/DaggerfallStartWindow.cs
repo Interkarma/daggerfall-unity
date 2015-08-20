@@ -44,11 +44,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddButton(new Vector2(72, 45), new Vector2(147, 15), DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow);
             AddButton(new Vector2(72, 99), new Vector2(147, 15), DaggerfallUIMessages.dfuiStartNewGame);
             AddButton(new Vector2(125, 145), new Vector2(41, 15), DaggerfallUIMessages.dfuiExitGame);
+        }
 
-            //// Add some test text
-            //DaggerfallFont font = new DaggerfallFont(DaggerfallUnity.Instance.Arena2Path, DaggerfallFont.FontName.FONT0000);
-            //TextLabel textLabel = AddTextLabel(font, new Vector2(0, 20), "This is a Daggerfall-native ASCII text field!");
-            //textLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        public override void ProcessMessages()
+        {
+            base.ProcessMessages();
+
+            switch (uiManager.GetMessage())
+            {
+                case DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow:
+                    uiManager.PushWindow(new DaggerfallLoadSavedGameWindow(uiManager));
+                    break;
+                case DaggerfallUIMessages.dfuiStartNewGame:
+                    uiManager.PushWindow(new StartNewGameWizard(uiManager));
+                    break;
+                case DaggerfallUIMessages.dfuiExitGame:
+                    Application.Quit();
+                    break;
+            }
         }
     }
 }

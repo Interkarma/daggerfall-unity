@@ -91,11 +91,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddControls();
         }
 
-        protected override void ProcessMessageQueue()
+        public override void ProcessMessages()
         {
-            string message = uiManager.PeekMessage();
+            base.ProcessMessages();
+
+            string message = uiManager.GetMessage();
             Dictionary<string, string> paramDict = UserInterfaceManager.BuildParamDict(message);
-            
+
             // Select save game
             if (message.Contains(DaggerfallUIMessages.dfuiSelectSaveGame))
                 SelectSaveGame(int.Parse(paramDict[gameid]));
@@ -109,9 +111,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 default:
                     return;
             }
-
-            // Message was handled, pop from stack
-            uiManager.PopMessage();
         }
 
         #region Private Methods

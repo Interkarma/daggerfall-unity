@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void ChangeWindow(UserInterfaceWindow newWindow);
         int MessageCount { get; }
         void PostMessage(string message);
-        string PopMessage();
+        string GetMessage();
         string PeekMessage();
     }
 
@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         const int maxMessageCount = 10;
 
-        Stack<string> messages = new Stack<string>();
+        Queue<string> messages = new Queue<string>();
         Stack<UserInterfaceWindow> windows = new Stack<UserInterfaceWindow>();
         FilterMode filterMode = FilterMode.Point;
         public event EventHandler OnWindowChange;
@@ -129,36 +129,36 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Push message to stack.
+        /// Post message to end of queue.
         /// </summary>
         public void PostMessage(string message)
         {
             if (MessageCount < maxMessageCount)
             {
-                messages.Push(message);
+                messages.Enqueue(message);
             }
             else
             {
                 // Clear message queue on overflow as not all handlers implemented yet
                 // TODO: Implement a more suitable collection for messaging
                 messages.Clear();
-                messages.Push(message);
+                messages.Enqueue(message);
             }
         }
 
         /// <summary>
-        /// Pop message from stack.
+        /// Get message at front of queue and remove message.
         /// </summary>
-        public string PopMessage()
+        public string GetMessage()
         {
             if (MessageCount > 0)
-                return messages.Pop();
+                return messages.Dequeue();
             else
                 return string.Empty;
         }
 
         /// <summary>
-        /// Peek message at top of stack.
+        /// Peek message at front of queue with removing.
         /// </summary>
         public string PeekMessage()
         {
