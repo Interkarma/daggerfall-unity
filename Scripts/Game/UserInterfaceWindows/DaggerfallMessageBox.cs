@@ -33,7 +33,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int buttonSpacing = 32;
         int buttonTextDistance = 4;
         MessageBoxButtons selectedButton = MessageBoxButtons.Cancel;
-        bool cancelled = false;
 
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
@@ -80,11 +79,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return selectedButton; }
         }
 
-        public bool Cancelled
-        {
-            get { return cancelled; }
-        }
-
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
@@ -113,18 +107,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             IsSetup = true;
         }
 
-        public override void Update()
-        {
-            base.Update();
-
-            if (Input.GetKeyDown(exitKey))
-            {
-                cancelled = true;
-                CloseWindow();
-            }
-        }
-
-        public void AddButton(MessageBoxButtons messageBoxButton)
+        public Button AddButton(MessageBoxButtons messageBoxButton)
         {
             if (!IsSetup)
                 Setup();
@@ -138,6 +121,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             buttons.Add(button);
 
             UpdatePanelSizes();
+
+            return button;
         }
 
         public void SetTextTokens(TextFile.Token[] tokens)

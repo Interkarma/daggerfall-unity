@@ -32,11 +32,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         DaggerfallRaceSelectWindow dfRaceSelectWindow;
         DaggerfallGenderSelectWindow dfGenderSelectWindow;
+        DaggerfallClassSelectWindow dfClassSelectWindow;
 
         enum WizardStages
         {
-            RaceSelect,
-            GenderSelect,
+            SelectRace,
+            SelectGender,
+            SelectClassMethod,      // Not implemented, will go straight to class list
+            SelectClassFromList,    // Custom class not implemented
             EndWizard,
         }
 
@@ -75,7 +78,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 dfRaceSelectWindow.OnClose += RaceSelectWindow_OnClose;
             }
 
-            wizardStage = WizardStages.RaceSelect;
+            wizardStage = WizardStages.SelectRace;
             dfRaceSelectWindow.Clear();
             uiManager.PushWindow(dfRaceSelectWindow);
         }
@@ -84,13 +87,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (dfGenderSelectWindow == null)
             {
-                // Uses race select as a background to popup
                 dfGenderSelectWindow = new DaggerfallGenderSelectWindow(uiManager, dfRaceSelectWindow);
                 dfGenderSelectWindow.OnClose += GenderSelectWindow_OnClose;
             }
 
-            wizardStage = WizardStages.GenderSelect;
+            wizardStage = WizardStages.SelectGender;
             uiManager.PushWindow(dfGenderSelectWindow);
+        }
+
+        void SetClassSelectWindow()
+        {
+            if (dfClassSelectWindow == null)
+            {
+                dfClassSelectWindow = new DaggerfallClassSelectWindow(uiManager, dfRaceSelectWindow);
+                dfClassSelectWindow.OnClose += ClassSelectWindow_OnClose;
+            }
         }
 
         #endregion
@@ -100,13 +111,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void RaceSelectWindow_OnClose()
         {
             if (dfRaceSelectWindow.SelectedRace != null)
+            {
+                characterSheet.race = dfRaceSelectWindow.SelectedRace;
                 SetGenderSelectWindow();
+            }
         }
 
         void GenderSelectWindow_OnClose()
         {
-            if (dfGenderSelectWindow.Cancelled)
+            if (!dfGenderSelectWindow.Cancelled)
+            {
+                characterSheet.gender = dfGenderSelectWindow.SelectedGender;
+            }
+            else
+            {
                 SetRaceSelectWindow();
+            }
+        }
+
+        void ClassSelectWindow_OnClose()
+        {
+            if (!dfClassSelectWindow.Cancelled)
+            {
+            }
+            else
+            {
+                SetRaceSelectWindow();
+            }
         }
 
         #endregion

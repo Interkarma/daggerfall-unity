@@ -10,6 +10,7 @@
 //
 
 using System;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Player
 {
@@ -18,7 +19,7 @@ namespace DaggerfallWorkshop.Game.Player
     /// </summary>
     public class CharacterSheet
     {
-        RaceTemplate race;
-        PlayerGender gender;
+        public RaceTemplate race;
+        public Genders gender;
     }
 }

@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -28,6 +29,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class DaggerfallGenderSelectWindow : DaggerfallMessageBox
     {
         const int selectThyCharactersGender = 2200;
+
+        public Genders SelectedGender { get; private set; }
 
         public DaggerfallGenderSelectWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
@@ -41,8 +44,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(selectThyCharactersGender);
             SetTextTokens(textTokens);
 
-            AddButton(MessageBoxButtons.Male);
-            AddButton(MessageBoxButtons.Female);
+            Button maleButton = AddButton(MessageBoxButtons.Male);
+            Button femaleButton = AddButton(MessageBoxButtons.Female);
+
+            maleButton.OnMouseClick += MaleButton_OnMouseClick;
+            femaleButton.OnMouseClick += FemaleButton_OnMouseClick;
+        }
+
+        void MaleButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            SelectedGender = Genders.Male;
+        }
+
+        void FemaleButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            SelectedGender = Genders.Female;
         }
 
         public override void Update()

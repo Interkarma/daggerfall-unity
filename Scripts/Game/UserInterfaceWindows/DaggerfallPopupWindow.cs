@@ -19,17 +19,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// <summary>
     /// Implementation of a popup window designed to appear on top of other screens.
     /// Will render previous window hierarchy before its own.
+    /// Popups can be cancelled at any time using the ESC key.
     /// </summary>
     public class DaggerfallPopupWindow : DaggerfallBaseWindow
     {
         DaggerfallBaseWindow previous;
 
         Color screenDimColor = new Color32(0, 0, 0, 128);
+        bool allowCancel = true;
+        bool cancelled = false;
 
         public Color ScreenDimColor
         {
             get { return screenDimColor; }
             set { screenDimColor = value; }
+        }
+
+        public bool AllowCancel
+        {
+            get { return allowCancel; }
+            set { allowCancel = value; }
+        }
+
+        public bool Cancelled
+        {
+            get { return cancelled; }
         }
 
         public DaggerfallPopupWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
@@ -40,6 +54,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            cancelled = false;
+            if (allowCancel)
+            {
+                if (Input.GetKeyDown(exitKey))
+                {
+                    cancelled = true;
+                    CloseWindow();
+                }
+            }
         }
 
         public override void Draw()
