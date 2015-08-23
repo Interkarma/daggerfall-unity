@@ -170,7 +170,7 @@ namespace DaggerfallConnect.Arena2
             cfg.Unknown2 = reader.ReadBytes(8);
 
             // Hit points per level
-            cfg.HitPointsPerLevel = reader.ReadUInt16();
+            cfg.HitPointsPerLevelOrMonsterLevel = reader.ReadUInt16();
 
             // Read advancement multiplier
             cfg.AdvancementMultiplier = reader.ReadUInt32();

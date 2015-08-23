@@ -35,8 +35,8 @@ namespace DaggerfallConnect
         // Advancement multiplier
         public float AdvancementMultiplier;
 
-        // Hit points per level
-        public int HitPointsPerLevel;
+        // Hit points per level or monster level
+        public int HitPointsPerLevelOrMonsterLevel;
 
         // Attributes
         public int Strength;
@@ -213,7 +213,8 @@ namespace DaggerfallConnect
             public Byte[] Unknown2;
 
             // bytes [52-53]
-            public UInt16 HitPointsPerLevel;
+            // Hit points per level for classes, monster level for monsters
+            public UInt16 HitPointsPerLevelOrMonsterLevel;
 
             // bytes [54-57]
             // Advancement multiplier fixed point format
@@ -522,7 +523,7 @@ namespace DaggerfallConnect
             this.MinorSkill5 = (Skills)RawData.MinorSkill5;
             this.MinorSkill6 = (Skills)RawData.MinorSkill6;
 
-            this.HitPointsPerLevel = RawData.HitPointsPerLevel;
+            this.HitPointsPerLevelOrMonsterLevel = RawData.HitPointsPerLevelOrMonsterLevel;
 
             float value = (RawData.AdvancementMultiplier >> 16) + ((RawData.AdvancementMultiplier & 0xffff)) / 65536f;
             this.AdvancementMultiplier = float.Parse(string.Format("{0:0.00}", value));
