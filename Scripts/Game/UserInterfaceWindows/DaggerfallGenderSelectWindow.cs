@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallGenderSelectWindow : DaggerfallMessageBox
     {
-        const int selectThyCharactersGender = 2200;
+        const int strSelectThyCharactersGender = 2200;
 
         public Genders SelectedGender { get; private set; }
 
@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Setup();
 
-            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(selectThyCharactersGender);
+            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(strSelectThyCharactersGender);
             SetTextTokens(textTokens);
 
             Button maleButton = AddButton(MessageBoxButtons.Male);

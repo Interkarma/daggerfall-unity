@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game
         // "VID Player" window messages
         public const string dfuiOpenVIDPlayerWindow = "dfuiOpenVIDPlayerWindow";
 
-        // "Character Wizard" window messages
-        public const string dfuiOpenCharacterWizard = "dfuiOpenCharacterWizard";
+        // "Start New Game Wizard" window messages
+        public const string dfuiStartNewGameWizard = "dfuiStartNewGameWizard";
     }
 }

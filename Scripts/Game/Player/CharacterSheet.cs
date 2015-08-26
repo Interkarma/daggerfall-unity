@@ -10,6 +10,7 @@
 //
 
 using System;
+using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Player
@@ -21,5 +22,6 @@ namespace DaggerfallWorkshop.Game.Player
     {
         public RaceTemplate race;
         public Genders gender;
+        public DFClass dfClass;
     }
 }

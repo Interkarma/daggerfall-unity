@@ -32,9 +32,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         DaggerfallRaceSelectWindow dfRaceSelectWindow;
         DaggerfallGenderSelectWindow dfGenderSelectWindow;
-        DaggerfallClassSelectWindow dfClassSelectWindow;
+        DaggerfallClassPickerWindow dfClassSelectWindow;
 
-        enum WizardStages
+        WizardStages WizardStage
+        {
+            get { return wizardStage; }
+        }
+
+        public enum WizardStages
         {
             SelectRace,
             SelectGender,
@@ -51,7 +56,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             // Wizard starts with race selection
-            SetRaceSelectWindow();
+            //SetRaceSelectWindow();
+            SetClassSelectWindow();
         }
 
         public override void Update()
@@ -99,9 +105,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (dfClassSelectWindow == null)
             {
-                dfClassSelectWindow = new DaggerfallClassSelectWindow(uiManager, dfRaceSelectWindow);
+                dfClassSelectWindow = new DaggerfallClassPickerWindow(uiManager, dfRaceSelectWindow);
                 dfClassSelectWindow.OnClose += ClassSelectWindow_OnClose;
             }
+
+            wizardStage = WizardStages.SelectClassFromList;
+            uiManager.PushWindow(dfClassSelectWindow);
         }
 
         #endregion
@@ -122,6 +131,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!dfGenderSelectWindow.Cancelled)
             {
                 characterSheet.gender = dfGenderSelectWindow.SelectedGender;
+                SetClassSelectWindow();
             }
             else
             {

@@ -96,7 +96,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Load a CFG file from stream.
         /// </summary>
-        /// <param name="reader">Stream positioned at 74-byte </param>
+        /// <param name="reader">Stream positioned at 74-byte CFG data record.</param>
         /// <returns>True if successful.</returns>
         public bool Load(BinaryReader reader)
         {
@@ -166,7 +166,7 @@ namespace DaggerfallConnect.Arena2
             // Read class name
             cfg.Name = file.ReadCStringSkip(reader, 0, 16);
 
-            // Read 8 unknown bytes for UnknownRange1
+            // Read 8 unknown bytes
             cfg.Unknown2 = reader.ReadBytes(8);
 
             // Hit points per level

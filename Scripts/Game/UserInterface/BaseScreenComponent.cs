@@ -272,9 +272,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (mouseOverComponent == false)
                 {
                     // Raise mouse entered event
-                    if (OnMouseEnter != null)
-                        OnMouseEnter();
-
+                    MouseEnter();
                     mouseOverComponent = true;
                 }
             }
@@ -283,9 +281,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (mouseOverComponent == true)
                 {
                     // Raise mouse leaving event
-                    if (OnMouseLeave != null)
-                        OnMouseLeave();
-
+                    MouseExit();
                     mouseOverComponent = false;
                 }
             }
@@ -301,8 +297,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 clickPosition.y *= 1f / localScale.y;
 
                 // Single click event
-                if (OnMouseClick != null)
-                    OnMouseClick(this, clickPosition);
+                MouseClick(clickPosition);
 
                 // Double-click event
                 if (firstClickTime == 0)
@@ -315,8 +310,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     if (nextClickTime - firstClickTime < doubleClickTime)
                     {
                         firstClickTime = 0;
-                        if (OnMouseDoubleClick != null)
-                            OnMouseDoubleClick(this, clickPosition);
+                        MouseDoubleClick(clickPosition);
                     }
                     else
                     {
@@ -359,6 +353,80 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 GUI.DrawTexture(Rectangle, backgroundColorTexture, ScaleMode.StretchToFill);
             }
+        }
+
+        /// <summary>
+        /// Converts a screen position to a local position relative to this control.
+        /// </summary>
+        /// <param name="screenPosition">Screen position.</param>
+        /// <returns>Local position.</returns>
+        public Vector2 ScreenToLocal(Vector2 screenPosition)
+        {
+            Rect myRect = Rectangle;
+            float x = (screenPosition.x - myRect.x) / LocalScale.x;
+            float y = (screenPosition.y - myRect.y) / LocalScale.y;
+
+            Vector2 localPosition = new Vector2(x, y);
+
+            return localPosition;
+        }
+
+        /// <summary>
+        /// Converts a screen rect to a local rect relative to this control.
+        /// </summary>
+        /// <param name="screenRect">Screen rect.</param>
+        /// <returns>Local rect.</returns>
+        public Rect ScreenToLocal(Rect screenRect)
+        {
+            Rect myRect = Rectangle;
+            float x = (screenRect.x - myRect.x) / LocalScale.x;
+            float y = (screenRect.y - myRect.y) / LocalScale.y;
+            float width = screenRect.width / LocalScale.x;
+            float height = screenRect.height / LocalScale.y;
+
+            Rect localRect = new Rect(x, y, width, height);
+
+            return localRect;
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Mouse clicked inside control area.
+        /// </summary>
+        protected virtual void MouseClick(Vector2 clickPosition)
+        {
+            if (OnMouseClick != null)
+                OnMouseClick(this, clickPosition);
+        }
+
+        /// <summary>
+        /// Mouse double-clicked inside control area.
+        /// </summary>
+        protected virtual void MouseDoubleClick(Vector2 clickPosition)
+        {
+            if (OnMouseDoubleClick != null)
+                OnMouseDoubleClick(this, clickPosition);
+        }
+
+        /// <summary>
+        /// Mouse entered control area.
+        /// </summary>
+        protected virtual void MouseEnter()
+        {
+            if (OnMouseEnter != null)
+                OnMouseEnter();
+        }
+
+        /// <summary>
+        /// Mouse exited control area.
+        /// </summary>
+        protected virtual void MouseExit()
+        {
+            if (OnMouseLeave != null)
+                OnMouseLeave();
         }
 
         #endregion

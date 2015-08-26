@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game
 
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
         public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
+        public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
         public FilterMode filterMode = FilterMode.Point;
@@ -105,7 +106,7 @@ namespace DaggerfallWorkshop.Game
                     if (showSplashVideo)
                         uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, splashVideo));
                     break;
-                case DaggerfallUIMessages.dfuiOpenCharacterWizard:
+                case DaggerfallUIMessages.dfuiStartNewGameWizard:
                     uiManager.PushWindow(new StartNewGameWizard(uiManager));
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:

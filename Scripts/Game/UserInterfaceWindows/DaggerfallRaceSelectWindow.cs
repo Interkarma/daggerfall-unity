@@ -80,7 +80,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             if (Input.GetKeyDown(exitKey))
+            {
+                selectedRace = null;
                 CloseWindow();
+            }
         }
 
         public void Clear()

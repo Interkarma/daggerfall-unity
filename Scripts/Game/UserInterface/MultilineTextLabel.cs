@@ -29,9 +29,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int rowLeading = 0;
         HorizontalAlignment rowAlignment = HorizontalAlignment.None;
         int glyphSpacing = 1;
-        Vector2 shadowPosition = Vector2.zero;
-        Color textColor = Color.white;
-        Color shadowColor = Color.black;
+        Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
+        Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
+        Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
         FilterMode filterMode = FilterMode.Point;
         List<TextLabel> labels = new List<TextLabel>();
         TextLabel lastLabel;

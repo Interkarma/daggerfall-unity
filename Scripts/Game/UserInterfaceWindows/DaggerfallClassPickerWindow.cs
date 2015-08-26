@@ -23,11 +23,13 @@ using DaggerfallWorkshop.Game.Player;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// Implements selecting pre-defined class list.
+    /// Implements the class picker popup window.
     /// </summary>
-    public class DaggerfallClassSelectWindow : DaggerfallPopupWindow
+    public class DaggerfallClassPickerWindow : DaggerfallListPickerWindow
     {
-        public DaggerfallClassSelectWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
+        List<DFClass> classList = new List<DFClass>();
+
+        public DaggerfallClassPickerWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
         }
@@ -35,6 +37,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             base.Setup();
+
+            // Read all CLASS*.CFG files and add to listbox
+            string[] files = Directory.GetFiles(DaggerfallUnity.Instance.Arena2Path, "class*.cfg");
+            if (files != null && files.Length > 0)
+            {
+                for (int i = 0; i < files.Length - 1; i++)
+                {
+                    ClassFile classFile = new ClassFile(files[i]);
+                    classList.Add(classFile.DFClass);
+                    listBox.AddItem(classFile.DFClass.Name);
+                }
+            }
         }
     }
 }

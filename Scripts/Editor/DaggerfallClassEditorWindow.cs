@@ -609,9 +609,9 @@ namespace DaggerfallWorkshop
                 string[] files = Directory.GetFiles(dfUnity.Arena2Path, "class*.cfg");
                 if (files != null && files.Length > 0)
                 {
-                    classTemplates = new DFClass[files.Length];
-                    classNames = new GUIContent[files.Length];
-                    for (int i = 0; i < files.Length; i++)
+                    classTemplates = new DFClass[files.Length - 1];
+                    classNames = new GUIContent[files.Length - 1];
+                    for (int i = 0; i < files.Length - 1; i++)
                     {
                         ClassFile classFile = new ClassFile(files[i]);
                         classTemplates[i] = classFile.DFClass;
