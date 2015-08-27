@@ -63,6 +63,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public delegate void OnMouseDoubleClickHandler(BaseScreenComponent sender, Vector2 position);
         public event OnMouseDoubleClickHandler OnMouseDoubleClick;
 
+        public delegate void OnMouseScrollUpEventHandler();
+        public event OnMouseScrollUpEventHandler OnMouseScrollUp;
+
+        public delegate void OnMouseScrollDownEventHandler();
+        public event OnMouseScrollDownEventHandler OnMouseScrollDown;
+
         #endregion
 
         #region Properties
@@ -286,7 +292,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
             }
 
-            // Handle left mouse click
+            // Clear double-click timer if mouse moves
+            if (mousePosition != lastMousePosition)
+                firstClickTime = 0;
+
+            // Handle left mouse clicks
             bool leftMouseDown = Input.GetMouseButtonDown(0);
             if (mouseOverComponent && leftMouseDown)
             {
@@ -314,9 +324,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     }
                     else
                     {
-                        firstClickTime = 0;
+                        firstClickTime = Time.time;
                     }
                 }
+            }
+
+            // Handle mouse wheel
+            float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
+            if (mouseOverComponent && mouseScroll != 0)
+            {
+                if (mouseScroll > 0)
+                    MouseScrollUp();
+                else if (mouseScroll < 0)
+                    MouseScrollDown();
             }
         }
 
@@ -427,6 +447,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (OnMouseLeave != null)
                 OnMouseLeave();
+        }
+
+        /// <summary>
+        /// Mouse wheel scrolled up.
+        /// </summary>
+        protected virtual void MouseScrollUp()
+        {
+            if (OnMouseScrollUp != null)
+                OnMouseScrollUp();
+        }
+
+        /// <summary>
+        /// Mouse wheel scrolled down.
+        /// </summary>
+        protected virtual void MouseScrollDown()
+        {
+            if (OnMouseScrollDown != null)
+                OnMouseScrollDown();
         }
 
         #endregion

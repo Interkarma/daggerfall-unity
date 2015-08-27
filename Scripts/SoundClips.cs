@@ -394,7 +394,9 @@ namespace DaggerfallWorkshop
         RaceKhajiit = 372,
         RaceArgonian = 373,
 
-        // 374-375 TODO
+        SelectClassDrums = 374,
+
+        // 375 Sounds like tearing paper
 
         DiceRoll2 = 376,
 

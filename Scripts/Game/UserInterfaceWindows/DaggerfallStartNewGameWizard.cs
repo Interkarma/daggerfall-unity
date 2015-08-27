@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         DaggerfallRaceSelectWindow dfRaceSelectWindow;
         DaggerfallGenderSelectWindow dfGenderSelectWindow;
-        DaggerfallClassPickerWindow dfClassSelectWindow;
+        DaggerfallClassSelectWindow dfClassSelectWindow;
 
         WizardStages WizardStage
         {
@@ -105,7 +105,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (dfClassSelectWindow == null)
             {
-                dfClassSelectWindow = new DaggerfallClassPickerWindow(uiManager, dfRaceSelectWindow);
+                dfClassSelectWindow = new DaggerfallClassSelectWindow(uiManager, dfRaceSelectWindow);
                 dfClassSelectWindow.OnClose += ClassSelectWindow_OnClose;
             }
 

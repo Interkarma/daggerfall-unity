@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Create list box
             listBox.Position = new Vector2(26, 27);
             listBox.Size = new Vector2(138, 72);
+            listBox.OnUseSelectedItem += ListBox_OnUseSelectedItem;
             pickerPanel.Components.Add(listBox);
 
             // Add previous button
@@ -120,5 +121,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             listBox.ScrollDown();
         }
+
+        void ListBox_OnUseSelectedItem()
+        {
+            RaiseOnItemPickedEvent();
+        }
+
+        #region Event Handlers
+
+        public delegate void OnItemPickedEventHandler(int index);
+        public event OnItemPickedEventHandler OnItemPicked;
+        void RaiseOnItemPickedEvent()
+        {
+            if (OnItemPicked != null)
+                OnItemPicked(listBox.SelectedIndex);
+        }
+
+        #endregion
     }
 }

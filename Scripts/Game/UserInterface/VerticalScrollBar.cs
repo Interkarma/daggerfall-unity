@@ -169,7 +169,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             float thumbY = scrollIndex * (totalRect.height - thumbHeight) / (totalUnits - displayUnits);
             thumbRect = ScreenToLocal(new Rect(totalRect.x, totalRect.y + thumbY, totalRect.width, thumbHeight));
 
-            // Draw thumb slices in screen space
+            // Draw thumb texture slices in screen space
             float topTextureHeight = vScrollThumbTop.height * LocalScale.y;
             float bottomTextureHeight = vScrollThumbBottom.height * LocalScale.y;
             Rect topRect = new Rect(totalRect.x, totalRect.y + thumbY, totalRect.width, topTextureHeight);

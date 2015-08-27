@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int SelectedIndex
         {
             get { return selectedIndex; }
-            set { selectedIndex = value; }
+            set { selectedIndex = value; RaiseOnSelectItemEvent(); }
         }
 
         public string SelectedItem
@@ -131,6 +131,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             base.Update();
+
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+                SelectPrevious();
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
+                SelectNext();
+            else if (Input.GetKeyDown(KeyCode.Return))
+                UseSelectedItem();
         }
 
         public override void Draw()
@@ -163,6 +170,37 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 y += label.Font.GlyphHeight + rowSpacing;
             }
+        }
+
+        protected override void MouseClick(Vector2 clickPosition)
+        {
+            base.MouseClick(clickPosition);
+
+            int row = (int)(clickPosition.y / (font.GlyphHeight + rowSpacing));
+
+            selectedIndex = scrollIndex + row;
+            RaiseOnSelectItemEvent();
+        }
+
+        protected override void MouseDoubleClick(Vector2 clickPosition)
+        {
+            base.MouseDoubleClick(clickPosition);
+
+            UseSelectedItem();
+        }
+
+        protected override void MouseScrollUp()
+        {
+            base.MouseScrollUp();
+
+            ScrollUp();
+        }
+
+        protected override void MouseScrollDown()
+        {
+            base.MouseScrollDown();
+
+            ScrollDown();
         }
 
         #endregion
@@ -199,6 +237,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (selectedIndex < scrollIndex)
                     scrollIndex = selectedIndex;
             }
+
+            RaiseOnSelectPreviousEvent();
         }
 
         public void SelectNext()
@@ -209,6 +249,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (selectedIndex > scrollIndex + (rowsDisplayed - 1))
                     scrollIndex++;
             }
+
+            RaiseOnSelectNextEvent();
+        }
+
+        public void UseSelectedItem()
+        {
+            RaiseOnUseItemEvent();
         }
 
         public void ScrollUp()
@@ -217,6 +264,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 scrollIndex--;
 
             ClampSelectionToVisibleRange();
+            RaiseOnScrollUpEvent();
         }
 
         public void ScrollDown()
@@ -225,15 +273,74 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 scrollIndex++;
 
             ClampSelectionToVisibleRange();
+            RaiseOnScrollDownEvent();
         }
 
         // Clamps selection to inside visible range like Daggerfall
         public void ClampSelectionToVisibleRange()
         {
             if (selectedIndex > scrollIndex + rowsDisplayed - 1)
+            {
                 selectedIndex = scrollIndex + rowsDisplayed - 1;
+                RaiseOnSelectItemEvent();
+            }
             if (selectedIndex < scrollIndex)
+            {
                 selectedIndex = scrollIndex;
+                RaiseOnSelectItemEvent();
+            }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        public delegate void OnSelectPreviousEventHandler();
+        public event OnSelectPreviousEventHandler OnSelectPrevious;
+        void RaiseOnSelectPreviousEvent()
+        {
+            if (OnSelectPrevious != null)
+                OnSelectPrevious();
+        }
+
+        public delegate void OnSelectNextEventHandler();
+        public event OnSelectNextEventHandler OnSelectNext;
+        void RaiseOnSelectNextEvent()
+        {
+            if (OnSelectNext != null)
+                OnSelectNext();
+        }
+
+        public delegate void OnScrollUpEventHandler();
+        public event OnScrollUpEventHandler OnScrollUp;
+        void RaiseOnScrollUpEvent()
+        {
+            if (OnScrollUp != null)
+                OnScrollUp();
+        }
+
+        public delegate void OnScrollDownEventHandler();
+        public event OnScrollDownEventHandler OnScrollDown;
+        void RaiseOnScrollDownEvent()
+        {
+            if (OnScrollDown != null)
+                OnScrollDown();
+        }
+
+        public delegate void OnSelectItemEventHandler();
+        public event OnSelectItemEventHandler OnSelectItem;
+        void RaiseOnSelectItemEvent()
+        {
+            if (OnSelectItem != null)
+                OnSelectItem();
+        }
+
+        public delegate void OnUseSelectedItemEventHandler();
+        public event OnUseSelectedItemEventHandler OnUseSelectedItem;
+        void RaiseOnUseItemEvent()
+        {
+            if (OnUseSelectedItem != null)
+                OnUseSelectedItem();
         }
 
         #endregion
