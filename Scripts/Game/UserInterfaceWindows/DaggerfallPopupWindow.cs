@@ -18,7 +18,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
     /// Implementation of a popup window designed to appear on top of other screens.
-    /// Will render previous window hierarchy before its own.
+    /// Can optionally render previous window hierarchy before its own.
     /// Popups can be optionally cancelled at any time using the ESC key.
     /// </summary>
     public class DaggerfallPopupWindow : DaggerfallBaseWindow

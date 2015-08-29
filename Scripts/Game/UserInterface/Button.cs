@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class Button : BaseScreenComponent
     {
         TextLabel label = new TextLabel();
+        AudioClip clickSound;
 
         public string ClickMessage { get; set; }
         public string DoubleClickMessage { get; set; }
@@ -33,6 +34,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public TextLabel Label
         {
             get { return label; }
+        }
+
+        public AudioClip ClickSound
+        {
+            get { return clickSound; }
+            set { clickSound = value; }
         }
 
         public Button()
@@ -67,6 +74,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void ClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            if (clickSound != null)
+                DaggerfallUI.Instance.AudioSource.PlayOneShot(clickSound);
+
             if (!string.IsNullOrEmpty(ClickMessage))
             {
                 DaggerfallUI.PostMessage(ClickMessage);

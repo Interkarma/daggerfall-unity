@@ -30,9 +30,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         WizardStages wizardStage;
         CharacterSheet characterSheet = new CharacterSheet();
 
-        DaggerfallRaceSelectWindow dfRaceSelectWindow;
-        DaggerfallGenderSelectWindow dfGenderSelectWindow;
-        DaggerfallClassSelectWindow dfClassSelectWindow;
+        CreateCharRaceSelect createCharRaceSelectWindow;
+        CreateCharGenderSelect createCharGenderSelectWindow;
+        CreateCharClassSelect createCharClassSelectWindow;
+        CreateCharNameSelect createCharNameSelectWindow;
 
         WizardStages WizardStage
         {
@@ -43,8 +44,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             SelectRace,
             SelectGender,
-            SelectClassMethod,      // Not implemented, will go straight to class list
+            SelectClassMethod,      // Not implemented, will go to class list
             SelectClassFromList,    // Custom class not implemented
+            SelectBiographyMethod,  // Not implemented, will go to name selection
+            SelectName,
             EndWizard,
         }
 
@@ -57,7 +60,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Wizard starts with race selection
             //SetRaceSelectWindow();
-            SetClassSelectWindow();
+            SetNameSelectWindow();
         }
 
         public override void Update()
@@ -78,39 +81,51 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetRaceSelectWindow()
         {
-            if (dfRaceSelectWindow == null)
+            if (createCharRaceSelectWindow == null)
             {
-                dfRaceSelectWindow = new DaggerfallRaceSelectWindow(uiManager);
-                dfRaceSelectWindow.OnClose += RaceSelectWindow_OnClose;
+                createCharRaceSelectWindow = new CreateCharRaceSelect(uiManager);
+                createCharRaceSelectWindow.OnClose += RaceSelectWindow_OnClose;
             }
 
             wizardStage = WizardStages.SelectRace;
-            dfRaceSelectWindow.Clear();
-            uiManager.PushWindow(dfRaceSelectWindow);
+            createCharRaceSelectWindow.Clear();
+            uiManager.PushWindow(createCharRaceSelectWindow);
         }
 
         void SetGenderSelectWindow()
         {
-            if (dfGenderSelectWindow == null)
+            if (createCharGenderSelectWindow == null)
             {
-                dfGenderSelectWindow = new DaggerfallGenderSelectWindow(uiManager, dfRaceSelectWindow);
-                dfGenderSelectWindow.OnClose += GenderSelectWindow_OnClose;
+                createCharGenderSelectWindow = new CreateCharGenderSelect(uiManager, createCharRaceSelectWindow);
+                createCharGenderSelectWindow.OnClose += GenderSelectWindow_OnClose;
             }
 
             wizardStage = WizardStages.SelectGender;
-            uiManager.PushWindow(dfGenderSelectWindow);
+            uiManager.PushWindow(createCharGenderSelectWindow);
         }
 
         void SetClassSelectWindow()
         {
-            if (dfClassSelectWindow == null)
+            if (createCharClassSelectWindow == null)
             {
-                dfClassSelectWindow = new DaggerfallClassSelectWindow(uiManager, dfRaceSelectWindow);
-                dfClassSelectWindow.OnClose += ClassSelectWindow_OnClose;
+                createCharClassSelectWindow = new CreateCharClassSelect(uiManager, createCharRaceSelectWindow);
+                createCharClassSelectWindow.OnClose += ClassSelectWindow_OnClose;
             }
 
             wizardStage = WizardStages.SelectClassFromList;
-            uiManager.PushWindow(dfClassSelectWindow);
+            uiManager.PushWindow(createCharClassSelectWindow);
+        }
+
+        void SetNameSelectWindow()
+        {
+            if (createCharNameSelectWindow == null)
+            {
+                createCharNameSelectWindow = new CreateCharNameSelect(uiManager);
+                createCharNameSelectWindow.OnClose += NameSelectWindow_OnClose;
+            }
+
+            wizardStage = WizardStages.SelectName;
+            uiManager.PushWindow(createCharNameSelectWindow);
         }
 
         #endregion
@@ -119,18 +134,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void RaceSelectWindow_OnClose()
         {
-            if (dfRaceSelectWindow.SelectedRace != null)
+            if (createCharRaceSelectWindow.SelectedRace != null)
             {
-                characterSheet.race = dfRaceSelectWindow.SelectedRace;
+                characterSheet.race = createCharRaceSelectWindow.SelectedRace;
                 SetGenderSelectWindow();
             }
         }
 
         void GenderSelectWindow_OnClose()
         {
-            if (!dfGenderSelectWindow.Cancelled)
+            if (!createCharGenderSelectWindow.Cancelled)
             {
-                characterSheet.gender = dfGenderSelectWindow.SelectedGender;
+                characterSheet.gender = createCharGenderSelectWindow.SelectedGender;
                 SetClassSelectWindow();
             }
             else
@@ -141,12 +156,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void ClassSelectWindow_OnClose()
         {
-            if (!dfClassSelectWindow.Cancelled)
+            if (!createCharClassSelectWindow.Cancelled)
             {
+                characterSheet.dfClass = createCharClassSelectWindow.SelectedClass;
+                SetNameSelectWindow();
             }
             else
             {
                 SetRaceSelectWindow();
+            }
+        }
+
+        void NameSelectWindow_OnClose()
+        {
+            if (!createCharNameSelectWindow.Cancelled)
+            {
+            }
+            else
+            {
+                SetClassSelectWindow();
             }
         }
 

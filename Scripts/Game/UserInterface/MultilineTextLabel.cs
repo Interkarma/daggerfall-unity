@@ -28,11 +28,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         PixelFont font;
         int rowLeading = 0;
         HorizontalAlignment rowAlignment = HorizontalAlignment.None;
-        int glyphSpacing = 1;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
-        FilterMode filterMode = FilterMode.Point;
         List<TextLabel> labels = new List<TextLabel>();
         TextLabel lastLabel;
         int totalWidth = 0;
@@ -64,12 +62,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { SetRowAlignment(value); }
         }
 
-        public int GlyphSpacing
-        {
-            get { return glyphSpacing; }
-            set { SetGlyphSpacing(value); }
-        }
-
         public Vector2 ShadowPosition
         {
             get { return shadowPosition; }
@@ -86,12 +78,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return shadowColor; }
             set { shadowColor = value; }
-        }
-
-        public FilterMode FilterMode
-        {
-            get { return filterMode; }
-            set { SetFilterMode(value); }
         }
 
         public override void Draw()
@@ -121,12 +107,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Protected Methods
 
-        protected virtual void SetGlyphSpacing(int value)
-        {
-            this.glyphSpacing = value;
-            // TODO: Update labels
-        }
-
         protected virtual void SetRowLeading(int amount)
         {
             this.rowLeading = amount;
@@ -135,11 +115,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected virtual void SetRowAlignment(HorizontalAlignment alignment)
         {
             this.rowAlignment = alignment;
-        }
-
-        protected virtual void SetFilterMode(FilterMode value)
-        {
-            this.filterMode = value;
         }
 
         #endregion
@@ -202,15 +177,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Size = new Vector2(totalWidth, totalHeight);
         }
 
-        TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, int glyphSpacing = 1)
+        TextLabel AddTextLabel(PixelFont font, Vector2 position, string text)
         {
             TextLabel textLabel = new TextLabel();
             textLabel.Scaling = Scaling.None;
             textLabel.HorizontalAlignment = rowAlignment;
             textLabel.Font = font;
             textLabel.Position = position;
-            textLabel.FilterMode = filterMode;
-            textLabel.GlyphSpacing = glyphSpacing;
             textLabel.Text = text;
             textLabel.Parent = this;
 

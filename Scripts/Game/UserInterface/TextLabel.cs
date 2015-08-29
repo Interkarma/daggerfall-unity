@@ -28,11 +28,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int totalWidth;
         int totalHeight;
         Texture2D labelTexture;
-        int glyphSpacing = 1;
-        Vector2 shadowPosition = Vector2.zero;
-        Color textColor = Color.white;
-        Color shadowColor = Color.black;
-        FilterMode filterMode = FilterMode.Point;
+        Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
+        Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
+        Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
 
         public PixelFont Font
         {
@@ -44,12 +42,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return text; }
             set { SetText(value); }
-        }
-
-        public int GlyphSpacing
-        {
-            get { return glyphSpacing; }
-            set { SetGlyphSpacing(value); }
         }
 
         public Vector2 ShadowPosition
@@ -73,12 +65,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public Texture2D Texture
         {
             get { return labelTexture; }
-        }
-
-        public FilterMode FilterMode
-        {
-            get { return filterMode; }
-            set { SetFilterMode(value); }
         }
 
         public override void Draw()
@@ -112,23 +98,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Protected Methods
 
-        protected virtual void SetGlyphSpacing(int value)
-        {
-            this.glyphSpacing = value;
-            CreateLabelTexture();
-        }
-
         protected virtual void SetText(string value)
         {
             this.text = value;
             CreateLabelTexture();
-        }
-
-        protected virtual void SetFilterMode(FilterMode value)
-        {
-            filterMode = value;
-            if (labelTexture)
-                labelTexture.filterMode = filterMode;
         }
 
         protected virtual void CreateLabelTexture()
@@ -147,7 +120,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Calculate total width
                 PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
-                width += glyph.width + glyphSpacing;
+                width += glyph.width + font.GlyphSpacing;
             }
 
             // Create target label texture
@@ -163,10 +136,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
                 labelTexture.SetPixels32(xpos, 0, glyph.width, totalHeight, glyph.colors);
-                xpos += glyph.width + glyphSpacing;
+                xpos += glyph.width + font.GlyphSpacing;
             }
             labelTexture.Apply(false, true);
-            labelTexture.filterMode = filterMode;
+            labelTexture.filterMode = font.FilterMode;
             this.Size = new Vector2(totalWidth, totalHeight);
         }
 

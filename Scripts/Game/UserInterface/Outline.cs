@@ -83,7 +83,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if ((sides & Sides.Left) == Sides.Left)
             {
                 Rect leftRect = rect;
-                leftRect.width = outlineThickness * LocalScale.y;
+                leftRect.width = outlineThickness * LocalScale.x;
                 GUI.DrawTexture(leftRect, outlineTexture);
             }
 
@@ -92,7 +92,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Rect rightRect = rect;
                 rightRect.x = rect.xMax;
-                rightRect.width = outlineThickness * LocalScale.y;
+                rightRect.width = outlineThickness * LocalScale.x;
                 GUI.DrawTexture(rightRect, outlineTexture);
             }
 

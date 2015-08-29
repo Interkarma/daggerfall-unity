@@ -24,15 +24,15 @@ using DaggerfallWorkshop.Game.Player;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// Implements gender select popup window.
+    /// Implements select gender window.
     /// </summary>
-    public class DaggerfallGenderSelectWindow : DaggerfallMessageBox
+    public class CreateCharGenderSelect : DaggerfallMessageBox
     {
         const int strSelectThyCharactersGender = 2200;
 
         public Genders SelectedGender { get; private set; }
 
-        public DaggerfallGenderSelectWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
+        public CreateCharGenderSelect(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
         }

@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         BaseScreenComponent parent;
         Vector2 position;
         Vector2 size;
+        bool hasFocus = false;
 
         Vector2 localScale = Vector2.one;
         Scaling scaling = Scaling.None;
@@ -80,6 +81,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return enabled; }
             set { enabled = value; }
+        }
+
+        /// <summary>
+        /// Flags for control focus.
+        /// </summary>
+        public bool HasFocus
+        {
+            get { return hasFocus; }
         }
 
         /// <summary>

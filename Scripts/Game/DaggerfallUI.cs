@@ -32,11 +32,13 @@ namespace DaggerfallWorkshop.Game
         const string splashVideo = "ANIM0001.VID";
 
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
+        public static Color DaggerfallDefaultInputTextColor = new Color32(227, 223, 0, 255);
         public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
         public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
+        public static Color DaggerfallDefaultTextCursorColor = new Color32(154, 134, 0, 200);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
-        public FilterMode filterMode = FilterMode.Point;
+        public FilterMode globalFilterMode = FilterMode.Point;
         public string startupMessage = string.Empty;
 
         DaggerfallUnity dfUnity;
@@ -46,6 +48,9 @@ namespace DaggerfallWorkshop.Game
 
         Texture2D[] daggerfallPopupTextures;
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[4];
+        AudioClip buttonClickSound;
+        char lastCharacterTyped;
+        KeyCode lastKeyCode;
 
         public DaggerfallFont Font1 { get { return GetFont(1); } }
         public DaggerfallFont Font2 { get { return GetFont(2); } }
@@ -59,12 +64,38 @@ namespace DaggerfallWorkshop.Game
             get { return audioSource; }
         }
 
+        public AudioClip ButtonClickSound
+        {
+            get
+            {
+                if (buttonClickSound == null)
+                    buttonClickSound = dfUnity.SoundReader.GetAudioClip(SoundClips.ButtonClick);
+
+                return buttonClickSound;
+            }
+        }
+
+        public FilterMode GlobalFilterMode
+        {
+            get { return globalFilterMode; }
+            set { globalFilterMode = value; }
+        }
+
+        public char LastCharacterTyped
+        {
+            get { return lastCharacterTyped; }
+        }
+
+        public KeyCode LastKeyCode
+        {
+            get { return lastKeyCode; }
+        }
+
         void Awake()
         {
             dfUnity = DaggerfallUnity.Instance;
             audioSource = GetComponent<AudioSource>();
             audioSource.spatialBlend = 0;
-            uiManager.FilterMode = filterMode;
 
             SetupSingleton();
             PostMessage(startupMessage);
@@ -90,6 +121,18 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
+            // Store key downs for alternate input (e.g. text box input)
+            if (Event.current.type == EventType.KeyDown)
+            {
+                lastCharacterTyped = Event.current.character;
+                lastKeyCode = Event.current.keyCode;
+            }
+            else
+            {
+                lastCharacterTyped = (char)0;
+                lastKeyCode = KeyCode.None;
+            }
+
             // Draw top window
             if (uiManager.TopWindow != null)
             {
@@ -129,19 +172,24 @@ namespace DaggerfallWorkshop.Game
             {
                 case 1:
                     if (daggerfallFonts[0] == null) daggerfallFonts[0] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0000);
+                    daggerfallFonts[0].FilterMode = globalFilterMode;
                     return daggerfallFonts[0];
                 case 2:
                     if (daggerfallFonts[1] == null) daggerfallFonts[1] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0001);
+                    daggerfallFonts[1].FilterMode = globalFilterMode;
                     return daggerfallFonts[1];
                 case 3:
                     if (daggerfallFonts[2] == null) daggerfallFonts[2] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0002);
+                    daggerfallFonts[2].FilterMode = globalFilterMode;
                     return daggerfallFonts[2];
                 case 4:
                 default:
                     if (daggerfallFonts[3] == null) daggerfallFonts[3] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0003);
+                    daggerfallFonts[3].FilterMode = globalFilterMode;
                     return daggerfallFonts[3];
                 case 5:
                     if (daggerfallFonts[4] == null) daggerfallFonts[4] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0004);
+                    daggerfallFonts[4].FilterMode = globalFilterMode;
                     return daggerfallFonts[4];
             }
         }
@@ -189,7 +237,7 @@ namespace DaggerfallWorkshop.Game
                 GetDaggerfallPopupSlice(Slices.BottomLeft),
                 GetDaggerfallPopupSlice(Slices.Bottom),
                 GetDaggerfallPopupSlice(Slices.BottomRight),
-                filterMode);
+                globalFilterMode);
 
             panel.SetMargins(Margins.All, 16);
         }

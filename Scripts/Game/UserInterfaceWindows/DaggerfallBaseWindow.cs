@@ -20,6 +20,10 @@ using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
+    /// <summary>
+    /// Implements a user interface window for native Daggerfall 320x200 screens.
+    /// Also provides some control helpers common to UI windows.
+    /// </summary>
     public abstract class DaggerfallBaseWindow : UserInterfaceWindow
     {
         public const int nativeScreenWidth = 320;
@@ -141,8 +145,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             textLabel.Scaling = Scaling.None;
             textLabel.Font = font;
             textLabel.Position = position;
-            textLabel.FilterMode = uiManager.FilterMode;
-            textLabel.GlyphSpacing = glyphSpacing;
             textLabel.Text = text;
             panel.Components.Add(textLabel);
 
@@ -173,7 +175,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
             imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
             Texture2D texture = GetTextureFromImg(imgFile, format);
-            texture.filterMode = uiManager.FilterMode;
+            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             return texture;
         }
@@ -194,7 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
             texture.SetPixels32(img.GetColor32(bitmap, 0));
             texture.Apply(false, true);
-            texture.filterMode = uiManager.FilterMode;
+            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             return texture;
         }
@@ -211,7 +213,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
             texture.SetPixels32(cifRciFile.GetColor32(bitmap, 0));
             texture.Apply(false, true);
-            texture.filterMode = uiManager.FilterMode;
+            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             return texture;
         }
@@ -226,7 +228,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
             texture.SetPixels32(image.GetColor32(bitmap, 0));
             texture.Apply(false, true);
-            texture.filterMode = uiManager.FilterMode;
+            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             return texture;
         }

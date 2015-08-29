@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// <summary>
     /// Implements race select window.
     /// </summary>
-    public class DaggerfallRaceSelectWindow : DaggerfallBaseWindow
+    public class CreateCharRaceSelect : DaggerfallBaseWindow
     {
         const string nativeImgName = "TMAP00I0.IMG";
         const string racePickerImgName = "TAMRIEL2.IMG";
@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return selectedRace; }
         }
 
-        public DaggerfallRaceSelectWindow(IUserInterfaceManager uiManager)
+        public CreateCharRaceSelect(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
         }
@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Load native texture
             nativeTexture = GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
-                throw new Exception("RaceSelectWindow: Could not load native texture.");
+                throw new Exception("CreateCharRaceSelect: Could not load native texture.");
 
             // Populates race dictionary
             PopulateRaceDict();
@@ -107,7 +107,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(textTokens);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                noButton.ClickSound = DaggerfallUI.Instance.ButtonClickSound;
                 messageBox.OnButtonClick += ConfirmRacePopup_OnButtonClick;
                 uiManager.PushWindow(messageBox);
 

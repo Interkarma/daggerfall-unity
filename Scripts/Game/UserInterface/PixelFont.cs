@@ -26,12 +26,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string invalidAsciiCode = "PixelFont does not contain glyph for ASCII code ";
 
         int glyphHeight;
+        int glyphSpacing = 1;
+        FilterMode filterMode = FilterMode.Point;
         Dictionary<int, GlyphInfo> glyphs = new Dictionary<int, GlyphInfo>();
 
         public int GlyphHeight
         {
             get { return glyphHeight; }
             set { glyphHeight = value; }
+        }
+
+        public int GlyphSpacing
+        {
+            get { return glyphSpacing; }
+            set { glyphSpacing = value; }
+        }
+
+        public FilterMode FilterMode
+        {
+            get { return filterMode; }
+            set { filterMode = value; }
         }
 
         public int GlyphCount

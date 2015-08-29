@@ -37,6 +37,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         FntFile fntFile = new FntFile();
         Color backgroundColor = Color.clear;
         Color textColor = Color.white;
+        Texture2D atlasTexture;
+        Rect[] atlasRects;
 
         #endregion
 
@@ -66,6 +68,79 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Private Methods
 
+        /// <summary>
+        /// Draws string of individual text glyphs for small-scale font rendering.
+        /// </summary>
+        public void DrawText(
+            string text,
+            Vector2 position,
+            Vector2 scale,
+            Color color)
+        {
+            if (!fntFile.IsLoaded)
+                throw new Exception("DaggerfallFont: DrawText() font not loaded.");
+
+            atlasTexture.filterMode = FilterMode;
+
+            byte[] asciiBytes = Encoding.ASCII.GetBytes(text);
+            if (asciiBytes == null || asciiBytes.Length == 0)
+                return;
+
+            float x = position.x;
+            float y = position.y;
+            for (int i = 0; i < asciiBytes.Length; i++)
+            {
+                // Invalid ASCII bytes are cast to a space character
+                if (!HasGlyph(asciiBytes[i]))
+                    asciiBytes[i] = PixelFont.SpaceASCII;
+
+                PixelFont.GlyphInfo glyph = GetGlyph(asciiBytes[i]);
+
+                Rect rect = new Rect(x, y, glyph.width * scale.x, GlyphHeight * scale.y);
+                if (asciiBytes[i] != PixelFont.SpaceASCII)
+                {
+                    Color guiColor = GUI.color;
+
+                    GUI.color = color;
+                    GUI.DrawTextureWithTexCoords(rect, atlasTexture, atlasRects[asciiBytes[i] - asciiStart]);
+
+                    GUI.color = guiColor;
+                }
+
+                x += rect.width + GlyphSpacing * scale.x;
+            }
+        }
+
+        /// <summary>
+        /// Calculates glyph width up to character length of string (-1 for all characters)
+        /// </summary>
+        public float GetCharacterWidth(string text, int length = -1)
+        {
+            byte[] asciiBytes = Encoding.ASCII.GetBytes(text);
+            if (asciiBytes == null || asciiBytes.Length == 0)
+                return 0;
+
+            if (length < 0)
+                length = asciiBytes.Length;
+
+            float width = 0;
+            for (int i = 0; i < length; i++)
+            {
+                // Invalid ASCII bytes are cast to a space character
+                if (!HasGlyph(asciiBytes[i]))
+                    asciiBytes[i] = PixelFont.SpaceASCII;
+
+                PixelFont.GlyphInfo glyph = GetGlyph(asciiBytes[i]);
+                width += glyph.width + GlyphSpacing;
+            }
+
+            return width;
+        }
+
+        #endregion
+
+        #region Private Methods
+
         bool LoadFont()
         {
             // Load font
@@ -86,6 +161,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             GlyphHeight = fntFile.FixedHeight;
+
+            // Create font atlas
+            ImageProcessing.CreateFontAtlas(fntFile, Color.clear, Color.white, out atlasTexture, out atlasRects);
+            atlasTexture.filterMode = FilterMode;
             
             return true;
         }

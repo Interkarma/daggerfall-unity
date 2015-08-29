@@ -23,9 +23,9 @@ using DaggerfallWorkshop.Game.Player;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// Implements the class picker popup window.
+    /// Implements the select class window.
     /// </summary>
-    public class DaggerfallClassSelectWindow : DaggerfallListPickerWindow
+    public class CreateCharClassSelect : DaggerfallListPickerWindow
     {
         const int startClassDescriptionID = 2100;
 
@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return selectedClass; }
         }
 
-        public DaggerfallClassSelectWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
+        public CreateCharClassSelect(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
         }
@@ -58,10 +58,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
 
-            OnItemPicked += DaggerfallClassPickerWindow_OnItemPicked;
+            OnItemPicked += DaggerfallClassSelectWindow_OnItemPicked;
         }
 
-        void DaggerfallClassPickerWindow_OnItemPicked(int index)
+        void DaggerfallClassSelectWindow_OnItemPicked(int index)
         {
             selectedClass = classList[index];
 
@@ -69,7 +69,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
             messageBox.SetTextTokens(textTokens);
             messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+            Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+            noButton.ClickSound = DaggerfallUI.Instance.ButtonClickSound;
             messageBox.OnButtonClick += ConfirmClassPopup_OnButtonClick;
             uiManager.PushWindow(messageBox);
 
