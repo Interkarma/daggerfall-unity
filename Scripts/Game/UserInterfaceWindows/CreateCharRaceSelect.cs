@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// <summary>
     /// Implements race select window.
     /// </summary>
-    public class CreateCharRaceSelect : DaggerfallBaseWindow
+    public class CreateCharRaceSelect : DaggerfallPopupWindow
     {
         const string nativeImgName = "TMAP00I0.IMG";
         const string racePickerImgName = "TAMRIEL2.IMG";
@@ -86,9 +86,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public void Clear()
+        public void Reset()
         {
             selectedRace = null;
+            if (promptLabel != null)
+                promptLabel.Enabled = true;
         }
 
         void ClickHandler(BaseScreenComponent sender, Vector2 position)
@@ -110,6 +112,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 noButton.ClickSound = DaggerfallUI.Instance.ButtonClickSound;
                 messageBox.OnButtonClick += ConfirmRacePopup_OnButtonClick;
+                messageBox.OnCancel += ConfirmRacePopup_OnCancel;
                 uiManager.PushWindow(messageBox);
 
                 AudioClip clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip((uint)selectedRace.ClipID);
@@ -120,12 +123,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ConfirmRacePopup_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
                 CloseWindow();
+            }
             else if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
             {
-                selectedRace = null;
-                promptLabel.Enabled = true;
+                sender.CancelWindow();
             }
+        }
+
+        void ConfirmRacePopup_OnCancel(DaggerfallPopupWindow sender)
+        {
+            Reset();
         }
 
         #region Private Method

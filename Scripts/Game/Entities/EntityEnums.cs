@@ -41,80 +41,44 @@ namespace DaggerfallWorkshop.Game.Entity
     }
 
     /// <summary>
-    /// Flags for entity special abilities.
-    /// These appear to be consistent in ENEMY*.CFG and CLASS*.CFG files.
+    /// Default races.
     /// </summary>
-    [Flags]
-    public enum SpecialAbilityFlags
+    public enum Races
     {
         None = 0,
-        AcuteHearing = 1,
-        Athleticism = 2,
-        AdrenalineRush = 4,
-        NoRegenSpellPoints = 8,
-        SunDamage = 16,
-        HolyDamage = 32,
+        Breton = 1,
+        Redguard = 2,
+        Nord = 3,
+        DarkElf = 4,
+        HighElf = 5,
+        WoodElf = 6,
+        Khajiit = 7,
+        Argonian = 8,
     }
 
     /// <summary>
-    /// Entity skills.
-    /// The indices below match those in BIOG*.TXT files and CLASS*.CFG files.
-    /// Likely to be the same indices using internally by the game.
-    /// TEXT.RSC description records start at 1360, but are in a different order to below.
+    /// Default classes.
     /// </summary>
-    public enum Skills
+    public enum Classes
     {
-        Medical = 0,
-        Etiquette = 1,
-        Streetwise = 2,
-        Jumping = 3,
-        Orcish = 4,
-        Harpy = 5,
-        Giantish = 6,
-        Dragonish = 7,
-        Nymph = 8,
-        Daedrice = 9,
-        Spriggan = 10,
-        Centaurian = 11,
-        Impish = 12,
-        Lockpicking = 13,
-        Mercantile = 14,
-        Pickpocket = 15,
-        Stealth = 16,
-        Swimming = 17,
-        Climbing = 18,
-        Backstabbing = 19,
-        Dodging = 20,
-        Running = 21,
-        Destruction = 22,
-        Restoration = 23,
-        Illusion = 24,
-        Alteration = 25,
-        Thaumaturgy = 26,
-        Mysticism = 27,
-        ShortBlade = 28,
-        LongBlade = 29,
-        HandToHand = 30,
-        Axe = 31,
-        BluntWeapon = 32,
-        Archery = 33,
-        CriticalStrike = 34,
-    }
-
-    /// <summary>
-    /// Materials enum for forbidden materials.
-    /// </summary>
-    public enum Materials
-    {
-        Iron = 1,
-        Steel = 2,
-        Silver = 4,
-        Elven = 8,
-        Dwarven = 16,
-        Mithril = 32,
-        Adamantium = 64,
-        Ebony = 128,
-        Orcish = 256,
-        Daedric = 512,
+        None = -1,
+        Mage = 0,
+        Spellsword = 1,
+        Battlemage = 2,
+        Sorcerer = 3,
+        Healer = 4,
+        Nightblade = 5,
+        Bard = 6,
+        Burglar = 7,
+        Rogue = 8,
+        Acrobat = 9,
+        Thief = 10,
+        Assassin = 11,
+        Monk = 12,
+        Archer = 13,
+        Ranger = 14,
+        Barbarian = 15,
+        Warrior = 16,
+        Knight = 17,
     }
 }

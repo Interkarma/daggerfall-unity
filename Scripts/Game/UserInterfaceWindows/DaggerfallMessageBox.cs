@@ -136,7 +136,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void ButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
-            CloseWindow();
             selectedButton = (MessageBoxButtons)sender.Tag;
             RaiseOnButtonClickEvent(this, selectedButton);
         }

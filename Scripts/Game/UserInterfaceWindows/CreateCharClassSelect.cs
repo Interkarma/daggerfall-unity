@@ -81,10 +81,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ConfirmClassPopup_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                sender.CloseWindow();
                 CloseWindow();
+            }
             else if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
             {
                 selectedClass = null;
+                sender.CancelWindow();
             }
         }
     }

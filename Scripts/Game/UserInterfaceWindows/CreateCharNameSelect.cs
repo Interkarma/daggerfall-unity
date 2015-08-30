@@ -31,6 +31,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "CHAR00I0.IMG";
 
         Texture2D nativeTexture;
+        TextBox textBox = new TextBox();
+        Button okButton;
+
+        public string Name
+        {
+            get { return textBox.Text; }
+            set { textBox.Text = value; }
+        }
 
         public CreateCharNameSelect(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -47,11 +55,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
-            // Add text edit box
-            TextBox textBox = new TextBox();
+            // Text edit box
             textBox.Position = new Vector2(100, 5);
             textBox.Size = new Vector2(214, 7);
             NativePanel.Components.Add(textBox);
+
+            // OK button
+            okButton = AddButton(new Rect(263, 172, 39, 22));
+            okButton.OnMouseClick += OkButton_OnMouseClick;
         }
+
+        #region Event Handlers
+
+        void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CloseWindow();
+        }
+
+        #endregion
     }
 }

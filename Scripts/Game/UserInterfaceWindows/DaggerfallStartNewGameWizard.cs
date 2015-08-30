@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         CreateCharGenderSelect createCharGenderSelectWindow;
         CreateCharClassSelect createCharClassSelectWindow;
         CreateCharNameSelect createCharNameSelectWindow;
+        CreateCharFaceSelect createCharFaceSelectWindow;
 
         WizardStages WizardStage
         {
@@ -48,6 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectClassFromList,    // Custom class not implemented
             SelectBiographyMethod,  // Not implemented, will go to name selection
             SelectName,
+            SelectFace,
             EndWizard,
         }
 
@@ -59,8 +61,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             // Wizard starts with race selection
-            //SetRaceSelectWindow();
-            SetNameSelectWindow();
+            SetRaceSelectWindow();
+
         }
 
         public override void Update()
@@ -87,9 +89,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 createCharRaceSelectWindow.OnClose += RaceSelectWindow_OnClose;
             }
 
+            createCharRaceSelectWindow.Reset();
+            characterSheet.race = null;
+
             wizardStage = WizardStages.SelectRace;
-            createCharRaceSelectWindow.Clear();
-            uiManager.PushWindow(createCharRaceSelectWindow);
+
+            if (uiManager.TopWindow != createCharRaceSelectWindow)
+                uiManager.PushWindow(createCharRaceSelectWindow);
         }
 
         void SetGenderSelectWindow()
@@ -128,16 +134,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(createCharNameSelectWindow);
         }
 
+        void SetFaceSelectWindow()
+        {
+            if (createCharFaceSelectWindow == null)
+            {
+                createCharFaceSelectWindow = new CreateCharFaceSelect(uiManager);
+                createCharFaceSelectWindow.OnClose += FaceSelectWindow_OnClose;
+            }
+
+            createCharFaceSelectWindow.SetFaceTextures(characterSheet.race, characterSheet.gender);
+
+            wizardStage = WizardStages.SelectFace;
+            uiManager.PushWindow(createCharFaceSelectWindow);
+        }
+
         #endregion
 
-        #region Window Message Handling
+        #region Event Handlers
 
         void RaceSelectWindow_OnClose()
         {
-            if (createCharRaceSelectWindow.SelectedRace != null)
+            if (!createCharRaceSelectWindow.Cancelled)
             {
                 characterSheet.race = createCharRaceSelectWindow.SelectedRace;
                 SetGenderSelectWindow();
+            }
+            else
+            {
+                characterSheet.race = null;
             }
         }
 
@@ -171,10 +195,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharNameSelectWindow.Cancelled)
             {
+                characterSheet.name = createCharNameSelectWindow.Name;
+                SetFaceSelectWindow();
             }
             else
             {
                 SetClassSelectWindow();
+            }
+        }
+
+        void FaceSelectWindow_OnClose()
+        {
+            if (!createCharFaceSelectWindow.Cancelled)
+            {
+                characterSheet.faceIndex = createCharFaceSelectWindow.FaceIndex;
+            }
+            else
+            {
+                SetNameSelectWindow();
             }
         }
 

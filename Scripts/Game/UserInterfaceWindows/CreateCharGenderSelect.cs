@@ -29,8 +29,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class CreateCharGenderSelect : DaggerfallMessageBox
     {
         const int strSelectThyCharactersGender = 2200;
+        Genders selectedGender;
 
-        public Genders SelectedGender { get; private set; }
+        public Genders SelectedGender
+        {
+            get { return selectedGender; }
+            set { selectedGender = value; }
+        }
 
         public CreateCharGenderSelect(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
@@ -54,11 +59,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void MaleButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectedGender = Genders.Male;
+            CloseWindow();
         }
 
         void FemaleButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectedGender = Genders.Female;
+            CloseWindow();
         }
 
         public override void Update()

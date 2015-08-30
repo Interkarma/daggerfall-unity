@@ -64,10 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (allowCancel)
             {
                 if (Input.GetKeyDown(exitKey))
-                {
-                    cancelled = true;
-                    CloseWindow();
-                }
+                    CancelWindow();
             }
         }
 
@@ -81,5 +78,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             base.Draw();
         }
+
+        public void CancelWindow()
+        {
+            cancelled = true;
+            RaiseOnCancelEvent(this);
+            CloseWindow();
+        }
+
+        #region Events
+
+        // OnCancel
+        public delegate void OnCancelHandler(DaggerfallPopupWindow sender);
+        public event OnCancelHandler OnCancel;
+        void RaiseOnCancelEvent(DaggerfallPopupWindow sender)
+        {
+            if (OnCancel != null)
+                OnCancel(sender);
+        }
+
+        #endregion
     }
 }

@@ -10,7 +10,9 @@
 //
 
 using System;
+using System.IO;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Player
@@ -23,5 +25,56 @@ namespace DaggerfallWorkshop.Game.Player
         public RaceTemplate race;
         public Genders gender;
         public DFClass dfClass;
+        public string name;
+        public int faceIndex;
+
+        public CharacterSheet()
+        {
+            SetDefaultValues();
+        }
+
+        // Set some default values for testing during development
+        void SetDefaultValues()
+        {
+            race = GetRaceTemplate(Races.Breton);
+            gender = Genders.Male;
+            dfClass = GetClassTemplate(Classes.Mage);
+            name = "Test McTest";
+            faceIndex = 0;
+        }
+
+        public static RaceTemplate GetRaceTemplate(Races race)
+        {
+            switch (race)
+            {
+                default:
+                case Races.Breton:
+                    return new Breton();
+                case Races.Redguard:
+                    return new Redguard();
+                case Races.Nord:
+                    return new Nord();
+                case Races.DarkElf:
+                    return new DarkElf();
+                case Races.HighElf:
+                    return new HighElf();
+                case Races.WoodElf:
+                    return new WoodElf();
+                case Races.Khajiit:
+                    return new Khajiit();
+                case Races.Argonian:
+                    return new Argonian();
+            }
+        }
+
+        public static DFClass GetClassTemplate(Classes classTemplate)
+        {
+            string filename = string.Format("CLASS{0:00}.CFG", (int)classTemplate);
+            ClassFile file = new ClassFile();
+            if (!file.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, filename)))
+                return null;
+
+            return file.DFClass;
+        }
     }
 }
