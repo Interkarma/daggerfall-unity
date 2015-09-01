@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
         public static Color DaggerfallDefaultInputTextColor = new Color32(227, 223, 0, 255);
         public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
+        public static Color DaggerfallAlternateShadowColor1 = new Color32(44, 60, 60, 255);
         public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
         public static Color DaggerfallDefaultTextCursorColor = new Color32(154, 134, 0, 200);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
@@ -43,12 +44,12 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallUnity dfUnity;
         AudioSource audioSource;
+        DaggerfallAudioSource dfAudioSource;
         UserInterfaceManager uiManager = new UserInterfaceManager();
         bool showSplashVideo = false;
 
         Texture2D[] daggerfallPopupTextures;
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[4];
-        AudioClip buttonClickSound;
         char lastCharacterTyped;
         KeyCode lastKeyCode;
 
@@ -64,15 +65,9 @@ namespace DaggerfallWorkshop.Game
             get { return audioSource; }
         }
 
-        public AudioClip ButtonClickSound
+        public DaggerfallAudioSource DaggerfallAudioSource
         {
-            get
-            {
-                if (buttonClickSound == null)
-                    buttonClickSound = dfUnity.SoundReader.GetAudioClip(SoundClips.ButtonClick);
-
-                return buttonClickSound;
-            }
+            get { return dfAudioSource; }
         }
 
         public FilterMode GlobalFilterMode
@@ -96,6 +91,7 @@ namespace DaggerfallWorkshop.Game
             dfUnity = DaggerfallUnity.Instance;
             audioSource = GetComponent<AudioSource>();
             audioSource.spatialBlend = 0;
+            dfAudioSource = GetComponent<DaggerfallAudioSource>();
 
             SetupSingleton();
             PostMessage(startupMessage);
@@ -256,6 +252,23 @@ namespace DaggerfallWorkshop.Game
                     daggerfallPopupTextures[i] = TextureReader.CreateFromAPIImage(cif, i, 0, 0);
                 }
             }
+        }
+
+        public AudioClip GetAudioClip(SoundClips clip)
+        {
+            return dfAudioSource.GetAudioClip((int)clip);
+        }
+
+        public void PlayOneShot(AudioClip clip)
+        {
+            if (audioSource)
+                audioSource.PlayOneShot(clip);
+        }
+
+        public void PlayOneShot(SoundClips clip)
+        {
+            if (dfAudioSource)
+                dfAudioSource.PlayOneShot(clip, 0);
         }
 
         #endregion

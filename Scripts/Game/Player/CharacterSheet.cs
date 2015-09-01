@@ -27,6 +27,7 @@ namespace DaggerfallWorkshop.Game.Player
         public DFClass dfClass;
         public string name;
         public int faceIndex;
+        public DaggerfallStats stats;
 
         public CharacterSheet()
         {
@@ -75,6 +76,22 @@ namespace DaggerfallWorkshop.Game.Player
                 return null;
 
             return file.DFClass;
+        }
+
+        public static DaggerfallStats GetClassBaseStats(DFClass dfClass)
+        {
+            DaggerfallStats stats = new DaggerfallStats();
+
+            stats.Strength = dfClass.Strength;
+            stats.Intelligence = dfClass.Intelligence;
+            stats.Willpower = dfClass.Willpower;
+            stats.Agility = dfClass.Agility;
+            stats.Endurance = dfClass.Endurance;
+            stats.Personality = dfClass.Personality;
+            stats.Speed = dfClass.Speed;
+            stats.Luck = dfClass.Luck;
+
+            return stats;
         }
     }
 }

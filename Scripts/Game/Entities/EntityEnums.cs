@@ -30,14 +30,14 @@ namespace DaggerfallWorkshop.Game.Entity
     /// </summary>
     public enum Stats
     {
-        Strength,
-        Intelligence,
-        Willpower,
-        Agility,
-        Endurance,
-        Personality,
-        Speed,
-        Luck,
+        Strength = 0,
+        Intelligence = 1,
+        Willpower = 2,
+        Agility = 3,
+        Endurance = 4,
+        Personality = 5,
+        Speed = 6,
+        Luck = 7,
     }
 
     /// <summary>

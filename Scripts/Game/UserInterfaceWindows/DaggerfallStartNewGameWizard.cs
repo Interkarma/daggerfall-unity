@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         CreateCharClassSelect createCharClassSelectWindow;
         CreateCharNameSelect createCharNameSelectWindow;
         CreateCharFaceSelect createCharFaceSelectWindow;
+        CreateCharAddBonusPoints createCharAddBonusPointsWindow;
 
         WizardStages WizardStage
         {
@@ -50,6 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectBiographyMethod,  // Not implemented, will go to name selection
             SelectName,
             SelectFace,
+            AddBonusPoints,
             EndWizard,
         }
 
@@ -61,8 +63,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             // Wizard starts with race selection
-            SetRaceSelectWindow();
-
+            //SetRaceSelectWindow();
+            SetAddBonusPointsWindow();
         }
 
         public override void Update()
@@ -148,6 +150,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(createCharFaceSelectWindow);
         }
 
+        void SetAddBonusPointsWindow()
+        {
+            if (createCharAddBonusPointsWindow == null)
+            {
+                createCharAddBonusPointsWindow = new CreateCharAddBonusPoints(uiManager);
+                createCharAddBonusPointsWindow.OnClose += AddBonusPointsWindow_OnClose;
+            }
+
+            createCharAddBonusPointsWindow.DFClass = characterSheet.dfClass;
+            createCharAddBonusPointsWindow.Reroll();
+
+            wizardStage = WizardStages.AddBonusPoints;
+            uiManager.PushWindow(createCharAddBonusPointsWindow);
+        }
+
         #endregion
 
         #region Event Handlers
@@ -209,10 +226,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!createCharFaceSelectWindow.Cancelled)
             {
                 characterSheet.faceIndex = createCharFaceSelectWindow.FaceIndex;
+                SetAddBonusPointsWindow();
             }
             else
             {
                 SetNameSelectWindow();
+            }
+        }
+
+        void AddBonusPointsWindow_OnClose()
+        {
+            if (!createCharAddBonusPointsWindow.Cancelled)
+            {
+            }
+            else
+            {
+                SetFaceSelectWindow();
             }
         }
 

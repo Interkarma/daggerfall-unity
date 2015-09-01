@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void ClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             if (clickSound != null)
-                DaggerfallUI.Instance.AudioSource.PlayOneShot(clickSound);
+                DaggerfallUI.Instance.PlayOneShot(clickSound);
 
             if (!string.IsNullOrEmpty(ClickMessage))
             {

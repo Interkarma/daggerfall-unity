@@ -70,7 +70,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messageBox.SetTextTokens(textTokens);
             messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
             Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
-            noButton.ClickSound = DaggerfallUI.Instance.ButtonClickSound;
+            noButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
             messageBox.OnButtonClick += ConfirmClassPopup_OnButtonClick;
             uiManager.PushWindow(messageBox);
 

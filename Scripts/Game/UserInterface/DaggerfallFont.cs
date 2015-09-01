@@ -112,6 +112,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
+        /// Draws string of individual text glyphs with a shadow.
+        /// </summary>
+        public void DrawText(
+            string text,
+            Vector2 position,
+            Vector2 scale,
+            Color color,
+            Color shadowColor,
+            Vector2 shadowPos)
+        {
+            DrawText(text, position + shadowPos, scale, shadowColor);
+            DrawText(text, position, scale, color);
+        }
+
+        /// <summary>
         /// Calculates glyph width up to character length of string (-1 for all characters)
         /// </summary>
         public float GetCharacterWidth(string text, int length = -1)
