@@ -34,6 +34,13 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="id">Text resource ID.</param>
         /// <returns>Text resource tokens.</returns>
         TextFile.Token[] GetRSCTokens(int id);
+
+        /// <summary>
+        /// Gets text for skill name.
+        /// </summary>
+        /// <param name="skill">Skill.</param>
+        /// <returns>Text for this skill.</returns>
+        string GetSkillName(DFClass.Skills skill);
         
         /// <summary>
         /// Opens a new book.
@@ -168,6 +175,85 @@ namespace DaggerfallWorkshop.Utility
                 return null;
 
             return TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
+        }
+
+        public string GetSkillName(DFClass.Skills skill)
+        {
+            switch (skill)
+            {
+                case DFClass.Skills.Medical:
+                    return "Medical";
+                case DFClass.Skills.Etiquette:
+                    return "Etiquette";
+                case DFClass.Skills.Streetwise:
+                    return "Streetwise";
+                case DFClass.Skills.Jumping:
+                    return "Jumping";
+                case DFClass.Skills.Orcish:
+                    return "Orcish";
+                case DFClass.Skills.Harpy:
+                    return "Harpy";
+                case DFClass.Skills.Giantish:
+                    return "Giantish";
+                case DFClass.Skills.Dragonish:
+                    return "Dragonish";
+                case DFClass.Skills.Nymph:
+                    return "Nymph";
+                case DFClass.Skills.Daedric:
+                    return "Daedric";
+                case DFClass.Skills.Spriggan:
+                    return "Spriggan";
+                case DFClass.Skills.Centaurian:
+                    return "Centaurian";
+                case DFClass.Skills.Impish:
+                    return "Impish";
+                case DFClass.Skills.Lockpicking:
+                    return "Lockpicking";
+                case DFClass.Skills.Mercantile:
+                    return "Mercantile";
+                case DFClass.Skills.Pickpocket:
+                    return "Pickpocket";
+                case DFClass.Skills.Stealth:
+                    return "Stealth";
+                case DFClass.Skills.Swimming:
+                    return "Swimming";
+                case DFClass.Skills.Climbing:
+                    return "Climbing";
+                case DFClass.Skills.Backstabbing:
+                    return "Backstabbing";
+                case DFClass.Skills.Dodging:
+                    return "Dodging";
+                case DFClass.Skills.Running:
+                    return "Running";
+                case DFClass.Skills.Destruction:
+                    return "Destruction";
+                case DFClass.Skills.Restoration:
+                    return "Restoration";
+                case DFClass.Skills.Illusion:
+                    return "Illusion";
+                case DFClass.Skills.Alteration:
+                    return "Alteration";
+                case DFClass.Skills.Thaumaturgy:
+                    return "Thaumaturgy";
+                case DFClass.Skills.Mysticism:
+                    return "Mysticism";
+                case DFClass.Skills.ShortBlade:
+                    return "Short Blade";
+                case DFClass.Skills.LongBlade:
+                    return "Long Blade";
+                case DFClass.Skills.HandToHand:
+                    return "Hand To Hand";
+                case DFClass.Skills.Axe:
+                    return "Axe";
+                case DFClass.Skills.BluntWeapon:
+                    return "Blunt Weapon";
+                case DFClass.Skills.Archery:
+                    return "Archery";
+                case DFClass.Skills.CriticalStrike:
+                    return "Critical Strike";
+                default:
+                    return string.Empty;
+            }
         }
 
         #region Protected Methods

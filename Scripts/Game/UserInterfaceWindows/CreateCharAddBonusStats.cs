@@ -23,9 +23,13 @@ using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
-    public class CreateCharAddBonusPoints : DaggerfallPopupWindow
+    /// <summary>
+    /// Implements "Add Bonus Points" to primary stats window.
+    /// </summary>
+    public class CreateCharAddBonusStats : DaggerfallPopupWindow
     {
         const string nativeImgName = "CHAR02I0.IMG";
+        const int strYouMustDistributeYourBonusPoints = 14;
 
         const int minBonusRoll = 0;         // The minimum number of points added to each base class stat
         const int maxBonusRoll = 10;        // The maximum number of points added to each base class stat
@@ -36,7 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture;
         DaggerfallFont font;
-        TextLabel[] statLabels = new TextLabel[8];
+        TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
         TextLabel damageModifierLabel;
         TextLabel maxEncumbranceLabel;
         TextLabel spellPointsLabel;
@@ -65,7 +69,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { dfClass = value; }
         }
 
-        public CreateCharAddBonusPoints(IUserInterfaceManager uiManager)
+        public CreateCharAddBonusStats(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
         }
@@ -78,7 +82,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Load native texture
             nativeTexture = GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
-                throw new Exception("CreateCharAddBonusPoints: Could not load native texture.");
+                throw new Exception("CreateCharAddBonusStats: Could not load native texture.");
 
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
@@ -86,7 +90,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add stat labels
             font = DaggerfallUI.Instance.DefaultFont;
             Vector2 pos = new Vector2(19, 33);
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < DaggerfallStats.Count; i++)
             {
                 statLabels[i] = AddTextLabel(font, pos, string.Empty);
                 statLabels[i].ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
@@ -114,7 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add stat select buttons
             pos = new Vector2(7, 20);
             Vector2 size = new Vector2(36, 20);
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < DaggerfallStats.Count; i++)
             {
                 Button button = AddButton(pos, size);
                 button.Tag = i;
@@ -200,8 +204,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void UpdateStatLabels()
         {
             // Update primary stat labels
-            Vector2 pos = new Vector2(19, 33);
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < DaggerfallStats.Count; i++)
             {
                 statLabels[i].Text = workingStats.GetStatValue(i).ToString();
                 if (workingStats.GetStatValue(i) != rolledStats.GetStatValue(i))
@@ -290,7 +293,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            CloseWindow();
+            if (bonusPool > 0)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(strYouMustDistributeYourBonusPoints);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+            }
+            else
+            {
+                CloseWindow();
+            }
         }
 
         #endregion

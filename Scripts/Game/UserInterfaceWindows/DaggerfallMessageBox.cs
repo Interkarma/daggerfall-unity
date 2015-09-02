@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int buttonSpacing = 32;
         int buttonTextDistance = 4;
         MessageBoxButtons selectedButton = MessageBoxButtons.Cancel;
+        bool clickAnywhereToClose = false;
 
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
@@ -79,6 +80,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return selectedButton; }
         }
 
+        public bool ClickAnywhereToClose
+        {
+            get { return clickAnywhereToClose; }
+            set { clickAnywhereToClose = value; }
+        }
+
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
@@ -93,6 +100,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             messagePanel.HorizontalAlignment = HorizontalAlignment.Center;
             messagePanel.VerticalAlignment = VerticalAlignment.Middle;
+            messagePanel.OnMouseClick += MessagePanel_OnMouseClick;
             DaggerfallUI.Instance.SetDaggerfallPopupStyle(messagePanel);
             NativePanel.Components.Add(messagePanel);
 
@@ -105,6 +113,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messagePanel.Components.Add(buttonPanel);
 
             IsSetup = true;
+        }
+
+        public void Show()
+        {
+            if (!IsSetup)
+                Setup();
+
+            uiManager.PushWindow(this);
         }
 
         public Button AddButton(MessageBoxButtons messageBoxButton)
@@ -134,6 +150,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdatePanelSizes();
         }
 
+        public void SetTextTokens(int id)
+        {
+            if (!IsSetup)
+                Setup();
+
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
+            SetTextTokens(tokens);
+        }
+
         void ButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedButton = (MessageBoxButtons)sender.Tag;
@@ -161,7 +186,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messagePanel.Size = new Vector2(label.Size.x, label.Size.y + buttonPanel.Size.y + buttonTextDistance);
         }
 
-        #region Events
+        void MessagePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (clickAnywhereToClose)
+                CloseWindow();
+        }
+
+        #region Events Handlers
 
         // OnButtonClick
         public delegate void OnButtonClickHandler(DaggerfallMessageBox sender, MessageBoxButtons messageBoxButton);

@@ -412,6 +412,21 @@ namespace DaggerfallConnect
         }
 
         /// <summary>
+        /// Primary stats.
+        /// </summary>
+        public enum Stats
+        {
+            Strength = 0,
+            Intelligence = 1,
+            Willpower = 2,
+            Agility = 3,
+            Endurance = 4,
+            Personality = 5,
+            Speed = 6,
+            Luck = 7,
+        }
+
+        /// <summary>
         /// Skills.
         /// The indices below match those in BIOG*.TXT files and CLASS*.CFG files.
         /// Likely to be the same indices using internally by the game.

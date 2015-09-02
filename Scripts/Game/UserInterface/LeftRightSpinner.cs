@@ -22,15 +22,15 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
-    /// Spinner for up/down number distribution.
+    /// Spinner for left/right number distribution.
     /// </summary>
-    public class UpDownSpinner : Panel
+    public class LeftRightSpinner : Panel
     {
-        const string nativeImgName = "CHAR02I1.IMG";
+        const string nativeImgName = "CHAR03I1.IMG";
 
         Texture2D nativeTexture;
-        Button upButton = new Button();
-        Button downButton = new Button();
+        Button leftButton = new Button();
+        Button rightButton = new Button();
         TextLabel valueLabel = new TextLabel();
         int value = 0;
 
@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { SetValue(value); }
         }
 
-        public UpDownSpinner()
+        public LeftRightSpinner()
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -57,19 +57,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
             backgroundTexture = nativeTexture;
 
             // Add up/down buttons
-            Components.Add(upButton);
-            Components.Add(downButton);
-            upButton.Position = new Vector2(0, 0);
-            upButton.Size = new Vector2(15, 7);
-            upButton.OnMouseClick += UpButton_OnMouseClick;
-            downButton.Position = new Vector2(0, 13);
-            downButton.Size = new Vector2(15, 7);
-            downButton.OnMouseClick += DownButton_OnMouseClick;
+            Components.Add(leftButton);
+            Components.Add(rightButton);
+            leftButton.Position = new Vector2(0, 0);
+            leftButton.Size = new Vector2(11, 9);
+            leftButton.OnMouseClick += LeftButton_OnMouseClick;
+            rightButton.Position = new Vector2(26, 0);
+            rightButton.Size = new Vector2(11, 9);
+            rightButton.OnMouseClick += RightButton_OnMouseClick;
 
             // Add value label
             Components.Add(valueLabel);
-            valueLabel.Position = new Vector2(0, 7);
-            valueLabel.Size = new Vector2(15, 6);
+            valueLabel.Position = new Vector2(0, 2);
+            valueLabel.Size = new Vector2(15, 9);
             valueLabel.HorizontalAlignment = HorizontalAlignment.Center;
             valueLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
             SetValue(this.value);
@@ -81,32 +81,32 @@ namespace DaggerfallWorkshop.Game.UserInterface
             valueLabel.Text = value.ToString();
         }
 
-        void UpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void LeftButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            RaiseOnUpButtonClicked();
+            RaiseOnLeftButtonClicked();
         }
 
-        void DownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void RightButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            RaiseOnDownButtonClicked();
+            RaiseOnRightButtonClicked();
         }
 
         #region Events
 
-        public delegate void OnUpButtonClickedHandler();
-        public event OnUpButtonClickedHandler OnUpButtonClicked;
-        void RaiseOnUpButtonClicked()
+        public delegate void OnLeftButtonClickedHandler();
+        public event OnLeftButtonClickedHandler OnLeftButtonClicked;
+        void RaiseOnLeftButtonClicked()
         {
-            if (OnUpButtonClicked != null)
-                OnUpButtonClicked();
+            if (OnLeftButtonClicked != null)
+                OnLeftButtonClicked();
         }
 
-        public delegate void OnDownButtonClickedHandler();
-        public event OnDownButtonClickedHandler OnDownButtonClicked;
-        void RaiseOnDownButtonClicked()
+        public delegate void OnRightButtonClickedHandler();
+        public event OnRightButtonClickedHandler OnRightButtonClicked;
+        void RaiseOnRightButtonClicked()
         {
-            if (OnDownButtonClicked != null)
-                OnDownButtonClicked();
+            if (OnRightButtonClicked != null)
+                OnRightButtonClicked();
         }
 
         #endregion

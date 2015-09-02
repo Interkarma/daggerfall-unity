@@ -35,7 +35,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         CreateCharClassSelect createCharClassSelectWindow;
         CreateCharNameSelect createCharNameSelectWindow;
         CreateCharFaceSelect createCharFaceSelectWindow;
-        CreateCharAddBonusPoints createCharAddBonusPointsWindow;
+        CreateCharAddBonusStats createCharAddBonusStatsWindow;
+        CreateCharAddBonusSkills createCharAddBonusSkillsWindow;
 
         WizardStages WizardStage
         {
@@ -51,7 +52,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectBiographyMethod,  // Not implemented, will go to name selection
             SelectName,
             SelectFace,
-            AddBonusPoints,
+            AddBonusStats,
+            AddBonusSkills,
             EndWizard,
         }
 
@@ -64,7 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Wizard starts with race selection
             //SetRaceSelectWindow();
-            SetAddBonusPointsWindow();
+            SetAddBonusSkillsWindow();
         }
 
         public override void Update()
@@ -150,19 +152,44 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(createCharFaceSelectWindow);
         }
 
-        void SetAddBonusPointsWindow()
+        void SetAddBonusStatsWindow()
         {
-            if (createCharAddBonusPointsWindow == null)
+            if (createCharAddBonusStatsWindow == null)
             {
-                createCharAddBonusPointsWindow = new CreateCharAddBonusPoints(uiManager);
-                createCharAddBonusPointsWindow.OnClose += AddBonusPointsWindow_OnClose;
+                createCharAddBonusStatsWindow = new CreateCharAddBonusStats(uiManager);
+                createCharAddBonusStatsWindow.OnClose += AddBonusStatsWindow_OnClose;
+                createCharAddBonusStatsWindow.DFClass = characterSheet.dfClass;
+                createCharAddBonusStatsWindow.Reroll();
             }
 
-            createCharAddBonusPointsWindow.DFClass = characterSheet.dfClass;
-            createCharAddBonusPointsWindow.Reroll();
+            // Update class and reroll if player changed class selection
+            if (createCharAddBonusStatsWindow.DFClass != characterSheet.dfClass)
+            {
+                createCharAddBonusStatsWindow.DFClass = characterSheet.dfClass;
+                createCharAddBonusStatsWindow.Reroll();
+            }
 
-            wizardStage = WizardStages.AddBonusPoints;
-            uiManager.PushWindow(createCharAddBonusPointsWindow);
+            wizardStage = WizardStages.AddBonusStats;
+            uiManager.PushWindow(createCharAddBonusStatsWindow);
+        }
+
+        void SetAddBonusSkillsWindow()
+        {
+            if (createCharAddBonusSkillsWindow == null)
+            {
+                createCharAddBonusSkillsWindow = new CreateCharAddBonusSkills(uiManager);
+                createCharAddBonusSkillsWindow.OnClose += AddBonusSkillsWindow_OnClose;
+                createCharAddBonusSkillsWindow.DFClass = characterSheet.dfClass;
+            }
+
+            // Update class if player changes class selection
+            if (createCharAddBonusSkillsWindow.DFClass != characterSheet.dfClass)
+            {
+                createCharAddBonusSkillsWindow.DFClass = characterSheet.dfClass;
+            }
+
+            wizardStage = WizardStages.AddBonusSkills;
+            uiManager.PushWindow(createCharAddBonusSkillsWindow);
         }
 
         #endregion
@@ -226,7 +253,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!createCharFaceSelectWindow.Cancelled)
             {
                 characterSheet.faceIndex = createCharFaceSelectWindow.FaceIndex;
-                SetAddBonusPointsWindow();
+                SetAddBonusStatsWindow();
             }
             else
             {
@@ -234,14 +261,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void AddBonusPointsWindow_OnClose()
+        void AddBonusStatsWindow_OnClose()
         {
-            if (!createCharAddBonusPointsWindow.Cancelled)
+            if (!createCharAddBonusStatsWindow.Cancelled)
             {
+                SetAddBonusSkillsWindow();
             }
             else
             {
                 SetFaceSelectWindow();
+            }
+        }
+
+        void AddBonusSkillsWindow_OnClose()
+        {
+            if (!createCharAddBonusSkillsWindow.Cancelled)
+            {
+            }
+            else
+            {
+                SetAddBonusStatsWindow();
             }
         }
 

@@ -65,11 +65,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             okButton.OnMouseClick += OkButton_OnMouseClick;
         }
 
+        public override void Update()
+        {
+            base.Update();
+
+            if (Input.GetKeyDown(KeyCode.Return))
+                AcceptName();
+        }
+
+        void AcceptName()
+        {
+            if (textBox.Text.Length > 0)
+                CloseWindow();
+        }
+
         #region Event Handlers
 
         void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            CloseWindow();
+            AcceptName();
         }
 
         #endregion

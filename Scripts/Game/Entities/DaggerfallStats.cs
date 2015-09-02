@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -22,6 +23,8 @@ namespace DaggerfallWorkshop.Game.Entity
     [Serializable]
     public struct DaggerfallStats
     {
+        public const int Count = 8;
+
         const int defaultValue = 50;
 
         public int Strength;
@@ -57,57 +60,57 @@ namespace DaggerfallWorkshop.Game.Entity
             this.Luck = other.Luck;
         }
 
-        public int GetStatValue(Stats stat)
+        public int GetStatValue(DFClass.Stats stat)
         {
             switch (stat)
             {
-                case Stats.Strength:
+                case DFClass.Stats.Strength:
                     return this.Strength;
-                case Stats.Intelligence:
+                case DFClass.Stats.Intelligence:
                     return this.Intelligence;
-                case Stats.Willpower:
+                case DFClass.Stats.Willpower:
                     return this.Willpower;
-                case Stats.Agility:
+                case DFClass.Stats.Agility:
                     return this.Agility;
-                case Stats.Endurance:
+                case DFClass.Stats.Endurance:
                     return this.Endurance;
-                case Stats.Personality:
+                case DFClass.Stats.Personality:
                     return this.Personality;
-                case Stats.Speed:
+                case DFClass.Stats.Speed:
                     return this.Speed;
-                case Stats.Luck:
+                case DFClass.Stats.Luck:
                     return this.Luck;
                 default:
                     return 0;
             }
         }
 
-        public void SetStatValue(Stats stat, int value)
+        public void SetStatValue(DFClass.Stats stat, int value)
         {
             switch (stat)
             {
-                case Stats.Strength:
+                case DFClass.Stats.Strength:
                     this.Strength = value;
                     break;
-                case Stats.Intelligence:
+                case DFClass.Stats.Intelligence:
                     this.Intelligence = value;
                     break;
-                case Stats.Willpower:
+                case DFClass.Stats.Willpower:
                     this.Willpower = value;
                     break;
-                case Stats.Agility:
+                case DFClass.Stats.Agility:
                     this.Agility = value;
                     break;
-                case Stats.Endurance:
+                case DFClass.Stats.Endurance:
                     this.Endurance = value;
                     break;
-                case Stats.Personality:
+                case DFClass.Stats.Personality:
                     this.Personality = value;
                     break;
-                case Stats.Speed:
+                case DFClass.Stats.Speed:
                     this.Speed = value;
                     break;
-                case Stats.Luck:
+                case DFClass.Stats.Luck:
                     this.Luck = value;
                     break;
             }
@@ -115,12 +118,12 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int GetStatValue(int index)
         {
-            return GetStatValue((Stats)index);
+            return GetStatValue((DFClass.Stats)index);
         }
 
         public void SetStatValue(int index, int value)
         {
-            SetStatValue((Stats)index, value);
+            SetStatValue((DFClass.Stats)index, value);
         }
     }
 }
