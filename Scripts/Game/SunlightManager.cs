@@ -79,7 +79,8 @@ namespace DaggerfallWorkshop.Game
 
             // Set angle of rotation based on time of day and user value
             float xrot = 180f * lerp;
-            myLight.transform.rotation = Quaternion.Lerp(myLight.transform.rotation, Quaternion.Euler(xrot, Angle, 0), Time.deltaTime);
+            myLight.transform.rotation = Quaternion.Euler(xrot, Angle, 0);
+            //myLight.transform.rotation = Quaternion.Lerp(myLight.transform.rotation, Quaternion.Euler(xrot, Angle, 0), Time.deltaTime);
 
             // Set sun direction and scale
             if (myLight.enabled)
