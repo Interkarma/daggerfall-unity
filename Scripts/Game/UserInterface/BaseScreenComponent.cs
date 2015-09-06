@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
-        const int colorTextureDim = 32;
+        const int colorTextureDim = 8;
 
         bool enabled;
         string name;
@@ -380,7 +380,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else if (backgroundColor != Color.clear && backgroundColorTexture != null)
             {
+                Color color = GUI.color;
+                GUI.color = backgroundColor;
                 GUI.DrawTexture(Rectangle, backgroundColorTexture, ScaleMode.StretchToFill);
+                GUI.color = color;
             }
         }
 
@@ -761,15 +764,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void SetBackgroundColor(Color color)
         {
             backgroundColor = color;
-            backgroundColorTexture = new Texture2D(colorTextureDim, colorTextureDim);
-            Color32[] colors = new Color32[colorTextureDim * colorTextureDim];
-            for (int i = 0; i < colors.Length; i++)
+            if (backgroundColorTexture == null)
             {
-                colors[i] = color;
+                backgroundColorTexture = new Texture2D(colorTextureDim, colorTextureDim);
+                Color32[] colors = new Color32[colorTextureDim * colorTextureDim];
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    colors[i] = Color.white;
+                }
+                backgroundColorTexture.SetPixels32(colors);
+                backgroundColorTexture.Apply(false, true);
+                backgroundColorTexture.filterMode = FilterMode.Point;
             }
-            backgroundColorTexture.SetPixels32(colors);
-            backgroundColorTexture.Apply(false, true);
-            backgroundColorTexture.filterMode = FilterMode.Point;
         }
 
         #endregion

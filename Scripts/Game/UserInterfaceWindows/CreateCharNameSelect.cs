@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             // Load native texture
-            nativeTexture = GetTextureFromImg(nativeImgName);
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
                 throw new Exception("CreateCharNameSelect: Could not load native texture.");
 
@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(textBox);
 
             // OK button
-            okButton = AddButton(new Rect(263, 172, 39, 22));
+            okButton = DaggerfallUI.AddButton(new Rect(263, 172, 39, 22), NativePanel);
             okButton.OnMouseClick += OkButton_OnMouseClick;
         }
 

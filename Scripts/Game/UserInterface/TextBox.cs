@@ -43,12 +43,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public string Text
         {
             get { return text; }
-            set { text = value; }
+            set { text = value; SetCursorPosition(text.Length); }
         }
 
         public TextBox()
         {
-            font = DaggerfallUI.Instance.DefaultFont;
+            font = DaggerfallUI.DefaultFont;
             Components.Add(textCursor);
         }
 

@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Setup();
 
             // Load native texture
-            nativeTexture = GetTextureFromImg(nativeImgName);
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
                 throw new Exception("DaggerfallClassSelectWindow: Could not load native texture.");
 
@@ -68,11 +68,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             pickerPanel.Components.Add(listBox);
 
             // Add previous button
-            Button previousButton = AddButton(new Rect(179, 10, 8, 9), pickerPanel);
+            Button previousButton = DaggerfallUI.AddButton(new Rect(179, 10, 9, 9), pickerPanel);
             previousButton.OnMouseClick += PreviousButton_OnMouseClick;
 
             // Add next button
-            Button nextButton = AddButton(new Rect(179, 108, 8, 9), pickerPanel);
+            Button nextButton = DaggerfallUI.AddButton(new Rect(179, 108, 9, 9), pickerPanel);
             nextButton.OnMouseClick += NextButton_OnMouseClick;
 
             // Add scrollbar

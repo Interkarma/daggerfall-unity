@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             // Load native texture
-            nativeTexture = GetTextureFromImg(nativeImgName);
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
                 throw new Exception("DaggerfallStartWindow: Could not load native texture.");
 
@@ -41,9 +41,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.BackgroundTexture = nativeTexture;
 
             // Setup buttons
-            AddButton(new Vector2(72, 45), new Vector2(147, 15), DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow);
-            AddButton(new Vector2(72, 99), new Vector2(147, 15), DaggerfallUIMessages.dfuiStartNewGame);
-            AddButton(new Vector2(125, 145), new Vector2(41, 15), DaggerfallUIMessages.dfuiExitGame);
+            DaggerfallUI.AddButton(new Vector2(72, 45), new Vector2(147, 15), DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow, NativePanel);
+            DaggerfallUI.AddButton(new Vector2(72, 99), new Vector2(147, 15), DaggerfallUIMessages.dfuiStartNewGame, NativePanel);
+            DaggerfallUI.AddButton(new Vector2(125, 145), new Vector2(41, 15), DaggerfallUIMessages.dfuiExitGame, NativePanel);
         }
 
         public override void ProcessMessages()

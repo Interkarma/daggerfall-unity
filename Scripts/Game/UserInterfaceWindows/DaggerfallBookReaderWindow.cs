@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dfUnity = DaggerfallUnity.Instance;
 
             // Load native texture
-            nativeTexture = GetTextureFromImg(nativeImgName);
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
                 throw new Exception("DaggerfallBookReaderWindow: Could not load native texture.");
 
@@ -49,8 +49,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ChangeFont(4);
 
             // Add buttons
-            AddButton(new Vector2(181, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderPreviousPage);
-            AddButton(new Vector2(208, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderNextPage);
+            DaggerfallUI.AddButton(new Vector2(181, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderPreviousPage, NativePanel);
+            DaggerfallUI.AddButton(new Vector2(208, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderNextPage, NativePanel);
             //CreateButton(new Vector2(277, 187), new Vector2(32, 10), WindowMessages.wmCloseWindow);
 
             // Test book
@@ -107,7 +107,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         horizontalAlignment = HorizontalAlignment.Center;
                         break;
                     case TextFile.Formatting.Text:
-                        TextLabel label = AddTextLabel(currentFont, new Vector2(x, y), token.text);
+                        TextLabel label = DaggerfallUI.AddTextLabel(currentFont, new Vector2(x, y), token.text, NativePanel);
                         label.HorizontalAlignment = horizontalAlignment;
                         label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
                         label.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;

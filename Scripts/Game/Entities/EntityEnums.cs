@@ -66,4 +66,16 @@ namespace DaggerfallWorkshop.Game.Entity
         Warrior = 16,
         Knight = 17,
     }
+
+    /// <summary>
+    /// Player reflex settings for enemy speed.
+    /// </summary>
+    public enum PlayerReflexes
+    {
+        VeryHigh,
+        High,
+        Average,
+        Low,
+        VeryLow,
+    }
 }

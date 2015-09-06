@@ -107,7 +107,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected virtual void CreateLabelTexture()
         {
             if (font == null)
-                font = DaggerfallUI.Instance.DefaultFont;
+                font = DaggerfallUI.DefaultFont;
 
             // First pass encodes ASCII and calculates final dimensions
             int width = 0;

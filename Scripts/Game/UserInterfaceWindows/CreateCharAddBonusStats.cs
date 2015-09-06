@@ -31,16 +31,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "CHAR02I0.IMG";
         const int strYouMustDistributeYourBonusPoints = 14;
 
-        const int minBonusRoll = 0;         // The minimum number of points added to each base class stat
-        const int maxBonusRoll = 10;        // The maximum number of points added to each base class stat
-        const int minBonusPool = 6;         // The minimum number of free points to allocate
-        const int maxBonusPool = 14;        // The maximum number of free points to allocate
-        const int minWorkingValue = 0;
-        const int maxWorkingValue = 95;
-
         Texture2D nativeTexture;
         DaggerfallFont font;
-        TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
         TextLabel damageModifierLabel;
         TextLabel maxEncumbranceLabel;
         TextLabel spellPointsLabel;
@@ -48,16 +40,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel toHitModifierLabel;
         TextLabel hitPointsModifierLabel;
         TextLabel healingRateModifierLabel;
-
-        UpDownSpinner spinner;
-        int selectedStat = 0;
+        StatsRollout statsRollout;
 
         DFClass dfClass;
-        DaggerfallStats rolledStats;
-        DaggerfallStats workingStats;
-        int bonusPool;
-        Color modifiedStatTextColor = Color.green;
-
         bool rollSaved = false;
         DaggerfallStats savedRolledStats;
         DaggerfallStats savedWorkingStats;
@@ -67,6 +52,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             get { return dfClass; }
             set { dfClass = value; }
+        }
+
+        public DaggerfallStats StartingStats
+        {
+            get { return statsRollout.StartingStats; }
+        }
+
+        public DaggerfallStats WorkingStats
+        {
+            get { return statsRollout.WorkingStats; }
         }
 
         public CreateCharAddBonusStats(IUserInterfaceManager uiManager)
@@ -80,31 +75,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             // Load native texture
-            nativeTexture = GetTextureFromImg(nativeImgName);
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
                 throw new Exception("CreateCharAddBonusStats: Could not load native texture.");
 
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
-            // Add stat labels
-            font = DaggerfallUI.Instance.DefaultFont;
-            Vector2 pos = new Vector2(19, 33);
-            for (int i = 0; i < DaggerfallStats.Count; i++)
-            {
-                statLabels[i] = AddTextLabel(font, pos, string.Empty);
-                statLabels[i].ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
-                pos.y += 22f;
-            }
+            // Add stats rollout
+            statsRollout = new StatsRollout();
+            statsRollout.Position = new Vector2(0, 0);
+            statsRollout.OnStatChanged += StatsRollout_OnStatChanged;
+            NativePanel.Components.Add(statsRollout);
 
             // Add secondary stat labels
-            damageModifierLabel = AddTextLabel(font, new Vector2(83, 22), string.Empty);
-            maxEncumbranceLabel = AddTextLabel(font, new Vector2(103, 32), string.Empty);
-            spellPointsLabel = AddTextLabel(font, new Vector2(112, 49), string.Empty);
-            magicResistLabel = AddTextLabel(font, new Vector2(121, 71), string.Empty);
-            toHitModifierLabel = AddTextLabel(font, new Vector2(97, 93), string.Empty);
-            hitPointsModifierLabel = AddTextLabel(font, new Vector2(101, 110), string.Empty);
-            healingRateModifierLabel = AddTextLabel(font, new Vector2(122, 120), string.Empty);
+            font = DaggerfallUI.DefaultFont;
+            damageModifierLabel = DaggerfallUI.AddTextLabel(font, new Vector2(83, 22), string.Empty, NativePanel);
+            maxEncumbranceLabel = DaggerfallUI.AddTextLabel(font, new Vector2(103, 32), string.Empty, NativePanel);
+            spellPointsLabel = DaggerfallUI.AddTextLabel(font, new Vector2(112, 49), string.Empty, NativePanel);
+            magicResistLabel = DaggerfallUI.AddTextLabel(font, new Vector2(121, 71), string.Empty, NativePanel);
+            toHitModifierLabel = DaggerfallUI.AddTextLabel(font, new Vector2(97, 93), string.Empty, NativePanel);
+            hitPointsModifierLabel = DaggerfallUI.AddTextLabel(font, new Vector2(101, 110), string.Empty, NativePanel);
+            healingRateModifierLabel = DaggerfallUI.AddTextLabel(font, new Vector2(122, 120), string.Empty, NativePanel);
 
             // Fix secondary stat shadow colors to match game
             damageModifierLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
@@ -115,38 +107,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hitPointsModifierLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
             healingRateModifierLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
 
-            // Add stat select buttons
-            pos = new Vector2(7, 20);
-            Vector2 size = new Vector2(36, 20);
-            for (int i = 0; i < DaggerfallStats.Count; i++)
-            {
-                Button button = AddButton(pos, size);
-                button.Tag = i;
-                button.OnMouseClick += StatButton_OnMouseClick;
-                pos.y += 22;
-            }
-
-            // Add up/down spinner
-            spinner = new UpDownSpinner();
-            NativePanel.Components.Add(spinner);
-            spinner.OnUpButtonClicked += Spinner_OnUpButtonClicked;
-            spinner.OnDownButtonClicked += Spinner_OnDownButtonClicked;
-            SelectStat(0);
-
             // Add "Reroll" button
-            Button rerollButton = AddButton(new Rect(263, 147, 39, 22));
+            Button rerollButton = DaggerfallUI.AddButton(new Rect(263, 147, 39, 22), NativePanel);
             rerollButton.OnMouseClick += RerollButton_OnMouseClick;
 
             // Add "Save Roll" button
-            Button saveRoll = AddButton(new Rect(162, 162, 71, 9));
+            Button saveRoll = DaggerfallUI.AddButton(new Rect(162, 162, 71, 9), NativePanel);
             saveRoll.OnMouseClick += SaveRoll_OnMouseClick;
 
             // Add "Load Roll" button
-            Button loadRoll = AddButton(new Rect(162, 171, 71, 9));
+            Button loadRoll = DaggerfallUI.AddButton(new Rect(162, 171, 71, 9), NativePanel);
             loadRoll.OnMouseClick += LoadRoll_OnMouseClick;
 
             // Add "OK" button
-            Button okButton = AddButton(new Rect(263, 172, 39, 22));
+            Button okButton = DaggerfallUI.AddButton(new Rect(263, 172, 39, 22), NativePanel);
             okButton.OnMouseClick += OkButton_OnMouseClick;
 
             IsSetup = true;
@@ -166,54 +140,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void Reroll()
         {
-            // Must be setup prior to rolling stats
             Setup();
-
-            // Assign base stats from class template
-            rolledStats = CharacterSheet.GetClassBaseStats(dfClass);
-
-            // Roll bonus value for each base stat
-            // Using maxBonusRoll + 1 as Unity's Random.Range(int,int) is exclusive
-            // of maximum value and we want to be inclusive of maximum value
-            rolledStats.Strength += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Intelligence += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Willpower += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Agility += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Endurance += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Personality += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Speed += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-            rolledStats.Luck += UnityEngine.Random.Range(minBonusRoll, maxBonusRoll + 1);
-
-            // Roll bonus pool for player to distribute
-            // Using maxBonusPool + 1 for inclusive range as above
-            bonusPool = UnityEngine.Random.Range(minBonusPool, maxBonusPool + 1);
-            spinner.Value = bonusPool;
-
-            // Copy base stats to working stats
-            workingStats.Copy(rolledStats);
-            UpdateStatLabels();
-
-            // Play "rolling dice" sound
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.DiceRoll);
+            statsRollout.Reroll(dfClass);
+            UpdateSecondaryStatLabels();
         }
 
         #endregion
 
         #region Private Methods
 
-        void UpdateStatLabels()
+        void UpdateSecondaryStatLabels()
         {
-            // Update primary stat labels
-            for (int i = 0; i < DaggerfallStats.Count; i++)
-            {
-                statLabels[i].Text = workingStats.GetStatValue(i).ToString();
-                if (workingStats.GetStatValue(i) != rolledStats.GetStatValue(i))
-                    statLabels[i].TextColor = modifiedStatTextColor;
-                else
-                    statLabels[i].TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
-            }
-
-            // Update secondary stat labels
+            DaggerfallStats workingStats = statsRollout.WorkingStats;
             damageModifierLabel.Text = DamageModifier(workingStats.Strength).ToString("+0;-0;0");
             maxEncumbranceLabel.Text = MaxEncumbrance(workingStats.Strength).ToString();
             spellPointsLabel.Text = SpellPoints(workingStats.Intelligence, dfClass.SpellPointMultiplierValue).ToString();
@@ -223,49 +161,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             healingRateModifierLabel.Text = HealingRateModifier(workingStats.Endurance).ToString("+0;-0;0");
         }
 
-        void SelectStat(int index)
-        {
-            selectedStat = index;
-            spinner.Position = new Vector2(44, 21 + (22 * index));
-        }
-
-        void StatButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            SelectStat((int)sender.Tag);
-        }
-
-        void Spinner_OnUpButtonClicked()
-        {
-            // Get working stat value
-            int workingValue = workingStats.GetStatValue(selectedStat);
-
-            // Working value cannot rise above maxWorkingValue and bonus cannot fall below zero
-            if (workingValue == maxWorkingValue || bonusPool == 0)
-                return;
-
-            // Remove a point from pool stat and assign to working stat
-            bonusPool -= 1;
-            workingStats.SetStatValue(selectedStat, workingValue + 1);
-            spinner.Value = bonusPool;
-            UpdateStatLabels();
-        }
-
-        void Spinner_OnDownButtonClicked()
-        {
-            // Get working stat value
-            int workingValue = workingStats.GetStatValue(selectedStat);
-
-            // Working value cannot reduce below starting value or minWorkingValue
-            if (workingValue == rolledStats.GetStatValue(selectedStat) || workingValue == minWorkingValue)
-                return;
-
-            // Remove a point from working stat and assign to pool
-            workingStats.SetStatValue(selectedStat, workingValue - 1);
-            bonusPool += 1;
-            spinner.Value = bonusPool;
-            UpdateStatLabels();
-        }
-
         void RerollButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             Reroll();
@@ -273,9 +168,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SaveRoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            savedRolledStats.Copy(rolledStats);
-            savedWorkingStats.Copy(workingStats);
-            savedBonusPool = bonusPool;
+            savedRolledStats.Copy(statsRollout.StartingStats);
+            savedWorkingStats.Copy(statsRollout.WorkingStats);
+            savedBonusPool = statsRollout.BonusPool;
             rollSaved = true;
         }
 
@@ -283,17 +178,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (rollSaved)
             {
-                rolledStats.Copy(savedRolledStats);
-                workingStats.Copy(savedWorkingStats);
-                bonusPool = savedBonusPool;
-                UpdateStatLabels();
-                spinner.Value = bonusPool;
+                statsRollout.SetStats(savedRolledStats, savedWorkingStats, savedBonusPool);
+                UpdateSecondaryStatLabels();
             }
         }
 
         void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (bonusPool > 0)
+            if (statsRollout.BonusPool > 0)
             {
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(strYouMustDistributeYourBonusPoints);
@@ -304,6 +196,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 CloseWindow();
             }
+        }
+
+        void StatsRollout_OnStatChanged()
+        {
+            UpdateSecondaryStatLabels();
         }
 
         #endregion

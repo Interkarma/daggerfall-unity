@@ -27,7 +27,11 @@ namespace DaggerfallWorkshop.Game.Player
         public DFClass dfClass;
         public string name;
         public int faceIndex;
-        public DaggerfallStats stats;
+        public DaggerfallStats startingStats;
+        public DaggerfallStats workingStats;
+        public DaggerfallSkills startingSkills;
+        public DaggerfallSkills workingSkills;
+        public PlayerReflexes reflexes;
 
         public CharacterSheet()
         {

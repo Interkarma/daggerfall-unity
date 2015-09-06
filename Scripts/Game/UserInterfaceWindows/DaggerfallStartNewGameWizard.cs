@@ -37,6 +37,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         CreateCharFaceSelect createCharFaceSelectWindow;
         CreateCharAddBonusStats createCharAddBonusStatsWindow;
         CreateCharAddBonusSkills createCharAddBonusSkillsWindow;
+        CreateCharReflexSelect createCharReflexSelectWindow;
+        CreateCharSummary createCharSummaryWindow;
 
         WizardStages WizardStage
         {
@@ -47,14 +49,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             SelectRace,
             SelectGender,
-            SelectClassMethod,      // Not implemented, will go to class list
-            SelectClassFromList,    // Custom class not implemented
-            SelectBiographyMethod,  // Not implemented, will go to name selection
+            SelectClassMethod,      // Class questions not implemented, goes straight to SelectClassFromList
+            SelectClassFromList,
+            CustomClassBuilder,     // Custom class not implemented
+            SelectBiographyMethod,  // Biography not implemented
             SelectName,
             SelectFace,
             AddBonusStats,
             AddBonusSkills,
-            EndWizard,
+            SelectReflexes,
+            Summary,
         }
 
         public StartNewGameWizard(IUserInterfaceManager uiManager)
@@ -65,8 +69,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             // Wizard starts with race selection
-            //SetRaceSelectWindow();
-            SetAddBonusSkillsWindow();
+            SetRaceSelectWindow();
         }
 
         public override void Update()
@@ -192,6 +195,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(createCharAddBonusSkillsWindow);
         }
 
+        void SetSelectReflexesWindow()
+        {
+            if (createCharReflexSelectWindow == null)
+            {
+                createCharReflexSelectWindow = new CreateCharReflexSelect(uiManager);
+                createCharReflexSelectWindow.OnClose += ReflexSelectWindow_OnClose;
+            }
+
+            wizardStage = WizardStages.SelectReflexes;
+            uiManager.PushWindow(createCharReflexSelectWindow);
+        }
+
+        void SetSummaryWindow()
+        {
+            if (createCharSummaryWindow == null)
+            {
+                createCharSummaryWindow = new CreateCharSummary(uiManager);
+                createCharSummaryWindow.OnClose += SummaryWindow_OnClose;
+            }
+
+            createCharSummaryWindow.CharacterSheet = characterSheet;
+
+            wizardStage = WizardStages.Summary;
+            uiManager.PushWindow(createCharSummaryWindow);
+        }
+
         #endregion
 
         #region Event Handlers
@@ -265,6 +294,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharAddBonusStatsWindow.Cancelled)
             {
+                characterSheet.startingStats = createCharAddBonusStatsWindow.StartingStats;
+                characterSheet.workingStats = createCharAddBonusStatsWindow.WorkingStats;
                 SetAddBonusSkillsWindow();
             }
             else
@@ -277,10 +308,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharAddBonusSkillsWindow.Cancelled)
             {
+                characterSheet.startingSkills = createCharAddBonusSkillsWindow.StartingSkills;
+                characterSheet.workingSkills = createCharAddBonusSkillsWindow.WorkingSkills;
+                SetSelectReflexesWindow();
             }
             else
             {
                 SetAddBonusStatsWindow();
+            }
+        }
+
+        void ReflexSelectWindow_OnClose()
+        {
+            if (!createCharReflexSelectWindow.Cancelled)
+            {
+                characterSheet.reflexes = createCharReflexSelectWindow.PlayerReflexes;
+                SetSummaryWindow();
+            }
+            else
+            {
+                SetAddBonusSkillsWindow();
+            }
+        }
+
+        void SummaryWindow_OnClose()
+        {
+            if (!createCharSummaryWindow.Cancelled)
+            {
+            }
+            else
+            {
+                SetSelectReflexesWindow();
             }
         }
 

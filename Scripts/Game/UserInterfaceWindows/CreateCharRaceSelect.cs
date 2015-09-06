@@ -50,7 +50,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             // Load native texture
-            nativeTexture = GetTextureFromImg(nativeImgName);
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
                 throw new Exception("CreateCharRaceSelect: Could not load native texture.");
 
@@ -58,14 +58,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             PopulateRaceDict();
 
             // Load picker colours
-            racePickerBitmap = GetImgBitmap(racePickerImgName);
+            racePickerBitmap = DaggerfallUI.GetImgBitmap(racePickerImgName);
 
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
             // Add "Please select your home province..." prompt
-            DaggerfallUI ui = DaggerfallUI.Instance;
-            promptLabel = AddTextLabel(ui.DefaultFont, new Vector2(0, 16), HardStrings.pleaseSelectYourHomeProvince);
+            promptLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 16), HardStrings.pleaseSelectYourHomeProvince, NativePanel);
             promptLabel.HorizontalAlignment = HorizontalAlignment.Center;
             promptLabel.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
             promptLabel.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;

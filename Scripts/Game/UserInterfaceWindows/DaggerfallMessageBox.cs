@@ -128,8 +128,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!IsSetup)
                 Setup();
 
-            Texture2D background = GetTextureFromCifRci(buttonsFilename, (int)messageBoxButton);
-            Button button = AddButton(Vector2.zero, new Vector2(background.width, background.height), buttonPanel);
+            Texture2D background = DaggerfallUI.GetTextureFromCifRci(buttonsFilename, (int)messageBoxButton);
+            Button button = DaggerfallUI.AddButton(Vector2.zero, new Vector2(background.width, background.height), buttonPanel);
             button.BackgroundTexture = background;
             button.BackgroundTextureLayout = TextureLayout.StretchToFill;
             button.Tag = messageBoxButton;

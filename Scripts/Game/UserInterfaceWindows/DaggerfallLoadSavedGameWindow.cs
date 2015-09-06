@@ -80,7 +80,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             // Load native texture
-            nativeTexture = GetTextureFromImg(nativeImgName);
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
                 throw new Exception("DaggerfallLoadSavedGameWindow: Could not load native texture.");
 
@@ -142,14 +142,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 saveTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
                 // Setup image button
-                saveImageButtons[i] = AddButton(saveImageButtonDims[i]);
+                saveImageButtons[i] = DaggerfallUI.AddButton(saveImageButtonDims[i], NativePanel);
                 saveImageButtons[i].BackgroundTexture = saveTexture;
                 saveImageButtons[i].BackgroundTextureLayout = TextureLayout.ScaleToFit;
                 saveImageButtons[i].ClickMessage = string.Format("{0}?{1}={2}", DaggerfallUIMessages.dfuiSelectSaveGame, gameid, i);
                 saveImageButtons[i].DoubleClickMessage = DaggerfallUIMessages.dfuiOpenSelectedSaveGame;
 
                 // Setup text button
-                saveTextButtons[i] = AddButton(saveTextButtonDims[i]);
+                saveTextButtons[i] = DaggerfallUI.AddButton(saveTextButtonDims[i], NativePanel);
                 saveTextButtons[i].Label.Text = saveGames.SaveName;
                 saveTextButtons[i].ClickMessage = string.Format("{0}?{1}={2}", DaggerfallUIMessages.dfuiSelectSaveGame, gameid, i);
                 saveTextButtons[i].DoubleClickMessage = DaggerfallUIMessages.dfuiOpenSelectedSaveGame;
@@ -160,15 +160,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Setup outline
-            outline = AddOutline(outlineRects[0], DaggerfallUI.DaggerfallDefaultTextColor);
+            outline = DaggerfallUI.AddOutline(outlineRects[0], DaggerfallUI.DaggerfallDefaultTextColor, NativePanel);
             if (selectedSaveGame == -1)
                 outline.Enabled = false;
             else
                 SelectSaveGame(selectedSaveGame);
 
             // Setup load game and exit buttons
-            AddButton(new Vector2(126, 5), new Vector2(68, 11), DaggerfallUIMessages.dfuiOpenSelectedSaveGame);
-            AddButton(new Vector2(133, 150), new Vector2(56, 19), WindowMessages.wmCloseWindow);
+            DaggerfallUI.AddButton(new Vector2(126, 5), new Vector2(68, 11), DaggerfallUIMessages.dfuiOpenSelectedSaveGame, NativePanel);
+            DaggerfallUI.AddButton(new Vector2(133, 150), new Vector2(56, 19), WindowMessages.wmCloseWindow, NativePanel);
         }
 
         void SelectSaveGame(int index)

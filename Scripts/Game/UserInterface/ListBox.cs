@@ -210,7 +210,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public void AddItem(string text)
         {
             if (font == null)
-                font = DaggerfallUI.Instance.DefaultFont;
+                font = DaggerfallUI.DefaultFont;
 
             TextLabel textLabel = new TextLabel();
             textLabel.Scaling = Scaling.None;

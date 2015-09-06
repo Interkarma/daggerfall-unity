@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public virtual void SetTextTokens(TextFile.Token[] multilineRecordTokens)
         {
             if (font == null)
-                font = DaggerfallUI.Instance.DefaultFont;
+                font = DaggerfallUI.DefaultFont;
 
             LayoutTextRows(multilineRecordTokens);
         }
