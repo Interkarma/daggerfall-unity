@@ -143,6 +143,12 @@ namespace DaggerfallWorkshop
             set { textProvider = value; }
         }
 
+        static SettingsManager settingsManager;
+        public static SettingsManager Settings
+        {
+            get { return (settingsManager != null) ? settingsManager : settingsManager = new SettingsManager(); }
+        }
+
         #endregion
 
         #region Singleton
@@ -228,7 +234,7 @@ namespace DaggerfallWorkshop
             // Allow implementor to set own Arena2 path (e.g. from custom settings file)
             RaiseOnSetArena2SourceEvent();
 
-            // Check path is valid
+            // Check stored singleton path is valid
             if (ValidateArena2Path(Arena2Path))
             {
                 isReady = true;
@@ -238,11 +244,28 @@ namespace DaggerfallWorkshop
             }
             else
             {
-                // Look for arena2 folder in Application.dataPath at runtime
+                // Otherwise, look for valid arena2 folder in Application.dataPath at runtime
+                string path;
+                bool found = false;
                 if (Application.isPlaying)
                 {
-                    string path = Path.Combine(Application.dataPath, "arena2");
+                    path = Path.Combine(Application.dataPath, "arena2");
                     if (Directory.Exists(path))
+                    {
+                        found = true;
+                    }
+                    else
+                    {
+                        // Finally, look for valid arena2 folder inside settings MyDaggerfallPath
+                        path = Path.Combine(Settings.MyDaggerfallPath, "arena2");
+                        if (Directory.Exists(path))
+                        {
+                            found = true;
+                        }
+                    }
+                    
+                    // Did we find a path?
+                    if (found)
                     {
                         // If it appears valid set this is as our path
                         if (ValidateArena2Path(path))
@@ -258,6 +281,7 @@ namespace DaggerfallWorkshop
             }
 
             // No path was found but we can try to carry on without one
+            // Many features will not work without a valid path
             isReady = true;
             isPathValidated = false;
 

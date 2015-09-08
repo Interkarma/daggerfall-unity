@@ -1,23 +1,25 @@
-' Daggerfall Unity .INI File
+[Daggerfall]
+MyDaggerfallPath=C:\Daggerfall
 
 [Video]
 ViewportX=1280
 ViewportY=720
 Fullscreen=1
 FieldOfView=60
-BitmapCursor=1
-VSync=1
+BitmapCursor=True
+VSync=True
 
 [ChildGuard]
-NoPlayerNudity=1
+NoPlayerNudity=True
 
 [GUI]
-NativeViewportX=320		' (0=point, 1=bilinear, 2=trilinear)
+NativeViewportX=320
 NativeViewportY=200
 ViewportScale=1
 MainFilterMode=0
 GUIFilterMode=0
+Crosshair=True
 
 [Startup]
 StartingLocation=Daggerfall/Privateer's Hold
-StartInDungeon=1
+StartInDungeon=True
