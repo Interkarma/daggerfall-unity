@@ -75,7 +75,7 @@ namespace DaggerfallConnect.Save
 
         /// <summary>
         /// Saves changes to SAVETREE.DAT file.
-        /// Must have been opened with readOnly=true.
+        /// Must have been opened with readOnly=false.
         /// </summary>
         public void Save()
         {
@@ -164,6 +164,7 @@ namespace DaggerfallConnect.Save
         CharacterParentUnknown1 = 0x04,
         CharacterParentUnknown2 = 0x05,
         Unknown1 = 0x06,
+        DungeonInformation = 0x07,                  // Length MUST be multiplied by 39 (0x27)
         Unknown2 = 0x08,
         SpellOrEffect = 0x09,
         GuildMembership = 0x0a,

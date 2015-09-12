@@ -23,6 +23,7 @@ namespace DaggerfallConnect.Save
     /// </summary>
     public class SaveTreeRecord
     {
+        public SaveTreeRecord Parent;               // Parent of this record
         public long Position;                       // Offset position in file
         public Int32 Length;                        // Length of this record in bytes
         public byte[] RawData;                      // Raw byte data of this record

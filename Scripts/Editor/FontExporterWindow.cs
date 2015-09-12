@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop
             FontExporterWindow window = (FontExporterWindow)EditorWindow.GetWindow(typeof(FontExporterWindow));
 #if UNITY_5_0
             window.title = windowTitle;
-#elif UNITY_5_1
+#elif UNITY_5_1 || UNITY_5_2
             window.titleContent = new GUIContent(windowTitle);
 #endif
         }

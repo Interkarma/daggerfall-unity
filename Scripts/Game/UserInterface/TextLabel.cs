@@ -22,11 +22,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// </summary>
     public class TextLabel : BaseScreenComponent
     {
+        const int minTextureDim = 8;
+
         PixelFont font;
         string text = string.Empty;
         byte[] asciiBytes;
         int totalWidth;
         int totalHeight;
+        int textureWidth;
+        int textureHeight;
         Texture2D labelTexture;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
@@ -78,19 +82,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Color guiColor = GUI.color;
 
             // Draw shadow
-            Rect rect = Rectangle;
+            Rect totalRect = Rectangle;
+            Rect innerRect = new Rect(0, 0, (float)totalWidth / (float)textureWidth, (float)totalHeight / (float)textureHeight);
             if (shadowPosition != Vector2.zero)
             {
-                Rect shadowRect = rect;
+                Rect shadowRect = totalRect;
                 shadowRect.x += shadowPosition.x * LocalScale.x;
                 shadowRect.y += shadowPosition.y * LocalScale.y;
                 GUI.color = shadowColor;
-                GUI.DrawTexture(shadowRect, labelTexture, ScaleMode.StretchToFill);
+                GUI.DrawTextureWithTexCoords(shadowRect, labelTexture, innerRect);
             }
 
             // Draw text
             GUI.color = textColor;
-            GUI.DrawTexture(rect, labelTexture, ScaleMode.StretchToFill);
+            GUI.DrawTextureWithTexCoords(totalRect, labelTexture, innerRect);
 
             // Restore starting colour
             GUI.color = guiColor;
@@ -145,8 +150,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         protected virtual Texture2D CreateLabelTexture(int width, int height)
         {
+            // Enforce minimum texture dimensions of 8x8 to avoid "degenerate image" error in Unity 5.2
+            textureWidth = (width < minTextureDim) ? minTextureDim : width;
+            textureHeight = (height < minTextureDim) ? minTextureDim : height;
+
             // Create target texture and init to clear
-            Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            Texture2D texture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGBA32, false);
             Color32[] colors = texture.GetPixels32();
             for (int i = 0; i < colors.Length; i++)
             {
@@ -154,7 +163,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             texture.SetPixels32(colors);
             texture.Apply(false);
-            
+
             return texture;
         }
 
