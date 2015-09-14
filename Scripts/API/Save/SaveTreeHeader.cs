@@ -25,7 +25,7 @@ namespace DaggerfallConnect.Save
     public class SaveTreeHeader
     {
         // Consts
-        public const int HeaderLength = 0x13;
+        public const int HeaderLength = 18;
         public const int VersionNumber = 0x26;
 
         // Public fields

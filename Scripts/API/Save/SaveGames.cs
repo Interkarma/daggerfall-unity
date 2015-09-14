@@ -30,11 +30,10 @@ namespace DaggerfallConnect.Save
         string savesPath = string.Empty;
         bool isPathOpen = false;
         bool isReadOnly = true;
-        Exception lastException;
 
         Dictionary<int, string> saveGameDict = new Dictionary<int, string>();
-        SaveTree saveTree = new SaveTree();
-        SaveImage saveImage = new SaveImage();
+        SaveTree saveTree;
+        SaveImage saveImage;
         string saveName = string.Empty;
 
         #region Properties
@@ -61,14 +60,6 @@ namespace DaggerfallConnect.Save
         public bool IsReadOnly
         {
             get { return isReadOnly; }
-        }
-
-        /// <summary>
-        /// Gets last exception.
-        /// </summary>
-        public Exception LastException
-        {
-            get { return lastException; }
         }
 
         /// <summary>
@@ -156,25 +147,18 @@ namespace DaggerfallConnect.Save
         /// <returns>True if successful.</returns>
         public bool OpenSave(int save)
         {
-            try
-            {
-                if (!HasSave(save))
-                    return false;
-
-                if (!saveTree.Open(Path.Combine(saveGameDict[save], SaveTree.Filename)))
-                    throw new Exception("Could not open SaveTree for index " + save);
-
-                if (!LoadSaveImage(save))
-                    throw new Exception("Could not open SaveImage for index " + save);
-
-                if (!LoadSaveName(save))
-                    throw new Exception("Could not open SaveName for index " + save);
-            }
-            catch (Exception ex)
-            {
-                lastException = ex;
+            if (!HasSave(save))
                 return false;
-            }
+
+            if (!LoadSaveImage(save))
+                throw new Exception("Could not open SaveImage for index " + save);
+
+            if (!LoadSaveName(save))
+                throw new Exception("Could not open SaveName for index " + save);
+
+            saveTree = new SaveTree();
+            if (!saveTree.Open(Path.Combine(saveGameDict[save], SaveTree.Filename)))
+                throw new Exception("Could not open SaveTree for index " + save);
 
             return true;
         }

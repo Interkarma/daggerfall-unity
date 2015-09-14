@@ -27,8 +27,11 @@ namespace DaggerfallConnect.Save
         public const string Filename = "SAVETREE.DAT";
 
         // Public fields
-        public SaveTreeHeader Header;               // SaveTree header
-        public List<SaveTreeRecord> Records;        // SaveTree records
+        public SaveTreeHeader Header;
+        public SaveTreeLocationDetail LocationDetail;
+        public List<ItemRecord> ItemRecords = new List<ItemRecord>();
+        public List<SpellRecord> SpellRecords = new List<SpellRecord>();
+        public List<SaveTreeBaseRecord> OtherRecords = new List<SaveTreeBaseRecord>();
 
         // Private fields
         FileProxy saveTreeFile = new FileProxy();
@@ -69,6 +72,12 @@ namespace DaggerfallConnect.Save
             // Read header
             Header = new SaveTreeHeader();
             Header.Read(reader);
+
+            // Read location detail
+            LocationDetail = new SaveTreeLocationDetail(reader);
+
+            // Read remaining records
+            ReadRecords(reader);
 
             return true;
         }
@@ -128,6 +137,44 @@ namespace DaggerfallConnect.Save
         }
 
         #endregion
+
+        #region Private Methods
+
+        void ReadRecords(BinaryReader reader)
+        {
+            OtherRecords = new List<SaveTreeBaseRecord>();
+            while (reader.BaseStream.Position < reader.BaseStream.Length - 4)
+            {
+                SaveTreeRecordTypes type = PeekRecordType(reader);
+                switch(type)
+                {
+                    case SaveTreeRecordTypes.Item:
+                        ItemRecord itemRecord = new ItemRecord(reader);
+                        ItemRecords.Add(itemRecord);
+                        break;
+                    case SaveTreeRecordTypes.Spell:
+                        SpellRecord spellRecord = new SpellRecord(reader);
+                        SpellRecords.Add(spellRecord);
+                        break;
+                    default:
+                        SaveTreeBaseRecord baseRecord = new SaveTreeBaseRecord(reader);
+                        OtherRecords.Add(baseRecord);
+                        break;
+                }
+            }
+        }
+
+        SaveTreeRecordTypes PeekRecordType(BinaryReader reader)
+        {
+            long position = reader.BaseStream.Position;
+            reader.ReadInt32();
+            int type = reader.ReadByte();
+            reader.BaseStream.Position = position;
+
+            return (SaveTreeRecordTypes)type;
+        }
+
+        #endregion
     }
 
     #region Structs & Enums
@@ -158,6 +205,7 @@ namespace DaggerfallConnect.Save
     /// </summary>
     public enum SaveTreeRecordTypes
     {
+        Null = 0x00,
         CharacterPosition = 0x01,
         Item = 0x02,
         Character = 0x03,
@@ -166,7 +214,7 @@ namespace DaggerfallConnect.Save
         Unknown1 = 0x06,
         DungeonInformation = 0x07,                  // Length MUST be multiplied by 39 (0x27)
         Unknown2 = 0x08,
-        SpellOrEffect = 0x09,
+        Spell = 0x09,
         GuildMembership = 0x0a,
         QBNData = 0x0e,
         QBNDataParent1 = 0x10,

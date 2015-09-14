@@ -19,13 +19,14 @@ using DaggerfallConnect.Utility;
 namespace DaggerfallConnect.Save
 {
     /// <summary>
-    /// Base record of SAVETREE.DAT.
+    /// Item record.
+    /// SaveTreeRecordTypes = 0x02
     /// </summary>
-    public class SaveTreeRecord
+    public class ItemRecord : SaveTreeBaseRecord
     {
-        public SaveTreeRecord Parent;               // Parent of this record
-        public long Position;                       // Offset position in file
-        public Int32 Length;                        // Length of this record in bytes
-        public byte[] RawData;                      // Raw byte data of this record
+        public ItemRecord(BinaryReader reader)
+            : base(reader)
+        {
+        }
     }
 }
