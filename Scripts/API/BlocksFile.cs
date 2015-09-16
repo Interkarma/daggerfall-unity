@@ -606,11 +606,11 @@ namespace DaggerfallConnect.Arena2
             blocks[block].DFBlock.RmbBlock.FldHeader.AutoMapData = reader.ReadBytes(64 * 64);
 
             // Filenames
-            blocks[block].DFBlock.RmbBlock.FldHeader.Name = blocks[block].MemoryFile.ReadCString(reader, 13);
+            blocks[block].DFBlock.RmbBlock.FldHeader.Name = FileProxy.ReadCString(reader, 13);
             blocks[block].DFBlock.RmbBlock.FldHeader.OtherNames = new string[32];
             for (int i = 0; i < 32; i++)
             {
-                blocks[block].DFBlock.RmbBlock.FldHeader.OtherNames[i] = blocks[block].MemoryFile.ReadCString(reader, 13);
+                blocks[block].DFBlock.RmbBlock.FldHeader.OtherNames[i] = FileProxy.ReadCString(reader, 13);
             }
         }
 
@@ -880,9 +880,9 @@ namespace DaggerfallConnect.Arena2
             blocks[Block].DFBlock.RdbBlock.ModelReferenceList = new DFBlock.RdbModelReference[750];
             for (int i = 0; i < 750; i++)
             {
-                blocks[Block].DFBlock.RdbBlock.ModelReferenceList[i].ModelId = blocks[Block].MemoryFile.ReadCString(Reader, 5);
+                blocks[Block].DFBlock.RdbBlock.ModelReferenceList[i].ModelId = FileProxy.ReadCString(Reader, 5);
                 UInt32.TryParse(blocks[Block].DFBlock.RdbBlock.ModelReferenceList[i].ModelId, out blocks[Block].DFBlock.RdbBlock.ModelReferenceList[i].ModelIdNum);
-                blocks[Block].DFBlock.RdbBlock.ModelReferenceList[i].Description = blocks[Block].MemoryFile.ReadCString(Reader, 3);
+                blocks[Block].DFBlock.RdbBlock.ModelReferenceList[i].Description = FileProxy.ReadCString(Reader, 3);
             }
         }
 
@@ -905,7 +905,7 @@ namespace DaggerfallConnect.Arena2
             blocks[block].DFBlock.RdbBlock.ObjectHeader.Unknown3 = reader.ReadUInt32();
             blocks[block].DFBlock.RdbBlock.ObjectHeader.Length = reader.ReadUInt32();
             blocks[block].DFBlock.RdbBlock.ObjectHeader.Unknown4 = reader.ReadBytes(32);
-            blocks[block].DFBlock.RdbBlock.ObjectHeader.Dagr = blocks[block].MemoryFile.ReadCString(reader, 4);
+            blocks[block].DFBlock.RdbBlock.ObjectHeader.Dagr = FileProxy.ReadCString(reader, 4);
             blocks[block].DFBlock.RdbBlock.ObjectHeader.Unknown5 = reader.ReadBytes(456);
         }
 

@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Save;
+using DaggerfallConnect.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -28,15 +29,17 @@ namespace DaggerfallWorkshop
     public class SaveExplorerWindow : EditorWindow
     {
         const string windowTitle = "Save Explorer";
-        const string menuPath = "Daggerfall Tools/Save Explorer";
+        const string menuPath = "Daggerfall Tools/Save Explorer [Beta]";
 
         DaggerfallUnity dfUnity;
         SaveGames saveGames;
         SaveTree[] saveTrees;
+        SaveTree currentSaveTree;
         GUIContent[] saveNames;
         Texture2D[] saveTextures;
         int selectedSave = 0;
-        bool showImage = true;
+        bool showImageFoldout = false;
+        Vector2 scrollPos;
 
         [MenuItem(menuPath)]
         static void Init()
@@ -57,11 +60,22 @@ namespace DaggerfallWorkshop
                 return;
             }
 
+            currentSaveTree = saveTrees[selectedSave];
+            if (currentSaveTree == null)
+                return;
+
             if (saveTrees != null && saveTrees.Length > 0)
             {
                 DisplaySaveSelectGUI();
                 DisplaySaveImageGUI();
                 DisplaySaveStatsGUI();
+
+                EditorGUILayout.Space();
+                EditorGUILayout.HelpBox("Temporarily Filtering out records of type UnknownTownLink and UnknownItemRecord to keep list manageable.", MessageType.Info);
+                scrollPos = GUILayoutHelper.ScrollView(scrollPos, () =>
+                {
+                    DisplaySaveTree(currentSaveTree.RootRecord);
+                });
             }
         }
 
@@ -73,50 +87,101 @@ namespace DaggerfallWorkshop
 
         void DisplaySaveImageGUI()
         {
-            showImage = EditorGUILayout.Toggle(new GUIContent("Show save image"), showImage);
-
-            if (saveTextures[selectedSave] == null || !showImage)
-                return;
-
-            EditorGUILayout.Space();
-            int height = (int)(((float)Screen.width / (float)saveTextures[selectedSave].width) * (float)saveTextures[selectedSave].height);
-            Rect rect = EditorGUILayout.GetControlRect(false, height);
-            EditorGUI.DrawTextureTransparent(rect, saveTextures[selectedSave], ScaleMode.StretchToFill);
+            if (saveTextures[selectedSave] != null)
+            {
+                showImageFoldout = GUILayoutHelper.Foldout(showImageFoldout, new GUIContent("Image"), () =>
+                {
+                    EditorGUILayout.Space();
+                    int height = (int)(((float)Screen.width / (float)saveTextures[selectedSave].width) * (float)saveTextures[selectedSave].height);
+                    Rect rect = EditorGUILayout.GetControlRect(false, height);
+                    EditorGUI.DrawTextureTransparent(rect, saveTextures[selectedSave], ScaleMode.StretchToFill);
+                });
+            }
         }
 
         void DisplaySaveStatsGUI()
         {
-            SaveTree saveTree = saveTrees[selectedSave];
-            if (saveTree == null)
-                return;
-
             EditorGUILayout.Space();
+            GUILayoutHelper.Horizontal(() =>
+            {
+                EditorGUILayout.LabelField(new GUIContent("Version"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.SelectableLabel(currentSaveTree.Header.Version.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            });
+            GUILayoutHelper.Horizontal(() =>
+            {
+                string positionText = string.Format("X={0}, Y={1}, Z={2}",
+                    currentSaveTree.Header.CharacterPosition.Position.WorldX,
+                    currentSaveTree.Header.CharacterPosition.Position.YBase - currentSaveTree.Header.CharacterPosition.Position.YOffset,
+                    currentSaveTree.Header.CharacterPosition.Position.WorldZ);
+
+                EditorGUILayout.LabelField(new GUIContent("Player Position", "Position of player in the world."), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.SelectableLabel(positionText, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            });
+            GUILayoutHelper.Horizontal(() =>
+            {
+                EditorGUILayout.LabelField(new GUIContent("LocationDetail records"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.SelectableLabel(currentSaveTree.LocationDetail.RecordCount.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            });
+            GUILayoutHelper.Horizontal(() =>
+            {
+                EditorGUILayout.LabelField(new GUIContent("RecordElement records"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.SelectableLabel(currentSaveTree.RecordDictionary.Count.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            });
             //GUILayoutHelper.Horizontal(() =>
             //{
-            //    EditorGUILayout.LabelField(new GUIContent("Location Detail Records"));
-            //    EditorGUILayout.SelectableLabel(saveTree.LocationDetail.RecordCount.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            //    EditorGUILayout.LabelField(new GUIContent("Header.Unknown"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+            //    EditorGUILayout.SelectableLabel(currentSaveTree.Header.Unknown.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             //});
-            GUILayoutHelper.Horizontal(() =>
+            //GUILayoutHelper.Horizontal(() =>
+            //{
+            //    EditorGUILayout.LabelField(new GUIContent("CharacterPosition.Unknown"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+            //    EditorGUILayout.SelectableLabel(currentSaveTree.Header.CharacterPosition.Unknown.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            //});
+        }
+
+        void DisplaySaveTree(SaveTreeBaseRecord parent)
+        {
+            for (int i = 0; i < parent.Children.Count; i++)
             {
-                EditorGUILayout.LabelField(new GUIContent("Item Records"));
-                EditorGUILayout.SelectableLabel(saveTree.ItemRecords.Count.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                if (GUILayout.Button("Export"))
-                    ExportGUI(saveTree.ItemRecords.ToArray(), "item");
-            });
-            GUILayoutHelper.Horizontal(() =>
+                RecordTypes recordType = parent.Children[i].RecordType;
+                if (recordType == RecordTypes.UnknownTownLink || recordType == RecordTypes.UnknownItemRecord)
+                    continue;
+
+                string textLabel = recordType.ToString();
+                if (recordType == RecordTypes.Item || recordType == RecordTypes.Spell)
+                {
+                    textLabel += string.Format(" [{0}]", GetItemOrSpellName(parent.Children[i]));
+                }
+
+                EditorGUILayout.LabelField(textLabel);
+                GUILayoutHelper.Indent(() =>
+                {
+                    DisplaySaveTree(parent.Children[i]);
+                });
+            }
+        }
+
+        string GetItemOrSpellName(SaveTreeBaseRecord record)
+        {
+            string result = string.Empty;
+
+            byte[] recordData = record.RecordData;
+            MemoryStream stream = new MemoryStream(recordData);
+            BinaryReader reader = new BinaryReader(stream);
+
+            if (record.RecordType == RecordTypes.Item)
             {
-                EditorGUILayout.LabelField(new GUIContent("Spell Records"));
-                EditorGUILayout.SelectableLabel(saveTree.SpellRecords.Count.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                if (GUILayout.Button("Export"))
-                    ExportGUI(saveTree.SpellRecords.ToArray(), "spell");
-            });
-            GUILayoutHelper.Horizontal(() =>
+                result = FileProxy.ReadCString(reader);         // Name starts at offset 0
+            }
+            else if (record.RecordType == RecordTypes.Spell)
             {
-                EditorGUILayout.LabelField(new GUIContent("Other Records"));
-                EditorGUILayout.SelectableLabel(saveTree.OtherRecords.Count.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                if (GUILayout.Button("Export"))
-                    ExportGUI(saveTree.OtherRecords.ToArray(), "other");
-            });
+                reader.BaseStream.Position += 47;               // Name starts at offset 47
+                result = FileProxy.ReadCString(reader);
+            }
+
+            reader.Close();
+
+            return result;
         }
 
         void ExportGUI(SaveTreeBaseRecord[] records, string name)
@@ -128,7 +193,7 @@ namespace DaggerfallWorkshop
                 foreach(SaveTreeBaseRecord record in records)
                 {
                     string filename = Path.Combine(path, string.Format("{0}-{1}", name, index++));
-                    File.WriteAllBytes(filename, record.RecordData);
+                    File.WriteAllBytes(filename, record.StreamData);
                 }
                 EditorUtility.DisplayDialog("Finished", string.Format("Exported {0} records.", index), "Close");
             }

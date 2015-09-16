@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop
         MaterialReader materialReader;
         MeshReader meshReader;
         SoundReader soundReader;
-        ITerrainSampler terrainSampler = new DefaultTerrainSampler();
+        ITerrainSampler terrainSampler = new NoiseTerrainSampler();
         ITextProvider textProvider = new DefaultTextProvider();
         
         #endregion

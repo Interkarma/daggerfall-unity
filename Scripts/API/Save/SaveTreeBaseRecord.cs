@@ -23,52 +23,209 @@ namespace DaggerfallConnect.Save
     /// </summary>
     public class SaveTreeBaseRecord
     {
-        protected long position;
-        protected int recordLength;
-        protected SaveTreeRecordTypes recordType;
-        protected byte[] recordData;
+        #region Fields
 
-        public long Position
+        // Constants
+        public const int RecordRootLength = 71;
+        public const int DungeonDataLengthMultiplier = 39;
+
+        // Source data from file stream
+        protected long streamPosition;
+        protected int streamLength;
+        protected byte[] streamData;
+
+        // RecordBase data
+        protected RecordTypes recordType;
+        protected RecordRoot recordRoot = new RecordRoot();
+
+        // Tree management
+        protected SaveTreeBaseRecord parent;
+        protected List<SaveTreeBaseRecord> children = new List<SaveTreeBaseRecord>();
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets position of data in source file stream.
+        /// </summary>
+        public long StreamPosition
         {
-            get { return position; }
+            get { return streamPosition; }
         }
 
+        /// <summary>
+        /// Gets length of raw data in source file stream.
+        /// </summary>
+        public int StreamLength
+        {
+            get { return streamLength; }
+        }
+
+        /// <summary>
+        /// Gets raw data as read from file stream.
+        /// </summary>
+        public byte[] StreamData
+        {
+            get { return streamData; }
+        }
+
+        /// <summary>
+        /// Gets type of this record.
+        /// </summary>
+        public RecordTypes RecordType
+        {
+            get { return recordType; }
+        }
+
+        /// <summary>
+        /// Gets or sets RecordRoot data of this record.
+        /// </summary>
+        public RecordRoot RecordRoot
+        {
+            get { return recordRoot; }
+            set { recordRoot = value; }
+        }
+
+        /// <summary>
+        /// Gets length of actual record data, excluding RecordRoot header.
+        /// </summary>
         public int RecordLength
         {
-            get { return recordLength; }
+            get { return (streamLength > 0) ? streamLength - RecordRootLength : 0; }
         }
 
+        /// <summary>
+        /// Gets or sets actual record data, excluding RecordRoot header.
+        /// </summary>
         public byte[] RecordData
         {
-            get { return recordData; }
+            get { return GetRecordData(); }
+            set { SetRecordData(value); }
         }
+
+        /// <summary>
+        /// Gets parent of this record.
+        /// </summary>
+        public SaveTreeBaseRecord Parent
+        {
+            get { return parent; }
+        }
+
+        /// <summary>
+        /// Gets children of this record.
+        /// </summary>
+        public List<SaveTreeBaseRecord> Children
+        {
+            get { return children; }
+        }
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="reader">Reader positioned at start of binary data.</param>
-        public SaveTreeBaseRecord(BinaryReader reader)
+        public SaveTreeBaseRecord()
         {
-            Open(reader);
         }
 
-        protected virtual void Open(BinaryReader reader)
+        /// <summary>
+        /// Reader constructor.
+        /// </summary>
+        /// <param name="reader">Reader positioned at start of record data.</param>
+        /// <param name="length">Length of data record to read.</param>
+        public SaveTreeBaseRecord(BinaryReader reader, int length)
         {
-            recordLength = reader.ReadInt32();
-            recordType = PeekRecordType(reader);
-            if (recordType == SaveTreeRecordTypes.DungeonData)
-                recordLength *= 39;
-
-            recordData = reader.ReadBytes(recordLength);
+            Open(reader, length);
         }
 
-        protected SaveTreeRecordTypes PeekRecordType(BinaryReader reader)
-        {
-            long position = reader.BaseStream.Position;
-            byte result = reader.ReadByte();
-            reader.BaseStream.Position = position;
+        #endregion
 
-            return (SaveTreeRecordTypes)result;
+        #region Public Methods
+
+        /// <summary>
+        /// Reads record data from stream.
+        /// </summary>
+        /// <param name="reader">Reader positioned at start of record data.</param>
+        /// <param name="length">Length of record data to read.</param>
+        public virtual void Open(BinaryReader reader, int length)
+        {
+            streamPosition = reader.BaseStream.Position;
+            streamLength = length;
+
+            // Cannot read zero-length records
+            if (length <= 0)
+                return;
+
+            // Peek record type and adjust for dungeon size
+            recordType = SaveTree.PeekRecordType(reader);
+            if (recordType == RecordTypes.DungeonData)
+                streamLength *= DungeonDataLengthMultiplier;
+
+            // Read raw record data
+            streamData = reader.ReadBytes(streamLength);
+
+            // Read RecordRoot data from start of memory buffer
+            ReadRecordRoot();
         }
+
+        #endregion
+
+        #region Private Methods
+
+        byte[] GetRecordData()
+        {
+            byte[] data = new byte[RecordLength];
+            Array.Copy(streamData, RecordRootLength, data, 0, RecordLength);
+
+            return data;
+        }
+
+        void SetRecordData(byte[] data)
+        {
+            if (data.Length != RecordLength)
+                throw new Exception("New record data length != original record data length.");
+
+            Array.Copy(data, 0, streamData, RecordRootLength, RecordLength);
+        }
+
+        void ReadRecordRoot()
+        {
+            MemoryStream stream = new MemoryStream(streamData);
+            BinaryReader reader = new BinaryReader(stream);
+
+            // Must have RecordRootLength of bytes to read or something has gone wrong
+            if (stream.Length < RecordRootLength)
+            {
+                stream.Close();
+                return;
+            }
+
+            // Position
+            reader.BaseStream.Position = 6;
+            recordRoot.Position = SaveTree.ReadPosition(reader);
+
+            // RecordID
+            reader.BaseStream.Position = 30;
+            recordRoot.RecordID = reader.ReadUInt32();
+
+            // QuestID
+            reader.BaseStream.Position = 37;
+            recordRoot.QuestID = reader.ReadByte();
+
+            // ParentRecordID
+            reader.BaseStream.Position = 38;
+            recordRoot.ParentRecordID = reader.ReadUInt32();
+
+            // ParentRecordType
+            reader.BaseStream.Position = 66;
+            recordRoot.ParentRecordType = (RecordTypes)reader.ReadInt32();
+
+            reader.Close();
+        }
+
+        #endregion
     }
 }

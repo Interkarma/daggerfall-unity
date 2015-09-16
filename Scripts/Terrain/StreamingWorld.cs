@@ -422,11 +422,17 @@ namespace DaggerfallWorkshop
                     miscBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
 
                     // RMB blocks are laid out in centre of terrain to align with ground
+                    //int width = location.Exterior.ExteriorData.Width;
+                    //int height = location.Exterior.ExteriorData.Height;
+                    //float offsetX = ((8 * RMBLayout.RMBSide) - (width * RMBLayout.RMBSide)) / 2;
+                    //float offsetZ = ((8 * RMBLayout.RMBSide) - (height * RMBLayout.RMBSide)) / 2;
+                    //Vector3 origin = new Vector3(offsetX, 2.0f * MeshReader.GlobalScale, offsetZ);
+
+                    // Position RMB blocks inside terrain area
                     int width = location.Exterior.ExteriorData.Width;
                     int height = location.Exterior.ExteriorData.Height;
-                    float offsetX = ((8 * RMBLayout.RMBSide) - (width * RMBLayout.RMBSide)) / 2;
-                    float offsetZ = ((8 * RMBLayout.RMBSide) - (height * RMBLayout.RMBSide)) / 2;
-                    Vector3 origin = new Vector3(offsetX, 2.0f * MeshReader.GlobalScale, offsetZ);
+                    DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(width, height);
+                    Vector3 origin = new Vector3(tilePos.X * RMBLayout.RMBTileSide, 2.0f * MeshReader.GlobalScale, tilePos.Y * RMBLayout.RMBTileSide);
 
                     // Get location data
                     DaggerfallLocation dfLocation = locationObject.GetComponent<DaggerfallLocation>();
@@ -776,11 +782,13 @@ namespace DaggerfallWorkshop
             if (!locationOut.Loaded)
                 return null;
 
-            // Get sampled position of height as more accurate than scaled average - thanks Nystul!
+            // Sample height of terrain at origin tile position, this is more accurate than scaled average - thanks Nystul!
+            // TODO: Daggerfall does not always position locations at exact centre as assumed.
+            // Working around this for now and will update this code later
             Terrain terrainInstance = dfTerrain.gameObject.GetComponent<Terrain>();
             float scale = terrainInstance.terrainData.heightmapScale.x;
-            float xSamplePos = dfUnity.TerrainSampler.HeightmapDimension * 0.5f;
-            float ySamplePos = dfUnity.TerrainSampler.HeightmapDimension * 0.5f;
+            float xSamplePos = dfUnity.TerrainSampler.HeightmapDimension * 0.55f;
+            float ySamplePos = dfUnity.TerrainSampler.HeightmapDimension * 0.55f;
             Vector3 pos = new Vector3(xSamplePos * scale, 0, ySamplePos * scale);
             float height = terrainInstance.SampleHeight(pos + terrainArray[terrain].terrainObject.transform.position);
 

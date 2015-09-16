@@ -24,8 +24,13 @@ namespace DaggerfallConnect.Save
     /// </summary>
     public class SpellRecord : SaveTreeBaseRecord
     {
-        public SpellRecord(BinaryReader reader)
-            : base(reader)
+        public SpellRecord()
+        {
+
+        }
+
+        public SpellRecord(BinaryReader reader, int length)
+            : base(reader, length)
         {
         }
     }

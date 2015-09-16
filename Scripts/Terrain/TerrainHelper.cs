@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Collections;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 
@@ -90,11 +91,32 @@ namespace DaggerfallWorkshop
             }
         }
 
+        // Determines tile origin of location inside terrain area.
+        // This is not always centred precisely but rather seems to follow some other
+        // logic/formula for locations of certain RMB dimensions (e.g. 1x1).
+        // Unknown if there are more exceptions or if a specific formula is needed.
+        // This method will be used in the interim pending further research.
+        public static DFPosition GetLocationTerrainTileOrigin(int width, int height)
+        {
+            DFPosition result = new DFPosition();
+            result.X = (RMBLayout.RMBTilesPerTerrain - width * RMBLayout.RMBTilesPerBlock) / 2;
+            result.Y = (RMBLayout.RMBTilesPerTerrain - height * RMBLayout.RMBTilesPerBlock) / 2;
+
+            // 1x1 locations seem to always use 72, 55 as origin rather than 56, 56 as expected
+            if (width == 1 && height == 1)
+            {
+                result.X = 72;
+                result.Y = 55;
+            }
+
+            return result;
+        }
+
         // Set location tilemap data
         public static void SetLocationTiles(ref MapPixelData mapPixel)
         {
-            const int tileDim = 16;
-            const int chunkDim = 8;
+            //const int tileDim = 16;
+            //const int chunkDim = 8;
 
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
 
@@ -102,8 +124,13 @@ namespace DaggerfallWorkshop
             DFLocation location = dfUnity.ContentReader.MapFileReader.GetLocation(mapPixel.mapRegionIndex, mapPixel.mapLocationIndex);
 
             // Centre location tiles inside terrain area
-            int startX = ((chunkDim * tileDim) - location.Exterior.ExteriorData.Width * tileDim) / 2;
-            int startY = ((chunkDim * tileDim) - location.Exterior.ExteriorData.Height * tileDim) / 2;
+            //int startX = ((chunkDim * tileDim) - location.Exterior.ExteriorData.Width * tileDim) / 2;
+            //int startY = ((chunkDim * tileDim) - location.Exterior.ExteriorData.Height * tileDim) / 2;
+
+            // Position tiles inside terrain area
+            int width = location.Exterior.ExteriorData.Width;
+            int height = location.Exterior.ExteriorData.Height;
+            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(width, height);
 
             // Full 8x8 locations have "terrain blend space" around walls to smooth down random terrain towards flat area.
             // This is indicated by texture index > 55 (ground texture range is 0-55), larger values indicate blend space.
@@ -123,13 +150,13 @@ namespace DaggerfallWorkshop
                         continue;
 
                     // Copy ground tile info
-                    for (int tileY = 0; tileY < tileDim; tileY++)
+                    for (int tileY = 0; tileY < RMBLayout.RMBTilesPerBlock; tileY++)
                     {
-                        for (int tileX = 0; tileX < tileDim; tileX++)
+                        for (int tileX = 0; tileX < RMBLayout.RMBTilesPerBlock; tileX++)
                         {
-                            DFBlock.RmbGroundTiles tile = block.RmbBlock.FldHeader.GroundData.GroundTiles[tileX, (tileDim - 1) - tileY];
-                            int xpos = startX + blockX * tileDim + tileX;
-                            int ypos = startY + blockY * tileDim + tileY;
+                            DFBlock.RmbGroundTiles tile = block.RmbBlock.FldHeader.GroundData.GroundTiles[tileX, (RMBLayout.RMBTilesPerBlock - 1) - tileY];
+                            int xpos = tilePos.X + blockX * RMBLayout.RMBTilesPerBlock + tileX;
+                            int ypos = tilePos.Y + blockY * RMBLayout.RMBTilesPerBlock + tileY;
 
                             int record = tile.TextureRecord;
                             if (tile.TextureRecord < 56)

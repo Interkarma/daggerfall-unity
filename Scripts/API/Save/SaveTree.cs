@@ -29,12 +29,12 @@ namespace DaggerfallConnect.Save
         // Public fields
         public SaveTreeHeader Header;
         public SaveTreeLocationDetail LocationDetail;
-        public List<ItemRecord> ItemRecords = new List<ItemRecord>();
-        public List<SpellRecord> SpellRecords = new List<SpellRecord>();
-        public List<SaveTreeBaseRecord> OtherRecords = new List<SaveTreeBaseRecord>();
+        public SaveTreeBaseRecord RootRecord = new SaveTreeBaseRecord();
+        public Dictionary<uint, SaveTreeBaseRecord> RecordDictionary = new Dictionary<uint, SaveTreeBaseRecord>();
 
         // Private fields
         FileProxy saveTreeFile = new FileProxy();
+        int duplicateKeysFound = 0;
 
         /// <summary>
         /// Default constructor.
@@ -102,19 +102,21 @@ namespace DaggerfallConnect.Save
             // Write header
             Header.Save(writer);
 
+            // TODO: Write other records
+
             writer.Close();
         }
 
         #region Static Methods
 
         /// <summary>
-        /// Read Position data from binary stream.
+        /// Read RecordPosition data from binary stream.
         /// </summary>
         /// <param name="reader">BinaryReader positioned at start of Position data.</param>
-        /// <returns>Position struct.</returns>
-        public static Position ReadPosition(BinaryReader reader)
+        /// <returns>RecordPosition struct.</returns>
+        public static RecordPosition ReadPosition(BinaryReader reader)
         {
-            Position position = new Position();
+            RecordPosition position = new RecordPosition();
             position.WorldX = reader.ReadInt32();
             position.YOffset = reader.ReadUInt16();
             position.YBase = reader.ReadUInt16();
@@ -127,8 +129,8 @@ namespace DaggerfallConnect.Save
         /// Write Position data to a binary stream.
         /// </summary>
         /// <param name="writer">BinaryWriter positioned at start of Position data.</param>
-        /// <param name="position">Position data to write.</param>
-        public static void WritePosition(BinaryWriter writer, Position position)
+        /// <param name="position">RecordPosition data to write.</param>
+        public static void WritePosition(BinaryWriter writer, RecordPosition position)
         {
             writer.Write(position.WorldX);
             writer.Write(position.YOffset);
@@ -136,42 +138,104 @@ namespace DaggerfallConnect.Save
             writer.Write(position.WorldZ);
         }
 
+        /// <summary>
+        /// Peeks record type from beginning of RecordRoot without moving stream position.
+        /// </summary>
+        /// <param name="reader">Reader positioned at start of RecordRoot data.</param>
+        /// <returns>Record type.</returns>
+        public static RecordTypes PeekRecordType(BinaryReader reader)
+        {
+            long position = reader.BaseStream.Position;
+            byte type = reader.ReadByte();
+            reader.BaseStream.Position = position;
+
+            return (RecordTypes)type;
+        }
+
         #endregion
 
         #region Private Methods
 
+        // Reads all records in SaveTree
+        // Reader must be positioned at start of first RecordElement
         void ReadRecords(BinaryReader reader)
         {
-            OtherRecords = new List<SaveTreeBaseRecord>();
-            while (reader.BaseStream.Position < reader.BaseStream.Length - 4)
+            RecordDictionary.Clear();
+            RootRecord = new SaveTreeBaseRecord();
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
-                SaveTreeRecordTypes type = PeekRecordType(reader);
-                switch(type)
-                {
-                    case SaveTreeRecordTypes.Item:
-                        ItemRecord itemRecord = new ItemRecord(reader);
-                        ItemRecords.Add(itemRecord);
-                        break;
-                    case SaveTreeRecordTypes.Spell:
-                        SpellRecord spellRecord = new SpellRecord(reader);
-                        SpellRecords.Add(spellRecord);
-                        break;
-                    default:
-                        SaveTreeBaseRecord baseRecord = new SaveTreeBaseRecord(reader);
-                        OtherRecords.Add(baseRecord);
-                        break;
-                }
+                // Read record length and skip empty records as they have no data
+                int length = reader.ReadInt32();
+                if (length <= 0)
+                    continue;
+
+                // Handle potential stream overflow (e.g. corrupt save, something went wrong)
+                if (reader.BaseStream.Position + length >= reader.BaseStream.Length)
+                    break;
+
+                // Peek record type from RecordRoot so we can instantiate record class based on type
+                RecordTypes type = PeekRecordType(reader);
+
+                // Add record based on type
+                SaveTreeBaseRecord record;
+                record = new SaveTreeBaseRecord(reader, length);
+                //switch (type)
+                //{
+                //    //case RecordTypes.Item:
+                //    //    record = new ItemRecord(reader);
+                //    //    break;
+                //    //case RecordTypes.Spell:
+                //    //    record = new SpellRecord(reader);
+                //    //    break;
+                //    //case RecordTypes.UnknownTownLink:
+                //    //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
+                //    //    continue;
+                //    //case RecordTypes.DungeonData:
+                //    //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
+                //    //    continue;
+                //    default:
+                //        record = new SaveTreeBaseRecord(reader, length);
+                //        break;
+                //}
+                AddRecord(record);
             }
+
+            LinkChildren();
         }
 
-        SaveTreeRecordTypes PeekRecordType(BinaryReader reader)
+        // Adds record to dictionary
+        bool AddRecord(SaveTreeBaseRecord record)
         {
-            long position = reader.BaseStream.Position;
-            reader.ReadInt32();
-            int type = reader.ReadByte();
-            reader.BaseStream.Position = position;
+            // Count duplicate IDs and ignore record
+            uint myKey = record.RecordRoot.RecordID;
+            if (RecordDictionary.ContainsKey(myKey))
+            {
+                duplicateKeysFound++;
+                return false;
+            }
 
-            return (SaveTreeRecordTypes)type;
+            // Add record to dictionary
+            RecordDictionary.Add(myKey, record);
+
+            return true;
+        }
+
+        // Populates children of parent records
+        void LinkChildren()
+        {
+            foreach (var kvp in RecordDictionary)
+            {
+                uint parentKey = kvp.Value.RecordRoot.ParentRecordID;
+                if (RecordDictionary.ContainsKey(parentKey))
+                {
+                    SaveTreeBaseRecord parent = RecordDictionary[parentKey];
+                    parent.Children.Add(kvp.Value);
+                }
+                else
+                {
+                    RootRecord.Children.Add(kvp.Value);
+                }
+            }
         }
 
         #endregion
@@ -186,13 +250,13 @@ namespace DaggerfallConnect.Save
     {
         public Byte RecordType;                 // Must always be 0x01
         public UInt16 Unknown;
-        public Position Position;
+        public RecordPosition Position;
     }
 
     /// <summary>
     /// Position coordinates.
     /// </summary>
-    public struct Position
+    public struct RecordPosition
     {
         public Int32 WorldX;                    // WorldX coordinate
         public UInt16 YOffset;                  // Altitude offset?
@@ -200,10 +264,19 @@ namespace DaggerfallConnect.Save
         public Int32 WorldZ;                    // WorldZ coordinate
     }
 
+    public struct RecordRoot
+    {
+        public RecordPosition Position;         // Position of the object in world (if applicable)
+        public UInt32 RecordID;                 // Unique ID of this record
+        public Byte QuestID;                    // Associated quest ID of this record (0 if no quest)
+        public UInt32 ParentRecordID;           // ID of parent record
+        public RecordTypes ParentRecordType;    // Type of parent record
+    }
+
     /// <summary>
     /// Types of SaveTree records encountered.
     /// </summary>
-    public enum SaveTreeRecordTypes
+    public enum RecordTypes
     {
         Null = 0x00,
         CharacterPosition = 0x01,

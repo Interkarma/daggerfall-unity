@@ -494,7 +494,7 @@ namespace DaggerfallConnect.Arena2
             reader.BaseStream.Position = 0;
             header.Position = 0;
             header.RecordCount = reader.ReadInt16();
-            header.Name = managedFile.ReadCString(reader, 0).Trim();
+            header.Name = FileProxy.ReadCString(reader, 0).Trim();
         }
 
         /// <summary>

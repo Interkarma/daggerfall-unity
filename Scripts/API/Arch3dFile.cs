@@ -556,7 +556,7 @@ namespace DaggerfallConnect.Arena2
         {
             reader.BaseStream.Position = 0;
             records[record].Header.Position = 0;
-            records[record].Header.Version = records[record].MemoryFile.ReadCString(reader, 4);
+            records[record].Header.Version = FileProxy.ReadCString(reader, 4);
             records[record].Header.PointCount = reader.ReadInt32();
             records[record].Header.PlaneCount = reader.ReadInt32();
             records[record].Header.Radius = reader.ReadUInt32();

@@ -194,7 +194,7 @@ namespace DaggerfallConnect.Arena2
         void ReadHeader(BinaryReader reader)
         {
             // Verify file starts with VID
-            header.VID = vidFile.ReadCString(reader, 3);
+            header.VID = FileProxy.ReadCString(reader, 3);
             if (header.VID != VID)
                 throw new Exception("VidFile: Invalid VID header encountered.");
 

@@ -389,7 +389,7 @@ namespace DaggerfallConnect.Arena2
                 for (int i = 0; i < header.DirectoryCount; i++)
                 {
                     nameRecordDirectory[i].Position = reader.BaseStream.Position;
-                    nameRecordDirectory[i].RecordName = managedFile.ReadCString(reader, 0);
+                    nameRecordDirectory[i].RecordName = FileProxy.ReadCString(reader, 0);
                     reader.BaseStream.Position = nameRecordDirectory[i].Position + 14;
                     nameRecordDirectory[i].RecordSize = reader.ReadInt32();
                     nameRecordDirectory[i].RecordPosition = recordPosition;

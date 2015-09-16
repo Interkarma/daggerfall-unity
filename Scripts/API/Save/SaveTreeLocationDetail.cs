@@ -23,13 +23,13 @@ namespace DaggerfallConnect.Save
     /// </summary>
     public class SaveTreeLocationDetail
     {
-        long position;
+        long streamPosition;
         int recordCount;
         SaveTreeLocationDetailRecord[] records;
 
-        public long Position
+        public long StreamPosition
         {
-            get { return position; }
+            get { return streamPosition; }
         }
 
         public int RecordCount
@@ -43,12 +43,12 @@ namespace DaggerfallConnect.Save
         /// <param name="reader">Reader positioned at start of binary data.</param>
         public SaveTreeLocationDetail(BinaryReader reader)
         {
-            position = reader.BaseStream.Position;
             Open(reader);
         }
 
         void Open(BinaryReader reader)
         {
+            streamPosition = reader.BaseStream.Position;
             recordCount = reader.ReadByte();
             records = new SaveTreeLocationDetailRecord[recordCount];
             for (int i = 0; i < recordCount; i++)

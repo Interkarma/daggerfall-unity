@@ -72,7 +72,7 @@ namespace DaggerfallConnect.Save
             // Read CharacterPosition.RecordType - must be 0x01
             CharacterPosition = new CharacterPositionRecord();
             CharacterPosition.RecordType = reader.ReadByte();
-            if (CharacterPosition.RecordType != (int)SaveTreeRecordTypes.CharacterPosition)
+            if (CharacterPosition.RecordType != (int)RecordTypes.CharacterPosition)
                 throw new Exception("Expected CharacterPosition in SaveTreeHeader has an invalid record type, must be 0x01.");
 
             // Read CharacterPosition.Unknown

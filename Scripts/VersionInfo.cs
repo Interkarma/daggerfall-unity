@@ -13,5 +13,5 @@ using System;
 
 public static class VersionInfo
 {
-    public const string Version = "1.4.23";
+    public const string Version = "1.4.24";
 }
