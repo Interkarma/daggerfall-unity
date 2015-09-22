@@ -17,10 +17,10 @@ using System.Text;
 namespace DaggerfallConnect
 {
     /// <summary>
-    /// Common class template shared by player, monsters, and enemy classes.
+    /// Common career template shared by player, monsters, and enemy classes.
     /// </summary>
     [Serializable]
-    public class DFClass
+    public class DFCareer
     {
         #region Fields
 
@@ -29,7 +29,7 @@ namespace DaggerfallConnect
         /// </summary>
         public CFGData RawData;
 
-        // Class name
+        // Career name
         public string Name;
 
         // Advancement multiplier
@@ -491,7 +491,7 @@ namespace DaggerfallConnect
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public DFClass()
+        public DFCareer()
         {
         }
 
@@ -499,7 +499,7 @@ namespace DaggerfallConnect
         /// CFGData constructor.
         /// </summary>
         /// <param name="cfg">CFGData to load into class.</param>
-        public DFClass(CFGData cfg)
+        public DFCareer(CFGData cfg)
         {
             this.RawData = cfg;
             StructureData();

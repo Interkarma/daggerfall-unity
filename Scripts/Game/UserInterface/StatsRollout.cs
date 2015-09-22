@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Public Methods
 
-        public void Reroll(DFClass dfClass)
+        public void Reroll(DFCareer dfClass)
         {
             // Assign base stats from class template
             DaggerfallStats rolledStats = CharacterSheet.GetClassBaseStats(dfClass);

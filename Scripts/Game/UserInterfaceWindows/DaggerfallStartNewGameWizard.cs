@@ -161,14 +161,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 createCharAddBonusStatsWindow = new CreateCharAddBonusStats(uiManager);
                 createCharAddBonusStatsWindow.OnClose += AddBonusStatsWindow_OnClose;
-                createCharAddBonusStatsWindow.DFClass = characterSheet.dfClass;
+                createCharAddBonusStatsWindow.DFClass = characterSheet.career;
                 createCharAddBonusStatsWindow.Reroll();
             }
 
             // Update class and reroll if player changed class selection
-            if (createCharAddBonusStatsWindow.DFClass != characterSheet.dfClass)
+            if (createCharAddBonusStatsWindow.DFClass != characterSheet.career)
             {
-                createCharAddBonusStatsWindow.DFClass = characterSheet.dfClass;
+                createCharAddBonusStatsWindow.DFClass = characterSheet.career;
                 createCharAddBonusStatsWindow.Reroll();
             }
 
@@ -182,13 +182,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 createCharAddBonusSkillsWindow = new CreateCharAddBonusSkills(uiManager);
                 createCharAddBonusSkillsWindow.OnClose += AddBonusSkillsWindow_OnClose;
-                createCharAddBonusSkillsWindow.DFClass = characterSheet.dfClass;
+                createCharAddBonusSkillsWindow.DFClass = characterSheet.career;
             }
 
             // Update class if player changes class selection
-            if (createCharAddBonusSkillsWindow.DFClass != characterSheet.dfClass)
+            if (createCharAddBonusSkillsWindow.DFClass != characterSheet.career)
             {
-                createCharAddBonusSkillsWindow.DFClass = characterSheet.dfClass;
+                createCharAddBonusSkillsWindow.DFClass = characterSheet.career;
             }
 
             wizardStage = WizardStages.AddBonusSkills;
@@ -255,7 +255,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharClassSelectWindow.Cancelled)
             {
-                characterSheet.dfClass = createCharClassSelectWindow.SelectedClass;
+                characterSheet.career = createCharClassSelectWindow.SelectedClass;
                 SetNameSelectWindow();
             }
             else

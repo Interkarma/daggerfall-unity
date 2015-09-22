@@ -144,10 +144,10 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         /// <param name="monster">Monster index.</param>
         /// <returns>DFClass.</returns>
-        public DFClass GetMonsterClass(int monster)
+        public DFCareer GetMonsterClass(int monster)
         {
             // Load the record
-            DFClass monsterClass;
+            DFCareer monsterClass;
             if (!LoadMonster(monster, out monsterClass))
                 return null;
 
@@ -159,9 +159,9 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         /// <param name="monster">Monster index.</param>
         /// <returns>True if successful.</returns>
-        public bool LoadMonster(int monster, out DFClass monsterClassOut)
+        public bool LoadMonster(int monster, out DFCareer monsterClassOut)
         {
-            monsterClassOut = new DFClass();
+            monsterClassOut = new DFCareer();
 
             // Generate name from index
             string name = string.Format("ENEMY{0:000}.CFG", monster);
@@ -180,7 +180,7 @@ namespace DaggerfallConnect.Arena2
             reader.Close();
 
             // Set output class
-            monsterClassOut = classFile.DFClass;
+            monsterClassOut = classFile.Career;
 
             return true;
         }

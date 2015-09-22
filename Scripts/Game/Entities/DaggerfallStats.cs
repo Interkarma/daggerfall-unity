@@ -60,57 +60,57 @@ namespace DaggerfallWorkshop.Game.Entity
             this.Luck = other.Luck;
         }
 
-        public int GetStatValue(DFClass.Stats stat)
+        public int GetStatValue(DFCareer.Stats stat)
         {
             switch (stat)
             {
-                case DFClass.Stats.Strength:
+                case DFCareer.Stats.Strength:
                     return this.Strength;
-                case DFClass.Stats.Intelligence:
+                case DFCareer.Stats.Intelligence:
                     return this.Intelligence;
-                case DFClass.Stats.Willpower:
+                case DFCareer.Stats.Willpower:
                     return this.Willpower;
-                case DFClass.Stats.Agility:
+                case DFCareer.Stats.Agility:
                     return this.Agility;
-                case DFClass.Stats.Endurance:
+                case DFCareer.Stats.Endurance:
                     return this.Endurance;
-                case DFClass.Stats.Personality:
+                case DFCareer.Stats.Personality:
                     return this.Personality;
-                case DFClass.Stats.Speed:
+                case DFCareer.Stats.Speed:
                     return this.Speed;
-                case DFClass.Stats.Luck:
+                case DFCareer.Stats.Luck:
                     return this.Luck;
                 default:
                     return 0;
             }
         }
 
-        public void SetStatValue(DFClass.Stats stat, int value)
+        public void SetStatValue(DFCareer.Stats stat, int value)
         {
             switch (stat)
             {
-                case DFClass.Stats.Strength:
+                case DFCareer.Stats.Strength:
                     this.Strength = value;
                     break;
-                case DFClass.Stats.Intelligence:
+                case DFCareer.Stats.Intelligence:
                     this.Intelligence = value;
                     break;
-                case DFClass.Stats.Willpower:
+                case DFCareer.Stats.Willpower:
                     this.Willpower = value;
                     break;
-                case DFClass.Stats.Agility:
+                case DFCareer.Stats.Agility:
                     this.Agility = value;
                     break;
-                case DFClass.Stats.Endurance:
+                case DFCareer.Stats.Endurance:
                     this.Endurance = value;
                     break;
-                case DFClass.Stats.Personality:
+                case DFCareer.Stats.Personality:
                     this.Personality = value;
                     break;
-                case DFClass.Stats.Speed:
+                case DFCareer.Stats.Speed:
                     this.Speed = value;
                     break;
-                case DFClass.Stats.Luck:
+                case DFCareer.Stats.Luck:
                     this.Luck = value;
                     break;
             }
@@ -118,12 +118,12 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int GetStatValue(int index)
         {
-            return GetStatValue((DFClass.Stats)index);
+            return GetStatValue((DFCareer.Stats)index);
         }
 
         public void SetStatValue(int index, int value)
         {
-            SetStatValue((DFClass.Stats)index, value);
+            SetStatValue((DFCareer.Stats)index, value);
         }
     }
 }

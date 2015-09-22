@@ -15,11 +15,11 @@ using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Effects;
 
-namespace DaggerfallWorkshop.Game.Player
+namespace DaggerfallWorkshop.Game.Entity
 {
     /// <summary>
     /// Every race is defined by a common template.
-    /// This is only used during character creation.
+    /// This will likely be changed to a text file system later.
     /// </summary>
     public class RaceTemplate
     {
@@ -38,11 +38,11 @@ namespace DaggerfallWorkshop.Game.Player
         public string PaperDollHeadsMale;                       // CIF filename of male head selection
         public string PaperDollHeadsFemale;                     // CIF filename of female head selection
 
-        public DFClass.EffectFlags ResistanceFlags;             // Racial resistances
-        public DFClass.EffectFlags ImmunityFlags;               // Racial immunity
-        public DFClass.EffectFlags LowToleranceFlags;           // Racial low tolerance
-        public DFClass.EffectFlags CriticalWeaknessFlags;       // Racial critical weakness
-        public DFClass.SpecialAbilityFlags SpecialAbilities;    // Racial special abilities
+        public DFCareer.EffectFlags ResistanceFlags;             // Racial resistances
+        public DFCareer.EffectFlags ImmunityFlags;               // Racial immunity
+        public DFCareer.EffectFlags LowToleranceFlags;           // Racial low tolerance
+        public DFCareer.EffectFlags CriticalWeaknessFlags;       // Racial critical weakness
+        public DFCareer.SpecialAbilityFlags SpecialAbilities;    // Racial special abilities
     }
 
     #region Default Race Templates
@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.Player
             PaperDollHeadsMale = "FACE02I0.CIF";
             PaperDollHeadsFemale = "FACE12I0.CIF";
 
-            ResistanceFlags = DFClass.EffectFlags.Frost;
+            ResistanceFlags = DFCareer.EffectFlags.Frost;
         }
     }
 
@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game.Player
             PaperDollHeadsMale = "FACE04I0.CIF";
             PaperDollHeadsFemale = "FACE14I0.CIF";
 
-            ImmunityFlags = DFClass.EffectFlags.Paralysis;
+            ImmunityFlags = DFCareer.EffectFlags.Paralysis;
         }
     }
 

@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game.Entity
     }
 
     /// <summary>
-    /// Default races.
+    /// Entity races.
     /// </summary>
     public enum Races
     {
@@ -42,9 +42,9 @@ namespace DaggerfallWorkshop.Game.Entity
     }
 
     /// <summary>
-    /// Default classes.
+    /// Entity careers.
     /// </summary>
-    public enum Classes
+    public enum Careers
     {
         None = -1,
         Mage = 0,

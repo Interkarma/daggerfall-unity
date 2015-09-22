@@ -33,10 +33,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int strYouMustDistributeYourBonusPoints = 14;
 
         Texture2D nativeTexture;
-        DFClass dfClass;
+        DFCareer dfClass;
         SkillsRollout skillsRollout;
 
-        public DFClass DFClass
+        public DFCareer DFClass
         {
             get { return dfClass; }
             set { SetClass(value); }
@@ -94,7 +94,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        void SetClass(DFClass dfClass)
+        void SetClass(DFCareer dfClass)
         {
             Setup();
             this.dfClass = dfClass;

@@ -20,6 +20,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -42,13 +43,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel healingRateModifierLabel;
         StatsRollout statsRollout;
 
-        DFClass dfClass;
+        DFCareer dfClass;
         bool rollSaved = false;
         DaggerfallStats savedRolledStats;
         DaggerfallStats savedWorkingStats;
         int savedBonusPool;
 
-        public DFClass DFClass
+        public DFCareer DFClass
         {
             get { return dfClass; }
             set { dfClass = value; }
@@ -152,13 +153,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void UpdateSecondaryStatLabels()
         {
             DaggerfallStats workingStats = statsRollout.WorkingStats;
-            damageModifierLabel.Text = DamageModifier(workingStats.Strength).ToString("+0;-0;0");
-            maxEncumbranceLabel.Text = MaxEncumbrance(workingStats.Strength).ToString();
-            spellPointsLabel.Text = SpellPoints(workingStats.Intelligence, dfClass.SpellPointMultiplierValue).ToString();
-            magicResistLabel.Text = MagicResist(workingStats.Willpower).ToString();
-            toHitModifierLabel.Text = ToHitModifier(workingStats.Agility).ToString("+0;-0;0");
-            hitPointsModifierLabel.Text = HitPointsModifier(workingStats.Endurance).ToString("+0;-0;0");
-            healingRateModifierLabel.Text = HealingRateModifier(workingStats.Endurance).ToString("+0;-0;0");
+            damageModifierLabel.Text = FormulaHelper.DamageModifier(workingStats.Strength).ToString("+0;-0;0");
+            maxEncumbranceLabel.Text = FormulaHelper.MaxEncumbrance(workingStats.Strength).ToString();
+            spellPointsLabel.Text = FormulaHelper.SpellPoints(workingStats.Intelligence, dfClass.SpellPointMultiplierValue).ToString();
+            magicResistLabel.Text = FormulaHelper.MagicResist(workingStats.Willpower).ToString();
+            toHitModifierLabel.Text = FormulaHelper.ToHitModifier(workingStats.Agility).ToString("+0;-0;0");
+            hitPointsModifierLabel.Text = FormulaHelper.HitPointsModifier(workingStats.Endurance).ToString("+0;-0;0");
+            healingRateModifierLabel.Text = FormulaHelper.HealingRateModifier(workingStats.Endurance).ToString("+0;-0;0");
         }
 
         void RerollButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -201,49 +202,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void StatsRollout_OnStatChanged()
         {
             UpdateSecondaryStatLabels();
-        }
-
-        #endregion
-
-        #region Formulas
-
-        // NOTE:
-        // These are currently only for display purposes during development.
-        // Will later be moved into a formula provider class for real gaming.
-
-        static int DamageModifier(int strength)
-        {
-            return (int)Mathf.Floor((float)strength / 10f) - 5;
-        }
-
-        static int MaxEncumbrance(int strength)
-        {
-            return (int)Mathf.Floor((float)strength * 1.5f);
-        }
-
-        static int SpellPoints(int intelligence, float multiplier)
-        {
-            return (int)Mathf.Floor((float)intelligence * multiplier);
-        }
-
-        static int MagicResist(int willpower)
-        {
-            return (int)Mathf.Floor((float)willpower / 10f);
-        }
-
-        static int ToHitModifier(int agility)
-        {
-            return (int)Mathf.Floor((float)agility / 10f) - 5;
-        }
-
-        static int HitPointsModifier(int endurance)
-        {
-            return (int)Mathf.Floor((float)endurance / 10f) - 5;
-        }
-
-        static int HealingRateModifier(int endurance)
-        {
-            return (int)Mathf.Floor((float)endurance / 10f) - 5;
         }
 
         #endregion

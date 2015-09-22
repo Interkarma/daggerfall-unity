@@ -83,192 +83,192 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
-        public short GetSkillValue(DFClass.Skills skill)
+        public short GetSkillValue(DFCareer.Skills skill)
         {
             switch (skill)
             {
-                case DFClass.Skills.Medical:
+                case DFCareer.Skills.Medical:
                     return Medical;
-                case DFClass.Skills.Etiquette:
+                case DFCareer.Skills.Etiquette:
                     return Etiquette;
-                case DFClass.Skills.Streetwise:
+                case DFCareer.Skills.Streetwise:
                     return Streetwise;
-                case DFClass.Skills.Jumping:
+                case DFCareer.Skills.Jumping:
                     return Jumping;
-                case DFClass.Skills.Orcish:
+                case DFCareer.Skills.Orcish:
                     return Orcish;
-                case DFClass.Skills.Harpy:
+                case DFCareer.Skills.Harpy:
                     return Harpy;
-                case DFClass.Skills.Giantish:
+                case DFCareer.Skills.Giantish:
                     return Giantish;
-                case DFClass.Skills.Dragonish:
+                case DFCareer.Skills.Dragonish:
                     return Dragonish;
-                case DFClass.Skills.Nymph:
+                case DFCareer.Skills.Nymph:
                     return Nymph;
-                case DFClass.Skills.Daedric:
+                case DFCareer.Skills.Daedric:
                     return Daedric;
-                case DFClass.Skills.Spriggan:
+                case DFCareer.Skills.Spriggan:
                     return Spriggan;
-                case DFClass.Skills.Centaurian:
+                case DFCareer.Skills.Centaurian:
                     return Centaurian;
-                case DFClass.Skills.Impish:
+                case DFCareer.Skills.Impish:
                     return Impish;
-                case DFClass.Skills.Lockpicking:
+                case DFCareer.Skills.Lockpicking:
                     return Lockpicking;
-                case DFClass.Skills.Mercantile:
+                case DFCareer.Skills.Mercantile:
                     return Mercantile;
-                case DFClass.Skills.Pickpocket:
+                case DFCareer.Skills.Pickpocket:
                     return Pickpocket;
-                case DFClass.Skills.Stealth:
+                case DFCareer.Skills.Stealth:
                     return Stealth;
-                case DFClass.Skills.Swimming:
+                case DFCareer.Skills.Swimming:
                     return Swimming;
-                case DFClass.Skills.Climbing:
+                case DFCareer.Skills.Climbing:
                     return Climbing;
-                case DFClass.Skills.Backstabbing:
+                case DFCareer.Skills.Backstabbing:
                     return Backstabbing;
-                case DFClass.Skills.Dodging:
+                case DFCareer.Skills.Dodging:
                     return Dodging;
-                case DFClass.Skills.Running:
+                case DFCareer.Skills.Running:
                     return Running;
-                case DFClass.Skills.Destruction:
+                case DFCareer.Skills.Destruction:
                     return Destruction;
-                case DFClass.Skills.Restoration:
+                case DFCareer.Skills.Restoration:
                     return Restoration;
-                case DFClass.Skills.Illusion:
+                case DFCareer.Skills.Illusion:
                     return Illusion;
-                case DFClass.Skills.Alteration:
+                case DFCareer.Skills.Alteration:
                     return Alteration;
-                case DFClass.Skills.Thaumaturgy:
+                case DFCareer.Skills.Thaumaturgy:
                     return Thaumaturgy;
-                case DFClass.Skills.Mysticism:
+                case DFCareer.Skills.Mysticism:
                     return Mysticism;
-                case DFClass.Skills.ShortBlade:
+                case DFCareer.Skills.ShortBlade:
                     return ShortBlade;
-                case DFClass.Skills.LongBlade:
+                case DFCareer.Skills.LongBlade:
                     return LongBlade;
-                case DFClass.Skills.HandToHand:
+                case DFCareer.Skills.HandToHand:
                     return HandToHand;
-                case DFClass.Skills.Axe:
+                case DFCareer.Skills.Axe:
                     return Axe;
-                case DFClass.Skills.BluntWeapon:
+                case DFCareer.Skills.BluntWeapon:
                     return BluntWeapon;
-                case DFClass.Skills.Archery:
+                case DFCareer.Skills.Archery:
                     return Archery;
-                case DFClass.Skills.CriticalStrike:
+                case DFCareer.Skills.CriticalStrike:
                     return CriticalStrike;
                 default:
                     return 0;
             }
         }
 
-        public void SetSkillValue(DFClass.Skills skill, short value)
+        public void SetSkillValue(DFCareer.Skills skill, short value)
         {
             switch (skill)
             {
-                case DFClass.Skills.Medical:
+                case DFCareer.Skills.Medical:
                     Medical = value;
                     break;
-                case DFClass.Skills.Etiquette:
+                case DFCareer.Skills.Etiquette:
                     Etiquette = value;
                     break;
-                case DFClass.Skills.Streetwise:
+                case DFCareer.Skills.Streetwise:
                     Streetwise = value;
                     break;
-                case DFClass.Skills.Jumping:
+                case DFCareer.Skills.Jumping:
                     Jumping = value;
                     break;
-                case DFClass.Skills.Orcish:
+                case DFCareer.Skills.Orcish:
                     Orcish = value;
                     break;
-                case DFClass.Skills.Harpy:
+                case DFCareer.Skills.Harpy:
                     Harpy = value;
                     break;
-                case DFClass.Skills.Giantish:
+                case DFCareer.Skills.Giantish:
                     Giantish = value;
                     break;
-                case DFClass.Skills.Dragonish:
+                case DFCareer.Skills.Dragonish:
                     Dragonish = value;
                     break;
-                case DFClass.Skills.Nymph:
+                case DFCareer.Skills.Nymph:
                     Nymph = value;
                     break;
-                case DFClass.Skills.Daedric:
+                case DFCareer.Skills.Daedric:
                     Daedric = value;
                     break;
-                case DFClass.Skills.Spriggan:
+                case DFCareer.Skills.Spriggan:
                     Spriggan = value;
                     break;
-                case DFClass.Skills.Centaurian:
+                case DFCareer.Skills.Centaurian:
                     Centaurian = value;
                     break;
-                case DFClass.Skills.Impish:
+                case DFCareer.Skills.Impish:
                     Impish = value;
                     break;
-                case DFClass.Skills.Lockpicking:
+                case DFCareer.Skills.Lockpicking:
                     Lockpicking = value;
                     break;
-                case DFClass.Skills.Mercantile:
+                case DFCareer.Skills.Mercantile:
                     Mercantile = value;
                     break;
-                case DFClass.Skills.Pickpocket:
+                case DFCareer.Skills.Pickpocket:
                     Pickpocket = value;
                     break;
-                case DFClass.Skills.Stealth:
+                case DFCareer.Skills.Stealth:
                     Stealth = value;
                     break;
-                case DFClass.Skills.Swimming:
+                case DFCareer.Skills.Swimming:
                     Swimming = value;
                     break;
-                case DFClass.Skills.Climbing:
+                case DFCareer.Skills.Climbing:
                     Climbing = value;
                     break;
-                case DFClass.Skills.Backstabbing:
+                case DFCareer.Skills.Backstabbing:
                     Backstabbing = value;
                     break;
-                case DFClass.Skills.Dodging:
+                case DFCareer.Skills.Dodging:
                     Dodging = value;
                     break;
-                case DFClass.Skills.Running:
+                case DFCareer.Skills.Running:
                     Running = value;
                     break;
-                case DFClass.Skills.Destruction:
+                case DFCareer.Skills.Destruction:
                     Destruction = value;
                     break;
-                case DFClass.Skills.Restoration:
+                case DFCareer.Skills.Restoration:
                     Restoration = value;
                     break;
-                case DFClass.Skills.Illusion:
+                case DFCareer.Skills.Illusion:
                     Illusion = value;
                     break;
-                case DFClass.Skills.Alteration:
+                case DFCareer.Skills.Alteration:
                     Alteration = value;
                     break;
-                case DFClass.Skills.Thaumaturgy:
+                case DFCareer.Skills.Thaumaturgy:
                     Thaumaturgy = value;
                     break;
-                case DFClass.Skills.Mysticism:
+                case DFCareer.Skills.Mysticism:
                     Mysticism = value;
                     break;
-                case DFClass.Skills.ShortBlade:
+                case DFCareer.Skills.ShortBlade:
                     ShortBlade = value;
                     break;
-                case DFClass.Skills.LongBlade:
+                case DFCareer.Skills.LongBlade:
                     LongBlade = value;
                     break;
-                case DFClass.Skills.HandToHand:
+                case DFCareer.Skills.HandToHand:
                     HandToHand = value;
                     break;
-                case DFClass.Skills.Axe:
+                case DFCareer.Skills.Axe:
                     Axe = value;
                     break;
-                case DFClass.Skills.BluntWeapon:
+                case DFCareer.Skills.BluntWeapon:
                     BluntWeapon = value;
                     break;
-                case DFClass.Skills.Archery:
+                case DFCareer.Skills.Archery:
                     Archery = value;
                     break;
-                case DFClass.Skills.CriticalStrike:
+                case DFCareer.Skills.CriticalStrike:
                     CriticalStrike = value;
                     break;
             }
@@ -276,12 +276,12 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public short GetSkillValue(int index)
         {
-            return GetSkillValue((DFClass.Skills)index);
+            return GetSkillValue((DFCareer.Skills)index);
         }
 
         public void SetSkillValue(int index, short value)
         {
-            SetSkillValue((DFClass.Skills)index, value);
+            SetSkillValue((DFCareer.Skills)index, value);
         }
     }
 }

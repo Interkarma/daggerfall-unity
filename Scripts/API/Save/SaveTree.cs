@@ -174,7 +174,7 @@ namespace DaggerfallConnect.Save
                     break;
 
                 // Peek record type from RecordRoot so we can instantiate record class based on type
-                RecordTypes type = PeekRecordType(reader);
+                //RecordTypes type = PeekRecordType(reader);
 
                 // Add record based on type
                 SaveTreeBaseRecord record;

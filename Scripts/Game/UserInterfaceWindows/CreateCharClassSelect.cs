@@ -29,10 +29,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const int startClassDescriptionID = 2100;
 
-        List<DFClass> classList = new List<DFClass>();
-        DFClass selectedClass;
+        List<DFCareer> classList = new List<DFCareer>();
+        DFCareer selectedClass;
 
-        public DFClass SelectedClass
+        public DFCareer SelectedClass
         {
             get { return selectedClass; }
         }
@@ -53,8 +53,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 for (int i = 0; i < files.Length - 1; i++)
                 {
                     ClassFile classFile = new ClassFile(files[i]);
-                    classList.Add(classFile.DFClass);
-                    listBox.AddItem(classFile.DFClass.Name);
+                    classList.Add(classFile.Career);
+                    listBox.AddItem(classFile.Career.Name);
                 }
             }
 

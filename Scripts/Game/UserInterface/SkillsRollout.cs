@@ -56,9 +56,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         DaggerfallSkills startingSkills;
         DaggerfallSkills workingSkills;
 
-        DFClass.Skills[] primarySkills = new DFClass.Skills[DaggerfallSkills.PrimarySkillsCount];
-        DFClass.Skills[] majorSkills = new DFClass.Skills[DaggerfallSkills.MajorSkillsCount];
-        DFClass.Skills[] minorSkills = new DFClass.Skills[DaggerfallSkills.MinorSkillsCount];
+        DFCareer.Skills[] primarySkills = new DFCareer.Skills[DaggerfallSkills.PrimarySkillsCount];
+        DFCareer.Skills[] majorSkills = new DFCareer.Skills[DaggerfallSkills.MajorSkillsCount];
+        DFCareer.Skills[] minorSkills = new DFCareer.Skills[DaggerfallSkills.MinorSkillsCount];
 
         TextLabel[] primarySkillLabels = new TextLabel[DaggerfallSkills.PrimarySkillsCount];
         TextLabel[] majorSkillLabels = new TextLabel[DaggerfallSkills.MajorSkillsCount];
@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateSkillValueLabels();
         }
 
-        public void SetClassSkills(DFClass dfClass)
+        public void SetClassSkills(DFCareer dfClass)
         {
             // Set primary, major, minor skills from class template
             primarySkills[0] = dfClass.PrimarySkill1;
@@ -337,7 +337,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             minorSkillSpinner.Position = new Vector2(203, 129 + (10 * index));
         }
 
-        void AddSkillPoint(DFClass.Skills skill, LeftRightSpinner spinner)
+        void AddSkillPoint(DFCareer.Skills skill, LeftRightSpinner spinner)
         {
             // Bonus point pool cannot fall below zero
             int workingValue = workingSkills.GetSkillValue(skill);
@@ -350,7 +350,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateSkillValueLabels();
         }
 
-        void RemoveSkillPoint(DFClass.Skills skill, LeftRightSpinner spinner)
+        void RemoveSkillPoint(DFCareer.Skills skill, LeftRightSpinner spinner)
         {
             // Working skill value cannot fall below rolled skill value
             int workingValue = workingSkills.GetSkillValue(skill);

@@ -1,5 +1,5 @@
 [Daggerfall]
-MyDaggerfallPath=C:\Daggerfall
+MyDaggerfallPath=
 
 [Video]
 ViewportX=1280
@@ -15,11 +15,22 @@ NoPlayerNudity=True
 [GUI]
 NativeViewportX=320
 NativeViewportY=200
-ViewportScale=1
+ViewportScale=1.0
 MainFilterMode=0
 GUIFilterMode=0
 Crosshair=True
 
+[Controls]
+InvertMouseVertical=False
+MouseLookSensitivity=1.0
+
 [Startup]
 StartingLocation=Daggerfall/Privateer's Hold
 StartInDungeon=True
+
+[Enhancements]
+LypyL_EnhancedSky=False
+Nystul_IncreasedTerrainDistance=False
+Nystul_RealtimeReflections=False
+UncannyValley_RealGrass=False
+UncannyValley_BirdsInDaggerfall=False

@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             this.statsRollout.StartingStats = characterSheet.startingStats;
             this.statsRollout.WorkingStats = characterSheet.workingStats;
             this.statsRollout.BonusPool = 0;
-            this.skillsRollout.SetClassSkills(characterSheet.dfClass);
+            this.skillsRollout.SetClassSkills(characterSheet.career);
             this.skillsRollout.StartingSkills = characterSheet.startingSkills;
             this.skillsRollout.WorkingSkills = characterSheet.workingSkills;
             this.skillsRollout.PrimarySkillBonusPoints = 0;

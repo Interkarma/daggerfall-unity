@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.Player
     {
         public RaceTemplate race;
         public Genders gender;
-        public DFClass dfClass;
+        public DFCareer career;
         public string name;
         public int faceIndex;
         public DaggerfallStats startingStats;
@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.Player
         {
             race = GetRaceTemplate(Races.Breton);
             gender = Genders.Male;
-            dfClass = GetClassTemplate(Classes.Mage);
+            career = GetCareerTemplate(Careers.Mage);
             name = "Test McTest";
             faceIndex = 0;
         }
@@ -72,17 +72,17 @@ namespace DaggerfallWorkshop.Game.Player
             }
         }
 
-        public static DFClass GetClassTemplate(Classes classTemplate)
+        public static DFCareer GetCareerTemplate(Careers classTemplate)
         {
             string filename = string.Format("CLASS{0:00}.CFG", (int)classTemplate);
             ClassFile file = new ClassFile();
             if (!file.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, filename)))
                 return null;
 
-            return file.DFClass;
+            return file.Career;
         }
 
-        public static DaggerfallStats GetClassBaseStats(DFClass dfClass)
+        public static DaggerfallStats GetClassBaseStats(DFCareer dfClass)
         {
             DaggerfallStats stats = new DaggerfallStats();
 

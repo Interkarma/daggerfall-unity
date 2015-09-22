@@ -26,22 +26,22 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaggerfallClassEditor : EditorWindow
     {
-        const string windowTitle = "Class Viewer";
-        const string menuPath = "Daggerfall Tools/Class Viewer";
+        const string windowTitle = "Career Viewer";
+        const string menuPath = "Daggerfall Tools/Career Viewer";
 
         DaggerfallUnity dfUnity;
-        DFClass selectedClass;
+        DFCareer selectedCareer;
         Vector2 scrollPos;
 
         [SerializeField]
-        ClassSource classSource = ClassSource.Classes;
+        CareerSource careerSource = CareerSource.PlayerClasses;
         [SerializeField]
         int selectedTemplate = 0;
 
         [SerializeField]
-        DFClass[] classTemplates;
+        DFCareer[] classTemplates;
         [SerializeField]
-        DFClass[] monsterTemplates;
+        DFCareer[] monsterTemplates;
 
         [SerializeField]
         GUIContent[] classNames;
@@ -71,9 +71,9 @@ namespace DaggerfallWorkshop
         [SerializeField]
         bool showUnknownFoldout = true;
 
-        enum ClassSource
+        enum CareerSource
         {
-            Classes,
+            PlayerClasses,
             Monsters,
         }
 
@@ -98,23 +98,23 @@ namespace DaggerfallWorkshop
 
             // Select class source
             EditorGUILayout.Space();
-            classSource = (ClassSource)EditorGUILayout.EnumPopup(new GUIContent("Source"), (ClassSource)classSource);
+            careerSource = (CareerSource)EditorGUILayout.EnumPopup(new GUIContent("Source"), (CareerSource)careerSource);
 
             // Select class from specified source
-            selectedClass = null;
-            if (classSource == ClassSource.Classes && classNames != null && classNames.Length > 0)
+            selectedCareer = null;
+            if (careerSource == CareerSource.PlayerClasses && classNames != null && classNames.Length > 0)
             {
                 if (selectedTemplate > classNames.Length)
                     selectedTemplate = 0;
                 selectedTemplate = EditorGUILayout.Popup(new GUIContent("Class"), selectedTemplate, classNames);
-                selectedClass = classTemplates[selectedTemplate];
+                selectedCareer = classTemplates[selectedTemplate];
             }
-            else if (classSource == ClassSource.Monsters && monsterNames != null && monsterNames.Length > 0)
+            else if (careerSource == CareerSource.Monsters && monsterNames != null && monsterNames.Length > 0)
             {
                 if (selectedTemplate > monsterNames.Length)
                     selectedTemplate = 0;
                 selectedTemplate = EditorGUILayout.Popup(new GUIContent("Class"), selectedTemplate, monsterNames);
-                selectedClass = monsterTemplates[selectedTemplate];
+                selectedCareer = monsterTemplates[selectedTemplate];
             }
             else
             {
@@ -122,7 +122,7 @@ namespace DaggerfallWorkshop
             }
 
             // Show foldouts
-            if (selectedClass != null)
+            if (selectedCareer != null)
             {
                 scrollPos = GUILayoutHelper.ScrollView(scrollPos, () =>
                 {
@@ -152,12 +152,12 @@ namespace DaggerfallWorkshop
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("HP Per Level / Monster Level");
-                        EditorGUILayout.SelectableLabel(selectedClass.HitPointsPerLevelOrMonsterLevel.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.HitPointsPerLevelOrMonsterLevel.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Difficulty Multiplier");
-                        EditorGUILayout.SelectableLabel(selectedClass.AdvancementMultiplier.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.AdvancementMultiplier.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                 });
             });
@@ -174,42 +174,42 @@ namespace DaggerfallWorkshop
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Strength");
-                        EditorGUILayout.SelectableLabel(selectedClass.Strength.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Strength.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Intelligence");
-                        EditorGUILayout.SelectableLabel(selectedClass.Intelligence.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Intelligence.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Willpower");
-                        EditorGUILayout.SelectableLabel(selectedClass.Willpower.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Willpower.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Agility");
-                        EditorGUILayout.SelectableLabel(selectedClass.Agility.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Agility.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Endurance");
-                        EditorGUILayout.SelectableLabel(selectedClass.Endurance.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Endurance.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Personality");
-                        EditorGUILayout.SelectableLabel(selectedClass.Personality.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Personality.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Speed");
-                        EditorGUILayout.SelectableLabel(selectedClass.Speed.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Speed.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Luck");
-                        EditorGUILayout.SelectableLabel(selectedClass.Luck.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Luck.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                 });
             });
@@ -224,30 +224,30 @@ namespace DaggerfallWorkshop
                 EditorGUILayout.LabelField("Primary");
                 GUILayoutHelper.Indent(() =>
                 {
-                    EditorGUILayout.SelectableLabel(selectedClass.PrimarySkill1.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                    EditorGUILayout.SelectableLabel(selectedClass.PrimarySkill2.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                    EditorGUILayout.SelectableLabel(selectedClass.PrimarySkill3.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.PrimarySkill1.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.PrimarySkill2.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.PrimarySkill3.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                 });
 
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Major");
                 GUILayoutHelper.Indent(() =>
                 {
-                    EditorGUILayout.SelectableLabel(selectedClass.MajorSkill1.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                    EditorGUILayout.SelectableLabel(selectedClass.MajorSkill2.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                    EditorGUILayout.SelectableLabel(selectedClass.MajorSkill3.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.MajorSkill1.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.MajorSkill2.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.MajorSkill3.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                 });
 
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Minor");
                 GUILayoutHelper.Indent(() =>
                 {
-                    EditorGUILayout.SelectableLabel(selectedClass.MinorSkill1.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                    EditorGUILayout.SelectableLabel(selectedClass.MinorSkill2.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                    EditorGUILayout.SelectableLabel(selectedClass.MinorSkill3.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                    EditorGUILayout.SelectableLabel(selectedClass.MinorSkill4.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                    EditorGUILayout.SelectableLabel(selectedClass.MinorSkill5.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                    EditorGUILayout.SelectableLabel(selectedClass.MinorSkill6.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.MinorSkill1.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.MinorSkill2.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.MinorSkill3.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.MinorSkill4.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.MinorSkill5.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.MinorSkill6.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                 });
             });
         }
@@ -263,37 +263,37 @@ namespace DaggerfallWorkshop
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Paralysis");
-                        EditorGUILayout.SelectableLabel(selectedClass.Paralysis.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Paralysis.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Magic");
-                        EditorGUILayout.SelectableLabel(selectedClass.Magic.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Magic.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Poison");
-                        EditorGUILayout.SelectableLabel(selectedClass.Poison.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Poison.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Fire");
-                        EditorGUILayout.SelectableLabel(selectedClass.Fire.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Fire.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Frost");
-                        EditorGUILayout.SelectableLabel(selectedClass.Frost.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Frost.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Shock");
-                        EditorGUILayout.SelectableLabel(selectedClass.Shock.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Shock.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Disease");
-                        EditorGUILayout.SelectableLabel(selectedClass.Disease.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Disease.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                 });
             });
@@ -310,52 +310,52 @@ namespace DaggerfallWorkshop
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Iron");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsMaterialForbidden(DFClass.MaterialFlags.Iron).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsMaterialForbidden(DFCareer.MaterialFlags.Iron).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Steel");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsMaterialForbidden(DFClass.MaterialFlags.Steel).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsMaterialForbidden(DFCareer.MaterialFlags.Steel).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Silver");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsMaterialForbidden(DFClass.MaterialFlags.Silver).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsMaterialForbidden(DFCareer.MaterialFlags.Silver).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Elven");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsMaterialForbidden(DFClass.MaterialFlags.Elven).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsMaterialForbidden(DFCareer.MaterialFlags.Elven).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Dwarven");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsMaterialForbidden(DFClass.MaterialFlags.Dwarven).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsMaterialForbidden(DFCareer.MaterialFlags.Dwarven).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Mithril");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsMaterialForbidden(DFClass.MaterialFlags.Mithril).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsMaterialForbidden(DFCareer.MaterialFlags.Mithril).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Adamantium");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsMaterialForbidden(DFClass.MaterialFlags.Adamantium).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsMaterialForbidden(DFCareer.MaterialFlags.Adamantium).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Ebony");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsMaterialForbidden(DFClass.MaterialFlags.Ebony).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsMaterialForbidden(DFCareer.MaterialFlags.Ebony).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Orcish");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsMaterialForbidden(DFClass.MaterialFlags.Orcish).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsMaterialForbidden(DFCareer.MaterialFlags.Orcish).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Daedric");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsMaterialForbidden(DFClass.MaterialFlags.Daedric).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsMaterialForbidden(DFCareer.MaterialFlags.Daedric).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                 });
             });
@@ -372,17 +372,17 @@ namespace DaggerfallWorkshop
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Leather");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsArmorForbidden(DFClass.ArmorFlags.Leather).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsArmorForbidden(DFCareer.ArmorFlags.Leather).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Chain");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsArmorForbidden(DFClass.ArmorFlags.Chain).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsArmorForbidden(DFCareer.ArmorFlags.Chain).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Plate");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsArmorForbidden(DFClass.ArmorFlags.Plate).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsArmorForbidden(DFCareer.ArmorFlags.Plate).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                 });
             });
@@ -399,22 +399,22 @@ namespace DaggerfallWorkshop
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Buckler");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsShieldForbidden(DFClass.ShieldFlags.Buckler).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsShieldForbidden(DFCareer.ShieldFlags.Buckler).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Round Shield");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsShieldForbidden(DFClass.ShieldFlags.RoundShield).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsShieldForbidden(DFCareer.ShieldFlags.RoundShield).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Kite Shield");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsShieldForbidden(DFClass.ShieldFlags.KiteShield).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsShieldForbidden(DFCareer.ShieldFlags.KiteShield).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Tower Shield");
-                        EditorGUILayout.SelectableLabel(selectedClass.IsShieldForbidden(DFClass.ShieldFlags.TowerShield).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.IsShieldForbidden(DFCareer.ShieldFlags.TowerShield).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                 });
             });
@@ -431,32 +431,32 @@ namespace DaggerfallWorkshop
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Short Blades");
-                        EditorGUILayout.SelectableLabel(selectedClass.ShortBlades.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.ShortBlades.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Long Blades");
-                        EditorGUILayout.SelectableLabel(selectedClass.LongBlades.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.LongBlades.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Hand To Hand");
-                        EditorGUILayout.SelectableLabel(selectedClass.HandToHand.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.HandToHand.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Axes");
-                        EditorGUILayout.SelectableLabel(selectedClass.Axes.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Axes.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Blunt Weapons");
-                        EditorGUILayout.SelectableLabel(selectedClass.BluntWeapons.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.BluntWeapons.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Missile Weapons");
-                        EditorGUILayout.SelectableLabel(selectedClass.MissileWeapons.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.MissileWeapons.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                 });
             });
@@ -473,27 +473,27 @@ namespace DaggerfallWorkshop
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Increased Magery");
-                        EditorGUILayout.SelectableLabel(selectedClass.SpellPointMultiplierValue.ToString("0.00 * INT"), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.SpellPointMultiplierValue.ToString("0.00 * INT"), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Darkness Powered Magery");
-                        EditorGUILayout.SelectableLabel(selectedClass.DarknessPoweredMagery.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.DarknessPoweredMagery.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Light Powered Magery");
-                        EditorGUILayout.SelectableLabel(selectedClass.LightPoweredMagery.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.LightPoweredMagery.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Spell Absorption");
-                        EditorGUILayout.SelectableLabel(selectedClass.SpellAbsorption.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.SpellAbsorption.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Unable to regenerate spell points");
-                        EditorGUILayout.SelectableLabel(selectedClass.NoRegenSpellPoints.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.NoRegenSpellPoints.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                 });
             });
@@ -510,63 +510,63 @@ namespace DaggerfallWorkshop
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Acute Hearing");
-                        EditorGUILayout.SelectableLabel(selectedClass.AcuteHearing.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.AcuteHearing.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Athleticism");
-                        EditorGUILayout.SelectableLabel(selectedClass.Athleticism.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Athleticism.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Adrenaline Rush");
-                        EditorGUILayout.SelectableLabel(selectedClass.AdrenalineRush.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.AdrenalineRush.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
 
                     EditorGUILayout.Space();
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Regeneration");
-                        EditorGUILayout.SelectableLabel(selectedClass.Regeneration.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.Regeneration.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Rapid Healing");
-                        EditorGUILayout.SelectableLabel(selectedClass.RapidHealing.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.RapidHealing.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
 
                     EditorGUILayout.Space();
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Damage From Sunlight");
-                        EditorGUILayout.SelectableLabel(selectedClass.DamageFromSunlight.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.DamageFromSunlight.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Damage From Holy Places");
-                        EditorGUILayout.SelectableLabel(selectedClass.DamageFromHolyPlaces.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.DamageFromHolyPlaces.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
 
                     EditorGUILayout.Space();
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Undead Attack Modifier");
-                        EditorGUILayout.SelectableLabel(selectedClass.UndeadAttackModifier.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.UndeadAttackModifier.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Daedra Attack Modifier");
-                        EditorGUILayout.SelectableLabel(selectedClass.DaedraAttackModifier.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.DaedraAttackModifier.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Humanoid Attack Modifier");
-                        EditorGUILayout.SelectableLabel(selectedClass.HumanoidAttackModifier.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.HumanoidAttackModifier.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Animals Attack Modifier");
-                        EditorGUILayout.SelectableLabel(selectedClass.AnimalsAttackModifier.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.SelectableLabel(selectedCareer.AnimalsAttackModifier.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                 });
             });
@@ -581,15 +581,15 @@ namespace DaggerfallWorkshop
                 GUILayoutHelper.Indent(() =>
                 {
                     EditorGUILayout.LabelField("Unknown1 [1 Bytes]");
-                    EditorGUILayout.SelectableLabel(selectedClass.RawData.Unknown1.ToString("X2"), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    EditorGUILayout.SelectableLabel(selectedCareer.RawData.Unknown1.ToString("X2"), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                 });
                 GUILayoutHelper.Indent(() =>
                 {
                     EditorGUILayout.LabelField("Unknown2 [8 Bytes]");
                     string valuesString = string.Empty;
-                    for (int i = 0; i < selectedClass.RawData.Unknown2.Length; i++)
+                    for (int i = 0; i < selectedCareer.RawData.Unknown2.Length; i++)
                     {
-                        valuesString += selectedClass.RawData.Unknown2[i].ToString("X2") + " ";
+                        valuesString += selectedCareer.RawData.Unknown2[i].ToString("X2") + " ";
                     }
                     EditorGUILayout.SelectableLabel(valuesString, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                 });
@@ -609,12 +609,12 @@ namespace DaggerfallWorkshop
                 string[] files = Directory.GetFiles(dfUnity.Arena2Path, "class*.cfg");
                 if (files != null && files.Length > 0)
                 {
-                    classTemplates = new DFClass[files.Length - 1];
+                    classTemplates = new DFCareer[files.Length - 1];
                     classNames = new GUIContent[files.Length - 1];
                     for (int i = 0; i < files.Length - 1; i++)
                     {
                         ClassFile classFile = new ClassFile(files[i]);
-                        classTemplates[i] = classFile.DFClass;
+                        classTemplates[i] = classFile.Career;
                         classNames[i] = new GUIContent(classTemplates[i].Name);
                     }
                 }
@@ -636,7 +636,7 @@ namespace DaggerfallWorkshop
                     }
 
                     // Second pass populates arrays
-                    monsterTemplates = new DFClass[cfgIndices.Count];
+                    monsterTemplates = new DFCareer[cfgIndices.Count];
                     monsterNames = new GUIContent[cfgIndices.Count];
                     for (int i = 0; i < cfgIndices.Count; i++)
                     {
@@ -649,7 +649,7 @@ namespace DaggerfallWorkshop
                         reader.Close();
 
                         // Add to arrays
-                        monsterTemplates[i] = classFile.DFClass;
+                        monsterTemplates[i] = classFile.Career;
                         monsterNames[i] = new GUIContent(monsterTemplates[i].Name);
                     }
                 }
