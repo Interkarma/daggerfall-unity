@@ -27,19 +27,19 @@ namespace DaggerfallWorkshop.Game.Entity
     {
         #region Fields
 
-        Genders gender;
-        RaceTemplate race;
-        DFCareer career;
-        string name;
-        int level;
-        int faceIndex;
-        DaggerfallStats stats;
-        DaggerfallSkills skills;
-        PlayerReflexes reflexes;
-        int maxHealth;
-        int currentHealth;
-        int currentMagicka;
-        int currentFatigue;
+        protected Genders gender;
+        protected RaceTemplate race;
+        protected DFCareer career;
+        protected string name;
+        protected int level;
+        protected int faceIndex;
+        protected DaggerfallStats stats;
+        protected DaggerfallSkills skills;
+        protected PlayerReflexes reflexes;
+        protected int maxHealth;
+        protected int currentHealth;
+        protected int currentMagicka;
+        protected int currentFatigue;
 
         #endregion
 
@@ -60,31 +60,6 @@ namespace DaggerfallWorkshop.Game.Entity
         public int CurrentFatigue { get { return currentFatigue; } }
         public int MaxMagicka { get { return FormulaHelper.SpellPoints(stats.Intelligence, career.SpellPointMultiplierValue); } }
         public int CurrentMagicka { get { return currentMagicka; } }
-
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Assigns entity from a character sheet.
-        /// </summary>
-        public void AssignCharacter(CharacterSheet character, int level = 1, int maxHealth = 0)
-        {
-            this.level = level;
-            this.gender = character.gender;
-            this.race = character.race;
-            this.career = character.career;
-            this.name = character.name;
-            this.faceIndex = character.faceIndex;
-            this.stats = character.workingStats;
-            this.skills = character.workingSkills;
-            this.reflexes = character.reflexes;
-
-            if (maxHealth <= 0)
-                this.maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
-            else
-                this.maxHealth = maxHealth;
-        }
 
         #endregion
 

@@ -320,25 +320,75 @@ namespace DaggerfallWorkshop.Game
             isPlayerInsideDungeon = true;
 
             // Set to start position
-            MovePlayerToDungeonStart();
+            MovePlayerToMarker(dungeon.StartMarker);
 
             // Raise event
             RaiseOnTransitionDungeonInteriorEvent(door, dungeon);
         }
 
-        public void MovePlayerToDungeonStart()
+        /// <summary>
+        /// Starts player inside dungeon with no exterior world.
+        /// </summary>
+        public void StartDungeonInterior(DFLocation location, bool preferEnterMarker = true)
+        {
+            // Ensure we have component references
+            if (!ReferenceComponents())
+                return;
+
+            // Layout dungeon
+            GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform);
+            newDungeon.hideFlags = HideFlags.HideAndDontSave;
+            dungeon = newDungeon.GetComponent<DaggerfallDungeon>();
+
+            GameObject marker = null;
+            if (preferEnterMarker && dungeon.EnterMarker != null)
+                marker = dungeon.EnterMarker;
+            else
+                marker = dungeon.StartMarker;
+
+            // Find start marker to position player
+            if (!marker)
+            {
+                // Could not find marker
+                DaggerfallUnity.LogMessage("No start or enter marker found for this dungeon. Aborting load.");
+                Destroy(newDungeon);
+                return;
+            }
+
+            // Disable exterior parent
+            if (ExteriorParent != null)
+                ExteriorParent.SetActive(false);
+
+            // Enable dungeon parent
+            if (DungeonParent != null)
+                DungeonParent.SetActive(true);
+
+            // Player is now inside dungeon
+            isPlayerInside = true;
+            isPlayerInsideDungeon = true;
+
+            // Set to start position
+            MovePlayerToMarker(marker);
+        }
+
+        public void MovePlayerToMarker(GameObject marker)
         {
             if (!isPlayerInsideDungeon)
                 return;
 
             // Set player to start position
-            transform.position = dungeon.StartMarker.transform.position + Vector3.up * (controller.height * 0.6f);
+            transform.position = marker.transform.position + Vector3.up * (controller.height * 0.6f);
 
             // Fix player standing
             SetStanding();
 
             // Raise event
             RaiseOnMovePlayerToDungeonStartEvent();
+        }
+
+        public void MovePlayerToDungeonStart()
+        {
+            MovePlayerToMarker(dungeon.StartMarker);
         }
 
         /// <summary>
@@ -429,7 +479,7 @@ namespace DaggerfallWorkshop.Game
             if (Physics.Raycast(ray, out hit, controller.height * 2f))
             {
                 // Position player at hit position plus just over half controller height up
-                transform.position = hit.point + Vector3.up * (controller.height * 0.6f);
+                transform.position = hit.point + Vector3.up * (controller.height * 0.7f);
             }
         }
 

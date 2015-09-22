@@ -5,7 +5,7 @@ MyDaggerfallPath=
 ViewportX=1280
 ViewportY=720
 Fullscreen=1
-FieldOfView=60
+FieldOfView=65
 BitmapCursor=True
 VSync=True
 

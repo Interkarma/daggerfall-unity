@@ -66,7 +66,8 @@ namespace DaggerfallWorkshop
         [HideInInspector]
         public string EditorFindLocationString = "Daggerfall/Privateer's Hold";
 
-        public bool AddLocationBeacon = false;
+        //public bool AddLocationBeacon = false;
+        public bool suppressWorld = false;
         public bool ShowDebugString = false;
 
         // List of terrain objects
@@ -250,7 +251,8 @@ namespace DaggerfallWorkshop
         private void InitWorld(bool repositionPlayer = false)
         {
             // Cannot init world without a player, as world positions around player
-            if (LocalPlayerGPS == null)
+            // Also do nothing if world is on hold at start
+            if (LocalPlayerGPS == null || suppressWorld)
                 return;
 
             // Player must be at origin on init for proper world sync
@@ -1029,7 +1031,7 @@ namespace DaggerfallWorkshop
                 dfUnity = DaggerfallUnity.Instance;
             }
 
-            if (LocalPlayerGPS == null)
+            if (LocalPlayerGPS == null || suppressWorld)
                 return false;
             else
                 InitWorld(true);

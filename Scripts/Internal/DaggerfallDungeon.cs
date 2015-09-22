@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop
         public int RandomMonsterVariance = 4;
 
         GameObject startMarker = null;
+        GameObject enterMarker = null;
 
         public DungeonSummary Summary
         {
@@ -49,6 +50,11 @@ namespace DaggerfallWorkshop
         public GameObject StartMarker
         {
             get { return startMarker; }
+        }
+
+        public GameObject EnterMarker
+        {
+            get { return enterMarker; }
         }
 
         [Serializable]
@@ -240,7 +246,7 @@ namespace DaggerfallWorkshop
 
                 DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
                 if (block.IsStartingBlock)
-                    FindStartMarker(daggerfallBlock);
+                    FindMarkers(daggerfallBlock);
             }
 
 #if SHOW_LAYOUT_TIMES
@@ -273,29 +279,36 @@ namespace DaggerfallWorkshop
 
                 DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
                 if (block.IsStartingBlock)
-                    FindStartMarker(daggerfallBlock);
+                    FindMarkers(daggerfallBlock);
             }
         }
 
-        // Finds start marker, should only be called for starting block
-        private void FindStartMarker(DaggerfallRDBBlock dfBlock)
+        // Finds start and enter markers, should only be called for starting block
+        private void FindMarkers(DaggerfallRDBBlock dfBlock)
         {
             if (!dfBlock)
                 throw new Exception("DaggerfallDungeon: dfBlock cannot be null.");
-            if (dfBlock.StartMarkers.Length == 0)
+
+            if (dfBlock.StartMarkers != null && dfBlock.StartMarkers.Length > 0)
             {
-                DaggerfallUnity.LogMessage("DaggerfallDungeon: No start markers found in block.", true);
-                return;
+                // There should only be one start marker per start block
+                // This message will let us know if more than one is found
+                if (dfBlock.StartMarkers.Length > 1)
+                    DaggerfallUnity.LogMessage("DaggerfallDungeon: Multiple 'Start' markers found. Using first marker.", true);
+
+                startMarker = dfBlock.StartMarkers[0];
             }
 
-            // There should only be one start marker per start block
-            // This message will let us know if more than one is found
-            if (dfBlock.StartMarkers.Length > 1)
+            if (dfBlock.EnterMarkers != null && dfBlock.EnterMarkers.Length > 0)
             {
-                DaggerfallUnity.LogMessage("DaggerfallDungeon: Multiple start markers found. Using first marker.", true);
-            }
 
-            startMarker = dfBlock.StartMarkers[0];
+                // There should only be one enter marker per start block
+                // This message will let us know if more than one is found
+                if (dfBlock.EnterMarkers.Length > 1)
+                    DaggerfallUnity.LogMessage("DaggerfallDungeon: Multiple 'Enter' markers found. Using first marker.", true);
+
+                enterMarker = dfBlock.EnterMarkers[0];
+            }
         }
 
         private bool ReadyCheck()

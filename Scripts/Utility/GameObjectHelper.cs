@@ -440,12 +440,13 @@ namespace DaggerfallWorkshop.Utility
             // Add flats
             DFBlock.RdbObject[] editorObjects;
             GameObject[] startMarkers;
-            RDBLayout.AddFlats(go, ref actionLinkDict, ref blockData, out editorObjects, out startMarkers);
+            GameObject[] enterMarkers;
+            RDBLayout.AddFlats(go, ref actionLinkDict, ref blockData, out editorObjects, out startMarkers, out enterMarkers);
 
-            // Set start markers
+            // Set start and enter markers
             DaggerfallRDBBlock dfBlock = go.GetComponent<DaggerfallRDBBlock>();
             if (dfBlock != null)
-                dfBlock.SetStartMarkers(startMarkers);
+                dfBlock.SetMarkers(startMarkers, enterMarkers);
 
             // Add enemies
             RDBLayout.AddFixedEnemies(go, editorObjects);

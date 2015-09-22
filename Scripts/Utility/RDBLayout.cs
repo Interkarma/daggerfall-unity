@@ -282,12 +282,15 @@ namespace DaggerfallWorkshop.Utility
             ref Dictionary<int, ActionLink> actionLinkDict,
             ref DFBlock blockData,
             out DFBlock.RdbObject[] editorObjectsOut,
-            out GameObject[] startMarkersOut)
+            out GameObject[] startMarkersOut,
+            out GameObject[] enterMarkersOut)
         {
             List<DFBlock.RdbObject> editorObjects = new List<DFBlock.RdbObject>();
             List<GameObject> startMarkers = new List<GameObject>();
+            List<GameObject> enterMarkers = new List<GameObject>();
             editorObjectsOut = null;
             startMarkersOut = null;
+            enterMarkersOut = null;
 
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -320,6 +323,8 @@ namespace DaggerfallWorkshop.Utility
                             editorObjects.Add(obj);
                             if (record == 10)
                                 startMarkers.Add(flatObject);
+                            else if (record == 8)
+                                enterMarkers.Add(flatObject);
 
                             //add editor flats to actionLinkDict
                             if (!actionLinkDict.ContainsKey(obj.This))
@@ -346,6 +351,7 @@ namespace DaggerfallWorkshop.Utility
             // Output editor objects
             editorObjectsOut = editorObjects.ToArray();
             startMarkersOut = startMarkers.ToArray();
+            enterMarkersOut = enterMarkers.ToArray();
         }
 
         /// <summary>
