@@ -63,7 +63,8 @@ namespace DaggerfallWorkshop.Game
         void Update()
         {
             // Toggle weapon sheath
-            if (Input.GetKeyDown(KeyCode.Z))
+            //if (Input.GetKeyDown(KeyCode.Z))
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon))
                 ToggleSheath();
 
             // Do nothing if weapons sheathed
@@ -73,8 +74,9 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Only track mouse if user holding down rmb and not attacking
-            if (!Input.GetButton("Fire2") && !isAttacking)
+            // Reset tracking if user not holding down 'SwingWeapon' button and no attack in progress
+            //if (!Input.GetButton("Fire2") && !isAttacking)
+            if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !isAttacking)
             {
                 lastAction = MouseDirections.None;
                 actionCount = 0;
@@ -127,7 +129,8 @@ namespace DaggerfallWorkshop.Game
         private void TrackMouseAttack()
         {
             // Track action for idle plus all eight mouse directions
-            var ms = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            //var ms = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            var ms = new Vector2(InputManager.Instance.MouseX, InputManager.Instance.MouseY);
             if (IsPassive(ms.x, HorizontalThreshold) && IsPassive(ms.y, VerticalThreshold))
                 TrackAction(MouseDirections.None);
             else if (IsNegative(ms.x, HorizontalThreshold) && IsPositive(ms.y, VerticalThreshold))

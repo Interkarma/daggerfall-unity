@@ -54,9 +54,9 @@ namespace DaggerfallWorkshop.Game
             if (!enableMouseLook)
                 return;
 
-            // Suppress mouse look if fire2 is down
-            // This means the player is swinging weapon
-            if (Input.GetButton("Fire2"))
+            // Suppress mouse look if player is swinging weapon
+            //if (Input.GetButton("Fire2"))
+            if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon))
                 return;
 
             // Allow the script to clamp based on a desired target value.
@@ -64,7 +64,9 @@ namespace DaggerfallWorkshop.Game
             var targetCharacterOrientation = Quaternion.Euler(targetCharacterDirection);
 
             // Get raw mouse input for a cleaner reading on more sensitive mice.
-            var mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            //var mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            //var mouseDelta = new Vector2(InputManager.Instance.MouseX, InputManager.Instance.MouseY);
+            var mouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
 
             // Invert mouse Y
             if (invertMouseY)

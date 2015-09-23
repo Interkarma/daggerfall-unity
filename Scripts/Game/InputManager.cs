@@ -25,15 +25,22 @@ namespace DaggerfallWorkshop.Game
         #region Fields
 
         const float acceleration = 3f;
-        const float friction = 3f;
+        const float friction = 4f;
         const float deadZone = 0.1f;
 
         KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         List<Actions> currentActions = new List<Actions>();
+        List<Actions> previousActions = new List<Actions>();
         bool paused;
         float horizontal;
         float vertical;
+        float lookX;
+        float lookY;
+        float mouseX;
+        float mouseY;
+        bool invertLookX;
+        bool invertLookY;
         bool posHorizontalImpulse;
         bool negHorizontalImpulse;
         bool posVerticalImpulse;
@@ -57,6 +64,38 @@ namespace DaggerfallWorkshop.Game
         public Actions[] CurrentActions
         {
             get { return currentActions.ToArray(); }
+        }
+
+        public float MouseX
+        {
+            get { return mouseX; }
+        }
+
+        public float MouseY
+        {
+            get { return mouseY; }
+        }
+
+        public float LookX
+        {
+            get { return lookX; }
+        }
+
+        public float LookY
+        {
+            get { return lookY; }
+        }
+
+        public bool InvertLookX
+        {
+            get { return invertLookX; }
+            set { invertLookX = value; }
+        }
+
+        public bool InvertLookY
+        {
+            get { return invertLookY; }
+            set { invertLookY = value; }
         }
 
         public float Horizontal
@@ -167,7 +206,11 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // Current actions are cleared at start of every frame
+            // Move current actions to previous actions
+            previousActions.Clear();
+            previousActions.AddRange(currentActions);
+
+            // Clear current actions
             currentActions.Clear();
 
             // Clear axis impulse flags, these will be raised again on movement
@@ -180,8 +223,15 @@ namespace DaggerfallWorkshop.Game
             if (paused)
                 return;
 
+            // Collect mouse axes
+            mouseX = Input.GetAxisRaw("Mouse X");
+            mouseY = Input.GetAxisRaw("Mouse Y");
+
+            // Update look impulse
+            UpdateLook();
+
             // Process actions from input sources
-            RunKeyboardActions();
+            FindKeyboardActions();
 
             // Apply friction to movement force
             ApplyFriction();
@@ -191,9 +241,28 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods
 
+        /// <summary>
+        /// Returns true when specified action is in progress for current frame.
+        /// </summary>
         public bool HasAction(Actions action)
         {
             return currentActions.Contains(action);
+        }
+
+        /// <summary>
+        /// Returns true when specified action is in progress for current frame but not for previous frame.
+        /// </summary>
+        public bool ActionStarted(Actions action)
+        {
+            return (!previousActions.Contains(action) && currentActions.Contains(action));
+        }
+
+        /// <summary>
+        /// Returns true when specified action was in progress previous frame but not for current frame.
+        /// </summary>
+        public bool ActionComplete(Actions action)
+        {
+            return (previousActions.Contains(action) && !currentActions.Contains(action));
         }
 
         #endregion
@@ -344,8 +413,23 @@ namespace DaggerfallWorkshop.Game
                 horizontal = Mathf.Clamp(horizontal + friction * Time.deltaTime, horizontal, 0);
         }
 
+        // Updates look axes based on supported input
+        void UpdateLook()
+        {
+            lookX = 0;
+            lookY = 0;
+
+            // Assign mouse
+            lookX = mouseX;
+            lookY = mouseY;
+
+            // Inversion
+            lookX = (invertLookX) ? -lookX : lookX;
+            lookY = (invertLookY) ? -lookY : lookY;
+        }
+
         // Enumerate all keyboard actions in progress
-        void RunKeyboardActions()
+        void FindKeyboardActions()
         {
             var enumerator = actionKeyDict.GetEnumerator();
             while (enumerator.MoveNext())
