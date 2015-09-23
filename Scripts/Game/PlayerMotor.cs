@@ -166,8 +166,10 @@ namespace DaggerfallWorkshop.Game
                 try
                 {
                     // Jump! But only if the jump button has been released and player has been grounded for a given number of frames
-                    if (!Input.GetButton("Jump"))
+                    if (!InputManager.Instance.HasAction(InputManager.Actions.Jump))
                         jumpTimer++;
+                    //if (!Input.GetButton("Jump"))
+                    //    jumpTimer++;
                     else if (jumpTimer >= antiBunnyHopFactor)
                     {
                         moveDirection.y = jumpSpeed;
@@ -273,8 +275,10 @@ namespace DaggerfallWorkshop.Game
             {
                 // If the run button is set to toggle, then switch between walk/run speed. (We use Update for this...
                 // FixedUpdate is a poor place to use GetButtonDown, since it doesn't necessarily run every frame and can miss the event)
-                if (toggleRun && grounded && Input.GetButtonDown("Run"))
+                if (toggleRun && grounded && InputManager.Instance.HasAction(InputManager.Actions.Run))
                     speed = (speed == walkSpeed ? runSpeed : walkSpeed);
+                //if (toggleRun && grounded && Input.GetButtonDown("Run"))
+                //    speed = (speed == walkSpeed ? runSpeed : walkSpeed);
             }
             catch
             {

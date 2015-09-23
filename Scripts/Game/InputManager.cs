@@ -18,18 +18,15 @@ using System.Text;
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// InputManager singleton class for Daggerfall-specific game inputs.
+    /// InputManager singleton class for Daggerfall-specific game actions.
     /// </summary>
     public class InputManager : MonoBehaviour
     {
         #region Fields
 
-        static KeyCode[] ReservedKeys = new KeyCode[] { KeyCode.Escape };
-
+        KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape };
         Dictionary<KeyCode, Actions> actionDict = new Dictionary<KeyCode, Actions>();
-        char lastCharacterTyped;
-        KeyCode lastKeyCode;
-        Actions lastAction;
+        List<Actions> currentActions = new List<Actions>();
         bool paused;
 
         #endregion
@@ -42,14 +39,14 @@ namespace DaggerfallWorkshop.Game
             set { paused = value; }
         }
 
-        public char LastCharacterTyped
+        public KeyCode[] ReservedKeys
         {
-            get { return lastCharacterTyped; }
+            get { return (KeyCode[])reservedKeys.Clone(); }
         }
 
-        public KeyCode LastKeyCode
+        public Actions[] CurrentActions
         {
-            get { return lastKeyCode; }
+            get { return currentActions.ToArray(); }
         }
 
         #endregion
@@ -150,32 +147,32 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            // Current actions are cleared at start of every frame
+            currentActions.Clear();
+
+            // Do nothing if paused
             if (paused)
                 return;
-        }
 
-        void OnGUI()
-        {
-            if (Event.current.type == EventType.KeyDown)
+            // Enumerate all actions in progress
+            var enumerator = actionDict.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                lastCharacterTyped = Event.current.character;
-                lastKeyCode = Event.current.keyCode;
-            }
-            else
-            {
-                lastCharacterTyped = (char)0;
-                lastKeyCode = KeyCode.None;
-            }
-
-            if (actionDict.ContainsKey(lastKeyCode))
-            {
-                Actions action = actionDict[lastKeyCode];
-                if (action != lastAction)
+                var element = enumerator.Current;
+                if (Input.GetKey(element.Key))
                 {
-                    Debug.Log(string.Format("Last action: {0}", action.ToString()));
-                    lastAction = action;
+                    currentActions.Add(element.Value);
                 }
             }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public bool HasAction(Actions action)
+        {
+            return currentActions.Contains(action);
         }
 
         #endregion
@@ -280,7 +277,14 @@ namespace DaggerfallWorkshop.Game
                 actionDict.Remove(code);
                 actionDict.Add(code, action);
             }
+        }
 
+        void ClearBinding(KeyCode code)
+        {
+            if (actionDict.ContainsKey(code))
+            {
+                actionDict.Remove(code);
+            }
         }
 
         #endregion
