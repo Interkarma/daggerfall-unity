@@ -24,10 +24,20 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        const float acceleration = 3f;
+        const float friction = 3f;
+        const float deadZone = 0.1f;
+
         KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape };
-        Dictionary<KeyCode, Actions> actionDict = new Dictionary<KeyCode, Actions>();
+        Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         List<Actions> currentActions = new List<Actions>();
         bool paused;
+        float horizontal;
+        float vertical;
+        bool posHorizontalImpulse;
+        bool negHorizontalImpulse;
+        bool posVerticalImpulse;
+        bool negVerticalImpulse;
 
         #endregion
 
@@ -47,6 +57,16 @@ namespace DaggerfallWorkshop.Game
         public Actions[] CurrentActions
         {
             get { return currentActions.ToArray(); }
+        }
+
+        public float Horizontal
+        {
+            get { return (horizontal < -deadZone || horizontal > deadZone) ? horizontal : 0; }
+        }
+
+        public float Vertical
+        {
+            get { return (vertical < -deadZone || vertical > deadZone) ? vertical : 0; }
         }
 
         #endregion
@@ -150,20 +170,21 @@ namespace DaggerfallWorkshop.Game
             // Current actions are cleared at start of every frame
             currentActions.Clear();
 
+            // Clear axis impulse flags, these will be raised again on movement
+            posHorizontalImpulse = false;
+            negHorizontalImpulse = false;
+            posVerticalImpulse = false;
+            negVerticalImpulse = false;
+
             // Do nothing if paused
             if (paused)
                 return;
 
-            // Enumerate all actions in progress
-            var enumerator = actionDict.GetEnumerator();
-            while (enumerator.MoveNext())
-            {
-                var element = enumerator.Current;
-                if (Input.GetKey(element.Key))
-                {
-                    currentActions.Add(element.Value);
-                }
-            }
+            // Process actions from input sources
+            RunKeyboardActions();
+
+            // Apply friction to movement force
+            ApplyFriction();
         }
 
         #endregion
@@ -211,7 +232,7 @@ namespace DaggerfallWorkshop.Game
 
         void SetupDefaults()
         {
-            actionDict.Clear();
+            actionKeyDict.Clear();
 
             SetBinding(KeyCode.Escape, Actions.Escape);
 
@@ -266,24 +287,92 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.V, Actions.TravelMap);
         }
 
+        // Bind a KeyCode to an action
         void SetBinding(KeyCode code, Actions action)
         {
-            if (!actionDict.ContainsKey(code))
+            if (!actionKeyDict.ContainsKey(code))
             {
-                actionDict.Add(code, action);
+                actionKeyDict.Add(code, action);
             }
             else
             {
-                actionDict.Remove(code);
-                actionDict.Add(code, action);
+                actionKeyDict.Remove(code);
+                actionKeyDict.Add(code, action);
             }
         }
 
+        // Unbind a KeyCode from an action
         void ClearBinding(KeyCode code)
         {
-            if (actionDict.ContainsKey(code))
+            if (actionKeyDict.ContainsKey(code))
             {
-                actionDict.Remove(code);
+                actionKeyDict.Remove(code);
+            }
+        }
+
+        // Apply force to horizontal axis
+        void ApplyHorizontalForce(float scale)
+        {
+            horizontal = Mathf.Clamp(horizontal + (acceleration * scale) * Time.deltaTime, -1, 1);
+            if (scale < 0)
+                negHorizontalImpulse = true;
+            else if (scale > 0)
+                posHorizontalImpulse = true;
+        }
+
+        // Apply force to vertical axis
+        void ApplyVerticalForce(float scale)
+        {
+            vertical = Mathf.Clamp(vertical + (acceleration * scale) * Time.deltaTime, -1, 1);
+            if (scale < 0)
+                negVerticalImpulse = true;
+            else if (scale > 0)
+                posVerticalImpulse = true;
+        }
+
+        // Apply friction to decelerate inactive movement impulses towards 0
+        void ApplyFriction()
+        {
+            if (!posVerticalImpulse && vertical > 0)
+                vertical = Mathf.Clamp(vertical - friction * Time.deltaTime, 0, vertical);
+            if (!negVerticalImpulse && vertical < 0)
+                vertical = Mathf.Clamp(vertical + friction * Time.deltaTime, vertical, 0);
+
+            if (!posHorizontalImpulse && horizontal > 0)
+                horizontal = Mathf.Clamp(horizontal - friction * Time.deltaTime, 0, horizontal);
+            if (!negHorizontalImpulse && horizontal < 0)
+                horizontal = Mathf.Clamp(horizontal + friction * Time.deltaTime, horizontal, 0);
+        }
+
+        // Enumerate all keyboard actions in progress
+        void RunKeyboardActions()
+        {
+            var enumerator = actionKeyDict.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                var element = enumerator.Current;
+                if (Input.GetKey(element.Key))
+                {
+                    // Add current action to list
+                    currentActions.Add(element.Value);
+
+                    // Handle movement impulses
+                    switch (element.Value)
+                    {
+                        case Actions.MoveRight:
+                            ApplyHorizontalForce(1);
+                            break;
+                        case Actions.MoveLeft:
+                            ApplyHorizontalForce(-1);
+                            break;
+                        case Actions.MoveForwards:
+                            ApplyVerticalForce(1);
+                            break;
+                        case Actions.MoveBackwards:
+                            ApplyVerticalForce(-1);
+                            break;
+                    }
+                }
             }
         }
 
