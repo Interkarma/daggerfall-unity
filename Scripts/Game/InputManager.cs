@@ -213,6 +213,12 @@ namespace DaggerfallWorkshop.Game
             // Clear current actions
             currentActions.Clear();
 
+            // Clear look and mouse axes
+            mouseX = 0;
+            mouseY = 0;
+            lookX = 0;
+            lookY = 0;
+
             // Clear axis impulse flags, these will be raised again on movement
             posHorizontalImpulse = false;
             negHorizontalImpulse = false;
@@ -416,9 +422,6 @@ namespace DaggerfallWorkshop.Game
         // Updates look axes based on supported input
         void UpdateLook()
         {
-            lookX = 0;
-            lookY = 0;
-
             // Assign mouse
             lookX = mouseX;
             lookY = mouseY;

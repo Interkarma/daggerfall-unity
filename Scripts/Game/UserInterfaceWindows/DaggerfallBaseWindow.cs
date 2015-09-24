@@ -31,15 +31,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool isSetup;
         DaggerfallUnity dfUnity;
-        Panel screenPanel = new Panel();      // Parent screen panel fits to entire viewport
         Panel nativePanel = new Panel();      // Native panel is 320x200 child panel scaled to fit parent
 
         public DaggerfallBaseWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
-            // Screen panel
-            screenPanel.Components.Add(nativePanel);
-            screenPanel.BackgroundColor = Color.black;
+            // Parent panel
+            parentPanel.Components.Add(nativePanel);
+            parentPanel.BackgroundColor = Color.black;
 
             // Native panel
             nativePanel.Scaling = Scaling.ScaleToFit;
@@ -57,11 +56,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             get { return isSetup; }
             set { isSetup = value; }
-        }
-
-        protected Panel ScreenPanel
-        {
-            get { return screenPanel; }
         }
 
         protected Panel NativePanel
@@ -85,12 +79,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            screenPanel.Update();
+            base.Update();
         }
 
         public override void Draw()
         {
-            screenPanel.Draw();
+            base.Draw();
         }
 
         protected abstract void Setup();

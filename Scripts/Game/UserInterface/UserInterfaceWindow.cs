@@ -21,6 +21,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public interface IUserInterfaceWindow
     {
         UserInterfaceWindow Value { get; }
+        bool Enabled { get; set; }
+        Panel ParentPanel { get; }
         void Update();
         void Draw();
         void ProcessMessages();
@@ -29,14 +31,33 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// <summary>
     /// UserInterfaceWindow abstract base class.
     /// Each window is a unique state managed by UserInterfaceManager.
+    /// All subordinate controls should be added to ParentPanel.
     /// </summary>
     public abstract class UserInterfaceWindow : IUserInterfaceWindow
     {
+        protected Panel parentPanel = new Panel();      // Parent panel fits to entire viewport
         protected IUserInterfaceManager uiManager;
+        protected bool enabled = true;
 
         public UserInterfaceWindow Value
         {
             get { return (this); }
+        }
+
+        public bool Enabled
+        {
+            get { return enabled; }
+            set { enabled = value; }
+        }
+
+        public Panel ParentPanel
+        {
+            get { return parentPanel; }
+        }
+
+        public UserInterfaceWindow()
+        {
+            this.uiManager = DaggerfallUI.UIManager;
         }
 
         public UserInterfaceWindow(IUserInterfaceManager uiManager)
@@ -46,19 +67,30 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public virtual void Update()
         {
+            if (enabled)
+            {
+                parentPanel.Update();
+            }
         }
 
         public virtual void Draw()
         {
+            if (enabled)
+            {
+                parentPanel.Draw();
+            }
         }
 
         public virtual void ProcessMessages()
         {
-            string message = uiManager.PeekMessage();
-            if (message == WindowMessages.wmCloseWindow)
+            if (uiManager != null)
             {
-                uiManager.GetMessage();     // Eat message
-                uiManager.PopWindow();      // Close window
+                string message = uiManager.PeekMessage();
+                if (message == WindowMessages.wmCloseWindow)
+                {
+                    uiManager.GetMessage();     // Eat message
+                    uiManager.PopWindow();      // Close window
+                }
             }
         }
 
@@ -68,12 +100,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             RaiseOnCloseHandler();
         }
 
-        internal protected virtual void WindowChanged(object sender, EventArgs e)
-        {
-            if (uiManager.TopWindow == this.Value)
-            {
-            }
-        }
+        //internal protected virtual void WindowChanged(object sender, EventArgs e)
+        //{
+        //    if (uiManager.TopWindow == this.Value)
+        //    {
+        //    }
+        //}
 
         #region Event Handlers
 

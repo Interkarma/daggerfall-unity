@@ -268,7 +268,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharNameSelectWindow.Cancelled)
             {
-                characterSheet.name = createCharNameSelectWindow.Name;
+                characterSheet.name = createCharNameSelectWindow.CharacterName;
                 SetFaceSelectWindow();
             }
             else

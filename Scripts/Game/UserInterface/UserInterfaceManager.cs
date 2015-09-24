@@ -166,7 +166,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void AddWindow(UserInterfaceWindow window)
         {
             windows.Push(window);
-            OnWindowChange += window.WindowChanged;
+            //OnWindowChange += window.WindowChanged;
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UserInterfaceWindow oldWindow = TopWindow;
             if (oldWindow != null)
             {
-                OnWindowChange -= oldWindow.WindowChanged;
+                //OnWindowChange -= oldWindow.WindowChanged;
                 windows.Pop();
             }
         }

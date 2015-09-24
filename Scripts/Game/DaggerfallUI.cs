@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game
 
         public FilterMode globalFilterMode = FilterMode.Point;
         public string startupMessage = string.Empty;
+        public bool enableHUD = false;
 
         DaggerfallUnity dfUnity;
         AudioSource audioSource;
@@ -53,6 +54,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[4];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
+        DaggerfallHUD dfHUD;
 
         public DaggerfallFont Font1 { get { return GetFont(1); } }
         public DaggerfallFont Font2 { get { return GetFont(2); } }
@@ -61,6 +63,7 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallFont Font5 { get { return GetFont(5); } }
 
         public static DaggerfallFont DefaultFont { get { return Instance.GetFont(4); } }
+        public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
 
         public AudioSource AudioSource
         {
@@ -94,6 +97,13 @@ namespace DaggerfallWorkshop.Game
             audioSource = GetComponent<AudioSource>();
             audioSource.spatialBlend = 0;
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
+
+            // HUD is first window on stack when enabled
+            if (enableHUD)
+            {
+                dfHUD = new DaggerfallHUD(uiManager);
+                uiManager.PushWindow(dfHUD);
+            }
 
             SetupSingleton();
             PostMessage(startupMessage);
@@ -130,6 +140,9 @@ namespace DaggerfallWorkshop.Game
                 lastCharacterTyped = (char)0;
                 lastKeyCode = KeyCode.None;
             }
+
+            // Set depth of GUI to appear on top of other elements
+            GUI.depth = 0;
 
             // Draw top window
             if (uiManager.TopWindow != null)

@@ -77,7 +77,8 @@ namespace DaggerfallWorkshop.Game
 
             if (Event.current.type.Equals(EventType.Repaint) && ShowWeapon)
             {
-                // Draw weapon texture
+                // Draw weapon texture behind other HUD elements
+                GUI.depth = 1;
                 GUI.DrawTextureWithTexCoords(weaponPosition, weaponAtlas, curAnimRect);
             }
         }

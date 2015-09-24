@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextBox textBox = new TextBox();
         Button okButton;
 
-        public string Name
+        public string CharacterName
         {
             get { return textBox.Text; }
             set { textBox.Text = value; }
