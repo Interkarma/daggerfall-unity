@@ -183,7 +183,7 @@ namespace DaggerfallWorkshop
 
         #region Unity
 
-        void Start()
+        void Awake()
         {
             SetupSingleton();
             SetupArena2Path();

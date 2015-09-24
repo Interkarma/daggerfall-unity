@@ -74,7 +74,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             crosshair.Enabled = ShowCrosshair;
             crosshair.Scale = CrosshairScale;
 
-            //vitals.Enabled = ShowVitals;
+            vitals.Enabled = ShowVitals;
+            vitals.Scale = Scale;
 
             compass.Enabled = ShowCompass;
             compass.Scale = Scale;

@@ -19,6 +19,7 @@ ViewportScale=1.0
 MainFilterMode=0
 GUIFilterMode=0
 Crosshair=True
+SwapHealthAndFatigueColors=False
 
 [Controls]
 InvertMouseVertical=False

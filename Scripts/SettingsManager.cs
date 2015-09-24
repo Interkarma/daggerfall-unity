@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop
         const string fallbackIniName = "fallback.ini";
         const string sectionDaggerfall = "Daggerfall";
         const string sectionStartup = "Startup";
+        const string sectionGUI = "GUI";
 
         bool usingFallback = false;
         FileIniDataParser iniParser = new FileIniDataParser();
@@ -57,6 +58,12 @@ namespace DaggerfallWorkshop
         {
             get { return bool.Parse(GetData(sectionStartup, "StartInDungeon")); }
             set { SetData(sectionStartup, "StartInDungeon", value.ToString()); }
+        }
+
+        public bool SwapHealthAndFatigueColors
+        {
+            get { return bool.Parse(GetData(sectionGUI, "SwapHealthAndFatigueColors")); }
+            set { SetData(sectionGUI, "SwapHealthAndFatigueColors", value.ToString()); }
         }
 
         #endregion

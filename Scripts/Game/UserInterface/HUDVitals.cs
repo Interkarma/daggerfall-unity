@@ -9,18 +9,82 @@
 // Notes:
 //
 
-//#define DEBUG_BUTTON_PLACEMENT
-#define DEBUG_BUTTON_CLICKS
-
 using UnityEngine;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
-    public class HUDVitals : BaseScreenComponent
+    /// <summary>
+    /// Player vital signs for HUD.
+    /// </summary>
+    public class HUDVitals : Panel
     {
+        const string healthBarFilename = "MAIN03I0.IMG";
+        const string fatigueBarFilename = "MAIN04I0.IMG";
+        const string magickaBarFilename = "MAIN05I0.IMG";
+        const int nativeBarWidth = 4;
+        const int nativeBarHeight = 32;
+        const int borderSize = 10;
+
+        public float Scale = 1.0f;
+
+        VerticalProgress healthProgress = new VerticalProgress();
+        VerticalProgress fatigueProgress = new VerticalProgress();
+        VerticalProgress magickaProgress = new VerticalProgress();
+
+        public HUDVitals()
+            :base()
+        {
+            LoadAssets();
+
+            BackgroundColor = Color.clear;
+            HorizontalAlignment = HorizontalAlignment.Left;
+            VerticalAlignment = VerticalAlignment.Bottom;
+            SetMargins(Margins.All, borderSize);
+            
+            healthProgress.VerticalAlignment = VerticalAlignment.Bottom;
+            fatigueProgress.VerticalAlignment = VerticalAlignment.Bottom;
+            magickaProgress.VerticalAlignment = VerticalAlignment.Bottom;
+
+            Components.Add(healthProgress);
+            Components.Add(fatigueProgress);
+            Components.Add(magickaProgress);
+        }
+
+        public override void Update()
+        {
+            if (Enabled)
+            {
+                base.Update();
+
+                float barWidth = nativeBarWidth * Scale;
+                float barHeight = nativeBarHeight * Scale;
+
+                Size = new Vector2(barWidth * 5, barHeight);
+
+                healthProgress.Position = new Vector2(0, 0);
+                healthProgress.Size = new Vector2(barWidth, barHeight);
+
+                fatigueProgress.Position = new Vector2(barWidth * 2, 0);
+                fatigueProgress.Size = new Vector2(barWidth, barHeight);
+
+                magickaProgress.Position = new Vector2(barWidth * 4, 0);
+                magickaProgress.Size = new Vector2(barWidth, barHeight);
+            }
+        }
+
+        void LoadAssets()
+        {
+            if (DaggerfallUnity.Settings.SwapHealthAndFatigueColors)
+            {
+                healthProgress.ProgressTexture = DaggerfallUI.GetTextureFromImg(fatigueBarFilename);
+                fatigueProgress.ProgressTexture = DaggerfallUI.GetTextureFromImg(healthBarFilename);
+            }
+            else
+            {
+                healthProgress.ProgressTexture = DaggerfallUI.GetTextureFromImg(healthBarFilename);
+                fatigueProgress.ProgressTexture = DaggerfallUI.GetTextureFromImg(fatigueBarFilename);
+            }
+            magickaProgress.ProgressTexture = DaggerfallUI.GetTextureFromImg(magickaBarFilename);
+        }
     }
 }

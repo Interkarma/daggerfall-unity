@@ -28,13 +28,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Middle;
+            LoadAssets();
         }
 
         public override void Update()
         {
-            LoadAssets();
-
-            if (CrosshairTexture)
+            if (CrosshairTexture && Enabled)
             {
                 BackgroundTexture = CrosshairTexture;
                 Size = new Vector2(CrosshairTexture.width * Scale, CrosshairTexture.height * Scale);
@@ -44,10 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void LoadAssets()
         {
-            if (!CrosshairTexture)
-            {
-                CrosshairTexture = Resources.Load<Texture2D>(defaultCrosshairFilename);
-            }
+            CrosshairTexture = Resources.Load<Texture2D>(defaultCrosshairFilename);
         }
     }
 }

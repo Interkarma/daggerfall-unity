@@ -26,7 +26,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Camera mainCamera;
         Texture2D compassTexture;
         Texture2D compassBoxTexture;
-        bool assetsLoaded = false;
 
         public HUDCompass()
             : base()
@@ -34,17 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             mainCamera = Camera.main;
             HorizontalAlignment = HorizontalAlignment.Right;
             VerticalAlignment = VerticalAlignment.Bottom;
-        }
-
-        public override void Update()
-        {
-            if (Enabled)
-            {
-                if (!assetsLoaded)
-                    LoadAssets();
-
-                base.Update();
-            }
+            LoadAssets();
         }
 
         public override void Draw()
@@ -60,7 +49,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             compassTexture = DaggerfallUI.GetTextureFromImg(compassFilename);
             compassBoxTexture = DaggerfallUI.GetTextureFromImg(compassBoxFilename);
-            assetsLoaded = true;
         }
 
         void DrawCompass()
