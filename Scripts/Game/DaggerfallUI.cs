@@ -54,7 +54,9 @@ namespace DaggerfallWorkshop.Game
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[4];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
+
         DaggerfallHUD dfHUD;
+        DaggerfallPauseOptionsWindow dfPauseOptions;
 
         public DaggerfallFont Font1 { get { return GetFont(1); } }
         public DaggerfallFont Font2 { get { return GetFont(2); } }
@@ -105,6 +107,9 @@ namespace DaggerfallWorkshop.Game
                 uiManager.PushWindow(dfHUD);
             }
 
+            dfPauseOptions = new DaggerfallPauseOptionsWindow(uiManager);
+            dfPauseOptions.OnClose += PauseOptionsDialog_OnClose;
+
             SetupSingleton();
             PostMessage(startupMessage);
         }
@@ -114,10 +119,12 @@ namespace DaggerfallWorkshop.Game
             // Route messages to top window or handle locally
             if (uiManager.MessageCount > 0)
             {
+                // Top window has first chance at message
                 if (uiManager.TopWindow != null)
                     uiManager.TopWindow.ProcessMessages();
-                else
-                    ProcessMessages();
+
+                // Then process locally
+                ProcessMessages();
             }
 
             // Update top window
@@ -162,6 +169,10 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case DaggerfallUIMessages.dfuiStartNewGameWizard:
                     uiManager.PushWindow(new StartNewGameWizard(uiManager));
+                    break;
+                case DaggerfallUIMessages.dfuiOpenPauseOptionsDialog:
+                    GameManager.Instance.PauseGame(true);
+                    uiManager.PushWindow(dfPauseOptions);
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
                     Application.Quit();
@@ -470,6 +481,15 @@ namespace DaggerfallWorkshop.Game
                     Destroy(gameObject);
                 }
             }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void PauseOptionsDialog_OnClose()
+        {
+            GameManager.Instance.PauseGame(false);
         }
 
         #endregion

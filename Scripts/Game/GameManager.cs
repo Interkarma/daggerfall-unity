@@ -14,6 +14,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -23,6 +25,18 @@ namespace DaggerfallWorkshop.Game
     public class GameManager : MonoBehaviour
     {
         #region Fields
+
+        bool gamePaused = false;
+        float savedTimeScale;
+
+        #endregion
+
+        #region Properties
+
+        public bool GamePaused
+        {
+            get { return gamePaused; }
+        }
 
         #endregion
 
@@ -63,6 +77,36 @@ namespace DaggerfallWorkshop.Game
             SetupSingleton();
         }
 
+        void Update()
+        {
+            // Post message to open options dialog on escape during gameplay
+            if (IsPlayingGame() && Input.GetKeyDown(KeyCode.Escape))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
+            }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void PauseGame(bool pause)
+        {
+            if (pause)
+            {
+                savedTimeScale = Time.timeScale;
+                Time.timeScale = 0;
+                InputManager.Instance.IsPaused = true;
+            }
+            else
+            {
+                Time.timeScale = savedTimeScale;
+                InputManager.Instance.IsPaused = false;
+            }
+
+            gamePaused = pause;
+        }
+
         #endregion
 
         #region Public Static Methods
@@ -95,6 +139,17 @@ namespace DaggerfallWorkshop.Game
                     Destroy(gameObject);
                 }
             }
+        }
+
+        // Returns true when gameplay is active
+        bool IsPlayingGame()
+        {
+            // Playing game when top window is null or sitting on HUD
+            IUserInterfaceWindow topWindow = DaggerfallUI.UIManager.TopWindow;
+            if (topWindow == null || topWindow is DaggerfallHUD)
+                return true;
+
+            return false;
         }
 
         #endregion

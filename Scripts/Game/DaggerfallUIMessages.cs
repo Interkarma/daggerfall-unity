@@ -37,5 +37,8 @@ namespace DaggerfallWorkshop.Game
 
         // "Start New Game Wizard" window messages
         public const string dfuiStartNewGameWizard = "dfuiStartNewGameWizard";
+
+        // "Pause options dialog" window messages
+        public const string dfuiOpenPauseOptionsDialog = "dfuiOpenPauseOptionsDialog";
     }
 }

@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallPopupWindow : DaggerfallBaseWindow
     {
-        DaggerfallBaseWindow previous;
+        IUserInterfaceWindow previousWindow;
 
         Color screenDimColor = new Color32(0, 0, 0, 128);
         bool allowCancel = true;
@@ -46,10 +46,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return cancelled; }
         }
 
-        public DaggerfallPopupWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
+        public IUserInterfaceWindow PreviousWindow
+        {
+            get { return previousWindow; }
+            set { previousWindow = value; }
+        }
+
+        public DaggerfallPopupWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             : base(uiManager)
         {
-            this.previous = previous;
+            this.previousWindow = previousWindow;
         }
 
         protected override void Setup()
@@ -61,18 +67,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             cancelled = false;
-            if (allowCancel)
-            {
-                if (Input.GetKeyDown(exitKey))
-                    CancelWindow();
-            }
+            if (allowCancel && Input.GetKeyDown(exitKey))
+                CancelWindow();
         }
 
         public override void Draw()
         {
-            if (previous != null)
+            if (previousWindow != null)
             {
-                previous.Draw();
+                previousWindow.Draw();
                 parentPanel.BackgroundColor = screenDimColor;
             }
 
@@ -83,7 +86,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             cancelled = true;
             RaiseOnCancelEvent(this);
-            CloseWindow();
+            uiManager.PostMessage(WindowMessages.wmCloseWindow);
         }
 
         #region Events

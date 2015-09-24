@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (message == WindowMessages.wmCloseWindow)
                 {
                     uiManager.GetMessage();     // Eat message
-                    uiManager.PopWindow();      // Close window
+                    CloseWindow();
                 }
             }
         }
