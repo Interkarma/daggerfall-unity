@@ -16,6 +16,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 
@@ -50,6 +51,8 @@ namespace DaggerfallWorkshop
 
         [SerializeField]
         bool showAttributesFoldout = true;
+        [SerializeField]
+        bool showSecondaryAttributesFoldout = true;
         [SerializeField]
         bool showAdvancementFoldout = true;
         [SerializeField]
@@ -128,6 +131,7 @@ namespace DaggerfallWorkshop
                 {
                     ShowAdvancementGUI();
                     ShowAttributesGUI();
+                    ShowSecondaryAttributesGUI();
                     ShowSkillsGUI();
                     ShowTolerancesGUI();
                     ShowProficienciesGUI();
@@ -211,6 +215,77 @@ namespace DaggerfallWorkshop
                         EditorGUILayout.LabelField("Luck");
                         EditorGUILayout.SelectableLabel(selectedCareer.Luck.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
+                });
+            });
+        }
+
+        void ShowSecondaryAttributesGUI()
+        {
+            EditorGUILayout.Space();
+            showSecondaryAttributesFoldout = GUILayoutHelper.Foldout(showSecondaryAttributesFoldout, new GUIContent("Secondary Attributes"), () =>
+            {
+                GUILayoutHelper.Indent(() =>
+                {
+                    EditorGUILayout.Space();
+                    GUILayoutHelper.Horizontal(() =>
+                    {
+                        EditorGUILayout.LabelField("Damage Modifier");
+                        EditorGUILayout.SelectableLabel(FormulaHelper.DamageModifier(selectedCareer.Strength).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    });
+                    GUILayoutHelper.Horizontal(() =>
+                    {
+                        EditorGUILayout.LabelField("Max Encumbrance");
+                        EditorGUILayout.SelectableLabel(FormulaHelper.MaxEncumbrance(selectedCareer.Strength).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    });
+                    GUILayoutHelper.Horizontal(() =>
+                    {
+                        EditorGUILayout.LabelField("Spell Points");
+                        EditorGUILayout.SelectableLabel(FormulaHelper.SpellPoints(selectedCareer.Intelligence, selectedCareer.SpellPointMultiplierValue).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    });
+                    GUILayoutHelper.Horizontal(() =>
+                    {
+                        EditorGUILayout.LabelField("Magic Resist");
+                        EditorGUILayout.SelectableLabel(FormulaHelper.MagicResist(selectedCareer.Willpower).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    });
+                    GUILayoutHelper.Horizontal(() =>
+                    {
+                        EditorGUILayout.LabelField("To Hit Modifier");
+                        EditorGUILayout.SelectableLabel(FormulaHelper.ToHitModifier(selectedCareer.Agility).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    });
+                    GUILayoutHelper.Horizontal(() =>
+                    {
+                        EditorGUILayout.LabelField("Hit Points Modifier");
+                        EditorGUILayout.SelectableLabel(FormulaHelper.HitPointsModifier(selectedCareer.Endurance).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    });
+                    GUILayoutHelper.Horizontal(() =>
+                    {
+                        EditorGUILayout.LabelField("Healing Rate Modifier");
+                        EditorGUILayout.SelectableLabel(FormulaHelper.HealingRateModifier(selectedCareer.Endurance).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    });
+                    if (careerSource == CareerSource.Monsters)
+                    {
+                        MobileEnemy enemy;
+                        if (EnemyBasics.GetEnemy(selectedCareer.Name, out enemy))
+                        {
+                            GUILayoutHelper.Horizontal(() =>
+                            {
+                                string monsterHealth = string.Format("{0}-{1}", enemy.MinHealth, enemy.MaxHealth);
+                                EditorGUILayout.LabelField("Monster Health");
+                                EditorGUILayout.SelectableLabel(monsterHealth, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                            });
+                            GUILayoutHelper.Horizontal(() =>
+                            {
+                                string monsterDamage = string.Format("{0}-{1}", enemy.MinDamage, enemy.MaxDamage);
+                                EditorGUILayout.LabelField("Monster Damage");
+                                EditorGUILayout.SelectableLabel(monsterDamage, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                            });
+                            GUILayoutHelper.Horizontal(() =>
+                            {
+                                EditorGUILayout.LabelField("Required Metal");
+                                EditorGUILayout.SelectableLabel(enemy.MinMetalToHit.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                            });
+                        }
+                    }
                 });
             });
         }
