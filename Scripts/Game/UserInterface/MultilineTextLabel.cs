@@ -180,7 +180,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         TextLabel AddTextLabel(PixelFont font, Vector2 position, string text)
         {
             TextLabel textLabel = new TextLabel();
-            textLabel.Scaling = Scaling.None;
+            textLabel.ScalingMode = Scaling.None;
             textLabel.HorizontalAlignment = rowAlignment;
             textLabel.Font = font;
             textLabel.Position = position;

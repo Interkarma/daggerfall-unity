@@ -34,8 +34,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Vector2 size;
         bool hasFocus = false;
 
+        Vector2 scale = Vector2.one;
         Vector2 localScale = Vector2.one;
-        Scaling scaling = Scaling.None;
+        Scaling scalingMode = Scaling.None;
         HorizontalAlignment horizontalAlignment = HorizontalAlignment.None;
         VerticalAlignment verticalAlignment = VerticalAlignment.None;
 
@@ -223,16 +224,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Gets or sets scaling.
+        /// Gets or sets manual scale for when ScalingMode = None.
         /// </summary>
-        public Scaling Scaling
+        public Vector2 Scale
         {
-            get { return scaling; }
-            set { scaling = value; }
+            get { return scale; }
+            set { scale = value; }
         }
 
         /// <summary>
-        /// Gets scale value based on scaling.
+        /// Gets or sets scaling mode.
+        /// </summary>
+        public Scaling ScalingMode
+        {
+            get { return scalingMode; }
+            set { scalingMode = value; }
+        }
+
+        /// <summary>
+        /// Gets atomatic scale value based on scaling mode.
         /// </summary>
         public Vector2 LocalScale
         {
@@ -602,10 +612,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Apply scaling
-            switch (scaling)
+            switch (scalingMode)
             {
                 case Scaling.None:
-                    localScale = (parent != null) ? parent.LocalScale : Vector2.one;
+                    localScale = (parent != null) ? parent.LocalScale : scale;
                     break;
                 case Scaling.StretchToFill:
                     rectangle = StretchToFill(rectangle);

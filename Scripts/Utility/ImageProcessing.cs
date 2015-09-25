@@ -78,6 +78,8 @@ namespace DaggerfallWorkshop.Utility
             // Encode and save file
             byte[] buffer = texture.EncodeToPNG();
             File.WriteAllBytes(path, buffer);
+
+            DaggerfallUnity.LogMessage(string.Format("Saved texture to {0}", path));
         }
 #endif
 

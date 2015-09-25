@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string compassFilename = "COMPASS.IMG";
         const string compassBoxFilename = "COMPBOX.IMG";
 
-        public float Scale = 2.0f;
+        public float CompassScale = 2.0f;
 
         Camera mainCamera;
         Texture2D compassTexture;
@@ -63,10 +63,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Compass box rect
             Rect compassBoxRect = new Rect();
-            compassBoxRect.x = Screen.width - (compassBoxTexture.width * Scale);
-            compassBoxRect.y = Screen.height - (compassBoxTexture.height * Scale);
-            compassBoxRect.width = compassBoxTexture.width * Scale;
-            compassBoxRect.height = compassBoxTexture.height * Scale;
+            compassBoxRect.x = Screen.width - (compassBoxTexture.width * CompassScale);
+            compassBoxRect.y = Screen.height - (compassBoxTexture.height * CompassScale);
+            compassBoxRect.width = compassBoxTexture.width * CompassScale;
+            compassBoxRect.height = compassBoxTexture.height * CompassScale;
 
             // Compass strip source
             Rect compassSrcRect = new Rect();
@@ -77,10 +77,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Compass strip destination
             Rect compassDstRect = new Rect();
-            compassDstRect.x = compassBoxRect.x + boxOutlineSize * Scale;
-            compassDstRect.y = compassBoxRect.y + boxOutlineSize * Scale;
-            compassDstRect.width = compassBoxRect.width - (boxOutlineSize * 2) * Scale;
-            compassDstRect.height = compassTexture.height * Scale;
+            compassDstRect.x = compassBoxRect.x + boxOutlineSize * CompassScale;
+            compassDstRect.y = compassBoxRect.y + boxOutlineSize * CompassScale;
+            compassDstRect.width = compassBoxRect.width - (boxOutlineSize * 2) * CompassScale;
+            compassDstRect.height = compassTexture.height * CompassScale;
 
             GUI.DrawTextureWithTexCoords(compassDstRect, compassTexture, compassSrcRect, false);
             GUI.DrawTexture(compassBoxRect, compassBoxTexture, ScaleMode.StretchToFill, true);

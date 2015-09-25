@@ -28,14 +28,15 @@ namespace DaggerfallWorkshop.Game
 
         bool gamePaused = false;
         float savedTimeScale;
+        Texture2D pauseScreenshot;
 
         #endregion
 
         #region Properties
 
-        public bool GamePaused
+        public static bool GamePaused
         {
-            get { return gamePaused; }
+            get { return Instance.gamePaused; }
         }
 
         #endregion
@@ -83,6 +84,7 @@ namespace DaggerfallWorkshop.Game
             if (IsPlayingGame() && Input.GetKeyDown(KeyCode.Escape))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
+                StartCoroutine(TakeScreenshot());
             }
         }
 
@@ -150,6 +152,16 @@ namespace DaggerfallWorkshop.Game
                 return true;
 
             return false;
+        }
+
+        // Takes a screenshot at end of current frame
+        IEnumerator TakeScreenshot()
+        {
+            yield return new WaitForEndOfFrame();
+
+            pauseScreenshot = new Texture2D(Screen.width, Screen.height);
+            pauseScreenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+            pauseScreenshot.Apply();
         }
 
         #endregion

@@ -339,7 +339,7 @@ namespace DaggerfallWorkshop.Game
         public static TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, Panel panel, int glyphSpacing = 1)
         {
             TextLabel textLabel = new TextLabel();
-            textLabel.Scaling = Scaling.None;
+            textLabel.ScalingMode = Scaling.None;
             textLabel.Font = font;
             textLabel.Position = position;
             textLabel.Text = text;
@@ -351,7 +351,7 @@ namespace DaggerfallWorkshop.Game
         public static Outline AddOutline(Rect rect, Color color, Panel panel)
         {
             Outline outline = new Outline();
-            outline.Scaling = Scaling.None;
+            outline.ScalingMode = Scaling.None;
             outline.Color = color;
             outline.Position = new Vector2(rect.x, rect.y);
             outline.Size = new Vector2(rect.width, rect.height);

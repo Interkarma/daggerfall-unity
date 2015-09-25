@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string defaultCrosshairFilename = "Crosshair";
 
         public Texture2D CrosshairTexture;
-        public float Scale = 1.0f;
+        public float CrosshairScale = 1.0f;
 
         public HUDCrosshair()
             : base()
@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (CrosshairTexture && Enabled)
             {
                 BackgroundTexture = CrosshairTexture;
-                Size = new Vector2(CrosshairTexture.width * Scale, CrosshairTexture.height * Scale);
+                Size = new Vector2(CrosshairTexture.width * CrosshairScale, CrosshairTexture.height * CrosshairScale);
                 base.Update();
             }
         }

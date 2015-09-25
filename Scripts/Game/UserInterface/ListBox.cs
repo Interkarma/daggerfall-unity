@@ -213,7 +213,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 font = DaggerfallUI.DefaultFont;
 
             TextLabel textLabel = new TextLabel();
-            textLabel.Scaling = Scaling.None;
+            textLabel.ScalingMode = Scaling.None;
             textLabel.HorizontalAlignment = rowAlignment;
             textLabel.Font = font;
             textLabel.Text = text;

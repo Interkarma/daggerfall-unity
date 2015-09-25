@@ -44,13 +44,8 @@ namespace DaggerfallWorkshop.Game
 				Cursor.visible = true;
 			}
 
-            // Enable/disable mouse look when capturing/uncapturing mouse
-            // Thanks LypyL!
-            if (Input.GetKeyDown(KeyCode.Escape))
-                enableMouseLook = !enableMouseLook;
-            if (!enableMouseLook && Input.GetMouseButtonDown(0) || !enableMouseLook && Input.GetMouseButtonDown(1))
-                enableMouseLook = true;
-
+            // Enable mouse cursor when game paused
+            enableMouseLook = !GameManager.GamePaused;
             if (!enableMouseLook)
                 return;
 

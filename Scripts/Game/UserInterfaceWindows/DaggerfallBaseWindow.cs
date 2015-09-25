@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             parentPanel.BackgroundColor = Color.black;
 
             // Native panel
-            nativePanel.Scaling = Scaling.ScaleToFit;
+            nativePanel.ScalingMode = Scaling.ScaleToFit;
             nativePanel.HorizontalAlignment = HorizontalAlignment.Center;
             nativePanel.BackgroundTextureLayout = TextureLayout.StretchToFill;
             nativePanel.Size = new Vector2(nativeScreenWidth, nativeScreenHeight);

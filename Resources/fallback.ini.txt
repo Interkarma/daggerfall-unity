@@ -13,9 +13,6 @@ VSync=True
 NoPlayerNudity=True
 
 [GUI]
-NativeViewportX=320
-NativeViewportY=200
-ViewportScale=1.0
 MainFilterMode=0
 GUIFilterMode=0
 Crosshair=True

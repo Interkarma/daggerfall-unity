@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallHUD : UserInterfaceWindow
     {
-        float scale = 2.0f;
+        float hudScale = 2.0f;
         float crosshairScale = 0.5f;
 
         HUDCrosshair crosshair = new HUDCrosshair();
@@ -38,10 +38,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// Set scale of UI components, except crosshair.
         /// </summary>
-        public float Scale
+        public float HUDScale
         {
-            get { return scale; }
-            set { scale = value; }
+            get { return hudScale; }
+            set { hudScale = value; }
         }
 
         public float CrosshairScale
@@ -60,9 +60,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Auto-set initial scale based on viewport size
             if (Screen.currentResolution.height >= 1080 && Screen.currentResolution.height < 1440)
-                scale = 3.0f;
+                hudScale = 3.0f;
             if (Screen.currentResolution.height >= 1440)
-                scale = 4.0f;
+                hudScale = 4.0f;
 
             parentPanel.Components.Add(crosshair);
             parentPanel.Components.Add(vitals);
@@ -72,13 +72,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             crosshair.Enabled = ShowCrosshair;
-            crosshair.Scale = CrosshairScale;
+            crosshair.CrosshairScale = CrosshairScale;
 
             vitals.Enabled = ShowVitals;
-            vitals.Scale = Scale;
+            vitals.VitalsScale = hudScale;
 
             compass.Enabled = ShowCompass;
-            compass.Scale = Scale;
+            compass.CompassScale = hudScale;
 
             base.Update();
         }
