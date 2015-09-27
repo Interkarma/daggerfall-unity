@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class DaggerfallUI : MonoBehaviour
     {
-        const string popupBorderRCIFile = "SPOP.RCI";
+        const string parchmentBorderRCIFile = "SPOP.RCI";
         const string splashVideo = "ANIM0001.VID";
 
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
@@ -50,7 +50,7 @@ namespace DaggerfallWorkshop.Game
         UserInterfaceManager uiManager = new UserInterfaceManager();
         bool showSplashVideo = false;
 
-        Texture2D[] daggerfallPopupTextures;
+        Texture2D[] daggerfallParchmentTextures;
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[4];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
@@ -65,6 +65,7 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallFont Font5 { get { return GetFont(5); } }
 
         public static DaggerfallFont DefaultFont { get { return Instance.GetFont(4); } }
+        public static DaggerfallFont TitleFont { get { return Instance.GetFont(2); } }
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
 
         public AudioSource AudioSource
@@ -91,6 +92,11 @@ namespace DaggerfallWorkshop.Game
         public KeyCode LastKeyCode
         {
             get { return lastKeyCode; }
+        }
+
+        public enum PopupStyle
+        {
+            Parchment,
         }
 
         void Awake()
@@ -216,66 +222,41 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public Texture2D GetDaggerfallPopupSlice(Slices slice)
-        {
-            LoadDaggerfallPopupTextures();
-
-            switch (slice)
-            {
-                case Slices.TopLeft:
-                    return daggerfallPopupTextures[0];
-                case Slices.Top:
-                    return daggerfallPopupTextures[1];
-                case Slices.TopRight:
-                    return daggerfallPopupTextures[2];
-                case Slices.Left:
-                    return daggerfallPopupTextures[3];
-                default:
-                case Slices.Fill:
-                    return daggerfallPopupTextures[4];
-                case Slices.Right:
-                    return daggerfallPopupTextures[5];
-                case Slices.BottomLeft:
-                    return daggerfallPopupTextures[6];
-                case Slices.Bottom:
-                    return daggerfallPopupTextures[7];
-                case Slices.BottomRight:
-                    return daggerfallPopupTextures[8];
-            }
-        }
-
-        public void SetDaggerfallPopupStyle(Panel panel)
+        public void SetDaggerfallPopupStyle(PopupStyle style, Panel panel)
         {
             panel.BackgroundTexture = null;
             panel.BackgroundColor = Color.clear;
 
-            panel.SetBorderTextures(
-                GetDaggerfallPopupSlice(Slices.TopLeft),
-                GetDaggerfallPopupSlice(Slices.Top),
-                GetDaggerfallPopupSlice(Slices.TopRight),
-                GetDaggerfallPopupSlice(Slices.Left),
-                GetDaggerfallPopupSlice(Slices.Fill),
-                GetDaggerfallPopupSlice(Slices.Right),
-                GetDaggerfallPopupSlice(Slices.BottomLeft),
-                GetDaggerfallPopupSlice(Slices.Bottom),
-                GetDaggerfallPopupSlice(Slices.BottomRight),
-                globalFilterMode);
+            if (style == PopupStyle.Parchment)
+            {
+                LoadDaggerfallParchmentTextures();
+                panel.SetBorderTextures(
+                    daggerfallParchmentTextures[0],
+                    daggerfallParchmentTextures[1],
+                    daggerfallParchmentTextures[2],
+                    daggerfallParchmentTextures[3],
+                    daggerfallParchmentTextures[4],
+                    daggerfallParchmentTextures[5],
+                    daggerfallParchmentTextures[6],
+                    daggerfallParchmentTextures[7],
+                    daggerfallParchmentTextures[8],
+                    globalFilterMode);
+            }
 
             panel.SetMargins(Margins.All, 16);
         }
 
-        void LoadDaggerfallPopupTextures()
+        void LoadDaggerfallParchmentTextures()
         {
-            // Load borders on first call
-            if (daggerfallPopupTextures == null || daggerfallPopupTextures.Length == 0)
+            if (daggerfallParchmentTextures == null || daggerfallParchmentTextures.Length == 0)
             {
-                CifRciFile cif = new CifRciFile(Path.Combine(dfUnity.Arena2Path, popupBorderRCIFile), FileUsage.UseMemory, true);
+                CifRciFile cif = new CifRciFile(Path.Combine(dfUnity.Arena2Path, parchmentBorderRCIFile), FileUsage.UseMemory, true);
                 cif.LoadPalette(Path.Combine(dfUnity.Arena2Path, cif.PaletteName));
 
-                daggerfallPopupTextures = new Texture2D[cif.RecordCount];
+                daggerfallParchmentTextures = new Texture2D[cif.RecordCount];
                 for (int i = 0; i < cif.RecordCount; i++)
                 {
-                    daggerfallPopupTextures[i] = TextureReader.CreateFromAPIImage(cif, i, 0, 0);
+                    daggerfallParchmentTextures[i] = TextureReader.CreateFromAPIImage(cif, i, 0, 0);
                 }
             }
         }
@@ -358,6 +339,17 @@ namespace DaggerfallWorkshop.Game
             panel.Components.Add(outline);
 
             return outline;
+        }
+
+        public static Panel AddPanel(Rect rect, Panel panel)
+        {
+            Panel newPanel = new Panel();
+            newPanel.ScalingMode = Scaling.None;
+            newPanel.Position = new Vector2(rect.x, rect.y);
+            newPanel.Size = new Vector2(rect.width, rect.height);
+            panel.Components.Add(newPanel);
+
+            return newPanel;
         }
 
         public static Texture2D GetTextureFromImg(string name, TextureFormat format = TextureFormat.ARGB32)

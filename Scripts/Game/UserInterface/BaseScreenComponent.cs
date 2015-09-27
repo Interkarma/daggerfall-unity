@@ -208,7 +208,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Gets interior width between horiztonal margins
+        /// Gets interior width between horizontal margins in screen space.
         /// </summary>
         public int InteriorWidth
         {
@@ -216,7 +216,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Gets interior height between vertical margins
+        /// Gets interior height between vertical margins in screen space.
         /// </summary>
         public int InteriorHeight
         {
@@ -284,7 +284,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             // Ensure position in inside margins
-            FitMargins();
+            // TODO:
+            // Review how this works and rethink intended purpose
+            // Currently adding margins twice
+            //FitMargins();
 
             // Update mouse pos - must to invert mouse position Y as Unity 0,0 is bottom-left
             lastMousePosition = mousePosition;
@@ -693,29 +696,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         private void FitMargins()
         {
-            if (parent != null)
-            {
-                Rect parentRect = GetParentRectangle();
-                Vector2 parentScale = parent.LocalScale;
+            //if (parent != null)
+            //{
+            //    Rect parentRect = GetParentRectangle();
+            //    Vector2 parentScale = parent.LocalScale;
 
-                // Ensure horizontal position is inside margins
-                if (size.x < parentRect.width)
-                {
-                    if (position.x < parent.LeftMargin)
-                        position.x = parent.LeftMargin;
-                    if (position.x > parentRect.width - parent.RightMargin)
-                        position.x = parentRect.width - parent.RightMargin - size.x * parentScale.x;
-                }
+            //    // Ensure horizontal position is inside margins
+            //    if (size.x < parentRect.width)
+            //    {
+            //        if (position.x < parent.LeftMargin)
+            //            position.x = parent.LeftMargin;
+            //        if (position.x > parentRect.width - parent.RightMargin)
+            //            position.x = parentRect.width - parent.RightMargin - size.x * parentScale.x;
+            //    }
 
-                // Ensure vertical position is inside margins
-                if (size.y < parentRect.height)
-                {
-                    if (position.y < parent.TopMargin)
-                        position.y = parent.TopMargin;
-                    if (position.y > parentRect.height - parent.BottomMargin)
-                        position.y = parentRect.height - parent.BottomMargin - size.y * parentScale.y;
-                }
-            }
+            //    // Ensure vertical position is inside margins
+            //    if (size.y < parentRect.height)
+            //    {
+            //        if (position.y < parent.TopMargin)
+            //            position.y = parent.TopMargin;
+            //        if (position.y > parentRect.height - parent.BottomMargin)
+            //            position.y = parentRect.height - parent.BottomMargin - size.y * parentScale.y;
+            //    }
+            //}
         }
 
         /// <summary>

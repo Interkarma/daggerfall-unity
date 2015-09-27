@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup info panel
             Panel infoPanel = new Panel();
-            DaggerfallUI.Instance.SetDaggerfallPopupStyle(infoPanel);
+            DaggerfallUI.Instance.SetDaggerfallPopupStyle(DaggerfallUI.PopupStyle.Parchment, infoPanel);
             NativePanel.Components.Add(infoPanel);
             infoPanel.HorizontalAlignment = HorizontalAlignment.Center;
             infoPanel.Position = new Vector2(0, 15);

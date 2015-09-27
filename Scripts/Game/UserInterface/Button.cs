@@ -9,7 +9,7 @@
 // Notes:
 //
 
-//#define DEBUG_BUTTON_PLACEMENT
+#define DEBUG_BUTTON_PLACEMENT
 #define DEBUG_BUTTON_CLICKS
 
 using UnityEngine;

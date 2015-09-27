@@ -63,6 +63,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Teleport = 20,
         }
 
+        public enum CommonMessageBoxButtons
+        {
+            YesNo,
+        }
+
         public int ButtonSpacing
         {
             get { return buttonSpacing; }
@@ -91,6 +96,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
         }
 
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, int textId, DaggerfallBaseWindow previous = null)
+            : base(uiManager, previous)
+        {
+            SetupBox(textId, buttons);
+        }
+
         protected override void Setup()
         {
             if (IsSetup)
@@ -101,7 +112,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messagePanel.HorizontalAlignment = HorizontalAlignment.Center;
             messagePanel.VerticalAlignment = VerticalAlignment.Middle;
             messagePanel.OnMouseClick += MessagePanel_OnMouseClick;
-            DaggerfallUI.Instance.SetDaggerfallPopupStyle(messagePanel);
+            DaggerfallUI.Instance.SetDaggerfallPopupStyle(DaggerfallUI.PopupStyle.Parchment, messagePanel);
             NativePanel.Components.Add(messagePanel);
 
             label.HorizontalAlignment = HorizontalAlignment.Center;
@@ -114,6 +125,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             IsSetup = true;
         }
+
+        #region Public Methods
 
         public void Show()
         {
@@ -159,6 +172,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetTextTokens(tokens);
         }
 
+        #endregion
+
+        #region Private Methods
+
         void ButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             selectedButton = (MessageBoxButtons)sender.Tag;
@@ -186,13 +203,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messagePanel.Size = new Vector2(label.Size.x, label.Size.y + buttonPanel.Size.y + buttonTextDistance);
         }
 
+        void SetupBox(int textId, CommonMessageBoxButtons buttons)
+        {
+            SetTextTokens(textId);
+            switch (buttons)
+            {
+                case CommonMessageBoxButtons.YesNo:
+                    AddButton(MessageBoxButtons.Yes);
+                    AddButton(MessageBoxButtons.No);
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
         void MessagePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (clickAnywhereToClose)
                 CloseWindow();
         }
 
-        #region Events Handlers
+        #endregion
+
+        #region Events
 
         // OnButtonClick
         public delegate void OnButtonClickHandler(DaggerfallMessageBox sender, MessageBoxButtons messageBoxButton);

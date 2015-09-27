@@ -21,5 +21,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class HardStrings
     {
         public const string pleaseSelectYourHomeProvince = "Please select your home province...";
+        public const string saveGame = "Save Game";
+        public const string loadGame = "Load Game";
     }
 }

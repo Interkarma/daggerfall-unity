@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop
         const string sectionDaggerfall = "Daggerfall";
         const string sectionStartup = "Startup";
         const string sectionGUI = "GUI";
+        const string sectionControls = "Controls";
 
         bool usingFallback = false;
         FileIniDataParser iniParser = new FileIniDataParser();
@@ -44,26 +45,32 @@ namespace DaggerfallWorkshop
 
         public string MyDaggerfallPath
         {
-            get { return GetData(sectionDaggerfall, "MyDaggerfallPath"); }
-            set { SetData(sectionStartup, "MyDaggerfallPath", value); }
+            get { return GetString(sectionDaggerfall, "MyDaggerfallPath"); }
+            set { SetString(sectionStartup, "MyDaggerfallPath", value); }
         }
 
         public string StartingLocation
         {
-            get { return GetData(sectionStartup, "StartingLocation"); }
-            set { SetData(sectionStartup, "StartingLocation", value); }
+            get { return GetString(sectionStartup, "StartingLocation"); }
+            set { SetString(sectionStartup, "StartingLocation", value); }
         }
 
         public bool StartInDungeon
         {
-            get { return bool.Parse(GetData(sectionStartup, "StartInDungeon")); }
-            set { SetData(sectionStartup, "StartInDungeon", value.ToString()); }
+            get { return GetBool(sectionStartup, "StartInDungeon"); }
+            set { SetBool(sectionStartup, "StartInDungeon", value); }
         }
 
         public bool SwapHealthAndFatigueColors
         {
-            get { return bool.Parse(GetData(sectionGUI, "SwapHealthAndFatigueColors")); }
-            set { SetData(sectionGUI, "SwapHealthAndFatigueColors", value.ToString()); }
+            get { return GetBool(sectionGUI, "SwapHealthAndFatigueColors"); }
+            set { SetBool(sectionGUI, "SwapHealthAndFatigueColors", value); }
+        }
+
+        public bool HeadBobbing
+        {
+            get { return GetBool(sectionControls, "HeadBobbing"); }
+            set { SetBool(sectionControls, "HeadBobbing", value); }
         }
 
         #endregion
@@ -129,6 +136,26 @@ namespace DaggerfallWorkshop
             {
                 iniData[sectionName][valueName] = valueData;
             }
+        }
+
+        string GetString(string sectionName, string valueName)
+        {
+            return GetData(sectionName, valueName);
+        }
+
+        void SetString(string sectionName, string valueName, string value)
+        {
+            SetData(sectionName, valueName, value);
+        }
+
+        bool GetBool(string sectionName, string valueName)
+        {
+            return bool.Parse(GetData(sectionName, valueName));
+        }
+
+        void SetBool(string sectionName, string valueName, bool value)
+        {
+            SetData(sectionName, valueName, value.ToString());
         }
 
         #endregion

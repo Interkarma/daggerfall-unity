@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public PixelFont Font
         {
             get { return font; }
-            set { font = value; }
+            set { font = value; CreateLabelTexture(); }
         }
 
         public string Text
