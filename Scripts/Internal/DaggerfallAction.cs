@@ -320,7 +320,7 @@ namespace DaggerfallWorkshop
             else
             {
                 if (!door.IsLocked)
-                    door.currentLockValue = 16; //don't know what what setting Daggerfall uses here
+                    door.CurrentLockValue = 16; //don't know what what setting Daggerfall uses here
             }
         }
 
@@ -339,7 +339,7 @@ namespace DaggerfallWorkshop
             }
             else
             {
-                door.currentLockValue = 0;
+                door.CurrentLockValue = 0;
 
             }
         }
@@ -362,7 +362,7 @@ namespace DaggerfallWorkshop
                     return;
                 else
                 {
-                    door.currentLockValue = 0;
+                    door.CurrentLockValue = 0;
                     door.ToggleDoor();
                 }
             }
@@ -388,7 +388,7 @@ namespace DaggerfallWorkshop
                 else
                 {
                     door.ToggleDoor();
-                    door.currentLockValue = door.StartingLockValue;
+                    door.CurrentLockValue = door.StartingLockValue;
                 }
 
             }

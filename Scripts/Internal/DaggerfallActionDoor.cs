@@ -4,30 +4,25 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    LypyL (lypyl@dfworkshop.net)
 // 
 // Notes:
 //
 
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using DaggerfallConnect;
-using DaggerfallConnect.Utility;
-using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// Specialised action component for hinged doors in builings and interiors.
+    /// Specialised action component for hinged doors in buildings interiors and dungeons.
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(BoxCollider))]
     public class DaggerfallActionDoor : MonoBehaviour
     {
         public bool StartOpen = false;                  // Door should start in open state
-        public int currentLockValue = 0;           //if > 0, door is locked. Can check w. IsLocked prop
+        public int CurrentLockValue = 0;                // if > 0, door is locked. Can check w. IsLocked prop
         public bool IsMagicallyHeld = false;            // Magically held locks can be opened by spells only
         public float OpenAngle = -90f;                  // Angle to swing door on axis when opening
         public float OpenDuration = 1.5f;               // How long in seconds for door to open
@@ -42,29 +37,28 @@ namespace DaggerfallWorkshop
 
         bool isOpen = false;
         bool isMoving = false;
-        int _startingLockValue = 0;                    //if > 0, is locked.
+        int startingLockValue = 0;                      // if > 0, is locked.
+        long loadID = 0;
         
-        Vector3 closedTransform;
+        Vector3 closedRotation;
         AudioSource audioSource;
         BoxCollider boxCollider;
 
-        public int StartingLockValue                      //use to set starting lock value, will set current lock value as well
+        public int StartingLockValue                    // Use to set starting lock value, will set current lock value as well
         {
-            get
-            {
-                return _startingLockValue;
-            }
-            set
-            {
-                _startingLockValue = value;
-                currentLockValue = StartingLockValue;
-            }
+            get { return startingLockValue; }
+            set { startingLockValue = CurrentLockValue = value; }
         }
 
+        public long LoadID
+        {
+            get { return loadID; }
+            set { loadID = value; }
+        }
        
         public bool IsLocked
         {
-            get { return currentLockValue > 0; }
+            get { return CurrentLockValue > 0; }
         }
 
         public bool IsOpen
@@ -72,9 +66,14 @@ namespace DaggerfallWorkshop
             get { return isOpen; }
         }
 
+        public Vector3 ClosedRotation
+        {
+            get { return closedRotation; }
+        }
+
         public void Start()
         {
-            closedTransform = transform.rotation.eulerAngles;
+            closedRotation = transform.rotation.eulerAngles;
             audioSource = GetComponent<AudioSource>();
             boxCollider = GetComponent<BoxCollider>();
 
@@ -88,6 +87,15 @@ namespace DaggerfallWorkshop
                 Close(OpenDuration);
             else
                 Open(OpenDuration);
+        }
+
+        public void SetOpen(bool open, bool instant = false, bool ignoreLocks = false)
+        {
+            float duration = (instant) ? 0 : OpenDuration;
+            if (open)
+                Open(duration, ignoreLocks);
+            else
+                Close(duration);
         }
 
         public void AttemptBash()
@@ -106,11 +114,11 @@ namespace DaggerfallWorkshop
                 if (!IsMagicallyHeld)
                 {
                     // Roll for chance to open
-                    Random.seed = Time.frameCount;
-                    float roll = Random.Range(0f, 1f);
+                    UnityEngine.Random.seed = Time.frameCount;
+                    float roll = UnityEngine.Random.Range(0f, 1f);
                     if (roll >= (1f - ChanceToBash))
                     {
-                        currentLockValue = 0;
+                        CurrentLockValue = 0;
                         ToggleDoor();
                     }
                 }
@@ -175,6 +183,8 @@ namespace DaggerfallWorkshop
 
             // Set flag
             isOpen = true;
+            IsMagicallyHeld = false;
+            CurrentLockValue = 0;
         }
 
         private void Close(float duration)
@@ -185,7 +195,7 @@ namespace DaggerfallWorkshop
 
             // Tween rotation
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                "rotation", closedTransform,
+                "rotation", closedRotation,
                 "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "OnCompleteClose",

@@ -106,6 +106,31 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Attempts to get a Daggerfall location from MAPS.BSA.
         /// </summary>
+        /// <param name="regionIndex">Index of region.</param>
+        /// <param name="locationIndex">Index of location.</param>
+        /// <param name="locationOut">DFLocation data out.</param>
+        /// <returns>True if successful.</returns>
+        public bool GetLocation(int regionIndex, int locationIndex, out DFLocation locationOut)
+        {
+            locationOut = new DFLocation();
+
+            if (!isReady)
+                return false;
+
+            // Get location data
+            locationOut = mapFileReader.GetLocation(regionIndex, locationIndex);
+            if (!locationOut.Loaded)
+            {
+                DaggerfallUnity.LogMessage(string.Format("Unknown location RegionIndex='{0}', LocationIndex='{1}'.", regionIndex, locationIndex), true);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Attempts to get a Daggerfall location from MAPS.BSA.
+        /// </summary>
         /// <param name="regionName">Name of region.</param>
         /// <param name="locationName">Name of location.</param>
         /// <param name="locationOut">DFLocation data out.</param>

@@ -117,9 +117,21 @@ namespace DaggerfallWorkshop.Game
             _smoothMouse = Vector2.zero;
         }
 
+        // Buggy - to be removed
         public void SetFacing(Vector3 forward)
         {
             if (characterBody) characterBody.transform.rotation = Quaternion.LookRotation(forward);
+            Init();
+        }
+
+        // Explicity set player body and camera rotation
+        public void SetPlayerFacing(Quaternion bodyRotation, Quaternion cameraRotation)
+        {
+            if (characterBody)
+                characterBody.transform.rotation = bodyRotation;
+
+            transform.rotation = cameraRotation;
+
             Init();
         }
     }

@@ -221,20 +221,22 @@ namespace DaggerfallWorkshop.Utility
                 {
                     if (obj.Type == DFBlock.RdbResourceTypes.Model)
                     {
+                        // Create unique LoadID for save sytem
+                        long loadID = (blockData.Index << 24) + obj.This;
+
                         // Look for action doors
                         int modelReference = obj.Resources.ModelResource.ModelIndex;
                         uint modelId = blockData.RdbBlock.ModelReferenceList[modelReference].ModelIdNum;
                         if (IsActionDoor(ref blockData, obj, modelReference))
                         {
-                            GameObject cgo = AddActionDoor(dfUnity, modelId, obj, actionDoorsNode.transform);
+                            GameObject cgo = AddActionDoor(dfUnity, modelId, obj, actionDoorsNode.transform, loadID);
                             cgo.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
 
-                            //add action component to door if it also has an action
+                            // Add action component to door if it also has an action
                             if (HasAction(obj))
                             {
                                 AddActionModelHelper(cgo, ref actionLinkDict, obj, blockData);
                             }
-
                         }
                     }
                 }
@@ -909,7 +911,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Adds action door to scene.
         /// </summary>
-        private static GameObject AddActionDoor(DaggerfallUnity dfUnity, uint modelId, DFBlock.RdbObject obj, Transform parent)
+        private static GameObject AddActionDoor(DaggerfallUnity dfUnity, uint modelId, DFBlock.RdbObject obj, Transform parent, long loadID = 0)
         {
             if (dfUnity.Option_DungeonDoorPrefab == null)
                 return null;
@@ -943,11 +945,17 @@ namespace DaggerfallWorkshop.Utility
             go.transform.Rotate(0, 0, degreesZ, Space.World);
             go.transform.localPosition = modelMatrix.GetColumn(3);
 
-            //set starting lock value
+            // Get action door script
+            DaggerfallActionDoor actionDoor = go.GetComponent<DaggerfallActionDoor>();
+
+            // Set starting lock value
             if (obj.Resources.ModelResource.TriggerFlag_StartingLock >= 16)
             {
-                go.GetComponent<DaggerfallActionDoor>().StartingLockValue = (int)obj.Resources.ModelResource.TriggerFlag_StartingLock;
+                actionDoor.StartingLockValue = (int)obj.Resources.ModelResource.TriggerFlag_StartingLock;
             }
+
+            // Set LoadID
+            actionDoor.LoadID = loadID;
 
             return go;
         }

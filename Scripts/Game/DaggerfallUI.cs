@@ -94,6 +94,11 @@ namespace DaggerfallWorkshop.Game
             get { return lastKeyCode; }
         }
 
+        public DaggerfallHUD DaggerfallHUD
+        {
+            get { return dfHUD; }
+        }
+
         public enum PopupStyle
         {
             Parchment,

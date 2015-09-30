@@ -162,6 +162,9 @@ namespace DaggerfallWorkshop.Game
             NoteBook,
             AutoMap,
             TravelMap,
+
+            QuickSave,
+            QuickLoad,
         }
 
         #endregion
@@ -360,6 +363,9 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.N, Actions.NoteBook);
             SetBinding(KeyCode.M, Actions.AutoMap);
             SetBinding(KeyCode.V, Actions.TravelMap);
+
+            SetBinding(KeyCode.F9, Actions.QuickSave);
+            SetBinding(KeyCode.F12, Actions.QuickLoad);
         }
 
         // Bind a KeyCode to an action

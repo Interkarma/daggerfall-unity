@@ -49,9 +49,9 @@ namespace DaggerfallWorkshop.Game
                 GameObjectHelper.AlignBillboardToGround(go, go.GetComponent<DaggerfallBillboard>().Summary.Size, 16f);
             }
 
-            // Disable enemy gameobject and schedule for destruction
+            // Disable enemy gameobject
+            // Do not destroy as we must still save enemy state when dead
             gameObject.SetActive(false);
-            GameObject.Destroy(gameObject);
         }
     }
 }

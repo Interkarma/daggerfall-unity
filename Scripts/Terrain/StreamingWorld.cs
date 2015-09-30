@@ -36,6 +36,8 @@ namespace DaggerfallWorkshop
     {
         #region Fields
 
+        const HideFlags defaultHideFlags = HideFlags.HideAndDontSave;
+
         const int maxTerrainArray = 256;        // Maximum terrains in memory at any time
 
         // Local player GPS for tracking player virtual position
@@ -418,10 +420,10 @@ namespace DaggerfallWorkshop
                     DaggerfallBillboardBatch miscBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(miscBillboardAtlas.AtlasMaterial, locationObject.transform);
 
                     // Set hide flags
-                    natureBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
-                    lightsBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
-                    animalsBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
-                    miscBillboardBatch.hideFlags = HideFlags.HideAndDontSave;
+                    natureBillboardBatch.hideFlags = defaultHideFlags;
+                    lightsBillboardBatch.hideFlags = defaultHideFlags;
+                    animalsBillboardBatch.hideFlags = defaultHideFlags;
+                    miscBillboardBatch.hideFlags = defaultHideFlags;
 
                     // RMB blocks are laid out in centre of terrain to align with ground
                     //int width = location.Exterior.ExteriorData.Width;
@@ -463,7 +465,7 @@ namespace DaggerfallWorkshop
                                 animalsBillboardBatch,
                                 miscBillboardAtlas,
                                 miscBillboardBatch);
-                            go.hideFlags = HideFlags.HideAndDontSave;
+                            go.hideFlags = defaultHideFlags;
                             go.transform.parent = locationObject.transform;
                             go.transform.localPosition = blockOrigin;
                             dfLocation.ApplyClimateSettings();
@@ -758,12 +760,12 @@ namespace DaggerfallWorkshop
             // Create new terrain object parented to streaming world
             terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(this.transform);
             terrainObject.name = string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
-            terrainObject.hideFlags = HideFlags.HideAndDontSave;
+            terrainObject.hideFlags = defaultHideFlags;
 
             // Create new billboard batch object parented to terrain
             billboardBatchObject = new GameObject();
             billboardBatchObject.name = string.Format("DaggerfallBillboardBatch [{0},{1}]", mapPixelX, mapPixelY);
-            billboardBatchObject.hideFlags = HideFlags.HideAndDontSave;
+            billboardBatchObject.hideFlags = defaultHideFlags;
             billboardBatchObject.transform.parent = terrainObject.transform;
             billboardBatchObject.transform.localPosition = Vector3.zero;
             billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
@@ -798,7 +800,7 @@ namespace DaggerfallWorkshop
             //float height = dfTerrain.MapData.averageHeight * TerrainScale;
             GameObject locationObject = new GameObject(string.Format("DaggerfallLocation [Region={0}, Name={1}]", locationOut.RegionName, locationOut.Name));
             locationObject.transform.parent = this.transform;
-            //locationObject.hideFlags = HideFlags.HideAndDontSave;
+            locationObject.hideFlags = defaultHideFlags;
             locationObject.transform.position = terrainArray[terrain].terrainObject.transform.position + new Vector3(0, height, 0);
             DaggerfallLocation dfLocation = locationObject.AddComponent<DaggerfallLocation>() as DaggerfallLocation;
             dfLocation.SetLocation(locationOut, false);

@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Text;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -80,11 +81,26 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            if (!IsPlayingGame())
+                return;
+
             // Post message to open options dialog on escape during gameplay
-            if (IsPlayingGame() && Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
                 StartCoroutine(TakeScreenshot());
+            }
+
+            // Handle quick save
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickSave))
+            {
+                SaveLoadManager.Instance.QuickSave();
+            }
+
+            // Handle quick load
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickLoad))
+            {
+                SaveLoadManager.Instance.QuickLoad();
             }
         }
 
@@ -146,12 +162,16 @@ namespace DaggerfallWorkshop.Game
         // Returns true when gameplay is active
         bool IsPlayingGame()
         {
-            // Playing game when top window is null or sitting on HUD
-            IUserInterfaceWindow topWindow = DaggerfallUI.UIManager.TopWindow;
-            if (topWindow == null || topWindow is DaggerfallHUD)
-                return true;
+            // Game not active when paused
+            if (gamePaused)
+                return false;
 
-            return false;
+            // Game not active when top window is neither null or HUD
+            IUserInterfaceWindow topWindow = DaggerfallUI.UIManager.TopWindow;
+            if (topWindow != null && !(topWindow is DaggerfallHUD))
+                return false;
+
+            return true;
         }
 
         // Takes a screenshot at end of current frame

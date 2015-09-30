@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -24,13 +26,18 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class PlayerEnterExit : MonoBehaviour
     {
+        const HideFlags defaultHideFlags = HideFlags.None;
+
         DaggerfallUnity dfUnity;
         CharacterController controller;
+        PlayerMouseLook playerMouseLook;
         bool isPlayerInside = false;
         bool isPlayerInsideDungeon = false;
         bool isPlayerInsideDungeonPalace = false;
+        bool isRespawning = false;
         DaggerfallInterior interior;
         DaggerfallDungeon dungeon;
+        StreamingWorld world;
         GameObject mainCamera;
         PlayerGPS playerGPS;
 
@@ -73,6 +80,15 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// True when a player respawn is in progress.
+        /// e.g. After loading a game or teleporting back to a marked location.
+        /// </summary>
+        public bool IsRespawning
+        {
+            get { return isRespawning; }
+        }
+
+        /// <summary>
         /// Gets current player dungeon.
         /// Only valid when player is inside a dungeon.
         /// </summary>
@@ -108,11 +124,17 @@ namespace DaggerfallWorkshop.Game
             get { return buildingType; }
         }
 
-        void Start()
+        void Awake()
         {
             dfUnity = DaggerfallUnity.Instance;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            playerMouseLook = GetComponent<PlayerMouseLook>();
             playerGPS = GetComponent<PlayerGPS>();
+            world = FindObjectOfType<StreamingWorld>();
+        }
+
+        void Start()
+        {
         }
 
         void Update()
@@ -130,6 +152,60 @@ namespace DaggerfallWorkshop.Game
                 }
             }
         }
+
+        #region Public Methods
+
+        /// <summary>
+        /// Respawn player at the specified world coordinates, optionally inside dungeon.
+        /// </summary>
+        public void RespawnPlayer(
+            int worldX,
+            int worldZ,
+            bool insideDungeon)
+        {
+            // Mark any existing world data for destruction
+            if (dungeon)
+            {
+                //dungeon.gameObject.SetActive(false);
+                Destroy(dungeon.gameObject);
+            }
+            if (interior)
+            {
+                //interior.gameObject.SetActive(false);
+                Destroy(interior.gameObject);
+            }
+
+            // Deregister all serializable objects
+            SaveLoadManager.DeregisterAllSerializableGameObjects();
+
+            // Start respawn process
+            isRespawning = true;
+            StartCoroutine(Respawner(worldX, worldZ, insideDungeon));
+        }
+
+        IEnumerator Respawner(int worldX, int worldZ, bool insideDungeon)
+        {
+            // Wait for end of frame so existing world data can be removed
+            yield return new WaitForEndOfFrame();
+
+            // Get location at this position
+            ContentReader.MapSummary summary;
+            DFPosition pos = MapsFile.WorldCoordToMapPixel(worldX, worldZ);
+            bool hasLocation = dfUnity.ContentReader.HasLocation(pos.X, pos.Y, out summary);
+
+            // Start in dungeon
+            if (hasLocation && insideDungeon)
+            {
+                DFLocation location;
+                dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
+                StartDungeonInterior(location, true);
+            }
+
+            // Lower respawn flag
+            isRespawning = false;
+        }
+
+        #endregion
 
         #region Building Transitions
 
@@ -161,7 +237,7 @@ namespace DaggerfallWorkshop.Game
             // Layout interior
             // This needs to be done first so we know where the enter markers are
             GameObject newInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex));
-            newInterior.hideFlags = HideFlags.HideAndDontSave;
+            newInterior.hideFlags = defaultHideFlags;
             interior = newInterior.AddComponent<DaggerfallInterior>();
             interior.DoLayout(doorOwner, door, climateBase);
 
@@ -292,7 +368,7 @@ namespace DaggerfallWorkshop.Game
 
             // Layout dungeon
             GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform);
-            newDungeon.hideFlags = HideFlags.HideAndDontSave;
+            newDungeon.hideFlags = defaultHideFlags;
             dungeon = newDungeon.GetComponent<DaggerfallDungeon>();
 
             // Find start marker to position player
@@ -337,7 +413,7 @@ namespace DaggerfallWorkshop.Game
 
             // Layout dungeon
             GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform);
-            newDungeon.hideFlags = HideFlags.HideAndDontSave;
+            newDungeon.hideFlags = defaultHideFlags;
             dungeon = newDungeon.GetComponent<DaggerfallDungeon>();
 
             GameObject marker = null;
