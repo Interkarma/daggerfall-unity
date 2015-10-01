@@ -403,4 +403,15 @@ namespace DaggerfallWorkshop
         LoopOnDemand,           // PlayOnAwake=false, Loop=true
         LoopIfPlayerNear,       // PlayOnAwake=true, Loop=true, distanceCheck=true
     }
+
+    /// <summary>
+    /// States for action doors and other objects.
+    /// </summary>
+    public enum ActionState
+    {
+        Start,
+        PlayingForward,
+        PlayingReverse,
+        End,
+    }
 }

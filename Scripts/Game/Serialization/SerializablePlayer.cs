@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         StreamingWorld streamingWorld;
         Camera playerCamera;
         PlayerMouseLook playerMouseLook;
+        PlayerMotor playerMotor;
 
         #endregion
 
@@ -50,6 +51,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerMouseLook = playerCamera.GetComponent<PlayerMouseLook>();
             if (!playerMouseLook)
                 throw new Exception("PlayerMouseLook not found.");
+
+            playerMotor = GetComponent<PlayerMotor>();
+            if (!playerMotor)
+                throw new Exception("PlayerMotor not found.");
         }
 
         void Start()
@@ -76,8 +81,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             PlayerData_v1 data = new PlayerData_v1();
             data.position = transform.position;
-            data.bodyRotation = transform.rotation;
-            data.cameraRotation = playerCamera.transform.rotation; ;
+            data.yaw = playerMouseLook.Yaw;
+            data.pitch = playerMouseLook.Pitch;
             data.worldPosX = streamingWorld.LocalPlayerGPS.WorldX;
             data.worldPosZ = streamingWorld.LocalPlayerGPS.WorldZ;
             data.worldCompensation = streamingWorld.WorldCompensation;
@@ -93,7 +98,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             PlayerData_v1 data = (PlayerData_v1)dataIn;
             transform.position = data.position;
-            playerMouseLook.SetPlayerFacing(data.bodyRotation, data.cameraRotation);
+            playerMouseLook.Yaw = data.yaw;
+            playerMouseLook.Pitch = data.pitch;
+
         }
 
         #endregion

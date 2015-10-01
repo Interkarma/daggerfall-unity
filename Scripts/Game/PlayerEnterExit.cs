@@ -30,14 +30,14 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallUnity dfUnity;
         CharacterController controller;
-        PlayerMouseLook playerMouseLook;
+        //PlayerMouseLook playerMouseLook;
         bool isPlayerInside = false;
         bool isPlayerInsideDungeon = false;
         bool isPlayerInsideDungeonPalace = false;
         bool isRespawning = false;
         DaggerfallInterior interior;
         DaggerfallDungeon dungeon;
-        StreamingWorld world;
+        //StreamingWorld world;
         GameObject mainCamera;
         PlayerGPS playerGPS;
 
@@ -128,9 +128,9 @@ namespace DaggerfallWorkshop.Game
         {
             dfUnity = DaggerfallUnity.Instance;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-            playerMouseLook = GetComponent<PlayerMouseLook>();
+            //playerMouseLook = GetComponent<PlayerMouseLook>();
             playerGPS = GetComponent<PlayerGPS>();
-            world = FindObjectOfType<StreamingWorld>();
+            //world = FindObjectOfType<StreamingWorld>();
         }
 
         void Start()
@@ -534,6 +534,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        // TODO: Rewrite to use yaw and pitch
         private void SetFacing(Vector3 forward)
         {
             // Set player facing direction
@@ -542,7 +543,7 @@ namespace DaggerfallWorkshop.Game
                 PlayerMouseLook mouseLook = mainCamera.GetComponent<PlayerMouseLook>();
                 if (mouseLook)
                 {
-                    mouseLook.SetFacing(forward);
+                    //mouseLook.SetFacing(forward);
                 }
             }
         }

@@ -1,29 +1,66 @@
+// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
+// Web Site:        http://www.dfworkshop.net
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
+
 using UnityEngine;
 using System.Collections;
 
 namespace DaggerfallWorkshop.Game
 {
     // 
-    // Thanks to FatiguedArtist in forum thread below for this code.
+    // Adapted from the below code by FatiguedArtist.
     // http://forum.unity3d.com/threads/a-free-simple-smooth-mouselook.73117/
     //
     public class PlayerMouseLook : MonoBehaviour
     {
+        const float piover2 = 1.570796f;
+
         Vector2 _mouseAbsolute;
         Vector2 _smoothMouse;
+        float cameraPitch = 0.0f;
+        float cameraYaw = 0.0f;
 
         public bool invertMouseY = false;
-        public Vector2 clampInDegrees = new Vector2(360, 180);
         public bool lockCursor;
         public Vector2 sensitivity = new Vector2(2, 2);
         public Vector2 smoothing = new Vector2(3, 3);
-        public Vector2 targetDirection;
-        public Vector2 targetCharacterDirection;
         public bool enableMouseLook = true;
 
         // Assign this if there's a parent object controlling motion, such as a Character Controller.
         // Yaw rotation will affect this object instead of the camera if set.
         public GameObject characterBody;
+
+        /// <summary>
+        /// Gets or sets pitch rotation of camera in degrees.
+        /// </summary>
+        public float Pitch
+        {
+            get { return cameraPitch * Mathf.Rad2Deg; }
+            set
+            {
+                cameraPitch = value * Mathf.Deg2Rad;
+                if (cameraPitch > piover2 * .99f)
+                    cameraPitch = piover2 * .99f;
+                else if (cameraPitch < -piover2 * .99f)
+                    cameraPitch = -piover2 * .99f;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets yaw rotation of camera in degrees.
+        /// </summary>
+        public float Yaw
+        {
+            get { return cameraYaw * Mathf.Rad2Deg; }
+            set { cameraYaw = value * Mathf.Deg2Rad; }
+        }
 
         void Start()
         {
@@ -54,13 +91,6 @@ namespace DaggerfallWorkshop.Game
             if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon))
                 return;
 
-            // Allow the script to clamp based on a desired target value.
-            var targetOrientation = Quaternion.Euler(targetDirection);
-            var targetCharacterOrientation = Quaternion.Euler(targetCharacterDirection);
-
-            // Get raw mouse input for a cleaner reading on more sensitive mice.
-            //var mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
-            //var mouseDelta = new Vector2(InputManager.Instance.MouseX, InputManager.Instance.MouseY);
             var mouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
 
             // Invert mouse Y
@@ -77,61 +107,33 @@ namespace DaggerfallWorkshop.Game
             // Find the absolute mouse movement value from point zero.
             _mouseAbsolute += _smoothMouse;
 
-            // Clamp and apply the local x value first, so as not to be affected by world transforms.
-            if (clampInDegrees.x < 360)
-                _mouseAbsolute.x = Mathf.Clamp(_mouseAbsolute.x, -clampInDegrees.x * 0.5f, clampInDegrees.x * 0.5f);
-
-            var xRotation = Quaternion.AngleAxis(-_mouseAbsolute.y, targetOrientation * Vector3.right);
-            transform.localRotation = xRotation;
-
-            // Then clamp and apply the global y value.
-            if (clampInDegrees.y < 360)
-                _mouseAbsolute.y = Mathf.Clamp(_mouseAbsolute.y, -clampInDegrees.y * 0.5f, clampInDegrees.y * 0.5f);
-
-            transform.localRotation *= targetOrientation;
+            // Update pitch and yaw
+            Yaw += _smoothMouse.x;
+            Pitch += -_smoothMouse.y;
 
             // If there's a character body that acts as a parent to the camera
             if (characterBody)
             {
-                var yRotation = Quaternion.AngleAxis(_mouseAbsolute.x, Vector3.up);
-                characterBody.transform.localRotation = yRotation;
-                characterBody.transform.localRotation *= targetCharacterOrientation;
+                transform.localEulerAngles = new Vector3(Pitch, 0, 0);
+                characterBody.transform.localEulerAngles = new Vector3(0, Yaw, 0);
             }
             else
             {
-                var yRotation = Quaternion.AngleAxis(_mouseAbsolute.x, transform.InverseTransformDirection(Vector3.up));
-                transform.localRotation *= yRotation;
+                transform.localEulerAngles = new Vector3(Pitch, Yaw, 0);
             }
         }
 
         public void Init()
         {
-            // Set target direction to the camera's initial orientation.
-            targetDirection = transform.localRotation.eulerAngles;
-
-            // Set target direction for the character body to its inital state.
-            if (characterBody) targetCharacterDirection = characterBody.transform.localRotation.eulerAngles;
-
             // Reset smoothing
             _mouseAbsolute = Vector2.zero;
             _smoothMouse = Vector2.zero;
         }
 
-        // Buggy - to be removed
-        public void SetFacing(Vector3 forward)
+        public void SetFacing(float yaw, float pitch)
         {
-            if (characterBody) characterBody.transform.rotation = Quaternion.LookRotation(forward);
-            Init();
-        }
-
-        // Explicity set player body and camera rotation
-        public void SetPlayerFacing(Quaternion bodyRotation, Quaternion cameraRotation)
-        {
-            if (characterBody)
-                characterBody.transform.rotation = bodyRotation;
-
-            transform.rotation = cameraRotation;
-
+            Yaw = yaw;
+            Pitch = pitch;
             Init();
         }
     }

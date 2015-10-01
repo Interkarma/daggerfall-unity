@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -343,7 +344,7 @@ namespace DaggerfallWorkshop.Utility
                         //add action component to flat if it has an action
                         if (obj.Resources.FlatResource.Action > 0)
                         {
-                            AddActionFlatHelper(flatObject, ref actionLinkDict, obj);
+                            AddActionFlatHelper(flatObject, ref actionLinkDict, blockData, obj);
                         }
 
                     }
@@ -716,12 +717,16 @@ namespace DaggerfallWorkshop.Utility
                 actionLinkDict.Add(rdbObj.This, link);
             }
 
-            AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag);
+            // Create unique LoadID for save sytem
+            long loadID = (blockData.Index << 24) + rdbObj.This;
+
+            AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
 
         private static void AddActionFlatHelper(
             GameObject go,
             ref Dictionary<int, ActionLink> actionLinkDict,
+            DFBlock blockData,
             DFBlock.RdbObject rdbObj)
         {
 
@@ -752,7 +757,10 @@ namespace DaggerfallWorkshop.Utility
                 actionLinkDict.Add(rdbObj.This, link);
             }
 
-            AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag);
+            // Create unique LoadID for save sytem
+            long loadID = (blockData.Index << 24) + rdbObj.This;
+
+            AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
 
 
@@ -764,7 +772,8 @@ namespace DaggerfallWorkshop.Utility
             float magnitude,
             int axis_raw,
             DFBlock.RdbTriggerFlags triggerFlag,
-            DFBlock.RdbActionFlags actionFlag
+            DFBlock.RdbActionFlags actionFlag,
+            long loadID = 0
             )
         {
             DaggerfallAction action = go.AddComponent<DaggerfallAction>();
@@ -774,6 +783,13 @@ namespace DaggerfallWorkshop.Utility
             action.Index = soundID_and_index;
             action.TriggerFlag = triggerFlag;
             action.ActionFlag = actionFlag;
+            action.LoadID = loadID;
+
+            // If SaveLoadManager present in game then attach SerializableActionObject
+            if (SaveLoadManager.Instance != null)
+            {
+                go.AddComponent<SerializableActionObject>();
+            }
 
             //if a collision type action or action flat, add DaggerFallActionCollision component
             if (action.TriggerFlag == DFBlock.RdbTriggerFlags.Collision01 || action.TriggerFlag == DFBlock.RdbTriggerFlags.Collision03 ||

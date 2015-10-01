@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         // Serializable objects in scene
         SerializablePlayer serializablePlayer;
         Dictionary<long, SerializableActionDoor> serializableActionDoors = new Dictionary<long, SerializableActionDoor>();
+        Dictionary<long, SerializableActionObject> serializableActionObjects = new Dictionary<long, SerializableActionObject>();
 
         #endregion
 
@@ -149,6 +150,8 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Instance.serializablePlayer = serializableObject as SerializablePlayer;
             else if (serializableObject is SerializableActionDoor)
                 Instance.serializableActionDoors.Add(serializableObject.LoadID, serializableObject as SerializableActionDoor);
+            else if (serializableObject is SerializableActionObject)
+                Instance.serializableActionObjects.Add(serializableObject.LoadID, serializableObject as SerializableActionObject);
         }
 
         /// <summary>
@@ -164,6 +167,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             if (serializableObject is SerializableActionDoor)
                 Instance.serializableActionDoors.Remove(serializableObject.LoadID);
+            else if (serializableObject is SerializableActionObject)
+                Instance.serializableActionObjects.Remove(serializableObject.LoadID);
         }
 
         /// <summary>
@@ -180,6 +185,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Deregister other objects
             Instance.serializableActionDoors.Clear();
+            Instance.serializableActionObjects.Clear();
         }
 
         #endregion
@@ -263,6 +269,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             DungeonData_v1 data = new DungeonData_v1();
             data.actionDoors = GetActionDoorData();
+            data.actionObjects = GetActionObjectData();
 
             return data;
         }
@@ -278,6 +285,19 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             return actionDoors.ToArray();
+        }
+
+        ActionObjectData_v1[] GetActionObjectData()
+        {
+            List<ActionObjectData_v1> actionObjects = new List<ActionObjectData_v1>();
+
+            foreach (var value in serializableActionObjects.Values)
+            {
+                if (value.ShouldSave)
+                    actionObjects.Add((ActionObjectData_v1)value.GetSaveData());
+            }
+
+            return actionObjects.ToArray();
         }
 
         #endregion
@@ -305,6 +325,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 return;
 
             RestoreActionDoorData(dungeonData.actionDoors);
+            RestoreActionObjectData(dungeonData.actionObjects);
         }
 
         void RestoreActionDoorData(ActionDoorData_v1[] actionDoors)
@@ -322,6 +343,21 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
         }
 
+        void RestoreActionObjectData(ActionObjectData_v1[] actionObjects)
+        {
+            if (actionObjects == null || actionObjects.Length == 0)
+                return;
+
+            for (int i = 0; i < actionObjects.Length; i++)
+            {
+                long key = actionObjects[i].loadID;
+                if (serializableActionObjects.ContainsKey(key))
+                {
+                    serializableActionObjects[key].RestoreSaveData(actionObjects[i]);
+                }
+            }
+        }
+
         #endregion
 
         #region Utility
@@ -329,8 +365,8 @@ namespace DaggerfallWorkshop.Game.Serialization
         // Fades HUD background in from black to briefly hide world while loading
         IEnumerator FadeHUDBackground()
         {
-            const float fadeStep = 0.01f;
-            const float fadeDuration = 1.0f;
+            const float fadeStep = 0.02f;
+            const float fadeDuration = 0.4f;
 
             // Must have PlayerEnterExit to respawn player at saved location
             PlayerEnterExit playerEnterExit = serializablePlayer.GetComponent<PlayerEnterExit>();

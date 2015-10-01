@@ -201,10 +201,14 @@ namespace DaggerfallWorkshop.Game
 
         #region Unity
 
-        void Start()
+        void Awake()
         {
             SetupSingleton();
             SetupDefaults();
+        }
+
+        void Start()
+        {
         }
 
         void Update()

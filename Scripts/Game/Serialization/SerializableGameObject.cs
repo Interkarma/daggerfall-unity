@@ -71,8 +71,8 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class PlayerData_v1
     {
         public Vector3 position;
-        public Quaternion bodyRotation;
-        public Quaternion cameraRotation;
+        public float yaw;
+        public float pitch;
         public int worldPosX;
         public int worldPosZ;
         public Vector3 worldCompensation;
@@ -87,6 +87,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class DungeonData_v1
     {
         public ActionDoorData_v1[] actionDoors;
+        public ActionObjectData_v1[] actionObjects;
     }
 
     #endregion
@@ -97,9 +98,24 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class ActionDoorData_v1
     {
         public long loadID;
-        public bool isOpen;
-        public int startingLockValue;
         public int currentLockValue;
+        public Quaternion currentRotation;
+        public ActionState currentState;
+        public float actionPercentage;
+    }
+
+    #endregion
+
+    #region Action Data
+
+    [fsObject("v1")]
+    public class ActionObjectData_v1
+    {
+        public long loadID;
+        public Vector3 currentPosition;
+        public Quaternion currentRotation;
+        public ActionState currentState;
+        public float actionPercentage;
     }
 
     #endregion

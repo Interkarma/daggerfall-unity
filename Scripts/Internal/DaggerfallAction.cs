@@ -32,30 +32,54 @@ namespace DaggerfallWorkshop
         public DFBlock.RdbTriggerFlags TriggerFlag = DFBlock.RdbTriggerFlags.None;  // Trigger flag value
         public Vector3 ActionRotation = Vector3.zero;                               // Rotation to perform
         public Vector3 ActionTranslation = Vector3.zero;                            // Translation to perform
-        public int Index = 0;                                                       //index for things like spells, text, and also the raw sound index from daggerfall
-        public float Magnitude = 0.0f;                                               //How far to move, how much damage etc.
+        public int Index = 0;                                                       // Index for things like spells, text, and also the raw sound index from daggerfall
+        public float Magnitude = 0.0f;                                              // How far to move, how much damage etc.
         public float ActionDuration = 0;                                            // Time to reach final state
         public Space ActionSpace = Space.Self;                                      // Relative space to perform action in (self or world)
 
         public GameObject NextObject;                                               // Next object in action chain
         public GameObject PreviousObject;                                           // Previous object in action chain
 
-        public Vector3 StartPosition;
+        long loadID = 0;
+        Vector3 startingPosition;
+        Quaternion startingRotation;
 
         AudioSource audioSource;
         ActionState currentState;
 
-        public enum ActionState
+        public long LoadID
         {
-            Start,
-            Playing,
-            End,
+            get { return loadID; }
+            set { loadID = value; }
         }
 
-        ActionState CurrentState
+        public Vector3 StartingPosition
+        {
+            get { return startingPosition; }
+        }
+
+        public Quaternion StartingRotation
+        {
+            get { return startingRotation; }
+        }
+
+        public ActionState CurrentState
         {
             get { return currentState; }
             set { SetState(value); }
+        }
+
+        public bool IsMoving
+        {
+            get { return (currentState == ActionState.PlayingForward || currentState == ActionState.PlayingReverse); }
+        }
+
+        /// <summary>
+        /// Gets the actual duration for timed actions.
+        /// </summary>
+        public float Duration
+        {
+            get { return ActionDuration / 20f; }
         }
 
         //Action flag -> Action Delegate lookup
@@ -84,12 +108,12 @@ namespace DaggerfallWorkshop
         {DFBlock.RdbActionFlags.Activate,   new ActionDelegate(Activate)},
         };
 
-
         void Start()
         {
-            currentState = ActionState.Start;
-            StartPosition = transform.position;
             audioSource = GetComponent<AudioSource>();
+            currentState = ActionState.Start;
+            startingPosition = transform.position;
+            startingRotation = transform.rotation;
         }
 
         /// <summary>
@@ -152,7 +176,7 @@ namespace DaggerfallWorkshop
         public bool IsPlaying()
         {
             // Check if this action or any chained action is playing
-            if (currentState == ActionState.Playing)
+            if (currentState == ActionState.PlayingForward || currentState == ActionState.PlayingReverse)
             {
                 return true;
             }
@@ -168,7 +192,6 @@ namespace DaggerfallWorkshop
                 return nextAction.IsPlaying();
             }
         }
-
 
         #region Action Helper Methods
         /// <summary>
@@ -197,42 +220,52 @@ namespace DaggerfallWorkshop
             currentState = state;
         }
 
+        /// <summary>
+        /// Restarts a tween in progress. For exmaple, if restoring from save.
+        /// </summary>
+        public void RestartTween(float durationScale = 1)
+        {
+            if (currentState == ActionState.PlayingForward)
+                TweenToEnd(Duration * durationScale);
+            else if (currentState == ActionState.PlayingReverse)
+                TweenToStart(Duration * durationScale);
+        }
 
-        private void TweenToEnd()
+        private void TweenToEnd(float duration)
         {
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                "amount", new Vector3(ActionRotation.x / 360f, ActionRotation.y / 360f, ActionRotation.z / 360f),
+                "rotation", startingRotation.eulerAngles + ActionRotation,
                 "space", ActionSpace,
-                "time", ActionDuration / 20.0f,
+                "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear);
 
             Hashtable moveParams = __ExternalAssets.iTween.Hash(
-                "position", StartPosition + ActionTranslation,
-                "time", ActionDuration / 20.0f,
+                "position", startingPosition + ActionTranslation,
+                "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
                 "oncompleteparams", ActionState.End);
 
-            __ExternalAssets.iTween.RotateBy(gameObject, rotateParams);
+            __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
             __ExternalAssets.iTween.MoveTo(gameObject, moveParams);
         }
 
-        private void TweenToStart()
+        private void TweenToStart(float duration)
         {
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                "amount", new Vector3(-ActionRotation.x / 360f, -ActionRotation.y / 360f, -ActionRotation.z / 360f),
+                "rotation", startingRotation.eulerAngles,
                 "space", ActionSpace,
-                "time", ActionDuration / 20.0f,
+                "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear);
 
             Hashtable moveParams = __ExternalAssets.iTween.Hash(
-                "position", StartPosition,
-                "time", ActionDuration / 20.0f,
+                "position", startingPosition,
+                "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
                 "oncompleteparams", ActionState.Start);
 
-            __ExternalAssets.iTween.RotateBy(gameObject, rotateParams);
+            __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
             __ExternalAssets.iTween.MoveTo(gameObject, moveParams);
         }
 
@@ -267,13 +300,13 @@ namespace DaggerfallWorkshop
         {
             if (thisAction.CurrentState == ActionState.Start)
             {
-                thisAction.CurrentState = ActionState.Playing;
-                thisAction.TweenToEnd();
+                thisAction.CurrentState = ActionState.PlayingForward;
+                thisAction.TweenToEnd(thisAction.Duration);
             }
             else if (thisAction.CurrentState == ActionState.End)
             {
-                thisAction.CurrentState = ActionState.Playing;
-                thisAction.TweenToStart();
+                thisAction.CurrentState = ActionState.PlayingReverse;
+                thisAction.TweenToStart(thisAction.Duration);
             }
 
         }

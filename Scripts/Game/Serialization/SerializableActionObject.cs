@@ -17,14 +17,11 @@ using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
-    /// <summary>
-    /// Implements ActionDoor serialization. Should be attached to every DaggerfallActionDoor GameObject.
-    /// </summary>
-    public class SerializableActionDoor : MonoBehaviour, ISerializableGameObject
+    public class SerializableActionObject : MonoBehaviour, ISerializableGameObject
     {
         #region Fields
 
-        DaggerfallActionDoor actionDoor;
+        DaggerfallAction action;
 
         #endregion
 
@@ -32,9 +29,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         void Awake()
         {
-            actionDoor = GetComponent<DaggerfallActionDoor>();
-            if (!actionDoor)
-                throw new Exception("DaggerfallActionDoor not found.");
+            action = GetComponent<DaggerfallAction>();
+            if (!action)
+                throw new Exception("DaggerfallAction not found.");
         }
 
         void Start()
@@ -56,16 +53,16 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public object GetSaveData()
         {
-            if (!actionDoor)
+            if (!action)
                 return null;
 
-            ActionDoorData_v1 data = new ActionDoorData_v1();
+            ActionObjectData_v1 data = new ActionObjectData_v1();
             data.loadID = LoadID;
-            data.currentLockValue = actionDoor.CurrentLockValue;
-            data.currentRotation = transform.rotation;
-            data.currentState = actionDoor.CurrentState;
+            data.currentPosition = action.transform.position;
+            data.currentRotation = action.transform.rotation;
+            data.currentState = action.CurrentState;
 
-            if (actionDoor.IsMoving)
+            if (action.IsMoving)
             {
                 __ExternalAssets.iTween tween = GetComponent<__ExternalAssets.iTween>();
                 if (tween)
@@ -79,13 +76,13 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public void RestoreSaveData(object dataIn)
         {
-            ActionDoorData_v1 data = (ActionDoorData_v1)dataIn;
+            ActionObjectData_v1 data = (ActionObjectData_v1)dataIn;
             if (data.loadID == LoadID)
             {
-                actionDoor.CurrentLockValue = data.currentLockValue;
-                actionDoor.transform.rotation = data.currentRotation;
-                actionDoor.CurrentState = data.currentState;
-                actionDoor.RestartTween(1 - data.actionPercentage);
+                action.transform.position = data.currentPosition;
+                action.transform.rotation = data.currentRotation;
+                action.CurrentState = data.currentState;
+                action.RestartTween(1 - data.actionPercentage);
             }
         }
 
@@ -95,12 +92,11 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         bool HasChanged()
         {
-            if (!actionDoor)
+            if (!action)
                 return false;
 
-            // Save when door not closed or lock value has changed
-            // Door is otherwise in starting closed position with initial lock value
-            if (actionDoor.CurrentState != ActionState.Start || actionDoor.CurrentLockValue != actionDoor.StartingLockValue)
+            // Save when action is not in starting position
+            if (action.CurrentState != ActionState.Start)
                 return true;
 
             return false;
@@ -108,10 +104,10 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         long GetLoadID()
         {
-            if (!actionDoor)
+            if (!action)
                 return 0;
 
-            return actionDoor.LoadID;
+            return action.LoadID;
         }
 
         #endregion
