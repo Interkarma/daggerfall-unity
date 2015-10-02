@@ -13,6 +13,8 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DaggerfallConnect;
+using DaggerfallWorkshop.Game.Entity;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Serialization
@@ -28,9 +30,10 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// <summary>
         /// ID used to match serialized objects to runtime objects.
         /// Must be unique for its data type and always reference the same object when procedural scene is recreated.
-        /// Object will not be serialized if left at default value of 0 or if ID collision detected.
-        /// Serialization class may not have enough information by itself to generate ID.
-        /// e.g. It may be necessary for scene builder to create a unique ID during procedural layout.
+        /// Object will not be serialized if left at default value of 0 or if LoadID collision detected.
+        /// Some objects are unique and can set LoadID to 1 or other unique value.
+        /// Serialization class may not have enough information by itself to generate LoadID.
+        /// e.g. It may be necessary for scene builder to create a unique LoadID during procedural layout.
         /// </summary>
         long LoadID { get; }
 
@@ -59,8 +62,31 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class SaveData_v1
     {
+        public SaveDataDescription_v1 header;
+        public DateAndTime_v1 dateAndTime;
         public PlayerData_v1 playerData;
         public DungeonData_v1 dungeonData;
+    }
+
+    #endregion
+
+    #region Header Data
+
+    [fsObject("v1")]
+    public class SaveDataDescription_v1
+    {
+        public string description = "Daggerfall Unity Save Game V1";
+    }
+
+    #endregion
+
+    #region World Data
+
+    [fsObject("v1")]
+    public class DateAndTime_v1
+    {
+        public int gameTime;
+        public int realTime;
     }
 
     #endregion
@@ -69,6 +95,33 @@ namespace DaggerfallWorkshop.Game.Serialization
 
     [fsObject("v1")]
     public class PlayerData_v1
+    {
+        public PlayerEntityData_v1 playerEntity;
+        public PlayerPositionData_v1 playerPosition;
+    }
+
+    [fsObject("v1")]
+    public class PlayerEntityData_v1
+    {
+        public Genders gender;
+        public int faceIndex;
+        public RaceTemplate raceTemplate;
+        public DFCareer careerTemplate;
+        public PlayerReflexes reflexes;
+        public string name;
+        public int level;
+        public DaggerfallStats stats;
+        public DaggerfallSkills skills;
+        public int maxHealth;
+        public int currentHealth;
+        public int maxFatigue;
+        public int currentFatigue;
+        public int maxMagicka;
+        public int currentMagicka;
+    }
+
+    [fsObject("v1")]
+    public class PlayerPositionData_v1
     {
         public Vector3 position;
         public float yaw;
@@ -116,6 +169,27 @@ namespace DaggerfallWorkshop.Game.Serialization
         public Quaternion currentRotation;
         public ActionState currentState;
         public float actionPercentage;
+    }
+
+    #endregion
+
+    #region Enemy Data
+
+    [fsObject("v1")]
+    public class EnemyData_v1
+    {
+        public long loadID;
+        public Vector3 currentPosition;
+        public Quaternion currentRotation;
+        public bool isDead;
+        public int startingHealth;
+        public int currentHealth;
+        public int startingFatigue;
+        public int currentFatigue;
+        public int startingMagicka;
+        public int currentMagicka;
+        public int careerData;
+        public int entityData;
     }
 
     #endregion

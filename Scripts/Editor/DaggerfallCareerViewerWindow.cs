@@ -71,8 +71,8 @@ namespace DaggerfallWorkshop
         bool showMagickaFoldout = true;
         [SerializeField]
         bool showMiscellaneousFoldout = true;
-        [SerializeField]
-        bool showUnknownFoldout = true;
+        //[SerializeField]
+        //bool showUnknownFoldout = true;
 
         enum CareerSource
         {
@@ -647,29 +647,29 @@ namespace DaggerfallWorkshop
             });
         }
 
-        void ShowUnknownGUI()
-        {
-            EditorGUILayout.Space();
-            showUnknownFoldout = GUILayoutHelper.Foldout(showUnknownFoldout, new GUIContent("Unknown"), () =>
-            {
-                EditorGUILayout.Space();
-                GUILayoutHelper.Indent(() =>
-                {
-                    EditorGUILayout.LabelField("Unknown1 [1 Bytes]");
-                    EditorGUILayout.SelectableLabel(selectedCareer.RawData.Unknown1.ToString("X2"), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                });
-                GUILayoutHelper.Indent(() =>
-                {
-                    EditorGUILayout.LabelField("Unknown2 [8 Bytes]");
-                    string valuesString = string.Empty;
-                    for (int i = 0; i < selectedCareer.RawData.Unknown2.Length; i++)
-                    {
-                        valuesString += selectedCareer.RawData.Unknown2[i].ToString("X2") + " ";
-                    }
-                    EditorGUILayout.SelectableLabel(valuesString, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                });
-            });
-        }
+        //void ShowUnknownGUI()
+        //{
+        //    EditorGUILayout.Space();
+        //    showUnknownFoldout = GUILayoutHelper.Foldout(showUnknownFoldout, new GUIContent("Unknown"), () =>
+        //    {
+        //        EditorGUILayout.Space();
+        //        GUILayoutHelper.Indent(() =>
+        //        {
+        //            EditorGUILayout.LabelField("Unknown1 [1 Bytes]");
+        //            EditorGUILayout.SelectableLabel(selectedCareer.RawData.Unknown1.ToString("X2"), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+        //        });
+        //        GUILayoutHelper.Indent(() =>
+        //        {
+        //            EditorGUILayout.LabelField("Unknown2 [8 Bytes]");
+        //            string valuesString = string.Empty;
+        //            for (int i = 0; i < selectedCareer.RawData.Unknown2.Length; i++)
+        //            {
+        //                valuesString += selectedCareer.RawData.Unknown2[i].ToString("X2") + " ";
+        //            }
+        //            EditorGUILayout.SelectableLabel(valuesString, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+        //        });
+        //    });
+        //}
 
         bool IsReady()
         {

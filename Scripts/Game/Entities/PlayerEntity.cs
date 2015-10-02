@@ -21,14 +21,33 @@ using DaggerfallWorkshop.Game.Player;
 namespace DaggerfallWorkshop.Game.Entity
 {
     /// <summary>
-    /// Implements player entity.
+    /// Implements DaggerfallEntity with properties specific to a Player.
     /// </summary>
     public class PlayerEntity : DaggerfallEntity
     {
+        #region Fields
+
+        const int testPlayerLevel = 1;
+        const string testPlayerName = "Nameless";
+
+        protected RaceTemplate race;
+        protected int faceIndex;
+        protected PlayerReflexes reflexes;
+
+        #endregion
+
+        #region Properties
+
+        public RaceTemplate Race { get { return race; } set { race = value; } }
+        public int FaceIndex { get { return faceIndex; } set { faceIndex = value; } }
+        public PlayerReflexes Reflexes { get { return reflexes; } set { reflexes = value; } }
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
-        /// Assigns entity from a character sheet.
+        /// Assigns player entity settings from a character sheet.
         /// </summary>
         public void AssignCharacter(CharacterSheet character, int level = 1, int maxHealth = 0)
         {
@@ -46,6 +65,24 @@ namespace DaggerfallWorkshop.Game.Entity
                 this.maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
             else
                 this.maxHealth = maxHealth;
+        }
+
+        /// <summary>
+        /// Assigns default entity settings.
+        /// </summary>
+        public override void SetEntityDefaults()
+        {
+            race = CharacterSheet.GetRaceTemplate(Races.Breton);
+            faceIndex = 0;
+            reflexes = PlayerReflexes.Average;
+            gender = Genders.Male;
+            career = CharacterSheet.GetCareerTemplate(Careers.Mage);
+            level = testPlayerLevel;
+            maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
+            name = testPlayerName;
+            stats.SetDefaults();
+            skills.SetDefaults();
+            FillVitalSigns();
         }
 
         #endregion

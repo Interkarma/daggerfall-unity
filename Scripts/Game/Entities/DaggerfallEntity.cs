@@ -21,45 +21,52 @@ using DaggerfallWorkshop.Game.Player;
 namespace DaggerfallWorkshop.Game.Entity
 {
     /// <summary>
-    /// Common entity type parent for any living, moving entity in the world.
+    /// Base entity type for all living GameObjects in the world.
+    /// The Effect system (spells, diseases, etc.) operates on entities.
     /// </summary>
-    public class DaggerfallEntity
+    [Serializable]
+    public abstract class DaggerfallEntity
     {
         #region Fields
 
         protected Genders gender;
-        protected RaceTemplate race;
-        protected DFCareer career;
+        protected DFCareer career = new DFCareer();
         protected string name;
         protected int level;
-        protected int faceIndex;
         protected DaggerfallStats stats;
         protected DaggerfallSkills skills;
-        protected PlayerReflexes reflexes;
         protected int maxHealth;
         protected int currentHealth;
-        protected int currentMagicka;
         protected int currentFatigue;
+        protected int currentMagicka;
 
         #endregion
 
         #region Properties
 
-        public Genders Gender { get { return gender; } }
-        public RaceTemplate Race { get { return race; } }
-        public DFCareer Career { get { return career; } }
-        public string Name { get { return name; } }
-        public int Level { get { return level; } }
-        public int FaceIndex { get { return faceIndex; } }
-        public PlayerReflexes Reflexes { get { return reflexes; } }
-        public DaggerfallStats Stats { get { return stats; } }
-        public DaggerfallSkills Skills { get { return skills; } }
-        public int MaxHealth { get { return maxHealth; } }
-        public int CurrentHealth { get { return CurrentHealth; } }
+        public Genders Gender { get { return gender; } set { gender = value; } }
+        public DFCareer Career { get { return career; } set { career = value; } } 
+        public string Name { get { return name; } set { name = value; } }
+        public int Level { get { return level; } set { level = value; } }
+        public DaggerfallStats Stats { get { return stats; } set { stats.Copy(value); } }
+        public DaggerfallSkills Skills { get { return skills; } set { skills.Copy(value); } }
+        public int MaxHealth { get { return maxHealth; } set { maxHealth = value; } }
+        public int CurrentHealth { get { return currentHealth; } set { SetHealth(value); } }
         public int MaxFatigue { get { return stats.Strength + stats.Endurance; } }
-        public int CurrentFatigue { get { return currentFatigue; } }
+        public int CurrentFatigue { get { return currentFatigue; } set { SetFatigue(value); } }
         public int MaxMagicka { get { return FormulaHelper.SpellPoints(stats.Intelligence, career.SpellPointMultiplierValue); } }
-        public int CurrentMagicka { get { return currentMagicka; } }
+        public int CurrentMagicka { get { return currentMagicka; } set { SetMagicka(value); } }
+
+        #endregion
+
+        #region Abstract Methods
+
+        /// <summary>
+        /// Sets entity defaults during scene startup.
+        /// Defaults should be overwritten by normal processes such as
+        /// character creation, monster instantiation, and save game deserialization.
+        /// </summary>
+        public abstract void SetEntityDefaults();
 
         #endregion
 
@@ -70,65 +77,66 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int IncreaseHealth(int amount)
         {
-            currentHealth += amount;
-            if (currentHealth > MaxHealth)
-                currentHealth = maxHealth;
-
-            return currentHealth;
+            return SetHealth(currentHealth + amount);
         }
 
         public int DecreaseHealth(int amount)
         {
-            currentHealth -= amount;
-            if (currentHealth < 0)
-            {
-                currentHealth = 0;
-                RaiseOnDeathEvent();
-            }
+            return SetHealth(currentHealth - amount);
+        }
+
+        public int SetHealth(int amount)
+        {
+            if (amount < 0) amount = 0;
+            if (amount > MaxHealth) amount = MaxHealth;
+            currentHealth = amount;
 
             return currentHealth;
         }
 
         public int IncreaseFatigue(int amount)
         {
-            currentFatigue += amount;
-            if (currentFatigue > MaxFatigue)
-                currentFatigue = MaxFatigue;
-
-            return currentFatigue;
+            return SetFatigue(currentFatigue + amount);
         }
 
         public int DecreaseFatigue(int amount)
         {
-            currentFatigue -= amount;
-            if (currentFatigue < 0)
-            {
-                currentFatigue = 0;
-                RaiseOnExhaustedEvent();
-            }
+            return SetFatigue(currentFatigue - amount);
+        }
+
+        public int SetFatigue(int amount)
+        {
+            if (amount < 0) amount = 0;
+            if (amount > MaxFatigue) amount = MaxFatigue;
+            currentFatigue = amount;
 
             return currentFatigue;
         }
 
         public int IncreaseMagicka(int amount)
         {
-            currentMagicka += amount;
-            if (currentMagicka > MaxMagicka)
-                currentMagicka = MaxMagicka;
-
-            return currentMagicka;
+            return SetMagicka(currentMagicka + amount);
         }
 
         public int DecreaseMagicka(int amount)
         {
-            currentMagicka -= amount;
-            if (currentMagicka < 0)
-            {
-                currentMagicka = 0;
-                RaiseOnMagickaDrainedEvent();
-            }
+            return SetMagicka(currentMagicka - amount);
+        }
+
+        public int SetMagicka(int amount)
+        {
+            if (amount < 0) amount = 0;
+            if (amount > MaxMagicka) amount = MaxMagicka;
+            currentMagicka = amount;
 
             return currentMagicka;
+        }
+
+        public void FillVitalSigns()
+        {
+            currentHealth = MaxHealth;
+            currentFatigue = MaxFatigue;
+            currentMagicka = MaxMagicka;
         }
 
         #endregion

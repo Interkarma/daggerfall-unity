@@ -38,11 +38,11 @@ namespace DaggerfallWorkshop.Game.Entity
         public string PaperDollHeadsMale;                       // CIF filename of male head selection
         public string PaperDollHeadsFemale;                     // CIF filename of female head selection
 
-        public DFCareer.EffectFlags ResistanceFlags;             // Racial resistances
-        public DFCareer.EffectFlags ImmunityFlags;               // Racial immunity
-        public DFCareer.EffectFlags LowToleranceFlags;           // Racial low tolerance
-        public DFCareer.EffectFlags CriticalWeaknessFlags;       // Racial critical weakness
-        public DFCareer.SpecialAbilityFlags SpecialAbilities;    // Racial special abilities
+        public DFCareer.EffectFlags ResistanceFlags;            // Racial resistances
+        public DFCareer.EffectFlags ImmunityFlags;              // Racial immunity
+        public DFCareer.EffectFlags LowToleranceFlags;          // Racial low tolerance
+        public DFCareer.EffectFlags CriticalWeaknessFlags;      // Racial critical weakness
+        public DFCareer.SpecialAbilityFlags SpecialAbilities;   // Racial special abilities
     }
 
     #region Default Race Templates

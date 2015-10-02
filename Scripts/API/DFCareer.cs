@@ -24,11 +24,6 @@ namespace DaggerfallConnect
     {
         #region Fields
 
-        /// <summary>
-        /// Raw data as read from CFG file.
-        /// </summary>
-        public CFGData RawData;
-
         // Career name
         public string Name;
 
@@ -136,10 +131,11 @@ namespace DaggerfallConnect
         #region Structures & Enumerations
 
         /// <summary>
-        /// A 74-byte data structure found in CLASS*.CFG and ENEMY*.CFG.
+        /// A 74-byte native data structure found in CLASS*.CFG and ENEMY*.CFG.
+        /// All of the fields in DFCareer are derived from this data.
         /// </summary>
         [Serializable]
-        public struct CFGData
+        public class CFGData
         {
             // bytes [0-3]
             // Flags controlling how class tolerates various magic effects.
@@ -501,8 +497,7 @@ namespace DaggerfallConnect
         /// <param name="cfg">CFGData to load into class.</param>
         public DFCareer(CFGData cfg)
         {
-            this.RawData = cfg;
-            StructureData();
+            StructureData(cfg);
         }
 
         #endregion
@@ -512,50 +507,50 @@ namespace DaggerfallConnect
         /// <summary>
         /// Reads RawData into structured data.
         /// </summary>
-        public void StructureData()
+        public void StructureData(CFGData cfg)
         {
-            this.Name = RawData.Name;
+            this.Name = cfg.Name;
 
-            this.Strength = RawData.Attributes[0];
-            this.Intelligence = RawData.Attributes[1];
-            this.Willpower = RawData.Attributes[2];
-            this.Agility = RawData.Attributes[3];
-            this.Endurance = RawData.Attributes[4];
-            this.Personality = RawData.Attributes[5];
-            this.Speed = RawData.Attributes[6];
-            this.Luck = RawData.Attributes[7];
+            this.Strength = cfg.Attributes[0];
+            this.Intelligence = cfg.Attributes[1];
+            this.Willpower = cfg.Attributes[2];
+            this.Agility = cfg.Attributes[3];
+            this.Endurance = cfg.Attributes[4];
+            this.Personality = cfg.Attributes[5];
+            this.Speed = cfg.Attributes[6];
+            this.Luck = cfg.Attributes[7];
 
-            this.PrimarySkill1 = (Skills)RawData.PrimarySkill1;
-            this.PrimarySkill2 = (Skills)RawData.PrimarySkill2;
-            this.PrimarySkill3 = (Skills)RawData.PrimarySkill3;
-            this.MajorSkill1 = (Skills)RawData.MajorSkill1;
-            this.MajorSkill2 = (Skills)RawData.MajorSkill2;
-            this.MajorSkill3 = (Skills)RawData.MajorSkill3;
-            this.MinorSkill1 = (Skills)RawData.MinorSkill1;
-            this.MinorSkill2 = (Skills)RawData.MinorSkill2;
-            this.MinorSkill3 = (Skills)RawData.MinorSkill3;
-            this.MinorSkill4 = (Skills)RawData.MinorSkill4;
-            this.MinorSkill5 = (Skills)RawData.MinorSkill5;
-            this.MinorSkill6 = (Skills)RawData.MinorSkill6;
+            this.PrimarySkill1 = (Skills)cfg.PrimarySkill1;
+            this.PrimarySkill2 = (Skills)cfg.PrimarySkill2;
+            this.PrimarySkill3 = (Skills)cfg.PrimarySkill3;
+            this.MajorSkill1 = (Skills)cfg.MajorSkill1;
+            this.MajorSkill2 = (Skills)cfg.MajorSkill2;
+            this.MajorSkill3 = (Skills)cfg.MajorSkill3;
+            this.MinorSkill1 = (Skills)cfg.MinorSkill1;
+            this.MinorSkill2 = (Skills)cfg.MinorSkill2;
+            this.MinorSkill3 = (Skills)cfg.MinorSkill3;
+            this.MinorSkill4 = (Skills)cfg.MinorSkill4;
+            this.MinorSkill5 = (Skills)cfg.MinorSkill5;
+            this.MinorSkill6 = (Skills)cfg.MinorSkill6;
 
-            this.HitPointsPerLevelOrMonsterLevel = RawData.HitPointsPerLevelOrMonsterLevel;
+            this.HitPointsPerLevelOrMonsterLevel = cfg.HitPointsPerLevelOrMonsterLevel;
 
-            float value = (RawData.AdvancementMultiplier >> 16) + ((RawData.AdvancementMultiplier & 0xffff)) / 65536f;
+            float value = (cfg.AdvancementMultiplier >> 16) + ((cfg.AdvancementMultiplier & 0xffff)) / 65536f;
             this.AdvancementMultiplier = float.Parse(string.Format("{0:0.00}", value));
 
-            this.Paralysis = GetTolerance(EffectFlags.Paralysis);
-            this.Magic = GetTolerance(EffectFlags.Magic);
-            this.Poison = GetTolerance(EffectFlags.Poison);
-            this.Fire = GetTolerance(EffectFlags.Fire);
-            this.Frost = GetTolerance(EffectFlags.Frost);
-            this.Shock = GetTolerance(EffectFlags.Shock);
-            this.Disease = GetTolerance(EffectFlags.Disease);
+            this.Paralysis = GetTolerance(cfg, EffectFlags.Paralysis);
+            this.Magic = GetTolerance(cfg, EffectFlags.Magic);
+            this.Poison = GetTolerance(cfg, EffectFlags.Poison);
+            this.Fire = GetTolerance(cfg, EffectFlags.Fire);
+            this.Frost = GetTolerance(cfg, EffectFlags.Frost);
+            this.Shock = GetTolerance(cfg, EffectFlags.Shock);
+            this.Disease = GetTolerance(cfg, EffectFlags.Disease);
 
-            this.ForbiddenMaterials = (MaterialFlags)RawData.ForbiddenMaterialsFlags;
-            this.ForbiddenShields = (ShieldFlags)((RawData.WeaponArmorShieldsBitfield >> 9) & 0x0f);
-            this.ForbiddenArmors = (ArmorFlags)((RawData.WeaponArmorShieldsBitfield >> 6) & 0x07);
-            this.ForbiddenProficiencies = (ProficiencyFlags)(RawData.WeaponArmorShieldsBitfield & 0x3f);
-            this.ExpertProficiencies = (ProficiencyFlags)((RawData.WeaponArmorShieldsBitfield >> 16) & 0x3f);
+            this.ForbiddenMaterials = (MaterialFlags)cfg.ForbiddenMaterialsFlags;
+            this.ForbiddenShields = (ShieldFlags)((cfg.WeaponArmorShieldsBitfield >> 9) & 0x0f);
+            this.ForbiddenArmors = (ArmorFlags)((cfg.WeaponArmorShieldsBitfield >> 6) & 0x07);
+            this.ForbiddenProficiencies = (ProficiencyFlags)(cfg.WeaponArmorShieldsBitfield & 0x3f);
+            this.ExpertProficiencies = (ProficiencyFlags)((cfg.WeaponArmorShieldsBitfield >> 16) & 0x3f);
 
             this.ShortBlades = GetProficiency(ProficiencyFlags.ShortBlades);
             this.LongBlades = GetProficiency(ProficiencyFlags.LongBlades);
@@ -564,30 +559,30 @@ namespace DaggerfallConnect
             this.BluntWeapons = GetProficiency(ProficiencyFlags.BluntWeapons);
             this.MissileWeapons = GetProficiency(ProficiencyFlags.MissileWeapons);
 
-            this.SpellPointMultiplier = GetSpellPointMultiplier();
+            this.SpellPointMultiplier = GetSpellPointMultiplier(cfg);
             this.SpellPointMultiplierValue = GetSpellPointMultiplierValue(this.SpellPointMultiplier);
 
-            this.DarknessPoweredMagery = (DarknessMageryFlags)((RawData.AbilityFlagsAndSpellPointsBitfield & 0x300) >> 8);
-            this.LightPoweredMagery = (LightMageryFlags)((RawData.AbilityFlagsAndSpellPointsBitfield & 0x00C0) >> 6);
+            this.DarknessPoweredMagery = (DarknessMageryFlags)((cfg.AbilityFlagsAndSpellPointsBitfield & 0x300) >> 8);
+            this.LightPoweredMagery = (LightMageryFlags)((cfg.AbilityFlagsAndSpellPointsBitfield & 0x00C0) >> 6);
 
-            this.SpellAbsorption = (SpellAbsorptionFlags)RawData.SpellAbsorptionFlags;
+            this.SpellAbsorption = (SpellAbsorptionFlags)cfg.SpellAbsorptionFlags;
 
-            this.NoRegenSpellPoints = HasSpecialAbility(SpecialAbilityFlags.NoRegenSpellPoints);
+            this.NoRegenSpellPoints = HasSpecialAbility(cfg, SpecialAbilityFlags.NoRegenSpellPoints);
 
-            this.AcuteHearing = HasSpecialAbility(SpecialAbilityFlags.AcuteHearing);
-            this.Athleticism = HasSpecialAbility(SpecialAbilityFlags.Athleticism);
-            this.AdrenalineRush = HasSpecialAbility(SpecialAbilityFlags.AdrenalineRush);
+            this.AcuteHearing = HasSpecialAbility(cfg, SpecialAbilityFlags.AcuteHearing);
+            this.Athleticism = HasSpecialAbility(cfg, SpecialAbilityFlags.Athleticism);
+            this.AdrenalineRush = HasSpecialAbility(cfg, SpecialAbilityFlags.AdrenalineRush);
 
-            this.Regeneration = (RegenerationFlags)RawData.Regeneration;
-            this.RapidHealing = (RapidHealingFlags)RawData.RapidHealing;
+            this.Regeneration = (RegenerationFlags)cfg.Regeneration;
+            this.RapidHealing = (RapidHealingFlags)cfg.RapidHealing;
 
-            this.DamageFromSunlight = HasSpecialAbility(SpecialAbilityFlags.SunDamage);
-            this.DamageFromHolyPlaces = HasSpecialAbility(SpecialAbilityFlags.HolyDamage);
+            this.DamageFromSunlight = HasSpecialAbility(cfg, SpecialAbilityFlags.SunDamage);
+            this.DamageFromHolyPlaces = HasSpecialAbility(cfg, SpecialAbilityFlags.HolyDamage);
 
-            this.UndeadAttackModifier = GetAttackModifier(EnemyGroups.Undead);
-            this.DaedraAttackModifier = GetAttackModifier(EnemyGroups.Daedra);
-            this.HumanoidAttackModifier = GetAttackModifier(EnemyGroups.Humanoid);
-            this.AnimalsAttackModifier = GetAttackModifier(EnemyGroups.Animals);
+            this.UndeadAttackModifier = GetAttackModifier(cfg, EnemyGroups.Undead);
+            this.DaedraAttackModifier = GetAttackModifier(cfg, EnemyGroups.Daedra);
+            this.HumanoidAttackModifier = GetAttackModifier(cfg, EnemyGroups.Humanoid);
+            this.AnimalsAttackModifier = GetAttackModifier(cfg, EnemyGroups.Animals);
         }
 
         /// <summary>
@@ -645,9 +640,9 @@ namespace DaggerfallConnect
         /// </summary>
         /// <param name="flags">EffectFlags to test.</param>
         /// <returns>True if resistant.</returns>
-        bool HasResistance(EffectFlags flags)
+        bool HasResistance(CFGData cfg, EffectFlags flags)
         {
-            return ((RawData.ResistanceFlags & (byte)flags) == (byte)flags) ? true : false;
+            return ((cfg.ResistanceFlags & (byte)flags) == (byte)flags) ? true : false;
         }
 
         /// <summary>
@@ -655,9 +650,9 @@ namespace DaggerfallConnect
         /// </summary>
         /// <param name="flags">EffectFlags to test.</param>
         /// <returns>True if immune.</returns>
-        bool HasImmunity(EffectFlags flags)
+        bool HasImmunity(CFGData cfg, EffectFlags flags)
         {
-            return ((RawData.ImmunityFlags & (byte)flags) == (byte)flags) ? true : false;
+            return ((cfg.ImmunityFlags & (byte)flags) == (byte)flags) ? true : false;
         }
 
         /// <summary>
@@ -665,9 +660,9 @@ namespace DaggerfallConnect
         /// </summary>
         /// <param name="flags">EffectFlags to test.</param>
         /// <returns>True if low tolerance.</returns>
-        bool HasLowTolerance(EffectFlags flags)
+        bool HasLowTolerance(CFGData cfg, EffectFlags flags)
         {
-            return ((RawData.LowToleranceFlags & (byte)flags) == (byte)flags) ? true : false;
+            return ((cfg.LowToleranceFlags & (byte)flags) == (byte)flags) ? true : false;
         }
 
         /// <summary>
@@ -675,9 +670,9 @@ namespace DaggerfallConnect
         /// </summary>
         /// <param name="flags">EffectFlags to test.</param>
         /// <returns>True if critical weakness.</returns>
-        bool HasCriticalWeakness(EffectFlags flags)
+        bool HasCriticalWeakness(CFGData cfg, EffectFlags flags)
         {
-            return ((RawData.CriticalWeaknessFlags & (byte)flags) == (byte)flags) ? true : false;
+            return ((cfg.CriticalWeaknessFlags & (byte)flags) == (byte)flags) ? true : false;
         }
 
         /// <summary>
@@ -685,26 +680,26 @@ namespace DaggerfallConnect
         /// </summary>
         /// <param name="flags">SpecialAbilityFlags to test.</param>
         /// <returns>True if has special ability.</returns>
-        bool HasSpecialAbility(SpecialAbilityFlags flags)
+        bool HasSpecialAbility(CFGData cfg, SpecialAbilityFlags flags)
         {
-            return ((RawData.AbilityFlagsAndSpellPointsBitfield & (byte)flags) == (byte)flags) ? true : false;
+            return ((cfg.AbilityFlagsAndSpellPointsBitfield & (byte)flags) == (byte)flags) ? true : false;
         }
 
         #endregion
 
         #region Private Methods
 
-        Tolerance GetTolerance(EffectFlags flags)
+        Tolerance GetTolerance(CFGData cfg, EffectFlags flags)
         {
             Tolerance result;
 
-            if (HasResistance(flags))
+            if (HasResistance(cfg, flags))
                 result = Tolerance.Resistant;
-            else if (HasImmunity(flags))
+            else if (HasImmunity(cfg, flags))
                 result = Tolerance.Immune;
-            else if (HasLowTolerance(flags))
+            else if (HasLowTolerance(cfg, flags))
                 result = Tolerance.LowTolerance;
-            else if (HasCriticalWeakness(flags))
+            else if (HasCriticalWeakness(cfg, flags))
                 result = Tolerance.CriticalWeakness;
             else
                 result = Tolerance.Normal;
@@ -726,11 +721,11 @@ namespace DaggerfallConnect
             return result;
         }
 
-        SpellPointMultipliers GetSpellPointMultiplier()
+        SpellPointMultipliers GetSpellPointMultiplier(CFGData cfg)
         {
             SpellPointMultipliers result;
 
-            result = (SpellPointMultipliers)((RawData.AbilityFlagsAndSpellPointsBitfield & 0x1C00) >> 8);
+            result = (SpellPointMultipliers)((cfg.AbilityFlagsAndSpellPointsBitfield & 0x1C00) >> 8);
 
             return result;
         }
@@ -765,34 +760,34 @@ namespace DaggerfallConnect
             return result;
         }
 
-        AttackModifier GetAttackModifier(EnemyGroups group)
+        AttackModifier GetAttackModifier(CFGData cfg, EnemyGroups group)
         {
             AttackModifier result = AttackModifier.Normal;
 
             switch (group)
             {
                 case EnemyGroups.Undead:
-                    if (HasFlags(RawData.AttackModifierFlags, 0x01))
+                    if (HasFlags(cfg.AttackModifierFlags, 0x01))
                         result = AttackModifier.Bonus;
-                    else if (HasFlags(RawData.AttackModifierFlags, 0x10))
+                    else if (HasFlags(cfg.AttackModifierFlags, 0x10))
                         result = AttackModifier.Phobia;
                     break;
                 case EnemyGroups.Daedra:
-                    if (HasFlags(RawData.AttackModifierFlags, 0x02))
+                    if (HasFlags(cfg.AttackModifierFlags, 0x02))
                         result = AttackModifier.Bonus;
-                    else if (HasFlags(RawData.AttackModifierFlags, 0x20))
+                    else if (HasFlags(cfg.AttackModifierFlags, 0x20))
                         result = AttackModifier.Phobia;
                     break;
                 case EnemyGroups.Humanoid:
-                    if (HasFlags(RawData.AttackModifierFlags, 0x04))
+                    if (HasFlags(cfg.AttackModifierFlags, 0x04))
                         result = AttackModifier.Bonus;
-                    else if (HasFlags(RawData.AttackModifierFlags, 0x40))
+                    else if (HasFlags(cfg.AttackModifierFlags, 0x40))
                         result = AttackModifier.Phobia;
                     break;
                 case EnemyGroups.Animals:
-                    if (HasFlags(RawData.AttackModifierFlags, 0x08))
+                    if (HasFlags(cfg.AttackModifierFlags, 0x08))
                         result = AttackModifier.Bonus;
-                    else if (HasFlags(RawData.AttackModifierFlags, 0x80))
+                    else if (HasFlags(cfg.AttackModifierFlags, 0x80))
                         result = AttackModifier.Phobia;
                     break;
             }

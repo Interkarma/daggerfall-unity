@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game.Player
             race = GetRaceTemplate(Races.Breton);
             gender = Genders.Male;
             career = GetCareerTemplate(Careers.Mage);
-            name = "Test McTest";
+            name = "Nameless";
             faceIndex = 0;
         }
 

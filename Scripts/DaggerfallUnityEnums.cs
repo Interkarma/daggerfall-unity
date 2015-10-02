@@ -414,4 +414,17 @@ namespace DaggerfallWorkshop
         PlayingReverse,
         End,
     }
+
+    /// <summary>
+    /// Defines various types of living entities in the world.
+    /// </summary>
+    public enum EntityTypes
+    {
+        None,
+        Player,
+        CivilianNPC,
+        StaticNPC,
+        EnemyMonster,
+        EnemyClass,
+    }
 }

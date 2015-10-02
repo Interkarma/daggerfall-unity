@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using FullSerializer;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -29,6 +30,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         Camera playerCamera;
         PlayerMouseLook playerMouseLook;
         PlayerMotor playerMotor;
+        DaggerfallEntityBehaviour playerEntityBehaviour;
 
         #endregion
 
@@ -55,6 +57,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerMotor = GetComponent<PlayerMotor>();
             if (!playerMotor)
                 throw new Exception("PlayerMotor not found.");
+
+            playerEntityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            if (!playerEntityBehaviour)
+                throw new Exception("PlayerEntityBehaviour not found.");
         }
 
         void Start()
@@ -80,13 +86,35 @@ namespace DaggerfallWorkshop.Game.Serialization
                 return null;
 
             PlayerData_v1 data = new PlayerData_v1();
-            data.position = transform.position;
-            data.yaw = playerMouseLook.Yaw;
-            data.pitch = playerMouseLook.Pitch;
-            data.worldPosX = streamingWorld.LocalPlayerGPS.WorldX;
-            data.worldPosZ = streamingWorld.LocalPlayerGPS.WorldZ;
-            data.worldCompensation = streamingWorld.WorldCompensation;
-            data.insideDungeon = playerEnterExit.IsPlayerInsideDungeon;
+
+            // Store player entity data
+            PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
+            data.playerEntity = new PlayerEntityData_v1();
+            data.playerEntity.gender = entity.Gender;
+            data.playerEntity.raceTemplate = entity.Race;
+            data.playerEntity.faceIndex = entity.FaceIndex;
+            data.playerEntity.reflexes = entity.Reflexes;
+            data.playerEntity.careerTemplate = entity.Career;
+            data.playerEntity.name = entity.Name;
+            data.playerEntity.level = entity.Level;
+            data.playerEntity.stats = entity.Stats;
+            data.playerEntity.skills = entity.Skills;
+            data.playerEntity.maxHealth = entity.MaxHealth;
+            data.playerEntity.currentHealth = entity.CurrentHealth;
+            data.playerEntity.maxFatigue = entity.MaxFatigue;
+            data.playerEntity.currentFatigue = entity.CurrentFatigue;
+            data.playerEntity.maxMagicka = entity.MaxMagicka;
+            data.playerEntity.currentMagicka = entity.CurrentMagicka;
+
+            // Store player position data
+            data.playerPosition = new PlayerPositionData_v1();
+            data.playerPosition.position = transform.position;
+            data.playerPosition.yaw = playerMouseLook.Yaw;
+            data.playerPosition.pitch = playerMouseLook.Pitch;
+            data.playerPosition.worldPosX = streamingWorld.LocalPlayerGPS.WorldX;
+            data.playerPosition.worldPosZ = streamingWorld.LocalPlayerGPS.WorldZ;
+            data.playerPosition.worldCompensation = streamingWorld.WorldCompensation;
+            data.playerPosition.insideDungeon = playerEnterExit.IsPlayerInsideDungeon;
 
             return data;
         }
@@ -96,10 +124,13 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!playerEnterExit || !streamingWorld || !playerCamera || !playerMouseLook)
                 return;
 
+            // TODO: Restore player entity data
+
+            // TODO: Restore player position data
             PlayerData_v1 data = (PlayerData_v1)dataIn;
-            transform.position = data.position;
-            playerMouseLook.Yaw = data.yaw;
-            playerMouseLook.Pitch = data.pitch;
+            transform.position = data.playerPosition.position;
+            playerMouseLook.Yaw = data.playerPosition.yaw;
+            playerMouseLook.Pitch = data.playerPosition.pitch;
 
         }
 

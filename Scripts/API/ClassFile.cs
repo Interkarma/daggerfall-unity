@@ -183,9 +183,7 @@ namespace DaggerfallConnect.Arena2
             }
 
             // Structure data
-            career = new DFCareer();
-            career.RawData = cfg;
-            career.StructureData();
+            career = new DFCareer(cfg);
         }
 
         #endregion

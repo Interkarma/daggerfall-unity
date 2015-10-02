@@ -251,6 +251,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         SaveData_v1 BuildSaveData()
         {
             SaveData_v1 saveData = new SaveData_v1();
+            saveData.header = new SaveDataDescription_v1();
             saveData.playerData = GetPlayerData();
             saveData.dungeonData = GetDungeonData();
 
@@ -409,7 +410,10 @@ namespace DaggerfallWorkshop.Game.Serialization
                 yield break;
 
             // Start the respawn process based on saved player location
-            playerEnterExit.RespawnPlayer(saveData.playerData.worldPosX, saveData.playerData.worldPosZ, saveData.playerData.insideDungeon);
+            playerEnterExit.RespawnPlayer(
+                saveData.playerData.playerPosition.worldPosX,
+                saveData.playerData.playerPosition.worldPosZ,
+                saveData.playerData.playerPosition.insideDungeon);
 
             // Keep yielding frames until world is ready again
             while (playerEnterExit.IsRespawning)
