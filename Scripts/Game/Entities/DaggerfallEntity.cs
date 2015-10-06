@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
@@ -87,7 +88,11 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int SetHealth(int amount)
         {
-            if (amount < 0) amount = 0;
+            if (amount <= 0)
+            {
+                amount = 0;
+                RaiseOnDeathEvent();
+            }
             if (amount > MaxHealth) amount = MaxHealth;
             currentHealth = amount;
 
@@ -106,7 +111,11 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int SetFatigue(int amount)
         {
-            if (amount < 0) amount = 0;
+            if (amount <= 0)
+            {
+                amount = 0;
+                RaiseOnExhaustedEvent();
+            }
             if (amount > MaxFatigue) amount = MaxFatigue;
             currentFatigue = amount;
 
@@ -125,7 +134,11 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int SetMagicka(int amount)
         {
-            if (amount < 0) amount = 0;
+            if (amount <= 0)
+            {
+                amount = 0;
+                RaiseOnMagickaDepletedEvent();
+            }
             if (amount > MaxMagicka) amount = MaxMagicka;
             currentMagicka = amount;
 
@@ -161,12 +174,45 @@ namespace DaggerfallWorkshop.Game.Entity
                 OnExhausted(this);
         }
 
-        public delegate void OnMagickaDrainedHandler(DaggerfallEntity entity);
-        public event OnMagickaDrainedHandler OnMagickaDrained;
-        void RaiseOnMagickaDrainedEvent()
+        public delegate void OnMagickaDepletedHandler(DaggerfallEntity entity);
+        public event OnMagickaDepletedHandler OnMagickaDepleted;
+        void RaiseOnMagickaDepletedEvent()
         {
-            if (OnMagickaDrained != null)
-                OnMagickaDrained(this);
+            if (OnMagickaDepleted != null)
+                OnMagickaDepleted(this);
+        }
+
+        #endregion
+
+        #region Static Methods
+
+        /// <summary>
+        /// Gets class career template.
+        /// Currently read from CLASS??.CFG. Would like to migrate this to a custom JSON format later.
+        /// </summary>
+        public static DFCareer GetClassCareerTemplate(ClassCareers career)
+        {
+            string filename = string.Format("CLASS{0:00}.CFG", (int)career);
+            ClassFile file = new ClassFile();
+            if (!file.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, filename)))
+                return null;
+
+            return file.Career;
+        }
+
+        /// <summary>
+        /// Gets monster career template.
+        /// Currently read from MONSTER.BSA. Would like to migrate this to a custom JSON format later.
+        /// </summary>
+        /// <param name="career"></param>
+        /// <returns></returns>
+        public static DFCareer GetMonsterCareerTemplate(MonsterCareers career)
+        {
+            MonsterFile monsterFile = new MonsterFile();
+            if (!monsterFile.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, MonsterFile.Filename), FileUsage.UseMemory, true))
+                throw new Exception("Could not load " + MonsterFile.Filename);
+
+            return monsterFile.GetMonsterClass((int)career);
         }
 
         #endregion

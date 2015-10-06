@@ -2,17 +2,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
     /// Sets up enemy using demo components.
+    /// Currently using this component to setup enemy entity.
+    /// TODO: Revise enemy instantiation and entity assignment.
     /// </summary>
     [RequireComponent(typeof(EnemyMotor))]
     public class SetupDemoEnemy : MonoBehaviour
     {
         public MobileTypes EnemyType = MobileTypes.SkeletalWarrior;
         public MobileReactions EnemyReaction = MobileReactions.Hostile;
+
+        DaggerfallEntityBehaviour entityBehaviour;
+
+        void Awake()
+        {
+            // Must have an entity behaviour
+            entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            if (!entityBehaviour)
+                gameObject.AddComponent<DaggerfallEntityBehaviour>();
+        }
 
         void Start()
         {
@@ -31,6 +44,7 @@ namespace DaggerfallWorkshop.Game
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             Dictionary<int, MobileEnemy> enemyDict = GameObjectHelper.EnemyDict;
+            MobileEnemy mobileEnemy = enemyDict[(int)EnemyType];
 
             // Find mobile unit in children
             DaggerfallMobileUnit dfMobile = GetMobileBillboardChild();
@@ -38,7 +52,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // Setup mobile billboard
                 Vector2 size = Vector2.one;
-                dfMobile.SetEnemy(dfUnity, enemyDict[(int)EnemyType], EnemyReaction);
+                dfMobile.SetEnemy(dfUnity, mobileEnemy, EnemyReaction);
 
                 // Setup controller
                 CharacterController controller = GetComponent<CharacterController>();
@@ -67,6 +81,29 @@ namespace DaggerfallWorkshop.Game
                     enemySounds.MoveSound = (SoundClips)dfMobile.Summary.Enemy.MoveSound;
                     enemySounds.BarkSound = (SoundClips)dfMobile.Summary.Enemy.BarkSound;
                     enemySounds.AttackSound = (SoundClips)dfMobile.Summary.Enemy.AttackSound;
+                }
+
+                // Setup entity
+                if (entityBehaviour)
+                {
+                    EnemyEntity entity = new EnemyEntity();
+                    entityBehaviour.Entity = entity;
+
+                    int enemyIndex = (int)EnemyType;
+                    if (enemyIndex >= 0 && enemyIndex <= 42)
+                    {
+                        entityBehaviour.EntityType = EntityTypes.EnemyMonster;
+                        entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType);
+                    }
+                    else if (enemyIndex >= 128 && enemyIndex <= 146)
+                    {
+                        entityBehaviour.EntityType = EntityTypes.EnemyClass;
+                        entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType);
+                    }
+                    else
+                    {
+                        entityBehaviour.EntityType = EntityTypes.None;
+                    }
                 }
             }
         }

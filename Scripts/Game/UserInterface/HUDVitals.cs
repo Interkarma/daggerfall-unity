@@ -31,6 +31,33 @@ namespace DaggerfallWorkshop.Game.UserInterface
         VerticalProgress fatigueProgress = new VerticalProgress();
         VerticalProgress magickaProgress = new VerticalProgress();
 
+        /// <summary>
+        /// Gets or sets current health as value between 0 and 1.
+        /// </summary>
+        public float Health
+        {
+            get { return healthProgress.Amount; }
+            set { healthProgress.Amount = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets current fatigue as value between 0 and 1.
+        /// </summary>
+        public float Fatigue
+        {
+            get { return fatigueProgress.Amount; }
+            set { fatigueProgress.Amount = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets current magicka as value between 0 and 1.
+        /// </summary>
+        public float Magicka
+        {
+            get { return magickaProgress.Amount; }
+            set { magickaProgress.Amount = value; }
+        }
+
         public HUDVitals()
             :base()
         {

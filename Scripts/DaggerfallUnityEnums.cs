@@ -164,6 +164,7 @@ namespace DaggerfallWorkshop
 
     /// <summary>
     /// A list of mobile enemy types with ID range 0-42 (monsters) and 128-146 (humanoids).
+    /// Do not extend this enum.
     /// </summary>
     public enum MobileTypes
     {

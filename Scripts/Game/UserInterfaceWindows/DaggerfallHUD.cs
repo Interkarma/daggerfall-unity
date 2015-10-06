@@ -16,6 +16,7 @@ using System.Collections;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -30,6 +31,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
+        GameObject player;
+        DaggerfallEntityBehaviour playerEntity;
 
         public bool ShowCrosshair { get; set; }
         public bool ShowVitals { get; set; }
@@ -58,6 +61,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowVitals = true;
             ShowCompass = true;
 
+            // Get references
+            player = GameObject.FindGameObjectWithTag("Player");
+            playerEntity = player.GetComponent<DaggerfallEntityBehaviour>();
+
             // Auto-set initial scale based on viewport size
             if (Screen.currentResolution.height >= 1080 && Screen.currentResolution.height < 1440)
                 hudScale = 3.0f;
@@ -71,14 +78,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void Update()
         {
+            // Update UI visibility and scale
             crosshair.Enabled = ShowCrosshair;
             crosshair.CrosshairScale = CrosshairScale;
-
             vitals.Enabled = ShowVitals;
             vitals.VitalsScale = hudScale;
-
             compass.Enabled = ShowCompass;
             compass.CompassScale = hudScale;
+
+            // Adjust vitals based on current player state
+            if (playerEntity)
+            {
+                PlayerEntity entity = playerEntity.Entity as PlayerEntity;
+                vitals.Health = (float)entity.CurrentHealth / (float)entity.MaxHealth;
+                vitals.Fatigue = (float)entity.CurrentFatigue / (float)entity.MaxFatigue;
+                vitals.Magicka = (float)entity.CurrentMagicka / (float)entity.MaxMagicka;
+            }
 
             base.Update();
         }

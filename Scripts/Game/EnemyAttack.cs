@@ -11,22 +11,24 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// Example enemy attack.
+    /// Temporary enemy attack.
     /// </summary>
     [RequireComponent(typeof(EnemySenses))]
     public class EnemyAttack : MonoBehaviour
     {
         public float MeleeAttackSpeed = 1.0f;       // Number of seconds between melee attacks
-        public float MeleeDistance = 2.5f;          // Maximum distance for melee attack
+        public float MeleeDistance = 2.0f;          // Maximum distance for melee attack
 
         EnemyMotor motor;
         EnemySenses senses;
         EnemySounds sounds;
         DaggerfallMobileUnit mobile;
+        DaggerfallEntityBehaviour entityBehaviour;
         float meleeTimer = 0;
         bool isAttacking;
 
@@ -36,6 +38,7 @@ namespace DaggerfallWorkshop.Game
             senses = GetComponent<EnemySenses>();
             sounds = GetComponent<EnemySounds>();
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
+            entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
         }
 
         void Update()
@@ -90,10 +93,20 @@ namespace DaggerfallWorkshop.Game
 
         private void MeleeDamage()
         {
+            int minDamage = 0, maxDamage = 0;
+            if (entityBehaviour)
+            {
+                EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+                MobileEnemy enemy = entity.MobileEnemy;
+                minDamage = enemy.MinDamage;
+                maxDamage = enemy.MaxDamage;
+            }
+
             // Are we still in range and facing player? Then apply melee damage.
             if (senses.DistanceToPlayer < MeleeDistance && senses.PlayerInSight)
             {
-                senses.Player.SendMessage("RemoveHealth");
+                int damage = Random.Range(minDamage, maxDamage + 1);
+                senses.Player.SendMessage("RemoveHealth", damage);
             }
         }
 

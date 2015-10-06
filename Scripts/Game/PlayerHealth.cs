@@ -11,25 +11,34 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// Example class to represent player health.
+    /// Temporary class to remove player health on damage.
     /// </summary>
     [RequireComponent(typeof(ShowPlayerDamage))]
     public class PlayerHealth : MonoBehaviour
     {
-        void Start()
+        DaggerfallEntityBehaviour entityBehaviour;
+
+        void Awake()
         {
+            entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
         }
 
         /// <summary>
         /// Player has been damaged.
         /// </summary>
-        void RemoveHealth()
+        void RemoveHealth(int amount)
         {
             GetComponent<ShowPlayerDamage>().Flash();
+            if (entityBehaviour)
+            {
+                PlayerEntity entity = entityBehaviour.Entity as PlayerEntity;
+                entity.DecreaseHealth(amount);
+            }
         }
 
         /// <summary>
@@ -38,7 +47,17 @@ namespace DaggerfallWorkshop.Game
         /// <param name="fallDistance"></param>
         void ApplyPlayerFallDamage(float fallDistance)
         {
-            GetComponent<ShowPlayerDamage>().Flash();
+            const float threshold = 10f;
+            const float percentPerMetre = 2.5f;
+
+            if (entityBehaviour)
+            {
+                // Remove percent of max health for every metre over threshold
+                PlayerEntity entity = entityBehaviour.Entity as PlayerEntity;
+                int unit = (int)(entity.MaxHealth * percentPerMetre);
+                int damage = unit * (int)(fallDistance - threshold);
+                RemoveHealth(damage);
+            }
         }
     }
 }

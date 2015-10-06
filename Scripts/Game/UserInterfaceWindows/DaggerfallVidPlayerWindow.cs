@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 video.Open(PlayOnStart);
                 video.Playing = true;
+                Cursor.visible = false;
             }
         }
 
@@ -76,6 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 video.VidFile.EndOfFile && video.Playing)
             {
                 video.Playing = false;
+                Cursor.visible = true;
                 RaiseOnVideoFinishedHandler();
                 CloseWindow();
             }

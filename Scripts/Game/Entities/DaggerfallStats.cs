@@ -125,5 +125,17 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             SetStatValue((DFCareer.Stats)index, value);
         }
+
+        public void SetFromCareer(DFCareer career)
+        {
+            Strength = career.Strength;
+            Intelligence = career.Intelligence;
+            Willpower = career.Willpower;
+            Agility = career.Agility;
+            Endurance = career.Endurance;
+            Personality = career.Personality;
+            Speed = career.Speed;
+            Luck = career.Luck;
+        }
     }
 }

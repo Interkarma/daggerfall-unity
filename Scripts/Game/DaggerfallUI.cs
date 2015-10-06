@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game
     {
         const string parchmentBorderRCIFile = "SPOP.RCI";
         const string splashVideo = "ANIM0001.VID";
+        const string deathVideo = "ANIM0012.VID";
 
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
         public static Color DaggerfallDefaultInputTextColor = new Color32(227, 223, 0, 255);
@@ -49,6 +50,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         UserInterfaceManager uiManager = new UserInterfaceManager();
         bool showSplashVideo = true;
+        bool showDeathVideo = true;
 
         Texture2D[] daggerfallParchmentTextures;
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[4];
@@ -174,9 +176,16 @@ namespace DaggerfallWorkshop.Game
             switch (uiManager.GetMessage())
             {
                 case DaggerfallUIMessages.dfuiInitGame:
+                    Cursor.lockState = CursorLockMode.None;
                     uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
                     if (showSplashVideo)
                         uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, splashVideo));
+                    break;
+                case DaggerfallUIMessages.dfuiInitGameFromDeath:
+                    Cursor.lockState = CursorLockMode.None;
+                    uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
+                    if (showDeathVideo)
+                        uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, deathVideo));
                     break;
                 case DaggerfallUIMessages.dfuiStartNewGameWizard:
                     uiManager.PushWindow(new StartNewGameWizard(uiManager));
@@ -281,6 +290,21 @@ namespace DaggerfallWorkshop.Game
         {
             if (dfAudioSource)
                 dfAudioSource.PlayOneShot(clip, 0);
+        }
+
+        public void FadeToBlack(float fadeDuration = 0.4f)
+        {
+            StartCoroutine(FadeHUDBackground(dfHUD.ParentPanel.BackgroundColor, Color.black, fadeDuration));
+        }
+
+        public void FadeFromBlack(float fadeDuration = 0.4f)
+        {
+            StartCoroutine(FadeHUDBackground(Color.black, dfHUD.ParentPanel.BackgroundColor, fadeDuration));
+        }
+
+        public void ClearFade()
+        {
+            dfHUD.ParentPanel.BackgroundColor = Color.clear;
         }
 
         #endregion
@@ -487,6 +511,44 @@ namespace DaggerfallWorkshop.Game
         private void PauseOptionsDialog_OnClose()
         {
             GameManager.Instance.PauseGame(false);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        // Fades HUD background in from black to briefly hide world while loading
+        IEnumerator FadeHUDBackground(Color startColor, Color targetColor, float fadeDuration = 0.4f)
+        {
+            const float fadeStep = 0.02f;
+
+            //// Must have PlayerEnterExit to respawn player at saved location
+            //PlayerEnterExit playerEnterExit = serializablePlayer.GetComponent<PlayerEnterExit>();
+            //if (!playerEnterExit)
+            //    yield break;
+
+            // Must have a HUD to fade
+            //DaggerfallHUD hud = DaggerfallUI.Instance.DaggerfallHUD;
+            if (dfHUD == null)
+                yield break;
+
+            // Setup fade
+            //Color startColor = Color.black;
+            //Color targetColor = dfHUD.ParentPanel.BackgroundColor;
+            dfHUD.ParentPanel.BackgroundColor = startColor;
+
+            // Progress fade
+            float progress = 0;
+            float increment = fadeStep / fadeDuration;
+            while (progress < 1)
+            {
+                dfHUD.ParentPanel.BackgroundColor = Color.Lerp(startColor, targetColor, progress);
+                progress += increment;
+                yield return new WaitForSeconds(fadeStep);
+            }
+
+            // Ensure starting colour is restored
+            dfHUD.ParentPanel.BackgroundColor = targetColor;
         }
 
         #endregion

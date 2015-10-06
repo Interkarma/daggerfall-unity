@@ -101,9 +101,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.skills = entity.Skills;
             data.playerEntity.maxHealth = entity.MaxHealth;
             data.playerEntity.currentHealth = entity.CurrentHealth;
-            data.playerEntity.maxFatigue = entity.MaxFatigue;
             data.playerEntity.currentFatigue = entity.CurrentFatigue;
-            data.playerEntity.maxMagicka = entity.MaxMagicka;
             data.playerEntity.currentMagicka = entity.CurrentMagicka;
 
             // Store player position data
@@ -111,6 +109,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerPosition.position = transform.position;
             data.playerPosition.yaw = playerMouseLook.Yaw;
             data.playerPosition.pitch = playerMouseLook.Pitch;
+            data.playerPosition.isCrouching = playerMotor.IsCrouching;
             data.playerPosition.worldPosX = streamingWorld.LocalPlayerGPS.WorldX;
             data.playerPosition.worldPosZ = streamingWorld.LocalPlayerGPS.WorldZ;
             data.playerPosition.worldCompensation = streamingWorld.WorldCompensation;
@@ -124,14 +123,28 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!playerEnterExit || !streamingWorld || !playerCamera || !playerMouseLook)
                 return;
 
-            // TODO: Restore player entity data
+            // Restore player entity data
+            PlayerData_v1 data = (PlayerData_v1)dataIn;
+            PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
+            entity.Gender = data.playerEntity.gender;
+            entity.Race = data.playerEntity.raceTemplate;
+            entity.FaceIndex = data.playerEntity.faceIndex;
+            entity.Reflexes = data.playerEntity.reflexes;
+            entity.Career = data.playerEntity.careerTemplate;
+            entity.Name = data.playerEntity.name;
+            entity.Level = data.playerEntity.level;
+            entity.Stats = data.playerEntity.stats;
+            entity.Skills = data.playerEntity.skills;
+            entity.MaxHealth = data.playerEntity.maxHealth;
+            entity.CurrentHealth = data.playerEntity.currentHealth;
+            entity.CurrentFatigue = data.playerEntity.currentFatigue;
+            entity.CurrentMagicka = data.playerEntity.currentMagicka;
 
             // TODO: Restore player position data
-            PlayerData_v1 data = (PlayerData_v1)dataIn;
             transform.position = data.playerPosition.position;
             playerMouseLook.Yaw = data.playerPosition.yaw;
             playerMouseLook.Pitch = data.playerPosition.pitch;
-
+            playerMotor.IsCrouching = data.playerPosition.isCrouching;
         }
 
         #endregion

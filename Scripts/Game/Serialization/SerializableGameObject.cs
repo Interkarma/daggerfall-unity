@@ -114,9 +114,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public DaggerfallSkills skills;
         public int maxHealth;
         public int currentHealth;
-        public int maxFatigue;
         public int currentFatigue;
-        public int maxMagicka;
         public int currentMagicka;
     }
 
@@ -126,6 +124,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public Vector3 position;
         public float yaw;
         public float pitch;
+        public bool isCrouching;
         public int worldPosX;
         public int worldPosZ;
         public Vector3 worldCompensation;

@@ -42,14 +42,14 @@ namespace DaggerfallWorkshop.Game.Entity
         public DaggerfallEntity Entity
         {
             get { return entity; }
-            set { entity = value; }
+            set { SetEntityValue(value); }
         }
 
         #endregion
 
         #region Unity
 
-        void Awake()
+        void Start()
         {
             SetEntityType(EntityType);
         }
@@ -72,15 +72,33 @@ namespace DaggerfallWorkshop.Game.Entity
             switch(type)
             {
                 case EntityTypes.None:
-                    entity = null;
+                    Entity = null;
                     break;
                 case EntityTypes.Player:
-                    entity = new PlayerEntity();
+                    Entity = new PlayerEntity();
                     break;
             }
 
-            if (entity != null)
-                entity.SetEntityDefaults();
+            if (Entity != null)
+                Entity.SetEntityDefaults();
+        }
+
+        void SetEntityValue(DaggerfallEntity value)
+        {
+            RaiseOnSetEntityHandler(entity, value);
+            entity = value;
+        }
+
+        #endregion
+
+        #region Events
+
+        public delegate void OnSetEntityHandler(DaggerfallEntity oldEntity, DaggerfallEntity newEntity);
+        public event OnSetEntityHandler OnSetEntity;
+        void RaiseOnSetEntityHandler(DaggerfallEntity oldEntity, DaggerfallEntity newEntity)
+        {
+            if (OnSetEntity != null)
+                OnSetEntity(oldEntity, newEntity);
         }
 
         #endregion

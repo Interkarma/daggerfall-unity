@@ -72,11 +72,14 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public override void SetEntityDefaults()
         {
+            // TODO: Add some bonus points to stats
+
             race = CharacterSheet.GetRaceTemplate(Races.Breton);
             faceIndex = 0;
             reflexes = PlayerReflexes.Average;
             gender = Genders.Male;
-            career = CharacterSheet.GetCareerTemplate(Careers.Mage);
+            career = DaggerfallEntity.GetClassCareerTemplate(ClassCareers.Mage);
+            stats.SetFromCareer(career);
             level = testPlayerLevel;
             maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
             name = testPlayerName;

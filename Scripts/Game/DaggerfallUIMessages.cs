@@ -17,6 +17,7 @@ namespace DaggerfallWorkshop.Game
     {
         // General window messages
         public const string dfuiInitGame = "dfuiInitGame";
+        public const string dfuiInitGameFromDeath = "dfuiInitGameFromDeath";
 
         // "Start Game" window messages
         public const string dfuiOpenLoadSavedGameWindow = "dfuiOpenLoadSavedGameWindow";

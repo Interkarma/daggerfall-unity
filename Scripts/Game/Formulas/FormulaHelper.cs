@@ -65,7 +65,9 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Generates player health based on level, endurance, and career hit points per level
         public static int RollMaxHealth(int level, int endurance, int hitPointsPerLevel)
         {
-            int maxHealth = 0;
+            const int baseHealth = 25;
+
+            int maxHealth = baseHealth;
             int bonusHealth = HitPointsModifier(endurance);
             int minRoll = hitPointsPerLevel / 2;
             int maxRoll = hitPointsPerLevel + 1;    // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value

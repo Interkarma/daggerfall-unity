@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.Player
         {
             race = GetRaceTemplate(Races.Breton);
             gender = Genders.Male;
-            career = GetCareerTemplate(Careers.Mage);
+            career = DaggerfallEntity.GetClassCareerTemplate(ClassCareers.Mage);
             name = "Nameless";
             faceIndex = 0;
         }
@@ -70,16 +70,6 @@ namespace DaggerfallWorkshop.Game.Player
                 case Races.Argonian:
                     return new Argonian();
             }
-        }
-
-        public static DFCareer GetCareerTemplate(Careers classTemplate)
-        {
-            string filename = string.Format("CLASS{0:00}.CFG", (int)classTemplate);
-            ClassFile file = new ClassFile();
-            if (!file.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, filename)))
-                return null;
-
-            return file.Career;
         }
 
         public static DaggerfallStats GetClassBaseStats(DFCareer dfClass)

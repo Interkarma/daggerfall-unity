@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), json) as SaveData_v1;
 
             // Restore save data
-            StartCoroutine(FadeHUDBackground());
+            DaggerfallUI.Instance.FadeFromBlack();
             StartCoroutine(LoadGame(saveData));
         }
 
@@ -362,41 +362,6 @@ namespace DaggerfallWorkshop.Game.Serialization
         #endregion
 
         #region Utility
-
-        // Fades HUD background in from black to briefly hide world while loading
-        IEnumerator FadeHUDBackground()
-        {
-            const float fadeStep = 0.02f;
-            const float fadeDuration = 0.4f;
-
-            // Must have PlayerEnterExit to respawn player at saved location
-            PlayerEnterExit playerEnterExit = serializablePlayer.GetComponent<PlayerEnterExit>();
-            if (!playerEnterExit)
-                yield break;
-
-            // Must have a HUD to fade
-            DaggerfallHUD hud = DaggerfallUI.Instance.DaggerfallHUD;
-            if (hud == null)
-                yield break;
-
-            // Setup fade
-            Color startColor = Color.black;
-            Color targetColor = hud.ParentPanel.BackgroundColor;
-            hud.ParentPanel.BackgroundColor = startColor;
-
-            // Progress fade
-            float progress = 0;
-            float increment = fadeStep / fadeDuration;
-            while(progress < 1)
-            {
-                hud.ParentPanel.BackgroundColor = Color.Lerp(startColor, targetColor, progress);
-                progress += increment;
-                yield return new WaitForSeconds(fadeStep);
-            }
-
-            // Ensure starting colour is restored
-            hud.ParentPanel.BackgroundColor = targetColor;
-        }
 
         IEnumerator LoadGame(SaveData_v1 saveData)
         {

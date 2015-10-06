@@ -25,6 +25,13 @@ namespace DaggerfallWorkshop.Game
 
         public float runSpeed = 11.0f;
 
+        public float standingHeight = 1.78f;
+        public float crouchingHeight = 0.45f;
+        public float crouchingSpeedDelta = 0.5f;
+        public float crouchingJumpDelta = 0.8f;
+        bool isCrouching = false;
+        bool wasCrouching = false;
+
         // If true, diagonal speed (when strafing + moving forward or back) can't exceed normal move speed; otherwise it's about 1.4 times faster
         public bool limitDiagonalSpeed = true;
 
@@ -79,6 +86,12 @@ namespace DaggerfallWorkshop.Game
         public bool IsRunning
         {
             get { return (speed == runSpeed); }
+        }
+
+        public bool IsCrouching
+        {
+            get { return isCrouching; }
+            set { isCrouching = value; }
         }
 
         public Transform ActivePlatform
@@ -148,6 +161,12 @@ namespace DaggerfallWorkshop.Game
                     speed = runSpeed;
                 }
 
+                // Manage crouching speed
+                if (isCrouching)
+                    speed *= crouchingSpeedDelta;
+                else
+                    controller.height = standingHeight;
+
                 // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
                 if ((sliding && slideWhenOverSlopeLimit) || (slideOnTaggedObjects && hit.collider.tag == "Slide"))
                 {
@@ -176,6 +195,10 @@ namespace DaggerfallWorkshop.Game
                     {
                         moveDirection.y = jumpSpeed;
                         jumpTimer = 0;
+
+                        // Modify crouching jump speed
+                        if (isCrouching)
+                            moveDirection.y *= crouchingJumpDelta;
                     }
                 }
                 catch
@@ -285,6 +308,25 @@ namespace DaggerfallWorkshop.Game
             catch
             {
                 speed = runSpeed;
+            }
+
+            // Toggle crouching
+            if (InputManager.Instance.ActionComplete(InputManager.Actions.Crouch))
+                isCrouching = !isCrouching;
+
+            // Manage crouching height
+            if (isCrouching && !wasCrouching)
+            {
+                controller.height = crouchingHeight;
+                Vector3 pos = controller.transform.position;
+                pos.y -= (standingHeight - crouchingHeight) / 2.0f;
+                controller.transform.position = pos;
+                wasCrouching = isCrouching;
+            }
+            else if (!isCrouching && wasCrouching)
+            {
+                controller.height = standingHeight;
+                wasCrouching = isCrouching;
             }
         }
 

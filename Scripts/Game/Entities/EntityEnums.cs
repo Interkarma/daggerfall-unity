@@ -27,6 +27,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
     /// <summary>
     /// Entity races.
+    /// Do not extend this enum.
     /// </summary>
     public enum Races
     {
@@ -42,9 +43,11 @@ namespace DaggerfallWorkshop.Game.Entity
     }
 
     /// <summary>
-    /// Entity careers.
+    /// Entity class careers.
+    /// Indices are explicit as they map directly to Daggerfall game file indices.
+    /// Do not extend this enum.
     /// </summary>
-    public enum Careers
+    public enum ClassCareers
     {
         None = -1,
         Mage = 0,
@@ -65,6 +68,59 @@ namespace DaggerfallWorkshop.Game.Entity
         Barbarian = 15,
         Warrior = 16,
         Knight = 17,
+    }
+
+    /// <summary>
+    /// Entity monster careers.
+    /// Indices are explicit as they map directly to Daggerfall game file indices.
+    /// Do not extend this enum.
+    /// </summary>
+    public enum MonsterCareers
+    {
+        None = -1,
+        Rat = 0,
+        Imp = 1,
+        Spriggan = 2,
+        GiantBat = 3,
+        GrizzlyBear = 4,
+        SabertoothTiger = 5,
+        Spider = 6,
+        Orc = 7,
+        Centaur = 8,
+        Werewolf = 9,
+        Nymph = 10,
+        Slaughterfish = 11,
+        OrcSergeant = 12,
+        Harpy = 13,
+        Wereboar = 14,
+        SkeletalWarrior = 15,
+        Giant = 16,
+        Zombie = 17,
+        Ghost = 18,
+        Mummy = 19,
+        GiantScorpion = 20,
+        OrcShaman = 21,
+        Gargoyle = 22,
+        Wraith = 23,
+        OrcWarlord = 24,
+        FrostDaedra = 25,
+        FireDaedra = 26,
+        Daedroth = 27,
+        Vampire = 28,
+        DaedraSeducer = 29,
+        VampireAncient = 30,
+        DaedraLord = 31,
+        Lich = 32,
+        AncientLich = 33,
+        Dragonling = 34,
+        FireAtronach = 35,
+        IronAtronach = 36,
+        FleshAtronach = 37,
+        IceAtronach = 38,
+        Horse_Invalid = 39,             // Not used and no matching texture (294 missing). Crashes DF when spawned in-game.
+        Dragonling_Alternate = 40,      // Another dragonling. Seems to work fine when spawned in-game.
+        Dreugh = 41,
+        Lamia = 42,
     }
 
     /// <summary>
