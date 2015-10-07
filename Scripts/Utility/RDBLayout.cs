@@ -236,7 +236,7 @@ namespace DaggerfallWorkshop.Utility
                             // Add action component to door if it also has an action
                             if (HasAction(obj))
                             {
-                                AddActionModelHelper(cgo, ref actionLinkDict, obj, blockData);
+                                AddActionModelHelper(cgo, ref actionLinkDict, obj, ref blockData);
                             }
                         }
                     }
@@ -344,7 +344,7 @@ namespace DaggerfallWorkshop.Utility
                         //add action component to flat if it has an action
                         if (obj.Resources.FlatResource.Action > 0)
                         {
-                            AddActionFlatHelper(flatObject, ref actionLinkDict, blockData, obj);
+                            AddActionFlatHelper(flatObject, ref actionLinkDict, ref blockData, obj);
                         }
 
                     }
@@ -364,7 +364,8 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="editorObjects">Editor objects containing flats.</param>
         public static void AddFixedEnemies(
             GameObject go,
-            DFBlock.RdbObject[] editorObjects)
+            DFBlock.RdbObject[] editorObjects,
+            ref DFBlock blockData)
         {
             const int fixedMonsterFlatIndex = 16;
 
@@ -389,7 +390,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Add fixed enemy objects
                 if (editorObjects[i].Resources.FlatResource.TextureRecord == fixedMonsterFlatIndex)
-                    AddFixedRDBEnemy(editorObjects[i], fixedEnemiesNode.transform);
+                    AddFixedRDBEnemy(editorObjects[i], fixedEnemiesNode.transform, ref blockData);
             }
         }
 
@@ -407,6 +408,7 @@ namespace DaggerfallWorkshop.Utility
             DFBlock.RdbObject[] editorObjects,
             DFRegion.DungeonTypes dungeonType,
             float monsterPower,
+            ref DFBlock blockData,
             int monsterVariance = 4,
             int seed = 0)
         {
@@ -436,7 +438,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Add random enemy objects
                 if (editorObjects[i].Resources.FlatResource.TextureRecord == randomMonsterFlatIndex)
-                    AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform);
+                    AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform, ref blockData);
             }
         }
 
@@ -526,7 +528,7 @@ namespace DaggerfallWorkshop.Utility
 
                         // Add action
                         if (hasAction && standaloneObject != null)
-                            AddActionModelHelper(standaloneObject, ref actionLinkDict, obj, blockData);
+                            AddActionModelHelper(standaloneObject, ref actionLinkDict, obj, ref blockData);
                     }
                 }
             }
@@ -687,7 +689,7 @@ namespace DaggerfallWorkshop.Utility
             GameObject go,
             ref Dictionary<int, ActionLink> actionLinkDict,
             DFBlock.RdbObject rdbObj,
-            DFBlock blockData)
+            ref DFBlock blockData)
         {
 
             DFBlock.RdbModelResource obj = rdbObj.Resources.ModelResource;
@@ -726,7 +728,7 @@ namespace DaggerfallWorkshop.Utility
         private static void AddActionFlatHelper(
             GameObject go,
             ref Dictionary<int, ActionLink> actionLinkDict,
-            DFBlock blockData,
+            ref DFBlock blockData,
             DFBlock.RdbObject rdbObj)
         {
 
@@ -1049,7 +1051,8 @@ namespace DaggerfallWorkshop.Utility
             DFRegion.DungeonTypes dungeonType,
             float monsterPower,
             int monsterVariance,
-            Transform parent)
+            Transform parent,
+            ref DFBlock blockData)
         {
             // Must have a dungeon type
             if (dungeonType == DFRegion.DungeonTypes.NoDungeon)
@@ -1078,8 +1081,11 @@ namespace DaggerfallWorkshop.Utility
                 // Get random monster from table
                 MobileTypes type = table.Enemies[UnityEngine.Random.Range(minMonsterIndex, maxMonsterIndex)];
 
+                // Create unique LoadID for save sytem
+                long loadID = (blockData.Index << 24) + obj.This;
+
                 // Add enemy
-                AddEnemy(obj, type, parent);
+                AddEnemy(obj, type, parent, loadID);
             }
             else
             {
@@ -1087,24 +1093,27 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent)
+        private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData)
         {
             // Get type value and ignore known invalid types
             int typeValue = (int)(obj.Resources.FlatResource.FactionMobileId & 0xff);
             if (typeValue == 99)
                 return;
 
+            // Create unique LoadID for save sytem
+            long loadID = (blockData.Index << 24) + obj.This;
+
             // Cast to enum
             MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionMobileId & 0xff);
 
-            AddEnemy(obj, type, parent);
+            AddEnemy(obj, type, parent, loadID);
         }
 
         private static void AddEnemy(
             DFBlock.RdbObject obj,
             MobileTypes type,
             Transform parent = null,
-            DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold)
+            long loadID = 0)
         {
             // Get default reaction
             MobileReactions reaction = MobileReactions.Hostile;
@@ -1125,6 +1134,12 @@ namespace DaggerfallWorkshop.Utility
                 DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
                 if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
                     GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
+            }
+
+            DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
+            if (enemy)
+            {
+                enemy.LoadID = loadID;
             }
         }
 

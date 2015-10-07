@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game
         AudioSource audioSource;
         DaggerfallAudioSource dfAudioSource;
         UserInterfaceManager uiManager = new UserInterfaceManager();
-        bool showSplashVideo = true;
+        bool showSplashVideo = false;
         bool showDeathVideo = true;
 
         Texture2D[] daggerfallParchmentTextures;

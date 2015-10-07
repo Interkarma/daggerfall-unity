@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         SerializablePlayer serializablePlayer;
         Dictionary<long, SerializableActionDoor> serializableActionDoors = new Dictionary<long, SerializableActionDoor>();
         Dictionary<long, SerializableActionObject> serializableActionObjects = new Dictionary<long, SerializableActionObject>();
+        Dictionary<long, SerializableEnemy> serializableEnemies = new Dictionary<long, SerializableEnemy>();
 
         #endregion
 
@@ -71,10 +72,15 @@ namespace DaggerfallWorkshop.Game.Serialization
             SetupSingleton();
         }
 
-        static bool applicationQuit = false;
+        static bool sceneUnloaded = false;
         void OnApplicationQuit()
         {
-            applicationQuit = true;
+            sceneUnloaded = true;
+        }
+
+        void OnDestroy()
+        {
+            sceneUnloaded = true;
         }
 
         #endregion
@@ -140,7 +146,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// </summary>
         public static void RegisterSerializableGameObject(ISerializableGameObject serializableObject)
         {
-            if (applicationQuit)
+            if (sceneUnloaded)
                 return;
 
             if (serializableObject.LoadID == 0)
@@ -152,6 +158,8 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Instance.serializableActionDoors.Add(serializableObject.LoadID, serializableObject as SerializableActionDoor);
             else if (serializableObject is SerializableActionObject)
                 Instance.serializableActionObjects.Add(serializableObject.LoadID, serializableObject as SerializableActionObject);
+            else if (serializableObject is SerializableEnemy)
+                Instance.serializableEnemies.Add(serializableObject.LoadID, serializableObject as SerializableEnemy);
         }
 
         /// <summary>
@@ -159,7 +167,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// </summary>
         public static void DeregisterSerializableGameObject(ISerializableGameObject serializableObject)
         {
-            if (applicationQuit)
+            if (sceneUnloaded)
                 return;
 
             if (serializableObject.LoadID == 0)
@@ -169,6 +177,8 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Instance.serializableActionDoors.Remove(serializableObject.LoadID);
             else if (serializableObject is SerializableActionObject)
                 Instance.serializableActionObjects.Remove(serializableObject.LoadID);
+            else if (serializableObject is SerializableEnemy)
+                Instance.serializableEnemies.Remove(serializableObject.LoadID);
         }
 
         /// <summary>
@@ -176,7 +186,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// </summary>
         public static void DeregisterAllSerializableGameObjects(bool keepPlayer = true)
         {
-            if (applicationQuit)
+            if (sceneUnloaded)
                 return;
 
             // Optionally deregister player
@@ -252,6 +262,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             SaveData_v1 saveData = new SaveData_v1();
             saveData.header = new SaveDataDescription_v1();
+            saveData.dateAndTime = GetDateTimeData();
             saveData.playerData = GetPlayerData();
             saveData.dungeonData = GetDungeonData();
 
@@ -266,11 +277,21 @@ namespace DaggerfallWorkshop.Game.Serialization
             return (PlayerData_v1)serializablePlayer.GetSaveData();
         }
 
+        DateAndTime_v1 GetDateTimeData()
+        {
+            DateAndTime_v1 data = new DateAndTime_v1();
+            data.gameTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
+            data.realTime = DateTime.Now.Ticks;
+
+            return data;
+        }
+
         DungeonData_v1 GetDungeonData()
         {
             DungeonData_v1 data = new DungeonData_v1();
             data.actionDoors = GetActionDoorData();
             data.actionObjects = GetActionObjectData();
+            data.enemies = GetEnemyData();
 
             return data;
         }
@@ -301,14 +322,36 @@ namespace DaggerfallWorkshop.Game.Serialization
             return actionObjects.ToArray();
         }
 
+        EnemyData_v1[] GetEnemyData()
+        {
+            List<EnemyData_v1> enemies = new List<EnemyData_v1>();
+
+            foreach (var value in serializableEnemies.Values)
+            {
+                if (value.ShouldSave)
+                    enemies.Add((EnemyData_v1)value.GetSaveData());
+            }
+
+            return enemies.ToArray();
+        }
+
         #endregion
 
         #region Loading
 
         void RestoreSaveData(SaveData_v1 saveData)
         {
+            RestoreDateTimeData(saveData.dateAndTime);
             RestorePlayerData(saveData.playerData);
             RestoreDungeonData(saveData.dungeonData);
+        }
+
+        void RestoreDateTimeData(DateAndTime_v1 dateTimeData)
+        {
+            if (dateTimeData == null)
+                return;
+
+            DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.FromSeconds(dateTimeData.gameTime);
         }
 
         void RestorePlayerData(PlayerData_v1 playerData)
@@ -327,6 +370,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             RestoreActionDoorData(dungeonData.actionDoors);
             RestoreActionObjectData(dungeonData.actionObjects);
+            RestoreEnemyData(dungeonData.enemies);
         }
 
         void RestoreActionDoorData(ActionDoorData_v1[] actionDoors)
@@ -355,6 +399,21 @@ namespace DaggerfallWorkshop.Game.Serialization
                 if (serializableActionObjects.ContainsKey(key))
                 {
                     serializableActionObjects[key].RestoreSaveData(actionObjects[i]);
+                }
+            }
+        }
+
+        void RestoreEnemyData(EnemyData_v1[] enemies)
+        {
+            if (enemies == null || enemies.Length == 0)
+                return;
+
+            for (int i = 0; i <enemies.Length; i++)
+            {
+                long key = enemies[i].loadID;
+                if (serializableEnemies.ContainsKey(key))
+                {
+                    serializableEnemies[key].RestoreSaveData(enemies[i]);
                 }
             }
         }

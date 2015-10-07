@@ -21,6 +21,8 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(ShowPlayerDamage))]
     public class PlayerHealth : MonoBehaviour
     {
+        public bool GodMode = false;
+
         DaggerfallEntityBehaviour entityBehaviour;
 
         void Awake()
@@ -34,7 +36,7 @@ namespace DaggerfallWorkshop.Game
         void RemoveHealth(int amount)
         {
             GetComponent<ShowPlayerDamage>().Flash();
-            if (entityBehaviour)
+            if (entityBehaviour && !GodMode)
             {
                 PlayerEntity entity = entityBehaviour.Entity as PlayerEntity;
                 entity.DecreaseHealth(amount);
@@ -44,11 +46,10 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Player has been damaged by a fall.
         /// </summary>
-        /// <param name="fallDistance"></param>
         void ApplyPlayerFallDamage(float fallDistance)
         {
             const float threshold = 10f;
-            const float percentPerMetre = 2.5f;
+            const float percentPerMetre = 50.0f / 100f;
 
             if (entityBehaviour)
             {

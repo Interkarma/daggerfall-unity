@@ -556,7 +556,10 @@ namespace DaggerfallWorkshop.Game
             if (Physics.Raycast(ray, out hit, controller.height * 2f))
             {
                 // Position player at hit position plus just over half controller height up
-                transform.position = hit.point + Vector3.up * (controller.height * 0.7f);
+                //transform.position = hit.point + Vector3.up * (controller.height * 0.7f);
+                Vector3 pos = hit.point;
+                pos.y += controller.height / 2f + 0.1f;
+                transform.position = pos;
             }
         }
 

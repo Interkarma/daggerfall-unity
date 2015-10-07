@@ -100,6 +100,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             RaiseOnCloseHandler();
         }
 
+        public void PopWindow()
+        {
+            uiManager.PopWindow();
+        }
+
         //internal protected virtual void WindowChanged(object sender, EventArgs e)
         //{
         //    if (uiManager.TopWindow == this.Value)

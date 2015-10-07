@@ -57,6 +57,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             const int boxInterior = 64;         // Pixel width of box interior
             const int nonWrappedPart = 258;     // Pixel width of non-wrapped part of compass strip
 
+            if (!compassBoxTexture || !compassTexture)
+                return;
+
             // Calculate displacement
             float percent = mainCamera.transform.eulerAngles.y / 360f;
             int scroll = (int)((float)nonWrappedPart * percent);

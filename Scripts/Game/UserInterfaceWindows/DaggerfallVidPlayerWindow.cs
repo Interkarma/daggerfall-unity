@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 video.VidFile.EndOfFile && video.Playing)
             {
                 video.Playing = false;
-                Cursor.visible = true;
+                video.Dispose();
                 RaiseOnVideoFinishedHandler();
                 CloseWindow();
             }

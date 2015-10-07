@@ -110,10 +110,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Events
+
+        public delegate void OnRestartHandler();
+        public event OnRestartHandler OnRestart;
+        void RaiseOnRestartEvent()
+        {
+            if (OnRestart != null)
+                OnRestart();
+        }
+
+        #endregion
+
         #region Event Handlers
 
         void RestartButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            PopWindow();
+            RaiseOnRestartEvent();
         }
 
         void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

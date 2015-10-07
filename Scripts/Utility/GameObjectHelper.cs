@@ -449,8 +449,8 @@ namespace DaggerfallWorkshop.Utility
                 dfBlock.SetMarkers(startMarkers, enterMarkers);
 
             // Add enemies
-            RDBLayout.AddFixedEnemies(go, editorObjects);
-            RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, monsterVariance, seed);
+            RDBLayout.AddFixedEnemies(go, editorObjects, ref blockData);
+            RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, ref blockData, monsterVariance, seed);
 
             // Link action nodes
             RDBLayout.LinkActionNodes(actionLinkDict);

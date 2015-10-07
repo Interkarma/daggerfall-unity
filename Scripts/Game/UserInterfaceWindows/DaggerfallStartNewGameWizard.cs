@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -27,6 +28,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class StartNewGameWizard : DaggerfallBaseWindow
     {
+        const string newGameCinematic1 = "ANIM0000.VID";
+        const string newGameCinematic2 = "ANIM0011.VID";
+        const string newGameCinematic3 = "DAG2.VID";
+
         WizardStages wizardStage;
         CharacterSheet characterSheet = new CharacterSheet();
 
@@ -70,6 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Wizard starts with race selection
             SetRaceSelectWindow();
+            StartNewGame();
         }
 
         public override void Update()
@@ -212,6 +218,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (createCharSummaryWindow == null)
             {
                 createCharSummaryWindow = new CreateCharSummary(uiManager);
+                createCharSummaryWindow.OnRestart += SummaryWindow_OnRestart;
                 createCharSummaryWindow.OnClose += SummaryWindow_OnClose;
             }
 
@@ -331,15 +338,56 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        private void SummaryWindow_OnRestart()
+        {
+            SetRaceSelectWindow();
+        }
+
         void SummaryWindow_OnClose()
         {
             if (!createCharSummaryWindow.Cancelled)
             {
+                StartNewGame();
             }
             else
             {
                 SetSelectReflexesWindow();
             }
+        }
+
+        #endregion
+
+        #region Game Startup Methods
+
+        void StartNewGame()
+        {
+            // Must have a start game object to transmit character sheet
+            StartGameBehaviour startGameBehaviour = GameObject.FindObjectOfType<StartGameBehaviour>();
+            if (!startGameBehaviour)
+                throw new Exception("Could not find StartGameBehaviour in scene.");
+
+            // Set behaviour to create a new game from character sheet
+            startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.CharacterSheet;
+            startGameBehaviour.CharacterSheet = characterSheet;
+
+            // Create cinematics
+            DaggerfallVidPlayerWindow cinematic1 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic1);
+            DaggerfallVidPlayerWindow cinematic2 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic2);
+            DaggerfallVidPlayerWindow cinematic3 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic3);
+
+            // End of final cinematic will launch game
+            cinematic3.OnVideoFinished += Cinematic3_OnVideoFinished;
+
+            // Push cinematics in reverse order so they play and pop out in correct order
+            uiManager.PushWindow(cinematic3);
+            uiManager.PushWindow(cinematic2);
+            uiManager.PushWindow(cinematic1);
+        }
+
+        private void Cinematic3_OnVideoFinished()
+        {
+            // Start main game scene
+            Application.LoadLevel(1);
         }
 
         #endregion

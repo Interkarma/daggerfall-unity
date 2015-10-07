@@ -46,6 +46,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.AddButton(new Vector2(125, 145), new Vector2(41, 15), DaggerfallUIMessages.dfuiExitGame, NativePanel);
         }
 
+        public override void Update()
+        {
+            base.Update();
+            Cursor.visible = true;
+        }
+
         public override void ProcessMessages()
         {
             base.ProcessMessages();

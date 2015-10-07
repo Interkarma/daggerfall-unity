@@ -85,8 +85,8 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class DateAndTime_v1
     {
-        public int gameTime;
-        public int realTime;
+        public ulong gameTime;
+        public long realTime;
     }
 
     #endregion
@@ -140,6 +140,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         public ActionDoorData_v1[] actionDoors;
         public ActionObjectData_v1[] actionObjects;
+        public EnemyData_v1[] enemies;
     }
 
     #endregion
@@ -183,12 +184,11 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool isDead;
         public int startingHealth;
         public int currentHealth;
-        public int startingFatigue;
         public int currentFatigue;
-        public int startingMagicka;
         public int currentMagicka;
-        public int careerData;
-        public int entityData;
+        public EntityTypes entityType;
+        public MonsterCareers monsterCareer;
+        public ClassCareers classCareer;
     }
 
     #endregion

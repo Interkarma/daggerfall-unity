@@ -326,6 +326,9 @@ namespace DaggerfallWorkshop.Game
             else if (!isCrouching && wasCrouching)
             {
                 controller.height = standingHeight;
+                Vector3 pos = controller.transform.position;
+                pos.y += (standingHeight - crouchingHeight) / 2.0f;
+                controller.transform.position = pos;
                 wasCrouching = isCrouching;
             }
         }

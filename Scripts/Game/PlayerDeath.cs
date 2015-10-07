@@ -27,16 +27,17 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallEntityBehaviour entityBehaviour;
         PlayerEntity playerEntity;
+        CharacterController playerController;
         Camera mainCamera;
         bool deathInProgress;
         float startCameraHeight;
         float targetCameraHeight;
         float currentCameraHeight;
-        bool initialPauseState;
         float timeOfDeath;
 
         void Awake()
         {
+            playerController = GetComponent<CharacterController>();
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             entityBehaviour.OnSetEntity += EntityBehaviour_OnSetEntity;
 
@@ -55,13 +56,14 @@ namespace DaggerfallWorkshop.Game
                 if (currentCameraHeight > targetCameraHeight)
                 {
                     currentCameraHeight -= fallSpeed * Time.deltaTime;
-                    Vector3 pos = mainCamera.transform.position;
+                    Vector3 pos = mainCamera.transform.localPosition;
                     pos.y = currentCameraHeight;
-                    mainCamera.transform.position = pos;
+                    mainCamera.transform.localPosition = pos;
                 }
 
                 if (Time.fixedTime - timeOfDeath > TimeBeforeReset)
                 {
+                    // Start new game from death cinematic
                     Application.LoadLevel(2);
                 }
             }
@@ -89,12 +91,11 @@ namespace DaggerfallWorkshop.Game
             // Start the death process and pause player input
             deathInProgress = true;
             timeOfDeath = Time.fixedTime;
-            initialPauseState = InputManager.Instance.IsPaused;
             InputManager.Instance.IsPaused = true;
 
             // Start camera falling and fading to black
-            startCameraHeight = mainCamera.transform.position.y;
-            targetCameraHeight = startCameraHeight * 0.2f;
+            startCameraHeight = mainCamera.transform.localPosition.y;
+            targetCameraHeight -= playerController.height / 3;
             currentCameraHeight = startCameraHeight;
             DaggerfallUI.Instance.FadeToBlack(FadeDuration);
         }
