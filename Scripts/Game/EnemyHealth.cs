@@ -20,7 +20,7 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(EnemyBlood))]
     public class EnemyHealth : MonoBehaviour
     {
-        public float Health = 100f;
+        public float Health = 50f;
 
         EnemyMotor motor;
         DaggerfallMobileUnit mobile;

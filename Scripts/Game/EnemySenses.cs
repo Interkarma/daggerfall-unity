@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 lastKnownPlayerPos;
         DaggerfallActionDoor actionDoor;
         float distanceToActionDoor;
+        bool hasEncounteredPlayer = false;
 
         public GameObject Player
         {
@@ -74,6 +75,12 @@ namespace DaggerfallWorkshop.Game
         public float DistanceToDoor
         {
             get { return distanceToActionDoor; }
+        }
+
+        public bool HasEncounteredPlayer
+        {
+            get { return hasEncounteredPlayer; }
+            set { hasEncounteredPlayer = value; }
         }
 
         void Start()
@@ -134,6 +141,10 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            // Raise flag on first encounter
+            if (!hasEncounteredPlayer && seen)
+                hasEncounteredPlayer = true;
+
             return seen;
         }
 
@@ -158,6 +169,10 @@ namespace DaggerfallWorkshop.Game
                 heard = true;
                 lastKnownPlayerPos = player.transform.position;
             }
+
+            // Raise flag on first encounter
+            if (!hasEncounteredPlayer && heard)
+                hasEncounteredPlayer = true;
 
             return heard;
         }

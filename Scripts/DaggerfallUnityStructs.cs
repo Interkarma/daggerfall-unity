@@ -156,7 +156,6 @@ namespace DaggerfallWorkshop
         public bool HasIdle;                        // Has standard Idle animation group
         public bool HasRangedAttack1;               // Has RangedAttack1 animation group
         public bool HasRangedAttack2;               // Has RangedAttack2 animation group
-        public float Health;                        // Enemy health pool
         public bool CanOpenDoors;                   // Enemy can open doors to pursue player
         public bool PrefersRanged;                  // Enemy prefers ranged attacks and spells over melee
         public int BloodIndex;                      // Index in TEXTURE.380 for blood splash 

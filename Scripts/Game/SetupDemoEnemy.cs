@@ -120,6 +120,32 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Change enemy settings and configure in a single call.
+        /// </summary>
+        public void ApplyEnemySettings(EntityTypes entityType, int careerIndex, bool isHostile = true)
+        {
+            // Get mobile type based on entity type and career index
+            MobileTypes mobileType;
+            if (entityType == EntityTypes.EnemyMonster)
+                mobileType = (MobileTypes)careerIndex;
+            else if (entityType == EntityTypes.EnemyClass)
+                mobileType = (MobileTypes)(careerIndex + 128);
+            else
+                return;
+
+            MobileReactions enemyReaction = (isHostile) ? MobileReactions.Hostile : MobileReactions.Passive;
+
+            ApplyEnemySettings(mobileType, enemyReaction);
+        }
+
+        public void AlignToGround()
+        {
+            CharacterController controller = GetComponent<CharacterController>();
+            if (controller != null)
+                GameObjectHelper.AlignControllerToGround(controller);
+        }
+
+        /// <summary>
         /// Finds mobile billboard in children.
         /// </summary>
         /// <returns>DaggerfallMobileUnit.</returns>

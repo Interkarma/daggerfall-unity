@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -287,7 +288,12 @@ namespace DaggerfallWorkshop.Game
                     return;
                 }
 
-                // Check if hit has an EnemyHealth - this should be done with Enemy tag in a real project
+                int damage = Random.Range((int)weapon.MinDamage, (int)(weapon.MaxDamage + 1));
+
+                // Check if hit has an EnemyHealth
+                // This is part of the old Demo code and will eventually be removed
+                // For now enemies should either use EnemyHealth (deprecated) or EnemyEntity (current) to track enemy health
+                // Never use both components on same enemy
                 EnemyHealth enemyHealth = hit.transform.gameObject.GetComponent<EnemyHealth>();
                 if (enemyHealth)
                 {
@@ -302,7 +308,32 @@ namespace DaggerfallWorkshop.Game
                     {
                         // Connected
                         weapon.PlayHitSound();
-                        enemyHealth.RemoveHealth(player, Random.Range(weapon.MinDamage, weapon.MaxDamage), hit.point);
+                        enemyHealth.RemoveHealth(player, damage, hit.point);
+                    }
+                }
+
+                // Check if hit an entity and remove health
+                DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
+                if (entityBehaviour)
+                {
+                    if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+                    {
+                        EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
+
+                        // Trigger blood splash at hit point
+                        EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
+                        if (blood)
+                        {
+                            blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);
+                        }
+
+                        // Remove health and handle death
+                        enemyEntity.DecreaseHealth(damage);
+                        if (enemyEntity.CurrentHealth <= 0)
+                        {
+                            // Using SendMessage for now, will replace later
+                            hit.transform.SendMessage("Die");
+                        }
                     }
                 }
             }

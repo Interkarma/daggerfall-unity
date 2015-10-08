@@ -265,6 +265,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.dateAndTime = GetDateTimeData();
             saveData.playerData = GetPlayerData();
             saveData.dungeonData = GetDungeonData();
+            saveData.enemyData = GetEnemyData();
 
             return saveData;
         }
@@ -291,7 +292,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             DungeonData_v1 data = new DungeonData_v1();
             data.actionDoors = GetActionDoorData();
             data.actionObjects = GetActionObjectData();
-            data.enemies = GetEnemyData();
 
             return data;
         }
@@ -344,6 +344,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             RestoreDateTimeData(saveData.dateAndTime);
             RestorePlayerData(saveData.playerData);
             RestoreDungeonData(saveData.dungeonData);
+            RestoreEnemyData(saveData.enemyData);
         }
 
         void RestoreDateTimeData(DateAndTime_v1 dateTimeData)
@@ -370,7 +371,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             RestoreActionDoorData(dungeonData.actionDoors);
             RestoreActionObjectData(dungeonData.actionObjects);
-            RestoreEnemyData(dungeonData.enemies);
         }
 
         void RestoreActionDoorData(ActionDoorData_v1[] actionDoors)

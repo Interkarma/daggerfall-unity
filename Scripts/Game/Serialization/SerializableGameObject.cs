@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public DateAndTime_v1 dateAndTime;
         public PlayerData_v1 playerData;
         public DungeonData_v1 dungeonData;
+        public EnemyData_v1[] enemyData;
     }
 
     #endregion
@@ -140,7 +141,6 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         public ActionDoorData_v1[] actionDoors;
         public ActionObjectData_v1[] actionObjects;
-        public EnemyData_v1[] enemies;
     }
 
     #endregion
@@ -187,8 +187,9 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int currentFatigue;
         public int currentMagicka;
         public EntityTypes entityType;
-        public MonsterCareers monsterCareer;
-        public ClassCareers classCareer;
+        public string careerName;
+        public int careerIndex;
+        public bool isHostile;
     }
 
     #endregion

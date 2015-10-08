@@ -12,43 +12,50 @@
 using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// Example enemy death.
+    /// Handle enemy death.
     /// </summary>
     public class EnemyDeath : MonoBehaviour
     {
         DaggerfallMobileUnit mobile;
 
-        void Start()
+        void Awake()
         {
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
         }
 
         public void Die()
         {
-            if (!mobile)
-                return;
+            if (mobile)
+            {
+                PlaceCorpseMarker(mobile.Summary.Enemy.CorpseTexture);
+                DisableEnemy();
+            }
+        }
 
+        public void PlaceCorpseMarker(int corpseTexture)
+        {
             // Get corpse marker texture indices
             int archive, record;
-            EnemyBasics.ReverseCorpseTexture(mobile.Summary.Enemy.CorpseTexture, out archive, out record);
+            EnemyBasics.ReverseCorpseTexture(corpseTexture, out archive, out record);
 
-            // Leave corpse marker
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-            if (dfUnity)
-            {
-                // Spawn marker
-                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, transform.parent, true);
-                go.transform.position = transform.position;
+            // Spawn corpse marker
+            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, transform.parent, true);
+            go.transform.position = transform.position;
 
-                // Align to ground. Be generous with distance as flying enemies might have a way to drop.
-                // This could also be hanlded by adding a Rigidbody and collider then let gravity do the work.
-                GameObjectHelper.AlignBillboardToGround(go, go.GetComponent<DaggerfallBillboard>().Summary.Size, 16f);
-            }
+            // Align to ground. Be generous with distance as flying enemies might have a way to drop.
+            // This could also be handled by adding a Rigidbody and collider then let gravity do the work.
+            // TODO: Ensure corpse markers never land on top of other monsters
+            GameObjectHelper.AlignBillboardToGround(go, go.GetComponent<DaggerfallBillboard>().Summary.Size, 16f);
+        }
 
+        public void DisableEnemy()
+        {
             // Disable enemy gameobject
             // Do not destroy as we must still save enemy state when dead
             gameObject.SetActive(false);

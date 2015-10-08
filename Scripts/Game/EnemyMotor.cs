@@ -19,7 +19,6 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     [RequireComponent(typeof(EnemySenses))]
     [RequireComponent(typeof(EnemyAttack))]
-    [RequireComponent(typeof(EnemyHealth))]
     [RequireComponent(typeof(EnemyDeath))]
     [RequireComponent(typeof(EnemyBlood))]
     [RequireComponent(typeof(EnemySounds))]
@@ -41,7 +40,11 @@ namespace DaggerfallWorkshop.Game
         float giveUpTimer;                          // Timer before enemy gives up
         bool isHostile;                             // Is enemy hostile to player
 
-        public bool IsHostile { get { return isHostile; } }
+        public bool IsHostile
+        {
+            get { return isHostile; }
+            set { isHostile = value; }
+        }
 
         void Start()
         {

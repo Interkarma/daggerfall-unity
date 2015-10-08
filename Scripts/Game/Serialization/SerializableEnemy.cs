@@ -62,29 +62,22 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!entityBehaviour)
                 return null;
 
-            // Get career type
-            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-            MonsterCareers monsterCareer = MonsterCareers.None;
-            ClassCareers classCareer = ClassCareers.None;
-            if (entity.EntityType == EntityTypes.EnemyMonster)
-                monsterCareer = (MonsterCareers)entity.CareerIndex;
-            else if (entity.EntityType == EntityTypes.EnemyClass)
-                classCareer = (ClassCareers)entity.CareerIndex;
-            else
-                return null;
-
             // Create save data
+            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+            EnemyMotor motor = enemy.GetComponent<EnemyMotor>();
             EnemyData_v1 data = new EnemyData_v1();
             data.loadID = LoadID;
             data.currentPosition = enemy.transform.position;
             data.currentRotation = enemy.transform.rotation;
             data.entityType = entity.EntityType;
-            data.monsterCareer = monsterCareer;
-            data.classCareer = classCareer;
+            data.careerName = entity.Career.Name;
+            data.careerIndex = entity.CareerIndex;
             data.startingHealth = entity.MaxHealth;
             data.currentHealth = entity.CurrentHealth;
             data.currentFatigue = entity.CurrentFatigue;
             data.currentMagicka = entity.CurrentMagicka;
+            data.isHostile = motor.IsHostile;
+            data.isDead = (entity.CurrentHealth <= 0) ? true : false;
 
             return data;
         }
@@ -95,10 +88,40 @@ namespace DaggerfallWorkshop.Game.Serialization
                 return;
 
             EnemyData_v1 data = (EnemyData_v1)dataIn;
-            if (data.loadID == LoadID)
+            if (data.loadID != LoadID)
+                return;
+
+            DaggerfallEntityBehaviour entityBehaviour = enemy.GetComponent<DaggerfallEntityBehaviour>();
+            EnemySenses senses = enemy.GetComponent<EnemySenses>();
+            EnemyMotor motor = enemy.GetComponent<EnemyMotor>();
+            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+
+            // Restore enemy career or class if different
+            if (entity.EntityType != data.entityType || entity.CareerIndex != data.careerIndex)
             {
-                enemy.transform.position = data.currentPosition;
-                enemy.transform.rotation = data.currentRotation;
+                SetupDemoEnemy setupEnemy = enemy.GetComponent<SetupDemoEnemy>();
+                setupEnemy.ApplyEnemySettings(data.entityType, data.careerIndex, data.isHostile);
+                setupEnemy.AlignToGround();
+            }
+
+            // Restore enemy position
+            enemy.transform.position = data.currentPosition;
+            enemy.transform.rotation = data.currentRotation;
+            entity.MaxHealth = data.startingHealth;
+            entity.CurrentHealth = data.currentHealth;
+            entity.CurrentFatigue = data.currentFatigue;
+            entity.CurrentMagicka = data.currentMagicka;
+            motor.IsHostile = data.isHostile;
+            senses.HasEncounteredPlayer = true;
+
+            // Set monster as dead
+            if (data.isDead)
+            {
+                EnemyDeath enemyDeath = enemy.GetComponent<EnemyDeath>();
+                if (enemyDeath)
+                {
+                    enemyDeath.Die();
+                }
             }
         }
 
@@ -111,7 +134,22 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!enemy)
                 return false;
 
-            return true;
+            DaggerfallEntityBehaviour entityBehaviour = enemy.GetComponent<DaggerfallEntityBehaviour>();
+            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+            EnemySenses senses = enemy.GetComponent<EnemySenses>();
+
+            // Save enemy if it has ever encountered player or if any vital signs have dropped
+            // Enemy should otherwise still be in starting state
+            bool save = false;
+            if (senses.HasEncounteredPlayer ||
+                entity.CurrentHealth < entity.MaxHealth ||
+                entity.CurrentFatigue < entity.MaxFatigue ||
+                entity.CurrentMagicka < entity.MaxMagicka)
+            {
+                save = true;
+            }
+
+            return save;
         }
 
         long GetLoadID()
