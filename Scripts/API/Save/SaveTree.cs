@@ -174,29 +174,31 @@ namespace DaggerfallConnect.Save
                     break;
 
                 // Peek record type from RecordRoot so we can instantiate record class based on type
-                //RecordTypes type = PeekRecordType(reader);
+                RecordTypes type = PeekRecordType(reader);
 
                 // Add record based on type
                 SaveTreeBaseRecord record;
-                record = new SaveTreeBaseRecord(reader, length);
-                //switch (type)
-                //{
-                //    //case RecordTypes.Item:
-                //    //    record = new ItemRecord(reader);
-                //    //    break;
-                //    //case RecordTypes.Spell:
-                //    //    record = new SpellRecord(reader);
-                //    //    break;
-                //    //case RecordTypes.UnknownTownLink:
-                //    //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
-                //    //    continue;
-                //    //case RecordTypes.DungeonData:
-                //    //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
-                //    //    continue;
-                //    default:
-                //        record = new SaveTreeBaseRecord(reader, length);
-                //        break;
-                //}
+                switch (type)
+                {
+                    case RecordTypes.Item:
+                        record = new ItemRecord(reader, length);
+                        break;
+                    case RecordTypes.Spell:
+                        record = new SpellRecord(reader, length);
+                        break;
+                    case RecordTypes.Character:
+                        record = new CharacterRecord(reader, length);
+                        break;
+                    //case RecordTypes.UnknownTownLink:
+                    //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
+                    //    continue;
+                    //case RecordTypes.DungeonData:
+                    //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
+                    //    continue;
+                    default:
+                        record = new SaveTreeBaseRecord(reader, length);
+                        break;
+                }
                 AddRecord(record);
             }
 

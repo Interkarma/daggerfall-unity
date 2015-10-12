@@ -97,8 +97,8 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class PlayerData_v1
     {
-        public PlayerEntityData_v1 playerEntity;
         public PlayerPositionData_v1 playerPosition;
+        public PlayerEntityData_v1 playerEntity;
     }
 
     [fsObject("v1")]
@@ -130,6 +130,8 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int worldPosZ;
         public Vector3 worldCompensation;
         public bool insideDungeon;
+        public bool insideBuilding;
+        public StaticDoor buildingExteriorDoor;
     }
 
     #endregion

@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Vector2 lastMousePosition;
         Vector2 mousePosition;
+        Vector2 scaledMousePosition;
 
         Color backgroundColor = Color.clear;
         Texture2D backgroundColorTexture;
@@ -180,6 +181,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
+        /// Gets scaled mouse position relative to top-left of this control.
+        /// If mouse is outside of control area this will return -1,-1.
+        /// </summary>
+        public Vector2 ScaledMousePosition
+        {
+            get { return scaledMousePosition; }
+        }
+
+        /// <summary>
         /// Gets or sets background colour.
         /// </summary>
         public Color BackgroundColor
@@ -292,6 +302,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Update mouse pos - must to invert mouse position Y as Unity 0,0 is bottom-left
             lastMousePosition = mousePosition;
             mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            scaledMousePosition = -Vector2.one;
 
             // Check if mouse is inside rectangle
             Rect myRect = Rectangle;
@@ -314,6 +325,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
             }
 
+            // Get scaled mouse position relative to top-left of control
+            if (mouseOverComponent)
+            {
+                scaledMousePosition = mousePosition - new Vector2(myRect.xMin, myRect.yMin);
+                scaledMousePosition.x *= 1f / localScale.x;
+                scaledMousePosition.y *= 1f / localScale.y;
+            }
+
             // Clear double-click timer if mouse moves
             if (mousePosition != lastMousePosition)
                 firstClickTime = 0;
@@ -322,14 +341,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             bool leftMouseDown = Input.GetMouseButtonDown(0);
             if (mouseOverComponent && leftMouseDown)
             {
-                // Calculate scaled click position relative to top-left corner
-                Vector2 topLeft = new Vector2(myRect.xMin, myRect.yMin);
-                Vector2 clickPosition = mousePosition - topLeft;
-                clickPosition.x *= 1f / localScale.x;
-                clickPosition.y *= 1f / localScale.y;
-
                 // Single click event
-                MouseClick(clickPosition);
+                MouseClick(scaledMousePosition);
 
                 // Double-click event
                 if (firstClickTime == 0)
@@ -342,7 +355,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     if (nextClickTime - firstClickTime < doubleClickTime)
                     {
                         firstClickTime = 0;
-                        MouseDoubleClick(clickPosition);
+                        MouseDoubleClick(scaledMousePosition);
                     }
                     else
                     {
@@ -759,6 +772,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (parentWidth > parentHeight)
                     scale = parentHeight / size.y;
                 else
+                    scale = parentWidth / size.x;
+
+                if (finalRect.width * scale > parent.InteriorWidth)
                     scale = parentWidth / size.x;
 
                 finalRect.width *= scale;

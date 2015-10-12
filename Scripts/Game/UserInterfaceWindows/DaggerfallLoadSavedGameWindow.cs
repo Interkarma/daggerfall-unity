@@ -18,6 +18,7 @@ using DaggerfallConnect.Save;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -106,7 +107,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (message)
             {
                 case DaggerfallUIMessages.dfuiOpenSelectedSaveGame:
-                    // TODO: Open selected save game
+                    OpenSelectedSaveGame();
                     break;
                 default:
                     return;
@@ -178,6 +179,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Rect rect = outlineRects[index];
             outline.Position = new Vector2(rect.x, rect.y);
             outline.Size = new Vector2(rect.width, rect.height);
+        }
+
+        void OpenSelectedSaveGame()
+        {
+            // Get StartGameBehaviour
+            StartGameBehaviour startGameBehaviour = GameObject.FindObjectOfType<StartGameBehaviour>();
+            if (!startGameBehaviour)
+                throw new Exception("Could not find StartGameBehaviour in scene.");
+
+            // Setup start behaviour
+            startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
+            startGameBehaviour.ClassicSaveIndex = selectedSaveGame;
+
+            // Start main game scene
+            Application.LoadLevel(1);
         }
 
         #endregion

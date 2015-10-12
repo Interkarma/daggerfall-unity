@@ -26,7 +26,6 @@ namespace DaggerfallConnect.Save
     {
         public SpellRecord()
         {
-
         }
 
         public SpellRecord(BinaryReader reader, int length)

@@ -33,6 +33,7 @@ namespace DaggerfallConnect.Save
 
         Dictionary<int, string> saveGameDict = new Dictionary<int, string>();
         SaveTree saveTree;
+        SaveVars saveVars;
         SaveImage saveImage;
         string saveName = string.Empty;
 
@@ -68,6 +69,14 @@ namespace DaggerfallConnect.Save
         public SaveTree SaveTree
         {
             get { return saveTree; }
+        }
+
+        /// <summary>
+        /// Gets SaveVars of currently open save.
+        /// </summary>
+        public SaveVars SaveVars
+        {
+            get { return saveVars; }
         }
 
         /// <summary>
@@ -160,6 +169,10 @@ namespace DaggerfallConnect.Save
             if (!saveTree.Open(Path.Combine(saveGameDict[save], SaveTree.Filename)))
                 throw new Exception("Could not open SaveTree for index " + save);
 
+            saveVars = new SaveVars();
+            if (!saveVars.Open(Path.Combine(saveGameDict[save], SaveVars.Filename)))
+                throw new Exception("Could not open SaveVars for index " + save);
+
             return true;
         }
 
@@ -189,7 +202,8 @@ namespace DaggerfallConnect.Save
             for (int i = 0; i < saves.Length; i++)
             {
                 if (!File.Exists(Path.Combine(saves[i], SaveTree.Filename)) ||
-                    !File.Exists(Path.Combine(saves[i], SaveImage.Filename)))
+                    !File.Exists(Path.Combine(saves[i], SaveImage.Filename)) ||
+                    !File.Exists(Path.Combine(saves[i], SaveVars.Filename)))
                 {
                     continue;
                 }

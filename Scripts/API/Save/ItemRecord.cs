@@ -26,7 +26,6 @@ namespace DaggerfallConnect.Save
     {
         public ItemRecord()
         {
-
         }
 
         public ItemRecord(BinaryReader reader, int length)

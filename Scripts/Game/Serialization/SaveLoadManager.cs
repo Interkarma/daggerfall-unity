@@ -70,6 +70,10 @@ namespace DaggerfallWorkshop.Game.Serialization
         void Start()
         {
             SetupSingleton();
+
+            // Init classic game startup time at startup
+            // This will also be modified when deserializing save game data
+            DaggerfallUnity.Instance.WorldTime.Now.SetClassicGameStartTime();
         }
 
         static bool sceneUnloaded = false;
@@ -437,7 +441,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerEnterExit.RespawnPlayer(
                 saveData.playerData.playerPosition.worldPosX,
                 saveData.playerData.playerPosition.worldPosZ,
-                saveData.playerData.playerPosition.insideDungeon);
+                saveData.playerData.playerPosition.insideDungeon,
+                saveData.playerData.playerPosition.insideBuilding);
 
             // Keep yielding frames until world is ready again
             while (playerEnterExit.IsRespawning)

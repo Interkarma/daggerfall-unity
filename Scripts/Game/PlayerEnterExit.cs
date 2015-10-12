@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game
         bool isRespawning = false;
         DaggerfallInterior interior;
         DaggerfallDungeon dungeon;
-        //StreamingWorld world;
+        StreamingWorld world;
         GameObject mainCamera;
         PlayerGPS playerGPS;
 
@@ -130,7 +130,7 @@ namespace DaggerfallWorkshop.Game
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             //playerMouseLook = GetComponent<PlayerMouseLook>();
             playerGPS = GetComponent<PlayerGPS>();
-            //world = FindObjectOfType<StreamingWorld>();
+            world = FindObjectOfType<StreamingWorld>();
         }
 
         void Start()
@@ -161,17 +161,16 @@ namespace DaggerfallWorkshop.Game
         public void RespawnPlayer(
             int worldX,
             int worldZ,
-            bool insideDungeon)
+            bool insideDungeon,
+            bool insideBuilding)
         {
             // Mark any existing world data for destruction
             if (dungeon)
             {
-                //dungeon.gameObject.SetActive(false);
                 Destroy(dungeon.gameObject);
             }
             if (interior)
             {
-                //interior.gameObject.SetActive(false);
                 Destroy(interior.gameObject);
             }
 
@@ -180,10 +179,10 @@ namespace DaggerfallWorkshop.Game
 
             // Start respawn process
             isRespawning = true;
-            StartCoroutine(Respawner(worldX, worldZ, insideDungeon));
+            StartCoroutine(Respawner(worldX, worldZ, insideDungeon, insideBuilding));
         }
 
-        IEnumerator Respawner(int worldX, int worldZ, bool insideDungeon)
+        IEnumerator Respawner(int worldX, int worldZ, bool insideDungeon, bool insideBuilding)
         {
             // Wait for end of frame so existing world data can be removed
             yield return new WaitForEndOfFrame();
@@ -192,6 +191,18 @@ namespace DaggerfallWorkshop.Game
             ContentReader.MapSummary summary;
             DFPosition pos = MapsFile.WorldCoordToMapPixel(worldX, worldZ);
             bool hasLocation = dfUnity.ContentReader.HasLocation(pos.X, pos.Y, out summary);
+
+            // Start outside
+            if (!insideDungeon && !insideBuilding)
+            {
+                EnableExteriorParent();
+                world.suppressWorld = false;
+                world.TeleportToWorldCoordinates(worldX, worldZ);
+
+                // Wait until world is ready
+                while (world.IsInit)
+                    yield return new WaitForEndOfFrame();
+            }
 
             // Start in dungeon
             if (hasLocation && insideDungeon)
@@ -259,25 +270,15 @@ namespace DaggerfallWorkshop.Game
             if (InteriorParent != null)
                 newInterior.transform.parent = InteriorParent.transform;
 
-            // Disable exterior parent
-            if (ExteriorParent != null)
-                ExteriorParent.SetActive(false);
-
-            // Enable interior parent
-            if (InteriorParent != null)
-                InteriorParent.SetActive(true);
-
             // Cache some information about this interior
             buildingType = interior.BuildingData.BuildingType;
 
             // Set player to marker position
-            // Not sure how to set facing here as player transitions to a marker, not a door
-            // Could always find closest door and use that
+            // TODO: Find closest door for player facing
             transform.position = marker + Vector3.up * (controller.height * 0.6f);
             SetStanding();
 
-            // Player is now inside building
-            isPlayerInside = true;
+            EnableInteriorParent();
 
             // Raise event
             RaiseOnTransitionInteriorEvent(door, interior);
@@ -310,17 +311,7 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // Enable exterior parent
-            if (ExteriorParent != null)
-                ExteriorParent.SetActive(true);
-
-            // Disable interior parent
-            if (InteriorParent != null)
-                InteriorParent.SetActive(false);
-
-            // Destroy interior game object
-            Destroy(interior.gameObject);
-            interior = null;
+            EnableExteriorParent();
 
             // Set player outside exterior door position
             transform.position = exitDoorPos;
@@ -383,17 +374,7 @@ namespace DaggerfallWorkshop.Game
             dungeonEntrancePosition = transform.position;
             dungeonEntranceForward = transform.forward;
 
-            // Disable exterior parent
-            if (ExteriorParent != null)
-                ExteriorParent.SetActive(false);
-
-            // Enable dungeon parent
-            if (DungeonParent != null)
-                DungeonParent.SetActive(true);
-
-            // Player is now inside dungeon
-            isPlayerInside = true;
-            isPlayerInsideDungeon = true;
+            EnableDungeonParent();
 
             // Set to start position
             MovePlayerToMarker(dungeon.StartMarker);
@@ -431,25 +412,70 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Disable exterior parent
-            if (ExteriorParent != null)
-                ExteriorParent.SetActive(false);
-
-            // Enable dungeon parent
-            if (DungeonParent != null)
-                DungeonParent.SetActive(true);
-
-            // Player is now inside dungeon
-            isPlayerInside = true;
-            isPlayerInsideDungeon = true;
+            EnableDungeonParent();
 
             // Set to start position
             MovePlayerToMarker(marker);
         }
 
+        /// <summary>
+        /// Enable ExteriorParent.
+        /// </summary>
+        public void EnableExteriorParent(bool cleanup = true)
+        {
+            if (cleanup)
+            {
+                if (dungeon) Destroy(dungeon.gameObject);
+                if (interior) Destroy(interior.gameObject);
+            }
+            
+            if (ExteriorParent != null) ExteriorParent.SetActive(true);
+            if (InteriorParent != null) InteriorParent.SetActive(false);
+            if (DungeonParent != null) DungeonParent.SetActive(false);
+
+            isPlayerInside = false;
+            isPlayerInsideDungeon = false;
+        }
+
+        /// <summary>
+        /// Enable InteriorParent.
+        /// </summary>
+        public void EnableInteriorParent(bool cleanup = true)
+        {
+            if (cleanup)
+            {
+                if (dungeon) Destroy(dungeon.gameObject);
+            }
+
+            if (ExteriorParent != null) ExteriorParent.SetActive(false);
+            if (InteriorParent != null) InteriorParent.SetActive(true);
+            if (DungeonParent != null) DungeonParent.SetActive(false);
+
+            isPlayerInside = true;
+            isPlayerInsideDungeon = false;
+        }
+
+        /// <summary>
+        /// Enable DungeonParent.
+        /// </summary>
+        public void EnableDungeonParent(bool cleanup = true)
+        {
+            if (cleanup)
+            {
+                if (interior) Destroy(interior.gameObject);
+            }
+
+            if (ExteriorParent != null) ExteriorParent.SetActive(false);
+            if (InteriorParent != null) InteriorParent.SetActive(false);
+            if (DungeonParent != null) DungeonParent.SetActive(true);
+
+            isPlayerInside = true;
+            isPlayerInsideDungeon = true;
+        }
+
         public void MovePlayerToMarker(GameObject marker)
         {
-            if (!isPlayerInsideDungeon)
+            if (!isPlayerInsideDungeon || !marker)
                 return;
 
             // Set player to start position

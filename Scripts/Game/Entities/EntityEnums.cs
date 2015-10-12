@@ -16,36 +16,37 @@ using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
+    //
+    // Note: Do not modify these enums as they map directly to native data values.
+    //
+
     /// <summary>
     /// Entity genders.
     /// </summary>
     public enum Genders
     {
-        Male,
-        Female,
+        Female = 1,
+        Male = 40,
     }
 
     /// <summary>
     /// Entity races.
-    /// Do not extend this enum.
     /// </summary>
     public enum Races
     {
-        None = 0,
-        Breton = 1,
-        Redguard = 2,
-        Nord = 3,
-        DarkElf = 4,
-        HighElf = 5,
-        WoodElf = 6,
-        Khajiit = 7,
-        Argonian = 8,
+        None = -1,
+        Breton = 0,
+        Redguard = 1,
+        Nord = 2,
+        DarkElf = 3,
+        HighElf = 4,
+        WoodElf = 5,
+        Khajiit = 6,
+        Argonian = 7,
     }
 
     /// <summary>
     /// Entity class careers.
-    /// Indices are explicit as they map directly to Daggerfall game file indices.
-    /// Do not extend this enum.
     /// </summary>
     public enum ClassCareers
     {
@@ -72,8 +73,6 @@ namespace DaggerfallWorkshop.Game.Entity
 
     /// <summary>
     /// Entity monster careers.
-    /// Indices are explicit as they map directly to Daggerfall game file indices.
-    /// Do not extend this enum.
     /// </summary>
     public enum MonsterCareers
     {
@@ -128,10 +127,10 @@ namespace DaggerfallWorkshop.Game.Entity
     /// </summary>
     public enum PlayerReflexes
     {
-        VeryHigh,
-        High,
-        Average,
-        Low,
-        VeryLow,
+        VeryHigh = 0,
+        High = 1,
+        Average = 2,
+        Low = 3,
+        VeryLow = 4,
     }
 }

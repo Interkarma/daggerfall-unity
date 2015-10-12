@@ -228,7 +228,7 @@ namespace DaggerfallWorkshop.Game
             if (mapPos.X >= TerrainHelper.minMapPixelX || mapPos.X < TerrainHelper.maxMapPixelX ||
                 mapPos.Y >= TerrainHelper.minMapPixelY || mapPos.Y < TerrainHelper.maxMapPixelY)
             {
-                streamingWorld.TeleportToCoordinates(mapPos.X, mapPos.Y);
+                streamingWorld.TeleportToCoordinates(mapPos.X, mapPos.Y, Vector3.zero);
             }
         }
 
