@@ -107,6 +107,24 @@ namespace DaggerfallConnect.Save
             writer.Close();
         }
 
+        /// <summary>
+        /// Finds all instances of a specific record type in tree starting from root record.
+        /// </summary>
+        /// <param name="type">Type of record to search for.</param>
+        /// <param name="root">Root record to start searching from. If null, will start from RecordRoot.</param>
+        /// <returns>List of records found. May contain 0 records.</returns>
+        public List<SaveTreeBaseRecord> FindRecords(RecordTypes type, SaveTreeBaseRecord root = null)
+        {
+            List<SaveTreeBaseRecord> recordList = new List<SaveTreeBaseRecord>();
+
+            if (root == null)
+                root = RootRecord;
+
+            FindRecordsByType(type, root, recordList);
+
+            return recordList;
+        }
+
         #region Static Methods
 
         /// <summary>
@@ -237,6 +255,18 @@ namespace DaggerfallConnect.Save
                 {
                     RootRecord.Children.Add(kvp.Value);
                 }
+            }
+        }
+
+        // Recursively search for record type
+        void FindRecordsByType(RecordTypes type, SaveTreeBaseRecord parent, List<SaveTreeBaseRecord> recordList)
+        {
+            if (parent.RecordType == type)
+                recordList.Add(parent);
+
+            for (int i = 0; i < parent.Children.Count; i++)
+            {
+                FindRecordsByType(type, parent.Children[i], recordList);
             }
         }
 

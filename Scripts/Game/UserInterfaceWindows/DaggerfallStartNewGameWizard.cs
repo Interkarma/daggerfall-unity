@@ -75,7 +75,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Wizard starts with race selection
             SetRaceSelectWindow();
-            StartNewGame();
         }
 
         public override void Update()
@@ -367,7 +366,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception("Could not find StartGameBehaviour in scene.");
 
             // Set behaviour to create a new game from character sheet
-            startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.CharacterSheet;
+            startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.NewCharacter;
             startGameBehaviour.CharacterSheet = characterSheet;
 
             // Create cinematics

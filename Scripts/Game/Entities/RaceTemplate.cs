@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -43,6 +44,38 @@ namespace DaggerfallWorkshop.Game.Entity
         public DFCareer.EffectFlags LowToleranceFlags;          // Racial low tolerance
         public DFCareer.EffectFlags CriticalWeaknessFlags;      // Racial critical weakness
         public DFCareer.SpecialAbilityFlags SpecialAbilities;   // Racial special abilities
+
+        /// <summary>
+        /// Populates a race dictionary with standard RaceTemplate definitions.
+        /// This is only temporary until loading race definitions from file is implemented.
+        /// </summary>
+        /// <returns></returns>
+        public static Dictionary<int, RaceTemplate> GetRaceDictionary()
+        {
+            Dictionary<int, RaceTemplate> raceDict = new Dictionary<int, RaceTemplate>();
+
+            // Instantiate race templates
+            Breton breton = new Breton();
+            Redguard redguard = new Redguard();
+            Nord nord = new Nord();
+            DarkElf darkElf = new DarkElf();
+            HighElf highElf = new HighElf();
+            WoodElf woodElf = new WoodElf();
+            Khajiit khajiit = new Khajiit();
+            Argonian argonian = new Argonian();
+
+            // Populate dictionary
+            raceDict.Add(breton.ID, breton);
+            raceDict.Add(redguard.ID, redguard);
+            raceDict.Add(nord.ID, nord);
+            raceDict.Add(darkElf.ID, darkElf);
+            raceDict.Add(highElf.ID, highElf);
+            raceDict.Add(woodElf.ID, woodElf);
+            raceDict.Add(khajiit.ID, khajiit);
+            raceDict.Add(argonian.ID, argonian);
+
+            return raceDict;
+        }
     }
 
     #region Default Race Templates

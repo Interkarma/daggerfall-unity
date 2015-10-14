@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DFBitmap racePickerBitmap;
         RaceTemplate selectedRace;
 
-        Dictionary<int, RaceTemplate> raceDict = new Dictionary<int, RaceTemplate>();
+        Dictionary<int, RaceTemplate> raceDict = RaceTemplate.GetRaceDictionary();
 
         public RaceTemplate SelectedRace
         {
@@ -53,9 +53,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
                 throw new Exception("CreateCharRaceSelect: Could not load native texture.");
-
-            // Populates race dictionary
-            PopulateRaceDict();
 
             // Load picker colours
             racePickerBitmap = DaggerfallUI.GetImgBitmap(racePickerImgName);
@@ -135,34 +132,5 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Reset();
         }
-
-        #region Private Method
-
-        // Manually populates race dictionary.
-        // This is only temporary until loading race definitions from file is implemented.
-        void PopulateRaceDict()
-        {
-            // Instantiate race templates
-            Breton breton = new Breton();
-            Redguard redguard = new Redguard();
-            Nord nord = new Nord();
-            DarkElf darkElf = new DarkElf();
-            HighElf highElf = new HighElf();
-            WoodElf woodElf = new WoodElf();
-            Khajiit khajiit = new Khajiit();
-            Argonian argonian = new Argonian();
-
-            // Populate dictionary
-            raceDict.Add(breton.ID, breton);
-            raceDict.Add(redguard.ID, redguard);
-            raceDict.Add(nord.ID, nord);
-            raceDict.Add(darkElf.ID, darkElf);
-            raceDict.Add(highElf.ID, highElf);
-            raceDict.Add(woodElf.ID, woodElf);
-            raceDict.Add(khajiit.ID, khajiit);
-            raceDict.Add(argonian.ID, argonian);
-        }
-
-        #endregion
     }
 }

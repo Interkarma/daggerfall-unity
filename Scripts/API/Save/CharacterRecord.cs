@@ -47,6 +47,27 @@ namespace DaggerfallConnect.Save
             ReadCharacterData();
         }
 
+        /// <summary>
+        /// Converts a CharacterRecord to a prototypical CharacterSheet for character import.
+        /// </summary>
+        /// <returns>CharacterSheet derived from CharacterRecord data.</returns>
+        public CharacterSheet ToCharacterSheet()
+        {
+            CharacterSheet sheet = new CharacterSheet();
+            Dictionary<int, RaceTemplate> raceDict = RaceTemplate.GetRaceDictionary();
+
+            sheet.race = raceDict[(int)parsedData.race];
+            sheet.gender = parsedData.gender;
+            sheet.career = parsedData.career;
+            sheet.name = parsedData.characterName;
+            sheet.faceIndex = parsedData.faceIndex;
+            sheet.workingStats = parsedData.currentStats;
+            sheet.workingSkills = parsedData.skills;
+            sheet.reflexes = parsedData.reflexes;
+
+            return sheet;
+        }
+
         #region Readers
 
         /// <summary>
@@ -137,17 +158,6 @@ namespace DaggerfallConnect.Save
         {
             byte value = reader.ReadByte();
             return (PlayerReflexes)value;
-        }
-
-        Int16[] ReadReputationUnknown(BinaryReader reader)
-        {
-            Int16[] values = new Int16[5];
-            for (int i = 0; i < 5; i++)
-            {
-                values[i] = reader.ReadInt16();
-            }
-
-            return values;
         }
 
         DaggerfallSkills ReadSkills(BinaryReader reader)

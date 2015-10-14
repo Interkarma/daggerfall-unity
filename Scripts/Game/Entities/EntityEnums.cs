@@ -35,14 +35,14 @@ namespace DaggerfallWorkshop.Game.Entity
     public enum Races
     {
         None = -1,
-        Breton = 0,
-        Redguard = 1,
-        Nord = 2,
-        DarkElf = 3,
-        HighElf = 4,
-        WoodElf = 5,
-        Khajiit = 6,
-        Argonian = 7,
+        Breton = 1,
+        Redguard = 2,
+        Nord = 3,
+        DarkElf = 4,
+        HighElf = 5,
+        WoodElf = 6,
+        Khajiit = 7,
+        Argonian = 8,
     }
 
     /// <summary>

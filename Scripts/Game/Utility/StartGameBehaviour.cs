@@ -21,6 +21,7 @@ using DaggerfallConnect.Save;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -60,7 +61,7 @@ namespace DaggerfallWorkshop.Game.Utility
             Nothing,
             FromINI,
             DefaultCharacter,
-            CharacterSheet,
+            NewCharacter,
             LoadClassicSave,
             LoadDaggerfallUnitySave,
         }
@@ -93,10 +94,11 @@ namespace DaggerfallWorkshop.Game.Utility
                 case StartMethods.FromINI:
                     StartFromINI();
                     break;
-                case StartMethods.CharacterSheet:
+                case StartMethods.NewCharacter:
+                    StartNewCharacter();
                     break;
                 case StartMethods.LoadClassicSave:
-                    LoadClassicSave();
+                    StartFromClassicSave();
                     break;
                 default:
                     break;
@@ -129,9 +131,19 @@ namespace DaggerfallWorkshop.Game.Utility
 
         #endregion
 
+        #region New Game Startup
+
+        void StartNewCharacter()
+        {
+            PlayerEntity playerEntity = FindPlayerEntity();
+            playerEntity.AssignCharacter(characterSheet);
+        }
+
+        #endregion
+
         #region Classic Save Startup
 
-        void LoadClassicSave()
+        void StartFromClassicSave()
         {
             // Save index must be in range
             if (classicSaveIndex < 0 || classicSaveIndex >= 6)
@@ -160,6 +172,19 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Set game time
             DaggerfallUnity.Instance.WorldTime.Now.FromClassicDaggerfallTime(saveVars.GameTime);
+
+            // Get character record
+            List<SaveTreeBaseRecord> records = saveTree.FindRecords(RecordTypes.Character);
+            if (records.Count != 1)
+                throw new Exception("SaveTree CharacterRecord not found.");
+
+            // Get prototypical character sheet data
+            CharacterRecord characterRecord = (CharacterRecord)records[0];
+            characterSheet = characterRecord.ToCharacterSheet();
+
+            // Assign data to player entity
+            PlayerEntity playerEntity = FindPlayerEntity();
+            playerEntity.AssignCharacter(characterSheet, characterRecord.ParsedData.level, characterRecord.ParsedData.startingHealth);
         }
 
         #endregion
@@ -173,6 +198,17 @@ namespace DaggerfallWorkshop.Game.Utility
                 throw new Exception("Could not find StreamingWorld.");
 
             return streamingWorld;
+        }
+
+        PlayerEntity FindPlayerEntity()
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (!player)
+                throw new Exception("Could not find Player.");
+
+            PlayerEntity playerEntity = player.GetComponent<DaggerfallEntityBehaviour>().Entity as PlayerEntity;
+
+            return playerEntity;
         }
 
         #endregion
