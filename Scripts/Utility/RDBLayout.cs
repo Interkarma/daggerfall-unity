@@ -96,7 +96,7 @@ namespace DaggerfallWorkshop.Utility
             // Validate
             if (string.IsNullOrEmpty(blockName))
                 return null;
-            if (!blockName.ToUpper().EndsWith(".RDB"))
+            if (!blockName.EndsWith(".RDB", StringComparison.InvariantCultureIgnoreCase))
                 return null;
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)

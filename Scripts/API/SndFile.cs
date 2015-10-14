@@ -160,8 +160,7 @@ namespace DaggerfallConnect.Arena2
         public bool Load(string filePath, FileUsage usage, bool readOnly)
         {
             // Validate filename
-            filePath = filePath.ToUpper();
-            if (!filePath.EndsWith("DAGGER.SND"))
+            if (!filePath.EndsWith("DAGGER.SND", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file

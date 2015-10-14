@@ -72,6 +72,18 @@ namespace DaggerfallWorkshop
             // Update
             serializedObject.Update();
 
+#if UNITY_EDITOR_LINUX
+            string message = string.Empty;
+            message += "Linux users please set your Daggerfall installation path (i.e. parent folder of complete Daggerfall install) in Resources/fallback.ini then click 'Update Path' below.";
+            message += " This is a temporary limitation to work around Inspector bugs in experimental Linux build.";
+            EditorGUILayout.HelpBox(message, MessageType.Info);
+            EditorGUILayout.SelectableLabel(dfUnity.Arena2Path, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            if (GUILayout.Button("Update Path"))
+            {
+                dfUnity.Arena2Path = string.Empty;
+                dfUnity.EditorResetArena2Path();
+            }
+#else
             // Get properties
             var propArena2Path = Prop("Arena2Path");
 
@@ -111,6 +123,7 @@ namespace DaggerfallWorkshop
                 EditorGUILayout.HelpBox("Please set the Arena2 path of your Daggerfall installation.", MessageType.Info);
                 return;
             }
+#endif
 
             // Display other GUI items
             DisplayOptionsGUI();

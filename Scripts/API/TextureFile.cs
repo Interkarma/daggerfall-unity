@@ -280,9 +280,8 @@ namespace DaggerfallConnect.Arena2
                 return true;
 
             // Validate filename
-            filePath = filePath.ToUpper();
             string fn = Path.GetFileName(filePath);
-            if (!fn.StartsWith("TEXTURE."))
+            if (!fn.StartsWith("TEXTURE.", StringComparison.InvariantCultureIgnoreCase))
                 return false;
             
             // Handle unsupported files

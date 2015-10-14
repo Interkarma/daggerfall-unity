@@ -191,8 +191,7 @@ namespace DaggerfallConnect.Arena2
         public bool Load(string filePath, FileUsage usage, bool readOnly)
         {
             // Validate filename
-            filePath = filePath.ToUpper();
-            if (!filePath.EndsWith("BLOCKS.BSA"))
+            if (!filePath.EndsWith("BLOCKS.BSA", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file

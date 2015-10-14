@@ -181,8 +181,8 @@ namespace DaggerfallConnect.Arena2
                 return true;
 
             // Validate filename
-            filePath = filePath.ToUpper();
-            if (!filePath.EndsWith(".CIF") && !filePath.EndsWith(".RCI"))
+            if (!filePath.EndsWith(".CIF", StringComparison.InvariantCultureIgnoreCase) &&
+                !filePath.EndsWith(".RCI", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file

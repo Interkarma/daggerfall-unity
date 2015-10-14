@@ -101,8 +101,8 @@ namespace DaggerfallConnect.Arena2
         public bool Load(string filePath)
         {
             // Validate filename
-            filePath = filePath.ToUpper();
-            if (!filePath.EndsWith("CLIMATE.PAK") && !filePath.EndsWith("POLITIC.PAK"))
+            if (!filePath.EndsWith("CLIMATE.PAK", StringComparison.InvariantCultureIgnoreCase) &&
+                !filePath.EndsWith("POLITIC.PAK", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file

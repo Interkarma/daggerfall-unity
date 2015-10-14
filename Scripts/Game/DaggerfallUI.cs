@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallHUD dfHUD;
         DaggerfallPauseOptionsWindow dfPauseOptions;
+        DaggerfallCharacterSheetWindow dfCharacterSheet;
 
         public DaggerfallFont Font1 { get { return GetFont(1); } }
         public DaggerfallFont Font2 { get { return GetFont(2); } }
@@ -122,6 +123,9 @@ namespace DaggerfallWorkshop.Game
 
             dfPauseOptions = new DaggerfallPauseOptionsWindow(uiManager);
             dfPauseOptions.OnClose += PauseOptionsDialog_OnClose;
+
+            dfCharacterSheet = new DaggerfallCharacterSheetWindow(uiManager);
+            dfCharacterSheet.OnClose += CharacterSheetDialog_OnClose;
 
             SetupSingleton();
             PostMessage(startupMessage);
@@ -193,6 +197,10 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenPauseOptionsDialog:
                     GameManager.Instance.PauseGame(true);
                     uiManager.PushWindow(dfPauseOptions);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenCharacterSheetDialog:
+                    GameManager.Instance.PauseGame(true);
+                    uiManager.PushWindow(dfCharacterSheet);
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
                     Application.Quit();
@@ -513,6 +521,11 @@ namespace DaggerfallWorkshop.Game
             GameManager.Instance.PauseGame(false);
         }
 
+        private void CharacterSheetDialog_OnClose()
+        {
+            GameManager.Instance.PauseGame(false);
+        }
+
         #endregion
 
         #region Private Methods
@@ -522,19 +535,11 @@ namespace DaggerfallWorkshop.Game
         {
             const float fadeStep = 0.02f;
 
-            //// Must have PlayerEnterExit to respawn player at saved location
-            //PlayerEnterExit playerEnterExit = serializablePlayer.GetComponent<PlayerEnterExit>();
-            //if (!playerEnterExit)
-            //    yield break;
-
             // Must have a HUD to fade
-            //DaggerfallHUD hud = DaggerfallUI.Instance.DaggerfallHUD;
             if (dfHUD == null)
                 yield break;
 
             // Setup fade
-            //Color startColor = Color.black;
-            //Color targetColor = dfHUD.ParentPanel.BackgroundColor;
             dfHUD.ParentPanel.BackgroundColor = startColor;
 
             // Progress fade

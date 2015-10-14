@@ -185,8 +185,7 @@ namespace DaggerfallConnect.Arena2
         public bool Load(string filePath, FileUsage usage, bool readOnly)
         {
             // Validate filename
-            filePath = filePath.ToUpper();
-            if (!filePath.EndsWith(Filename))
+            if (!filePath.EndsWith(Filename, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file into memory

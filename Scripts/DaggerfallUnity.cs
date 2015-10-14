@@ -185,6 +185,7 @@ namespace DaggerfallWorkshop
 
         void Awake()
         {
+            instance = null;
             SetupSingleton();
             SetupArena2Path();
             SetupContentReaders();
@@ -210,6 +211,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void EditorResetArena2Path()
         {
+            Settings.RereadSettings();
             SetupArena2Path();
             SetupContentReaders(true);
         }
@@ -231,6 +233,9 @@ namespace DaggerfallWorkshop
 
         private void SetupArena2Path()
         {
+            // Clear path validated flag
+            isPathValidated = false;
+
             // Allow implementor to set own Arena2 path (e.g. from custom settings file)
             RaiseOnSetArena2SourceEvent();
 
@@ -242,48 +247,49 @@ namespace DaggerfallWorkshop
                 LogMessage("Arena2 path validated.", true);
                 return;
             }
+
+            // Look for arena2 folder inside Settings.MyDaggerfallPath
+            bool found = false;
+            string path = Path.Combine(Settings.MyDaggerfallPath, "arena2");
+            if (!string.IsNullOrEmpty(path))
+            {
+                LogMessage("Trying INI path " + path, true);
+                if (Directory.Exists(path))
+                    found = true;
+                else
+                    LogMessage("INI path not found.", true);
+            }
+
+            // Otherwise, look for arena2 folder in Application.dataPath at runtime
+            if (Application.isPlaying && !found)
+            {
+                path = Path.Combine(Application.dataPath, "arena2");
+                if (Directory.Exists(path))
+                    found = true;
+            }
+
+            // Did we find a path?
+            if (found)
+            {
+                // If it appears valid set this is as our path
+                LogMessage(string.Format("Testing arena2 path at '{0}'.", path), true);
+                if (ValidateArena2Path(path))
+                {
+                    Arena2Path = path;
+                    isReady = true;
+                    isPathValidated = true;
+                    LogMessage(string.Format("Found valid arena2 path at '{0}'.", path), true);
+                    return;
+                }
+            }
             else
             {
-                // Otherwise, look for valid arena2 folder in Application.dataPath at runtime
-                string path;
-                bool found = false;
-                if (Application.isPlaying)
-                {
-                    path = Path.Combine(Application.dataPath, "arena2");
-                    if (Directory.Exists(path))
-                    {
-                        found = true;
-                    }
-                    else
-                    {
-                        // Finally, look for valid arena2 folder inside settings MyDaggerfallPath
-                        path = Path.Combine(Settings.MyDaggerfallPath, "arena2");
-                        if (Directory.Exists(path))
-                        {
-                            found = true;
-                        }
-                    }
-                    
-                    // Did we find a path?
-                    if (found)
-                    {
-                        // If it appears valid set this is as our path
-                        if (ValidateArena2Path(path))
-                        {
-                            Arena2Path = path;
-                            isReady = true;
-                            isPathValidated = true;
-                            LogMessage(string.Format("Found valid arena2 path at '{0}'.", path));
-                            return;
-                        }
-                    }
-                }
+                LogMessage(string.Format("Could not find arena2 path. Try setting MyDaggerfallPath in Resources/fallback.ini."), true);
             }
 
             // No path was found but we can try to carry on without one
             // Many features will not work without a valid path
             isReady = true;
-            isPathValidated = false;
 
             // Singleton is now ready
             RaiseOnReadyEvent();

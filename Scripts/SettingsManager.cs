@@ -75,6 +75,15 @@ namespace DaggerfallWorkshop
 
         #endregion
 
+        #region Public Methods
+
+        public void RereadSettings()
+        {
+            ReadSettings();
+        }
+
+        #endregion
+
         #region Private Methods
 
         void ReadSettings()

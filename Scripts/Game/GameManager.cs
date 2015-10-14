@@ -91,14 +91,18 @@ namespace DaggerfallWorkshop.Game
                 StartCoroutine(TakeScreenshot());
             }
 
-            // Handle quick save
+            // Handle in-game windows
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.CharacterSheet))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetDialog);
+            }
+
+            // Handle quick save and load
             if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickSave))
             {
                 SaveLoadManager.Instance.QuickSave();
             }
-
-            // Handle quick load
-            if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickLoad))
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickLoad))
             {
                 SaveLoadManager.Instance.QuickLoad();
             }
@@ -110,19 +114,19 @@ namespace DaggerfallWorkshop.Game
 
         public void PauseGame(bool pause)
         {
-            if (pause)
+            if (pause && !gamePaused)
             {
                 savedTimeScale = Time.timeScale;
                 Time.timeScale = 0;
                 InputManager.Instance.IsPaused = true;
+                gamePaused = true;
             }
-            else
+            else if (!pause && gamePaused)
             {
                 Time.timeScale = savedTimeScale;
                 InputManager.Instance.IsPaused = false;
+                gamePaused = false;
             }
-
-            gamePaused = pause;
         }
 
         #endregion
