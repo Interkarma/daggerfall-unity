@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallAlternateShadowColor1 = new Color32(44, 60, 60, 255);
         public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
         public static Color DaggerfallDefaultTextCursorColor = new Color32(154, 134, 0, 200);
+        public static Color DaggerfallUnityNotImplementedColor = new Color(1, 0, 0, 0.5f);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
         public FilterMode globalFilterMode = FilterMode.Point;
@@ -362,6 +363,16 @@ namespace DaggerfallWorkshop.Game
             textLabel.Position = position;
             textLabel.Text = text;
             panel.Components.Add(textLabel);
+
+            return textLabel;
+        }
+
+        public static TextLabel AddDefaultShadowedTextLabel(Vector2 position, Panel panel, int glyphSpacing = 1)
+        {
+            TextLabel textLabel = AddTextLabel(DefaultFont, position, string.Empty, panel, glyphSpacing);
+            textLabel.TextColor = DaggerfallDefaultTextColor;
+            textLabel.ShadowColor = DaggerfallAlternateShadowColor1;
+            textLabel.ShadowPosition = DaggerfallDefaultShadowPos;
 
             return textLabel;
         }
