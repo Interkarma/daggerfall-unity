@@ -283,5 +283,89 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             SetSkillValue((DFCareer.Skills)index, value);
         }
+
+        public DFCareer.Stats GetPrimaryStat(DFCareer.Skills skill)
+        {
+            switch (skill)
+            {
+                case DFCareer.Skills.Medical:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Etiquette:
+                    return DFCareer.Stats.Personality;
+                case DFCareer.Skills.Streetwise:
+                    return DFCareer.Stats.Personality;
+                case DFCareer.Skills.Jumping:
+                    return DFCareer.Stats.Strength;
+                case DFCareer.Skills.Orcish:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Harpy:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Giantish:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Dragonish:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Nymph:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Daedric:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Spriggan:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Centaurian:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Impish:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Lockpicking:
+                    return DFCareer.Stats.Intelligence;
+                case DFCareer.Skills.Mercantile:
+                    return DFCareer.Stats.Personality;
+                case DFCareer.Skills.Pickpocket:
+                    return DFCareer.Stats.Agility;
+                case DFCareer.Skills.Stealth:
+                    return DFCareer.Stats.Agility;
+                case DFCareer.Skills.Swimming:
+                    return DFCareer.Stats.Endurance;
+                case DFCareer.Skills.Climbing:
+                    return DFCareer.Stats.Strength;
+                case DFCareer.Skills.Backstabbing:
+                    return DFCareer.Stats.Agility;
+                case DFCareer.Skills.Dodging:
+                    return DFCareer.Stats.Speed;
+                case DFCareer.Skills.Running:
+                    return DFCareer.Stats.Speed;
+                case DFCareer.Skills.Destruction:
+                    return DFCareer.Stats.Willpower;
+                case DFCareer.Skills.Restoration:
+                    return DFCareer.Stats.Willpower;
+                case DFCareer.Skills.Illusion:
+                    return DFCareer.Stats.Willpower;
+                case DFCareer.Skills.Alteration:
+                    return DFCareer.Stats.Willpower;
+                case DFCareer.Skills.Thaumaturgy:
+                    return DFCareer.Stats.Willpower;
+                case DFCareer.Skills.Mysticism:
+                    return DFCareer.Stats.Willpower;
+                case DFCareer.Skills.ShortBlade:
+                    return DFCareer.Stats.Agility;
+                case DFCareer.Skills.LongBlade:
+                    return DFCareer.Stats.Agility;
+                case DFCareer.Skills.HandToHand:
+                    return DFCareer.Stats.Agility;
+                case DFCareer.Skills.Axe:
+                    return DFCareer.Stats.Strength;
+                case DFCareer.Skills.BluntWeapon:
+                    return DFCareer.Stats.Strength;
+                case DFCareer.Skills.Archery:
+                    return DFCareer.Stats.Agility;
+                case DFCareer.Skills.CriticalStrike:
+                    return DFCareer.Stats.Agility;
+                default:
+                    return (DFCareer.Stats)(-1);
+            }
+        }
+
+        public DFCareer.Stats GetPrimaryStat(int index)
+        {
+            return GetPrimaryStat((DFCareer.Skills)index);
+        }
     }
 }

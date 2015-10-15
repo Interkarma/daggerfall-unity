@@ -41,6 +41,27 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="skill">Skill.</param>
         /// <returns>Text for this skill.</returns>
         string GetSkillName(DFCareer.Skills skill);
+
+        /// <summary>
+        /// Gets text for stat name.
+        /// </summary>
+        /// <param name="stat">Stat.</param>
+        /// <returns>Text for this stat.</returns>
+        string GetStatName(DFCareer.Stats stat);
+
+        /// <summary>
+        /// Gets abbreviated text for stat name.
+        /// </summary>
+        /// <param name="stat">Stat.</param>
+        /// <returns>Abbreviated text for this stat.</returns>
+        string GetAbbreviatedStatName(DFCareer.Stats stat);
+
+        /// <summary>
+        /// Gets text resource ID of stat description.
+        /// </summary>
+        /// <param name="stat">Stat.</param>
+        /// <returns>Text resource ID.</returns>
+        int GetStatDescriptionTextID(DFCareer.Stats stat);
         
         /// <summary>
         /// Opens a new book.
@@ -253,6 +274,81 @@ namespace DaggerfallWorkshop.Utility
                     return "Critical Strike";
                 default:
                     return string.Empty;
+            }
+        }
+
+        public string GetStatName(DFCareer.Stats stat)
+        {
+            switch (stat)
+            {
+                case DFCareer.Stats.Strength:
+                    return "Strength";
+                case DFCareer.Stats.Intelligence:
+                    return "Intelligence";
+                case DFCareer.Stats.Willpower:
+                    return "Willpower";
+                case DFCareer.Stats.Agility:
+                    return "Agility";
+                case DFCareer.Stats.Endurance:
+                    return "Endurance";
+                case DFCareer.Stats.Personality:
+                    return "Personality";
+                case DFCareer.Stats.Speed:
+                    return "Speed";
+                case DFCareer.Stats.Luck:
+                    return "Luck";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        public string GetAbbreviatedStatName(DFCareer.Stats stat)
+        {
+            switch (stat)
+            {
+                case DFCareer.Stats.Strength:
+                    return "STR";
+                case DFCareer.Stats.Intelligence:
+                    return "INT";
+                case DFCareer.Stats.Willpower:
+                    return "WIL";
+                case DFCareer.Stats.Agility:
+                    return "AGI";
+                case DFCareer.Stats.Endurance:
+                    return "END";
+                case DFCareer.Stats.Personality:
+                    return "PER";
+                case DFCareer.Stats.Speed:
+                    return "SPD";
+                case DFCareer.Stats.Luck:
+                    return "LUC";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        public int GetStatDescriptionTextID(DFCareer.Stats stat)
+        {
+            switch (stat)
+            {
+                case DFCareer.Stats.Strength:
+                    return 0;
+                case DFCareer.Stats.Intelligence:
+                    return 1;
+                case DFCareer.Stats.Willpower:
+                    return 2;
+                case DFCareer.Stats.Agility:
+                    return 3;
+                case DFCareer.Stats.Endurance:
+                    return 4;
+                case DFCareer.Stats.Personality:
+                    return 5;
+                case DFCareer.Stats.Speed:
+                    return 6;
+                case DFCareer.Stats.Luck:
+                    return 7;
+                default:
+                    return -1;
             }
         }
 

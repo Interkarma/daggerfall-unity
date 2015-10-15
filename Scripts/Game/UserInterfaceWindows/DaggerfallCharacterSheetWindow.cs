@@ -37,10 +37,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel raceLabel = new TextLabel();
         TextLabel classLabel = new TextLabel();
         TextLabel levelLabel = new TextLabel();
-        TextLabel goldLabel = new TextLabel();
+        //TextLabel goldLabel = new TextLabel();
         TextLabel fatigueLabel = new TextLabel();
         TextLabel healthLabel = new TextLabel();
-        TextLabel encumbranceLabel = new TextLabel();
+        //TextLabel encumbranceLabel = new TextLabel();
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
 
         public DaggerfallCharacterSheetWindow(IUserInterfaceManager uiManager)
@@ -66,10 +66,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             raceLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(41, 14), NativePanel);
             classLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(46, 24), NativePanel);
             levelLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(45, 34), NativePanel);
-            goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(39, 44), NativePanel);
+            //goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(39, 44), NativePanel);
             fatigueLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(57, 54), NativePanel);
             healthLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(52, 64), NativePanel);
-            encumbranceLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(90, 74), NativePanel);
+            //encumbranceLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(90, 74), NativePanel);
 
             // Setup stat labels
             Vector2 pos = new Vector2(150, 17);
