@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -402,6 +403,16 @@ namespace DaggerfallWorkshop.Game
 
         public static Texture2D GetTextureFromImg(string name, TextureFormat format = TextureFormat.ARGB32)
         {
+            DFPosition offset;
+            Texture2D texture = GetTextureFromImg(name, out offset, format);
+
+            return texture;
+        }
+
+        public static Texture2D GetTextureFromImg(string name, out DFPosition offset, TextureFormat format = TextureFormat.ARGB32)
+        {
+            offset = new DFPosition();
+
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return null;
@@ -409,6 +420,19 @@ namespace DaggerfallWorkshop.Game
             ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
             imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
             Texture2D texture = GetTextureFromImg(imgFile, format);
+            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+
+            offset = imgFile.ImageOffset;
+
+            return texture;
+        }
+
+        public static Texture2D GetTextureFromImg(ImgFile img, TextureFormat format = TextureFormat.ARGB32)
+        {
+            DFBitmap bitmap = img.GetDFBitmap();
+            Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
+            texture.SetPixels32(img.GetColor32(bitmap, 0));
+            texture.Apply(false, true);
             texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             return texture;
@@ -424,19 +448,17 @@ namespace DaggerfallWorkshop.Game
             return imgFile.GetDFBitmap();
         }
 
-        public static Texture2D GetTextureFromImg(ImgFile img, TextureFormat format = TextureFormat.ARGB32)
+        public static Texture2D GetTextureFromCifRci(string name, int record, int frame = 0, TextureFormat format = TextureFormat.ARGB32)
         {
-            DFBitmap bitmap = img.GetDFBitmap();
-            Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
-            texture.SetPixels32(img.GetColor32(bitmap, 0));
-            texture.Apply(false, true);
-            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            DFPosition offset;
+            Texture2D texture = GetTextureFromCifRci(name, record, out offset, frame, format);
 
             return texture;
         }
 
-        public static Texture2D GetTextureFromCifRci(string name, int record, int frame = 0, TextureFormat format = TextureFormat.ARGB32)
+        public static Texture2D GetTextureFromCifRci(string name, int record, out DFPosition offset, int frame = 0, TextureFormat format = TextureFormat.ARGB32)
         {
+            offset = new DFPosition();
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return null;
@@ -448,6 +470,8 @@ namespace DaggerfallWorkshop.Game
             texture.SetPixels32(cifRciFile.GetColor32(bitmap, 0));
             texture.Apply(false, true);
             texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+
+            offset = cifRciFile.GetOffset(record);
 
             return texture;
         }

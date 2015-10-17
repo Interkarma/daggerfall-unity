@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -42,6 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel healthLabel = new TextLabel();
         //TextLabel encumbranceLabel = new TextLabel();
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
+        Panel paperDollPanel = new Panel();
 
         PlayerEntity PlayerEntity
         {
@@ -55,6 +57,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
+            //// TEST: Change player settings
+            //PlayerEntity.FaceIndex = 7;
+            //PlayerEntity.Race = new DarkElf();
+            //PlayerEntity.Gender = Genders.Male;
+
             // Load native texture
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)
@@ -131,6 +138,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Assign values to labels
             UpdateValues();
+
+            // Player paper doll panel
+            paperDollPanel = new Panel();
+            Texture2D raceBackground = DaggerfallUI.GetTextureFromImg(PlayerEntity.Race.PaperDollBackground);
+            paperDollPanel.Position = new Vector2(192, 1);
+            paperDollPanel.Size = new Vector2(raceBackground.width, raceBackground.height);
+            paperDollPanel.BackgroundTexture = raceBackground;
+            NativePanel.Components.Add(paperDollPanel);
+
+            // Test player paper doll body and head
+            // This will need to be moved later to another control
+            // with complete inventory support
+            SetupPlayerAvatarPanel();
         }
 
         public void UpdateValues()
@@ -217,7 +237,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return tokens.ToArray();
         }
 
-        void ShowSkillsDialogSingleColumn(List<DFCareer.Skills> skills, bool twoColumn = false)
+        void ShowSkillsDialog(List<DFCareer.Skills> skills, bool twoColumn = false)
         {
             bool secondColumn = false;
             List<TextFile.Token> tokens = new List<TextFile.Token>();
@@ -252,28 +272,73 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messageBox.Show();
         }
 
+        // Test paper doll setup only
+        // Will be moved later to a unique control
+        void SetupPlayerAvatarPanel()
+        {
+            // Player body image
+            string paperDollBodyImageName = string.Empty;
+            if (DaggerfallUnity.Settings.NoPlayerNudity)
+            {
+                if (PlayerEntity.Gender == Genders.Male)
+                    paperDollBodyImageName = PlayerEntity.Race.PaperDollBodyMaleClothed;
+                else
+                    paperDollBodyImageName = PlayerEntity.Race.PaperDollBodyFemaleClothed;
+            }
+            else
+            {
+                if (PlayerEntity.Gender == Genders.Male)
+                    paperDollBodyImageName = PlayerEntity.Race.PaperDollBodyMaleUnclothed;
+                else
+                    paperDollBodyImageName = PlayerEntity.Race.PaperDollBodyFemaleUnclothed;
+            }
+
+            // Add body
+            DFPosition offset;
+            Panel playerBodyPanel = new Panel();
+            Texture2D playerBodyTexture = DaggerfallUI.GetTextureFromImg(paperDollBodyImageName, out offset);
+            playerBodyPanel.Size = new Vector2(playerBodyTexture.width, playerBodyTexture.height);
+            playerBodyPanel.Position = new Vector2(offset.X, offset.Y);
+            playerBodyPanel.BackgroundTexture = playerBodyTexture;
+            NativePanel.Components.Add(playerBodyPanel);
+
+            // Player head image
+            Texture2D playerHeadTexture;
+            if (PlayerEntity.Gender == Genders.Male)
+                playerHeadTexture = DaggerfallUI.GetTextureFromCifRci(PlayerEntity.Race.PaperDollHeadsMale, PlayerEntity.FaceIndex, out offset);
+            else
+                playerHeadTexture = DaggerfallUI.GetTextureFromCifRci(PlayerEntity.Race.PaperDollHeadsFemale, PlayerEntity.FaceIndex, out offset);
+
+            // Add head
+            Panel playerHeadPanel = new Panel();
+            playerHeadPanel.Size = new Vector2(playerHeadTexture.width, playerHeadTexture.height);
+            playerHeadPanel.Position = new Vector2(offset.X, offset.Y);
+            playerHeadPanel.BackgroundTexture = playerHeadTexture;
+            NativePanel.Components.Add(playerHeadPanel);
+        }
+
         #endregion
 
         #region Event Handlers
 
         private void PrimarySkillsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            ShowSkillsDialogSingleColumn(PlayerEntity.GetPrimarySkills());
+            ShowSkillsDialog(PlayerEntity.GetPrimarySkills());
         }
 
         private void MajorSkillsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            ShowSkillsDialogSingleColumn(PlayerEntity.GetMajorSkills());
+            ShowSkillsDialog(PlayerEntity.GetMajorSkills());
         }
 
         private void MinorSkillsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            ShowSkillsDialogSingleColumn(PlayerEntity.GetMinorSkills());
+            ShowSkillsDialog(PlayerEntity.GetMinorSkills());
         }
 
         private void MiscSkillsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            ShowSkillsDialogSingleColumn(PlayerEntity.GetMiscSkills(), true);
+            ShowSkillsDialog(PlayerEntity.GetMiscSkills(), true);
         }
 
         private void StatButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

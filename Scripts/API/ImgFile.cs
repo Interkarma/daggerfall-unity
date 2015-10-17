@@ -167,6 +167,14 @@ namespace DaggerfallConnect.Arena2
             get { return "IMG File"; }
         }
 
+        /// <summary>
+        /// Gets XOffset and YOffset from image header.
+        /// </summary>
+        public DFPosition ImageOffset
+        {
+            get { return new DFPosition(header.XOffset, header.YOffset); }
+        }
+
         #endregion
 
         #region Public Methods

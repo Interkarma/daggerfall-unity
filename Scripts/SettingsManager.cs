@@ -23,6 +23,11 @@ using IniParser.Model;
 
 namespace DaggerfallWorkshop
 {
+    /// <summary>
+    /// Settings manager for reading game configuration from INI file.
+    /// Can read from settings.ini in game data directory or from built-in fallback.ini in Resources.
+    /// For any setting failing a read (ot settings.ini missing), fallback.ini will be used instead.
+    /// </summary>
     public class SettingsManager
     {
         const string settingsIniName = "settings.ini";
@@ -31,10 +36,12 @@ namespace DaggerfallWorkshop
         const string sectionStartup = "Startup";
         const string sectionGUI = "GUI";
         const string sectionControls = "Controls";
+        const string sectionChildGuard = "ChildGuard";
 
         bool usingFallback = false;
         FileIniDataParser iniParser = new FileIniDataParser();
-        IniData iniData;
+        IniData fallbackIniData = null;
+        IniData userIniData = null;
 
         public SettingsManager()
         {
@@ -73,6 +80,12 @@ namespace DaggerfallWorkshop
             set { SetBool(sectionControls, "HeadBobbing", value); }
         }
 
+        public bool NoPlayerNudity
+        {
+            get { return GetBool(sectionChildGuard, "NoPlayerNudity"); }
+            set { SetBool(sectionChildGuard, "NoPlayerNudity", value); }
+        }
+
         #endregion
 
         #region Public Methods
@@ -88,31 +101,35 @@ namespace DaggerfallWorkshop
 
         void ReadSettings()
         {
-            string path = Path.Combine(Application.dataPath, settingsIniName);
-            if (File.Exists(path))
+            // Attempt to load settings.ini
+            bool loadedUserSettings = false;
+            string userIniPath = Path.Combine(Application.dataPath, settingsIniName);
+            if (File.Exists(userIniPath))
             {
-                // Load settings.ini
-                iniData = iniParser.ReadFile(path);
+                userIniData = iniParser.ReadFile(userIniPath);
+                loadedUserSettings = true;
+            }
+
+            // Load fallback.ini
+            bool loadedFallbackSettings = false;
+            TextAsset asset = Resources.Load<TextAsset>(fallbackIniName);
+            if (asset != null)
+            {
+                MemoryStream stream = new MemoryStream(asset.bytes);
+                StreamReader reader = new StreamReader(stream);
+                fallbackIniData = iniParser.ReadData(reader);
+                reader.Close();
+                usingFallback = true;
+                loadedFallbackSettings = true;
+            }
+
+            // Report on primary ini file
+            if (loadedUserSettings)
                 DaggerfallUnity.LogMessage("Loaded settings.ini.");
-            }
+            else if (!loadedUserSettings && loadedFallbackSettings)
+                DaggerfallUnity.LogMessage("Loaded fallback.ini");
             else
-            {
-                // Load fallback.ini
-                TextAsset asset = Resources.Load<TextAsset>(fallbackIniName);
-                if (asset != null)
-                {
-                    MemoryStream stream = new MemoryStream(asset.bytes);
-                    StreamReader reader = new StreamReader(stream);
-                    iniData = iniParser.ReadData(reader);
-                    reader.Close();
-                    usingFallback = true;
-                    DaggerfallUnity.LogMessage("Loaded fallback.ini");
-                }
-                else
-                {
-                    DaggerfallUnity.LogMessage("Failed to load fallback.ini.");
-                }
-            }
+                DaggerfallUnity.LogMessage("Failed to load fallback.ini.");
         }
 
         void WriteSettings()
@@ -122,28 +139,41 @@ namespace DaggerfallWorkshop
                 string path = Path.Combine(Application.dataPath, settingsIniName);
                 if (File.Exists(path))
                 {
-                    iniParser.WriteFile(path, iniData);
+                    iniParser.WriteFile(path, userIniData);
                 }
             }
         }
 
         string GetData(string sectionName, string valueName)
         {
-            if (iniData != null)
+            try
             {
-                return iniData[sectionName][valueName];
+                if (userIniData != null)
+                    return userIniData[sectionName][valueName];
+                else
+                    throw new Exception();
             }
-            else
+            catch
             {
-                return string.Empty;
+                if (fallbackIniData != null)
+                    return fallbackIniData[sectionName][valueName];
+                else
+                    throw new Exception("GetData() could not find settings.ini or fallback.ini.");
             }
         }
 
         void SetData(string sectionName, string valueName, string valueData)
         {
-            if (iniData != null)
+            try
             {
-                iniData[sectionName][valueName] = valueData;
+                if (userIniData != null)
+                    userIniData[sectionName][valueName] = valueData;
+                else
+                    throw new Exception();
+            }
+            catch
+            {
+                throw new Exception(string.Format("Failed to SetData() for value {0}.", valueName));
             }
         }
 

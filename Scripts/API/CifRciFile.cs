@@ -228,6 +228,23 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
+        /// Gets X and Y offset of specified record (where appropriate).
+        /// </summary>
+        /// <param name="record">Index of record.</param>
+        /// <returns>DFPosition object.</returns>
+        public DFPosition GetOffset(int record)
+        {
+            // Validate
+            if (record < 0 || record >= RecordCount)
+                return new DFPosition(0, 0);
+
+            if (records[record].Header.FrameCount > 1)
+                return new DFPosition(0, 0);
+            else
+                return new DFPosition(records[record].Header.XOffset, records[record].Header.YOffset);
+        }
+
+        /// <summary>
         /// Gets bitmap data as indexed 8-bit byte array for specified record and frame.
         /// </summary>
         /// <param name="record">Index of record.</param>
