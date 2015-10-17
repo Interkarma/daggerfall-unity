@@ -284,7 +284,7 @@ namespace DaggerfallWorkshop.Game.Entity
             SetSkillValue((DFCareer.Skills)index, value);
         }
 
-        public DFCareer.Stats GetPrimaryStat(DFCareer.Skills skill)
+        public static DFCareer.Stats GetPrimaryStat(DFCareer.Skills skill)
         {
             switch (skill)
             {
@@ -363,7 +363,7 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
-        public DFCareer.Stats GetPrimaryStat(int index)
+        public static DFCareer.Stats GetPrimaryStat(int index)
         {
             return GetPrimaryStat((DFCareer.Skills)index);
         }

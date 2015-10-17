@@ -48,6 +48,29 @@ namespace DaggerfallConnect.Arena2
             get { return (int)((header.TextRecordHeaderLength / 6) - 1); }
         }
 
+        /// <summary>
+        /// Gets a NewLineToken.
+        /// </summary>
+        public static Token NewLineToken
+        {
+            get
+            {
+                Token newLineToken = new Token();
+                newLineToken.formatting = Formatting.NewLine;
+                return newLineToken;
+            }
+        }
+
+        public static Token TabToken
+        {
+            get
+            {
+                Token tabToken = new Token();
+                tabToken.formatting = Formatting.PositionPrefix;
+                return tabToken;
+            }
+        }
+
         #endregion
 
         #region Enums
@@ -78,6 +101,8 @@ namespace DaggerfallConnect.Arena2
             EndOfPage = 0xf6,
             SubrecordSeparator = 0xff,
             EndOfRecord = 0xfe,
+
+            Nothing = 0xffff,
         }
 
         #endregion
@@ -318,9 +343,9 @@ namespace DaggerfallConnect.Arena2
         /// <param name="position">Position in buffer to start tokenizing (e.g. start of record or start of page).</param>
         /// <param name="endToken">Formatting byte that terminates token stream (e.g. Formatting.EndOfRecord or Formatting.EndOfPage).</param>
         /// <returns>Array of text and formatting tokens.</returns>
-        public static TextFile.Token[] ReadTokens(ref byte[] buffer, int position, Formatting endToken)
+        public static Token[] ReadTokens(ref byte[] buffer, int position, Formatting endToken)
         {
-            List<TextFile.Token> tokens = new List<TextFile.Token>();
+            List<Token> tokens = new List<Token>();
 
             while (position < buffer.Length)
             {
@@ -328,51 +353,37 @@ namespace DaggerfallConnect.Arena2
                 if (nextByte == (byte)endToken)
                     break;
 
-                if (nextByte >= (byte)TextFile.Formatting.FirstCharacter && nextByte <= (byte)TextFile.Formatting.LastCharacter)
-                    tokens.Add(ReadTextToken(ref buffer, position, out position));
-                else
+                if (IsFormattingToken(nextByte))
                     tokens.Add(ReadFormattingToken(ref buffer, position, out position));
+                else
+                    tokens.Add(ReadTextToken(ref buffer, position, out position));     
             }
 
             return tokens.ToArray();
         }
 
-        private static TextFile.Token ReadTextToken(ref byte[] buffer, int position, out int endPosition)
+        private static Token ReadFormattingToken(ref byte[] buffer, int position, out int endPosition)
         {
-            // Find length of text data
-            int start = position;
-            int count = 0;
-            while (position < buffer.Length)
-            {
-                byte nextByte = buffer[position++];
-                if (nextByte >= (byte)TextFile.Formatting.FirstCharacter && nextByte <= (byte)TextFile.Formatting.LastCharacter)
-                    count++;
-                else
-                    break;
-            }
+            Formatting formatting = (Formatting)buffer[position++];
 
-            // Create token
-            TextFile.Token token = new TextFile.Token();
-            token.formatting = TextFile.Formatting.Text;
-            token.text = Encoding.UTF8.GetString(buffer, start, count);
-            endPosition = start + count;
-
-            return token;
-        }
-
-        private static TextFile.Token ReadFormattingToken(ref byte[] buffer, int position, out int endPosition)
-        {
-            TextFile.Formatting formatting = (TextFile.Formatting)buffer[position++];
-
+            byte? peek;
             int x = 0, y = 0;
-            TextFile.Token token = new TextFile.Token();
+            Token token = new Token();
             token.formatting = formatting;
             switch (token.formatting)
             {
-                case TextFile.Formatting.NewLineOffset:
+                case Formatting.NewLineOffset:
                     break;
-                case TextFile.Formatting.FontPrefix:
+                case Formatting.FontPrefix:
                     x = buffer[position++];
+                    break;
+                case Formatting.PositionPrefix:
+                    peek = PeekByte(ref buffer, position);
+                    if (peek != null && IsFormattingToken(peek.Value))
+                    {
+                        x = peek.Value;
+                        position++;
+                    }
                     break;
             }
             token.x = x;
@@ -380,6 +391,45 @@ namespace DaggerfallConnect.Arena2
             endPosition = position;
 
             return token;
+        }
+
+        private static Token ReadTextToken(ref byte[] buffer, int position, out int endPosition)
+        {
+            // Find length of text data
+            int start = position;
+            int count = 0;
+            while (position < buffer.Length)
+            {
+                byte nextByte = buffer[position++];
+                if (nextByte >= (byte)Formatting.FirstCharacter && nextByte <= (byte)Formatting.LastCharacter)
+                    count++;
+                else
+                    break;
+            }
+
+            // Create token
+            Token token = new Token();
+            token.formatting = Formatting.Text;
+            token.text = Encoding.UTF8.GetString(buffer, start, count);
+            endPosition = start + count;
+
+            return token;
+        }
+
+        private static bool IsFormattingToken(byte value)
+        {
+            if (value >= (byte)Formatting.FirstCharacter && value <= (byte)Formatting.LastCharacter)
+                return false;
+            else
+                return true;
+        }
+
+        private static byte? PeekByte(ref byte[] buffer, int currentIndex, int offsetIndex = 0)
+        {
+            if (currentIndex + offsetIndex >= buffer.Length)
+                return null;
+            else
+                return buffer[currentIndex + offsetIndex];
         }
 
         #endregion

@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Panel messagePanel = new Panel();
         Panel buttonPanel = new Panel();
-        MultilineTextLabel label = new MultilineTextLabel();
+        MultiFormatTextLabel label = new MultiFormatTextLabel();
         List<Button> buttons = new List<Button>();
         int buttonSpacing = 32;
         int buttonTextDistance = 4;

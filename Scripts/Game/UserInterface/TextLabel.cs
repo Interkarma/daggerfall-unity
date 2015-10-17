@@ -71,6 +71,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return labelTexture; }
         }
 
+        public int TextWidth
+        {
+            get { return totalWidth; }
+        }
+
+        public int TextHeight
+        {
+            get { return totalHeight; }
+        }
+
         public override void Draw()
         {
             base.Draw();

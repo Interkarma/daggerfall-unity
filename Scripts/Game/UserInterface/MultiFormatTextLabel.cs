@@ -19,15 +19,14 @@ using DaggerfallConnect.Arena2;
 namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
-    /// A multiline text label using a pixel font.
-    /// Designed for Daggerfall's multiline text records.
-    /// This class will be extended later as required.
+    /// A multi-format text label supporting variable pixel fonts and layouts.
+    /// Designed for Daggerfall's formatted text records such as books and status popups.
+    /// This class will be improved over time as needed.
     /// </summary>
-    public class MultilineTextLabel : BaseScreenComponent
+    public class MultiFormatTextLabel : BaseScreenComponent
     {
         PixelFont font;
         int rowLeading = 0;
-        HorizontalAlignment rowAlignment = HorizontalAlignment.None;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
@@ -49,17 +48,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return rowLeading; }
             set { SetRowLeading(value); }
-        }
-
-        /// <summary>
-        /// Gets or sets row horizontal alignment.
-        /// If set to None, text will use formatting as defined in token stream.
-        /// Otherwise, text will ignore formatting defined in token stream.
-        /// </summary>
-        public HorizontalAlignment RowAlignment
-        {
-            get { return rowAlignment; }
-            set { SetRowAlignment(value); }
         }
 
         public Vector2 ShadowPosition
@@ -94,15 +82,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Sets the multiline text from a multiline record token array.
+        /// Sets the formatted text from a token array.
         /// </summary>
-        /// <param name="multilineRecordTokens">Multiline record token array.</param>
-        public virtual void SetTextTokens(TextFile.Token[] multilineRecordTokens)
+        /// <param name="tokens">Format token array.</param>
+        public virtual void SetTextTokens(TextFile.Token[] tokens)
         {
             if (font == null)
                 font = DaggerfallUI.DefaultFont;
 
-            LayoutTextRows(multilineRecordTokens);
+            LayoutTextElements(tokens);
         }
 
         #region Protected Methods
@@ -112,53 +100,82 @@ namespace DaggerfallWorkshop.Game.UserInterface
             this.rowLeading = amount;
         }
 
-        protected virtual void SetRowAlignment(HorizontalAlignment alignment)
-        {
-            this.rowAlignment = alignment;
-        }
-
         #endregion
 
         #region Private Methods
 
-        void LayoutTextRows(TextFile.Token[] tokens)
+        const int tabWidth = 45;
+
+        int cursorX = 0;
+        int cursorY = 0;
+        int tabStop = 0;
+
+        int LineHeight
+        {
+            get { return font.GlyphHeight + rowLeading; }
+        }
+
+        void NewLine()
+        {
+            cursorX = 0;
+            cursorY += LineHeight;
+            totalHeight += LineHeight;
+            tabStop = 0;
+        }
+
+        void LayoutTextElements(TextFile.Token[] tokens)
         {
             labels.Clear();
             totalWidth = 0;
             totalHeight = 0;
+            cursorX = 0;
+            cursorY = 0;
 
-            int x = 0, y = 0;
-            int newLine = font.GlyphHeight + rowLeading;
-            foreach (var token in tokens)
+            TextFile.Token token = new TextFile.Token();
+            TextFile.Token nextToken = new TextFile.Token();
+            for (int i = 0; i < tokens.Length; i++)
             {
-                // Handle user-specified alignment
-                if (rowAlignment != HorizontalAlignment.None && lastLabel != null)
-                    lastLabel.HorizontalAlignment = rowAlignment;
+                token = tokens[i];
+                nextToken.formatting = TextFile.Formatting.Nothing;
+                if (i < tokens.Length - 1)
+                    nextToken = tokens[i + 1];
 
-                // A justify code also seems to indicate a newline
+                // Still working out rules for justify logic
+                // This will adapt over time as required
                 switch (token.formatting)
                 {
                     case TextFile.Formatting.NewLine:
-                        y += newLine;
+                        NewLine();
                         break;
                     case TextFile.Formatting.JustifyLeft:
-                        if (rowAlignment == HorizontalAlignment.None && lastLabel != null)
-                            lastLabel.HorizontalAlignment = HorizontalAlignment.Left;
-                        y += newLine;
+                        NewLine();
                         break;
                     case TextFile.Formatting.JustifyCenter:
-                        if (rowAlignment == HorizontalAlignment.None && lastLabel != null)
+                        if (lastLabel != null)
                             lastLabel.HorizontalAlignment = HorizontalAlignment.Center;
-                        y += newLine;
+                        NewLine();
+                        break;
+                    case TextFile.Formatting.PositionPrefix:
+                        if (token.x != 0)
+                        {
+                            // Tab by specific number of pixels
+                            cursorX += token.x;
+                        }
+                        else
+                        {
+                            // Tab to next tab stop
+                            tabStop++;
+                            cursorX = tabStop * tabWidth;
+                        }
                         break;
                     case TextFile.Formatting.Text:
-                        TextLabel label = AddTextLabel(font, new Vector2(x, y), token.text);
-                        label.HorizontalAlignment = rowAlignment;
+                        TextLabel label = AddTextLabel(font, new Vector2(cursorX, cursorY), token.text);
                         label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
                         label.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
                         label.ShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
                         labels.Add(label);
                         lastLabel = label;
+                        cursorX += label.TextWidth;
                         break;
                     default:
                         Debug.Log("MultilineTextLabel: Unknown formatting token: " + (int)token.formatting);
@@ -167,13 +184,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 if (lastLabel != null)
                 {
-                    Vector2 size = lastLabel.Size;
-                    if (size.x > totalWidth)
-                        totalWidth = (int)size.x;
+                    int rowWidth = (int)lastLabel.Position.x + lastLabel.TextWidth;
+                    if (rowWidth > totalWidth)
+                        totalWidth = rowWidth;
                 }
             }
 
-            totalHeight = labels.Count * (font.GlyphHeight + rowLeading);
             Size = new Vector2(totalWidth, totalHeight);
         }
 
@@ -181,7 +197,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             TextLabel textLabel = new TextLabel();
             textLabel.ScalingMode = Scaling.None;
-            textLabel.HorizontalAlignment = rowAlignment;
             textLabel.Font = font;
             textLabel.Position = position;
             textLabel.Text = text;

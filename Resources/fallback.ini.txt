@@ -16,6 +16,7 @@ MainFilterMode=0
 GUIFilterMode=0
 Crosshair=True
 SwapHealthAndFatigueColors=False
+DimAlphaStrength=0.6
 
 [Controls]
 InvertMouseVertical=False

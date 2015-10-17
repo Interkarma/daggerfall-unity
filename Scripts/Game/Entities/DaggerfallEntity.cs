@@ -154,6 +154,75 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #endregion
 
+        #region Public Methods
+
+        /// <summary>
+        /// Gets list of primary skills.
+        /// </summary>
+        public List<DFCareer.Skills> GetPrimarySkills()
+        {
+            List<DFCareer.Skills> primarySkills = new List<DFCareer.Skills>();
+            primarySkills.Add(career.PrimarySkill1);
+            primarySkills.Add(career.PrimarySkill2);
+            primarySkills.Add(career.PrimarySkill3);
+
+            return primarySkills;
+        }
+
+        /// <summary>
+        /// Gets list of major skills.
+        /// </summary>
+        public List<DFCareer.Skills> GetMajorSkills()
+        {
+            List<DFCareer.Skills> majorSkills = new List<DFCareer.Skills>();
+            majorSkills.Add(career.MajorSkill1);
+            majorSkills.Add(career.MajorSkill2);
+            majorSkills.Add(career.MajorSkill3);
+
+            return majorSkills;
+        }
+
+        /// <summary>
+        /// Gets list of minor skills.
+        /// </summary>
+        public List<DFCareer.Skills> GetMinorSkills()
+        {
+            List<DFCareer.Skills> minorSkills = new List<DFCareer.Skills>();
+            minorSkills.Add(career.MinorSkill1);
+            minorSkills.Add(career.MinorSkill2);
+            minorSkills.Add(career.MinorSkill3);
+            minorSkills.Add(career.MinorSkill4);
+            minorSkills.Add(career.MinorSkill5);
+            minorSkills.Add(career.MinorSkill6);
+
+            return minorSkills;
+        }
+
+        /// <summary>
+        /// Gets list of miscellaneous skills.
+        /// </summary>
+        public List<DFCareer.Skills> GetMiscSkills()
+        {
+            List<DFCareer.Skills> primarySkills = GetPrimarySkills();
+            List<DFCareer.Skills> majorSkills = GetMajorSkills();
+            List<DFCareer.Skills> minorSkills = GetMinorSkills();
+
+            List<DFCareer.Skills> miscSkills = new List<DFCareer.Skills>();
+            for (int i = 0; i < DaggerfallSkills.Count; i++)
+            {
+                if (!primarySkills.Contains((DFCareer.Skills)i) &&
+                    !majorSkills.Contains((DFCareer.Skills)i) &&
+                    !minorSkills.Contains((DFCareer.Skills)i))
+                {
+                    miscSkills.Add((DFCareer.Skills)i);
+                }
+            }
+
+            return miscSkills;
+        }
+
+        #endregion
+
         #region Temporary Events
 
         // These tie in with temporary effects and will be moved later

@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             infoPanel.Position = new Vector2(0, 15);
 
             // Setup info text
-            MultilineTextLabel infoText = new MultilineTextLabel();
+            MultiFormatTextLabel infoText = new MultiFormatTextLabel();
             infoPanel.Components.Add(infoText);
             infoText.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(strPlayerReflexesDetermine));
             infoText.HorizontalAlignment = HorizontalAlignment.Center;
