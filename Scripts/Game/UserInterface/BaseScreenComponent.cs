@@ -40,8 +40,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         HorizontalAlignment horizontalAlignment = HorizontalAlignment.None;
         VerticalAlignment verticalAlignment = VerticalAlignment.None;
 
-        float doubleClickTime = 0.3f;
-        float firstClickTime;
+        float doubleClickDelay = 0.3f;
+        float clickTime;
+        float lastClickTime;
 
         Vector2 lastMousePosition;
         Vector2 mousePosition;
@@ -333,10 +334,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 scaledMousePosition.y *= 1f / localScale.y;
             }
 
-            // Clear double-click timer if mouse moves
-            if (mousePosition != lastMousePosition)
-                firstClickTime = 0;
-
             // Handle left mouse clicks
             bool leftMouseDown = Input.GetMouseButtonDown(0);
             if (mouseOverComponent && leftMouseDown)
@@ -344,24 +341,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Single click event
                 MouseClick(scaledMousePosition);
 
-                // Double-click event
-                if (firstClickTime == 0)
-                {
-                    firstClickTime = Time.time;
-                }
-                else
-                {
-                    float nextClickTime = Time.time;
-                    if (nextClickTime - firstClickTime < doubleClickTime)
-                    {
-                        firstClickTime = 0;
-                        MouseDoubleClick(scaledMousePosition);
-                    }
-                    else
-                    {
-                        firstClickTime = Time.time;
-                    }
-                }
+                // Store mouse click timing
+                lastClickTime = clickTime;
+                clickTime = Time.realtimeSinceStartup;
+
+                // Handle left mouse double-clicks
+                if (clickTime - lastClickTime < doubleClickDelay)
+                    MouseDoubleClick(scaledMousePosition);
             }
 
             // Handle mouse wheel
@@ -639,6 +625,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 case Scaling.ScaleToFit:
                     rectangle = ScaleToFit(rectangle);
                     break;
+                case Scaling.Free:
+                    rectangle = ScaleFreely(rectangle);
+                    break;
             }
 
             if (parent != null)
@@ -781,6 +770,31 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 finalRect.height *= scale;
 
                 localScale.x = localScale.y = scale;
+            }
+
+            return finalRect;
+        }
+
+        /// <summary>
+        /// Scale to fit parent with no regard to aspect ratio.
+        /// </summary>
+        private Rect ScaleFreely(Rect myRect)
+        {
+            Rect finalRect = myRect;
+
+            if (parent != null)
+            {
+                int parentWidth = parent.InteriorWidth;
+                int parentHeight = parent.InteriorHeight;
+
+                float xScale = parentWidth / size.x;
+                float yScale = parentHeight / size.y;
+
+                finalRect.width *= xScale;
+                finalRect.height *= yScale;
+
+                localScale.x = xScale;
+                localScale.y = yScale;
             }
 
             return finalRect;

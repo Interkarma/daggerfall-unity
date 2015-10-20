@@ -504,6 +504,9 @@ namespace DaggerfallConnect
         /// </summary>
         public struct RmbBlockDoorRecord
         {
+            /// <summary>Offset of this object from start of RMB record. Not required unless you are extending the block reader.</summary>
+            internal Int32 This;
+
             /// <summary>X position in 3D space.</summary>
             public Int32 XPos;
 

@@ -70,7 +70,7 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
-            if (!ReadyCheck() || GameManager.GamePaused)
+            if (!ReadyCheck() || GameManager.IsGamePaused)
             {
                 return;
             }

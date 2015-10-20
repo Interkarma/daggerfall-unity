@@ -41,10 +41,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             parentPanel.BackgroundColor = Color.black;
 
             // Native panel
-            nativePanel.ScalingMode = Scaling.ScaleToFit;
             nativePanel.HorizontalAlignment = HorizontalAlignment.Center;
+            nativePanel.VerticalAlignment = VerticalAlignment.Middle;
             nativePanel.BackgroundTextureLayout = TextureLayout.StretchToFill;
             nativePanel.Size = new Vector2(nativeScreenWidth, nativeScreenHeight);
+
+            // Set native panel scaling mode
+            bool freeScale = DaggerfallUnity.Settings.FreeScaling;
+            if (freeScale)
+                nativePanel.ScalingMode = Scaling.Free;
+            else
+                nativePanel.ScalingMode = Scaling.ScaleToFit;
         }
 
         protected DaggerfallUnity DaggerfallUnity

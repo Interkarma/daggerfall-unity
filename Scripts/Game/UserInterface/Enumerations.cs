@@ -98,5 +98,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         None,                           // Panel scale is fixed
         StretchToFill,                  // Panel will stretch to fill parent
         ScaleToFit,                     // Panel will scale to fit parent while maintaining aspect ratio
+        Free,                           // Panel will scale to fit parent with no regard to aspect ratio
     }
 }

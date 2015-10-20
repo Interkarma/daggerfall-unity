@@ -22,27 +22,37 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
     /// <summary>
-    /// This component is intended to survive from the start screen into main game.
-    /// It will carry settings for new characters or detail an existing game to load.
-    /// Uses DontDestroyOnLoad() to keep information live during transition.
+    /// Game startup and shutdown helper.
     /// </summary>
     public class StartGameBehaviour : MonoBehaviour
     {
-        bool doNotDeploy = true;
-        StartMethods startMethod = StartMethods.Nothing;
-        StartMethods lastMethod = StartMethods.Nothing;
+        #region Fields
+
+        // Constants
+        string fallbackLocatioName = "Daggerfall/Privateer's Hold";
+
+        // Editor properties
+        public StartMethods StartMethod = StartMethods.Nothing;
+        public bool EnableVideos = true;
+        public bool GodMod = false;
+
+        // Private fields
+        StartMethods lastStartMethod = StartMethods.Nothing;
         CharacterSheet characterSheet;
         int classicSaveIndex = -1;
+        GameObject player;
+        PlayerEnterExit playerEnterExit;
+        PlayerHealth playerHealth;
 
-        public StartMethods StartMethod
-        {
-            get { return startMethod; }
-            set { startMethod = value; }
-        }
+        #endregion
+
+        #region Properties
 
         public CharacterSheet CharacterSheet
         {
@@ -56,46 +66,65 @@ namespace DaggerfallWorkshop.Game.Utility
             set { classicSaveIndex = value; }
         }
 
+        #endregion
+
+        #region Enums
+
         public enum StartMethods
         {
-            Nothing,
-            FromINI,
-            DefaultCharacter,
-            NewCharacter,
-            LoadClassicSave,
-            LoadDaggerfallUnitySave,
+            Nothing,                                // No startup action
+            TitleMenu,                              // Open title menu
+            NewCharacter,                           // Spawn character to start location in INI
+            LoadDaggerfallUnityQuickSave,           // Loads the current quicksave slot (if present)
+            //LoadDaggerfallUnitySave,              // TODO: This will replace quicksave option
+            LoadClassicSave,                        // Loads a classic save
         }
+
+        #endregion
+
+        #region Unity
 
         void Awake()
         {
-            DontDestroyOnLoad(transform.gameObject);
+            // Get player objects
+            player = FindPlayer();
+            playerEnterExit = FindPlayerEnterExit(player);
+            playerHealth = FindPlayerHealth(player);
         }
 
-        void OnLevelWasLoaded()
+        void Start()
         {
-            // Lower doNotDeploy flag after level transition to main scene
-            if (Application.loadedLevel == 1)
-                doNotDeploy = false;
+            ApplyStartSettings();
         }
 
         void Update()
         {
-            if (startMethod != lastMethod && !doNotDeploy)
+            // Restart game using method provided
+            if (StartMethod != lastStartMethod)
             {
-                lastMethod = startMethod;
+                lastStartMethod = StartMethod;
+                DaggerfallUI.Instance.PopToHUD();
+                GameManager.Instance.PauseGame(true);
                 InvokeStartMethod();
             }
         }
 
+        #endregion
+
+        #region Private Methods
+
         void InvokeStartMethod()
         {
-            switch(startMethod)
+            switch(StartMethod)
             {
-                case StartMethods.FromINI:
-                    StartFromINI();
+                case StartMethods.TitleMenu:
+                    StartTitleMenu();
                     break;
                 case StartMethods.NewCharacter:
                     StartNewCharacter();
+                    break;
+                case StartMethods.LoadDaggerfallUnityQuickSave:
+                    StartFromQuickSave();
                     break;
                 case StartMethods.LoadClassicSave:
                     StartFromClassicSave();
@@ -105,38 +134,114 @@ namespace DaggerfallWorkshop.Game.Utility
             }
         }
 
-        #region INI Startup
+        #endregion
 
-        void StartFromINI()
+        #region Common Startup
+
+        void ApplyStartSettings()
         {
-            DFLocation location;
-            if (!GameObjectHelper.FindMultiNameLocation(DaggerfallUnity.Settings.StartingLocation, out location))
-                return;
-
-            StreamingWorld streamingWorld = FindStreamingWorld();
-            if (DaggerfallUnity.Settings.StartInDungeon)
+            // Camera settings
+            GameObject cameraObject = GameObject.FindGameObjectWithTag("MainCamera");
+            if (cameraObject)
             {
-                PlayerEnterExit playerEnterExit = GetComponent<PlayerEnterExit>();
+                // Set camera FOV
+                Camera camera = cameraObject.GetComponent<Camera>();
+                if (camera)
+                    camera.fieldOfView = DaggerfallUnity.Settings.FieldOfView;
+
+                // Set mouse look
+                PlayerMouseLook mouseLook = cameraObject.GetComponent<PlayerMouseLook>();
+                if (mouseLook)
+                    mouseLook.invertMouseY = DaggerfallUnity.Settings.InvertMouseVertical;
+
+                // Set mouse look smoothing
+                if (mouseLook)
+                    mouseLook.enableSmoothing = DaggerfallUnity.Settings.MouseLookSmoothing;
+
+                // Set mouse look sensitivity
+                if (mouseLook)
+                    mouseLook.sensitivityScale = DaggerfallUnity.Settings.MouseLookSensitivity;
+            }
+
+            // VSync settings
+            if (DaggerfallUnity.Settings.VSync)
+                QualitySettings.vSyncCount = 1;
+            else
+                QualitySettings.vSyncCount = 0;
+
+            // Filter settings
+            DaggerfallUnity.Instance.MaterialReader.MainFilterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+
+            // HUD settings
+            DaggerfallHUD hud = DaggerfallUI.Instance.DaggerfallHUD;
+            if (hud != null)
+                hud.ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
+
+            // GodMode setting
+            playerHealth.GodMode = GodMod;
+
+            // Enable/disable videos
+            DaggerfallUI.Instance.enableVideos = EnableVideos;
+        }
+
+        #endregion
+
+        #region Startup Methods
+
+        void StartTitleMenu()
+        {
+            playerEnterExit.DisableAllParents();
+            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGame);
+        }
+
+        void StartFromQuickSave()
+        {
+            playerEnterExit.DisableAllParents();
+            if (SaveLoadManager.Instance.HasQuickSave())
+                SaveLoadManager.Instance.QuickLoad();
+        }
+
+        // Start new character to location specified in INI
+        void StartNewCharacter()
+        {
+            // Assign character sheet
+            PlayerEntity playerEntity = FindPlayerEntity();
+            playerEntity.AssignCharacter(characterSheet);
+
+            // Get start parameters
+            string startingLocationName = DaggerfallUnity.Settings.StartingLocation;
+            bool startInDungeon = DaggerfallUnity.Settings.StartInDungeon;
+
+            // Find start location
+            DFLocation location;
+            if (!GameObjectHelper.FindMultiNameLocation(startingLocationName, out location))
+            {
+                // Could not find INI location specified, fallback to Privateer's Hold
+                startInDungeon = true;
+                DaggerfallUnity.LogMessage(string.Format("Could not find {0}, fallback to {1}", startingLocationName, fallbackLocatioName), true);
+                if (!GameObjectHelper.FindMultiNameLocation(fallbackLocatioName, out location))
+                    throw new Exception("Could not find INI location or fallback location. There could be a problem with Arena2 folder.");
+            }
+
+            // Start at specified location
+            if (startInDungeon)
+            {
+                playerEnterExit.EnableDungeonParent();
                 playerEnterExit.StartDungeonInterior(location);
-                streamingWorld.suppressWorld = false;
             }
             else
             {
+                playerEnterExit.EnableExteriorParent();
+                StreamingWorld streamingWorld = FindStreamingWorld();
                 DFPosition mapPixel = MapsFile.LongitudeLatitudeToMapPixel((int)location.MapTableData.Longitude, (int)location.MapTableData.Latitude);
                 streamingWorld.MapPixelX = mapPixel.X;
                 streamingWorld.MapPixelY = mapPixel.Y;
                 streamingWorld.suppressWorld = false;
             }
-        }
 
-        #endregion
-
-        #region New Game Startup
-
-        void StartNewCharacter()
-        {
-            PlayerEntity playerEntity = FindPlayerEntity();
-            playerEntity.AssignCharacter(characterSheet);
+            // Start game
+            GameManager.Instance.PauseGame(false);
+            DaggerfallUI.Instance.FadeHUDFromBlack();
         }
 
         #endregion
@@ -150,7 +255,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 throw new IndexOutOfRangeException("classicSaveIndex out of range.");
 
             // Open saves in parent path of Arena2 folder
-            string path = Path.GetDirectoryName(DaggerfallUnity.Instance.Arena2Path);
+            string path = SaveLoadManager.Instance.DaggerfallSavePath;
             SaveGames saveGames = new SaveGames(path);
             if (!saveGames.IsPathOpen)
                 throw new Exception(string.Format("Could not open Daggerfall saves path {0}", path));
@@ -164,6 +269,7 @@ namespace DaggerfallWorkshop.Game.Utility
             SaveVars saveVars = saveGames.SaveVars;
 
             // Set player to world position
+            playerEnterExit.EnableExteriorParent();
             StreamingWorld streamingWorld = FindStreamingWorld();
             int worldX = saveTree.Header.CharacterPosition.Position.WorldX;
             int worldZ = saveTree.Header.CharacterPosition.Position.WorldZ;
@@ -185,6 +291,10 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign data to player entity
             PlayerEntity playerEntity = FindPlayerEntity();
             playerEntity.AssignCharacter(characterSheet, characterRecord.ParsedData.level, characterRecord.ParsedData.startingHealth);
+
+            // Start game
+            GameManager.Instance.PauseGame(false);
+            DaggerfallUI.Instance.FadeHUDFromBlack();
         }
 
         #endregion
@@ -200,12 +310,36 @@ namespace DaggerfallWorkshop.Game.Utility
             return streamingWorld;
         }
 
-        PlayerEntity FindPlayerEntity()
+        GameObject FindPlayer()
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (!player)
                 throw new Exception("Could not find Player.");
 
+            return player;
+        }
+
+        PlayerEnterExit FindPlayerEnterExit(GameObject player)
+        {
+            PlayerEnterExit playerEnterExit = player.GetComponent<PlayerEnterExit>();
+            if (!playerEnterExit)
+                throw new Exception("Could not find PlayerEnterExit.");
+
+            return playerEnterExit;
+        }
+
+        PlayerHealth FindPlayerHealth(GameObject player)
+        {
+            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+            if (!playerHealth)
+                throw new Exception("Could not find PlayerHealth.");
+
+            return playerHealth;
+        }
+
+        PlayerEntity FindPlayerEntity()
+        {
+            GameObject player = FindPlayer();
             PlayerEntity playerEntity = player.GetComponent<DaggerfallEntityBehaviour>().Entity as PlayerEntity;
 
             return playerEntity;

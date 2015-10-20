@@ -45,6 +45,9 @@ namespace DaggerfallWorkshop.Game.Player
             gender = Genders.Male;
             career = DaggerfallEntity.GetClassCareerTemplate(ClassCareers.Mage);
             name = "Nameless";
+            reflexes = PlayerReflexes.Average;
+            workingSkills.SetDefaults();
+            workingStats.SetFromCareer(career);
             faceIndex = 0;
         }
 

@@ -138,6 +138,59 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Finds closest door in any array of static doors.
+        /// Owner position and rotation must be set.
+        /// </summary>
+        /// <param name="position">Position to find closest door to.</param>
+        /// <param name="doors">Door array.</param>
+        /// <returns>Position of closest door in world space.</returns>
+        public static Vector3 FindClosestDoor(Vector3 position, StaticDoor[] doors, out StaticDoor closestDoorOut)
+        {
+            closestDoorOut = new StaticDoor();
+            Vector3 closestDoorPos = position;
+            float minDistance = float.MaxValue;
+            for (int i = 0; i < doors.Length; i++)
+            {
+                // Get this door centre in world space
+                Vector3 centre = doors[i].ownerRotation * doors[i].buildingMatrix.MultiplyPoint3x4(doors[i].centre) + doors[i].ownerPosition;
+
+                // Check distance and store closest
+                float distance = Vector3.Distance(position, centre);
+                if (distance < minDistance)
+                {
+                    closestDoorPos = centre;
+                    minDistance = distance;
+                    closestDoorOut = doors[i];
+                }
+            }
+
+            return closestDoorPos;
+        }
+
+        /// <summary>
+        /// Gets door normal in world space.
+        /// Owner position and rotation must be set.
+        /// </summary>
+        /// <param name="door">Door to calculate normal for.</param>
+        /// <returns>Normal pointing away from door in world.</returns>
+        public static Vector3 GetDoorNormal(StaticDoor door)
+        {
+            return Vector3.Normalize(door.ownerRotation * door.buildingMatrix.MultiplyVector(door.normal));
+        }
+
+        /// <summary>
+        /// Gets door position in world space.
+        /// </summary>
+        /// <param name="index">Door index.</param>
+        /// <returns>Door position in world space.</returns>
+        public Vector3 GetDoorPosition(int index)
+        {
+            Vector3 centre = transform.rotation * Doors[index].buildingMatrix.MultiplyPoint3x4(Doors[index].centre) + transform.position;
+
+            return centre;
+        }
+
+        /// <summary>
         /// Gets world transformed normal of door at index.
         /// </summary>
         /// <param name="index">Door index.</param>

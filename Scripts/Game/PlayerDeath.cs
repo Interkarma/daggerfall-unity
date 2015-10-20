@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game
                 if (Time.fixedTime - timeOfDeath > TimeBeforeReset)
                 {
                     // Start new game from death cinematic
-                    Application.LoadLevel(2);
+                    //Application.LoadLevel(2);
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop.Game
             startCameraHeight = mainCamera.transform.localPosition.y;
             targetCameraHeight -= playerController.height / 3;
             currentCameraHeight = startCameraHeight;
-            DaggerfallUI.Instance.FadeToBlack(FadeDuration);
+            DaggerfallUI.Instance.FadeHUDToBlack(FadeDuration);
         }
     }
 }

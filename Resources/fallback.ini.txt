@@ -5,22 +5,26 @@ MyDaggerfallUnitySavePath=
 [Video]
 ViewportX=1280
 ViewportY=720
-Fullscreen=1
+VSync=True
+Fullscreen=True
 FieldOfView=65
+MainFilterMode=0
 
 [ChildGuard]
 NoPlayerNudity=True
 
 [GUI]
-MainFilterMode=0
 GUIFilterMode=0
 Crosshair=True
 SwapHealthAndFatigueColors=False
-DimAlphaStrength=0.6
+DimAlphaStrength=0.5
+FreeScaling=False
 
 [Controls]
 InvertMouseVertical=False
+MouseLookSmoothing=True
 MouseLookSensitivity=1.0
+HeadBobbing=False
 
 [Startup]
 StartingLocation=Daggerfall/Privateer's Hold
@@ -32,5 +36,3 @@ Nystul_IncreasedTerrainDistance=False
 Nystul_RealtimeReflections=False
 UncannyValley_RealGrass=False
 UncannyValley_BirdsInDaggerfall=False
-
-[ActionBinds]

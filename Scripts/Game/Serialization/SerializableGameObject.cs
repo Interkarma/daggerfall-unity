@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class SaveDataDescription_v1
     {
-        public string description = "Daggerfall Unity Save Game V1";
+        public string description = "Daggerfall Unity Save Game v1";
     }
 
     #endregion
@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public Vector3 worldCompensation;
         public bool insideDungeon;
         public bool insideBuilding;
-        public StaticDoor buildingExteriorDoor;
+        public StaticDoor[] exteriorDoors;
     }
 
     #endregion

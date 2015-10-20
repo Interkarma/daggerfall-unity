@@ -46,13 +46,12 @@ namespace DaggerfallWorkshop.Game
         public FilterMode globalFilterMode = FilterMode.Point;
         public string startupMessage = string.Empty;
         public bool enableHUD = false;
+        public bool enableVideos = true;
 
         DaggerfallUnity dfUnity;
         AudioSource audioSource;
         DaggerfallAudioSource dfAudioSource;
         UserInterfaceManager uiManager = new UserInterfaceManager();
-        bool showSplashVideo = false;
-        bool showDeathVideo = true;
 
         Texture2D[] daggerfallParchmentTextures;
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[4];
@@ -68,6 +67,8 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallFont Font3 { get { return GetFont(3); } }
         public DaggerfallFont Font4 { get { return GetFont(4); } }
         public DaggerfallFont Font5 { get { return GetFont(5); } }
+
+        public UserInterfaceManager UserInterfaceManager { get { return uiManager; } }
 
         public static DaggerfallFont DefaultFont { get { return Instance.GetFont(4); } }
         public static DaggerfallFont TitleFont { get { return Instance.GetFont(2); } }
@@ -116,13 +117,6 @@ namespace DaggerfallWorkshop.Game
             audioSource.spatialBlend = 0;
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
 
-            // HUD is first window on stack when enabled
-            if (enableHUD)
-            {
-                dfHUD = new DaggerfallHUD(uiManager);
-                uiManager.PushWindow(dfHUD);
-            }
-
             dfPauseOptions = new DaggerfallPauseOptionsWindow(uiManager);
             dfPauseOptions.OnClose += PauseOptionsDialog_OnClose;
 
@@ -131,6 +125,17 @@ namespace DaggerfallWorkshop.Game
 
             SetupSingleton();
             PostMessage(startupMessage);
+        }
+
+        void Start()
+        {
+            // HUD is first window on stack when enabled
+            if (enableHUD)
+            {
+                dfHUD = new DaggerfallHUD(uiManager);
+                uiManager.PushWindow(dfHUD);
+                Debug.Log("HUD pushed to stack.");
+            }
         }
 
         void Update()
@@ -182,15 +187,15 @@ namespace DaggerfallWorkshop.Game
             switch (uiManager.GetMessage())
             {
                 case DaggerfallUIMessages.dfuiInitGame:
-                    Cursor.lockState = CursorLockMode.None;
+                    GameManager.Instance.PauseGame(true);
                     uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
-                    if (showSplashVideo)
+                    if (enableVideos)
                         uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, splashVideo));
                     break;
                 case DaggerfallUIMessages.dfuiInitGameFromDeath:
-                    Cursor.lockState = CursorLockMode.None;
+                    GameManager.Instance.PauseGame(true);
                     uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
-                    if (showDeathVideo)
+                    if (enableVideos)
                         uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, deathVideo));
                     break;
                 case DaggerfallUIMessages.dfuiStartNewGameWizard:
@@ -216,6 +221,18 @@ namespace DaggerfallWorkshop.Game
         {
             if (Instance.uiManager != null)
                 Instance.uiManager.PostMessage(message);
+        }
+
+        /// <summary>
+        /// Pops all windows down to HUD (if present).
+        /// </summary>
+        public void PopToHUD()
+        {
+            if (!enableHUD || dfHUD == null)
+                return;
+
+            while (uiManager.TopWindow != dfHUD)
+                uiManager.PopWindow();
         }
 
         public DaggerfallFont GetFont(int index)
@@ -302,19 +319,20 @@ namespace DaggerfallWorkshop.Game
                 dfAudioSource.PlayOneShot(clip, 0);
         }
 
-        public void FadeToBlack(float fadeDuration = 0.4f)
+        public void FadeHUDToBlack(float fadeDuration = 0.4f)
         {
-            StartCoroutine(FadeHUDBackground(dfHUD.ParentPanel.BackgroundColor, Color.black, fadeDuration));
+            if (dfHUD == null)
+                return;
+
+            StartCoroutine(FadePanelBackground(dfHUD.ParentPanel, dfHUD.ParentPanel.BackgroundColor, Color.black, fadeDuration));
         }
 
-        public void FadeFromBlack(float fadeDuration = 0.4f)
+        public void FadeHUDFromBlack(float fadeDuration = 0.4f)
         {
-            StartCoroutine(FadeHUDBackground(Color.black, dfHUD.ParentPanel.BackgroundColor, fadeDuration));
-        }
+            if (dfHUD == null)
+                return;
 
-        public void ClearFade()
-        {
-            dfHUD.ParentPanel.BackgroundColor = Color.clear;
+            StartCoroutine(FadePanelBackground(dfHUD.ParentPanel, Color.black, dfHUD.ParentPanel.BackgroundColor, fadeDuration));
         }
 
         #endregion
@@ -566,7 +584,7 @@ namespace DaggerfallWorkshop.Game
         #region Private Methods
 
         // Fades HUD background in from black to briefly hide world while loading
-        IEnumerator FadeHUDBackground(Color startColor, Color targetColor, float fadeDuration = 0.4f)
+        IEnumerator FadePanelBackground(Panel target, Color startColor, Color targetColor, float fadeDuration = 0.4f, bool popWindowOnCompletion = false)
         {
             const float fadeStep = 0.02f;
 
@@ -575,20 +593,24 @@ namespace DaggerfallWorkshop.Game
                 yield break;
 
             // Setup fade
-            dfHUD.ParentPanel.BackgroundColor = startColor;
+            target.BackgroundColor = startColor;
 
             // Progress fade
             float progress = 0;
             float increment = fadeStep / fadeDuration;
             while (progress < 1)
             {
-                dfHUD.ParentPanel.BackgroundColor = Color.Lerp(startColor, targetColor, progress);
+                target.BackgroundColor = Color.Lerp(startColor, targetColor, progress);
                 progress += increment;
                 yield return new WaitForSeconds(fadeStep);
             }
 
             // Ensure starting colour is restored
-            dfHUD.ParentPanel.BackgroundColor = targetColor;
+            target.BackgroundColor = targetColor;
+
+            // Pop window if specified
+            if (popWindowOnCompletion)
+                uiManager.PopWindow();
         }
 
         #endregion

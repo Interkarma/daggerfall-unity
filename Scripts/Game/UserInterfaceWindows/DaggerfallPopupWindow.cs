@@ -12,6 +12,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -31,7 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public Color ScreenDimColor
         {
-            get { return screenDimColor; }
+            get { return GetScreenDimColor(); }
             set { screenDimColor = value; }
         }
 
@@ -87,6 +88,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cancelled = true;
             RaiseOnCancelEvent(this);
             uiManager.PostMessage(WindowMessages.wmCloseWindow);
+        }
+
+        Color GetScreenDimColor()
+        {
+            float alpha = DaggerfallUnity.Settings.DimAlphaStrength;
+            Color dimColor = screenDimColor;
+            dimColor.a = alpha;
+
+            return dimColor;
         }
 
         #region Events

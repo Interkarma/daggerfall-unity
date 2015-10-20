@@ -791,6 +791,7 @@ namespace DaggerfallConnect.Arena2
             blockData.BlockDoorRecords = new DFBlock.RmbBlockDoorRecord[numDoorRecords];
             for (int i = 0; i < numDoorRecords; i++)
             {
+                blockData.BlockDoorRecords[i].This = (Int32)reader.BaseStream.Position;
                 blockData.BlockDoorRecords[i].XPos = reader.ReadInt32();
                 blockData.BlockDoorRecords[i].YPos = reader.ReadInt32();
                 blockData.BlockDoorRecords[i].ZPos = reader.ReadInt32();

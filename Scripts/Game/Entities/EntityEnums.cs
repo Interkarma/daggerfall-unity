@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.Entity
     /// </summary>
     public enum Genders
     {
-        Female = 1,
-        Male = 40,
+        Male,
+        Female,
     }
 
     /// <summary>

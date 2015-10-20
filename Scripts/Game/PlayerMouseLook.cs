@@ -31,7 +31,9 @@ namespace DaggerfallWorkshop.Game
         public bool lockCursor;
         public Vector2 sensitivity = new Vector2(2, 2);
         public Vector2 smoothing = new Vector2(3, 3);
+        public float sensitivityScale = 1.0f;
         public bool enableMouseLook = true;
+        public bool enableSmoothing = true;
 
         // Assign this if there's a parent object controlling motion, such as a Character Controller.
         // Yaw rotation will affect this object instead of the camera if set.
@@ -82,7 +84,7 @@ namespace DaggerfallWorkshop.Game
 			}
 
             // Enable mouse cursor when game paused
-            enableMouseLook = !GameManager.GamePaused;
+            enableMouseLook = !GameManager.IsGamePaused;
             if (!enableMouseLook)
                 return;
 
@@ -91,25 +93,40 @@ namespace DaggerfallWorkshop.Game
             if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon))
                 return;
 
-            var mouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
+            Vector2 rawMouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
 
             // Invert mouse Y
             if (invertMouseY)
-                mouseDelta.y = -mouseDelta.y;
+                rawMouseDelta.y = -rawMouseDelta.y;
 
-            // Scale input against the sensitivity setting and multiply that against the smoothing value.
-            mouseDelta = Vector2.Scale(mouseDelta, new Vector2(sensitivity.x * smoothing.x, sensitivity.y * smoothing.y));
+            // Scale sensitivity
+            float sensitivityX = sensitivity.x * sensitivityScale;
+            float sensitivityY = sensitivity.y * sensitivityScale;
 
-            // Interpolate mouse movement over time to apply smoothing delta.
-            _smoothMouse.x = Mathf.Lerp(_smoothMouse.x, mouseDelta.x, 1f / smoothing.x);
-            _smoothMouse.y = Mathf.Lerp(_smoothMouse.y, mouseDelta.y, 1f / smoothing.y);
+            if (enableSmoothing)
+            {
+                // Scale raw mouse delta against the smoothing value
+                Vector2 smoothMouseDelta = Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX * smoothing.x, sensitivityY * smoothing.y));
 
-            // Find the absolute mouse movement value from point zero.
-            _mouseAbsolute += _smoothMouse;
+                // Interpolate mouse movement over time to apply smoothing delta
+                _smoothMouse.x = Mathf.Lerp(_smoothMouse.x, smoothMouseDelta.x, 1f / smoothing.x);
+                _smoothMouse.y = Mathf.Lerp(_smoothMouse.y, smoothMouseDelta.y, 1f / smoothing.y);
 
-            // Update pitch and yaw
-            Yaw += _smoothMouse.x;
-            Pitch += -_smoothMouse.y;
+                // Find the absolute mouse movement value from point zero
+                _mouseAbsolute += _smoothMouse;
+
+                // Update pitch and yaw
+                Yaw += _smoothMouse.x;
+                Pitch += -_smoothMouse.y;
+            }
+            else
+            {
+                // Just use scaled raw mouse input without any smoothing
+                rawMouseDelta = Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX, sensitivityY));
+                _mouseAbsolute += rawMouseDelta;
+                Yaw += rawMouseDelta.x;
+                Pitch += -rawMouseDelta.y;
+            }
 
             // If there's a character body that acts as a parent to the camera
             if (characterBody)

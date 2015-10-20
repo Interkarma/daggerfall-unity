@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
-        bool gamePaused = false;
+        bool isGamePaused = false;
         float savedTimeScale;
         Texture2D pauseScreenshot;
 
@@ -35,9 +35,9 @@ namespace DaggerfallWorkshop.Game
 
         #region Properties
 
-        public static bool GamePaused
+        public static bool IsGamePaused
         {
-            get { return Instance.gamePaused; }
+            get { return Instance.isGamePaused; }
         }
 
         #endregion
@@ -77,6 +77,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             SetupSingleton();
+            Debug.Log("Welcome to Daggerfall Unity " + VersionInfo.DaggerfallUnityVersion);
         }
 
         void Update()
@@ -114,18 +115,18 @@ namespace DaggerfallWorkshop.Game
 
         public void PauseGame(bool pause)
         {
-            if (pause && !gamePaused)
+            if (pause && !isGamePaused)
             {
                 savedTimeScale = Time.timeScale;
                 Time.timeScale = 0;
                 InputManager.Instance.IsPaused = true;
-                gamePaused = true;
+                isGamePaused = true;
             }
-            else if (!pause && gamePaused)
+            else if (!pause && isGamePaused)
             {
                 Time.timeScale = savedTimeScale;
                 InputManager.Instance.IsPaused = false;
-                gamePaused = false;
+                isGamePaused = false;
             }
         }
 
@@ -167,7 +168,7 @@ namespace DaggerfallWorkshop.Game
         bool IsPlayingGame()
         {
             // Game not active when paused
-            if (gamePaused)
+            if (isGamePaused)
                 return false;
 
             // Game not active when SaveLoadManager not present

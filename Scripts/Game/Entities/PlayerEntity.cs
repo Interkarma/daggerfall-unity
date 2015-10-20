@@ -51,6 +51,12 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void AssignCharacter(CharacterSheet character, int level = 1, int maxHealth = 0)
         {
+            if (character == null)
+            {
+                SetEntityDefaults();
+                return;
+            }
+
             this.level = level;
             this.gender = character.gender;
             this.race = character.race;
@@ -65,6 +71,10 @@ namespace DaggerfallWorkshop.Game.Entity
                 this.maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
             else
                 this.maxHealth = maxHealth;
+
+            FillVitalSigns();
+
+            DaggerfallUnity.LogMessage("Assigned character " + this.name, true);
         }
 
         /// <summary>

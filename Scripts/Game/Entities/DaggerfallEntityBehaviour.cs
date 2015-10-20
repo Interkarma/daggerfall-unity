@@ -79,6 +79,8 @@ namespace DaggerfallWorkshop.Game.Entity
                     break;
             }
 
+            lastEntityType = type;
+
             if (Entity != null)
                 Entity.SetEntityDefaults();
         }

@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             // Fire ray into scene
-            if (Input.GetButtonDown("Fire1"))
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.ActivateCenterObject))
             {
                 // Using RaycastAll as hits can be blocked by decorations or other models
                 // When this happens activation feels unresponsive to player
@@ -62,13 +62,13 @@ namespace DaggerfallWorkshop.Game
                                 if (door.doorType == DoorTypes.Building && !playerEnterExit.IsPlayerInside)
                                 {
                                     // Hit door while outside, transition inside
-                                    playerEnterExit.TransitionInterior(doorOwner, door);
+                                    playerEnterExit.TransitionInterior(doorOwner, door, true);
                                     return;
                                 }
                                 else if (door.doorType == DoorTypes.Building && playerEnterExit.IsPlayerInside)
                                 {
                                     // Hit door while inside, transition outside
-                                    playerEnterExit.TransitionExterior();
+                                    playerEnterExit.TransitionExterior(true);
                                     return;
                                 }
                                 else if (door.doorType == DoorTypes.DungeonEntrance && !playerEnterExit.IsPlayerInside)
@@ -76,14 +76,14 @@ namespace DaggerfallWorkshop.Game
                                     if (playerGPS)
                                     {
                                         // Hit dungeon door while outside, transition inside
-                                        playerEnterExit.TransitionDungeonInterior(doorOwner, door, playerGPS.CurrentLocation);
+                                        playerEnterExit.TransitionDungeonInterior(doorOwner, door, playerGPS.CurrentLocation, true);
                                         return;
                                     }
                                 }
                                 else if (door.doorType == DoorTypes.DungeonExit && playerEnterExit.IsPlayerInside)
                                 {
                                     // Hit dungeon exit while inside, transtion outside
-                                    playerEnterExit.TransitionDungeonExterior();
+                                    playerEnterExit.TransitionDungeonExterior(true);
                                     return;
                                 }
                             }

@@ -254,6 +254,8 @@ namespace DaggerfallWorkshop
     [Serializable]
     public struct StaticDoor
     {
+        public Vector3 ownerPosition;               // World position of door owner
+        public Quaternion ownerRotation;            // Rotation of door owner
         public Matrix4x4 buildingMatrix;            // Matrix of individual building owning this door
         public DoorTypes doorType;                  // Type of door
         public int blockIndex;                      // Block index in BLOCKS.BSA

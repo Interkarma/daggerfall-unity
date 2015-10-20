@@ -57,11 +57,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            //// TEST: Change player settings
-            //PlayerEntity.FaceIndex = 7;
-            //PlayerEntity.Race = new DarkElf();
-            //PlayerEntity.Gender = Genders.Male;
-
             // Load native texture
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
             if (!nativeTexture)

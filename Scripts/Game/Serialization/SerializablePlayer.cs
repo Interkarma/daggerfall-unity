@@ -34,6 +34,15 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #endregion
 
+        #region Properties
+
+        StreamingWorld StreamingWorld
+        {
+            get { return (streamingWorld != null) ? streamingWorld : FindStreamingWorld(); }
+        }
+
+        #endregion
+
         #region Unity
 
         void Awake()
@@ -41,10 +50,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerEnterExit = GetComponent<PlayerEnterExit>();
             if (!playerEnterExit)
                 throw new Exception("PlayerEnterExit not found.");
-
-            streamingWorld = GameObject.FindObjectOfType<StreamingWorld>();
-            if (!streamingWorld)
-                throw new Exception("StreamingWorld not found.");
 
             playerCamera = GetComponentInChildren<Camera>();
             if (!playerCamera)
@@ -61,10 +66,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerEntityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             if (!playerEntityBehaviour)
                 throw new Exception("PlayerEntityBehaviour not found.");
-        }
 
-        void Start()
-        {
             SaveLoadManager.RegisterSerializableGameObject(this);
         }
 
@@ -82,7 +84,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public object GetSaveData()
         {
-            if (!playerEnterExit || !streamingWorld)
+            if (!playerEnterExit || !StreamingWorld)
                 return null;
 
             PlayerData_v1 data = new PlayerData_v1();
@@ -110,17 +112,24 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerPosition.yaw = playerMouseLook.Yaw;
             data.playerPosition.pitch = playerMouseLook.Pitch;
             data.playerPosition.isCrouching = playerMotor.IsCrouching;
-            data.playerPosition.worldPosX = streamingWorld.LocalPlayerGPS.WorldX;
-            data.playerPosition.worldPosZ = streamingWorld.LocalPlayerGPS.WorldZ;
-            data.playerPosition.worldCompensation = streamingWorld.WorldCompensation;
+            data.playerPosition.worldPosX = StreamingWorld.LocalPlayerGPS.WorldX;
+            data.playerPosition.worldPosZ = StreamingWorld.LocalPlayerGPS.WorldZ;
+            data.playerPosition.worldCompensation = StreamingWorld.WorldCompensation;
             data.playerPosition.insideDungeon = playerEnterExit.IsPlayerInsideDungeon;
+            data.playerPosition.insideBuilding = playerEnterExit.IsPlayerInsideBuilding;
+
+            // Store building exterior door data
+            if ((playerEnterExit.IsPlayerInsideBuilding))
+            {
+                data.playerPosition.exteriorDoors = playerEnterExit.ExteriorDoors;
+            }
 
             return data;
         }
 
         public void RestoreSaveData(object dataIn)
         {
-            if (!playerEnterExit || !streamingWorld || !playerCamera || !playerMouseLook)
+            if (!playerEnterExit || !StreamingWorld || !playerCamera || !playerMouseLook)
                 return;
 
             // Restore player entity data
@@ -140,11 +149,24 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.CurrentFatigue = data.playerEntity.currentFatigue;
             entity.CurrentMagicka = data.playerEntity.currentMagicka;
 
-            // TODO: Restore player position data
+            // Restore player position data
             transform.position = data.playerPosition.position;
             playerMouseLook.Yaw = data.playerPosition.yaw;
             playerMouseLook.Pitch = data.playerPosition.pitch;
             playerMotor.IsCrouching = data.playerPosition.isCrouching;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        StreamingWorld FindStreamingWorld()
+        {
+            streamingWorld = GameObject.FindObjectOfType<StreamingWorld>();
+            if (!streamingWorld)
+                throw new Exception("StreamingWorld not found.");
+
+            return streamingWorld;
         }
 
         #endregion

@@ -26,17 +26,20 @@ namespace DaggerfallWorkshop
     /// <summary>
     /// Settings manager for reading game configuration from INI file.
     /// Can read from settings.ini in game data directory or from built-in fallback.ini in Resources.
-    /// For any setting failing a read (ot settings.ini missing), fallback.ini will be used instead.
+    /// For any setting failing a read (or settings.ini missing), fallback.ini will be used instead.
     /// </summary>
     public class SettingsManager
     {
         const string settingsIniName = "settings.ini";
         const string fallbackIniName = "fallback.ini";
+
         const string sectionDaggerfall = "Daggerfall";
-        const string sectionStartup = "Startup";
+        const string sectionVideo = "Video";
+        const string sectionChildGuard = "ChildGuard";
         const string sectionGUI = "GUI";
         const string sectionControls = "Controls";
-        const string sectionChildGuard = "ChildGuard";
+        const string sectionStartup = "Startup";
+        const string sectionEnhancements = "Enhancements";
 
         bool usingFallback = false;
         FileIniDataParser iniParser = new FileIniDataParser();
@@ -50,11 +53,125 @@ namespace DaggerfallWorkshop
 
         #region Settings Properties
 
+        // [Daggerfall]
+
         public string MyDaggerfallPath
         {
             get { return GetString(sectionDaggerfall, "MyDaggerfallPath"); }
-            set { SetString(sectionStartup, "MyDaggerfallPath", value); }
+            set { SetString(sectionDaggerfall, "MyDaggerfallPath", value); }
         }
+
+        public string MyDaggerfallUnitySavePath
+        {
+            get { return GetString(sectionDaggerfall, "MyDaggerfallUnitySavePath"); }
+            set { SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", value); }
+        }
+
+        // [Video]
+
+        public int ViewportX
+        {
+            get { return GetInt(sectionVideo, "ViewportX"); }
+            set { SetInt(sectionVideo, "ViewportX", value); }
+        }
+
+        public int ViewportY
+        {
+            get { return GetInt(sectionVideo, "ViewportY"); }
+            set { SetInt(sectionVideo, "ViewportY", value); }
+        }
+
+        public bool Fullscreen
+        {
+            get { return GetBool(sectionVideo, "Fullscreen"); }
+            set { SetBool(sectionVideo, "Fullscreen", value); }
+        }
+
+        public bool VSync
+        {
+            get { return GetBool(sectionVideo, "VSync"); }
+            set { SetBool(sectionVideo, "VSync", value); }
+        }
+
+        public int FieldOfView
+        {
+            get { return GetInt(sectionVideo, "FieldOfView"); }
+            set { SetInt(sectionVideo, "FieldOfView", value); }
+        }
+
+        public int MainFilterMode
+        {
+            get { return GetInt(sectionVideo, "MainFilterMode"); }
+            set { SetInt(sectionVideo, "MainFilterMode", value); }
+        }
+
+        // [ChildGuard]
+
+        public bool NoPlayerNudity
+        {
+            get { return GetBool(sectionChildGuard, "NoPlayerNudity"); }
+            set { SetBool(sectionChildGuard, "NoPlayerNudity", value); }
+        }
+
+        // [GUI]
+
+        public int GUIFilterMode
+        {
+            get { return GetInt(sectionGUI, "GUIFilterMode"); }
+            set { SetInt(sectionGUI, "GUIFilterMode", value); }
+        }
+
+        public bool Crosshair
+        {
+            get { return GetBool(sectionGUI, "Crosshair"); }
+            set { SetBool(sectionGUI, "Crosshair", value); }
+        }
+
+        public bool SwapHealthAndFatigueColors
+        {
+            get { return GetBool(sectionGUI, "SwapHealthAndFatigueColors"); }
+            set { SetBool(sectionGUI, "SwapHealthAndFatigueColors", value); }
+        }
+
+        public float DimAlphaStrength
+        {
+            get { return GetFloat(sectionGUI, "DimAlphaStrength"); }
+            set { SetFloat(sectionGUI, "DimAlphaStrength", value); }
+        }
+
+        public bool FreeScaling
+        {
+            get { return GetBool(sectionGUI, "FreeScaling"); }
+            set { SetBool(sectionGUI, "FreeScaling", value); }
+        }
+
+        // [Controls]
+
+        public bool InvertMouseVertical
+        {
+            get { return GetBool(sectionControls, "InvertMouseVertical"); }
+            set { SetBool(sectionControls, "InvertMouseVertical", value); }
+        }
+
+        public bool MouseLookSmoothing
+        {
+            get { return GetBool(sectionControls, "MouseLookSmoothing"); }
+            set { SetBool(sectionControls, "MouseLookSmoothing", value); }
+        }
+
+        public float MouseLookSensitivity
+        {
+            get { return GetFloat(sectionControls, "MouseLookSensitivity"); }
+            set { SetFloat(sectionControls, "MouseLookSensitivity", value); }
+        }
+
+        public bool HeadBobbing
+        {
+            get { return GetBool(sectionControls, "HeadBobbing"); }
+            set { SetBool(sectionControls, "HeadBobbing", value); }
+        }
+
+        // [Startup]
 
         public string StartingLocation
         {
@@ -68,22 +185,36 @@ namespace DaggerfallWorkshop
             set { SetBool(sectionStartup, "StartInDungeon", value); }
         }
 
-        public bool SwapHealthAndFatigueColors
+        // [Enhancements]
+
+        public bool LypyL_EnhancedSky
         {
-            get { return GetBool(sectionGUI, "SwapHealthAndFatigueColors"); }
-            set { SetBool(sectionGUI, "SwapHealthAndFatigueColors", value); }
+            get { return GetBool(sectionEnhancements, "LypyL_EnhancedSky"); }
+            set { SetBool(sectionEnhancements, "LypyL_EnhancedSky", value); }
         }
 
-        public bool HeadBobbing
+        public bool Nystul_IncreasedTerrainDistance
         {
-            get { return GetBool(sectionControls, "HeadBobbing"); }
-            set { SetBool(sectionControls, "HeadBobbing", value); }
+            get { return GetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance"); }
+            set { SetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance", value); }
         }
 
-        public bool NoPlayerNudity
+        public bool Nystul_RealtimeReflections
         {
-            get { return GetBool(sectionChildGuard, "NoPlayerNudity"); }
-            set { SetBool(sectionChildGuard, "NoPlayerNudity", value); }
+            get { return GetBool(sectionEnhancements, "Nystul_RealtimeReflections"); }
+            set { SetBool(sectionEnhancements, "Nystul_RealtimeReflections", value); }
+        }
+
+        public bool UncannyValley_RealGrass
+        {
+            get { return GetBool(sectionEnhancements, "UncannyValley_RealGrass"); }
+            set { SetBool(sectionEnhancements, "UncannyValley_RealGrass", value); }
+        }
+
+        public bool UncannyValley_BirdsInDaggerfall
+        {
+            get { return GetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall"); }
+            set { SetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall", value); }
         }
 
         #endregion
@@ -125,9 +256,9 @@ namespace DaggerfallWorkshop
 
             // Report on primary ini file
             if (loadedUserSettings)
-                DaggerfallUnity.LogMessage("Loaded settings.ini.");
+                DaggerfallUnity.LogMessage("Using settings.ini.");
             else if (!loadedUserSettings && loadedFallbackSettings)
-                DaggerfallUnity.LogMessage("Loaded fallback.ini");
+                DaggerfallUnity.LogMessage("Using fallback.ini");
             else
                 DaggerfallUnity.LogMessage("Failed to load fallback.ini.");
         }
@@ -136,10 +267,17 @@ namespace DaggerfallWorkshop
         {
             if (iniParser != null && !usingFallback)
             {
-                string path = Path.Combine(Application.dataPath, settingsIniName);
-                if (File.Exists(path))
+                try
                 {
-                    iniParser.WriteFile(path, userIniData);
+                    string path = Path.Combine(Application.dataPath, settingsIniName);
+                    if (File.Exists(path))
+                    {
+                        iniParser.WriteFile(path, userIniData);
+                    }
+                }
+                catch
+                {
+                    DaggerfallUnity.LogMessage("Failed to write settings.ini.");
                 }
             }
         }
@@ -193,6 +331,26 @@ namespace DaggerfallWorkshop
         }
 
         void SetBool(string sectionName, string valueName, bool value)
+        {
+            SetData(sectionName, valueName, value.ToString());
+        }
+
+        int GetInt(string sectionName, string valueName)
+        {
+            return int.Parse(GetData(sectionName, valueName));
+        }
+
+        void SetInt(string sectionName, string valueName, int value)
+        {
+            SetData(sectionName, valueName, value.ToString());
+        }
+
+        float GetFloat(string sectionName, string valueName)
+        {
+            return float.Parse(GetData(sectionName, valueName));
+        }
+
+        void SetFloat(string sectionName, string valueName, float value)
         {
             SetData(sectionName, valueName, value.ToString());
         }

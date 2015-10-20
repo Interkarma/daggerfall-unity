@@ -27,12 +27,15 @@ namespace DaggerfallWorkshop.Game
         const float acceleration = 3f;
         const float friction = 4f;
         const float deadZone = 0.1f;
+        const float frameSkipTotal = 5;
 
         KeyCode[] reservedKeys = new KeyCode[] { KeyCode.Escape };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         List<Actions> currentActions = new List<Actions>();
         List<Actions> previousActions = new List<Actions>();
-        bool paused;
+        bool isPaused;
+        bool wasPaused;
+        int frameSkipCount;
         float horizontal;
         float vertical;
         float lookX;
@@ -52,8 +55,8 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsPaused
         {
-            get { return paused; }
-            set { paused = value; }
+            get { return isPaused; }
+            set { isPaused = value; }
         }
 
         public KeyCode[] ReservedKeys
@@ -233,8 +236,25 @@ namespace DaggerfallWorkshop.Game
             negVerticalImpulse = false;
 
             // Do nothing if paused
-            if (paused)
+            if (isPaused)
+            {
+                frameSkipCount = 0;
+                wasPaused = true;
                 return;
+            }
+
+            // Skip some frame post-pause
+            // This ensures GUI actions do not "fall-through" to main world
+            // as closing GUI and picking up next input all happen same-frame
+            // This also helps prevent fall-through of GUI mouse movements to
+            // same-frame mouse-look actions
+            if (wasPaused && frameSkipCount++ < frameSkipTotal)
+            {
+                return;
+            }
+
+            // Lower was paused flag
+            wasPaused = false;
 
             // Collect mouse axes
             mouseX = Input.GetAxisRaw("Mouse X");

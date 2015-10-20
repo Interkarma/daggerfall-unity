@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop
     {
         #region Fields
 
-        const HideFlags defaultHideFlags = HideFlags.HideAndDontSave;
+        const HideFlags defaultHideFlags = HideFlags.None;
 
         const int maxTerrainArray = 256;        // Maximum terrains in memory at any time
 
@@ -69,6 +69,7 @@ namespace DaggerfallWorkshop
         public string EditorFindLocationString = "Daggerfall/Privateer's Hold";
 
         //public bool AddLocationBeacon = false;
+        public GameObject streamingTarget = null;
         public bool suppressWorld = false;
         public bool ShowDebugString = false;
 
@@ -92,8 +93,9 @@ namespace DaggerfallWorkshop
         double worldX, worldZ;
         TerrainTexturing terrainTexturing = new TerrainTexturing();
         bool isReady = false;
-        Vector3 repositionOffset = Vector3.zero;
-        RepositionMethods autoReposition = RepositionMethods.None;
+
+        Vector3 autoRepositionOffset = Vector3.zero;
+        RepositionMethods autoRepositionMethod = RepositionMethods.RandomStartMarker;
 
         bool init;
         bool terrainUpdateRunning;
@@ -130,6 +132,18 @@ namespace DaggerfallWorkshop
 
         #endregion
 
+        #region Private Properties
+
+        // Streaming world objects are ultimately parented to this object
+        // If left null, world objects will be parented to this transform
+        // This allows for decoupling of GPS logic and streaming functions
+        Transform StreamingTarget
+        {
+            get { return (streamingTarget != null) ? streamingTarget.transform : this.transform; }
+        }
+
+        #endregion
+
         #region Structs/Enums
 
         struct TerrainDesc
@@ -160,8 +174,8 @@ namespace DaggerfallWorkshop
             None,
             Origin,
             Offset,
-            NearestDungeonEntrance,
-            RandomCityStartMarker,
+            DungeonEntrance,
+            RandomStartMarker,
         }
 
         #endregion
@@ -204,6 +218,28 @@ namespace DaggerfallWorkshop
             {
                 UpdateLocations();
                 updateLocatations = false;
+            }
+
+            // Reposition player
+            if (autoRepositionMethod != RepositionMethods.None)
+            {
+                switch (autoRepositionMethod)
+                {
+                    case RepositionMethods.RandomStartMarker:
+                        PositionPlayerToLocation();
+                        break;
+                    case RepositionMethods.Offset:
+                        RepositionPlayer(MapPixelX, MapPixelY, autoRepositionOffset);
+                        break;
+                    case RepositionMethods.DungeonEntrance:
+                        PositionPlayerToDungeonExit();
+                        break;
+                    default:
+                    case RepositionMethods.Origin:
+                        RepositionPlayer(MapPixelX, MapPixelY, Vector3.zero);
+                        break;
+                }
+                autoRepositionMethod = RepositionMethods.None;
             }
 
             // Get distance player has moved in world map units and apply to world position
@@ -300,6 +336,12 @@ namespace DaggerfallWorkshop
                 return terrainArray[terrainIndexDict[key]].terrainObject;
             else
                 return null;
+        }
+
+        public void SetAutoReposition(RepositionMethods method, Vector3 offset)
+        {
+            autoRepositionOffset = offset;
+            autoRepositionMethod = method;
         }
 
         #endregion
@@ -433,6 +475,7 @@ namespace DaggerfallWorkshop
         private void UpdateLocations()
         {
             CollectLocations();
+
             for (int i = 0; i < terrainArray.Length; i++)
             {
                 if (terrainArray[i].active && terrainArray[i].hasLocation)
@@ -442,9 +485,9 @@ namespace DaggerfallWorkshop
 
         private IEnumerator UpdateLocation(int index, bool allowYield)
         {
-            int key = TerrainHelper.MakeTerrainKey(terrainArray[index].mapPixelX, terrainArray[index].mapPixelY);
-            int playerKey = TerrainHelper.MakeTerrainKey(MapPixelX, MapPixelY);
-            bool isPlayerTerrain = (key == playerKey);
+            //int key = TerrainHelper.MakeTerrainKey(terrainArray[index].mapPixelX, terrainArray[index].mapPixelY);
+            //int playerKey = TerrainHelper.MakeTerrainKey(MapPixelX, MapPixelY);
+            //bool isPlayerTerrain = (key == playerKey);
 
             if (terrainArray[index].active && terrainArray[index].hasLocation && terrainArray[index].updateLocation)
             {
@@ -456,7 +499,7 @@ namespace DaggerfallWorkshop
                 GameObject locationObject = CreateLocationGameObject(index, out location);
                 if (locationObject)
                 {
-                    // Add location object to dictionary
+                    // Add location object to list
                     LocationDesc locationDesc = new LocationDesc();
                     locationDesc.locationObject = locationObject;
                     locationDesc.mapPixelX = terrainArray[index].mapPixelX;
@@ -539,6 +582,22 @@ namespace DaggerfallWorkshop
                     //    //repositionPlayer = false;
                     //}
 
+                    //// Position player outside dungeon exit
+                    //if (isPlayerTerrain && autoRepositionMethod == RepositionMethods.DungeonEntrance)
+                    //{
+                    //    PositionPlayerToDungeonExit(dfLocation);
+                    //    autoRepositionMethod = RepositionMethods.None;
+                    //}
+
+                    //// Position player to random start marker for locations
+                    //if (isPlayerTerrain &&
+                    //    (autoRepositionMethod == RepositionMethods.RandomStartMarker || autoRepositionMethod == RepositionMethods.Offset))
+                    //{
+                    //    bool useStartMarker = (dfLocation.Summary.LocationType == DFRegion.LocationTypes.TownCity);
+                    //    PositionPlayerToLocation(MapPixelX, MapPixelY, dfLocation, origin, width, height, useStartMarker);
+                    //    autoRepositionMethod = RepositionMethods.None;
+                    //}
+
                     // Apply billboard batches
                     natureBillboardBatch.Apply();
                     lightsBillboardBatch.Apply();
@@ -555,22 +614,28 @@ namespace DaggerfallWorkshop
                 //}
             }
 
-            // Handle player reposition
-            if (isPlayerTerrain)
-            {
-                switch(autoReposition)
-                {
-                    case RepositionMethods.None:
-                        break;
-                    case RepositionMethods.Offset:
-                        RepositionPlayer(MapPixelX, MapPixelY, repositionOffset);
-                        break;
-                    default:
-                    case RepositionMethods.Origin:
-                        RepositionPlayer(MapPixelX, MapPixelY, Vector3.zero);
-                        break;
-                }
-            }
+            //// Handle player reposition
+            //if (isPlayerTerrain)
+            //{
+            //    switch(autoRepositionMethod)
+            //    {
+            //        case RepositionMethods.None:
+            //            break;
+            //        case RepositionMethods.RandomStartMarker:
+            //            PositionPlayerToLocation();
+            //            break;
+            //        case RepositionMethods.Offset:
+            //            RepositionPlayer(MapPixelX, MapPixelY, autoRepositionOffset);
+            //            break;
+            //        case RepositionMethods.DungeonEntrance:
+            //            PositionPlayerToDungeonExit();
+            //            break;
+            //        default:
+            //        case RepositionMethods.Origin:
+            //            RepositionPlayer(MapPixelX, MapPixelY, Vector3.zero);
+            //            break;
+            //    }
+            //}
         }
 
         // Place a single terrain and mark it for update
@@ -785,8 +850,8 @@ namespace DaggerfallWorkshop
             DFPosition worldPos = MapsFile.MapPixelToWorldCoord(mapPixelX, mapPixelY);
             LocalPlayerGPS.WorldX = worldPos.X;
             LocalPlayerGPS.WorldZ = worldPos.Y;
-            this.repositionOffset = repositionOffset;
-            this.autoReposition = autoReposition;
+            autoRepositionOffset = repositionOffset;
+            autoRepositionMethod = autoReposition;
             InitWorld();
             RaiseOnTeleportToCoordinatesEvent(worldPos);
         }
@@ -844,7 +909,7 @@ namespace DaggerfallWorkshop
         private void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject, out GameObject billboardBatchObject)
         {
             // Create new terrain object parented to streaming world
-            terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(this.transform);
+            terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(StreamingTarget);
             terrainObject.name = string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
             terrainObject.hideFlags = defaultHideFlags;
 
@@ -885,7 +950,7 @@ namespace DaggerfallWorkshop
             // Spawn parent game object for new location
             //float height = dfTerrain.MapData.averageHeight * TerrainScale;
             GameObject locationObject = new GameObject(string.Format("DaggerfallLocation [Region={0}, Name={1}]", locationOut.RegionName, locationOut.Name));
-            locationObject.transform.parent = this.transform;
+            locationObject.transform.parent = StreamingTarget;
             locationObject.hideFlags = defaultHideFlags;
             locationObject.transform.position = terrainArray[terrain].terrainObject.transform.position + new Vector3(0, height, 0);
             DaggerfallLocation dfLocation = locationObject.AddComponent<DaggerfallLocation>() as DaggerfallLocation;
@@ -988,20 +1053,107 @@ namespace DaggerfallWorkshop
                 // This is our minimum height before player falls through world
                 Vector3 targetPosition = new Vector3(position.x, 0, position.z);
                 float height = terrain.SampleHeight(targetPosition + terrain.transform.position);
-                targetPosition.y = height + controller.height / 2f + 0.1f;
+                targetPosition.y = height + controller.height / 2f + 0.15f;
 
                 // If desired position is higher then minimum position then we can safely use that
                 if (position.y > targetPosition.y)
                     targetPosition.y = position.y;
 
-                // Move player object to new position and init floating origin
+                // Move player object to new position
                 LocalPlayerGPS.transform.position = targetPosition;
-                InitFloatingOrigin(LocalPlayerGPS.transform);
+                ResyncWorldCoordinates();
             }
             else
             {
                 throw new Exception("StreamingWorld: Could not find CharacterController peered with LocalPlayerGPS.");
             }
+        }
+
+        // Position player outside first dungeon door of this location
+        // TODO: Expand this logic so it works better for dungeons with multiple entrances (e.g. Daggerfall castle)
+        private void PositionPlayerToDungeonExit(DaggerfallLocation location = null)
+        {
+            // Attempt to get location from current terrain transform
+            if (!location)
+                location = GetPlayerLocation();
+
+            DaggerfallStaticDoors[] doors = location.StaticDoorCollections;
+
+            // If no doors found then just position to origin
+            if (doors == null || doors.Length == 0)
+            {
+                RepositionPlayer(MapPixelX, MapPixelY, Vector3.zero);
+                return;
+            }
+
+            // Find first dungeon door
+            int foundIndex = -1;
+            DaggerfallStaticDoors foundCollection = null;
+            foreach(var collection in doors)
+            {
+                for (int i = 0; i < collection.Doors.Length; i++)
+                {
+                    if (collection.Doors[i].doorType == DoorTypes.DungeonEntrance)
+                    {
+                        foundCollection = collection;
+                        foundIndex = i;
+                    }
+                }
+            }
+
+            // Position player outside door position
+            if (foundCollection)
+            {
+                Vector3 startPosition = foundCollection.GetDoorPosition(foundIndex);
+                Vector3 doorNormal = foundCollection.GetDoorNormal(foundIndex);
+                startPosition += doorNormal * 1f;
+                RepositionPlayer(MapPixelX, MapPixelY, startPosition);
+            }
+            else
+            {
+                RepositionPlayer(MapPixelX, MapPixelY, Vector3.zero);
+            }
+        }
+
+        private void PositionPlayerToLocation()
+        {
+            // Find current location
+            DaggerfallLocation currentLocation = GetPlayerLocation();
+            if (!currentLocation)
+            {
+                // No location found, fail back to terrain origin
+                RepositionPlayer(MapPixelX, MapPixelY, Vector3.zero);
+                return;
+            }
+
+            // Get location dimensions for positioning
+            int width = currentLocation.Summary.BlockWidth;
+            int height = currentLocation.Summary.BlockHeight;
+            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(width, height);
+            Vector3 origin = new Vector3(tilePos.X * RMBLayout.RMBTileSide, 2.0f * MeshReader.GlobalScale, tilePos.Y * RMBLayout.RMBTileSide);
+
+            // Position player to random side of location
+            PositionPlayerToLocation(
+                MapPixelX,
+                MapPixelY,
+                currentLocation,
+                origin,
+                width,
+                height,
+                (currentLocation.Summary.LocationType == DFRegion.LocationTypes.TownCity));
+        }
+
+        DaggerfallLocation GetPlayerLocation()
+        {
+            // Look for location at current map pixel coords
+            for (int i = 0; i < locationList.Count; i++)
+            {
+                LocationDesc desc = locationList[i];
+                if (desc.mapPixelX == MapPixelX && desc.mapPixelY == MapPixelY)
+                    return desc.locationObject.GetComponent<DaggerfallLocation>();
+            }
+
+            return null;
         }
 
         // Sets player to ground level near a location
@@ -1032,31 +1184,37 @@ namespace DaggerfallWorkshop
             float extraDistance = RMBLayout.RMBSide * 0.1f;
 
             // Start player in position
-            // Will also SendMessage to receiver called SetFacing on player gameobject with forward vector
-            // You should implement this if using your own mouselook component
             Vector3 newPlayerPosition = centre;
-            switch (side)
+            PlayerMouseLook mouseLook = LocalPlayerGPS.GetComponentInChildren<PlayerMouseLook>();
+            if (mouseLook)
             {
-                case 0:         // North
-                    newPlayerPosition += new Vector3(0, 0, (halfHeight + extraDistance));
-                    LocalPlayerGPS.SendMessage("SetFacing", Vector3.back, SendMessageOptions.DontRequireReceiver);
-                    //Debug.Log("Spawned player north.");
-                    break;
-                case 1:         // South
-                    newPlayerPosition += new Vector3(0, 0, -(halfHeight + extraDistance));
-                    LocalPlayerGPS.SendMessage("SetFacing", Vector3.forward, SendMessageOptions.DontRequireReceiver);
-                    //Debug.Log("Spawned player south.");
-                    break;
-                case 2:         // East
-                    newPlayerPosition += new Vector3((halfWidth + extraDistance), 0, 0);
-                    LocalPlayerGPS.SendMessage("SetFacing", Vector3.left, SendMessageOptions.DontRequireReceiver);
-                    //Debug.Log("Spawned player east.");
-                    break;
-                case 3:         // West
-                    newPlayerPosition += new Vector3(-(halfWidth + extraDistance), 0, 0);
-                    LocalPlayerGPS.SendMessage("SetFacing", Vector3.right, SendMessageOptions.DontRequireReceiver);
-                    //Debug.Log("Spawned player west.");
-                    break;
+                switch (side)
+                {
+                    case 0:         // North
+                        newPlayerPosition += new Vector3(0, 0, (halfHeight + extraDistance));
+                        mouseLook.SetFacing(180, 0);
+                        //LocalPlayerGPS.gameObject.SendMessage("SetFacing", Vector3.back, SendMessageOptions.DontRequireReceiver);
+                        //Debug.Log("Spawned player north.");
+                        break;
+                    case 1:         // South
+                        newPlayerPosition += new Vector3(0, 0, -(halfHeight + extraDistance));
+                        mouseLook.SetFacing(0, 0);
+                        //LocalPlayerGPS.gameObject.SendMessage("SetFacing", Vector3.forward, SendMessageOptions.DontRequireReceiver);
+                        //Debug.Log("Spawned player south.");
+                        break;
+                    case 2:         // East
+                        newPlayerPosition += new Vector3((halfWidth + extraDistance), 0, 0);
+                        mouseLook.SetFacing(270, 0);
+                        //LocalPlayerGPS.gameObject.SendMessage("SetFacing", Vector3.left, SendMessageOptions.DontRequireReceiver);
+                        //Debug.Log("Spawned player east.");
+                        break;
+                    case 3:         // West
+                        newPlayerPosition += new Vector3(-(halfWidth + extraDistance), 0, 0);
+                        mouseLook.SetFacing(90, 0);
+                        //LocalPlayerGPS.gameObject.SendMessage("SetFacing", Vector3.right, SendMessageOptions.DontRequireReceiver);
+                        //Debug.Log("Spawned player west.");
+                        break;
+                }
             }
 
             // Adjust to nearest start marker if requested
@@ -1077,12 +1235,14 @@ namespace DaggerfallWorkshop
                 if (closestMarker != -1)
                 {
                     //PositionPlayerToTerrain(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position);
+                    RepositionPlayer(mapPixelX, mapPixelY, startMarkers[closestMarker].transform.position);
                     return;
                 }
             }
 
             // Just position to outside location
             //PositionPlayerToTerrain(mapPixelX, mapPixelY, newPlayerPosition);
+            RepositionPlayer(mapPixelX, mapPixelY, newPlayerPosition);
         }
 
         // Align player to ground
@@ -1100,14 +1260,14 @@ namespace DaggerfallWorkshop
             return false;
         }
 
-        // If using FloatingOrigin on player, we must sometimes reinitialize so it does not get out of sync
-        private void InitFloatingOrigin(Transform playerTransform)
+        // Resync world coordinates after changing player transform position
+        void ResyncWorldCoordinates()
         {
-            FloatingOrigin fo = playerTransform.GetComponent<FloatingOrigin>();
-            if (fo)
-            {
-                fo.Initialize();
-            }
+            Vector3 playerPos = LocalPlayerGPS.transform.position;
+            DFPosition mapPixelOrigin = MapsFile.MapPixelToWorldCoord(MapPixelX, MapPixelY);
+            worldX = mapPixelOrigin.X + (playerPos.x * SceneMapRatio);
+            worldZ = mapPixelOrigin.Y + (playerPos.z * SceneMapRatio);
+            lastPlayerPos = playerPos;
         }
 
         #endregion

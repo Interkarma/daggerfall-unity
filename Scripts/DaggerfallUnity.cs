@@ -236,10 +236,18 @@ namespace DaggerfallWorkshop
             // Clear path validated flag
             isPathValidated = false;
 
+#if !UNITY_EDITOR
+            // When starting a build, always clear stored path
+            if (Application.isPlaying)
+            {
+                Arena2Path = string.Empty;
+            }
+#endif
+
             // Allow implementor to set own Arena2 path (e.g. from custom settings file)
             RaiseOnSetArena2SourceEvent();
 
-            // Check stored singleton path is valid
+            // Check stored singleton path is valid - but only in editor
             if (ValidateArena2Path(Arena2Path))
             {
                 isReady = true;
@@ -317,13 +325,13 @@ namespace DaggerfallWorkshop
             }
         }
 
-        #endregion
+#endregion
 
-        #region Public Static Methods
+#region Public Static Methods
 
         public static void LogMessage(string message, bool showInEditor = false)
         {
-            if (showInEditor || Application.isPlaying) Debug.Log(string.Format("DFTFU {0}: {1}", VersionInfo.Version, message));
+            if (showInEditor || Application.isPlaying) Debug.Log(string.Format("DFTFU {0}: {1}", VersionInfo.DaggerfallToolsForUnityVersion, message));
         }
 
         public static bool FindDaggerfallUnity(out DaggerfallUnity dfUnityOut)
@@ -346,9 +354,9 @@ namespace DaggerfallWorkshop
             return results.AppearsValid;
         }
 
-        #endregion
+#endregion
 
-        #region Private Methods
+#region Private Methods
 
         private void SetupSingleton()
         {
@@ -364,9 +372,9 @@ namespace DaggerfallWorkshop
             }
         }
 
-        #endregion
+#endregion
 
-        #region Event Handlers
+#region Event Handlers
 
         // OnReady
         public delegate void OnReadyEventHandler();
@@ -404,6 +412,6 @@ namespace DaggerfallWorkshop
                 OnSetTextProvider();
         }
 
-        #endregion
+#endregion
     }
 }

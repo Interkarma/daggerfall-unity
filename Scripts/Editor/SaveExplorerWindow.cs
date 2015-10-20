@@ -16,6 +16,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Player;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Save;
@@ -69,6 +70,7 @@ namespace DaggerfallWorkshop
                 DisplaySaveSelectGUI();
                 DisplaySaveImageGUI();
                 DisplaySaveStatsGUI();
+                DisplaySaveCharacterGUI();
 
                 EditorGUILayout.Space();
                 EditorGUILayout.HelpBox("Temporarily Filtering out records of type UnknownTownLink and UnknownItemRecord to keep list manageable.", MessageType.Info);
@@ -112,6 +114,7 @@ namespace DaggerfallWorkshop
                 string positionText = string.Format("X={0}, Y={1}, Z={2}",
                     currentSaveTree.Header.CharacterPosition.Position.WorldX,
                     currentSaveTree.Header.CharacterPosition.Position.YBase - currentSaveTree.Header.CharacterPosition.Position.YOffset,
+                    currentSaveTree.Header.CharacterPosition.Position.YBase,
                     currentSaveTree.Header.CharacterPosition.Position.WorldZ);
 
                 EditorGUILayout.LabelField(new GUIContent("Player Position", "Position of player in the world."), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
@@ -137,6 +140,29 @@ namespace DaggerfallWorkshop
             //    EditorGUILayout.LabelField(new GUIContent("CharacterPosition.Unknown"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
             //    EditorGUILayout.SelectableLabel(currentSaveTree.Header.CharacterPosition.Unknown.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             //});
+        }
+
+        void DisplaySaveCharacterGUI()
+        {
+            // Get character record
+            List<SaveTreeBaseRecord> records = currentSaveTree.FindRecords(RecordTypes.Character);
+            if (records.Count != 1)
+                return;
+
+            CharacterRecord characterRecord = (CharacterRecord)records[0];
+            //CharacterSheet characterSheet = characterRecord.ToCharacterSheet();
+
+            EditorGUILayout.Space();
+            GUILayoutHelper.Horizontal(() =>
+            {
+                EditorGUILayout.LabelField(new GUIContent("Name"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.SelectableLabel(characterRecord.ParsedData.characterName, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            });
+            GUILayoutHelper.Horizontal(() =>
+            {
+                EditorGUILayout.LabelField(new GUIContent("Gender"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.SelectableLabel(((int)characterRecord.ParsedData.gender).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            });
         }
 
         void DisplaySaveTree(SaveTreeBaseRecord parent)

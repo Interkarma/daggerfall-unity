@@ -19,13 +19,14 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
     /// Implements the Daggerfall Load Saved Game interface.
     /// </summary>
-    public class DaggerfallLoadSavedGameWindow : DaggerfallBaseWindow
+    public class DaggerfallLoadSavedGameWindow : DaggerfallPopupWindow
     {
         const string nativeImgName = "LOAD00I0.IMG";
         const string gameid = "gameid";
@@ -73,8 +74,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return selectedSaveGame; }
         }
 
-        public DaggerfallLoadSavedGameWindow(IUserInterfaceManager uiManager)
-            : base(uiManager)
+        public DaggerfallLoadSavedGameWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
+            : base(uiManager, previousWindow)
         {
         }
 
@@ -92,28 +93,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddControls();
         }
 
-        public override void ProcessMessages()
-        {
-            base.ProcessMessages();
-
-            string message = uiManager.GetMessage();
-            Dictionary<string, string> paramDict = UserInterfaceManager.BuildParamDict(message);
-
-            // Select save game
-            if (message.Contains(DaggerfallUIMessages.dfuiSelectSaveGame))
-                SelectSaveGame(int.Parse(paramDict[gameid]));
-
-            // Other messages
-            switch (message)
-            {
-                case DaggerfallUIMessages.dfuiOpenSelectedSaveGame:
-                    OpenSelectedSaveGame();
-                    break;
-                default:
-                    return;
-            }
-        }
-
         #region Private Methods
 
         void OpenSaveGames()
@@ -127,15 +106,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void AddControls()
         {
-            if (!saveGames.IsPathOpen)
-                return;
-
             saveImageButtons = new Button[saveImageButtonDims.Length];
             saveTextButtons = new Button[saveTextButtonDims.Length];
             for (int i = 0; i < saveImageButtonDims.Length; i++)
             {
                 // Open save
-                if (!saveGames.OpenSave(i))
+                if (!saveGames.TryOpenSave(i))
                     continue;
 
                 // Get save texture
@@ -146,14 +122,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 saveImageButtons[i] = DaggerfallUI.AddButton(saveImageButtonDims[i], NativePanel);
                 saveImageButtons[i].BackgroundTexture = saveTexture;
                 saveImageButtons[i].BackgroundTextureLayout = TextureLayout.ScaleToFit;
-                saveImageButtons[i].ClickMessage = string.Format("{0}?{1}={2}", DaggerfallUIMessages.dfuiSelectSaveGame, gameid, i);
-                saveImageButtons[i].DoubleClickMessage = DaggerfallUIMessages.dfuiOpenSelectedSaveGame;
+                saveImageButtons[i].Tag = i;
+                saveImageButtons[i].OnMouseClick += SaveGame_OnMouseClick;
+                saveImageButtons[i].OnMouseDoubleClick += SaveGame_OnMouseDoubleClick;
 
                 // Setup text button
                 saveTextButtons[i] = DaggerfallUI.AddButton(saveTextButtonDims[i], NativePanel);
                 saveTextButtons[i].Label.Text = saveGames.SaveName;
-                saveTextButtons[i].ClickMessage = string.Format("{0}?{1}={2}", DaggerfallUIMessages.dfuiSelectSaveGame, gameid, i);
-                saveTextButtons[i].DoubleClickMessage = DaggerfallUIMessages.dfuiOpenSelectedSaveGame;
+                saveTextButtons[i].Tag = i;
+                saveTextButtons[i].OnMouseClick += SaveGame_OnMouseClick;
+                saveTextButtons[i].OnMouseDoubleClick += SaveGame_OnMouseDoubleClick;
 
                 // Select first valid save game
                 if (selectedSaveGame == -1)
@@ -167,9 +145,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 SelectSaveGame(selectedSaveGame);
 
-            // Setup load game and exit buttons
-            DaggerfallUI.AddButton(new Vector2(126, 5), new Vector2(68, 11), DaggerfallUIMessages.dfuiOpenSelectedSaveGame, NativePanel);
+            // Setup load game button
+            if (selectedSaveGame >= 0)
+            {
+                Button loadGameButton = DaggerfallUI.AddButton(new Vector2(126, 5), new Vector2(68, 11), NativePanel);
+                loadGameButton.OnMouseClick += LoadGameButton_OnMouseClick;
+            }
+
+            // Setup exit button
             DaggerfallUI.AddButton(new Vector2(133, 150), new Vector2(56, 19), WindowMessages.wmCloseWindow, NativePanel);
+
+            // TEMP: Look for quick save and add temp button
+            if (SaveLoadManager.Instance.HasQuickSave())
+            {
+                Button quickLoadButton = new Button();
+                quickLoadButton.HorizontalAlignment = HorizontalAlignment.Center;
+                quickLoadButton.VerticalAlignment = VerticalAlignment.Middle;
+                quickLoadButton.BackgroundColor = Color.gray;
+                quickLoadButton.Label.Text = "Quick Load";
+                quickLoadButton.Label.BackgroundColor = Color.gray;
+                quickLoadButton.OnMouseClick += QuickLoadButton_OnMouseClick;
+                quickLoadButton.Size = new Vector2(52, 10);
+                NativePanel.Components.Add(quickLoadButton);
+            }
         }
 
         void SelectSaveGame(int index)
@@ -183,17 +181,58 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void OpenSelectedSaveGame()
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            // Setup start behaviour
+            StartGameBehaviour startGameBehaviour = FindStartGameBehaviour();
+            startGameBehaviour.ClassicSaveIndex = selectedSaveGame;
+            startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
+        }
+
+        void QuickLoad()
+        {
+            // Setup start behaviour
+            StartGameBehaviour startGameBehaviour = FindStartGameBehaviour();
+            startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadDaggerfallUnityQuickSave;
+        }
+
+        StartGameBehaviour FindStartGameBehaviour()
+        {
             // Get StartGameBehaviour
             StartGameBehaviour startGameBehaviour = GameObject.FindObjectOfType<StartGameBehaviour>();
             if (!startGameBehaviour)
                 throw new Exception("Could not find StartGameBehaviour in scene.");
 
-            // Setup start behaviour
-            startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
-            startGameBehaviour.ClassicSaveIndex = selectedSaveGame;
+            return startGameBehaviour;
+        }
 
-            // Start main game scene
-            Application.LoadLevel(1);
+        #endregion
+
+        #region Event Handlers
+
+        private void LoadGameButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            OpenSelectedSaveGame();
+        }
+
+        private void SaveGame_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            SelectSaveGame((int)sender.Tag);
+        }
+
+        private void SaveGame_OnMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
+        {
+            SelectSaveGame((int)sender.Tag);
+            OpenSelectedSaveGame();
+        }
+
+        private void QuickLoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            QuickLoad();
         }
 
         #endregion

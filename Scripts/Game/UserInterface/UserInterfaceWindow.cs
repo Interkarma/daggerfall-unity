@@ -94,6 +94,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public virtual void OnPush()
+        {
+        }
+
+        public virtual void OnPop()
+        {
+        }
+
         public void CloseWindow()
         {
             uiManager.PopWindow();

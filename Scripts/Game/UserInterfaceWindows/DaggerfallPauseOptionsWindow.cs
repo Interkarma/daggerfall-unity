@@ -20,6 +20,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -66,10 +67,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Save game
             Button saveButton = DaggerfallUI.AddButton(new Rect(4, 4, 45, 16), optionsPanel);
+            saveButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
             saveButton.OnMouseClick += SaveButton_OnMouseClick;
 
             // Load game
             Button loadButton = DaggerfallUI.AddButton(new Rect(52, 4, 46, 16), optionsPanel);
+            loadButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
             loadButton.OnMouseClick += LoadButton_OnMouseClick;
 
             // Controls
@@ -111,12 +114,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SaveButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            DaggerfallUnitySaveGameWindow saveWindow = new DaggerfallUnitySaveGameWindow(uiManager, this);
-            uiManager.PushWindow(saveWindow);
+            //DaggerfallUnitySaveGameWindow saveWindow = new DaggerfallUnitySaveGameWindow(uiManager, this);
+            //uiManager.PushWindow(saveWindow);
+            //SaveLoadManager.Instance.QuickSave();
         }
 
         private void LoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            //DaggerfallLoadSavedGameWindow loadWindow = new DaggerfallLoadSavedGameWindow(uiManager, this);
+            //uiManager.PushWindow(loadWindow);
         }
 
         #endregion

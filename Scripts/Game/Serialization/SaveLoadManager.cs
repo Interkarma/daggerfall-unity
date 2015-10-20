@@ -26,8 +26,9 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         #region Fields
 
-        const string saveFilename = "SaveData.txt";
-        const string testSavePath = @"D:\Test\Saves\QuickSave";
+        const string savesFolder = "Saves";
+        const string quickSaveFilename = "QuickSave.txt";
+        const string autoSaveFilename = "AutoSave.txt";
         const string notReadyExceptionText = "SaveLoad not ready.";
         const string invalidLoadIDExceptionText = "serializableObject does not have a valid LoadID";
 
@@ -36,6 +37,23 @@ namespace DaggerfallWorkshop.Game.Serialization
         Dictionary<long, SerializableActionDoor> serializableActionDoors = new Dictionary<long, SerializableActionDoor>();
         Dictionary<long, SerializableActionObject> serializableActionObjects = new Dictionary<long, SerializableActionObject>();
         Dictionary<long, SerializableEnemy> serializableEnemies = new Dictionary<long, SerializableEnemy>();
+
+        string unitySavePath = string.Empty;
+        string daggerfallSavePath = string.Empty;
+
+        #endregion
+
+        #region Properties
+
+        public string UnitySavePath
+        {
+            get { return GetUnitySavePath(); }
+        }
+
+        public string DaggerfallSavePath
+        {
+            get { return GetDaggerfallSavePath(); }
+        }
 
         #endregion
 
@@ -57,15 +75,17 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public static bool HasInstance
         {
-            get
-            {
-                return (instance != null);
-            }
+            get { return (instance != null); }
         }
 
         #endregion
 
         #region Unity
+
+        void Awake()
+        {
+            sceneUnloaded = false;
+        }
 
         void Start()
         {
@@ -99,6 +119,19 @@ namespace DaggerfallWorkshop.Game.Serialization
             return true;
         }
 
+        public bool HasQuickSave()
+        {
+            // Must be ready
+            if (!IsReady())
+                throw new Exception(notReadyExceptionText);
+
+            string path = Path.Combine(UnitySavePath, quickSaveFilename);
+            if (File.Exists(path))
+                return true;
+
+            return false;
+        }
+
         public void QuickSave()
         {
             // Must be ready
@@ -112,7 +145,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             string json = Serialize(saveData.GetType(), saveData);
 
             // Save data to file
-            WriteSaveFile(Path.Combine(testSavePath, saveFilename), json);
+            WriteSaveFile(Path.Combine(UnitySavePath, quickSaveFilename), json);
         }
 
         public void QuickLoad()
@@ -122,13 +155,14 @@ namespace DaggerfallWorkshop.Game.Serialization
                 throw new Exception(notReadyExceptionText);
 
             // Read save data from file
-            string json = ReadSaveFile(Path.Combine(testSavePath, saveFilename));
+            string json = ReadSaveFile(Path.Combine(UnitySavePath, quickSaveFilename));
 
             // Deserialize JSON string to save data
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), json) as SaveData_v1;
 
             // Restore save data
-            DaggerfallUI.Instance.FadeFromBlack();
+            GameManager.Instance.PauseGame(false);
+            DaggerfallUI.Instance.FadeHUDFromBlack();
             StartCoroutine(LoadGame(saveData));
         }
 
@@ -246,6 +280,56 @@ namespace DaggerfallWorkshop.Game.Serialization
                     Destroy(gameObject);
                 }
             }
+        }
+
+        string GetUnitySavePath()
+        {
+            if (!string.IsNullOrEmpty(unitySavePath))
+                return unitySavePath;
+
+            string result = string.Empty;
+
+            // Try settings
+            result = DaggerfallUnity.Settings.MyDaggerfallUnitySavePath;
+            if (string.IsNullOrEmpty(result) || !Directory.Exists(result))
+            {
+                // Default to dataPath
+                result = Path.Combine(Application.dataPath, savesFolder);
+                if (!Directory.Exists(result))
+                {
+                    // Attempt to create path
+                    Directory.CreateDirectory(result);
+                }
+            }
+
+            // Test result is a valid path
+            if (!Directory.Exists(result))
+                throw new Exception("Could not locate valid path for Unity save files. Check 'MyDaggerfallUnitySavePath' in settings.ini.");
+
+            // Log result and save path
+            DaggerfallUnity.LogMessage(string.Format("Using path '{0}' for Unity saves.", result), true);
+            unitySavePath = result;
+
+            return result;
+        }
+
+        string GetDaggerfallSavePath()
+        {
+            if (!string.IsNullOrEmpty(daggerfallSavePath))
+                return daggerfallSavePath;
+
+            string result = string.Empty;
+
+            // Test result is a valid path
+            result = Path.GetDirectoryName(DaggerfallUnity.Instance.Arena2Path);
+            if (!Directory.Exists(result))
+                throw new Exception("Could not locate valid path for Daggerfall save files. Check 'MyDaggerfallPath' in settings.ini points to your Daggerfall folder.");
+
+            // Log result and save path
+            DaggerfallUnity.LogMessage(string.Format("Using path '{0}' for Daggerfall save importing.", result), true);
+            daggerfallSavePath = result;
+
+            return result;
         }
 
         void WriteSaveFile(string path, string json)
@@ -437,12 +521,32 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!playerEnterExit)
                 yield break;
 
+            // Check exterior doors are included in save, we need these to exit building
+            bool hasExteriorDoors;
+            if (saveData.playerData.playerPosition.exteriorDoors == null || saveData.playerData.playerPosition.exteriorDoors.Length == 0)
+                hasExteriorDoors = false;
+            else
+                hasExteriorDoors = true;
+
             // Start the respawn process based on saved player location
-            playerEnterExit.RespawnPlayer(
-                saveData.playerData.playerPosition.worldPosX,
-                saveData.playerData.playerPosition.worldPosZ,
-                saveData.playerData.playerPosition.insideDungeon,
-                saveData.playerData.playerPosition.insideBuilding);
+            if (!saveData.playerData.playerPosition.insideBuilding || !hasExteriorDoors)
+            {
+                // Start outside or in dungeon
+                playerEnterExit.RespawnPlayer(
+                    saveData.playerData.playerPosition.worldPosX,
+                    saveData.playerData.playerPosition.worldPosZ,
+                    saveData.playerData.playerPosition.insideDungeon);
+            }
+            else
+            {
+                // Start inside a building
+                playerEnterExit.RespawnPlayer(
+                    saveData.playerData.playerPosition.worldPosX,
+                    saveData.playerData.playerPosition.worldPosZ,
+                    saveData.playerData.playerPosition.insideDungeon,
+                    saveData.playerData.playerPosition.insideBuilding,
+                    saveData.playerData.playerPosition.exteriorDoors);
+            }
 
             // Keep yielding frames until world is ready again
             while (playerEnterExit.IsRespawning)

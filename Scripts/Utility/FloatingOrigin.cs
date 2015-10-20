@@ -129,15 +129,6 @@ namespace DaggerfallWorkshop.Utility
             this.player = newPlayer;
         }
 
-        /// <summary>
-        /// Does nothing anymore - remove reference from StreamingWorld and delete this if you want.
-        /// </summary>
-        public void Initialize()
-        {
-            return;
-
-        }
-
         #region Event Handlers
 
         // OnPositionUpdate

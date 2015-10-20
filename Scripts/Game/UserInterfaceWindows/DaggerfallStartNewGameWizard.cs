@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         WizardStages wizardStage;
         CharacterSheet characterSheet = new CharacterSheet();
+        StartGameBehaviour startGameBehaviour;
 
         CreateCharRaceSelect createCharRaceSelectWindow;
         CreateCharGenderSelect createCharGenderSelectWindow;
@@ -73,6 +74,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
+            // Must have a start game object to transmit character sheet
+            startGameBehaviour = GameObject.FindObjectOfType<StartGameBehaviour>();
+            if (!startGameBehaviour)
+                throw new Exception("Could not find StartGameBehaviour in scene.");
+
             // Wizard starts with race selection
             SetRaceSelectWindow();
         }
@@ -360,33 +366,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void StartNewGame()
         {
-            // Must have a start game object to transmit character sheet
-            StartGameBehaviour startGameBehaviour = GameObject.FindObjectOfType<StartGameBehaviour>();
-            if (!startGameBehaviour)
-                throw new Exception("Could not find StartGameBehaviour in scene.");
-
-            // Set behaviour to create a new game from character sheet
-            startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.NewCharacter;
+            // Assign character sheet to player entity
             startGameBehaviour.CharacterSheet = characterSheet;
 
-            // Create cinematics
-            DaggerfallVidPlayerWindow cinematic1 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic1);
-            DaggerfallVidPlayerWindow cinematic2 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic2);
-            DaggerfallVidPlayerWindow cinematic3 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic3);
+            if (DaggerfallUI.Instance.enableVideos)
+            {
+                // Create cinematics
+                DaggerfallVidPlayerWindow cinematic1 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic1);
+                DaggerfallVidPlayerWindow cinematic2 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic2);
+                DaggerfallVidPlayerWindow cinematic3 = new DaggerfallVidPlayerWindow(uiManager, newGameCinematic3);
 
-            // End of final cinematic will launch game
-            cinematic3.OnVideoFinished += Cinematic3_OnVideoFinished;
+                // End of final cinematic will launch game
+                cinematic3.OnVideoFinished += TriggerGame;
 
-            // Push cinematics in reverse order so they play and pop out in correct order
-            uiManager.PushWindow(cinematic3);
-            uiManager.PushWindow(cinematic2);
-            uiManager.PushWindow(cinematic1);
+                // Push cinematics in reverse order so they play and pop out in correct order
+                uiManager.PushWindow(cinematic3);
+                uiManager.PushWindow(cinematic2);
+                uiManager.PushWindow(cinematic1);
+            }
+            else
+            {
+                TriggerGame();
+            }
         }
 
-        private void Cinematic3_OnVideoFinished()
+        void TriggerGame()
         {
-            // Start main game scene
-            Application.LoadLevel(1);
+            startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.NewCharacter;
         }
 
         #endregion

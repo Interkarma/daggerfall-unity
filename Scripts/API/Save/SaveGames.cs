@@ -176,6 +176,23 @@ namespace DaggerfallConnect.Save
             return true;
         }
 
+        /// <summary>
+        /// Opens the save game index specified. Will not throw any exceptions on failure.
+        /// </summary>
+        /// <param name="save">Save index</param>
+        /// <returns>True if successful.</returns>
+        public bool TryOpenSave(int save)
+        {
+            try
+            {
+                return OpenSave(save);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         #endregion
 
         #region Private Methods

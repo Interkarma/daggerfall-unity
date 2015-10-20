@@ -56,7 +56,7 @@ namespace DaggerfallConnect.Save
             CharacterSheet sheet = new CharacterSheet();
             Dictionary<int, RaceTemplate> raceDict = RaceTemplate.GetRaceDictionary();
 
-            sheet.race = raceDict[(int)parsedData.race];
+            sheet.race = raceDict[(int)parsedData.race + 1];
             sheet.gender = parsedData.gender;
             sheet.career = parsedData.career;
             sheet.name = parsedData.characterName;
@@ -141,7 +141,18 @@ namespace DaggerfallConnect.Save
 
         Genders ReadGender(BinaryReader reader)
         {
-            return (Genders)reader.ReadByte();
+            byte value = reader.ReadByte();
+            switch(value)
+            {
+                case 0:
+                    return Genders.Male;
+                case 40:
+                    return Genders.Male;
+                case 1:
+                    return Genders.Female;
+                default:
+                    throw new Exception("Unknown gender value " + value);
+            }
         }
 
         UInt16 ReadTransportationFlags(BinaryReader reader)
