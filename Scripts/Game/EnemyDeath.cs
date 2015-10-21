@@ -14,6 +14,7 @@ using System.Collections;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -31,8 +32,16 @@ namespace DaggerfallWorkshop.Game
 
         public void Die()
         {
+            Die(true);
+        }
+
+        public void Die(bool showDeathMessage)
+        {
             if (mobile)
             {
+                if (showDeathMessage)
+                    ShowDeathMessage();
+
                 PlaceCorpseMarker(mobile.Summary.Enemy.CorpseTexture);
                 DisableEnemy();
             }
@@ -59,6 +68,13 @@ namespace DaggerfallWorkshop.Game
             // Disable enemy gameobject
             // Do not destroy as we must still save enemy state when dead
             gameObject.SetActive(false);
+        }
+
+        void ShowDeathMessage()
+        {
+            string deathMessage = HardStrings.thingJustDied;
+            deathMessage = deathMessage.Replace("%s", mobile.Summary.Enemy.Name);
+            DaggerfallUI.Instance.PopupMessage(deathMessage);
         }
     }
 }

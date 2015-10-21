@@ -102,6 +102,9 @@ namespace DaggerfallWorkshop
 
         public void ToggleDoor()
         {
+            if (IsMoving)
+                return;
+
             if (IsOpen)
                 Close(OpenDuration);
             else
@@ -169,6 +172,8 @@ namespace DaggerfallWorkshop
                 Open(OpenDuration * durationScale);
             else if (currentState == ActionState.PlayingReverse)
                 Close(OpenDuration * durationScale);
+            else if (currentState == ActionState.End)
+                MakeTrigger(true);
         }
 
         #region Private Methods
@@ -199,8 +204,7 @@ namespace DaggerfallWorkshop
             currentState = ActionState.PlayingForward;
 
             // Set collider to trigger only
-            if (IsTriggerWhenOpen && boxCollider != null)
-                boxCollider.isTrigger = true;
+            MakeTrigger(true);
 
             // Play open sound if flagged and ready
             if (PlaySounds && OpenSound > 0 && duration > 0 && audioSource)
@@ -247,10 +251,15 @@ namespace DaggerfallWorkshop
             }
 
             // Set collider back to a solid object
-            if (IsTriggerWhenOpen && boxCollider != null)
-                boxCollider.isTrigger = false;
+            MakeTrigger(false);
 
             currentState = ActionState.Start;
+        }
+
+        private void MakeTrigger(bool isTrigger)
+        {
+            if (IsTriggerWhenOpen && boxCollider != null)
+                boxCollider.isTrigger = isTrigger;
         }
 
         #endregion

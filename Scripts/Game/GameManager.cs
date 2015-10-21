@@ -17,6 +17,8 @@ using System.Text;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -31,6 +33,12 @@ namespace DaggerfallWorkshop.Game
         float savedTimeScale;
         Texture2D pauseScreenshot;
 
+        GameObject playerObject = null;
+        Camera mainCamera = null;
+        StartGameBehaviour startGameBehaviour = null;
+        PlayerEntity playerEntity = null;
+        PlayerDeath playerDeath = null;
+
         #endregion
 
         #region Properties
@@ -38,6 +46,31 @@ namespace DaggerfallWorkshop.Game
         public static bool IsGamePaused
         {
             get { return Instance.isGamePaused; }
+        }
+
+        public Camera MainCamera
+        {
+            get { return (mainCamera) ? mainCamera : FindMainCamera(); }
+        }
+
+        public GameObject PlayerObject
+        {
+            get { return (playerObject) ? playerObject : FindPlayerObject(); }
+        }
+
+        public StartGameBehaviour StartGameBehaviour
+        {
+            get { return (startGameBehaviour) ? startGameBehaviour : FindStartGameBehaviour(); }
+        }
+
+        public PlayerEntity PlayerEntity
+        {
+            get { return (playerEntity != null) ? playerEntity : FindPlayerEntity(); }
+        }
+
+        public PlayerDeath PlayerDeath
+        {
+            get { return (playerDeath) ? playerDeath : FindPlayerDeath(); }
         }
 
         #endregion
@@ -191,6 +224,53 @@ namespace DaggerfallWorkshop.Game
             pauseScreenshot = new Texture2D(Screen.width, Screen.height);
             pauseScreenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
             pauseScreenshot.Apply();
+        }
+
+        GameObject FindPlayerObject()
+        {
+            playerObject = GameObject.FindGameObjectWithTag("Player");
+
+            return playerObject;
+        }
+
+        Camera FindMainCamera()
+        {
+            GameObject go = GameObject.FindGameObjectWithTag("MainCamera");
+            if (go)
+                mainCamera = go.GetComponent<Camera>();
+            else
+                return null;
+
+            return mainCamera;
+        }
+
+        StartGameBehaviour FindStartGameBehaviour()
+        {
+            startGameBehaviour = GameObject.FindObjectOfType<StartGameBehaviour>();
+
+            return startGameBehaviour;
+        }
+
+        PlayerEntity FindPlayerEntity()
+        {
+            if (PlayerObject)
+            {
+                playerEntity = PlayerObject.GetComponent<PlayerEntity>();
+                return playerEntity;
+            }
+
+            return null;
+        }
+
+        PlayerDeath FindPlayerDeath()
+        {
+            if (PlayerObject)
+            {
+                playerDeath = PlayerObject.GetComponent<PlayerDeath>();
+                return playerDeath;
+            }
+
+            return null;
         }
 
         #endregion

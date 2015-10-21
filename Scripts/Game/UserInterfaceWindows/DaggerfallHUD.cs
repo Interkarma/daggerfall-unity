@@ -22,21 +22,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
     /// Implements heads-up-display for default view mode.
+    /// TODO: Migrate to full DaggerfallBaseWindow setup
     /// </summary>
-    public class DaggerfallHUD : UserInterfaceWindow
+    public class DaggerfallHUD : DaggerfallBaseWindow
     {
         float hudScale = 2.0f;
         float crosshairScale = 0.5f;
 
+        PopupText popupText = new PopupText();
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
         GameObject player;
         DaggerfallEntityBehaviour playerEntity;
 
+        public bool ShowPopupText { get; set; }
         public bool ShowCrosshair { get; set; }
         public bool ShowVitals { get; set; }
         public bool ShowCompass { get; set; }
+
+        public PopupText PopupText
+        {
+            get { return popupText; }
+        }
 
         /// <summary>
         /// Set scale of UI components, except crosshair.
@@ -57,6 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             :base(uiManager)
         {
             parentPanel.BackgroundColor = Color.clear;
+            ShowPopupText = true;
             ShowCrosshair = true;
             ShowVitals = true;
             ShowCompass = true;
@@ -71,14 +80,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (Screen.currentResolution.height >= 1440)
                 hudScale = 4.0f;
 
-            parentPanel.Components.Add(crosshair);
-            parentPanel.Components.Add(vitals);
-            parentPanel.Components.Add(compass);
+            ParentPanel.Components.Add(crosshair);
+            ParentPanel.Components.Add(vitals);
+            ParentPanel.Components.Add(compass);
+        }
+
+        protected override void Setup()
+        {
+            popupText.Size = NativePanel.Size;
+            NativePanel.Components.Add(popupText);
         }
 
         public override void Update()
         {
             // Update UI visibility and scale
+            popupText.Enabled = ShowPopupText;
             crosshair.Enabled = ShowCrosshair;
             crosshair.CrosshairScale = CrosshairScale;
             vitals.Enabled = ShowVitals;

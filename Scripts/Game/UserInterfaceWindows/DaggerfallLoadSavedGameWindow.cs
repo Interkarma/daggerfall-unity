@@ -89,6 +89,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
+            // Always dim background
+            ParentPanel.BackgroundColor = ScreenDimColor;
+
             OpenSaveGames();
             AddControls();
         }

@@ -120,7 +120,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 EnemyDeath enemyDeath = enemy.GetComponent<EnemyDeath>();
                 if (enemyDeath)
                 {
-                    enemyDeath.Die();
+                    enemyDeath.Die(false);
                 }
             }
         }

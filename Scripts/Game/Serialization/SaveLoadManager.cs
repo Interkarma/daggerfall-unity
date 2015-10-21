@@ -146,6 +146,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Save data to file
             WriteSaveFile(Path.Combine(UnitySavePath, quickSaveFilename), json);
+
+            // Notify
+            DaggerfallUI.Instance.PopupMessage(HardStrings.gameSaved);
         }
 
         public void QuickLoad()

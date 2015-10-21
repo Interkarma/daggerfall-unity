@@ -21,6 +21,7 @@ using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -223,6 +224,12 @@ namespace DaggerfallWorkshop.Game
                 Instance.uiManager.PostMessage(message);
         }
 
+        public void PopupMessage(string text)
+        {
+            if (dfHUD != null)
+                dfHUD.PopupText.AddText(text);
+        }
+
         /// <summary>
         /// Pops all windows down to HUD (if present).
         /// </summary>
@@ -324,6 +331,7 @@ namespace DaggerfallWorkshop.Game
             if (dfHUD == null)
                 return;
 
+            dfHUD.ParentPanel.BackgroundColor = Color.clear;
             StartCoroutine(FadePanelBackground(dfHUD.ParentPanel, dfHUD.ParentPanel.BackgroundColor, Color.black, fadeDuration));
         }
 
@@ -332,24 +340,34 @@ namespace DaggerfallWorkshop.Game
             if (dfHUD == null)
                 return;
 
+            dfHUD.ParentPanel.BackgroundColor = Color.clear;
             StartCoroutine(FadePanelBackground(dfHUD.ParentPanel, Color.black, dfHUD.ParentPanel.BackgroundColor, fadeDuration));
+        }
+
+        public void ClearFade()
+        {
+            if (dfHUD == null)
+                return;
+
+            dfHUD.ParentPanel.BackgroundColor = Color.clear;
         }
 
         #endregion
 
         #region Static Helpers
 
-        public static Button AddButton(Vector2 position, Vector2 size, Panel panel)
+        public static Button AddButton(Vector2 position, Vector2 size, Panel panel = null)
         {
             Button button = new Button();
             button.Position = position;
             button.Size = size;
-            panel.Components.Add(button);
+            if (panel != null)
+                panel.Components.Add(button);
 
             return button;
         }
 
-        public static Button AddButton(Rect rect, Panel panel)
+        public static Button AddButton(Rect rect, Panel panel = null)
         {
             return AddButton(
                 new Vector2(rect.x, rect.y),
@@ -357,7 +375,7 @@ namespace DaggerfallWorkshop.Game
                 panel);
         }
 
-        public static Button AddButton(Vector2 position, Vector2 size, string clickMessage, Panel panel)
+        public static Button AddButton(Vector2 position, Vector2 size, string clickMessage, Panel panel = null)
         {
             Button button = AddButton(position, size, panel);
             button.ClickMessage = clickMessage;
@@ -365,7 +383,7 @@ namespace DaggerfallWorkshop.Game
             return button;
         }
 
-        public static Button AddButton(Vector2 position, Vector2 size, string clickMessage, string doubleClickMessage, Panel panel)
+        public static Button AddButton(Vector2 position, Vector2 size, string clickMessage, string doubleClickMessage, Panel panel = null)
         {
             Button button = AddButton(position, size, panel);
             button.ClickMessage = clickMessage;
@@ -374,19 +392,20 @@ namespace DaggerfallWorkshop.Game
             return button;
         }
 
-        public static TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, Panel panel, int glyphSpacing = 1)
+        public static TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, Panel panel = null, int glyphSpacing = 1)
         {
             TextLabel textLabel = new TextLabel();
             textLabel.ScalingMode = Scaling.None;
             textLabel.Font = font;
             textLabel.Position = position;
             textLabel.Text = text;
-            panel.Components.Add(textLabel);
+            if (panel != null)
+                panel.Components.Add(textLabel);
 
             return textLabel;
         }
 
-        public static TextLabel AddDefaultShadowedTextLabel(Vector2 position, Panel panel, int glyphSpacing = 1)
+        public static TextLabel AddDefaultShadowedTextLabel(Vector2 position, Panel panel = null, int glyphSpacing = 1)
         {
             TextLabel textLabel = AddTextLabel(DefaultFont, position, string.Empty, panel, glyphSpacing);
             textLabel.TextColor = DaggerfallDefaultTextColor;
@@ -396,25 +415,27 @@ namespace DaggerfallWorkshop.Game
             return textLabel;
         }
 
-        public static Outline AddOutline(Rect rect, Color color, Panel panel)
+        public static Outline AddOutline(Rect rect, Color color, Panel panel = null)
         {
             Outline outline = new Outline();
             outline.ScalingMode = Scaling.None;
             outline.Color = color;
             outline.Position = new Vector2(rect.x, rect.y);
             outline.Size = new Vector2(rect.width, rect.height);
-            panel.Components.Add(outline);
+            if (panel != null)
+                panel.Components.Add(outline);
 
             return outline;
         }
 
-        public static Panel AddPanel(Rect rect, Panel panel)
+        public static Panel AddPanel(Rect rect, Panel panel = null)
         {
             Panel newPanel = new Panel();
             newPanel.ScalingMode = Scaling.None;
             newPanel.Position = new Vector2(rect.x, rect.y);
             newPanel.Size = new Vector2(rect.width, rect.height);
-            panel.Components.Add(newPanel);
+            if (panel != null)
+                panel.Components.Add(newPanel);
 
             return newPanel;
         }

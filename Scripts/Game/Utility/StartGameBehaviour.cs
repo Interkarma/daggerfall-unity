@@ -43,7 +43,6 @@ namespace DaggerfallWorkshop.Game.Utility
         public bool GodMod = false;
 
         // Private fields
-        StartMethods lastStartMethod = StartMethods.Nothing;
         CharacterSheet characterSheet;
         int classicSaveIndex = -1;
         GameObject player;
@@ -74,6 +73,7 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             Nothing,                                // No startup action
             TitleMenu,                              // Open title menu
+            TitleMenuFromDeath,                     // Open title menu after death
             NewCharacter,                           // Spawn character to start location in INI
             LoadDaggerfallUnityQuickSave,           // Loads the current quicksave slot (if present)
             //LoadDaggerfallUnitySave,              // TODO: This will replace quicksave option
@@ -100,12 +100,12 @@ namespace DaggerfallWorkshop.Game.Utility
         void Update()
         {
             // Restart game using method provided
-            if (StartMethod != lastStartMethod)
+            if (StartMethod != StartMethods.Nothing)
             {
-                lastStartMethod = StartMethod;
                 DaggerfallUI.Instance.PopToHUD();
                 GameManager.Instance.PauseGame(true);
                 InvokeStartMethod();
+                StartMethod = StartMethods.Nothing;
             }
         }
 
@@ -115,10 +115,13 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void InvokeStartMethod()
         {
-            switch(StartMethod)
+            switch (StartMethod)
             {
                 case StartMethods.TitleMenu:
                     StartTitleMenu();
+                    break;
+                case StartMethods.TitleMenuFromDeath:
+                    StartTitleMenuFromDeath();
                     break;
                 case StartMethods.NewCharacter:
                     StartNewCharacter();
@@ -192,6 +195,16 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             playerEnterExit.DisableAllParents();
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGame);
+        }
+
+        void StartTitleMenuFromDeath()
+        {
+            // Reset player death camera
+            if (GameManager.Instance.PlayerDeath)
+                GameManager.Instance.PlayerDeath.ResetCamera();
+
+            playerEnterExit.DisableAllParents();
+            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGameFromDeath);
         }
 
         void StartFromQuickSave()

@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop
         SoundReader soundReader;
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITextProvider textProvider = new DefaultTextProvider();
-        
+
         #endregion
 
         #region Public Fields
@@ -325,9 +325,9 @@ namespace DaggerfallWorkshop
             }
         }
 
-#endregion
+        #endregion
 
-#region Public Static Methods
+        #region Public Static Methods
 
         public static void LogMessage(string message, bool showInEditor = false)
         {
@@ -354,9 +354,9 @@ namespace DaggerfallWorkshop
             return results.AppearsValid;
         }
 
-#endregion
+        #endregion
 
-#region Private Methods
+        #region Private Methods
 
         private void SetupSingleton()
         {
@@ -372,9 +372,9 @@ namespace DaggerfallWorkshop
             }
         }
 
-#endregion
+        #endregion
 
-#region Event Handlers
+        #region Event Handlers
 
         // OnReady
         public delegate void OnReadyEventHandler();
@@ -412,6 +412,6 @@ namespace DaggerfallWorkshop
                 OnSetTextProvider();
         }
 
-#endregion
+        #endregion
     }
 }

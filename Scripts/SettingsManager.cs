@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -347,7 +348,7 @@ namespace DaggerfallWorkshop
 
         float GetFloat(string sectionName, string valueName)
         {
-            return float.Parse(GetData(sectionName, valueName));
+            return float.Parse(GetData(sectionName, valueName), NumberStyles.Float, CultureInfo.InvariantCulture);
         }
 
         void SetFloat(string sectionName, string valueName, float value)

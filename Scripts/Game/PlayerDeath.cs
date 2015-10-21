@@ -10,8 +10,10 @@
 //
 
 using UnityEngine;
+using System;
 using System.Collections;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -20,11 +22,14 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class PlayerDeath : MonoBehaviour
     {
+        #region Fields
+
         const float fallSpeed = 2.5f;
 
         public float FadeDuration = 2f;
         public float TimeBeforeReset = 3;
 
+        StartGameBehaviour startGameBehaviour;
         DaggerfallEntityBehaviour entityBehaviour;
         PlayerEntity playerEntity;
         CharacterController playerController;
@@ -35,23 +40,28 @@ namespace DaggerfallWorkshop.Game
         float currentCameraHeight;
         float timeOfDeath;
 
+        #endregion
+
+        #region Unity
+
         void Awake()
         {
             playerController = GetComponent<CharacterController>();
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             entityBehaviour.OnSetEntity += EntityBehaviour_OnSetEntity;
+            mainCamera = GameManager.Instance.MainCamera;
+        }
 
-            // Find main camera gameobject
-            GameObject go = GameObject.FindGameObjectWithTag("MainCamera");
-            if (go)
-            {
-                mainCamera = go.GetComponent<Camera>();
-            }
+        void Start()
+        {
+            startGameBehaviour = GameObject.FindObjectOfType<StartGameBehaviour>();
+            if (!startGameBehaviour)
+                throw new Exception("Could not find StartGameBehaviour in scene.");
         }
 
         void Update()
         {
-            if (deathInProgress)
+            if (deathInProgress && mainCamera)
             {
                 if (currentCameraHeight > targetCameraHeight)
                 {
@@ -64,10 +74,33 @@ namespace DaggerfallWorkshop.Game
                 if (Time.fixedTime - timeOfDeath > TimeBeforeReset)
                 {
                     // Start new game from death cinematic
-                    //Application.LoadLevel(2);
+                    startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.TitleMenuFromDeath;
+                    deathInProgress = false;
+                    ResetCamera();
                 }
             }
         }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Resets camera after a death event.
+        /// </summary>
+        public void ResetCamera()
+        {
+            if (mainCamera)
+            {
+                Vector3 pos = mainCamera.transform.localPosition;
+                pos.y = startCameraHeight;
+                mainCamera.transform.localPosition = pos;
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
 
         private void EntityBehaviour_OnSetEntity(DaggerfallEntity oldEntity, DaggerfallEntity newEntity)
         {
@@ -85,7 +118,7 @@ namespace DaggerfallWorkshop.Game
 
         private void PlayerEntity_OnDeath(DaggerfallEntity entity)
         {
-            if (deathInProgress)
+            if (deathInProgress || !mainCamera)
                 return;
 
             // Start the death process and pause player input
@@ -99,5 +132,7 @@ namespace DaggerfallWorkshop.Game
             currentCameraHeight = startCameraHeight;
             DaggerfallUI.Instance.FadeHUDToBlack(FadeDuration);
         }
+
+        #endregion
     }
 }

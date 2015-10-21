@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Setup();
 
             // Read all CLASS*.CFG files and add to listbox
-            string[] files = Directory.GetFiles(DaggerfallUnity.Instance.Arena2Path, "class*.cfg");
+            string[] files = Directory.GetFiles(DaggerfallUnity.Instance.Arena2Path, "CLASS*.CFG");
             if (files != null && files.Length > 0)
             {
                 for (int i = 0; i < files.Length - 1; i++)
