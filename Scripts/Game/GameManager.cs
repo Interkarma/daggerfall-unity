@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game
         StartGameBehaviour startGameBehaviour = null;
         PlayerEntity playerEntity = null;
         PlayerDeath playerDeath = null;
+        WeatherManager weatherManager = null;
 
         #endregion
 
@@ -71,6 +72,16 @@ namespace DaggerfallWorkshop.Game
         public PlayerDeath PlayerDeath
         {
             get { return (playerDeath) ? playerDeath : FindPlayerDeath(); }
+        }
+
+        public WeatherManager WeatherManager
+        {
+            get { return (weatherManager) ? weatherManager : FindWeatherManager(); }
+        }
+
+        public bool IsPlayerOnHUD
+        {
+            get { return IsHUDTopWindow(); }
         }
 
         #endregion
@@ -146,7 +157,8 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods
 
-        public void PauseGame(bool pause)
+        bool hudDisabledByPause = false;
+        public void PauseGame(bool pause, bool hideHUD = false)
         {
             if (pause && !isGamePaused)
             {
@@ -154,12 +166,24 @@ namespace DaggerfallWorkshop.Game
                 Time.timeScale = 0;
                 InputManager.Instance.IsPaused = true;
                 isGamePaused = true;
+
+                if (hideHUD)
+                {
+                    DaggerfallUI.Instance.DaggerfallHUD.Enabled = false;
+                    hudDisabledByPause = true;
+                }
             }
             else if (!pause && isGamePaused)
             {
                 Time.timeScale = savedTimeScale;
                 InputManager.Instance.IsPaused = false;
                 isGamePaused = false;
+
+                if (hudDisabledByPause)
+                {
+                    DaggerfallUI.Instance.DaggerfallHUD.Enabled = true;
+                    hudDisabledByPause = false;
+                }
             }
         }
 
@@ -197,6 +221,15 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        bool IsHUDTopWindow()
+        {
+            IUserInterfaceWindow topWindow = DaggerfallUI.UIManager.TopWindow;
+            if (topWindow is DaggerfallHUD)
+                return true;
+
+            return false;
+        }
+
         // Returns true when gameplay is active
         bool IsPlayingGame()
         {
@@ -229,6 +262,8 @@ namespace DaggerfallWorkshop.Game
         GameObject FindPlayerObject()
         {
             playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerObject == null)
+                throw new Exception("GameManager could not find Player object.");
 
             return playerObject;
         }
@@ -236,10 +271,12 @@ namespace DaggerfallWorkshop.Game
         Camera FindMainCamera()
         {
             GameObject go = GameObject.FindGameObjectWithTag("MainCamera");
-            if (go)
-                mainCamera = go.GetComponent<Camera>();
-            else
-                return null;
+            if (go == null)
+                throw new Exception("GameManager could not find MainCamera object.");
+
+            mainCamera = go.GetComponent<Camera>();
+            if (mainCamera == null)
+                throw new Exception("GameManager could not find Camera.");
 
             return mainCamera;
         }
@@ -247,6 +284,8 @@ namespace DaggerfallWorkshop.Game
         StartGameBehaviour FindStartGameBehaviour()
         {
             startGameBehaviour = GameObject.FindObjectOfType<StartGameBehaviour>();
+            if (startGameBehaviour == null)
+                throw new Exception("GameManager could not find StartGameBehaviour.");
 
             return startGameBehaviour;
         }
@@ -256,6 +295,8 @@ namespace DaggerfallWorkshop.Game
             if (PlayerObject)
             {
                 playerEntity = PlayerObject.GetComponent<PlayerEntity>();
+                if (playerEntity == null)
+                    throw new Exception("GameManager could not find PlayerEntity.");
                 return playerEntity;
             }
 
@@ -267,10 +308,21 @@ namespace DaggerfallWorkshop.Game
             if (PlayerObject)
             {
                 playerDeath = PlayerObject.GetComponent<PlayerDeath>();
+                if (playerDeath == null)
+                    throw new Exception("GameManager could not find PlayerDeath.");
                 return playerDeath;
             }
 
             return null;
+        }
+
+        WeatherManager FindWeatherManager()
+        {
+            weatherManager = GameObject.FindObjectOfType<WeatherManager>();
+            if (weatherManager == null)
+                throw new Exception("GameManager could not find WeatherManager.");
+
+            return weatherManager;
         }
 
         #endregion

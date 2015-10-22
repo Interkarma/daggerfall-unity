@@ -31,6 +31,7 @@ StartingLocation=Daggerfall/Privateer's Hold
 StartInDungeon=True
 
 [Enhancements]
+LypyL_GameConsole=True
 LypyL_EnhancedSky=False
 Nystul_IncreasedTerrainDistance=False
 Nystul_RealtimeReflections=False
