@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game
         PlayerEntity playerEntity = null;
         PlayerDeath playerDeath = null;
         WeatherManager weatherManager = null;
+        bool isFullscreen = false;
 
         #endregion
 
@@ -126,6 +127,17 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            // HACK: Fix Unity fullscreen window scaling issue
+            if (Screen.fullScreen && !isFullscreen)
+            {
+                Resolution nativeResolution = Screen.resolutions[Screen.resolutions.Length - 1];
+                if (Screen.width != nativeResolution.width || Screen.height != nativeResolution.height)
+                {
+                    Screen.SetResolution(nativeResolution.width, nativeResolution.height, true);
+                }
+                isFullscreen = true;
+            }
+
             if (!IsPlayingGame())
                 return;
 

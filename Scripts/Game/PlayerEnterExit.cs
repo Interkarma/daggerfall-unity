@@ -627,7 +627,6 @@ namespace DaggerfallWorkshop.Game
             // Raise event
             RaiseOnPreTransitionEvent(TransitionType.ToDungeonExterior);
 
-            DaggerfallUI.Instance.FadeHUDToBlack();
             EnableExteriorParent();
 
             // Set player outside exterior door position and set facing

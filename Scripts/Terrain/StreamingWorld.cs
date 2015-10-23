@@ -130,14 +130,10 @@ namespace DaggerfallWorkshop
         /// </summary>
         public float SceneMapRatio { get { return 1f / MeshReader.GlobalScale; } }
 
-        #endregion
-
-        #region Private Properties
-
         // Streaming world objects are ultimately parented to this object
         // If left null, world objects will be parented to this transform
         // This allows for decoupling of GPS logic and streaming functions
-        Transform StreamingTarget
+        public Transform StreamingTarget
         {
             get { return (streamingTarget != null) ? streamingTarget.transform : this.transform; }
         }
@@ -307,11 +303,16 @@ namespace DaggerfallWorkshop
         }
 
         // Offset world compensation for floating origin world
-        public void OffsetWorldCompensation(Vector3 change, bool offsetLastPlayerPos = true)
+        /// <summary>
+        /// Offset world compensation for floating origin.
+        /// </summary>
+        /// <param name="change">Amount to offset world compensation.</param>
+        /// <param name="offsetLastPlayerPos">Optionally update last known player position so GPS does not change.</param>
+        public void OffsetWorldCompensation(Vector3 offset, bool offsetLastPlayerPos = true)
         {
-            worldCompensation += change;
+            worldCompensation += offset;
             if (offsetLastPlayerPos)
-                lastPlayerPos += change;
+                lastPlayerPos += offset;
         }
 
         /// <summary>
@@ -850,6 +851,7 @@ namespace DaggerfallWorkshop
             DFPosition worldPos = MapsFile.MapPixelToWorldCoord(mapPixelX, mapPixelY);
             LocalPlayerGPS.WorldX = worldPos.X;
             LocalPlayerGPS.WorldZ = worldPos.Y;
+            LocalPlayerGPS.UpdateWorldInfo();
             autoRepositionOffset = repositionOffset;
             autoRepositionMethod = autoReposition;
             InitWorld();

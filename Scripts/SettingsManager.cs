@@ -188,16 +188,16 @@ namespace DaggerfallWorkshop
 
         // [Enhancements]
 
-        public bool LypyL_EnhancedSky
-        {
-            get { return GetBool(sectionEnhancements, "LypyL_EnhancedSky"); }
-            set { SetBool(sectionEnhancements, "LypyL_EnhancedSky", value); }
-        }
-
         public bool LypyL_GameConsole
         {
             get { return GetBool(sectionEnhancements, "LypyL_GameConsole"); }
             set { SetBool(sectionEnhancements, "LypyL_GameConsole", value); }
+        }
+
+        public bool LypyL_EnhancedSky
+        {
+            get { return GetBool(sectionEnhancements, "LypyL_EnhancedSky"); }
+            set { SetBool(sectionEnhancements, "LypyL_EnhancedSky", value); }
         }
 
         public bool Nystul_IncreasedTerrainDistance

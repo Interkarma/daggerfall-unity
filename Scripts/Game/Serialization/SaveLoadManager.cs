@@ -519,6 +519,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!serializablePlayer)
                 yield break;
 
+            // Immediately set date so world is loaded with correct season
+            RestoreDateTimeData(saveData.dateAndTime);
+
             // Must have PlayerEnterExit to respawn player at saved location
             PlayerEnterExit playerEnterExit = serializablePlayer.GetComponent<PlayerEnterExit>();
             if (!playerEnterExit)

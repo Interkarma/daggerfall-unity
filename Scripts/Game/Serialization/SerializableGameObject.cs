@@ -128,7 +128,6 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool isCrouching;
         public int worldPosX;
         public int worldPosZ;
-        public Vector3 worldCompensation;
         public bool insideDungeon;
         public bool insideBuilding;
         public StaticDoor[] exteriorDoors;

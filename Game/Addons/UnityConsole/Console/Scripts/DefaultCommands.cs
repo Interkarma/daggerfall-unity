@@ -7,12 +7,13 @@ using DaggerfallConnect.Arena2;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace Wenzil.Console
 {
     public class DefaultCommands : MonoBehaviour
     {
-
+        public static bool showDebugStrings = false;
 
         void Start()
         {
@@ -28,8 +29,12 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
             ConsoleCommandsDatabase.RegisterCommand(KillAllEnemies.name, KillAllEnemies.description, KillAllEnemies.usage, KillAllEnemies.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TransitionToExterior.name, TransitionToExterior.description, TransitionToExterior.usage, TransitionToExterior.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(SetHealth.name, SetHealth.description, SetHealth.usage, SetHealth.Execute);
+
             ConsoleCommandsDatabase.RegisterCommand(SetWalkSpeed.name, SetWalkSpeed.description, SetWalkSpeed.usage, SetWalkSpeed.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetMouseSensitivity.name, SetMouseSensitivity.description, SetMouseSensitivity.usage, SetMouseSensitivity.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ToggleMouseSmoothing.name, ToggleMouseSmoothing.description, ToggleMouseSmoothing.usage, ToggleMouseSmoothing.Execute);
+
             //ConsoleCommandsDatabase.RegisterCommand(SetMouseSmoothing.name, SetMouseSmoothing.description, SetMouseSmoothing.usage, SetMouseSmoothing.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetVSync.name, SetVSync.description, SetVSync.usage, SetVSync.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetRunSpeed.name, SetRunSpeed.description, SetRunSpeed.usage, SetRunSpeed.Execute);
@@ -67,29 +72,28 @@ namespace Wenzil.Console
 
         private static class ShowDebugStrings
         {
-            public static readonly string name = "tdg";
-            public static readonly string error = "Failed to toggle debug string setting - StreamingWorld object not found?";
+            public static readonly string name = "tdbg";
+            public static readonly string error = "Failed to toggle debug string ";
             public static readonly string description = "Toggles if the debug information is displayed";
-            public static readonly string usage = "tdg";
+            public static readonly string usage = "tdbg";
 
             public static string Execute(params string[] args)
             {
                 DaggerfallWorkshop.StreamingWorld streamingWorld = GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
                 DaggerfallWorkshop.DaggerfallUnity daggerfallUnity = GameObject.FindObjectOfType<DaggerfallWorkshop.DaggerfallUnity>();
+                DaggerfallSongPlayer songPlayer = GameObject.FindObjectOfType<DaggerfallSongPlayer>();
 
-                if (!streamingWorld || !daggerfallUnity)
-                {
-                    return error;
+                DefaultCommands.showDebugStrings = !DefaultCommands.showDebugStrings;
+                bool show = DefaultCommands.showDebugStrings;
+                if (streamingWorld)
+                    streamingWorld.ShowDebugString = show;
+                if (daggerfallUnity)
+                    daggerfallUnity.WorldTime.ShowDebugString = show;
+                if (songPlayer)
+                    songPlayer.ShowDebugString = show;
+                return string.Format("Debug string show: {0}", show);
 
-                }
-                else
-                {
 
-                    streamingWorld.ShowDebugString = !streamingWorld.ShowDebugString;
-                    daggerfallUnity.WorldTime.ShowDebugString = !daggerfallUnity.WorldTime.ShowDebugString;
-                    return string.Format("Debug string: {0}", streamingWorld.ShowDebugString);
-
-                }
 
 
 
@@ -105,30 +109,33 @@ namespace Wenzil.Console
         private static class SetHealth
         {
             public static readonly string name = "set_health";
-            public static readonly string error = "Failed to set health - invalid setting or Player health object not found";
+            public static readonly string error = "Failed to set health - invalid setting or player object not found";
             public static readonly string description = "Set Health";
             public static readonly string usage = "set_Health [#]";
 
             public static string Execute(params string[] args)
             {
-                int health;
-                PlayerHealth playerHealth = GameObject.FindObjectOfType<PlayerHealth>();
 
-                if (args.Length < 1)
+                GameObject player = GameObject.FindGameObjectWithTag("Player");
+                DaggerfallEntityBehaviour playerBehavior;
+                int health = 0;
+                if (args == null || args.Length < 1 || !int.TryParse(args[0], out health))
                 {
                     return HelpCommand.Execute(SetHealth.name);
 
                 }
-                else if (playerHealth == null || int.TryParse(args[0], out health))
+                else if (player != null)
                 {
-                    return error;
+                    playerBehavior = player.GetComponent<DaggerfallEntityBehaviour>();
+                    playerBehavior.Entity.SetHealth(health);
+
+                    return string.Format("Set health to: {0}", playerBehavior.Entity.CurrentHealth);
                 }
                 else
                 {
-                    return "blah";
+                    return error;
+
                 }
-
-
 
             }
         }
@@ -143,14 +150,17 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                PlayerHealth playerHealth = GameObject.FindObjectOfType<PlayerHealth>();
-                if (playerHealth == null)
+                GameObject player = GameObject.FindGameObjectWithTag("Player");
+                DaggerfallEntityBehaviour playerBehavior;
+
+                if (player == null)
                 {
                     return error;
                 }
                 else
                 {
-                    playerHealth.SendMessage("RemoveHealth", 999999);       //don't know how to get player health anymore :/
+                    playerBehavior = player.GetComponent<DaggerfallEntityBehaviour>();
+                    playerBehavior.Entity.SetHealth(0);
                     return "Are you still there?";
                 }
 
@@ -170,7 +180,7 @@ namespace Wenzil.Console
             {
                 PlayerWeather playerWeather = GameObject.FindObjectOfType<PlayerWeather>();
 
-                if (args.Length < 1)
+                if (args == null || args.Length < 1)
                 {
                     return usage;
 
@@ -180,7 +190,6 @@ namespace Wenzil.Console
                     return error;
 
                 }
-                //else if(Enum.IsDefined(typeof(PlayerWeather.WeatherTypes), args[0]))
                 else
                 {
                     int type;
@@ -220,7 +229,7 @@ namespace Wenzil.Console
                     return error;
 
                 }
-                if (args.Length < 1)
+                if (args == null || args.Length < 1)
                 {
                     try
                     {
@@ -266,7 +275,7 @@ namespace Wenzil.Console
                     return error;
 
                 }
-                if (args.Length < 1)
+                if (args == null || args.Length < 1)
                 {
                     try
                     {
@@ -313,7 +322,7 @@ namespace Wenzil.Console
                     return error;
 
                 }
-                if (args.Length < 1)
+                if (args == null || args.Length < 1)
                 {
                     try
                     {
@@ -375,6 +384,31 @@ namespace Wenzil.Console
                 {
                     mLook.sensitivity = new Vector2(speed, speed);
                     return string.Format("Set mouse sensitivity to: {0}", mLook.sensitivity.ToString());
+                }
+            }
+
+        }
+
+
+        private static class ToggleMouseSmoothing
+        {
+            public static readonly string name = "tmsmooth";
+            public static readonly string error = "Failed to toggle mouse smoothing - PlayerMouseLook object not found?";
+            public static readonly string description = "Toggle mouse smoothing.";
+            public static readonly string usage = "tmsmooth";
+
+            public static string Execute(params string[] args)
+            {
+                PlayerMouseLook mLook = GameObject.FindObjectOfType<PlayerMouseLook>();
+                if (mLook == null)
+                {
+                    return error;
+                }
+                else
+                {
+                    //mLook.smoothing = new Vector2(speed, speed);
+                    mLook.enableSmoothing = !mLook.enableSmoothing;
+                    return string.Format("Mouse smoothing is on: {0}", mLook.enableSmoothing.ToString());
                 }
             }
 
@@ -471,7 +505,7 @@ namespace Wenzil.Console
                     return error;
 
                 }
-                if (args.Length < 1)
+                if (args == null || args.Length < 1)
                 {
                     try
                     {
@@ -518,7 +552,7 @@ namespace Wenzil.Console
                     return error;
 
                 }
-                if (args.Length < 1)
+                if (args == null || args.Length < 1)
                 {
                     try
                     {
@@ -748,10 +782,6 @@ namespace Wenzil.Console
                     return error;
 
                 }
-
-
-
-
             }
 
 
@@ -768,31 +798,27 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                EnemyHealth[] enemies = GameObject.FindObjectsOfType<EnemyHealth>();
+                DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
                 int count = 0;
-                for (int i = 0; i < enemies.Count(); i++)
+                for (int i = 0; i < entityBehaviours.Length; i++)
                 {
-                    try
+                    DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
+                    if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
                     {
-                        enemies[i].RemoveHealth(enemies[i].gameObject, enemies[i].Health * 2, Vector3.zero);
+                        entityBehaviour.transform.SendMessage("Die");
                         count++;
                     }
-                    catch
-                    {
-                        return "Unknown Error";
-
-                    }
-
                 }
-
-                return string.Format("Finished.  Killed {0} out of {1} enemies", count, enemies.Count());
-
-
-
+                return string.Format("Finished.  Killed: {0} enemies.", count);
             }
 
 
         }
+
+
+
+
+
 
     }
 }

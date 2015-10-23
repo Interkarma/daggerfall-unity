@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Utility
     {
         
         public bool updateTransform = true;
-        public bool updateParticles = true;
+        public bool updateParticles = false;
         
 
         /// <summary>

@@ -114,7 +114,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerPosition.isCrouching = playerMotor.IsCrouching;
             data.playerPosition.worldPosX = StreamingWorld.LocalPlayerGPS.WorldX;
             data.playerPosition.worldPosZ = StreamingWorld.LocalPlayerGPS.WorldZ;
-            data.playerPosition.worldCompensation = StreamingWorld.WorldCompensation;
             data.playerPosition.insideDungeon = playerEnterExit.IsPlayerInsideDungeon;
             data.playerPosition.insideBuilding = playerEnterExit.IsPlayerInsideBuilding;
 

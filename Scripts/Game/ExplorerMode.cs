@@ -37,21 +37,21 @@ namespace DaggerfallWorkshop.Game
         StreamingWorld streamingWorld;
         PlayerEnterExit playerEnterExit;
         PlayerGPS playerGPS;
-        PlayerMotor playerMotor;
-        PlayerMouseLook playerMouseLook;
-        ShowTitleScreen titleScreen;
+        //PlayerMotor playerMotor;
+        //PlayerMouseLook playerMouseLook;
+        //ShowTitleScreen titleScreen;
 
-        int timeScaleControl = 1;
-        int minTimeScaleControl = 1;
-        int maxTimeScaleControl = 150;
-        int timeScaleStep = 25;
-        float timeScaleMultiplier = 10f;
-        float startRunSpeed;
-        float startTorchRange;
-        bool showDebugStrings = false;
-        bool invertMouse = false;
-        bool hiRunSpeed = false;
-        bool hiTorchRange = false;
+        //int timeScaleControl = 1;
+        //int minTimeScaleControl = 1;
+        //int maxTimeScaleControl = 150;
+        //int timeScaleStep = 25;
+        //float timeScaleMultiplier = 10f;
+        //float startRunSpeed;
+        //float startTorchRange;
+        //bool showDebugStrings = false;
+        //bool invertMouse = false;
+        //bool hiRunSpeed = false;
+        //bool hiTorchRange = false;
 
         void Start()
         {
@@ -59,21 +59,25 @@ namespace DaggerfallWorkshop.Game
             streamingWorld = GameObject.FindObjectOfType<StreamingWorld>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
             playerGPS = GetComponent<PlayerGPS>();
-            playerMotor = GetComponent<PlayerMotor>();
-            playerMouseLook = GameObject.FindObjectOfType<PlayerMouseLook>();
-            titleScreen = GameObject.FindObjectOfType<ShowTitleScreen>();
+            //playerMotor = GetComponent<PlayerMotor>();
+            //playerMouseLook = GameObject.FindObjectOfType<PlayerMouseLook>();
+            //titleScreen = GameObject.FindObjectOfType<ShowTitleScreen>();
 
-            // Get starting run speed
-            if (playerMotor)
-                startRunSpeed = playerMotor.runSpeed;
+            //// Get starting run speed
+            //if (playerMotor)
+            //    startRunSpeed = playerMotor.runSpeed;
 
-            // Get starting torch range
-            if (PlayerTorch != null)
-                startTorchRange = PlayerTorch.range;
+            //// Get starting torch range
+            //if (PlayerTorch != null)
+            //    startTorchRange = PlayerTorch.range;
         }
 
         void Update()
         {
+
+            if (dfUnity) dfUnity.WorldTime.ShowDebugString = true;
+            if (streamingWorld) streamingWorld.ShowDebugString = true;
+
             if (streamingWorld.IsInit)
             {
                 // Exit while loading world
@@ -81,132 +85,132 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                // Stop showing title screen
-                if (titleScreen)
-                    titleScreen.ShowTitle = false;
+                //// Stop showing title screen
+                //if (titleScreen)
+                //    titleScreen.ShowTitle = false;
             }
 
-            // Random location
-            // Must have playerEnterExit reference
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                if (!playerEnterExit)
-                    return;
+            //// Random location
+            //// Must have playerEnterExit reference
+            //if (Input.GetKeyDown(KeyCode.R))
+            //{
+            //    if (!playerEnterExit)
+            //        return;
 
-                // Sheate weapons
-                if (WeaponManager)
-                {
-                    WeaponManager.SheathWeapons();
-                }
+            //    // Sheate weapons
+            //    if (WeaponManager)
+            //    {
+            //        WeaponManager.SheathWeapons();
+            //    }
 
-                if (playerEnterExit.IsPlayerInsideDungeon)
-                {
-                    // Just move player to start of dungeon
-                    playerEnterExit.MovePlayerToDungeonStart();
-                }
-                else
-                {
-                    // Randomise environment and location
-                    RandomiseEnvironment();
-                    StartCoroutine(TeleportRandomLocation());
-                }
-            }
+            //    if (playerEnterExit.IsPlayerInsideDungeon)
+            //    {
+            //        // Just move player to start of dungeon
+            //        playerEnterExit.MovePlayerToDungeonStart();
+            //    }
+            //    else
+            //    {
+            //        // Randomise environment and location
+            //        RandomiseEnvironment();
+            //        StartCoroutine(TeleportRandomLocation());
+            //    }
+            //}
 
-            // Preset locations
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                StartCoroutine(TeleportLocation("Daggerfall", "Daggerfall"));
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                StartCoroutine(TeleportLocation("Wayrest", "Wayrest"));
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                StartCoroutine(TeleportLocation("Sentinel", "Sentinel"));
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                StartCoroutine(TeleportLocation("Orsinium Area", "Orsinium"));
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                StartCoroutine(TeleportLocation("Tulune", "The Old Copperham Place"));
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha6))
-            {
-                StartCoroutine(TeleportLocation("Pothago", "The Stronghold of Cirden"));
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha7))
-            {
-                StartCoroutine(TeleportLocation("Daggerfall", "Privateer's Hold"));
-            }
+            //// Preset locations
+            //if (Input.GetKeyDown(KeyCode.Alpha1))
+            //{
+            //    StartCoroutine(TeleportLocation("Daggerfall", "Daggerfall"));
+            //}
+            //if (Input.GetKeyDown(KeyCode.Alpha2))
+            //{
+            //    StartCoroutine(TeleportLocation("Wayrest", "Wayrest"));
+            //}
+            //if (Input.GetKeyDown(KeyCode.Alpha3))
+            //{
+            //    StartCoroutine(TeleportLocation("Sentinel", "Sentinel"));
+            //}
+            //if (Input.GetKeyDown(KeyCode.Alpha4))
+            //{
+            //    StartCoroutine(TeleportLocation("Orsinium Area", "Orsinium"));
+            //}
+            //if (Input.GetKeyDown(KeyCode.Alpha5))
+            //{
+            //    StartCoroutine(TeleportLocation("Tulune", "The Old Copperham Place"));
+            //}
+            //if (Input.GetKeyDown(KeyCode.Alpha6))
+            //{
+            //    StartCoroutine(TeleportLocation("Pothago", "The Stronghold of Cirden"));
+            //}
+            //if (Input.GetKeyDown(KeyCode.Alpha7))
+            //{
+            //    StartCoroutine(TeleportLocation("Daggerfall", "Privateer's Hold"));
+            //}
 
-            // Time scale
-            if (Input.GetKeyDown(KeyCode.Equals))
-            {
-                timeScaleControl += timeScaleStep;
-                if (timeScaleControl > maxTimeScaleControl)
-                    timeScaleControl = maxTimeScaleControl;
-                dfUnity.WorldTime.TimeScale = timeScaleControl * timeScaleMultiplier;
-            }
-            if (Input.GetKeyDown(KeyCode.Minus))
-            {
-                timeScaleControl -= timeScaleStep;
-                if (timeScaleControl < minTimeScaleControl)
-                    timeScaleControl = minTimeScaleControl;
-                dfUnity.WorldTime.TimeScale = timeScaleControl * timeScaleMultiplier;
-            }
+            //// Time scale
+            //if (Input.GetKeyDown(KeyCode.Equals))
+            //{
+            //    timeScaleControl += timeScaleStep;
+            //    if (timeScaleControl > maxTimeScaleControl)
+            //        timeScaleControl = maxTimeScaleControl;
+            //    dfUnity.WorldTime.TimeScale = timeScaleControl * timeScaleMultiplier;
+            //}
+            //if (Input.GetKeyDown(KeyCode.Minus))
+            //{
+            //    timeScaleControl -= timeScaleStep;
+            //    if (timeScaleControl < minTimeScaleControl)
+            //        timeScaleControl = minTimeScaleControl;
+            //    dfUnity.WorldTime.TimeScale = timeScaleControl * timeScaleMultiplier;
+            //}
 
-            // Music control
-            if (SongManager)
-            {
-                if (Input.GetKeyDown(KeyCode.P))
-                    SongManager.TogglePlay();
-                if (Input.GetKeyDown(KeyCode.LeftBracket))
-                    SongManager.PlayPreviousSong();
-                if (Input.GetKeyDown(KeyCode.RightBracket))
-                    SongManager.PlayNextSong();
-            }
+            //// Music control
+            //if (SongManager)
+            //{
+            //    if (Input.GetKeyDown(KeyCode.P))
+            //        SongManager.TogglePlay();
+            //    if (Input.GetKeyDown(KeyCode.LeftBracket))
+            //        SongManager.PlayPreviousSong();
+            //    if (Input.GetKeyDown(KeyCode.RightBracket))
+            //        SongManager.PlayNextSong();
+            //}
 
-            // Invert mouse
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                invertMouse = !invertMouse;
-                if (playerMouseLook) playerMouseLook.invertMouseY = invertMouse;
-            }
+            //// Invert mouse
+            //if (Input.GetKeyDown(KeyCode.I))
+            //{
+            //    invertMouse = !invertMouse;
+            //    if (playerMouseLook) playerMouseLook.invertMouseY = invertMouse;
+            //}
 
-            // High speed running
-            if (playerMotor)
-            {
-                if (Input.GetKeyDown(KeyCode.H))
-                {
-                    hiRunSpeed = !hiRunSpeed;
-                    if (hiRunSpeed)
-                        playerMotor.runSpeed = hiRunSpeedValue;
-                    else
-                        playerMotor.runSpeed = startRunSpeed;
-                }
-            }
+            //// High speed running
+            //if (playerMotor)
+            //{
+            //    if (Input.GetKeyDown(KeyCode.H))
+            //    {
+            //        hiRunSpeed = !hiRunSpeed;
+            //        if (hiRunSpeed)
+            //            playerMotor.runSpeed = hiRunSpeedValue;
+            //        else
+            //            playerMotor.runSpeed = startRunSpeed;
+            //    }
+            //}
 
-            // Brighter torch
-            if (Input.GetKeyDown(KeyCode.T) && PlayerTorch != null)
-            {
-                hiTorchRange = !hiTorchRange;
-                if (hiTorchRange)
-                    PlayerTorch.range = hiTorchRangeValue;
-                else
-                    PlayerTorch.range = startTorchRange;
-            }
+            //// Brighter torch
+            //if (Input.GetKeyDown(KeyCode.T) && PlayerTorch != null)
+            //{
+            //    hiTorchRange = !hiTorchRange;
+            //    if (hiTorchRange)
+            //        PlayerTorch.range = hiTorchRangeValue;
+            //    else
+            //        PlayerTorch.range = startTorchRange;
+            //}
 
-            // Debug strings
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                showDebugStrings = !showDebugStrings;
-                if (dfUnity) dfUnity.WorldTime.ShowDebugString = showDebugStrings;
-                if (streamingWorld) streamingWorld.ShowDebugString = showDebugStrings;
-                if (SongManager) SongManager.SongPlayer.ShowDebugString = showDebugStrings;
-            }
+            //// Debug strings
+            //if (Input.GetKeyDown(KeyCode.L))
+            //{
+            //    showDebugStrings = !showDebugStrings;
+            //    if (dfUnity) dfUnity.WorldTime.ShowDebugString = showDebugStrings;
+            //    if (streamingWorld) streamingWorld.ShowDebugString = showDebugStrings;
+            //    if (SongManager) SongManager.SongPlayer.ShowDebugString = showDebugStrings;
+            //}
         }
 
         // Teleport player to any location by name
@@ -219,8 +223,8 @@ namespace DaggerfallWorkshop.Game
             if (!location.Loaded)
                 yield break;
 
-            if (titleScreen)
-                titleScreen.ShowTitle = true;
+            //if (titleScreen)
+            //    titleScreen.ShowTitle = true;
             yield return new WaitForEndOfFrame();
 
             // Check inside range
@@ -329,8 +333,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Teleport
-            if (titleScreen)
-                titleScreen.ShowTitle = true;
+            //if (titleScreen)
+            //    titleScreen.ShowTitle = true;
             yield return new WaitForEndOfFrame();
             streamingWorld.TeleportToCoordinates(mapPos.X, mapPos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
         }
