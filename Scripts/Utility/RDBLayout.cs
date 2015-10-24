@@ -911,19 +911,49 @@ namespace DaggerfallWorkshop.Utility
             if (actionLinkDict.Count == 0)
                 return;
 
-            // Iterate through actions
+            // Iterate through actions #Lypl
             foreach (var item in actionLinkDict)
             {
                 ActionLink link = item.Value;
+                DaggerfallAction dfAction = link.gameObject.GetComponent<DaggerfallAction>();
 
-                // Link to next node
-                if (actionLinkDict.ContainsKey(link.nextKey))
-                    link.gameObject.GetComponent<DaggerfallAction>().NextObject = actionLinkDict[link.nextKey].gameObject;
+                if (dfAction == null)
+                    continue;
 
-                // Link to previous node
-                if (actionLinkDict.ContainsKey(link.prevKey))
-                    link.gameObject.GetComponent<DaggerfallAction>().PreviousObject = actionLinkDict[link.prevKey].gameObject;
+                try
+                {
+                    // Link to next node
+                    if (actionLinkDict.ContainsKey(link.nextKey))
+                        dfAction.NextObject = actionLinkDict[link.nextKey].gameObject;
+
+                    // Link to previous node
+                    if (actionLinkDict.ContainsKey(link.prevKey))
+                        dfAction.PreviousObject = actionLinkDict[link.prevKey].gameObject;
+                }
+                catch (Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(ex.Message, true);
+                    DaggerfallUnity.LogMessage(string.Format("Error in LinkActionNodes; {0} : {1} : {2} : {3}", link.gameObject.name, link.nextKey, link.prevKey, dfAction), true);
+                }
             }
+
+            //// Exit if no actions
+            //if (actionLinkDict.Count == 0)
+            //    return;
+
+            //// Iterate through actions
+            //foreach (var item in actionLinkDict)
+            //{
+            //    ActionLink link = item.Value;
+
+            //    // Link to next node
+            //    if (actionLinkDict.ContainsKey(link.nextKey))
+            //        link.gameObject.GetComponent<DaggerfallAction>().NextObject = actionLinkDict[link.nextKey].gameObject;
+
+            //    // Link to previous node
+            //    if (actionLinkDict.ContainsKey(link.prevKey))
+            //        link.gameObject.GetComponent<DaggerfallAction>().PreviousObject = actionLinkDict[link.prevKey].gameObject;
+            //}
         }
 
         /// <summary>

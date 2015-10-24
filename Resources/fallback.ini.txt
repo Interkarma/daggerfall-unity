@@ -25,6 +25,9 @@ InvertMouseVertical=False
 MouseLookSmoothing=True
 MouseLookSensitivity=1.0
 HeadBobbing=False
+ShowWeaponLeftHand=False
+WeaponSwingThreshold=0.8
+WeaponSwingTriggerCount=3
 
 [Startup]
 StartingLocation=Daggerfall/Privateer's Hold

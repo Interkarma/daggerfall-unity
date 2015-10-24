@@ -96,13 +96,13 @@ namespace DaggerfallWorkshop
 
         public int FieldOfView
         {
-            get { return GetInt(sectionVideo, "FieldOfView"); }
+            get { return GetInt(sectionVideo, "FieldOfView", 60, 80); }
             set { SetInt(sectionVideo, "FieldOfView", value); }
         }
 
         public int MainFilterMode
         {
-            get { return GetInt(sectionVideo, "MainFilterMode"); }
+            get { return GetInt(sectionVideo, "MainFilterMode", 0, 2); }
             set { SetInt(sectionVideo, "MainFilterMode", value); }
         }
 
@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop
 
         public int GUIFilterMode
         {
-            get { return GetInt(sectionGUI, "GUIFilterMode"); }
+            get { return GetInt(sectionGUI, "GUIFilterMode", 0, 2); }
             set { SetInt(sectionGUI, "GUIFilterMode", value); }
         }
 
@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop
 
         public float DimAlphaStrength
         {
-            get { return GetFloat(sectionGUI, "DimAlphaStrength"); }
+            get { return GetFloat(sectionGUI, "DimAlphaStrength", 0, 1); }
             set { SetFloat(sectionGUI, "DimAlphaStrength", value); }
         }
 
@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop
 
         public float MouseLookSensitivity
         {
-            get { return GetFloat(sectionControls, "MouseLookSensitivity"); }
+            get { return GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f); }
             set { SetFloat(sectionControls, "MouseLookSensitivity", value); }
         }
 
@@ -170,6 +170,24 @@ namespace DaggerfallWorkshop
         {
             get { return GetBool(sectionControls, "HeadBobbing"); }
             set { SetBool(sectionControls, "HeadBobbing", value); }
+        }
+
+        public bool ShowWeaponLeftHand
+        {
+            get { return GetBool(sectionControls, "ShowWeaponLeftHand"); }
+            set { SetBool(sectionControls, "ShowWeaponLeftHand", value); }
+        }
+
+        public float WeaponSwingThreshold
+        {
+            get { return GetFloat(sectionControls, "WeaponSwingThreshold", 0.1f, 1.0f); }
+            set { SetFloat(sectionControls, "WeaponSwingThreshold", value); }
+        }
+
+        public int WeaponSwingTriggerCount
+        {
+            get { return GetInt(sectionControls, "WeaponSwingTriggerCount", 1, 10); }
+            set { SetInt(sectionControls, "WeaponSwingTriggerCount", value); }
         }
 
         // [Startup]
@@ -347,6 +365,12 @@ namespace DaggerfallWorkshop
             return int.Parse(GetData(sectionName, valueName));
         }
 
+        int GetInt(string sectionName, string valueName, int min, int max)
+        {
+            int value = int.Parse(GetData(sectionName, valueName));
+            return Mathf.Clamp(value, min, max);
+        }
+
         void SetInt(string sectionName, string valueName, int value)
         {
             SetData(sectionName, valueName, value.ToString());
@@ -355,6 +379,12 @@ namespace DaggerfallWorkshop
         float GetFloat(string sectionName, string valueName)
         {
             return float.Parse(GetData(sectionName, valueName), NumberStyles.Float, CultureInfo.InvariantCulture);
+        }
+
+        float GetFloat(string sectionName, string valueName, float min, float max)
+        {
+            float value = float.Parse(GetData(sectionName, valueName), NumberStyles.Float, CultureInfo.InvariantCulture);
+            return Mathf.Clamp(value, min, max);
         }
 
         void SetFloat(string sectionName, string valueName, float value)

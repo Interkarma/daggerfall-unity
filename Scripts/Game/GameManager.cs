@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game
         PlayerEntity playerEntity = null;
         PlayerDeath playerDeath = null;
         WeatherManager weatherManager = null;
+        WeaponManager weaponManager = null;
         bool isFullscreen = false;
 
         #endregion
@@ -78,6 +79,11 @@ namespace DaggerfallWorkshop.Game
         public WeatherManager WeatherManager
         {
             get { return (weatherManager) ? weatherManager : FindWeatherManager(); }
+        }
+
+        public WeaponManager WeaponManager
+        {
+            get { return (weaponManager) ? WeaponManager : FindWeaponManager(); }
         }
 
         public bool IsPlayerOnHUD
@@ -335,6 +341,18 @@ namespace DaggerfallWorkshop.Game
                 throw new Exception("GameManager could not find WeatherManager.");
 
             return weatherManager;
+        }
+
+        WeaponManager FindWeaponManager()
+        {
+            if (PlayerObject)
+            {
+                weaponManager = PlayerObject.GetComponent<WeaponManager>();
+                if (weaponManager == null)
+                    throw new Exception("GameManager could not find WeaponManager.");
+            }
+
+            return weaponManager;
         }
 
         #endregion

@@ -180,6 +180,15 @@ namespace DaggerfallWorkshop.Game.Utility
             if (hud != null)
                 hud.ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
 
+            // Weapon hand settings
+            WeaponManager weaponManager = GameManager.Instance.WeaponManager;
+            weaponManager.RightHandWeapon.LeftHand = DaggerfallUnity.Settings.ShowWeaponLeftHand;
+
+            // Weapon swing settings
+            weaponManager.HorizontalThreshold = DaggerfallUnity.Settings.WeaponSwingThreshold;
+            weaponManager.VerticalThreshold = DaggerfallUnity.Settings.WeaponSwingThreshold;
+            weaponManager.TriggerCount = DaggerfallUnity.Settings.WeaponSwingTriggerCount;
+
             // GodMode setting
             playerHealth.GodMode = GodMod;
 

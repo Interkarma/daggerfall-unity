@@ -14,6 +14,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+using FullSerializer;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -23,6 +26,8 @@ namespace DaggerfallWorkshop.Game
     public class InputManager : MonoBehaviour
     {
         #region Fields
+
+        const string keyBindsFilename = "KeyBinds.txt";
 
         const float acceleration = 3f;
         const float friction = 4f;
@@ -48,6 +53,16 @@ namespace DaggerfallWorkshop.Game
         bool negHorizontalImpulse;
         bool posVerticalImpulse;
         bool negVerticalImpulse;
+
+        #endregion
+
+        #region Structures
+
+        [fsObject("v1")]
+        public class KeyBindData_v1
+        {
+            public Dictionary<KeyCode, Actions> actionKeyBinds;
+        }
 
         #endregion
 
@@ -212,6 +227,17 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
+            // Load a keybind file if possible
+            try
+            {
+                if (HasKeyBindsSave())
+                    LoadKeyBinds();
+            }
+            catch(Exception ex)
+            {
+                DaggerfallUnity.LogMessage(string.Format("Could not load keybinds file. The exception was: '{0}'", ex.Message), true);
+                DaggerfallUnity.LogMessage("Setting default key binds after failed load.", true);
+            }
         }
 
         void Update()
@@ -491,6 +517,42 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Save/Load Bindings
+
+        string GetKeyBindsSavePath()
+        {
+            return Path.Combine(Application.dataPath, keyBindsFilename);
+        }
+
+        bool HasKeyBindsSave()
+        {
+            if (File.Exists(GetKeyBindsSavePath()))
+                return true;
+
+            return false;
+        }
+
+        void SaveKeyBinds()
+        {
+            string path = GetKeyBindsSavePath();
+
+            KeyBindData_v1 keyBindsData = new KeyBindData_v1();
+            keyBindsData.actionKeyBinds = actionKeyDict;
+            string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
+            File.WriteAllText(path, json);
+        }
+
+        void LoadKeyBinds()
+        {
+            string path = GetKeyBindsSavePath();
+
+            string json = File.ReadAllText(path);
+            KeyBindData_v1 keyBindsData = SaveLoadManager.Deserialize(typeof(KeyBindData_v1), json) as KeyBindData_v1;
+            actionKeyDict = keyBindsData.actionKeyBinds;
         }
 
         #endregion

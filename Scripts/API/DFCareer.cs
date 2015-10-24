@@ -537,7 +537,14 @@ namespace DaggerfallConnect
             this.HitPointsPerLevelOrMonsterLevel = cfg.HitPointsPerLevelOrMonsterLevel;
 
             float value = (cfg.AdvancementMultiplier >> 16) + ((cfg.AdvancementMultiplier & 0xffff)) / 65536f;
-            this.AdvancementMultiplier = float.Parse(string.Format("{0:0.00}", value), NumberStyles.Float, CultureInfo.InvariantCulture);
+            try
+            {
+                this.AdvancementMultiplier = float.Parse(string.Format("{0:0.00}", value), NumberStyles.Float, CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                this.AdvancementMultiplier = value;
+            }
 
             this.Paralysis = GetTolerance(cfg, EffectFlags.Paralysis);
             this.Magic = GetTolerance(cfg, EffectFlags.Magic);

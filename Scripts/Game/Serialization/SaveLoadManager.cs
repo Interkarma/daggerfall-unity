@@ -241,11 +241,11 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #endregion
 
-        #region Private Static Methods
+        #region Public Static Methods
 
         static readonly fsSerializer _serializer = new fsSerializer();
 
-        static string Serialize(Type type, object value, bool pretty = true)
+        public static string Serialize(Type type, object value, bool pretty = true)
         {
             // Serialize the data
             fsData data;
@@ -255,7 +255,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             return (pretty) ? fsJsonPrinter.PrettyJson(data) : fsJsonPrinter.CompressedJson(data);
         }
 
-        static object Deserialize(Type type, string serializedState)
+        public static object Deserialize(Type type, string serializedState)
         {
             // Step 1: Parse the JSON data
             fsData data = fsJsonParser.Parse(serializedState);
