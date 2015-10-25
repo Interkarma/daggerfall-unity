@@ -39,14 +39,14 @@ namespace Wenzil.Console
         /// <summary>
         /// Opens or closes the console.
         /// </summary>
-        public void ToggleConsole()
+        public void ToggleConsole(bool force = false)
         {
             // Do nothing if HUD is not top window (e.g. player in some other menu)
-            if (!DaggerfallWorkshop.Game.GameManager.Instance.IsPlayerOnHUD)
+            if (!DaggerfallWorkshop.Game.GameManager.Instance.IsPlayerOnHUD && !force)
                 return;
 
             // Do nothing if HUD not enabled in settings
-            if (!DaggerfallWorkshop.DaggerfallUnity.Settings.LypyL_GameConsole)
+            if (!DaggerfallWorkshop.DaggerfallUnity.Settings.LypyL_GameConsole && !force)
                 return;
 
             inputField.text = string.Empty;

@@ -34,9 +34,6 @@ namespace DaggerfallWorkshop.Game.Utility
     {
         #region Fields
 
-        // Constants
-        string fallbackLocatioName = "Daggerfall/Privateer's Hold";
-
         // Editor properties
         public StartMethods StartMethod = StartMethods.Nothing;
         public bool EnableVideos = true;
@@ -102,7 +99,6 @@ namespace DaggerfallWorkshop.Game.Utility
             // Restart game using method provided
             if (StartMethod != StartMethods.Nothing)
             {
-                DaggerfallUI.Instance.PopToHUD();
                 GameManager.Instance.PauseGame(true);
                 InvokeStartMethod();
                 StartMethod = StartMethods.Nothing;
@@ -202,6 +198,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void StartTitleMenu()
         {
+            DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGame);
         }
@@ -212,12 +209,14 @@ namespace DaggerfallWorkshop.Game.Utility
             if (GameManager.Instance.PlayerDeath)
                 GameManager.Instance.PlayerDeath.ResetCamera();
 
+            DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGameFromDeath);
         }
 
         void StartFromQuickSave()
         {
+            DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
             if (SaveLoadManager.Instance.HasQuickSave())
                 SaveLoadManager.Instance.QuickLoad();
@@ -226,39 +225,49 @@ namespace DaggerfallWorkshop.Game.Utility
         // Start new character to location specified in INI
         void StartNewCharacter()
         {
+            DaggerfallUI.Instance.PopToHUD();
+
             // Assign character sheet
             PlayerEntity playerEntity = FindPlayerEntity();
             playerEntity.AssignCharacter(characterSheet);
 
+            // Set game time
+            DaggerfallUnity.Instance.WorldTime.Now.SetClassicGameStartTime();
+
             // Get start parameters
-            string startingLocationName = DaggerfallUnity.Settings.StartingLocation;
+            DFPosition mapPixel = new DFPosition(DaggerfallUnity.Settings.StartCellX, DaggerfallUnity.Settings.StartCellY);
             bool startInDungeon = DaggerfallUnity.Settings.StartInDungeon;
 
-            // Find start location
-            DFLocation location;
-            if (!GameObjectHelper.FindMultiNameLocation(startingLocationName, out location))
+            // Read location if any
+            DFLocation location = new DFLocation();
+            ContentReader.MapSummary mapSummary;
+            bool hasLocation = DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary);
+            if (hasLocation)
             {
-                // Could not find INI location specified, fallback to Privateer's Hold
-                startInDungeon = true;
-                DaggerfallUnity.LogMessage(string.Format("Could not find {0}, fallback to {1}", startingLocationName, fallbackLocatioName), true);
-                if (!GameObjectHelper.FindMultiNameLocation(fallbackLocatioName, out location))
-                    throw new Exception("Could not find INI location or fallback location. There could be a problem with Arena2 folder.");
+                if (!DaggerfallUnity.Instance.ContentReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex, out location))
+                    hasLocation = false;
             }
 
             // Start at specified location
-            if (startInDungeon)
+            StreamingWorld streamingWorld = FindStreamingWorld();
+            if (hasLocation && startInDungeon && location.HasDungeon)
             {
+                if (streamingWorld)
+                {
+                    streamingWorld.TeleportToCoordinates(mapPixel.X, mapPixel.Y);
+                    streamingWorld.suppressWorld = true;
+                }
                 playerEnterExit.EnableDungeonParent();
                 playerEnterExit.StartDungeonInterior(location);
             }
             else
             {
                 playerEnterExit.EnableExteriorParent();
-                StreamingWorld streamingWorld = FindStreamingWorld();
-                DFPosition mapPixel = MapsFile.LongitudeLatitudeToMapPixel((int)location.MapTableData.Longitude, (int)location.MapTableData.Latitude);
-                streamingWorld.MapPixelX = mapPixel.X;
-                streamingWorld.MapPixelY = mapPixel.Y;
-                streamingWorld.suppressWorld = false;
+                if (streamingWorld)
+                {
+                    streamingWorld.SetAutoReposition(StreamingWorld.RepositionMethods.Origin, Vector3.zero);
+                    streamingWorld.suppressWorld = false;
+                }
             }
 
             // Start game
@@ -283,8 +292,13 @@ namespace DaggerfallWorkshop.Game.Utility
                 throw new Exception(string.Format("Could not open Daggerfall saves path {0}", path));
 
             // Open save index
-            if (!saveGames.OpenSave(classicSaveIndex))
-                throw new Exception(string.Format("Could not open save index {0}", classicSaveIndex));
+            if (!saveGames.TryOpenSave(classicSaveIndex))
+            {
+                string error = string.Format("Could not open classic save index {0}.", classicSaveIndex);
+                DaggerfallUI.MessageBox(error);
+                DaggerfallUnity.LogMessage(string.Format(error), true);
+                return;
+            }
 
             // Get required save data
             SaveTree saveTree = saveGames.SaveTree;
@@ -315,6 +329,7 @@ namespace DaggerfallWorkshop.Game.Utility
             playerEntity.AssignCharacter(characterSheet, characterRecord.ParsedData.level, characterRecord.ParsedData.startingHealth);
 
             // Start game
+            DaggerfallUI.Instance.PopToHUD();
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
         }

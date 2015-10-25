@@ -125,6 +125,7 @@ namespace DaggerfallWorkshop.Utility
 
         void Initialize()
         {
+            playerMotor.ClearActivePlatform();
             DFPosition mapPixel = StreamingWorld.LocalPlayerGPS.CurrentMapPixel;
             currentMapPixel = mapPixel;
             lastMapPixel = mapPixel;

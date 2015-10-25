@@ -13,6 +13,6 @@ using System;
 
 public static class VersionInfo
 {
-    public const string DaggerfallToolsForUnityVersion = "1.4.43";
-    public const string DaggerfallUnityVersion = "0.0.4";
+    public const string DaggerfallToolsForUnityVersion = "1.4.45";
+    public const string DaggerfallUnityVersion = "0.0.5";
 }

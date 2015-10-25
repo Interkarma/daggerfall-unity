@@ -192,10 +192,16 @@ namespace DaggerfallWorkshop
 
         // [Startup]
 
-        public string StartingLocation
+        public int StartCellX
         {
-            get { return GetString(sectionStartup, "StartingLocation"); }
-            set { SetString(sectionStartup, "StartingLocation", value); }
+            get { return GetInt(sectionStartup, "StartCellX", 2, 997); }
+            set { SetInt(sectionStartup, "StartCellX", value); }
+        }
+
+        public int StartCellY
+        {
+            get { return GetInt(sectionStartup, "StartCellY", 2, 497); }
+            set { SetInt(sectionStartup, "StartCellY", value); }
         }
 
         public bool StartInDungeon

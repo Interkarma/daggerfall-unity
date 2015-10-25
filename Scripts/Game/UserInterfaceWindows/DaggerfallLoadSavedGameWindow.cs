@@ -114,8 +114,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             for (int i = 0; i < saveImageButtonDims.Length; i++)
             {
                 // Open save
-                if (!saveGames.TryOpenSave(i))
+                if (!saveGames.LazyOpenSave(i))
+                {
+                    DaggerfallUnity.LogMessage(string.Format("Could not lazy open save index {0}.", i), true);
                     continue;
+                }
 
                 // Get save texture
                 Texture2D saveTexture = TextureReader.CreateFromAPIImage(saveGames.SaveImage);

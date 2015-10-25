@@ -57,6 +57,11 @@ namespace DaggerfallWorkshop
             get { return enterMarker; }
         }
 
+        public DaggerfallStaticDoors[] StaticDoorCollections
+        {
+            get { return EnumerateStaticDoorCollections(); }
+        }
+
         [Serializable]
         public struct DungeonSummary
         {
@@ -309,6 +314,12 @@ namespace DaggerfallWorkshop
 
                 enterMarker = dfBlock.EnterMarkers[0];
             }
+        }
+
+        // Enumerates all static doors in child blocks
+        DaggerfallStaticDoors[] EnumerateStaticDoorCollections()
+        {
+            return GetComponentsInChildren<DaggerfallStaticDoors>();
         }
 
         private bool ReadyCheck()

@@ -30,7 +30,8 @@ WeaponSwingThreshold=0.8
 WeaponSwingTriggerCount=3
 
 [Startup]
-StartingLocation=Daggerfall/Privateer's Hold
+StartCellX=109
+StartCellY=158
 StartInDungeon=True
 
 [Enhancements]

@@ -153,5 +153,12 @@ namespace DaggerfallWorkshop.Game
             Pitch = pitch;
             Init();
         }
+
+        public void SetFacing(Vector3 forward)
+        {
+            Quaternion q = Quaternion.LookRotation(forward);
+            Vector3 v = q.eulerAngles;
+            SetFacing(v.y, v.x);
+        }
     }
 }

@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             // HUD is first window on stack when enabled
-            if (enableHUD)
+            if (enableHUD && DaggerfallUnity.Instance.IsPathValidated)
             {
                 dfHUD = new DaggerfallHUD(uiManager);
                 uiManager.PushWindow(dfHUD);
@@ -185,6 +185,10 @@ namespace DaggerfallWorkshop.Game
 
         void ProcessMessages()
         {
+            // Do nothing if DaggerfallUnity path not valid
+            if (!DaggerfallUnity.Instance.IsPathValidated)
+                return;
+
             switch (uiManager.GetMessage())
             {
                 case DaggerfallUIMessages.dfuiInitGame:
@@ -244,6 +248,10 @@ namespace DaggerfallWorkshop.Game
 
         public DaggerfallFont GetFont(int index)
         {
+            // Do nothing if DaggerfallUnity path not valid
+            if (!DaggerfallUnity.Instance.IsPathValidated)
+                return null;
+
             switch (index)
             {
                 case 1:
@@ -272,6 +280,10 @@ namespace DaggerfallWorkshop.Game
 
         public void SetDaggerfallPopupStyle(PopupStyle style, Panel panel)
         {
+            // Do nothing if DaggerfallUnity path not valid
+            if (!DaggerfallUnity.Instance.IsPathValidated)
+                return;
+
             panel.BackgroundTexture = null;
             panel.BackgroundColor = Color.clear;
 
@@ -528,6 +540,24 @@ namespace DaggerfallWorkshop.Game
             texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             return texture;
+        }
+
+        public static DaggerfallMessageBox MessageBox(string message)
+        {
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
+            messageBox.SetText(message);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.Show();
+            return messageBox;
+        }
+
+        public static DaggerfallMessageBox MessageBox(string[] message)
+        {
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
+            messageBox.SetText(message);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.Show();
+            return messageBox;
         }
 
         #endregion

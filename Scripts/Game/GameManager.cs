@@ -35,12 +35,14 @@ namespace DaggerfallWorkshop.Game
 
         GameObject playerObject = null;
         Camera mainCamera = null;
+        PlayerMouseLook playerMouseLook = null;
         StartGameBehaviour startGameBehaviour = null;
         PlayerEntity playerEntity = null;
         PlayerDeath playerDeath = null;
+        PlayerGPS playerGPS = null;
         WeatherManager weatherManager = null;
         WeaponManager weaponManager = null;
-        bool isFullscreen = false;
+        //bool isFullscreen = false;
 
         #endregion
 
@@ -61,6 +63,11 @@ namespace DaggerfallWorkshop.Game
             get { return (playerObject) ? playerObject : FindPlayerObject(); }
         }
 
+        public PlayerMouseLook PlayerMouseLook
+        {
+            get { return (playerMouseLook) ? playerMouseLook : FindPlayerMouseLook(); }
+        }
+
         public StartGameBehaviour StartGameBehaviour
         {
             get { return (startGameBehaviour) ? startGameBehaviour : FindStartGameBehaviour(); }
@@ -74,6 +81,11 @@ namespace DaggerfallWorkshop.Game
         public PlayerDeath PlayerDeath
         {
             get { return (playerDeath) ? playerDeath : FindPlayerDeath(); }
+        }
+
+        public PlayerGPS PlayerGPS
+        {
+            get { return (playerGPS) ? playerGPS : FindPlayerGPS(); }
         }
 
         public WeatherManager WeatherManager
@@ -128,21 +140,48 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             SetupSingleton();
+
+            // Check arena2 path is validated OK and exit if not
+            if (!DaggerfallUnity.Instance.IsPathValidated)
+            {
+                Debug.Log("DaggerfallUnity.Arena2Path failed validation.");
+
+                // Eject error into console
+                Wenzil.Console.ConsoleUI consoleUI = FindObjectOfType<Wenzil.Console.ConsoleUI>();
+                if (consoleUI)
+                {
+                    if (!consoleUI.isConsoleOpen)
+                        consoleUI.ToggleConsole(true);
+                    consoleUI.AddNewOutputLine("Failed to open MyDaggerfallPath or Arena2Path. Please verify the following paths exist and match casing below:");
+                    consoleUI.AddNewOutputLine("");
+                    consoleUI.AddNewOutputLine("MyDaggerfallPath: " + DaggerfallUnity.Settings.MyDaggerfallPath);
+                    if (!string.IsNullOrEmpty(DaggerfallUnity.Instance.Arena2Path))
+                        consoleUI.AddNewOutputLine("Arena2Path: " + DaggerfallUnity.Instance.Arena2Path);
+                    consoleUI.AddNewOutputLine("");
+                    consoleUI.AddNewOutputLine("Enter QUIT to exit game.");
+                    PauseGame(true, true);
+                }
+
+                return;
+            }
+
+            // Log welcome message
             Debug.Log("Welcome to Daggerfall Unity " + VersionInfo.DaggerfallUnityVersion);
         }
 
         void Update()
         {
-            // HACK: Fix Unity fullscreen window scaling issue
-            if (Screen.fullScreen && !isFullscreen)
-            {
-                Resolution nativeResolution = Screen.resolutions[Screen.resolutions.Length - 1];
-                if (Screen.width != nativeResolution.width || Screen.height != nativeResolution.height)
-                {
-                    Screen.SetResolution(nativeResolution.width, nativeResolution.height, true);
-                }
-                isFullscreen = true;
-            }
+            // TODO: Remove this once verified no more resolution issues in current Unity version
+            //// HACK: Fix Unity fullscreen window scaling issue
+            //if (Screen.fullScreen && !isFullscreen)
+            //{
+            //    Resolution nativeResolution = Screen.resolutions[Screen.resolutions.Length - 1];
+            //    if (Screen.width != nativeResolution.width || Screen.height != nativeResolution.height)
+            //    {
+            //        Screen.SetResolution(nativeResolution.width, nativeResolution.height, true);
+            //    }
+            //    isFullscreen = true;
+            //}
 
             if (!IsPlayingGame())
                 return;
@@ -185,7 +224,7 @@ namespace DaggerfallWorkshop.Game
                 InputManager.Instance.IsPaused = true;
                 isGamePaused = true;
 
-                if (hideHUD)
+                if (hideHUD && DaggerfallUI.Instance.DaggerfallHUD != null)
                 {
                     DaggerfallUI.Instance.DaggerfallHUD.Enabled = false;
                     hudDisabledByPause = true;
@@ -197,7 +236,7 @@ namespace DaggerfallWorkshop.Game
                 InputManager.Instance.IsPaused = false;
                 isGamePaused = false;
 
-                if (hudDisabledByPause)
+                if (hudDisabledByPause && DaggerfallUI.Instance.DaggerfallHUD != null)
                 {
                     DaggerfallUI.Instance.DaggerfallHUD.Enabled = true;
                     hudDisabledByPause = false;
@@ -321,6 +360,19 @@ namespace DaggerfallWorkshop.Game
             return null;
         }
 
+        PlayerMouseLook FindPlayerMouseLook()
+        {
+            if (MainCamera)
+            {
+                playerMouseLook = MainCamera.GetComponent<PlayerMouseLook>();
+                if (playerMouseLook == null)
+                    throw new Exception("GameManager could not find PlayerMouseLook.");
+                return playerMouseLook;
+            }
+
+            return null;
+        }
+
         PlayerDeath FindPlayerDeath()
         {
             if (PlayerObject)
@@ -329,6 +381,19 @@ namespace DaggerfallWorkshop.Game
                 if (playerDeath == null)
                     throw new Exception("GameManager could not find PlayerDeath.");
                 return playerDeath;
+            }
+
+            return null;
+        }
+
+        PlayerGPS FindPlayerGPS()
+        {
+            if (PlayerObject)
+            {
+                playerGPS = PlayerObject.GetComponent<PlayerGPS>();
+                if (playerGPS == null)
+                    throw new Exception("GameManager could not find PlayerGPS.");
+                return playerGPS;
             }
 
             return null;
@@ -353,6 +418,15 @@ namespace DaggerfallWorkshop.Game
             }
 
             return weaponManager;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        void PathErrorMessageBox_OnClose()
+        {
+            Application.Quit();
         }
 
         #endregion

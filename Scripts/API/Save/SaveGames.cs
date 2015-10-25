@@ -150,6 +150,26 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
+        /// Opens just SaveImage and SaveName for display.
+        /// Before reading other data, must call OpenSave() or TryOpenSave().
+        /// </summary>
+        /// <param name="save">Save index.</param>
+        /// <returns>True if successful.</returns>
+        public bool LazyOpenSave(int save)
+        {
+            if (!HasSave(save))
+                return false;
+
+            if (!LoadSaveImage(save))
+                throw new Exception("Could not lazy open SavImage for index " + save);
+
+            if (!LoadSaveName(save))
+                throw new Exception("Could not lazy open SaveName for index " + save);
+
+            return true;
+        }
+
+        /// <summary>
         /// Opens the save game index specified.
         /// </summary>
         /// <param name="save">Save index</param>
@@ -219,8 +239,8 @@ namespace DaggerfallConnect.Save
             for (int i = 0; i < saves.Length; i++)
             {
                 if (!File.Exists(Path.Combine(saves[i], SaveTree.Filename)) ||
-                    !File.Exists(Path.Combine(saves[i], SaveImage.Filename)) ||
-                    !File.Exists(Path.Combine(saves[i], SaveVars.Filename)))
+                    !File.Exists(Path.Combine(saves[i], SaveImage.Filename)))
+                    //!File.Exists(Path.Combine(saves[i], SaveVars.Filename)))      // TODO: Restore this once savevars supported
                 {
                     continue;
                 }

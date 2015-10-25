@@ -247,7 +247,8 @@ namespace DaggerfallWorkshop
             // Allow implementor to set own Arena2 path (e.g. from custom settings file)
             RaiseOnSetArena2SourceEvent();
 
-            // Check stored singleton path is valid - but only in editor
+#if UNITY_EDITOR
+            // Check editor singleton path is valid
             if (ValidateArena2Path(Arena2Path))
             {
                 isReady = true;
@@ -255,10 +256,11 @@ namespace DaggerfallWorkshop
                 LogMessage("Arena2 path validated.", true);
                 return;
             }
+#endif
 
-            // Look for arena2 folder inside Settings.MyDaggerfallPath
+            // Look for arena2/ARENA2 folder inside Settings.MyDaggerfallPath
             bool found = false;
-            string path = Path.Combine(Settings.MyDaggerfallPath, "arena2");
+            string path = TestArena2Exists(Settings.MyDaggerfallPath);
             if (!string.IsNullOrEmpty(path))
             {
                 LogMessage("Trying INI path " + path, true);
@@ -271,8 +273,8 @@ namespace DaggerfallWorkshop
             // Otherwise, look for arena2 folder in Application.dataPath at runtime
             if (Application.isPlaying && !found)
             {
-                path = Path.Combine(Application.dataPath, "arena2");
-                if (Directory.Exists(path))
+                path = TestArena2Exists(Application.dataPath);
+                if (!string.IsNullOrEmpty(path))
                     found = true;
             }
 
@@ -301,6 +303,20 @@ namespace DaggerfallWorkshop
 
             // Singleton is now ready
             RaiseOnReadyEvent();
+        }
+
+        string TestArena2Exists(string parent)
+        {
+            // Accept either upper or lower case
+            string pathLower = Path.Combine(parent, "arena2");
+            string pathUpper = Path.Combine(parent, "ARENA2");
+
+            if (Directory.Exists(pathLower))
+                return pathLower;
+            else if (Directory.Exists(pathUpper))
+                return pathUpper;
+            else
+                return string.Empty;
         }
 
         private void SetupContentReaders(bool force = false)

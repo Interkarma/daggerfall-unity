@@ -65,6 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public enum CommonMessageBoxButtons
         {
+            Nothing,
             YesNo,
         }
 
@@ -91,12 +92,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { clickAnywhereToClose = value; }
         }
 
-        public DaggerfallMessageBox(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, IUserInterfaceWindow previous = null)
             : base(uiManager, previous)
         {
         }
 
-        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, int textId, DaggerfallBaseWindow previous = null)
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, int textId, IUserInterfaceWindow previous = null)
             : base(uiManager, previous)
         {
             SetupBox(textId, buttons);
@@ -152,6 +153,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdatePanelSizes();
 
             return button;
+        }
+
+        public void SetText(string text)
+        {
+            string[] rows = new string[1];
+            rows[0] = text;
+            SetText(rows);
+        }
+
+        public void SetText(string[] rows)
+        {
+            // Tokenize rows
+            List<TextFile.Token> tokenList = new List<TextFile.Token>();
+            TextFile.Token textToken = new TextFile.Token();
+            TextFile.Token newLineToken = new TextFile.Token();
+            for (int i = 0; i < rows.Length; i++)
+            {
+                textToken.formatting = TextFile.Formatting.Text;
+                textToken.text = rows[i];
+                tokenList.Add(textToken);
+                if (i < rows.Length - 1)
+                {
+                    newLineToken.formatting = TextFile.Formatting.NewLine;
+                    tokenList.Add(newLineToken);
+                }
+            }
+
+            // Set tokens
+            SetTextTokens(tokenList.ToArray());
         }
 
         public void SetTextTokens(TextFile.Token[] tokens)

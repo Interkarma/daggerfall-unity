@@ -459,17 +459,28 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Cache door
-            //cachedEntranceDoor = door;
-
-            // Cache player starting position and facing to use on exit
-            //dungeonEntrancePosition = transform.position;
-            //dungeonEntranceForward = transform.forward;
-
             EnableDungeonParent();
 
             // Set to start position
             MovePlayerToMarker(dungeon.StartMarker);
+
+            // Find closest dungeon exit door to orient player
+            StaticDoor[] doors = DaggerfallStaticDoors.FindDoorsInCollections(dungeon.StaticDoorCollections, DoorTypes.DungeonExit);
+            if (doors != null && doors.Length > 0)
+            {
+                Vector3 doorPos;
+                int doorIndex;
+                if (DaggerfallStaticDoors.FindClosestDoorToPlayer(transform.position, doors, out doorPos, out doorIndex))
+                {
+                    // Set player facing away from door
+                    PlayerMouseLook playerMouseLook = GameManager.Instance.PlayerMouseLook;
+                    if (playerMouseLook)
+                    {
+                        Vector3 normal = DaggerfallStaticDoors.GetDoorNormal(doors[doorIndex]);
+                        playerMouseLook.SetFacing(normal);
+                    }
+                }
+            }
 
             // Raise event
             RaiseOnTransitionDungeonInteriorEvent(door, dungeon);
@@ -512,6 +523,11 @@ namespace DaggerfallWorkshop.Game
 
             // Set to start position
             MovePlayerToMarker(marker);
+
+            // Set player facing north
+            PlayerMouseLook playerMouseLook = GameManager.Instance.PlayerMouseLook;
+            if (playerMouseLook)
+                playerMouseLook.SetFacing(Vector3.forward);
         }
 
         /// <summary>
