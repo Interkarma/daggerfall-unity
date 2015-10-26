@@ -289,6 +289,8 @@ namespace DaggerfallWorkshop
                     isReady = true;
                     isPathValidated = true;
                     LogMessage(string.Format("Found valid arena2 path at '{0}'.", path), true);
+                    //Generate log file
+                    GenerateDiagLog.PrintInfo(Settings.MyDaggerfallPath);
                     return;
                 }
             }
