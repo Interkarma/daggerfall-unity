@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop.Game
                     mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral)
                     controller.Move(transform.forward * (FlySpeed * Time.deltaTime));
                 else
-                    controller.SimpleMove(transform.forward * ((MoveSpeed * 40f) * Time.deltaTime));    // Not sure why SimpleMove() needs to be scaled. Check this.
+                    controller.SimpleMove(transform.forward * MoveSpeed);
             }
             else
             {
