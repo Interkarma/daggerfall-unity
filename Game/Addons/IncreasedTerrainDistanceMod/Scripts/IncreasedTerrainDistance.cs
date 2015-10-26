@@ -160,13 +160,19 @@ namespace ProjectIncreasedTerrainDistance
             return path;
         }
 
+        void SetTerrainSampler()
+        {
+            DaggerfallUnity.Instance.TerrainSampler = new ImprovedTerrainSampler();
+        }
+
         void Awake()
         {
+            if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
+                return;
+
             dfUnity = DaggerfallUnity.Instance;
 
-            //DaggerfallUnity.OnSetTerrainSampler += SetTerrainSampler;
-            
-            DaggerfallUnity.Instance.TerrainSampler = new ImprovedTerrainSampler();            
+            DaggerfallUnity.OnSetTerrainSampler += SetTerrainSampler;
 
             ImprovedTerrainSampler improvedTerrainSampler = DaggerfallUnity.Instance.TerrainSampler as ImprovedTerrainSampler;
             if (improvedTerrainSampler == null)
@@ -174,8 +180,8 @@ namespace ProjectIncreasedTerrainDistance
                 DaggerfallUnity.LogMessage("IncreasedTerrainDistance: TerrainSampler instance is not of type ImprovedTerrainSampler (use ITerrainSampler terrainSampler = new ImprovedTerrainSampler() in DaggerfallUnity.cs)", true);
             }
 
-            if (!streamingWorld)            
-                streamingWorld = GameObject.Find("StreamingWorld").GetComponent<StreamingWorld>();           
+            if (!streamingWorld)
+                streamingWorld = GameObject.Find("StreamingWorld").GetComponent<StreamingWorld>();
             if (!streamingWorld)
             {
                 DaggerfallUnity.LogMessage("IncreasedTerrainDistance: Missing StreamingWorld reference.", true);
@@ -222,7 +228,10 @@ namespace ProjectIncreasedTerrainDistance
         }
 
         void OnEnable()
-        {              
+        {
+            if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
+                return;
+
             FloatingOrigin.OnPositionUpdate += WorldTerrainUpdatePosition;
 
             StreamingWorld.OnReady += UpdateTerrainInfoTilemap; // important to do actions after TerrainHelper.DilateCoastalClimate() was called in StreamingWorld.ReadyCheck()
@@ -235,6 +244,9 @@ namespace ProjectIncreasedTerrainDistance
 
         void OnDisable()
         {
+            if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
+                return;
+
             FloatingOrigin.OnPositionUpdate -= WorldTerrainUpdatePosition;
 
             StreamingWorld.OnReady -= UpdateTerrainInfoTilemap;
@@ -355,6 +367,9 @@ namespace ProjectIncreasedTerrainDistance
 
         void Start()
         {
+            if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
+                return;
+
             if (worldTerrainGameObject == null) // lazy creation
             {
                 if (!ReadyCheck())
