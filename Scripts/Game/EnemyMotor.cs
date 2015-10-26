@@ -56,6 +56,10 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+        }
+
+        void FixedUpdate()
+        {
             Move();
             OpenDoors();
         }

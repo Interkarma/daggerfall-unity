@@ -160,6 +160,11 @@ namespace DaggerfallWorkshop
             get { return new RectOffset(locationWorldRectMinX, locationWorldRectMaxX, locationWorldRectMinZ, locationWorldRectMaxZ); }
         }
 
+        void Awake()
+        {
+            dfUnity = DaggerfallUnity.Instance;
+        }
+
         void Start()
         {
             // Init change trackers for event system
@@ -232,6 +237,10 @@ namespace DaggerfallWorkshop
 
         private void UpdateWorldInfo(int x, int y)
         {
+            // Requires DaggerfallUnity to be ready
+            if (!ReadyCheck())
+                return;
+
             // Requires MAPS.BSA connection
             if (dfUnity.ContentReader.MapFileReader == null)
                 return;
