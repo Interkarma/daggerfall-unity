@@ -462,7 +462,7 @@ namespace DaggerfallWorkshop
             //myCamera.depth = mainCamera.depth - 1;
             myCamera.cullingMask = 0;
             myCamera.clearFlags = CameraClearFlags.SolidColor;
-            mainCamera.clearFlags = CameraClearFlags.Nothing;
+            //mainCamera.clearFlags = CameraClearFlags.Nothing;
         }
 
         private bool ReadyCheck()
