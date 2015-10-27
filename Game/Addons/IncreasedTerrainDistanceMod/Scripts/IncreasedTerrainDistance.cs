@@ -378,72 +378,7 @@ namespace ProjectIncreasedTerrainDistance
                 if (!dfUnity.MaterialReader.IsReady)
                     return;
 
-                int layerExtendedTerrain = LayerMask.NameToLayer("WorldTerrain");
-                if (layerExtendedTerrain == -1)
-                {
-                    DaggerfallUnity.LogMessage("Layer with name \"WorldTerrain\" missing! Set it in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);
-                    if (Application.isEditor)
-                        Debug.Break();
-                    else
-                        Application.Quit();
-                }
-
-                Camera.main.farClipPlane = 1200.0f;
-
-                if (!stackedNearCamera)
-                {
-                    GameObject goStackedNearCamera = new GameObject("stackedNearCamera");
-                    stackedNearCamera = goStackedNearCamera.AddComponent<Camera>();
-                    stackedNearCamera.cullingMask = Camera.main.cullingMask;
-                    stackedNearCamera.nearClipPlane = 980.0f;
-                    stackedNearCamera.farClipPlane = 15000.0f;
-                    stackedNearCamera.fieldOfView = Camera.main.fieldOfView;
-                    stackedNearCamera.renderingPath = Camera.main.renderingPath;
-                    stackedNearCamera.gameObject.AddComponent<CloneCameraRotationFromMainCamera>();
-                    stackedNearCamera.gameObject.AddComponent<CloneCameraPositionFromMainCamera>();
-                    stackedNearCamera.transform.SetParent(this.transform);
-                }
-
-
-
-                if (!stackedCamera)
-                {
-                    GameObject goStackedCamera = new GameObject("stackedCamera");
-                    stackedCamera = goStackedCamera.AddComponent<Camera>();
-                    stackedCamera.cullingMask = 1 << layerExtendedTerrain;
-                    stackedCamera.nearClipPlane = 980.0f;
-                    stackedCamera.farClipPlane = 300000.0f;
-                    stackedCamera.fieldOfView = Camera.main.fieldOfView;
-                    stackedCamera.renderingPath = Camera.main.renderingPath;
-                    stackedCamera.gameObject.AddComponent<CloneCameraRotationFromMainCamera>();
-                    stackedCamera.gameObject.AddComponent<CloneCameraPositionFromMainCamera>();
-                    stackedCamera.transform.SetParent(this.transform);
-                }
-
-                if (!renderTextureSky)
-                {
-                    renderTextureSky = new RenderTexture(renderTextureSkyWidth, renderTextureSkyHeight, renderTextureSkyDepth, renderTextureSkyFormat);
-                }
-
-                if (!goRenderSkyboxToTexture)
-                {
-                    goRenderSkyboxToTexture = new GameObject("stackedCameraSkyboxRenderToTextureGeneric", typeof(Camera));
-                    goRenderSkyboxToTexture.transform.SetParent(this.transform);
-                }
-
-                if (!cameraRenderSkyboxToTexture)
-                {
-                    cameraRenderSkyboxToTexture = goRenderSkyboxToTexture.GetComponent<Camera>();
-
-                    goRenderSkyboxToTexture.AddComponent<CloneCameraRotationFromMainCamera>();
-                    goRenderSkyboxToTexture.AddComponent<RenderSkyboxWithoutSun>();
-
-                    cameraRenderSkyboxToTexture.clearFlags = CameraClearFlags.Skybox;
-                    cameraRenderSkyboxToTexture.cullingMask = 0; // nothing
-                    cameraRenderSkyboxToTexture.nearClipPlane = stackedCamera.nearClipPlane;
-                    cameraRenderSkyboxToTexture.farClipPlane = stackedCamera.farClipPlane;
-                    cameraRenderSkyboxToTexture.fieldOfView = stackedCamera.fieldOfView;
-                }
+                SetupGameObjects();
             }
         }
 
@@ -482,8 +417,79 @@ namespace ProjectIncreasedTerrainDistance
             SetUpCameras();
         }
 
+        void SetupGameObjects()
+        {
+            int layerExtendedTerrain = LayerMask.NameToLayer("WorldTerrain");
+            if (layerExtendedTerrain == -1)
+            {
+                DaggerfallUnity.LogMessage("Layer with name \"WorldTerrain\" missing! Set it in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);
+                if (Application.isEditor)
+                    Debug.Break();
+                else
+                    Application.Quit();
+            }
+
+            //Camera.main.farClipPlane = 1200.0f;
+
+            if (!stackedNearCamera)
+            {
+                GameObject goStackedNearCamera = new GameObject("stackedNearCamera");
+                stackedNearCamera = goStackedNearCamera.AddComponent<Camera>();
+                stackedNearCamera.cullingMask = Camera.main.cullingMask;
+                stackedNearCamera.nearClipPlane = 980.0f;
+                stackedNearCamera.farClipPlane = 15000.0f;
+                stackedNearCamera.fieldOfView = Camera.main.fieldOfView;
+                stackedNearCamera.renderingPath = Camera.main.renderingPath;
+                stackedNearCamera.gameObject.AddComponent<CloneCameraRotationFromMainCamera>();
+                stackedNearCamera.gameObject.AddComponent<CloneCameraPositionFromMainCamera>();
+                stackedNearCamera.transform.SetParent(this.transform);
+            }
+
+            if (!stackedCamera)
+            {
+                GameObject goStackedCamera = new GameObject("stackedCamera");
+                stackedCamera = goStackedCamera.AddComponent<Camera>();
+                stackedCamera.cullingMask = 1 << layerExtendedTerrain;
+                stackedCamera.nearClipPlane = 980.0f;
+                stackedCamera.farClipPlane = 300000.0f;
+                stackedCamera.fieldOfView = Camera.main.fieldOfView;
+                stackedCamera.renderingPath = Camera.main.renderingPath;
+                stackedCamera.gameObject.AddComponent<CloneCameraRotationFromMainCamera>();
+                stackedCamera.gameObject.AddComponent<CloneCameraPositionFromMainCamera>();
+                stackedCamera.transform.SetParent(this.transform);
+            }
+
+            if (!renderTextureSky)
+            {
+                renderTextureSky = new RenderTexture(renderTextureSkyWidth, renderTextureSkyHeight, renderTextureSkyDepth, renderTextureSkyFormat);
+            }
+
+            if (!goRenderSkyboxToTexture)
+            {
+                goRenderSkyboxToTexture = new GameObject("stackedCameraSkyboxRenderToTextureGeneric", typeof(Camera));
+                goRenderSkyboxToTexture.transform.SetParent(this.transform);
+            }
+
+            if (!cameraRenderSkyboxToTexture)
+            {
+                cameraRenderSkyboxToTexture = goRenderSkyboxToTexture.GetComponent<Camera>();
+
+                goRenderSkyboxToTexture.AddComponent<CloneCameraRotationFromMainCamera>();
+                goRenderSkyboxToTexture.AddComponent<RenderSkyboxWithoutSun>();
+
+                cameraRenderSkyboxToTexture.clearFlags = CameraClearFlags.Skybox;
+                cameraRenderSkyboxToTexture.cullingMask = 0; // nothing
+                cameraRenderSkyboxToTexture.nearClipPlane = stackedCamera.nearClipPlane;
+                cameraRenderSkyboxToTexture.farClipPlane = stackedCamera.farClipPlane;
+                cameraRenderSkyboxToTexture.fieldOfView = stackedCamera.fieldOfView;
+            }
+        }
+
         void SetUpCameras()
         {
+            // Ensure these are setup first or SetUpCameras() will barf
+            SetupGameObjects();
+
             // set up camera stack - AFTER layer "WorldTerrain" has been assigned to worldTerrainGameObject (is done in function generateWorldTerrain())
 
             Camera.main.clearFlags = CameraClearFlags.Depth;
