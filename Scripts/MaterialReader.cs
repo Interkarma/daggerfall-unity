@@ -552,6 +552,29 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Sets CachedMaterial properties.
+        /// existing Material will be updated in cache with cachedMaterialIn.
+        /// </summary>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index.</param>
+        /// <param name="cachedMaterialIn">the CachedMaterial used to update the cache.</param>
+        /// <returns>True if CachedMaterial was found and updated successfully.</returns>
+        public bool SetCachedMaterial(int archive, int record, int frame, CachedMaterial cachedMaterialIn)
+        {
+            int key = MakeTextureKey((short)archive, (byte)record, (byte)frame);
+            if (materialDict.ContainsKey(key))
+            {
+                materialDict[key] = cachedMaterialIn;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Gets CachedMaterial properties for an atlased material.
         /// Atlas material will not be loaded automatically if not found in cache.
         /// </summary>
