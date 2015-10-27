@@ -191,6 +191,13 @@ namespace DaggerfallWorkshop
             SetupContentReaders();
         }
 
+        void Start()
+        {
+            // Allow external code to set their own interfaces at start
+            RaiseOnSetTerrainSamplerEvent();
+            RaiseOnSetTextProviderEvent();
+        }
+
         void Update()
         {
 #if UNITY_EDITOR
@@ -336,10 +343,6 @@ namespace DaggerfallWorkshop
                     DaggerfallUnity.LogMessage(string.Format("Setting up content readers without arena2 path. Not all features will be available."));
                     reader = new ContentReader(string.Empty);
                 }
-
-                // Allow external code to set their own interfaces at start
-                RaiseOnSetTerrainSamplerEvent();
-                RaiseOnSetTextProviderEvent();
             }
         }
 

@@ -32,12 +32,12 @@ WeaponSwingTriggerCount=3
 [Startup]
 StartCellX=109
 StartCellY=158
-StartInDungeon=True
+StartInDungeon=False
 
 [Enhancements]
 LypyL_GameConsole=True
 LypyL_EnhancedSky=False
-Nystul_IncreasedTerrainDistance=False
+Nystul_IncreasedTerrainDistance=True
 Nystul_RealtimeReflections=False
 UncannyValley_RealGrass=False
 UncannyValley_BirdsInDaggerfall=False

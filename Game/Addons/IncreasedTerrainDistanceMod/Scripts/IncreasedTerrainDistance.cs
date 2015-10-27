@@ -50,6 +50,10 @@ namespace ProjectIncreasedTerrainDistance
         // WeatherManager is used for seasonal textures
         public WeatherManager weatherManager;
 
+        public int stackedCameraDepth = 1;
+        public int stackedNearCameraDepth = 2;
+        public int cameraRenderSkyboxToTextureDepth = -10;
+
         //public RenderTexture renderTextureSky;
 
         //[Range(0.0001f, 0.000001f)]
@@ -160,11 +164,6 @@ namespace ProjectIncreasedTerrainDistance
             return path;
         }
 
-        void SetTerrainSampler()
-        {
-            DaggerfallUnity.Instance.TerrainSampler = new ImprovedTerrainSampler();
-        }
-
         void Awake()
         {
             if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
@@ -172,13 +171,13 @@ namespace ProjectIncreasedTerrainDistance
 
             dfUnity = DaggerfallUnity.Instance;
 
-            DaggerfallUnity.OnSetTerrainSampler += SetTerrainSampler;
+            dfUnity.TerrainSampler = new ImprovedTerrainSampler();
 
-            ImprovedTerrainSampler improvedTerrainSampler = DaggerfallUnity.Instance.TerrainSampler as ImprovedTerrainSampler;
-            if (improvedTerrainSampler == null)
-            {
-                DaggerfallUnity.LogMessage("IncreasedTerrainDistance: TerrainSampler instance is not of type ImprovedTerrainSampler (use ITerrainSampler terrainSampler = new ImprovedTerrainSampler() in DaggerfallUnity.cs)", true);
-            }
+            //ImprovedTerrainSampler improvedTerrainSampler = DaggerfallUnity.Instance.TerrainSampler as ImprovedTerrainSampler;
+            //if (improvedTerrainSampler == null)
+            //{
+            //    DaggerfallUnity.LogMessage("IncreasedTerrainDistance: TerrainSampler instance is not of type ImprovedTerrainSampler (use ITerrainSampler terrainSampler = new ImprovedTerrainSampler() in DaggerfallUnity.cs)", true);
+            //}
 
             if (!streamingWorld)
                 streamingWorld = GameObject.Find("StreamingWorld").GetComponent<StreamingWorld>();
@@ -495,11 +494,11 @@ namespace ProjectIncreasedTerrainDistance
             Camera.main.clearFlags = CameraClearFlags.Depth;
             stackedNearCamera.clearFlags = CameraClearFlags.Depth;
             stackedCamera.clearFlags = CameraClearFlags.Depth;
-            stackedCamera.depth = 1; // rendered first            
-            stackedNearCamera.depth = 2;
-            Camera.main.depth = 3; // renders over stacked camera
+            stackedCamera.depth = stackedCameraDepth; // rendered first            
+            stackedNearCamera.depth = stackedNearCameraDepth;
+            //Camera.main.depth = 3; // renders over stacked camera
 
-            cameraRenderSkyboxToTexture.depth = -10; // make sure to render first
+            cameraRenderSkyboxToTexture.depth = cameraRenderSkyboxToTextureDepth; // make sure to render first
             cameraRenderSkyboxToTexture.renderingPath = stackedCamera.renderingPath;
 
             #if ENHANCED_SKY_AVAILABLE
