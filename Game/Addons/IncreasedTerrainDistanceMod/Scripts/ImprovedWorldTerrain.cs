@@ -28,12 +28,15 @@ namespace ProjectIncreasedTerrainDistance
     /// </summary>
     public static class ImprovedWorldTerrain
     {
-        const string filepathInTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_in.bin";
+        //const string filepathInTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_in.bin";
+        //const string filepathOutTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_out.bin";
+        //const string filepathMapLocationRangeX = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeX.bin";
+        //const string filepathMapLocationRangeY = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeY.bin";
 
-        const string filepathOutTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_out.bin";
-
-        const string filepathMapLocationRangeX = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeX.bin";
-        const string filepathMapLocationRangeY = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeY.bin";
+        //const string filepathInTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_in.bin";
+        //const string filepathOutTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_out.bin";
+        const string filenameMapLocationRangeX = "mapLocationRangeX.bin";
+        const string filenameMapLocationRangeY = "mapLocationRangeY.bin";
 
         const float minDistanceFromWaterForExtraExaggeration = 3.0f; // when does exaggeration start in terms of how far does terrain have to be away from water
         const float exaggerationFactorWaterDistance = 0.15f; // how strong is the distance from water incorporated into the multiplier
@@ -226,18 +229,39 @@ namespace ProjectIncreasedTerrainDistance
                     mapLocationRangeX = new byte[width * height];
                     mapLocationRangeY = new byte[width * height];
 
-                    FileStream istream;
-                    istream = new FileStream(filepathMapLocationRangeX, FileMode.Open, FileAccess.Read);
-                    BinaryReader readerMapLocationRangeX = new BinaryReader(istream, Encoding.UTF8);
-                    readerMapLocationRangeX.Read(mapLocationRangeX, 0, width * height);
-                    readerMapLocationRangeX.Close();
-                    istream.Close();
+                    MemoryStream istream;
+                    TextAsset assetMapLocationRangeX = Resources.Load<TextAsset>(filenameMapLocationRangeX);
+                    if (assetMapLocationRangeX != null)
+                    {
+                        istream = new MemoryStream(assetMapLocationRangeX.bytes);
+                        BinaryReader readerMapLocationRangeX = new BinaryReader(istream, Encoding.UTF8);
+                        readerMapLocationRangeX.Read(mapLocationRangeX, 0, width * height);
+                        readerMapLocationRangeX.Close();
+                        istream.Close();
+                    }
 
-                    istream = new FileStream(filepathMapLocationRangeY, FileMode.Open, FileAccess.Read);
-                    BinaryReader readerMapLocationRangeY = new BinaryReader(istream, Encoding.UTF8);
-                    readerMapLocationRangeY.Read(mapLocationRangeY, 0, width * height);
-                    readerMapLocationRangeY.Close();
-                    istream.Close();
+                    TextAsset assetMapLocationRangeY = Resources.Load<TextAsset>(filenameMapLocationRangeY);
+                    if (assetMapLocationRangeY)
+                    {
+                        istream = new MemoryStream(assetMapLocationRangeY.bytes);
+                        BinaryReader readerMapLocationRangeY = new BinaryReader(istream, Encoding.UTF8);
+                        readerMapLocationRangeY.Read(mapLocationRangeY, 0, width * height);
+                        readerMapLocationRangeY.Close();
+                        istream.Close();
+                    }
+
+                    //FileStream istream;
+                    //istream = new FileStream(filepathMapLocationRangeX, FileMode.Open, FileAccess.Read);
+                    //BinaryReader readerMapLocationRangeX = new BinaryReader(istream, Encoding.UTF8);
+                    //readerMapLocationRangeX.Read(mapLocationRangeX, 0, width * height);
+                    //readerMapLocationRangeX.Close();
+                    //istream.Close();
+
+                    //istream = new FileStream(filepathMapLocationRangeY, FileMode.Open, FileAccess.Read);
+                    //BinaryReader readerMapLocationRangeY = new BinaryReader(istream, Encoding.UTF8);
+                    //readerMapLocationRangeY.Read(mapLocationRangeY, 0, width * height);
+                    //readerMapLocationRangeY.Close();
+                    //istream.Close();
                 }
                 #endif
 
