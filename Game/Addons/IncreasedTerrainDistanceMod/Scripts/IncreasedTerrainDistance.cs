@@ -53,6 +53,9 @@ namespace ProjectIncreasedTerrainDistance
         public int stackedCameraDepth = 1;
         public int stackedNearCameraDepth = 2;
         public int cameraRenderSkyboxToTextureDepth = -10;
+        public float mainCameraFarClipPlane = 1200.0f;
+        public FogMode sceneFogMode = FogMode.Exponential;
+        public float sceneFogDensity = 0.000025f;
 
         //public RenderTexture renderTextureSky;
 
@@ -428,7 +431,10 @@ namespace ProjectIncreasedTerrainDistance
                     Application.Quit();
             }
 
-            //Camera.main.farClipPlane = 1200.0f;
+            // Set main camera settings
+            Camera.main.farClipPlane = mainCameraFarClipPlane;
+            RenderSettings.fogMode = sceneFogMode;
+            RenderSettings.fogDensity = sceneFogDensity;
 
             if (!stackedNearCamera)
             {
