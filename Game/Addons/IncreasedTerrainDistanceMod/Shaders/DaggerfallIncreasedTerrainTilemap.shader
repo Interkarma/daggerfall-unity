@@ -38,7 +38,9 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		_BlendStart("blend start distance for blending distant terrain into skybox", Float) = 15000.0
 		_BlendEnd("blend end distance for blending distant terrain into skybox", Float) = 200000.0
 		_FogMode("Fog Mode", Int) = 1
-		_FogDensity("Fog Density", Float) = 0.01
+		_FogDensity("Fog Density", Float) = 0.01 // since unity_FogParams are no longer working for some reason use a shaderlab parameter
+		_FogStartDistance("Fog Start Distance", Float) = 0 // since unity_FogParams are no longer working for some reason use a shaderlab parameter
+		_FogEndDistance("Fog End Distance", Float) = 2000 // since unity_FogParams are no longer working for some reason use a shaderlab parameter
 		_FogFromSkyTex("specifies if fog color should be derived from sky texture or not", Int) = 0
 	}
 	SubShader {
@@ -72,13 +74,16 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		float _WaterHeightTransformed;
 		int _TerrainDistance;
 		int _PlayerPosX;
-		int _PlayerPosY;		
+		int _PlayerPosY;
 		int _TextureSetSeasonCode;
 		float _BlendStart;
 		float _BlendEnd;
 
 		int _FogMode;
 		float _FogDensity;
+		float _FogStartDistance;
+		float _FogEndDistance;
+
 		int _FogFromSkyTex;
 
 		struct Input
@@ -94,17 +99,17 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			float dist = distance(IN.worldPos.xz, _WorldSpaceCameraPos.xz); //max(abs(IN.worldPos.x - _WorldSpaceCameraPos.x), abs(IN.worldPos.z - _WorldSpaceCameraPos.z));
 			
 			float blendFacTerrain = 1.0f;
-			
-			/*
+						
 			if (_FogMode == 1) // linear
 			{
-				blendFacTerrain = max(0.0f, min(1.0f, dist * unity_FogParams.z + unity_FogParams.w));				
+				//blendFacTerrain = max(0.0f, min(1.0f, dist * unity_FogParams.z + unity_FogParams.w));
+				blendFacTerrain = max(0.0f, min(1.0f, (_FogEndDistance - dist) / (_FogEndDistance - _FogStartDistance + 1.0)));
 			}
 			if (_FogMode == 2) // exp
 			{
 				// factor = exp(-density*z)
 				float fogFac = 0.0;
-				fogFac = unity_FogParams.y * dist;
+				fogFac = _FogDensity * dist;
 				blendFacTerrain = exp2(-fogFac);
 
 			}
@@ -112,14 +117,9 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			{
 				// factor = exp(-(density*z)^2)
 				float fogFac = 0.0;
-				fogFac = unity_FogParams.x * dist;
+				fogFac = _FogDensity * dist;
 				blendFacTerrain = exp2(-fogFac*fogFac);
 			}
-			*/
-
-			// factor = exp(-density*z)
-			float fogFac = _FogDensity * dist;
-			blendFacTerrain = exp2(-fogFac);
 			
 			const float fadeRange = _BlendEnd - _BlendStart + 1.0f;
 			float alphaFadeAmount = max(0.0f, min(1.0f, (_BlendEnd - dist) / fadeRange));

@@ -54,8 +54,8 @@ namespace ProjectIncreasedTerrainDistance
         public int stackedNearCameraDepth = 2;
         public int cameraRenderSkyboxToTextureDepth = -10;
         public float mainCameraFarClipPlane = 1200.0f;
-        public FogMode sceneFogMode = FogMode.Exponential;
-        public float sceneFogDensity = 0.000025f;
+        //public FogMode sceneFogMode = FogMode.Exponential;
+        //public float sceneFogDensity = 0.000025f;
 
         //public RenderTexture renderTextureSky;
 
@@ -67,8 +67,6 @@ namespace ProjectIncreasedTerrainDistance
 
         [Range(0.0f, 300000.0f)]
         public float blendEnd = 145000.0f;
-
-        public float fogDensity = 0.000025f;
 
 
         // is dfUnity ready?
@@ -241,7 +239,10 @@ namespace ProjectIncreasedTerrainDistance
             StreamingWorld.OnTeleportToCoordinates += UpdateWorldTerrain;
 
             PlayerEnterExit.OnTransitionExterior += TransitionToExterior;
-            PlayerEnterExit.OnTransitionDungeonExterior += TransitionToExterior;        
+            PlayerEnterExit.OnTransitionDungeonExterior += TransitionToExterior;
+            #if ENHANCED_SKY_AVAILABLE
+                EnhancedSky.SkyManager.toggleSkyObjectsEvent += EnhancedSkyToggle;
+            #endif
         }
 
         void OnDisable()
@@ -257,6 +258,22 @@ namespace ProjectIncreasedTerrainDistance
 
             PlayerEnterExit.OnTransitionExterior -= TransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= TransitionToExterior;
+
+            #if ENHANCED_SKY_AVAILABLE
+                EnhancedSky.SkyManager.toggleSkyObjectsEvent -= EnhancedSkyToggle;
+            #endif
+        }
+
+        void EnhancedSkyToggle(bool toggle)
+        {
+            if (toggle)
+            {
+                sampleFogColorFromSky = true;
+            }
+            else
+            {
+                sampleFogColorFromSky = false;
+            }
         }
 
         void InitImprovedWorldTerrain()
@@ -433,8 +450,6 @@ namespace ProjectIncreasedTerrainDistance
 
             // Set main camera settings
             Camera.main.farClipPlane = mainCameraFarClipPlane;
-            RenderSettings.fogMode = sceneFogMode;
-            RenderSettings.fogDensity = sceneFogDensity;
 
             if (!stackedNearCamera)
             {
@@ -521,13 +536,43 @@ namespace ProjectIncreasedTerrainDistance
                     }
                 }
 
-                if (skyMan)
+                if ((skyMan)&&(skyMan.gameObject.activeInHierarchy))
                 {
                     sampleFogColorFromSky = true;
                 }
             #endif
     
             cameraRenderSkyboxToTexture.targetTexture = renderTextureSky;
+        }
+
+        void setMaterialFogParameters()
+        {
+            if (terrainMaterial != null)
+            {
+                if (RenderSettings.fog == true)
+                {
+                    if (RenderSettings.fogMode == FogMode.Linear)
+                    {
+                        terrainMaterial.SetInt("_FogMode", 1);
+                        terrainMaterial.SetFloat("_FogStartDistance", RenderSettings.fogStartDistance);
+                        terrainMaterial.SetFloat("_FogEndDistance", RenderSettings.fogEndDistance);
+                    }
+                    else if (RenderSettings.fogMode == FogMode.Exponential)
+                    {
+                        terrainMaterial.SetInt("_FogMode", 2);
+                        terrainMaterial.SetFloat("_FogDensity", RenderSettings.fogDensity);
+                    }
+                    else if (RenderSettings.fogMode == FogMode.ExponentialSquared)
+                    {
+                        terrainMaterial.SetInt("_FogMode", 3);
+                        terrainMaterial.SetFloat("_FogDensity", RenderSettings.fogDensity);
+                    }                    
+                }
+                else
+                {
+                    terrainMaterial.SetInt("_FogMode", 0);
+                }
+            }
         }
 
         void Update()
@@ -546,24 +591,7 @@ namespace ProjectIncreasedTerrainDistance
                 Terrain terrain = worldTerrainGameObject.GetComponent<Terrain>();
                 if (terrain)
                 {
-                    /*
-                    if (RenderSettings.fog == true)
-                    {
-                        if (RenderSettings.fogMode == FogMode.Linear)
-                            terrainMaterial.SetInt("_FogMode", 1);
-                        else if (RenderSettings.fogMode == FogMode.Exponential)
-                            terrainMaterial.SetInt("_FogMode", 2);
-                        else if (RenderSettings.fogMode == FogMode.ExponentialSquared)
-                            terrainMaterial.SetInt("_FogMode", 3);
-                    }
-                    else
-                    {
-                        terrainMaterial.SetInt("_FogMode", 0);
-                    }
-                    */
-                    terrainMaterial.SetInt("_FogMode", 2);
-                    terrainMaterial.SetFloat("_FogDensity", fogDensity);
-
+                    setMaterialFogParameters();
             
                     #if ENHANCED_SKY_AVAILABLE
                         if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
@@ -944,19 +972,7 @@ namespace ProjectIncreasedTerrainDistance
             //Texture2D myTex = Resources.Load("test_pattern_texture") as Texture2D;
             //terrainMaterial.SetTexture("_SkyTex", myTex);
 
-            if (RenderSettings.fog == true)
-            {
-                if (RenderSettings.fogMode == FogMode.Linear)
-                    terrainMaterial.SetInt("_FogMode", 1);
-                else if (RenderSettings.fogMode == FogMode.Exponential)
-                    terrainMaterial.SetInt("_FogMode", 2);
-                else if (RenderSettings.fogMode == FogMode.ExponentialSquared)
-                    terrainMaterial.SetInt("_FogMode", 3);
-            }
-            else
-            {
-                terrainMaterial.SetInt("_FogMode", 0);
-            }
+            setMaterialFogParameters();
 
             terrainMaterial.SetFloat("_FogFromSkyTex", 0);
 
