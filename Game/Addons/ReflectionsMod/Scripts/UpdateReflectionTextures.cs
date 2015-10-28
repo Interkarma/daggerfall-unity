@@ -19,6 +19,9 @@ namespace ReflectionsMod
 {
     public class UpdateReflectionTextures : MonoBehaviour
     {
+        public string iniPathConfigInjectionTextures = ""; // handed over to InjectReflectiveMaterialProperty script - if not specified will use fallback ini-file
+        //public string iniPathConfigInjectionTextures = "Assets/daggerfall-unity/Game/Addons/ReflectionsMod/Resources/configInjectionTextures.ini"; // use this line to test ini file loading from filepath
+
         private GameObject reflectionPlaneBottom = null;
         private GameObject reflectionPlaneSeaLevel = null;
 
@@ -277,8 +280,8 @@ namespace ReflectionsMod
 
             reflectionPlaneBottom.transform.SetParent(this.transform);
 
-            reflectionPlaneBottom.AddComponent(typeof(InjectReflectiveMaterialProperty)); // the inject script is parented to this plane so that the OnWillRenderObject() method of the inject script will work - this is important since update() function resulted in slightly delayed update which could be seen when ground level height changed
-
+            InjectReflectiveMaterialProperty scriptInjectReflectiveMaterialProperty = reflectionPlaneBottom.AddComponent<InjectReflectiveMaterialProperty>(); // the inject script is parented to this plane so that the OnWillRenderObject() method of the inject script will work - this is important since update() function resulted in slightly delayed update which could be seen when ground level height changed
+            scriptInjectReflectiveMaterialProperty.iniPathConfigInjectionTextures = this.iniPathConfigInjectionTextures;            
 
             reflectionPlaneSeaLevel = new GameObject("ReflectionPlaneSeaLevel");
             reflectionPlaneSeaLevel.layer = LayerMask.NameToLayer("Water");

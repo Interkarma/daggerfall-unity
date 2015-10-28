@@ -8,6 +8,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
+using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
@@ -20,7 +21,8 @@ namespace ReflectionsMod
 {
     public class InjectReflectiveMaterialProperty : MonoBehaviour
     {
-        const string filepathConfigInjectionTextures = "Assets/daggerfall-unity/Game/Addons/ReflectionsMod/Resources/configInjectionTextures.ini";
+        public string iniPathConfigInjectionTextures = ""; // if not specified will use fallback ini-file
+        const string iniPathFallbackConfigInjectionTextures = "configInjectionTextures.ini";
         // Streaming World Component
         public StreamingWorld streamingWorld;
 
@@ -28,8 +30,31 @@ namespace ReflectionsMod
 
         UpdateReflectionTextures reflectionTexturesScript = null;
 
-        IniParser.FileIniDataParser iniParser;
-        IniParser.Model.IniData parsedIniData;
+        IniParser.FileIniDataParser iniParser = new FileIniDataParser();
+        IniParser.Model.IniData iniData;
+
+        IniParser.Model.IniData getIniParserConfigInjectionTextures()
+        {
+            IniParser.Model.IniData parsedIniData = null;
+
+            // Attempt to load configInjectionTextures.ini
+            string userIniPathConfigInjectionTextures = Path.Combine(Application.dataPath, iniPathConfigInjectionTextures);
+            if (File.Exists(userIniPathConfigInjectionTextures))
+            {
+                parsedIniData = iniParser.ReadFile(userIniPathConfigInjectionTextures);
+            }
+
+            // Load fallback configInjectionTextures .ini
+            TextAsset asset = Resources.Load<TextAsset>(iniPathFallbackConfigInjectionTextures);
+            if (asset != null)
+            {
+                MemoryStream stream = new MemoryStream(asset.bytes);
+                StreamReader reader = new StreamReader(stream);
+                parsedIniData = iniParser.ReadData(reader);
+                reader.Close();
+            }
+            return parsedIniData;
+        }
 
         void Start()
         {
@@ -48,8 +73,7 @@ namespace ReflectionsMod
                     Application.Quit();
             }
 
-            iniParser = new FileIniDataParser();
-            parsedIniData = iniParser.ReadFile(filepathConfigInjectionTextures);
+            iniData = getIniParserConfigInjectionTextures();
         }
 
         void Awake()        
@@ -253,10 +277,10 @@ namespace ReflectionsMod
            //if (reflectionTexturesScript.isIndoorEnvironment()) // fails for some reason when 2indoor transition happens - TODO: investigate
            //{
 
-                IniParser.Model.IniData textureInjectionData = parsedIniData;
-                if (parsedIniData != null)
+                IniParser.Model.IniData textureInjectionData = iniData;
+                if (iniData != null)
                 {
-                    foreach (IniParser.Model.SectionData section in parsedIniData.Sections)
+                    foreach (IniParser.Model.SectionData section in iniData.Sections)
                     {
                         int textureArchive = int.Parse(textureInjectionData[section.SectionName]["textureArchive"]);
                         int textureRecord = int.Parse(textureInjectionData[section.SectionName]["textureRecord"]);
