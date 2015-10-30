@@ -25,6 +25,9 @@ namespace ReflectionsMod
         private GameObject reflectionPlaneBottom = null;
         private GameObject reflectionPlaneSeaLevel = null;
 
+        MirrorReflection mirrorRefl = null;
+        MirrorReflection mirrorReflSeaLevel = null;
+
         public bool isOutdoorEnvironment()
         {
             if (GameObject.Find("Exterior"))
@@ -274,9 +277,9 @@ namespace ReflectionsMod
             renderer.material.color = Color.green;
             renderer.enabled = true; // if this is set to false OnWillRenderObject() in MirrorReflection.cs will not work (workaround would be to change OnWillRenderObject() to Update()
 
-            MirrorReflection mirrorRefl = reflectionPlaneBottom.AddComponent<MirrorReflection>();
-            mirrorRefl.m_TextureSize = 512;            
-            mirrorRefl.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");            
+            mirrorRefl = reflectionPlaneBottom.AddComponent<MirrorReflection>();
+            mirrorRefl.m_TextureSize = 512;
+            mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
 
             reflectionPlaneBottom.transform.SetParent(this.transform);
 
@@ -298,7 +301,7 @@ namespace ReflectionsMod
             rendererSeaLevel.material.color = Color.green;
             rendererSeaLevel.enabled = true; // if this is set to false OnWillRenderObject() in MirrorReflection.cs will not work (workaround would be to change OnWillRenderObject() to Update()
 
-            MirrorReflection mirrorReflSeaLevel = reflectionPlaneSeaLevel.AddComponent<MirrorReflection>();
+            mirrorReflSeaLevel = reflectionPlaneSeaLevel.AddComponent<MirrorReflection>();
             mirrorReflSeaLevel.m_TextureSize = 512;
             mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
 
@@ -317,7 +320,10 @@ namespace ReflectionsMod
                 return;
 
             if (isIndoorEnvironment())
-            {      
+            {
+                mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
+                mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
+
                 RaycastHit hit;
                 float distanceToGround = 0;
 
@@ -334,6 +340,18 @@ namespace ReflectionsMod
 
             if (isOutdoorEnvironment())
             {
+                LayerMask layerIndexWorldTerrain = LayerMask.NameToLayer("WorldTerrain");
+                if (layerIndexWorldTerrain != -1)
+                {
+                    mirrorRefl.m_ReflectLayers.value = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
+                    mirrorReflSeaLevel.m_ReflectLayers = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
+                }
+                else
+                {
+                    mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
+                    mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
+                }
+
                 Terrain terrainInstancePlayerTerrain = null;
 
                 int referenceLocationX = playerGPS.CurrentMapPixel.X;
