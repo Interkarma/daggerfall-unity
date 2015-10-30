@@ -43,6 +43,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(SetTimeScale.name, SetTimeScale.description, SetTimeScale.usage, SetTimeScale.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetGravity.name, SetGravity.description, SetGravity.usage, SetGravity.Execute);
 
+            ConsoleCommandsDatabase.RegisterCommand(GotoLocation.name, GotoLocation.description, GotoLocation.usage, GotoLocation.Execute);            
         }
 
 
@@ -656,6 +657,80 @@ namespace Wenzil.Console
             }
 
 
+        }
+
+        private static class GotoLocation
+        {
+            public static readonly string name = "location";
+            public static readonly string description = "Send the player to the predefined location";
+            public static readonly string usage = "loaction [n]; where n is between 1 & 9:\n1...Daggerfall/Daggerfall\n2...Wayrest/Wayrest\n3...Sentinel/Sentinel\n";
+
+            public static string Execute(params string[] args)
+            {
+                int n = 0;
+                DaggerfallWorkshop.StreamingWorld streamingWorld = GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
+                PlayerEnterExit playerEE = GameObject.FindObjectOfType<PlayerEnterExit>();
+
+                if (args == null || args.Length < 1)
+                {
+                    return HelpCommand.Execute(GotoLocation.name);
+
+                }
+                else if (streamingWorld == null)
+                {
+                    return "Could not locate Streaming world object";
+
+                }
+                else if (playerEE == null || playerEE.IsPlayerInside)
+                {
+                    return "PlayerEnterExit could not be found or player inside";
+
+                }
+                else if (int.TryParse(args[0], out n))
+                {
+                    if (n <= 0 || n > 9)
+                        return "Invalid location index";
+                    else
+                    {
+                        switch(n) 
+                        {
+                            case 1:
+                                streamingWorld.TeleportToCoordinates(207, 213); // Daggerfall/Daggerfall                              
+                                break;
+                            case 2:
+                                streamingWorld.TeleportToCoordinates(859, 244); // Wayrest/Wayrest
+                                break;
+                            case 3:
+                                streamingWorld.TeleportToCoordinates(397, 343); // Sentinel/Sentinel
+                                break;
+                            case 4:
+                                streamingWorld.TeleportToCoordinates(892, 146); // Orsinium Area/Orsinium
+                                break;
+                            case 5:
+                                streamingWorld.TeleportToCoordinates(67, 119); // Tulune/The Old Copperham Place
+                                break;
+                            case 6:
+                                streamingWorld.TeleportToCoordinates(254, 408); // Pothago/The Stronghold of Cirden
+                                break;
+                            case 7:
+                                streamingWorld.TeleportToCoordinates(109, 158); // Daggerfall/Privateer's Hold
+                                break;
+                            case 8:
+                                streamingWorld.TeleportToCoordinates(860, 245); // Wayrest/
+                                break;
+                            case 9:
+                                streamingWorld.TeleportToCoordinates(718, 204); // Isle of Balfiera/Direnni Tower
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+
+                }
+
+                return "Invalid location index";
+            }
         }
 
         private static class TransitionToExterior
