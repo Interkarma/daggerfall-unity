@@ -48,7 +48,7 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		_FogFromSkyTex("specifies if fog color should be derived from sky texture or not", Int) = 0
 	}
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		Tags { "RenderType"="Opaque" "Queue" = "Overlay"} // Overlay is workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
 		LOD 200
 
 		// extra pass that renders to depth buffer only (world terrain is semi-transparent) - important for correct blending

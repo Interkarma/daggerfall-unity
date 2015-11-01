@@ -9,7 +9,7 @@
 // uncomment next line if enhanced sky mod by Lypyl is present
 #define ENHANCED_SKY_AVAILABLE
 
-//#define REFLECTIONSMOD_AVAILABLE
+#define REFLECTIONSMOD_AVAILABLE
 
 using UnityEngine;
 using System;
@@ -471,7 +471,7 @@ namespace ProjectIncreasedTerrainDistance
             {
                 GameObject goStackedCamera = new GameObject("stackedCamera");
                 stackedCamera = goStackedCamera.AddComponent<Camera>();
-                stackedCamera.cullingMask = 1 << layerExtendedTerrain;
+                stackedCamera.cullingMask = (1 << layerExtendedTerrain) +(1 << LayerMask.NameToLayer("Water")); // add water layer so reflections are updated in time (workaround)
                 stackedCamera.nearClipPlane = 980.0f;
                 stackedCamera.farClipPlane = 300000.0f;
                 stackedCamera.fieldOfView = Camera.main.fieldOfView;
@@ -982,21 +982,21 @@ namespace ProjectIncreasedTerrainDistance
             terrainMaterial.SetFloat("_BlendStart", blendStart);
             terrainMaterial.SetFloat("_BlendEnd", blendEnd);
 
-            //#if REFLECTIONSMOD_AVAILABLE
-            //    RenderTexture reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().mirrorReflSeaLevel.m_ReflectionTexture;
-            //    if (reflectionSeaTexture != null)
-            //    {
-            //        terrainMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
-            //        terrainMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
-            //        terrainMaterial.SetInt("_UseSeaReflectionTex", 1);
-            //    }
-            //    else
-            //    {
-            //        terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
-            //    }
-            //#else
-            //    terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
-            //#endif
+            #if REFLECTIONSMOD_AVAILABLE
+                RenderTexture reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().mirrorReflSeaLevel.m_ReflectionTexture;
+                if (reflectionSeaTexture != null)
+                {
+                    terrainMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
+                    terrainMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
+                    terrainMaterial.SetInt("_UseSeaReflectionTex", 1);
+                }
+                else
+                {
+                    terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
+                }
+            #else
+                terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
+            #endif
 
             // Promote material
             terrain.materialTemplate = terrainMaterial;

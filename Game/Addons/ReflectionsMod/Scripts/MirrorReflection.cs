@@ -44,7 +44,7 @@ namespace ReflectionsMod
 		    if( !cam )
 			    return;
 
-            Camera cameraToUse = GameObject.Find("stackedNearCamera").GetComponent<Camera>(); // when stacked camera is present use it to prevent reflection of near terrain in stackedCamera clip range distance not being updated
+            Camera cameraToUse = GameObject.Find("stackedCamera").GetComponent<Camera>(); // when stacked camera is present use it to prevent reflection of near terrain in stackedCamera clip range distance not being updated
             if (!cameraToUse)  // if stacked camera was not found us main camera
             {
                 cameraToUse = Camera.main;
@@ -193,14 +193,14 @@ namespace ReflectionsMod
 			    GameObject go = new GameObject( "Mirror Refl Camera id" + GetInstanceID() + " for " + currentCamera.GetInstanceID(), typeof(Camera), typeof(Skybox) );
 			    reflectionCamera = go.GetComponent<Camera>();
 			    reflectionCamera.enabled = false;
-			    reflectionCamera.transform.position = transform.position;
-			    reflectionCamera.transform.rotation = transform.rotation;
+                reflectionCamera.transform.position = currentCamera.transform.position;
+                reflectionCamera.transform.rotation = currentCamera.transform.rotation;
 			    reflectionCamera.gameObject.AddComponent<FlareLayer>();
 			    //go.hideFlags = HideFlags.HideAndDontSave;
 			    m_ReflectionCameras[currentCamera] = reflectionCamera;
 
                 go.transform.SetParent(GameObject.Find("ReflectionsMod").transform);
-		    }        
+		    }
 	    }
  
 	    // Extended sign: returns -1, 0 or 1 based on sign of a

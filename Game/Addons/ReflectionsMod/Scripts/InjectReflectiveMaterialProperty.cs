@@ -89,7 +89,7 @@ namespace ReflectionsMod
             PlayerEnterExit.OnTransitionDungeonInterior += InjectMaterialPropertiesIndoor;
             PlayerEnterExit.OnTransitionDungeonExterior += InjectMaterialPropertiesOutdoor;
 
-            //DaggerfallTerrain.OnInstantiateTerrain += InjectMaterialProperties;
+            DaggerfallTerrain.OnInstantiateTerrain += InjectMaterialProperties;
         }
 
         void OnDestroy()
@@ -105,7 +105,7 @@ namespace ReflectionsMod
             PlayerEnterExit.OnTransitionDungeonInterior -= InjectMaterialPropertiesIndoor;
             PlayerEnterExit.OnTransitionDungeonExterior -= InjectMaterialPropertiesOutdoor;
 
-            //DaggerfallTerrain.OnInstantiateTerrain -= InjectMaterialProperties;
+            DaggerfallTerrain.OnInstantiateTerrain -= InjectMaterialProperties;
         }
 
         public void OnWillRenderObject()
