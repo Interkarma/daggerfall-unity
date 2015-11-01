@@ -279,7 +279,6 @@ namespace ReflectionsMod
 
             mirrorRefl = reflectionPlaneBottom.AddComponent<MirrorReflection>();
             mirrorRefl.m_TextureSize = 512;
-            mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
 
             reflectionPlaneBottom.transform.SetParent(this.transform);
 
@@ -303,9 +302,54 @@ namespace ReflectionsMod
 
             mirrorReflSeaLevel = reflectionPlaneSeaLevel.AddComponent<MirrorReflection>();
             mirrorReflSeaLevel.m_TextureSize = 512;
-            mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
 
-            reflectionPlaneSeaLevel.transform.SetParent(this.transform);           
+            reflectionPlaneSeaLevel.transform.SetParent(this.transform);
+
+            LayerMask layerIndexWorldTerrain = LayerMask.NameToLayer("WorldTerrain");
+            if (layerIndexWorldTerrain != -1)
+            {
+                mirrorRefl.m_ReflectLayers.value = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
+                mirrorReflSeaLevel.m_ReflectLayers = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
+            }
+            else
+            {
+                mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
+                mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
+            }
+
+            PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToExterior;
+        }
+
+        void OnDestroy()
+        {
+            PlayerEnterExit.OnTransitionInterior -= OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToExterior;
+        }
+
+        void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
+            mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
+        }
+
+        void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            LayerMask layerIndexWorldTerrain = LayerMask.NameToLayer("WorldTerrain");
+            if (layerIndexWorldTerrain != -1)
+            {
+                mirrorRefl.m_ReflectLayers.value = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
+                mirrorReflSeaLevel.m_ReflectLayers = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
+            }
+            else
+            {
+                mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
+                mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
+            }
         }
 
         void Update()
@@ -321,9 +365,6 @@ namespace ReflectionsMod
 
             if (isIndoorEnvironment())
             {
-                mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
-                mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
-
                 RaycastHit hit;
                 float distanceToGround = 0;
 
@@ -340,18 +381,6 @@ namespace ReflectionsMod
 
             if (isOutdoorEnvironment())
             {
-                LayerMask layerIndexWorldTerrain = LayerMask.NameToLayer("WorldTerrain");
-                if (layerIndexWorldTerrain != -1)
-                {
-                    mirrorRefl.m_ReflectLayers.value = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
-                    mirrorReflSeaLevel.m_ReflectLayers = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
-                }
-                else
-                {
-                    mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
-                    mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
-                }
-
                 Terrain terrainInstancePlayerTerrain = null;
 
                 int referenceLocationX = playerGPS.CurrentMapPixel.X;
