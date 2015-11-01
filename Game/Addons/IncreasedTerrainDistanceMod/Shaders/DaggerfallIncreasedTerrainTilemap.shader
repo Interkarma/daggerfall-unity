@@ -30,6 +30,10 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		_MaxIndex("Max Tileset Index", Int) = 255
 		_AtlasSize("Atlas Size (in pixels)", Float) = 2048.0
 		_GutterSize("Gutter Size (in pixels)", Float) = 32.0
+		
+		_SeaReflectionTex("Reflection Texture Sea Reflection", 2D) = "black" {}
+		_UseSeaReflectionTex("specifies if sea reflection texture is used", Int) = 0
+
 		_PlayerPosX("Player Position in X-direction on world map", Int) = 0
 		_PlayerPosY("Player Position in X-direction on world map", Int) = 0
 		_TerrainDistance("Terrain Distance", Int) = 3
@@ -58,6 +62,8 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd
 		#pragma glsl
 
+		#pragma multi_compile __ ENABLE_WATER_REFLECTIONS
+
 		#define PI 3.1416f
 
 		sampler2D _TileAtlasTexDesert;
@@ -71,6 +77,12 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		int _MaxIndex;
 		float _AtlasSize;
 		float _GutterSize;
+
+		#if defined(ENABLE_WATER_REFLECTIONS)
+			sampler2D _SeaReflectionTex;
+			int _UseSeaReflectionTex;
+		#endif
+
 		float _WaterHeightTransformed;
 		int _TerrainDistance;
 		int _PlayerPosX;
@@ -230,8 +242,15 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			}
 
 			if ((index==223)||(IN.worldPos.y < _WaterHeightTransformed)) // water (either by tile index or by tile world position)
-			{
+			{							
 				c = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 0);
+				#if defined(ENABLE_WATER_REFLECTIONS)
+					if (_UseSeaReflectionTex)
+					{
+						float2 screenUV = IN.screenPos.xy / IN.screenPos.w;	
+						c.rgb = 0.5f * c.rgb + 0.5f * tex2D(_SeaReflectionTex, screenUV).rgb;
+					}
+				#endif
 				//discard;
 			}
 			else if ((index==224)||(index==225)||(index==229)) // desert
@@ -309,8 +328,7 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			{		
 			c.rgb = min(1.0f, 0.3f * c.rgb + 0.7f * ((1.0f - treeCoverage) * c.rgb + treeCoverage * treeColor));		
 			c.rgb = 0.9f * c.rgb;
-			}		
-
+			}
 			o.Albedo = c.rgb;
 		}
 		ENDCG

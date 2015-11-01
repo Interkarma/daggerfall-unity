@@ -25,8 +25,8 @@ namespace ReflectionsMod
         private GameObject reflectionPlaneBottom = null;
         private GameObject reflectionPlaneSeaLevel = null;
 
-        MirrorReflection mirrorRefl = null;
-        MirrorReflection mirrorReflSeaLevel = null;
+        public MirrorReflection mirrorRefl = null;
+        public MirrorReflection mirrorReflSeaLevel = null;
 
         public bool isOutdoorEnvironment()
         {

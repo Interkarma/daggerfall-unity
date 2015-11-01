@@ -663,7 +663,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "location";
             public static readonly string description = "Send the player to the predefined location";
-            public static readonly string usage = "loaction [n]; where n is between 1 & 9:\n1...Daggerfall/Daggerfall\n2...Wayrest/Wayrest\n3...Sentinel/Sentinel\n";
+            public static readonly string usage = "loaction [n]; where n is between 1 & 9:\n1 ... Daggerfall/Daggerfall\n2 ... Wayrest/Wayrest\n3 ... Sentinel/Sentinel\n4 ... Orsinium Area/Orsinium\n5 ... Tulune/The Old Copperham Place\n6 ... Pothago/The Stronghold of Cirden\n7 ... Daggerfall/Privateer's Hold\n8 ... Wayrest/Merwark Hollow\n9 ... Isle of Balfiera/Direnni Tower\n";
 
             public static string Execute(params string[] args)
             {
@@ -716,7 +716,7 @@ namespace Wenzil.Console
                                 streamingWorld.TeleportToCoordinates(109, 158); // Daggerfall/Privateer's Hold
                                 break;
                             case 8:
-                                streamingWorld.TeleportToCoordinates(860, 245); // Wayrest/
+                                streamingWorld.TeleportToCoordinates(860, 245); // Wayrest/Merwark Hollow
                                 break;
                             case 9:
                                 streamingWorld.TeleportToCoordinates(718, 204); // Isle of Balfiera/Direnni Tower

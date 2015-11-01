@@ -4,10 +4,12 @@
 //Author: Michael Rauter (a.k.a. Nystul)
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 //Version: 1.54
-//Contributors: Lypyl
+//Contributors: Lypyl, Interkarma
 
 // uncomment next line if enhanced sky mod by Lypyl is present
 #define ENHANCED_SKY_AVAILABLE
+
+//#define REFLECTIONSMOD_AVAILABLE
 
 using UnityEngine;
 using System;
@@ -974,11 +976,27 @@ namespace ProjectIncreasedTerrainDistance
 
             setMaterialFogParameters();
 
-            terrainMaterial.SetFloat("_FogFromSkyTex", 0);
+            terrainMaterial.SetInt("_FogFromSkyTex", 0);
 
             //terrainMaterial.SetFloat("_BlendFactor", blendFactor);
             terrainMaterial.SetFloat("_BlendStart", blendStart);
             terrainMaterial.SetFloat("_BlendEnd", blendEnd);
+
+            //#if REFLECTIONSMOD_AVAILABLE
+            //    RenderTexture reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().mirrorReflSeaLevel.m_ReflectionTexture;
+            //    if (reflectionSeaTexture != null)
+            //    {
+            //        terrainMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
+            //        terrainMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
+            //        terrainMaterial.SetInt("_UseSeaReflectionTex", 1);
+            //    }
+            //    else
+            //    {
+            //        terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
+            //    }
+            //#else
+            //    terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
+            //#endif
 
             // Promote material
             terrain.materialTemplate = terrainMaterial;
