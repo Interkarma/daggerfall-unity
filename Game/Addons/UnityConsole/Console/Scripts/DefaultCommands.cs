@@ -663,7 +663,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "location";
             public static readonly string description = "Send the player to the predefined location";
-            public static readonly string usage = "loaction [n]; where n is between 1 & 9:\n1 ... Daggerfall/Daggerfall\n2 ... Wayrest/Wayrest\n3 ... Sentinel/Sentinel\n4 ... Orsinium Area/Orsinium\n5 ... Tulune/The Old Copperham Place\n6 ... Pothago/The Stronghold of Cirden\n7 ... Daggerfall/Privateer's Hold\n8 ... Wayrest/Merwark Hollow\n9 ... Isle of Balfiera/Direnni Tower\n";
+            public static readonly string usage = "loaction [n]; where n is between 0 & 9:\n0 ... random location\n1 ... Daggerfall/Daggerfall\n2 ... Wayrest/Wayrest\n3 ... Sentinel/Sentinel\n4 ... Orsinium Area/Orsinium\n5 ... Tulune/The Old Copperham Place\n6 ... Pothago/The Stronghold of Cirden\n7 ... Daggerfall/Privateer's Hold\n8 ... Wayrest/Merwark Hollow\n9 ... Isle of Balfiera/Direnni Tower\n";
 
             public static string Execute(params string[] args)
             {
@@ -688,14 +688,28 @@ namespace Wenzil.Console
                 }
                 else if (int.TryParse(args[0], out n))
                 {
-                    if (n <= 0 || n > 9)
+                    if (n < 0 || n > 9)
                         return "Invalid location index";
                     else
                     {
                         switch(n) 
                         {
+                            case 0:
+                                int xpos, ypos;
+                                while (true)
+                                {
+                                    xpos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelX-1);
+                                    ypos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelY-1);
+                                    DaggerfallWorkshop.Utility.ContentReader.MapSummary mapSummary;
+                                    if (DaggerfallWorkshop.DaggerfallUnity.Instance.ContentReader.HasLocation(xpos, ypos, out mapSummary))
+                                    {
+                                        streamingWorld.TeleportToCoordinates(xpos + 1, ypos - 1); // random location
+                                        break;
+                                    }
+                                }                                
+                                break;
                             case 1:
-                                streamingWorld.TeleportToCoordinates(207, 213); // Daggerfall/Daggerfall                              
+                                streamingWorld.TeleportToCoordinates(207, 213); // Daggerfall/Daggerfall  
                                 break;
                             case 2:
                                 streamingWorld.TeleportToCoordinates(859, 244); // Wayrest/Wayrest
