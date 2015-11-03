@@ -4,10 +4,12 @@
 //Author: Michael Rauter (a.k.a. Nystul)
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 //Version: 1.54
-//Contributors: Lypyl
+//Contributors: Lypyl, Interkarma
 
 // uncomment next line if enhanced sky mod by Lypyl is present
 #define ENHANCED_SKY_AVAILABLE
+
+#define REFLECTIONSMOD_AVAILABLE
 
 using UnityEngine;
 using System;
@@ -54,8 +56,8 @@ namespace ProjectIncreasedTerrainDistance
         public int stackedNearCameraDepth = 2;
         public int cameraRenderSkyboxToTextureDepth = -10;
         public float mainCameraFarClipPlane = 1200.0f;
-        public FogMode sceneFogMode = FogMode.Exponential;
-        public float sceneFogDensity = 0.000025f;
+        //public FogMode sceneFogMode = FogMode.Exponential;
+        //public float sceneFogDensity = 0.000025f;
 
         //public RenderTexture renderTextureSky;
 
@@ -67,8 +69,6 @@ namespace ProjectIncreasedTerrainDistance
 
         [Range(0.0f, 300000.0f)]
         public float blendEnd = 145000.0f;
-
-        public float fogDensity = 0.000025f;
 
 
         // is dfUnity ready?
@@ -241,7 +241,10 @@ namespace ProjectIncreasedTerrainDistance
             StreamingWorld.OnTeleportToCoordinates += UpdateWorldTerrain;
 
             PlayerEnterExit.OnTransitionExterior += TransitionToExterior;
-            PlayerEnterExit.OnTransitionDungeonExterior += TransitionToExterior;        
+            PlayerEnterExit.OnTransitionDungeonExterior += TransitionToExterior;
+            #if ENHANCED_SKY_AVAILABLE
+                EnhancedSky.SkyManager.toggleSkyObjectsEvent += EnhancedSkyToggle;
+            #endif
         }
 
         void OnDisable()
@@ -257,6 +260,22 @@ namespace ProjectIncreasedTerrainDistance
 
             PlayerEnterExit.OnTransitionExterior -= TransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= TransitionToExterior;
+
+            #if ENHANCED_SKY_AVAILABLE
+                EnhancedSky.SkyManager.toggleSkyObjectsEvent -= EnhancedSkyToggle;
+            #endif
+        }
+
+        void EnhancedSkyToggle(bool toggle)
+        {
+            if (toggle)
+            {
+                sampleFogColorFromSky = true;
+            }
+            else
+            {
+                sampleFogColorFromSky = false;
+            }
         }
 
         void InitImprovedWorldTerrain()
@@ -433,8 +452,6 @@ namespace ProjectIncreasedTerrainDistance
 
             // Set main camera settings
             Camera.main.farClipPlane = mainCameraFarClipPlane;
-            RenderSettings.fogMode = sceneFogMode;
-            RenderSettings.fogDensity = sceneFogDensity;
 
             if (!stackedNearCamera)
             {
@@ -454,7 +471,7 @@ namespace ProjectIncreasedTerrainDistance
             {
                 GameObject goStackedCamera = new GameObject("stackedCamera");
                 stackedCamera = goStackedCamera.AddComponent<Camera>();
-                stackedCamera.cullingMask = 1 << layerExtendedTerrain;
+                stackedCamera.cullingMask = (1 << layerExtendedTerrain) +(1 << LayerMask.NameToLayer("Water")); // add water layer so reflections are updated in time (workaround)
                 stackedCamera.nearClipPlane = 980.0f;
                 stackedCamera.farClipPlane = 300000.0f;
                 stackedCamera.fieldOfView = Camera.main.fieldOfView;
@@ -521,13 +538,43 @@ namespace ProjectIncreasedTerrainDistance
                     }
                 }
 
-                if (skyMan)
+                if ((skyMan)&&(skyMan.gameObject.activeInHierarchy))
                 {
                     sampleFogColorFromSky = true;
                 }
             #endif
     
             cameraRenderSkyboxToTexture.targetTexture = renderTextureSky;
+        }
+
+        void setMaterialFogParameters()
+        {
+            if (terrainMaterial != null)
+            {
+                if (RenderSettings.fog == true)
+                {
+                    if (RenderSettings.fogMode == FogMode.Linear)
+                    {
+                        terrainMaterial.SetInt("_FogMode", 1);
+                        terrainMaterial.SetFloat("_FogStartDistance", RenderSettings.fogStartDistance);
+                        terrainMaterial.SetFloat("_FogEndDistance", RenderSettings.fogEndDistance);
+                    }
+                    else if (RenderSettings.fogMode == FogMode.Exponential)
+                    {
+                        terrainMaterial.SetInt("_FogMode", 2);
+                        terrainMaterial.SetFloat("_FogDensity", RenderSettings.fogDensity);
+                    }
+                    else if (RenderSettings.fogMode == FogMode.ExponentialSquared)
+                    {
+                        terrainMaterial.SetInt("_FogMode", 3);
+                        terrainMaterial.SetFloat("_FogDensity", RenderSettings.fogDensity);
+                    }                    
+                }
+                else
+                {
+                    terrainMaterial.SetInt("_FogMode", 0);
+                }
+            }
         }
 
         void Update()
@@ -546,24 +593,7 @@ namespace ProjectIncreasedTerrainDistance
                 Terrain terrain = worldTerrainGameObject.GetComponent<Terrain>();
                 if (terrain)
                 {
-                    /*
-                    if (RenderSettings.fog == true)
-                    {
-                        if (RenderSettings.fogMode == FogMode.Linear)
-                            terrainMaterial.SetInt("_FogMode", 1);
-                        else if (RenderSettings.fogMode == FogMode.Exponential)
-                            terrainMaterial.SetInt("_FogMode", 2);
-                        else if (RenderSettings.fogMode == FogMode.ExponentialSquared)
-                            terrainMaterial.SetInt("_FogMode", 3);
-                    }
-                    else
-                    {
-                        terrainMaterial.SetInt("_FogMode", 0);
-                    }
-                    */
-                    terrainMaterial.SetInt("_FogMode", 2);
-                    terrainMaterial.SetFloat("_FogDensity", fogDensity);
-
+                    setMaterialFogParameters();
             
                     #if ENHANCED_SKY_AVAILABLE
                         if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
@@ -944,25 +974,29 @@ namespace ProjectIncreasedTerrainDistance
             //Texture2D myTex = Resources.Load("test_pattern_texture") as Texture2D;
             //terrainMaterial.SetTexture("_SkyTex", myTex);
 
-            if (RenderSettings.fog == true)
-            {
-                if (RenderSettings.fogMode == FogMode.Linear)
-                    terrainMaterial.SetInt("_FogMode", 1);
-                else if (RenderSettings.fogMode == FogMode.Exponential)
-                    terrainMaterial.SetInt("_FogMode", 2);
-                else if (RenderSettings.fogMode == FogMode.ExponentialSquared)
-                    terrainMaterial.SetInt("_FogMode", 3);
-            }
-            else
-            {
-                terrainMaterial.SetInt("_FogMode", 0);
-            }
+            setMaterialFogParameters();
 
-            terrainMaterial.SetFloat("_FogFromSkyTex", 0);
+            terrainMaterial.SetInt("_FogFromSkyTex", 0);
 
             //terrainMaterial.SetFloat("_BlendFactor", blendFactor);
             terrainMaterial.SetFloat("_BlendStart", blendStart);
             terrainMaterial.SetFloat("_BlendEnd", blendEnd);
+
+            #if REFLECTIONSMOD_AVAILABLE
+                RenderTexture reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().mirrorReflSeaLevel.m_ReflectionTexture;
+                if (reflectionSeaTexture != null)
+                {
+                    terrainMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
+                    terrainMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
+                    terrainMaterial.SetInt("_UseSeaReflectionTex", 1);
+                }
+                else
+                {
+                    terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
+                }
+            #else
+                terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
+            #endif
 
             // Promote material
             terrain.materialTemplate = terrainMaterial;

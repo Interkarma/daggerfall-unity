@@ -43,11 +43,16 @@ namespace ReflectionsMod
 		    Camera cam = Camera.current;
 		    if( !cam )
 			    return;
-           
-            if (cam != Camera.main) // skip everything that is not the main camera
-                return;            
- 
-		    // Safeguard from recursive reflections.        
+
+            Camera cameraToUse = GameObject.Find("stackedCamera").GetComponent<Camera>(); // when stacked camera is present use it to prevent reflection of near terrain in stackedCamera clip range distance not being updated
+            if (!cameraToUse)  // if stacked camera was not found us main camera
+            {
+                cameraToUse = Camera.main;
+            }
+            if (cam != cameraToUse) // skip everything that is not the main camera
+                return;
+
+            // Safeguard from recursive reflections.        
 		    if( s_InsideRendering )
 			    return;
 		    s_InsideRendering = true;
@@ -84,7 +89,7 @@ namespace ReflectionsMod
 		    Matrix4x4 projection = cam.CalculateObliqueMatrix(clipPlane);
 		    reflectionCamera.projectionMatrix = projection;
 
-		    reflectionCamera.cullingMask = ~(1<<4) & m_ReflectLayers.value; // never render water layer
+            reflectionCamera.cullingMask = ~(1 << 4) & m_ReflectLayers.value; // never render water layer
 		    reflectionCamera.targetTexture = m_ReflectionTexture;
 
             // next 2 lines are important for making shadows work correctly - otherwise shadows will be broken
@@ -98,7 +103,7 @@ namespace ReflectionsMod
 		    reflectionCamera.Render();
 		    reflectionCamera.transform.position = oldpos;
             GL.invertCulling = false;
- 
+
 		    // Restore pixel light count
 		    if( m_DisablePixelLights )
 			    QualitySettings.pixelLightCount = oldPixelLightCount;
@@ -145,8 +150,12 @@ namespace ReflectionsMod
 		    // update other values to match current camera.
 		    // even if we are supplying custom camera&projection matrices,
 		    // some of values are used elsewhere (e.g. skybox uses far plane)
+
+            // get near clipping plane from main camera
             dest.renderingPath = src.renderingPath;
+
             dest.farClipPlane = src.farClipPlane;
+
             dest.nearClipPlane = 0.03f; //src.nearClipPlane;
 		    dest.orthographic = src.orthographic;
 		    dest.fieldOfView = src.fieldOfView;
@@ -184,14 +193,14 @@ namespace ReflectionsMod
 			    GameObject go = new GameObject( "Mirror Refl Camera id" + GetInstanceID() + " for " + currentCamera.GetInstanceID(), typeof(Camera), typeof(Skybox) );
 			    reflectionCamera = go.GetComponent<Camera>();
 			    reflectionCamera.enabled = false;
-			    reflectionCamera.transform.position = transform.position;
-			    reflectionCamera.transform.rotation = transform.rotation;
+                reflectionCamera.transform.position = currentCamera.transform.position;
+                reflectionCamera.transform.rotation = currentCamera.transform.rotation;
 			    reflectionCamera.gameObject.AddComponent<FlareLayer>();
 			    //go.hideFlags = HideFlags.HideAndDontSave;
 			    m_ReflectionCameras[currentCamera] = reflectionCamera;
 
                 go.transform.SetParent(GameObject.Find("ReflectionsMod").transform);
-		    }        
+		    }
 	    }
  
 	    // Extended sign: returns -1, 0 or 1 based on sign of a

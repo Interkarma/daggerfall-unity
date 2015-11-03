@@ -30,6 +30,10 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		_MaxIndex("Max Tileset Index", Int) = 255
 		_AtlasSize("Atlas Size (in pixels)", Float) = 2048.0
 		_GutterSize("Gutter Size (in pixels)", Float) = 32.0
+		
+		_SeaReflectionTex("Reflection Texture Sea Reflection", 2D) = "black" {}
+		_UseSeaReflectionTex("specifies if sea reflection texture is used", Int) = 0
+
 		_PlayerPosX("Player Position in X-direction on world map", Int) = 0
 		_PlayerPosY("Player Position in X-direction on world map", Int) = 0
 		_TerrainDistance("Terrain Distance", Int) = 3
@@ -38,11 +42,13 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		_BlendStart("blend start distance for blending distant terrain into skybox", Float) = 15000.0
 		_BlendEnd("blend end distance for blending distant terrain into skybox", Float) = 200000.0
 		_FogMode("Fog Mode", Int) = 1
-		_FogDensity("Fog Density", Float) = 0.01
+		_FogDensity("Fog Density", Float) = 0.01 // since unity_FogParams are no longer working for some reason use a shaderlab parameter
+		_FogStartDistance("Fog Start Distance", Float) = 0 // since unity_FogParams are no longer working for some reason use a shaderlab parameter
+		_FogEndDistance("Fog End Distance", Float) = 2000 // since unity_FogParams are no longer working for some reason use a shaderlab parameter
 		_FogFromSkyTex("specifies if fog color should be derived from sky texture or not", Int) = 0
 	}
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		Tags { "RenderType"="Opaque" "Queue" = "Overlay"} // Overlay is workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
 		LOD 200
 
 		// extra pass that renders to depth buffer only (world terrain is semi-transparent) - important for correct blending
@@ -55,6 +61,8 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		#pragma target 3.0		
 		#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd
 		#pragma glsl
+
+		#pragma multi_compile __ ENABLE_WATER_REFLECTIONS
 
 		#define PI 3.1416f
 
@@ -69,16 +77,25 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		int _MaxIndex;
 		float _AtlasSize;
 		float _GutterSize;
+
+		#if defined(ENABLE_WATER_REFLECTIONS)
+			sampler2D _SeaReflectionTex;
+			int _UseSeaReflectionTex;
+		#endif
+
 		float _WaterHeightTransformed;
 		int _TerrainDistance;
 		int _PlayerPosX;
-		int _PlayerPosY;		
+		int _PlayerPosY;
 		int _TextureSetSeasonCode;
 		float _BlendStart;
 		float _BlendEnd;
 
 		int _FogMode;
 		float _FogDensity;
+		float _FogStartDistance;
+		float _FogEndDistance;
+
 		int _FogFromSkyTex;
 
 		struct Input
@@ -94,17 +111,17 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			float dist = distance(IN.worldPos.xz, _WorldSpaceCameraPos.xz); //max(abs(IN.worldPos.x - _WorldSpaceCameraPos.x), abs(IN.worldPos.z - _WorldSpaceCameraPos.z));
 			
 			float blendFacTerrain = 1.0f;
-			
-			/*
+						
 			if (_FogMode == 1) // linear
 			{
-				blendFacTerrain = max(0.0f, min(1.0f, dist * unity_FogParams.z + unity_FogParams.w));				
+				//blendFacTerrain = max(0.0f, min(1.0f, dist * unity_FogParams.z + unity_FogParams.w));
+				blendFacTerrain = max(0.0f, min(1.0f, (_FogEndDistance - dist) / (_FogEndDistance - _FogStartDistance + 1.0)));
 			}
 			if (_FogMode == 2) // exp
 			{
 				// factor = exp(-density*z)
 				float fogFac = 0.0;
-				fogFac = unity_FogParams.y * dist;
+				fogFac = _FogDensity * dist;
 				blendFacTerrain = exp2(-fogFac);
 
 			}
@@ -112,14 +129,9 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			{
 				// factor = exp(-(density*z)^2)
 				float fogFac = 0.0;
-				fogFac = unity_FogParams.x * dist;
+				fogFac = _FogDensity * dist;
 				blendFacTerrain = exp2(-fogFac*fogFac);
 			}
-			*/
-
-			// factor = exp(-density*z)
-			float fogFac = _FogDensity * dist;
-			blendFacTerrain = exp2(-fogFac);
 			
 			const float fadeRange = _BlendEnd - _BlendStart + 1.0f;
 			float alphaFadeAmount = max(0.0f, min(1.0f, (_BlendEnd - dist) / fadeRange));
@@ -230,8 +242,15 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			}
 
 			if ((index==223)||(IN.worldPos.y < _WaterHeightTransformed)) // water (either by tile index or by tile world position)
-			{
+			{							
 				c = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 0);
+				#if defined(ENABLE_WATER_REFLECTIONS)
+					if (_UseSeaReflectionTex)
+					{
+						float2 screenUV = IN.screenPos.xy / IN.screenPos.w;	
+						c.rgb = 0.5f * c.rgb + 0.5f * tex2D(_SeaReflectionTex, screenUV).rgb;
+					}
+				#endif
 				//discard;
 			}
 			else if ((index==224)||(index==225)||(index==229)) // desert
@@ -309,8 +328,7 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			{		
 			c.rgb = min(1.0f, 0.3f * c.rgb + 0.7f * ((1.0f - treeCoverage) * c.rgb + treeCoverage * treeColor));		
 			c.rgb = 0.9f * c.rgb;
-			}		
-
+			}
 			o.Albedo = c.rgb;
 		}
 		ENDCG

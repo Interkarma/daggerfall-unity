@@ -5,7 +5,8 @@
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 //Version: 1.54
 
-//#define CREATE_PERSISTENT_LOCATION_RANGE_MAPS
+// only define CREATE_* if you want to manually create the maps - usually this should not be necessary (and never do in executable build - only from editor - otherwise paths are wrong)
+//#define CREATE_PERSISTENT_LOCATION_RANGE_MAPS 
 //#define CREATE_PERSISTENT_TREE_COVERAGE_MAP
 #define LOAD_TREE_COVERAGE_MAP
 
@@ -28,15 +29,14 @@ namespace ProjectIncreasedTerrainDistance
     /// </summary>
     public static class ImprovedWorldTerrain
     {
-        //const string filepathInTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_in.bin";
-        //const string filepathOutTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_out.bin";
-        //const string filepathMapLocationRangeX = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeX.bin";
-        //const string filepathMapLocationRangeY = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeY.bin";
 
-        //const string filepathInTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_in.bin";
-        //const string filepathOutTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_out.bin";
         const string filenameMapLocationRangeX = "mapLocationRangeX.bin";
         const string filenameMapLocationRangeY = "mapLocationRangeY.bin";
+        const string filenameTreeCoverageMap = "mapTreeCoverage.bin";
+
+        const string out_filepathMapLocationRangeX = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeX_out.bin"; // only used on manual trigger in unity editor - never in executable - so it should be ok
+        const string out_filepathMapLocationRangeY = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeY_out.bin"; //  only used on manual trigger in unity editor - never in executable - so it should be ok
+        const string out_filepathOutTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_out.bin"; //  only used on manual trigger in unity editor - never in executable - so it should be ok
 
         const float minDistanceFromWaterForExtraExaggeration = 3.0f; // when does exaggeration start in terms of how far does terrain have to be away from water
         const float exaggerationFactorWaterDistance = 0.15f; // how strong is the distance from water incorporated into the multiplier
@@ -209,13 +209,13 @@ namespace ProjectIncreasedTerrainDistance
               
                     // save to files
                     FileStream ostream;
-                    ostream = new FileStream("./Assets/IncreasedTerrainDistance/Resources/mapLocationRangeX.bin", FileMode.Create, FileAccess.Write);
+                    ostream = new FileStream(out_filepathMapLocationRangeX, FileMode.Create, FileAccess.Write);
                     BinaryWriter writerMapLocationRangeX = new BinaryWriter(ostream, Encoding.UTF8);
                     writerMapLocationRangeX.Write(mapLocationRangeX, 0, width * height);
                     writerMapLocationRangeX.Close();
                     ostream.Close();
 
-                    ostream = new FileStream("./Assets/IncreasedTerrainDistance/Resources/mapLocationRangeY.bin", FileMode.Create, FileAccess.Write);
+                    ostream = new FileStream(out_filepathMapLocationRangeY, FileMode.Create, FileAccess.Write);
                     BinaryWriter writerMapLocationRangeY = new BinaryWriter(ostream, Encoding.UTF8);
                     writerMapLocationRangeY.Write(mapLocationRangeY, 0, width * height);
                     writerMapLocationRangeY.Close();
@@ -395,7 +395,7 @@ namespace ProjectIncreasedTerrainDistance
                     int height = WoodsFile.mapHeightValue;
                     mapTreeCoverage = new byte[width * height];
 
-                    #if LOAD_TREE_COVERAGE_MAP
+                    #if !LOAD_TREE_COVERAGE_MAP
                     {
                         float startTreeCoverageAtElevation = ImprovedTerrainSampler.baseHeightScale * 2.0f; // ImprovedTerrainSampler.scaledBeachElevation;
                         float minTreeCoverageSaturated = ImprovedTerrainSampler.baseHeightScale * 6.0f;
@@ -445,12 +445,16 @@ namespace ProjectIncreasedTerrainDistance
                     }
                     #else
                     {
-                        FileStream istream;
-                        istream = new FileStream(filepathInTreeCoverageMap, FileMode.Open, FileAccess.Read);
-                        BinaryReader readerMapTreeCoverage = new BinaryReader(istream, Encoding.UTF8);
-                        readerMapTreeCoverage.Read(mapTreeCoverage, 0, width * height);
-                        readerMapTreeCoverage.Close();
-                        istream.Close();
+                        MemoryStream istream;
+                        TextAsset assetMapTreeCoverage = Resources.Load<TextAsset>(filenameTreeCoverageMap);
+                        if (assetMapTreeCoverage)
+                        {
+                            istream = new MemoryStream(assetMapTreeCoverage.bytes);
+                            BinaryReader readerMapTreeCoverage = new BinaryReader(istream, Encoding.UTF8);
+                            readerMapTreeCoverage.Read(mapTreeCoverage, 0, width * height);
+                            readerMapTreeCoverage.Close();
+                            istream.Close();
+                        }
                     }
                     #endif
 

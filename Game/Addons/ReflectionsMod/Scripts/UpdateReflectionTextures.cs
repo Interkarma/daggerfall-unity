@@ -19,8 +19,14 @@ namespace ReflectionsMod
 {
     public class UpdateReflectionTextures : MonoBehaviour
     {
+        public string iniPathConfigInjectionTextures = ""; // handed over to InjectReflectiveMaterialProperty script - if not specified will use fallback ini-file
+        //public string iniPathConfigInjectionTextures = "Assets/daggerfall-unity/Game/Addons/ReflectionsMod/Resources/configInjectionTextures.ini"; // use this line to test ini file loading from filepath
+
         private GameObject reflectionPlaneBottom = null;
         private GameObject reflectionPlaneSeaLevel = null;
+
+        public MirrorReflection mirrorRefl = null;
+        public MirrorReflection mirrorReflSeaLevel = null;
 
         public bool isOutdoorEnvironment()
         {
@@ -271,14 +277,13 @@ namespace ReflectionsMod
             renderer.material.color = Color.green;
             renderer.enabled = true; // if this is set to false OnWillRenderObject() in MirrorReflection.cs will not work (workaround would be to change OnWillRenderObject() to Update()
 
-            MirrorReflection mirrorRefl = reflectionPlaneBottom.AddComponent<MirrorReflection>();
-            mirrorRefl.m_TextureSize = 512;            
-            mirrorRefl.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");            
+            mirrorRefl = reflectionPlaneBottom.AddComponent<MirrorReflection>();
+            mirrorRefl.m_TextureSize = 512;
 
             reflectionPlaneBottom.transform.SetParent(this.transform);
 
-            reflectionPlaneBottom.AddComponent(typeof(InjectReflectiveMaterialProperty)); // the inject script is parented to this plane so that the OnWillRenderObject() method of the inject script will work - this is important since update() function resulted in slightly delayed update which could be seen when ground level height changed
-
+            InjectReflectiveMaterialProperty scriptInjectReflectiveMaterialProperty = reflectionPlaneBottom.AddComponent<InjectReflectiveMaterialProperty>(); // the inject script is parented to this plane so that the OnWillRenderObject() method of the inject script will work - this is important since update() function resulted in slightly delayed update which could be seen when ground level height changed
+            scriptInjectReflectiveMaterialProperty.iniPathConfigInjectionTextures = this.iniPathConfigInjectionTextures;            
 
             reflectionPlaneSeaLevel = new GameObject("ReflectionPlaneSeaLevel");
             reflectionPlaneSeaLevel.layer = LayerMask.NameToLayer("Water");
@@ -295,11 +300,56 @@ namespace ReflectionsMod
             rendererSeaLevel.material.color = Color.green;
             rendererSeaLevel.enabled = true; // if this is set to false OnWillRenderObject() in MirrorReflection.cs will not work (workaround would be to change OnWillRenderObject() to Update()
 
-            MirrorReflection mirrorReflSeaLevel = reflectionPlaneSeaLevel.AddComponent<MirrorReflection>();
+            mirrorReflSeaLevel = reflectionPlaneSeaLevel.AddComponent<MirrorReflection>();
             mirrorReflSeaLevel.m_TextureSize = 512;
-            mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
 
-            reflectionPlaneSeaLevel.transform.SetParent(this.transform);           
+            reflectionPlaneSeaLevel.transform.SetParent(this.transform);
+
+            LayerMask layerIndexWorldTerrain = LayerMask.NameToLayer("WorldTerrain");
+            if (layerIndexWorldTerrain != -1)
+            {
+                mirrorRefl.m_ReflectLayers.value = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
+                mirrorReflSeaLevel.m_ReflectLayers = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
+            }
+            else
+            {
+                mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
+                mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
+            }
+
+            PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToExterior;
+        }
+
+        void OnDestroy()
+        {
+            PlayerEnterExit.OnTransitionInterior -= OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToExterior;
+        }
+
+        void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
+            mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
+        }
+
+        void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            LayerMask layerIndexWorldTerrain = LayerMask.NameToLayer("WorldTerrain");
+            if (layerIndexWorldTerrain != -1)
+            {
+                mirrorRefl.m_ReflectLayers.value = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
+                mirrorReflSeaLevel.m_ReflectLayers = (1 << LayerMask.NameToLayer("Default")) + (1 << LayerMask.NameToLayer("WorldTerrain"));
+            }
+            else
+            {
+                mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
+                mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
+            }
         }
 
         void Update()
@@ -314,7 +364,7 @@ namespace ReflectionsMod
                 return;
 
             if (isIndoorEnvironment())
-            {      
+            {
                 RaycastHit hit;
                 float distanceToGround = 0;
 
