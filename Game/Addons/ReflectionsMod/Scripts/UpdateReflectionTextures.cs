@@ -25,12 +25,22 @@ namespace ReflectionsMod
         private GameObject reflectionPlaneBottom = null;
         private GameObject reflectionPlaneSeaLevel = null;
 
-        public MirrorReflection mirrorRefl = null;
-        public MirrorReflection mirrorReflSeaLevel = null;
+        private MirrorReflection mirrorRefl = null; 
+        private MirrorReflection mirrorReflSeaLevel = null;
+
+        public RenderTexture getSeaReflectionRenderTexture()
+        {
+            return mirrorReflSeaLevel.m_ReflectionTexture;
+        }
+
+        public RenderTexture getGroundReflectionRenderTexture()
+        {
+            return mirrorRefl.m_ReflectionTexture;
+        }
 
         public bool isOutdoorEnvironment()
         {
-            if (GameObject.Find("Exterior"))
+            if (GameObject.Find("Exterior")) // TODO: find a more performant way to check if player is in exterior environment
                 return(true);
             else
                 return(false);
@@ -38,7 +48,7 @@ namespace ReflectionsMod
 
         public bool isIndoorEnvironment()
         {
-            if ((GameObject.Find("Interior")) || (GameObject.Find("Dungeon")))
+            if ((GameObject.Find("Interior")) || (GameObject.Find("Dungeon"))) // TODO: find a more performant way to check if player is in interior or dungeon environment
                 return(true);
             else
                 return(false);

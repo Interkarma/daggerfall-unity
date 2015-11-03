@@ -29,6 +29,21 @@ namespace ReflectionsMod
  
 	    private static bool s_InsideRendering = false;
 
+        private Camera cameraToUse = null;
+
+        void Start()
+        {
+            GameObject stackedCameraGameObject = GameObject.Find("stackedCamera");
+            if (stackedCameraGameObject != null)
+            {
+                cameraToUse = stackedCameraGameObject.GetComponent<Camera>(); // when stacked camera is present use it to prevent reflection of near terrain in stackedCamera clip range distance not being updated
+            }
+            if (!cameraToUse)  // if stacked camera was not found us main camera
+            {
+                cameraToUse = Camera.main;
+            }
+        }
+
 	    // This is called when it's known that the object will be rendered by some
 	    // camera. We render reflections and do other updates here.
 	    // Because the script executes in edit mode, reflections for the scene view
@@ -43,13 +58,8 @@ namespace ReflectionsMod
 		    Camera cam = Camera.current;
 		    if( !cam )
 			    return;
-
-            Camera cameraToUse = GameObject.Find("stackedCamera").GetComponent<Camera>(); // when stacked camera is present use it to prevent reflection of near terrain in stackedCamera clip range distance not being updated
-            if (!cameraToUse)  // if stacked camera was not found us main camera
-            {
-                cameraToUse = Camera.main;
-            }
-            if (cam != cameraToUse) // skip everything that is not the main camera
+            
+            if (cam != cameraToUse) // skip every camera that is not the intended camera to use for rendering the mirrored scene
                 return;
 
             // Safeguard from recursive reflections.        
