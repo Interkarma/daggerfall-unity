@@ -6,14 +6,22 @@
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 
 using UnityEngine;
-using System.Collections;
 
 namespace EnhancedSky
 {
     public class PresetContainer : MonoBehaviour
     {
+        public const int MOONSCALENORMAL = 6;
+        public const int MOONSCALELARGE = 8;
+        public const float SUNSIZENORMAL = 0.11F;
+        public const float SUNSIZELARGE = 0.145F;
+        public const float SUNFLARESIZENORMAL = 0.57F;
+        public const float SUNFLARESIZELARGE = 0.80F;
 
-        public static PresetContainer instance;
+        public const int MAXCLOUDDIMENSION = 1500;
+        public const int MINCLOUDDIMENSION = 100;
+
+        public static PresetContainer _instance;
 
         public Gradient colorBase;
         public Gradient colorOver;
@@ -33,20 +41,41 @@ namespace EnhancedSky
         public AnimationCurve moonAlphaOver;
 
         public Color skyTint;
+        public Color MasserColor = new Color(.5216f, .5216f, .5216f);
+        public Color SecundaColor = new Color(.7647f, .7647f, .7647f);
 
-        public float atmsphrOffset = .5f;               //causing red sky at night
+        public float atmsphrOffset = .5f;
+
+        public static PresetContainer Instance { get { return (_instance != null) ? _instance : _instance = FindPreset(); } private set { _instance = value;} }
 
         void Awake()
         {
-            if (instance != null)
+            if (_instance != null)
                 this.enabled = false;
-            instance = this;
+            _instance = this;
 
         }
 
         void Destroy()
         {
-            instance = null;
+            Instance = null;
+        }
+
+        private static PresetContainer FindPreset()
+        {
+            PresetContainer pc = GameObject.FindObjectOfType<PresetContainer>();
+            if (pc == null)
+            {
+                DaggerfallWorkshop.DaggerfallUnity.LogMessage("Could not locate PresetContainer in scene");
+                return null;
+
+            }
+            else
+            {
+                return pc;
+            }
+                
+
         }
 
     }

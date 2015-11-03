@@ -17,25 +17,28 @@ namespace EnhancedSky
     {
         public GameObject masser;
         public GameObject secunda;
-        public Color masserColor;
-        public Color secundaColor;
+        public GameObject masserStarMask;
+        public GameObject secundaStarMask;
+        public bool autoUpdatePhase = true;     //if false moon phases won't be updated
 
-        SkyManager skyMan;
-        DaggerfallUnity dfUnity;
-        DaggerfallDateTime dateTime;
-        Renderer masserRend;
-        Renderer secundaRend;
-        Material masserMat;
-        Material secundaMat;
-        AnimationCurve moonAlpha;
-        
+        int _tempCheck          = 0;
+        int _lastCheck          = 0;           //last day checked, equal to (year * 360) + dayofyear
+        bool _updateMoonPhase   = true;
+        bool _isNight           = true;
 
+        Color _masserColor      = Color.clear;
+        Color _secundaColor     = Color.clear;
+        Renderer _masserRend;
+        Renderer _secundaRend;
+        AnimationCurve _moonAlpha;
 
-        int tempCheck = 0;
-        int lastCheck = 0;           //last day checked, equal to (year * 360) + dayofyear
-        bool updateMoonPhase = true;
-        bool isNight = true;
-        
+        Material MasserMat          { get {return SkyMan.MasserMat;}  }
+        Material SecundaMat         { get {return SkyMan.SecundaMat;} }
+        Material StarBlock          { get { return SkyMan.StarMaskMat; } }
+        DaggerfallDateTime DateTime { get { return DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime; } }
+        DaggerfallUnity DfUnity     { get { return DaggerfallUnity.Instance ;} }
+        SkyManager SkyMan           { get { return SkyManager.instance; } }
+
      
         public enum MoonPhases
         {
@@ -75,95 +78,25 @@ namespace EnhancedSky
         };
 
         public MoonPhases MasserPhase = MoonPhases.Full;
-        public MoonPhases secundaPhase = MoonPhases.Full;
+        public MoonPhases SecundaPhase = MoonPhases.Full;
 
-        // Use this for initialization
-        void Start()
-        {
-            dfUnity = DaggerfallUnity.Instance;
-            dateTime = dfUnity.WorldTime.DaggerfallDateTime;
-            skyMan = SkyManager.instance;
-            if (!masser)
-                masser = GameObject.Find("MoonMasser");
-            if (!secunda)
-                secunda = GameObject.Find("MoonSecunda");
-            masserRend = masser.GetComponent<Renderer>();
-            secundaRend = secunda.GetComponent<Renderer>();
 
-            if (!masserMat)
-                masserMat = masserRend.material;
-            if (!secundaMat)
-                secundaMat = secundaRend.material;
-
-            moonAlpha = PresetContainer.instance.moonAlphaBase;
-            SkyManager.fastTravelEvent += this.Init;
-            SkyManager.toggleSkyObjectsEvent += this.ToggleState;
-        }
-
-        void FixedUpdate()
-        {
-
-            //if time between moons set & before dusk, set to night - this is when moon phase will be checked
-            //to avoid moons being updated while in sky
-            if(skyMan.CurrentSeconds > skyMan.DuskTime || skyMan.CurrentSeconds < skyMan.DawnTime + 7200)
-                isNight = true;
-            else
-                isNight = false;
-
-            //if(isNight)     //update moons' alpha
-            if(isNight)
-            {
-              
-                //set masser alpha & color
-                if (MasserPhase != MoonPhases.New)
-                    masserMat.SetColor("_Color", new Color(masserColor.r, masserColor.g, masserColor.b, moonAlpha.Evaluate(skyMan.TimeRatio)));
-                else
-                    masserMat.SetColor("_Color", new Color(masserColor.r, masserColor.g, masserColor.b, 0));
-                
-                //set secunda alpha & color
-                if (secundaPhase != MoonPhases.New)
-                    secundaMat.SetColor("_Color", new Color(secundaColor.r, secundaColor.g, secundaColor.b, moonAlpha.Evaluate(skyMan.TimeRatio)));
-                else
-                    secundaMat.SetColor("_Color", new Color(secundaColor.r, secundaColor.g, secundaColor.b, 0));
-            }
-            else if((tempCheck = GetDay()) != lastCheck)    //if last day moon checked != today and it's not night, update moon phase
-            {
-                updateMoonPhase = true;
-            }
-
-            if (updateMoonPhase)
-            {
-                lastCheck = tempCheck;
-                GetLunarPhase(ref MasserPhase, lastCheck, true);
-                GetLunarPhase(ref secundaPhase, lastCheck, false);
-                updateMoonPhase = false;
-            }
-        }
-
-        void OnDestroy()
+        void OnDisable()
         {
             StopAllCoroutines();
-            SkyManager.fastTravelEvent -= this.Init;
-            SkyManager.toggleSkyObjectsEvent -= this.ToggleState;
+            SkyManager.updateSkyEvent -= this.Init;
+            SkyManager.updateSkySettingsEvent -= this.SetSkyObjectSize;
+
         }
 
 
-        
-
-
-        /// <summary>
-        /// Handles interior / exterior transition events from skyman
-        /// </summary>
-        public void ToggleState(bool onOff)
+        void OnEnable()
         {
-            if (!onOff)
-                this.enabled = false;
-            else
-            {
-                this.enabled = true;
-                Init(skyMan.IsOvercast);
-            }
+            Init(SkyMan.IsOvercast);
+            SkyManager.updateSkyEvent += this.Init;
+            SkyManager.updateSkySettingsEvent += this.SetSkyObjectSize;
         }
+
 
         /// <summary>
         /// Handles fast travel events from skyman
@@ -171,14 +104,82 @@ namespace EnhancedSky
         /// <param name="isOverCast"></param>
         public void Init(bool isOverCast)
         {
-            if (isOverCast)
-            {
-                moonAlpha = PresetContainer.instance.moonAlphaOver;
-            }
+            GetRefrences();
+            SetSkyObjectSize();
+            _updateMoonPhase = true;
+        }
+
+        void FixedUpdate()
+        {
+
+            //if time between moons set & before dusk, set to night - this is when moon phase will be checked
+            //to avoid moons being updated while in sky
+            if(SkyMan.CurrentSeconds > SkyMan.DuskTime || SkyMan.CurrentSeconds < SkyMan.DawnTime + 7200)
+                _isNight = true;
             else
-                moonAlpha = PresetContainer.instance.moonAlphaBase;
-            //
-            updateMoonPhase = true;
+                _isNight = false;
+
+            //if(isNight)     //update moons' alpha
+            if(_isNight)
+            {
+                if (SkyMan.IsOvercast)
+                {
+                    _moonAlpha = PresetContainer.Instance.moonAlphaOver;
+                }
+                else
+                    _moonAlpha = PresetContainer.Instance.moonAlphaBase;
+
+                //set masser alpha & color
+                if (MasserPhase != MoonPhases.New)
+                     _masserRend.material.SetColor("_Color", new Color(_masserColor.r, _masserColor.g, _masserColor.b, _moonAlpha.Evaluate(SkyMan.TimeRatio)));
+                else
+                    _masserRend.material.SetColor("_Color", new Color(_masserColor.r, _masserColor.g, _masserColor.b, 0));
+                
+                //set secunda alpha & color
+                if (SecundaPhase != MoonPhases.New)
+                    _secundaRend.material.SetColor("_Color", new Color(_secundaColor.r, _secundaColor.g, _secundaColor.b, _moonAlpha.Evaluate(SkyMan.TimeRatio)));
+                else
+                    _secundaRend.material.SetColor("_Color", new Color(_secundaColor.r, _secundaColor.g, _secundaColor.b, 0));
+            }
+            else if((_tempCheck = GetDay()) != _lastCheck)    //if last day moon checked != today and it's not night, update moon phase
+            {
+                _updateMoonPhase = true;
+            }
+
+            if (_updateMoonPhase && autoUpdatePhase)
+            {
+                _lastCheck = _tempCheck;
+                GetLunarPhase(ref MasserPhase, _lastCheck, true);
+                GetLunarPhase(ref SecundaPhase, _lastCheck, false);
+                _updateMoonPhase = false;
+            }
+        }
+
+        
+        public void SetPhase(MoonPhases masserPhase, MoonPhases secundaPhase)
+        {
+            if (Enum.IsDefined(typeof(MoonPhases), masserPhase))
+                this.MasserPhase = masserPhase;
+
+            if (Enum.IsDefined(typeof(MoonPhases), secundaPhase))
+                this.SecundaPhase = secundaPhase;
+
+            if(MasserPhase != MoonPhases.New)
+            {
+                Texture2D masserTexture = GetTexture(MasserPhase, masserTextureLookup);
+                if (masserTexture != null)
+                    _masserRend.material.mainTexture = masserTexture;
+            }
+            if(SecundaPhase != MoonPhases.New)
+            {
+               Texture2D secundaTexture = GetTexture(SecundaPhase, secundaTextureLookup);
+               if (secundaTexture != null)
+                   _secundaRend.material.mainTexture = secundaTexture;
+
+            }
+            
+            
+            
         }
 
         /// <summary>
@@ -186,8 +187,8 @@ namespace EnhancedSky
         /// </summary>
         private int GetDay()
         {
-            int year = dateTime.Year;
-            int day = dateTime.DayOfYear;
+            int year = DateTime.Year;
+            int day = DateTime.DayOfYear;
             //Debug.Log("Year: " + year + " day: " + day + " result: " + ((year * 360) + day - 1));
             return (year * 360) + day-1;
         }
@@ -241,17 +242,17 @@ namespace EnhancedSky
             {
                 offset = 3;
                 textureLookup = masserTextureLookup;
-                moonRend = masserRend;
+                moonRend = _masserRend;
             }
             else
             {
                 offset = -1;
                 textureLookup = secundaTextureLookup;
-                moonRend = secundaRend;
+                moonRend = _secundaRend;
             }
 
             day += offset;
-            if (dateTime.Year < 0)
+            if (DateTime.Year < 0)
             {
                 Debug.LogError("Year < 0 not supported.");
             }
@@ -311,6 +312,61 @@ namespace EnhancedSky
             }
             
             return (moonPhase = tempPhase);
+
+        }
+       
+        private void GetRefrences()
+        {
+            try
+            {
+                if (!masser)
+                    masser = transform.FindChild("MoonMasser").gameObject;
+                if (!secunda)
+                    secunda = transform.FindChild("MoonSecunda").gameObject;
+                if (!masserStarMask)
+                    masserStarMask = masser.transform.FindChild("StarBlock").gameObject;
+                if (!secundaStarMask)
+                    secundaStarMask = secunda.transform.FindChild("StarBlock").gameObject;
+                _masserRend = masser.GetComponent<Renderer>();
+                _secundaRend = secunda.GetComponent<Renderer>();
+                _masserRend.material = MasserMat;
+                _secundaRend.material = SecundaMat;
+                masserStarMask.GetComponent<Renderer>().material = StarBlock;
+                secundaStarMask.GetComponent<Renderer>().material = StarBlock;
+
+               
+
+                _moonAlpha = PresetContainer.Instance.moonAlphaBase;
+                _masserColor = PresetContainer.Instance.MasserColor;
+                _secundaColor = PresetContainer.Instance.SecundaColor;
+            }
+            catch(Exception ex)
+            {
+                Debug.LogError(ex.Message);
+            }
+
+        }
+
+        public void SetSkyObjectSize()
+        {
+            if(!masser || !secunda)
+                GetRefrences();
+
+            Vector3 scale = Vector3.zero;
+            if (SkyMan.SkyObjectSizeSetting == SkyObjectSize.Normal)
+            {
+                scale = new Vector3(PresetContainer.MOONSCALENORMAL, PresetContainer.MOONSCALENORMAL, PresetContainer.MOONSCALENORMAL);
+                masser.transform.localScale = scale;
+                secunda.transform.localScale = scale * .5f;
+            }
+            else
+            {
+                scale = new Vector3(PresetContainer.MOONSCALELARGE, PresetContainer.MOONSCALELARGE, PresetContainer.MOONSCALELARGE);
+                masser.transform.localScale = scale;
+                secunda.transform.localScale = scale * .5f;
+            }
+
+
 
         }
 

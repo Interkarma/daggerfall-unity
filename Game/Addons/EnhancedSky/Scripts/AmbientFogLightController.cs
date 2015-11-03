@@ -7,66 +7,49 @@
 
 
 using UnityEngine;
-using System.Collections;
 
 namespace EnhancedSky
 {
     public class AmbientFogLightController : MonoBehaviour
     {
-        #region fields
-        public SkyManager skyMan;
-        Gradient fogGradient;
-        Gradient groundGradient;
-        AnimationCurve atmosphereCurve;
-        Material skyMat;
-        ///LensFlare sunFlare;
+        #region fields & properties
+        float       _atmsphrOffset;
+        LensFlare   _sunFlare;
+        Color       _skyTint = Color.clear;
+        Color       _groundColor = Color.clear;
 
-        float atmsphrOffset;
-        Color skyTint;// = new Color(128, 128, 128);
-        Color groundColor;// = new Color(132, 166, 195);
+        SkyManager SkyMan           { get { return SkyManager.instance;} }
+        Material SkyMat             { get { return SkyManager.instance.SkyMat;}}
+        LensFlare SunFlare          { get { return (_sunFlare != null) ? _sunFlare : _sunFlare = transform.GetComponentInChildren<LensFlare>(); } }
+        Gradient FogGradient        { get; set; }
+        Gradient HorizonGradient    { get; set; }
+        AnimationCurve AtmosphereCurve { get; set; }
+
+        
         #endregion
 
         #region Unity
-        
-        // Use this for initialization
-        void Start()
+
+        void OnEnable()
         {
-            skyMan = SkyManager.instance;
+            Init(SkyMan.IsOvercast);
+            SkyManager.updateSkyEvent += this.Init;
+            SkyManager.updateSkySettingsEvent += this.SetSkyObjectSize;
 
-            //if (!sunFlare)
-              //  sunFlare = GameObject.Find("Sun").GetComponent<LensFlare>();
-
-            if (!skyMat)
-                skyMat = skyMan.skyMat;
-            SkyManager.fastTravelEvent += this.Init;
-            SkyManager.toggleSkyObjectsEvent += this.ToggleState;
-            Init(skyMan.IsOvercast);
         }
 
-        void OnDestroy()
+        void OnDisable()
         {
-            StopAllCoroutines();
-            SkyManager.fastTravelEvent -= this.Init;
-            SkyManager.toggleSkyObjectsEvent -= this.ToggleState;
+
+            SkyManager.updateSkyEvent -= this.Init;
+            SkyManager.updateSkySettingsEvent -= this.SetSkyObjectSize;
 
         }
+       
 
         #endregion
-
-        public void ToggleState(bool onOff)
-        {
-            this.enabled = onOff;
-
-            if (!onOff)
-                StopAllCoroutines();
-            else
-            {
-                this.enabled = onOff;
-                Init(skyMan.IsOvercast);
-            }
-        }
-
-
+     
+        
 
         #region methods
         /// <summary>
@@ -76,59 +59,85 @@ namespace EnhancedSky
         /// <param name="isOverCast"></param>
         public void Init(bool isOverCast)
         {
-            StopAllCoroutines();
 
             if(isOverCast)
             {
-                fogGradient = PresetContainer.instance.fogOver;
-                groundGradient = PresetContainer.instance.colorOver;
-                atmosphereCurve = PresetContainer.instance.atmosphereOver;
-                skyMat.SetFloat("_Exposure", .2f);
-                //sunFlare.enabled = false;
+                FogGradient = PresetContainer.Instance.fogOver;
+                HorizonGradient = PresetContainer.Instance.colorOver;
+                AtmosphereCurve = PresetContainer.Instance.atmosphereOver;
+                SkyMat.SetFloat("_Exposure", .3f);                              //##TODO - add to presets
+                SunFlare.enabled = false;
             }
             else
             {
-                fogGradient = PresetContainer.instance.fogBase;
-                groundGradient = PresetContainer.instance.colorBase;
-                atmosphereCurve = PresetContainer.instance.atmosphereBase;
-                skyMat.SetFloat("_Exposure", .5f);
-                
+                FogGradient = PresetContainer.Instance.fogBase;
+                HorizonGradient = PresetContainer.Instance.colorBase;
+                AtmosphereCurve = PresetContainer.Instance.atmosphereBase;
+                SkyMat.SetFloat("_Exposure", .5f);
             }
 
-            skyTint = PresetContainer.instance.skyTint;
-            skyMat.SetColor("_SkyTint", skyTint);
-            atmsphrOffset = PresetContainer.instance.atmsphrOffset;
-            StartCoroutine(SetAmbient());
+            SetSkyObjectSize();
 
+
+            _skyTint = PresetContainer.Instance.skyTint;
+            SkyMat.SetColor("_SkyTint", _skyTint);
+            _atmsphrOffset = PresetContainer.Instance.atmsphrOffset;
+            
         }
 
-        /// <summary>
-        /// Controls some ambient sky settings.
-        /// </summary>
-        IEnumerator SetAmbient()
+        void FixedUpdate()
         {
-            while (true)
+            _atmsphrOffset = PresetContainer.Instance.atmsphrOffset;
+            //set fog color
+            RenderSettings.fogColor = FogGradient.Evaluate(SkyMan.TimeRatio);
+
+            //set sky Material ground color & atmo. thickness
+            SkyMat.SetFloat("_AtmosphereThickness", AtmosphereCurve.Evaluate(SkyMan.TimeRatio) + _atmsphrOffset); //1
+            _groundColor = HorizonGradient.Evaluate(SkyMan.TimeRatio);
+            SkyMat.SetColor("_GroundColor", _groundColor);
+
+            if (SkyMan.UseSunFlare && !(SkyMan.IsOvercast || SkyMan.IsNight))
             {
-                atmsphrOffset = PresetContainer.instance.atmsphrOffset;
-                //set fog color
-                RenderSettings.fogColor = fogGradient.Evaluate(skyMan.TimeRatio);
-     
-                //set sky Material ground color & atmo. thickness
-                skyMat.SetFloat("_AtmosphereThickness", atmosphereCurve.Evaluate(skyMan.TimeRatio) + atmsphrOffset); //1
-                groundColor = groundGradient.Evaluate(skyMan.TimeRatio);
-                skyMat.SetColor("_GroundColor", groundColor);
-                
-                
-               // if (skyMan.UseSunFlare && !(skyMan.IsOvercast || skyMan.IsNight))
-                //    sunFlare.enabled = true;
-                //else
-                 //   sunFlare.enabled = false;
-                
-                
-                yield return new WaitForEndOfFrame();
+                if (!SunFlare)
+                {
+                    Debug.Log("ESKY: Ambient Controller couldnt find Sun Flare");
+                    return;
+                }
+                else if (!SkyMan.IsNight)
+                    SunFlare.enabled = true;
+                else
+                    SunFlare.enabled = false;
+            }
+            else
+                SunFlare.enabled = false;
+        }
+
+        public void SetSkyObjectSize()
+        {
+           
+
+            try
+            {
+                if (!SunFlare)
+                {
+                    Debug.Log("ESKY: Ambient Controller couldnt find Sun Flare");
+                    return;
+                }
+                if (SkyMan.SkyObjectSizeSetting == SkyObjectSize.Normal)
+                    SunFlare.brightness = PresetContainer.SUNFLARESIZENORMAL;
+                else
+                    SunFlare.brightness = PresetContainer.SUNFLARESIZELARGE;
+            }
+            catch
+            {
+
+
             }
 
+
+
         }
+
         #endregion
 
     }

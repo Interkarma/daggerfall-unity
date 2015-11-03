@@ -4,7 +4,7 @@
 //Author: LypyL
 ///Contact: Lypyl@dfworkshop.net
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
-// v. 1.7.0
+
 
 
 using UnityEngine;
@@ -23,7 +23,8 @@ namespace EnhancedSky
             if (!MainCamera)
                 MainCamera = GameObject.FindGameObjectWithTag("MainCamera");
 
-            SkyCamera.renderingPath = MainCamera.GetComponent<Camera>().renderingPath;
+            //SkyCamera.renderingPath = MainCamera.GetComponent<Camera>().renderingPath;
+            GetCameraSettings();
 
         }
 
@@ -31,6 +32,31 @@ namespace EnhancedSky
         {
             this.transform.rotation = MainCamera.transform.rotation;
         }
+
+        void GetCameraSettings()
+        {
+            Camera mainCam = MainCamera.GetComponent<Camera>();
+            if(mainCam)
+            {
+                SkyCamera.renderingPath = mainCam.renderingPath;
+                SkyCamera.fieldOfView = mainCam.fieldOfView;
+
+            }
+            else
+            {
+                Debug.Log("Using default settings for SkyCamera");
+                SkyCamera.fieldOfView = 65;
+                SkyCamera.renderingPath = RenderingPath.DeferredShading;
+
+            }
+
+
+
+
+        }
+
+
+
 
     }
 }
