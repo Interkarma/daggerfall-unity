@@ -26,7 +26,13 @@ namespace ReflectionsMod
         // Streaming World Component
         public StreamingWorld streamingWorld;
 
-        DaggerfallUnity dfUnity;
+        private GameObject gameObjectReflectionPlaneGroundLevel = null;
+        private GameObject gameObjectReflectionPlaneSeaLevel = null;
+        private GameObject gameObjectReflectionPlaneLowerLevel = null;
+
+        private GameObject gameObjectStreamingTarget = null;
+
+        private DaggerfallUnity dfUnity;
 
         UpdateReflectionTextures reflectionTexturesScript = null;
 
@@ -56,6 +62,17 @@ namespace ReflectionsMod
             return parsedIniData;
         }
 
+        static string GetGameObjectPath(GameObject obj)
+        {
+            string path = "/" + obj.name;
+            while (obj.transform.parent != null)
+            {
+                obj = obj.transform.parent.gameObject;
+                path = "/" + obj.name + path;
+            }
+            return path;
+        }
+
         void Start()
         {
             dfUnity = DaggerfallUnity.Instance;
@@ -71,6 +88,21 @@ namespace ReflectionsMod
                     Debug.Break();
                 else
                     Application.Quit();
+            }
+
+            gameObjectReflectionPlaneGroundLevel = GameObject.Find("ReflectionPlaneBottom");
+            gameObjectReflectionPlaneSeaLevel = GameObject.Find("ReflectionPlaneSeaLevel");
+            gameObjectReflectionPlaneLowerLevel = gameObjectReflectionPlaneSeaLevel;
+
+            // get inactive gameobject StreamingTarget (just GameObject.Find() would fail to find inactive gameobjects)
+            GameObject[] gameObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            foreach (GameObject currentGameObject in gameObjects)
+            {
+                string objectPathInHierarchy = GetGameObjectPath(currentGameObject);
+                if (objectPathInHierarchy == "/Exterior/StreamingTarget")
+                {
+                    gameObjectStreamingTarget = currentGameObject;
+                }
             }
 
             iniData = getIniParserConfigInjectionTextures();
@@ -112,11 +144,10 @@ namespace ReflectionsMod
         {
             if (reflectionTexturesScript.isOutdoorEnvironment())
             {
-                GameObject goReflectionPlaneGroundLevel = GameObject.Find("ReflectionPlaneBottom");
-                GameObject goReflectionPlaneSeaLevel = GameObject.Find("ReflectionPlaneSeaLevel");
+                if (!gameObjectStreamingTarget)
+                    return;
 
-                GameObject go = GameObject.Find("StreamingTarget");
-                foreach (Transform child in go.transform)
+                foreach (Transform child in gameObjectStreamingTarget.transform)
                 {
                     DaggerfallTerrain dfTerrain = child.GetComponent<DaggerfallTerrain>();
                     if (!dfTerrain)
@@ -129,8 +160,8 @@ namespace ReflectionsMod
                         {
                             if (terrain.materialTemplate.shader.name == "Daggerfall/TilemapWithReflections")
                             {
-                                terrain.materialTemplate.SetFloat("_GroundLevelHeight", goReflectionPlaneGroundLevel.transform.position.y);
-                                terrain.materialTemplate.SetFloat("_SeaLevelHeight", goReflectionPlaneSeaLevel.transform.position.y);
+                                terrain.materialTemplate.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y);
+                                terrain.materialTemplate.SetFloat("_SeaLevelHeight", gameObjectReflectionPlaneSeaLevel.transform.position.y);
                             }
                         }
                     }
@@ -139,18 +170,18 @@ namespace ReflectionsMod
 
             if (reflectionTexturesScript.isIndoorEnvironment())
             {
-                GameObject goReflectionPlaneGroundLevel = GameObject.Find("ReflectionPlaneBottom");
-                        
-                GameObject goReflectionPlaneLowerLevel = GameObject.Find("ReflectionPlaneSeaLevel");
-
                 Renderer[] renderers = null;
-                if (GameObject.Find("Interior"))
+
+                // TODO: find a way to eliminate GameObject.Find() here and determine if inside building or dungeon
+                GameObject gameObjectInterior = GameObject.Find("Interior"); 
+                GameObject gameObjectDungeon = GameObject.Find("Dungeon");
+                if (gameObjectInterior != null)
                 {
-                    renderers = GameObject.Find("Interior").GetComponentsInChildren<Renderer>();
+                    renderers = gameObjectInterior.GetComponentsInChildren<Renderer>();
                 }
-                else if (GameObject.Find("Dungeon"))
+                else if (gameObjectDungeon != null)
                 {
-                    renderers = GameObject.Find("Dungeon").GetComponentsInChildren<Renderer>();
+                    renderers = gameObjectDungeon.GetComponentsInChildren<Renderer>();
                 }
 
                 if (renderers != null)
@@ -161,8 +192,8 @@ namespace ReflectionsMod
                         {
                             if (m.shader.name == "Daggerfall/FloorMaterialWithReflections")
                             {
-                                m.SetFloat("_GroundLevelHeight", goReflectionPlaneGroundLevel.transform.position.y);
-                                m.SetFloat("_LowerLevelHeight", goReflectionPlaneLowerLevel.transform.position.y);
+                                m.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y);
+                                m.SetFloat("_LowerLevelHeight", gameObjectReflectionPlaneLowerLevel.transform.position.y);
                             }
                         }
                     }

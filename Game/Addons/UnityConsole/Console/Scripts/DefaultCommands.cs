@@ -703,7 +703,7 @@ namespace Wenzil.Console
                                     DaggerfallWorkshop.Utility.ContentReader.MapSummary mapSummary;
                                     if (DaggerfallWorkshop.DaggerfallUnity.Instance.ContentReader.HasLocation(xpos, ypos, out mapSummary))
                                     {
-                                        streamingWorld.TeleportToCoordinates(xpos + 1, ypos - 1); // random location
+                                        streamingWorld.TeleportToCoordinates(xpos, ypos); // random location
                                         break;
                                     }
                                 }                                

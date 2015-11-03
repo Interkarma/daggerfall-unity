@@ -9,7 +9,7 @@
 // uncomment next line if enhanced sky mod by Lypyl is present
 #define ENHANCED_SKY_AVAILABLE
 
-//#define REFLECTIONSMOD_AVAILABLE
+#define REFLECTIONSMOD_AVAILABLE
 
 using UnityEngine;
 using System;
@@ -227,6 +227,8 @@ namespace ProjectIncreasedTerrainDistance
                 else
                     Application.Quit();
             }
+
+            SetupGameObjects(); // create cameras here in OnAwake() so MirrorReflection script of ReflectionsMod can find cameras in its Start() function
         }
 
         void OnEnable()
@@ -399,7 +401,7 @@ namespace ProjectIncreasedTerrainDistance
                 if (!dfUnity.MaterialReader.IsReady)
                     return;
 
-                SetupGameObjects();
+                SetupGameObjects(); // it should be possible to eliminated this line without any impact: please verify!
             }
         }
 
@@ -975,10 +977,7 @@ namespace ProjectIncreasedTerrainDistance
             Vector3 vecWaterHeightTransformed = terrainGameObject.transform.TransformPoint(vecWaterHeight); // transform to world coordinates
             terrainMaterial.SetFloat("_WaterHeightTransformed", vecWaterHeightTransformed.y);
 
-            terrainMaterial.SetTexture("_SkyTex", renderTextureSky);
-            
-            //Texture2D myTex = Resources.Load("test_pattern_texture") as Texture2D;
-            //terrainMaterial.SetTexture("_SkyTex", myTex);
+            terrainMaterial.SetTexture("_SkyTex", renderTextureSky);           
 
             setMaterialFogParameters();
 
@@ -989,7 +988,7 @@ namespace ProjectIncreasedTerrainDistance
             terrainMaterial.SetFloat("_BlendEnd", blendEnd);
 
             #if REFLECTIONSMOD_AVAILABLE
-                RenderTexture reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().mirrorReflSeaLevel.m_ReflectionTexture;
+                RenderTexture reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
                 if (reflectionSeaTexture != null)
                 {
                     terrainMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");

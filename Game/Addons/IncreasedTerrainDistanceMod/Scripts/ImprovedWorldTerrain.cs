@@ -33,10 +33,10 @@ namespace ProjectIncreasedTerrainDistance
         const string filenameMapLocationRangeX = "mapLocationRangeX.bin";
         const string filenameMapLocationRangeY = "mapLocationRangeY.bin";
         const string filenameTreeCoverageMap = "mapTreeCoverage.bin";
-
-        const string out_filepathMapLocationRangeX = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeX_out.bin"; // only used on manual trigger in unity editor - never in executable - so it should be ok
-        const string out_filepathMapLocationRangeY = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeY_out.bin"; //  only used on manual trigger in unity editor - never in executable - so it should be ok
-        const string out_filepathOutTreeCoverageMap = "./Assets/daggerfall-unity/Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_out.bin"; //  only used on manual trigger in unity editor - never in executable - so it should be ok
+        
+        const string out_filepathMapLocationRangeX = "Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeX_out.bin"; // only used on manual trigger in unity editor - never in executable - so it should be ok
+        const string out_filepathMapLocationRangeY = "Game/Addons/IncreasedTerrainDistanceMod/Resources/mapLocationRangeY_out.bin"; //  only used on manual trigger in unity editor - never in executable - so it should be ok
+        const string out_filepathOutTreeCoverageMap = "Game/Addons/IncreasedTerrainDistanceMod/Resources/mapTreeCoverage_out.bin"; //  only used on manual trigger in unity editor - never in executable - so it should be ok
 
         const float minDistanceFromWaterForExtraExaggeration = 3.0f; // when does exaggeration start in terms of how far does terrain have to be away from water
         const float exaggerationFactorWaterDistance = 0.15f; // how strong is the distance from water incorporated into the multiplier
@@ -209,19 +209,19 @@ namespace ProjectIncreasedTerrainDistance
               
                     // save to files
                     FileStream ostream;
-                    ostream = new FileStream(out_filepathMapLocationRangeX, FileMode.Create, FileAccess.Write);
+                    ostream = new FileStream(Path.Combine(Application.dataPath, out_filepathMapLocationRangeX), FileMode.Create, FileAccess.Write);
                     BinaryWriter writerMapLocationRangeX = new BinaryWriter(ostream, Encoding.UTF8);
                     writerMapLocationRangeX.Write(mapLocationRangeX, 0, width * height);
                     writerMapLocationRangeX.Close();
                     ostream.Close();
 
-                    ostream = new FileStream(out_filepathMapLocationRangeY, FileMode.Create, FileAccess.Write);
+                    ostream = new FileStream(Path.Combine(Application.dataPath, out_filepathMapLocationRangeY), FileMode.Create, FileAccess.Write);
                     BinaryWriter writerMapLocationRangeY = new BinaryWriter(ostream, Encoding.UTF8);
                     writerMapLocationRangeY.Write(mapLocationRangeY, 0, width * height);
                     writerMapLocationRangeY.Close();
                     ostream.Close();
                 }
-#else
+                #else
                 {
                     int width = WoodsFile.mapWidthValue;
                     int height = WoodsFile.mapHeightValue;
@@ -460,7 +460,7 @@ namespace ProjectIncreasedTerrainDistance
 
                     #if CREATE_PERSISTENT_TREE_COVERAGE_MAP
                     {
-                        FileStream ostream = new FileStream(filepathOutTreeCoverageMap, FileMode.Create, FileAccess.Write);
+                        FileStream ostream = new FileStream(Path.Combine(Application.dataPath, out_filepathOutTreeCoverageMap), FileMode.Create, FileAccess.Write);
                         BinaryWriter writerMapTreeCoverage = new BinaryWriter(ostream, Encoding.UTF8);
                         writerMapTreeCoverage.Write(mapTreeCoverage, 0, width * height);
                         writerMapTreeCoverage.Close();
