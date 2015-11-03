@@ -9,7 +9,7 @@
 // uncomment next line if enhanced sky mod by Lypyl is present
 #define ENHANCED_SKY_AVAILABLE
 
-#define REFLECTIONSMOD_AVAILABLE
+//#define REFLECTIONSMOD_AVAILABLE
 
 using UnityEngine;
 using System;
@@ -56,8 +56,8 @@ namespace ProjectIncreasedTerrainDistance
         public int stackedNearCameraDepth = 2;
         public int cameraRenderSkyboxToTextureDepth = -10;
         public float mainCameraFarClipPlane = 1200.0f;
-        //public FogMode sceneFogMode = FogMode.Exponential;
-        //public float sceneFogDensity = 0.000025f;
+        public FogMode sceneFogMode = FogMode.Exponential;
+        public float sceneFogDensity = 0.000025f;
 
         //public RenderTexture renderTextureSky;
 
@@ -452,6 +452,12 @@ namespace ProjectIncreasedTerrainDistance
 
             // Set main camera settings
             Camera.main.farClipPlane = mainCameraFarClipPlane;
+
+            // Set fog mode and density
+            // This must be done in script from startup only when mod is enabled
+            // The settings in Lighting panel are for core game (no mods) only
+            RenderSettings.fogMode = sceneFogMode;
+            RenderSettings.fogDensity = sceneFogDensity;
 
             if (!stackedNearCamera)
             {
