@@ -4,7 +4,7 @@
 //Author: LypyL
 ///Contact: Lypyl@dfworkshop.net
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
-// v. 1.8.1
+// v. 1.9.1
 
 /*  moon textures by Doubloonz @ nexus mods, w/ permission to use for DFTFU.
  *http://www.nexusmods.com/skyrim/mods/40785/
@@ -16,13 +16,12 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Utility;
-using System;
 
 
 
 /* Setup instructions:
- * 1. Add EnhancedSkyController prefab to scene.
- *
+ * 1. Add EnhancedSkyController prefab to scene (shouldn't be a child of something that gets disabled like Exterior object)
+ * 
  * 2. Add new layer named SkyLayer.
  * 
  * 3. Change fog to expon. squared, and set density to something like .000012
@@ -31,57 +30,75 @@ using System;
  * 
  * 5. Uncheck SkyLayer in Main Camera's Culling Mask list (same for other cameras again - only skyCam should have it checked).
  *
- * 6. Add ToggleEnhancedSky to input manager.
+ * 6. Make sure all the public refrences are set on the Controller in scene (DaggerfallSky Rig, 
+ * Daggerfall WeatherManager, PlayerEnterExit & Exterior Parent).
  * 
- * Tested w/ Daggerfall tools for Unity v. 1.4.16 (WIP)
+ * Tested w/ Daggerfall tools for Unity v. 1.4.45 (WIP)
  */
 namespace EnhancedSky
 {
+    public enum SkyObjectSize
+    {
+        Normal,
+        Large,
+    }
 
     public class SkyManager : MonoBehaviour
     {
 
 
         #region Fields
-        public const int dayInSeconds = 86400;
-        public const int offset = 21600;
+        public const int DAYINSECONDS = 86400;
+        public const int OFFSET = 21600;
+        public const int TIMEINSIDELIMIT = 1;
 
-        //Enhanced sky objects & materials
-        //public GameObject CloudpreFab;
-        public Material cloudMat;
-        public Material starMat;
-        public Material skyMat;
-       
-        public GameObject MoonMasser;
-        public GameObject MoonSecunda;
-        public RotationScript rotScript;
-        public GameObject Stars;
-        public GameObject SkyCamObject;
+        private Material _skyMat;
+        private Material _cloudMat;
+        private Material _masserMat;
+        private Material _secundaMat;
+        private Material _starsMat;
+        private Material _skyObjMat;
+        private Shader _depthMaskShader;
+        private Shader _UnlitAlphaFadeShader;
+        public int cloudQuality = 400;
+        public int cloudSeed = -1;
+        public bool EnhancedSkyCurrentToggle = false;
 
         //daggerfall tools references
-        DaggerfallUnity dfUnity;
-        DaggerfallDateTime timeScript;
-        public GameObject dfallSky;
-        public WeatherManager weatherMan;
-        public PlayerEnterExit playerEE;
+        public GameObject       dfallSky;
+        public WeatherManager   WeatherMan;
+        public PlayerEnterExit  playerEE;
+        public GameObject       exteriorParent;
 
-        System.Diagnostics.Stopwatch stopWatch;
-        public int TimeInsideLimit = 3;
-        private bool _useSunFlare = true;
-        private bool _enhancedSkyToggle = true;
+        System.Diagnostics.Stopwatch _stopWatch;
+        CloudGenerator  _cloudGen;
+        GameObject      _container;
+        GameObject      _containerPrefab;
         #endregion
 
         #region Properties
+        DaggerfallUnity DfUnity         { get { return DaggerfallUnity.Instance;} }
+        DaggerfallDateTime TimeScript   { get { return DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime; } }
 
-        public bool UseSunFlare { get { return _useSunFlare; } set { _useSunFlare = value;} }
-        public bool EnhancedSkyToggle { get { return _enhancedSkyToggle; } set { _enhancedSkyToggle = value;} }
-        public bool IsOvercast { get; private set; }
-        public bool IsNight { get { if (timeScript == null) return false; else return timeScript.IsNight; } }
-        public float CurrentSeconds { get; set; }
-        public float TimeRatio { get {return (CurrentSeconds / dayInSeconds); }}
-        public int DawnTime { get; private set; }
-        public int DuskTime { get; private set; }
-        public int TimeInside { get; set; }
+        
+        public Material SkyObjMat       { get { return (_skyObjMat != null) ? _skyObjMat : Resources.Load("SkyObjMat") as Material; } private set {_skyObjMat = value ;} }
+        public Material SkyMat          { get { return (_skyMat) ? _skyMat : _skyMat = Resources.Load("Sky") as Material; } private set { _skyMat = value ;} }
+        public Material CloudMat        { get { return (_cloudMat) ? _cloudMat : _cloudMat = GetInstanceMaterial(); } private set { _cloudMat = value; } }
+        public Material MasserMat       { get { return (_masserMat) ? _masserMat : _masserMat = GetInstanceMaterial(); } private set { _masserMat = value; } }
+        public Material SecundaMat      { get { return (_secundaMat) ? _secundaMat : _secundaMat = GetInstanceMaterial(); } private set { _secundaMat = value; } }
+        public Material StarsMat        { get; private set; }
+        public Material StarMaskMat     { get; private set; }
+
+        public SkyObjectSize SkyObjectSizeSetting { get; set; }
+        public CloudGenerator CloudGen  { get { return (_cloudGen != null) ? _cloudGen : _cloudGen = this.GetComponent<CloudGenerator>(); } }
+        public bool UseSunFlare         { get; set; }
+        public bool IsOvercast          { get { return (WeatherMan != null) ? WeatherMan.IsOvercast : false; } }
+        public bool IsNight             { get { return (TimeScript != null) ? TimeScript.IsNight : false; } }
+        public float CurrentSeconds     { get { return UpdateTime(); } }
+        public float TimeRatio          { get {return (CurrentSeconds / DAYINSECONDS); }}
+        public int DawnTime             { get; private set; }
+        public int DuskTime             { get; private set; }
+        public int TimeInside           { get; set; } 
         #endregion
 
         #region Singleton
@@ -99,94 +116,105 @@ namespace EnhancedSky
         }
         #endregion
 
-        #region Events
+        #region Events & Handlers
         //Events & handlers
-        public delegate void SkyEvent(bool isOverCast);                                     
-        public static event SkyEvent fastTravelEvent;
-        public static event SkyEvent toggleSkyObjectsEvent;
+        public delegate void SkyEvent(bool isOverCast);
+        public delegate void UpdateSkyObjectSettings();
+
+        public static event SkyEvent updateSkyEvent;
+        public static event SkyEvent toggleSkyObjectsEvent; //no longer needed
+        public static event UpdateSkyObjectSettings updateSkySettingsEvent;
 
         /// <summary>
-        /// Get InteriorTransition & InteriorDungeonTransition events from PlayerEnterExit, and triggers event
+        /// Get InteriorTransition & InteriorDungeonTransition events from PlayerEnterExit
         /// </summary>
         /// <param name="args"></param>
         public void InteriorTransitionEvent(PlayerEnterExit.TransitionEventArgs args)      //player went indoors (or dungeon), disable sky objects
         {
-            CurrentSeconds = UpdateTime();
-
-            if (SkyManager.instance.EnhancedSkyToggle)
-            {
-                //Debug.Log("IndoorTransitionEvent");
-                stopWatch.Reset();
-                stopWatch.Start();
-                ToggleSkyObjects(false);
-            }
-
+            _stopWatch.Reset();
+            _stopWatch.Start();
         }
 
         /// <summary>
-        /// Get ExteriorTransition & DungeonExteriorTransition events from PlayerEnterExit & triggers event
+        /// Get ExteriorTransition & DungeonExteriorTransition events from PlayerEnterExit
         /// </summary>
         /// <param name="args"></param>
         public void ExteriorTransitionEvent(PlayerEnterExit.TransitionEventArgs args)   //player transitioned to exterior from indoors or dungeon
         {
-            CurrentSeconds = UpdateTime();
-
-
-            if (SkyManager.instance.EnhancedSkyToggle)
-            {
-                IsOvercast = weatherMan.IsOvercast;
-                stopWatch.Stop();
-                TimeInside = stopWatch.Elapsed.Minutes;
-                //Debug.Log("time inside: " + _timeInside);
+            _stopWatch.Stop();
+            TimeInside = _stopWatch.Elapsed.Minutes;
+            if(EnhancedSkyCurrentToggle)
                 ToggleSkyObjects(true);                 //enable sky objects
-            }
+        }
+
+        public void WeatherManagerSkyEventsHandler()
+        {
+            if (updateSkyEvent != null)
+                updateSkyEvent(IsOvercast);
 
         }
-        
+
+
         /// <summary>
         /// Disables / enables the Enhanced sky objects
         /// </summary>
         /// <param name="toggle"></param>
-        public void ToggleSkyObjects(bool toggle)
+        private void ToggleSkyObjects(bool toggle)
         {
-            Debug.Log("ToggleSkyObjects toggle: " + toggle);
-            CurrentSeconds = UpdateTime();
 
             try
             {
-                dfallSky.SetActive(!toggle);
-                MoonMasser.SetActive(toggle);
-                MoonSecunda.SetActive(toggle);
-                SkyCamObject.SetActive(toggle);
+                if(!toggle && _container != null) 
+                {
+                    dfallSky.SetActive(true);
+                    Destroy(_container);
+                    
+                }
+                else if(toggle && !_container)
+                {
+                    GetRefrences();
+                    
+                    if(SkyMat)
+                        RenderSettings.skybox = SkyMat;
+                    else
+                        throw new System.NullReferenceException();
+                    if (_containerPrefab)
+                    {
+                        _container = Instantiate(_containerPrefab);
+                        _container.transform.SetParent(exteriorParent.transform, true);
+                    }
+                    else
+                        throw new System.NullReferenceException();
+
+                    dfallSky.SetActive(false);
+                    SkyObjectSizeChange(SkyObjectSizeSetting);
+                }
+                
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Debug.LogWarning("Error enabling or diabling Daggerfall Sky object. ");
                 Debug.LogWarning(ex.Message + " | in ToggleSkyObjects toggle: " + toggle);
             }
             
+            //trigger toggleSkyObject event - this event is not used by ESKY anymore
             if(toggleSkyObjectsEvent != null)
-                toggleSkyObjectsEvent(toggle);
+               toggleSkyObjectsEvent(IsOvercast);
 
         }
 
-        
-
 
         /// <summary>
-        /// Updates enhanced sky objects when Player Teleports using StreamingWorld.TeleportToCoordinates()
+        /// Updates enhanced sky objects
         /// </summary>
         /// <param name="worldPos"></param>
         public void EnhancedSkyUpdate(DFPosition worldPos)                         //player teleporting
         {
-            CurrentSeconds = UpdateTime();
-
             //Debug.Log("EnhancedSkyUpdate");
-            if (fastTravelEvent != null && SkyManager.instance.EnhancedSkyToggle)   //only trigger if eSky on
+            if (updateSkyEvent != null && SkyManager.instance.EnhancedSkyCurrentToggle)   //only trigger if eSky on
             {
                 //Debug.Log("triggering fastTravelEvent");
-                fastTravelEvent(weatherMan.IsOvercast);
-
+                updateSkyEvent(IsOvercast);
             }
 
         }
@@ -197,81 +225,70 @@ namespace EnhancedSky
         {
             if (_instance == null)
                 _instance = this;
-            else if(this != instance)
+            else if (this != instance)
             {
                 Destroy(this.gameObject);
             }
-            
-            if (!cloudMat)
-                cloudMat = Resources.Load("MainCloud") as Material;
-            //cloudMat.renderQueue = 2998;    //put clouds behind horizon block - not used anymore
-            if (!starMat)
-                starMat = Resources.Load("Stars") as Material;
-            if (!skyMat)
-                skyMat = Resources.Load("Sky") as Material;
-            RenderSettings.skybox = skyMat;
-            stopWatch = new System.Diagnostics.Stopwatch();
+            _stopWatch = new System.Diagnostics.Stopwatch();
 
-            //Transition event subscriptions.  These will trigger sky events
-            PlayerEnterExit.OnTransitionInterior += InteriorTransitionEvent; //interior transition
+            PlayerEnterExit.OnTransitionInterior        += InteriorTransitionEvent; //interior transition
             PlayerEnterExit.OnTransitionDungeonInterior += InteriorTransitionEvent; //dungeon interior transition
-            PlayerEnterExit.OnTransitionExterior += ExteriorTransitionEvent; //exterior transition
+            PlayerEnterExit.OnTransitionExterior        += ExteriorTransitionEvent; //exterior transition
             PlayerEnterExit.OnTransitionDungeonExterior += ExteriorTransitionEvent; //dungeon exterior transition
-            StreamingWorld.OnTeleportToCoordinates += EnhancedSkyUpdate;
+            StreamingWorld.OnTeleportToCoordinates      += EnhancedSkyUpdate;
+            WeatherManager.OnClearOvercast              += WeatherManagerSkyEventsHandler;
+            WeatherManager.OnSetRainOvercast            += WeatherManagerSkyEventsHandler;
+            WeatherManager.OnSetSnowOvercast            += WeatherManagerSkyEventsHandler;
+
         }
 
 
         // Use this for initialization
         void Start()
         {
-            dfUnity = DaggerfallUnity.Instance;
-            timeScript = dfUnity.WorldTime.DaggerfallDateTime;		
             DuskTime = DaggerfallDateTime.DuskHour * 3600;     
-            DawnTime = DaggerfallDateTime.DawnHour * 3600;      
+            DawnTime = DaggerfallDateTime.DawnHour * 3600;
+          
+            GetRefrences();
+            //Register Console Commands
+            EnhancedSkyConsoleCommands.RegisterCommands();
 
-            if (!weatherMan)
-                weatherMan = GameObject.Find("WeatherManager").GetComponent<WeatherManager>();
-            if(!dfallSky)
-                dfallSky = GameObject.Find("SkyRig");
-            if (!playerEE)
-                playerEE = GameObject.Find("PlayerAdvanced").GetComponent<PlayerEnterExit>();
-            if (!MoonMasser)
-                MoonMasser = GameObject.Find("MoonMasser");
-            if (!MoonSecunda)
-                MoonSecunda = GameObject.Find("MoonSecunda");
-            if(rotScript)
-                rotScript = GameObject.Find("Rotator").GetComponent<RotationScript>();
-            if (!SkyCamObject)
-                SkyCamObject = GameObject.Find("SkyCam");
+            
+            //if (DaggerfallUnity.Instance.IsReady)
+            //    EnhancedSkyCurrentToggle = DaggerfallUnity.Settings.LypyL_EnhancedSky;
 
-            CurrentSeconds = UpdateTime();
-            IsOvercast = weatherMan.IsOvercast;
-            ToggleSkyObjects(EnhancedSkyToggle);
-            Debug.Log("");
-        }
 
-        // Update is called once per frame
-        void Update()
-        {
-            CurrentSeconds = UpdateTime();
-            IsOvercast = weatherMan.IsOvercast;
+            // player starting outside & ESKY starting on
+            if (playerEE != null && !playerEE.IsPlayerInside)
+                ToggleEnhancedSky(EnhancedSkyCurrentToggle);
 
-            //if(Input.GetButtonDown("ToggleEnhancedSky") && !playerEE.IsPlayerInside)
-            //{
-            //    EnhancedSkyToggle = !EnhancedSkyToggle;
-            //    ToggleAdvancedSky(EnhancedSkyToggle);
-            //}
- 
+           
         }
 
         void OnDestroy()
         {
+          
+            
+            ToggleSkyObjects(false);
+
             //Unsubscribe from events
-            PlayerEnterExit.OnTransitionInterior -= InteriorTransitionEvent; //interior transition
+            PlayerEnterExit.OnTransitionInterior        -= InteriorTransitionEvent; //interior transition
             PlayerEnterExit.OnTransitionDungeonInterior -= InteriorTransitionEvent; //dungeon interior transition
-            PlayerEnterExit.OnTransitionExterior -= ExteriorTransitionEvent; //exterior transition
+            PlayerEnterExit.OnTransitionExterior        -= ExteriorTransitionEvent; //exterior transition
             PlayerEnterExit.OnTransitionDungeonExterior -= ExteriorTransitionEvent; //dungeon exterior transition
-            StreamingWorld.OnTeleportToCoordinates -= EnhancedSkyUpdate;
+            StreamingWorld.OnTeleportToCoordinates      -= EnhancedSkyUpdate;
+            WeatherManager.OnClearOvercast              -= WeatherManagerSkyEventsHandler;
+            WeatherManager.OnSetRainOvercast            -= WeatherManagerSkyEventsHandler;
+            WeatherManager.OnSetSnowOvercast            -= WeatherManagerSkyEventsHandler;
+
+            Destroy(StarsMat);
+            Destroy(_skyObjMat);
+            Destroy(StarMaskMat);
+            Destroy(MasserMat);
+            Destroy(SecundaMat);
+            Resources.UnloadAsset(_depthMaskShader);
+            Resources.UnloadAsset(_UnlitAlphaFadeShader);
+            
 
             StopAllCoroutines();
             if (_instance == this)
@@ -280,28 +297,127 @@ namespace EnhancedSky
         #endregion
 
         #region methods
-        public float UpdateTime()
+
+   
+
+        private bool GetRefrences()
         {
             try
             {
-                return (timeScript.MinuteOfDay * 60) + timeScript.Second;
+                if (!_depthMaskShader)
+                    _depthMaskShader = Resources.Load("DepthMask") as Shader;
+                if (!_UnlitAlphaFadeShader)
+                    _UnlitAlphaFadeShader = Resources.Load("UnlitAlphaWithFade") as Shader;
+                if (!StarMaskMat)
+                    StarMaskMat = new Material(_depthMaskShader);
+                if (!_skyObjMat)
+                    _skyObjMat = new Material(_UnlitAlphaFadeShader);
+                if (!StarsMat)
+                    StarsMat = Instantiate(Resources.Load("Stars")) as Material;
+                if (!SkyMat)
+                    SkyMat = Instantiate(Resources.Load("Sky")) as Material;
+                if (!_cloudGen)
+                    _cloudGen = this.GetComponent<CloudGenerator>();
+                if(!_cloudGen)
+                    _cloudGen = gameObject.AddComponent<CloudGenerator>();
+                if (!_containerPrefab)
+                    _containerPrefab = Resources.Load("EnhancedSkyContainer", typeof(GameObject)) as GameObject;
+                if (!dfallSky)
+                    dfallSky = GameObject.Find("SkyRig");
+                if (!playerEE)
+                    playerEE = GameObject.FindObjectOfType<PlayerEnterExit>();
+                if (!exteriorParent)
+                {
+                    if (playerEE)
+                        exteriorParent = playerEE.ExteriorParent;
+                }
             }
             catch
             {
-                dfUnity = DaggerfallUnity.Instance;
-                timeScript = dfUnity.WorldTime.DaggerfallDateTime;
-                if (dfUnity != null && timeScript != null)
-                    return (timeScript.MinuteOfDay * 60) + timeScript.Second;
+                DaggerfallUnity.LogMessage("Error in SkyManager.GetRefrences()", true);
+                return false;
+            }
+            if (dfallSky && playerEE && exteriorParent && _cloudGen && _containerPrefab && _depthMaskShader && _UnlitAlphaFadeShader 
+                && StarMaskMat && _skyObjMat && StarsMat && SkyMat)
+                return true;
+            else
+                return false;
+
+        }
+
+
+        private Material GetInstanceMaterial()
+        {
+            return Instantiate(SkyObjMat);
+        }
+
+        private float UpdateTime()
+        {
+            try
+            {
+                return (TimeScript.MinuteOfDay * 60) + TimeScript.Second;
+            }
+            catch
+            {
+                GetRefrences();
+                if (DfUnity != null && TimeScript != null)
+                    return (TimeScript.MinuteOfDay * 60) + TimeScript.Second;
                 else
-                    return -1f;
+                {
+                    Debug.LogWarning("SkyManager couldn't UpdateTime");
+                    return -1;
+                }
             }
         }
 
         
-        void ToggleAdvancedSky(bool toggle)
+        public void ToggleEnhancedSky(bool toggle)
         {
+            if(!GetRefrences() && toggle)
+            {
+                DaggerfallUnity.LogMessage("Skymanager missing refrences, can't enable");
+                return;
+
+            }
+            EnhancedSkyCurrentToggle = toggle;
             ToggleSkyObjects(toggle);
+            
         }
+
+    
+        public void SkyObjectSizeChange(SkyObjectSize size)
+        {
+            SkyObjectSizeSetting = size;
+            if(!EnhancedSkyCurrentToggle || SkyMat == null)
+            {
+                //Debug.Log("Sky Material was null");
+                return;
+            }
+
+            if(size == SkyObjectSize.Normal)
+                SkyMat.SetFloat("_SunSize", PresetContainer.SUNSIZENORMAL);
+            else
+                SkyMat.SetFloat("_SunSize", PresetContainer.SUNSIZELARGE);
+            if (updateSkySettingsEvent != null)
+                updateSkySettingsEvent();
+        }
+
+
+        public void SetCloudTextureResolution(int resolution)
+        {
+            if(resolution < PresetContainer.MINCLOUDDIMENSION)
+                resolution = PresetContainer.MINCLOUDDIMENSION;
+            else if(resolution > PresetContainer.MAXCLOUDDIMENSION)
+                resolution = PresetContainer.MAXCLOUDDIMENSION;
+            else
+                cloudQuality = resolution;
+            if (updateSkySettingsEvent != null)
+                updateSkySettingsEvent();
+        }
+
+
+
+
 
         #endregion
 

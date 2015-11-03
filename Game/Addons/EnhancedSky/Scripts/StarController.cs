@@ -7,114 +7,65 @@
 
 
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-
 
 namespace EnhancedSky
 {
     public class StarController : MonoBehaviour
     {
-        SkyManager skyMan;
-        Gradient starFade;
-        Renderer starRend;
-        Color lastColor;
-        Material starMat;
-
-        bool setColors = true;
-     
-        // Use this for initialization
-        void Start()
+        Renderer _rend;
+        Color   _lastColor;
+        bool    _setColors = true;
+        Renderer Rend     { get { return (_rend != null) ? _rend : _rend = this.GetComponent<Renderer>(); } }
+        Gradient StarFade { get { return PresetContainer.Instance.starGradient ;} }
+        SkyManager SkyMan { get { return SkyManager.instance; } }
+ 
+        void OnEnable()
         {
-            //event subscriptions
-            skyMan = SkyManager.instance;
-            if (!starRend)
-                starRend = this.GetComponent<Renderer>();
-
-            if (!starMat)
-                starMat = skyMan.starMat;
-
-            starFade = PresetContainer.instance.starGradient;
-            SkyManager.fastTravelEvent += this.Init;
-            SkyManager.toggleSkyObjectsEvent += this.ToggleState;
-            Init(skyMan.IsOvercast);
+            Init(SkyMan.IsOvercast);
+            SkyManager.updateSkyEvent += this.Init;
         }
-        void OnDestroy()
+
+
+        void OnDisable()
         {
             StopAllCoroutines();
-            SkyManager.fastTravelEvent -= this.Init;
-            SkyManager.toggleSkyObjectsEvent -= this.ToggleState;
-
+            SkyManager.updateSkyEvent -= this.Init;
         }
 
-        public void ToggleState(bool on)
-        {
-            this.gameObject.SetActive(on);
-
-            if (!on)
-                StopAllCoroutines();
-            else
-            {
-                gameObject.GetComponent<ParticleSystem>().enableEmission = on;
-                Init(skyMan.IsOvercast);
-
-            }
-        }
-
-
+      
 
         public void Init(bool isOverCast)
         {
-            StopAllCoroutines();
-            
+            Rend.material = SkyMan.StarsMat;
+            Rend.enabled = false;
+            _setColors = true;
 
-            starRend.enabled = false;
-            setColors = true;
-            StartCoroutine(SetStars(isOverCast));
         }
 
-
-        /// <summary>
-        /// if not overcast, will brighten and dim stars over time.  If over cast, stars are turned off and loop exits.
-        /// </summary>
-        /// <param name="isOverCast"></param>
-        /// <returns></returns>
-        IEnumerator SetStars(bool isOverCast)
+        void FixedUpdate()
         {
-            while (!isOverCast)
+            if (SkyMan.IsOvercast)
+                return;
+
+            if (SkyMan.CurrentSeconds < SkyMan.DuskTime && SkyMan.CurrentSeconds > SkyMan.DawnTime)  //daytime, not overcast                                                            
             {
-                //currentSeconds = skyMan.CurrentSeconds;
-
-                if (skyMan.CurrentSeconds < skyMan.DuskTime && skyMan.CurrentSeconds > skyMan.DawnTime)  //daytime, not overcast                                                            
-                {
-                    starRend.enabled = false;
-                    yield return new WaitForEndOfFrame();
-                }
-                else
-                    starRend.enabled = true;
-
-                Color colorCheck = starFade.Evaluate(skyMan.TimeRatio);
-                if (lastColor.a != colorCheck.a)
-                    setColors = true;
-
-                if (setColors)
-                {
-                    lastColor = colorCheck;
-                    SetStarColor(lastColor);
-                    setColors = false;
-                }
-                
-                yield return new WaitForEndOfFrame();
+                Rend.enabled = false;
+                return;
             }
-            
-            yield break;
-        }
+            else
+                Rend.enabled = true;
 
+            Color colorCheck = StarFade.Evaluate(SkyMan.TimeRatio);
+            if (_lastColor.a != colorCheck.a)
+                _setColors = true;
 
-        private void SetStarColor(Color color)
-        {
-            //Debug.Log("setting star colors");
-            starMat.SetColor("_Color", color);
+            if (_setColors)
+            {
+                _lastColor = colorCheck;
+                Rend.material.SetColor("_Color", _lastColor);
+                _setColors = false;
+            }
+
         }
 
     }

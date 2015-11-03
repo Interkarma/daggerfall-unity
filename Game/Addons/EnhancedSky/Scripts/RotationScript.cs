@@ -6,76 +6,29 @@
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop;
 
 namespace EnhancedSky
 {
     public class RotationScript : MonoBehaviour
     {
-        public SkyManager skyMan; 
+        float _degreeRoation;
+        float _dot = 1.0f;
+        Quaternion _targetRot;
+        public SkyManager SkyMan { get { return SkyManager.instance; } }
 
-        // Use this for initialization
-        void Start()
+        void FixedUpdate()
         {
-            //event subscriptions
-            skyMan = SkyManager.instance;
-            SkyManager.fastTravelEvent += this.Init;
-            SkyManager.toggleSkyObjectsEvent += this.ToggleState;
-            Init(false);
+            _degreeRoation = ((float)(SkyMan.CurrentSeconds - SkyManager.OFFSET) / SkyManager.DAYINSECONDS) * 360;
+            _targetRot = (Quaternion.Euler(_degreeRoation, 270f, 0f));
+            _dot = Mathf.Abs(Quaternion.Dot(_targetRot, transform.rotation));
             
-        }
-
-        void OnDestroy()
-        {
-            StopAllCoroutines();
-            SkyManager.fastTravelEvent -= this.Init;
-            SkyManager.toggleSkyObjectsEvent -= this.ToggleState;
-
-        }
-
-        public void ToggleState(bool on)
-        {
-            //this.enabled = onOff;
-            this.gameObject.SetActive(on);
-            
-            if (!on)
-                StopAllCoroutines();
+            if(_dot < .999 && DaggerfallUnity.Instance.WorldTime.TimeScale <= 1000)
+                this.transform.rotation = _targetRot;
             else
-                Init(skyMan.IsOvercast);
+                this.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(_degreeRoation, 270, 0), Time.deltaTime);
             
         }
-
-
-        public void Init(bool isOverCast)
-        {
-            StopAllCoroutines();
-            StartCoroutine(Rotate());
-        }
-
-        
-        IEnumerator Rotate()
-        {
-            //jump to current rotation before lerping, so the sun/moons don't appear to slide when player fast travels
-            //or has spent a long time inside
-            float degreeRoation;
-            degreeRoation = ((float)(skyMan.CurrentSeconds - SkyManager.offset) / SkyManager.dayInSeconds) * 360;
-            this.transform.rotation = (Quaternion.Euler(degreeRoation, 270f, 0f));
-            
-            while (true)
-            {
-                yield return new WaitForEndOfFrame();
-                degreeRoation = ((float)(skyMan.CurrentSeconds - SkyManager.offset) / SkyManager.dayInSeconds) * 360;
-                this.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(degreeRoation, 270, 0), Time.deltaTime);
-            }
-
-
-        }
-
-        
-
 
     }
 }
