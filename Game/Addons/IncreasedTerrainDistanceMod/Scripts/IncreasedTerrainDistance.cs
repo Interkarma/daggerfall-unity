@@ -7,9 +7,9 @@
 //Contributors: Lypyl, Interkarma
 
 // uncomment next line if enhanced sky mod by Lypyl is present
-#define ENHANCED_SKY_AVAILABLE
+#define ENHANCED_SKY_CODE_AVAILABLE
 
-#define REFLECTIONSMOD_AVAILABLE
+#define REFLECTIONSMOD_CODE_AVAILABLE
 
 using UnityEngine;
 using System;
@@ -70,6 +70,8 @@ namespace ProjectIncreasedTerrainDistance
         [Range(0.0f, 300000.0f)]
         public float blendEnd = 145000.0f;
 
+        bool isActiveReflectionsMod = false;
+        bool isActiveEnhancedSkyMod = false;
 
         // is dfUnity ready?
         bool isReady = false;
@@ -128,7 +130,7 @@ namespace ProjectIncreasedTerrainDistance
         public Camera getFarTerrainCamera() { return stackedCamera; }
         public Camera getStackedNearCamera() { return stackedNearCamera; }
 
-        #if ENHANCED_SKY_AVAILABLE
+        #if ENHANCED_SKY_CODE_AVAILABLE
         EnhancedSky.SkyManager skyMan = null;
         bool sampleFogColorFromSky = false;
         #endif
@@ -244,8 +246,11 @@ namespace ProjectIncreasedTerrainDistance
 
             PlayerEnterExit.OnTransitionExterior += TransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += TransitionToExterior;
-            #if ENHANCED_SKY_AVAILABLE
+            #if ENHANCED_SKY_CODE_AVAILABLE
+            if (isActiveEnhancedSkyMod)
+            {
                 EnhancedSky.SkyManager.toggleSkyObjectsEvent += EnhancedSkyToggle;
+            }
             #endif
         }
 
@@ -263,13 +268,17 @@ namespace ProjectIncreasedTerrainDistance
             PlayerEnterExit.OnTransitionExterior -= TransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= TransitionToExterior;
 
-            #if ENHANCED_SKY_AVAILABLE
+            #if ENHANCED_SKY_CODE_AVAILABLE
+            if (isActiveEnhancedSkyMod)
+            {
                 EnhancedSky.SkyManager.toggleSkyObjectsEvent -= EnhancedSkyToggle;
+            }
             #endif
         }
 
         void EnhancedSkyToggle(bool toggle)
         {
+            #if ENHANCED_SKY_CODE_AVAILABLE
             if (toggle)
             {
                 sampleFogColorFromSky = true;
@@ -278,6 +287,7 @@ namespace ProjectIncreasedTerrainDistance
             {
                 sampleFogColorFromSky = false;
             }
+            #endif
         }
 
         void InitImprovedWorldTerrain()
@@ -392,6 +402,12 @@ namespace ProjectIncreasedTerrainDistance
         {
             if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
                 return;
+
+            if (GameObject.Find("EnhancedSkyController") != null)
+                isActiveEnhancedSkyMod = true;
+
+            if (GameObject.Find("ReflectionsMod") != null)
+                isActiveReflectionsMod = true;
 
             if (worldTerrainGameObject == null) // lazy creation
             {
@@ -532,7 +548,9 @@ namespace ProjectIncreasedTerrainDistance
             cameraRenderSkyboxToTexture.depth = cameraRenderSkyboxToTextureDepth; // make sure to render first
             cameraRenderSkyboxToTexture.renderingPath = stackedCamera.renderingPath;
 
-            #if ENHANCED_SKY_AVAILABLE
+            #if ENHANCED_SKY_CODE_AVAILABLE
+            if (isActiveEnhancedSkyMod)
+            {
                 //skyMan = GameObject.Find("EnhancedSkyController").GetComponent<EnhancedSky.SkyManager>();
                 EnhancedSky.SkyManager[] skyManagers = Resources.FindObjectsOfTypeAll<EnhancedSky.SkyManager>();
                 foreach (EnhancedSky.SkyManager currentSkyManager in skyManagers)
@@ -546,10 +564,11 @@ namespace ProjectIncreasedTerrainDistance
                     }
                 }
 
-                if ((skyMan)&&(skyMan.gameObject.activeInHierarchy))
+                if ((skyMan) && (skyMan.gameObject.activeInHierarchy))
                 {
                     sampleFogColorFromSky = true;
                 }
+            }
             #endif
     
             cameraRenderSkyboxToTexture.targetTexture = renderTextureSky;
@@ -603,7 +622,9 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     setMaterialFogParameters();
             
-                    #if ENHANCED_SKY_AVAILABLE
+                    #if ENHANCED_SKY_CODE_AVAILABLE
+                    if (isActiveEnhancedSkyMod)
+                    {
                         if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
                         {
                             terrain.materialTemplate.SetFloat("_FogFromSkyTex", 1);
@@ -612,6 +633,7 @@ namespace ProjectIncreasedTerrainDistance
                         {
                             terrain.materialTemplate.SetFloat("_FogFromSkyTex", 0);
                         }
+                    }
                     #endif
 
                     //terrain.materialTemplate.SetFloat("_BlendFactor", blendFactor);
@@ -987,7 +1009,9 @@ namespace ProjectIncreasedTerrainDistance
             terrainMaterial.SetFloat("_BlendStart", blendStart);
             terrainMaterial.SetFloat("_BlendEnd", blendEnd);
 
-            #if REFLECTIONSMOD_AVAILABLE
+            #if REFLECTIONSMOD_CODE_AVAILABLE
+            if (isActiveReflectionsMod)
+            {
                 RenderTexture reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
                 if (reflectionSeaTexture != null)
                 {
@@ -999,8 +1023,9 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
                 }
+            }
             #else
-                terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
+            terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
             #endif
 
             // Promote material
