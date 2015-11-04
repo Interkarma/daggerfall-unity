@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string autoSaveFilename = "AutoSave.txt";
         const string notReadyExceptionText = "SaveLoad not ready.";
         const string invalidLoadIDExceptionText = "serializableObject does not have a valid LoadID";
+        const string duplicateLoadIDErrorText = "{0} detected duplicate LoadID {1}. This object will not be serialized.";
 
         // Serializable objects in scene
         SerializablePlayer serializablePlayer;
@@ -196,11 +197,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (serializableObject is SerializablePlayer)
                 Instance.serializablePlayer = serializableObject as SerializablePlayer;
             else if (serializableObject is SerializableActionDoor)
-                Instance.serializableActionDoors.Add(serializableObject.LoadID, serializableObject as SerializableActionDoor);
+                AddSerializableActionDoor(serializableObject as SerializableActionDoor);
             else if (serializableObject is SerializableActionObject)
-                Instance.serializableActionObjects.Add(serializableObject.LoadID, serializableObject as SerializableActionObject);
+                AddSerializableActionObject(serializableObject as SerializableActionObject);
             else if (serializableObject is SerializableEnemy)
-                Instance.serializableEnemies.Add(serializableObject.LoadID, serializableObject as SerializableEnemy);
+                AddSerializableEnemy(serializableObject as SerializableEnemy);
         }
 
         /// <summary>
@@ -237,11 +238,52 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Deregister other objects
             Instance.serializableActionDoors.Clear();
             Instance.serializableActionObjects.Clear();
+            Instance.serializableEnemies.Clear();
         }
 
         #endregion
 
-        #region Public Static Methods
+        #region Private Static Methods
+
+        private static void AddSerializableActionDoor(SerializableActionDoor serializableObject)
+        {
+            if (Instance.serializableActionDoors.ContainsKey(serializableObject.LoadID))
+            {
+                string message = string.Format(duplicateLoadIDErrorText, "AddSerializableActionDoor()", serializableObject.LoadID);
+                DaggerfallUnity.LogMessage(message);
+                return;
+            }
+
+            Instance.serializableActionDoors.Add(serializableObject.LoadID, serializableObject);
+        }
+
+        private static void AddSerializableActionObject(SerializableActionObject serializableObject)
+        {
+            if (Instance.serializableActionObjects.ContainsKey(serializableObject.LoadID))
+            {
+                string message = string.Format(duplicateLoadIDErrorText, "AddSerializableActionObject()", serializableObject.LoadID);
+                DaggerfallUnity.LogMessage(message);
+                return;
+            }
+
+            Instance.serializableActionObjects.Add(serializableObject.LoadID, serializableObject);
+        }
+
+        private static void AddSerializableEnemy(SerializableEnemy serializableObject)
+        {
+            if (Instance.serializableEnemies.ContainsKey(serializableObject.LoadID))
+            {
+                string message = string.Format(duplicateLoadIDErrorText, "AddSerializableEnemy()", serializableObject.LoadID);
+                DaggerfallUnity.LogMessage(message);
+                return;
+            }
+
+            Instance.serializableEnemies.Add(serializableObject.LoadID, serializableObject);
+        }
+
+        #endregion
+
+        #region Serialization Helpers
 
         static readonly fsSerializer _serializer = new fsSerializer();
 
