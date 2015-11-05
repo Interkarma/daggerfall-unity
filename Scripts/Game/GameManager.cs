@@ -19,8 +19,6 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Entity;
-using System.Reflection;
-using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -30,33 +28,20 @@ namespace DaggerfallWorkshop.Game
     public class GameManager : MonoBehaviour
     {
         #region Fields
+
         bool isGamePaused = false;
         float savedTimeScale;
         Texture2D pauseScreenshot;
-        
+
         GameObject playerObject = null;
         Camera mainCamera = null;
         PlayerMouseLook playerMouseLook = null;
         StartGameBehaviour startGameBehaviour = null;
         PlayerEntity playerEntity = null;
         PlayerDeath playerDeath = null;
-        PlayerGPS playerGPS  = null;
-        PlayerEnterExit playerEnterExit = null;
+        PlayerGPS playerGPS = null;
         WeatherManager weatherManager = null;
         WeaponManager weaponManager = null;
-        GameObject mainCameraObject = null;
-        GameObject interiorParent = null;
-        GameObject exteriorParent = null;
-        GameObject dungeonParent = null;
-        StreamingWorld streamingWorld = null;
-        GameObject streamingTarget = null;
-        SaveLoadManager saveLoadManager = null;
-        PlayerMotor playerMotor = null;
-        FloatingOrigin floatingOrigin = null;
-        FPSWeapon[] playerWeapons = new FPSWeapon[2];
-        PlayerActivate playerActivate = null;
-        CharacterController playerController;
-
         //bool isFullscreen = false;
 
         #endregion
@@ -70,165 +55,52 @@ namespace DaggerfallWorkshop.Game
 
         public Camera MainCamera
         {
-            get { return (mainCamera) ? mainCamera : mainCamera = GetComponentFromObject<Camera>(MainCameraObject, "MainCamera"); }
-            set { mainCamera = value;}
+            get { return (mainCamera) ? mainCamera : FindMainCamera(); }
         }
 
         public GameObject PlayerObject
         {
-            get { return (playerObject) ? playerObject : playerObject = GetGameObjectWithTag("Player"); }
-            set { playerObject = value; }
+            get { return (playerObject) ? playerObject : FindPlayerObject(); }
         }
 
         public PlayerMouseLook PlayerMouseLook
         {
-            get { return (playerMouseLook) ? playerMouseLook : playerMouseLook = GetComponentFromObject<PlayerMouseLook>(MainCameraObject, "MainCamera"); }
-            set { playerMouseLook = value; }
+            get { return (playerMouseLook) ? playerMouseLook : FindPlayerMouseLook(); }
         }
 
         public StartGameBehaviour StartGameBehaviour
         {
-            get { return (startGameBehaviour) ? startGameBehaviour : startGameBehaviour = GetMonoBehaviour<StartGameBehaviour>(); }
-            set { startGameBehaviour = value; }
+            get { return (startGameBehaviour) ? startGameBehaviour : FindStartGameBehaviour(); }
         }
 
         public PlayerEntity PlayerEntity
         {
-            get { return (playerEntity != null) ? playerEntity : playerEntity = GetComponentFromObject<DaggerfallEntityBehaviour>(PlayerObject).Entity as PlayerEntity; }
-            set { playerEntity = value; }
+            get { return (playerEntity != null) ? playerEntity : FindPlayerEntity(); }
         }
 
         public PlayerDeath PlayerDeath
         {
-            get { return (playerDeath) ? playerDeath : playerDeath = GetComponentFromObject<PlayerDeath>(PlayerObject); }
-            set { playerDeath = value; }
+            get { return (playerDeath) ? playerDeath : FindPlayerDeath(); }
         }
 
         public PlayerGPS PlayerGPS
         {
-            get { return (playerGPS) ? playerGPS : playerGPS = GetComponentFromObject<PlayerGPS>(PlayerObject);}
-            set { playerGPS = value; }
-        }
-
-        public PlayerEnterExit PlayerEnterExit
-        {
-            get { return (playerEnterExit) ? playerEnterExit: playerEnterExit = GetComponentFromObject<PlayerEnterExit>(PlayerObject); }
-            set { playerEnterExit = value; }
+            get { return (playerGPS) ? playerGPS : FindPlayerGPS(); }
         }
 
         public WeatherManager WeatherManager
         {
-            get { return (weatherManager) ? weatherManager : weatherManager = GetMonoBehaviour<WeatherManager>(); }
-            set { weatherManager = value; }
+            get { return (weatherManager) ? weatherManager : FindWeatherManager(); }
         }
 
         public WeaponManager WeaponManager
         {
-            get { return (weaponManager) ? weaponManager : weaponManager = GetComponentFromObject<WeaponManager>(PlayerObject); }
-            set { weaponManager = value; }
-        }
-
-        public GameObject MainCameraObject 
-        {
-            get { return (mainCameraObject) ? mainCameraObject : mainCameraObject = GetGameObjectWithTag("MainCamera") ; }
-            set { mainCameraObject = value; }
-        }
-
-        public GameObject InteriorParent
-        {
-            get { return (interiorParent) ? interiorParent : interiorParent = GetGameObjectWithName("Interior"); }
-            set { interiorParent = value; }
-        }
-        public GameObject ExteriorParent
-        {
-            get { return (exteriorParent) ? exteriorParent : exteriorParent = GetGameObjectWithName("Exterior"); }
-            set { exteriorParent = value; }
-        }
-
-        public GameObject DungeonParent
-        {
-            get { return (dungeonParent) ? dungeonParent : dungeonParent = GetGameObjectWithName("Dungeon"); }
-            set { dungeonParent = value; }
-        }
-
-        public StreamingWorld StreamingWorld
-        {
-            get { return (streamingWorld) ? streamingWorld : streamingWorld = streamingWorld = GetMonoBehaviour<StreamingWorld>(); }
-            set { streamingWorld = value; }
-        }
-
-        public GameObject StreamingTarget
-        {
-            get { return (streamingTarget) ? streamingTarget : streamingTarget = GetGameObjectWithName("StreamingTarget"); }
-            set { streamingTarget = value; }
-        }
-
-        public SaveLoadManager SaveLoadManager
-        {
-            get { return (saveLoadManager) ? saveLoadManager : saveLoadManager = GetMonoBehaviour<SaveLoadManager>(); }
-            set { saveLoadManager = value; }
-        }
-
-        public PlayerMotor PlayerMotor
-        {
-            get { return (playerMotor) ? playerMotor : playerMotor = GetComponentFromObject<PlayerMotor>(PlayerObject); }
-            set { playerMotor = value; }
-        }
-
-        public FloatingOrigin FloatingOrigin
-        {
-            get { return (floatingOrigin) ? floatingOrigin :  floatingOrigin = GetMonoBehaviour<FloatingOrigin>(); }
-            set { floatingOrigin = value; }
-        }
-
-        public FPSWeapon LeftHandWeapon
-        {
-            get { return (playerWeapons[0]) ? playerWeapons[0] : playerWeapons[0] = GetComponentFromObject<FPSWeapon>( GetGameObjectWithName("Left Hand Weapon") ); }
-            set { playerWeapons[0] = value; }
-
-        }
-
-        public FPSWeapon RightHandWeapon
-        {
-            get { return (playerWeapons[1]) ? playerWeapons[1] : playerWeapons[1] = GetComponentFromObject<FPSWeapon>(GetGameObjectWithName("Right Hand Weapon")); }
-            set { playerWeapons[1] = value; }
-        }
-
-        public PlayerActivate PlayerActivate
-        {
-            get { return (playerActivate) ? playerActivate : playerActivate = GetComponentFromObject<PlayerActivate>(PlayerObject); }
-            set { playerActivate = value; }
-        }
-
-        public CharacterController PlayerController
-        {
-            get { return (playerController) ? playerController : playerController = GetComponentFromObject<CharacterController>(PlayerObject); }
-            set { playerController = value; }
+            get { return (weaponManager) ? WeaponManager : FindWeaponManager(); }
         }
 
         public bool IsPlayerOnHUD
         {
             get { return IsHUDTopWindow(); }
-        }
-
-        public bool IsPlayerInside 
-        {
-            get { return PlayerEnterExit.IsPlayerInside;}
-        }
-
-        public bool IsPlayerInsideDungeon
-        {
-            get { return PlayerEnterExit.IsPlayerInsideDungeon; }
-        }
-
-        public bool IsPlayerInsideBuilding
-        {
-            get { return PlayerEnterExit.IsPlayerInsideBuilding; }
-        }
-
-        public bool IsPlayerInsidePalace
-        {
-            get { return PlayerEnterExit.IsPlayerInsideDungeonPalace; }
         }
 
         #endregion
@@ -268,7 +140,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             SetupSingleton();
-            
+
             // Check arena2 path is validated OK and exit if not
             if (!DaggerfallUnity.Instance.IsPathValidated)
             {
@@ -293,8 +165,6 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            //try to set all properties at startup
-            GetProperties();
             // Log welcome message
             Debug.Log("Welcome to Daggerfall Unity " + VersionInfo.DaggerfallUnityVersion);
         }
@@ -446,108 +316,109 @@ namespace DaggerfallWorkshop.Game
             pauseScreenshot.Apply();
         }
 
-
-
-        /// <summary>
-        /// Checks all of the GameManager's properties at start up.
-        /// </summary>
-        private void GetProperties()
+        GameObject FindPlayerObject()
         {
-            var props = typeof(GameManager).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            foreach(PropertyInfo prop in props)
-            {
-                try
-                {
-                    var value = prop.GetValue(GameManager.instance, null);
-                    //DaggerfallUnity.LogMessage(string.Format("GameManager Startup...property: {0} value: {1}", prop.Name, value), true);
-                }
-                catch(Exception ex)
-                {
-                    Debug.Log(string.Format("{0} | GameManager Failed to get value for prop: {1}", ex.Message, prop.Name));
-                }
+            playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerObject == null)
+                throw new Exception("GameManager could not find Player object.");
 
+            return playerObject;
+        }
+
+        Camera FindMainCamera()
+        {
+            GameObject go = GameObject.FindGameObjectWithTag("MainCamera");
+            if (go == null)
+                throw new Exception("GameManager could not find MainCamera object.");
+
+            mainCamera = go.GetComponent<Camera>();
+            if (mainCamera == null)
+                throw new Exception("GameManager could not find Camera.");
+
+            return mainCamera;
+        }
+
+        StartGameBehaviour FindStartGameBehaviour()
+        {
+            startGameBehaviour = GameObject.FindObjectOfType<StartGameBehaviour>();
+            if (startGameBehaviour == null)
+                throw new Exception("GameManager could not find StartGameBehaviour.");
+
+            return startGameBehaviour;
+        }
+
+        PlayerEntity FindPlayerEntity()
+        {
+            if (PlayerObject)
+            {
+                playerEntity = PlayerObject.GetComponent<PlayerEntity>();
+                if (playerEntity == null)
+                    throw new Exception("GameManager could not find PlayerEntity.");
+                return playerEntity;
             }
 
+            return null;
         }
 
-
-        /// <summary>
-        /// Get monobehaviour object
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static T GetMonoBehaviour<T>() where T : MonoBehaviour
+        PlayerMouseLook FindPlayerMouseLook()
         {
-            T result = (T)GameObject.FindObjectOfType<T>();
-            if (result == null)
-                throw new Exception(string.Format("GameManager could not find {0}.", typeof(T)));
-            else
-                return result;
-        }
-
-
-        /// <summary>
-        /// Get a component from an object.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj">Object to check for component</param>
-        /// <param name="tag">optional; if object is null, will attempt to find object with tag</param>
-        /// <returns></returns>
-        public static T GetComponentFromObject<T>(GameObject obj, string tag = null) where T : Component
-        {
-            T result = default(T);    
-            if(obj == null && !string.IsNullOrEmpty(tag))
+            if (MainCamera)
             {
-                obj = GetGameObjectWithTag(tag);
+                playerMouseLook = MainCamera.GetComponent<PlayerMouseLook>();
+                if (playerMouseLook == null)
+                    throw new Exception("GameManager could not find PlayerMouseLook.");
+                return playerMouseLook;
             }
-            else if(obj == null && string.IsNullOrEmpty(tag))
-            {
-                throw new Exception(string.Format("GameManager could not find component type {0} - both object & string were null.", typeof(T), obj.name));  
-            }
-            
-            if(obj != null)
-            {
-                result = obj.GetComponent<T>();
-            }
-            if (result == null)
-                throw new Exception(string.Format("GameManager could not find component type {0} on object {1}.", typeof(T), obj.name));
-            else
-                return result;
+
+            return null;
         }
 
-        /// <summary>
-        /// Find a gameobject by tag
-        /// </summary>
-        /// <param name="tag"></param>
-        /// <returns></returns>
-        public static GameObject GetGameObjectWithTag(string tag)
+        PlayerDeath FindPlayerDeath()
         {
-            if(string.IsNullOrEmpty(tag))
-                throw new Exception(string.Format("GameManager could not find GameObject with tag as string was null or empty"));
-            GameObject result = GameObject.FindGameObjectWithTag(tag);
-            if (result == null)
-                throw new Exception(string.Format("GameManager could not find GameObject with tag {0}", tag));
-            else
-                return result;
+            if (PlayerObject)
+            {
+                playerDeath = PlayerObject.GetComponent<PlayerDeath>();
+                if (playerDeath == null)
+                    throw new Exception("GameManager could not find PlayerDeath.");
+                return playerDeath;
+            }
+
+            return null;
         }
 
-        /// <summary>
-        /// Find a gameobject by name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static GameObject GetGameObjectWithName(string name)
+        PlayerGPS FindPlayerGPS()
         {
-            if (string.IsNullOrEmpty(name))
-                throw new Exception(string.Format("GameManager could not find GameObject with name as string was null or empty"));
-            GameObject result = GameObject.Find(name);
-            if (result == null)
-                throw new Exception(string.Format("GameManager could not find GameObject with name {0}", name));
-            else
-                return result;
+            if (PlayerObject)
+            {
+                playerGPS = PlayerObject.GetComponent<PlayerGPS>();
+                if (playerGPS == null)
+                    throw new Exception("GameManager could not find PlayerGPS.");
+                return playerGPS;
+            }
+
+            return null;
         }
 
-     
+        WeatherManager FindWeatherManager()
+        {
+            weatherManager = GameObject.FindObjectOfType<WeatherManager>();
+            if (weatherManager == null)
+                throw new Exception("GameManager could not find WeatherManager.");
+
+            return weatherManager;
+        }
+
+        WeaponManager FindWeaponManager()
+        {
+            if (PlayerObject)
+            {
+                weaponManager = PlayerObject.GetComponent<WeaponManager>();
+                if (weaponManager == null)
+                    throw new Exception("GameManager could not find WeaponManager.");
+            }
+
+            return weaponManager;
+        }
 
         #endregion
 
