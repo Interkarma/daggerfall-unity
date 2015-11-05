@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game
     public class GameManager : MonoBehaviour
     {
         #region Fields
+
         bool isGamePaused = false;
         float savedTimeScale;
         Texture2D pauseScreenshot;
@@ -56,8 +57,6 @@ namespace DaggerfallWorkshop.Game
         FPSWeapon[] playerWeapons = new FPSWeapon[2];
         PlayerActivate playerActivate = null;
         CharacterController playerController;
-
-        //bool isFullscreen = false;
 
         #endregion
 
@@ -153,7 +152,7 @@ namespace DaggerfallWorkshop.Game
 
         public StreamingWorld StreamingWorld
         {
-            get { return (streamingWorld) ? streamingWorld : streamingWorld = streamingWorld = GetMonoBehaviour<StreamingWorld>(); }
+            get { return (streamingWorld) ? streamingWorld : streamingWorld = GetMonoBehaviour<StreamingWorld>(); }
             set { streamingWorld = value; }
         }
 
@@ -293,26 +292,15 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            //try to set all properties at startup
+            // Try to set all properties at startup
             GetProperties();
+
             // Log welcome message
             Debug.Log("Welcome to Daggerfall Unity " + VersionInfo.DaggerfallUnityVersion);
         }
 
         void Update()
         {
-            // TODO: Remove this once verified no more resolution issues in current Unity version
-            //// HACK: Fix Unity fullscreen window scaling issue
-            //if (Screen.fullScreen && !isFullscreen)
-            //{
-            //    Resolution nativeResolution = Screen.resolutions[Screen.resolutions.Length - 1];
-            //    if (Screen.width != nativeResolution.width || Screen.height != nativeResolution.height)
-            //    {
-            //        Screen.SetResolution(nativeResolution.width, nativeResolution.height, true);
-            //    }
-            //    isFullscreen = true;
-            //}
-
             if (!IsPlayingGame())
                 return;
 
@@ -446,8 +434,6 @@ namespace DaggerfallWorkshop.Game
             pauseScreenshot.Apply();
         }
 
-
-
         /// <summary>
         /// Checks all of the GameManager's properties at start up.
         /// </summary>
@@ -458,18 +444,15 @@ namespace DaggerfallWorkshop.Game
             {
                 try
                 {
-                    var value = prop.GetValue(GameManager.instance, null);
+                    prop.GetValue(GameManager.instance, null);
                     //DaggerfallUnity.LogMessage(string.Format("GameManager Startup...property: {0} value: {1}", prop.Name, value), true);
                 }
                 catch(Exception ex)
                 {
                     Debug.Log(string.Format("{0} | GameManager Failed to get value for prop: {1}", ex.Message, prop.Name));
                 }
-
             }
-
         }
-
 
         /// <summary>
         /// Get monobehaviour object
@@ -546,8 +529,6 @@ namespace DaggerfallWorkshop.Game
             else
                 return result;
         }
-
-     
 
         #endregion
 
