@@ -173,44 +173,40 @@ namespace Wenzil.Console
         private static class SetWeather
         {
             public static readonly string name = "set_weather";
+            public static readonly string error = "Failed to set weathear - invalid argument or no Player Weather object";
             public static readonly string description = "Sets the weather to indicated type";
-            public static readonly string usage = "set_weather [#] \n0 = none \n1 = rain \n2 = storm \n3 = snow";
+            public static readonly string usage = "set_weather [0 = none, 1 = rain, 2 = snow]";
 
             public static string Execute(params string[] args)
             {
-                WeatherManager weatherManager = GameManager.Instance.WeatherManager;
-                int weatherType = 0;
-                
+                PlayerWeather playerWeather = GameObject.FindObjectOfType<PlayerWeather>();
+
                 if (args == null || args.Length < 1)
                 {
-                    return HelpCommand.Execute(SetWeather.name);
+                    return usage;
 
                 }
-                else if (weatherManager == null)
+                else if (playerWeather == null)
                 {
-                    return HelpCommand.Execute(SetWeather.name);
+                    return error;
 
                 }
-                else if(int.TryParse(args[0], out weatherType))
+                else
                 {
-                    if(weatherType >= 0 && weatherType < 4)
+                    int type;
+                    int.TryParse(args[0], out type);
+                    if (Enum.IsDefined(typeof(PlayerWeather.WeatherTypes), type))
                     {
-                        weatherManager.ClearAllWeather();
-
-                        if (weatherType == 1)
-                            weatherManager.StartRaining();
-                        else if (weatherType == 2)
-                            weatherManager.StartStorming();
-                        else if (weatherType == 3)
-                            weatherManager.StartSnowing();
-                        return "Set weather.";
-                        
-
+                        playerWeather.WeatherType = (PlayerWeather.WeatherTypes)Enum.Parse(typeof(PlayerWeather.WeatherTypes), args[0], true);
+                        return "Weather set";
                     }
- 
+                    else
+                    {
+                        return "Error when trying to set weather";
+                    }
+
                 }
-                
-                return HelpCommand.Execute(SetWeather.name);
+
 
 
 
@@ -707,46 +703,42 @@ namespace Wenzil.Console
                                     DaggerfallWorkshop.Utility.ContentReader.MapSummary mapSummary;
                                     if (DaggerfallWorkshop.DaggerfallUnity.Instance.ContentReader.HasLocation(xpos, ypos, out mapSummary))
                                     {
-                                        streamingWorld.TeleportToCoordinates(xpos + 1, ypos - 1); // random location
-                                        break;
+                                        streamingWorld.TeleportToCoordinates(xpos, ypos); // random location
+                                        return (string.Format("Teleported player to location at: {0}, {1}", xpos, ypos));
                                     }
                                 }                                
-                                break;
                             case 1:
-                                streamingWorld.TeleportToCoordinates(207, 213); // Daggerfall/Daggerfall  
-                                break;
+                                streamingWorld.TeleportToCoordinates(207, 213);
+                                return ("Teleported player to Daggerfall/Daggerfall");
                             case 2:
-                                streamingWorld.TeleportToCoordinates(859, 244); // Wayrest/Wayrest
-                                break;
+                                streamingWorld.TeleportToCoordinates(859, 244);
+                                return ("Teleported player to Wayrest/Wayrest");
                             case 3:
-                                streamingWorld.TeleportToCoordinates(397, 343); // Sentinel/Sentinel
-                                break;
+                                streamingWorld.TeleportToCoordinates(397, 343);
+                                return ("Teleported player to Sentinel/Sentinel");
                             case 4:
-                                streamingWorld.TeleportToCoordinates(892, 146); // Orsinium Area/Orsinium
-                                break;
+                                streamingWorld.TeleportToCoordinates(892, 146);
+                                return ("Teleported player to Orsinium Area/Orsinium");
                             case 5:
-                                streamingWorld.TeleportToCoordinates(67, 119); // Tulune/The Old Copperham Place
-                                break;
+                                streamingWorld.TeleportToCoordinates(67, 119);
+                                return ("Teleported player to Tulune/The Old Copperham Place");
                             case 6:
-                                streamingWorld.TeleportToCoordinates(254, 408); // Pothago/The Stronghold of Cirden
-                                break;
+                                streamingWorld.TeleportToCoordinates(254, 408);
+                                return ("Teleported player to Pothago/The Stronghold of Cirden");
                             case 7:
-                                streamingWorld.TeleportToCoordinates(109, 158); // Daggerfall/Privateer's Hold
-                                break;
+                                streamingWorld.TeleportToCoordinates(109, 158);
+                                return ("Teleported player to Daggerfall/Privateer's Hold");
                             case 8:
-                                streamingWorld.TeleportToCoordinates(860, 245); // Wayrest/Merwark Hollow
-                                break;
+                                streamingWorld.TeleportToCoordinates(860, 245);
+                                return ("Teleported player to Wayrest/Merwark Hollow");
                             case 9:
-                                streamingWorld.TeleportToCoordinates(718, 204); // Isle of Balfiera/Direnni Tower
-                                break;
+                                streamingWorld.TeleportToCoordinates(718, 204);
+                                return ("Teleported player to Isle of Balfiera/Direnni Tower");
                             default:
                                 break;
                         }
-
                     }
-
                 }
-
                 return "Invalid location index";
             }
         }
