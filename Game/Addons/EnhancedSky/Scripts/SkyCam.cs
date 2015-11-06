@@ -13,15 +13,16 @@ namespace EnhancedSky
 {
     public class SkyCam : MonoBehaviour
     {
-        public GameObject MainCamera;
-        public Camera SkyCamera;
+        public GameObject mainCamera;
+        public Camera skyCamera;
 
         // Use this for initialization
         void Start()
         {
-            SkyCamera = this.GetComponent<Camera>();
-            if (!MainCamera)
-                MainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            if(!skyCamera)
+                skyCamera = this.GetComponent<Camera>();
+            if (!mainCamera)
+                mainCamera = DaggerfallWorkshop.Game.GameManager.Instance.MainCameraObject;
 
             //SkyCamera.renderingPath = MainCamera.GetComponent<Camera>().renderingPath;
             GetCameraSettings();
@@ -30,23 +31,23 @@ namespace EnhancedSky
 
         void LateUpdate()
         {
-            this.transform.rotation = MainCamera.transform.rotation;
+            this.transform.rotation = mainCamera.transform.rotation;
         }
 
         void GetCameraSettings()
         {
-            Camera mainCam = MainCamera.GetComponent<Camera>();
+            Camera mainCam = mainCamera.GetComponent<Camera>();
             if(mainCam)
             {
-                SkyCamera.renderingPath = mainCam.renderingPath;
-                SkyCamera.fieldOfView = mainCam.fieldOfView;
+                skyCamera.renderingPath = mainCam.renderingPath;
+                skyCamera.fieldOfView = mainCam.fieldOfView;
 
             }
             else
             {
                 Debug.Log("Using default settings for SkyCamera");
-                SkyCamera.fieldOfView = 65;
-                SkyCamera.renderingPath = RenderingPath.DeferredShading;
+                skyCamera.fieldOfView = 65;
+                skyCamera.renderingPath = RenderingPath.DeferredShading;
 
             }
 

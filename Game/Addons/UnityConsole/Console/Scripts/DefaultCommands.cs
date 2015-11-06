@@ -56,7 +56,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                PlayerHealth playerHealth = GameObject.FindObjectOfType<PlayerHealth>();
+                PlayerHealth playerHealth = GameManager.Instance.PlayerHealth;//GameObject.FindObjectOfType<PlayerHealth>();
                 if (playerHealth)
                 {
                     playerHealth.GodMode = !playerHealth.GodMode;
@@ -80,8 +80,8 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                DaggerfallWorkshop.StreamingWorld streamingWorld = GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
-                DaggerfallWorkshop.DaggerfallUnity daggerfallUnity = GameObject.FindObjectOfType<DaggerfallWorkshop.DaggerfallUnity>();
+                DaggerfallWorkshop.StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;//GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
+                DaggerfallWorkshop.DaggerfallUnity daggerfallUnity = DaggerfallUnity.Instance;
                 DaggerfallSongPlayer songPlayer = GameObject.FindObjectOfType<DaggerfallSongPlayer>();
 
                 DefaultCommands.showDebugStrings = !DefaultCommands.showDebugStrings;
@@ -93,20 +93,9 @@ namespace Wenzil.Console
                 if (songPlayer)
                     songPlayer.ShowDebugString = show;
                 return string.Format("Debug string show: {0}", show);
-
-
-
-
-
             }
         }
 
-
-
-
-        /// <summary>
-        /// This is not added yet.
-        /// </summary>
         private static class SetHealth
         {
             public static readonly string name = "set_health";
@@ -116,20 +105,17 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
+                DaggerfallEntityBehaviour playerBehavior = GameManager.Instance.PlayerEntityBehaviour;
 
-                GameObject player = GameObject.FindGameObjectWithTag("Player");
-                DaggerfallEntityBehaviour playerBehavior;
                 int health = 0;
                 if (args == null || args.Length < 1 || !int.TryParse(args[0], out health))
                 {
                     return HelpCommand.Execute(SetHealth.name);
 
                 }
-                else if (player != null)
+                else if (playerBehavior != null)
                 {
-                    playerBehavior = player.GetComponent<DaggerfallEntityBehaviour>();
                     playerBehavior.Entity.SetHealth(health);
-
                     return string.Format("Set health to: {0}", playerBehavior.Entity.CurrentHealth);
                 }
                 else
@@ -151,16 +137,14 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                GameObject player = GameObject.FindGameObjectWithTag("Player");
-                DaggerfallEntityBehaviour playerBehavior;
+                DaggerfallEntityBehaviour playerBehavior = GameManager.Instance.PlayerEntityBehaviour;
 
-                if (player == null)
+                if (playerBehavior == null)
                 {
                     return error;
                 }
                 else
                 {
-                    playerBehavior = player.GetComponent<DaggerfallEntityBehaviour>();
                     playerBehavior.Entity.SetHealth(0);
                     return "Are you still there?";
                 }
@@ -227,7 +211,7 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 int speed;
-                PlayerMotor playerMotor = GameObject.FindObjectOfType<PlayerMotor>();
+                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
 
                 if (playerMotor == null)
                 {
@@ -273,7 +257,7 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 int speed;
-                PlayerMotor playerMotor = GameObject.FindObjectOfType<PlayerMotor>();
+                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
 
                 if (playerMotor == null)
                 {
@@ -320,7 +304,7 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 int speed;
-                DaggerfallWorkshop.DaggerfallUnity daggerfallUnity = GameObject.FindObjectOfType<DaggerfallWorkshop.DaggerfallUnity>();
+                DaggerfallWorkshop.DaggerfallUnity daggerfallUnity = DaggerfallWorkshop.DaggerfallUnity.Instance;
 
                 if (daggerfallUnity == null)
                 {
@@ -373,7 +357,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                PlayerMouseLook mLook = GameObject.FindObjectOfType<PlayerMouseLook>();
+                PlayerMouseLook mLook = GameManager.Instance.PlayerMouseLook;//GameObject.FindObjectOfType<PlayerMouseLook>();
                 float speed = 0;
                 if (args == null || args.Length < 1 || !float.TryParse(args[0], out speed))
                 {
@@ -404,7 +388,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                PlayerMouseLook mLook = GameObject.FindObjectOfType<PlayerMouseLook>();
+                PlayerMouseLook mLook = GameManager.Instance.PlayerMouseLook;//GameObject.FindObjectOfType<PlayerMouseLook>();
                 if (mLook == null)
                 {
                     return error;
@@ -429,7 +413,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                PlayerMouseLook mLook = GameObject.FindObjectOfType<PlayerMouseLook>();
+                PlayerMouseLook mLook = GameManager.Instance.PlayerMouseLook;//GameObject.FindObjectOfType<PlayerMouseLook>();
                 float speed = 0;
                 if (args == null || args.Length < 1 || !float.TryParse(args[0], out speed))
                 {
@@ -503,7 +487,7 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 int gravity = 0;
-                PlayerMotor playerMotor = GameObject.FindObjectOfType<PlayerMotor>();
+                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
 
                 if (playerMotor == null)
                 {
@@ -550,7 +534,7 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 int speed;
-                PlayerMotor playerMotor = GameObject.FindObjectOfType<PlayerMotor>();
+                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
 
                 if (playerMotor == null)
                 {
@@ -597,7 +581,7 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
 
-                PlayerMotor playerMotor = GameObject.FindObjectOfType<PlayerMotor>();
+                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
 
                 if (playerMotor == null)
                 {
@@ -624,8 +608,8 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 int x = 0; int y = 0;
-                DaggerfallWorkshop.StreamingWorld streamingWorld = GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
-                PlayerEnterExit playerEE = GameObject.FindObjectOfType<PlayerEnterExit>();
+                DaggerfallWorkshop.StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;//GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
+                PlayerEnterExit playerEE = GameManager.Instance.PlayerEnterExit;//GameObject.FindObjectOfType<PlayerEnterExit>();
 
                 if (args == null || args.Length < 2)
                 {
@@ -667,13 +651,12 @@ namespace Wenzil.Console
         {
             public static readonly string name = "location";
             public static readonly string description = "Send the player to the predefined location";
-            public static readonly string usage = "loaction [n]; where n is between 0 & 9:\n0 ... random location\n1 ... Daggerfall/Daggerfall\n2 ... Wayrest/Wayrest\n3 ... Sentinel/Sentinel\n4 ... Orsinium Area/Orsinium\n5 ... Tulune/The Old Copperham Place\n6 ... Pothago/The Stronghold of Cirden\n7 ... Daggerfall/Privateer's Hold\n8 ... Wayrest/Merwark Hollow\n9 ... Isle of Balfiera/Direnni Tower\n";
-
+            public static readonly string usage = "location [n]; where n is between 0 & 9:\n0 ... random location\n1 ... Daggerfall/Daggerfall\n2 ... Wayrest/Wayrest\n3 ... Sentinel/Sentinel\n4 ... Orsinium Area/Orsinium\n5 ... Tulune/The Old Copperham Place\n6 ... Pothago/The Stronghold of Cirden\n7 ... Daggerfall/Privateer's Hold\n8 ... Wayrest/Merwark Hollow\n9 ... Isle of Balfiera/Direnni Tower\n";
             public static string Execute(params string[] args)
             {
                 int n = 0;
-                DaggerfallWorkshop.StreamingWorld streamingWorld = GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
-                PlayerEnterExit playerEE = GameObject.FindObjectOfType<PlayerEnterExit>();
+                DaggerfallWorkshop.StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;//GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
+                PlayerEnterExit playerEE = GameManager.Instance.PlayerEnterExit;//GameObject.FindObjectOfType<PlayerEnterExit>();
 
                 if (args == null || args.Length < 1)
                 {
@@ -743,6 +726,7 @@ namespace Wenzil.Console
                                 break;
                         }
 
+                        return "Teleported successfully.";
                     }
 
                 }
@@ -761,7 +745,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                PlayerEnterExit playerEnterExit = GameObject.FindObjectOfType<PlayerEnterExit>();
+                PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;//GameObject.FindObjectOfType<PlayerEnterExit>();
                 if (playerEnterExit == null || !playerEnterExit.IsPlayerInside)
                 {
                     Console.Log(HelpCommand.Execute(TransitionToExterior.name));
@@ -810,8 +794,8 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                PlayerEnterExit playerEnterExit = GameObject.FindObjectOfType<PlayerEnterExit>();
-                GameObject playerObj = GameObject.FindGameObjectWithTag("Player") as GameObject;
+                PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;//GameObject.FindObjectOfType<PlayerEnterExit>();
+                GameObject playerObj = GameManager.Instance.PlayerObject;//GameObject.FindGameObjectWithTag("Player") as GameObject;
                 if (playerObj == null || playerEnterExit == null || !playerEnterExit.IsPlayerInsideDungeon)
                 {
                     return error;
@@ -839,20 +823,18 @@ namespace Wenzil.Console
         private static class OpenAllDoors
         {
             public static readonly string name = "openalldoors";
-            public static readonly string error = "Player not inside, or couldn't locate PlayerEnterExit object";
+            public static readonly string error = "Player not inside";
             public static readonly string description = "Opens all doors in an interior or dungeon, regardless of locked state";
             public static readonly string usage = "openalldoors";
 
             public static string Execute(params string[] args)
             {
-                PlayerEnterExit playerEnterExit = GameObject.FindObjectOfType<PlayerEnterExit>();
-
-                if (playerEnterExit == null || !playerEnterExit.IsPlayerInside)
+                if (!GameManager.Instance.IsPlayerInside)
                 {
 
                     return error;
                 }
-                else if (playerEnterExit.IsPlayerInside)
+                else
                 {
                     DaggerfallActionDoor[] doors = GameObject.FindObjectsOfType<DaggerfallActionDoor>();
                     int count = 0;
@@ -866,15 +848,11 @@ namespace Wenzil.Console
 
                     }
 
-                    return string.Format("Finished.  Opened {0} doors out of {1}", count, doors.Length);
+                    return string.Format("Finished.  Opened {0} doors out of {1}", count, doors.Count());
 
 
                 }
-                else
-                {
-                    return error;
 
-                }
             }
 
 

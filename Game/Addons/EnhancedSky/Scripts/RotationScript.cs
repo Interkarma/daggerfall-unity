@@ -15,7 +15,7 @@ namespace EnhancedSky
         float _degreeRoation;
         float _dot = 1.0f;
         Quaternion _targetRot;
-        public SkyManager SkyMan { get { return SkyManager.instance; } }
+        SkyManager SkyMan { get { return SkyManager.instance; } }
 
         void FixedUpdate()
         {

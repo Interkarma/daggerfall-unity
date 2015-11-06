@@ -38,12 +38,15 @@ namespace DaggerfallWorkshop.Game
         GameObject playerObject = null;
         Camera mainCamera = null;
         PlayerMouseLook playerMouseLook = null;
+        PlayerHealth playerHealth = null;
         StartGameBehaviour startGameBehaviour = null;
         PlayerEntity playerEntity = null;
+        DaggerfallEntityBehaviour playerEntityBehaviour = null;
         PlayerDeath playerDeath = null;
         PlayerGPS playerGPS  = null;
         PlayerEnterExit playerEnterExit = null;
         WeatherManager weatherManager = null;
+        DaggerfallSky skyRig = null;
         WeaponManager weaponManager = null;
         GameObject mainCameraObject = null;
         GameObject interiorParent = null;
@@ -85,6 +88,12 @@ namespace DaggerfallWorkshop.Game
             set { playerMouseLook = value; }
         }
 
+        public PlayerHealth PlayerHealth
+        {
+            get { return (playerHealth) ? playerHealth : playerHealth = GetComponentFromObject<PlayerHealth>(PlayerObject, "Player"); }
+            set { playerHealth = value; }
+        }
+
         public StartGameBehaviour StartGameBehaviour
         {
             get { return (startGameBehaviour) ? startGameBehaviour : startGameBehaviour = GetMonoBehaviour<StartGameBehaviour>(); }
@@ -93,8 +102,14 @@ namespace DaggerfallWorkshop.Game
 
         public PlayerEntity PlayerEntity
         {
-            get { return (playerEntity != null) ? playerEntity : playerEntity = GetComponentFromObject<DaggerfallEntityBehaviour>(PlayerObject).Entity as PlayerEntity; }
+            get { return (playerEntity != null) ? playerEntity : playerEntity = PlayerEntityBehaviour.Entity as PlayerEntity; }//GetComponentFromObject<DaggerfallEntityBehaviour>(PlayerObject).Entity as PlayerEntity; }
             set { playerEntity = value; }
+        }
+
+        public DaggerfallEntityBehaviour PlayerEntityBehaviour
+        {
+            get { return (playerEntityBehaviour != null) ? playerEntityBehaviour : playerEntityBehaviour = GetComponentFromObject<DaggerfallEntityBehaviour>(PlayerObject); }
+            set { playerEntityBehaviour = value; }
         }
 
         public PlayerDeath PlayerDeath
@@ -119,6 +134,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (weatherManager) ? weatherManager : weatherManager = GetMonoBehaviour<WeatherManager>(); }
             set { weatherManager = value; }
+        }
+
+        public DaggerfallSky SkyRig
+        {
+            get { return (skyRig) ? skyRig : skyRig = GetMonoBehaviour<DaggerfallSky>(); }
+            set { skyRig = value; }
         }
 
         public WeaponManager WeaponManager
