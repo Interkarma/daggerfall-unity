@@ -11,15 +11,18 @@ namespace EnhancedSky
 {
     public class PresetContainer : MonoBehaviour
     {
-        public const int MOONSCALENORMAL = 6;
+        public const int MOONSCALENORMAL = 4;
         public const int MOONSCALELARGE = 8;
-        public const float SUNSIZENORMAL = 0.11F;
-        public const float SUNSIZELARGE = 0.145F;
+        //public const float SUNSIZENORMAL = 0.11F;     //sizes for simple sun disk
+        //public const float SUNSIZELARGE = 0.145F;
+        public const float SUNSIZENORMAL = 0.05F;
+        public const float SUNSIZELARGE = 0.06F;
+
         public const float SUNFLARESIZENORMAL = 0.57F;
-        public const float SUNFLARESIZELARGE = 0.80F;
+        public const float SUNFLARESIZELARGE = 0.80F; 
 
         public const int MAXCLOUDDIMENSION = 1500;
-        public const int MINCLOUDDIMENSION = 100;
+        public const int MINCLOUDDIMENSION = 1;
 
         public static PresetContainer _instance;
 

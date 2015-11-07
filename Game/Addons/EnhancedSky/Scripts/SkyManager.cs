@@ -66,7 +66,7 @@ namespace EnhancedSky
 
         //daggerfall tools references
         public GameObject       dfallSky;
-        public WeatherManager   WeatherMan;
+        public WeatherManager   weatherMan;
         public PlayerEnterExit  playerEE;
         public GameObject       exteriorParent;
 
@@ -92,7 +92,7 @@ namespace EnhancedSky
         public SkyObjectSize SkyObjectSizeSetting { get; set; }
         public CloudGenerator CloudGen  { get { return (_cloudGen != null) ? _cloudGen : _cloudGen = this.GetComponent<CloudGenerator>(); } }
         public bool UseSunFlare         { get; set; }
-        public bool IsOvercast          { get { return (WeatherMan != null) ? WeatherMan.IsOvercast : false; } }
+        public bool IsOvercast          { get { return (weatherMan != null) ? weatherMan.IsOvercast : false; } }
         public bool IsNight             { get { return (TimeScript != null) ? TimeScript.IsNight : false; } }
         public float CurrentSeconds     { get { return UpdateTime(); } }
         public float TimeRatio          { get {return (CurrentSeconds / DAYINSECONDS); }}
@@ -254,8 +254,8 @@ namespace EnhancedSky
             EnhancedSkyConsoleCommands.RegisterCommands();
 
             
-            //if (DaggerfallUnity.Instance.IsReady)
-            //    EnhancedSkyCurrentToggle = DaggerfallUnity.Settings.LypyL_EnhancedSky;
+            if (DaggerfallUnity.Instance.IsReady)
+                EnhancedSkyCurrentToggle = DaggerfallUnity.Settings.LypyL_EnhancedSky;
 
 
             // player starting outside & ESKY starting on
@@ -323,21 +323,22 @@ namespace EnhancedSky
                 if (!_containerPrefab)
                     _containerPrefab = Resources.Load("EnhancedSkyContainer", typeof(GameObject)) as GameObject;
                 if (!dfallSky)
-                    dfallSky = GameObject.Find("SkyRig");
+                    dfallSky = GameManager.Instance.SkyRig.gameObject;
                 if (!playerEE)
-                    playerEE = GameObject.FindObjectOfType<PlayerEnterExit>();
+                    playerEE = GameManager.Instance.PlayerEnterExit;
                 if (!exteriorParent)
-                {
-                    if (playerEE)
-                        exteriorParent = playerEE.ExteriorParent;
-                }
+                    exteriorParent = GameManager.Instance.ExteriorParent;
+                if (!weatherMan)
+                    weatherMan = GameManager.Instance.WeatherManager;
+
+
             }
             catch
             {
                 DaggerfallUnity.LogMessage("Error in SkyManager.GetRefrences()", true);
                 return false;
             }
-            if (dfallSky && playerEE && exteriorParent && _cloudGen && _containerPrefab && _depthMaskShader && _UnlitAlphaFadeShader 
+            if (dfallSky && playerEE && exteriorParent && weatherMan && _cloudGen && _containerPrefab && _depthMaskShader && _UnlitAlphaFadeShader 
                 && StarMaskMat && _skyObjMat && StarsMat && SkyMat)
                 return true;
             else
@@ -398,6 +399,8 @@ namespace EnhancedSky
                 SkyMat.SetFloat("_SunSize", PresetContainer.SUNSIZENORMAL);
             else
                 SkyMat.SetFloat("_SunSize", PresetContainer.SUNSIZELARGE);
+            
+            
             if (updateSkySettingsEvent != null)
                 updateSkySettingsEvent();
         }

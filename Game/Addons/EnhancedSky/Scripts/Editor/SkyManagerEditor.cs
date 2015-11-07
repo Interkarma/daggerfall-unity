@@ -53,12 +53,12 @@ namespace EnhancedSky
                 if(GUILayout.Button("Toggle Weather"))          //WeatherManager doesn't like this before the game is properly started
                 {
                     if (skyMan.IsOvercast)
-                        skyMan.WeatherMan.ClearAllWeather();
+                        skyMan.weatherMan.ClearAllWeather();
                     else
-                        skyMan.WeatherMan.SetRainOvercast(true);
+                        skyMan.weatherMan.SetRainOvercast(true);
 
 
-                    Debug.Log("Is Overcast: " + skyMan.WeatherMan.IsOvercast);
+                    Debug.Log("Is Overcast: " + skyMan.weatherMan.IsOvercast);
                 }
                     
 
