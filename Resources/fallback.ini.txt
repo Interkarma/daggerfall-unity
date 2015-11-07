@@ -36,8 +36,8 @@ StartInDungeon=False
 
 [Enhancements]
 LypyL_GameConsole=True
-LypyL_EnhancedSky=False
-Nystul_IncreasedTerrainDistance=False
-Nystul_RealtimeReflections=False
-UncannyValley_RealGrass=False
-UncannyValley_BirdsInDaggerfall=False
+LypyL_EnhancedSky=True
+Nystul_IncreasedTerrainDistance=True
+Nystul_RealtimeReflections=True
+UncannyValley_RealGrass=True
+UncannyValley_BirdsInDaggerfall=True
