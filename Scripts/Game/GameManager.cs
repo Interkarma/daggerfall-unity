@@ -65,6 +65,8 @@ namespace DaggerfallWorkshop.Game
 
         #region Properties
 
+        public bool IsReady { get; private set; }
+
         public static bool IsGamePaused
         {
             get { return Instance.isGamePaused; }
@@ -458,7 +460,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Checks all of the GameManager's properties at start up.
         /// </summary>
-        private void GetProperties()
+        public void GetProperties()
         {
             var props = typeof(GameManager).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             foreach(PropertyInfo prop in props)
@@ -473,6 +475,13 @@ namespace DaggerfallWorkshop.Game
                     Debug.Log(string.Format("{0} | GameManager Failed to get value for prop: {1}", ex.Message, prop.Name));
                 }
             }
+
+            if (GameManager.HasInstance)
+            {
+                IsReady = true;
+                DaggerfallUnity.LogMessage("GameManager ready");
+            }
+                
         }
 
         /// <summary>

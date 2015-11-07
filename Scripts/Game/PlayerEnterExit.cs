@@ -544,6 +544,9 @@ namespace DaggerfallWorkshop.Game
 
         public void DisableAllParents(bool cleanup = true)
         {
+            if (!GameManager.Instance.IsReady)
+                GameManager.Instance.GetProperties();
+
             if (cleanup)
             {
                 if (dungeon) Destroy(dungeon.gameObject);
@@ -566,10 +569,10 @@ namespace DaggerfallWorkshop.Game
                 if (interior) Destroy(interior.gameObject);
                 exteriorDoors = null;
             }
-            
+            DisableAllParents(false);
             if (ExteriorParent != null) ExteriorParent.SetActive(true);
-            if (InteriorParent != null) InteriorParent.SetActive(false);
-            if (DungeonParent != null) DungeonParent.SetActive(false);
+            //if (InteriorParent != null) InteriorParent.SetActive(false);
+            //if (DungeonParent != null) DungeonParent.SetActive(false);
 
             world.suppressWorld = false;
             isPlayerInside = false;
@@ -585,10 +588,10 @@ namespace DaggerfallWorkshop.Game
             {
                 if (dungeon) Destroy(dungeon.gameObject);
             }
-
-            if (ExteriorParent != null) ExteriorParent.SetActive(false);
+            DisableAllParents(false);
             if (InteriorParent != null) InteriorParent.SetActive(true);
-            if (DungeonParent != null) DungeonParent.SetActive(false);
+            //if (ExteriorParent != null) ExteriorParent.SetActive(false);
+            //if (DungeonParent != null) DungeonParent.SetActive(false);
 
             isPlayerInside = true;
             isPlayerInsideDungeon = false;
@@ -603,10 +606,10 @@ namespace DaggerfallWorkshop.Game
             {
                 if (interior) Destroy(interior.gameObject);
             }
-
-            if (ExteriorParent != null) ExteriorParent.SetActive(false);
-            if (InteriorParent != null) InteriorParent.SetActive(false);
+            DisableAllParents(false);
             if (DungeonParent != null) DungeonParent.SetActive(true);
+            //if (ExteriorParent != null) ExteriorParent.SetActive(false);
+            //if (InteriorParent != null) InteriorParent.SetActive(false);
 
             isPlayerInside = true;
             isPlayerInsideDungeon = true;
