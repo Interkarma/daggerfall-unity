@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors: 
 // 
 // Notes:
 //
@@ -315,6 +315,11 @@ namespace DaggerfallWorkshop.Game
             if (InputManager.Instance.ActionStarted(InputManager.Actions.CharacterSheet))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetDialog);
+            }
+
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoMap))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenAutomap);
             }
 
             // Handle quick save and load

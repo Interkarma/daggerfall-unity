@@ -62,6 +62,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallHUD dfHUD;
         DaggerfallPauseOptionsWindow dfPauseOptions;
         DaggerfallCharacterSheetWindow dfCharacterSheet;
+        DaggerfallAutomapWindow dfAutomap;
 
         public DaggerfallFont Font1 { get { return GetFont(1); } }
         public DaggerfallFont Font2 { get { return GetFont(2); } }
@@ -123,6 +124,9 @@ namespace DaggerfallWorkshop.Game
 
             dfCharacterSheet = new DaggerfallCharacterSheetWindow(uiManager);
             dfCharacterSheet.OnClose += CharacterSheetDialog_OnClose;
+
+            dfAutomap = new DaggerfallAutomapWindow(uiManager);
+            dfAutomap.OnClose += AutomapDialog_OnClose;
 
             SetupSingleton();
             PostMessage(startupMessage);
@@ -213,6 +217,13 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenCharacterSheetDialog:
                     GameManager.Instance.PauseGame(true);
                     uiManager.PushWindow(dfCharacterSheet);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenAutomap:
+                    if (!GameObject.Find("Exterior")) // open automap only if player is in interior or dungeon - TODO: location automap for exterior locations
+                    {
+                        GameManager.Instance.PauseGame(true);
+                        uiManager.PushWindow(dfAutomap);
+                    }
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
                     Application.Quit();
@@ -626,6 +637,11 @@ namespace DaggerfallWorkshop.Game
         }
 
         private void CharacterSheetDialog_OnClose()
+        {
+            GameManager.Instance.PauseGame(false);
+        }
+
+        private void AutomapDialog_OnClose()
         {
             GameManager.Instance.PauseGame(false);
         }
