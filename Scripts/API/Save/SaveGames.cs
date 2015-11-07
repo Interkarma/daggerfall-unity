@@ -224,7 +224,14 @@ namespace DaggerfallConnect.Save
 
         string GetArena2Path()
         {
-            return Path.Combine(savesPath, "arena2");
+            string path1 = Path.Combine(savesPath, "arena2");
+            string path2 = Path.Combine(savesPath, "ARENA2");
+            if (Directory.Exists(path1))
+                return path1;
+            else if (Directory.Exists(path2))
+                return path2;
+            else
+                throw new Exception("SaveGame could not locate subordinate 'arena2' or 'ARENA2' path inside " + savesPath);
         }
 
         int EnumerateSaves(string path)

@@ -116,6 +116,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerPosition.worldPosZ = StreamingWorld.LocalPlayerGPS.WorldZ;
             data.playerPosition.insideDungeon = playerEnterExit.IsPlayerInsideDungeon;
             data.playerPosition.insideBuilding = playerEnterExit.IsPlayerInsideBuilding;
+            data.playerPosition.terrainSamplerName = DaggerfallUnity.Instance.TerrainSampler.ToString();
+            data.playerPosition.terrainSamplerVersion = DaggerfallUnity.Instance.TerrainSampler.Version;
 
             // Store building exterior door data
             if ((playerEnterExit.IsPlayerInsideBuilding))

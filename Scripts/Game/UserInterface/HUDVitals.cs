@@ -25,8 +25,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int nativeBarHeight = 32;
         const int borderSize = 10;
 
-        public float VitalsScale = 1.0f;
-
         VerticalProgress healthProgress = new VerticalProgress();
         VerticalProgress fatigueProgress = new VerticalProgress();
         VerticalProgress magickaProgress = new VerticalProgress();
@@ -83,8 +81,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 base.Update();
 
-                float barWidth = nativeBarWidth * VitalsScale;
-                float barHeight = nativeBarHeight * VitalsScale;
+                float barWidth = nativeBarWidth * Scale.x;
+                float barHeight = nativeBarHeight * Scale.y;
 
                 Size = new Vector2(barWidth * 5, barHeight);
 

@@ -23,6 +23,15 @@ namespace DaggerfallWorkshop
     /// </summary>
     public interface ITerrainSampler
     {
+        /// <summary>
+        /// Version of terrain sampler implementation.
+        /// This is serialized with save games to ensure player is being loaded
+        /// back into the same world on deserialization.
+        /// If you make a change to how heightmaps are generated, then you MUST tick up the version number.
+        /// Failed to do this can make player fall through world on load.
+        /// </summary>
+        int Version { get; }
+
         // Terrain heightmap dimension (+1 extra point for end vertex)
         // Example settings are 129, 257, 513, 1023, etc.
         // Do not set to a value less than MapsFile.WorldMapTileDim
@@ -58,6 +67,7 @@ namespace DaggerfallWorkshop
     {
         protected int defaultHeightmapDimension = 129;
 
+        public abstract int Version { get; }
         public virtual int HeightmapDimension { get; set; }
         public virtual float MaxTerrainHeight { get; set; }
         public virtual float OceanElevation { get; set; }

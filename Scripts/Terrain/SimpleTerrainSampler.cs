@@ -24,6 +24,11 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class SimpleTerrainSampler : TerrainSampler
     {
+        public override int Version
+        {
+            get { return 1; }
+        }
+
         public SimpleTerrainSampler()
         {
             HeightmapDimension = defaultHeightmapDimension;

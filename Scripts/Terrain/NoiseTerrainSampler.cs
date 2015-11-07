@@ -26,6 +26,11 @@ namespace DaggerfallWorkshop
     {
         public float Scale = 1;
 
+        public override int Version
+        {
+            get { return 1; }
+        }
+
         public NoiseTerrainSampler()
         {
             HeightmapDimension = defaultHeightmapDimension;

@@ -32,6 +32,11 @@ namespace ProjectIncreasedTerrainDistance
         // Max terrain height of this sampler implementation
         public const float maxTerrainHeight = 26115f;
 
+        public override int Version
+        {
+            get { return 1; }
+        }
+
         public ImprovedTerrainSampler()
         {
             HeightmapDimension = defaultHeightmapDimension;

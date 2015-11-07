@@ -32,7 +32,7 @@ WeaponSwingTriggerCount=3
 [Startup]
 StartCellX=109
 StartCellY=158
-StartInDungeon=False
+StartInDungeon=True
 
 [Enhancements]
 LypyL_GameConsole=True

@@ -93,14 +93,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void Update()
         {
-            // Update UI visibility and scale
+            // Update HUD visibility
             popupText.Enabled = ShowPopupText;
             crosshair.Enabled = ShowCrosshair;
-            crosshair.CrosshairScale = CrosshairScale;
             vitals.Enabled = ShowVitals;
-            vitals.VitalsScale = hudScale;
             compass.Enabled = ShowCompass;
-            compass.CompassScale = hudScale;
+
+            // Scale HUD elements
+            compass.Scale = NativePanel.LocalScale;
+            vitals.Scale = NativePanel.LocalScale;
+            crosshair.CrosshairScale = CrosshairScale;
 
             // Adjust vitals based on current player state
             if (playerEntity)
