@@ -181,18 +181,20 @@ namespace DaggerfallWorkshop.Game
             int worldZ,
             bool insideDungeon = false)
         {
-            RespawnPlayer(worldX, worldZ, insideDungeon, false);
+            RespawnPlayer(worldX, worldZ, insideDungeon, false, null, false);
         }
 
         /// <summary>
         /// Respawn player at the specified world coordinates, optionally inside dungeon or building.
+        /// Player can be forced to respawn to closest start marker or origin.
         /// </summary>
         public void RespawnPlayer(
             int worldX,
             int worldZ,
             bool insideDungeon,
             bool insideBuilding,
-            StaticDoor[] exteriorDoors = null)
+            StaticDoor[] exteriorDoors = null,
+            bool forceReposition = false)
         {
             // Mark any existing world data for destruction
             if (dungeon)
@@ -210,10 +212,10 @@ namespace DaggerfallWorkshop.Game
             // Start respawn process
             isRespawning = true;
             this.exteriorDoors = exteriorDoors;
-            StartCoroutine(Respawner(worldX, worldZ, insideDungeon, insideBuilding));
+            StartCoroutine(Respawner(worldX, worldZ, insideDungeon, insideBuilding, forceReposition));
         }
 
-        IEnumerator Respawner(int worldX, int worldZ, bool insideDungeon, bool insideBuilding)
+        IEnumerator Respawner(int worldX, int worldZ, bool insideDungeon, bool insideBuilding, bool forceReposition)
         {
             // Wait for end of frame so existing world data can be removed
             yield return new WaitForEndOfFrame();
@@ -235,7 +237,16 @@ namespace DaggerfallWorkshop.Game
             {
                 // Start outside
                 EnableExteriorParent();
-                world.TeleportToWorldCoordinates(worldX, worldZ);
+                if (!forceReposition)
+                {
+                    // Teleport to explicit world coordinates
+                    world.TeleportToWorldCoordinates(worldX, worldZ);
+                }
+                else
+                {
+                    // Force reposition to closest start marker if available
+                    world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
+                }
 
                 // Wait until world is ready
                 while (world.IsInit)
@@ -245,15 +256,19 @@ namespace DaggerfallWorkshop.Game
             {
                 // Start in dungeon
                 DFLocation location;
+                world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.None);
                 dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
                 StartDungeonInterior(location, true);
+                world.suppressWorld = true;
             }
             else if (hasLocation && insideBuilding && exteriorDoors != null)
             {
                 // Start in building
                 DFLocation location;
+                world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.None);
                 dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
                 StartBuildingInterior(location, exteriorDoors[0]);
+                world.suppressWorld = true;
             }
             else
             {

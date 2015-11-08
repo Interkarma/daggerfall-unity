@@ -330,6 +330,8 @@ namespace ProjectIncreasedTerrainDistance
 
             worldTerrainGameObject.transform.SetParent(goExterior.transform);
 
+            // Setup cameras here or stacked camera depth will conflict with main camera on new interior game
+            // e.g. start in dungeon, load interior save
             SetUpCameras();
 
             Terrain terrain = worldTerrainGameObject.GetComponent<Terrain>();
@@ -408,6 +410,8 @@ namespace ProjectIncreasedTerrainDistance
 
             if (GameObject.Find("ReflectionsMod") != null)
                 isActiveReflectionsMod = true;
+
+            SetUpCameras();
 
             if (worldTerrainGameObject == null) // lazy creation
             {

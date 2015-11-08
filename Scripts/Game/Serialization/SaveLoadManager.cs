@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         }
 
         #endregion
-
+        
         #region Singleton
 
         static SaveLoadManager instance = null;
@@ -576,24 +576,54 @@ namespace DaggerfallWorkshop.Game.Serialization
             else
                 hasExteriorDoors = true;
 
-            // Start the respawn process based on saved player location
-            if (!saveData.playerData.playerPosition.insideBuilding || !hasExteriorDoors)
+            // Raise reposition flag if terrain sampler changed
+            // This is required as changing terrain samplers will invalidate serialized player coordinates
+            bool repositionPlayer = false;
+            if (saveData.playerData.playerPosition.terrainSamplerName != DaggerfallUnity.Instance.TerrainSampler.ToString() ||
+                saveData.playerData.playerPosition.terrainSamplerVersion != DaggerfallUnity.Instance.TerrainSampler.Version)
             {
-                // Start outside or in dungeon
+                repositionPlayer = true;
+                if (DaggerfallUI.Instance.DaggerfallHUD != null)
+                    DaggerfallUI.Instance.DaggerfallHUD.PopupText.AddText("Terrain sampler changed. Repositioning player.");
+            }
+
+            // Raise reposition flag if player is supposed to start indoors but building has no doors
+            if (saveData.playerData.playerPosition.insideBuilding && !hasExteriorDoors)
+            {
+                repositionPlayer = true;
+                if (DaggerfallUI.Instance.DaggerfallHUD != null)
+                    DaggerfallUI.Instance.DaggerfallHUD.PopupText.AddText("Building has no exterior doors. Repositioning player.");
+            }
+
+            // Start the respawn process based on saved player location
+            if (saveData.playerData.playerPosition.insideDungeon && !repositionPlayer)
+            {
+                // Start in dungeon
                 playerEnterExit.RespawnPlayer(
                     saveData.playerData.playerPosition.worldPosX,
                     saveData.playerData.playerPosition.worldPosZ,
-                    saveData.playerData.playerPosition.insideDungeon);
+                    true);
             }
-            else
+            else if (saveData.playerData.playerPosition.insideBuilding && hasExteriorDoors && !repositionPlayer)
             {
-                // Start inside a building
+                // Start in building
                 playerEnterExit.RespawnPlayer(
                     saveData.playerData.playerPosition.worldPosX,
                     saveData.playerData.playerPosition.worldPosZ,
                     saveData.playerData.playerPosition.insideDungeon,
                     saveData.playerData.playerPosition.insideBuilding,
                     saveData.playerData.playerPosition.exteriorDoors);
+            }
+            else
+            {
+                // Start outside
+                playerEnterExit.RespawnPlayer(
+                    saveData.playerData.playerPosition.worldPosX,
+                    saveData.playerData.playerPosition.worldPosZ,
+                    false,
+                    false,
+                    null,
+                    repositionPlayer);
             }
 
             // Keep yielding frames until world is ready again

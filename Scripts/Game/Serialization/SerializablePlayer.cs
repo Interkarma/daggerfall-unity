@@ -150,11 +150,37 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.CurrentFatigue = data.playerEntity.currentFatigue;
             entity.CurrentMagicka = data.playerEntity.currentMagicka;
 
-            // Restore player position data
-            transform.position = data.playerPosition.position;
-            playerMouseLook.Yaw = data.playerPosition.yaw;
-            playerMouseLook.Pitch = data.playerPosition.pitch;
-            playerMotor.IsCrouching = data.playerPosition.isCrouching;
+            // Flag determines if player position is restored
+            bool restorePlayerPosition = true;
+
+            // Check exterior doors are included in save, we need these to exit building
+            bool hasExteriorDoors;
+            if (data.playerPosition.exteriorDoors == null || data.playerPosition.exteriorDoors.Length == 0)
+                hasExteriorDoors = false;
+            else
+                hasExteriorDoors = true;
+
+            // Lower player position flag if player outside and terrain sampler changed
+            if (data.playerPosition.terrainSamplerName != DaggerfallUnity.Instance.TerrainSampler.ToString() ||
+                data.playerPosition.terrainSamplerVersion != DaggerfallUnity.Instance.TerrainSampler.Version)
+            {
+                restorePlayerPosition = false;
+            }
+
+            // Lower player position flag if inside with no doors
+            if (data.playerPosition.insideBuilding && !hasExteriorDoors)
+            {
+                restorePlayerPosition = false;
+            }
+
+            // Restore player position
+            if (restorePlayerPosition)
+            {
+                transform.position = data.playerPosition.position;
+                playerMouseLook.Yaw = data.playerPosition.yaw;
+                playerMouseLook.Pitch = data.playerPosition.pitch;
+                playerMotor.IsCrouching = data.playerPosition.isCrouching;
+            }
         }
 
         #endregion
