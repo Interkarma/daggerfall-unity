@@ -27,6 +27,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         DaggerfallFont font;
         TextCursor textCursor = new TextCursor();
         string text = string.Empty;
+        int lastStringLength = 0;
+        Vector2 maxSize = Vector2.zero;
 
         public int MaxCharacters
         {
@@ -37,7 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public DaggerfallFont Font
         {
             get { return font; }
-            set { font = value; }
+            set { font = value; MaxSize = CalculateMaximumSize(); }
         }
 
         public string Text
@@ -46,10 +48,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { text = value; SetCursorPosition(text.Length); }
         }
 
+        public Vector2 MaxSize
+        {
+            get { return maxSize; }
+            set { maxSize = value; }
+        }
+
         public TextBox()
         {
             font = DaggerfallUI.DefaultFont;
             Components.Add(textCursor);
+            MaxSize = CalculateMaximumSize();
+            this.Size = CalculateCurrentSize();
         }
 
         public override void Update()
@@ -97,6 +107,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 text = text.Insert(cursorPosition, character.ToString());
                 MoveCursorRight();
             }
+
+            if (lastStringLength != text.Length)
+            {
+                this.Size = CalculateCurrentSize();
+            }
+
         }
 
         public override void Draw()
@@ -146,6 +162,47 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             return font.GetCharacterWidth(text, cursorPosition);
         }
+
+        //calculate the size required for max chars using widest glyphs
+        private Vector2 CalculateMaximumSize()
+        {
+            int width = 0;
+            for (int i = 0; i < 128; i++)
+            {
+                if (!font.HasGlyph(i))
+                    continue;
+
+                PixelFont.GlyphInfo glyph = font.GetGlyph(i);
+                if (glyph.width > width)
+                {
+                    width = glyph.width;
+                }
+            }
+
+            int totalWidth = (width + font.GlyphSpacing) * MaxCharacters;
+            return new Vector2(totalWidth, font.GlyphHeight);
+        }
+
+        //calculate the current size
+        private Vector2 CalculateCurrentSize()
+        {
+            int width = 0;
+            byte[] asciiBytes;
+            asciiBytes = Encoding.ASCII.GetBytes(text);
+
+            for (int i = 0; i < asciiBytes.Length; i++)
+            {
+                // Invalid ASCII bytes are cast to a space character
+                if (!font.HasGlyph(asciiBytes[i]))
+                    asciiBytes[i] = PixelFont.SpaceASCII;
+
+                // Calculate total width
+                PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
+                width += glyph.width + font.GlyphSpacing;
+            }
+            return new Vector2(width, font.GlyphHeight);
+        }
+
 
         #endregion
     }

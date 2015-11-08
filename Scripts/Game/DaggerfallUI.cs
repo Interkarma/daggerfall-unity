@@ -192,26 +192,26 @@ namespace DaggerfallWorkshop.Game
             switch (uiManager.GetMessage())
             {
                 case DaggerfallUIMessages.dfuiInitGame:
-                    GameManager.Instance.PauseGame(true);
+                    //GameManager.Instance.PauseGame(true);
                     uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
                     if (enableVideos)
                         uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, splashVideo));
                     break;
                 case DaggerfallUIMessages.dfuiInitGameFromDeath:
-                    GameManager.Instance.PauseGame(true);
+                    //GameManager.Instance.PauseGame(true);
                     uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
                     if (enableVideos)
                         uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, deathVideo));
                     break;
                 case DaggerfallUIMessages.dfuiStartNewGameWizard:
-                    uiManager.PushWindow(new StartNewGameWizard(uiManager));
+                    //uiManager.PushWindow(new StartNewGameWizard(uiManager));
                     break;
                 case DaggerfallUIMessages.dfuiOpenPauseOptionsDialog:
-                    GameManager.Instance.PauseGame(true);
+                    //GameManager.Instance.PauseGame(true);
                     uiManager.PushWindow(dfPauseOptions);
                     break;
                 case DaggerfallUIMessages.dfuiOpenCharacterSheetDialog:
-                    GameManager.Instance.PauseGame(true);
+                    //GameManager.Instance.PauseGame(true);
                     uiManager.PushWindow(dfCharacterSheet);
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
