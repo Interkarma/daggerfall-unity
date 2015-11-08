@@ -283,6 +283,9 @@ namespace DaggerfallWorkshop
                 reader.Close();
                 usingFallback = true;
                 loadedFallbackSettings = true;
+                //Create new settings.ini in data directory from fallback.ini if settings.ini not found
+                if (!Application.isEditor && loadedFallbackSettings && !loadedUserSettings)
+                    File.WriteAllBytes(Path.Combine(Application.dataPath, settingsIniName), asset.bytes);
             }
 
             // Report on primary ini file
