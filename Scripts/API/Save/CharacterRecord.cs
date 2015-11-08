@@ -142,17 +142,15 @@ namespace DaggerfallConnect.Save
         Genders ReadGender(BinaryReader reader)
         {
             byte value = reader.ReadByte();
-            switch(value)
-            {
-                case 0:
-                    return Genders.Male;
-                case 40:
-                    return Genders.Male;
-                case 1:
-                    return Genders.Female;
-                default:
-                    throw new Exception("Unknown gender value " + value);
-            }
+
+            // Daggerfall uses a wide range of gender values
+            // It is currently unknown what these values represent
+            // However it seems that first bit always maps to
+            // 0 for male and 1 for female
+            if ((value & 1) == 1)
+                return Genders.Female;
+            else
+                return Genders.Male;
         }
 
         UInt16 ReadTransportationFlags(BinaryReader reader)
