@@ -17,6 +17,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop
 {
@@ -25,6 +26,10 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaggerfallAction : MonoBehaviour
     {
+        public const int TYPE_11_TEXT_INDEX = 8600;
+        public const int TYPE_12_TEXT_INDEX = 5400;
+        public const int ANSWER_TEXT_INDEX = 5656;
+
         public bool ActionEnabled = false;                                          // Enable/disable action - not currently being used, but some objects are single activate
         public bool PlaySound = true;                                               // Play sound if present (ActionSound > 0)
         public string ModelDescription = string.Empty;                              // Description string for this model
@@ -46,6 +51,20 @@ namespace DaggerfallWorkshop
 
         AudioSource audioSource;
         ActionState currentState;
+
+        //lookup for action type12, temp. storing them here
+        static Dictionary<int, string[]> actionTypeTwelveLookup = new Dictionary<int, string[]>()
+        {
+            {5404, new string[]{"bow","bow arrow","crossbow","bows","crossbows"}},   //sheogorath answer index = 5660
+            {5406, new string[]{"one","1"}},                                         //blind god, answer index = 5662
+            {5423, new string[]{"benefactor","the benefactor"}},                      //benefactor answer index = 5679
+            {5424, new string[]{"shut up","shutup","shaddup"}},                         //shaddup! answer index = 5680
+            {5464, new string[]{"yes","oK","i agree","y","agreed","done","fine","okay","sure","yep"}}, //daggerfall guard answer index = 5720
+        };
+
+        public string[] type12_answers;//answers for action type 12 dialogue questions
+
+
 
         public long LoadID
         {
@@ -95,6 +114,8 @@ namespace DaggerfallWorkshop
         {DFBlock.RdbActionFlags.NegativeZ,  new ActionDelegate(Move)},
         {DFBlock.RdbActionFlags.PositiveY,  new ActionDelegate(Move)},
         {DFBlock.RdbActionFlags.NegativeY,  new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.ShowText,   new ActionDelegate(ShowText)},
+        {DFBlock.RdbActionFlags.ShowTextWithInput,   new ActionDelegate(ShowTextWithInput)},
         {DFBlock.RdbActionFlags.Teleport,   new ActionDelegate(Teleport)},
         {DFBlock.RdbActionFlags.LockDoor,   new ActionDelegate(LockDoor)},
         {DFBlock.RdbActionFlags.UnlockDoor, new ActionDelegate(UnlockDoor)},
@@ -154,15 +175,17 @@ namespace DaggerfallWorkshop
                 d = actionFunctions[ActionFlag];
             }
 
-            //always activate next && play sound, even if unknown action type. Many will just activate next actions
-            //this will have to be updated in future, as a couple actions (like Text w/ input) only trigger next conditionally, but it works for now
-            ActivateNext();
+
+            if (ActionFlag != DFBlock.RdbActionFlags.ShowTextWithInput)
+                ActivateNext();
+
             if (PlaySound && Index > 0 && audioSource)
             {
                 audioSource.Play();
             }
 
-            //if failed to get valid delegate from lookup, stop
+            //stop if failed to get valid delegate from lookup - ideally this check should be done before playing
+            //sound & activating next, but for testing purposes is done after
             if (d == null)
             {
                 DaggerfallUnity.LogMessage(string.Format("No delegate found for this action flag: {0}", ActionFlag));
@@ -287,8 +310,33 @@ namespace DaggerfallWorkshop
             }
             else
                 return true;
-
         }
+
+        /// <summary>
+        /// Handles the input return event for action type 12
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="userInput"></param>
+        public void UserInputHandler(DaggerfallInputMessageBox sender, string userInput)
+        {
+            if (type12_answers == null || type12_answers.Length == 0)
+            {
+                DaggerfallUnity.LogMessage(string.Format(("No answers to check for: {0} {1}"), this.gameObject.name, this.Index));
+                return;
+            }
+            userInput = userInput.ToLower();
+            for (int i = 0; i < type12_answers.Length; i++)
+            {
+                if (userInput == type12_answers[i].ToLower())
+                {
+                    ActivateNext();
+                    return;
+                }
+            }
+            //Debug.Log("no matching answer found for: " + userInput);
+        }
+
+
         #endregion
 
         #region Actions
@@ -310,6 +358,46 @@ namespace DaggerfallWorkshop
             }
 
         }
+
+        /// <summary>
+        /// 11
+        /// Pop-up text
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="thisAction"></param>
+        public static void ShowText(GameObject obj, DaggerfallAction thisAction)
+        {
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallWorkshop.Game.DaggerfallUI.UIManager, null);
+            messageBox.SetTextTokens(thisAction.Index + TYPE_11_TEXT_INDEX);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.Show();
+        }
+
+        /// <summary>
+        /// 12
+        /// Pop-up text that returns player input
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="thisAction"></param>
+        public static void ShowTextWithInput(GameObject obj, DaggerfallAction thisAction)
+        {
+            int textID = thisAction.Index + TYPE_12_TEXT_INDEX;
+            if (actionTypeTwelveLookup.ContainsKey(textID))
+            {
+                thisAction.type12_answers = actionTypeTwelveLookup[textID];
+            }
+            else
+            {
+                Debug.LogError(string.Format("Error: invalid key: {0} for action type 12, couldn't get answer(s)", textID));//todo - display error message
+            }
+            DaggerfallInputMessageBox inputBox = new DaggerfallInputMessageBox(DaggerfallWorkshop.Game.DaggerfallUI.UIManager, textID, 20, "\t> ", true, false, null);
+            inputBox.ParentPanel.BackgroundColor = Color.clear;
+            inputBox.OnGotUserInput += thisAction.UserInputHandler;
+            inputBox.Show();
+        }
+
+
 
 
 

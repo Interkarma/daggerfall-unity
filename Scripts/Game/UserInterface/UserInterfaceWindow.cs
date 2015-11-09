@@ -22,6 +22,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         UserInterfaceWindow Value { get; }
         bool Enabled { get; set; }
+        bool PauseWhileOpen { get; set; }
         Panel ParentPanel { get; }
         void Update();
         void Draw();
@@ -38,6 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected Panel parentPanel = new Panel();      // Parent panel fits to entire viewport
         protected IUserInterfaceManager uiManager;
         protected bool enabled = true;
+        protected bool pauseWhileOpened = true;
 
         public UserInterfaceWindow Value
         {
@@ -111,6 +113,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public void PopWindow()
         {
             uiManager.PopWindow();
+        }
+
+        public virtual bool PauseWhileOpen
+        {
+            get { return pauseWhileOpened; }
+            set { pauseWhileOpened = value; }
         }
 
         //internal protected virtual void WindowChanged(object sender, EventArgs e)
