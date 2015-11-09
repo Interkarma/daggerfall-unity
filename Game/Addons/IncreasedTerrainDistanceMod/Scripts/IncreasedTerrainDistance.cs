@@ -549,10 +549,6 @@ namespace ProjectIncreasedTerrainDistance
             stackedNearCamera.depth = stackedNearCameraDepth;
             //Camera.main.depth = 3; // renders over stacked camera
 
-            // Copy rendering path from main camera
-            stackedNearCamera.renderingPath = Camera.main.renderingPath;
-            stackedCamera.renderingPath = Camera.main.renderingPath;
-
             cameraRenderSkyboxToTexture.depth = cameraRenderSkyboxToTextureDepth; // make sure to render first
             cameraRenderSkyboxToTexture.renderingPath = stackedCamera.renderingPath;
 
