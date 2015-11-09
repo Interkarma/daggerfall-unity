@@ -72,11 +72,27 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 careerIndex = (int)mobileEnemy.ID;
                 career = GetMonsterCareerTemplate((MonsterCareers)careerIndex);
+                stats.SetFromCareer(career);
+
+                // Enemy monster has predefined level and health
+                level = career.HitPointsPerLevelOrMonsterLevel;
+                maxHealth = UnityEngine.Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
             }
             else if (entityType == EntityTypes.EnemyClass)
             {
                 careerIndex = (int)mobileEnemy.ID - 128;
                 career = GetClassCareerTemplate((ClassCareers)careerIndex);
+                stats.SetFromCareer(career);
+
+                // Enemy class is levelled to player and uses same health rules
+                level = GameManager.Instance.PlayerEntity.Level;
+                maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
+
+                // Enemy class damage is temporarily set by a fudged level multiplier
+                // This will change once full entity setup and items are available
+                const float damageMultiplier = 4f;
+                mobileEnemy.MinDamage = (int)(level * damageMultiplier);
+                mobileEnemy.MaxDamage = (int)((level + 2) * damageMultiplier);
             }
             else
             {
@@ -87,11 +103,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
             this.mobileEnemy = mobileEnemy;
             this.entityType = entityType;
-
             name = career.Name;
-            stats.SetFromCareer(career);
-            level = career.HitPointsPerLevelOrMonsterLevel;
-            maxHealth = UnityEngine.Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
+            
             FillVitalSigns();
         }
 

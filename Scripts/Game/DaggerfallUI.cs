@@ -222,6 +222,14 @@ namespace DaggerfallWorkshop.Game
 
         #region Helpers
 
+        public static void AddHUDText(string message)
+        {
+            if (Instance.dfHUD != null)
+            {
+                Instance.dfHUD.PopupText.AddText(message);
+            }
+        }
+
         public static void PostMessage(string message)
         {
             if (Instance.uiManager != null)

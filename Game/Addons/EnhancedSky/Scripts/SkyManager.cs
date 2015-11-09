@@ -56,7 +56,7 @@ namespace EnhancedSky
         private Material _cloudMat;
         private Material _masserMat;
         private Material _secundaMat;
-        private Material _starsMat;
+        //private Material _starsMat;       // Unused
         private Material _skyObjMat;
         private Shader _depthMaskShader;
         private Shader _UnlitAlphaFadeShader;

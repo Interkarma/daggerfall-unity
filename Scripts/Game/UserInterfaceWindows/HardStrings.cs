@@ -25,5 +25,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string loadGame = "Load Game";
         public const string thingJustDied = "%s just died.";
         public const string gameSaved = "Game saved.";
+        public const string thisHouseHasNothingOfValue = "This house has nothing of value.";
     }
 }

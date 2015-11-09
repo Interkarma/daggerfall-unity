@@ -321,7 +321,19 @@ namespace DaggerfallWorkshop.Game
             GameObject newInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex));
             newInterior.hideFlags = defaultHideFlags;
             interior = newInterior.AddComponent<DaggerfallInterior>();
-            interior.DoLayout(doorOwner, door, climateBase);
+
+            // Try to layout interior
+            // If we fail for any reason, use that old chestnut "this house has nothing of value"
+            try
+            {
+                interior.DoLayout(doorOwner, door, climateBase);
+            }
+            catch
+            {
+                DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.thisHouseHasNothingOfValue);
+                Destroy(newInterior);
+                return;
+            }
 
             // Position interior directly inside of exterior
             // This helps with finding closest enter/exit point relative to player position
