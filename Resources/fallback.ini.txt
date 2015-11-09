@@ -9,6 +9,7 @@ VSync=True
 Fullscreen=True
 FieldOfView=65
 MainFilterMode=0
+UseLegacyDeferred=False
 
 [ChildGuard]
 NoPlayerNudity=True

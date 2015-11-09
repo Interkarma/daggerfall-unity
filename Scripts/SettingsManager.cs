@@ -106,6 +106,12 @@ namespace DaggerfallWorkshop
             set { SetInt(sectionVideo, "MainFilterMode", value); }
         }
 
+        public bool UseLegacyDeferred
+        {
+            get { return GetBool(sectionVideo, "UseLegacyDeferred"); }
+            set { SetBool(sectionVideo, "UseLegacyDeferred", value); }
+        }
+
         // [ChildGuard]
 
         public bool NoPlayerNudity
