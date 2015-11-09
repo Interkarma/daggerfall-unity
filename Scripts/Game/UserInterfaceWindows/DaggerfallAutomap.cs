@@ -26,7 +26,7 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// Implements character sheet window.
+    /// Implements indoor and dungeon automap window.
     /// </summary>
     public class DaggerfallAutomapWindow : DaggerfallPopupWindow
     {
@@ -36,12 +36,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         enum AutomapViewMode { View2D = 0, View3D = 1};
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
 
+        Panel panelAutomap = null;
+
         Texture2D nativeTexture;
         Texture2D nativeTextureGrid2D;
         Texture2D nativeTextureGrid3D;
 
         Color[] pixelsGrid2D;
         Color[] pixelsGrid3D;
+
+        Camera cameraAutomap = null;
+        RenderTexture renderTextureAutomap = null;
+        Texture2D textureAutomap = null;
+
+
+        int renderTextureAutomapWidth;
+        int renderTextureAutomapHeight;
+        int renderTextureAutomapDepth = 16;
 
         public DaggerfallAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -95,18 +106,77 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
+
+            if (!cameraAutomap)
+            {
+                GameObject gameObjectCameraAutomap = new GameObject("cameraAutomap");
+                cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
+                cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
+                cameraAutomap.cullingMask = 1;
+                //cameraAutomap.depth = 10;
+                cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
+                cameraAutomap.nearClipPlane = 0.7f;
+                cameraAutomap.farClipPlane = 1000.0f;
+                //cameraAutomap.orthographic = true;
+
+                //cameraAutomap.transform.position = GameObject.Find("PlayerAdvanced").transform.position;
+                //cameraAutomap.transform.rotation = GameObject.Find("PlayerAdvanced").transform.rotation;
+            }
+
+            renderTextureAutomapWidth = ParentPanel.InteriorWidth - 80;
+            renderTextureAutomapHeight = ParentPanel.InteriorHeight - 100;
+
+            if (!renderTextureAutomap)
+                renderTextureAutomap = new RenderTexture(renderTextureAutomapWidth, renderTextureAutomapHeight, renderTextureAutomapDepth);
+            cameraAutomap.targetTexture = renderTextureAutomap;
+
+            Rect position = new Rect(40f, 10f, (float)renderTextureAutomapWidth, (float)renderTextureAutomapHeight);
+            if (panelAutomap == null)
+                panelAutomap = DaggerfallUI.AddPanel(position, ParentPanel);
+
+            if (!textureAutomap)
+                textureAutomap = new Texture2D(renderTextureAutomap.width, renderTextureAutomap.height, TextureFormat.ARGB32, false);
+
+            updateAutoMapView();
         }
 
+        
         public override void OnPush()
         {
+
             if (IsSetup)
             {
-
+                
             }
+            updateAutoMapView();
         }
+
+        /*
+        public override void Update()
+        {
+            base.Update();
+            //updateAutoMapView();
+        }
+        */     
 
         #region Private Methods
 
+        private void updateAutoMapView()
+        {
+            if ((!cameraAutomap) || (!renderTextureAutomap))
+                return;
+
+            cameraAutomap.transform.position = Camera.main.transform.position - Camera.main.transform.forward * 10.0f;
+            cameraAutomap.transform.rotation = Camera.main.transform.rotation;
+
+            cameraAutomap.Render();
+
+            RenderTexture.active = renderTextureAutomap;
+            textureAutomap.ReadPixels(new Rect(0, 0, renderTextureAutomap.width, renderTextureAutomap.height), 0, 0);
+            textureAutomap.Apply(false);
+
+            panelAutomap.BackgroundTexture = textureAutomap;
+        }
 
 
         #endregion
