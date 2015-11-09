@@ -679,49 +679,48 @@ namespace Wenzil.Console
                         return "Invalid location index";
                     else
                     {
-                        switch(n) 
+                        switch (n)
                         {
                             case 0:
                                 int xpos, ypos;
                                 while (true)
                                 {
-                                    xpos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelX-1);
-                                    ypos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelY-1);
+                                    xpos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelX - 1);
+                                    ypos = UnityEngine.Random.Range(0, MapsFile.MaxMapPixelY - 1);
                                     DaggerfallWorkshop.Utility.ContentReader.MapSummary mapSummary;
                                     if (DaggerfallWorkshop.DaggerfallUnity.Instance.ContentReader.HasLocation(xpos, ypos, out mapSummary))
                                     {
-                                        streamingWorld.TeleportToCoordinates(xpos + 1, ypos - 1); // random location
-                                        break;
+                                        streamingWorld.TeleportToCoordinates(xpos + 1, ypos - 1); // random location - locations always seem to be one pixel to the northern east - so compensate for this (since locations are never at the border - there should not occur a index out of bounds...)
+                                        return (string.Format("Teleported player to location at: {0}, {1}", xpos, ypos));
                                     }
-                                }                                
-                                break;
+                                }
                             case 1:
-                                streamingWorld.TeleportToCoordinates(207, 213); // Daggerfall/Daggerfall  
-                                break;
+                                streamingWorld.TeleportToCoordinates(207, 213, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Daggerfall/Daggerfall");
                             case 2:
-                                streamingWorld.TeleportToCoordinates(859, 244); // Wayrest/Wayrest
-                                break;
+                                streamingWorld.TeleportToCoordinates(859, 244, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Wayrest/Wayrest");
                             case 3:
-                                streamingWorld.TeleportToCoordinates(397, 343); // Sentinel/Sentinel
-                                break;
+                                streamingWorld.TeleportToCoordinates(397, 343, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Sentinel/Sentinel");
                             case 4:
-                                streamingWorld.TeleportToCoordinates(892, 146); // Orsinium Area/Orsinium
-                                break;
+                                streamingWorld.TeleportToCoordinates(892, 146, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Orsinium Area/Orsinium");
                             case 5:
-                                streamingWorld.TeleportToCoordinates(67, 119); // Tulune/The Old Copperham Place
-                                break;
+                                streamingWorld.TeleportToCoordinates(67, 119, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Tulune/The Old Copperham Place");
                             case 6:
-                                streamingWorld.TeleportToCoordinates(254, 408); // Pothago/The Stronghold of Cirden
-                                break;
+                                streamingWorld.TeleportToCoordinates(254, 408, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Pothago/The Stronghold of Cirden");
                             case 7:
-                                streamingWorld.TeleportToCoordinates(109, 158); // Daggerfall/Privateer's Hold
-                                break;
+                                streamingWorld.TeleportToCoordinates(109, 158, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Daggerfall/Privateer's Hold");
                             case 8:
-                                streamingWorld.TeleportToCoordinates(860, 245); // Wayrest/Merwark Hollow
-                                break;
+                                streamingWorld.TeleportToCoordinates(860, 245, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Wayrest/Merwark Hollow");
                             case 9:
-                                streamingWorld.TeleportToCoordinates(718, 204); // Isle of Balfiera/Direnni Tower
-                                break;
+                                streamingWorld.TeleportToCoordinates(718, 204, StreamingWorld.RepositionMethods.RandomStartMarker);
+                                return ("Teleported player to Isle of Balfiera/Direnni Tower");
                             default:
                                 break;
                         }
@@ -804,10 +803,9 @@ namespace Wenzil.Console
                 {
                     try
                     {
-                        playerObj.transform.position = playerEnterExit.Dungeon.EnterMarker.transform.position;
-                        return "Transitioning to door positon";
-
-
+                        // Teleport to StartMarker at dungeon entrance
+                        playerObj.transform.position = playerEnterExit.Dungeon.StartMarker.transform.position;
+                        return "Transitioning to door position";
                     }
                     catch
                     {
@@ -816,7 +814,6 @@ namespace Wenzil.Console
 
                 }
             }
-
         }
 
 
