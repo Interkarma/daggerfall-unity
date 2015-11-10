@@ -103,6 +103,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
             gridButton.OnMouseClick += GridButton_OnMouseClick;
 
+            // forward button
+            Button forwardButton = DaggerfallUI.AddButton(new Rect(105, 171, 21, 19), NativePanel);
+            forwardButton.OnMouseClick += ForwardButton_OnMouseClick;
+
+            // backward button
+            Button backwardButton = DaggerfallUI.AddButton(new Rect(126, 171, 21, 19), NativePanel);
+            backwardButton.OnMouseClick += BackwardButton_OnMouseClick;
+
+            // left button
+            Button leftButton = DaggerfallUI.AddButton(new Rect(149, 171, 21, 19), NativePanel);
+            leftButton.OnMouseClick += LeftButton_OnMouseClick;
+            
+            // right button
+            Button rightButton = DaggerfallUI.AddButton(new Rect(170, 171, 21, 19), NativePanel);
+            rightButton.OnMouseClick += RightButton_OnMouseClick;
+
+            // rotate left button
+            Button rotateLeftButton = DaggerfallUI.AddButton(new Rect(193, 171, 21, 19), NativePanel);
+            rotateLeftButton.OnMouseClick += RotateLeftButton_OnMouseClick;
+
+            // rotate right button
+            Button rotateRightButton = DaggerfallUI.AddButton(new Rect(214, 171, 21, 19), NativePanel);
+            rotateRightButton.OnMouseClick += RotateRightButton_OnMouseClick;
+
+            // up button
+            Button upButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
+            upButton.OnMouseClick += UpButton_OnMouseClick;
+
+            // down button
+            Button downButton = DaggerfallUI.AddButton(new Rect(258, 171, 21, 19), NativePanel);
+            downButton.OnMouseClick += DownButton_OnMouseClick;
+
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
@@ -123,20 +155,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 //cameraAutomap.transform.rotation = GameObject.Find("PlayerAdvanced").transform.rotation;
             }
 
-            renderTextureAutomapWidth = ParentPanel.InteriorWidth - 80;
-            renderTextureAutomapHeight = ParentPanel.InteriorHeight - 100;
+            renderTextureAutomapWidth = ParentPanel.InteriorWidth - 19;
+            renderTextureAutomapHeight = ParentPanel.InteriorHeight - 98;
 
             if (!renderTextureAutomap)
                 renderTextureAutomap = new RenderTexture(renderTextureAutomapWidth, renderTextureAutomapHeight, renderTextureAutomapDepth);
             cameraAutomap.targetTexture = renderTextureAutomap;
 
-            Rect position = new Rect(40f, 10f, (float)renderTextureAutomapWidth, (float)renderTextureAutomapHeight);
+            Rect position = new Rect(9f, 2f, (float)renderTextureAutomapWidth, (float)renderTextureAutomapHeight);
             if (panelAutomap == null)
                 panelAutomap = DaggerfallUI.AddPanel(position, ParentPanel);
 
             if (!textureAutomap)
                 textureAutomap = new Texture2D(renderTextureAutomap.width, renderTextureAutomap.height, TextureFormat.ARGB32, false);
 
+            setToDefaultCameraPosition();
             updateAutoMapView();
         }
 
@@ -148,7 +181,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 
             }
-            updateAutoMapView();
+            Debug.Log("here");
+            if (cameraAutomap)
+            {
+                setToDefaultCameraPosition();
+                updateAutoMapView();
+            }
         }
 
         /*
@@ -161,13 +199,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
+        private void setToDefaultCameraPosition()
+        {
+            Vector3 cameraForwardInXZ = new Vector3(Camera.main.transform.forward.x, 0.0f, Camera.main.transform.forward.z);
+            cameraAutomap.transform.position = Camera.main.transform.position - cameraForwardInXZ * 10.0f + Vector3.up * 8.0f;
+            //cameraAutomap.transform.rotation = Camera.main.transform.rotation;
+            cameraAutomap.transform.LookAt(Camera.main.transform.position);
+        }
+
         private void updateAutoMapView()
         {
             if ((!cameraAutomap) || (!renderTextureAutomap))
                 return;
-
-            cameraAutomap.transform.position = Camera.main.transform.position - Camera.main.transform.forward * 10.0f;
-            cameraAutomap.transform.rotation = Camera.main.transform.rotation;
 
             cameraAutomap.Render();
 
@@ -204,6 +247,54 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 default:
                     break;
             }
+        }
+
+        private void ForwardButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {            
+            cameraAutomap.transform.position += new Vector3(0.0f, 0.0f, 1.0f);
+            updateAutoMapView();
+        }
+
+        private void BackwardButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            cameraAutomap.transform.position += new Vector3(0.0f, 0.0f, -1.0f);
+            updateAutoMapView();
+        }
+
+        private void LeftButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            cameraAutomap.transform.position += new Vector3(-1.0f, 0.0f, 0.0f);
+            updateAutoMapView();
+        }
+
+        private void RightButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            cameraAutomap.transform.position += new Vector3(1.0f, 0.0f, 0.0f);
+            updateAutoMapView();
+        }
+
+        private void RotateLeftButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, -10.0f);
+            updateAutoMapView();
+        }
+
+        private void RotateRightButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, +10.0f);
+            updateAutoMapView();
+        }
+
+        private void UpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            cameraAutomap.transform.position += new Vector3(0.0f, 1.0f, 0.0f);
+            updateAutoMapView();
+        }
+
+        private void DownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            cameraAutomap.transform.position += new Vector3(0.0f, -1.0f, 0.0f);
+            updateAutoMapView();
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
