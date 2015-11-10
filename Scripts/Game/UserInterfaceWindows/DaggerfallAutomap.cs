@@ -54,6 +54,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int renderTextureAutomapHeight;
         int renderTextureAutomapDepth = 16;
 
+        Vector3 backupCameraPositionViewFromTop;
+        Quaternion backupCameraRotationViewFromTop;
+        Vector3 backupCameraPositionView3D;
+        Quaternion backupCameraRotationView3D;
+
+        Vector3 biasFromInitialPositionViewFromTop;
+        Vector3 biasFromInitialPositionView3D;
+
         public DaggerfallAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
@@ -149,6 +157,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 1000.0f;
+                cameraAutomap.fieldOfView = 35.0f;
                 //cameraAutomap.orthographic = true;
 
                 //cameraAutomap.transform.position = GameObject.Find("PlayerAdvanced").transform.position;
@@ -169,42 +178,108 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!textureAutomap)
                 textureAutomap = new Texture2D(renderTextureAutomap.width, renderTextureAutomap.height, TextureFormat.ARGB32, false);
 
-            setToDefaultCameraPosition();
+            resetCameraPosition();
+            resetBiasFromInitialPosition();
             updateAutoMapView();
         }
 
         
         public override void OnPush()
         {
-
             if (IsSetup)
             {
-                
-            }
-            Debug.Log("here");
-            if (cameraAutomap)
-            {
-                setToDefaultCameraPosition();
-                updateAutoMapView();
+                if (cameraAutomap)
+                {
+                    resetCameraPosition();
+                    resetBiasFromInitialPosition();
+                    updateAutoMapView();
+                }              
             }
         }
-
-        /*
-        public override void Update()
-        {
-            base.Update();
-            //updateAutoMapView();
-        }
-        */     
 
         #region Private Methods
 
-        private void setToDefaultCameraPosition()
+        private void resetCameraPosition()
+        {
+            // get initial values for camera transform for view from top
+            resetCameraTransformViewFromTop();
+            saveCameraTransformViewFromTop();
+            
+            // get initial values for camera transform for 3D view
+            resetCameraTransformView3D();
+            saveCameraTransformView3D();
+
+            // then set camera transform according to grid-button (view mode) setting
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    resetCameraTransformViewFromTop();
+                    break;
+                case AutomapViewMode.View3D:
+                    resetCameraTransformView3D();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void resetBiasFromInitialPosition()
+        {
+            biasFromInitialPositionViewFromTop = new Vector3(0.0f, 0.0f, 0.0f);
+            biasFromInitialPositionView3D = new Vector3(0.0f, 0.0f, 10.0f);
+        }
+
+        private void shiftBiasFromInitialPosition(Vector3 translation)
+        {
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    biasFromInitialPositionViewFromTop += translation;
+                    break;
+                case AutomapViewMode.View3D:
+                    biasFromInitialPositionView3D += translation;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void resetCameraTransformViewFromTop()
+        {
+            cameraAutomap.transform.position = Camera.main.transform.position + Vector3.up * 20.0f;
+            cameraAutomap.transform.LookAt(Camera.main.transform.position);            
+        }
+
+        private void resetCameraTransformView3D()
         {
             Vector3 cameraForwardInXZ = new Vector3(Camera.main.transform.forward.x, 0.0f, Camera.main.transform.forward.z);
             cameraAutomap.transform.position = Camera.main.transform.position - cameraForwardInXZ * 10.0f + Vector3.up * 8.0f;
             //cameraAutomap.transform.rotation = Camera.main.transform.rotation;
             cameraAutomap.transform.LookAt(Camera.main.transform.position);
+        }
+
+        private void saveCameraTransformViewFromTop()
+        {
+            backupCameraPositionViewFromTop = cameraAutomap.transform.position;
+            backupCameraRotationViewFromTop = cameraAutomap.transform.rotation;
+        }
+
+        private void saveCameraTransformView3D()
+        {
+            backupCameraPositionView3D = cameraAutomap.transform.position;
+            backupCameraRotationView3D = cameraAutomap.transform.rotation;
+        }
+
+        private void restoreOldCameraTransformViewFromTop()
+        {
+            cameraAutomap.transform.position = backupCameraPositionViewFromTop;
+            cameraAutomap.transform.rotation = backupCameraRotationViewFromTop;
+        }
+
+        private void restoreOldCameraTransformView3D()
+        {
+            cameraAutomap.transform.position = backupCameraPositionView3D;
+            cameraAutomap.transform.rotation = backupCameraRotationView3D;
         }
 
         private void updateAutoMapView()
@@ -238,11 +313,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // update grid graphics
                     nativeTexture.SetPixels(78, nativeTexture.height - 171 - 19, 27, 19, pixelsGrid2D);
                     nativeTexture.Apply(false);
+                    saveCameraTransformView3D();
+                    restoreOldCameraTransformViewFromTop();
+                    updateAutoMapView();
                     break;
                 case AutomapViewMode.View3D:
                     // update grid graphics
                     nativeTexture.SetPixels(78, nativeTexture.height - 171 - 19, 27, 19, pixelsGrid3D);
                     nativeTexture.Apply(false);
+                    saveCameraTransformViewFromTop();
+                    restoreOldCameraTransformView3D();
+                    updateAutoMapView();
                     break;
                 default:
                     break;
@@ -250,50 +331,90 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         private void ForwardButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {            
-            cameraAutomap.transform.position += new Vector3(0.0f, 0.0f, 1.0f);
+        {
+            Vector3 translation = -cameraAutomap.transform.forward * 1.0f;
+            translation.y = 0.0f; // comment this out for movement along camera optical axis
+            cameraAutomap.transform.position += translation;
+            shiftBiasFromInitialPosition(translation);
             updateAutoMapView();
         }
 
         private void BackwardButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            cameraAutomap.transform.position += new Vector3(0.0f, 0.0f, -1.0f);
+            Vector3 translation = cameraAutomap.transform.forward * 1.0f;
+            translation.y = 0.0f; // comment this out for movement along camera optical axis
+            cameraAutomap.transform.position += translation;
+            shiftBiasFromInitialPosition(translation);
             updateAutoMapView();
         }
 
         private void LeftButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            cameraAutomap.transform.position += new Vector3(-1.0f, 0.0f, 0.0f);
+            Vector3 translation = cameraAutomap.transform.right * 1.0f;
+            translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
+            cameraAutomap.transform.position += translation;
+            shiftBiasFromInitialPosition(translation);
             updateAutoMapView();
         }
 
         private void RightButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            cameraAutomap.transform.position += new Vector3(1.0f, 0.0f, 0.0f);
+            Vector3 translation = -cameraAutomap.transform.right * 1.0f;
+            translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
+            cameraAutomap.transform.position += translation;
+            shiftBiasFromInitialPosition(translation);
             updateAutoMapView();
         }
 
         private void RotateLeftButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, -10.0f);
+            Vector3 biasFromInitialPosition;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    biasFromInitialPosition = biasFromInitialPositionViewFromTop;
+                    break;
+                case AutomapViewMode.View3D:
+                    biasFromInitialPosition = biasFromInitialPositionView3D;
+                    break;
+                default:
+                    biasFromInitialPosition = Vector3.zero;
+                    break;
+            }
+            cameraAutomap.transform.RotateAround(Camera.main.transform.position + biasFromInitialPosition, -Vector3.up, -10.0f);
+            //cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, -10.0f);
             updateAutoMapView();
         }
 
         private void RotateRightButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, +10.0f);
+            Vector3 biasFromInitialPosition;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    biasFromInitialPosition = biasFromInitialPositionViewFromTop;
+                    break;
+                case AutomapViewMode.View3D:
+                    biasFromInitialPosition = biasFromInitialPositionView3D;
+                    break;
+                default:
+                    biasFromInitialPosition = Vector3.zero;
+                    break;
+            }
+            cameraAutomap.transform.RotateAround(Camera.main.transform.position + biasFromInitialPosition, -Vector3.up, +10.0f);
+            //cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, +10.0f);
             updateAutoMapView();
         }
 
         private void UpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            cameraAutomap.transform.position += new Vector3(0.0f, 1.0f, 0.0f);
+            cameraAutomap.transform.position += new Vector3(0.0f, -1.0f, 0.0f);
             updateAutoMapView();
         }
 
         private void DownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            cameraAutomap.transform.position += new Vector3(0.0f, -1.0f, 0.0f);
+            cameraAutomap.transform.position += new Vector3(0.0f, +1.0f, 0.0f);
             updateAutoMapView();
         }
 
