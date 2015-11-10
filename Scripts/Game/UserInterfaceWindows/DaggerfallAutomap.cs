@@ -157,7 +157,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 1000.0f;
-                cameraAutomap.fieldOfView = 35.0f;
+                cameraAutomap.fieldOfView = 45.0f;
                 //cameraAutomap.orthographic = true;
 
                 //cameraAutomap.transform.position = GameObject.Find("PlayerAdvanced").transform.position;
@@ -246,14 +246,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void resetCameraTransformViewFromTop()
         {
-            cameraAutomap.transform.position = Camera.main.transform.position + Vector3.up * 20.0f;
+            cameraAutomap.transform.position = Camera.main.transform.position + Vector3.up * 30.0f;
             cameraAutomap.transform.LookAt(Camera.main.transform.position);            
         }
 
         private void resetCameraTransformView3D()
         {
             Vector3 cameraForwardInXZ = new Vector3(Camera.main.transform.forward.x, 0.0f, Camera.main.transform.forward.z);
-            cameraAutomap.transform.position = Camera.main.transform.position - cameraForwardInXZ * 10.0f + Vector3.up * 8.0f;
+            cameraAutomap.transform.position = Camera.main.transform.position - cameraForwardInXZ * 30.0f + Vector3.up * 8.0f;
             //cameraAutomap.transform.rotation = Camera.main.transform.rotation;
             cameraAutomap.transform.LookAt(Camera.main.transform.position);
         }
@@ -332,8 +332,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ForwardButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Vector3 translation = -cameraAutomap.transform.forward * 1.0f;
-            translation.y = 0.0f; // comment this out for movement along camera optical axis
+            Vector3 translation;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    translation = -cameraAutomap.transform.up * 1.0f;
+                    break;
+                case AutomapViewMode.View3D:
+                    translation = -cameraAutomap.transform.forward * 1.0f;
+                    translation.y = 0.0f; // comment this out for movement along camera optical axis
+                    break;
+                default:
+                    translation = Vector3.zero;
+                    break;
+            }            
             cameraAutomap.transform.position += translation;
             shiftBiasFromInitialPosition(translation);
             updateAutoMapView();
@@ -341,8 +353,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void BackwardButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Vector3 translation = cameraAutomap.transform.forward * 1.0f;
-            translation.y = 0.0f; // comment this out for movement along camera optical axis
+            Vector3 translation;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    translation = cameraAutomap.transform.up * 1.0f;
+                    break;
+                case AutomapViewMode.View3D:
+                    translation = cameraAutomap.transform.forward * 1.0f;
+                    translation.y = 0.0f; // comment this out for movement along camera optical axis
+                    break;
+                default:
+                    translation = Vector3.zero;
+                    break;
+            }            
             cameraAutomap.transform.position += translation;
             shiftBiasFromInitialPosition(translation);
             updateAutoMapView();
@@ -408,13 +432,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            cameraAutomap.transform.position += new Vector3(0.0f, -1.0f, 0.0f);
+            cameraAutomap.transform.position += new Vector3(0.0f, +1.0f, 0.0f);
             updateAutoMapView();
         }
 
         private void DownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            cameraAutomap.transform.position += new Vector3(0.0f, +1.0f, 0.0f);
+            cameraAutomap.transform.position += new Vector3(0.0f, -1.0f, 0.0f);
             updateAutoMapView();
         }
 
