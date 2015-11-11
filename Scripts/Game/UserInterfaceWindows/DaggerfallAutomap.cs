@@ -38,9 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const float cameraHeightViewFromTop = 30.0f;
         const float cameraHeightView3D = 8.0f;
-        const float cameraBackwardDistance = 20.0f;
-        
-        const float modelBiasZ = 10.0f;
+        const float cameraBackwardDistance = 20.0f;        
 
 
         const string nativeImgName = "AMAP00I0.IMG";
@@ -242,7 +240,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void resetBiasFromInitialPosition()
         {
             biasFromInitialPositionViewFromTop = Vector3.zero;
-            biasFromInitialPositionView3D = Vector3.forward * modelBiasZ;
+            biasFromInitialPositionView3D = Vector3.forward;
         }
 
         private void shiftBiasFromInitialPosition(Vector3 translation)
@@ -321,7 +319,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Vector3 translation = cameraAutomap.transform.forward * zoomSpeed;
             cameraAutomap.transform.position += translation;
-            shiftBiasFromInitialPosition(translation);
             updateAutoMapView();
         }
 
@@ -329,7 +326,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Vector3 translation = -cameraAutomap.transform.forward * zoomSpeed;
             cameraAutomap.transform.position += translation;
-            shiftBiasFromInitialPosition(translation);
             updateAutoMapView();
         }
 
