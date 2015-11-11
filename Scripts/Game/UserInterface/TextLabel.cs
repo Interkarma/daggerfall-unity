@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         const int minTextureDim = 8;
 
+        int maxCharacters = -1;
         PixelFont font;
         string text = string.Empty;
         byte[] asciiBytes;
@@ -35,6 +36,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
+
+        /// <summary>
+        /// Maximum length of label string.
+        /// Setting to -1 allows for any length.
+        /// </summary>
+        public int MaxCharacters
+        {
+            get { return maxCharacters; }
+            set { maxCharacters = value; }
+        }
 
         public PixelFont Font
         {
@@ -115,6 +126,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         protected virtual void SetText(string value)
         {
+            // Truncate string to max characters
+            if (maxCharacters != -1)
+                value = value.Substring(0, maxCharacters);
+
             this.text = value;
             CreateLabelTexture();
         }
