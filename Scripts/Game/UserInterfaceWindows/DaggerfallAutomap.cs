@@ -120,12 +120,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
-            NativePanel.OnMouseScrollUp += NativePanel_OnMouseScrollUp;
-            NativePanel.OnMouseScrollDown += NativePanel_OnMouseScrollDown;
-
             // Grid button (toggle 2D <-> 3D view)
             Button gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
             gridButton.OnMouseClick += GridButton_OnMouseClick;
+            gridButton.OnMouseScrollUp += GridButton_OnMouseScrollUp;
+            gridButton.OnMouseScrollDown += GridButton_OnMouseScrollDown;
 
             // forward button
             Button forwardButton = DaggerfallUI.AddButton(new Rect(105, 171, 21, 19), NativePanel);
@@ -193,6 +192,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (!textureAutomap)
                 textureAutomap = new Texture2D(renderTextureAutomap.width, renderTextureAutomap.height, TextureFormat.ARGB32, false);
+
+            panelAutomap.OnMouseScrollUp += PanelAutomap_OnMouseScrollUp;
+            panelAutomap.OnMouseScrollDown += PanelAutomap_OnMouseScrollDown;
 
             resetCameraPosition();
             resetBiasFromInitialPosition();
@@ -325,14 +327,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        private void NativePanel_OnMouseScrollUp()
+        private void PanelAutomap_OnMouseScrollUp()
         {
             Vector3 translation = cameraAutomap.transform.forward * zoomSpeed;
             cameraAutomap.transform.position += translation;
             updateAutoMapView();
         }
 
-        private void NativePanel_OnMouseScrollDown()
+        private void PanelAutomap_OnMouseScrollDown()
         {
             Vector3 translation = -cameraAutomap.transform.forward * zoomSpeed;
             cameraAutomap.transform.position += translation;
@@ -365,6 +367,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void GridButton_OnMouseScrollUp()
+        {
+            if (automapViewMode == AutomapViewMode.View3D)
+            {
+                cameraAutomap.transform.Rotate(1.0f, 0.0f, 0.0f, Space.Self);
+                updateAutoMapView();
+            }
+        }
+
+        private void GridButton_OnMouseScrollDown()
+        {
+            if (automapViewMode == AutomapViewMode.View3D)
+            {
+                cameraAutomap.transform.Rotate(-1.0f, 0.0f, 0.0f, Space.Self);
+                updateAutoMapView();
             }
         }
 
