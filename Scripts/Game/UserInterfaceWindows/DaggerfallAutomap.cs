@@ -56,6 +56,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Color[] pixelsGrid2D;
         Color[] pixelsGrid3D;
 
+        HUDCompass compass;
+
         Camera cameraAutomap = null;
         RenderTexture renderTextureAutomap = null;
         Texture2D textureAutomap = null;
@@ -195,6 +197,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             resetCameraPosition();
             resetBiasFromInitialPosition();
             updateAutoMapView();
+
+            NativePanel.Update(); // needed so that NativePanel.LocalScale holds correct value
+            
+            compass = new HUDCompass(cameraAutomap);
+            Vector2 scale = NativePanel.LocalScale;
+            compass.CompassBoxRect = new Rect(3f * scale.x, 172f * scale.y, 76f * scale.x, 17f * scale.y);
+            compass.Scale = NativePanel.LocalScale;
+            NativePanel.Components.Add(compass);
         }
 
         
@@ -266,8 +276,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void resetCameraTransformView3D()
         {
-            Vector3 cameraForwardInXZ = new Vector3(Camera.main.transform.forward.x, 0.0f, Camera.main.transform.forward.z);
-            cameraAutomap.transform.position = Camera.main.transform.position - cameraForwardInXZ * cameraBackwardDistance + Vector3.up * cameraHeightView3D;
+            Vector3 viewDirectionInXZ = Vector3.forward; // new Vector3(Camera.main.transform.forward.x, 0.0f, Camera.main.transform.forward.z);
+            cameraAutomap.transform.position = Camera.main.transform.position - viewDirectionInXZ * cameraBackwardDistance + Vector3.up * cameraHeightView3D;
             //cameraAutomap.transform.rotation = Camera.main.transform.rotation;
             cameraAutomap.transform.LookAt(Camera.main.transform.position);
         }
