@@ -49,6 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
 
         Panel panelAutomap = null;
+        Rect oldPositionPanelAutomap;
         Vector2 oldDragPosition;
         bool leftMouseDown = false;
         bool inDragMode() { return leftMouseDown; }
@@ -67,9 +68,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D textureAutomap = null;
 
 
-        int renderTextureAutomapWidth;
-        int renderTextureAutomapHeight;
         int renderTextureAutomapDepth = 16;
+        int oldRenderTextureAutomapWidth;
+        int oldRenderTextureAutomapHeight;
 
         Vector3 backupCameraPositionViewFromTop;
         Quaternion backupCameraRotationViewFromTop;
@@ -124,11 +125,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
+            ParentPanel.Update();
+
             // Setup automap panel (into this the level geometry is rendered)
-            Rect positionPanelAutomap = new Rect(9f, 2f, (float)(ParentPanel.InteriorWidth - 19), (float)(ParentPanel.InteriorHeight - 98));
+            //Rect positionPanelAutomap = new Rect(9f, 2f, (float)(ParentPanel.InteriorWidth - 109), (float)(ParentPanel.InteriorHeight - 198));
+            //Rect positionPanelAutomap = new Rect(ParentPanel.Position.x, ParentPanel.Position.y, (float)(ParentPanel.Size.x - 19), (float)(ParentPanel.Size.y - 98));
+            Rect positionPanelAutomap = new Rect(ParentPanel.Position.x, ParentPanel.Position.y, (float)(ParentPanel.InteriorWidth * 0.98f), (float)(ParentPanel.InteriorHeight * 0.8f));
+            oldPositionPanelAutomap = positionPanelAutomap;
             if (panelAutomap == null)
             {
                 panelAutomap = DaggerfallUI.AddPanel(positionPanelAutomap, ParentPanel);
+                panelAutomap.ScalingMode = Scaling.None;
             }
             panelAutomap.OnMouseScrollUp += PanelAutomap_OnMouseScrollUp;
             panelAutomap.OnMouseScrollDown += PanelAutomap_OnMouseScrollDown;
@@ -184,26 +191,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
                 cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
                 cameraAutomap.cullingMask = 1;
-                //cameraAutomap.depth = 10;
                 cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 1000.0f;
                 cameraAutomap.fieldOfView = 45.0f;
-                //cameraAutomap.orthographic = true;
-
-                //cameraAutomap.transform.position = GameObject.Find("PlayerAdvanced").transform.position;
-                //cameraAutomap.transform.rotation = GameObject.Find("PlayerAdvanced").transform.rotation;
             }
 
-            renderTextureAutomapWidth = (int)positionPanelAutomap.width;
-            renderTextureAutomapHeight = (int)positionPanelAutomap.height;
-
-            if (!renderTextureAutomap)
-                renderTextureAutomap = new RenderTexture(renderTextureAutomapWidth, renderTextureAutomapHeight, renderTextureAutomapDepth);
-            cameraAutomap.targetTexture = renderTextureAutomap;
-
-            if (!textureAutomap)
-                textureAutomap = new Texture2D(renderTextureAutomap.width, renderTextureAutomap.height, TextureFormat.ARGB32, false);
+            createAutomapTextures((int)positionPanelAutomap.width, (int)positionPanelAutomap.height);
 
             resetCameraPosition();
             resetBiasFromInitialPosition();
@@ -221,6 +215,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             base.Update();
+
+            Rect positionPanelAutomap = new Rect(ParentPanel.Position.x, ParentPanel.Position.y, (float)(ParentPanel.InteriorWidth * 0.98f), (float)(ParentPanel.InteriorHeight * 0.8f));
+            if (oldPositionPanelAutomap != positionPanelAutomap)
+            {
+                panelAutomap.Position = new Vector2(positionPanelAutomap.x, positionPanelAutomap.y);
+                panelAutomap.Size = new Vector2(positionPanelAutomap.width, positionPanelAutomap.height);
+                createAutomapTextures((int)positionPanelAutomap.width, (int)positionPanelAutomap.height);
+                updateAutoMapView();
+            }
 
             if (leftMouseDown)
             {
@@ -249,6 +252,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #region Private Methods
+
+        private void createAutomapTextures(int width, int height)
+        {
+            if ((!renderTextureAutomap) || (oldRenderTextureAutomapWidth != width) || (oldRenderTextureAutomapHeight != height))
+            {
+                cameraAutomap.targetTexture = null;
+                if (renderTextureAutomap)
+                    UnityEngine.Object.DestroyImmediate(renderTextureAutomap);
+                if (textureAutomap)
+                    UnityEngine.Object.DestroyImmediate(textureAutomap);
+
+                renderTextureAutomap = new RenderTexture(width, height, renderTextureAutomapDepth);
+                cameraAutomap.targetTexture = renderTextureAutomap;
+
+                textureAutomap = new Texture2D(renderTextureAutomap.width, renderTextureAutomap.height, TextureFormat.ARGB32, false);
+
+                oldRenderTextureAutomapWidth = width;
+                oldRenderTextureAutomapHeight = height;
+            }
+        }
 
         private void resetCameraPosition()
         {
@@ -361,6 +384,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             RenderTexture.active = renderTextureAutomap;
             textureAutomap.ReadPixels(new Rect(0, 0, renderTextureAutomap.width, renderTextureAutomap.height), 0, 0);
             textureAutomap.Apply(false);
+            RenderTexture.active = null;
 
             panelAutomap.BackgroundTexture = textureAutomap;
         }
