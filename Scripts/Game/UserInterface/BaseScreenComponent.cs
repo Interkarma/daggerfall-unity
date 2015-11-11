@@ -71,6 +71,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public delegate void OnMouseClickHandler(BaseScreenComponent sender, Vector2 position);
         public event OnMouseClickHandler OnMouseClick;
 
+        public delegate void OnRightMouseClickHandler(BaseScreenComponent sender, Vector2 position);
+        public event OnRightMouseClickHandler OnRightMouseClick;
+
         public delegate void OnMouseDoubleClickHandler(BaseScreenComponent sender, Vector2 position);
         public event OnMouseDoubleClickHandler OnMouseDoubleClick;
 
@@ -344,6 +347,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Get left mouse down
             bool leftMouseDown = Input.GetMouseButtonDown(0);
 
+            // Get right mouse down
+            bool rightMouseDown = Input.GetMouseButton(1);
+
             // Handle mouse down/up events
             // Can only trigger mouse down while over component but can release from anywhere
             if (mouseOverComponent && leftMouseDown && !leftMouseWasDown)
@@ -372,6 +378,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Handle left mouse double-clicks
                 if (clickTime - lastClickTime < doubleClickDelay)
                     MouseDoubleClick(scaledMousePosition);
+            }
+
+            // Handle right mouse clicks
+            if (mouseOverComponent && rightMouseDown)
+            {
+                // Single click event
+                RightMouseClick(scaledMousePosition);
             }
 
             // Handle mouse wheel
@@ -468,6 +481,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (OnMouseClick != null)
                 OnMouseClick(this, clickPosition);
+        }
+
+        /// <summary>
+        /// Mouse clicked inside control area.
+        /// </summary>
+        protected virtual void RightMouseClick(Vector2 clickPosition)
+        {
+            if (OnRightMouseClick != null)
+                OnRightMouseClick(this, clickPosition);
         }
 
         /// <summary>

@@ -21,14 +21,42 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string compassFilename = "COMPASS.IMG";
         const string compassBoxFilename = "COMPBOX.IMG";
 
-        Camera mainCamera;
+        Camera compassCamera;
         Texture2D compassTexture;
         Texture2D compassBoxTexture;
+        float eulerAngle;
+
+        /// <summary>
+        /// Gets or sets a compass camera to automatically determine compass heading.
+        /// </summary>
+        public Camera CompassCamera
+        {
+            get { return compassCamera; }
+            set { compassCamera = value; }
+        }
+
+        /// <summary>
+        /// Gets or a sets a Euler angle to use for compass heading.
+        /// This value is only observed when CompassCamera is null.
+        /// </summary>
+        public float EulerAngle
+        {
+            get { return eulerAngle; }
+            set { eulerAngle = Mathf.Clamp(value, 0f, 360f); }
+        }
 
         public HUDCompass()
             : base()
         {
-            mainCamera = Camera.main;
+            compassCamera = Camera.main;
+            HorizontalAlignment = HorizontalAlignment.Right;
+            VerticalAlignment = VerticalAlignment.Bottom;
+            LoadAssets();
+        }
+
+        public HUDCompass(Camera camera)
+        {
+            compassCamera = camera;
             HorizontalAlignment = HorizontalAlignment.Right;
             VerticalAlignment = VerticalAlignment.Bottom;
             LoadAssets();
@@ -59,7 +87,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             // Calculate displacement
-            float percent = mainCamera.transform.eulerAngles.y / 360f;
+            float percent;
+            if (compassCamera != null)
+                percent = compassCamera.transform.eulerAngles.y / 360f;
+            else
+                percent = eulerAngle;
+
+            // Calculate scroll offset
             int scroll = (int)((float)nonWrappedPart * percent);
 
             // Compass box rect
