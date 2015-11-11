@@ -49,8 +49,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
 
         Panel panelAutomap = null;
-        Vector2? oldDragPosition = null;
-        bool inDragMode() { return oldDragPosition.HasValue; }
+        Vector2 oldDragPosition;
+        bool leftMouseDown = false;
+        bool inDragMode() { return leftMouseDown; }
 
         Texture2D nativeTexture;
         Texture2D nativeTextureGrid2D;
@@ -217,6 +218,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(compass);
         }
 
+        public override void Update()
+        {
+            base.Update();
+
+            if (leftMouseDown)
+            {
+                Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+
+                float dragSpeedCompensated = dragSpeed * Vector3.Magnitude(Camera.main.transform.position + getBiasFromInitialPosition() - cameraAutomap.transform.position);
+                Vector2 bias = mousePosition - oldDragPosition;
+                Vector3 translation = -cameraAutomap.transform.right * dragSpeedCompensated * bias.x + cameraAutomap.transform.up * dragSpeedCompensated * bias.y;
+                cameraAutomap.transform.position += translation;
+                updateAutoMapView();
+                oldDragPosition = mousePosition;
+            }
+        }
         
         public override void OnPush()
         {
@@ -371,24 +388,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (oldDragPosition == null)
-            {
-                oldDragPosition = position;
-            }
-            else
-            {
-                float dragSpeedCompensated = dragSpeed * Vector3.Magnitude(Camera.main.transform.position + getBiasFromInitialPosition() - cameraAutomap.transform.position);
-                Vector2 bias = position - oldDragPosition.Value;
-                Vector3 translation = -cameraAutomap.transform.right * dragSpeedCompensated * bias.x + cameraAutomap.transform.up * dragSpeedCompensated * bias.y;
-                cameraAutomap.transform.position += translation;
-                updateAutoMapView();
-                oldDragPosition = position;
-            }
+            Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            oldDragPosition = mousePosition;            
+            leftMouseDown = true;
         }
 
         private void PanelAutomap_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
-            oldDragPosition = null;
+            leftMouseDown = false;
         }
 
         private void GridButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

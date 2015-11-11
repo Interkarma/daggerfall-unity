@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Nystul
+// Contributors:    
 // 
 // Notes:
 //
@@ -344,19 +344,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 scaledMousePosition.y *= 1f / localScale.y;
             }
 
-
-            // Get left mouse button clicked
-            bool leftMouseClicked = Input.GetMouseButtonDown(0); // this is kind of confusing GetMouseButtonDown() returns true only if mouse was clicked in the current frame 
-
-            // Get right mouse button clicked
-            bool rightMouseClicked = Input.GetMouseButtonDown(1); // this is kind of confusing GetMouseButtonDown() returns true only if mouse was clicked in the current frame 
-
             // Get left mouse down
-            bool leftMouseDown = Input.GetMouseButton(0); // returns true as long as mouse button is down
+            bool leftMouseDown = Input.GetMouseButton(0);
+
+            // Get right mouse down
+            bool rightMouseDown = Input.GetMouseButton(1);
 
             // Handle mouse down/up events
             // Can only trigger mouse down while over component but can release from anywhere
-            if (mouseOverComponent && leftMouseDown) // && !leftMouseWasDown)            
+            if (mouseOverComponent && leftMouseDown && !leftMouseWasDown)
             {
                 leftMouseWasDown = true;
                 if (OnMouseDown != null)
@@ -370,7 +366,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Handle left mouse clicks
-            if (mouseOverComponent && leftMouseClicked)
+            if (mouseOverComponent && leftMouseDown)
             {
                 // Single click event
                 MouseClick(scaledMousePosition);
@@ -385,7 +381,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Handle right mouse clicks
-            if (mouseOverComponent && rightMouseClicked)
+            if (mouseOverComponent && rightMouseDown)
             {
                 // Single click event
                 RightMouseClick(scaledMousePosition);
