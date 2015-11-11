@@ -127,35 +127,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // forward button
             Button forwardButton = DaggerfallUI.AddButton(new Rect(105, 171, 21, 19), NativePanel);
-            forwardButton.OnMouseClick += ForwardButton_OnMouseClick;
+            forwardButton.OnMouseDown += ForwardButton_OnMouseDown;
 
             // backward button
             Button backwardButton = DaggerfallUI.AddButton(new Rect(126, 171, 21, 19), NativePanel);
-            backwardButton.OnMouseClick += BackwardButton_OnMouseClick;
+            backwardButton.OnMouseDown += BackwardButton_OnMouseDown;
 
             // left button
             Button leftButton = DaggerfallUI.AddButton(new Rect(149, 171, 21, 19), NativePanel);
-            leftButton.OnMouseClick += LeftButton_OnMouseClick;
+            leftButton.OnMouseDown += LeftButton_OnMouseDown;
             
             // right button
             Button rightButton = DaggerfallUI.AddButton(new Rect(170, 171, 21, 19), NativePanel);
-            rightButton.OnMouseClick += RightButton_OnMouseClick;
+            rightButton.OnMouseDown += RightButton_OnMouseDown;
 
             // rotate left button
             Button rotateLeftButton = DaggerfallUI.AddButton(new Rect(193, 171, 21, 19), NativePanel);
-            rotateLeftButton.OnMouseClick += RotateLeftButton_OnMouseClick;
+            rotateLeftButton.OnMouseDown += RotateLeftButton_OnMouseDown;
 
             // rotate right button
             Button rotateRightButton = DaggerfallUI.AddButton(new Rect(214, 171, 21, 19), NativePanel);
-            rotateRightButton.OnMouseClick += RotateRightButton_OnMouseClick;
+            rotateRightButton.OnMouseDown += RotateRightButton_OnMouseDown;
 
             // up button
             Button upButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
-            upButton.OnMouseClick += UpButton_OnMouseClick;
+            upButton.OnMouseDown += UpButton_OnMouseDown;
 
             // down button
             Button downButton = DaggerfallUI.AddButton(new Rect(258, 171, 21, 19), NativePanel);
-            downButton.OnMouseClick += DownButton_OnMouseClick;
+            downButton.OnMouseDown += DownButton_OnMouseDown;
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
@@ -358,7 +358,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void ForwardButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ForwardButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
             Vector3 translation;
             switch (automapViewMode)
@@ -379,7 +379,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             updateAutoMapView();
         }
 
-        private void BackwardButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void BackwardButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
             Vector3 translation;
             switch (automapViewMode)
@@ -400,7 +400,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             updateAutoMapView();
         }
 
-        private void LeftButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void LeftButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
             Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed;
             translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
@@ -409,7 +409,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             updateAutoMapView();
         }
 
-        private void RightButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void RightButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
             Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed;
             translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
@@ -418,7 +418,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             updateAutoMapView();
         }
 
-        private void RotateLeftButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void RotateLeftButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
             Vector3 biasFromInitialPosition;
             switch (automapViewMode)
@@ -438,7 +438,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             updateAutoMapView();
         }
 
-        private void RotateRightButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void RotateRightButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
             Vector3 biasFromInitialPosition;
             switch (automapViewMode)
@@ -458,13 +458,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             updateAutoMapView();
         }
 
-        private void UpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void UpButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
             cameraAutomap.transform.position += Vector3.up * scrollUpDownSpeed;
             updateAutoMapView();
         }
 
-        private void DownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void DownButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
             cameraAutomap.transform.position += Vector3.down * scrollUpDownSpeed;
             updateAutoMapView();
