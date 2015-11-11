@@ -123,6 +123,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Grid button (toggle 2D <-> 3D view)
             Button gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
             gridButton.OnMouseClick += GridButton_OnMouseClick;
+            gridButton.OnRightMouseClick += GridButton_OnRightMouseClick;
             gridButton.OnMouseScrollUp += GridButton_OnMouseScrollUp;
             gridButton.OnMouseScrollDown += GridButton_OnMouseScrollDown;
 
@@ -369,6 +370,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
             }
         }
+
+        private void GridButton_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            switch(automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    biasFromInitialPositionViewFromTop = Vector3.zero;
+                    updateAutoMapView();
+                    break;
+                case AutomapViewMode.View3D:
+                    biasFromInitialPositionView3D = Vector3.zero;
+                    updateAutoMapView();
+                    break;
+                default:
+                    break;
+            }
+        }        
 
         private void GridButton_OnMouseScrollUp()
         {
