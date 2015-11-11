@@ -34,7 +34,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float scrollForwardBackwardSpeed = 1.0f;
         const float scrollUpDownSpeed = 1.0f;
         const float rotateSpeed = 10.0f;
-        const float zoomSpeed = 1.0f;
+        const float zoomSpeed = 0.1f; // suggested value range: 0.1f (fast) to 0.01f (slow)
+        const float dragSpeed = 0.002f; // suggested value range: 0.01f (fast) to 0.001f (slow)
 
         const float cameraHeightViewFromTop = 30.0f;
         const float cameraHeightView3D = 8.0f;
@@ -48,6 +49,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
 
         Panel panelAutomap = null;
+        Vector2? oldDragPosition = null;
+        bool inDragMode() { return oldDragPosition.HasValue; }
 
         Texture2D nativeTexture;
         Texture2D nativeTextureGrid2D;
@@ -120,6 +123,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
+            // Setup automap panel (into this the level geometry is rendered)
+            Rect positionPanelAutomap = new Rect(9f, 2f, (float)(ParentPanel.InteriorWidth - 19), (float)(ParentPanel.InteriorHeight - 98));
+            if (panelAutomap == null)
+            {
+                panelAutomap = DaggerfallUI.AddPanel(positionPanelAutomap, ParentPanel);
+            }
+            panelAutomap.OnMouseScrollUp += PanelAutomap_OnMouseScrollUp;
+            panelAutomap.OnMouseScrollDown += PanelAutomap_OnMouseScrollDown;
+            panelAutomap.OnMouseDown += PanelAutomap_OnMouseDown;
+            panelAutomap.OnMouseUp += PanelAutomap_OnMouseUp;
+
             // Grid button (toggle 2D <-> 3D view)
             Button gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
             gridButton.OnMouseClick += GridButton_OnMouseClick;
@@ -180,22 +194,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 //cameraAutomap.transform.rotation = GameObject.Find("PlayerAdvanced").transform.rotation;
             }
 
-            renderTextureAutomapWidth = ParentPanel.InteriorWidth - 19;
-            renderTextureAutomapHeight = ParentPanel.InteriorHeight - 98;
+            renderTextureAutomapWidth = (int)positionPanelAutomap.width;
+            renderTextureAutomapHeight = (int)positionPanelAutomap.height;
 
             if (!renderTextureAutomap)
                 renderTextureAutomap = new RenderTexture(renderTextureAutomapWidth, renderTextureAutomapHeight, renderTextureAutomapDepth);
             cameraAutomap.targetTexture = renderTextureAutomap;
 
-            Rect position = new Rect(9f, 2f, (float)renderTextureAutomapWidth, (float)renderTextureAutomapHeight);
-            if (panelAutomap == null)
-                panelAutomap = DaggerfallUI.AddPanel(position, ParentPanel);
-
             if (!textureAutomap)
                 textureAutomap = new Texture2D(renderTextureAutomap.width, renderTextureAutomap.height, TextureFormat.ARGB32, false);
-
-            panelAutomap.OnMouseScrollUp += PanelAutomap_OnMouseScrollUp;
-            panelAutomap.OnMouseScrollDown += PanelAutomap_OnMouseScrollDown;
 
             resetCameraPosition();
             resetBiasFromInitialPosition();
@@ -271,6 +278,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        private Vector3 getBiasFromInitialPosition()
+        {
+            Vector3 biasFromInitialPosition;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    biasFromInitialPosition = biasFromInitialPositionViewFromTop;
+                    break;
+                case AutomapViewMode.View3D:
+                    biasFromInitialPosition = biasFromInitialPositionView3D;
+                    break;
+                default:
+                    biasFromInitialPosition = Vector3.zero;
+                    break;
+            }
+            return (biasFromInitialPosition);
+        }
+
         private void resetCameraTransformViewFromTop()
         {
             cameraAutomap.transform.position = Camera.main.transform.position + Vector3.up * cameraHeightViewFromTop;
@@ -330,20 +355,47 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseScrollUp()
         {
-            Vector3 translation = cameraAutomap.transform.forward * zoomSpeed;
+            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position + getBiasFromInitialPosition() - cameraAutomap.transform.position);
+            Vector3 translation = cameraAutomap.transform.forward * zoomSpeedCompensated;
             cameraAutomap.transform.position += translation;
             updateAutoMapView();
         }
 
         private void PanelAutomap_OnMouseScrollDown()
         {
-            Vector3 translation = -cameraAutomap.transform.forward * zoomSpeed;
+            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position + getBiasFromInitialPosition() - cameraAutomap.transform.position);
+            Vector3 translation = -cameraAutomap.transform.forward * zoomSpeedCompensated;
             cameraAutomap.transform.position += translation;
             updateAutoMapView();
         }
 
+        private void PanelAutomap_OnMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            if (oldDragPosition == null)
+            {
+                oldDragPosition = position;
+            }
+            else
+            {
+                float dragSpeedCompensated = dragSpeed * Vector3.Magnitude(Camera.main.transform.position + getBiasFromInitialPosition() - cameraAutomap.transform.position);
+                Vector2 bias = position - oldDragPosition.Value;
+                Vector3 translation = -cameraAutomap.transform.right * dragSpeedCompensated * bias.x + cameraAutomap.transform.up * dragSpeedCompensated * bias.y;
+                cameraAutomap.transform.position += translation;
+                updateAutoMapView();
+                oldDragPosition = position;
+            }
+        }
+
+        private void PanelAutomap_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            oldDragPosition = null;
+        }
+
         private void GridButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             int numberOfViewModes = Enum.GetNames(typeof(AutomapViewMode)).Length;
             automapViewMode++;
             if ((int)automapViewMode > numberOfViewModes - 1) // first mode is mode 0 -> so use numberOfViewModes-1 for comparison
@@ -373,6 +425,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void GridButton_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             switch(automapViewMode)
             {
                 case AutomapViewMode.View2D:
@@ -390,6 +445,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void GridButton_OnMouseScrollUp()
         {
+            if (inDragMode())
+                return;
+
             if (automapViewMode == AutomapViewMode.View3D)
             {
                 cameraAutomap.transform.Rotate(1.0f, 0.0f, 0.0f, Space.Self);
@@ -399,6 +457,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void GridButton_OnMouseScrollDown()
         {
+            if (inDragMode())
+                return;
+
             if (automapViewMode == AutomapViewMode.View3D)
             {
                 cameraAutomap.transform.Rotate(-1.0f, 0.0f, 0.0f, Space.Self);
@@ -408,6 +469,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ForwardButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             Vector3 translation;
             switch (automapViewMode)
             {
@@ -429,6 +493,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void BackwardButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             Vector3 translation;
             switch (automapViewMode)
             {
@@ -450,6 +517,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void LeftButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed;
             translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
             cameraAutomap.transform.position += translation;
@@ -459,6 +529,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void RightButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed;
             translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
             cameraAutomap.transform.position += translation;
@@ -468,6 +541,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void RotateLeftButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             Vector3 biasFromInitialPosition;
             switch (automapViewMode)
             {
@@ -488,6 +564,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void RotateRightButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             Vector3 biasFromInitialPosition;
             switch (automapViewMode)
             {
@@ -508,18 +587,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             cameraAutomap.transform.position += Vector3.up * scrollUpDownSpeed;
             updateAutoMapView();
         }
 
         private void DownButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             cameraAutomap.transform.position += Vector3.down * scrollUpDownSpeed;
             updateAutoMapView();
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (inDragMode())
+                return;
+
             CloseWindow();
         }
 
