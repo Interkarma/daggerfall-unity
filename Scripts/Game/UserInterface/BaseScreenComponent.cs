@@ -345,7 +345,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Get left mouse down
-            bool leftMouseDown = Input.GetMouseButton(0);
+            bool leftMouseDown = Input.GetMouseButtonDown(0);
 
             // Get right mouse down
             bool rightMouseDown = Input.GetMouseButton(1);
