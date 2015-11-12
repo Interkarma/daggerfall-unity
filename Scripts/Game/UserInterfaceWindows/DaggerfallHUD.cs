@@ -26,7 +26,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallHUD : DaggerfallBaseWindow
     {
-        float hudScale = 2.0f;
         float crosshairScale = 0.5f;
 
         PopupText popupText = new PopupText();
@@ -44,15 +43,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public PopupText PopupText
         {
             get { return popupText; }
-        }
-
-        /// <summary>
-        /// Set scale of UI components, except crosshair.
-        /// </summary>
-        public float HUDScale
-        {
-            get { return hudScale; }
-            set { hudScale = value; }
         }
 
         public float CrosshairScale
@@ -73,12 +63,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Get references
             player = GameObject.FindGameObjectWithTag("Player");
             playerEntity = player.GetComponent<DaggerfallEntityBehaviour>();
-
-            // Auto-set initial scale based on viewport size
-            if (Screen.currentResolution.height >= 1080 && Screen.currentResolution.height < 1440)
-                hudScale = 3.0f;
-            if (Screen.currentResolution.height >= 1440)
-                hudScale = 4.0f;
 
             ParentPanel.Components.Add(crosshair);
             ParentPanel.Components.Add(vitals);
@@ -103,6 +87,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             compass.Scale = NativePanel.LocalScale;
             vitals.Scale = NativePanel.LocalScale;
             crosshair.CrosshairScale = CrosshairScale;
+
+            // Align compass to screen panel
+            Rect screenRect = ParentPanel.Rectangle;
+            float compassX = screenRect.width - (compass.Size.x);
+            float compassY = screenRect.height - (compass.Size.y);
+            compass.Position = new Vector2(compassX, compassY);
 
             // Adjust vitals based on current player state
             if (playerEntity)

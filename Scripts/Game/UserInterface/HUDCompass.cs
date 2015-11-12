@@ -57,8 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             : base()
         {
             compassCamera = Camera.main;
-            HorizontalAlignment = HorizontalAlignment.Right;
-            VerticalAlignment = VerticalAlignment.Bottom;            
+
             LoadAssets();
         }
 
@@ -68,6 +67,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             HorizontalAlignment = HorizontalAlignment.Right;
             VerticalAlignment = VerticalAlignment.Bottom;            
             LoadAssets();
+        }
+
+        public override void Update()
+        {
+            if (Enabled)
+            {
+                base.Update();
+                Size = new Vector2(compassBoxTexture.width * Scale.x, compassBoxTexture.height * Scale.y);
+            }
         }
 
         public override void Draw()
@@ -105,18 +113,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             int scroll = (int)((float)nonWrappedPart * percent);
 
             Rect compassBoxRect = new Rect();
-            if (customCompassBoxRect.HasValue)
-            {
-                compassBoxRect = customCompassBoxRect.Value;
-            }
-            else
-            {
-                // Compass box rect                
-                compassBoxRect.x = Screen.width - (compassBoxTexture.width * Scale.x);
-                compassBoxRect.y = Screen.height - (compassBoxTexture.height * Scale.y);
-                compassBoxRect.width = compassBoxTexture.width * Scale.x;
-                compassBoxRect.height = compassBoxTexture.height * Scale.y;
-            }
+
+            compassBoxRect.x = Position.x;
+            compassBoxRect.y = Position.y;
+            compassBoxRect.width = compassBoxTexture.width * Scale.x;
+            compassBoxRect.height = compassBoxTexture.height * Scale.y;
+
 
             // Compass strip source
             Rect compassSrcRect = new Rect();
