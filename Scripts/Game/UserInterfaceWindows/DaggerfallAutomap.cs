@@ -142,8 +142,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup automap render panel (into this the level geometry is rendered)
             Rect rectDummyPanelAutomap = new Rect();
-            rectDummyPanelAutomap.position = new Vector2(5, 5);
-            rectDummyPanelAutomap.size = new Vector2(310, 160);
+            rectDummyPanelAutomap.position = new Vector2(1, 1);
+            rectDummyPanelAutomap.size = new Vector2(318, 169);
 
             dummyPanelAutomap = DaggerfallUI.AddPanel(rectDummyPanelAutomap, NativePanel);
             //oldPositionDummyPanelAutomap = dummyPanelAutomap.Rectangle;
