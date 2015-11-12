@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected TextureLayout backgroundTextureLayout = TextureLayout.StretchToFill;
 
         bool mouseOverComponent = false;
-        bool leftMouseWasDown = false;
+        bool leftMouseWasHeldDown = false;
 
         public delegate void OnMouseEnterHandler();
         public event OnMouseEnterHandler OnMouseEnter;
@@ -344,23 +344,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 scaledMousePosition.y *= 1f / localScale.y;
             }
 
-            // Get left mouse down
+            // Get left and right mouse down for general click handling and double-click sampling
             bool leftMouseDown = Input.GetMouseButtonDown(0);
+            bool rightMouseDown = Input.GetMouseButtonDown(1);
 
-            // Get right mouse down
-            bool rightMouseDown = Input.GetMouseButton(1);
+            // Get left mouse down for up/down events
+            bool leftMouseHeldDown = Input.GetMouseButton(0);
 
             // Handle mouse down/up events
             // Can only trigger mouse down while over component but can release from anywhere
-            if (mouseOverComponent && leftMouseDown && !leftMouseWasDown)
+            if (mouseOverComponent && leftMouseHeldDown && !leftMouseWasHeldDown)
             {
-                leftMouseWasDown = true;
+                leftMouseWasHeldDown = true;
                 if (OnMouseDown != null)
                     OnMouseDown(this, scaledMousePosition);
             }
-            if (!leftMouseDown && leftMouseWasDown)
+            if (!leftMouseHeldDown && leftMouseWasHeldDown)
             {
-                leftMouseWasDown = false;
+                leftMouseWasHeldDown = false;
                 if (OnMouseUp != null)
                     OnMouseUp(this, scaledMousePosition);
             }
