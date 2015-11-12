@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop
 
         public static void PrintInfo(string path)
         {
-            string fileName = "DFTFU_EnvironmentLog";
+            string fileName = "DFTFU_Environment.log";
             StringBuilder builder = new StringBuilder();
             bool check = false;
 
@@ -39,6 +39,10 @@ namespace DaggerfallWorkshop
             if (!check)
                 builder.AppendLine(string.Format("!!! error in GetSystemAndCultureInfo !!! ")).AppendLine(Environment.NewLine);
 
+            check = GetSystemInfo(builder);
+
+            if (!check)
+                builder.AppendLine(string.Format("!!! error in GetSystemInfo !!! ")).AppendLine(Environment.NewLine);
 
             check = GetDirs(path, builder);
 
@@ -100,7 +104,7 @@ namespace DaggerfallWorkshop
             catch (Exception ex)
             {
                 DaggerfallUnity.LogMessage(ex.Message);
-                builder.AppendLine(string.Format("!!!! Error in GETDFTFUSettings: {0} | {1} | {2} !!!", ex.Message, ex.InnerException, ex.Source)).AppendLine(Environment.NewLine);;
+                builder.AppendLine(string.Format("!!!! Error in GETDFTFUSettings: {0} | {1} | {2} !!!", ex.Message, ex.InnerException, ex.Source)).AppendLine(Environment.NewLine);
                 return false;
 
 
@@ -127,7 +131,7 @@ namespace DaggerfallWorkshop
 
                 var cultProps = typeof(CultureInfo).GetProperties();
                 var envProps = typeof(Environment).GetProperties();
-                builder.AppendLine(string.Format("### Start Enviorment Properties ###")).AppendLine(Environment.NewLine);;
+                builder.AppendLine(string.Format("### Start Enviornment Info ###")).AppendLine(Environment.NewLine);
 
                 foreach (var prop in envProps)
                 {
@@ -135,30 +139,60 @@ namespace DaggerfallWorkshop
                     if (value.ToString() == Environment.UserName || value.ToString() == Environment.UserDomainName || prop.Name == "StackTrace")
                         continue;
                     DaggerfallUnity.LogMessage(string.Format("{0} | {1}", prop.Name, value));
-                    builder.AppendLine(string.Format("{0} | {1} ", prop.Name, value)).AppendLine(Environment.NewLine); ;
+                    builder.AppendLine(string.Format("{0} | {1} ", prop.Name, value)).AppendLine(Environment.NewLine);
 
                 }
 
-                builder.Append(string.Format("### Start Culture Properties ###")).AppendLine(Environment.NewLine).AppendLine(Environment.NewLine);;
+                builder.Append(string.Format("### Start Culture Info ###")).AppendLine(Environment.NewLine).AppendLine(Environment.NewLine);
                 foreach (var prop in cultProps)
                 {
                     DaggerfallUnity.LogMessage(string.Format("{0} | {1}", prop.Name, prop.GetValue(currentCult, null)));
 
-                    builder.AppendLine(string.Format("{0} | {1}", prop.Name, prop.GetValue(currentCult, null))).AppendLine(Environment.NewLine); 
+                    builder.AppendLine(string.Format("{0} | {1}", prop.Name, prop.GetValue(currentCult, null))).AppendLine(Environment.NewLine);
 
                 }
 
-                builder.AppendLine(string.Format("### End Culture Properties ### ")).AppendLine(Environment.NewLine).AppendLine(Environment.NewLine); 
+                builder.AppendLine(string.Format("### End Culture Properties ### ")).AppendLine(Environment.NewLine).AppendLine(Environment.NewLine);
 
             }
             catch (Exception ex)
             {
                 DaggerfallUnity.LogMessage(ex.Message);
-                builder.AppendLine(string.Format("!!! Error in GetSystemAndCultureInfo: {0} !!!", ex.Message)).AppendLine(Environment.NewLine); 
+                builder.AppendLine(string.Format("!!! Error in GetSystemAndCultureInfo: {0} !!!", ex.Message)).AppendLine(Environment.NewLine);
                 return false;
             }
             return true;
 
+
+        }
+
+
+        private static bool GetSystemInfo(StringBuilder builder)
+        {
+
+            try
+            {
+                SystemInfo sysInfo = new SystemInfo();
+                var sysInfoProps = typeof(SystemInfo).GetProperties();
+                builder.AppendLine(string.Format("### Start System Info ###")).AppendLine(Environment.NewLine);
+
+                foreach (var prop in sysInfoProps)
+                {
+                    var value = prop.GetValue(sysInfo, null);
+                    if (value.ToString() == SystemInfo.deviceName || value.ToString() == SystemInfo.deviceUniqueIdentifier)
+                        continue;
+                    DaggerfallUnity.LogMessage(string.Format("{0} | {1}", prop.Name, value));
+                    builder.AppendLine(string.Format("{0} | {1} ", prop.Name, value)).AppendLine(Environment.NewLine);
+                }
+
+            }
+            catch(Exception ex)
+            {
+                DaggerfallUnity.LogMessage(ex.Message);
+                builder.AppendLine(string.Format("!!! Error in GetSystemInfo: {0} !!!", ex.Message)).AppendLine(Environment.NewLine);
+            }
+
+            return true;
 
         }
 
@@ -181,7 +215,7 @@ namespace DaggerfallWorkshop
                     path = path.Substring(0, path.Length - 6);
                     if (!Directory.Exists(path))
                     {
-                        builder.AppendLine(string.Format("!!! No valid path found, stoping !!!")).AppendLine(Environment.NewLine); 
+                        builder.AppendLine(string.Format("!!! No valid path found, stoping !!!")).AppendLine(Environment.NewLine);
                         return false;
                     }
 
@@ -190,7 +224,7 @@ namespace DaggerfallWorkshop
                 {
                     DaggerfallUnity.LogMessage("Error in GetDirs()");
 
-                    builder.AppendLine(string.Format("!!! Error in GETDirs() : {0} !!!", ex.Message)).AppendLine(Environment.NewLine); 
+                    builder.AppendLine(string.Format("!!! Error in GETDirs() : {0} !!!", ex.Message)).AppendLine(Environment.NewLine);
                     return false;
 
                 }
@@ -200,7 +234,7 @@ namespace DaggerfallWorkshop
 
             try
             {
-                builder.AppendLine(string.Format("### START FILE CHECK ###")).AppendLine(Environment.NewLine).AppendLine(Environment.NewLine); 
+                builder.AppendLine(string.Format("### START FILE CHECK ###")).AppendLine(Environment.NewLine);
 
                 var subDirs = Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
                 var files = GetFiles(path);
@@ -216,12 +250,12 @@ namespace DaggerfallWorkshop
             catch (Exception ex)
             {
                 DaggerfallUnity.LogMessage("Error in GetDirs()");
-                builder.AppendLine(string.Format("!!!! Error in GETDirs() : {0} !!! ", ex.Message)).AppendLine(Environment.NewLine); 
+                builder.AppendLine(string.Format("!!!! Error in GETDirs() : {0} !!! ", ex.Message)).AppendLine(Environment.NewLine);
                 return false;
             }
 
 
-            builder.AppendLine(string.Format("### END FILE CHECK ###")).AppendLine(Environment.NewLine).AppendLine(Environment.NewLine); 
+            builder.AppendLine(string.Format("### END FILE CHECK ###")).AppendLine(Environment.NewLine).AppendLine(Environment.NewLine);
             return true;
         }
 
@@ -243,16 +277,16 @@ namespace DaggerfallWorkshop
         {
             if (string.IsNullOrEmpty(dir))
             {
-                builder.AppendLine("!!! Invalid directory string !!!").AppendLine(Environment.NewLine); 
+                builder.AppendLine("!!! Invalid directory string !!!").AppendLine(Environment.NewLine);
             }
             else
             {
-                builder.AppendLine(Environment.NewLine).AppendLine(string.Format("\t\t *** DIRECTORY PATH: {0} ***", dir)); 
+                builder.AppendLine(Environment.NewLine).AppendLine(string.Format("\t\t *** DIRECTORY PATH: {0} ***", dir));
 
             }
             if (files == null || files.Length < 1)
             {
-                builder.AppendLine("!!! No file names found in directory !!!").AppendLine(Environment.NewLine); 
+                builder.AppendLine("!!! No file names found in directory !!!");
             }
 
             foreach (string file in files)
@@ -304,13 +338,7 @@ namespace DaggerfallWorkshop
             {
 
             }
-
-
         }
-
-
-
-
 
     }
 }
