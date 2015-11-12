@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
+        int maxCharacters = -1;
         PixelFont font;
         int selectedIndex = 0;
         int scrollIndex = 0;
@@ -47,6 +48,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Maximum length of label string.
+        /// Setting to -1 allows for any length.
+        /// </summary>
+        public int MaxCharacters
+        {
+            get { return maxCharacters; }
+            set { maxCharacters = value; }
+        }
 
         public int ScrollIndex
         {
@@ -216,6 +227,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.ScalingMode = Scaling.None;
             textLabel.HorizontalAlignment = rowAlignment;
             textLabel.Font = font;
+            textLabel.MaxCharacters = maxCharacters;
             textLabel.Text = text;
             textLabel.Parent = this;
             listItems.Add(textLabel);
