@@ -51,8 +51,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel panelAutomap = null;
         Rect oldPositionPanelAutomap;
         Vector2 oldDragPosition;
-        bool leftMouseDown = false;
-        bool inDragMode() { return leftMouseDown; }
+
+        bool leftMouseDownOnPanelAutomap = false;
+        bool leftMouseDownOnForwardButton = false;
+        bool leftMouseDownOnBackwardButton = false;
+        bool leftMouseDownOnLeftButton = false;
+        bool leftMouseDownOnRightButton = false;
+        bool leftMouseDownOnRotateLeftButton = false;
+        bool leftMouseDownOnRotateRightButton = false;
+        bool leftMouseDownOnUpstairsButton = false;
+        bool leftMouseDownOnDownstairsButton = false;
+        bool alreadyInMouseDown = false;
+        bool inDragMode() { return leftMouseDownOnPanelAutomap; }
 
         Texture2D nativeTexture;
         Texture2D nativeTextureGrid2D;
@@ -152,34 +162,42 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // forward button
             Button forwardButton = DaggerfallUI.AddButton(new Rect(105, 171, 21, 19), NativePanel);
             forwardButton.OnMouseDown += ForwardButton_OnMouseDown;
+            forwardButton.OnMouseUp += ForwardButton_OnMouseUp;
 
             // backward button
             Button backwardButton = DaggerfallUI.AddButton(new Rect(126, 171, 21, 19), NativePanel);
             backwardButton.OnMouseDown += BackwardButton_OnMouseDown;
+            backwardButton.OnMouseUp += BackwardButton_OnMouseUp;
 
             // left button
             Button leftButton = DaggerfallUI.AddButton(new Rect(149, 171, 21, 19), NativePanel);
             leftButton.OnMouseDown += LeftButton_OnMouseDown;
+            leftButton.OnMouseUp += LeftButton_OnMouseUp;
             
             // right button
             Button rightButton = DaggerfallUI.AddButton(new Rect(170, 171, 21, 19), NativePanel);
             rightButton.OnMouseDown += RightButton_OnMouseDown;
+            rightButton.OnMouseUp += RightButton_OnMouseUp;
 
             // rotate left button
             Button rotateLeftButton = DaggerfallUI.AddButton(new Rect(193, 171, 21, 19), NativePanel);
             rotateLeftButton.OnMouseDown += RotateLeftButton_OnMouseDown;
+            rotateLeftButton.OnMouseUp += RotateLeftButton_OnMouseUp;
 
             // rotate right button
             Button rotateRightButton = DaggerfallUI.AddButton(new Rect(214, 171, 21, 19), NativePanel);
             rotateRightButton.OnMouseDown += RotateRightButton_OnMouseDown;
+            rotateRightButton.OnMouseUp += RotateRightButton_OnMouseUp;
 
-            // up button
-            Button upButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
-            upButton.OnMouseDown += UpButton_OnMouseDown;
+            // upstairs button
+            Button upstairsButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
+            upstairsButton.OnMouseDown += UpstairsButton_OnMouseDown;
+            upstairsButton.OnMouseUp += UpstairsButton_OnMouseUp;
 
-            // down button
-            Button downButton = DaggerfallUI.AddButton(new Rect(258, 171, 21, 19), NativePanel);
-            downButton.OnMouseDown += DownButton_OnMouseDown;
+            // downstairs button
+            Button downstairsButton = DaggerfallUI.AddButton(new Rect(258, 171, 21, 19), NativePanel);
+            downstairsButton.OnMouseDown += DownstairsButton_OnMouseDown;
+            downstairsButton.OnMouseUp += DownstairsButton_OnMouseUp;
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
@@ -225,7 +243,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 updateAutoMapView();
             }
 
-            if (leftMouseDown)
+            if (leftMouseDownOnPanelAutomap)
             {
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
 
@@ -235,6 +253,119 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cameraAutomap.transform.position += translation;
                 updateAutoMapView();
                 oldDragPosition = mousePosition;
+            }
+
+            if (leftMouseDownOnForwardButton)
+            {
+                Vector3 translation;
+                switch (automapViewMode)
+                {
+                    case AutomapViewMode.View2D:
+                        translation = -cameraAutomap.transform.up * scrollForwardBackwardSpeed;
+                        break;
+                    case AutomapViewMode.View3D:
+                        translation = -cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
+                        translation.y = 0.0f; // comment this out for movement along camera optical axis
+                        break;
+                    default:
+                        translation = Vector3.zero;
+                        break;
+                }
+                cameraAutomap.transform.position += translation;
+                shiftBiasFromInitialPosition(translation);
+                updateAutoMapView();
+            }
+
+            if (leftMouseDownOnBackwardButton)
+            {
+                Vector3 translation;
+                switch (automapViewMode)
+                {
+                    case AutomapViewMode.View2D:
+                        translation = cameraAutomap.transform.up * scrollForwardBackwardSpeed;
+                        break;
+                    case AutomapViewMode.View3D:
+                        translation = cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
+                        translation.y = 0.0f; // comment this out for movement along camera optical axis
+                        break;
+                    default:
+                        translation = Vector3.zero;
+                        break;
+                }
+                cameraAutomap.transform.position += translation;
+                shiftBiasFromInitialPosition(translation);
+                updateAutoMapView();
+            }
+
+            if (leftMouseDownOnLeftButton)
+            {
+                Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed;
+                translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
+                cameraAutomap.transform.position += translation;
+                shiftBiasFromInitialPosition(translation);
+                updateAutoMapView();
+            }
+
+            if (leftMouseDownOnRightButton)
+            {
+                Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed;
+                translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
+                cameraAutomap.transform.position += translation;
+                shiftBiasFromInitialPosition(translation);
+                updateAutoMapView();
+            }
+
+
+            if (leftMouseDownOnRotateLeftButton)
+            {
+                Vector3 biasFromInitialPosition;
+                switch (automapViewMode)
+                {
+                    case AutomapViewMode.View2D:
+                        biasFromInitialPosition = biasFromInitialPositionViewFromTop;
+                        break;
+                    case AutomapViewMode.View3D:
+                        biasFromInitialPosition = biasFromInitialPositionView3D;
+                        break;
+                    default:
+                        biasFromInitialPosition = Vector3.zero;
+                        break;
+                }
+                cameraAutomap.transform.RotateAround(Camera.main.transform.position + biasFromInitialPosition, -Vector3.up, -rotateSpeed);
+                //cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, -rotateSpeed);
+                updateAutoMapView();
+            }
+
+            if (leftMouseDownOnRotateRightButton)
+            {
+                Vector3 biasFromInitialPosition;
+                switch (automapViewMode)
+                {
+                    case AutomapViewMode.View2D:
+                        biasFromInitialPosition = biasFromInitialPositionViewFromTop;
+                        break;
+                    case AutomapViewMode.View3D:
+                        biasFromInitialPosition = biasFromInitialPositionView3D;
+                        break;
+                    default:
+                        biasFromInitialPosition = Vector3.zero;
+                        break;
+                }
+                cameraAutomap.transform.RotateAround(Camera.main.transform.position + biasFromInitialPosition, -Vector3.up, +rotateSpeed);
+                //cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, +rotateSpeed);
+                updateAutoMapView();
+            }
+
+            if (leftMouseDownOnUpstairsButton)
+            {
+                cameraAutomap.transform.position += Vector3.up * scrollUpDownSpeed;
+                updateAutoMapView();
+            }
+
+            if (leftMouseDownOnDownstairsButton)
+            {
+                cameraAutomap.transform.position += Vector3.down * scrollUpDownSpeed;
+                updateAutoMapView();
             }
         }
         
@@ -412,14 +543,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
+            if (alreadyInMouseDown)
+                return;
+
             Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
             oldDragPosition = mousePosition;            
-            leftMouseDown = true;
+            leftMouseDownOnPanelAutomap = true;
+            alreadyInMouseDown = true;
         }
 
         private void PanelAutomap_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
-            leftMouseDown = false;
+            leftMouseDownOnPanelAutomap = false;
+            alreadyInMouseDown = false;
         }
 
         private void GridButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -500,138 +636,124 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ForwardButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode())
+            if (inDragMode() || alreadyInMouseDown)
                 return;
 
-            Vector3 translation;
-            switch (automapViewMode)
-            {
-                case AutomapViewMode.View2D:
-                    translation = -cameraAutomap.transform.up * scrollForwardBackwardSpeed;
-                    break;
-                case AutomapViewMode.View3D:
-                    translation = -cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
-                    translation.y = 0.0f; // comment this out for movement along camera optical axis
-                    break;
-                default:
-                    translation = Vector3.zero;
-                    break;
-            }            
-            cameraAutomap.transform.position += translation;
-            shiftBiasFromInitialPosition(translation);
-            updateAutoMapView();
+            leftMouseDownOnForwardButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void ForwardButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            leftMouseDownOnForwardButton = false;
+            alreadyInMouseDown = false;
         }
 
         private void BackwardButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode())
+            if (inDragMode() || alreadyInMouseDown)
                 return;
 
-            Vector3 translation;
-            switch (automapViewMode)
-            {
-                case AutomapViewMode.View2D:
-                    translation = cameraAutomap.transform.up * scrollForwardBackwardSpeed;
-                    break;
-                case AutomapViewMode.View3D:
-                    translation = cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
-                    translation.y = 0.0f; // comment this out for movement along camera optical axis
-                    break;
-                default:
-                    translation = Vector3.zero;
-                    break;
-            }            
-            cameraAutomap.transform.position += translation;
-            shiftBiasFromInitialPosition(translation);
-            updateAutoMapView();
+            leftMouseDownOnBackwardButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void BackwardButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            leftMouseDownOnBackwardButton = false;
+            alreadyInMouseDown = false;
         }
 
         private void LeftButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode())
+            if (inDragMode() || alreadyInMouseDown)
                 return;
 
-            Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed;
-            translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
-            cameraAutomap.transform.position += translation;
-            shiftBiasFromInitialPosition(translation);
-            updateAutoMapView();
+            leftMouseDownOnLeftButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void LeftButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            leftMouseDownOnLeftButton = false;
+            alreadyInMouseDown = false;
         }
 
         private void RightButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode())
+            if (inDragMode() || alreadyInMouseDown)
                 return;
 
-            Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed;
-            translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
-            cameraAutomap.transform.position += translation;
-            shiftBiasFromInitialPosition(translation);
-            updateAutoMapView();
+            leftMouseDownOnRightButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void RightButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            leftMouseDownOnRightButton = false;
+            alreadyInMouseDown = false;
         }
 
         private void RotateLeftButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode())
+            if (inDragMode() || alreadyInMouseDown)
                 return;
 
-            Vector3 biasFromInitialPosition;
-            switch (automapViewMode)
-            {
-                case AutomapViewMode.View2D:
-                    biasFromInitialPosition = biasFromInitialPositionViewFromTop;
-                    break;
-                case AutomapViewMode.View3D:
-                    biasFromInitialPosition = biasFromInitialPositionView3D;
-                    break;
-                default:
-                    biasFromInitialPosition = Vector3.zero;
-                    break;
-            }
-            cameraAutomap.transform.RotateAround(Camera.main.transform.position + biasFromInitialPosition, -Vector3.up, -rotateSpeed);
-            //cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, -rotateSpeed);
-            updateAutoMapView();
+            leftMouseDownOnRotateLeftButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void RotateLeftButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            leftMouseDownOnRotateLeftButton = false;
+            alreadyInMouseDown = false;
         }
 
         private void RotateRightButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode())
+            if (inDragMode() || alreadyInMouseDown)
                 return;
 
-            Vector3 biasFromInitialPosition;
-            switch (automapViewMode)
-            {
-                case AutomapViewMode.View2D:
-                    biasFromInitialPosition = biasFromInitialPositionViewFromTop;
-                    break;
-                case AutomapViewMode.View3D:
-                    biasFromInitialPosition = biasFromInitialPositionView3D;
-                    break;
-                default:
-                    biasFromInitialPosition = Vector3.zero;
-                    break;
-            }
-            cameraAutomap.transform.RotateAround(Camera.main.transform.position + biasFromInitialPosition, -Vector3.up, +rotateSpeed);
-            //cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, +rotateSpeed);
-            updateAutoMapView();
+            leftMouseDownOnRotateRightButton = true;
+            alreadyInMouseDown = true;
         }
 
-        private void UpButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
+        private void RotateRightButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode())
-                return;
-
-            cameraAutomap.transform.position += Vector3.up * scrollUpDownSpeed;
-            updateAutoMapView();
+            leftMouseDownOnRotateRightButton = false;
+            alreadyInMouseDown = false;
         }
 
-        private void DownButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
+
+        private void UpstairsButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode())
+            if (inDragMode() || alreadyInMouseDown)
                 return;
 
-            cameraAutomap.transform.position += Vector3.down * scrollUpDownSpeed;
-            updateAutoMapView();
+            leftMouseDownOnUpstairsButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void UpstairsButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            leftMouseDownOnUpstairsButton = false;
+            alreadyInMouseDown = false;
+        }
+
+
+        private void DownstairsButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            if (inDragMode() || alreadyInMouseDown)
+                return;
+
+            leftMouseDownOnDownstairsButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void DownstairsButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            leftMouseDownOnDownstairsButton = false;
+            alreadyInMouseDown = false;
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
