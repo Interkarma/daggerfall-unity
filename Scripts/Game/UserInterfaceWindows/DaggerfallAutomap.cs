@@ -145,14 +145,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup automap render panel (into this the level geometry is rendered)
             Rect rectDummyPannelAutomap = new Rect();
-            //rectDummyPannelAutomap.position = new Vector2(NativePanel.Rectangle.xMin + 10, NativePanel.Rectangle.yMin + 10);
-            //rectDummyPannelAutomap.size = new Vector2(NativePanel.Rectangle.width - 20, NativePanel.Rectangle.height - 60);
-            rectDummyPannelAutomap.position = new Vector2(10, 10);
-            rectDummyPannelAutomap.size = new Vector2(300, 140);
+            rectDummyPannelAutomap.position = new Vector2(5, 5);
+            rectDummyPannelAutomap.size = new Vector2(310, 160);
 
             dummyPannelAutomap = DaggerfallUI.AddPanel(rectDummyPannelAutomap, NativePanel);
-            dummyPannelAutomap.HorizontalAlignment = HorizontalAlignment.Center;
-            dummyPannelAutomap.VerticalAlignment = VerticalAlignment.Middle;
             //oldPositionDummyPanelAutomap = dummyPannelAutomap.Rectangle;
 
             Rect positionPanelRenderAutomap = dummyPannelAutomap.Rectangle;            
@@ -252,25 +248,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(compass);
         }
 
-
-        private void updatePositionAutomapPanel()
-        {
-            panelRenderAutomap.Position = dummyPannelAutomap.Position;
-            panelRenderAutomap.Size = dummyPannelAutomap.Size;
-            //oldPositionPanelRenderAutomap = panelRenderAutomap.Rectangle;
-        }
         private void updateAutomapPanel()
         {
-            //if (oldPositionPanelRenderAutomap != panelRenderAutomap.Rectangle)
             if (oldPositionNativePanel != NativePanel.Rectangle)
             {
-                updatePositionAutomapPanel();
-
-                Vector2 positionPanelRenderAutomap = dummyPannelAutomap.Size;
+                panelRenderAutomap.Position = dummyPannelAutomap.Rectangle.position;
+                panelRenderAutomap.Size = new Vector2(dummyPannelAutomap.InteriorWidth, dummyPannelAutomap.InteriorHeight);
+           
+                //Debug.Log(String.Format("dummy panel size: {0}, {1}; {2}, {3}; {4}, {5}; {6}, {7}\n", NativePanel.InteriorWidth, NativePanel.InteriorHeight, ParentPanel.InteriorWidth, ParentPanel.InteriorHeight, dummyPannelAutomap.InteriorWidth, dummyPannelAutomap.InteriorHeight, parentPanel.InteriorWidth, parentPanel.InteriorHeight));
+                //Debug.Log(String.Format("dummy panel pos: {0}, {1}; {2}, {3}; {4}, {5}; {6}, {7}\n", NativePanel.Rectangle.xMin, NativePanel.Rectangle.yMin, ParentPanel.Rectangle.xMin, ParentPanel.Rectangle.yMin, dummyPannelAutomap.Rectangle.xMin, dummyPannelAutomap.Rectangle.yMin, parentPanel.Rectangle.xMin, parentPanel.Rectangle.yMin));
+                Vector2 positionPanelRenderAutomap = new Vector2(dummyPannelAutomap.InteriorWidth, dummyPannelAutomap.InteriorHeight); //dummyPannelAutomap.Size;
                 createAutomapTextures((int)positionPanelRenderAutomap.x, (int)positionPanelRenderAutomap.y);
                 updateAutoMapView();
 
                 //oldPositionDummyPanelAutomap = dummyPannelAutomap.Rectangle;
+                //oldPositionPanelRenderAutomap = panelRenderAutomap.Rectangle;
                 oldPositionNativePanel = NativePanel.Rectangle;
             }
         }
