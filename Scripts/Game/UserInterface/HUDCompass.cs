@@ -26,14 +26,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Texture2D compassBoxTexture;
         float eulerAngle;
 
-        Rect? customCompassBoxRect;
-
-        public Rect CompassBoxRect
-        {
-            get { return customCompassBoxRect.Value; }
-            set { customCompassBoxRect = value; }
-        }
-
         /// <summary>
         /// Gets or sets a compass camera to automatically determine compass heading.
         /// </summary>
@@ -57,7 +49,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             : base()
         {
             compassCamera = Camera.main;
-
             LoadAssets();
         }
 
@@ -65,7 +56,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             compassCamera = camera;
             HorizontalAlignment = HorizontalAlignment.Right;
-            VerticalAlignment = VerticalAlignment.Bottom;            
+            VerticalAlignment = VerticalAlignment.Bottom;
             LoadAssets();
         }
 
@@ -112,13 +103,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Calculate scroll offset
             int scroll = (int)((float)nonWrappedPart * percent);
 
+            // Compass box rect
             Rect compassBoxRect = new Rect();
-
             compassBoxRect.x = Position.x;
             compassBoxRect.y = Position.y;
             compassBoxRect.width = compassBoxTexture.width * Scale.x;
             compassBoxRect.height = compassBoxTexture.height * Scale.y;
-
 
             // Compass strip source
             Rect compassSrcRect = new Rect();
