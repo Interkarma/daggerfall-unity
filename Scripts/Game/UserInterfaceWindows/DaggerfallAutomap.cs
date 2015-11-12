@@ -48,8 +48,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         enum AutomapViewMode { View2D = 0, View3D = 1};
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
 
-        Panel panelAutomap = null;
-        Rect oldPositionPanelAutomap;
+        Panel dummyPannelAutomap = null;
+        Panel panelRenderAutomap = null;
+        Rect oldPositionNativePanel;
+        //Rect oldPositionPanelRenderAutomap;
+        //Rect oldPositionDummyPanelAutomap;
         Vector2 oldDragPosition;
 
         bool leftMouseDownOnPanelAutomap = false;
@@ -135,22 +138,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
-            ParentPanel.Update();
+            //NativePanel.Update();
+            //ParentPanel.Update();
 
-            // Setup automap panel (into this the level geometry is rendered)
-            //Rect positionPanelAutomap = new Rect(9f, 2f, (float)(ParentPanel.InteriorWidth - 109), (float)(ParentPanel.InteriorHeight - 198));
-            //Rect positionPanelAutomap = new Rect(ParentPanel.Position.x, ParentPanel.Position.y, (float)(ParentPanel.Size.x - 19), (float)(ParentPanel.Size.y - 98));
-            Rect positionPanelAutomap = new Rect(ParentPanel.Position.x, ParentPanel.Position.y, (float)(ParentPanel.InteriorWidth * 0.98f), (float)(ParentPanel.InteriorHeight * 0.8f));
-            oldPositionPanelAutomap = positionPanelAutomap;
-            if (panelAutomap == null)
-            {
-                panelAutomap = DaggerfallUI.AddPanel(positionPanelAutomap, ParentPanel);
-                panelAutomap.ScalingMode = Scaling.None;
-            }
-            panelAutomap.OnMouseScrollUp += PanelAutomap_OnMouseScrollUp;
-            panelAutomap.OnMouseScrollDown += PanelAutomap_OnMouseScrollDown;
-            panelAutomap.OnMouseDown += PanelAutomap_OnMouseDown;
-            panelAutomap.OnMouseUp += PanelAutomap_OnMouseUp;
+            oldPositionNativePanel = NativePanel.Rectangle;
+
+            // Setup automap render panel (into this the level geometry is rendered)
+            Rect rectDummyPannelAutomap = new Rect();
+            //rectDummyPannelAutomap.position = new Vector2(NativePanel.Rectangle.xMin + 10, NativePanel.Rectangle.yMin + 10);
+            //rectDummyPannelAutomap.size = new Vector2(NativePanel.Rectangle.width - 20, NativePanel.Rectangle.height - 60);
+            rectDummyPannelAutomap.position = new Vector2(10, 10);
+            rectDummyPannelAutomap.size = new Vector2(300, 140);
+
+            dummyPannelAutomap = DaggerfallUI.AddPanel(rectDummyPannelAutomap, NativePanel);
+            dummyPannelAutomap.HorizontalAlignment = HorizontalAlignment.Center;
+            dummyPannelAutomap.VerticalAlignment = VerticalAlignment.Middle;
+            //oldPositionDummyPanelAutomap = dummyPannelAutomap.Rectangle;
+
+            Rect positionPanelRenderAutomap = dummyPannelAutomap.Rectangle;            
+            panelRenderAutomap = DaggerfallUI.AddPanel(positionPanelRenderAutomap, ParentPanel);
+            panelRenderAutomap.ScalingMode = Scaling.None;
+            //oldPositionPanelRenderAutomap = panelRenderAutomap.Rectangle;
+            
+            panelRenderAutomap.OnMouseScrollUp += PanelAutomap_OnMouseScrollUp;
+            panelRenderAutomap.OnMouseScrollDown += PanelAutomap_OnMouseScrollDown;
+            panelRenderAutomap.OnMouseDown += PanelAutomap_OnMouseDown;
+            panelRenderAutomap.OnMouseUp += PanelAutomap_OnMouseUp;
 
             // Grid button (toggle 2D <-> 3D view)
             Button gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
@@ -215,7 +228,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cameraAutomap.fieldOfView = 45.0f;
             }
 
-            createAutomapTextures((int)positionPanelAutomap.width, (int)positionPanelAutomap.height);
+            createAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
 
             resetCameraPosition();
             resetBiasFromInitialPosition();
@@ -226,22 +239,47 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             compass = new HUDCompass(cameraAutomap);
             Vector2 scale = NativePanel.LocalScale;
             compass.CompassBoxRect = new Rect(3f * scale.x, 172f * scale.y, 76f * scale.x, 17f * scale.y);
-            compass.Scale = NativePanel.LocalScale;
+            
+            //Vector2 scale = NativePanel.LocalScale;
+            //compass.HorizontalAlignment = HorizontalAlignment.None;
+            //compass.VerticalAlignment = VerticalAlignment.None;
+            //compass.ScalingMode = Scaling.Free;
+            
+            compass.Position = new Vector2(3f * scale.x, 172f * scale.y);
+            compass.Scale = scale;
+            //compass.OffsetFrom(NativePanel, Sides.Left, 200);
+            //compass.OffsetFrom(NativePanel, Sides.Left, 50);
             NativePanel.Components.Add(compass);
+        }
+
+
+        private void updatePositionAutomapPanel()
+        {
+            panelRenderAutomap.Position = dummyPannelAutomap.Position;
+            panelRenderAutomap.Size = dummyPannelAutomap.Size;
+            //oldPositionPanelRenderAutomap = panelRenderAutomap.Rectangle;
+        }
+        private void updateAutomapPanel()
+        {
+            //if (oldPositionPanelRenderAutomap != panelRenderAutomap.Rectangle)
+            if (oldPositionNativePanel != NativePanel.Rectangle)
+            {
+                updatePositionAutomapPanel();
+
+                Vector2 positionPanelRenderAutomap = dummyPannelAutomap.Size;
+                createAutomapTextures((int)positionPanelRenderAutomap.x, (int)positionPanelRenderAutomap.y);
+                updateAutoMapView();
+
+                //oldPositionDummyPanelAutomap = dummyPannelAutomap.Rectangle;
+                oldPositionNativePanel = NativePanel.Rectangle;
+            }
         }
 
         public override void Update()
         {
             base.Update();
 
-            Rect positionPanelAutomap = new Rect(ParentPanel.Position.x, ParentPanel.Position.y, (float)(ParentPanel.InteriorWidth * 0.98f), (float)(ParentPanel.InteriorHeight * 0.8f));
-            if (oldPositionPanelAutomap != positionPanelAutomap)
-            {
-                panelAutomap.Position = new Vector2(positionPanelAutomap.x, positionPanelAutomap.y);
-                panelAutomap.Size = new Vector2(positionPanelAutomap.width, positionPanelAutomap.height);
-                createAutomapTextures((int)positionPanelAutomap.width, (int)positionPanelAutomap.height);
-                updateAutoMapView();
-            }
+            updateAutomapPanel();
 
             if (leftMouseDownOnPanelAutomap)
             {
@@ -386,7 +424,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void createAutomapTextures(int width, int height)
         {
-            if ((!renderTextureAutomap) || (oldRenderTextureAutomapWidth != width) || (oldRenderTextureAutomapHeight != height))
+            if ((!cameraAutomap) || (!renderTextureAutomap) || (oldRenderTextureAutomapWidth != width) || (oldRenderTextureAutomapHeight != height))
             {
                 cameraAutomap.targetTexture = null;
                 if (renderTextureAutomap)
@@ -517,7 +555,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             textureAutomap.Apply(false);
             RenderTexture.active = null;
 
-            panelAutomap.BackgroundTexture = textureAutomap;
+            panelRenderAutomap.BackgroundTexture = textureAutomap;
         }
 
 
