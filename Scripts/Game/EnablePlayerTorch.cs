@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game
             if (!dfUnity.IsReady || !playerEnterExit || !PlayerTorch)
                 return;
 
-            if (playerEnterExit.IsPlayerInsideDungeon || dfUnity.WorldTime.Now.IsNight)
+            if (playerEnterExit.IsPlayerInsideDungeon || dfUnity.WorldTime.Now.IsCityLightsOn)
                 PlayerTorch.SetActive(true);
             else
                 PlayerTorch.SetActive(false);
