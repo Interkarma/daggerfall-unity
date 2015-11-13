@@ -48,7 +48,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         GameObject gameObjectGeometry = null;
         int layerAutomap; // layer used for geometry of automap
         GameObject gameObjectInteriorLightRig = null;
-        GameObject gameobjectAutomapLight = null;
+        GameObject gameobjectAutomapKeyLight = null;
+        GameObject gameobjectAutomapFillLight = null;
+        GameObject gameobjectAutomapBackLight = null;
 
         enum AutomapViewMode { View2D = 0, View3D = 1};
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
@@ -449,7 +451,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // enable interior lights
                 gameObjectInteriorLightRig.SetActive(true);
-                UnityEngine.Object.DestroyImmediate(gameobjectAutomapLight);
+                //UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
+                UnityEngine.Object.DestroyImmediate(gameobjectAutomapFillLight);
+                UnityEngine.Object.DestroyImmediate(gameobjectAutomapBackLight);
             }
         }
 
@@ -580,11 +584,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                 }
 
-                gameobjectAutomapLight = new GameObject("AutomapKeyLight");
-                gameobjectAutomapLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
-                Light scriptLight = gameobjectAutomapLight.AddComponent<Light>();
-                scriptLight.type = LightType.Directional;
-                //scriptLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
+                //gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
+                //gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
+                //Light scriptKeyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
+                //scriptKeyLight.type = LightType.Directional;
+                ////scriptKeyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
+
+                gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
+                gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
+                Light scriptFillLight = gameobjectAutomapFillLight.AddComponent<Light>();
+                scriptFillLight.type = LightType.Directional;
+                scriptFillLight.intensity = 0.6f;
+
+                gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
+                gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
+                Light scriptBackLight = gameobjectAutomapBackLight.AddComponent<Light>();
+                scriptBackLight.type = LightType.Directional;
+                scriptBackLight.intensity = 0.2f;
 
                 gameObjectGeometry.SetActive(true);
             }
