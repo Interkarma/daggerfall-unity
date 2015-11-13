@@ -45,6 +45,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
 
+        GameObject gameObjectCameraAutomap = null;
+
         GameObject gameObjectGeometry = null;
         int layerAutomap; // layer used for geometry of automap
         GameObject gameObjectInteriorLightRig = null;
@@ -228,17 +230,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             createGeometryForAutomap();
 
-            if (!cameraAutomap)
-            {
-                GameObject gameObjectCameraAutomap = new GameObject("CameraAutomap");
-                cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
-                cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
-                cameraAutomap.cullingMask = 1 << layerAutomap;
-                cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
-                cameraAutomap.nearClipPlane = 0.7f;
-                cameraAutomap.farClipPlane = 1000.0f;
-                cameraAutomap.fieldOfView = 45.0f;
-            }
+            createAutomapCamera();
 
             createAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
 
@@ -429,12 +421,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (IsSetup)
             {
-                if (gameObjectGeometry != null)
-                {
-                    UnityEngine.Object.DestroyImmediate(gameObjectGeometry);                    
-                }
-
                 createGeometryForAutomap();
+
+                createAutomapCamera();
+
+                Rect positionPanelRenderAutomap = dummyPanelAutomap.Rectangle;
+                createAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
 
                 if (cameraAutomap)
                 {
@@ -451,9 +443,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // enable interior lights
                 gameObjectInteriorLightRig.SetActive(true);
-                //UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
+                UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapFillLight);
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapBackLight);
+            }
+
+            if (gameObjectGeometry != null)
+            {
+                UnityEngine.Object.DestroyImmediate(gameObjectGeometry);
+            }
+
+            if (gameObjectCameraAutomap != null)
+            {
+                UnityEngine.Object.DestroyImmediate(gameObjectCameraAutomap);
+            }
+
+            if (renderTextureAutomap != null)
+            {
+                UnityEngine.Object.DestroyImmediate(renderTextureAutomap);
+            }
+
+            if (textureAutomap != null)
+            {
+                UnityEngine.Object.DestroyImmediate(textureAutomap);
             }
         }
 
@@ -470,7 +482,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return path;
         }
 
-
+        private void createAutomapCamera()
+        {
+            if (!cameraAutomap)
+            {
+                gameObjectCameraAutomap = new GameObject("CameraAutomap");
+                cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
+                cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
+                cameraAutomap.cullingMask = 1 << layerAutomap;
+                cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
+                cameraAutomap.nearClipPlane = 0.7f;
+                cameraAutomap.farClipPlane = 1000.0f;
+                cameraAutomap.fieldOfView = 45.0f;
+            }
+        }
 
         private static void SetLayerRecursively(GameObject obj, int layer)
         {
@@ -561,10 +586,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (gameObjectToClone != null)
             {
-                gameObjectToClone.SetActive(false);
+                //gameObjectToClone.SetActive(false);
                 gameObjectGeometry = GameObject.Instantiate(gameObjectToClone);
                 gameObjectGeometry.name = "GeometryAutomap";
-                gameObjectToClone.SetActive(true);
+                //gameObjectToClone.SetActive(true);
                 
                 if (inDungeon == false)
                 {
@@ -584,11 +609,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                 }
 
-                //gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
-                //gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
-                //Light scriptKeyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
-                //scriptKeyLight.type = LightType.Directional;
-                ////scriptKeyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
+                gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
+                gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
+                Light scriptKeyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
+                scriptKeyLight.type = LightType.Directional;
+                //scriptKeyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
 
                 gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
                 gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
