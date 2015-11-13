@@ -45,6 +45,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
 
+        int layerAutomap; // layer used for geometry of automap
+
         enum AutomapViewMode { View2D = 0, View3D = 1};
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
 
@@ -102,6 +104,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             ImgFile imgFile = null;
             DFBitmap bitmap = null;
+
+            layerAutomap = LayerMask.NameToLayer("Automap");
+            if (layerAutomap == -1)
+            {
+                DaggerfallUnity.LogMessage("Layer with name \"Automap\" missing! Set it in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);
+                //if (Application.isEditor)
+                //    Debug.Break();
+                //else
+                //    Application.Quit();
+            }
 
             // Load native texture
             imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, nativeImgName), FileUsage.UseMemory, false);
@@ -209,12 +221,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
+            createGeometryForAutomap();
+
             if (!cameraAutomap)
             {
-                GameObject gameObjectCameraAutomap = new GameObject("cameraAutomap");
+                GameObject gameObjectCameraAutomap = new GameObject("CameraAutomap");
                 cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
                 cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
-                cameraAutomap.cullingMask = 1;
+                cameraAutomap.cullingMask = 1 << layerAutomap;
                 cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 1000.0f;
@@ -407,6 +421,88 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #region Private Methods
+
+        static string GetGameObjectPath(GameObject obj)
+        {
+            string path = "/" + obj.name;
+            while (obj.transform.parent != null)
+            {
+                obj = obj.transform.parent.gameObject;
+                path = "/" + obj.name + path;
+            }
+            return path;
+        }
+
+
+
+        private static void SetLayerRecursively(GameObject obj, int layer)
+        {
+            obj.layer = layer;
+
+            foreach (Transform child in obj.transform)
+            {
+                SetLayerRecursively(child.gameObject, layer);
+            }
+        }
+
+        private void createGeometryForAutomap()
+        {
+            GameObject gameObjectGeometry = null;
+            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
+            {
+                foreach (Transform elem in GameManager.Instance.InteriorParent.transform)
+                {
+                    if (elem.name.Contains("DaggerfallInterior"))
+                    {
+                        elem.gameObject.SetActive(false);
+                        gameObjectGeometry = GameObject.Instantiate(elem.gameObject);
+                        gameObjectGeometry.name = "GeometryAutomap";
+                        elem.gameObject.SetActive(true);
+                        gameObjectGeometry.SetActive(true);
+                        foreach (Transform child in gameObjectGeometry.transform)
+                        {
+                            foreach (Transform innerChild in child.transform)
+                            {
+                                DaggerfallWorkshop.Game.Serialization.SerializableActionDoor script = innerChild.GetComponent<DaggerfallWorkshop.Game.Serialization.SerializableActionDoor>();
+                                if (script != null)
+                                {
+                                    script.enabled = false;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            else if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
+            {
+                foreach (Transform elem in GameManager.Instance.InteriorParent.transform)
+                {
+                    if (elem.name.Contains("DaggerfallDungeon"))
+                    {
+                        elem.gameObject.SetActive(false);
+                        gameObjectGeometry = GameObject.Instantiate(elem.gameObject);
+                        gameObjectGeometry.name = "GeometryAutomap";
+                        elem.gameObject.SetActive(true);
+                        gameObjectGeometry.SetActive(true);
+                        foreach (Transform child in gameObjectGeometry.transform)
+                        {
+                            foreach (Transform innerChild in child.transform)
+                            {
+                                DaggerfallWorkshop.Game.Serialization.SerializableActionDoor script = innerChild.GetComponent<DaggerfallWorkshop.Game.Serialization.SerializableActionDoor>();
+                                if (script != null)
+                                {
+                                    script.enabled = false;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            SetLayerRecursively(gameObjectGeometry, layerAutomap);
+        }
 
         private void createAutomapTextures(int width, int height)
         {
