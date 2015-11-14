@@ -62,16 +62,18 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="textureTable">Optional texture table for dungeon.</param>
         /// <param name="allowExitDoors">Add exit doors to block.</param>
         /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
+        /// <param name="serialize">Allow for serialization of supported sub-objects.</param>
         /// <returns>Block GameObject.</returns>
         public static GameObject CreateBaseGameObject(
             string blockName,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             int[] textureTable = null,
             bool allowExitDoors = true,
-            DaggerfallRDBBlock cloneFrom = null)
+            DaggerfallRDBBlock cloneFrom = null,
+            bool serialize = true)
         {
             DFBlock blockData;
-            return CreateBaseGameObject(blockName, ref actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom);
+            return CreateBaseGameObject(blockName, actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom, serialize);
         }
 
         /// <summary>
@@ -82,14 +84,16 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="textureTable">Optional texture table for dungeon.</param>
         /// <param name="allowExitDoors">Add exit doors to block.</param>
         /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
+        /// <param name="serialize">Allow for serialization of supported sub-objects.</param>
         /// <returns>Block GameObject.</returns>
         public static GameObject CreateBaseGameObject(
             string blockName,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             out DFBlock blockDataOut,
             int[] textureTable = null,
             bool allowExitDoors = true,
-            DaggerfallRDBBlock cloneFrom = null)
+            DaggerfallRDBBlock cloneFrom = null,
+            bool serialize = true)
         {
             blockDataOut = new DFBlock();
 
@@ -105,7 +109,7 @@ namespace DaggerfallWorkshop.Utility
             // Get block data
             blockDataOut = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
 
-            return CreateBaseGameObject(ref blockDataOut, ref actionLinkDict, textureTable, allowExitDoors, cloneFrom);
+            return CreateBaseGameObject(ref blockDataOut, actionLinkDict, textureTable, allowExitDoors, cloneFrom, serialize);
         }
 
         /// <summary>
@@ -115,13 +119,15 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="textureTable">Optional texture table for dungeon.</param>
         /// <param name="allowExitDoors">Add exit doors to block.</param>
         /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
+        /// <param name="serialize">Allow for serialization of supported sub-objects.</param>
         /// <returns>Block GameObject.</returns>
         public static GameObject CreateBaseGameObject(
             ref DFBlock blockData,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             int[] textureTable = null,
             bool allowExitDoors = true,
-            DaggerfallRDBBlock cloneFrom = null)
+            DaggerfallRDBBlock cloneFrom = null,
+            bool serialize = true)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -160,10 +166,11 @@ namespace DaggerfallWorkshop.Utility
             AddModels(
                 dfUnity,
                 ref blockData,
-                ref actionLinkDict,
+                actionLinkDict,
                 textureTable,
                 allowExitDoors,
                 out exitDoors,
+                serialize,
                 combiner,
                 modelsNode.transform,
                 actionModelsNode.transform);
@@ -196,7 +203,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Add actions doors to block.
         /// </summary>
-        public static void AddActionDoors(GameObject go, ref Dictionary<int, ActionLink> actionLinkDict, ref DFBlock blockData, int[] textureTable)
+        public static void AddActionDoors(GameObject go, Dictionary<int, ActionLink> actionLinkDict, ref DFBlock blockData, int[] textureTable, bool serialize = true)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -223,7 +230,9 @@ namespace DaggerfallWorkshop.Utility
                     if (obj.Type == DFBlock.RdbResourceTypes.Model)
                     {
                         // Create unique LoadID for save sytem
-                        long loadID = (blockData.Index << 24) + obj.This;
+                        long loadID = 0;
+                        if (serialize)
+                            loadID = (blockData.Index << 24) + obj.This;
 
                         // Look for action doors
                         int modelReference = obj.Resources.ModelResource.ModelIndex;
@@ -236,7 +245,7 @@ namespace DaggerfallWorkshop.Utility
                             // Add action component to door if it also has an action
                             if (HasAction(obj))
                             {
-                                AddActionModelHelper(cgo, ref actionLinkDict, obj, ref blockData);
+                                AddActionModelHelper(cgo, actionLinkDict, obj, ref blockData, serialize);
                             }
                         }
                     }
@@ -282,7 +291,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public static void AddFlats(
             GameObject go,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             ref DFBlock blockData,
             out DFBlock.RdbObject[] editorObjectsOut,
             out GameObject[] startMarkersOut,
@@ -344,7 +353,7 @@ namespace DaggerfallWorkshop.Utility
                         //add action component to flat if it has an action
                         if (obj.Resources.FlatResource.Action > 0)
                         {
-                            AddActionFlatHelper(flatObject, ref actionLinkDict, ref blockData, obj);
+                            AddActionFlatHelper(flatObject, actionLinkDict, ref blockData, obj);
                         }
 
                     }
@@ -362,10 +371,12 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="go">GameObject to add monsters to.</param>
         /// <param name="editorObjects">Editor objects containing flats.</param>
+        /// <param name="serialize">Allow for serialization when available.</param>
         public static void AddFixedEnemies(
             GameObject go,
             DFBlock.RdbObject[] editorObjects,
-            ref DFBlock blockData)
+            ref DFBlock blockData,
+            bool serialize = true)
         {
             const int fixedMonsterFlatIndex = 16;
 
@@ -390,7 +401,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Add fixed enemy objects
                 if (editorObjects[i].Resources.FlatResource.TextureRecord == fixedMonsterFlatIndex)
-                    AddFixedRDBEnemy(editorObjects[i], fixedEnemiesNode.transform, ref blockData);
+                    AddFixedRDBEnemy(editorObjects[i], fixedEnemiesNode.transform, ref blockData, serialize);
             }
         }
 
@@ -401,8 +412,9 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="editorObjects">Editor objects containing flats.</param>
         /// <param name="dungeonType">Dungeon type selects the encounter table.</param>
         /// <param name="monsterPower">Value between 0-1 for lowest monster power to highest.</param>
-        /// ?<param name="monsterVariance">Adjust final index +/- this value in encounter table.</param>
+        /// <param name="monsterVariance">Adjust final index +/- this value in encounter table.</param>
         /// <param name="seed">Random seed for encounters.</param>
+        /// <param name="serialize">Allow for serialization when available.</param>
         public static void AddRandomEnemies(
             GameObject go,
             DFBlock.RdbObject[] editorObjects,
@@ -410,7 +422,8 @@ namespace DaggerfallWorkshop.Utility
             float monsterPower,
             ref DFBlock blockData,
             int monsterVariance = 4,
-            int seed = 0)
+            int seed = 0,
+            bool serialize = true)
         {
             const int randomMonsterFlatIndex = 15;
 
@@ -438,7 +451,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Add random enemy objects
                 if (editorObjects[i].Resources.FlatResource.TextureRecord == randomMonsterFlatIndex)
-                    AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform, ref blockData);
+                    AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform, ref blockData, serialize);
             }
         }
 
@@ -452,10 +465,11 @@ namespace DaggerfallWorkshop.Utility
         private static void AddModels(
             DaggerfallUnity dfUnity,
             ref DFBlock blockData,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             int[] textureTable,
             bool allowExitDoors,
             out List<StaticDoor> exitDoorsOut,
+            bool serialize,
             ModelCombiner combiner = null,
             Transform modelsParent = null,
             Transform actionModelsParent = null)
@@ -528,7 +542,7 @@ namespace DaggerfallWorkshop.Utility
 
                         // Add action
                         if (hasAction && standaloneObject != null)
-                            AddActionModelHelper(standaloneObject, ref actionLinkDict, obj, ref blockData);
+                            AddActionModelHelper(standaloneObject, actionLinkDict, obj, ref blockData, serialize);
                     }
                 }
             }
@@ -687,9 +701,10 @@ namespace DaggerfallWorkshop.Utility
 
         private static void AddActionModelHelper(
             GameObject go,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             DFBlock.RdbObject rdbObj,
-            ref DFBlock blockData)
+            ref DFBlock blockData,
+            bool serialize)
         {
 
             DFBlock.RdbModelResource obj = rdbObj.Resources.ModelResource;
@@ -701,35 +716,41 @@ namespace DaggerfallWorkshop.Utility
             DFBlock.RdbTriggerFlags triggerFlag = DFBlock.RdbTriggerFlags.None;
             DFBlock.RdbActionFlags actionFlag = DFBlock.RdbActionFlags.None;
 
-            //set action flag if valid / known
-            if (Enum.IsDefined(typeof(DFBlock.RdbActionFlags), (DFBlock.RdbActionFlags)obj.ActionResource.Flags))
-                actionFlag = (DFBlock.RdbActionFlags)obj.ActionResource.Flags;
-
-            //set trigger flag if valid / known
-            if (Enum.IsDefined(typeof(DFBlock.RdbTriggerFlags), (DFBlock.RdbTriggerFlags)obj.TriggerFlag_StartingLock))
-                triggerFlag = (DFBlock.RdbTriggerFlags)obj.TriggerFlag_StartingLock;
-
-            //add action node to actionLink dictionary
-            if (!actionLinkDict.ContainsKey(rdbObj.This))
+            if (actionLinkDict != null)
             {
-                ActionLink link;
-                link.nextKey = obj.ActionResource.NextObjectOffset;
-                link.prevKey = obj.ActionResource.PreviousObjectOffset;
-                link.gameObject = go;
-                actionLinkDict.Add(rdbObj.This, link);
+                // Set action flag if valid / known
+                if (Enum.IsDefined(typeof(DFBlock.RdbActionFlags), (DFBlock.RdbActionFlags)obj.ActionResource.Flags))
+                    actionFlag = (DFBlock.RdbActionFlags)obj.ActionResource.Flags;
+
+                // Set trigger flag if valid / known
+                if (Enum.IsDefined(typeof(DFBlock.RdbTriggerFlags), (DFBlock.RdbTriggerFlags)obj.TriggerFlag_StartingLock))
+                    triggerFlag = (DFBlock.RdbTriggerFlags)obj.TriggerFlag_StartingLock;
+
+                // Add action node to actionLink dictionary
+                if (!actionLinkDict.ContainsKey(rdbObj.This))
+                {
+                    ActionLink link;
+                    link.nextKey = obj.ActionResource.NextObjectOffset;
+                    link.prevKey = obj.ActionResource.PreviousObjectOffset;
+                    link.gameObject = go;
+                    actionLinkDict.Add(rdbObj.This, link);
+                }
             }
 
             // Create unique LoadID for save sytem
-            long loadID = (blockData.Index << 24) + rdbObj.This;
+            long loadID = 0;
+            if (serialize)
+                loadID = (blockData.Index << 24) + rdbObj.This;
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
 
         private static void AddActionFlatHelper(
             GameObject go,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             ref DFBlock blockData,
-            DFBlock.RdbObject rdbObj)
+            DFBlock.RdbObject rdbObj,
+            bool serialize = true)
         {
 
             DFBlock.RdbFlatResource obj = rdbObj.Resources.FlatResource;
@@ -760,7 +781,9 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Create unique LoadID for save sytem
-            long loadID = (blockData.Index << 24) + rdbObj.This;
+            long loadID = 0;
+            if (serialize)
+                loadID = (blockData.Index << 24) + rdbObj.This;
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
@@ -1082,7 +1105,8 @@ namespace DaggerfallWorkshop.Utility
             float monsterPower,
             int monsterVariance,
             Transform parent,
-            ref DFBlock blockData)
+            ref DFBlock blockData,
+            bool serialize)
         {
             // Must have a dungeon type
             if (dungeonType == DFRegion.DungeonTypes.NoDungeon)
@@ -1112,7 +1136,9 @@ namespace DaggerfallWorkshop.Utility
                 MobileTypes type = table.Enemies[UnityEngine.Random.Range(minMonsterIndex, maxMonsterIndex)];
 
                 // Create unique LoadID for save sytem
-                long loadID = (blockData.Index << 24) + obj.This;
+                long loadID = 0;
+                if (serialize)
+                    loadID = (blockData.Index << 24) + obj.This;
 
                 // Add enemy
                 AddEnemy(obj, type, parent, loadID);
@@ -1123,7 +1149,7 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData)
+        private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, bool serialize)
         {
             // Get type value and ignore known invalid types
             int typeValue = (int)(obj.Resources.FlatResource.FactionMobileId & 0xff);
@@ -1131,7 +1157,9 @@ namespace DaggerfallWorkshop.Utility
                 return;
 
             // Create unique LoadID for save sytem
-            long loadID = (blockData.Index << 24) + obj.This;
+            long loadID = 0;
+            if (serialize)
+                loadID = (blockData.Index << 24) + obj.This;
 
             // Cast to enum
             MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionMobileId & 0xff);

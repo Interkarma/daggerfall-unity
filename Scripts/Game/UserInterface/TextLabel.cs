@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Truncate string to max characters
             if (maxCharacters != -1)
-                value = value.Substring(0, maxCharacters);
+                value = value.Substring(0, Math.Min(value.Length, maxCharacters));
 
             this.text = value;
             CreateLabelTexture();

@@ -430,9 +430,9 @@ namespace DaggerfallWorkshop.Utility
 
             // Create base object
             DFBlock blockData;
-            GameObject go = RDBLayout.CreateBaseGameObject(blockName, ref actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom);
+            GameObject go = RDBLayout.CreateBaseGameObject(blockName, actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom);
             // Add action doors
-            RDBLayout.AddActionDoors(go, ref actionLinkDict, ref blockData, textureTable);
+            RDBLayout.AddActionDoors(go, actionLinkDict, ref blockData, textureTable);
 
             // Add lights
             RDBLayout.AddLights(go, ref blockData);
@@ -441,7 +441,7 @@ namespace DaggerfallWorkshop.Utility
             DFBlock.RdbObject[] editorObjects;
             GameObject[] startMarkers;
             GameObject[] enterMarkers;
-            RDBLayout.AddFlats(go, ref actionLinkDict, ref blockData, out editorObjects, out startMarkers, out enterMarkers);
+            RDBLayout.AddFlats(go, actionLinkDict, ref blockData, out editorObjects, out startMarkers, out enterMarkers);
 
             // Set start and enter markers
             DaggerfallRDBBlock dfBlock = go.GetComponent<DaggerfallRDBBlock>();

@@ -39,12 +39,14 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         void Start()
         {
-            SaveLoadManager.RegisterSerializableGameObject(this);
+            if (LoadID != 0)
+                SaveLoadManager.RegisterSerializableGameObject(this);
         }
 
         void OnDestroy()
         {
-            SaveLoadManager.DeregisterSerializableGameObject(this);
+            if (LoadID != 0)
+                SaveLoadManager.DeregisterSerializableGameObject(this);
         }
 
         #endregion
