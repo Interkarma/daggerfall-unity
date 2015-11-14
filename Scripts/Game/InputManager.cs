@@ -469,7 +469,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-
         // Unbind a KeyCode from an action
         void ClearBinding(KeyCode code)
         {
