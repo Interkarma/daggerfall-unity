@@ -54,6 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Init empty texture
             vidTexture = TextureReader.CreateFromSolidColor(1, 1, Color.black, false, false);
             vidTexture.wrapMode = TextureWrapMode.Clamp;
+            vidTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
         }
 
         public void Open(string name)
@@ -64,6 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             vidTexture = TextureReader.CreateFromSolidColor(vidFile.FrameWidth, vidFile.FrameHeight, Color.black, false, false);
             vidTexture.wrapMode = TextureWrapMode.Clamp;
+            vidTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
         }
 
         public void Play(string name)
