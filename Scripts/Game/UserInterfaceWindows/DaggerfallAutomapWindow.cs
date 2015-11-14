@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float scrollLeftRightSpeed = 1.0f;
         const float scrollForwardBackwardSpeed = 1.0f;
         const float scrollUpDownSpeed = 1.0f;
-        const float rotateSpeed = 10.0f;
+        const float rotateSpeed = 3.0f;
         const float zoomSpeed = 0.1f; // suggested value range: 0.1f (fast) to 0.01f (slow)
         const float dragSpeed = 0.002f; // suggested value range: 0.01f (fast) to 0.001f (slow)
 
@@ -439,7 +439,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
             {
                 // enable interior lights
-                gameObjectInteriorLightRig.SetActive(true);
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                {
+                    gameObjectInteriorLightRig.SetActive(true);
+                }
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapFillLight);
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapBackLight);
@@ -485,7 +488,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 1000.0f;
-                cameraAutomap.fieldOfView = 45.0f;
+                cameraAutomap.fieldOfView = 15.0f;
 
                 gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
             }
@@ -497,23 +500,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
             gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
             Light scriptKeyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
-            scriptKeyLight.type = LightType.Directional;
+            scriptKeyLight.type = LightType.Directional;            
             //scriptKeyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
             gameobjectAutomapKeyLight.transform.SetParent(gameobjectAutomap.transform);
 
             gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
             gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
             Light scriptFillLight = gameobjectAutomapFillLight.AddComponent<Light>();
-            scriptFillLight.type = LightType.Directional;
-            scriptFillLight.intensity = 0.6f;
+            scriptFillLight.type = LightType.Directional;          
             gameobjectAutomapFillLight.transform.SetParent(gameobjectAutomap.transform);
 
             gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
             gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
             Light scriptBackLight = gameobjectAutomapBackLight.AddComponent<Light>();
-            scriptBackLight.type = LightType.Directional;
-            scriptBackLight.intensity = 0.2f;
+            scriptBackLight.type = LightType.Directional;            
             gameobjectAutomapBackLight.transform.SetParent(gameobjectAutomap.transform);
+
+            if (GameManager.Instance.IsPlayerInsideBuilding)
+            {
+                scriptKeyLight.intensity = 1.0f;
+                scriptFillLight.intensity = 0.6f;
+                scriptBackLight.intensity = 0.2f;
+            }
+            else if  ((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsidePalace))
+            {
+                scriptKeyLight.intensity = 0.05f;
+                scriptFillLight.intensity = 0.05f;
+                scriptBackLight.intensity = 0.05f;
+            }
         }
 
         private void createAutomapTextures(int width, int height)
@@ -707,6 +721,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     nativeTexture.Apply(false);
                     saveCameraTransformView3D();
                     restoreOldCameraTransformViewFromTop();
+                    cameraAutomap.fieldOfView = 15.0f;
                     updateAutoMapView();
                     break;
                 case AutomapViewMode.View3D:
@@ -715,6 +730,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     nativeTexture.Apply(false);
                     saveCameraTransformViewFromTop();
                     restoreOldCameraTransformView3D();
+                    cameraAutomap.fieldOfView = 45.0f;
                     updateAutoMapView();
                     break;
                 default:

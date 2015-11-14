@@ -117,12 +117,12 @@ namespace DaggerfallWorkshop.Game
 
                     // Layout interior
                     StaticDoor door = args.StaticDoor;
-                    GameObject newInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex));
-                    DaggerfallInterior interior = newInterior.AddComponent<DaggerfallInterior>();
+                    GameObject gameobjectInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex));
+                    DaggerfallInterior interior = gameobjectInterior.AddComponent<DaggerfallInterior>();
 
                     interior.DoLayoutAutomap(null, door, climateBase);
 
-                    newInterior.transform.SetParent(gameobjectGeometry.transform);
+                    gameobjectInterior.transform.SetParent(gameobjectGeometry.transform);
 
                     gameobjectGeometry.transform.position = elem.transform.position;
                     gameobjectGeometry.transform.rotation = elem.transform.rotation;
@@ -147,11 +147,28 @@ namespace DaggerfallWorkshop.Game
                 if (elem.name.Contains("DaggerfallDungeon"))
                 {
                     DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-                    foreach (var block in location.Dungeon.Blocks)
+
+                    GameObject gameobjectDungeon = new GameObject(string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name));
+                    //DaggerfallDungeon dungeon = gameobjectDungeon.AddComponent<DaggerfallDungeon>();
+
+                    // Create dungeon layout
+                    foreach (DFLocation.DungeonBlock block in location.Dungeon.Blocks)
                     {
-                        GameObject gameobject = RDBLayout.CreateBaseGameObject(block.BlockName, null, null, true, null, false);
-                        gameobject.transform.SetParent(gameobjectGeometry.transform);
+                        if (location.Name == "Orsinium")
+                        {
+                            if (block.X == -1 && block.Z == -1 && block.BlockName == "N0000065.RDB")
+                                continue;
+                        }
+
+                        GameObject go = RDBLayout.CreateBaseGameObject(block.BlockName, null, null, true, null, false);
+
+                        go.transform.parent = this.transform;
+                        go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
+
+                        go.transform.SetParent(gameobjectDungeon.transform);
                     }
+
+                    gameobjectDungeon.transform.SetParent(gameobjectGeometry.transform);
 
                     gameobjectGeometry.transform.position = elem.transform.position;
                     gameobjectGeometry.transform.rotation = elem.transform.rotation;
