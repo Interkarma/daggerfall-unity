@@ -133,6 +133,7 @@ namespace DaggerfallWorkshop.Game
         public enum Actions
         {
             Escape,
+            ToggleConsole,
 
             MoveForwards,
             MoveBackwards,
@@ -324,6 +325,23 @@ namespace DaggerfallWorkshop.Game
             return (previousActions.Contains(action) && !currentActions.Contains(action));
         }
 
+        /// <summary>
+        /// Gets all key codes made to a specific binding.
+        /// </summary>
+        public KeyCode GetBindings(Actions action)
+        {
+            if (actionKeyDict.ContainsValue(action))
+            {
+                foreach (var k in actionKeyDict.Keys)
+                {
+                    if (actionKeyDict[k] == action)
+                        return k;
+                }
+            }
+
+            return KeyCode.None;
+        }
+
         #endregion
 
         #region Public Static Methods
@@ -431,6 +449,7 @@ namespace DaggerfallWorkshop.Game
                 actionKeyDict.Add(code, action);
             }
         }
+
 
         // Unbind a KeyCode from an action
         void ClearBinding(KeyCode code)
