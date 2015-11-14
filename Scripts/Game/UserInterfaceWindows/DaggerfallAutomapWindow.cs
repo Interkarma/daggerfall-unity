@@ -47,7 +47,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         GameObject gameObjectCameraAutomap = null;
 
-        GameObject gameObjectGeometry = null;
+        GameObject gameobjectAutomap = null;
+        //GameObject gameObjectGeometry = null;
         int layerAutomap; // layer used for geometry of automap
         GameObject gameObjectInteriorLightRig = null;
         GameObject gameobjectAutomapKeyLight = null;
@@ -112,14 +113,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ImgFile imgFile = null;
             DFBitmap bitmap = null;
 
+            gameobjectAutomap = GameObject.Find("Automap");
+            if (gameobjectAutomap == null)
+            {
+                DaggerfallUnity.LogMessage("GameObject \"Automap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add script Game/DaggerfallAutomap!\"", true);
+            }
+
             layerAutomap = LayerMask.NameToLayer("Automap");
             if (layerAutomap == -1)
             {
                 DaggerfallUnity.LogMessage("Layer with name \"Automap\" missing! Set it in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);
-                //if (Application.isEditor)
-                //    Debug.Break();
-                //else
-                //    Application.Quit();
             }
 
             // Load native texture
@@ -228,7 +231,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
-            createGeometryForAutomap();
+            createLightsForAutomapGeometry();
 
             createAutomapCamera();
 
@@ -411,17 +414,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // disable interior lights - disabling instead of setting lights' culling mask - since only a small number of lights can be ignored by layer (got a warning when I tried)
                 gameObjectInteriorLightRig = GameObject.Find("InteriorLightRig");
                 gameObjectInteriorLightRig.SetActive(false);
-
-                //Light[] lights = GameObject.Find("InteriorLightRig").GetComponentsInChildren<Light>();
-                //foreach (Light light in lights)
-                //{
-                //    light.enabled = false;
-                //}
             }
 
             if (IsSetup)
             {
-                createGeometryForAutomap();
+                createLightsForAutomapGeometry();
 
                 createAutomapCamera();
 
@@ -439,18 +436,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPop()
         {
-            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
+            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
             {
                 // enable interior lights
                 gameObjectInteriorLightRig.SetActive(true);
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapFillLight);
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapBackLight);
-            }
-
-            if (gameObjectGeometry != null)
-            {
-                UnityEngine.Object.DestroyImmediate(gameObjectGeometry);
             }
 
             if (gameObjectCameraAutomap != null)
@@ -494,273 +486,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 1000.0f;
                 cameraAutomap.fieldOfView = 45.0f;
+
+                gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
             }
         }
 
-        private static void SetLayerRecursively(GameObject obj, int layer)
+
+        private void createLightsForAutomapGeometry()
         {
-            obj.layer = layer;
-
-            foreach (Transform child in obj.transform)
-            {
-                SetLayerRecursively(child.gameObject, layer);
-            }
-        }
-
-        private void modifyGeometryForBlockGameObject(GameObject gameobject)
-        {
-            foreach (Transform innerChild in gameobject.transform)
-            {
-                DaggerfallWorkshop.Game.Serialization.SerializableActionDoor scriptSerializeableActionDoor = innerChild.GetComponent<DaggerfallWorkshop.Game.Serialization.SerializableActionDoor>();
-                if (scriptSerializeableActionDoor != null)
-                {
-                    scriptSerializeableActionDoor.enabled = false;
-                    UnityEngine.Object.Destroy(scriptSerializeableActionDoor);
-                }
-                DaggerfallWorkshop.Game.Serialization.SerializableEnemy scriptSerializeableEnemy = innerChild.GetComponent<DaggerfallWorkshop.Game.Serialization.SerializableEnemy>();
-                if (scriptSerializeableEnemy != null)
-                {
-                    scriptSerializeableEnemy.enabled = false;
-                    UnityEngine.Object.Destroy(scriptSerializeableEnemy);
-                }
-                DaggerfallWorkshop.Game.Serialization.SerializableActionObject scriptSerializeableActionObject = innerChild.GetComponent<DaggerfallWorkshop.Game.Serialization.SerializableActionObject>();
-                if (scriptSerializeableActionObject != null)
-                {
-                    scriptSerializeableActionObject.enabled = false;
-                    UnityEngine.Object.Destroy(scriptSerializeableActionObject);
-                }
-            }
-            switch (gameobject.name)
-            {
-                case "Interior Flats":
-                    gameobject.gameObject.SetActive(false);
-                    break;
-                case "People Flats":
-                    gameobject.gameObject.SetActive(false);
-                    break;
-                case "Action Doors":
-                    gameobject.gameObject.SetActive(false);
-                    break;
-                case "Lights":
-                    gameobject.gameObject.SetActive(false);
-                    break;
-                case "Flats":
-                    gameobject.gameObject.SetActive(false);
-                    break;
-                case "Fixed Enemies":
-                    gameobject.gameObject.SetActive(false);
-                    break;
-                case "Random Enemies":
-                    gameobject.gameObject.SetActive(false);
-                    break;
-            }
-        }
-
-        private void createGeometryForAutomap()
-        {
-            if (!gameObjectGeometry)
-            {
-                UnityEngine.Object.DestroyImmediate(gameObjectGeometry);
-            }
-            
-            gameObjectGeometry = new GameObject("GeometryAutomap");
-            
-            bool inDungeon = false;
-            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
-            {
-                foreach (Transform elem in GameManager.Instance.InteriorParent.transform)
-                {
-                    if (elem.name.Contains("DaggerfallInterior"))
-                    {
-                        //GameObject levelGameObject = elem.gameObject;
-                        ////"Block=" "Level="
-                        //String name = elem.gameObject.name;
-                        //int startIndex = name.IndexOf("[") + "[".Length;
-                        //int endIndex = name.IndexOf("]");
-                        //name = name.Substring(startIndex, endIndex - startIndex);
-
-                        ////char[] delimiterChars = { '=', ',' };
-                        //string[] subStrings = name.Split(new char[] { '=', ',' });
-                        //int block = Int32.Parse(subStrings[1]);
-                        //int level = Int32.Parse(subStrings[3]);
-
-                        //DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-                        //foreach (var block in location.Dungeon.Blocks)
-                        //{
-                        //    GameObject gameobject = RDBLayout.CreateBaseGameObject(block.BlockName, null, null, true, null, false);
-                        //    gameobject.transform.SetParent(gameObjectGeometry.transform);
-                        //}
-
-                        // Get climate
-                        ClimateBases climateBase = ClimateBases.Temperate;
-                        climateBase = ClimateSwaps.FromAPIClimateBase(GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType);
-
-                        // Layout interior
-                        // This needs to be done first so we know where the enter markers are
-                        StaticDoor door;
-                        GameObject newInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex));
-                        newInterior.hideFlags = defaultHideFlags;
-                        interior = newInterior.AddComponent<DaggerfallInterior>();
-
-                        //interior.DoLayout(doorOwner, door, climateBase);
-
-                        // Get block data
-                        blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blockIndex);
-                        if (blockData.Type != DFBlock.BlockTypes.Rmb)
-                            throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
-
-                        // Get record data
-                        recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
-                        if (recordData.Interior.Header.Num3dObjectRecords == 0)
-                            throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
-
-                        gameObjectGeometry.transform.position = elem.transform.position;
-                        gameObjectGeometry.transform.rotation = elem.transform.rotation;
-
-                        break;
-                    }
-                }
-            }
-            else if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
-            {
-                foreach (Transform elem in GameManager.Instance.DungeonParent.transform)
-                {
-                    if (elem.name.Contains("DaggerfallDungeon"))
-                    {
-                        inDungeon = true;
-
-                        DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-                        foreach (var block in location.Dungeon.Blocks)
-                        {
-                            GameObject gameobject = RDBLayout.CreateBaseGameObject(block.BlockName, null, null, true, null, false);
-                            gameobject.transform.SetParent(gameObjectGeometry.transform);
-                        }
-
-                        gameObjectGeometry.transform.position = elem.transform.position;
-                        gameObjectGeometry.transform.rotation = elem.transform.rotation;
-
-                        break;
-                    }
-                }
-            }
-
-            //if (inDungeon == false)
-            //{
-            //    foreach (Transform child in gameObjectGeometry.transform)
-            //    {
-            //        modifyGeometryForBlockGameObject(child.gameObject);
-            //    }
-            //}
-            //else
-            //{
-            //    foreach (Transform child in gameObjectGeometry.transform)
-            //    {
-            //        foreach (Transform innerChild in child)
-            //        {
-            //            modifyGeometryForBlockGameObject(innerChild.gameObject);
-            //        }
-            //    }
-            //}
-
             gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
             gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
             Light scriptKeyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
             scriptKeyLight.type = LightType.Directional;
             //scriptKeyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
+            gameobjectAutomapKeyLight.transform.SetParent(gameobjectAutomap.transform);
 
             gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
             gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
             Light scriptFillLight = gameobjectAutomapFillLight.AddComponent<Light>();
             scriptFillLight.type = LightType.Directional;
             scriptFillLight.intensity = 0.6f;
+            gameobjectAutomapFillLight.transform.SetParent(gameobjectAutomap.transform);
 
             gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
             gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
             Light scriptBackLight = gameobjectAutomapBackLight.AddComponent<Light>();
             scriptBackLight.type = LightType.Directional;
             scriptBackLight.intensity = 0.2f;
-
-            gameObjectGeometry.SetActive(true);
-
-            SetLayerRecursively(gameObjectGeometry, layerAutomap);
+            gameobjectAutomapBackLight.transform.SetParent(gameobjectAutomap.transform);
         }
-
-        //private void createGeometryForAutomap()
-        //{
-        //    GameObject gameObjectToClone = null;
-        //    bool inDungeon = false;
-        //    if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
-        //    {
-        //        foreach (Transform elem in GameManager.Instance.InteriorParent.transform)
-        //        {
-        //            if (elem.name.Contains("DaggerfallInterior"))
-        //            {
-        //                gameObjectToClone = elem.gameObject;
-        //                break;
-        //            }
-        //        }
-        //    }
-        //    else if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
-        //    {
-        //        foreach (Transform elem in GameManager.Instance.DungeonParent.transform)
-        //        {
-        //            if (elem.name.Contains("DaggerfallDungeon"))
-        //            {
-        //                gameObjectToClone = elem.gameObject;
-        //                inDungeon = true;
-        //                break;
-        //            }
-        //        }
-        //    }
-
-        //    if (gameObjectToClone != null)
-        //    {
-        //        //gameObjectToClone.SetActive(false);
-        //        gameObjectGeometry = GameObject.Instantiate(gameObjectToClone);
-        //        gameObjectGeometry.name = "GeometryAutomap";
-        //        //gameObjectToClone.SetActive(true);
-                
-        //        if (inDungeon == false)
-        //        {
-        //            foreach (Transform child in gameObjectGeometry.transform)
-        //            {
-        //                modifyGeometryForBlockGameObject(child.gameObject);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            foreach (Transform child in gameObjectGeometry.transform)
-        //            {
-        //                foreach (Transform innerChild in child)
-        //                {
-        //                    modifyGeometryForBlockGameObject(innerChild.gameObject);
-        //                }
-        //            }
-        //        }
-
-        //        gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
-        //        gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
-        //        Light scriptKeyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
-        //        scriptKeyLight.type = LightType.Directional;
-        //        //scriptKeyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
-
-        //        gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
-        //        gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
-        //        Light scriptFillLight = gameobjectAutomapFillLight.AddComponent<Light>();
-        //        scriptFillLight.type = LightType.Directional;
-        //        scriptFillLight.intensity = 0.6f;
-
-        //        gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
-        //        gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
-        //        Light scriptBackLight = gameobjectAutomapBackLight.AddComponent<Light>();
-        //        scriptBackLight.type = LightType.Directional;
-        //        scriptBackLight.intensity = 0.2f;
-
-        //        gameObjectGeometry.SetActive(true);
-        //    }
-
-        //    SetLayerRecursively(gameObjectGeometry, layerAutomap);
-        //}
 
         private void createAutomapTextures(int width, int height)
         {
