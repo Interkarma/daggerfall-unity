@@ -558,7 +558,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void createGeometryForAutomap()
         {
-            GameObject gameObjectToClone = null;
+            if (!gameObjectGeometry)
+            {
+                UnityEngine.Object.DestroyImmediate(gameObjectGeometry);
+            }
+            
+            gameObjectGeometry = new GameObject("GeometryAutomap");
+            
             bool inDungeon = false;
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
             {
@@ -566,7 +572,51 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     if (elem.name.Contains("DaggerfallInterior"))
                     {
-                        gameObjectToClone = elem.gameObject;
+                        //GameObject levelGameObject = elem.gameObject;
+                        ////"Block=" "Level="
+                        //String name = elem.gameObject.name;
+                        //int startIndex = name.IndexOf("[") + "[".Length;
+                        //int endIndex = name.IndexOf("]");
+                        //name = name.Substring(startIndex, endIndex - startIndex);
+
+                        ////char[] delimiterChars = { '=', ',' };
+                        //string[] subStrings = name.Split(new char[] { '=', ',' });
+                        //int block = Int32.Parse(subStrings[1]);
+                        //int level = Int32.Parse(subStrings[3]);
+
+                        //DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+                        //foreach (var block in location.Dungeon.Blocks)
+                        //{
+                        //    GameObject gameobject = RDBLayout.CreateBaseGameObject(block.BlockName, null, null, true, null, false);
+                        //    gameobject.transform.SetParent(gameObjectGeometry.transform);
+                        //}
+
+                        // Get climate
+                        ClimateBases climateBase = ClimateBases.Temperate;
+                        climateBase = ClimateSwaps.FromAPIClimateBase(GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType);
+
+                        // Layout interior
+                        // This needs to be done first so we know where the enter markers are
+                        StaticDoor door;
+                        GameObject newInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex));
+                        newInterior.hideFlags = defaultHideFlags;
+                        interior = newInterior.AddComponent<DaggerfallInterior>();
+
+                        //interior.DoLayout(doorOwner, door, climateBase);
+
+                        // Get block data
+                        blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blockIndex);
+                        if (blockData.Type != DFBlock.BlockTypes.Rmb)
+                            throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
+
+                        // Get record data
+                        recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
+                        if (recordData.Interior.Header.Num3dObjectRecords == 0)
+                            throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
+
+                        gameObjectGeometry.transform.position = elem.transform.position;
+                        gameObjectGeometry.transform.rotation = elem.transform.rotation;
+
                         break;
                     }
                 }
@@ -577,61 +627,140 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     if (elem.name.Contains("DaggerfallDungeon"))
                     {
-                        gameObjectToClone = elem.gameObject;
                         inDungeon = true;
+
+                        DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+                        foreach (var block in location.Dungeon.Blocks)
+                        {
+                            GameObject gameobject = RDBLayout.CreateBaseGameObject(block.BlockName, null, null, true, null, false);
+                            gameobject.transform.SetParent(gameObjectGeometry.transform);
+                        }
+
+                        gameObjectGeometry.transform.position = elem.transform.position;
+                        gameObjectGeometry.transform.rotation = elem.transform.rotation;
+
                         break;
                     }
                 }
             }
 
-            if (gameObjectToClone != null)
-            {
-                //gameObjectToClone.SetActive(false);
-                gameObjectGeometry = GameObject.Instantiate(gameObjectToClone);
-                gameObjectGeometry.name = "GeometryAutomap";
-                //gameObjectToClone.SetActive(true);
-                
-                if (inDungeon == false)
-                {
-                    foreach (Transform child in gameObjectGeometry.transform)
-                    {
-                        modifyGeometryForBlockGameObject(child.gameObject);
-                    }
-                }
-                else
-                {
-                    foreach (Transform child in gameObjectGeometry.transform)
-                    {
-                        foreach (Transform innerChild in child)
-                        {
-                            modifyGeometryForBlockGameObject(innerChild.gameObject);
-                        }
-                    }
-                }
+            //if (inDungeon == false)
+            //{
+            //    foreach (Transform child in gameObjectGeometry.transform)
+            //    {
+            //        modifyGeometryForBlockGameObject(child.gameObject);
+            //    }
+            //}
+            //else
+            //{
+            //    foreach (Transform child in gameObjectGeometry.transform)
+            //    {
+            //        foreach (Transform innerChild in child)
+            //        {
+            //            modifyGeometryForBlockGameObject(innerChild.gameObject);
+            //        }
+            //    }
+            //}
 
-                gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
-                gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
-                Light scriptKeyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
-                scriptKeyLight.type = LightType.Directional;
-                //scriptKeyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
+            gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
+            gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
+            Light scriptKeyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
+            scriptKeyLight.type = LightType.Directional;
+            //scriptKeyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
 
-                gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
-                gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
-                Light scriptFillLight = gameobjectAutomapFillLight.AddComponent<Light>();
-                scriptFillLight.type = LightType.Directional;
-                scriptFillLight.intensity = 0.6f;
+            gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
+            gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
+            Light scriptFillLight = gameobjectAutomapFillLight.AddComponent<Light>();
+            scriptFillLight.type = LightType.Directional;
+            scriptFillLight.intensity = 0.6f;
 
-                gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
-                gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
-                Light scriptBackLight = gameobjectAutomapBackLight.AddComponent<Light>();
-                scriptBackLight.type = LightType.Directional;
-                scriptBackLight.intensity = 0.2f;
+            gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
+            gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
+            Light scriptBackLight = gameobjectAutomapBackLight.AddComponent<Light>();
+            scriptBackLight.type = LightType.Directional;
+            scriptBackLight.intensity = 0.2f;
 
-                gameObjectGeometry.SetActive(true);
-            }
+            gameObjectGeometry.SetActive(true);
 
             SetLayerRecursively(gameObjectGeometry, layerAutomap);
         }
+
+        //private void createGeometryForAutomap()
+        //{
+        //    GameObject gameObjectToClone = null;
+        //    bool inDungeon = false;
+        //    if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
+        //    {
+        //        foreach (Transform elem in GameManager.Instance.InteriorParent.transform)
+        //        {
+        //            if (elem.name.Contains("DaggerfallInterior"))
+        //            {
+        //                gameObjectToClone = elem.gameObject;
+        //                break;
+        //            }
+        //        }
+        //    }
+        //    else if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
+        //    {
+        //        foreach (Transform elem in GameManager.Instance.DungeonParent.transform)
+        //        {
+        //            if (elem.name.Contains("DaggerfallDungeon"))
+        //            {
+        //                gameObjectToClone = elem.gameObject;
+        //                inDungeon = true;
+        //                break;
+        //            }
+        //        }
+        //    }
+
+        //    if (gameObjectToClone != null)
+        //    {
+        //        //gameObjectToClone.SetActive(false);
+        //        gameObjectGeometry = GameObject.Instantiate(gameObjectToClone);
+        //        gameObjectGeometry.name = "GeometryAutomap";
+        //        //gameObjectToClone.SetActive(true);
+                
+        //        if (inDungeon == false)
+        //        {
+        //            foreach (Transform child in gameObjectGeometry.transform)
+        //            {
+        //                modifyGeometryForBlockGameObject(child.gameObject);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            foreach (Transform child in gameObjectGeometry.transform)
+        //            {
+        //                foreach (Transform innerChild in child)
+        //                {
+        //                    modifyGeometryForBlockGameObject(innerChild.gameObject);
+        //                }
+        //            }
+        //        }
+
+        //        gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
+        //        gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
+        //        Light scriptKeyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
+        //        scriptKeyLight.type = LightType.Directional;
+        //        //scriptKeyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
+
+        //        gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
+        //        gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
+        //        Light scriptFillLight = gameobjectAutomapFillLight.AddComponent<Light>();
+        //        scriptFillLight.type = LightType.Directional;
+        //        scriptFillLight.intensity = 0.6f;
+
+        //        gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
+        //        gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
+        //        Light scriptBackLight = gameobjectAutomapBackLight.AddComponent<Light>();
+        //        scriptBackLight.type = LightType.Directional;
+        //        scriptBackLight.intensity = 0.2f;
+
+        //        gameObjectGeometry.SetActive(true);
+        //    }
+
+        //    SetLayerRecursively(gameObjectGeometry, layerAutomap);
+        //}
 
         private void createAutomapTextures(int width, int height)
         {
