@@ -29,6 +29,15 @@ namespace Wenzil.Console
                Solution: move it to class level initialization, and make inputHistoryCapacity a const */
             // inputHistory = new ConsoleInputHistory(inputHistoryCapacity); 
         }
+
+        void Start()
+        {
+            toggleKey = DaggerfallWorkshop.Game.InputManager.Instance.GetBinding(DaggerfallWorkshop.Game.InputManager.Actions.ToggleConsole);
+            if (toggleKey == KeyCode.None)
+                toggleKey = KeyCode.BackQuote;
+
+        }
+
         void OnEnable()
         {
             Console.OnConsoleLog += ui.AddNewOutputLine;
