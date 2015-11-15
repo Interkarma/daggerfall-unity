@@ -141,7 +141,7 @@ namespace DaggerfallConnect.Save
         public bool HasSave(int save)
         {
             if (!isPathOpen)
-                throw new Exception("Save games folder is not open.");
+                return false;
 
             if (!saveGameDict.ContainsKey(save))
                 return false;

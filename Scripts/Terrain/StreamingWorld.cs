@@ -238,6 +238,12 @@ namespace DaggerfallWorkshop
                 autoRepositionMethod = RepositionMethods.None;
             }
 
+            // Do not update world position if player is inside dungeon
+            // This can cause player to become desynced from world as dungeon can
+            // actually extend beyond the current map pixel area
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                return;
+
             // Get distance player has moved in world map units and apply to world position
             Vector3 playerPos = LocalPlayerGPS.transform.position;
             worldX += (playerPos.x - lastPlayerPos.x) * SceneMapRatio;

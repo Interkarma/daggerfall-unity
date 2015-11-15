@@ -241,6 +241,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listItems.RemoveAt(index);
         }
 
+        public void UpdateItem(int index, string label)
+        {
+            if (index < 0 || index >= listItems.Count)
+                throw new IndexOutOfRangeException("ListBox: UpdateItem index out of range.");
+            else if (listItems[index] == null)
+                throw new IndexOutOfRangeException("ListBox: item at index was null.");
+            else
+                listItems[index].Text = label;
+        }
+
         public void SelectPrevious()
         {
             if (selectedIndex > 0)

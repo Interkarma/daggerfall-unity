@@ -628,7 +628,7 @@ namespace Wenzil.Console
                 }
                 else if (int.TryParse(args[0], out x) && int.TryParse(args[1], out y))
                 {
-                    if (x < 0 || y < 0)
+                    if (x <= 0 || y <= 0)
                         return "Invalid Coordinates";
                     else if (x >= MapsFile.MaxMapPixelX || y >= MapsFile.MaxMapPixelY)
                         return "Invalid coordiantes";
