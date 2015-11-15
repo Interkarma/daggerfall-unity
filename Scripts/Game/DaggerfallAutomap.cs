@@ -104,21 +104,24 @@ namespace DaggerfallWorkshop.Game
             Material[] newMaterials = new Material[meshRenderer.materials.Length];
             for (int i = 0; i < meshRenderer.materials.Length; i++)
             {
-                Debug.Log("here...");
                 Material material = meshRenderer.materials[i];
                 Material newMaterial = newMaterials[i];
 
                 newMaterial = new Material(Shader.Find("Daggerfall/Automap"));
-                newMaterial.CopyPropertiesFromMaterial(material);
+                //newMaterial.CopyPropertiesFromMaterial(material);
                 newMaterial.name = "Automap injected for: " + material.name;
-                //Texture mainTex = material.GetTexture("_MainTex");
-                //newMaterial.SetTexture("_MainTex", mainTex);
-                //Texture bumpMapTex = material.GetTexture("_BumpMap");
-                //newMaterial.SetTexture("_BumpMap", bumpMapTex);
-                //Texture emissionMapTex = material.GetTexture("_EmissionMap");
-                //newMaterial.SetTexture("_EmissionMap", emissionMapTex);
-                //Color emissionColor = material.GetColor("_EmissionColor");
-                //newMaterial.SetColor("_EmissionColor", emissionColor);
+                Texture mainTex = material.GetTexture("_MainTex");
+                newMaterial.SetTexture("_MainTex", mainTex);
+                Texture bumpMapTex = material.GetTexture("_BumpMap");
+                newMaterial.SetTexture("_BumpMap", bumpMapTex);
+                Texture emissionMapTex = material.GetTexture("_EmissionMap");
+                newMaterial.SetTexture("_EmissionMap", emissionMapTex);
+                Color emissionColor = material.GetColor("_EmissionColor");
+                newMaterial.SetColor("_EmissionColor", emissionColor);
+                Vector3 playerAdvancedPos = GameObject.Find("PlayerAdvanced").transform.position;
+                Debug.Log(String.Format("playerpos: {0}, {1}, {2}", playerAdvancedPos.x, playerAdvancedPos.y, playerAdvancedPos.z));
+                Vector4 playerPosition = new Vector4(playerAdvancedPos.x, playerAdvancedPos.y + Camera.main.transform.localPosition.y, playerAdvancedPos.z, 0.0f);
+                newMaterial.SetVector("_PlayerPosition", playerPosition);
                 newMaterials[i] = newMaterial;
             }
             meshRenderer.materials = newMaterials;
