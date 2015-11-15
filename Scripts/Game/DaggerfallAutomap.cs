@@ -106,8 +106,6 @@ namespace DaggerfallWorkshop.Game
         {
             if (isOpenAutomap) // only do stuff if automap is indeed open
             {
-                //Debug.Log(String.Format("playerpos: {0}, {1}, {2}", playerAdvancedPos.x, playerAdvancedPos.y, playerAdvancedPos.z));
-                //Debug.Log(String.Format("sclicing bias: {0}", slicingBiasPositionY));
                 float slicingPositionY = playerAdvancedPos.y + Camera.main.transform.localPosition.y + slicingBiasPositionY;
                 Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
             }

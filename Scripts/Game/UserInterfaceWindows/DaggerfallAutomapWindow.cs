@@ -76,6 +76,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool leftMouseDownOnRotateRightButton = false;
         bool leftMouseDownOnUpstairsButton = false;
         bool leftMouseDownOnDownstairsButton = false;
+        bool rightMouseDownOnUpstairsButton = false;
+        bool rightMouseDownOnDownstairsButton = false;
         bool alreadyInMouseDown = false;
         bool inDragMode() { return leftMouseDownOnPanelAutomap; }
 
@@ -215,11 +217,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button upstairsButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
             upstairsButton.OnMouseDown += UpstairsButton_OnMouseDown;
             upstairsButton.OnMouseUp += UpstairsButton_OnMouseUp;
+            upstairsButton.OnRightMouseDown += UpstairsButton_OnRightMouseDown;
+            upstairsButton.OnRightMouseUp += UpstairsButton_OnRightMouseUp;
 
             // downstairs button
             Button downstairsButton = DaggerfallUI.AddButton(new Rect(258, 171, 21, 19), NativePanel);
             downstairsButton.OnMouseDown += DownstairsButton_OnMouseDown;
             downstairsButton.OnMouseUp += DownstairsButton_OnMouseUp;
+            downstairsButton.OnRightMouseDown += DownstairsButton_OnRightMouseDown;
+            downstairsButton.OnRightMouseUp += DownstairsButton_OnRightMouseUp;
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
@@ -391,14 +397,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (leftMouseDownOnUpstairsButton)
             {
                 cameraAutomap.transform.position += Vector3.up * moveUpDownSpeed;
-                slicingBiasPositionY += Vector3.up.y * moveUpDownSpeed;                
-                scriptDaggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
                 updateAutoMapView();
             }
 
             if (leftMouseDownOnDownstairsButton)
             {
                 cameraAutomap.transform.position += Vector3.down * moveUpDownSpeed;
+                updateAutoMapView();
+            }
+
+            if (rightMouseDownOnUpstairsButton)
+            {
+                slicingBiasPositionY += Vector3.up.y * moveUpDownSpeed;
+                scriptDaggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
+                updateAutoMapView();
+            }
+
+            if (rightMouseDownOnDownstairsButton)
+            {
                 slicingBiasPositionY += Vector3.down.y * moveUpDownSpeed;
                 scriptDaggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
                 updateAutoMapView();
@@ -940,6 +956,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void DownstairsButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
             leftMouseDownOnDownstairsButton = false;
+            alreadyInMouseDown = false;
+        }
+
+        private void UpstairsButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            if (inDragMode() || alreadyInMouseDown)
+                return;
+
+            rightMouseDownOnUpstairsButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void UpstairsButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            rightMouseDownOnUpstairsButton = false;
+            alreadyInMouseDown = false;
+        }
+
+
+        private void DownstairsButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            if (inDragMode() || alreadyInMouseDown)
+                return;
+
+            rightMouseDownOnDownstairsButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void DownstairsButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            rightMouseDownOnDownstairsButton = false;
             alreadyInMouseDown = false;
         }
 
