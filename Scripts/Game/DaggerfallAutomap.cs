@@ -98,6 +98,75 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        private void updateMaterialsFromRenderer(MeshRenderer meshRenderer)
+        {
+            meshRenderer.enabled = false;
+            Material[] newMaterials = new Material[meshRenderer.materials.Length];
+            for (int i = 0; i < meshRenderer.materials.Length; i++)
+            {
+                Debug.Log("here...");
+                Material material = meshRenderer.materials[i];
+                Material newMaterial = newMaterials[i];
+
+                newMaterial = new Material(Shader.Find("Daggerfall/Automap"));
+                newMaterial.CopyPropertiesFromMaterial(material);
+                newMaterial.name = "Automap injected for: " + material.name;
+                //Texture mainTex = material.GetTexture("_MainTex");
+                //newMaterial.SetTexture("_MainTex", mainTex);
+                //Texture bumpMapTex = material.GetTexture("_BumpMap");
+                //newMaterial.SetTexture("_BumpMap", bumpMapTex);
+                //Texture emissionMapTex = material.GetTexture("_EmissionMap");
+                //newMaterial.SetTexture("_EmissionMap", emissionMapTex);
+                //Color emissionColor = material.GetColor("_EmissionColor");
+                //newMaterial.SetColor("_EmissionColor", emissionColor);
+                newMaterials[i] = newMaterial;
+            }
+            meshRenderer.materials = newMaterials;
+            meshRenderer.enabled = true;
+        }
+        private void injectCustomAutomapShaderForMaterials()
+        {
+            if (GameManager.Instance.IsPlayerInsideBuilding)
+            {
+                foreach (Transform elem in gameobjectGeometry.transform)
+                {
+                    //Debug.Log(String.Format("name: {0}", elem.name));
+                    foreach (Transform innerElem in elem.gameObject.transform)
+                    {
+                        foreach (Transform inner2Elem in innerElem.gameObject.transform)
+                        {
+                            MeshRenderer meshRenderer = inner2Elem.gameObject.GetComponent<MeshRenderer>();
+                            if (meshRenderer == null)
+                                break;
+
+                            updateMaterialsFromRenderer(meshRenderer);
+                        }
+                    }
+                }
+            }
+            else if ((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsidePalace))
+            {
+                foreach (Transform elem in gameobjectGeometry.transform)
+                {
+                    //Debug.Log(String.Format("name: {0}", elem.name));
+                    foreach (Transform innerElem in elem.gameObject.transform)
+                    {
+                        foreach (Transform inner2Elem in innerElem.gameObject.transform)
+                        {
+                            foreach (Transform inner3Elem in inner2Elem.gameObject.transform)
+                            {
+                                MeshRenderer meshRenderer = inner3Elem.gameObject.GetComponent<MeshRenderer>();
+                                if (meshRenderer == null)
+                                    break;
+
+                                updateMaterialsFromRenderer(meshRenderer);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private void createIndoorGeometryForAutomap(PlayerEnterExit.TransitionEventArgs args)
         {
             if (gameobjectGeometry != null)
@@ -131,6 +200,8 @@ namespace DaggerfallWorkshop.Game
 
             SetLayerRecursively(gameobjectGeometry, layerAutomap);
             gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
+
+            injectCustomAutomapShaderForMaterials();
         }
 
         private void createDungeonGeometryForAutomap()
@@ -179,6 +250,8 @@ namespace DaggerfallWorkshop.Game
 
             SetLayerRecursively(gameobjectGeometry, layerAutomap);
             gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
+
+            injectCustomAutomapShaderForMaterials();
         }
 
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
