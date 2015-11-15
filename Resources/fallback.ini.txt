@@ -16,6 +16,7 @@ NoPlayerNudity=True
 
 [GUI]
 GUIFilterMode=0
+VideoFilterMode=0
 Crosshair=True
 SwapHealthAndFatigueColors=False
 DimAlphaStrength=0.5
