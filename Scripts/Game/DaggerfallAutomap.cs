@@ -34,9 +34,27 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectGeometry = null;
         int layerAutomap; // layer used for geometry of automap
 
+        Vector3 playerAdvancedPos;
+
+        float slicingBiasPositionY;
+
+        bool isOpenAutomap = false;
+
         #endregion
 
         #region Properties
+
+        public float SlicingBiasPositionY
+        {
+            get { return (slicingBiasPositionY); }
+            set { slicingBiasPositionY = value; }
+        }
+
+        public bool IsOpenAutomap
+        {
+            set { isOpenAutomap = value; }
+        }
+
         #endregion
 
         #region Unity
@@ -84,6 +102,17 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        void Update()
+        {
+            if (isOpenAutomap) // only do stuff if automap is indeed open
+            {
+                //Debug.Log(String.Format("playerpos: {0}, {1}, {2}", playerAdvancedPos.x, playerAdvancedPos.y, playerAdvancedPos.z));
+                //Debug.Log(String.Format("sclicing bias: {0}", slicingBiasPositionY));
+                float slicingPositionY = playerAdvancedPos.y + Camera.main.transform.localPosition.y + slicingBiasPositionY;
+                Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -100,6 +129,8 @@ namespace DaggerfallWorkshop.Game
 
         private void updateMaterialsFromRenderer(MeshRenderer meshRenderer)
         {
+            playerAdvancedPos = GameObject.Find("PlayerAdvanced").transform.position;
+
             meshRenderer.enabled = false;
             Material[] newMaterials = new Material[meshRenderer.materials.Length];
             for (int i = 0; i < meshRenderer.materials.Length; i++)
@@ -118,8 +149,6 @@ namespace DaggerfallWorkshop.Game
                 newMaterial.SetTexture("_EmissionMap", emissionMapTex);
                 Color emissionColor = material.GetColor("_EmissionColor");
                 newMaterial.SetColor("_EmissionColor", emissionColor);
-                Vector3 playerAdvancedPos = GameObject.Find("PlayerAdvanced").transform.position;
-                Debug.Log(String.Format("playerpos: {0}, {1}, {2}", playerAdvancedPos.x, playerAdvancedPos.y, playerAdvancedPos.z));
                 Vector4 playerPosition = new Vector4(playerAdvancedPos.x, playerAdvancedPos.y + Camera.main.transform.localPosition.y, playerAdvancedPos.z, 0.0f);
                 newMaterial.SetVector("_PlayerPosition", playerPosition);
                 newMaterials[i] = newMaterial;

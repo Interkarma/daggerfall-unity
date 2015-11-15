@@ -34,11 +34,11 @@ Shader "Daggerfall/Automap" {
 		//Blend One OneMinusSrcAlpha		
 		//Blend SrcAlpha OneMinusSrcAlpha
 
-		//Fog {Mode Off}
+		Fog {Mode Off}
 		
 		CGPROGRAM
 		#pragma target 3.0
-		#pragma surface surf Lambert keepalpha //nofog noforwardadd
+		#pragma surface surf Lambert keepalpha nofog //noforwardadd
 
 		half4 _Color;
 		sampler2D _MainTex;
@@ -46,6 +46,7 @@ Shader "Daggerfall/Automap" {
 		sampler2D _EmissionMap;
 		half4 _EmissionColor;
 		uniform float4 _PlayerPosition;
+		uniform float _SclicingPositionY;
 
 		struct Input {
 			float2 uv_MainTex;
@@ -63,7 +64,7 @@ Shader "Daggerfall/Automap" {
 			o.Emission = emission;
 			//o.Metallic = 0;
 			//o.Albedo.r +=0.2f;
-			if (IN.worldPos.y > _PlayerPosition.y)
+			if (IN.worldPos.y > _SclicingPositionY)
 			{
 				//o.Alpha = 0.3f;
 				discard;
@@ -72,7 +73,7 @@ Shader "Daggerfall/Automap" {
 
 			float dist = distance(IN.worldPos.y, _PlayerPosition.y);
 			o.Alpha = 1.0f - max(0.0f, min(0.3f, dist/60.0f));
-			o.Albedo *= 1.0f - max(0.0f, min(1.0f, dist/20.0f));
+			o.Albedo *= 1.0f - max(0.0f, min(0.4f, dist/20.0f));
 
 		}
 		ENDCG

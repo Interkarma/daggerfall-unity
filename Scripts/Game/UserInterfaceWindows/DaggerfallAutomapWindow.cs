@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const float scrollLeftRightSpeed = 1.0f;
         const float scrollForwardBackwardSpeed = 1.0f;
-        const float scrollUpDownSpeed = 1.0f;
+        const float moveUpDownSpeed = 0.5f;
         const float rotateSpeed = 3.0f;
         const float zoomSpeed = 0.1f; // suggested value range: 0.1f (fast) to 0.01f (slow)
         const float dragSpeed = 0.002f; // suggested value range: 0.01f (fast) to 0.001f (slow)
@@ -44,6 +44,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
+
+        DaggerfallAutomap scriptDaggerfallAutomap = null; // used to communicate with DaggerfallAutomap script
 
         GameObject gameObjectCameraAutomap = null;
 
@@ -103,6 +105,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Vector3 biasFromInitialPositionViewFromTop;
         Vector3 biasFromInitialPositionView3D;
 
+        float slicingBiasPositionY = 0.0f;
+
         public DaggerfallAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
@@ -113,17 +117,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ImgFile imgFile = null;
             DFBitmap bitmap = null;
 
-            gameobjectAutomap = GameObject.Find("Automap");
-            if (gameobjectAutomap == null)
-            {
-                DaggerfallUnity.LogMessage("GameObject \"Automap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add script Game/DaggerfallAutomap!\"", true);
-            }
-
-            layerAutomap = LayerMask.NameToLayer("Automap");
-            if (layerAutomap == -1)
-            {
-                DaggerfallUnity.LogMessage("Layer with name \"Automap\" missing! Set it in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);
-            }
+            initClassResources();
 
             // Load native texture
             imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, nativeImgName), FileUsage.UseMemory, false);
@@ -396,19 +390,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (leftMouseDownOnUpstairsButton)
             {
-                cameraAutomap.transform.position += Vector3.up * scrollUpDownSpeed;
+                cameraAutomap.transform.position += Vector3.up * moveUpDownSpeed;
+                slicingBiasPositionY += Vector3.up.y * moveUpDownSpeed;                
+                scriptDaggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
                 updateAutoMapView();
             }
 
             if (leftMouseDownOnDownstairsButton)
             {
-                cameraAutomap.transform.position += Vector3.down * scrollUpDownSpeed;
+                cameraAutomap.transform.position += Vector3.down * moveUpDownSpeed;
+                slicingBiasPositionY += Vector3.down.y * moveUpDownSpeed;
+                scriptDaggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
                 updateAutoMapView();
             }
         }
         
         public override void OnPush()
-        {            
+        {
+            initClassResources();
+
+            scriptDaggerfallAutomap.IsOpenAutomap = true; // indicate DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function
+
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
             {
                 // disable interior lights - disabling instead of setting lights' culling mask - since only a small number of lights can be ignored by layer (got a warning when I tried)
@@ -430,12 +432,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     resetCameraPosition();
                     resetBiasFromInitialPosition();
                     updateAutoMapView();
-                }              
+                }
+
+                slicingBiasPositionY = 0.0f;
             }
         }
 
         public override void OnPop()
         {
+            scriptDaggerfallAutomap.IsOpenAutomap = false;
+
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
             {
                 // enable interior lights
@@ -465,6 +471,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #region Private Methods
+
+        private void initClassResources()
+        {
+            if (!gameobjectAutomap)
+            {
+                gameobjectAutomap = GameObject.Find("Automap");
+                if (gameobjectAutomap == null)
+                {
+                    DaggerfallUnity.LogMessage("GameObject \"Automap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add script Game/DaggerfallAutomap!\"", true);
+                }
+            }
+
+            if (!scriptDaggerfallAutomap)
+            {
+                scriptDaggerfallAutomap = gameobjectAutomap.GetComponent<DaggerfallAutomap>();
+                if (scriptDaggerfallAutomap == null)
+                {
+                    DaggerfallUnity.LogMessage("Script DafferfallAutomap is missing in GameObject \"Automap\"! GameObject \"Automap\" must have script Game/DaggerfallAutomap attached!\"", true);
+                }
+            }
+
+            layerAutomap = LayerMask.NameToLayer("Automap");
+            if (layerAutomap == -1)
+            {
+                DaggerfallUnity.LogMessage("Layer with name \"Automap\" missing! Set it in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);
+            }
+
+        }
 
         static string GetGameObjectPath(GameObject obj)
         {
