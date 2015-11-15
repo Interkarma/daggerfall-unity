@@ -84,7 +84,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Color[] pixelsGrid2D;
         Color[] pixelsGrid3D;
 
-        HUDCompass compass;
+        HUDCompass compass = null;
 
         Camera cameraAutomap = null;
         RenderTexture renderTextureAutomap = null;
@@ -491,6 +491,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cameraAutomap.fieldOfView = 15.0f;
 
                 gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
+
+                if (compass != null)
+                {
+                    compass.CompassCamera = cameraAutomap;
+                }                        
             }
         }
 
