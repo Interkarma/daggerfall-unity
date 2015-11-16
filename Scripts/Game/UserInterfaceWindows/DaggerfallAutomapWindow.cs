@@ -45,6 +45,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float cameraBackwardDistance = 20.0f;
 
         const float fieldOfViewCameraMode2D = 15.0f;
+        const float changeSpeedCameraFieldOfView = 1.0f;
+        const float minFieldOfViewCameraMode3D = 15.0f;
+        const float maxFieldOfViewCameraMode3D = 65.0f;
         float fieldOfViewCameraMode3D = 45.0f;
 
         const string nativeImgName = "AMAP00I0.IMG";
@@ -74,6 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
+        bool rightMouseDownOnGridButton = false;
         bool leftMouseDownOnForwardButton = false;
         bool leftMouseDownOnBackwardButton = false;
         bool leftMouseDownOnLeftButton = false;
@@ -85,7 +89,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool rightMouseDownOnUpstairsButton = false;
         bool rightMouseDownOnDownstairsButton = false;
         bool alreadyInMouseDown = false;
-        bool inDragMode() { return leftMouseDownOnPanelAutomap || rightMouseDownOnPanelAutomap; }
+        bool inDragMode() { return leftMouseDownOnPanelAutomap || rightMouseDownOnPanelAutomap || rightMouseDownOnGridButton; }
 
         Texture2D nativeTexture;
         Texture2D nativeTextureGrid2D;
@@ -99,7 +103,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Camera cameraAutomap = null;
         RenderTexture renderTextureAutomap = null;
         Texture2D textureAutomap = null;
-
 
         int renderTextureAutomapDepth = 16;
         int oldRenderTextureAutomapWidth;
@@ -190,6 +193,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gridButton.OnRightMouseClick += GridButton_OnRightMouseClick;
             gridButton.OnMouseScrollUp += GridButton_OnMouseScrollUp;
             gridButton.OnMouseScrollDown += GridButton_OnMouseScrollDown;
+            //gridButton.OnRightMouseUp += GridButton_OnRightMouseUp;
+            //gridButton.OnRightMouseDown += GridButton_OnRightMouseDown;
 
             // forward button
             Button forwardButton = DaggerfallUI.AddButton(new Rect(105, 171, 21, 19), NativePanel);
@@ -384,6 +389,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 updateAutoMapView();
                 oldDragPosition = mousePosition;
             }
+
+            //if (rightMouseDownOnGridButton)
+            //{
+            //    Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+
+            //    Vector2 bias = mousePosition - oldDragPosition;
+
+            //    if (automapViewMode == AutomapViewMode.View3D)
+            //    {
+            //        cameraAutomap.transform.Rotate(cameraTiltChangeSpeed * bias.y, 0.0f, 0.0f, Space.Self);
+            //        updateAutoMapView();
+            //    }
+
+            //    updateAutoMapView();
+            //    oldDragPosition = mousePosition;
+            //}
 
             if (leftMouseDownOnForwardButton)
             {
@@ -862,7 +883,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 default:
                     break;
             }
-        }        
+        }
+
+        //private void GridButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
+        //{
+        //    if (alreadyInMouseDown)
+        //        return;
+
+        //    Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+        //    oldDragPosition = mousePosition;
+
+        //    rightMouseDownOnGridButton = true;
+        //    alreadyInMouseDown = true;
+        //}
+
+        //private void GridButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
+        //{
+        //    rightMouseDownOnGridButton = false;
+        //    alreadyInMouseDown = false;
+        //}
 
         private void GridButton_OnMouseScrollUp()
         {
@@ -871,7 +910,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (automapViewMode == AutomapViewMode.View3D)
             {
-                cameraAutomap.transform.Rotate(cameraTiltChangeSpeed, 0.0f, 0.0f, Space.Self);
+                fieldOfViewCameraMode3D = Mathf.Max(minFieldOfViewCameraMode3D, Mathf.Min(maxFieldOfViewCameraMode3D, fieldOfViewCameraMode3D + changeSpeedCameraFieldOfView));
+                cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
                 updateAutoMapView();
             }
         }
@@ -883,7 +923,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (automapViewMode == AutomapViewMode.View3D)
             {
-                cameraAutomap.transform.Rotate(-cameraTiltChangeSpeed, 0.0f, 0.0f, Space.Self);
+                fieldOfViewCameraMode3D = Mathf.Max(minFieldOfViewCameraMode3D, Mathf.Min(maxFieldOfViewCameraMode3D, fieldOfViewCameraMode3D - changeSpeedCameraFieldOfView));
+                cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
                 updateAutoMapView();
             }
         }

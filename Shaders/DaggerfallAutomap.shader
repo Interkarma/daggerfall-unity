@@ -73,7 +73,7 @@ Shader "Daggerfall/Automap" {
 
 			float dist = distance(IN.worldPos.y, _SclicingPositionY); //_PlayerPosition.y);
 			//o.Alpha = 1.0f - max(0.0f, min(0.1f, dist/100.0f));
-			o.Albedo *= 1.0f - max(0.0f, min(0.5f, dist/15.0f));
+			o.Albedo *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
 
 		}
 		ENDCG

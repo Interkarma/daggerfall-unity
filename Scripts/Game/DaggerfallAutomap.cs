@@ -42,6 +42,10 @@ namespace DaggerfallWorkshop.Game
 
         GameObject gameobjectPlayerMarkerArrow = null;
 
+        GameObject gameobjectRayPlayerPos = null;
+        GameObject gameobjectRayEntrancePos = null;
+        GameObject gameobjectRayRotationPivotAxis = null;
+
         #endregion
 
         #region Properties
@@ -226,6 +230,16 @@ namespace DaggerfallWorkshop.Game
             gameobjectPlayerMarkerArrow.layer = layerAutomap;
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
+
+            gameobjectRayPlayerPos = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            gameobjectRayPlayerPos.name = "RayPlayerPos";
+            gameobjectRayPlayerPos.layer = layerAutomap;
+            gameobjectRayPlayerPos.transform.position = gameObjectPlayerAdvanced.transform.position;
+            gameobjectRayPlayerPos.transform.localScale = new Vector3(0.1f, 100.0f, 0.1f);
+            Material material = new Material(Shader.Find("Standard"));
+            material.color = new Color(1.0f, 0.0f, 0.0f);
+            MeshRenderer meshRenderer = gameobjectRayPlayerPos.GetComponent<MeshRenderer>();
+            meshRenderer.material = material;
         }
 
         private void updateSlicingPositionY()
@@ -291,7 +305,6 @@ namespace DaggerfallWorkshop.Game
                     DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
 
                     GameObject gameobjectDungeon = new GameObject(string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name));
-                    //DaggerfallDungeon dungeon = gameobjectDungeon.AddComponent<DaggerfallDungeon>();
 
                     // Create dungeon layout
                     foreach (DFLocation.DungeonBlock block in location.Dungeon.Blocks)
