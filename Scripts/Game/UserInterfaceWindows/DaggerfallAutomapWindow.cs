@@ -26,7 +26,7 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// Implements indoor and dungeon automap window.
+    /// Implements indoor and dungeon automap window window.
     /// </summary>
     public class DaggerfallAutomapWindow : DaggerfallPopupWindow
     {
@@ -40,10 +40,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float dragRotateSpeed = 0.5f;
         const float dragRotateCameraTiltSpeed = 0.15f;
 
-        const float cameraHeightViewFromTop = 30.0f;
+        const float cameraHeightViewFromTop = 90.0f;
         const float cameraHeightView3D = 8.0f;
-        const float cameraBackwardDistance = 20.0f;        
+        const float cameraBackwardDistance = 20.0f;
 
+        const float fieldOfViewCameraMode2D = 15.0f;
+        float fieldOfViewCameraMode3D = 45.0f;
 
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
@@ -281,6 +283,73 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        public override void OnPush()
+        {
+            initClassResources();
+
+            scriptDaggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function
+            scriptDaggerfallAutomap.updateAutomapState(); // signal DaggerfallAutomap script to update its state (updates player marker arrow)
+
+            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
+            {
+                // disable interior lights - disabling instead of setting lights' culling mask - since only a small number of lights can be ignored by layer (got a warning when I tried)
+                gameObjectInteriorLightRig = GameObject.Find("InteriorLightRig");
+                gameObjectInteriorLightRig.SetActive(false);
+            }
+
+            if (IsSetup)
+            {
+                createLightsForAutomapGeometry();
+
+                createAutomapCamera();
+
+                Rect positionPanelRenderAutomap = dummyPanelAutomap.Rectangle;
+                createAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
+
+                if (cameraAutomap)
+                {
+                    resetCameraPosition();
+                    resetBiasFromInitialPosition();
+                    updateAutoMapView();
+                }
+
+                slicingBiasPositionY = 0.0f;
+            }
+        }
+
+        public override void OnPop()
+        {
+            scriptDaggerfallAutomap.IsOpenAutomap = false;
+
+            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
+            {
+                // enable interior lights
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                {
+                    gameObjectInteriorLightRig.SetActive(true);
+                }
+                UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
+                UnityEngine.Object.DestroyImmediate(gameobjectAutomapFillLight);
+                UnityEngine.Object.DestroyImmediate(gameobjectAutomapBackLight);
+            }
+
+            if (gameObjectCameraAutomap != null)
+            {
+                UnityEngine.Object.DestroyImmediate(gameObjectCameraAutomap);
+            }
+
+            if (renderTextureAutomap != null)
+            {
+                UnityEngine.Object.DestroyImmediate(renderTextureAutomap);
+            }
+
+            if (textureAutomap != null)
+            {
+                UnityEngine.Object.DestroyImmediate(textureAutomap);
+            }
+        }
+
+
         public override void Update()
         {
             base.Update();
@@ -307,7 +376,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 cameraAutomap.transform.Rotate(0.0f, +dragRotateSpeed * bias.x, 0.0f, Space.World);
 
-                cameraAutomap.transform.Rotate(+dragRotateCameraTiltSpeed * bias.y, 0.0f, 0.0f, Space.Self);               
+                if (automapViewMode == AutomapViewMode.View3D)
+                {
+                    cameraAutomap.transform.Rotate(+dragRotateCameraTiltSpeed * bias.y, 0.0f, 0.0f, Space.Self);
+                }
 
                 updateAutoMapView();
                 oldDragPosition = mousePosition;
@@ -439,72 +511,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 scriptDaggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
                 updateAutoMapView();
             }
-        }
-        
-        public override void OnPush()
-        {
-            initClassResources();
-
-            scriptDaggerfallAutomap.IsOpenAutomap = true; // indicate DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function
-
-            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
-            {
-                // disable interior lights - disabling instead of setting lights' culling mask - since only a small number of lights can be ignored by layer (got a warning when I tried)
-                gameObjectInteriorLightRig = GameObject.Find("InteriorLightRig");
-                gameObjectInteriorLightRig.SetActive(false);
-            }
-
-            if (IsSetup)
-            {
-                createLightsForAutomapGeometry();
-
-                createAutomapCamera();
-
-                Rect positionPanelRenderAutomap = dummyPanelAutomap.Rectangle;
-                createAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
-
-                if (cameraAutomap)
-                {
-                    resetCameraPosition();
-                    resetBiasFromInitialPosition();
-                    updateAutoMapView();
-                }
-
-                slicingBiasPositionY = 0.0f;
-            }
-        }
-
-        public override void OnPop()
-        {
-            scriptDaggerfallAutomap.IsOpenAutomap = false;
-
-            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
-            {
-                // enable interior lights
-                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
-                {
-                    gameObjectInteriorLightRig.SetActive(true);
-                }
-                UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
-                UnityEngine.Object.DestroyImmediate(gameobjectAutomapFillLight);
-                UnityEngine.Object.DestroyImmediate(gameobjectAutomapBackLight);
-            }
-
-            if (gameObjectCameraAutomap != null)
-            {
-                UnityEngine.Object.DestroyImmediate(gameObjectCameraAutomap);
-            }
-
-            if (renderTextureAutomap != null)
-            {
-                UnityEngine.Object.DestroyImmediate(renderTextureAutomap);
-            }
-
-            if (textureAutomap != null)
-            {
-                UnityEngine.Object.DestroyImmediate(textureAutomap);
-            }
-        }
+        }        
 
         #region Private Methods
 
@@ -557,8 +564,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 cameraAutomap.cullingMask = 1 << layerAutomap;
                 cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
                 cameraAutomap.nearClipPlane = 0.7f;
-                cameraAutomap.farClipPlane = 1000.0f;
-                cameraAutomap.fieldOfView = 15.0f;
+                cameraAutomap.farClipPlane = 5000.0f;
+
+                switch (automapViewMode)
+                {
+                    case AutomapViewMode.View2D: default:
+                        cameraAutomap.fieldOfView = fieldOfViewCameraMode2D;
+                        break;
+                    case AutomapViewMode.View3D:
+                        cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
+                        break;
+                }
 
                 gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
 
@@ -599,9 +615,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if  ((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsidePalace))
             {
-                scriptKeyLight.intensity = 0.05f;
-                scriptFillLight.intensity = 0.05f;
-                scriptBackLight.intensity = 0.05f;
+                scriptKeyLight.intensity = 0.5f;
+                scriptFillLight.intensity = 0.5f;
+                scriptBackLight.intensity = 0.5f;
             }
         }
 
@@ -638,13 +654,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // then set camera transform according to grid-button (view mode) setting
             switch (automapViewMode)
             {
-                case AutomapViewMode.View2D:
+                case AutomapViewMode.View2D: default:
                     resetCameraTransformViewFromTop();
                     break;
                 case AutomapViewMode.View3D:
                     resetCameraTransformView3D();
-                    break;
-                default:
                     break;
             }
         }
@@ -813,7 +827,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     nativeTexture.Apply(false);
                     saveCameraTransformView3D();
                     restoreOldCameraTransformViewFromTop();
-                    cameraAutomap.fieldOfView = 15.0f;
+                    cameraAutomap.fieldOfView = fieldOfViewCameraMode2D;
                     updateAutoMapView();
                     break;
                 case AutomapViewMode.View3D:
@@ -822,7 +836,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     nativeTexture.Apply(false);
                     saveCameraTransformViewFromTop();
                     restoreOldCameraTransformView3D();
-                    cameraAutomap.fieldOfView = 45.0f;
+                    cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
                     updateAutoMapView();
                     break;
                 default:

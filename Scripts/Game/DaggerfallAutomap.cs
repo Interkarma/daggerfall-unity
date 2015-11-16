@@ -34,11 +34,13 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectGeometry = null;
         int layerAutomap; // layer used for geometry of automap
 
-        Vector3 playerAdvancedPos;
+        GameObject gameObjectPlayerAdvanced = null;
 
         float slicingBiasPositionY;
 
         bool isOpenAutomap = false;
+
+        GameObject gameobjectPlayerMarkerArrow = null;
 
         #endregion
 
@@ -57,10 +59,32 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
+        #region Public Methods
+        
+        public void updateAutomapState()
+        {
+            gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
+            gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
+
+            updateSlicingPositionY();
+        }
+
+        #endregion
+
         #region Unity
 
         void Awake()
         {
+            gameObjectPlayerAdvanced = GameObject.Find("PlayerAdvanced");
+            if (!gameObjectPlayerAdvanced)
+            {
+                DaggerfallUnity.LogMessage("GameObject \"PlayerAdvanced\" not found! in script DaggerfallAutomap (in function Awake())", true);
+                if (Application.isEditor)
+                    Debug.Break();
+                else
+                    Application.Quit();
+            }
+
             layerAutomap = LayerMask.NameToLayer("Automap");
             if (layerAutomap == -1)
             {
@@ -106,8 +130,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (isOpenAutomap) // only do stuff if automap is indeed open
             {
-                float slicingPositionY = playerAdvancedPos.y + Camera.main.transform.localPosition.y + slicingBiasPositionY;
-                Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
+                updateSlicingPositionY();
             }
         }
 
@@ -127,8 +150,7 @@ namespace DaggerfallWorkshop.Game
 
         private void updateMaterialsFromRenderer(MeshRenderer meshRenderer)
         {
-            playerAdvancedPos = GameObject.Find("PlayerAdvanced").transform.position;
-
+            Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
             meshRenderer.enabled = false;
             Material[] newMaterials = new Material[meshRenderer.materials.Length];
             for (int i = 0; i < meshRenderer.materials.Length; i++)
@@ -197,6 +219,21 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        private void doInitialSetupForGeometryCreation()
+        {
+            gameobjectPlayerMarkerArrow = GameObjectHelper.CreateDaggerfallMeshGameObject(99900, gameobjectAutomap.transform, false, null, true);
+            gameobjectPlayerMarkerArrow.name = "PlayerMarkerArrow";
+            gameobjectPlayerMarkerArrow.layer = layerAutomap;
+            gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
+            gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
+        }
+
+        private void updateSlicingPositionY()
+        {
+            float slicingPositionY = gameObjectPlayerAdvanced.transform.position.y + Camera.main.transform.localPosition.y + slicingBiasPositionY;
+            Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
+        }
+
         private void createIndoorGeometryForAutomap(PlayerEnterExit.TransitionEventArgs args)
         {
             if (gameobjectGeometry != null)
@@ -205,6 +242,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Interior)");
+
+            doInitialSetupForGeometryCreation();
 
             foreach (Transform elem in GameManager.Instance.InteriorParent.transform)
             {
@@ -242,6 +281,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Dungeon)");
+
+            doInitialSetupForGeometryCreation();
 
             foreach (Transform elem in GameManager.Instance.DungeonParent.transform)
             {
