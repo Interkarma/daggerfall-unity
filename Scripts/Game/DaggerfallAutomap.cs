@@ -46,6 +46,11 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectRayEntrancePos = null;
         GameObject gameobjectRayRotationPivotAxis = null;
 
+        readonly Vector3 rayPlayerPosOffset = new Vector3(-0.1f, 0.0f, +0.1f);
+        readonly Vector3 rayEntrancePosOffset = new Vector3(0.1f, 0.0f, +0.1f);
+
+        DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow instanceDaggerfallAutomapWindow = null;
+
         #endregion
 
         #region Properties
@@ -64,13 +69,26 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Public Methods
-        
-        public void updateAutomapState()
+
+
+        public void registerDaggerfallAutomapWindow(DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow instanceDaggerfallAutomapWindow)
+        {
+            this.instanceDaggerfallAutomapWindow = instanceDaggerfallAutomapWindow;
+        }
+
+        public void updateAutomapStateOnWindowPush()
         {
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
+            gameobjectRayPlayerPos.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
+
             updateSlicingPositionY();
+        }
+
+        public void forceUpdate()
+        {
+            Update();
         }
 
         #endregion
@@ -135,6 +153,22 @@ namespace DaggerfallWorkshop.Game
             if (isOpenAutomap) // only do stuff if automap is indeed open
             {
                 updateSlicingPositionY();
+
+                if (instanceDaggerfallAutomapWindow != null)
+                {
+                    Vector3 biasFromInitialPosition;
+                    switch (instanceDaggerfallAutomapWindow.CurrentAutomapViewMode)
+                    {
+                        case DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow.AutomapViewMode.View2D:
+                        default:
+                            biasFromInitialPosition = instanceDaggerfallAutomapWindow.BiasFromInitialPositionViewFromTop;
+                            break;
+                        case DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow.AutomapViewMode.View3D:
+                            biasFromInitialPosition = instanceDaggerfallAutomapWindow.BiasFromInitialPositionView3D;
+                            break;
+                    }
+                    gameobjectRayRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position + biasFromInitialPosition;
+                }
             }
         }
 
@@ -225,21 +259,59 @@ namespace DaggerfallWorkshop.Game
 
         private void doInitialSetupForGeometryCreation()
         {
-            gameobjectPlayerMarkerArrow = GameObjectHelper.CreateDaggerfallMeshGameObject(99900, gameobjectAutomap.transform, false, null, true);
-            gameobjectPlayerMarkerArrow.name = "PlayerMarkerArrow";
-            gameobjectPlayerMarkerArrow.layer = layerAutomap;
+            if (!gameobjectPlayerMarkerArrow)
+            {
+                gameobjectPlayerMarkerArrow = GameObjectHelper.CreateDaggerfallMeshGameObject(99900, gameobjectAutomap.transform, false, null, true);
+                gameobjectPlayerMarkerArrow.name = "PlayerMarkerArrow";
+                gameobjectPlayerMarkerArrow.layer = layerAutomap;
+            }
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
-            gameobjectRayPlayerPos = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            gameobjectRayPlayerPos.name = "RayPlayerPos";
-            gameobjectRayPlayerPos.layer = layerAutomap;
-            gameobjectRayPlayerPos.transform.position = gameObjectPlayerAdvanced.transform.position;
-            gameobjectRayPlayerPos.transform.localScale = new Vector3(0.1f, 100.0f, 0.1f);
-            Material material = new Material(Shader.Find("Standard"));
-            material.color = new Color(1.0f, 0.0f, 0.0f);
-            MeshRenderer meshRenderer = gameobjectRayPlayerPos.GetComponent<MeshRenderer>();
-            meshRenderer.material = material;
+            if (!gameobjectRayPlayerPos)
+            {
+                gameobjectRayPlayerPos = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                UnityEngine.Object.DestroyImmediate(gameobjectRayPlayerPos.GetComponent<Collider>());
+                gameobjectRayPlayerPos.name = "RayPlayerPosition";
+                gameobjectRayPlayerPos.transform.SetParent(gameobjectAutomap.transform);
+                gameobjectRayPlayerPos.layer = layerAutomap;                
+                gameobjectRayPlayerPos.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
+                Material material = new Material(Shader.Find("Standard"));
+                material.color = new Color(1.0f, 0.0f, 0.0f);
+                MeshRenderer meshRenderer = gameobjectRayPlayerPos.GetComponent<MeshRenderer>();
+                meshRenderer.material = material;
+            }
+            gameobjectRayPlayerPos.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
+
+            if (!gameobjectRayRotationPivotAxis)
+            {
+                gameobjectRayRotationPivotAxis = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                UnityEngine.Object.DestroyImmediate(gameobjectRayRotationPivotAxis.GetComponent<Collider>());
+                gameobjectRayRotationPivotAxis.name = "RayRotationPivotAxis";
+                gameobjectRayRotationPivotAxis.transform.SetParent(gameobjectAutomap.transform);
+                gameobjectRayRotationPivotAxis.layer = layerAutomap;                
+                gameobjectRayRotationPivotAxis.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
+                Material material = new Material(Shader.Find("Standard"));
+                material.color = new Color(0.0f, 0.0f, 1.0f);
+                MeshRenderer meshRenderer = gameobjectRayRotationPivotAxis.GetComponent<MeshRenderer>();
+                meshRenderer.material = material;
+            }
+            gameobjectRayRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position;
+
+            if (!gameobjectRayEntrancePos)
+            {
+                gameobjectRayEntrancePos = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                UnityEngine.Object.DestroyImmediate(gameobjectRayEntrancePos.GetComponent<Collider>());
+                gameobjectRayEntrancePos.name = "RayEntracePosition";
+                gameobjectRayEntrancePos.transform.SetParent(gameobjectAutomap.transform);
+                gameobjectRayEntrancePos.layer = layerAutomap;                
+                gameobjectRayEntrancePos.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
+                Material material = new Material(Shader.Find("Standard"));
+                material.color = new Color(0.0f, 1.0f, 0.0f);
+                MeshRenderer meshRenderer = gameobjectRayEntrancePos.GetComponent<MeshRenderer>();
+                meshRenderer.material = material;
+            }
+            gameobjectRayEntrancePos.transform.position = gameObjectPlayerAdvanced.transform.position + rayEntrancePosOffset;
         }
 
         private void updateSlicingPositionY()

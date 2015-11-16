@@ -58,14 +58,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         GameObject gameObjectCameraAutomap = null;
 
         GameObject gameobjectAutomap = null;
-        //GameObject gameObjectGeometry = null;
+
         int layerAutomap; // layer used for geometry of automap
         GameObject gameObjectInteriorLightRig = null;
         GameObject gameobjectAutomapKeyLight = null;
         GameObject gameobjectAutomapFillLight = null;
         GameObject gameobjectAutomapBackLight = null;
 
-        enum AutomapViewMode { View2D = 0, View3D = 1};
+        public enum AutomapViewMode { View2D = 0, View3D = 1};
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
 
         Panel dummyPanelAutomap = null; // used to determine correct render panel position
@@ -117,6 +117,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Vector3 biasFromInitialPositionView3D;
 
         float slicingBiasPositionY = 0.0f;
+
+        public AutomapViewMode CurrentAutomapViewMode
+        {
+            get { return (automapViewMode); }
+        }
+
+        public Vector3 BiasFromInitialPositionViewFromTop
+        {
+            get { return (biasFromInitialPositionViewFromTop); }
+        }
+
+        public Vector3 BiasFromInitialPositionView3D
+        {
+            get { return (biasFromInitialPositionView3D); }
+        }
 
         public DaggerfallAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -292,8 +307,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             initClassResources();
 
-            scriptDaggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function
-            scriptDaggerfallAutomap.updateAutomapState(); // signal DaggerfallAutomap script to update its state (updates player marker arrow)
+            scriptDaggerfallAutomap.registerDaggerfallAutomapWindow(this);
+            scriptDaggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
+            scriptDaggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script to update its state (updates player marker arrow)
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
             {
@@ -763,6 +779,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void updateAutoMapView()
         {
+            scriptDaggerfallAutomap.forceUpdate();
+
             if ((!cameraAutomap) || (!renderTextureAutomap))
                 return;
 
@@ -883,6 +901,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 default:
                     break;
             }
+            updateAutoMapView();
         }
 
         //private void GridButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
