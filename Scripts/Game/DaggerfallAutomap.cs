@@ -29,38 +29,40 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
-        GameObject gameobjectAutomap = null;
+        GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
 
-        GameObject gameobjectGeometry = null;
-        int layerAutomap; // layer used for geometry of automap
+        GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap
+        int layerAutomap; // layer used for level geometry of automap
 
-        GameObject gameObjectPlayerAdvanced = null;
+        GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
-        float slicingBiasPositionY;
+        float slicingBiasPositionY; // bias from player y-position of geometry slice plane (set via Property SlicingBiasPositionY triggered by DaggerfallAutomapWindow script)
 
-        bool isOpenAutomap = false;
+        bool isOpenAutomap = false; // flag that indicates if automap window is open (set via Property IsOpenAutomap triggered by DaggerfallAutomapWindow script)
 
-        GameObject gameobjectPlayerMarkerArrow = null;
+        GameObject gameobjectPlayerMarkerArrow = null; // GameObject which will hold player marker arrow
 
-        GameObject gameobjectRayPlayerPos = null;
-        GameObject gameobjectRayEntrancePos = null;
-        GameObject gameobjectRayRotationPivotAxis = null;
+        GameObject gameobjectRayPlayerPos = null; // GameObject which will hold player marker ray (red ray)
+        GameObject gameobjectRayEntrancePos = null; // GameObject which will hold (dungeon) entrance marker ray (green ray)
+        GameObject gameobjectRayRotationPivotAxis = null; // GameObject which will hold rotation pivot axis ray (blue ray)
 
-        readonly Vector3 rayPlayerPosOffset = new Vector3(-0.1f, 0.0f, +0.1f);
-        readonly Vector3 rayEntrancePosOffset = new Vector3(0.1f, 0.0f, +0.1f);
+        readonly Vector3 rayPlayerPosOffset = new Vector3(-0.1f, 0.0f, +0.1f); // small offset to prevent ray for player position to be exactly in the same position as the rotation pivot axis
+        readonly Vector3 rayEntrancePosOffset = new Vector3(0.1f, 0.0f, +0.1f); // small offset to prevent ray for dungeon entrance to be exactly in the same position as the rotation pivot axis
 
-        DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow instanceDaggerfallAutomapWindow = null;
+        DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow instanceDaggerfallAutomapWindow = null; // will hold reference to DaggerfallAutomapWindow class
 
         #endregion
 
         #region Properties
 
+        // DaggerfallAutomapWindow script will use this to propagate its slicingBiasPositionY (y-offset from the player y position)
         public float SlicingBiasPositionY
         {
             get { return (slicingBiasPositionY); }
             set { slicingBiasPositionY = value; }
         }
 
+        // DaggerfallAutomapWindow script will use this to propagate if the automap window is open or not
         public bool IsOpenAutomap
         {
             set { isOpenAutomap = value; }
@@ -70,12 +72,13 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods
 
-
+        // DaggerfallAutomapWindow script will use this function to register itself with this script
         public void registerDaggerfallAutomapWindow(DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow instanceDaggerfallAutomapWindow)
         {
             this.instanceDaggerfallAutomapWindow = instanceDaggerfallAutomapWindow;
         }
 
+        // DaggerfallAutomapWindow script will use this to signal this script to update when automap window was pushed - TODO: check if this can done with an event (if events work with gui windows)
         public void updateAutomapStateOnWindowPush()
         {
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
@@ -86,6 +89,7 @@ namespace DaggerfallWorkshop.Game
             updateSlicingPositionY();
         }
 
+        // DaggerfallAutomapWindow script will use this to signal this script to update when anything changed that requires DaggerfallAutomap to update - TODO: check if this can done with an event (if events work with gui windows)
         public void forceUpdate()
         {
             Update();

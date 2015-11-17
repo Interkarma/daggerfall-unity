@@ -34,49 +34,50 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float scrollForwardBackwardSpeed = 1.0f; // left mouse on button arrow up/down makes geometry move with this speed
         const float moveRotationMarkerLeftRightSpeed = 0.2f; // right mouse on button arrow left/right makes rotation axis move with this speed
         const float moveRotationMarkerForwardBackwardSpeed = 0.2f; // right mouse on button arrow up/down makes rotation axis move with this speed
-        const float moveUpDownSpeed = 0.5f;
-        const float rotateSpeed = 3.0f;
-        const float zoomSpeed = 0.1f; // suggested value range: 0.1f (fast) to 0.01f (slow)
-        const float cameraTiltChangeSpeed = 0.5f;
-        const float dragSpeed = 0.002f; // suggested value range: 0.01f (fast) to 0.001f (slow)
-        const float dragRotateSpeed = 0.5f;
-        const float dragRotateCameraTiltSpeed = 0.15f;
+        const float moveUpDownSpeed = 0.5f; // left mouse on button upstairs/downstairs makes geometry move with this speed
+        const float rotateSpeed = 3.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
+        const float zoomSpeed = 0.1f; // suggested value range: 0.1f (fast) to 0.01f (slow) // mouse wheel inside main area of the automap window will zoom with this speed
+        const float cameraTiltChangeSpeed = 0.5f; // currently no mouse functionality linked
+        const float dragSpeed = 0.002f; // suggested value range: 0.01f (fast) to 0.001f (slow) // hold left mouse button down and move mouse to move geometry with this speed)
+        const float dragRotateSpeed = 0.5f; // hold right mouse button down and move left/right to rotate geometry with this speed
+        const float dragRotateCameraTiltSpeed = 0.15f; // hold right mouse button down and move up/down to change tilt of camera with this speed
+        const float changeSpeedCameraFieldOfView = 1.0f; // mouse wheel over grid button will change camera field of view in 3D mode with this speed
 
-        const float cameraHeightViewFromTop = 90.0f;
-        const float cameraHeightView3D = 8.0f;
-        const float cameraBackwardDistance = 20.0f;
+        const float fieldOfViewCameraMode2D = 15.0f; // camera field of view used for 2D mode
+        float fieldOfViewCameraMode3D = 45.0f; // camera field of view used for 3D mode (can be changed with mouse wheel over grid button)
+        const float minFieldOfViewCameraMode3D = 15.0f; // minimum value of camera field of view that can be adjusted in 3D mode
+        const float maxFieldOfViewCameraMode3D = 65.0f; // maximum value of camera field of view that can be adjusted in 3D mode
 
-        const float fieldOfViewCameraMode2D = 15.0f;
-        const float changeSpeedCameraFieldOfView = 1.0f;
-        const float minFieldOfViewCameraMode3D = 15.0f;
-        const float maxFieldOfViewCameraMode3D = 65.0f;
-        float fieldOfViewCameraMode3D = 45.0f;
+        const float cameraHeightViewFromTop = 90.0f; // initial camera height in 2D mode
+        const float cameraHeightView3D = 8.0f; // initial camera height in 3D mode
+        const float cameraBackwardDistance = 20.0f; // initial camera distance "backwards" in 3D mode
 
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
 
-        DaggerfallAutomap scriptDaggerfallAutomap = null; // used to communicate with DaggerfallAutomap script
+        DaggerfallAutomap daggerfallAutomap = null; // used to communicate with DaggerfallAutomap class
 
-        GameObject gameObjectCameraAutomap = null;
+        GameObject gameObjectCameraAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
 
-        GameObject gameobjectAutomap = null;
+        GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
 
-        int layerAutomap; // layer used for geometry of automap
-        GameObject gameObjectInteriorLightRig = null;
-        GameObject gameobjectAutomapKeyLight = null;
-        GameObject gameobjectAutomapFillLight = null;
-        GameObject gameobjectAutomapBackLight = null;
+        int layerAutomap; // layer used for level geometry of automap
+        GameObject gameObjectInteriorLightRig = null; // reference to instance of GameObject called "InteriorLightRig" - this will be used to deactivate lights of interior geometry inside GameObject "Interior"
+        GameObject gameobjectAutomapKeyLight = null; // instead this script will use its own key light to lighten the level geometry used for automap
+        GameObject gameobjectAutomapFillLight = null; // and fill light
+        GameObject gameobjectAutomapBackLight = null; // and back light
 
         public enum AutomapViewMode { View2D = 0, View3D = 1};
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
 
         Panel dummyPanelAutomap = null; // used to determine correct render panel position
-        Panel panelRenderAutomap = null;
+        Panel panelRenderAutomap = null; // level geometry is rendered into this panel
         Rect oldPositionNativePanel;
-        Vector2 oldDragPosition;
+        Vector2 oldMousePosition; // old mouse position used to determine offset of mouse movement since last time used for for drag and drop functionality
 
         Panel dummyPanelCompass = null; // used to determine correct compass position
 
+        // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnGridButton = false;
@@ -97,32 +98,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool alreadyInMouseDown = false;
         bool inDragMode() { return leftMouseDownOnPanelAutomap || rightMouseDownOnPanelAutomap || rightMouseDownOnGridButton; }
 
-        Texture2D nativeTexture;
-        Texture2D nativeTextureGrid2D;
-        Texture2D nativeTextureGrid3D;
+        Texture2D nativeTexture; // background image will be stored in this Texture2D
+        Texture2D nativeTextureGrid2D; // grid button texture for 2D view image will be stored in this Texture2D
+        Texture2D nativeTextureGrid3D; // grid button texture for 3D view image will be stored in this Texture2D
 
         Color[] pixelsGrid2D;
         Color[] pixelsGrid3D;
 
         HUDCompass compass = null;
 
-        Camera cameraAutomap = null;
-        RenderTexture renderTextureAutomap = null;
-        Texture2D textureAutomap = null;
+        Camera cameraAutomap = null; // camera for automap camera
+        RenderTexture renderTextureAutomap = null; // render texture in which automap camera will render into
+        Texture2D textureAutomap = null; // render texture will converted to this texture so that it can be drawn in panelRenderAutomap
 
         int renderTextureAutomapDepth = 16;
-        int oldRenderTextureAutomapWidth;
-        int oldRenderTextureAutomapHeight;
+        int oldRenderTextureAutomapWidth; // used to store previous width of automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
+        int oldRenderTextureAutomapHeight; // used to store previous height of automap render texture to react to changes to NativePanel's size and react accordingly by setting texture up with new widht and height again
 
+        // backup positions and rotations for 2D and 3D view to allow independent camera settings for both
         Vector3 backupCameraPositionViewFromTop;
         Quaternion backupCameraRotationViewFromTop;
         Vector3 backupCameraPositionView3D;
         Quaternion backupCameraRotationView3D;
 
+        // independent bias of rotation pivot axis for both 2D and 3D view
         Vector3 biasFromInitialPositionViewFromTop;
         Vector3 biasFromInitialPositionView3D;
 
-        float slicingBiasPositionY = 0.0f;
+        float slicingBiasPositionY = 0.0f; // level of geometry slicing (y-position of slice plane)
 
         public AutomapViewMode CurrentAutomapViewMode
         {
@@ -321,9 +324,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             initClassResources();
 
-            scriptDaggerfallAutomap.registerDaggerfallAutomapWindow(this);
-            scriptDaggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
-            scriptDaggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script to update its state (updates player marker arrow)
+            daggerfallAutomap.registerDaggerfallAutomapWindow(this);
+            daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
+            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script to update its state (updates player marker arrow)
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
             {
@@ -354,7 +357,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPop()
         {
-            scriptDaggerfallAutomap.IsOpenAutomap = false;
+            daggerfallAutomap.IsOpenAutomap = false;
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
             {
@@ -396,18 +399,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
 
                 float dragSpeedCompensated = dragSpeed * Vector3.Magnitude(Camera.main.transform.position + getBiasFromInitialPosition() - cameraAutomap.transform.position);
-                Vector2 bias = mousePosition - oldDragPosition;
+                Vector2 bias = mousePosition - oldMousePosition;
                 Vector3 translation = -cameraAutomap.transform.right * dragSpeedCompensated * bias.x + cameraAutomap.transform.up * dragSpeedCompensated * bias.y;
                 cameraAutomap.transform.position += translation;
                 updateAutoMapView();
-                oldDragPosition = mousePosition;
+                oldMousePosition = mousePosition;
             }
 
             if (rightMouseDownOnPanelAutomap)
             {
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
                 
-                Vector2 bias = mousePosition - oldDragPosition;
+                Vector2 bias = mousePosition - oldMousePosition;
 
                 cameraAutomap.transform.Rotate(0.0f, +dragRotateSpeed * bias.x, 0.0f, Space.World);
 
@@ -417,14 +420,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
 
                 updateAutoMapView();
-                oldDragPosition = mousePosition;
+                oldMousePosition = mousePosition;
             }
 
             //if (rightMouseDownOnGridButton)
             //{
             //    Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
 
-            //    Vector2 bias = mousePosition - oldDragPosition;
+            //    Vector2 bias = mousePosition - oldMousePosition;
 
             //    if (automapViewMode == AutomapViewMode.View3D)
             //    {
@@ -433,7 +436,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //    }
 
             //    updateAutoMapView();
-            //    oldDragPosition = mousePosition;
+            //    oldMousePosition = mousePosition;
             //}
 
             if (leftMouseDownOnForwardButton)
@@ -609,14 +612,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (rightMouseDownOnUpstairsButton)
             {
                 slicingBiasPositionY += Vector3.up.y * moveUpDownSpeed;
-                scriptDaggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
+                daggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
                 updateAutoMapView();
             }
 
             if (rightMouseDownOnDownstairsButton)
             {
                 slicingBiasPositionY += Vector3.down.y * moveUpDownSpeed;
-                scriptDaggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
+                daggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
                 updateAutoMapView();
             }
         }        
@@ -634,10 +637,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
 
-            if (!scriptDaggerfallAutomap)
+            if (!daggerfallAutomap)
             {
-                scriptDaggerfallAutomap = gameobjectAutomap.GetComponent<DaggerfallAutomap>();
-                if (scriptDaggerfallAutomap == null)
+                daggerfallAutomap = gameobjectAutomap.GetComponent<DaggerfallAutomap>();
+                if (daggerfallAutomap == null)
                 {
                     DaggerfallUnity.LogMessage("Script DafferfallAutomap is missing in GameObject \"Automap\"! GameObject \"Automap\" must have script Game/DaggerfallAutomap attached!\"", true);
                 }
@@ -850,7 +853,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void updateAutoMapView()
         {
-            scriptDaggerfallAutomap.forceUpdate();
+            daggerfallAutomap.forceUpdate();
 
             if ((!cameraAutomap) || (!renderTextureAutomap))
                 return;
@@ -892,7 +895,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-            oldDragPosition = mousePosition;            
+            oldMousePosition = mousePosition;            
             leftMouseDownOnPanelAutomap = true;
             alreadyInMouseDown = true;
         }
@@ -909,7 +912,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-            oldDragPosition = mousePosition;
+            oldMousePosition = mousePosition;
             rightMouseDownOnPanelAutomap = true;
             alreadyInMouseDown = true;
         }
@@ -981,7 +984,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //        return;
 
         //    Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-        //    oldDragPosition = mousePosition;
+        //    oldMousePosition = mousePosition;
 
         //    rightMouseDownOnGridButton = true;
         //    alreadyInMouseDown = true;
