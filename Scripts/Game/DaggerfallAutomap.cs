@@ -29,6 +29,8 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        const float scanRateGeometryDiscoveryInHertz = 10.0f; // n times per second the discovery of new geometry/meshes is checked
+
         GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
 
         GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap
@@ -150,6 +152,8 @@ namespace DaggerfallWorkshop.Game
                 else
                     Application.Quit();
             }
+
+            StartCoroutine(CheckForNewlyDiscoveredMeshes());
         }
 
         void Update()
@@ -179,6 +183,40 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Private Methods
+
+        IEnumerator CheckForNewlyDiscoveredMeshes()
+        {
+            while (true)
+            {
+                if (gameobjectGeometry != null)
+                {
+                    gameobjectPlayerMarkerArrow.gameObject.SetActive(false);
+                    gameobjectRayPlayerPos.gameObject.SetActive(false);
+                    gameobjectRayEntrancePos.gameObject.SetActive(false);
+                    gameobjectRayRotationPivotAxis.gameObject.SetActive(false);
+
+                    if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
+                    {
+                        RaycastHit hit;
+                        if (Physics.Raycast(gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition, Vector3.down, out hit, 1000.0f, 1 << layerAutomap))
+                        {
+                            MeshCollider meshCollider = hit.collider as MeshCollider;
+                            if (meshCollider != null)
+                            {
+                                meshCollider.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                            }
+                        }
+                    }
+
+                    gameobjectPlayerMarkerArrow.gameObject.SetActive(true);
+                    gameobjectRayPlayerPos.gameObject.SetActive(true);
+                    gameobjectRayEntrancePos.gameObject.SetActive(true);
+                    gameobjectRayRotationPivotAxis.gameObject.SetActive(true);
+                }
+
+                yield return new WaitForSeconds(1.0f / scanRateGeometryDiscoveryInHertz);
+            }
+        }
 
         private static void SetLayerRecursively(GameObject obj, int layer)
         {
@@ -218,7 +256,8 @@ namespace DaggerfallWorkshop.Game
             meshRenderer.materials = newMaterials;
             meshRenderer.enabled = true;
         }
-        private void injectCustomAutomapShaderForMaterials()
+
+        private void injectMeshAndMaterialProperties()
         {
             if (GameManager.Instance.IsPlayerInsideBuilding)
             {
@@ -254,6 +293,8 @@ namespace DaggerfallWorkshop.Game
                                     break;
 
                                 updateMaterialsFromRenderer(meshRenderer);
+
+                                meshRenderer.enabled = false;
                             }
                         }
                     }
@@ -369,7 +410,7 @@ namespace DaggerfallWorkshop.Game
             SetLayerRecursively(gameobjectGeometry, layerAutomap);
             gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
 
-            injectCustomAutomapShaderForMaterials();
+            injectMeshAndMaterialProperties();
         }
 
         private void createDungeonGeometryForAutomap()
@@ -382,6 +423,8 @@ namespace DaggerfallWorkshop.Game
             gameobjectGeometry = new GameObject("GeometryAutomap (Dungeon)");
 
             doInitialSetupForGeometryCreation();
+
+            DaggerfallUnity.Instance.Option_CombineRDB = false;
 
             foreach (Transform elem in GameManager.Instance.DungeonParent.transform)
             {
@@ -417,10 +460,12 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            DaggerfallUnity.Instance.Option_CombineRDB = true;
+
             SetLayerRecursively(gameobjectGeometry, layerAutomap);
             gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
 
-            injectCustomAutomapShaderForMaterials();
+            injectMeshAndMaterialProperties();
         }
 
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
