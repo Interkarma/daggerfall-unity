@@ -186,6 +186,32 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
+        private void scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(Vector3 rayStartPos, Vector3 rayDirection, float rayDistance, Vector3 offsetSecondProtectionRaycast)
+        {
+            RaycastHit hit1, hit2;
+            // raycast down from player head position
+            bool didHit1 = Physics.Raycast(rayStartPos, rayDirection, out hit1, rayDistance, 1 << layerAutomap);
+            // raycast down from player head position with slight offset of 10cm (protection against hole in daggerfall geometry prevention)
+            bool didHit2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hit2, rayDistance, 1 << layerAutomap);
+            // only when both hits have same collider (TODO: check if there are no problems with small geometry)
+            if ((didHit1) && (didHit2) && (hit1.collider == hit2.collider))
+            {
+                MeshCollider meshCollider = hit1.collider as MeshCollider;
+                if (meshCollider != null)
+                {
+                    meshCollider.gameObject.GetComponent<MeshRenderer>().enabled = true;
+
+                    Material[] mats = meshCollider.gameObject.GetComponent<MeshRenderer>().materials;
+                    foreach (Material mat in mats)
+                    {
+                        mat.SetFloat("_VisitedInThisEntering", 1.0f);
+                    }
+                    meshCollider.gameObject.GetComponent<MeshRenderer>().materials = mats; // check if necessary
+                }
+            }
+
+        }
+
         IEnumerator CheckForNewlyDiscoveredMeshes()
         {
             while (true)
@@ -199,22 +225,18 @@ namespace DaggerfallWorkshop.Game
 
                     if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
                     {
-                        RaycastHit hit;
-                        if (Physics.Raycast(gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition, Vector3.down, out hit, 1000.0f, 1 << layerAutomap))
-                        {
-                            MeshCollider meshCollider = hit.collider as MeshCollider;
-                            if (meshCollider != null)
-                            {
-                                meshCollider.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                        // reveal geometry right below player
+                        Vector3 rayStartPos = gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition;
+                        Vector3 rayDirection = Vector3.down;
+                        float rayDistance = 3.0f;
+                        Vector3 offsetSecondProtectionRaycast = Vector3.left * 0.1f;
+                        scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
 
-                                Material[] mats = meshCollider.gameObject.GetComponent<MeshRenderer>().materials;
-                                foreach (Material mat in mats)
-                                {
-                                    mat.SetFloat("_VisitedInThisEntering", 1.0f);
-                                }
-                                meshCollider.gameObject.GetComponent<MeshRenderer>().materials = mats; // check if necessary
-                            }
-                        }
+                        // reveal geometry which player is looking at (and which is near enough)
+                        rayDirection = Camera.main.transform.rotation * Vector3.forward;
+                        offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.right, rayDirection)) * 0.1f;
+                        rayDistance = 25.0f;
+                        scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
                     }
 
                     gameobjectPlayerMarkerArrow.gameObject.SetActive(true);
