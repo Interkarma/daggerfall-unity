@@ -278,8 +278,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectRayPlayerPos.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(1.0f, 0.0f, 0.0f);
-                MeshRenderer meshRenderer = gameobjectRayPlayerPos.GetComponent<MeshRenderer>();
-                meshRenderer.material = material;
+                gameobjectRayPlayerPos.GetComponent<MeshRenderer>().material = material;
             }
             gameobjectRayPlayerPos.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
 
@@ -293,23 +292,33 @@ namespace DaggerfallWorkshop.Game
                 gameobjectRayRotationPivotAxis.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(0.0f, 0.0f, 1.0f);
-                MeshRenderer meshRenderer = gameobjectRayRotationPivotAxis.GetComponent<MeshRenderer>();
-                meshRenderer.material = material;
+                gameobjectRayRotationPivotAxis.GetComponent<MeshRenderer>().material = material;
             }
             gameobjectRayRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position;
 
             if (!gameobjectRayEntrancePos)
             {
-                gameobjectRayEntrancePos = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                UnityEngine.Object.DestroyImmediate(gameobjectRayEntrancePos.GetComponent<Collider>());
-                gameobjectRayEntrancePos.name = "RayEntracePosition";
+                gameobjectRayEntrancePos = new GameObject("EntracePositionMarker");
                 gameobjectRayEntrancePos.transform.SetParent(gameobjectAutomap.transform);
-                gameobjectRayEntrancePos.layer = layerAutomap;                
-                gameobjectRayEntrancePos.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
+                gameobjectRayEntrancePos.layer = layerAutomap;
+
+                GameObject gameobjectRay = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                UnityEngine.Object.DestroyImmediate(gameobjectRay.GetComponent<Collider>());
+                gameobjectRay.name = "RayEntracePositionMarker";
+                gameobjectRay.transform.SetParent(gameobjectRayEntrancePos.transform);
+                gameobjectRay.layer = layerAutomap;
+                gameobjectRay.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(0.0f, 1.0f, 0.0f);
-                MeshRenderer meshRenderer = gameobjectRayEntrancePos.GetComponent<MeshRenderer>();
-                meshRenderer.material = material;
+                gameobjectRay.GetComponent<MeshRenderer>().material = material;
+
+                GameObject gameObjectCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                UnityEngine.Object.DestroyImmediate(gameObjectCubeMarker.GetComponent<Collider>());
+                gameObjectCubeMarker.name = "CubeEntracePositionMarker";
+                gameObjectCubeMarker.transform.SetParent(gameobjectRayEntrancePos.transform);
+                gameObjectCubeMarker.GetComponent<MeshRenderer>().material = material;
+                gameObjectCubeMarker.layer = layerAutomap;
+                gameObjectCubeMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
             }
             gameobjectRayEntrancePos.transform.position = gameObjectPlayerAdvanced.transform.position + rayEntrancePosOffset;
         }
