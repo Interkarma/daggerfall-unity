@@ -18,6 +18,7 @@ Shader "Daggerfall/Automap" {
 		_EmissionMap("Emission Map", 2D) = "white" {}
 		_EmissionColor("Emission Color", Color) = (0,0,0)
 		_PlayerPosition("player position", Vector) = (0,0,0,1)
+		_VisitedInThisEntering("indicates if mesh was visited in this entering", Float) = 0.0
 	}
 	SubShader {
 		//Tags { "RenderType"="Transparent" "IgnoreProjector" = "True" "Queue" = "Transparent"}
@@ -47,6 +48,7 @@ Shader "Daggerfall/Automap" {
 		half4 _EmissionColor;
 		uniform float4 _PlayerPosition;
 		uniform float _SclicingPositionY;
+		fixed _VisitedInThisEntering;
 
 		struct Input {
 			float2 uv_MainTex;
@@ -75,6 +77,11 @@ Shader "Daggerfall/Automap" {
 			//o.Alpha = 1.0f - max(0.0f, min(0.1f, dist/100.0f));
 			o.Albedo *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
 
+			if (_VisitedInThisEntering == 0.0f)
+			{
+				half3 color = o.Albedo.rgb;
+				o.Albedo = dot(color.rgb, float3(0.3, 0.59, 0.11));
+			}
 		}
 		ENDCG
 	} 

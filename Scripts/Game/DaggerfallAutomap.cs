@@ -36,6 +36,8 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap
         int layerAutomap; // layer used for level geometry of automap
 
+        String oldGeometryName = "";
+
         GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
         float slicingBiasPositionY; // bias from player y-position of geometry slice plane (set via Property SlicingBiasPositionY triggered by DaggerfallAutomapWindow script)
@@ -188,8 +190,8 @@ namespace DaggerfallWorkshop.Game
         {
             while (true)
             {
-                if (gameobjectGeometry != null)
-                {
+                if ((gameobjectGeometry != null) && ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace)))
+                {                    
                     gameobjectPlayerMarkerArrow.gameObject.SetActive(false);
                     gameobjectRayPlayerPos.gameObject.SetActive(false);
                     gameobjectRayEntrancePos.gameObject.SetActive(false);
@@ -204,6 +206,13 @@ namespace DaggerfallWorkshop.Game
                             if (meshCollider != null)
                             {
                                 meshCollider.gameObject.GetComponent<MeshRenderer>().enabled = true;
+
+                                Material[] mats = meshCollider.gameObject.GetComponent<MeshRenderer>().materials;
+                                foreach (Material mat in mats)
+                                {
+                                    mat.SetFloat("_VisitedInThisEntering", 1.0f);
+                                }
+                                meshCollider.gameObject.GetComponent<MeshRenderer>().materials = mats; // check if necessary
                             }
                         }
                     }
@@ -228,10 +237,10 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void updateMaterialsFromRenderer(MeshRenderer meshRenderer)
+        private void updateMaterialsFromRenderer(MeshRenderer meshRenderer, bool visitedInThisEntering = false)
         {
             Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
-            meshRenderer.enabled = false;
+            //meshRenderer.enabled = false;
             Material[] newMaterials = new Material[meshRenderer.materials.Length];
             for (int i = 0; i < meshRenderer.materials.Length; i++)
             {
@@ -251,13 +260,17 @@ namespace DaggerfallWorkshop.Game
                 newMaterial.SetColor("_EmissionColor", emissionColor);
                 Vector4 playerPosition = new Vector4(playerAdvancedPos.x, playerAdvancedPos.y + Camera.main.transform.localPosition.y, playerAdvancedPos.z, 0.0f);
                 newMaterial.SetVector("_PlayerPosition", playerPosition);
+                if (visitedInThisEntering == true)
+                    newMaterial.SetFloat("_VisitedInThisEntering", 1.0f);
+                else
+                    newMaterial.SetFloat("_VisitedInThisEntering", 0.0f);
                 newMaterials[i] = newMaterial;
             }
             meshRenderer.materials = newMaterials;
-            meshRenderer.enabled = true;
+            //meshRenderer.enabled = true;
         }
 
-        private void injectMeshAndMaterialProperties()
+        private void injectMeshAndMaterialProperties(bool resetDiscoveryState = true)
         {
             if (GameManager.Instance.IsPlayerInsideBuilding)
             {
@@ -272,7 +285,10 @@ namespace DaggerfallWorkshop.Game
                             if (meshRenderer == null)
                                 break;
 
-                            updateMaterialsFromRenderer(meshRenderer);
+                            if (resetDiscoveryState)
+                            {
+                                updateMaterialsFromRenderer(meshRenderer, true);
+                            }
                         }
                     }
                 }
@@ -294,7 +310,10 @@ namespace DaggerfallWorkshop.Game
 
                                 updateMaterialsFromRenderer(meshRenderer);
 
-                                meshRenderer.enabled = false;
+                                if (resetDiscoveryState)
+                                {
+                                    meshRenderer.enabled = false;
+                                }
                             }
                         }
                     }
@@ -376,9 +395,19 @@ namespace DaggerfallWorkshop.Game
 
         private void createIndoorGeometryForAutomap(PlayerEnterExit.TransitionEventArgs args)
         {
+            StaticDoor door = args.StaticDoor;
+            String newGeometryName = string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex);
             if (gameobjectGeometry != null)
             {
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+                if (oldGeometryName != newGeometryName)
+                {
+                    UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+                }
+                else
+                {
+                    injectMeshAndMaterialProperties(false);
+                    return;
+                }
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Interior)");
@@ -394,8 +423,8 @@ namespace DaggerfallWorkshop.Game
                     climateBase = ClimateSwaps.FromAPIClimateBase(GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType);
 
                     // Layout interior
-                    StaticDoor door = args.StaticDoor;
-                    GameObject gameobjectInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex));
+                    
+                    GameObject gameobjectInterior = new GameObject(newGeometryName);
                     DaggerfallInterior interior = gameobjectInterior.AddComponent<DaggerfallInterior>();
 
                     interior.DoLayoutAutomap(null, door, climateBase);
@@ -411,13 +440,25 @@ namespace DaggerfallWorkshop.Game
             gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
 
             injectMeshAndMaterialProperties();
+
+            oldGeometryName = newGeometryName;
         }
 
         private void createDungeonGeometryForAutomap()
         {
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            String newGeometryName = string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name);
             if (gameobjectGeometry != null)
             {
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+                if (oldGeometryName != newGeometryName)
+                {
+                    UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+                }
+                else
+                {
+                    injectMeshAndMaterialProperties(false);
+                    return;
+                }
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Dungeon)");
@@ -430,9 +471,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (elem.name.Contains("DaggerfallDungeon"))
                 {
-                    DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-
-                    GameObject gameobjectDungeon = new GameObject(string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name));
+                    GameObject gameobjectDungeon = new GameObject(newGeometryName);
 
                     // Create dungeon layout
                     foreach (DFLocation.DungeonBlock block in location.Dungeon.Blocks)
@@ -466,6 +505,8 @@ namespace DaggerfallWorkshop.Game
             gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
 
             injectMeshAndMaterialProperties();
+
+            oldGeometryName = newGeometryName;
         }
 
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
