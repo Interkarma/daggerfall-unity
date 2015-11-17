@@ -85,12 +85,20 @@ namespace DaggerfallWorkshop.Game
         // DaggerfallAutomapWindow script will use this to signal this script to update when automap window was pushed - TODO: check if this can done with an event (if events work with gui windows)
         public void updateAutomapStateOnWindowPush()
         {
+            gameobjectGeometry.SetActive(true);
+
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
             gameobjectRayPlayerPos.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
 
             updateSlicingPositionY();
+        }
+
+        // DaggerfallAutomapWindow script will use this to signal this script to update when automap window was popped - TODO: check if this can done with an event (if events work with gui windows)
+        public void updateAutomapStateOnWindowPop()
+        {
+            gameobjectGeometry.SetActive(false);
         }
 
         // DaggerfallAutomapWindow script will use this to signal this script to update when anything changed that requires DaggerfallAutomap to update - TODO: check if this can done with an event (if events work with gui windows)
@@ -188,13 +196,24 @@ namespace DaggerfallWorkshop.Game
 
         private void scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(Vector3 rayStartPos, Vector3 rayDirection, float rayDistance, Vector3 offsetSecondProtectionRaycast)
         {
-            RaycastHit hit1, hit2;
+            RaycastHit hit1, hit2, hitTrueLevelGeometry1, hitTrueLevelGeometry2;
+
+            bool didHitTrueLevelGeometry1 = Physics.Raycast(rayStartPos, rayDirection, out hitTrueLevelGeometry1, rayDistance, 1 << 0); // use default layer
+            bool didHitTrueLevelGeometry2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hitTrueLevelGeometry2, rayDistance, 1 << 0); // use default layer
+
             // raycast down from player head position
-            bool didHit1 = Physics.Raycast(rayStartPos, rayDirection, out hit1, rayDistance, 1 << layerAutomap);
+            bool didHit1 = Physics.Raycast(rayStartPos, rayDirection, out hit1, rayDistance, 1 << layerAutomap); // use layer "Automap"
             // raycast down from player head position with slight offset of 10cm (protection against hole in daggerfall geometry prevention)
-            bool didHit2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hit2, rayDistance, 1 << layerAutomap);
+            bool didHit2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hit2, rayDistance, 1 << layerAutomap); // use layer "Automap"
             // only when both hits have same collider (TODO: check if there are no problems with small geometry)
-            if ((didHit1) && (didHit2) && (hit1.collider == hit2.collider))
+            if (didHit1 &&
+                didHit2 &&
+                hit1.collider == hit2.collider &&                
+                didHitTrueLevelGeometry1 &&
+                didHitTrueLevelGeometry2 &&
+                Math.Abs(hitTrueLevelGeometry1.distance - hit1.distance) < 0.001f &&
+                Math.Abs(hitTrueLevelGeometry2.distance - hit2.distance) < 0.001f
+                )
             {
                 MeshCollider meshCollider = hit1.collider as MeshCollider;
                 if (meshCollider != null)
@@ -234,7 +253,7 @@ namespace DaggerfallWorkshop.Game
 
                         // reveal geometry which player is looking at (and which is near enough)
                         rayDirection = Camera.main.transform.rotation * Vector3.forward;
-                        offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.right, rayDirection)) * 0.1f;
+                        offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
                         rayDistance = 25.0f;
                         scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
                     }
@@ -504,12 +523,15 @@ namespace DaggerfallWorkshop.Game
                                 continue;
                         }
 
-                        GameObject go = RDBLayout.CreateBaseGameObject(block.BlockName, null, null, true, null, false);
+                        DFBlock blockData;
+                        int[] textureTable = null;
+                        GameObject gameobjectBlock = RDBLayout.CreateBaseGameObject(block.BlockName, null, out blockData, textureTable, true, null, false);
+                        //gameobjectBlock.transform.parent = this.transform;
+                        gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
-                        go.transform.parent = this.transform;
-                        go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
+                        gameobjectBlock.transform.SetParent(gameobjectDungeon.transform);
 
-                        go.transform.SetParent(gameobjectDungeon.transform);
+                        //RDBLayout.AddActionDoors(gameobjectBlock, null, ref blockData, null, false);
                     }
 
                     gameobjectDungeon.transform.SetParent(gameobjectGeometry.transform);

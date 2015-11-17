@@ -326,7 +326,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             daggerfallAutomap.registerDaggerfallAutomapWindow(this);
             daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
-            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script to update its state (updates player marker arrow)
+            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed and that it should update its state (updates player marker arrow)
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
             {
@@ -385,6 +385,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 UnityEngine.Object.DestroyImmediate(textureAutomap);
             }
+
+            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed
         }
 
 
