@@ -96,7 +96,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool rightMouseDownOnUpstairsButton = false;
         bool rightMouseDownOnDownstairsButton = false;
         bool alreadyInMouseDown = false;
-        bool inDragMode() { return leftMouseDownOnPanelAutomap || rightMouseDownOnPanelAutomap || rightMouseDownOnGridButton; }
+        bool alreadyInRightMouseDown = false;
+        bool inDragMode() { return leftMouseDownOnPanelAutomap || rightMouseDownOnPanelAutomap; }
 
         Texture2D nativeTexture; // background image will be stored in this Texture2D
         Texture2D nativeTextureGrid2D; // grid button texture for 2D view image will be stored in this Texture2D
@@ -124,8 +125,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // independent bias of rotation pivot axis for both 2D and 3D view
         Vector3 biasRotationPivotAxisFromInitialPositionViewFromTop;
         Vector3 biasRotationPivotAxisFromInitialPositionView3D;
-
-        float slicingBiasPositionY = 0.0f; // level of geometry slicing (y-position of slice plane)
 
         public AutomapViewMode CurrentAutomapViewMode
         {
@@ -326,7 +325,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             daggerfallAutomap.registerDaggerfallAutomapWindow(this);
             daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
-            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed and that it should update its state (updates player marker arrow)
+            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed and that it should update its state (updates player marker arrow)            
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
             {
@@ -346,12 +345,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 if (cameraAutomap)
                 {
+                    daggerfallAutomap.SlicingBiasY = 0.0f;
                     resetCameraPosition();
                     resetBiasFromInitialPosition();
                     updateAutoMapView();
+                    daggerfallAutomap.forceUpdate();
                 }
-
-                slicingBiasPositionY = 0.0f;
             }
         }
 
@@ -613,15 +612,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (rightMouseDownOnUpstairsButton)
             {
-                slicingBiasPositionY += Vector3.up.y * moveUpDownSpeed;
-                daggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
+                daggerfallAutomap.SlicingBiasY += Vector3.up.y * moveUpDownSpeed;
                 updateAutoMapView();
             }
 
             if (rightMouseDownOnDownstairsButton)
             {
-                slicingBiasPositionY += Vector3.down.y * moveUpDownSpeed;
-                daggerfallAutomap.SlicingBiasPositionY = slicingBiasPositionY;
+                daggerfallAutomap.SlicingBiasY += Vector3.down.y * moveUpDownSpeed;
                 updateAutoMapView();
             }
         }        
@@ -910,19 +907,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (alreadyInMouseDown)
+            if (alreadyInRightMouseDown)
                 return;
 
             Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
             oldMousePosition = mousePosition;
             rightMouseDownOnPanelAutomap = true;
-            alreadyInMouseDown = true;
+            alreadyInRightMouseDown = true;
         }
 
         private void PanelAutomap_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
             rightMouseDownOnPanelAutomap = false;
-            alreadyInMouseDown = false;
+            alreadyInRightMouseDown = false;
         }
 
         private void GridButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -982,20 +979,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         //private void GridButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
         //{
-        //    if (alreadyInMouseDown)
+        //    if (alreadyInRightMouseDown)
         //        return;
 
         //    Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
         //    oldMousePosition = mousePosition;
 
         //    rightMouseDownOnGridButton = true;
-        //    alreadyInMouseDown = true;
+        //    alreadyInRightMouseDown = true;
         //}
 
         //private void GridButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         //{
         //    rightMouseDownOnGridButton = false;
-        //    alreadyInMouseDown = false;
+        //    alreadyInRightMouseDown = false;
         //}
 
         private void GridButton_OnMouseScrollUp()
@@ -1041,17 +1038,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ForwardButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode() || alreadyInMouseDown)
+            if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
             rightMouseDownOnForwardButton = true;
-            alreadyInMouseDown = true;
+            alreadyInRightMouseDown = true;
         }
 
         private void ForwardButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
             rightMouseDownOnForwardButton = false;
-            alreadyInMouseDown = false;
+            alreadyInRightMouseDown = false;
         }
 
         private void BackwardButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
@@ -1071,17 +1068,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void BackwardButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode() || alreadyInMouseDown)
+            if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
             rightMouseDownOnBackwardButton = true;
-            alreadyInMouseDown = true;
+            alreadyInRightMouseDown = true;
         }
 
         private void BackwardButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
             rightMouseDownOnBackwardButton = false;
-            alreadyInMouseDown = false;
+            alreadyInRightMouseDown = false;
         }
 
         private void LeftButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
@@ -1101,17 +1098,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void LeftButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode() || alreadyInMouseDown)
+            if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
             rightMouseDownOnLeftButton = true;
-            alreadyInMouseDown = true;
+            alreadyInRightMouseDown = true;
         }
 
         private void LeftButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
             rightMouseDownOnLeftButton = false;
-            alreadyInMouseDown = false;
+            alreadyInRightMouseDown = false;
         }
 
         private void RightButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
@@ -1131,17 +1128,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void RightButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode() || alreadyInMouseDown)
+            if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
             rightMouseDownOnRightButton = true;
-            alreadyInMouseDown = true;
+            alreadyInRightMouseDown = true;
         }
 
         private void RightButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
             rightMouseDownOnRightButton = false;
-            alreadyInMouseDown = false;
+            alreadyInRightMouseDown = false;
         }
 
         private void RotateLeftButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
@@ -1208,33 +1205,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpstairsButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode() || alreadyInMouseDown)
+            if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
             rightMouseDownOnUpstairsButton = true;
-            alreadyInMouseDown = true;
+            alreadyInRightMouseDown = true;
         }
 
         private void UpstairsButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
             rightMouseDownOnUpstairsButton = false;
-            alreadyInMouseDown = false;
+            alreadyInRightMouseDown = false;
         }
 
 
         private void DownstairsButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
         {
-            if (inDragMode() || alreadyInMouseDown)
+            if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
             rightMouseDownOnDownstairsButton = true;
-            alreadyInMouseDown = true;
+            alreadyInRightMouseDown = true;
         }
 
         private void DownstairsButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
             rightMouseDownOnDownstairsButton = false;
-            alreadyInMouseDown = false;
+            alreadyInRightMouseDown = false;
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

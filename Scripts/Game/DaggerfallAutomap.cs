@@ -40,15 +40,15 @@ namespace DaggerfallWorkshop.Game
 
         GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
-        float slicingBiasPositionY; // bias from player y-position of geometry slice plane (set via Property SlicingBiasPositionY triggered by DaggerfallAutomapWindow script)
+        float slicingBiasY; // y-bias from player y-position of geometry slice plane (set via Property SlicingBiasY used by DaggerfallAutomapWindow script to set value)
 
         bool isOpenAutomap = false; // flag that indicates if automap window is open (set via Property IsOpenAutomap triggered by DaggerfallAutomapWindow script)
 
         GameObject gameobjectBeacons = null; // collector GameObject to hold beacons
         GameObject gameobjectPlayerMarkerArrow = null; // GameObject which will hold player marker arrow
-        GameObject gameobjectRayPlayerPos = null; // GameObject which will hold player marker ray (red ray)
-        GameObject gameobjectRayEntrancePos = null; // GameObject which will hold (dungeon) entrance marker ray (green ray)
-        GameObject gameobjectRayRotationPivotAxis = null; // GameObject which will hold rotation pivot axis ray (blue ray)
+        GameObject gameobjectBeaconPlayerPosition = null; // GameObject which will hold player marker ray (red ray)
+        GameObject gameobjectBeaconEntrancePosition = null; // GameObject which will hold (dungeon) entrance marker ray (green ray)
+        GameObject gameobjectBeaconRotationPivotAxis = null; // GameObject which will hold rotation pivot axis ray (blue ray)
 
         readonly Vector3 rayPlayerPosOffset = new Vector3(-0.1f, 0.0f, +0.1f); // small offset to prevent ray for player position to be exactly in the same position as the rotation pivot axis
         readonly Vector3 rayEntrancePosOffset = new Vector3(0.1f, 0.0f, +0.1f); // small offset to prevent ray for dungeon entrance to be exactly in the same position as the rotation pivot axis
@@ -60,12 +60,12 @@ namespace DaggerfallWorkshop.Game
         #region Properties
 
         /**
-         * DaggerfallAutomapWindow script will use this to propagate its slicingBiasPositionY (y-offset from the player y position)
+         * DaggerfallAutomapWindow script will use this to propagate its slicingBiasY (y-offset from the player y position)
          */
-        public float SlicingBiasPositionY
+        public float SlicingBiasY
         {
-            get { return (slicingBiasPositionY); }
-            set { slicingBiasPositionY = value; }
+            get { return (slicingBiasY); }
+            set { slicingBiasY = value; }
         }
 
         /**
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
-            gameobjectRayPlayerPos.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
+            gameobjectBeaconPlayerPosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
 
             updateSlicingPositionY();
         }
@@ -203,7 +203,7 @@ namespace DaggerfallWorkshop.Game
                             biasRotationPivotAxisFromInitialPosition = instanceDaggerfallAutomapWindow.BiasRotationPivotAxisFromInitialPositionView3D;
                             break;
                     }
-                    gameobjectRayRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position + biasRotationPivotAxisFromInitialPosition;
+                    gameobjectBeaconRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position + biasRotationPivotAxisFromInitialPosition;
                 }
             }
         }
@@ -274,9 +274,9 @@ namespace DaggerfallWorkshop.Game
 
                     // disable beacons to prevent their colliders
                     gameobjectPlayerMarkerArrow.gameObject.SetActive(false);
-                    gameobjectRayPlayerPos.gameObject.SetActive(false);
-                    gameobjectRayEntrancePos.gameObject.SetActive(false);
-                    gameobjectRayRotationPivotAxis.gameObject.SetActive(false);
+                    gameobjectBeaconPlayerPosition.gameObject.SetActive(false);
+                    gameobjectBeaconEntrancePosition.gameObject.SetActive(false);
+                    gameobjectBeaconRotationPivotAxis.gameObject.SetActive(false);
 
                     if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
                     {
@@ -297,9 +297,9 @@ namespace DaggerfallWorkshop.Game
 
                     // enable previously disabled beacons
                     gameobjectPlayerMarkerArrow.gameObject.SetActive(true);
-                    gameobjectRayPlayerPos.gameObject.SetActive(true);
-                    gameobjectRayEntrancePos.gameObject.SetActive(true);
-                    gameobjectRayRotationPivotAxis.gameObject.SetActive(true);
+                    gameobjectBeaconPlayerPosition.gameObject.SetActive(true);
+                    gameobjectBeaconEntrancePosition.gameObject.SetActive(true);
+                    gameobjectBeaconRotationPivotAxis.gameObject.SetActive(true);
 
                     // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
                     gameobjectGeometry.SetActive(false);
@@ -438,44 +438,44 @@ namespace DaggerfallWorkshop.Game
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
-            if (!gameobjectRayPlayerPos)
+            if (!gameobjectBeaconPlayerPosition)
             {
-                gameobjectRayPlayerPos = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                UnityEngine.Object.DestroyImmediate(gameobjectRayPlayerPos.GetComponent<Collider>());
-                gameobjectRayPlayerPos.name = "RayPlayerPosition";
-                gameobjectRayPlayerPos.transform.SetParent(gameobjectBeacons.transform);
-                gameobjectRayPlayerPos.layer = layerAutomap;                
-                gameobjectRayPlayerPos.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
+                gameobjectBeaconPlayerPosition = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                UnityEngine.Object.DestroyImmediate(gameobjectBeaconPlayerPosition.GetComponent<Collider>());
+                gameobjectBeaconPlayerPosition.name = "BeaconPlayerPosition";
+                gameobjectBeaconPlayerPosition.transform.SetParent(gameobjectBeacons.transform);
+                gameobjectBeaconPlayerPosition.layer = layerAutomap;                
+                gameobjectBeaconPlayerPosition.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(1.0f, 0.0f, 0.0f);
-                gameobjectRayPlayerPos.GetComponent<MeshRenderer>().material = material;
+                gameobjectBeaconPlayerPosition.GetComponent<MeshRenderer>().material = material;
             }
-            gameobjectRayPlayerPos.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
+            gameobjectBeaconPlayerPosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
 
-            if (!gameobjectRayRotationPivotAxis)
+            if (!gameobjectBeaconRotationPivotAxis)
             {
-                gameobjectRayRotationPivotAxis = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                UnityEngine.Object.DestroyImmediate(gameobjectRayRotationPivotAxis.GetComponent<Collider>());
-                gameobjectRayRotationPivotAxis.name = "RayRotationPivotAxis";
-                gameobjectRayRotationPivotAxis.transform.SetParent(gameobjectBeacons.transform);
-                gameobjectRayRotationPivotAxis.layer = layerAutomap;                
-                gameobjectRayRotationPivotAxis.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
+                gameobjectBeaconRotationPivotAxis = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                UnityEngine.Object.DestroyImmediate(gameobjectBeaconRotationPivotAxis.GetComponent<Collider>());
+                gameobjectBeaconRotationPivotAxis.name = "BeaconRotationPivotAxis";
+                gameobjectBeaconRotationPivotAxis.transform.SetParent(gameobjectBeacons.transform);
+                gameobjectBeaconRotationPivotAxis.layer = layerAutomap;                
+                gameobjectBeaconRotationPivotAxis.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(0.0f, 0.0f, 1.0f);
-                gameobjectRayRotationPivotAxis.GetComponent<MeshRenderer>().material = material;
+                gameobjectBeaconRotationPivotAxis.GetComponent<MeshRenderer>().material = material;
             }
-            gameobjectRayRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position;
+            gameobjectBeaconRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position;
 
-            if (!gameobjectRayEntrancePos)
+            if (!gameobjectBeaconEntrancePosition)
             {
-                gameobjectRayEntrancePos = new GameObject("EntracePositionMarker");
-                gameobjectRayEntrancePos.transform.SetParent(gameobjectBeacons.transform);
-                gameobjectRayEntrancePos.layer = layerAutomap;
+                gameobjectBeaconEntrancePosition = new GameObject("BeaconEntracePosition");
+                gameobjectBeaconEntrancePosition.transform.SetParent(gameobjectBeacons.transform);
+                gameobjectBeaconEntrancePosition.layer = layerAutomap;
 
                 GameObject gameobjectRay = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 UnityEngine.Object.DestroyImmediate(gameobjectRay.GetComponent<Collider>());
-                gameobjectRay.name = "RayEntracePositionMarker";
-                gameobjectRay.transform.SetParent(gameobjectRayEntrancePos.transform);
+                gameobjectRay.name = "BeaconEntracePositionMarker";
+                gameobjectRay.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
                 gameobjectRay.layer = layerAutomap;
                 gameobjectRay.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
@@ -485,12 +485,12 @@ namespace DaggerfallWorkshop.Game
                 GameObject gameObjectCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 UnityEngine.Object.DestroyImmediate(gameObjectCubeMarker.GetComponent<Collider>());
                 gameObjectCubeMarker.name = "CubeEntracePositionMarker";
-                gameObjectCubeMarker.transform.SetParent(gameobjectRayEntrancePos.transform);
+                gameObjectCubeMarker.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
                 gameObjectCubeMarker.GetComponent<MeshRenderer>().material = material;
                 gameObjectCubeMarker.layer = layerAutomap;
                 gameObjectCubeMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
             }
-            gameobjectRayEntrancePos.transform.position = gameObjectPlayerAdvanced.transform.position + rayEntrancePosOffset;
+            gameobjectBeaconEntrancePosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayEntrancePosOffset;
         }
 
         /**
@@ -498,7 +498,7 @@ namespace DaggerfallWorkshop.Game
          */
         private void updateSlicingPositionY()
         {
-            float slicingPositionY = gameObjectPlayerAdvanced.transform.position.y + Camera.main.transform.localPosition.y + slicingBiasPositionY;
+            float slicingPositionY = gameObjectPlayerAdvanced.transform.position.y + Camera.main.transform.localPosition.y + slicingBiasY;
             Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
         }
 
