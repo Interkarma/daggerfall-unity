@@ -254,7 +254,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         mat.SetFloat("_VisitedInThisEntering", 1.0f); // mark material as visited in this entrance/dungeon run
                     }
-                    meshCollider.gameObject.GetComponent<MeshRenderer>().materials = mats; // check if necessary
+                    meshCollider.gameObject.GetComponent<MeshRenderer>().materials = mats;
                 }
             }
 
@@ -269,7 +269,8 @@ namespace DaggerfallWorkshop.Game
             {
                 if ((gameobjectGeometry != null) && ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace)))
                 {
-                    gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
+                    // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
+                    gameobjectGeometry.SetActive(true);
 
                     // disable beacons to prevent their colliders
                     gameobjectPlayerMarkerArrow.gameObject.SetActive(false);
@@ -294,17 +295,24 @@ namespace DaggerfallWorkshop.Game
                         scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
                     }
 
+                    // enable previously disabled beacons
                     gameobjectPlayerMarkerArrow.gameObject.SetActive(true);
                     gameobjectRayPlayerPos.gameObject.SetActive(true);
                     gameobjectRayEntrancePos.gameObject.SetActive(true);
                     gameobjectRayRotationPivotAxis.gameObject.SetActive(true);
 
-                    gameobjectGeometry.SetActive(false); // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
+                    // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
+                    gameobjectGeometry.SetActive(false);
                 }
                 yield return new WaitForSeconds(1.0f / scanRateGeometryDiscoveryInHertz);
             }
         }
 
+        /*
+         * sets layer of a GameObject and all of its childs recursively
+         * @param obj the target GameObject
+         * @param layer the layer to be set
+         */
         private static void SetLayerRecursively(GameObject obj, int layer)
         {
             obj.layer = layer;
@@ -315,7 +323,14 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void updateMaterialsFromRenderer(MeshRenderer meshRenderer, bool visitedInThisEntering = false)
+        /*
+         * updates materials of mesh renderer
+         * (this injects the automap shader and sets the state for materials to be rendered dependent
+         * on if they where revealed already in a previous dungeon run)
+         * @param meshRenderer the MeshRenderer whose materials needs to be updated
+         * @param visitedInThisEntering indicates if the materials of meshRenderer should be marked as "visited in this entering/dungeon run" (rendered in color) or not (rendered in grayscale)
+         */
+        private void updateMaterialsOfMeshRenderer(MeshRenderer meshRenderer, bool visitedInThisEntering = false)
         {
             Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
             //meshRenderer.enabled = false;
@@ -348,13 +363,18 @@ namespace DaggerfallWorkshop.Game
             //meshRenderer.enabled = true;
         }
 
+        /*
+         * will inject materials and properties to MeshRenderer in the proper hierarchy level of automap level geometry GameObject
+         * note: the proper hierarchy level differs between an "Interior" and a "Dungeon" geometry GameObject
+         * @param resetDiscoveryState if true resets the discovery state for geometry that needs to be discovered (when inside dungeons or palaces)
+         */
         private void injectMeshAndMaterialProperties(bool resetDiscoveryState = true)
         {
             if (GameManager.Instance.IsPlayerInsideBuilding)
             {
+                // find all MeshRenderers in 3rd hierarchy level
                 foreach (Transform elem in gameobjectGeometry.transform)
                 {
-                    //Debug.Log(String.Format("name: {0}", elem.name));
                     foreach (Transform innerElem in elem.gameObject.transform)
                     {
                         foreach (Transform inner2Elem in innerElem.gameObject.transform)
@@ -363,19 +383,18 @@ namespace DaggerfallWorkshop.Game
                             if (meshRenderer == null)
                                 break;
 
-                            if (resetDiscoveryState)
-                            {
-                                updateMaterialsFromRenderer(meshRenderer, true);
-                            }
+                            // update materials and set meshes as visited in this run (so "Interior" geometry always is colored
+                            // (since we don't disable the mesh, it is also discovered - which is a precondition for being rendered))
+                            updateMaterialsOfMeshRenderer(meshRenderer, true);                            
                         }
                     }
                 }
             }
             else if ((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsidePalace))
             {
+                // find all MeshRenderers in 4th hierarchy level
                 foreach (Transform elem in gameobjectGeometry.transform)
                 {
-                    //Debug.Log(String.Format("name: {0}", elem.name));
                     foreach (Transform innerElem in elem.gameObject.transform)
                     {
                         foreach (Transform inner2Elem in innerElem.gameObject.transform)
@@ -386,10 +405,13 @@ namespace DaggerfallWorkshop.Game
                                 if (meshRenderer == null)
                                     break;
 
-                                updateMaterialsFromRenderer(meshRenderer);
+                                // update materials (omit 2nd parameter so default behavior is initiated which is:
+                                // meshes are marked as not visited in this run (so "Dungeon" geometry that has been discovered in a previous dungeon run is rendered in grayscale)
+                                updateMaterialsOfMeshRenderer(meshRenderer);
 
-                                if (resetDiscoveryState)
+                                if (resetDiscoveryState) // if forced reset of discovery state
                                 {
+                                    // mark meshRenderer as undiscovered
                                     meshRenderer.enabled = false;
                                 }
                             }
