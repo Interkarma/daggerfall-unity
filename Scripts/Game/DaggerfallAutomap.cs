@@ -28,6 +28,9 @@ namespace DaggerfallWorkshop.Game
     using AutomapGeometryModelState = DaggerfallAutomap.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState;
     using AutomapGeometryBlockElementState = DaggerfallAutomap.AutomapGeometryBlockState.AutomapGeometryBlockElementState;
 
+    /// <summary>
+    /// this class provides the automap core functionality like geometry creation and discovery mechanism 
+    /// </summary>
     public class DaggerfallAutomap : MonoBehaviour
     {
         public class AutomapGeometryBlockState
@@ -88,27 +91,27 @@ namespace DaggerfallWorkshop.Game
 
         #region Properties
 
-        /**
-         * DaggerfallAutomapWindow script will use this to propagate its slicingBiasY (y-offset from the player y position)
-         */
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to propagate its slicingBiasY (y-offset from the player y position)
+        /// </summary>
         public float SlicingBiasY
         {
             get { return (slicingBiasY); }
             set { slicingBiasY = value; }
         }
 
-        /**
-         * DaggerfallAutomapWindow script will use this to propagate its slicingBiasY (y-offset from the player y position)
-         */
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to propagate its rotation pivot axis position (dependent on selected view)
+        /// </summary>
         public Vector3 RotationPivotAxisPosition
         {
             get { return (rotationPivotAxisPosition); }
             set { rotationPivotAxisPosition = value; }
         }
 
-        /**
-         * DaggerfallAutomapWindow script will use this to propagate if the automap window is open or not
-         */
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to propagate if the automap window is open or not
+        /// </summary>
         public bool IsOpenAutomap
         {
             set { isOpenAutomap = value; }
@@ -118,18 +121,18 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods
 
-        /**
-         * DaggerfallAutomapWindow script will use this function to register itself with this script
-         * @param instanceDaggerfallAutomapWindow the DaggerfallAutomapWindow to register
-         */
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this function to register itself with this script
+        /// <param name="instanceDaggerfallAutomapWindow"> the DaggerfallAutomapWindow to register </param>
+        /// </summary>
         public void registerDaggerfallAutomapWindow(DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow instanceDaggerfallAutomapWindow)
         {
             this.instanceDaggerfallAutomapWindow = instanceDaggerfallAutomapWindow;
         }
 
-        /**
-         * DaggerfallAutomapWindow script will use this to signal this script to update when automap window was pushed - TODO: check if this can done with an event (if events work with gui windows)
-         */
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to signal this script to update when automap window was pushed - TODO: check if this can done with an event (if events work with gui windows)
+        /// </summary>
         public void updateAutomapStateOnWindowPush()
         {
             gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
@@ -142,9 +145,9 @@ namespace DaggerfallWorkshop.Game
             updateSlicingPositionY();
         }
 
-        /**
-         * DaggerfallAutomapWindow script will use this to signal this script to update when automap window was popped - TODO: check if this can done with an event (if events work with gui windows)
-         */
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to signal this script to update when automap window was popped - TODO: check if this can done with an event (if events work with gui windows)
+        /// </summary>
         public void updateAutomapStateOnWindowPop()
         {
             // about gameobjectGeometry.SetActive(false):
@@ -154,9 +157,9 @@ namespace DaggerfallWorkshop.Game
             gameobjectGeometry.SetActive(false); // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
         }
 
-        /**
-         * DaggerfallAutomapWindow script will use this to signal this script to update when anything changed that requires DaggerfallAutomap to update - TODO: check if this can done with an event (if events work with gui windows)
-         */
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to signal this script to update when anything changed that requires DaggerfallAutomap to update - TODO: check if this can done with an event (if events work with gui windows)
+        /// </summary>
         public void forceUpdate()
         {
             Update();
@@ -244,9 +247,9 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        /**
-         * does a raycast based hit test with additional protection raycast and marks automap level geometry meshes as discovered and visited in this entering/dungeon run
-         */
+        /// <summary>
+        /// does a raycast based hit test with additional protection raycast and marks automap level geometry meshes as discovered and visited in this entering/dungeon run
+        /// </summary>
         private void scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(
             Vector3 rayStartPos,    ///< the start position for the detection raycast
             Vector3 rayDirection,   ///< the ray direction of the detection raycast
@@ -292,9 +295,9 @@ namespace DaggerfallWorkshop.Game
 
         }
 
-        /*
-         * basic automap level geometry revealing functionality - this function is periodically invoked
-         */
+        /// <summary>
+        /// basic automap level geometry revealing functionality - this function is periodically invoked
+        /// </summary>
         IEnumerator CheckForNewlyDiscoveredMeshes()
         {
             while (true)
@@ -340,28 +343,21 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        /*
-         * sets layer of a GameObject and all of its childs recursively
-         * @param obj the target GameObject
-         * @param layer the layer to be set
-         */
-        private static void SetLayerRecursively(GameObject obj, int layer)
+        /// <summary>
+        /// update y-position of place of slicing automap level geometry
+        /// </summary>
+        private void updateSlicingPositionY()
         {
-            obj.layer = layer;
-
-            foreach (Transform child in obj.transform)
-            {
-                SetLayerRecursively(child.gameObject, layer);
-            }
+            float slicingPositionY = gameObjectPlayerAdvanced.transform.position.y + Camera.main.transform.localPosition.y + slicingBiasY;
+            Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
         }
 
-        /*
-         * updates materials of mesh renderer
-         * (this injects the automap shader and sets the state for materials to be rendered dependent
-         * on if they where revealed already in a previous dungeon run)
-         * @param meshRenderer the MeshRenderer whose materials needs to be updated
-         * @param visitedInThisEntering indicates if the materials of meshRenderer should be marked as "visited in this entering/dungeon run" (rendered in color) or not (rendered in grayscale)
-         */
+        /// <summary>
+        /// updates materials of mesh renderer
+        /// (this injects the automap shader and sets the state for materials to be rendered dependent on if they where revealed already in a previous dungeon run)
+        /// <param name="meshRenderer"> the MeshRenderer whose materials needs to be updated </param>
+        /// <param name="visitedInThisEntering"> indicates if the materials of meshRenderer should be marked as "visited in this entering/dungeon run" (rendered in color) or not (rendered in grayscale) </param>
+        /// </summary>
         private void updateMaterialsOfMeshRenderer(MeshRenderer meshRenderer, bool visitedInThisEntering = false)
         {
             Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
@@ -395,11 +391,11 @@ namespace DaggerfallWorkshop.Game
             //meshRenderer.enabled = true;
         }
 
-        /*
-         * will inject materials and properties to MeshRenderer in the proper hierarchy level of automap level geometry GameObject
-         * note: the proper hierarchy level differs between an "Interior" and a "Dungeon" geometry GameObject
-         * @param resetDiscoveryState if true resets the discovery state for geometry that needs to be discovered (when inside dungeons or palaces)
-         */
+        /// <summary>
+        /// will inject materials and properties to MeshRenderer in the proper hierarchy level of automap level geometry GameObject
+        /// note: the proper hierarchy level differs between an "Interior" and a "Dungeon" geometry GameObject
+        /// <param name="resetDiscoveryState"> if true resets the discovery state for geometry that needs to be discovered (when inside dungeons or palaces) </param>
+        /// </summary>
         private void injectMeshAndMaterialProperties(bool resetDiscoveryState = true)
         {
             if (GameManager.Instance.IsPlayerInsideBuilding)
@@ -453,6 +449,14 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// inital setup for geometry creation: lazy creation of player marker arrow and beacons including
+        /// player position beacon, dungeon entrance position beacon and rotation pivot axis position beacon
+        /// will always get the current player position and update the player marker arrow position and the player position beacon
+        /// will always get the rotation pivot axis position, will always set the dungeon entrance position (just takes the
+        /// player position since this function is only called when geometry is created (when entering the dungeon or interior)) -
+        /// so the player position is at the entrance
+        /// </summary>
         private void doInitialSetupForGeometryCreation()
         {
             if (!gameobjectBeacons)
@@ -495,8 +499,8 @@ namespace DaggerfallWorkshop.Game
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(0.0f, 0.0f, 1.0f);
                 gameobjectBeaconRotationPivotAxis.GetComponent<MeshRenderer>().material = material;
-            }
-            gameobjectBeaconRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position;
+            }            
+            gameobjectBeaconRotationPivotAxis.transform.position = rotationPivotAxisPosition;
 
             if (!gameobjectBeaconEntrancePosition)
             {
@@ -525,19 +529,31 @@ namespace DaggerfallWorkshop.Game
             gameobjectBeaconEntrancePosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayEntrancePosOffset;
         }
 
-        /**
-         * update y-position of place of slicing automap level geometry
-         */
-        private void updateSlicingPositionY()
+        /// <summary>
+        /// sets layer of a GameObject and all of its childs recursively
+        /// <param name="obj"> the target GameObject </param>
+        /// <param name="layer"> the layer to be set </param>
+        /// </summary>
+        private static void SetLayerRecursively(GameObject obj, int layer)
         {
-            float slicingPositionY = gameObjectPlayerAdvanced.transform.position.y + Camera.main.transform.localPosition.y + slicingBiasY;
-            Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
+            obj.layer = layer;
+
+            foreach (Transform child in obj.transform)
+            {
+                SetLayerRecursively(child.gameObject, layer);
+            }
         }
 
+        /// <summary>
+        /// creates the indoor geometry used for automap rendering
+        /// <param name="args"> the transition event arguments used to extract door information for loading the correct interior </param>
+        /// </summary>
         private void createIndoorGeometryForAutomap(PlayerEnterExit.TransitionEventArgs args)
         {
             StaticDoor door = args.StaticDoor;
             String newGeometryName = string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex);
+
+            // obsolete block commented out - now solved with the AutomapGeometryBlockState state
             //if (gameobjectGeometry != null)
             //{
             //    if (oldGeometryName != newGeometryName)
@@ -569,31 +585,39 @@ namespace DaggerfallWorkshop.Game
                     climateBase = ClimateSwaps.FromAPIClimateBase(GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType);
 
                     // Layout interior
-                    
                     GameObject gameobjectInterior = new GameObject(newGeometryName);
                     DaggerfallInterior interior = gameobjectInterior.AddComponent<DaggerfallInterior>();
 
+                    // automap layout is a simplified layout in contrast to normal layout (less objects)
                     interior.DoLayoutAutomap(null, door, climateBase);
 
                     gameobjectInterior.transform.SetParent(gameobjectGeometry.transform);
 
+                    // copy position and rotation from real level geometry
                     gameobjectGeometry.transform.position = elem.transform.position;
                     gameobjectGeometry.transform.rotation = elem.transform.rotation;
                 }
             }
 
+            // put all objects inside gameobjectGeometry in layer "Automap"
             SetLayerRecursively(gameobjectGeometry, layerAutomap);
             gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
 
+            // inject all materials of automap geometry with automap shader and reset MeshRenderer enabled state (this is used for the discovery mechanism)
             injectMeshAndMaterialProperties();
 
             //oldGeometryName = newGeometryName;
         }
 
+        /// <summary>
+        /// creates the dungeon geometry used for automap rendering
+        /// </summary>
         private void createDungeonGeometryForAutomap()
         {
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
             String newGeometryName = string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name);
+
+            // obsolete block commented out - now solved with the AutomapGeometryDungeonState state
             //if (gameobjectGeometry != null)
             //{
             //    if (oldGeometryName != newGeometryName)
@@ -616,6 +640,7 @@ namespace DaggerfallWorkshop.Game
 
             doInitialSetupForGeometryCreation();
 
+            // disable this option to get all small dungeon parts as individual models
             DaggerfallUnity.Instance.Option_CombineRDB = false;
 
             foreach (Transform elem in GameManager.Instance.DungeonParent.transform)
@@ -636,16 +661,14 @@ namespace DaggerfallWorkshop.Game
                         DFBlock blockData;
                         int[] textureTable = null;
                         GameObject gameobjectBlock = RDBLayout.CreateBaseGameObject(block.BlockName, null, out blockData, textureTable, true, null, false);
-                        //gameobjectBlock.transform.parent = this.transform;
                         gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
                         gameobjectBlock.transform.SetParent(gameobjectDungeon.transform);
-
-                        //RDBLayout.AddActionDoors(gameobjectBlock, null, ref blockData, null, false);
                     }
 
                     gameobjectDungeon.transform.SetParent(gameobjectGeometry.transform);
 
+                    // copy position and rotation from real level geometry
                     gameobjectGeometry.transform.position = elem.transform.position;
                     gameobjectGeometry.transform.rotation = elem.transform.rotation;
 
@@ -653,18 +676,27 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            // enable this option (to reset to normal behavior)
             DaggerfallUnity.Instance.Option_CombineRDB = true;
 
+            // put all objects inside gameobjectGeometry in layer "Automap"
             SetLayerRecursively(gameobjectGeometry, layerAutomap);
             gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
 
+            // inject all materials of automap geometry with automap shader and reset MeshRenderer enabled state (this is used for the discovery mechanism)
             injectMeshAndMaterialProperties();
 
             //oldGeometryName = newGeometryName;
         }
 
+        /// <summary>
+        /// saves discovery state to object automapGeometryInteriorState
+        /// this class is mapping the hierarchy inside the GameObject gameObjectGeometry in such way
+        /// that the MeshRenderer enabled state for objects in the 3rd hierarchy level (which are the actual models)
+        /// is matching value of field "discovered" in AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState
+        /// </summary>
         private void saveStateAutomapInterior()
-        {
+        {            
             Transform interiorBlock = gameobjectGeometry.transform.GetChild(0); // building interior should only have one block - so get it
             automapGeometryInteriorState = new AutomapGeometryBlockState();
             automapGeometryInteriorState.blockName = interiorBlock.name;
@@ -697,6 +729,13 @@ namespace DaggerfallWorkshop.Game
             automapGeometryInteriorState.blockElements = blockElements;
         }
 
+        /// <summary>
+        /// saves discovery state to object automapGeometryDungeonState
+        /// this class is mapping the hierarchy inside the GameObject gameObjectGeometry in such way
+        /// that the MeshRenderer enabled state for objects in the 4th hierarchy level (which are the actual models)
+        /// is matching value of field "discovered" in AutomapGeometryDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState
+        /// hopefully this is a useful starting point for storing discovery state of dungeons in savegames later
+        /// </summary>
         private void saveStateAutomapDungeon()
         {
             Transform gameObjectGeometryDungeon = gameobjectGeometry.transform.GetChild(0);
@@ -739,6 +778,12 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// restores discovery state from automapGeometryInteriorState onto gameobjectGeometry
+        /// this class is mapping the value of field "discovered" (AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState)
+        /// inside object automapGeometryInteriorState to the objects inside the 3rd hierarchy level of GameObject gameObjectGeometry (which are the actual models)
+        /// in such way that the MeshRenderer enabled state for these objects match the value of field "discovered"
+        /// </summary>
         private void restoreStateAutomapInterior()
         {
             Transform interiorBlock = gameobjectGeometry.transform.GetChild(0);
@@ -766,6 +811,12 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// restores discovery state from automapGeometryInteriorState onto gameobjectGeometry
+        /// this class is mapping the value of field "discovered" (AutomapGeometryDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState)
+        /// inside object automapGeometryDungeonState to the objects inside the 4th hierarchy level of GameObject gameObjectGeometry (which are the actual models)
+        /// in such way that the MeshRenderer enabled state for these objects match the value of field "discovered"
+        /// </summary>
         private void restoreStateAutomapDungeon()
         {
             Transform location = gameobjectGeometry.transform.GetChild(0);

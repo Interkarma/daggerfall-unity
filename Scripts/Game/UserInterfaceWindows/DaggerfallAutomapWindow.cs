@@ -37,7 +37,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float moveUpDownSpeed = 0.5f; // left mouse on button upstairs/downstairs makes geometry move with this speed
         const float rotateSpeed = 3.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
         const float zoomSpeed = 0.1f; // suggested value range: 0.1f (fast) to 0.01f (slow) // mouse wheel inside main area of the automap window will zoom with this speed
-        const float cameraTiltChangeSpeed = 0.5f; // currently no mouse functionality linked
         const float dragSpeed = 0.002f; // suggested value range: 0.01f (fast) to 0.001f (slow) // hold left mouse button down and move mouse to move geometry with this speed)
         const float dragRotateSpeed = 0.5f; // hold right mouse button down and move left/right to rotate geometry with this speed
         const float dragRotateCameraTiltSpeed = 0.15f; // hold right mouse button down and move up/down to change tilt of camera with this speed
@@ -80,7 +79,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
-        //bool rightMouseDownOnGridButton = false;
         bool leftMouseDownOnForwardButton = false;
         bool rightMouseDownOnForwardButton = false;
         bool leftMouseDownOnBackwardButton = false;
@@ -409,22 +407,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 oldMousePosition = mousePosition;
             }
 
-            //if (rightMouseDownOnGridButton)
-            //{
-            //    Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-
-            //    Vector2 bias = mousePosition - oldMousePosition;
-
-            //    if (automapViewMode == AutomapViewMode.View3D)
-            //    {
-            //        cameraAutomap.transform.Rotate(cameraTiltChangeSpeed * bias.y, 0.0f, 0.0f, Space.Self);
-            //        updateAutoMapView();
-            //    }
-
-            //    updateAutoMapView();
-            //    oldMousePosition = mousePosition;
-            //}
-
             if (leftMouseDownOnForwardButton)
             {
                 Vector3 translation;
@@ -545,41 +527,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (leftMouseDownOnRotateLeftButton)
             {
-                Vector3 biasRotationPivotAxisFromInitialPosition;
+                Vector3 rotationPivotAxisPosition;
                 switch (automapViewMode)
                 {
                     case AutomapViewMode.View2D:
-                        biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionViewFromTop;
+                        rotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
                         break;
                     case AutomapViewMode.View3D:
-                        biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionView3D;
+                        rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
                         break;
                     default:
-                        biasRotationPivotAxisFromInitialPosition = Vector3.zero;
+                        rotationPivotAxisPosition = Vector3.zero;
                         break;
                 }
-                cameraAutomap.transform.RotateAround(Camera.main.transform.position + biasRotationPivotAxisFromInitialPosition, -Vector3.up, -rotateSpeed);
-                //cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, -rotateSpeed);
+                cameraAutomap.transform.RotateAround(Camera.main.transform.position + rotationPivotAxisPosition, -Vector3.up, -rotateSpeed);
                 updateAutoMapView();
             }
 
             if (leftMouseDownOnRotateRightButton)
             {
-                Vector3 biasRotationPivotAxisFromInitialPosition;
+                Vector3 rotationPivotAxisPosition;
                 switch (automapViewMode)
                 {
                     case AutomapViewMode.View2D:
-                        biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionViewFromTop;
+                        rotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
                         break;
                     case AutomapViewMode.View3D:
-                        biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionView3D;
+                        rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
                         break;
                     default:
-                        biasRotationPivotAxisFromInitialPosition = Vector3.zero;
+                        rotationPivotAxisPosition = Vector3.zero;
                         break;
                 }
-                cameraAutomap.transform.RotateAround(Camera.main.transform.position + biasRotationPivotAxisFromInitialPosition, -Vector3.up, +rotateSpeed);
-                //cameraAutomap.transform.RotateAround(Camera.main.transform.position, Vector3.up, +rotateSpeed);
+                cameraAutomap.transform.RotateAround(Camera.main.transform.position + rotationPivotAxisPosition, -Vector3.up, +rotateSpeed);
                 updateAutoMapView();
             }
 
@@ -638,17 +618,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         }
 
-        static string GetGameObjectPath(GameObject obj)
-        {
-            string path = "/" + obj.name;
-            while (obj.transform.parent != null)
-            {
-                obj = obj.transform.parent.gameObject;
-                path = "/" + obj.name + path;
-            }
-            return path;
-        }
-
         private void createAutomapCamera()
         {
             if (!cameraAutomap)
@@ -685,34 +654,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
             gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
-            Light scriptKeyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
-            scriptKeyLight.type = LightType.Directional;            
-            //scriptKeyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
+            Light keyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
+            keyLight.type = LightType.Directional;
+            //keyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
             gameobjectAutomapKeyLight.transform.SetParent(gameobjectAutomap.transform);
 
             gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
             gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
-            Light scriptFillLight = gameobjectAutomapFillLight.AddComponent<Light>();
-            scriptFillLight.type = LightType.Directional;          
+            Light fillLight = gameobjectAutomapFillLight.AddComponent<Light>();
+            fillLight.type = LightType.Directional;          
             gameobjectAutomapFillLight.transform.SetParent(gameobjectAutomap.transform);
 
             gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
             gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
-            Light scriptBackLight = gameobjectAutomapBackLight.AddComponent<Light>();
-            scriptBackLight.type = LightType.Directional;            
+            Light backLight = gameobjectAutomapBackLight.AddComponent<Light>();
+            backLight.type = LightType.Directional;            
             gameobjectAutomapBackLight.transform.SetParent(gameobjectAutomap.transform);
 
             if (GameManager.Instance.IsPlayerInsideBuilding)
             {
-                scriptKeyLight.intensity = 1.0f;
-                scriptFillLight.intensity = 0.6f;
-                scriptBackLight.intensity = 0.2f;
+                keyLight.intensity = 1.0f;
+                fillLight.intensity = 0.6f;
+                backLight.intensity = 0.2f;
             }
             else if  ((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsidePalace))
             {
-                scriptKeyLight.intensity = 0.5f;
-                scriptFillLight.intensity = 0.5f;
-                scriptBackLight.intensity = 0.5f;
+                keyLight.intensity = 0.5f;
+                fillLight.intensity = 0.5f;
+                backLight.intensity = 0.5f;
             }
         }
 
@@ -795,20 +764,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private Vector3 getRotationPivotAxisPosition()
         {
-            Vector3 biasRotationPivotAxisFromInitialPosition;
+            Vector3 rotationPivotAxisPosition;
             switch (automapViewMode)
             {
                 case AutomapViewMode.View2D:
-                    biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionViewFromTop;
+                    rotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
                     break;
                 case AutomapViewMode.View3D:
-                    biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionView3D;
+                    rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
                     break;
                 default:
-                    biasRotationPivotAxisFromInitialPosition = Vector3.zero;
+                    rotationPivotAxisPosition = Vector3.zero;
                     break;
             }
-            return (biasRotationPivotAxisFromInitialPosition);
+            return (rotationPivotAxisPosition);
         }
 
         private void resetCameraTransformViewFromTop()
@@ -819,9 +788,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void resetCameraTransformView3D()
         {
-            Vector3 viewDirectionInXZ = Vector3.forward; // new Vector3(Camera.main.transform.forward.x, 0.0f, Camera.main.transform.forward.z);
+            Vector3 viewDirectionInXZ = Vector3.forward;
             cameraAutomap.transform.position = Camera.main.transform.position - viewDirectionInXZ * cameraBackwardDistance + Vector3.up * cameraHeightView3D;
-            //cameraAutomap.transform.rotation = Camera.main.transform.rotation;
             cameraAutomap.transform.LookAt(Camera.main.transform.position);
         }
 
@@ -977,24 +945,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             updateAutoMapView();
         }
-
-        //private void GridButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
-        //{
-        //    if (alreadyInRightMouseDown)
-        //        return;
-
-        //    Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-        //    oldMousePosition = mousePosition;
-
-        //    rightMouseDownOnGridButton = true;
-        //    alreadyInRightMouseDown = true;
-        //}
-
-        //private void GridButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
-        //{
-        //    rightMouseDownOnGridButton = false;
-        //    alreadyInRightMouseDown = false;
-        //}
 
         private void GridButton_OnMouseScrollUp()
         {
