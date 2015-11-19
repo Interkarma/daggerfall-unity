@@ -69,6 +69,8 @@ namespace DaggerfallWorkshop.Game
 
         float slicingBiasY; // y-bias from player y-position of geometry slice plane (set via Property SlicingBiasY used by DaggerfallAutomapWindow script to set value)
 
+        Vector3 rotationPivotAxisPosition; // position of the rotation pivot axis (set via Property RotationPivotAxisPosition used by DaggerfallAutomapWindow script to set value)
+
         bool isOpenAutomap = false; // flag that indicates if automap window is open (set via Property IsOpenAutomap triggered by DaggerfallAutomapWindow script)
 
         GameObject gameobjectBeacons = null; // collector GameObject to hold beacons
@@ -93,6 +95,15 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (slicingBiasY); }
             set { slicingBiasY = value; }
+        }
+
+        /**
+         * DaggerfallAutomapWindow script will use this to propagate its slicingBiasY (y-offset from the player y position)
+         */
+        public Vector3 RotationPivotAxisPosition
+        {
+            get { return (rotationPivotAxisPosition); }
+            set { rotationPivotAxisPosition = value; }
         }
 
         /**
@@ -223,19 +234,8 @@ namespace DaggerfallWorkshop.Game
 
                 if (instanceDaggerfallAutomapWindow != null) // do only if instance of DaggerfallAutomapWindow class registered itself (with function registerDaggerfallAutomapWindow())
                 {
-                    // update bias from initial position of rotation pivot axis
-                    Vector3 biasRotationPivotAxisFromInitialPosition;
-                    switch (instanceDaggerfallAutomapWindow.CurrentAutomapViewMode)
-                    {
-                        case DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow.AutomapViewMode.View2D:
-                        default:
-                            biasRotationPivotAxisFromInitialPosition = instanceDaggerfallAutomapWindow.BiasRotationPivotAxisFromInitialPositionViewFromTop;
-                            break;
-                        case DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow.AutomapViewMode.View3D:
-                            biasRotationPivotAxisFromInitialPosition = instanceDaggerfallAutomapWindow.BiasRotationPivotAxisFromInitialPositionView3D;
-                            break;
-                    }
-                    gameobjectBeaconRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position + biasRotationPivotAxisFromInitialPosition;
+                    // update position of rotation pivot axis
+                    gameobjectBeaconRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position + rotationPivotAxisPosition;
                 }
             }
         }

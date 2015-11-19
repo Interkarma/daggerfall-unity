@@ -32,8 +32,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const float scrollLeftRightSpeed = 1.0f; // left mouse on button arrow left/right makes geometry move with this speed
         const float scrollForwardBackwardSpeed = 1.0f; // left mouse on button arrow up/down makes geometry move with this speed
-        const float moveRotationMarkerLeftRightSpeed = 0.2f; // right mouse on button arrow left/right makes rotation axis move with this speed
-        const float moveRotationMarkerForwardBackwardSpeed = 0.2f; // right mouse on button arrow up/down makes rotation axis move with this speed
+        const float moveRotationPivotAxisMarkerLeftRightSpeed = 0.2f; // right mouse on button arrow left/right makes rotation pivot axis move with this speed
+        const float moveRotationPivotAxisMarkerForwardBackwardSpeed = 0.2f; // right mouse on button arrow up/down makes rotation pivot axis move with this speed
         const float moveUpDownSpeed = 0.5f; // left mouse on button upstairs/downstairs makes geometry move with this speed
         const float rotateSpeed = 3.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
         const float zoomSpeed = 0.1f; // suggested value range: 0.1f (fast) to 0.01f (slow) // mouse wheel inside main area of the automap window will zoom with this speed
@@ -122,24 +122,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Vector3 backupCameraPositionView3D;
         Quaternion backupCameraRotationView3D;
 
-        // independent bias of rotation pivot axis for both 2D and 3D view
-        Vector3 biasRotationPivotAxisFromInitialPositionViewFromTop;
-        Vector3 biasRotationPivotAxisFromInitialPositionView3D;
-
-        public AutomapViewMode CurrentAutomapViewMode
-        {
-            get { return (automapViewMode); }
-        }
-
-        public Vector3 BiasRotationPivotAxisFromInitialPositionViewFromTop
-        {
-            get { return (biasRotationPivotAxisFromInitialPositionViewFromTop); }
-        }
-
-        public Vector3 BiasRotationPivotAxisFromInitialPositionView3D
-        {
-            get { return (biasRotationPivotAxisFromInitialPositionView3D); }
-        }
+        // independent rotation pivot axis position for both 2D and 3D view
+        Vector3 rotationPivotAxisPositionViewFromTop;
+        Vector3 rotationPivotAxisPositionView3D;
 
         public DaggerfallAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -282,7 +267,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             createAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
 
             resetCameraPosition();
-            resetBiasFromInitialPosition();
+            resetRotationPivotAxisPosition();
             updateAutoMapView();
 
             Rect rectDummyPanelCompass = new Rect();
@@ -347,7 +332,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     daggerfallAutomap.SlicingBiasY = 0.0f;
                     resetCameraPosition();
-                    resetBiasFromInitialPosition();
+                    resetRotationPivotAxisPosition();
                     updateAutoMapView();
                     daggerfallAutomap.forceUpdate();
                 }
@@ -399,7 +384,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
 
-                float dragSpeedCompensated = dragSpeed * Vector3.Magnitude(Camera.main.transform.position + getBiasFromInitialPosition() - cameraAutomap.transform.position);
+                float dragSpeedCompensated = dragSpeed * Vector3.Magnitude(Camera.main.transform.position + getRotationPivotAxisPosition() - cameraAutomap.transform.position);
                 Vector2 bias = mousePosition - oldMousePosition;
                 Vector3 translation = -cameraAutomap.transform.right * dragSpeedCompensated * bias.x + cameraAutomap.transform.up * dragSpeedCompensated * bias.y;
                 cameraAutomap.transform.position += translation;
@@ -457,7 +442,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
                 }
                 cameraAutomap.transform.position += translation;
-                shiftBiasFromInitialPosition(translation);
+                shiftRotationPivotAxisPosition(translation);
                 updateAutoMapView();
             }
 
@@ -467,17 +452,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (automapViewMode)
                 {
                     case AutomapViewMode.View2D:
-                        translation = cameraAutomap.transform.up * moveRotationMarkerForwardBackwardSpeed;
+                        translation = cameraAutomap.transform.up * moveRotationPivotAxisMarkerForwardBackwardSpeed;
                         break;
                     case AutomapViewMode.View3D:
-                        translation = cameraAutomap.transform.forward * moveRotationMarkerForwardBackwardSpeed;
+                        translation = cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed;
                         translation.y = 0.0f; // comment this out for movement along camera optical axis
                         break;
                     default:
                         translation = Vector3.zero;
                         break;
                 }
-                shiftBiasFromInitialPosition(translation);
+                shiftRotationPivotAxisPosition(translation);
                 updateAutoMapView();
             }
 
@@ -498,7 +483,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
                 }
                 cameraAutomap.transform.position += translation;
-                shiftBiasFromInitialPosition(translation);
+                shiftRotationPivotAxisPosition(translation);
                 updateAutoMapView();
             }
 
@@ -508,17 +493,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (automapViewMode)
                 {
                     case AutomapViewMode.View2D:
-                        translation = -cameraAutomap.transform.up * moveRotationMarkerForwardBackwardSpeed;
+                        translation = -cameraAutomap.transform.up * moveRotationPivotAxisMarkerForwardBackwardSpeed;
                         break;
                     case AutomapViewMode.View3D:
-                        translation = -cameraAutomap.transform.forward * moveRotationMarkerForwardBackwardSpeed;
+                        translation = -cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed;
                         translation.y = 0.0f; // comment this out for movement along camera optical axis
                         break;
                     default:
                         translation = Vector3.zero;
                         break;
                 }
-                shiftBiasFromInitialPosition(translation);             
+                shiftRotationPivotAxisPosition(translation);             
                 updateAutoMapView();
             }
 
@@ -528,15 +513,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed;
                 translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
                 cameraAutomap.transform.position += translation;
-                shiftBiasFromInitialPosition(translation);
+                shiftRotationPivotAxisPosition(translation);
                 updateAutoMapView();
             }
 
             if (rightMouseDownOnLeftButton)
             {
-                Vector3 translation = -cameraAutomap.transform.right * moveRotationMarkerLeftRightSpeed;
+                Vector3 translation = -cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed;
                 translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
-                shiftBiasFromInitialPosition(translation);
+                shiftRotationPivotAxisPosition(translation);
                 updateAutoMapView();
             }
 
@@ -545,15 +530,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed;
                 translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
                 cameraAutomap.transform.position += translation;
-                shiftBiasFromInitialPosition(translation);
+                shiftRotationPivotAxisPosition(translation);
                 updateAutoMapView();
             }
 
             if (rightMouseDownOnRightButton)
             {
-                Vector3 translation = cameraAutomap.transform.right * moveRotationMarkerLeftRightSpeed;
+                Vector3 translation = cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed;
                 translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector                
-                shiftBiasFromInitialPosition(translation);
+                shiftRotationPivotAxisPosition(translation);
                 updateAutoMapView();
             }
 
@@ -564,10 +549,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (automapViewMode)
                 {
                     case AutomapViewMode.View2D:
-                        biasRotationPivotAxisFromInitialPosition = biasRotationPivotAxisFromInitialPositionViewFromTop;
+                        biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionViewFromTop;
                         break;
                     case AutomapViewMode.View3D:
-                        biasRotationPivotAxisFromInitialPosition = biasRotationPivotAxisFromInitialPositionView3D;
+                        biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionView3D;
                         break;
                     default:
                         biasRotationPivotAxisFromInitialPosition = Vector3.zero;
@@ -584,10 +569,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (automapViewMode)
                 {
                     case AutomapViewMode.View2D:
-                        biasRotationPivotAxisFromInitialPosition = biasRotationPivotAxisFromInitialPositionViewFromTop;
+                        biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionViewFromTop;
                         break;
                     case AutomapViewMode.View3D:
-                        biasRotationPivotAxisFromInitialPosition = biasRotationPivotAxisFromInitialPositionView3D;
+                        biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionView3D;
                         break;
                     default:
                         biasRotationPivotAxisFromInitialPosition = Vector3.zero;
@@ -773,37 +758,51 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void resetBiasFromInitialPosition()
+        private void resetRotationPivotAxisPositionViewFromTop()
         {
-            biasRotationPivotAxisFromInitialPositionViewFromTop = Vector3.zero;
-            biasRotationPivotAxisFromInitialPositionView3D = Vector3.forward;
+            rotationPivotAxisPositionViewFromTop = Vector3.zero;
+            daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
         }
 
-        private void shiftBiasFromInitialPosition(Vector3 translation)
+        private void resetRotationPivotAxisPositionView3D()
+        {
+            rotationPivotAxisPositionView3D = Vector3.zero;
+            daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
+        }
+
+        private void resetRotationPivotAxisPosition()
+        {
+            resetRotationPivotAxisPositionViewFromTop();
+            resetRotationPivotAxisPositionView3D();
+        }
+
+        private void shiftRotationPivotAxisPosition(Vector3 translation)
         {
             switch (automapViewMode)
             {
                 case AutomapViewMode.View2D:
-                    biasRotationPivotAxisFromInitialPositionViewFromTop += translation;
+                    rotationPivotAxisPositionViewFromTop += translation;
+                    daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
                     break;
                 case AutomapViewMode.View3D:
-                    biasRotationPivotAxisFromInitialPositionView3D += translation;
+                    rotationPivotAxisPositionView3D += translation;
+                    daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
                     break;
                 default:
                     break;
             }
         }
 
-        private Vector3 getBiasFromInitialPosition()
+        private Vector3 getRotationPivotAxisPosition()
         {
             Vector3 biasRotationPivotAxisFromInitialPosition;
             switch (automapViewMode)
             {
                 case AutomapViewMode.View2D:
-                    biasRotationPivotAxisFromInitialPosition = biasRotationPivotAxisFromInitialPositionViewFromTop;
+                    biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionViewFromTop;
                     break;
                 case AutomapViewMode.View3D:
-                    biasRotationPivotAxisFromInitialPosition = biasRotationPivotAxisFromInitialPositionView3D;
+                    biasRotationPivotAxisFromInitialPosition = rotationPivotAxisPositionView3D;
                     break;
                 default:
                     biasRotationPivotAxisFromInitialPosition = Vector3.zero;
@@ -874,7 +873,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseScrollUp()
         {
-            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position + getBiasFromInitialPosition() - cameraAutomap.transform.position);
+            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position + getRotationPivotAxisPosition() - cameraAutomap.transform.position);
             Vector3 translation = cameraAutomap.transform.forward * zoomSpeedCompensated;
             cameraAutomap.transform.position += translation;
             updateAutoMapView();
@@ -882,7 +881,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseScrollDown()
         {
-            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position + getBiasFromInitialPosition() - cameraAutomap.transform.position);
+            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position + getRotationPivotAxisPosition() - cameraAutomap.transform.position);
             Vector3 translation = -cameraAutomap.transform.forward * zoomSpeedCompensated;
             cameraAutomap.transform.position += translation;
             updateAutoMapView();
@@ -940,6 +939,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     saveCameraTransformView3D();
                     restoreOldCameraTransformViewFromTop();
                     cameraAutomap.fieldOfView = fieldOfViewCameraMode2D;
+                    daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
                     updateAutoMapView();
                     break;
                 case AutomapViewMode.View3D:
@@ -949,6 +949,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     saveCameraTransformViewFromTop();
                     restoreOldCameraTransformView3D();
                     cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
+                    daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
                     updateAutoMapView();
                     break;
                 default:
@@ -964,11 +965,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch(automapViewMode)
             {
                 case AutomapViewMode.View2D:
-                    biasRotationPivotAxisFromInitialPositionViewFromTop = Vector3.zero;
+                    resetRotationPivotAxisPositionViewFromTop();
                     updateAutoMapView();
                     break;
                 case AutomapViewMode.View3D:
-                    biasRotationPivotAxisFromInitialPositionView3D = Vector3.zero;
+                    resetRotationPivotAxisPositionView3D();
                     updateAutoMapView();
                     break;
                 default:
