@@ -3,8 +3,8 @@
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Nystul
+// Original Author: Michael Rauter (a.k.a. Nystul)
+// Contributors:    
 // 
 // Notes:
 //
@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap
         int layerAutomap; // layer used for level geometry of automap
 
-        String oldGeometryName = "";
+        //String oldGeometryName = "";
 
         GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
@@ -284,7 +284,7 @@ namespace DaggerfallWorkshop.Game
                     Material[] mats = meshCollider.gameObject.GetComponent<MeshRenderer>().materials;
                     foreach (Material mat in mats)
                     {
-                        mat.SetFloat("_VisitedInThisEntering", 1.0f); // mark material as visited in this entrance/dungeon run
+                        mat.DisableKeyword("RENDER_IN_GRAYSCALE"); // mark material as visited in this entrance/dungeon run
                     }
                     meshCollider.gameObject.GetComponent<MeshRenderer>().materials = mats;
                 }
@@ -386,9 +386,9 @@ namespace DaggerfallWorkshop.Game
                 Vector4 playerPosition = new Vector4(playerAdvancedPos.x, playerAdvancedPos.y + Camera.main.transform.localPosition.y, playerAdvancedPos.z, 0.0f);
                 newMaterial.SetVector("_PlayerPosition", playerPosition);
                 if (visitedInThisEntering == true)
-                    newMaterial.SetFloat("_VisitedInThisEntering", 1.0f);
+                    newMaterial.DisableKeyword("RENDER_IN_GRAYSCALE");
                 else
-                    newMaterial.SetFloat("_VisitedInThisEntering", 0.0f);
+                    newMaterial.EnableKeyword("RENDER_IN_GRAYSCALE");
                 newMaterials[i] = newMaterial;
             }
             meshRenderer.materials = newMaterials;
@@ -587,7 +587,7 @@ namespace DaggerfallWorkshop.Game
 
             injectMeshAndMaterialProperties();
 
-            oldGeometryName = newGeometryName;
+            //oldGeometryName = newGeometryName;
         }
 
         private void createDungeonGeometryForAutomap()
@@ -660,7 +660,7 @@ namespace DaggerfallWorkshop.Game
 
             injectMeshAndMaterialProperties();
 
-            oldGeometryName = newGeometryName;
+            //oldGeometryName = newGeometryName;
         }
 
         private void saveStateAutomapInterior()
