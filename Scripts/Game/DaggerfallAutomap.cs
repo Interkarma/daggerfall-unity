@@ -25,8 +25,35 @@ using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
+    using AutomapGeometryModelState = DaggerfallAutomap.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState;
+    using AutomapGeometryBlockElementState = DaggerfallAutomap.AutomapGeometryBlockState.AutomapGeometryBlockElementState;
+
     public class DaggerfallAutomap : MonoBehaviour
     {
+        public class AutomapGeometryBlockState
+        {
+            public class AutomapGeometryBlockElementState
+            {
+                public class AutomapGeometryModelState
+                {
+                    public bool discovered;
+                }
+                public List<AutomapGeometryModelState> models;
+            }
+            public List<AutomapGeometryBlockElementState> blockElements;
+            public String blockName;
+        }
+        
+        //using AutomapGeometryBlockState.AutomapGeometryBlockElementState;
+
+        public class AutomapGeometryDungeonState
+        {
+            public String locationName;
+            public List<AutomapGeometryBlockState> blocks;
+        }
+        AutomapGeometryDungeonState automapGeometryDungeonState = null;
+        AutomapGeometryBlockState automapGeometryInteriorState = null;
+
         #region Fields
 
         const float scanRateGeometryDiscoveryInHertz = 10.0f; // n times per second the discovery of new geometry/meshes is checked
@@ -160,12 +187,17 @@ namespace DaggerfallWorkshop.Game
         {
             PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior;
             PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeonInterior;
+            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
+
         }
 
         void OnDisable()
         {
             PlayerEnterExit.OnTransitionInterior -= OnTransitionToInterior;
             PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeonInterior;
+            PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
         }
 
         void Start()
@@ -506,17 +538,22 @@ namespace DaggerfallWorkshop.Game
         {
             StaticDoor door = args.StaticDoor;
             String newGeometryName = string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex);
+            //if (gameobjectGeometry != null)
+            //{
+            //    if (oldGeometryName != newGeometryName)
+            //    {
+            //        UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+            //    }
+            //    else
+            //    {
+            //        injectMeshAndMaterialProperties(false);
+            //        return;
+            //    }
+            //}
+
             if (gameobjectGeometry != null)
             {
-                if (oldGeometryName != newGeometryName)
-                {
-                    UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
-                }
-                else
-                {
-                    injectMeshAndMaterialProperties(false);
-                    return;
-                }
+                UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Interior)");
@@ -557,17 +594,22 @@ namespace DaggerfallWorkshop.Game
         {
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
             String newGeometryName = string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name);
+            //if (gameobjectGeometry != null)
+            //{
+            //    if (oldGeometryName != newGeometryName)
+            //    {
+            //        UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+            //    }
+            //    else
+            //    {
+            //        injectMeshAndMaterialProperties(false);
+            //        return;
+            //    }
+            //}
+
             if (gameobjectGeometry != null)
             {
-                if (oldGeometryName != newGeometryName)
-                {
-                    UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
-                }
-                else
-                {
-                    injectMeshAndMaterialProperties(false);
-                    return;
-                }
+                UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Dungeon)");
@@ -621,14 +663,164 @@ namespace DaggerfallWorkshop.Game
             oldGeometryName = newGeometryName;
         }
 
+        private void saveStateAutomapInterior()
+        {
+            Transform interiorBlock = gameobjectGeometry.transform.GetChild(0); // building interior should only have one block - so get it
+            automapGeometryInteriorState = new AutomapGeometryBlockState();
+            automapGeometryInteriorState.blockName = interiorBlock.name;
+
+            List<AutomapGeometryBlockElementState> blockElements = new List<AutomapGeometryBlockElementState>();
+
+            foreach (Transform currentTransformModel in interiorBlock.transform)
+            {
+                AutomapGeometryBlockElementState blockElement = new AutomapGeometryBlockElementState();
+
+                List<AutomapGeometryModelState> models = new List<AutomapGeometryModelState>();
+                foreach (Transform currentTransformMesh in currentTransformModel.transform)
+                {
+                    AutomapGeometryModelState model = new AutomapGeometryModelState();
+                    MeshRenderer meshRenderer = currentTransformMesh.GetComponent<MeshRenderer>();
+                    if ((meshRenderer) && (meshRenderer.enabled))
+                    {
+                        model.discovered = true;
+                    }
+                    else
+                    {
+                        model.discovered = false;
+                    }
+                    models.Add(model);
+                }
+
+                blockElement.models = models;
+                blockElements.Add(blockElement);
+            }
+            automapGeometryInteriorState.blockElements = blockElements;
+        }
+
+        private void saveStateAutomapDungeon()
+        {
+            Transform gameObjectGeometryDungeon = gameobjectGeometry.transform.GetChild(0);
+            automapGeometryDungeonState = new AutomapGeometryDungeonState();
+            automapGeometryDungeonState.locationName = gameObjectGeometryDungeon.name;
+            automapGeometryDungeonState.blocks = new List<AutomapGeometryBlockState>();
+
+            foreach (Transform currentBlock in gameObjectGeometryDungeon.transform)
+            {
+                AutomapGeometryBlockState automapGeometryBlockState = new AutomapGeometryBlockState();
+                automapGeometryBlockState.blockName = currentBlock.name;
+
+                List<AutomapGeometryBlockElementState> blockElements = new List<AutomapGeometryBlockElementState>();
+
+                foreach (Transform currentTransformModel in currentBlock.transform)
+                {
+                    AutomapGeometryBlockElementState blockElement = new AutomapGeometryBlockElementState();
+
+                    List<AutomapGeometryModelState> models = new List<AutomapGeometryModelState>();
+                    foreach (Transform currentTransformMesh in currentTransformModel.transform)
+                    {
+                        AutomapGeometryModelState model = new AutomapGeometryModelState();
+                        MeshRenderer meshRenderer = currentTransformMesh.GetComponent<MeshRenderer>();
+                        if ((meshRenderer) && (meshRenderer.enabled))
+                        {
+                            model.discovered = true;
+                        }
+                        else
+                        {
+                            model.discovered = false;
+                        }
+                        models.Add(model);
+                    }
+
+                    blockElement.models = models;
+                    blockElements.Add(blockElement);
+                }
+                automapGeometryBlockState.blockElements = blockElements;
+                automapGeometryDungeonState.blocks.Add(automapGeometryBlockState);
+            }
+        }
+
+        private void restoreStateAutomapInterior()
+        {
+            Transform interiorBlock = gameobjectGeometry.transform.GetChild(0);
+
+            if (automapGeometryInteriorState == null)
+                return;
+
+            if (interiorBlock.name != automapGeometryInteriorState.blockName)
+                return;
+
+            for (int indexElement = 0; indexElement < interiorBlock.childCount; indexElement++)
+            {
+                Transform currentTransformElement = interiorBlock.GetChild(indexElement);
+
+                for (int indexModel = 0; indexModel < currentTransformElement.childCount; indexModel++)
+                {
+                    Transform currentTransformModel = currentTransformElement.GetChild(indexModel);
+
+                    MeshRenderer meshRenderer = currentTransformModel.GetComponent<MeshRenderer>();
+                    if ((meshRenderer) && (automapGeometryInteriorState.blockElements[indexElement].models[indexModel].discovered == true))
+                    {                        
+                        meshRenderer.enabled = true;
+                    }                            
+                }
+            }
+        }
+
+        private void restoreStateAutomapDungeon()
+        {
+            Transform location = gameobjectGeometry.transform.GetChild(0);
+
+            if (automapGeometryDungeonState == null)
+                return;
+
+            if (location.name != automapGeometryDungeonState.locationName)
+                return;
+
+            for (int indexBlock = 0; indexBlock < location.childCount; indexBlock++)
+            {
+                Transform currentBlock = location.GetChild(indexBlock);
+
+                if (currentBlock.name != automapGeometryDungeonState.blocks[indexBlock].blockName)
+                    return;
+
+                for (int indexElement = 0; indexElement < currentBlock.childCount; indexElement++)
+                {
+                    Transform currentTransformElement = currentBlock.GetChild(indexElement);
+
+                    for (int indexModel = 0; indexModel < currentTransformElement.childCount; indexModel++)
+                    {
+                        Transform currentTransformModel = currentTransformElement.GetChild(indexModel);
+
+                        MeshRenderer meshRenderer = currentTransformModel.GetComponent<MeshRenderer>();
+                        if ((meshRenderer) && (automapGeometryDungeonState.blocks[indexBlock].blockElements[indexElement].models[indexModel].discovered == true))
+                        {
+                            meshRenderer.enabled = true;
+                        }
+                    }
+                }
+            }
+        }
+
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
         {
             createIndoorGeometryForAutomap(args);
+            restoreStateAutomapInterior();
         }
 
         private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
         {
             createDungeonGeometryForAutomap();
+            restoreStateAutomapDungeon();
+        }
+
+        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            saveStateAutomapInterior();
+        }
+
+        private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            saveStateAutomapDungeon();
         }
 
         #endregion

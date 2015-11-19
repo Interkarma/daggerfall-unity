@@ -80,7 +80,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
-        bool rightMouseDownOnGridButton = false;
+        //bool rightMouseDownOnGridButton = false;
         bool leftMouseDownOnForwardButton = false;
         bool rightMouseDownOnForwardButton = false;
         bool leftMouseDownOnBackwardButton = false;
