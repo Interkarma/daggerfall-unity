@@ -9,6 +9,8 @@
 // Notes:
 //
 
+//#define DEBUG_RAYCASTS
+
 using UnityEngine;
 using System;
 using System.IO;
@@ -256,7 +258,9 @@ namespace DaggerfallWorkshop.Game
             Vector3 offsetSecondProtectionRaycast ///< offset for second protection raycast (is used to prevent discovery of geometry through gaps in the level geometry)
             )
         {
-            RaycastHit hit1, hit2, hitTrueLevelGeometry1, hitTrueLevelGeometry2;
+            RaycastHit hit1, hit2, hit3, hitTrueLevelGeometry1, hitTrueLevelGeometry2, hitTrueLevelGeometry3;
+
+            Vector3 offsetThirdProtectionRaycast = Vector3.Cross(Vector3.Normalize(rayDirection), Vector3.Normalize(offsetSecondProtectionRaycast)) * Vector3.Magnitude(offsetSecondProtectionRaycast);
 
             // move GameObject "PlayerAdvanced" temporarily to different layer than "Default" so the raycast do not hit the colliders
             // did not find a better solution for this problem (scanWithRaycastInDirectionAndUpdateMeshesAndMaterials() does raycasts
@@ -267,27 +271,44 @@ namespace DaggerfallWorkshop.Game
             // do raycast and protection raycast on main level geometry (use default layer as layer mask)
             bool didHitTrueLevelGeometry1 = Physics.Raycast(rayStartPos, rayDirection, out hitTrueLevelGeometry1, rayDistance, 1 << 0);
             bool didHitTrueLevelGeometry2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hitTrueLevelGeometry2, rayDistance, 1 << 0);
+            bool didHitTrueLevelGeometry3 = Physics.Raycast(rayStartPos + offsetThirdProtectionRaycast, rayDirection, out hitTrueLevelGeometry3, rayDistance, 1 << 0);
 
+#if DEBUG_RAYCASTS
+            Debug.DrawRay(rayStartPos, rayDirection, Color.magenta, 1.0f);
+            Debug.DrawRay(rayStartPos + offsetSecondProtectionRaycast, rayDirection, Color.yellow, 1.0f);
+            Debug.DrawRay(rayStartPos + offsetThirdProtectionRaycast, rayDirection, Color.cyan, 1.0f);
+#endif
             // move GameObject "PlayerAdvanced" back to Default layer
             gameObjectPlayerAdvanced.layer = LayerMask.NameToLayer("Default");
 
             // main raycast (on Colliders in layer "Automap")
             bool didHit1 = Physics.Raycast(rayStartPos, rayDirection, out hit1, rayDistance, 1 << layerAutomap);
-            // 2nd protection raycast (on Colliders in layer "Automap") with offset (protection against hole in daggerfall geometry prevention)
+            // 2nd (protection) raycast (on Colliders in layer "Automap") with offset (protection against hole in daggerfall geometry prevention)
             bool didHit2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hit2, rayDistance, 1 << layerAutomap);
-            // if ((didHitTrueLevelGeometry1) && (didHitTrueLevelGeometry2) && (didHit1) && (didHit2)) {
-            // Debug.Log(String.Format("hitTG1: {0}, hitTG2: {1}, hit1: {2}, hit2: {3}, distanceTG1: {4}, distanceTG: {5}, distance1: {6}, distance2: {7}", didHitTrueLevelGeometry1, didHitTrueLevelGeometry2, didHit1, didHit2, hitTrueLevelGeometry1.distance, hitTrueLevelGeometry2.distance, hit1.distance, hit2.distance));
-            // Debug.Log(String.Format("{0}, {1}", hitTrueLevelGeometry1.collider.name, hitTrueLevelGeometry2.collider.name));
-            // }
+            // 3rd (protection) raycast (on Colliders in layer "Automap") with offset (protection against hole in daggerfall geometry prevention)
+            bool didHit3 = Physics.Raycast(rayStartPos + offsetThirdProtectionRaycast, rayDirection, out hit3, rayDistance, 1 << layerAutomap);
+
+#if DEBUG_RAYCASTS
+            Debug.Log(String.Format("hitTG1: {0}, hitTG2: {1}, hitTG3: {2}, hit1: {3}, hit2: {4}, hit3: {5}", didHitTrueLevelGeometry1, didHitTrueLevelGeometry2, didHitTrueLevelGeometry3, didHit1, didHit2, didHit3));
+            if ((didHitTrueLevelGeometry1) && (didHitTrueLevelGeometry2) && (didHit1) && (didHit2)) {
+                Debug.Log(String.Format("distanceTG1: {0}, distanceTG2: {1}, distanceTG3: {2}, distance1: {3}, distance2: {4}, distance3: {4}", hitTrueLevelGeometry1.distance, hitTrueLevelGeometry2.distance, hitTrueLevelGeometry2.distance, hit1.distance, hit2.distance, hit3.distance));
+                Debug.Log(String.Format("collider of hit1: {0}, collider of hit2: {1}, collider of hit3: {2}", hitTrueLevelGeometry1.collider.name, hitTrueLevelGeometry2.collider.name, hitTrueLevelGeometry3.collider.name));
+            }
+#endif
+
             if (
                 didHit1 &&
                 didHit2 &&
-                hit1.collider == hit2.collider &&  // hits must have same collider (TODO: check if there are no problems with small geometry)              
+                didHit3 &&
+                hit1.collider == hit2.collider &&  // hits must have same collider (TODO: check if there are no problems with small geometry)
+                hit1.collider == hit3.collider &&  // hits must have same collider (TODO: check if there are no problems with small geometry)
                 didHitTrueLevelGeometry1 &&
                 didHitTrueLevelGeometry2 &&
+                didHitTrueLevelGeometry3 &&
                 // hits on true geometry must have same distance as hits on automap geometry - otherwise there is a obstacle, e.g. a door
                 Math.Abs(hitTrueLevelGeometry1.distance - hit1.distance) < 0.01f &&
-                Math.Abs(hitTrueLevelGeometry2.distance - hit2.distance) < 0.01f
+                Math.Abs(hitTrueLevelGeometry2.distance - hit2.distance) < 0.01f &&
+                Math.Abs(hitTrueLevelGeometry3.distance - hit3.distance) < 0.01f
                 )
             {
                 MeshCollider meshCollider = hit1.collider as MeshCollider;
@@ -352,9 +373,9 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// updates materials of mesh renderer
         /// (this injects the automap shader and sets the state for materials to be rendered dependent on if they where revealed already in a previous dungeon run)
+        /// </summary>
         /// <param name="meshRenderer"> the MeshRenderer whose materials needs to be updated </param>
         /// <param name="visitedInThisEntering"> indicates if the materials of meshRenderer should be marked as "visited in this entering/dungeon run" (rendered in color) or not (rendered in grayscale) </param>
-        /// </summary>
         private void updateMaterialsOfMeshRenderer(MeshRenderer meshRenderer, bool visitedInThisEntering = false)
         {
             Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
@@ -391,8 +412,8 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// will inject materials and properties to MeshRenderer in the proper hierarchy level of automap level geometry GameObject
         /// note: the proper hierarchy level differs between an "Interior" and a "Dungeon" geometry GameObject
-        /// <param name="resetDiscoveryState"> if true resets the discovery state for geometry that needs to be discovered (when inside dungeons or palaces) </param>
         /// </summary>
+        /// <param name="resetDiscoveryState"> if true resets the discovery state for geometry that needs to be discovered (when inside dungeons or palaces) </param>
         private void injectMeshAndMaterialProperties(bool resetDiscoveryState = true)
         {
             if (GameManager.Instance.IsPlayerInsideBuilding)
@@ -528,9 +549,9 @@ namespace DaggerfallWorkshop.Game
 
         /// <summary>
         /// sets layer of a GameObject and all of its childs recursively
+        /// </summary>
         /// <param name="obj"> the target GameObject </param>
         /// <param name="layer"> the layer to be set </param>
-        /// </summary>
         private static void SetLayerRecursively(GameObject obj, int layer)
         {
             obj.layer = layer;
@@ -543,8 +564,8 @@ namespace DaggerfallWorkshop.Game
 
         /// <summary>
         /// creates the indoor geometry used for automap rendering
-        /// <param name="args"> the transition event arguments used to extract door information for loading the correct interior </param>
         /// </summary>
+        /// <param name="args"> the transition event arguments used to extract door information for loading the correct interior </param>
         private void createIndoorGeometryForAutomap(PlayerEnterExit.TransitionEventArgs args)
         {
             StaticDoor door = args.StaticDoor;
@@ -784,8 +805,8 @@ namespace DaggerfallWorkshop.Game
         /// this class is mapping the value of field "discovered" (AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState)
         /// inside object automapGeometryInteriorState to the objects inside the 3rd hierarchy level of GameObject gameObjectGeometry (which are the actual models)
         /// in such way that the MeshRenderer enabled state for these objects match the value of field "discovered"
-        /// <param name="forceNotVisitedInThisRun"> if set to true geometry is restored and its state is forced to not being visited in this run </param>
         /// </summary>
+        /// <param name="forceNotVisitedInThisRun"> if set to true geometry is restored and its state is forced to not being visited in this run </param>
         private void restoreStateAutomapInterior(bool forceNotVisitedInThisRun = false)
         {
             Transform interiorBlock = gameobjectGeometry.transform.GetChild(0);
@@ -844,8 +865,8 @@ namespace DaggerfallWorkshop.Game
         /// this class is mapping the value of field "discovered" (AutomapGeometryDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState)
         /// inside object automapGeometryDungeonState to the objects inside the 4th hierarchy level of GameObject gameObjectGeometry (which are the actual models)
         /// in such way that the MeshRenderer enabled state for these objects match the value of field "discovered"
-        /// <param name="forceNotVisitedInThisRun"> if set to true geometry is restored and its state is forced to not being visited in this run </param>
         /// </summary>
+        /// <param name="forceNotVisitedInThisRun"> if set to true geometry is restored and its state is forced to not being visited in this run </param>
         private void restoreStateAutomapDungeon(bool forceNotVisitedInThisRun = false)
         {
             Transform location = gameobjectGeometry.transform.GetChild(0);
