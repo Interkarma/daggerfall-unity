@@ -301,7 +301,8 @@ namespace DaggerfallWorkshop.Game
         {
             while (true)
             {
-                if ((gameobjectGeometry != null) && ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace)))
+                // only proceed if automap is not opened (otherwise command gameobjectGeometry.SetActive(false); will mess with automap rendering when scheduling is a bitch and overwrites changes from updateAutomapStateOnWindowPush()
+                if ((!isOpenAutomap) && (gameobjectGeometry != null) && ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace)))
                 {
                     // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
                     gameobjectGeometry.SetActive(true);
@@ -312,22 +313,19 @@ namespace DaggerfallWorkshop.Game
                     gameobjectBeaconEntrancePosition.gameObject.SetActive(false);
                     gameobjectBeaconRotationPivotAxis.gameObject.SetActive(false);
 
-                    if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
-                    {
-                        // reveal geometry right below player - raycast down from player head position
-                        Vector3 rayStartPos = gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition;
-                        Vector3 rayDirection = Vector3.down;
-                        float rayDistance = 3.0f; // 3 meters should be enough (note: flying to high will result in geometry not being revealed by this raycast
-                        Vector3 offsetSecondProtectionRaycast = Vector3.left * 0.1f; // will be used for protection raycast with slight offset of 10cm (protection against hole in daggerfall geometry prevention)            
-                        scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
+                    // reveal geometry right below player - raycast down from player head position
+                    Vector3 rayStartPos = gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition;
+                    Vector3 rayDirection = Vector3.down;
+                    float rayDistance = 3.0f; // 3 meters should be enough (note: flying to high will result in geometry not being revealed by this raycast
+                    Vector3 offsetSecondProtectionRaycast = Vector3.left * 0.1f; // will be used for protection raycast with slight offset of 10cm (protection against hole in daggerfall geometry prevention)            
+                    scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
 
-                        // reveal geometry which player is looking at (and which is near enough)
-                        rayDirection = Camera.main.transform.rotation * Vector3.forward;
-                        // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
-                        offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
-                        rayDistance = 25.0f;
-                        scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
-                    }
+                    // reveal geometry which player is looking at (and which is near enough)
+                    rayDirection = Camera.main.transform.rotation * Vector3.forward;
+                    // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
+                    offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
+                    rayDistance = 25.0f;
+                    scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);                    
 
                     // enable previously disabled beacons
                     gameobjectPlayerMarkerArrow.gameObject.SetActive(true);

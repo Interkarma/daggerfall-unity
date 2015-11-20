@@ -124,15 +124,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Vector3 rotationPivotAxisPositionViewFromTop;
         Vector3 rotationPivotAxisPositionView3D;
 
+        bool isSetup = false;
+
         public DaggerfallAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
         }
 
         protected override void Setup()
-        {
+        {           
             ImgFile imgFile = null;
             DFBitmap bitmap = null;
+
+            if (isSetup)
+                return;
 
             initClassResources();
 
@@ -279,6 +284,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             compass.Position = dummyPanelCompass.Rectangle.position;
             compass.Scale = scale;
             NativePanel.Components.Add(compass);
+
+            isSetup = true;
         }
 
         private void resizeGUIelementsOnDemand()
@@ -306,6 +313,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             initClassResources();
 
+            if (!isSetup)
+                Setup();
+
             daggerfallAutomap.registerDaggerfallAutomapWindow(this);
             daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
             daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed and that it should update its state (updates player marker arrow)            
@@ -317,24 +327,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 gameObjectInteriorLightRig.SetActive(false);
             }
 
-            if (IsSetup)
-            {
-                createLightsForAutomapGeometry();
+            createLightsForAutomapGeometry();
 
-                createAutomapCamera();
+            createAutomapCamera();
 
-                Rect positionPanelRenderAutomap = dummyPanelAutomap.Rectangle;
-                createAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
+            Rect positionPanelRenderAutomap = dummyPanelAutomap.Rectangle;
+            createAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
 
-                if (cameraAutomap)
-                {
-                    daggerfallAutomap.SlicingBiasY = 0.0f;
-                    resetCameraPosition();
-                    resetRotationPivotAxisPosition();
-                    updateAutoMapView();
-                    daggerfallAutomap.forceUpdate();
-                }
-            }
+            daggerfallAutomap.SlicingBiasY = 0.2f;
+            resetCameraPosition();
+            resetRotationPivotAxisPosition();
+            updateAutoMapView();
+            daggerfallAutomap.forceUpdate();
+
         }
 
         public override void OnPop()
@@ -648,33 +653,50 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void createLightsForAutomapGeometry()
         {
-            gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
-            gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
-            Light keyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
-            keyLight.type = LightType.Directional;
-            //keyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
-            gameobjectAutomapKeyLight.transform.SetParent(gameobjectAutomap.transform);
+            if (!gameobjectAutomapKeyLight)
+            {
+                gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
+                gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
+                Light keyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
+                keyLight.type = LightType.Directional;
+                //keyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
+                gameobjectAutomapKeyLight.transform.SetParent(gameobjectAutomap.transform);
+            }
 
-            gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
-            gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
-            Light fillLight = gameobjectAutomapFillLight.AddComponent<Light>();
-            fillLight.type = LightType.Directional;          
-            gameobjectAutomapFillLight.transform.SetParent(gameobjectAutomap.transform);
+            if (!gameobjectAutomapFillLight)
+            {
+                gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
+                gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
+                Light fillLight = gameobjectAutomapFillLight.AddComponent<Light>();
+                fillLight.type = LightType.Directional;
+                gameobjectAutomapFillLight.transform.SetParent(gameobjectAutomap.transform);
+            }
 
-            gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
-            gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
-            Light backLight = gameobjectAutomapBackLight.AddComponent<Light>();
-            backLight.type = LightType.Directional;            
-            gameobjectAutomapBackLight.transform.SetParent(gameobjectAutomap.transform);
+            if (!gameobjectAutomapBackLight)
+            {
+                gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
+                gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
+                Light backLight = gameobjectAutomapBackLight.AddComponent<Light>();
+                backLight.type = LightType.Directional;
+                gameobjectAutomapBackLight.transform.SetParent(gameobjectAutomap.transform);
+            }
 
             if (GameManager.Instance.IsPlayerInsideBuilding)
             {
+                Light keyLight = gameobjectAutomapKeyLight.GetComponent<Light>();
+                Light fillLight = gameobjectAutomapFillLight.GetComponent<Light>();
+                Light backLight = gameobjectAutomapBackLight.GetComponent<Light>();
+
                 keyLight.intensity = 1.0f;
                 fillLight.intensity = 0.6f;
                 backLight.intensity = 0.2f;
             }
             else if  ((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsidePalace))
             {
+                Light keyLight = gameobjectAutomapKeyLight.GetComponent<Light>();
+                Light fillLight = gameobjectAutomapFillLight.GetComponent<Light>();
+                Light backLight = gameobjectAutomapBackLight.GetComponent<Light>();
+
                 keyLight.intensity = 0.5f;
                 fillLight.intensity = 0.5f;
                 backLight.intensity = 0.5f;
