@@ -258,16 +258,27 @@ namespace DaggerfallWorkshop.Game
         {
             RaycastHit hit1, hit2, hitTrueLevelGeometry1, hitTrueLevelGeometry2;
 
+            // move GameObject "PlayerAdvanced" temporarily to different layer than "Default" so the raycast do not hit the colliders
+            // did not find a better solution for this problem (scanWithRaycastInDirectionAndUpdateMeshesAndMaterials() does raycasts
+            // both on geometry in layerAutomap as well as geometry in layer "default" - this mechanism is needed to detect doors
+            // and not reveal geometry behind it (automap level geometry does not have door meshes...))
+            gameObjectPlayerAdvanced.layer = LayerMask.NameToLayer("Automap");   
+
             // do raycast and protection raycast on main level geometry (use default layer as layer mask)
             bool didHitTrueLevelGeometry1 = Physics.Raycast(rayStartPos, rayDirection, out hitTrueLevelGeometry1, rayDistance, 1 << 0);
             bool didHitTrueLevelGeometry2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hitTrueLevelGeometry2, rayDistance, 1 << 0);
+
+            // move GameObject "PlayerAdvanced" back to Default layer
+            gameObjectPlayerAdvanced.layer = LayerMask.NameToLayer("Default");
 
             // main raycast (on Colliders in layer "Automap")
             bool didHit1 = Physics.Raycast(rayStartPos, rayDirection, out hit1, rayDistance, 1 << layerAutomap);
             // 2nd protection raycast (on Colliders in layer "Automap") with offset (protection against hole in daggerfall geometry prevention)
             bool didHit2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hit2, rayDistance, 1 << layerAutomap);
-            Debug.Log(String.Format("hitTG1: {0}, hitTG2: {1}, hit1: {2}, hit2: {3}, distanceTG1: {4}, distanceTG: {5}, distance1: {6}, distance2: {7}", didHitTrueLevelGeometry1, didHitTrueLevelGeometry2, didHit1, didHit2, hitTrueLevelGeometry1.distance, hitTrueLevelGeometry2.distance, hit1.distance, hit2.distance));
-            Debug.Log(String.Format("{0}, {1}", hitTrueLevelGeometry1.collider.name, hitTrueLevelGeometry2.collider.name));
+            // if ((didHitTrueLevelGeometry1) && (didHitTrueLevelGeometry2) && (didHit1) && (didHit2)) {
+            // Debug.Log(String.Format("hitTG1: {0}, hitTG2: {1}, hit1: {2}, hit2: {3}, distanceTG1: {4}, distanceTG: {5}, distance1: {6}, distance2: {7}", didHitTrueLevelGeometry1, didHitTrueLevelGeometry2, didHit1, didHit2, hitTrueLevelGeometry1.distance, hitTrueLevelGeometry2.distance, hit1.distance, hit2.distance));
+            // Debug.Log(String.Format("{0}, {1}", hitTrueLevelGeometry1.collider.name, hitTrueLevelGeometry2.collider.name));
+            // }
             if (
                 didHit1 &&
                 didHit2 &&
@@ -306,21 +317,7 @@ namespace DaggerfallWorkshop.Game
                 if ((!isOpenAutomap) && (gameobjectGeometry != null) && ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace)))
                 {
                     // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
-                    gameobjectGeometry.SetActive(true);
-
-                    // disable colliders from GameObject "PlayerAdvanced" - TODO: make sure this does not cause problems - since we are
-                    // in a coroutine and collider might get deactivated in the wrong moment - talk to Interkarma about this potential problem
-                    // did not find a better solution for this problem (scanWithRaycastInDirectionAndUpdateMeshesAndMaterials() does raycasts
-                    // both on geometry in layerAutomap as well as geometry in layer "default" - this mechanism is needed to detect doors
-                    // and not reveal geometry behind it (automap level geometry does not have door meshes...))
-                    gameObjectPlayerAdvanced.GetComponent<CharacterController>().enabled = false;
-                    gameObjectPlayerAdvanced.GetComponent<CapsuleCollider>().enabled = false;
-
-                    // disable beacons to prevent their colliders
-                    gameobjectPlayerMarkerArrow.gameObject.SetActive(false);
-                    gameobjectBeaconPlayerPosition.gameObject.SetActive(false);
-                    gameobjectBeaconEntrancePosition.gameObject.SetActive(false);
-                    gameobjectBeaconRotationPivotAxis.gameObject.SetActive(false);
+                    gameobjectGeometry.SetActive(true);                 
 
                     // reveal geometry right below player - raycast down from player head position
                     Vector3 rayStartPos = gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition;
@@ -334,17 +331,7 @@ namespace DaggerfallWorkshop.Game
                     // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
                     offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
                     rayDistance = 25.0f;
-                    scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);                    
-                    
-                    // enable previously disabled beacons
-                    gameobjectPlayerMarkerArrow.gameObject.SetActive(true);
-                    gameobjectBeaconPlayerPosition.gameObject.SetActive(true);
-                    gameobjectBeaconEntrancePosition.gameObject.SetActive(true);
-                    gameobjectBeaconRotationPivotAxis.gameObject.SetActive(true);
-
-                    // reenable colliders from GameObject "PlayerAdvanced"
-                    gameObjectPlayerAdvanced.GetComponent<CharacterController>().enabled = true;
-                    gameObjectPlayerAdvanced.GetComponent<CapsuleCollider>().enabled = true;
+                    scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
 
                     // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
                     gameobjectGeometry.SetActive(false);
