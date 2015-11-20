@@ -39,15 +39,14 @@ namespace DaggerfallWorkshop.Game
             {
                 public class AutomapGeometryModelState
                 {
-                    public bool discovered;
+                    public bool discovered; /// discovered before (render model)
+                    public bool visitedInThisRun; /// visited in this dungeon run (if true render in color, otherwise grayscale)
                 }
                 public List<AutomapGeometryModelState> models;
             }
             public List<AutomapGeometryBlockElementState> blockElements;
             public String blockName;
         }
-        
-        //using AutomapGeometryBlockState.AutomapGeometryBlockElementState;
 
         public class AutomapGeometryDungeonState
         {
@@ -715,10 +714,12 @@ namespace DaggerfallWorkshop.Game
                     if ((meshRenderer) && (meshRenderer.enabled))
                     {
                         model.discovered = true;
+                        model.visitedInThisRun = !meshRenderer.materials[0].IsKeywordEnabled("RENDER_IN_GRAYSCALE"); // all materials of model have the same setting - so just material[0] is tested
                     }
                     else
                     {
                         model.discovered = false;
+                        model.visitedInThisRun = false;
                     }
                     models.Add(model);
                 }
@@ -762,10 +763,12 @@ namespace DaggerfallWorkshop.Game
                         if ((meshRenderer) && (meshRenderer.enabled))
                         {
                             model.discovered = true;
+                            model.visitedInThisRun = !meshRenderer.materials[0].IsKeywordEnabled("RENDER_IN_GRAYSCALE"); // all materials of model have the same setting - so just material[0] is tested
                         }
                         else
                         {
                             model.discovered = false;
+                            model.visitedInThisRun = false;
                         }
                         models.Add(model);
                     }
@@ -783,8 +786,9 @@ namespace DaggerfallWorkshop.Game
         /// this class is mapping the value of field "discovered" (AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState)
         /// inside object automapGeometryInteriorState to the objects inside the 3rd hierarchy level of GameObject gameObjectGeometry (which are the actual models)
         /// in such way that the MeshRenderer enabled state for these objects match the value of field "discovered"
+        /// <param name="forceNotVisitedInThisRun"> if set to true geometry is restored and its state is forced to not being visited in this run </param>
         /// </summary>
-        private void restoreStateAutomapInterior()
+        private void restoreStateAutomapInterior(bool forceNotVisitedInThisRun = false)
         {
             Transform interiorBlock = gameobjectGeometry.transform.GetChild(0);
 
@@ -803,10 +807,36 @@ namespace DaggerfallWorkshop.Game
                     Transform currentTransformModel = currentTransformElement.GetChild(indexModel);
 
                     MeshRenderer meshRenderer = currentTransformModel.GetComponent<MeshRenderer>();
-                    if ((meshRenderer) && (automapGeometryInteriorState.blockElements[indexElement].models[indexModel].discovered == true))
-                    {                        
-                        meshRenderer.enabled = true;
-                    }                            
+                    if (meshRenderer)
+                    {
+                        if (automapGeometryInteriorState.blockElements[indexElement].models[indexModel].discovered == true)
+                        {
+                            meshRenderer.enabled = true;
+
+                            if ((!forceNotVisitedInThisRun)&&(automapGeometryInteriorState.blockElements[indexElement].models[indexModel].visitedInThisRun))
+                            {
+                                Material[] materials = meshRenderer.materials;
+                                foreach (Material mat in meshRenderer.materials)
+                                {
+                                    mat.DisableKeyword("RENDER_IN_GRAYSCALE");
+                                }
+                                meshRenderer.materials = materials;
+                            }
+                            else
+                            {
+                                Material[] materials = meshRenderer.materials;
+                                foreach (Material mat in meshRenderer.materials)
+                                {
+                                    mat.EnableKeyword("RENDER_IN_GRAYSCALE");
+                                }
+                                meshRenderer.materials = materials;
+                            }
+                        }
+                        else
+                        {
+                            meshRenderer.enabled = false;
+                        }
+                    }
                 }
             }
         }
@@ -816,8 +846,9 @@ namespace DaggerfallWorkshop.Game
         /// this class is mapping the value of field "discovered" (AutomapGeometryDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState)
         /// inside object automapGeometryDungeonState to the objects inside the 4th hierarchy level of GameObject gameObjectGeometry (which are the actual models)
         /// in such way that the MeshRenderer enabled state for these objects match the value of field "discovered"
+        /// <param name="forceNotVisitedInThisRun"> if set to true geometry is restored and its state is forced to not being visited in this run </param>
         /// </summary>
-        private void restoreStateAutomapDungeon()
+        private void restoreStateAutomapDungeon(bool forceNotVisitedInThisRun = false)
         {
             Transform location = gameobjectGeometry.transform.GetChild(0);
 
@@ -843,9 +874,35 @@ namespace DaggerfallWorkshop.Game
                         Transform currentTransformModel = currentTransformElement.GetChild(indexModel);
 
                         MeshRenderer meshRenderer = currentTransformModel.GetComponent<MeshRenderer>();
-                        if ((meshRenderer) && (automapGeometryDungeonState.blocks[indexBlock].blockElements[indexElement].models[indexModel].discovered == true))
+                        if (meshRenderer)
                         {
-                            meshRenderer.enabled = true;
+                            if (automapGeometryDungeonState.blocks[indexBlock].blockElements[indexElement].models[indexModel].discovered == true)
+                            {
+                                meshRenderer.enabled = true;
+
+                                if ((!forceNotVisitedInThisRun)&&(automapGeometryDungeonState.blocks[indexBlock].blockElements[indexElement].models[indexModel].visitedInThisRun))
+                                {
+                                    Material[] materials = meshRenderer.materials;
+                                    foreach (Material mat in meshRenderer.materials)
+                                    {
+                                        mat.DisableKeyword("RENDER_IN_GRAYSCALE");
+                                    }
+                                    meshRenderer.materials = materials;
+                                }
+                                else
+                                {
+                                    Material[] materials = meshRenderer.materials;
+                                    foreach (Material mat in meshRenderer.materials)
+                                    {
+                                        mat.EnableKeyword("RENDER_IN_GRAYSCALE");
+                                    }
+                                    meshRenderer.materials = materials;
+                                }
+                            }
+                            else
+                            {
+                                meshRenderer.enabled = false;
+                            }
                         }
                     }
                 }
@@ -855,13 +912,13 @@ namespace DaggerfallWorkshop.Game
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
         {
             createIndoorGeometryForAutomap(args);
-            restoreStateAutomapInterior();
+            restoreStateAutomapInterior(true);
         }
 
         private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
         {
             createDungeonGeometryForAutomap();
-            restoreStateAutomapDungeon();
+            restoreStateAutomapDungeon(true);
         }
 
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
