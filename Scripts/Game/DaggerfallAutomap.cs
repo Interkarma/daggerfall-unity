@@ -33,6 +33,12 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class DaggerfallAutomap : MonoBehaviour
     {
+        /// <summary>
+        /// class to store state of discovery of a dungeon block or interior, this state can be used to restore state of GameObject gameobjectGeometry
+        /// this class basically maps the two fields/states (MeshRenderer active state and Material shader keyword "RENDER_IN_GRAYSCALE") that are
+        /// used for discovery state of the models inside GameObject gameobjectGeometry when an interior is loaded into this GameObject
+        /// it is also used as type inside the blocks list in AutomapGeometryDungeonState
+        /// </summary>
         public class AutomapGeometryBlockState
         {
             public class AutomapGeometryBlockElementState
@@ -48,12 +54,20 @@ namespace DaggerfallWorkshop.Game
             public String blockName;
         }
 
+        /// <summary>
+        /// class to store state of discovery of a dungeon, this state can be used to restore state of GameObject gameobjectGeometry
+        /// this class basically maps the two fields/states (MeshRenderer active state and Material shader keyword "RENDER_IN_GRAYSCALE") that are
+        /// used for discovery state of the models inside GameObject gameobjectGeometry when a dungeon is loaded into this GameObject
+        /// </summary>
         public class AutomapGeometryDungeonState
         {
             public String locationName;
             public List<AutomapGeometryBlockState> blocks;
         }
+
+        // dungeon state is of type AutomapGeometryDungeonState which has its models in 4th hierarchy level
         AutomapGeometryDungeonState automapGeometryDungeonState = null;
+        // interior state is of type AutomapGeometryBlockState which has its models in 3rd hierarchy level
         AutomapGeometryBlockState automapGeometryInteriorState = null;
 
         #region Fields

@@ -129,6 +129,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
         }
 
+        /// <summary>
+        /// initial window setup of the automap window
+        /// </summary>
         protected override void Setup()
         {           
             ImgFile imgFile = null;
@@ -271,6 +274,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             isSetup = true;
         }
 
+        /// <summary>
+        /// called when automap window is pushed - resets automap settings to default settings and signals DaggerfallAutomap class
+        /// </summary>
         public override void OnPush()
         {
             initClassResources(); // initialize gameobjectAutomap, daggerfallAutomap and layerAutomap
@@ -278,8 +284,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!isSetup) // if Setup() has not run, run it now
                 Setup();
             
-            daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function
-            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed and that it should update its state (updates player marker arrow)            
+            daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
             {
@@ -303,10 +308,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             resetCameraPosition();
             resetRotationPivotAxisPosition();
 
+            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed and that it should update its state (updates player marker arrow)
+
             // and update the automap view
             updateAutomapView();
         }
 
+        /// <summary>
+        /// called when automap window is popped - destroys resources and signals DaggerfallAutomap class
+        /// </summary>
         public override void OnPop()
         {
             daggerfallAutomap.IsOpenAutomap = false; // signal DaggerfallAutomap script that automap was closed
@@ -343,7 +353,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             daggerfallAutomap.updateAutomapStateOnWindowPop(); // signal DaggerfallAutomap script that automap window was closed
         }
 
-
+        /// <summary>
+        /// reacts on left/right mouse button down states over different automap buttons and other GUI elements
+        /// handles resizing of NativePanel as well
+        /// </summary>
         public override void Update()
         {
             base.Update();
@@ -558,6 +571,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
+        /// <summary>
+        /// tests for availability and initializes class resources like GameObject for automap, DaggerfallAutomap class and layerAutomap
+        /// </summary>
         private void initClassResources()
         {
             if (!gameobjectAutomap)
@@ -585,6 +601,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        /// <summary>
+        /// resizes GUI elements automap render panel (and the needed RenderTexture and Texture2D) and compass
+        /// </summary>
         private void resizeGUIelementsOnDemand()
         {
             if (oldPositionNativePanel != NativePanel.Rectangle)
@@ -608,6 +627,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        /// <summary>
+        /// creates the automap camera if not present and sets camera default settings, registers camera to compass
+        /// </summary>
         private void createAutomapCamera()
         {
             if (!cameraAutomap)
@@ -639,7 +661,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-
+        /// <summary>
+        /// creates (if not present) automap lights that light the automap level geometry
+        /// </summary>
         private void createLightsForAutomapGeometry()
         {
             if (!gameobjectAutomapKeyLight)
@@ -692,6 +716,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        /// <summary>
+        /// creates RenderTexture and Texture2D with the required size if it is not present or its old size differs from the expected size
+        /// </summary>
+        /// <param name="width"> the expected width of the RenderTexture and Texture2D </param>
+        /// <param name="height"> the expected height of the RenderTexture and Texture2D </param>
         private void createAutomapTextures(int width, int height)
         {
             if ((!cameraAutomap) || (!renderTextureAutomap) || (oldRenderTextureAutomapWidth != width) || (oldRenderTextureAutomapHeight != height))
@@ -712,6 +741,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        /// <summary>
+        /// resets the automap camera position for both view modes
+        /// </summary>
         private void resetCameraPosition()
         {
             // get initial values for camera transform for view from top
@@ -734,24 +766,92 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        /// <summary>
+        /// resets the camera transform of the 2D view mode
+        /// </summary>
+        private void resetCameraTransformViewFromTop()
+        {
+            cameraAutomap.transform.position = Camera.main.transform.position + Vector3.up * cameraHeightViewFromTop;
+            cameraAutomap.transform.LookAt(Camera.main.transform.position);
+        }
+
+        /// <summary>
+        /// resets the camera transform of the 3D view mode
+        /// </summary>
+        private void resetCameraTransformView3D()
+        {
+            Vector3 viewDirectionInXZ = Vector3.forward;
+            cameraAutomap.transform.position = Camera.main.transform.position - viewDirectionInXZ * cameraBackwardDistance + Vector3.up * cameraHeightView3D;
+            cameraAutomap.transform.LookAt(Camera.main.transform.position);
+        }
+
+        /// <summary>
+        /// saves the camera transform of the 2D view mode
+        /// </summary>
+        private void saveCameraTransformViewFromTop()
+        {
+            backupCameraPositionViewFromTop = cameraAutomap.transform.position;
+            backupCameraRotationViewFromTop = cameraAutomap.transform.rotation;
+        }
+
+        /// <summary>
+        /// saves the camera transform of the 3D view mode
+        /// </summary>
+        private void saveCameraTransformView3D()
+        {
+            backupCameraPositionView3D = cameraAutomap.transform.position;
+            backupCameraRotationView3D = cameraAutomap.transform.rotation;
+        }
+
+        /// <summary>
+        /// restores the camera transform of the 2D view mode
+        /// </summary>
+        private void restoreOldCameraTransformViewFromTop()
+        {
+            cameraAutomap.transform.position = backupCameraPositionViewFromTop;
+            cameraAutomap.transform.rotation = backupCameraRotationViewFromTop;
+        }
+
+        /// <summary>
+        /// restores the camera transform of the 3D view mode
+        /// </summary>
+        private void restoreOldCameraTransformView3D()
+        {
+            cameraAutomap.transform.position = backupCameraPositionView3D;
+            cameraAutomap.transform.rotation = backupCameraRotationView3D;
+        }
+
+        /// <summary>
+        /// resets the rotation pivot axis position for the 2D view mode
+        /// </summary>
         private void resetRotationPivotAxisPositionViewFromTop()
         {
             rotationPivotAxisPositionViewFromTop = Vector3.zero;
             daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
         }
 
+        /// <summary>
+        /// resets the rotation pivot axis position for the 3D view mode
+        /// </summary>
         private void resetRotationPivotAxisPositionView3D()
         {
             rotationPivotAxisPositionView3D = Vector3.zero;
             daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
         }
 
+        /// <summary>
+        /// resets the rotation pivot axis position for both view modes
+        /// </summary>
         private void resetRotationPivotAxisPosition()
         {
             resetRotationPivotAxisPositionViewFromTop();
             resetRotationPivotAxisPositionView3D();
         }
 
+        /// <summary>
+        /// shifts the rotation pivot axis position for the currently selected view mode
+        /// </summary>
+        /// <param name="translation"> the translation for the shift </param>
         private void shiftRotationPivotAxisPosition(Vector3 translation)
         {
             switch (automapViewMode)
@@ -769,6 +869,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        /// <summary>
+        /// gets the rotation pivot axis position for the currently selected view mode
+        /// </summary>
+        /// <returns> the position of the rotation pivot axis </returns>
         private Vector3 getRotationPivotAxisPosition()
         {
             Vector3 rotationPivotAxisPosition;
@@ -787,43 +891,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return (rotationPivotAxisPosition);
         }
 
-        private void resetCameraTransformViewFromTop()
-        {
-            cameraAutomap.transform.position = Camera.main.transform.position + Vector3.up * cameraHeightViewFromTop;
-            cameraAutomap.transform.LookAt(Camera.main.transform.position);            
-        }
-
-        private void resetCameraTransformView3D()
-        {
-            Vector3 viewDirectionInXZ = Vector3.forward;
-            cameraAutomap.transform.position = Camera.main.transform.position - viewDirectionInXZ * cameraBackwardDistance + Vector3.up * cameraHeightView3D;
-            cameraAutomap.transform.LookAt(Camera.main.transform.position);
-        }
-
-        private void saveCameraTransformViewFromTop()
-        {
-            backupCameraPositionViewFromTop = cameraAutomap.transform.position;
-            backupCameraRotationViewFromTop = cameraAutomap.transform.rotation;
-        }
-
-        private void saveCameraTransformView3D()
-        {
-            backupCameraPositionView3D = cameraAutomap.transform.position;
-            backupCameraRotationView3D = cameraAutomap.transform.rotation;
-        }
-
-        private void restoreOldCameraTransformViewFromTop()
-        {
-            cameraAutomap.transform.position = backupCameraPositionViewFromTop;
-            cameraAutomap.transform.rotation = backupCameraRotationViewFromTop;
-        }
-
-        private void restoreOldCameraTransformView3D()
-        {
-            cameraAutomap.transform.position = backupCameraPositionView3D;
-            cameraAutomap.transform.rotation = backupCameraRotationView3D;
-        }
-
+        /// <summary>
+        /// updates the automap view - signals DaggerfallAutomap class to update and renders the automap level geometry afterwards into the automap render panel
+        /// </summary>
         private void updateAutomapView()
         {
             daggerfallAutomap.forceUpdate();
