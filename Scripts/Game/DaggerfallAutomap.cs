@@ -84,8 +84,6 @@ namespace DaggerfallWorkshop.Game
         readonly Vector3 rayPlayerPosOffset = new Vector3(-0.1f, 0.0f, +0.1f); // small offset to prevent ray for player position to be exactly in the same position as the rotation pivot axis
         readonly Vector3 rayEntrancePosOffset = new Vector3(0.1f, 0.0f, +0.1f); // small offset to prevent ray for dungeon entrance to be exactly in the same position as the rotation pivot axis
 
-        DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow instanceDaggerfallAutomapWindow = null; // will hold reference to DaggerfallAutomapWindow class
-
         #endregion
 
         #region Properties
@@ -119,15 +117,6 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// DaggerfallAutomapWindow script will use this function to register itself with this script
-        /// <param name="instanceDaggerfallAutomapWindow"> the DaggerfallAutomapWindow to register </param>
-        /// </summary>
-        public void registerDaggerfallAutomapWindow(DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallAutomapWindow instanceDaggerfallAutomapWindow)
-        {
-            this.instanceDaggerfallAutomapWindow = instanceDaggerfallAutomapWindow;
-        }
 
         /// <summary>
         /// DaggerfallAutomapWindow script will use this to signal this script to update when automap window was pushed - TODO: check if this can done with an event (if events work with gui windows)
@@ -234,11 +223,8 @@ namespace DaggerfallWorkshop.Game
             {
                 updateSlicingPositionY();
 
-                if (instanceDaggerfallAutomapWindow != null) // do only if instance of DaggerfallAutomapWindow class registered itself (with function registerDaggerfallAutomapWindow())
-                {
-                    // update position of rotation pivot axis
-                    gameobjectBeaconRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position + rotationPivotAxisPosition;
-                }
+                // update position of rotation pivot axis
+                gameobjectBeaconRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position + rotationPivotAxisPosition;
             }
         }
 
