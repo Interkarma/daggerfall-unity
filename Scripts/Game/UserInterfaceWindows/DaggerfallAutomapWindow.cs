@@ -413,18 +413,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (automapViewMode)
                 {
                     case AutomapViewMode.View2D:
-                        translation = -cameraAutomap.transform.up * scrollForwardBackwardSpeed;
+                        translation = cameraAutomap.transform.up * scrollForwardBackwardSpeed;
                         break;
                     case AutomapViewMode.View3D:
-                        translation = -cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
+                        translation = cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
                         translation.y = 0.0f; // comment this out for movement along camera optical axis
                         break;
                     default:
                         translation = Vector3.zero;
                         break;
                 }
-                cameraAutomap.transform.position += translation;
-                shiftRotationPivotAxisPosition(translation);
+                cameraAutomap.transform.position += translation;                
                 updateAutoMapView();
             }
 
@@ -454,18 +453,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 switch (automapViewMode)
                 {
                     case AutomapViewMode.View2D:
-                        translation = cameraAutomap.transform.up * scrollForwardBackwardSpeed;
+                        translation = -cameraAutomap.transform.up * scrollForwardBackwardSpeed;
                         break;
                     case AutomapViewMode.View3D:
-                        translation = cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
+                        translation = -cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
                         translation.y = 0.0f; // comment this out for movement along camera optical axis
                         break;
                     default:
                         translation = Vector3.zero;
                         break;
                 }
-                cameraAutomap.transform.position += translation;
-                shiftRotationPivotAxisPosition(translation);
+                cameraAutomap.transform.position += translation;                
                 updateAutoMapView();
             }
 
@@ -492,10 +490,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (leftMouseDownOnLeftButton)
             {
-                Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed;
+                Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed;
                 translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
-                cameraAutomap.transform.position += translation;
-                shiftRotationPivotAxisPosition(translation);
+                cameraAutomap.transform.position += translation;                
                 updateAutoMapView();
             }
 
@@ -509,10 +506,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (leftMouseDownOnRightButton)
             {
-                Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed;
+                Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed;
                 translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
-                cameraAutomap.transform.position += translation;
-                shiftRotationPivotAxisPosition(translation);
+                cameraAutomap.transform.position += translation;                
                 updateAutoMapView();
             }
 
