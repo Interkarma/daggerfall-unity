@@ -105,6 +105,14 @@ namespace DaggerfallWorkshop.Game
         #region Properties
 
         /// <summary>
+        /// DaggerfallAutomapWindow script will use this to get automap layer
+        /// </summary>
+        public int LayerAutomap
+        {
+            get { return (layerAutomap); }
+        }
+
+        /// <summary>
         /// DaggerfallAutomapWindow script will use this to propagate its slicingBiasY (y-offset from the player y position)
         /// </summary>
         public float SlicingBiasY
@@ -188,11 +196,8 @@ namespace DaggerfallWorkshop.Game
             layerAutomap = LayerMask.NameToLayer("Automap");
             if (layerAutomap == -1)
             {
-                DaggerfallUnity.LogMessage("Layer with name \"Automap\" missing! Set it in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);
-                if (Application.isEditor)
-                    Debug.Break();
-                else
-                    Application.Quit();
+                DaggerfallUnity.LogMessage("Did not find Layer with name \"Automap\"! Defaulting to Layer 10\nIt is prefered that Layer \"Automap\" is set in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);
+                layerAutomap = 10;
             }
         }
 
@@ -266,7 +271,7 @@ namespace DaggerfallWorkshop.Game
             // did not find a better solution for this problem (scanWithRaycastInDirectionAndUpdateMeshesAndMaterials() does raycasts
             // both on geometry in layerAutomap as well as geometry in layer "default" - this mechanism is needed to detect doors
             // and not reveal geometry behind it (automap level geometry does not have door meshes...))
-            gameObjectPlayerAdvanced.layer = LayerMask.NameToLayer("Automap");   
+            gameObjectPlayerAdvanced.layer = layerAutomap; 
 
             // do raycast and protection raycast on main level geometry (use default layer as layer mask)
             bool didHitTrueLevelGeometry1 = Physics.Raycast(rayStartPos, rayDirection, out hitTrueLevelGeometry1, rayDistance, 1 << 0);

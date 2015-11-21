@@ -60,7 +60,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
 
-        int layerAutomap; // layer used for level geometry of automap
         GameObject gameObjectInteriorLightRig = null; // reference to instance of GameObject called "InteriorLightRig" - this will be used to deactivate lights of interior geometry inside GameObject "Interior"
         GameObject gameobjectAutomapKeyLight = null; // instead this script will use its own key light to lighten the level geometry used for automap
         GameObject gameobjectAutomapFillLight = null; // and fill light
@@ -593,12 +592,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUnity.LogMessage("Script DafferfallAutomap is missing in GameObject \"Automap\"! GameObject \"Automap\" must have script Game/DaggerfallAutomap attached!\"", true);
                 }
             }
-
-            layerAutomap = LayerMask.NameToLayer("Automap");
-            if (layerAutomap == -1)
-            {
-                DaggerfallUnity.LogMessage("Layer with name \"Automap\" missing! Set it in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);
-            }
         }
 
         /// <summary>
@@ -637,7 +630,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 gameObjectCameraAutomap = new GameObject("CameraAutomap");
                 cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
                 cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
-                cameraAutomap.cullingMask = 1 << layerAutomap;
+                cameraAutomap.cullingMask = 1 << daggerfallAutomap.LayerAutomap;
                 cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 5000.0f;
