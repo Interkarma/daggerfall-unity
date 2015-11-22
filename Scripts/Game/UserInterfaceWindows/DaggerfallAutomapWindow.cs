@@ -43,7 +43,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float changeSpeedCameraFieldOfView = 1.0f; // mouse wheel over grid button will change camera field of view in 3D mode with this speed
 
         const float fieldOfViewCameraMode2D = 15.0f; // camera field of view used for 2D mode
-        float fieldOfViewCameraMode3D = 45.0f; // camera field of view used for 3D mode (can be changed with mouse wheel over grid button)
+        const float defaultFieldOfViewCameraMode3D = 45.0f; // default camera field of view used for 3D mode
+        float fieldOfViewCameraMode3D = defaultFieldOfViewCameraMode3D; // camera field of view used for 3D mode (can be changed with mouse wheel over grid button)
         const float minFieldOfViewCameraMode3D = 15.0f; // minimum value of camera field of view that can be adjusted in 3D mode
         const float maxFieldOfViewCameraMode3D = 65.0f; // maximum value of camera field of view that can be adjusted in 3D mode
 
@@ -56,9 +57,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         DaggerfallAutomap daggerfallAutomap = null; // used to communicate with DaggerfallAutomap class
 
-        GameObject gameObjectCameraAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
-
         GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
+
+        Camera cameraAutomap = null; // camera for automap camera
 
         public enum AutomapViewMode { View2D = 0, View3D = 1};
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
@@ -98,7 +99,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         HUDCompass compass = null;
 
-        Camera cameraAutomap = null; // camera for automap camera
         RenderTexture renderTextureAutomap = null; // render texture in which automap camera will render into
         Texture2D textureAutomap = null; // render texture will converted to this texture so that it can be drawn in panelRenderAutomap
 
@@ -258,8 +258,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rectDummyPanelCompass.size = new Vector2(76, 17);
             dummyPanelCompass = DaggerfallUI.AddPanel(rectDummyPanelCompass, NativePanel);
 
-            // compass
-            compass = new HUDCompass(cameraAutomap);
+            // compass            
+            compass = new HUDCompass();
             Vector2 scale = NativePanel.LocalScale;
             compass.Position = dummyPanelCompass.Rectangle.position;
             compass.Scale = scale;
@@ -280,19 +280,51 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             
             daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
 
-            // create camera (if not present) that will render automap level geometry
-            createAutomapCamera();
+            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed and that it should update its state (updates player marker arrow)
+
+            // get automap camera
+            cameraAutomap = daggerfallAutomap.CameraAutomap;
 
             // create automap render texture and Texture2D used in conjuction with automap camera to render automap level geometry and display it in panel
             Rect positionPanelRenderAutomap = dummyPanelAutomap.Rectangle;
             createAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
 
-            // reset values to default
-            daggerfallAutomap.SlicingBiasY = 0.2f;
-            resetCameraPosition();
-            resetRotationPivotAxisPosition();
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D: default:
+                    cameraAutomap.fieldOfView = fieldOfViewCameraMode2D;
+                    break;
+                case AutomapViewMode.View3D:
+                    cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
+                    break;
+            }
 
-            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed and that it should update its state (updates player marker arrow)
+            if (compass != null)
+            {
+                compass.CompassCamera = cameraAutomap;
+            }
+
+            if (daggerfallAutomap.ResetAutomapSettingsFromExternalScript == true)
+            {
+                // reset values to default
+                daggerfallAutomap.SlicingBiasY = 0.2f;
+                resetCameraPosition();
+                resetRotationPivotAxisPosition();
+                fieldOfViewCameraMode3D = defaultFieldOfViewCameraMode3D;
+                daggerfallAutomap.ResetAutomapSettingsFromExternalScript = false; // indicate the settings were reset
+            }
+            else
+            {
+                switch (automapViewMode)
+                {
+                    case AutomapViewMode.View2D: default:
+                        restoreOldCameraTransformViewFromTop();
+                        break;
+                    case AutomapViewMode.View3D:
+                        restoreOldCameraTransformView3D();
+                        break;
+                }
+            }
 
             // and update the automap view
             updateAutomapView();
@@ -305,11 +337,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             daggerfallAutomap.IsOpenAutomap = false; // signal DaggerfallAutomap script that automap was closed
 
-            // destroy the other gameobjects as well (especially the camera) so they don't use system resources
-            if (gameObjectCameraAutomap != null)
-            {
-                UnityEngine.Object.DestroyImmediate(gameObjectCameraAutomap);
-            }
+            // destroy the other gameobjects as well so they don't use system resources
 
             if (renderTextureAutomap != null)
             {
@@ -589,40 +617,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 compass.Scale = scale;
 
                 oldPositionNativePanel = NativePanel.Rectangle;
-            }
-        }
-
-        /// <summary>
-        /// creates the automap camera if not present and sets camera default settings, registers camera to compass
-        /// </summary>
-        private void createAutomapCamera()
-        {
-            if (!cameraAutomap)
-            {
-                gameObjectCameraAutomap = new GameObject("CameraAutomap");
-                cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
-                cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
-                cameraAutomap.cullingMask = 1 << daggerfallAutomap.LayerAutomap;
-                cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
-                cameraAutomap.nearClipPlane = 0.7f;
-                cameraAutomap.farClipPlane = 5000.0f;
-
-                switch (automapViewMode)
-                {
-                    case AutomapViewMode.View2D: default:
-                        cameraAutomap.fieldOfView = fieldOfViewCameraMode2D;
-                        break;
-                    case AutomapViewMode.View3D:
-                        cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
-                        break;
-                }
-
-                gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
-
-                if (compass != null)
-                {
-                    compass.CompassCamera = cameraAutomap;
-                }                        
             }
         }
 

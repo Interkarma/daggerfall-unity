@@ -87,6 +87,9 @@ namespace DaggerfallWorkshop.Game
 
         //String oldGeometryName = "";
 
+        GameObject gameObjectCameraAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
+        Camera cameraAutomap = null; // camera for automap camera
+
         GameObject gameObjectInteriorLightRig = null; // reference to instance of GameObject called "InteriorLightRig" - this will be used to deactivate lights of interior geometry inside GameObject "Interior"
         GameObject gameobjectAutomapKeyLight = null; // instead this script will use its own key light to lighten the level geometry used for automap
         GameObject gameobjectAutomapFillLight = null; // and fill light
@@ -99,6 +102,12 @@ namespace DaggerfallWorkshop.Game
         Vector3 rotationPivotAxisPosition; // position of the rotation pivot axis (set via Property RotationPivotAxisPosition used by DaggerfallAutomapWindow script to set value)
 
         bool isOpenAutomap = false; // flag that indicates if automap window is open (set via Property IsOpenAutomap triggered by DaggerfallAutomapWindow script)
+
+        // flag that indicates if external script should reset automap settings (set via Property ResetAutomapSettingsFromExternalScript checked and erased by DaggerfallAutomapWindow script)
+        // this might look weirds - why not just notify the DaggerfallAutomapWindow class you may ask... - I wanted to make DaggerfallAutomap inaware and independent of the actual GUI implementation
+        // so communication will always be only from DaggerfallAutomapWindow to DaggerfallAutomap class - so into other direction it works in that way that DaggerfallAutomap will pull
+        // from DaggerfallAutomapWindow via flags - this is why this flag and its Property ResetAutomapSettingsFromExternalScript exist
+        bool resetAutomapSettingsFromExternalScript = false;
 
         GameObject gameobjectBeacons = null; // collector GameObject to hold beacons
         GameObject gameobjectPlayerMarkerArrow = null; // GameObject which will hold player marker arrow
@@ -119,6 +128,23 @@ namespace DaggerfallWorkshop.Game
         public int LayerAutomap
         {
             get { return (layerAutomap); }
+        }
+
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to get automap camera
+        /// </summary>
+        public Camera CameraAutomap
+        {
+            get { return (cameraAutomap); }
+        }
+
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to check if it should reset automap settings (and if it does it will erase flag)
+        /// </summary>
+        public bool ResetAutomapSettingsFromExternalScript
+        {
+            get { return (resetAutomapSettingsFromExternalScript); }
+            set { resetAutomapSettingsFromExternalScript = value; }
         }
 
         /// <summary>
@@ -168,6 +194,9 @@ namespace DaggerfallWorkshop.Game
                 gameObjectInteriorLightRig.SetActive(false);
             }
 
+            // create camera (if not present) that will render automap level geometry
+            createAutomapCamera();
+
             // create lights that will light automap level geometry
             createLightsForAutomapGeometry();
 
@@ -198,6 +227,12 @@ namespace DaggerfallWorkshop.Game
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapFillLight);
                 UnityEngine.Object.DestroyImmediate(gameobjectAutomapBackLight);
+            }
+
+            // destroy the camera so it does not use system resources
+            if (gameObjectCameraAutomap != null)
+            {
+                UnityEngine.Object.DestroyImmediate(gameObjectCameraAutomap);
             }
         }
 
@@ -819,6 +854,24 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// creates the automap camera if not present and sets camera default settings, registers camera to compass
+        /// </summary>
+        private void createAutomapCamera()
+        {
+            if (!cameraAutomap)
+            {
+                gameObjectCameraAutomap = new GameObject("CameraAutomap");
+                cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
+                cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
+                cameraAutomap.cullingMask = 1 << layerAutomap;
+                cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
+                cameraAutomap.nearClipPlane = 0.7f;
+                cameraAutomap.farClipPlane = 5000.0f;
+                gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
+            }
+        }
+
+        /// <summary>
         /// creates (if not present) automap lights that light the automap level geometry
         /// </summary>
         private void createLightsForAutomapGeometry()
@@ -1098,12 +1151,14 @@ namespace DaggerfallWorkshop.Game
         {
             createIndoorGeometryForAutomap(args);
             restoreStateAutomapInterior(true);
+            resetAutomapSettingsFromExternalScript = true;
         }
 
         private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
         {
             createDungeonGeometryForAutomap();
             restoreStateAutomapDungeon(true);
+            resetAutomapSettingsFromExternalScript = true;
         }
 
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
