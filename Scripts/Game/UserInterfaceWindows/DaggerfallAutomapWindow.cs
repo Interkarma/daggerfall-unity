@@ -60,11 +60,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
 
-        GameObject gameObjectInteriorLightRig = null; // reference to instance of GameObject called "InteriorLightRig" - this will be used to deactivate lights of interior geometry inside GameObject "Interior"
-        GameObject gameobjectAutomapKeyLight = null; // instead this script will use its own key light to lighten the level geometry used for automap
-        GameObject gameobjectAutomapFillLight = null; // and fill light
-        GameObject gameobjectAutomapBackLight = null; // and back light
-
         public enum AutomapViewMode { View2D = 0, View3D = 1};
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
 
@@ -285,16 +280,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             
             daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
 
-            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
-            {
-                // disable interior lights - disabling instead of setting lights' culling mask - since only a small number of lights can be ignored by layer (got a warning when I tried)
-                gameObjectInteriorLightRig = GameObject.Find("InteriorLightRig");
-                gameObjectInteriorLightRig.SetActive(false);
-            }
-
-            // create lights that will light automap level geometry
-            createLightsForAutomapGeometry();
-
             // create camera (if not present) that will render automap level geometry
             createAutomapCamera();
 
@@ -319,19 +304,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             daggerfallAutomap.IsOpenAutomap = false; // signal DaggerfallAutomap script that automap was closed
-
-            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
-            {
-                // enable interior lights
-                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
-                {
-                    gameObjectInteriorLightRig.SetActive(true);
-                }
-                // and get rid of lights used to light the automap level geometry
-                UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
-                UnityEngine.Object.DestroyImmediate(gameobjectAutomapFillLight);
-                UnityEngine.Object.DestroyImmediate(gameobjectAutomapBackLight);
-            }
 
             // destroy the other gameobjects as well (especially the camera) so they don't use system resources
             if (gameObjectCameraAutomap != null)
@@ -651,61 +623,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     compass.CompassCamera = cameraAutomap;
                 }                        
-            }
-        }
-
-        /// <summary>
-        /// creates (if not present) automap lights that light the automap level geometry
-        /// </summary>
-        private void createLightsForAutomapGeometry()
-        {
-            if (!gameobjectAutomapKeyLight)
-            {
-                gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
-                gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
-                Light keyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
-                keyLight.type = LightType.Directional;
-                //keyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
-                gameobjectAutomapKeyLight.transform.SetParent(gameobjectAutomap.transform);
-            }
-
-            if (!gameobjectAutomapFillLight)
-            {
-                gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
-                gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
-                Light fillLight = gameobjectAutomapFillLight.AddComponent<Light>();
-                fillLight.type = LightType.Directional;
-                gameobjectAutomapFillLight.transform.SetParent(gameobjectAutomap.transform);
-            }
-
-            if (!gameobjectAutomapBackLight)
-            {
-                gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
-                gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
-                Light backLight = gameobjectAutomapBackLight.AddComponent<Light>();
-                backLight.type = LightType.Directional;
-                gameobjectAutomapBackLight.transform.SetParent(gameobjectAutomap.transform);
-            }
-
-            if (GameManager.Instance.IsPlayerInsideBuilding)
-            {
-                Light keyLight = gameobjectAutomapKeyLight.GetComponent<Light>();
-                Light fillLight = gameobjectAutomapFillLight.GetComponent<Light>();
-                Light backLight = gameobjectAutomapBackLight.GetComponent<Light>();
-
-                keyLight.intensity = 1.0f;
-                fillLight.intensity = 0.6f;
-                backLight.intensity = 0.2f;
-            }
-            else if  ((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsidePalace))
-            {
-                Light keyLight = gameobjectAutomapKeyLight.GetComponent<Light>();
-                Light fillLight = gameobjectAutomapFillLight.GetComponent<Light>();
-                Light backLight = gameobjectAutomapBackLight.GetComponent<Light>();
-
-                keyLight.intensity = 0.5f;
-                fillLight.intensity = 0.5f;
-                backLight.intensity = 0.5f;
             }
         }
 

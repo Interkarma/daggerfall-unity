@@ -87,6 +87,11 @@ namespace DaggerfallWorkshop.Game
 
         //String oldGeometryName = "";
 
+        GameObject gameObjectInteriorLightRig = null; // reference to instance of GameObject called "InteriorLightRig" - this will be used to deactivate lights of interior geometry inside GameObject "Interior"
+        GameObject gameobjectAutomapKeyLight = null; // instead this script will use its own key light to lighten the level geometry used for automap
+        GameObject gameobjectAutomapFillLight = null; // and fill light
+        GameObject gameobjectAutomapBackLight = null; // and back light
+
         GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
         float slicingBiasY; // y-bias from player y-position of geometry slice plane (set via Property SlicingBiasY used by DaggerfallAutomapWindow script to set value)
@@ -156,6 +161,16 @@ namespace DaggerfallWorkshop.Game
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
+            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
+            {
+                // disable interior lights - disabling instead of setting lights' culling mask - since only a small number of lights can be ignored by layer (got a warning when I tried)
+                gameObjectInteriorLightRig = GameObject.Find("InteriorLightRig");
+                gameObjectInteriorLightRig.SetActive(false);
+            }
+
+            // create lights that will light automap level geometry
+            createLightsForAutomapGeometry();
+
             gameobjectBeaconPlayerPosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
 
             updateSlicingPositionY();
@@ -170,7 +185,20 @@ namespace DaggerfallWorkshop.Game
             // this will not be enough if we will eventually allow gui windows to be opened while exploring the world
             // then it will be necessary to either only disable the colliders on the automap level geometry or
             // make player collision ignore colliders of objects in automap layer - I would clearly prefer this option
-            gameobjectGeometry.SetActive(false); // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry            
+            gameobjectGeometry.SetActive(false); // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
+
+            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
+            {
+                // enable interior lights
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
+                {
+                    gameObjectInteriorLightRig.SetActive(true);
+                }
+                // and get rid of lights used to light the automap level geometry
+                UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
+                UnityEngine.Object.DestroyImmediate(gameobjectAutomapFillLight);
+                UnityEngine.Object.DestroyImmediate(gameobjectAutomapBackLight);
+            }
         }
 
         /// <summary>
@@ -788,6 +816,61 @@ namespace DaggerfallWorkshop.Game
             injectMeshAndMaterialProperties();
 
             //oldGeometryName = newGeometryName;
+        }
+
+        /// <summary>
+        /// creates (if not present) automap lights that light the automap level geometry
+        /// </summary>
+        private void createLightsForAutomapGeometry()
+        {
+            if (!gameobjectAutomapKeyLight)
+            {
+                gameobjectAutomapKeyLight = new GameObject("AutomapKeyLight");
+                gameobjectAutomapKeyLight.transform.rotation = Quaternion.Euler(50.0f, 270.0f, 0.0f);
+                Light keyLight = gameobjectAutomapKeyLight.AddComponent<Light>();
+                keyLight.type = LightType.Directional;
+                //keyLight.cullingMask = 1 << layerAutomap; // issues warning "Too many layers used to exclude objects from lighting. Up to 4 layers can be used to exclude lights"
+                gameobjectAutomapKeyLight.transform.SetParent(gameobjectAutomap.transform);
+            }
+
+            if (!gameobjectAutomapFillLight)
+            {
+                gameobjectAutomapFillLight = new GameObject("AutomapFillLight");
+                gameobjectAutomapFillLight.transform.rotation = Quaternion.Euler(50.0f, 126.0f, 0.0f);
+                Light fillLight = gameobjectAutomapFillLight.AddComponent<Light>();
+                fillLight.type = LightType.Directional;
+                gameobjectAutomapFillLight.transform.SetParent(gameobjectAutomap.transform);
+            }
+
+            if (!gameobjectAutomapBackLight)
+            {
+                gameobjectAutomapBackLight = new GameObject("AutomapBackLight");
+                gameobjectAutomapBackLight.transform.rotation = Quaternion.Euler(50.0f, 0.0f, 0.0f);
+                Light backLight = gameobjectAutomapBackLight.AddComponent<Light>();
+                backLight.type = LightType.Directional;
+                gameobjectAutomapBackLight.transform.SetParent(gameobjectAutomap.transform);
+            }
+
+            if (GameManager.Instance.IsPlayerInsideBuilding)
+            {
+                Light keyLight = gameobjectAutomapKeyLight.GetComponent<Light>();
+                Light fillLight = gameobjectAutomapFillLight.GetComponent<Light>();
+                Light backLight = gameobjectAutomapBackLight.GetComponent<Light>();
+
+                keyLight.intensity = 1.0f;
+                fillLight.intensity = 0.6f;
+                backLight.intensity = 0.2f;
+            }
+            else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
+            {
+                Light keyLight = gameobjectAutomapKeyLight.GetComponent<Light>();
+                Light fillLight = gameobjectAutomapFillLight.GetComponent<Light>();
+                Light backLight = gameobjectAutomapBackLight.GetComponent<Light>();
+
+                keyLight.intensity = 0.5f;
+                fillLight.intensity = 0.5f;
+                backLight.intensity = 0.5f;
+            }
         }
 
         /// <summary>
