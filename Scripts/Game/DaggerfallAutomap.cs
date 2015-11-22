@@ -864,7 +864,7 @@ namespace DaggerfallWorkshop.Game
                 cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
                 cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
                 cameraAutomap.cullingMask = 1 << layerAutomap;
-                cameraAutomap.renderingPath = RenderingPath.DeferredLighting;
+                cameraAutomap.renderingPath = Camera.main.renderingPath;
                 cameraAutomap.nearClipPlane = 0.7f;
                 cameraAutomap.farClipPlane = 5000.0f;
                 gameObjectCameraAutomap.transform.SetParent(gameobjectAutomap.transform);
@@ -1151,14 +1151,14 @@ namespace DaggerfallWorkshop.Game
         {
             createIndoorGeometryForAutomap(args);
             restoreStateAutomapInterior(true);
-            resetAutomapSettingsFromExternalScript = true;
+            resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
         }
 
         private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
         {
             createDungeonGeometryForAutomap();
             restoreStateAutomapDungeon(true);
-            resetAutomapSettingsFromExternalScript = true;
+            resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
         }
 
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)

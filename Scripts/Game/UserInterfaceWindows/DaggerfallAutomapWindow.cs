@@ -307,13 +307,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 compass.CompassCamera = cameraAutomap;
             }
-            
+
+            resetRotationPivotAxisPosition(); // reset rotation pivot axis whenever automap window is opened
+
             if (daggerfallAutomap.ResetAutomapSettingsFromExternalScript == true)
             {
                 // reset values to default
                 daggerfallAutomap.SlicingBiasY = defaultSlicingBiasY;
-                resetCameraPosition();
-                resetRotationPivotAxisPosition();
+                resetCameraPosition();                
                 fieldOfViewCameraMode3D = defaultFieldOfViewCameraMode3D;
                 daggerfallAutomap.ResetAutomapSettingsFromExternalScript = false; // indicate the settings were reset
             }
