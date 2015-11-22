@@ -10,6 +10,7 @@
 //
 
 //#define DEBUG_RAYCASTS
+//#define DEBUG_SHOW_RAYCAST_TIMES
 
 using UnityEngine;
 using System;
@@ -74,7 +75,10 @@ namespace DaggerfallWorkshop.Game
 
         #region Fields
 
-        const float scanRateGeometryDiscoveryInHertz = 10.0f; // n times per second the discovery of new geometry/meshes is checked
+        const float raycastDistanceDown = 3.0f; // 3 meters should be enough (note: flying to high will result in geometry not being revealed by this raycast
+        const float raycastDistanceViewDirection = 30.0f; // don't want to make it too easy to discover big halls - although it shouldn't be to small as well
+
+        const float scanRateGeometryDiscoveryInHertz = 5.0f; // n times per second the discovery of new geometry/meshes is checked
 
         GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
 
@@ -263,28 +267,94 @@ namespace DaggerfallWorkshop.Game
             Vector3 offsetSecondProtectionRaycast ///< offset for second protection raycast (is used to prevent discovery of geometry through gaps in the level geometry)
             )
         {
-            RaycastHit hit1, hit2, hit3, hitTrueLevelGeometry1, hitTrueLevelGeometry2, hitTrueLevelGeometry3;
+            RaycastHit hit1, hit2, hit3;
+            RaycastHit hitTrueLevelGeometry1, hitTrueLevelGeometry2, hitTrueLevelGeometry3;
 
             Vector3 offsetThirdProtectionRaycast = Vector3.Cross(Vector3.Normalize(rayDirection), Vector3.Normalize(offsetSecondProtectionRaycast)) * Vector3.Magnitude(offsetSecondProtectionRaycast);
 
-            // move GameObject "PlayerAdvanced" temporarily to different layer than "Default" so the raycast do not hit the colliders
-            // did not find a better solution for this problem (scanWithRaycastInDirectionAndUpdateMeshesAndMaterials() does raycasts
-            // both on geometry in layerAutomap as well as geometry in layer "default" - this mechanism is needed to detect doors
-            // and not reveal geometry behind it (automap level geometry does not have door meshes...))
-            gameObjectPlayerAdvanced.layer = layerAutomap; 
-
-            // do raycast and protection raycast on main level geometry (use default layer as layer mask)
-            bool didHitTrueLevelGeometry1 = Physics.Raycast(rayStartPos, rayDirection, out hitTrueLevelGeometry1, rayDistance, 1 << 0);
-            bool didHitTrueLevelGeometry2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hitTrueLevelGeometry2, rayDistance, 1 << 0);
-            bool didHitTrueLevelGeometry3 = Physics.Raycast(rayStartPos + offsetThirdProtectionRaycast, rayDirection, out hitTrueLevelGeometry3, rayDistance, 1 << 0);
 
 #if DEBUG_RAYCASTS
             Debug.DrawRay(rayStartPos, rayDirection, Color.magenta, 1.0f);
             Debug.DrawRay(rayStartPos + offsetSecondProtectionRaycast, rayDirection, Color.yellow, 1.0f);
             Debug.DrawRay(rayStartPos + offsetThirdProtectionRaycast, rayDirection, Color.cyan, 1.0f);
 #endif
-            // move GameObject "PlayerAdvanced" back to Default layer
-            gameObjectPlayerAdvanced.layer = LayerMask.NameToLayer("Default");
+
+            // old raycast method with moving GameObject "PlayerAdvanced" temporarily to layer automap - obsolete due to better approach with RaycastAll() method
+//#if DEBUG_SHOW_RAYCAST_TIMES
+//            // Start timing
+//            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+//            long startTime = stopwatch.ElapsedMilliseconds;
+//#endif
+
+//            // move GameObject "PlayerAdvanced" temporarily to different layer than "Default" so the raycast do not hit the colliders
+//            // did not find a better solution for this problem (scanWithRaycastInDirectionAndUpdateMeshesAndMaterials() does raycasts
+//            // both on geometry in layerAutomap as well as geometry in layer "default" - this mechanism is needed to detect doors
+//            // and not reveal geometry behind it (automap level geometry does not have door meshes...))
+//            gameObjectPlayerAdvanced.layer = layerAutomap; 
+
+//            // do raycast and protection raycast on main level geometry (use default layer as layer mask)
+//            bool didHitTrueLevelGeometry1 = Physics.Raycast(rayStartPos, rayDirection, out hitTrueLevelGeometry1, rayDistance, 1 << 0);
+//            bool didHitTrueLevelGeometry2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hitTrueLevelGeometry2, rayDistance, 1 << 0);
+//            bool didHitTrueLevelGeometry3 = Physics.Raycast(rayStartPos + offsetThirdProtectionRaycast, rayDirection, out hitTrueLevelGeometry3, rayDistance, 1 << 0);
+
+//            // move GameObject "PlayerAdvanced" back to Default layer
+//            gameObjectPlayerAdvanced.layer = LayerMask.NameToLayer("Default");
+
+//#if DEBUG_SHOW_RAYCAST_TIMES
+//            // Show timer
+//            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+//            DaggerfallUnity.LogMessage(string.Format("Time to do raycast to layer \"Default\": {0}ms", totalTime), true);
+            //#endif
+
+#if DEBUG_SHOW_RAYCAST_TIMES
+            // Start timing
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
+#endif
+
+            RaycastHit[] hitsTrueLevelGeometry1 = Physics.RaycastAll(rayStartPos, rayDirection, rayDistance, 1 << 0);
+            RaycastHit[] hitsTrueLevelGeometry2 = Physics.RaycastAll(rayStartPos + offsetSecondProtectionRaycast, rayDirection, rayDistance, 1 << 0);
+            RaycastHit[] hitsTrueLevelGeometry3 = Physics.RaycastAll(rayStartPos + offsetThirdProtectionRaycast, rayDirection, rayDistance, 1 << 0);
+            // do raycast and protection raycast on main level geometry (use default layer as layer mask)
+
+            hitTrueLevelGeometry1 = new RaycastHit();
+            float nearestDistance = float.MaxValue;
+            foreach (RaycastHit hit in hitsTrueLevelGeometry1)
+            {
+                if ((hit.collider.gameObject.name != "PlayerAdvanced") && (hit.distance < nearestDistance))
+                {
+                    hitTrueLevelGeometry1 = hit;
+                    nearestDistance = hit.distance;
+                }
+            }
+
+            hitTrueLevelGeometry2 = new RaycastHit();
+            nearestDistance = float.MaxValue;
+            foreach (RaycastHit hit in hitsTrueLevelGeometry2)
+            {
+                if ((hit.collider.gameObject.name != "PlayerAdvanced") && (hit.distance < nearestDistance))
+                {
+                    hitTrueLevelGeometry2 = hit;
+                    nearestDistance = hit.distance;
+                }
+            }
+
+            hitTrueLevelGeometry3 = new RaycastHit();
+            nearestDistance = float.MaxValue;
+            foreach (RaycastHit hit in hitsTrueLevelGeometry3)
+            {
+                if ((hit.collider.gameObject.name != "PlayerAdvanced") && (hit.distance < nearestDistance))
+                {
+                    hitTrueLevelGeometry3 = hit;
+                    nearestDistance = hit.distance;
+                }
+            }
+
+#if DEBUG_SHOW_RAYCAST_TIMES
+            // Show timer
+            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            DaggerfallUnity.LogMessage(string.Format("Time to do RaycastAll: {0}ms", totalTime), true);
+#endif
 
             // main raycast (on Colliders in layer "Automap")
             bool didHit1 = Physics.Raycast(rayStartPos, rayDirection, out hit1, rayDistance, 1 << layerAutomap);
@@ -294,22 +364,30 @@ namespace DaggerfallWorkshop.Game
             bool didHit3 = Physics.Raycast(rayStartPos + offsetThirdProtectionRaycast, rayDirection, out hit3, rayDistance, 1 << layerAutomap);
 
 #if DEBUG_RAYCASTS
-            Debug.Log(String.Format("hitTG1: {0}, hitTG2: {1}, hitTG3: {2}, hit1: {3}, hit2: {4}, hit3: {5}", didHitTrueLevelGeometry1, didHitTrueLevelGeometry2, didHitTrueLevelGeometry3, didHit1, didHit2, didHit3));
-            if ((didHitTrueLevelGeometry1) && (didHitTrueLevelGeometry2) && (didHit1) && (didHit2)) {
-                Debug.Log(String.Format("distanceTG1: {0}, distanceTG2: {1}, distanceTG3: {2}, distance1: {3}, distance2: {4}, distance3: {4}", hitTrueLevelGeometry1.distance, hitTrueLevelGeometry2.distance, hitTrueLevelGeometry2.distance, hit1.distance, hit2.distance, hit3.distance));
-                Debug.Log(String.Format("collider of hit1: {0}, collider of hit2: {1}, collider of hit3: {2}", hitTrueLevelGeometry1.collider.name, hitTrueLevelGeometry2.collider.name, hitTrueLevelGeometry3.collider.name));
-            }
+            //Debug.Log(String.Format("hitTG1: {0}, hitTG2: {1}, hitTG3: {2}, hit1: {3}, hit2: {4}, hit3: {5}", didHitTrueLevelGeometry1, didHitTrueLevelGeometry2, didHitTrueLevelGeometry3, didHit1, didHit2, didHit3));
+            //if ((didHitTrueLevelGeometry1) && (didHitTrueLevelGeometry2) && (didHit1) && (didHit2))
+            //{
+            //    Debug.Log(String.Format("distanceTG1: {0}, distanceTG2: {1}, distanceTG3: {2}, distance1: {3}, distance2: {4}, distance3: {4}", hitTrueLevelGeometry1.distance, hitTrueLevelGeometry2.distance, hitTrueLevelGeometry2.distance, hit1.distance, hit2.distance, hit3.distance));
+            //    Debug.Log(String.Format("collider of TGhit1: {0}, collider of TGhit2: {1}, collider of TGhit3: {2}, collider of hit1: {3}, collider of hit2: {4}, collider of hit3: {5}", hitTrueLevelGeometry1.collider.name, hitTrueLevelGeometry2.collider.name, hitTrueLevelGeometry3.collider.name, hit1.collider.name, hit2.collider.name, hit3.collider.name));
+            //}
+
+            Debug.Log(String.Format("hit1: {3}, hit1: {4}, hit1: {5}", didHit1, didHit2, didHit3));
+            if ((didHit1) && (didHit2) && (didHit3))
+            {
+                Debug.Log(String.Format("distanceTG1: {0}, distanceTG2: {1}, distanceTG3: {2}, distance1: {3}, distance2: {4}, distance3: {4}", hitTrueLevelGeometry1.distance, hitTrueLevelGeometry2.distance, hitTrueLevelGeometry3.distance, hit1.distance, hit2.distance, hit3.distance));
+                Debug.Log(String.Format("collider of TGhit1: {0}, collider of TGhit2: {1}, collider of TGhit3: {2}, collider of hit1: {3}, collider of hit2: {4}, collider of hit3: {5}", hitTrueLevelGeometry1.collider.name, hitTrueLevelGeometry2.collider.name, hitTrueLevelGeometry3.collider.name, hit1.collider.name, hit2.collider.name, hit3.collider.name));
+            }            
 #endif
 
             if (
                 didHit1 &&
                 didHit2 &&
                 didHit3 &&
-                hit1.collider == hit2.collider &&  // hits must have same collider (TODO: check if there are no problems with small geometry)
-                hit1.collider == hit3.collider &&  // hits must have same collider (TODO: check if there are no problems with small geometry)
-                didHitTrueLevelGeometry1 &&
-                didHitTrueLevelGeometry2 &&
-                didHitTrueLevelGeometry3 &&
+                hit1.collider == hit2.collider &&  // hits must have same collider
+                hit1.collider == hit3.collider &&  // hits must have same collider
+                //didHitTrueLevelGeometry1 &&
+                //didHitTrueLevelGeometry2 &&
+                //didHitTrueLevelGeometry3 &&
                 // hits on true geometry must have same distance as hits on automap geometry - otherwise there is a obstacle, e.g. a door
                 Math.Abs(hitTrueLevelGeometry1.distance - hit1.distance) < 0.01f &&
                 Math.Abs(hitTrueLevelGeometry2.distance - hit2.distance) < 0.01f &&
@@ -348,7 +426,7 @@ namespace DaggerfallWorkshop.Game
                     // reveal geometry right below player - raycast down from player head position
                     Vector3 rayStartPos = gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition;
                     Vector3 rayDirection = Vector3.down;
-                    float rayDistance = 3.0f; // 3 meters should be enough (note: flying to high will result in geometry not being revealed by this raycast
+                    float rayDistance = raycastDistanceDown;
                     Vector3 offsetSecondProtectionRaycast = Vector3.left * 0.1f; // will be used for protection raycast with slight offset of 10cm (protection against hole in daggerfall geometry prevention)            
                     scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
                     
@@ -356,7 +434,7 @@ namespace DaggerfallWorkshop.Game
                     rayDirection = Camera.main.transform.rotation * Vector3.forward;
                     // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
                     offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
-                    rayDistance = 25.0f;
+                    rayDistance = raycastDistanceViewDirection;
                     scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
 
                     // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
