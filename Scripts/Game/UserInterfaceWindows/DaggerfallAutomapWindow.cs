@@ -48,6 +48,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float minFieldOfViewCameraMode3D = 15.0f; // minimum value of camera field of view that can be adjusted in 3D mode
         const float maxFieldOfViewCameraMode3D = 65.0f; // maximum value of camera field of view that can be adjusted in 3D mode
 
+        const float defaultSlicingBiasY = 0.2f;
+
         const float cameraHeightViewFromTop = 90.0f; // initial camera height in 2D mode
         const float cameraHeightView3D = 8.0f; // initial camera height in 3D mode
         const float cameraBackwardDistance = 20.0f; // initial camera distance "backwards" in 3D mode
@@ -309,7 +311,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (daggerfallAutomap.ResetAutomapSettingsFromExternalScript == true)
             {
                 // reset values to default
-                daggerfallAutomap.SlicingBiasY = 0.2f;
+                daggerfallAutomap.SlicingBiasY = defaultSlicingBiasY;
                 resetCameraPosition();
                 resetRotationPivotAxisPosition();
                 fieldOfViewCameraMode3D = defaultFieldOfViewCameraMode3D;
@@ -379,7 +381,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
 
-                float dragSpeedCompensated = dragSpeed * Vector3.Magnitude(Camera.main.transform.position + getRotationPivotAxisPosition() - cameraAutomap.transform.position);
+                float dragSpeedCompensated = dragSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
                 Vector2 bias = mousePosition - oldMousePosition;
                 Vector3 translation = -cameraAutomap.transform.right * dragSpeedCompensated * bias.x + cameraAutomap.transform.up * dragSpeedCompensated * bias.y;
                 cameraAutomap.transform.position += translation;
