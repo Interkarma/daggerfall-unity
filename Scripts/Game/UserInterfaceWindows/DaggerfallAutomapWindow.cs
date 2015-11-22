@@ -61,6 +61,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Camera cameraAutomap = null; // camera for automap camera
 
+        GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
+
         public enum AutomapViewMode { View2D = 0, View3D = 1};
         AutomapViewMode automapViewMode = AutomapViewMode.View2D;
 
@@ -134,7 +136,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (isSetup) // don't setup twice!
                 return;
 
-            initClassResources(); // initialize gameobjectAutomap, daggerfallAutomap and layerAutomap
+            initGlobalResources(); // initialize gameobjectAutomap, daggerfallAutomap and layerAutomap
 
             // Load native texture
             imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, nativeImgName), FileUsage.UseMemory, false);
@@ -273,7 +275,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public override void OnPush()
         {
-            initClassResources(); // initialize gameobjectAutomap, daggerfallAutomap and layerAutomap
+            initGlobalResources(); // initialize gameobjectAutomap, daggerfallAutomap and layerAutomap
 
             if (!isSetup) // if Setup() has not run, run it now
                 Setup();
@@ -303,7 +305,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 compass.CompassCamera = cameraAutomap;
             }
-
+            
             if (daggerfallAutomap.ResetAutomapSettingsFromExternalScript == true)
             {
                 // reset values to default
@@ -335,6 +337,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public override void OnPop()
         {
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                default:
+                    saveCameraTransformViewFromTop();
+                    break;
+                case AutomapViewMode.View3D:
+                    saveCameraTransformView3D();
+                    break;
+            }
+
             daggerfallAutomap.IsOpenAutomap = false; // signal DaggerfallAutomap script that automap was closed
 
             // destroy the other gameobjects as well so they don't use system resources
@@ -520,7 +533,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         rotationPivotAxisPosition = Vector3.zero;
                         break;
                 }
-                cameraAutomap.transform.RotateAround(Camera.main.transform.position + rotationPivotAxisPosition, -Vector3.up, -rotateSpeed);
+                cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotateSpeed);
                 updateAutomapView();
             }
 
@@ -539,7 +552,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         rotationPivotAxisPosition = Vector3.zero;
                         break;
                 }
-                cameraAutomap.transform.RotateAround(Camera.main.transform.position + rotationPivotAxisPosition, -Vector3.up, +rotateSpeed);
+                cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, +rotateSpeed);
                 updateAutomapView();
             }
 
@@ -573,7 +586,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// tests for availability and initializes class resources like GameObject for automap, DaggerfallAutomap class and layerAutomap
         /// </summary>
-        private void initClassResources()
+        private void initGlobalResources()
         {
             if (!gameobjectAutomap)
             {
@@ -591,6 +604,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     DaggerfallUnity.LogMessage("Script DafferfallAutomap is missing in GameObject \"Automap\"! GameObject \"Automap\" must have script Game/DaggerfallAutomap attached!\"", true);
                 }
+            }
+
+            gameObjectPlayerAdvanced = GameObject.Find("PlayerAdvanced");
+            if (!gameObjectPlayerAdvanced)
+            {
+                DaggerfallUnity.LogMessage("GameObject \"PlayerAdvanced\" not found! in script DaggerfallAutomap (in function Awake())", true);
+                if (Application.isEditor)
+                    Debug.Break();
+                else
+                    Application.Quit();
             }
         }
 
@@ -730,7 +753,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void resetRotationPivotAxisPositionViewFromTop()
         {
-            rotationPivotAxisPositionViewFromTop = Vector3.zero;
+            rotationPivotAxisPositionViewFromTop = gameObjectPlayerAdvanced.transform.position;
             daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
         }
 
@@ -739,7 +762,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void resetRotationPivotAxisPositionView3D()
         {
-            rotationPivotAxisPositionView3D = Vector3.zero;
+            rotationPivotAxisPositionView3D = gameObjectPlayerAdvanced.transform.position;
             daggerfallAutomap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
         }
 
@@ -789,7 +812,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
                     break;
                 default:
-                    rotationPivotAxisPosition = Vector3.zero;
+                    rotationPivotAxisPosition = gameObjectPlayerAdvanced.transform.position;
                     break;
             }
             return (rotationPivotAxisPosition);

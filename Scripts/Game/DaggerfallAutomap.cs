@@ -312,7 +312,7 @@ namespace DaggerfallWorkshop.Game
                 updateSlicingPositionY();
 
                 // update position of rotation pivot axis
-                gameobjectBeaconRotationPivotAxis.transform.position = gameObjectPlayerAdvanced.transform.position + rotationPivotAxisPosition;
+                gameobjectBeaconRotationPivotAxis.transform.position = rotationPivotAxisPosition;
             }
         }
 
@@ -663,7 +663,7 @@ namespace DaggerfallWorkshop.Game
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(0.0f, 0.0f, 1.0f);
                 gameobjectBeaconRotationPivotAxis.GetComponent<MeshRenderer>().material = material;
-            }            
+            }
             gameobjectBeaconRotationPivotAxis.transform.position = rotationPivotAxisPosition;
 
             if (!gameobjectBeaconEntrancePosition)
