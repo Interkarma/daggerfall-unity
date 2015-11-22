@@ -266,6 +266,8 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUnity.LogMessage("Did not find Layer with name \"Automap\"! Defaulting to Layer 10\nIt is prefered that Layer \"Automap\" is set in Unity Editor under \"Edit/Project Settings/Tags and Layers!\"", true);
                 layerAutomap = 10;
             }
+
+            Camera.main.cullingMask = Camera.main.cullingMask & ~((1 << layerAutomap)); // don't render automap layer with main camera ("Camera.main.cullingMask |= 1 << layerAutomap;" did not work - don't know why)
         }
 
         void OnDestroy()
@@ -306,7 +308,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         void Update()
-        {
+        {            
             if (isOpenAutomap) // only do stuff if automap is indeed open
             {
                 updateSlicingPositionY();
