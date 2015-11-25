@@ -72,8 +72,6 @@ Shader "Daggerfall/Automap" {
 	FallBack "Standard"
 }
 
-
-
 /*
 Shader "Daggerfall/Automap"
 {
@@ -195,25 +193,33 @@ Shader "Daggerfall/Automap"
  					float I = exp2(-4.0*d*d);
  				
  					//return lerp(_Color, _WireColor, I);				
-					if (I<0.1f)
+					//if (I<0.1f)
+					//{
+					//	clip( -1.0 );
+					//	return float4( 1.0, 0.0, 0.0, 1.0 );
+					//}
+					//else
 					{
-						clip( -1.0 );
-						return float4( 1.0, 0.0, 0.0, 1.0 );
+		#if defined(RENDER_IN_GRAYSCALE)
+		//				return float4( 0.25, 0.25, 0.25, 1.0 );
+		#else
+			//			return float4( 0.9, 0.9, 0.7, 1.0 );
+		#endif
 					}
-					else
-					{
-						return float4( 0.9, 0.9, 0.7, 1.0 ); // outColor;
-					}
+
+					outColor.a = 0.6;
+					return outColor;
 				}
 
 				float dist = distance(IN.worldPos.y, _SclicingPositionY);
 				outColor.rgb *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
 
 				// TODO: make render in grayscale work again
-//		#if defined(RENDER_IN_GRAYSCALE)
-//				half3 color = outColor;
-//				outColor = dot(color.rgb, float3(0.3, 0.59, 0.11));		
-//		#endif
+		#if defined(RENDER_IN_GRAYSCALE)
+				half3 color = outColor;
+				float grayValue = dot(color.rgb, float3(0.3, 0.59, 0.11));
+				outColor = half4(grayValue, grayValue, grayValue, 0.7f);
+		#endif
 
 				return outColor;
 

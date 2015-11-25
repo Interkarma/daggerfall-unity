@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Fields
 
-        const float raycastDistanceDown = 3.0f; // 3 meters should be enough (note: flying to high will result in geometry not being revealed by this raycast
+        const float raycastDistanceDown = 3.0f; // 3 meters should be enough (note: flying too high will result in geometry not being revealed by this raycast
         const float raycastDistanceViewDirection = 30.0f; // don't want to make it too easy to discover big halls - although it shouldn't be to small as well
 
         const float scanRateGeometryDiscoveryInHertz = 5.0f; // n times per second the discovery of new geometry/meshes is checked
@@ -103,10 +103,10 @@ namespace DaggerfallWorkshop.Game
 
         bool isOpenAutomap = false; // flag that indicates if automap window is open (set via Property IsOpenAutomap triggered by DaggerfallAutomapWindow script)
 
-        // flag that indicates if external script should reset automap settings (set via Property ResetAutomapSettingsFromExternalScript checked and erased by DaggerfallAutomapWindow script)
+        // flag that indicates if external script should reset automap settings (set via Property ResetAutomapSettingsSignalForExternalScript checked and erased by DaggerfallAutomapWindow script)
         // this might look weirds - why not just notify the DaggerfallAutomapWindow class you may ask... - I wanted to make DaggerfallAutomap inaware and independent of the actual GUI implementation
         // so communication will always be only from DaggerfallAutomapWindow to DaggerfallAutomap class - so into other direction it works in that way that DaggerfallAutomap will pull
-        // from DaggerfallAutomapWindow via flags - this is why this flag and its Property ResetAutomapSettingsFromExternalScript exist
+        // from DaggerfallAutomapWindow via flags - this is why this flag and its Property ResetAutomapSettingsSignalForExternalScript exist
         bool resetAutomapSettingsFromExternalScript = false;
 
         GameObject gameobjectBeacons = null; // collector GameObject to hold beacons
@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// DaggerfallAutomapWindow script will use this to check if it should reset automap settings (and if it does it will erase flag)
         /// </summary>
-        public bool ResetAutomapSettingsFromExternalScript
+        public bool ResetAutomapSettingsSignalForExternalScript
         {
             get { return (resetAutomapSettingsFromExternalScript); }
             set { resetAutomapSettingsFromExternalScript = value; }
