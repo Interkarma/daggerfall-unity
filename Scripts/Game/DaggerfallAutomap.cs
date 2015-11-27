@@ -103,6 +103,16 @@ namespace DaggerfallWorkshop.Game
 
         bool isOpenAutomap = false; // flag that indicates if automap window is open (set via Property IsOpenAutomap triggered by DaggerfallAutomapWindow script)
 
+        // automap render mode is a setting that influences geometry rendered above slicing plane
+        public enum AutomapRenderMode
+        {
+            Transparent = 0,
+            Wireframe = 1,
+            Cutout = 2
+        };
+
+        AutomapRenderMode currentAutomapRenderMode = AutomapRenderMode.Transparent; // currently selected automap render mode (default value: transparent)
+
         // flag that indicates if external script should reset automap settings (set via Property ResetAutomapSettingsSignalForExternalScript checked and erased by DaggerfallAutomapWindow script)
         // this might look weirds - why not just notify the DaggerfallAutomapWindow class you may ask... - I wanted to make DaggerfallAutomap inaware and independent of the actual GUI implementation
         // so communication will always be only from DaggerfallAutomapWindow to DaggerfallAutomap class - so into other direction it works in that way that DaggerfallAutomap will pull
@@ -244,6 +254,33 @@ namespace DaggerfallWorkshop.Game
             Update();
         }
 
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to signal this script to switch to the next available automap rendering mode
+        /// </summary>
+        public void switchToNextAutomapRenderMode()
+        {
+            int numberOfAutomapRenderModes = Enum.GetNames(typeof(AutomapRenderMode)).Length;
+            currentAutomapRenderMode++;
+            if ((int)currentAutomapRenderMode > numberOfAutomapRenderModes - 1) // first mode is mode 0 -> so use numberOfAutomapRenderModes-1 for comparison
+                currentAutomapRenderMode = 0;
+            switch (currentAutomapRenderMode)
+            {
+                default:
+                case AutomapRenderMode.Transparent:
+                    Shader.DisableKeyword("AUTOMAP_RENDER_MODE_WIREFRAME");
+                    Shader.EnableKeyword("AUTOMAP_RENDER_MODE_TRANSPARENT");
+                    break;
+                case AutomapRenderMode.Wireframe:
+                    Shader.EnableKeyword("AUTOMAP_RENDER_MODE_WIREFRAME");
+                    Shader.DisableKeyword("AUTOMAP_RENDER_MODE_TRANSPARENT");
+                    break;
+                case AutomapRenderMode.Cutout:
+                    Shader.DisableKeyword("AUTOMAP_RENDER_MODE_WIREFRAME");
+                    Shader.DisableKeyword("AUTOMAP_RENDER_MODE_TRANSPARENT");
+                    break;
+            }
+        }
+
         #endregion
 
         #region Unity
@@ -303,6 +340,9 @@ namespace DaggerfallWorkshop.Game
                 else
                     Application.Quit();
             }
+
+            Shader.DisableKeyword("AUTOMAP_RENDER_MODE_WIREFRAME");
+            Shader.EnableKeyword("AUTOMAP_RENDER_MODE_TRANSPARENT");
 
             StartCoroutine(CheckForNewlyDiscoveredMeshes()); // coroutine for periodically update discovery state of automap level geometry
         }
@@ -1152,7 +1192,7 @@ namespace DaggerfallWorkshop.Game
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
         {
             createIndoorGeometryForAutomap(args);
-            restoreStateAutomapInterior(true);
+            restoreStateAutomapInterior(false);
             resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
         }
 

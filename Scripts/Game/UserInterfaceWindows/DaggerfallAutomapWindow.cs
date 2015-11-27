@@ -379,6 +379,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             resizeGUIelementsOnDemand();
 
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                daggerfallAutomap.switchToNextAutomapRenderMode();
+                updateAutomapView();
+            }
+
             if (leftMouseDownOnPanelAutomap)
             {
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);

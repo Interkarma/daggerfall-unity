@@ -8,7 +8,7 @@
 // 
 // Notes:
 //
-
+/*
 Shader "Daggerfall/Automap" {
 	// Surface Shader for Automap Geometry
 	Properties {
@@ -71,8 +71,9 @@ Shader "Daggerfall/Automap" {
 	} 
 	FallBack "Standard"
 }
+*/
 
-/*
+
 Shader "Daggerfall/Automap"
 {
 
@@ -95,13 +96,17 @@ Shader "Daggerfall/Automap"
     	{
 
 			CGPROGRAM
+
+			//#define AUTOMAP_RENDER_MODE_CUTOUT
+			//#define AUTOMAP_RENDER_MODE_WIREFRAME
+			//#define AUTOMAP_RENDER_MODE_TRANSPARENT
 			#include "UnityCG.cginc"
 			#pragma target 4.0
 			#pragma vertex vert
 			#pragma geometry geom
 			#pragma fragment frag
 			
-			#pragma multi_compile __ RENDER_IN_GRAYSCALE
+			#pragma multi_compile __ RENDER_IN_GRAYSCALE AUTOMAP_RENDER_MODE_WIREFRAME AUTOMAP_RENDER_MODE_TRANSPARENT
 			
 			half4 _Color;
 			sampler2D _MainTex;
@@ -187,38 +192,41 @@ Shader "Daggerfall/Automap"
 				outColor.a = albedo.a;
 				if (IN.worldPos.y > _SclicingPositionY)
 				{
-					//distance of frag from triangles center
-					float d = min(IN.dist.x, min(IN.dist.y, IN.dist.z));
-					//fade based on dist from center
- 					float I = exp2(-4.0*d*d);
+					#if defined(AUTOMAP_RENDER_MODE_WIREFRAME)
+						//distance of frag from triangles center
+						float d = min(IN.dist.x, min(IN.dist.y, IN.dist.z));
+						//fade based on dist from center
+ 						float I = exp2(-4.0*d*d);
  				
- 					//return lerp(_Color, _WireColor, I);				
-					//if (I<0.1f)
-					//{
-					//	clip( -1.0 );
-					//	return float4( 1.0, 0.0, 0.0, 1.0 );
-					//}
-					//else
-					{
-		#if defined(RENDER_IN_GRAYSCALE)
-		//				return float4( 0.25, 0.25, 0.25, 1.0 );
-		#else
-			//			return float4( 0.9, 0.9, 0.7, 1.0 );
-		#endif
-					}
-
-					outColor.a = 0.6;
-					return outColor;
+ 						//return lerp(_Color, _WireColor, I);				
+						if (I<0.1f)
+						{
+							clip( -1.0 );
+							outColor = float4( 1.0, 0.0, 0.0, 1.0 );
+						}
+						else
+						{
+							#if defined(RENDER_IN_GRAYSCALE)
+								outColor = float4( 0.25, 0.25, 0.25, 1.0 );
+							#else
+								outColor = float4( 0.9, 0.9, 0.7, 1.0 );
+							#endif
+						}
+					#elif defined(AUTOMAP_RENDER_MODE_TRANSPARENT)
+						outColor.a = 0.6;
+					#else //#elif defined(AUTOMAP_RENDER_MODE_CUTOUT)
+						clip( -1.0 );
+						outColor = half4( 1.0, 0.0, 0.0, 1.0 );
+					#endif					
 				}
 
 				float dist = distance(IN.worldPos.y, _SclicingPositionY);
 				outColor.rgb *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
 
-				// TODO: make render in grayscale work again
 		#if defined(RENDER_IN_GRAYSCALE)
 				half3 color = outColor;
 				float grayValue = dot(color.rgb, float3(0.3, 0.59, 0.11));
-				outColor = half4(grayValue, grayValue, grayValue, 0.7f);
+				outColor.rgb = half3(grayValue, grayValue, grayValue);
 		#endif
 
 				return outColor;
@@ -229,5 +237,5 @@ Shader "Daggerfall/Automap"
 
     	}
 	}
+	FallBack "Standard"
 }
-*/
