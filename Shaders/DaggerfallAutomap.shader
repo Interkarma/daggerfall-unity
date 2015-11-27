@@ -106,7 +106,8 @@ Shader "Daggerfall/Automap"
 			#pragma geometry geom
 			#pragma fragment frag
 			
-			#pragma multi_compile __ RENDER_IN_GRAYSCALE AUTOMAP_RENDER_MODE_WIREFRAME AUTOMAP_RENDER_MODE_TRANSPARENT
+			#pragma multi_compile __ RENDER_IN_GRAYSCALE
+			#pragma multi_compile __ AUTOMAP_RENDER_MODE_WIREFRAME AUTOMAP_RENDER_MODE_TRANSPARENT
 			
 			half4 _Color;
 			sampler2D _MainTex;
