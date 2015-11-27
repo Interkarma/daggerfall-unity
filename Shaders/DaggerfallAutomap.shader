@@ -6,7 +6,7 @@
 // Project Page:    https://github.com/Interkarma/daggerfall-unity
 // Contributors:    
 // 
-// Notes:
+// Notes: original wireframe shader source: http://scrawkblog.com/2013/03/18/wireframe-shader-for-unity/
 //
 
 Shader "Daggerfall/Automap"
