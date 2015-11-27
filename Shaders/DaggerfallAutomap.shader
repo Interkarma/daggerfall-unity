@@ -8,71 +8,6 @@
 // 
 // Notes:
 //
-/*
-Shader "Daggerfall/Automap" {
-	// Surface Shader for Automap Geometry
-	Properties {
-		_Color("Color", Color) = (1,1,1,1)
-		_MainTex("Albedo Map", 2D) = "white" {}
-		_BumpMap("Normal Map", 2D) = "bump" {}
-		_EmissionMap("Emission Map", 2D) = "white" {}
-		_EmissionColor("Emission Color", Color) = (0,0,0)
-		_PlayerPosition("player position", Vector) = (0,0,0,1)
-	}
-	SubShader {
-		Tags { "RenderType"="Opaque"}
-		LOD 200
-
-		Fog {Mode Off}
-		
-		CGPROGRAM
-		#pragma target 3.0
-		#pragma surface surf Standard keepalpha nofog
-
-		#pragma multi_compile __ RENDER_IN_GRAYSCALE
-
-		half4 _Color;
-		sampler2D _MainTex;
-		sampler2D _BumpMap;
-		sampler2D _EmissionMap;
-		half4 _EmissionColor;
-		uniform float4 _PlayerPosition;
-		uniform float _SclicingPositionY;
-
-		struct Input {
-			float2 uv_MainTex;
-			float2 uv_BumpMap;
-			float2 uv_EmissionMap;
-			float3 worldPos;
-		};
-
-		void surf (Input IN, inout SurfaceOutputStandard o) {
-			half4 albedo = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-			half3 emission = tex2D(_EmissionMap, IN.uv_EmissionMap).rgb * _EmissionColor;
-			o.Albedo = albedo.rgb - emission; // Emission cancels out other lights
-			o.Alpha = albedo.a;
-			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
-			o.Emission = emission;
-			o.Metallic = 0;
-			if (IN.worldPos.y > _SclicingPositionY)
-			{
-				discard;
-			}
-
-			float dist = distance(IN.worldPos.y, _SclicingPositionY); //_PlayerPosition.y);
-			o.Albedo *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
-
-#if defined(RENDER_IN_GRAYSCALE)
-			half3 color = o.Albedo.rgb;
-			o.Albedo = dot(color.rgb, float3(0.3, 0.59, 0.11));		
-#endif
-		}
-		ENDCG
-	} 
-	FallBack "Standard"
-}
-*/
-
 
 Shader "Daggerfall/Automap"
 {
@@ -86,7 +21,7 @@ Shader "Daggerfall/Automap"
 		_EmissionColor("Emission Color", Color) = (0,0,0)
 		_PlayerPosition("player position", Vector) = (0,0,0,1)
 	}	
-	SubShader 
+	SubShader // shader for target 4.0
 	{
 	
 	    Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
@@ -97,9 +32,6 @@ Shader "Daggerfall/Automap"
 
 			CGPROGRAM
 
-			//#define AUTOMAP_RENDER_MODE_CUTOUT
-			//#define AUTOMAP_RENDER_MODE_WIREFRAME
-			//#define AUTOMAP_RENDER_MODE_TRANSPARENT
 			#include "UnityCG.cginc"
 			#pragma target 4.0
 			#pragma vertex vert
@@ -122,8 +54,15 @@ Shader "Daggerfall/Automap"
     			float4  pos : SV_POSITION;				
     			float2  uv : TEXCOORD0;
 				float3 worldPos : TEXCOORD5;
-			};
-			
+			};		
+
+			void vert(appdata_full v, out v2g OUT)
+			{
+    			OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+    			OUT.uv = v.texcoord;
+				OUT.worldPos = mul(_Object2World, v.vertex).xyz;
+			}
+
 			struct g2f 
 			{
     			float4  pos : SV_POSITION;
@@ -131,17 +70,6 @@ Shader "Daggerfall/Automap"
     			float3 dist : TEXCOORD1;
 				float3 worldPos : TEXCOORD5;
 			};
-
-			//v2g vert(appdata_full v)
-			void vert(appdata_full v, out v2g OUT)
-			{
-    			//v2g OUT;
-				//UNITY_INITIALIZE_OUTPUT(v2g, OUT);
-    			OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-    			OUT.uv = v.texcoord; //the uv's arent used in this shader but are included in case you want to use them
-				OUT.worldPos = mul(_Object2World, v.vertex).xyz;
-    			//return OUT;
-			}
 			
 			[maxvertexcount(3)]
 			void geom(triangle v2g IN[3], inout TriangleStream<g2f> triStream)
@@ -198,8 +126,7 @@ Shader "Daggerfall/Automap"
 						float d = min(IN.dist.x, min(IN.dist.y, IN.dist.z));
 						//fade based on dist from center
  						float I = exp2(-4.0*d*d);
- 				
- 						//return lerp(_Color, _WireColor, I);				
+ 						
 						if (I<0.1f)
 						{
 							clip( -1.0 );
@@ -224,11 +151,88 @@ Shader "Daggerfall/Automap"
 				float dist = distance(IN.worldPos.y, _SclicingPositionY);
 				outColor.rgb *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
 
-		#if defined(RENDER_IN_GRAYSCALE)
-				half3 color = outColor;
-				float grayValue = dot(color.rgb, float3(0.3, 0.59, 0.11));
-				outColor.rgb = half3(grayValue, grayValue, grayValue);
-		#endif
+				#if defined(RENDER_IN_GRAYSCALE)
+					half3 color = outColor;
+					float grayValue = dot(color.rgb, float3(0.3, 0.59, 0.11));
+					outColor.rgb = half3(grayValue, grayValue, grayValue);
+				#endif
+
+				return outColor;
+
+			}
+			
+			ENDCG
+
+    	}
+	}
+
+	SubShader // fallback shader for target 3.0
+	{
+	
+	    Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+		Blend SrcAlpha OneMinusSrcAlpha
+
+    	Pass 
+    	{
+
+			CGPROGRAM
+
+			#include "UnityCG.cginc"
+			#pragma target 3.0
+			#pragma vertex vert
+			#pragma fragment frag
+			
+			#pragma multi_compile __ RENDER_IN_GRAYSCALE
+			#pragma multi_compile __ AUTOMAP_RENDER_MODE_TRANSPARENT
+			
+			half4 _Color;
+			sampler2D _MainTex;
+			sampler2D _BumpMap;
+			sampler2D _EmissionMap;
+			half4 _EmissionColor;
+			uniform float4 _PlayerPosition;
+			uniform float _SclicingPositionY;
+		
+			struct v2f
+			{
+    			float4  pos : SV_POSITION;				
+    			float2  uv : TEXCOORD0;
+				float3 worldPos : TEXCOORD5;
+			};		
+
+			void vert(appdata_full v, out v2f OUT)
+			{
+    			OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+    			OUT.uv = v.texcoord;
+				OUT.worldPos = mul(_Object2World, v.vertex).xyz;
+			}
+
+
+			half4 frag(v2f IN) : COLOR
+			{
+				float4 outColor;
+				half4 albedo = tex2D(_MainTex, IN.uv) * _Color;
+				half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
+				outColor.rgb = albedo.rgb - emission; // Emission cancels out other lights
+				outColor.a = albedo.a;
+				if (IN.worldPos.y > _SclicingPositionY)
+				{				
+					#if defined(AUTOMAP_RENDER_MODE_TRANSPARENT)
+						outColor.a = 0.6;
+					#else //#elif defined(AUTOMAP_RENDER_MODE_CUTOUT)
+						clip( -1.0 );
+						outColor = half4( 1.0, 0.0, 0.0, 1.0 );
+					#endif					
+				}
+
+				float dist = distance(IN.worldPos.y, _SclicingPositionY);
+				outColor.rgb *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
+
+				#if defined(RENDER_IN_GRAYSCALE)
+					half3 color = outColor;
+					float grayValue = dot(color.rgb, float3(0.3, 0.59, 0.11));
+					outColor.rgb = half3(grayValue, grayValue, grayValue);
+				#endif
 
 				return outColor;
 
