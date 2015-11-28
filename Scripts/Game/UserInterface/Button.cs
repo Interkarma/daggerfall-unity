@@ -10,7 +10,7 @@
 //
 
 //#define DEBUG_BUTTON_PLACEMENT
-#define DEBUG_BUTTON_CLICKS
+//#define DEBUG_BUTTON_CLICKS
 
 using UnityEngine;
 using System;
