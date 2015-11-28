@@ -503,7 +503,10 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Name of the region.</returns>
         public string GetRegionName(int region)
         {
-            return regionNames[region];
+            if (region < 0 || region >= RegionCount)
+                return string.Empty;
+            else
+                return regionNames[region];
         }
 
         /// <summary>

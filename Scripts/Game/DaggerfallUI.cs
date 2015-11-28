@@ -62,6 +62,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallHUD dfHUD;
         DaggerfallPauseOptionsWindow dfPauseOptions;
         DaggerfallCharacterSheetWindow dfCharacterSheet;
+        DaggerfallTravelMapWindow dfTravelMap;
+
         DaggerfallAutomapWindow dfAutomap;
 
         public DaggerfallFont Font1 { get { return GetFont(1); } }
@@ -125,7 +127,9 @@ namespace DaggerfallWorkshop.Game
             dfCharacterSheet = new DaggerfallCharacterSheetWindow(uiManager);
             dfCharacterSheet.OnClose += CharacterSheetDialog_OnClose;
 
+            dfTravelMap = new DaggerfallTravelMapWindow(uiManager);
             dfAutomap = new DaggerfallAutomapWindow(uiManager);
+
             dfAutomap.OnClose += AutomapDialog_OnClose;
 
             SetupSingleton();
@@ -196,19 +200,18 @@ namespace DaggerfallWorkshop.Game
             switch (uiManager.GetMessage())
             {
                 case DaggerfallUIMessages.dfuiInitGame:
-                    //GameManager.Instance.PauseGame(true);
+                    //uiManager.PushWindow(dfTravelMap);
                     uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
                     if (enableVideos)
                         uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, splashVideo));
                     break;
                 case DaggerfallUIMessages.dfuiInitGameFromDeath:
-                    //GameManager.Instance.PauseGame(true);
                     uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
                     if (enableVideos)
                         uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, deathVideo));
                     break;
                 case DaggerfallUIMessages.dfuiStartNewGameWizard:
-                    //uiManager.PushWindow(new StartNewGameWizard(uiManager));
+                    uiManager.PushWindow(new StartNewGameWizard(uiManager));
                     break;
                 case DaggerfallUIMessages.dfuiOpenPauseOptionsDialog:
                     //GameManager.Instance.PauseGame(true);
@@ -217,6 +220,10 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenCharacterSheetDialog:
                     //GameManager.Instance.PauseGame(true);
                     uiManager.PushWindow(dfCharacterSheet);
+                    break;
+
+                case DaggerfallUIMessages.dfuiOpenTravelMapDialog:
+                    uiManager.PushWindow(dfTravelMap);
                     break;
                 case DaggerfallUIMessages.dfuiOpenAutomap:
                     if (GameManager.Instance.PlayerEnterExit.IsPlayerInside) // open automap only if player is in interior or dungeon - TODO: location automap for exterior locations
@@ -475,6 +482,32 @@ namespace DaggerfallWorkshop.Game
         {
             DFPosition offset;
             Texture2D texture = GetTextureFromImg(name, out offset, format);
+
+            return texture;
+        }
+
+        public static Texture2D GetTextureFromImg(string name, Rect subRect, TextureFormat format = TextureFormat.ARGB32)
+        {
+            ImgFile imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, name), FileUsage.UseMemory, true);
+            imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
+
+            DFBitmap bitmap = imgFile.GetDFBitmap();
+            Color32[] colors = imgFile.GetColor32(bitmap, 0);
+
+            Color32[] newColors = new Color32[(int)subRect.width * (int)subRect.height];
+            ImageProcessing.CopyColors(
+                ref colors,
+                ref newColors,
+                new DFSize(bitmap.Width, bitmap.Height),
+                new DFSize((int)subRect.width, (int)subRect.height),
+                new DFPosition((int)subRect.x, (int)(subRect.height - subRect.y)),
+                new DFPosition(0, 0),
+                new DFSize((int)subRect.width, (int)subRect.height));
+
+            Texture2D texture = new Texture2D((int)subRect.width, (int)subRect.height, format, false);
+            texture.SetPixels32(newColors, 0);
+            texture.Apply(false, true);
+            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             return texture;
         }

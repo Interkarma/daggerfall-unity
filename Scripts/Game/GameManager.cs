@@ -339,6 +339,10 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetDialog);
             }
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.TravelMap))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapDialog);
+            }
 
             if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoMap))
             {
