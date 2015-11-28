@@ -11,7 +11,7 @@
 
 using System;
 
-namespace DaggerfallWorkshop.Game.Items.ItemEnums
+namespace DaggerfallWorkshop.Game.Items
 {
     public enum ItemType
     {
