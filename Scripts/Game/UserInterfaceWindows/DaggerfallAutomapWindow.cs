@@ -54,6 +54,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float cameraHeightView3D = 8.0f; // initial camera height in 3D mode
         const float cameraBackwardDistance = 20.0f; // initial camera distance "backwards" in 3D mode
 
+        // hotkey definitions
+        const KeyCode Hotkey_SwitchAutomapRenderMode = KeyCode.Tab;
+        const KeyCode Hotkey_MoveLeft = KeyCode.LeftArrow;
+        const KeyCode Hotkey_MoveRight = KeyCode.RightArrow;
+        const KeyCode Hotkey_MoveForward = KeyCode.UpArrow;
+        const KeyCode Hotkey_MoveBackward = KeyCode.DownArrow;
+        const KeyCode HotkeyModifierKey_RotationPivotAxis = KeyCode.LeftControl;
+        const KeyCode HotkeyModifierKey_Rotate = KeyCode.LeftAlt;
+        const KeyCode Hotkey_Upstairs = KeyCode.PageUp;
+        const KeyCode Hotkey_Downstairs = KeyCode.PageDown;
+        const KeyCode HotkeyModifierKey_SliceLevel = KeyCode.LeftControl;
+
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
 
@@ -381,11 +393,85 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             resizeGUIelementsOnDemand();
 
-            if (Input.GetKeyDown(KeyCode.Tab))
+            if (Input.GetKeyDown(Hotkey_SwitchAutomapRenderMode))
             {
                 daggerfallAutomap.switchToNextAutomapRenderMode();
                 updateAutomapView();
             }
+            if (Input.GetKey(Hotkey_MoveForward))
+            {
+                if (Input.GetKey(HotkeyModifierKey_RotationPivotAxis))
+                {
+                    ActionMoveRotationPivotAxisForward();
+                }
+                else
+                {
+                    ActionMoveForward();
+                }
+            }
+            if (Input.GetKey(Hotkey_MoveBackward))
+            {
+                if (Input.GetKey(HotkeyModifierKey_RotationPivotAxis))
+                {
+                    ActionMoveRotationPivotAxisBackward();
+                }
+                else
+                {
+                    ActionMoveBackward();
+                }
+            }
+            if (Input.GetKey(Hotkey_MoveLeft))
+            {
+                if (Input.GetKey(HotkeyModifierKey_RotationPivotAxis))
+                {
+                    ActionMoveRotationPivotAxisLeft();
+                }
+                else if (Input.GetKey(HotkeyModifierKey_Rotate))
+                {
+                    ActionRotateLeft();
+                }
+                else
+                {
+                    ActionMoveLeft();
+                }
+            }
+            if (Input.GetKey(Hotkey_MoveRight))
+            {
+                if (Input.GetKey(HotkeyModifierKey_RotationPivotAxis))
+                {
+                    ActionMoveRotationPivotAxisRight();
+                }
+                else if (Input.GetKey(HotkeyModifierKey_Rotate))
+                {
+                    ActionRotateRight();
+                }
+                else
+                {
+                    ActionMoveRight();
+                }
+            }
+            if (Input.GetKey(Hotkey_Upstairs))
+            {
+                if (Input.GetKey(HotkeyModifierKey_SliceLevel))
+                {
+                    ActionIncreaseSliceLevel();
+                }
+                else
+                {
+                    ActionMoveUpstairs();
+                }
+            }
+            if (Input.GetKey(Hotkey_Downstairs))
+            {
+                if (Input.GetKey(HotkeyModifierKey_SliceLevel))
+                {
+                    ActionDecreaseSliceLevel();
+                }
+                else
+                {
+                    ActionMoveDownstairs();
+                }
+            }            
 
             if (leftMouseDownOnPanelAutomap)
             {
@@ -418,178 +504,73 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (leftMouseDownOnForwardButton)
             {
-                Vector3 translation;
-                switch (automapViewMode)
-                {
-                    case AutomapViewMode.View2D:
-                        translation = cameraAutomap.transform.up * scrollForwardBackwardSpeed;
-                        break;
-                    case AutomapViewMode.View3D:
-                        translation = cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
-                        translation.y = 0.0f; // comment this out for movement along camera optical axis
-                        break;
-                    default:
-                        translation = Vector3.zero;
-                        break;
-                }
-                cameraAutomap.transform.position += translation;                
-                updateAutomapView();
+                ActionMoveForward();
             }
 
             if (rightMouseDownOnForwardButton)
             {
-                Vector3 translation;
-                switch (automapViewMode)
-                {
-                    case AutomapViewMode.View2D:
-                        translation = cameraAutomap.transform.up * moveRotationPivotAxisMarkerForwardBackwardSpeed;
-                        break;
-                    case AutomapViewMode.View3D:
-                        translation = cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed;
-                        translation.y = 0.0f; // comment this out for movement along camera optical axis
-                        break;
-                    default:
-                        translation = Vector3.zero;
-                        break;
-                }
-                shiftRotationPivotAxisPosition(translation);
-                updateAutomapView();
+                ActionMoveRotationPivotAxisForward();
             }
 
             if (leftMouseDownOnBackwardButton)
             {
-                Vector3 translation;
-                switch (automapViewMode)
-                {
-                    case AutomapViewMode.View2D:
-                        translation = -cameraAutomap.transform.up * scrollForwardBackwardSpeed;
-                        break;
-                    case AutomapViewMode.View3D:
-                        translation = -cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
-                        translation.y = 0.0f; // comment this out for movement along camera optical axis
-                        break;
-                    default:
-                        translation = Vector3.zero;
-                        break;
-                }
-                cameraAutomap.transform.position += translation;                
-                updateAutomapView();
+                ActionMoveBackward();
             }
 
             if (rightMouseDownOnBackwardButton)
             {
-                Vector3 translation;
-                switch (automapViewMode)
-                {
-                    case AutomapViewMode.View2D:
-                        translation = -cameraAutomap.transform.up * moveRotationPivotAxisMarkerForwardBackwardSpeed;
-                        break;
-                    case AutomapViewMode.View3D:
-                        translation = -cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed;
-                        translation.y = 0.0f; // comment this out for movement along camera optical axis
-                        break;
-                    default:
-                        translation = Vector3.zero;
-                        break;
-                }
-                shiftRotationPivotAxisPosition(translation);             
-                updateAutomapView();
+                ActionMoveRotationPivotAxisBackward();
             }
-
 
             if (leftMouseDownOnLeftButton)
             {
-                Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed;
-                translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
-                cameraAutomap.transform.position += translation;                
-                updateAutomapView();
+                ActionMoveLeft();
             }
 
             if (rightMouseDownOnLeftButton)
             {
-                Vector3 translation = -cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed;
-                translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
-                shiftRotationPivotAxisPosition(translation);
-                updateAutomapView();
+                ActionMoveRotationPivotAxisLeft();
             }
 
             if (leftMouseDownOnRightButton)
             {
-                Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed;
-                translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
-                cameraAutomap.transform.position += translation;                
-                updateAutomapView();
+                ActionMoveRight();
             }
 
             if (rightMouseDownOnRightButton)
             {
-                Vector3 translation = cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed;
-                translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector                
-                shiftRotationPivotAxisPosition(translation);
-                updateAutomapView();
+                ActionMoveRotationPivotAxisRight();
             }
 
 
             if (leftMouseDownOnRotateLeftButton)
             {
-                Vector3 rotationPivotAxisPosition;
-                switch (automapViewMode)
-                {
-                    case AutomapViewMode.View2D:
-                        rotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
-                        break;
-                    case AutomapViewMode.View3D:
-                        rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
-                        break;
-                    default:
-                        rotationPivotAxisPosition = Vector3.zero;
-                        break;
-                }
-                cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotateSpeed);
-                updateAutomapView();
+                ActionRotateLeft();
             }
 
             if (leftMouseDownOnRotateRightButton)
             {
-                Vector3 rotationPivotAxisPosition;
-                switch (automapViewMode)
-                {
-                    case AutomapViewMode.View2D:
-                        rotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
-                        break;
-                    case AutomapViewMode.View3D:
-                        rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
-                        break;
-                    default:
-                        rotationPivotAxisPosition = Vector3.zero;
-                        break;
-                }
-                cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, +rotateSpeed);
-                updateAutomapView();
+                ActionRotateRight();
             }
 
             if (leftMouseDownOnUpstairsButton)
             {
-                cameraAutomap.transform.position += Vector3.up * moveUpDownSpeed;
-                updateAutomapView();
+                ActionMoveUpstairs();
             }
 
             if (leftMouseDownOnDownstairsButton)
             {
-                cameraAutomap.transform.position += Vector3.down * moveUpDownSpeed;
-                updateAutomapView();
+                ActionMoveDownstairs();
             }
 
             if (rightMouseDownOnUpstairsButton)
             {
-                daggerfallAutomap.SlicingBiasY += Vector3.up.y * moveUpDownSpeed;
-                updateAutomapView();
+                ActionIncreaseSliceLevel();
             }
 
             if (rightMouseDownOnDownstairsButton)
             {
-                daggerfallAutomap.SlicingBiasY += Vector3.down.y * moveUpDownSpeed;
-                updateAutomapView();
+                ActionDecreaseSliceLevel();
             }
         }        
 
@@ -850,6 +831,226 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             panelRenderAutomap.BackgroundTexture = textureAutomap;
         }
 
+
+        #endregion
+
+        #region Actions (Callbacks for Mouse Events and Hotkeys)
+
+        /// <summary>
+        /// action (callback) for move forward (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionMoveForward()
+        {
+            Vector3 translation;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    translation = cameraAutomap.transform.up * scrollForwardBackwardSpeed;
+                    break;
+                case AutomapViewMode.View3D:
+                    translation = cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
+                    translation.y = 0.0f; // comment this out for movement along camera optical axis
+                    break;
+                default:
+                    translation = Vector3.zero;
+                    break;
+            }
+            cameraAutomap.transform.position += translation;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for move backward (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionMoveBackward()
+        {
+            Vector3 translation;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    translation = -cameraAutomap.transform.up * scrollForwardBackwardSpeed;
+                    break;
+                case AutomapViewMode.View3D:
+                    translation = -cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
+                    translation.y = 0.0f; // comment this out for movement along camera optical axis
+                    break;
+                default:
+                    translation = Vector3.zero;
+                    break;
+            }
+            cameraAutomap.transform.position += translation;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for move left (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionMoveLeft()
+        {
+            Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed;
+            translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
+            cameraAutomap.transform.position += translation;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for move right (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionMoveRight()
+        {
+            Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed;
+            translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
+            cameraAutomap.transform.position += translation;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for moving rotation pivot axis forward (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionMoveRotationPivotAxisForward()
+        {
+            Vector3 translation;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    translation = cameraAutomap.transform.up * moveRotationPivotAxisMarkerForwardBackwardSpeed;
+                    break;
+                case AutomapViewMode.View3D:
+                    translation = cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed;
+                    translation.y = 0.0f; // comment this out for movement along camera optical axis
+                    break;
+                default:
+                    translation = Vector3.zero;
+                    break;
+            }
+            shiftRotationPivotAxisPosition(translation);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for moving rotation pivot axis backward (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionMoveRotationPivotAxisBackward()
+        {
+            Vector3 translation;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    translation = -cameraAutomap.transform.up * moveRotationPivotAxisMarkerForwardBackwardSpeed;
+                    break;
+                case AutomapViewMode.View3D:
+                    translation = -cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed;
+                    translation.y = 0.0f; // comment this out for movement along camera optical axis
+                    break;
+                default:
+                    translation = Vector3.zero;
+                    break;
+            }
+            shiftRotationPivotAxisPosition(translation);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for moving rotation pivot axis left (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionMoveRotationPivotAxisLeft()
+        {
+            Vector3 translation = -cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed;
+            translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
+            shiftRotationPivotAxisPosition(translation);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for moving rotation pivot axis right (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionMoveRotationPivotAxisRight()
+        {
+            Vector3 translation = cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed;
+            translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector                
+            shiftRotationPivotAxisPosition(translation);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for rotating model left (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionRotateLeft()
+        {
+            Vector3 rotationPivotAxisPosition;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    rotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
+                    break;
+                case AutomapViewMode.View3D:
+                    rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
+                    break;
+                default:
+                    rotationPivotAxisPosition = Vector3.zero;
+                    break;
+            }
+            cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotateSpeed);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for rotating model right (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionRotateRight()
+        {
+            Vector3 rotationPivotAxisPosition;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    rotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
+                    break;
+                case AutomapViewMode.View3D:
+                    rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
+                    break;
+                default:
+                    rotationPivotAxisPosition = Vector3.zero;
+                    break;
+            }
+            cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, +rotateSpeed);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for moving upstairs (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionMoveUpstairs()
+        {
+            cameraAutomap.transform.position += Vector3.up * moveUpDownSpeed;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for moving downstairs (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionMoveDownstairs()
+        {
+            cameraAutomap.transform.position += Vector3.down * moveUpDownSpeed;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for increasing slice level (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionIncreaseSliceLevel()
+        {
+            daggerfallAutomap.SlicingBiasY += Vector3.up.y * moveUpDownSpeed;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action (callback) for decreasing slice level (can be triggered by mouse click or hotkey)
+        /// </summary>
+        private void ActionDecreaseSliceLevel()
+        {
+            daggerfallAutomap.SlicingBiasY += Vector3.down.y * moveUpDownSpeed;
+            updateAutomapView();
+        }
 
         #endregion
 
