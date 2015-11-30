@@ -125,6 +125,16 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectBeaconEntrancePosition = null; // GameObject which will hold (dungeon) entrance marker ray (green ray)
         GameObject gameobjectBeaconRotationPivotAxis = null; // GameObject which will hold rotation pivot axis ray (blue ray)
 
+        // specifies which object should have focus ()
+        public enum AutomapFocusObject
+        {
+            Player = 0,
+            Entrance = 1,
+            RotationAxis = 2
+        };
+
+        AutomapFocusObject focusObject;
+
         readonly Vector3 rayPlayerPosOffset = new Vector3(-0.1f, 0.0f, +0.1f); // small offset to prevent ray for player position to be exactly in the same position as the rotation pivot axis
         readonly Vector3 rayEntrancePosOffset = new Vector3(0.1f, 0.0f, +0.1f); // small offset to prevent ray for dungeon entrance to be exactly in the same position as the rotation pivot axis
 
@@ -279,6 +289,33 @@ namespace DaggerfallWorkshop.Game
                     Shader.DisableKeyword("AUTOMAP_RENDER_MODE_TRANSPARENT");
                     break;
             }
+        }
+
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to signal this script to switch focus to next object of interest and return the GameObject which has focus
+        /// </summary>
+        /// <returns> the GameObject which has the focus </returns>
+        public GameObject switchFocusToNextObject()
+        {
+            int numberOfAutomapFocusObjects = Enum.GetNames(typeof(AutomapFocusObject)).Length;
+            focusObject++;
+            if ((int)focusObject > numberOfAutomapFocusObjects - 1) // first mode is mode 0 -> so use numberOfAutomapFocusObjects-1 for comparison
+                focusObject = 0;
+            GameObject gameobjectInFocus;
+            switch (focusObject)
+            {
+                default:
+                case AutomapFocusObject.Player:
+                    gameobjectInFocus = gameobjectBeaconPlayerPosition;
+                    break;
+                case AutomapFocusObject.Entrance:
+                    gameobjectInFocus = gameobjectBeaconEntrancePosition;
+                    break;
+                case AutomapFocusObject.RotationAxis:
+                    gameobjectInFocus = gameobjectBeaconRotationPivotAxis;
+                    break;
+            }
+            return (gameobjectInFocus);
         }
 
         #endregion

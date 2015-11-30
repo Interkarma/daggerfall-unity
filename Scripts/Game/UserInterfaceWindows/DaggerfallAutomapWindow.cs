@@ -261,6 +261,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rectDummyPanelCompass.position = new Vector2(3, 172);
             rectDummyPanelCompass.size = new Vector2(76, 17);
             dummyPanelCompass = DaggerfallUI.AddPanel(rectDummyPanelCompass, NativePanel);
+            dummyPanelCompass.OnMouseClick += Compass_OnMouseClick;
+            dummyPanelCompass.OnRightMouseClick += Compass_OnRightMouseClick;
 
             // compass            
             compass = new HUDCompass();
@@ -1205,6 +1207,49 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             CloseWindow();
+        }
+
+        private void Compass_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (inDragMode())
+                return;
+
+            GameObject gameobjectInFocus = daggerfallAutomap.switchFocusToNextObject();
+            Vector3 newPosition;
+
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    newPosition = cameraAutomap.transform.position;
+                    newPosition.x = gameobjectInFocus.transform.position.x;
+                    newPosition.z = gameobjectInFocus.transform.position.z;
+                    cameraAutomap.transform.position = newPosition;
+                    updateAutomapView();
+                    break;
+                case AutomapViewMode.View3D:
+                    Vector3 viewDirectionInXZ = cameraAutomap.transform.forward;
+                    viewDirectionInXZ.y = 0.0f;
+                    newPosition = gameobjectInFocus.transform.position - viewDirectionInXZ * cameraBackwardDistance + Vector3.up * cameraHeightView3D;
+                    //newPosition.y = cameraAutomap.transform.position.y;
+                    cameraAutomap.transform.position = newPosition;                    
+                    updateAutomapView();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void Compass_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (inDragMode())
+                return;
+
+            // reset values to default
+            resetRotationPivotAxisPosition(); // reset rotation pivot axis
+            daggerfallAutomap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
+            resetCameraPosition();
+            fieldOfViewCameraMode3D = defaultFieldOfViewCameraMode3D;
+            updateAutomapView();
         }
 
         #endregion
