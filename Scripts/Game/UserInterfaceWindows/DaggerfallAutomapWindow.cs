@@ -54,7 +54,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float cameraHeightView3D = 8.0f; // initial camera height in 3D mode
         const float cameraBackwardDistance = 20.0f; // initial camera distance "backwards" in 3D mode
 
-        // hotkey definitions
+        // this is a helper class to implement behaviour and easier use of hotkeys and key modifiers (left-shift, right-shift, ...) in conjunction
+        // note: currently a combination of key modifiers like shift+alt is not supported. all specified modifiers are comined with an or-relation
         class HotkeySequence
         {
             public enum KeyModifiers
@@ -109,6 +110,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        // definitions of hotkey sequences
         readonly HotkeySequence HotkeySequence_CloseMap = new HotkeySequence(KeyCode.M, HotkeySequence.KeyModifiers.None);        
         readonly HotkeySequence HotkeySequence_SwitchAutomapGridMode = new HotkeySequence(KeyCode.Space, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ResetView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.None);
@@ -137,6 +139,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_DecreaseSliceLevel = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
         readonly HotkeySequence HotkeySequence_ZoomIn = new HotkeySequence(KeyCode.KeypadPlus, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ZoomOut = new HotkeySequence(KeyCode.KeypadMinus, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_IncreaseCameraFieldOfFiew = new HotkeySequence(KeyCode.KeypadMultiply, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_DecreaseCameraFieldOfFiew = new HotkeySequence(KeyCode.KeypadDivide, HotkeySequence.KeyModifiers.None);
 
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
@@ -582,6 +586,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ActionZoomOut();
             }
+            if (Input.GetKey(HotkeySequence_IncreaseCameraFieldOfFiew.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_IncreaseCameraFieldOfFiew.modifiers))
+            {
+                ActionIncreaseCameraFieldOfView();
+            }
+            if (Input.GetKey(HotkeySequence_DecreaseCameraFieldOfFiew.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_DecreaseCameraFieldOfFiew.modifiers))
+            {
+                ActionDecreaseCameraFieldOfView();
+            }  
 
             // check mouse input and assign actions
             if (leftMouseDownOnPanelAutomap)
@@ -1206,6 +1218,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
+        /// action for increasing camera field of view
+        /// </summary>
+        private void ActionIncreaseCameraFieldOfView()
+        {
+            if (automapViewMode == AutomapViewMode.View3D)
+            {
+                fieldOfViewCameraMode3D = Mathf.Max(minFieldOfViewCameraMode3D, Mathf.Min(maxFieldOfViewCameraMode3D, fieldOfViewCameraMode3D + changeSpeedCameraFieldOfView));
+                cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
+                updateAutomapView();
+            }            
+        }
+
+        /// <summary>
+        /// action for decreasing camera field of view
+        /// </summary>
+        private void ActionDecreaseCameraFieldOfView()
+        {
+            if (automapViewMode == AutomapViewMode.View3D)
+            {
+                fieldOfViewCameraMode3D = Mathf.Max(minFieldOfViewCameraMode3D, Mathf.Min(maxFieldOfViewCameraMode3D, fieldOfViewCameraMode3D - changeSpeedCameraFieldOfView));
+                cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
+                updateAutomapView();
+            }
+        }
+
+        /// <summary>
         /// action for switching to next automap render mode
         /// </summary>
         private void ActionSwitchToNextAutomapRenderMode()
@@ -1287,6 +1325,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             daggerfallAutomap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
             resetCameraPosition();
             fieldOfViewCameraMode3D = defaultFieldOfViewCameraMode3D;
+            cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
             updateAutomapView();
         }
 
@@ -1410,12 +1449,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode())
                 return;
 
-            if (automapViewMode == AutomapViewMode.View3D)
-            {
-                fieldOfViewCameraMode3D = Mathf.Max(minFieldOfViewCameraMode3D, Mathf.Min(maxFieldOfViewCameraMode3D, fieldOfViewCameraMode3D + changeSpeedCameraFieldOfView));
-                cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
-                updateAutomapView();
-            }
+            ActionIncreaseCameraFieldOfView();
         }
 
         private void GridButton_OnMouseScrollDown()
@@ -1423,12 +1457,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode())
                 return;
 
-            if (automapViewMode == AutomapViewMode.View3D)
-            {
-                fieldOfViewCameraMode3D = Mathf.Max(minFieldOfViewCameraMode3D, Mathf.Min(maxFieldOfViewCameraMode3D, fieldOfViewCameraMode3D - changeSpeedCameraFieldOfView));
-                cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
-                updateAutomapView();
-            }
+            ActionDecreaseCameraFieldOfView();
         }
 
         private void ForwardButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
