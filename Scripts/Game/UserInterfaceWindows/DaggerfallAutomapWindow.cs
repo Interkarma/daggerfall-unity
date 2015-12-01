@@ -55,16 +55,77 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float cameraBackwardDistance = 20.0f; // initial camera distance "backwards" in 3D mode
 
         // hotkey definitions
-        const KeyCode Hotkey_SwitchAutomapRenderMode = KeyCode.Tab;
-        const KeyCode Hotkey_MoveLeft = KeyCode.LeftArrow;
-        const KeyCode Hotkey_MoveRight = KeyCode.RightArrow;
-        const KeyCode Hotkey_MoveForward = KeyCode.UpArrow;
-        const KeyCode Hotkey_MoveBackward = KeyCode.DownArrow;
-        const KeyCode HotkeyModifierKey_RotationPivotAxis = KeyCode.LeftControl;
-        const KeyCode HotkeyModifierKey_Rotate = KeyCode.LeftAlt;
-        const KeyCode Hotkey_Upstairs = KeyCode.PageUp;
-        const KeyCode Hotkey_Downstairs = KeyCode.PageDown;
-        const KeyCode HotkeyModifierKey_SliceLevel = KeyCode.LeftControl;
+        class HotkeySequence
+        {
+            public enum KeyModifiers
+            {
+                None = 0,
+                LeftControl = 1,
+                RightControl = 2,
+                LeftShift = 4,
+                RightShift = 8,
+                LeftAlt = 16,
+                RightAlt = 32
+            };
+
+            public KeyCode keyCode;
+            public KeyModifiers modifiers;
+
+            public HotkeySequence(KeyCode keyCode, KeyModifiers modifiers)      
+            {
+                this.keyCode = keyCode;
+                this.modifiers = modifiers;
+            }
+
+            public static KeyModifiers getKeyModifiers(bool leftControl, bool rightControl, bool leftShift, bool rightShift, bool leftAlt, bool rightAlt)
+            {
+                KeyModifiers keyModifiers = KeyModifiers.None;
+                if (leftControl)
+                    keyModifiers = keyModifiers | KeyModifiers.LeftControl;
+                if (rightControl)
+                    keyModifiers = keyModifiers | KeyModifiers.RightControl;
+                if (leftShift)
+                    keyModifiers = keyModifiers | KeyModifiers.LeftShift;
+                if (rightShift)
+                    keyModifiers = keyModifiers | KeyModifiers.RightShift;
+                if (leftAlt)
+                    keyModifiers = keyModifiers | KeyModifiers.LeftAlt;
+                if (rightAlt)
+                    keyModifiers = keyModifiers | KeyModifiers.RightAlt;
+                return keyModifiers;
+            }
+
+            public static bool checkSetModifiers(HotkeySequence.KeyModifiers pressedModifiers, HotkeySequence.KeyModifiers triggeringModifiers)
+            {
+                if (triggeringModifiers == KeyModifiers.None)
+                {
+                    if (pressedModifiers == KeyModifiers.None)
+                        return true;
+                    else
+                        return false;
+                }
+
+                return ((pressedModifiers & triggeringModifiers) != 0); // if any of the modifiers in triggeringModifiers is pressed return true                
+            }
+        }
+
+        readonly HotkeySequence HotkeySequence_SwitchAutomapRenderMode = new HotkeySequence(KeyCode.Tab, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_MoveLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_MoveRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_MoveForward = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_MoveBackward = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_MoveRotationPivotAxisLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_MoveRotationPivotAxisRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_MoveRotationPivotAxisForward = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_MoveRotationPivotAxisBackward = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_RotateLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
+        readonly HotkeySequence HotkeySequence_RotateRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
+        readonly HotkeySequence HotkeySequence_Upstairs = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_Downstairs = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_IncreaseSliceLevel = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_DecreaseSliceLevel = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_ZoomIn = new HotkeySequence(KeyCode.KeypadPlus, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_ZoomOut = new HotkeySequence(KeyCode.KeypadMinus, HotkeySequence.KeyModifiers.None);
 
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
@@ -393,86 +454,80 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             resizeGUIelementsOnDemand();
 
-            if (Input.GetKeyDown(Hotkey_SwitchAutomapRenderMode))
+            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.getKeyModifiers(Input.GetKey(KeyCode.LeftControl), Input.GetKey(KeyCode.RightControl), Input.GetKey(KeyCode.LeftShift), Input.GetKey(KeyCode.RightShift), Input.GetKey(KeyCode.LeftAlt), Input.GetKey(KeyCode.RightAlt));
+
+            // check hotkeys and assign actions
+            if (Input.GetKeyDown(HotkeySequence_SwitchAutomapRenderMode.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchAutomapRenderMode.modifiers))
             {
                 daggerfallAutomap.switchToNextAutomapRenderMode();
                 updateAutomapView();
             }
-            if (Input.GetKey(Hotkey_MoveForward))
+            if (Input.GetKey(HotkeySequence_MoveForward.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveForward.modifiers))
             {
-                if (Input.GetKey(HotkeyModifierKey_RotationPivotAxis))
-                {
-                    ActionMoveRotationPivotAxisForward();
-                }
-                else
-                {
-                    ActionMoveForward();
-                }
+                ActionMoveForward();
             }
-            if (Input.GetKey(Hotkey_MoveBackward))
+            if (Input.GetKey(HotkeySequence_MoveBackward.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveBackward.modifiers))
             {
-                if (Input.GetKey(HotkeyModifierKey_RotationPivotAxis))
-                {
-                    ActionMoveRotationPivotAxisBackward();
-                }
-                else
-                {
-                    ActionMoveBackward();
-                }
+                ActionMoveBackward();
             }
-            if (Input.GetKey(Hotkey_MoveLeft))
+            if (Input.GetKey(HotkeySequence_MoveLeft.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveLeft.modifiers))
             {
-                if (Input.GetKey(HotkeyModifierKey_RotationPivotAxis))
-                {
-                    ActionMoveRotationPivotAxisLeft();
-                }
-                else if (Input.GetKey(HotkeyModifierKey_Rotate))
-                {
-                    ActionRotateLeft();
-                }
-                else
-                {
-                    ActionMoveLeft();
-                }
+                ActionMoveLeft();
             }
-            if (Input.GetKey(Hotkey_MoveRight))
+            if (Input.GetKey(HotkeySequence_MoveRight.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveRight.modifiers))
             {
-                if (Input.GetKey(HotkeyModifierKey_RotationPivotAxis))
-                {
-                    ActionMoveRotationPivotAxisRight();
-                }
-                else if (Input.GetKey(HotkeyModifierKey_Rotate))
-                {
-                    ActionRotateRight();
-                }
-                else
-                {
-                    ActionMoveRight();
-                }
+                ActionMoveRight();
             }
-            if (Input.GetKey(Hotkey_Upstairs))
+            if (Input.GetKey(HotkeySequence_MoveRotationPivotAxisForward.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveRotationPivotAxisForward.modifiers))
             {
-                if (Input.GetKey(HotkeyModifierKey_SliceLevel))
-                {
-                    ActionIncreaseSliceLevel();
-                }
-                else
-                {
-                    ActionMoveUpstairs();
-                }
+                ActionMoveRotationPivotAxisForward();
             }
-            if (Input.GetKey(Hotkey_Downstairs))
+            if (Input.GetKey(HotkeySequence_MoveRotationPivotAxisBackward.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveRotationPivotAxisBackward.modifiers))
             {
-                if (Input.GetKey(HotkeyModifierKey_SliceLevel))
-                {
-                    ActionDecreaseSliceLevel();
-                }
-                else
-                {
-                    ActionMoveDownstairs();
-                }
-            }            
+                ActionMoveRotationPivotAxisBackward();
+            }
+            if (Input.GetKey(HotkeySequence_MoveRotationPivotAxisLeft.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveRotationPivotAxisLeft.modifiers))
+            {
+                ActionMoveRotationPivotAxisLeft();
+            }
+            if (Input.GetKey(HotkeySequence_MoveRotationPivotAxisRight.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveRotationPivotAxisRight.modifiers))
+            {
+                ActionMoveRotationPivotAxisRight();
+            }
+            if (Input.GetKey(HotkeySequence_RotateLeft.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateLeft.modifiers))
+            {
+                ActionRotateLeft();
+            }
+            if (Input.GetKey(HotkeySequence_RotateRight.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateRight.modifiers))
+            {
+                ActionRotateRight();
+            }
+            if (Input.GetKey(HotkeySequence_Upstairs.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_Upstairs.modifiers))
+            {
+                ActionMoveUpstairs();
+            }
+            if (Input.GetKey(HotkeySequence_Downstairs.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_Downstairs.modifiers))
+            {
+                ActionMoveDownstairs();
+            }
+            if (Input.GetKey(HotkeySequence_IncreaseSliceLevel.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_IncreaseSliceLevel.modifiers))
+            {
+                ActionIncreaseSliceLevel();
+            }
+            if (Input.GetKey(HotkeySequence_DecreaseSliceLevel.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_DecreaseSliceLevel.modifiers))
+            {
+                ActionDecreaseSliceLevel();
+            }
+            if (Input.GetKey(HotkeySequence_ZoomIn.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_ZoomIn.modifiers))
+            {
+                ActionZoomIn();
+            }
+            if (Input.GetKey(HotkeySequence_ZoomOut.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_ZoomOut.modifiers))
+            {
+                ActionZoomOut();
+            }
 
+            // check mouse input and assign actions
             if (leftMouseDownOnPanelAutomap)
             {
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
@@ -837,7 +892,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Actions (Callbacks for Mouse Events and Hotkeys)
 
         /// <summary>
-        /// action (callback) for move forward (can be triggered by mouse click or hotkey)
+        /// action for move forward (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionMoveForward()
         {
@@ -860,7 +915,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for move backward (can be triggered by mouse click or hotkey)
+        /// action for move backward (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionMoveBackward()
         {
@@ -883,7 +938,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for move left (can be triggered by mouse click or hotkey)
+        /// action for move left (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionMoveLeft()
         {
@@ -894,7 +949,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for move right (can be triggered by mouse click or hotkey)
+        /// action for move right (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionMoveRight()
         {
@@ -905,7 +960,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for moving rotation pivot axis forward (can be triggered by mouse click or hotkey)
+        /// action for moving rotation pivot axis forward (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionMoveRotationPivotAxisForward()
         {
@@ -928,7 +983,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for moving rotation pivot axis backward (can be triggered by mouse click or hotkey)
+        /// action for moving rotation pivot axis backward (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionMoveRotationPivotAxisBackward()
         {
@@ -951,7 +1006,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for moving rotation pivot axis left (can be triggered by mouse click or hotkey)
+        /// action for moving rotation pivot axis left (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionMoveRotationPivotAxisLeft()
         {
@@ -962,7 +1017,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for moving rotation pivot axis right (can be triggered by mouse click or hotkey)
+        /// action for moving rotation pivot axis right (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionMoveRotationPivotAxisRight()
         {
@@ -973,7 +1028,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for rotating model left (can be triggered by mouse click or hotkey)
+        /// action for rotating model left (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionRotateLeft()
         {
@@ -995,7 +1050,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for rotating model right (can be triggered by mouse click or hotkey)
+        /// action for rotating model right (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionRotateRight()
         {
@@ -1017,7 +1072,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for moving upstairs (can be triggered by mouse click or hotkey)
+        /// action for moving upstairs (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionMoveUpstairs()
         {
@@ -1026,7 +1081,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for moving downstairs (can be triggered by mouse click or hotkey)
+        /// action for moving downstairs (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionMoveDownstairs()
         {
@@ -1035,7 +1090,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for increasing slice level (can be triggered by mouse click or hotkey)
+        /// action for increasing slice level (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionIncreaseSliceLevel()
         {
@@ -1044,11 +1099,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action (callback) for decreasing slice level (can be triggered by mouse click or hotkey)
+        /// action for decreasing slice level (can be triggered by mouse click or hotkey)
         /// </summary>
         private void ActionDecreaseSliceLevel()
         {
             daggerfallAutomap.SlicingBiasY += Vector3.down.y * moveUpDownSpeed;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for zooming in (can be triggered by mouse wheel or hotkey)
+        /// </summary>
+        private void ActionZoomIn()
+        {
+            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
+            Vector3 translation = cameraAutomap.transform.forward * zoomSpeedCompensated;
+            cameraAutomap.transform.position += translation;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for zooming out (can be triggered by mouse wheel or hotkey)
+        /// </summary>
+        private void ActionZoomOut()
+        {
+            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
+            Vector3 translation = -cameraAutomap.transform.forward * zoomSpeedCompensated;
+            cameraAutomap.transform.position += translation;
             updateAutomapView();
         }
 
@@ -1058,18 +1135,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseScrollUp()
         {
-            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
-            Vector3 translation = cameraAutomap.transform.forward * zoomSpeedCompensated;
-            cameraAutomap.transform.position += translation;
-            updateAutomapView();
+            ActionZoomIn();
         }
 
         private void PanelAutomap_OnMouseScrollDown()
         {
-            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
-            Vector3 translation = -cameraAutomap.transform.forward * zoomSpeedCompensated;
-            cameraAutomap.transform.position += translation;
-            updateAutomapView();
+            ActionZoomOut();
         }
 
         private void PanelAutomap_OnMouseDown(BaseScreenComponent sender, Vector2 position)
