@@ -292,6 +292,36 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// DaggerfallAutomapWindow script will use this to signal this script to switch to automap rendering mode "transparent"
+        /// </summary>
+        public void switchToAutomapRenderModeTransparent()
+        {
+            currentAutomapRenderMode = AutomapRenderMode.Transparent;
+            Shader.DisableKeyword("AUTOMAP_RENDER_MODE_WIREFRAME");
+            Shader.EnableKeyword("AUTOMAP_RENDER_MODE_TRANSPARENT");
+        }
+
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to signal this script to switch to automap rendering mode "wireframe"
+        /// </summary>
+        public void switchToAutomapRenderModeWireframe()
+        {
+            currentAutomapRenderMode = AutomapRenderMode.Wireframe;
+            Shader.EnableKeyword("AUTOMAP_RENDER_MODE_WIREFRAME");
+            Shader.DisableKeyword("AUTOMAP_RENDER_MODE_TRANSPARENT");
+        }
+
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to signal this script to switch to automap rendering mode "cutout"
+        /// </summary>
+        public void switchToAutomapRenderModeCutout()
+        {
+            currentAutomapRenderMode = AutomapRenderMode.Cutout;
+            Shader.DisableKeyword("AUTOMAP_RENDER_MODE_WIREFRAME");
+            Shader.DisableKeyword("AUTOMAP_RENDER_MODE_TRANSPARENT");                        
+        }
+
+        /// <summary>
         /// DaggerfallAutomapWindow script will use this to signal this script to switch focus to next object of interest and return the GameObject which has focus
         /// </summary>
         /// <returns> the GameObject which has the focus </returns>
