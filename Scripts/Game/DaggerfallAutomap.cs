@@ -341,7 +341,7 @@ namespace DaggerfallWorkshop.Game
                 layerAutomap = 10;
             }
 
-            Camera.main.cullingMask = Camera.main.cullingMask & ~((1 << layerAutomap)); // don't render automap layer with main camera ("Camera.main.cullingMask |= 1 << layerAutomap;" did not work - don't know why)
+            Camera.main.cullingMask = Camera.main.cullingMask & ~((1 << layerAutomap)); // don't render automap layer with main camera
         }
 
         void OnDestroy()
