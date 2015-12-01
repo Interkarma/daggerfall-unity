@@ -114,6 +114,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_CloseMap = new HotkeySequence(KeyCode.M, HotkeySequence.KeyModifiers.None);        
         readonly HotkeySequence HotkeySequence_SwitchAutomapGridMode = new HotkeySequence(KeyCode.Space, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ResetView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_ResetRotationPivotAxisView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
         readonly HotkeySequence HotkeySequence_SwitchFocusToNextBeaconObject = new HotkeySequence(KeyCode.Tab, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_SwitchToNextAutomapRenderMode = new HotkeySequence(KeyCode.Return, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeTransparent = new HotkeySequence(KeyCode.F1, HotkeySequence.KeyModifiers.None);
@@ -484,6 +485,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ActionResetView();
             }
+            if (Input.GetKeyDown(HotkeySequence_ResetRotationPivotAxisView.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_ResetRotationPivotAxisView.modifiers))
+            {
+                ActionResetRotationPivotAxis();
+            }            
             if (Input.GetKeyDown(HotkeySequence_SwitchFocusToNextBeaconObject.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchFocusToNextBeaconObject.modifiers))
             {
                 ActionSwitchFocusToNextBeaconObject();
