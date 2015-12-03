@@ -1291,12 +1291,10 @@ namespace DaggerfallWorkshop.Game
         private void revealDungeonOnAutomap()
         {
             Transform location = gameobjectGeometry.transform.GetChild(0);
-            Debug.Log("here1...");
             for (int indexBlock = 0; indexBlock < location.childCount; indexBlock++)
             {
                 Transform currentBlock = location.GetChild(indexBlock);
 
-                Debug.Log("here2...");
                 for (int indexElement = 0; indexElement < currentBlock.childCount; indexElement++)
                 {
                     Transform currentTransformElement = currentBlock.GetChild(indexElement);
@@ -1304,12 +1302,10 @@ namespace DaggerfallWorkshop.Game
                     for (int indexModel = 0; indexModel < currentTransformElement.childCount; indexModel++)
                     {
                         Transform currentTransformModel = currentTransformElement.GetChild(indexModel);
-                        Debug.Log("here3...");
                         MeshRenderer meshRenderer = currentTransformModel.GetComponent<MeshRenderer>();
                         if (meshRenderer)
                         {
                             meshRenderer.enabled = true;
-                            Debug.Log("here6...");
                             Material[] materials = meshRenderer.materials;
                             foreach (Material mat in meshRenderer.materials)
                             {
