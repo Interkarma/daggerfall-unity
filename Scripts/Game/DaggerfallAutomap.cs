@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
+using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -36,6 +37,21 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class DaggerfallAutomap : MonoBehaviour
     {
+        #region Singleton
+        private static DaggerfallAutomap _instance;
+
+        public static DaggerfallAutomap instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = GameObject.FindObjectOfType<DaggerfallAutomap>();
+                return _instance;
+            }
+            private set { _instance = value; }
+        }
+        #endregion
+
         /// <summary>
         /// class to store state of discovery of a dungeon block or interior, this state can be used to restore state of GameObject gameobjectGeometry
         /// this class basically maps the two fields/states (MeshRenderer active state and Material shader keyword "RENDER_IN_GRAYSCALE") that are
@@ -408,10 +424,23 @@ namespace DaggerfallWorkshop.Game
                     Application.Quit();
             }
 
+            // set default automap render mode
             Shader.DisableKeyword("AUTOMAP_RENDER_MODE_WIREFRAME");
             Shader.EnableKeyword("AUTOMAP_RENDER_MODE_TRANSPARENT");
 
-            StartCoroutine(CheckForNewlyDiscoveredMeshes()); // coroutine for periodically update discovery state of automap level geometry
+            // register console commands
+            try
+            {
+                ConsoleCommandsDatabase.RegisterCommand(RevealAutomap.name, RevealAutomap.description, RevealAutomap.usage, RevealAutomap.Execute);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("Error Registering Automap Console commands: {0}", ex.Message));
+
+            }
+
+            // coroutine for periodically update discovery state of automap level geometry
+            StartCoroutine(CheckForNewlyDiscoveredMeshes());
         }
 
         void Update()
@@ -1256,6 +1285,43 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// reveals complete dungeon (including disconnected dungeon segments) on automap
+        /// </summary>
+        private void revealDungeonOnAutomap()
+        {
+            Transform location = gameobjectGeometry.transform.GetChild(0);
+            Debug.Log("here1...");
+            for (int indexBlock = 0; indexBlock < location.childCount; indexBlock++)
+            {
+                Transform currentBlock = location.GetChild(indexBlock);
+
+                Debug.Log("here2...");
+                for (int indexElement = 0; indexElement < currentBlock.childCount; indexElement++)
+                {
+                    Transform currentTransformElement = currentBlock.GetChild(indexElement);
+
+                    for (int indexModel = 0; indexModel < currentTransformElement.childCount; indexModel++)
+                    {
+                        Transform currentTransformModel = currentTransformElement.GetChild(indexModel);
+                        Debug.Log("here3...");
+                        MeshRenderer meshRenderer = currentTransformModel.GetComponent<MeshRenderer>();
+                        if (meshRenderer)
+                        {
+                            meshRenderer.enabled = true;
+                            Debug.Log("here6...");
+                            Material[] materials = meshRenderer.materials;
+                            foreach (Material mat in meshRenderer.materials)
+                            {
+                                mat.DisableKeyword("RENDER_IN_GRAYSCALE");
+                            }
+                            meshRenderer.materials = materials;
+                        }
+                    }
+                }
+            }
+        }
+
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
         {
             createIndoorGeometryForAutomap(args);
@@ -1278,6 +1344,38 @@ namespace DaggerfallWorkshop.Game
         private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             saveStateAutomapDungeon();
+        }
+
+        #endregion
+
+        #region console_commands
+
+        private static class RevealAutomap
+        {
+            public static readonly string name = "automap_reveal";
+            public static readonly string description = "reveals complete dungeon (including disconnected dungeon segments) on automap";
+            public static readonly string usage = "automap_reveal";
+
+
+
+            public static string Execute(params string[] args)
+            {
+                if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
+                {
+                    DaggerfallAutomap daggerfallAutomap = DaggerfallAutomap.instance;
+
+                    if (daggerfallAutomap == null)
+                    {
+                        return "DaggerfallAutomap instance not found";
+                    }
+                    daggerfallAutomap.revealDungeonOnAutomap();
+                    return "dungeon has been completely revealed on the automap";
+                }
+                else
+                {
+                    return "this command only has an effect when inside a dungeon or palace";
+                }
+            }
         }
 
         #endregion
