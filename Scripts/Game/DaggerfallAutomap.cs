@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (a.k.a. Nystul)
-// Contributors:    
+// Contributors:    Lypyl  
 // 
 // Notes:
 //
@@ -431,7 +431,7 @@ namespace DaggerfallWorkshop.Game
             // register console commands
             try
             {
-                ConsoleCommandsDatabase.RegisterCommand(RevealAutomap.name, RevealAutomap.description, RevealAutomap.usage, RevealAutomap.Execute);
+                AutoMapConsoleCommands.RegisterCommands();
             }
             catch (Exception ex)
             {
@@ -1288,33 +1288,34 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// reveals complete dungeon (including disconnected dungeon segments) on automap
         /// </summary>
-        private void revealDungeonOnAutomap()
+        private void RevealAll()
         {
-            Transform location = gameobjectGeometry.transform.GetChild(0);
-            for (int indexBlock = 0; indexBlock < location.childCount; indexBlock++)
+            if (!gameobjectGeometry)
+                return;
+            MeshRenderer[] meshRenderers = gameobjectGeometry.GetComponentsInChildren<MeshRenderer>(true);
+            foreach (MeshRenderer meshRenderer in meshRenderers)
             {
-                Transform currentBlock = location.GetChild(indexBlock);
-
-                for (int indexElement = 0; indexElement < currentBlock.childCount; indexElement++)
+                meshRenderer.enabled = true;
+                Material[] materials = meshRenderer.materials;
+                foreach (Material mat in meshRenderer.materials)
                 {
-                    Transform currentTransformElement = currentBlock.GetChild(indexElement);
-
-                    for (int indexModel = 0; indexModel < currentTransformElement.childCount; indexModel++)
-                    {
-                        Transform currentTransformModel = currentTransformElement.GetChild(indexModel);
-                        MeshRenderer meshRenderer = currentTransformModel.GetComponent<MeshRenderer>();
-                        if (meshRenderer)
-                        {
-                            meshRenderer.enabled = true;
-                            Material[] materials = meshRenderer.materials;
-                            foreach (Material mat in meshRenderer.materials)
-                            {
-                                mat.DisableKeyword("RENDER_IN_GRAYSCALE");
-                            }
-                            meshRenderer.materials = materials;
-                        }
-                    }
+                    mat.DisableKeyword("RENDER_IN_GRAYSCALE");
                 }
+                meshRenderer.materials = materials;
+            }
+        }
+
+        /// <summary>
+        /// hides complete dungeon on automap
+        /// </summary>
+        public void HideAll()
+        {
+            if (!gameobjectGeometry)
+                return;
+            MeshRenderer[] meshRenderers = gameobjectGeometry.GetComponentsInChildren<MeshRenderer>(true);
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+            {
+                meshRenderer.enabled = false;
             }
         }
 
@@ -1346,32 +1347,79 @@ namespace DaggerfallWorkshop.Game
 
         #region console_commands
 
-        private static class RevealAutomap
+        public static class AutoMapConsoleCommands
         {
-            public static readonly string name = "automap_reveal";
-            public static readonly string description = "reveals complete dungeon (including disconnected dungeon segments) on automap";
-            public static readonly string usage = "automap_reveal";
-
-
-
-            public static string Execute(params string[] args)
+            public static void RegisterCommands()
             {
-                if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
+                try
                 {
-                    DaggerfallAutomap daggerfallAutomap = DaggerfallAutomap.instance;
+                    ConsoleCommandsDatabase.RegisterCommand(RevealAll.name, RevealAll.description, RevealAll.usage, RevealAll.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(HideAll.name, HideAll.description, HideAll.usage, HideAll.Execute);
 
+                }
+                catch (System.Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(ex.Message, true);
+                }
+            }
+
+
+
+            private static class RevealAll
+            {
+                public static readonly string name = "map_revealall";
+                public static readonly string description = "Reveals entire map (including disconnected dungeon segments) on automap";
+                public static readonly string usage = "map_revealall";
+
+
+                public static string Execute(params string[] args)
+                {
+                    if (!GameManager.Instance.IsPlayerInside)
+                    {
+                        return "this command only has an effect when inside a dungeon";
+                    }
+
+                    DaggerfallAutomap daggerfallAutomap = DaggerfallAutomap.instance;
                     if (daggerfallAutomap == null)
                     {
                         return "DaggerfallAutomap instance not found";
                     }
-                    daggerfallAutomap.revealDungeonOnAutomap();
+
+                    daggerfallAutomap.RevealAll();
                     return "dungeon has been completely revealed on the automap";
                 }
-                else
-                {
-                    return "this command only has an effect when inside a dungeon or palace";
-                }
             }
+
+
+            private static class HideAll
+            {
+                public static readonly string name = "map_hideall";
+                public static readonly string description = "Hides entire map";
+                public static readonly string usage = "map_hideall";
+
+
+                public static string Execute(params string[] args)
+                {
+                    if (!GameManager.Instance.IsPlayerInside)
+                    {
+                        return "this command only has an effect when inside a dungeon";
+                    }
+
+                    DaggerfallAutomap daggerfallAutomap = DaggerfallAutomap.instance;
+                    if (daggerfallAutomap == null)
+                    {
+                        return "DaggerfallAutomap instance not found";
+                    }
+
+                    daggerfallAutomap.HideAll();
+
+                    return "hide complete on automap";
+                }
+
+            }
+
+
+
         }
 
         #endregion
