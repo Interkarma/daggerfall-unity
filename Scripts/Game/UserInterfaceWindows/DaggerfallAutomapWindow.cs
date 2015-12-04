@@ -165,6 +165,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel dummyPanelCompass = null; // used to determine correct compass position
 
         // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
+        bool leftMouseClickedOnPanelAutomap = false; // used for debug teleport mode clicks
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
         bool leftMouseDownOnForwardButton = false;
@@ -471,6 +472,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             resizeGUIelementsOnDemand();
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.getKeyModifiers(Input.GetKey(KeyCode.LeftControl), Input.GetKey(KeyCode.RightControl), Input.GetKey(KeyCode.LeftShift), Input.GetKey(KeyCode.RightShift), Input.GetKey(KeyCode.LeftAlt), Input.GetKey(KeyCode.RightAlt));
+
+            // debug teleport mode action
+            if (
+                (daggerfallAutomap.DebugTeleportMode == true) &&
+                leftMouseClickedOnPanelAutomap && // make sure click happened in panel area
+                Input.GetMouseButtonDown(0) && // make sure click was issued in this frame
+                ((Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightControl) && Input.GetKey(KeyCode.RightShift)))
+               )
+            {
+                //Vector2 mousePosition = new Vector2((Input.mousePosition.x / Screen.width) * panelRenderAutomap.Size.x, (Input.mousePosition.y / Screen.height) * panelRenderAutomap.Size.y);
+                Vector2 mousePosition = panelRenderAutomap.ScaledMousePosition;
+                mousePosition.y = panelRenderAutomap.Size.y - mousePosition.y;
+                daggerfallAutomap.tryTeleportPlayerToDungeonSegmentAtScreenPosition(mousePosition);
+                updateAutomapView();
+            }
 
             // check hotkeys and assign actions
             if (Input.GetKeyDown(HotkeySequence_CloseMap.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CloseMap.modifiers))
@@ -1404,14 +1420,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (alreadyInMouseDown)
                 return;
 
+            leftMouseClickedOnPanelAutomap = true; // used for debug teleport mode clicks
+
+            if (daggerfallAutomap.DebugTeleportMode && ((Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightControl) && Input.GetKey(KeyCode.RightShift))))
+                return;
+
             Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-            oldMousePosition = mousePosition;            
+            oldMousePosition = mousePosition;
             leftMouseDownOnPanelAutomap = true;
             alreadyInMouseDown = true;
         }
 
         private void PanelAutomap_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            leftMouseClickedOnPanelAutomap = false; // used for debug teleport mode clicks
             leftMouseDownOnPanelAutomap = false;
             alreadyInMouseDown = false;
         }

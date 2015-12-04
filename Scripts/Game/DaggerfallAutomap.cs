@@ -154,6 +154,8 @@ namespace DaggerfallWorkshop.Game
         readonly Vector3 rayPlayerPosOffset = new Vector3(-0.1f, 0.0f, +0.1f); // small offset to prevent ray for player position to be exactly in the same position as the rotation pivot axis
         readonly Vector3 rayEntrancePosOffset = new Vector3(0.1f, 0.0f, +0.1f); // small offset to prevent ray for dungeon entrance to be exactly in the same position as the rotation pivot axis
 
+        bool debugTeleportMode = false;
+
         #endregion
 
         #region Properties
@@ -207,6 +209,15 @@ namespace DaggerfallWorkshop.Game
         public bool IsOpenAutomap
         {
             set { isOpenAutomap = value; }
+        }
+
+        /// <summary>
+        /// used to set or get the debug teleport mode
+        /// </summary>
+        public bool DebugTeleportMode
+        {
+            get { return (debugTeleportMode); }
+            set { debugTeleportMode = value; }
         }
 
         #endregion
@@ -362,6 +373,22 @@ namespace DaggerfallWorkshop.Game
                     break;
             }
             return (gameobjectInFocus);
+        }
+
+        /// <summary>
+        /// DaggerfallAutomapWindow script will use this to signal this script to try to teleport player to dungeon segment shown at a provided screen position
+        /// </summary>
+        /// <param name="screenPosition"> the screen position of interest - if a dungeon segment is shown at this position player will be teleported there </param>
+        public void tryTeleportPlayerToDungeonSegmentAtScreenPosition(Vector2 screenPosition)
+        {
+            Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 10000, 1 << layerAutomap))
+            {
+                gameObjectPlayerAdvanced.transform.position = hit.point + Vector3.up * 0.1f;
+                gameobjectBeaconPlayerPosition.transform.position = hit.point + rayPlayerPosOffset;
+                gameobjectPlayerMarkerArrow.transform.position = hit.point + rayPlayerPosOffset;
+            }
         }
 
         #endregion
@@ -1355,15 +1382,13 @@ namespace DaggerfallWorkshop.Game
                 {
                     ConsoleCommandsDatabase.RegisterCommand(RevealAll.name, RevealAll.description, RevealAll.usage, RevealAll.Execute);
                     ConsoleCommandsDatabase.RegisterCommand(HideAll.name, HideAll.description, HideAll.usage, HideAll.Execute);
-
+                    ConsoleCommandsDatabase.RegisterCommand(DebugTeleportMode.name, DebugTeleportMode.description, DebugTeleportMode.usage, DebugTeleportMode.Execute);                    
                 }
                 catch (System.Exception ex)
                 {
                     DaggerfallUnity.LogMessage(ex.Message, true);
                 }
             }
-
-
 
             private static class RevealAll
             {
@@ -1389,7 +1414,6 @@ namespace DaggerfallWorkshop.Game
                     return "dungeon has been completely revealed on the automap";
                 }
             }
-
 
             private static class HideAll
             {
@@ -1418,6 +1442,29 @@ namespace DaggerfallWorkshop.Game
 
             }
 
+            private static class DebugTeleportMode
+            {
+                public static readonly string name = "map_teleportmode";
+                public static readonly string description = "toggles (enables or disables) debug teleport mode (Control+Shift+Left Mouse Click on a dungeon segment will teleport player to it)";
+                public static readonly string usage = "map_teleportmode";
+
+
+                public static string Execute(params string[] args)
+                {
+                    DaggerfallAutomap daggerfallAutomap = DaggerfallAutomap.instance;
+                    if (daggerfallAutomap == null)
+                    {
+                        return "DaggerfallAutomap instance not found";
+                    }
+
+                    bool oldDebugTeleportMode = daggerfallAutomap.DebugTeleportMode;
+                    daggerfallAutomap.DebugTeleportMode = !oldDebugTeleportMode;
+                    if (daggerfallAutomap.DebugTeleportMode == true)
+                        return "debug teleport mode has been enabled";
+                    else
+                        return "debug teleport mode has been disabled";
+                }
+            }
 
 
         }
