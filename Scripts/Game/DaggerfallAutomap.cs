@@ -382,12 +382,25 @@ namespace DaggerfallWorkshop.Game
         public void tryTeleportPlayerToDungeonSegmentAtScreenPosition(Vector2 screenPosition)
         {
             Ray ray = cameraAutomap.ScreenPointToRay(screenPosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 10000, 1 << layerAutomap))
+
+            RaycastHit[] hits = Physics.RaycastAll(ray, 10000, 1 << layerAutomap);            
+
+            RaycastHit? nearestHit = null;
+            float nearestDistance = float.MaxValue;
+            foreach (RaycastHit hit in hits)
             {
-                gameObjectPlayerAdvanced.transform.position = hit.point + Vector3.up * 0.1f;
-                gameobjectBeaconPlayerPosition.transform.position = hit.point + rayPlayerPosOffset;
-                gameobjectPlayerMarkerArrow.transform.position = hit.point + rayPlayerPosOffset;
+                if ((hit.distance < nearestDistance) && (hit.collider.gameObject.GetComponent<MeshRenderer>().enabled))
+                {
+                    nearestHit = hit;
+                    nearestDistance = hit.distance;
+                }
+            }
+
+            if (nearestHit.HasValue)
+            {
+                gameObjectPlayerAdvanced.transform.position = nearestHit.Value.point + Vector3.up * 0.1f;
+                gameobjectBeaconPlayerPosition.transform.position = nearestHit.Value.point + rayPlayerPosOffset;
+                gameobjectPlayerMarkerArrow.transform.position = nearestHit.Value.point + rayPlayerPosOffset;
             }
         }
 
