@@ -148,7 +148,8 @@ Shader "Daggerfall/Automap"
 					#endif					
 				}
 
-				float dist = distance(IN.worldPos.y, _SclicingPositionY);
+				float dist = distance(min(IN.worldPos.y, _SclicingPositionY), _SclicingPositionY);
+
 				outColor.rgb *= 1.0f - max(0.0f, min(0.6f, dist/20.0f));
 
 				#if defined(RENDER_IN_GRAYSCALE)
