@@ -373,7 +373,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (!isSetup) // if Setup() has not run, run it now
                 Setup();
-            
+
             daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
 
             daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed and that it should update its state (updates player marker arrow)
@@ -490,8 +490,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // check hotkeys and assign actions
             if (Input.GetKeyDown(HotkeySequence_CloseMap.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CloseMap.modifiers))
-            {
+            {                
                 CloseWindow();
+                Input.ResetInputAxes(); // prevents automap window to reopen immediately after closing
             }
             if (Input.GetKeyDown(HotkeySequence_SwitchAutomapGridMode.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchAutomapGridMode.modifiers))
             {
