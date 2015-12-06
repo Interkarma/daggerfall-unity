@@ -520,33 +520,6 @@ namespace DaggerfallWorkshop.Game
             Debug.DrawRay(rayStartPos + offsetThirdProtectionRaycast, rayDirection, Color.cyan, 1.0f);
 #endif
 
-            // old raycast method with moving GameObject "PlayerAdvanced" temporarily to layer automap - obsolete due to better approach with RaycastAll() method
-//#if DEBUG_SHOW_RAYCAST_TIMES
-//            // Start timing
-//            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-//            long startTime = stopwatch.ElapsedMilliseconds;
-//#endif
-
-//            // move GameObject "PlayerAdvanced" temporarily to different layer than "Default" so the raycast do not hit the colliders
-//            // did not find a better solution for this problem (scanWithRaycastInDirectionAndUpdateMeshesAndMaterials() does raycasts
-//            // both on geometry in layerAutomap as well as geometry in layer "default" - this mechanism is needed to detect doors
-//            // and not reveal geometry behind it (automap level geometry does not have door meshes...))
-//            gameObjectPlayerAdvanced.layer = layerAutomap; 
-
-//            // do raycast and protection raycast on main level geometry (use default layer as layer mask)
-//            bool didHitTrueLevelGeometry1 = Physics.Raycast(rayStartPos, rayDirection, out hitTrueLevelGeometry1, rayDistance, 1 << 0);
-//            bool didHitTrueLevelGeometry2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hitTrueLevelGeometry2, rayDistance, 1 << 0);
-//            bool didHitTrueLevelGeometry3 = Physics.Raycast(rayStartPos + offsetThirdProtectionRaycast, rayDirection, out hitTrueLevelGeometry3, rayDistance, 1 << 0);
-
-//            // move GameObject "PlayerAdvanced" back to Default layer
-//            gameObjectPlayerAdvanced.layer = LayerMask.NameToLayer("Default");
-
-//#if DEBUG_SHOW_RAYCAST_TIMES
-//            // Show timer
-//            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-//            DaggerfallUnity.LogMessage(string.Format("Time to do raycast to layer \"Default\": {0}ms", totalTime), true);
-            //#endif
-
 #if DEBUG_SHOW_RAYCAST_TIMES
             // Start timing
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -673,6 +646,13 @@ namespace DaggerfallWorkshop.Game
                     
                     // reveal geometry which player is looking at (and which is near enough)
                     rayDirection = Camera.main.transform.rotation * Vector3.forward;
+                    // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
+                    offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
+                    rayDistance = raycastDistanceViewDirection;
+                    scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
+
+                    //reveal geometry that is in front of player (by raycast in forward and downward direction)
+                    rayDirection = Camera.main.transform.rotation * Vector3.forward + Vector3.down / 3.0f;
                     // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
                     offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
                     rayDistance = raycastDistanceViewDirection;
