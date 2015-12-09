@@ -122,12 +122,12 @@ namespace DaggerfallWorkshop.Game
         // automap render mode is a setting that influences geometry rendered above slicing plane
         public enum AutomapRenderMode
         {
-            Transparent = 0,
+            Cutout = 0,
             Wireframe = 1,
-            Cutout = 2
+            Transparent = 2
         };
 
-        AutomapRenderMode currentAutomapRenderMode = AutomapRenderMode.Transparent; // currently selected automap render mode (default value: transparent)
+        AutomapRenderMode currentAutomapRenderMode = AutomapRenderMode.Cutout; // currently selected automap render mode (default value: cutout)
 
         // flag that indicates if external script should reset automap settings (set via Property ResetAutomapSettingsSignalForExternalScript checked and erased by DaggerfallAutomapWindow script)
         // this might look weirds - why not just notify the DaggerfallAutomapWindow class you may ask... - I wanted to make DaggerfallAutomap inaware and independent of the actual GUI implementation
@@ -465,8 +465,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // set default automap render mode
-            Shader.DisableKeyword("AUTOMAP_RENDER_MODE_WIREFRAME");
-            Shader.EnableKeyword("AUTOMAP_RENDER_MODE_TRANSPARENT");
+            switchToAutomapRenderModeCutout();
 
             // register console commands
             try

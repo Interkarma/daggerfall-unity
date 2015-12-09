@@ -117,9 +117,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_ResetRotationPivotAxisView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
         readonly HotkeySequence HotkeySequence_SwitchFocusToNextBeaconObject = new HotkeySequence(KeyCode.Tab, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_SwitchToNextAutomapRenderMode = new HotkeySequence(KeyCode.Return, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeTransparent = new HotkeySequence(KeyCode.F1, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeCutout = new HotkeySequence(KeyCode.F1, HotkeySequence.KeyModifiers.None);        
         readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeWireframe = new HotkeySequence(KeyCode.F2, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeCutout = new HotkeySequence(KeyCode.F3, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeTransparent = new HotkeySequence(KeyCode.F3, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveForward = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.None);
@@ -1059,7 +1059,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
                 case AutomapViewMode.View3D:
                     translation = cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed;
-                    translation.y = 0.0f; // comment this out for movement along camera optical axis
+                    //translation.y = 0.0f; // comment this out for movement along camera optical axis
                     break;
                 default:
                     translation = Vector3.zero;
@@ -1082,7 +1082,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
                 case AutomapViewMode.View3D:
                     translation = -cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed;
-                    translation.y = 0.0f; // comment this out for movement along camera optical axis
+                    //translation.y = 0.0f; // comment this out for movement along camera optical axis
                     break;
                 default:
                     translation = Vector3.zero;
@@ -1098,7 +1098,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionMoveRotationPivotAxisLeft()
         {
             Vector3 translation = -cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed;
-            translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
+            //translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
             shiftRotationPivotAxisPosition(translation);
             updateAutomapView();
         }
@@ -1109,7 +1109,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionMoveRotationPivotAxisRight()
         {
             Vector3 translation = cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed;
-            translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector                
+            //translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector                
             shiftRotationPivotAxisPosition(translation);
             updateAutomapView();
         }
