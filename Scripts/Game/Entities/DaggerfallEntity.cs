@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int level;
         protected DaggerfallStats stats;
         protected DaggerfallSkills skills;
+        protected EntityItems items;
         protected int maxHealth;
         protected int currentHealth;
         protected int currentFatigue;
@@ -51,6 +52,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int Level { get { return level; } set { level = value; } }
         public DaggerfallStats Stats { get { return stats; } set { stats.Copy(value); } }
         public DaggerfallSkills Skills { get { return skills; } set { skills.Copy(value); } }
+        public EntityItems Items { get { return items; } set { items.Copy(value); } }
         public int MaxHealth { get { return maxHealth; } set { maxHealth = value; } }
         public int CurrentHealth { get { return currentHealth; } set { SetHealth(value); } }
         public int MaxFatigue { get { return stats.Strength + stats.Endurance; } }

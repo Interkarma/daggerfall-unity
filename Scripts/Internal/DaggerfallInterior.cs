@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Nystul   
 // 
 // Notes:
 //
@@ -102,6 +102,43 @@ namespace DaggerfallWorkshop
             AddFlats();
             AddPeople();
             AddActionDoors();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Layout interior for automap based on data in exterior door and optional location for climate settings.
+        /// </summary>
+        /// <param name="doorOwner">Parent transform owning door array.</param>
+        /// <param name="door">Exterior door player clicked on.</param>
+        /// <returns>True if successful.</returns>
+        public bool DoLayoutAutomap(Transform doorOwner, StaticDoor door, ClimateBases climateBase)
+        {
+            if (dfUnity == null)
+                dfUnity = DaggerfallUnity.Instance;
+
+            // Use specified climate
+            this.climateBase = climateBase;
+
+            // Save exterior information
+            this.entryDoor = door;
+            this.doorOwner = doorOwner;
+
+            // Get block data
+            blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blockIndex);
+            if (blockData.Type != DFBlock.BlockTypes.Rmb)
+                throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
+
+            // Get record data
+            recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
+            if (recordData.Interior.Header.Num3dObjectRecords == 0)
+                throw new Exception(string.Format("No interior 3D models found for record index {0}", door.recordIndex), null);
+
+            // Layout interior data
+            AddModels();
+            //AddFlats();
+            //AddPeople();
+            //AddActionDoors();
 
             return true;
         }
