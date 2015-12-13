@@ -104,7 +104,7 @@ namespace DaggerfallWorkshop.Game
 
         public PlayerEntity PlayerEntity
         {
-            get { return (playerEntity != null) ? playerEntity : playerEntity = PlayerEntityBehaviour.Entity as PlayerEntity; }//GetComponentFromObject<DaggerfallEntityBehaviour>(PlayerObject).Entity as PlayerEntity; }
+            get { return (playerEntity != null) ? playerEntity : playerEntity = PlayerEntityBehaviour.Entity as PlayerEntity; }
             set { playerEntity = value; }
         }
 
@@ -337,11 +337,15 @@ namespace DaggerfallWorkshop.Game
             // Handle in-game windows
             if (InputManager.Instance.ActionStarted(InputManager.Actions.CharacterSheet))
             {
-                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetDialog);
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
+            }
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.Inventory))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.TravelMap))
             {
-                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapDialog);
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
             }
 
             // Handle quick save and load

@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         // Editor properties
         public StartMethods StartMethod = StartMethods.Nothing;
+        public int StartSaveIndex = 0;
         public bool EnableVideos = true;
         public bool GodMod = false;
 
@@ -74,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Utility
             NewCharacter,                           // Spawn character to start location in INI
             LoadDaggerfallUnityQuickSave,           // Loads the current quicksave slot (if present)
             //LoadDaggerfallUnitySave,              // TODO: This will replace quicksave option
-            LoadClassicSave,                        // Loads a classic save
+            LoadClassicSave,                        // Loads a classic save using start save index
         }
 
         #endregion
@@ -126,6 +127,7 @@ namespace DaggerfallWorkshop.Game.Utility
                     StartFromQuickSave();
                     break;
                 case StartMethods.LoadClassicSave:
+                    classicSaveIndex = StartSaveIndex;
                     StartFromClassicSave();
                     break;
                 default:

@@ -43,13 +43,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel healthLabel = new TextLabel();
         //TextLabel encumbranceLabel = new TextLabel();
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
-        Panel playerBackgroundPanel = new Panel();
-        Panel playerBodyPanel = new Panel();
-        Panel playerHeadPanel = new Panel();
+        CharacterPortrait characterPortrait = new CharacterPortrait();
 
         PlayerEntity PlayerEntity
         {
-            get { return (playerEntity != null) ? playerEntity : GetPlayerEntity(); }
+            get { return (playerEntity != null) ? playerEntity : playerEntity = GameManager.Instance.PlayerEntity; }
         }
 
         public DaggerfallCharacterSheetWindow(IUserInterfaceManager uiManager)
@@ -69,6 +67,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
+
+            // Character portrait
+            NativePanel.Components.Add(characterPortrait);
+            characterPortrait.Position = new Vector2(200, 8);
 
             // Setup labels
             nameLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(41, 4), NativePanel);
@@ -133,15 +135,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 pos.y += 24f;
             }
 
-            // Player paper doll components
-            // This will later be moved later to a dedicated control with complete inventory support
-            NativePanel.Components.Add(playerBackgroundPanel);
-            NativePanel.Components.Add(playerBodyPanel);
-            NativePanel.Components.Add(playerHeadPanel);
-
             // Update player paper doll for first time
             UpdatePlayerValues();
-            UpdatePlayerAvatarPanel();
+            characterPortrait.Refresh();
         }
 
         public override void OnPush()
@@ -149,31 +145,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (IsSetup)
             {
                 UpdatePlayerValues();
-                UpdatePlayerAvatarPanel();
+                characterPortrait.Refresh();
             }
         }
 
         #region Private Methods
-
-        // Finds Player and returns PlayerEntity object
-        PlayerEntity GetPlayerEntity()
-        {
-            // Get player object
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (!player)
-                throw new Exception("Could not find Player.");
-
-            DaggerfallEntityBehaviour entityBehaviour = player.GetComponent<DaggerfallEntityBehaviour>();
-            if (!entityBehaviour)
-                throw new Exception("Could not find DaggerfallEntityBehaviour on Player.");
-
-            // Get player entity
-            playerEntity = entityBehaviour.Entity as PlayerEntity;
-            if (playerEntity == null)
-                throw new Exception("Could not find PlayerEntity.");
-
-            return playerEntity;
-        }
 
         // Adds button for attribute popup text
         // NOTE: This has only partial functionality until %vars and all formatting tokens are supported
@@ -268,55 +244,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update stat labels
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
-                statLabels[i].Text = playerEntity.Stats.GetStatValue(i).ToString();
+                statLabels[i].Text = PlayerEntity.Stats.GetStatValue(i).ToString();
             }
-        }
-
-        // Test paper doll setup only
-        // Will be moved later to a unique control
-        void UpdatePlayerAvatarPanel()
-        {
-            // Update player background
-            Texture2D raceBackground = DaggerfallUI.GetTextureFromImg(PlayerEntity.Race.PaperDollBackground);
-            playerBackgroundPanel.BackgroundTexture = raceBackground;
-            playerBackgroundPanel.Position = new Vector2(192, 1);
-            playerBackgroundPanel.Size = new Vector2(raceBackground.width, raceBackground.height);
-
-            // Get player body image
-            string paperDollBodyImageName = string.Empty;
-            if (DaggerfallUnity.Settings.NoPlayerNudity)
-            {
-                if (PlayerEntity.Gender == Genders.Male)
-                    paperDollBodyImageName = PlayerEntity.Race.PaperDollBodyMaleClothed;
-                else
-                    paperDollBodyImageName = PlayerEntity.Race.PaperDollBodyFemaleClothed;
-            }
-            else
-            {
-                if (PlayerEntity.Gender == Genders.Male)
-                    paperDollBodyImageName = PlayerEntity.Race.PaperDollBodyMaleUnclothed;
-                else
-                    paperDollBodyImageName = PlayerEntity.Race.PaperDollBodyFemaleUnclothed;
-            }
-
-            // Update body
-            DFPosition offset;
-            Texture2D playerBodyTexture = DaggerfallUI.GetTextureFromImg(paperDollBodyImageName, out offset);
-            playerBodyPanel.Size = new Vector2(playerBodyTexture.width, playerBodyTexture.height);
-            playerBodyPanel.Position = new Vector2(offset.X, offset.Y);
-            playerBodyPanel.BackgroundTexture = playerBodyTexture;
-
-            // Get player head image
-            Texture2D playerHeadTexture;
-            if (PlayerEntity.Gender == Genders.Male)
-                playerHeadTexture = DaggerfallUI.GetTextureFromCifRci(PlayerEntity.Race.PaperDollHeadsMale, PlayerEntity.FaceIndex, out offset);
-            else
-                playerHeadTexture = DaggerfallUI.GetTextureFromCifRci(PlayerEntity.Race.PaperDollHeadsFemale, PlayerEntity.FaceIndex, out offset);
-
-            // Update head
-            playerHeadPanel.Size = new Vector2(playerHeadTexture.width, playerHeadTexture.height);
-            playerHeadPanel.Position = new Vector2(offset.X, offset.Y);
-            playerHeadPanel.BackgroundTexture = playerHeadTexture;
         }
 
         #endregion

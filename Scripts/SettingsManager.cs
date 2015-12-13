@@ -128,6 +128,12 @@ namespace DaggerfallWorkshop
             set { SetInt(sectionGUI, "GUIFilterMode", value); }
         }
 
+        public int VideoFilterMode
+        {
+            get { return GetInt(sectionGUI, "VideoFilterMode"); }
+            set { SetInt(sectionGUI, "VideoFilterMode", value); }
+        }
+
         public bool Crosshair
         {
             get { return GetBool(sectionGUI, "Crosshair"); }

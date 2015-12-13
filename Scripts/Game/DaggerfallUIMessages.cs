@@ -43,7 +43,8 @@ namespace DaggerfallWorkshop.Game
         public const string dfuiOpenPauseOptionsDialog = "dfuiOpenPauseOptionsDialog";
 
         // "In game windows" window messages
-        public const string dfuiOpenCharacterSheetDialog = "dfuiOpenCharacterSheetDialog";
-        public const string dfuiOpenTravelMapDialog = "dfuiOpenTravelMapDialog";
+        public const string dfuiOpenCharacterSheetWindow = "dfuiOpenCharacterSheetWindow";
+        public const string dfuiOpenInventoryWindow = "dfuiOpenInventoryWindow";
+        public const string dfuiOpenTravelMapWindow = "dfuiOpenTravelMapWindow";
     }
 }
