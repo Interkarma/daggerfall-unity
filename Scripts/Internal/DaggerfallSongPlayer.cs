@@ -14,10 +14,10 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using AudioSynthesis.Bank;
-using AudioSynthesis.Sequencer;
-using AudioSynthesis.Synthesis;
-using AudioSynthesis.Midi;
+using DaggerfallWorkshop.AudioSynthesis.Bank;
+using DaggerfallWorkshop.AudioSynthesis.Sequencer;
+using DaggerfallWorkshop.AudioSynthesis.Synthesis;
+using DaggerfallWorkshop.AudioSynthesis.Midi;
 
 namespace DaggerfallWorkshop
 {

@@ -94,6 +94,11 @@ namespace __ExternalAssets
 
         private Transform thisTransform;
 
+        public float Percentage
+        {
+            get { return percentage; }
+        }
+
 
         /// <summary>
         /// The type of easing to use based on Robert Penner's open source easing equations (http://www.robertpenner.com/easing_terms_of_use.html).

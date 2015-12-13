@@ -1,0 +1,446 @@
+; ReflectionsMod for Daggerfall Tools For Unity by Nystul
+; http://www.reddit.com/r/dftfu
+; http://www.dfworkshop.net/
+; Author: Michael Rauter (a.k.a. Nystul)
+; License: MIT License (http://www.opensource.org/licenses/mit-license.php)
+; Version: 0.32
+
+
+;
+; -----------------------
+; formatting description:
+; -----------------------
+;
+; example for texture-global reflectivity and smoothness:
+;
+;		[337_3 {Mages Guild Ground Texture (Woodland)}] 
+;		textureArchive = 337
+;		textureRecord = 3
+;		textureFrame = 0
+;		useMetallicGlossMap = false
+;		reflectivity = 0.6
+;		smoothness = 0.9
+;
+;
+; example for reflectivity and smoothness from metallic gloss map:
+; (metallic (reflectivity) is sampled from r-channel of texture, gloss (smoothness) is sampled from alpha channel of texture)
+; filename of metallic gloss map has to be without file extension (e.g. don't put .png in there) and the file needs to be in the Resources folder
+;
+;		[444_3 {House Ground Texture (Swamp)}]
+;		textureArchive = 444
+;		textureRecord = 3
+;		textureFrame = 0
+;		useMetallicGlossMap = true
+;		filenameMetallicGlossMap = metallicGlossMap_Texture_444_3
+;
+; you can inject albedo and normal maps also - ONLY WORKING FOR FLOOR TEXTURES CORRECTLY!!! - (e.g. for texture files in Resources folder and filenames custom_texture.png and custom_texture_normals.png):
+;		filenameAlbedoMap = custom_texture
+;		filenameNormalMap = custom_texture_normals
+;
+
+
+[337_3 {Mages Guild Ground Texture (Woodland)}] 
+textureArchive = 337
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.6
+smoothness = 0.9
+
+[037_3 {Mages Guild Ground Texture (Desert)}]
+textureArchive = 037
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.4
+smoothness = 0.8
+
+[137_3 {Mages Guild Ground Texture (Mountain)}]
+textureArchive = 137
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.5
+smoothness = 0.9
+
+[437_3 {Mages Guild Ground Texture (Swamp)}]
+textureArchive = 437
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.6
+smoothness = 0.9
+
+[363_3 {Temple Ground Texture (Woodland)}] 
+textureArchive = 363
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.4
+smoothness = 0.96
+
+[063_3 {Temple Ground Texture (Desert)}]
+textureArchive = 063
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.4
+smoothness = 0.96
+
+[463_3 {Temple Ground Texture (Swamp)}]
+textureArchive = 463
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.4
+smoothness = 0.96
+
+[360_3 {Kights Order Ground Texture (Woodland)}] 
+textureArchive = 360
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.1
+smoothness = 0.75
+
+[060_3 {Kights Order Ground Texture (Desert)}]
+textureArchive = 060
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.1
+smoothness = 0.75
+
+[460_3 {Kights Order Ground Texture (Swamp)}]
+textureArchive = 460
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.1
+smoothness = 0.55
+
+[350_1 {Castle Daggerfall Ground Texture}]
+textureArchive = 350
+textureRecord = 1
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.6
+smoothness = 0.875
+
+[352_1 {Castle Wayrest Ground Texture}]
+textureArchive = 352
+textureRecord = 1
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.5
+smoothness = 0.0925
+
+[354_1 {Castle Sentinel Ground Texture}]
+textureArchive = 354
+textureRecord = 1
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.3
+smoothness = 0.875
+
+[150_1 {Shedugant Ground Texture}]
+textureArchive = 150
+textureRecord = 1
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.6
+smoothness = 0.875
+
+[152_1 {Woodborne Ground Texture}]
+textureArchive = 152
+textureRecord = 1
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.6
+smoothness = 0.875
+
+[153_1 {Lysandus Tomb Ground Texture}]
+textureArchive = 153
+textureRecord = 1
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.07
+smoothness = 0.875
+
+[016_3 {House Ground Texture (Desert)}]
+textureArchive = 016
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.2
+smoothness = 0.95
+
+[040_3 {House Ground Texture (Desert)}]
+textureArchive = 040
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.18
+smoothness = 0.85
+
+[044_3 {House and Palace Ground Texture (Desert)}]
+textureArchive = 044
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.3
+smoothness = 0.95
+
+[116_3 {House Ground Texture (Mountain)}]
+textureArchive = 116
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.04
+smoothness = 0.67
+
+[140_3 {House Ground Texture (Mountain)}]
+textureArchive = 140
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.075
+smoothness = 0.71
+
+[328_3 {House Ground Texture (Mountain)}]
+textureArchive = 328
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.1
+smoothness = 0.7
+
+[366_3 {House Ground Texture (Mountain)}]
+textureArchive = 366
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.1
+smoothness = 0.7
+
+[019_2 {Crypt Ground Texture (Desert)}]
+textureArchive = 019
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.14
+smoothness = 0.5
+
+[020_2 {Crypt Ground Texture (Desert)}]
+textureArchive = 020
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.16
+smoothness = 0.5625
+
+[022_2 {Dungeon Ground Texture (Desert)}]
+textureArchive = 022
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.09
+smoothness = 0.35
+
+[023_2 {Dungeon Ground Texture (Desert)}]
+textureArchive = 023
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.12
+smoothness = 0.75
+
+[024_2 {Dungeon Ground Texture (Desert)}]
+textureArchive = 024
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.14
+smoothness = 0.9725
+
+[119_2 {Crypt Ground Texture (Mountain)}]
+textureArchive = 119
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.18
+smoothness = 0.71875
+
+[120_2 {Crypt Ground Texture (Mountain)}]
+textureArchive = 120
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.08
+smoothness = 0.3
+
+[122_2 {Dungeon Ground Texture (Mountain)}]
+textureArchive = 122
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.17
+smoothness = 0.8
+
+[123_2 {Dungeon Ground Texture (Mountain)}]
+textureArchive = 123
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.16
+smoothness = 0.7
+
+[124_2 {Dungeon Ground Texture (Mountain)}]
+textureArchive = 124
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.2
+smoothness = 0.8
+
+[168_2 {Sewer Ground Texture (Mountain)}]
+textureArchive = 168
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.14
+smoothness = 0.69375
+ 
+[319_2 {Crypt Ground Texture (Woodland)}]
+textureArchive = 319
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.18
+smoothness = 0.72
+
+[320_2 {Crypt Ground Texture (Woodland)}]
+textureArchive = 320
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.3
+smoothness = 0.62
+
+[322_2 {Dungeon Ground Texture (Woodland)}]
+textureArchive = 322
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.14
+smoothness = 0.8
+
+[323_2 {Dungeon Ground Texture (Woodland)}]
+textureArchive = 323
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.12
+smoothness = 0.75
+
+[324_2 {Dungeon Ground Texture (Woodland)}]
+textureArchive = 324
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.18
+smoothness = 0.85
+
+[419_2 {Crypt Ground Texture (Swamp)}]
+textureArchive = 419
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.18
+smoothness = 0.72
+
+[420_2 {Crypt Ground Texture (Swamp)}]
+textureArchive = 420
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.15
+smoothness = 0.69
+
+[422_2 {Dungeon Ground Texture (Swamp)}]
+textureArchive = 422
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.16
+smoothness = 0.725
+
+[423_2 {Dungeon Ground Texture (Swamp)}]
+textureArchive = 423
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.1
+smoothness = 0.5
+
+[424_2 {Dungeon Ground Texture (Swamp)}]
+textureArchive = 424
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.15
+smoothness = 0.6
+
+[468_2 {Sewer Ground Texture (Swamp)}]
+textureArchive = 468
+textureRecord = 2
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.14
+smoothness = 0.65
+
+
+
+[311_3 {House Ground Texture (Moderate)}]
+textureArchive = 311
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = true
+; similar to texture 444_3 - so use its metallglossmap texture
+filenameMetallicGlossMap = metallicGlossMap_Texture_444_3
+
+[316_3 {House Ground Texture (Moderate)}]
+textureArchive = 316
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = true
+filenameMetallicGlossMap = metallicGlossMap_Texture_316_3
+
+[344_3 {House Ground Texture (Moderate)}]
+textureArchive = 344
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = true
+filenameMetallicGlossMap = metallicGlossMap_Texture_344_3
+
+[411_3 {House Ground Texture (Swamp)}]
+textureArchive = 411
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = true
+; similar to texture 444_3 - so use its metallglossmap texture
+filenameMetallicGlossMap = metallicGlossMap_Texture_444_3
+
+[440_3 {House Ground Texture (Swamp)}]
+textureArchive = 440
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = true
+filenameMetallicGlossMap = metallicGlossMap_Texture_440_3
+
+[444_3 {House Ground Texture (Swamp)}]
+textureArchive = 444
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = true
+filenameMetallicGlossMap = metallicGlossMap_Texture_444_3

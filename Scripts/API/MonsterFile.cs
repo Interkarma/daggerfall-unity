@@ -22,18 +22,10 @@ namespace DaggerfallConnect.Arena2
     /// <summary>
     /// Connects to MONSTER.BSA to enumerate and extract monster data.
     /// NOTE: This is a work in progress and is not complete.
-    /// 
-    /// Thanks to tamentis for starting point:
-    /// https://github.com/tamentis/openscrolls/blob/master/list_monsters.py
     /// </summary>
     public class MonsterFile
     {
         #region Fields
-
-        /// <summary>
-        /// Spell point multipliers.
-        /// </summary>
-        public static float[] SpellPointMultipliers = new float[] { 3.0f, 2.0f, 1.75f, 1.5f, 1.0f };
 
         /// <summary>
         /// The BsaFile representing MONSTER.BSA.
@@ -54,73 +46,8 @@ namespace DaggerfallConnect.Arena2
         {
         }
 
-        /// <summary>
-        /// Defines a monster CFG record.
-        /// Name is in format ENEMY000.CFG, where 000 is monster ID.
-        /// These records are always 74 bytes.
-        /// </summary>
-        public struct MonsterCFG
-        {
-            // bytes [0-3]
-            // Flags controlling how monster tolerates various magic effects.
-            public Byte ResistanceFlags;
-            public Byte ImmunityFlags;
-            public Byte LowToleranceFlags;
-            public Byte CriticalWeaknessFlags;
-
-            // byte [4-5]
-            // Bitfield controlling special ability flags and spellpoints
-            // value & 1 = AcuteHearing
-            // value & 2 = Athleticism
-            // value & 4 = AdrenalineRush
-            // value & 8 = NoRegenSpellPoints
-            // value & 16 = SunDamage
-            // value & 32 = HolyDamage
-            // (value & 0x00C0) >> 8 = SpellPoints in dark
-            // (value & 0x0300) >> 10 = SpellPoints in light
-            // (value 0x1C00) >> 12 = SpellPointMultiplierIndex
-            public Int16 AbilityFlagsAndSpellPointsBitfield;
-
-            // bytes [6-27]
-            // Unknown values. Research needed.
-            public Byte[] UnknownRange1;
-
-            // bytes [28-43]
-            // Name of monster.
-            public String Name;
-
-            // bytes [44-73]
-            public Byte[] UnknownRange2;
-        }
-
-        /// <summary>
-        /// Flags for special abilities.
-        /// </summary>
-        [Flags]
-        public enum SpecialAbilityFlags
-        {
-            AcuteHearing = 1,
-            Athleticism = 2,
-            AdrenalineRush = 4,
-            NoRegenSpellPoints = 8,
-            SunDamage = 16,
-            HolyDamage = 32,
-        }
-
-        /// <summary>
-        /// Flags for magic effects.
-        /// </summary>
-        [Flags]
-        public enum MagicEffectFlags
-        {
-            Paralysis = 1,
-            Magic = 2,
-            Poison = 4,
-            Fire = 8,
-            Frost = 16,
-            Shock = 64,
-            Disease = 128,
-        }
+        // NOTE: Monster CFG records are identical to CLASS.CFG records
+        // and are loaded using ClassFile
 
         #endregion
 
@@ -213,18 +140,18 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
-        /// Gets monster data.
+        /// Gets monster class data.
         /// </summary>
         /// <param name="monster">Monster index.</param>
-        /// <returns>DFMonster.</returns>
-        public DFMonster GetMonster(int monster)
+        /// <returns>DFClass.</returns>
+        public DFCareer GetMonsterClass(int monster)
         {
             // Load the record
-            DFMonster dfMonster = new DFMonster();
-            if (!LoadMonster(monster, out dfMonster))
-                return dfMonster;
+            DFCareer monsterClass;
+            if (!LoadMonster(monster, out monsterClass))
+                return null;
 
-            return dfMonster;
+            return monsterClass;
         }
 
         /// <summary>
@@ -232,9 +159,9 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         /// <param name="monster">Monster index.</param>
         /// <returns>True if successful.</returns>
-        public bool LoadMonster(int monster, out DFMonster dfMonster)
+        public bool LoadMonster(int monster, out DFCareer monsterClassOut)
         {
-            dfMonster = new DFMonster();
+            monsterClassOut = new DFCareer();
 
             // Generate name from index
             string name = string.Format("ENEMY{0:000}.CFG", monster);
@@ -244,65 +171,18 @@ namespace DaggerfallConnect.Arena2
             if (index == -1)
                 return false;
 
-            // Read monster CFG data
-            MonsterCFG cfg = ReadMonsterCFG(index);
-            dfMonster.MonsterCFG = cfg;
+            // Read monster class data
+            ClassFile classFile = new ClassFile();
+            byte[] data = bsaFile.GetRecordBytes(index);
+            MemoryStream stream = new MemoryStream(data);
+            BinaryReader reader = new BinaryReader(stream);
+            classFile.Load(reader);
+            reader.Close();
 
-            // Copy name, resists, etc.
-            dfMonster.Name = cfg.Name;
-            dfMonster.ResistanceFlags = cfg.ResistanceFlags;
-            dfMonster.ImmunityFlags = cfg.ImmunityFlags;
-            dfMonster.LowToleranceFlags = cfg.LowToleranceFlags;
-            dfMonster.CriticalWeaknessFlags = cfg.CriticalWeaknessFlags;
-
-            // Expand special abilities, spell points, etc.
-            int value = cfg.AbilityFlagsAndSpellPointsBitfield;
-            dfMonster.AcuteHearing = ((value & 1) == 1);
-            dfMonster.Athleticism = ((value & 2) == 2);
-            dfMonster.AdrenalineRush = ((value & 4) == 4);
-            dfMonster.NoRegenSpellPoints = ((value & 8) == 8);
-            dfMonster.SunDamage = ((value & 16) == 16);
-            dfMonster.HolyDamage = ((value & 32) == 32);
-            dfMonster.SpellPointsInDark = ((value & 0x00c0) >> 8);
-            dfMonster.SpellPointsInLight = ((value & 0x0300) >> 10);
-            dfMonster.SpellPointMultiplier = ((value & 0x1c00) >> 12);
+            // Set output class
+            monsterClassOut = classFile.Career;
 
             return true;
-        }
-
-        #endregion
-
-        #region Readers
-
-        /// <summary>
-        /// Read monster data.
-        /// </summary>
-        private MonsterCFG ReadMonsterCFG(int index)
-        {
-            // Get reader for this monster record
-            FileProxy proxy = bsaFile.GetRecordProxy(index);
-            BinaryReader reader = proxy.GetReader();
-
-            // Read monster resist, etc. flags
-            MonsterCFG cfg = new MonsterCFG();
-            cfg.ResistanceFlags = reader.ReadByte();
-            cfg.ImmunityFlags = reader.ReadByte();
-            cfg.LowToleranceFlags = reader.ReadByte();
-            cfg.CriticalWeaknessFlags = reader.ReadByte();
-
-            // Read monster special ability and spell point bitfield
-            cfg.AbilityFlagsAndSpellPointsBitfield = reader.ReadInt16();
-
-            // Read 22 unknown bytes for UnknownRange1
-            cfg.UnknownRange1 = reader.ReadBytes(22);
-
-            // Read name
-            cfg.Name = proxy.ReadCStringSkip(reader, 0, 16);
-
-            // Read 30 unknown bytes for UnknownRange2
-            cfg.UnknownRange2 = reader.ReadBytes(30);
-
-            return cfg;
         }
 
         #endregion

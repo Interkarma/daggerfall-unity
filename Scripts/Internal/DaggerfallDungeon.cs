@@ -9,12 +9,13 @@
 // Notes:
 //
 
+//#define SHOW_LAYOUT_TIMES
+
 using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Diagnostics;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
@@ -39,6 +40,7 @@ namespace DaggerfallWorkshop
         public int RandomMonsterVariance = 4;
 
         GameObject startMarker = null;
+        GameObject enterMarker = null;
 
         public DungeonSummary Summary
         {
@@ -48,6 +50,16 @@ namespace DaggerfallWorkshop
         public GameObject StartMarker
         {
             get { return startMarker; }
+        }
+
+        public GameObject EnterMarker
+        {
+            get { return enterMarker; }
+        }
+
+        public DaggerfallStaticDoors[] StaticDoorCollections
+        {
+            get { return EnumerateStaticDoorCollections(); }
         }
 
         [Serializable]
@@ -216,9 +228,11 @@ namespace DaggerfallWorkshop
 
         private void LayoutDungeon(ref DFLocation location)
         {
-            //// Start timing
-            //Stopwatch stopwatch = Stopwatch.StartNew();
-            //long startTime = stopwatch.ElapsedMilliseconds;
+#if SHOW_LAYOUT_TIMES
+            // Start timing
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
+#endif
 
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
@@ -237,12 +251,14 @@ namespace DaggerfallWorkshop
 
                 DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
                 if (block.IsStartingBlock)
-                    FindStartMarker(daggerfallBlock);
+                    FindMarkers(daggerfallBlock);
             }
 
-            //// Show timer
-            //long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            //DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
+#if SHOW_LAYOUT_TIMES
+            // Show timer
+            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
+#endif
         }
 
         // Orsinium defines two blocks at [-1,-1]
@@ -268,29 +284,42 @@ namespace DaggerfallWorkshop
 
                 DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
                 if (block.IsStartingBlock)
-                    FindStartMarker(daggerfallBlock);
+                    FindMarkers(daggerfallBlock);
             }
         }
 
-        // Finds start marker, should only be called for starting block
-        private void FindStartMarker(DaggerfallRDBBlock dfBlock)
+        // Finds start and enter markers, should only be called for starting block
+        private void FindMarkers(DaggerfallRDBBlock dfBlock)
         {
             if (!dfBlock)
                 throw new Exception("DaggerfallDungeon: dfBlock cannot be null.");
-            if (dfBlock.StartMarkers.Length == 0)
+
+            if (dfBlock.StartMarkers != null && dfBlock.StartMarkers.Length > 0)
             {
-                DaggerfallUnity.LogMessage("DaggerfallDungeon: No start markers found in block.", true);
-                return;
+                // There should only be one start marker per start block
+                // This message will let us know if more than one is found
+                if (dfBlock.StartMarkers.Length > 1)
+                    DaggerfallUnity.LogMessage("DaggerfallDungeon: Multiple 'Start' markers found. Using first marker.", true);
+
+                startMarker = dfBlock.StartMarkers[0];
             }
 
-            // There should only be one start marker per start block
-            // This message will let us know if more than one is found
-            if (dfBlock.StartMarkers.Length > 1)
+            if (dfBlock.EnterMarkers != null && dfBlock.EnterMarkers.Length > 0)
             {
-                DaggerfallUnity.LogMessage("DaggerfallDungeon: Multiple start markers found. Using first marker.", true);
-            }
 
-            startMarker = dfBlock.StartMarkers[0];
+                // There should only be one enter marker per start block
+                // This message will let us know if more than one is found
+                if (dfBlock.EnterMarkers.Length > 1)
+                    DaggerfallUnity.LogMessage("DaggerfallDungeon: Multiple 'Enter' markers found. Using first marker.", true);
+
+                enterMarker = dfBlock.EnterMarkers[0];
+            }
+        }
+
+        // Enumerates all static doors in child blocks
+        DaggerfallStaticDoors[] EnumerateStaticDoorCollections()
+        {
+            return GetComponentsInChildren<DaggerfallStaticDoors>();
         }
 
         private bool ReadyCheck()

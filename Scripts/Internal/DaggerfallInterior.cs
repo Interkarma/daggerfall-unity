@@ -272,6 +272,9 @@ namespace DaggerfallWorkshop
 
             foreach (DFBlock.RmbBlockDoorRecord obj in recordData.Interior.BlockDoorRecords)
             {
+                // Create unique LoadID for save sytem
+                long loadID = (blockData.Index << 24) + obj.This;
+
                 // Get model transform
                 Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);
                 Vector3 modelPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
@@ -292,6 +295,13 @@ namespace DaggerfallWorkshop
                 // Apply transforms
                 go.transform.rotation = Quaternion.Euler(modelRotation);
                 go.transform.position = modelPosition;
+
+                // Get action door script
+                DaggerfallActionDoor actionDoor = go.GetComponent<DaggerfallActionDoor>();
+
+                // Assign loadID
+                if (actionDoor)
+                    actionDoor.LoadID = loadID;
             }
         }
 

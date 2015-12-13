@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using DaggerfallWorkshop.Demo;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop

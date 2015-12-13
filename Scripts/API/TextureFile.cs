@@ -280,9 +280,8 @@ namespace DaggerfallConnect.Arena2
                 return true;
 
             // Validate filename
-            filePath = filePath.ToUpper();
             string fn = Path.GetFileName(filePath);
-            if (!fn.StartsWith("TEXTURE."))
+            if (!fn.StartsWith("TEXTURE.", StringComparison.InvariantCultureIgnoreCase))
                 return false;
             
             // Handle unsupported files
@@ -494,7 +493,7 @@ namespace DaggerfallConnect.Arena2
             reader.BaseStream.Position = 0;
             header.Position = 0;
             header.RecordCount = reader.ReadInt16();
-            header.Name = managedFile.ReadCString(reader, 0).Trim();
+            header.Name = FileProxy.ReadCString(reader, 0).Trim();
         }
 
         /// <summary>

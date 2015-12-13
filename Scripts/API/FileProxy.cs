@@ -368,7 +368,7 @@ namespace DaggerfallConnect.Utility
         /// <param name="reader">Source reader.</param>
         /// <param name="readLength">Number of bytes to read (0 for null-terminated).</param>
         /// <returns>String composed from bytes read.</returns>
-        public string ReadCString(BinaryReader reader, int readLength)
+        public static string ReadCString(BinaryReader reader, int readLength = 0)
         {
             // Find null terminator as Encoding.UTF8.GetString(bytes[]) does not null terminate
             if (readLength == 0)

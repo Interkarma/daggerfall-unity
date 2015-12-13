@@ -9,6 +9,8 @@
 // Notes:
 //
 
+#define SHOW_LAYOUT_TIMES
+
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -63,6 +65,11 @@ namespace DaggerfallWorkshop
             }
         }
 
+        public DaggerfallStaticDoors[] StaticDoorCollections
+        {
+            get { return EnumerateStaticDoorCollections(); }
+        }
+
         [Serializable]
         public struct LocationSummary
         {
@@ -83,6 +90,8 @@ namespace DaggerfallWorkshop
             public ClimateNatureSets Nature;
             public int SkyBase;
             public DaggerfallBillboardBatch NatureBillboardBatch;
+            public int BlockWidth;
+            public int BlockHeight;
         }
 
         void Start()
@@ -158,6 +167,8 @@ namespace DaggerfallWorkshop
             summary.Climate = ClimateSwaps.FromAPIClimateBase(location.Climate.ClimateType);
             summary.Nature = ClimateSwaps.FromAPITextureSet(location.Climate.NatureSet);
             summary.SkyBase = location.Climate.SkyBase;
+            summary.BlockWidth = location.Exterior.ExteriorData.Width;
+            summary.BlockHeight = location.Exterior.ExteriorData.Height;
 
             // Assign starting climate
             CurrentSeason = ClimateSeason.Summer;
@@ -261,6 +272,12 @@ namespace DaggerfallWorkshop
             }
         }
 
+        // Enumerates all static doors in child blocks
+        DaggerfallStaticDoors[] EnumerateStaticDoorCollections()
+        {
+            return GetComponentsInChildren<DaggerfallStaticDoors>();
+        }
+
         #region Private Methods
 
         private int GetNatureArchive()
@@ -289,6 +306,12 @@ namespace DaggerfallWorkshop
         /// </summary>
         private void LayoutLocation(ref DFLocation location)
         {
+#if SHOW_LAYOUT_TIMES
+            // Start timing
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
+#endif
+
             // Get city dimensions
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
@@ -350,6 +373,12 @@ namespace DaggerfallWorkshop
 
             // Enumerate start marker game objects
             EnumerateStartMarkers();
+
+#if SHOW_LAYOUT_TIMES
+            // Show timer
+            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            DaggerfallUnity.LogMessage(string.Format("Time to layout location: {0}ms", totalTime), true);
+#endif
         }
 
         private bool ReadyCheck()

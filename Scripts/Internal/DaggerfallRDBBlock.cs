@@ -27,15 +27,22 @@ namespace DaggerfallWorkshop
         public Bounds RDBBounds = new Bounds();
 
         GameObject[] startMarkers = null;
+        GameObject[] enterMarkers = null;
 
         public GameObject[] StartMarkers
         {
             get { return startMarkers; }
         }
 
-        public void SetStartMarkers(GameObject[] startMarkers)
+        public GameObject[] EnterMarkers
+        {
+            get { return enterMarkers; }
+        }
+
+        public void SetMarkers(GameObject[] startMarkers, GameObject[] enterMarkers)
         {
             this.startMarkers = startMarkers;
+            this.enterMarkers = enterMarkers;
         }
     }
 }

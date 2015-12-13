@@ -78,6 +78,8 @@ namespace DaggerfallWorkshop.Utility
             // Encode and save file
             byte[] buffer = texture.EncodeToPNG();
             File.WriteAllBytes(path, buffer);
+
+            DaggerfallUnity.LogMessage(string.Format("Saved texture to {0}", path));
         }
 #endif
 
@@ -706,7 +708,7 @@ namespace DaggerfallWorkshop.Utility
 
         #region Fonts
 
-        // Gets a glyph from FntFile as Color32 array
+        // Gets fixed-width glyph data from FntFile as Color32 array
         public static Color32[] GetGlyphColors(FntFile fntFile, int index, Color backColor, Color textColor, out Rect sizeOut)
         {
             // Get actual glyph rect
@@ -720,10 +722,30 @@ namespace DaggerfallWorkshop.Utility
                 for (int x = 0; x < FntFile.GlyphFixedDimension; x++)
                 {
                     int pos = y * FntFile.GlyphFixedDimension + x;
-                    if (data[pos] > 0)
-                        colors[pos] = textColor;
-                    else
-                        colors[pos] = backColor;
+                    colors[pos] = (data[pos] > 0) ? textColor : backColor;
+                }
+            }
+
+            return colors;
+        }
+
+        // Gets proportial-width glyph data from FntFile as Color32 array
+        public static Color32[] GetProportionalGlyphColors(FntFile fntFile, int index, Color backColor, Color textColor, bool invertY = false)
+        {
+            // Get actual glyph dimensions
+            int width = fntFile.GetGlyphWidth(index);
+            int height = fntFile.FixedHeight;
+            Color32[] colors = new Color32[width * height];
+
+            // Get glyph byte data as color array
+            byte[] data = fntFile.GetGlyphPixels(index);
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int srcPos = y * FntFile.GlyphFixedDimension + x;
+                    int dstPos = (invertY) ? (height - 1 - y) * width + x : y * width + x;
+                    colors[dstPos] = (data[srcPos] > 0) ? textColor : backColor;
                 }
             }
 

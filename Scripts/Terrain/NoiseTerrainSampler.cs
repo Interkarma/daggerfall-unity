@@ -19,47 +19,44 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// A minimum sampler to produce rolling noise-based terrain.
+    /// A sampler to produce rolling noise-based terrain.
     /// Does not use Daggerfall map data so usual coastlines and elevations not present.
-    /// Creates lots of small hills and lakes. Locations may appear in water.
     /// </summary>
     public class NoiseTerrainSampler : TerrainSampler
     {
-        const float baseHeightScale = 100f;
+        public float Scale = 1;
+
+        public override int Version
+        {
+            get { return 1; }
+        }
 
         public NoiseTerrainSampler()
         {
-            MaxTerrainHeight = 2000;
-            OceanElevation = 1;
-            BeachElevation = 5;
+            HeightmapDimension = defaultHeightmapDimension;
+            MaxTerrainHeight = 200;
+            OceanElevation = -1;
+            BeachElevation = -1;
         }
 
         public override void GenerateSamples(ref MapPixelData mapPixel)
         {
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            // Create samples arrays
+            mapPixel.tilemapSamples = new TilemapSample[MapsFile.WorldMapTileDim, MapsFile.WorldMapTileDim];
+            mapPixel.heightmapSamples = new float[HeightmapDimension, HeightmapDimension];
 
-            // Create samples array
-            int dim = TerrainHelper.terrainSampleDim;
-            mapPixel.samples = new WorldSample[dim * dim];
-
-            // Populate samples
+            // Populate heightmap
             float averageHeight = 0;
             float maxHeight = float.MinValue;
-            for (int y = 0; y < dim; y++)
+            for (int y = 0; y < HeightmapDimension; y++)
             {
-                for (int x = 0; x < dim; x++)
+                for (int x = 0; x < HeightmapDimension; x++)
                 {
-                    // It is important to use a continous noise function to avoid gaps between tiles
-                    float latitude = mapPixel.mapPixelX * MapsFile.WorldMapTileDim + x;
-                    float longitude = MapsFile.MaxWorldTileCoordZ - mapPixel.mapPixelY * MapsFile.WorldMapTileDim + y;
-                    float height = TerrainHelper.GetNoise(dfUnity.ContentReader.Noise, latitude, longitude, 0.0025f, 0.9f, 0.7f, 2);
-                    height *= baseHeightScale;
-
-                    // Set sample 
-                    mapPixel.samples[y * dim + x] = new WorldSample()
-                    {
-                        scaledHeight = height,
-                    };
+                    // It is important to use a continuous noise function to avoid gaps between tiles
+                    int noisex = mapPixel.mapPixelX * (HeightmapDimension - 1) + x;
+                    int noisey = (MapsFile.MaxMapPixelY - mapPixel.mapPixelY) * (HeightmapDimension - 1) + y;
+                    float height = TerrainHelper.GetNoise(noisex, noisey, 0.01f, 0.5f, 0.1f, 2) * Scale;
+                    mapPixel.heightmapSamples[y, x] = height;
 
                     // Accumulate averages and max height
                     averageHeight += height;
@@ -69,7 +66,7 @@ namespace DaggerfallWorkshop
             }
 
             // Average and max heights are passed back for flattening location areas
-            mapPixel.averageHeight = averageHeight /= (float)(dim * dim);
+            mapPixel.averageHeight = averageHeight /= (float)(HeightmapDimension * HeightmapDimension);
             mapPixel.maxHeight = maxHeight;
         }
     }

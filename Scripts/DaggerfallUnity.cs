@@ -36,9 +36,6 @@ namespace DaggerfallWorkshop
     [RequireComponent(typeof(SoundReader))]
     public class DaggerfallUnity : MonoBehaviour
     {
-        [NonSerialized]
-        public const string Version = "1.3.37";
-
         #region Fields
 
         bool isReady = false;
@@ -50,7 +47,8 @@ namespace DaggerfallWorkshop
         MeshReader meshReader;
         SoundReader soundReader;
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
-        
+        ITextProvider textProvider = new DefaultTextProvider();
+
         #endregion
 
         #region Public Fields
@@ -139,6 +137,18 @@ namespace DaggerfallWorkshop
             set { terrainSampler = value; }
         }
 
+        public ITextProvider TextProvider
+        {
+            get { return textProvider; }
+            set { textProvider = value; }
+        }
+
+        static SettingsManager settingsManager;
+        public static SettingsManager Settings
+        {
+            get { return (settingsManager != null) ? settingsManager : settingsManager = new SettingsManager(); }
+        }
+
         #endregion
 
         #region Singleton
@@ -173,11 +183,19 @@ namespace DaggerfallWorkshop
 
         #region Unity
 
-        void Start()
+        void Awake()
         {
+            instance = null;
             SetupSingleton();
             SetupArena2Path();
             SetupContentReaders();
+        }
+
+        void Start()
+        {
+            // Allow external code to set their own interfaces at start
+            RaiseOnSetTerrainSamplerEvent();
+            RaiseOnSetTextProviderEvent();
         }
 
         void Update()
@@ -200,6 +218,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void EditorResetArena2Path()
         {
+            Settings.RereadSettings();
             SetupArena2Path();
             SetupContentReaders(true);
         }
@@ -221,10 +240,22 @@ namespace DaggerfallWorkshop
 
         private void SetupArena2Path()
         {
+            // Clear path validated flag
+            isPathValidated = false;
+
+#if !UNITY_EDITOR
+            // When starting a build, always clear stored path
+            if (Application.isPlaying)
+            {
+                Arena2Path = string.Empty;
+            }
+#endif
+
             // Allow implementor to set own Arena2 path (e.g. from custom settings file)
             RaiseOnSetArena2SourceEvent();
 
-            // Check path is valid
+#if UNITY_EDITOR
+            // Check editor singleton path is valid
             if (ValidateArena2Path(Arena2Path))
             {
                 isReady = true;
@@ -232,33 +263,69 @@ namespace DaggerfallWorkshop
                 LogMessage("Arena2 path validated.", true);
                 return;
             }
+#endif
+
+            // Look for arena2/ARENA2 folder inside Settings.MyDaggerfallPath
+            bool found = false;
+            string path = TestArena2Exists(Settings.MyDaggerfallPath);
+            if (!string.IsNullOrEmpty(path))
+            {
+                LogMessage("Trying INI path " + path, true);
+                if (Directory.Exists(path))
+                    found = true;
+                else
+                    LogMessage("INI path not found.", true);
+            }
+
+            // Otherwise, look for arena2 folder in Application.dataPath at runtime
+            if (Application.isPlaying && !found)
+            {
+                path = TestArena2Exists(Application.dataPath);
+                if (!string.IsNullOrEmpty(path))
+                    found = true;
+            }
+
+            // Did we find a path?
+            if (found)
+            {
+                // If it appears valid set this is as our path
+                LogMessage(string.Format("Testing arena2 path at '{0}'.", path), true);
+                if (ValidateArena2Path(path))
+                {
+                    Arena2Path = path;
+                    isReady = true;
+                    isPathValidated = true;
+                    LogMessage(string.Format("Found valid arena2 path at '{0}'.", path), true);
+                    //Generate log file
+                    GenerateDiagLog.PrintInfo(Settings.MyDaggerfallPath);
+                    return;
+                }
+            }
             else
             {
-                // Look for arena2 folder in Application.dataPath at runtime
-                if (Application.isPlaying)
-                {
-                    string path = Path.Combine(Application.dataPath, "arena2");
-                    if (Directory.Exists(path))
-                    {
-                        // If it appears valid set this is as our path
-                        if (ValidateArena2Path(path))
-                        {
-                            Arena2Path = path;
-                            isReady = true;
-                            isPathValidated = true;
-                            LogMessage(string.Format("Found valid arena2 path at '{0}'.", path));
-                            return;
-                        }
-                    }
-                }
+                LogMessage(string.Format("Could not find arena2 path. Try setting MyDaggerfallPath in Resources/fallback.ini."), true);
             }
 
             // No path was found but we can try to carry on without one
+            // Many features will not work without a valid path
             isReady = true;
-            isPathValidated = false;
 
             // Singleton is now ready
             RaiseOnReadyEvent();
+        }
+
+        string TestArena2Exists(string parent)
+        {
+            // Accept either upper or lower case
+            string pathLower = Path.Combine(parent, "arena2");
+            string pathUpper = Path.Combine(parent, "ARENA2");
+
+            if (Directory.Exists(pathLower))
+                return pathLower;
+            else if (Directory.Exists(pathUpper))
+                return pathUpper;
+            else
+                return string.Empty;
         }
 
         private void SetupContentReaders(bool force = false)
@@ -276,9 +343,6 @@ namespace DaggerfallWorkshop
                     DaggerfallUnity.LogMessage(string.Format("Setting up content readers without arena2 path. Not all features will be available."));
                     reader = new ContentReader(string.Empty);
                 }
-
-                // Allow external code to set their own terrain sampler at start
-                RaiseOnSetTerrainSamplerEvent();
             }
         }
 
@@ -288,7 +352,7 @@ namespace DaggerfallWorkshop
 
         public static void LogMessage(string message, bool showInEditor = false)
         {
-            if (showInEditor || Application.isPlaying) Debug.Log(string.Format("DFTFU {0}: {1}", Version, message));
+            if (showInEditor || Application.isPlaying) Debug.Log(string.Format("DFTFU {0}: {1}", VersionInfo.DaggerfallToolsForUnityVersion, message));
         }
 
         public static bool FindDaggerfallUnity(out DaggerfallUnity dfUnityOut)
@@ -358,6 +422,15 @@ namespace DaggerfallWorkshop
         {
             if (OnSetTerrainSampler != null)
                 OnSetTerrainSampler();
+        }
+
+        // OnSetTextProvider
+        public delegate void OnSetTextProviderEventHandler();
+        public static event OnSetTextProviderEventHandler OnSetTextProvider;
+        protected virtual void RaiseOnSetTextProviderEvent()
+        {
+            if (OnSetTextProvider != null)
+                OnSetTextProvider();
         }
 
         #endregion

@@ -103,6 +103,10 @@ namespace DaggerfallConnect
             if (fileProxy.Length != reader.Read(paletteBuffer, 0, (int)fileProxy.Length))
                 return false;
 
+            // Multiply MAP.PAL
+            if (Path.GetFileName(FilePath) == "MAP.PAL")
+                Multiply(4);
+
             return true;
         }
 
@@ -152,6 +156,17 @@ namespace DaggerfallConnect
                 paletteBuffer[offset++] = (byte)i;
                 paletteBuffer[offset++] = (byte)i;
                 paletteBuffer[offset++] = (byte)i;
+            }
+        }
+
+        public void Multiply(int scale)
+        {
+            int offset = headerLength;
+            for (int i = 0; i < 256; i++)
+            {
+                paletteBuffer[offset] = (byte)(paletteBuffer[offset++] * scale);
+                paletteBuffer[offset] = (byte)(paletteBuffer[offset++] * scale);
+                paletteBuffer[offset] = (byte)(paletteBuffer[offset++] * scale);
             }
         }
 
@@ -253,6 +268,19 @@ namespace DaggerfallConnect
             paletteBuffer[offset] = R;
             paletteBuffer[offset + 1] = G;
             paletteBuffer[offset + 2]  = B;
+        }
+
+        /// <summary>
+        /// Sets 768-byte palette buffer directly.
+        /// </summary>
+        /// <param name="data">Data to set.</param>
+        public void Set(byte[] data)
+        {
+            if (data.Length != 768)
+                throw new Exception("DFPalette: Invalid buffer length. Must be 768 bytes for direct set.");
+
+            headerLength = 0;
+            Array.Copy(data, paletteBuffer, 768);
         }
 
         /// <summary>

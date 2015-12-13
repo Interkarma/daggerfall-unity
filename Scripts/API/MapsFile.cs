@@ -25,9 +25,9 @@ namespace DaggerfallConnect.Arena2
     {
         #region Class Variables
 
-        public const float WorldMapTerrainDim = 32768;
-        public const float WorldMapTileDim = 128;
-        public const float WorldMapRMBDim = 4096;
+        public const int WorldMapTerrainDim = 32768;
+        public const int WorldMapTileDim = 128;
+        public const int WorldMapRMBDim = 4096;
         public const int MinWorldCoordX = 0;
         public const int MinWorldCoordZ = 0;
         public const int MaxWorldCoordX = 32768000;
@@ -474,8 +474,7 @@ namespace DaggerfallConnect.Arena2
         public bool Load(string filePath, FileUsage usage, bool readOnly)
         {
             // Validate filename
-            filePath = filePath.ToUpper();
-            if (!filePath.EndsWith("MAPS.BSA"))
+            if (!filePath.EndsWith("MAPS.BSA", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load PAK files
@@ -504,7 +503,10 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Name of the region.</returns>
         public string GetRegionName(int region)
         {
-            return regionNames[region];
+            if (region < 0 || region >= RegionCount)
+                return string.Empty;
+            else
+                return regionNames[region];
         }
 
         /// <summary>

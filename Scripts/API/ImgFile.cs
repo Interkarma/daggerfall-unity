@@ -123,16 +123,24 @@ namespace DaggerfallConnect.Arena2
                 if (IsPalettized)
                     return string.Empty;
 
-                // Return based on source filename
                 string fn = Path.GetFileName(managedFile.FilePath);
-                if (fn == "DANK02I0.IMG")
-                    return "DANKBMAP.COL";
-                else if (fn.Substring(0, 4) == "FMAP")
+
+                // Handle special palettes
+                if (fn.Substring(0, 4) == "FMAP")
                     return "FMAP_PAL.COL";
                 else if (fn.Substring(0, 4) == "NITE")
                     return "NIGHTSKY.COL";
-                else
-                    return "ART_PAL.COL";
+
+                // Select palette based on filename
+                switch (fn)
+                {
+                    case "DANK02I0.IMG":
+                        return "DANKBMAP.COL";
+                    case "TMAP00I0.IMG":
+                        return "MAP.PAL";
+                    default:
+                        return "ART_PAL.COL";
+                }
             }
         }
 
@@ -157,6 +165,14 @@ namespace DaggerfallConnect.Arena2
         public override string Description
         {
             get { return "IMG File"; }
+        }
+
+        /// <summary>
+        /// Gets XOffset and YOffset from image header.
+        /// </summary>
+        public DFPosition ImageOffset
+        {
+            get { return new DFPosition(header.XOffset, header.YOffset); }
         }
 
         #endregion
@@ -208,9 +224,8 @@ namespace DaggerfallConnect.Arena2
                 return true;
 
             // Validate filename
-            filePath = filePath.ToUpper();
             string fn = Path.GetFileName(filePath);
-            if (!fn.EndsWith(".IMG"))
+            if (!fn.EndsWith(".IMG", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Handle unsupported files

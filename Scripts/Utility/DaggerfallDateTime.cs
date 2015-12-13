@@ -25,6 +25,9 @@ namespace DaggerfallWorkshop.Utility
     {
         #region Fields
 
+        const ulong classicEpochInSeconds = 12566016000;        // Converts from DaggerfallDateTime epoch to classic Daggerfall epoch
+        const uint classicGameStartTime = 523530;               // Game start time in minutes from classic epoch
+
         // Time multipliers
         public const int SecondsPerMinute = 60;
         public const int MinutesPerHour = 60;
@@ -375,6 +378,30 @@ namespace DaggerfallWorkshop.Utility
             }
 
             Day = (int)dayno;
+        }
+
+        /// <summary>
+        /// Gets current time from classic Daggerfall minutes (e.g. found in vanilla save files)
+        /// </summary>
+        public uint ToClassicDaggerfallTime()
+        {
+            return (uint)((ToSeconds() - classicEpochInSeconds) / SecondsPerMinute);
+        }
+
+        /// <summary>
+        /// Sets current time from classic Daggerfall minutes (e.g. found in vanilla save files)
+        /// </summary>
+        public void FromClassicDaggerfallTime(uint time)
+        {
+            FromSeconds(classicEpochInSeconds + (time * SecondsPerMinute));
+        }
+
+        /// <summary>
+        /// Sets the classic game start time of 13:30 4th Morning Star 3E405.
+        /// </summary>
+        public void SetClassicGameStartTime()
+        {
+            FromClassicDaggerfallTime(classicGameStartTime);
         }
 
         /// <summary>

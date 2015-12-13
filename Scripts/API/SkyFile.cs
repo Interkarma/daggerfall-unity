@@ -120,9 +120,9 @@ namespace DaggerfallConnect.Arena2
                 return true;
 
             // Validate filename
-            filePath = filePath.ToUpper();
             string fn = Path.GetFileName(filePath);
-            if (!fn.StartsWith("SKY") && !fn.EndsWith(".DAT"))
+            if (!fn.StartsWith("SKY", StringComparison.InvariantCultureIgnoreCase) &&
+                !fn.EndsWith(".DAT", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file
