@@ -149,6 +149,7 @@ namespace DaggerfallWorkshop.Utility
                 DaggerfallUnity.LogMessage(string.Format("Unknown location RegionName='{0}', LocationName='{1}'.", regionName, locationName), true);
                 return false;
             }
+
             return true;
         }
 
