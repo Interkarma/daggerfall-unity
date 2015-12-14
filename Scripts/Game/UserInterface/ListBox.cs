@@ -251,6 +251,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 listItems[index].Text = label;
         }
 
+        public void SwapItems(int indexA, int indexB)
+        {
+            if (indexA < 0 || indexB < 0 || indexA >= listItems.Count || indexB >= listItems.Count)
+                throw new IndexOutOfRangeException("ListBox: UpdateItem index out of range.");
+            else
+            {
+                TextLabel temp = listItems[indexA];
+                listItems[indexA] = listItems[indexB];
+                listItems[indexB] = temp;
+            }
+
+        }
+
         public void SelectPrevious()
         {
             if (selectedIndex > 0)
