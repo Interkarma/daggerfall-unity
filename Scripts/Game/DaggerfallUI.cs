@@ -217,7 +217,8 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfCharacterSheet);
                     break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapDialog:
-                    uiManager.PushWindow(dfTravelMap);
+                    if(!GameManager.Instance.IsPlayerInside)
+                        uiManager.PushWindow(dfTravelMap);
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
                     Application.Quit();
