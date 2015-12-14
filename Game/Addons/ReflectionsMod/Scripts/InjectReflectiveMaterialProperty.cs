@@ -142,7 +142,7 @@ namespace ReflectionsMod
 
         public void OnWillRenderObject()
         {
-            if (reflectionTexturesScript.isOutdoorEnvironment())
+            if (!GameManager.Instance.IsPlayerInside)
             {
                 if (!gameObjectStreamingTarget)
                     return;
@@ -168,7 +168,7 @@ namespace ReflectionsMod
                 }
             }
 
-            if (reflectionTexturesScript.isIndoorEnvironment())
+            if (GameManager.Instance.IsPlayerInside)
             {
                 Renderer[] renderers = null;
 
@@ -188,7 +188,8 @@ namespace ReflectionsMod
                 {
                     foreach (Renderer r in renderers)
                     {
-                        foreach (Material m in r.sharedMaterials)
+                        Material[] mats = r.sharedMaterials;
+                        foreach (Material m in mats)
                         {
                             if (m.shader.name == "Daggerfall/FloorMaterialWithReflections")
                             {
@@ -196,6 +197,7 @@ namespace ReflectionsMod
                                 m.SetFloat("_LowerLevelHeight", gameObjectReflectionPlaneLowerLevel.transform.position.y);
                             }
                         }
+                        r.sharedMaterials = mats;
                     }
                 }
             }
@@ -242,15 +244,15 @@ namespace ReflectionsMod
             // for some reason indoor reflections do not work on first transition to interior if this line is uncommented - TODO: further investigate
             // (seems like indoor floor textures in cache are somehow "initialized" differently if the callback is invoked on startup although player is outdoors but indoor textures are also injected here)
             // even more mysterious is that trying to debug freezes unity if one sets a break point on the InjectMaterialPropertiesIndoor() line and the if statement is active, if it is commented out no freeze occurs
-            //if (reflectionTexturesScript.isIndoorEnvironment())
-           //{
-               InjectMaterialPropertiesIndoor();
-           //}
+            //if (GameManager.Instance.IsPlayerInside)
+            {
+                InjectMaterialPropertiesIndoor();
+            }
 
-           if (reflectionTexturesScript.isOutdoorEnvironment())
-           {
-               InjectMaterialPropertiesOutdoor();
-           }
+            if (!GameManager.Instance.IsPlayerInside)
+            {
+                InjectMaterialPropertiesOutdoor();
+            }
         }
 
         void InjectMaterialPropertiesIndoor()

@@ -38,22 +38,6 @@ namespace ReflectionsMod
             return mirrorRefl.m_ReflectionTexture;
         }
 
-        public bool isOutdoorEnvironment()
-        {
-            if (GameObject.Find("Exterior")) // TODO: find a more performant way to check if player is in exterior environment
-                return(true);
-            else
-                return(false);
-        }
-
-        public bool isIndoorEnvironment()
-        {
-            if ((GameObject.Find("Interior")) || (GameObject.Find("Dungeon"))) // TODO: find a more performant way to check if player is in interior or dungeon environment
-                return(true);
-            else
-                return(false);
-        }
-
         bool computeStepDownRaycast(Vector3 raycastStartPoint, Vector3 directionVec, float maxDiffMagnitude, out RaycastHit hit)
         {
             if (Physics.Raycast(raycastStartPoint, directionVec, out hit, 1000.0F))
@@ -373,7 +357,7 @@ namespace ReflectionsMod
             if (!playerGPS)
                 return;
 
-            if (isIndoorEnvironment())
+            if (GameManager.Instance.IsPlayerInside)
             {
                 RaycastHit hit;
                 float distanceToGround = 0;
@@ -389,7 +373,7 @@ namespace ReflectionsMod
                 reflectionPlaneSeaLevel.transform.position = goPlayerAdvanced.transform.position - new Vector3(0.0f, distanceLevelBelow, 0.0f);                
             }
 
-            if (isOutdoorEnvironment())
+            if (!GameManager.Instance.IsPlayerInside)
             {
                 Terrain terrainInstancePlayerTerrain = null;
 
@@ -425,6 +409,9 @@ namespace ReflectionsMod
                 }
 
                 GameObject go = GameObject.Find("StreamingTarget");
+                if (go == null)
+                    return;
+
                 foreach (Transform child in go.transform)
                 {
                     DaggerfallTerrain dfTerrain = child.GetComponent<DaggerfallTerrain>();
