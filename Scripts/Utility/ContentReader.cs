@@ -178,6 +178,27 @@ namespace DaggerfallWorkshop.Utility
             return false;
         }
 
+        /// <summary>
+        /// Determines if the current WorldCoord has a location.
+        /// </summary>
+        /// <param name="mapPixelX">Map pixel X.</param>
+        /// <param name="mapPixelY">Map pixel Y.</param>
+        /// <returns>True if there is a location at this map pixel.</returns>
+        public bool HasLocation(int mapPixelX, int mapPixelY)
+        {
+            if (!isReady)
+            {
+                return false;
+            }
+
+            int id = MapsFile.GetMapPixelID(mapPixelX, mapPixelY);
+            if (mapDict.ContainsKey(id))
+            {
+                return true;
+            }
+            return false;
+        }
+
         #endregion
 
         #region Private Methods

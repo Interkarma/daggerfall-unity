@@ -311,6 +311,13 @@ namespace DaggerfallConnect.Arena2
             return mapPixelY * 1000 + mapPixelX;
         }
 
+        public static DFPosition GetPixelFromPixelID(int pixelID)
+        {
+            int x = pixelID % 1000;
+            int y = (pixelID - x) / 1000;
+            return new DFPosition(x, y);
+        }
+
         /// <summary>
         /// Gets ID of map pixel using latitude and longitude.
         /// This can be mapped to location IDs and quest IDs.
