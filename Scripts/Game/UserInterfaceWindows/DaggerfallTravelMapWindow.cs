@@ -1022,7 +1022,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 index = -1;
             else if (index > 3 && index < 7 && filterHomes)
                 index = -1;
-            else if (index > 6 && index < 9 && filterTemples)
+            else if (index > 6 && index < 10 && filterTemples)
                 index = -1;
             else if (index > 9 && index < 14 && filterTowns)
                 index = -1;
