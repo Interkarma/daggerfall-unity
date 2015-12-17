@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         // Editor properties
         public StartMethods StartMethod = StartMethods.Nothing;
-        public int StartSaveIndex = 0;
+        public int OverrideSaveIndex = -1;
         public bool EnableVideos = true;
         public bool GodMod = false;
 
@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game.Utility
                     StartFromQuickSave();
                     break;
                 case StartMethods.LoadClassicSave:
-                    classicSaveIndex = StartSaveIndex;
+                    if (OverrideSaveIndex != -1) classicSaveIndex = OverrideSaveIndex;
                     StartFromClassicSave();
                     break;
                 default:
