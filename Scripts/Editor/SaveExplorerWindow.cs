@@ -42,6 +42,8 @@ namespace DaggerfallWorkshop
         bool showImageFoldout = false;
         Vector2 scrollPos;
 
+        CharacterRecord characterRecord = null;
+
         [MenuItem(menuPath)]
         static void Init()
         {
@@ -149,7 +151,7 @@ namespace DaggerfallWorkshop
             if (records.Count != 1)
                 return;
 
-            CharacterRecord characterRecord = (CharacterRecord)records[0];
+            characterRecord = (CharacterRecord)records[0];
             //CharacterSheet characterSheet = characterRecord.ToCharacterSheet();
 
             EditorGUILayout.Space();
@@ -179,12 +181,38 @@ namespace DaggerfallWorkshop
                     textLabel += string.Format(" [{0}]", GetItemOrSpellName(parent.Children[i]));
                 }
 
+                // Check if item equipped
+                if (recordType == RecordTypes.Item)
+                {
+                    if (IsItemEquipped(parent.Children[i] as ItemRecord))
+                    {
+                        textLabel = "*" + textLabel;
+                    }
+                }
+
                 EditorGUILayout.LabelField(textLabel);
                 GUILayoutHelper.Indent(() =>
                 {
                     DisplaySaveTree(parent.Children[i]);
                 });
             }
+        }
+
+        bool IsItemEquipped(ItemRecord record)
+        {
+            if (characterRecord == null || record.RecordType != RecordTypes.Item || record.Parent == null)
+                return false;
+
+            // Try to match item RecordID with equipped item IDs
+            // Item RecordID must be shifted right 8 bits
+            uint[] equippedItems = characterRecord.ParsedData.equippedItems;
+            for (int i = 0; i < equippedItems.Length; i++)
+            {
+                if (equippedItems[i] == (record.RecordRoot.RecordID >> 8))
+                    return true;
+            }
+
+            return false;
         }
 
         string GetItemOrSpellName(SaveTreeBaseRecord record)

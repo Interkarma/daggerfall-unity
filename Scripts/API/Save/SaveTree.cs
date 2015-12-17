@@ -249,6 +249,7 @@ namespace DaggerfallConnect.Save
                 if (RecordDictionary.ContainsKey(parentKey))
                 {
                     SaveTreeBaseRecord parent = RecordDictionary[parentKey];
+                    kvp.Value.Parent = parent;
                     parent.Children.Add(kvp.Value);
                 }
                 else

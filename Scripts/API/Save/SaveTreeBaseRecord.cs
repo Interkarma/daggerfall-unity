@@ -105,11 +105,12 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
-        /// Gets parent of this record.
+        /// Gets or sets parent of this record.
         /// </summary>
         public SaveTreeBaseRecord Parent
         {
             get { return parent; }
+            set { parent = value; }
         }
 
         /// <summary>

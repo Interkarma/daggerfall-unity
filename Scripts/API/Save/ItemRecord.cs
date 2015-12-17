@@ -24,6 +24,37 @@ namespace DaggerfallConnect.Save
     /// </summary>
     public class ItemRecord : SaveTreeBaseRecord
     {
+        #region Fields
+
+        NativeItemRecord nativeItem;
+
+        #endregion
+
+        #region Structures
+
+        /// <summary>
+        /// Stores native item data exactly as read from save file.
+        /// </summary>
+        struct NativeItemRecord
+        {
+            public string name;
+            public UInt16[] category;
+            public UInt32[] value;
+            public UInt16[] hits;
+            public UInt32[] picture;
+            public Byte material;
+            public Byte construction;
+            public Byte color;
+            public UInt32 weight;
+            public UInt16 enchantmentPoints;
+            public UInt16 message;
+            public UInt16[] magic;
+        }
+
+        #endregion
+
+        #region Constructors
+
         public ItemRecord()
         {
         }
@@ -31,6 +62,31 @@ namespace DaggerfallConnect.Save
         public ItemRecord(BinaryReader reader, int length)
             : base(reader, length)
         {
+            ReadNativeItemData();
         }
+
+        #endregion
+
+        #region Private Methods
+
+        void ReadNativeItemData()
+        {
+            // Must be an item type
+            if (recordType != RecordTypes.Item)
+                return;
+
+            // Prepare stream
+            MemoryStream stream = new MemoryStream(RecordData);
+            BinaryReader reader = new BinaryReader(stream);
+
+            // Read native item data
+            nativeItem = new NativeItemRecord();
+            nativeItem.name = FileProxy.ReadCString(reader, 20);
+
+            // Close stream
+            reader.Close();
+        }
+
+        #endregion
     }
 }

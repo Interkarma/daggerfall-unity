@@ -112,7 +112,8 @@ namespace DaggerfallConnect.Save
             reader.BaseStream.Position = 0x9d;
             parsedData.skills = ReadSkills(reader);
 
-            // TODO: 0x16f equipped items?
+            reader.BaseStream.Position = 0x016f;
+            parsedData.equippedItems = ReadEquippedItems(reader);
 
             reader.BaseStream.Position = 0x01fd;
             parsedData.timeStamp = reader.ReadUInt32();
@@ -183,6 +184,19 @@ namespace DaggerfallConnect.Save
             return skills;
         }
 
+        UInt32[] ReadEquippedItems(BinaryReader reader)
+        {
+            const int equippedCount = 27;   // May actually be 35 based on data between here and next record. Test and confirm.
+
+            UInt32[] equippedItems = new UInt32[equippedCount];
+            for (int i = 0; i < equippedCount; i++)
+            {
+                equippedItems[i] = reader.ReadUInt32();
+            }
+
+            return equippedItems;
+        }
+
         DFCareer ReadCareer(BinaryReader reader)
         {
             ClassFile classFile = new ClassFile();
@@ -217,6 +231,7 @@ namespace DaggerfallConnect.Save
             public UInt32 physicalGold;
             public Int16 maxMagicka;
             public DaggerfallSkills skills;
+            public UInt32[] equippedItems;
             public UInt32 timeStamp;
             public DFCareer career;
         }
