@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
+#if UNITY_5_3
+using UnityEngine.SceneManagement;
+#endif
 
 /// <summary>
 /// LOAD command. Load the specified scene by name.
