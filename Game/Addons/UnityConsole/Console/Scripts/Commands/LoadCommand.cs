@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 /// <summary>
@@ -25,6 +26,7 @@ namespace Wenzil.Console.Commands
             }
         }
 
+#if UNITY_5_0 || UNITY_5_1 || UNITY_5_2
         private static string LoadLevel(string scene)
         {
             try
@@ -41,5 +43,23 @@ namespace Wenzil.Console.Commands
             else
                 return string.Format("Failed to load {0}. Are you sure it's in the list of levels in Build Settings?", scene);
         }
+#elif UNITY_5_3
+        private static string LoadLevel(string scene)
+        {
+            try
+            {
+                SceneManager.LoadScene(scene);
+            }
+            catch
+            {
+                return string.Format("Failed to load {0}.", scene);
+            }
+
+            if (SceneManager.GetActiveScene().name == scene) // Assume success if we had to load the scene we were already in
+                return string.Format("Success loading {0}.", scene);
+            else
+                return string.Format("Failed to load {0}. Are you sure it's in the list of levels in Build Settings?", scene);
+        }
+#endif
     }
 }
