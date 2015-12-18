@@ -400,6 +400,7 @@ namespace DaggerfallWorkshop.Game
             actionKeyDict.Clear();
 
             SetBinding(KeyCode.Escape, Actions.Escape);
+            SetBinding(KeyCode.BackQuote, Actions.ToggleConsole);
 
             SetBinding(KeyCode.W, Actions.MoveForwards);
             SetBinding(KeyCode.S, Actions.MoveBackwards);
@@ -581,6 +582,7 @@ namespace DaggerfallWorkshop.Game
             keyBindsData.actionKeyBinds = actionKeyDict;
             string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
             File.WriteAllText(path, json);
+            RaiseSavedKeyBindsEvent();
         }
 
         void LoadKeyBinds()
@@ -590,6 +592,34 @@ namespace DaggerfallWorkshop.Game
             string json = File.ReadAllText(path);
             KeyBindData_v1 keyBindsData = SaveLoadManager.Deserialize(typeof(KeyBindData_v1), json) as KeyBindData_v1;
             actionKeyDict = keyBindsData.actionKeyBinds;
+            RaiseLoadedKeyBindsEvent();
+        }
+
+        #endregion
+
+        #region Events
+
+        public delegate void OnLoadSaveKeyBinds();
+        public static event OnLoadSaveKeyBinds OnLoadedKeyBinds;
+        protected virtual void RaiseLoadedKeyBindsEvent()
+        {
+            if (OnLoadedKeyBinds != null)
+                OnLoadedKeyBinds();
+        }
+
+        public static event OnLoadSaveKeyBinds OnSavedKeyBinds;
+        protected virtual void RaiseSavedKeyBindsEvent()
+        {
+            if (OnSavedKeyBinds != null)
+                OnSavedKeyBinds();
+        }
+
+        public delegate void OnUpdateKeyBind(KeyCode code);
+        public static event OnUpdateKeyBind OnUpdatedKeyBind;
+        protected virtual void RaiseUpdatedKeyBindsEvent(KeyCode code)
+        {
+            if (OnUpdatedKeyBind != null)
+                OnUpdatedKeyBind(code);
         }
 
         #endregion
