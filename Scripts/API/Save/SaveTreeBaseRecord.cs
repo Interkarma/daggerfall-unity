@@ -162,7 +162,7 @@ namespace DaggerfallConnect.Save
 
             // Peek record type and adjust for dungeon size
             recordType = SaveTree.PeekRecordType(reader);
-            if (recordType == RecordTypes.DungeonData)
+            if (recordType == RecordTypes.DungeonInformation)
                 streamLength *= DungeonDataLengthMultiplier;
 
             // Read raw record data

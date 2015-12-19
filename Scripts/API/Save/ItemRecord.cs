@@ -26,7 +26,16 @@ namespace DaggerfallConnect.Save
     {
         #region Fields
 
-        NativeItemRecord nativeItem;
+        ItemRecordData parsedData;
+
+        #endregion
+
+        #region Properties
+
+        public ItemRecordData ParsedData
+        {
+            get { return parsedData; }
+        }
 
         #endregion
 
@@ -35,10 +44,11 @@ namespace DaggerfallConnect.Save
         /// <summary>
         /// Stores native item data exactly as read from save file.
         /// </summary>
-        struct NativeItemRecord
+        public struct ItemRecordData
         {
             public string name;
-            public UInt16[] category;
+            public UInt16 category1;
+            public UInt16 category2;
             public UInt32[] value;
             public UInt16[] hits;
             public UInt32[] picture;
@@ -80,8 +90,10 @@ namespace DaggerfallConnect.Save
             BinaryReader reader = new BinaryReader(stream);
 
             // Read native item data
-            nativeItem = new NativeItemRecord();
-            nativeItem.name = FileProxy.ReadCString(reader, 20);
+            parsedData = new ItemRecordData();
+            parsedData.name = FileProxy.ReadCString(reader, 32);
+            parsedData.category1 = reader.ReadUInt16();
+            parsedData.category2 = reader.ReadUInt16();
 
             // Close stream
             reader.Close();

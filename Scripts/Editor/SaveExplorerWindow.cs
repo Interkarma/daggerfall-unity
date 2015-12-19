@@ -17,6 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Save;
@@ -36,11 +37,17 @@ namespace DaggerfallWorkshop
         SaveGames saveGames;
         SaveTree[] saveTrees;
         SaveTree currentSaveTree;
+        SaveTreeBaseRecord[] currentItems;
         GUIContent[] saveNames;
         Texture2D[] saveTextures;
-        int selectedSave = 0;
         bool showImageFoldout = false;
+
+        int lastSelectedSave = -1;
+        int selectedSave = 0;
+
         Vector2 scrollPos;
+        bool showItemsFoldout = true;
+        bool showSaveTreeFoldout = false;
 
         CharacterRecord characterRecord = null;
 
@@ -63,9 +70,16 @@ namespace DaggerfallWorkshop
                 return;
             }
 
-            currentSaveTree = saveTrees[selectedSave];
-            if (currentSaveTree == null)
-                return;
+            if (selectedSave != lastSelectedSave || currentSaveTree == null)
+            {
+                currentSaveTree = saveTrees[selectedSave];
+                if (currentSaveTree == null)
+                    return;
+
+                currentItems = currentSaveTree.FindRecords(RecordTypes.Item).ToArray();
+
+                lastSelectedSave = selectedSave;
+            }
 
             if (saveTrees != null && saveTrees.Length > 0)
             {
@@ -74,11 +88,24 @@ namespace DaggerfallWorkshop
                 DisplaySaveStatsGUI();
                 DisplaySaveCharacterGUI();
 
-                EditorGUILayout.Space();
-                EditorGUILayout.HelpBox("Temporarily Filtering out records of type UnknownTownLink and UnknownItemRecord to keep list manageable.", MessageType.Info);
                 scrollPos = GUILayoutHelper.ScrollView(scrollPos, () =>
                 {
-                    DisplaySaveTree(currentSaveTree.RootRecord);
+                    EditorGUILayout.Space();
+                    showItemsFoldout = GUILayoutHelper.Foldout(showItemsFoldout, new GUIContent("Items"), () =>
+                    {
+                        GUILayoutHelper.Indent(() =>
+                        {
+                            DisplayItemsFoldout();
+                        });
+                    });
+
+                    EditorGUILayout.Space();
+                    showSaveTreeFoldout = GUILayoutHelper.Foldout(showSaveTreeFoldout, new GUIContent("SaveTree"), () =>
+                    {
+                        EditorGUILayout.HelpBox("Temporarily Filtering out records of type UnknownTownLink and UnknownItemRecord to keep list manageable.", MessageType.Info);
+
+                        DisplaySaveTree(currentSaveTree.RootRecord);
+                    });
                 });
             }
         }
@@ -105,6 +132,9 @@ namespace DaggerfallWorkshop
 
         void DisplaySaveStatsGUI()
         {
+            if (currentSaveTree == null)
+                return;
+
             EditorGUILayout.Space();
             GUILayoutHelper.Horizontal(() =>
             {
@@ -146,6 +176,9 @@ namespace DaggerfallWorkshop
 
         void DisplaySaveCharacterGUI()
         {
+            if (currentSaveTree == null)
+                return;
+
             // Get character record
             List<SaveTreeBaseRecord> records = currentSaveTree.FindRecords(RecordTypes.Character);
             if (records.Count != 1)
@@ -167,6 +200,26 @@ namespace DaggerfallWorkshop
             });
         }
 
+        void DisplayItemsFoldout()
+        {
+            if (currentItems == null || currentItems.Length == 0)
+            {
+                EditorGUILayout.HelpBox("No items found.", MessageType.Info);
+                return;
+            }
+
+            for (int i = 0; i < currentItems.Length; i++)
+            {
+                ItemRecord itemRecord = currentItems[i] as ItemRecord;
+
+                string name = itemRecord.ParsedData.name;
+                string type = ((ItemType)itemRecord.ParsedData.category1).ToString();
+
+                string textLabel = string.Format("{0} [Type={1}]", name, type);
+                EditorGUILayout.LabelField(textLabel);
+            }
+        }
+
         void DisplaySaveTree(SaveTreeBaseRecord parent)
         {
             for (int i = 0; i < parent.Children.Count; i++)
@@ -184,9 +237,10 @@ namespace DaggerfallWorkshop
                 // Check if item equipped
                 if (recordType == RecordTypes.Item)
                 {
-                    if (IsItemEquipped(parent.Children[i] as ItemRecord))
+                    int equippedIndex = GetEquippedIndex(parent.Children[i] as ItemRecord);
+                    if (equippedIndex != -1)
                     {
-                        textLabel = "*" + textLabel;
+                        textLabel = string.Format("(*={0:00}) {1}", equippedIndex, textLabel);
                     }
                 }
 
@@ -198,10 +252,10 @@ namespace DaggerfallWorkshop
             }
         }
 
-        bool IsItemEquipped(ItemRecord record)
+        int GetEquippedIndex(ItemRecord record)
         {
             if (characterRecord == null || record.RecordType != RecordTypes.Item || record.Parent == null)
-                return false;
+                return -1;
 
             // Try to match item RecordID with equipped item IDs
             // Item RecordID must be shifted right 8 bits
@@ -209,10 +263,10 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < equippedItems.Length; i++)
             {
                 if (equippedItems[i] == (record.RecordRoot.RecordID >> 8))
-                    return true;
+                    return i;
             }
 
-            return false;
+            return -1;
         }
 
         string GetItemOrSpellName(SaveTreeBaseRecord record)

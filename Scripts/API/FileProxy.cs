@@ -378,7 +378,7 @@ namespace DaggerfallConnect.Utility
                 reader.BaseStream.Position = pos;
             }
 
-            return Encoding.UTF8.GetString(reader.ReadBytes(readLength));
+            return Encoding.UTF8.GetString(reader.ReadBytes(readLength)).TrimEnd('\0');
         }
 
         /// <summary>
