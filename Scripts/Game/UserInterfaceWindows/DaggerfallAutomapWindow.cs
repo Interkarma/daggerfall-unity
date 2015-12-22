@@ -30,17 +30,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallAutomapWindow : DaggerfallPopupWindow
     {
-        const float scrollLeftRightSpeed = 1.0f; // left mouse on button arrow left/right makes geometry move with this speed
-        const float scrollForwardBackwardSpeed = 1.0f; // left mouse on button arrow up/down makes geometry move with this speed
-        const float moveRotationPivotAxisMarkerLeftRightSpeed = 0.2f; // right mouse on button arrow left/right makes rotation pivot axis move with this speed
-        const float moveRotationPivotAxisMarkerForwardBackwardSpeed = 0.2f; // right mouse on button arrow up/down makes rotation pivot axis move with this speed
-        const float moveUpDownSpeed = 0.5f; // left mouse on button upstairs/downstairs makes geometry move with this speed
-        const float rotateSpeed = 3.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
-        const float zoomSpeed = 0.1f; // suggested value range: 0.1f (fast) to 0.01f (slow) // mouse wheel inside main area of the automap window will zoom with this speed
-        const float dragSpeed = 0.002f; // suggested value range: 0.01f (fast) to 0.001f (slow) // hold left mouse button down and move mouse to move geometry with this speed)
+        const float scrollLeftRightSpeed = 50.0f; // left mouse on button arrow left/right makes geometry move with this speed
+        const float scrollForwardBackwardSpeed = 50.0f; // left mouse on button arrow up/down makes geometry move with this speed
+        const float moveRotationPivotAxisMarkerLeftRightSpeed = 10.0f; // right mouse on button arrow left/right makes rotation pivot axis move with this speed
+        const float moveRotationPivotAxisMarkerForwardBackwardSpeed = 10.0f; // right mouse on button arrow up/down makes rotation pivot axis move with this speed
+        const float moveUpDownSpeed = 25.0f; // left mouse on button upstairs/downstairs makes geometry move with this speed
+        const float rotateSpeed = 150.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
+        const float zoomSpeed = 3.0f; // zoom with this speed when keyboard hotkey is pressed
+        const float zoomSpeedMouseWheel = 0.06f; // mouse wheel inside main area of the automap window will zoom with this speed
+        const float dragSpeed = 0.002f; // hold left mouse button down and move mouse to move geometry with this speed)
         const float dragRotateSpeed = 0.5f; // hold right mouse button down and move left/right to rotate geometry with this speed
         const float dragRotateCameraTiltSpeed = 0.15f; // hold right mouse button down and move up/down to change tilt of camera with this speed
-        const float changeSpeedCameraFieldOfView = 1.0f; // mouse wheel over grid button will change camera field of view in 3D mode with this speed
+        const float changeSpeedCameraFieldOfView = 50.0f; // mouse wheel over grid button will change camera field of view in 3D mode with this speed
 
         const float fieldOfViewCameraMode2D = 15.0f; // camera field of view used for 2D mode
         const float defaultFieldOfViewCameraMode3D = 45.0f; // default camera field of view used for 3D mode
@@ -468,7 +469,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Update()
         {
             base.Update();
-
             resizeGUIelementsOnDemand();
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.getKeyModifiers(Input.GetKey(KeyCode.LeftControl), Input.GetKey(KeyCode.RightControl), Input.GetKey(KeyCode.LeftShift), Input.GetKey(KeyCode.RightShift), Input.GetKey(KeyCode.LeftAlt), Input.GetKey(KeyCode.RightAlt));
@@ -487,7 +487,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 daggerfallAutomap.tryTeleportPlayerToDungeonSegmentAtScreenPosition(mousePosition);
                 updateAutomapView();
             }
-
+            
             // check hotkeys and assign actions
             if (Input.GetKeyDown(HotkeySequence_CloseMap.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CloseMap.modifiers))
             {                
@@ -602,11 +602,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             if (Input.GetKey(HotkeySequence_ZoomIn.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_ZoomIn.modifiers))
             {
-                ActionZoomIn();
+                ActionZoomIn(zoomSpeed * Time.unscaledDeltaTime);
             }
             if (Input.GetKey(HotkeySequence_ZoomOut.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_ZoomOut.modifiers))
             {
-                ActionZoomOut();
+                ActionZoomOut(zoomSpeed * Time.unscaledDeltaTime);
             }
             if (Input.GetKey(HotkeySequence_IncreaseCameraFieldOfFiew.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_IncreaseCameraFieldOfFiew.modifiers))
             {
@@ -987,10 +987,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (automapViewMode)
             {
                 case AutomapViewMode.View2D:
-                    translation = cameraAutomap.transform.up * scrollForwardBackwardSpeed;
+                    translation = cameraAutomap.transform.up * scrollForwardBackwardSpeed * Time.unscaledDeltaTime;
                     break;
                 case AutomapViewMode.View3D:
-                    translation = cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
+                    translation = cameraAutomap.transform.forward * scrollForwardBackwardSpeed * Time.unscaledDeltaTime;
                     translation.y = 0.0f; // comment this out for movement along camera optical axis
                     break;
                 default:
@@ -1010,10 +1010,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (automapViewMode)
             {
                 case AutomapViewMode.View2D:
-                    translation = -cameraAutomap.transform.up * scrollForwardBackwardSpeed;
+                    translation = -cameraAutomap.transform.up * scrollForwardBackwardSpeed * Time.unscaledDeltaTime;
                     break;
                 case AutomapViewMode.View3D:
-                    translation = -cameraAutomap.transform.forward * scrollForwardBackwardSpeed;
+                    translation = -cameraAutomap.transform.forward * scrollForwardBackwardSpeed * Time.unscaledDeltaTime;
                     translation.y = 0.0f; // comment this out for movement along camera optical axis
                     break;
                 default:
@@ -1029,7 +1029,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveLeft()
         {
-            Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed;
+            Vector3 translation = -cameraAutomap.transform.right * scrollLeftRightSpeed * Time.unscaledDeltaTime;
             translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
             cameraAutomap.transform.position += translation;
             updateAutomapView();
@@ -1040,7 +1040,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveRight()
         {
-            Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed;
+            Vector3 translation = cameraAutomap.transform.right * scrollLeftRightSpeed * Time.unscaledDeltaTime;
             translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
             cameraAutomap.transform.position += translation;
             updateAutomapView();
@@ -1055,10 +1055,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (automapViewMode)
             {
                 case AutomapViewMode.View2D:
-                    translation = cameraAutomap.transform.up * moveRotationPivotAxisMarkerForwardBackwardSpeed;
+                    translation = cameraAutomap.transform.up * moveRotationPivotAxisMarkerForwardBackwardSpeed * Time.unscaledDeltaTime;
                     break;
                 case AutomapViewMode.View3D:
-                    translation = cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed;
+                    translation = cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed * Time.unscaledDeltaTime;
                     //translation.y = 0.0f; // comment this out for movement along camera optical axis
                     break;
                 default:
@@ -1078,10 +1078,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (automapViewMode)
             {
                 case AutomapViewMode.View2D:
-                    translation = -cameraAutomap.transform.up * moveRotationPivotAxisMarkerForwardBackwardSpeed;
+                    translation = -cameraAutomap.transform.up * moveRotationPivotAxisMarkerForwardBackwardSpeed * Time.unscaledDeltaTime;
                     break;
                 case AutomapViewMode.View3D:
-                    translation = -cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed;
+                    translation = -cameraAutomap.transform.forward * moveRotationPivotAxisMarkerForwardBackwardSpeed * Time.unscaledDeltaTime;
                     //translation.y = 0.0f; // comment this out for movement along camera optical axis
                     break;
                 default:
@@ -1097,7 +1097,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveRotationPivotAxisLeft()
         {
-            Vector3 translation = -cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed;
+            Vector3 translation = -cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed * Time.unscaledDeltaTime;
             //translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
             shiftRotationPivotAxisPosition(translation);
             updateAutomapView();
@@ -1108,7 +1108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveRotationPivotAxisRight()
         {
-            Vector3 translation = cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed;
+            Vector3 translation = cameraAutomap.transform.right * moveRotationPivotAxisMarkerLeftRightSpeed * Time.unscaledDeltaTime;
             //translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector                
             shiftRotationPivotAxisPosition(translation);
             updateAutomapView();
@@ -1132,7 +1132,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     rotationPivotAxisPosition = Vector3.zero;
                     break;
             }
-            cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotateSpeed);
+            cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotateSpeed * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
@@ -1154,7 +1154,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     rotationPivotAxisPosition = Vector3.zero;
                     break;
             }
-            cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, +rotateSpeed);
+            cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, +rotateSpeed * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
@@ -1164,7 +1164,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <param name="rotationSpeed"> amount used for rotation </param>
         private void ActionRotateCamera(float rotationAmount)
         {
-            cameraAutomap.transform.Rotate(0.0f, rotationAmount, 0.0f, Space.World);
+            cameraAutomap.transform.Rotate(0.0f, rotationAmount * Time.unscaledDeltaTime, 0.0f, Space.World);
             updateAutomapView();
         }
 
@@ -1176,7 +1176,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (automapViewMode == AutomapViewMode.View3D)
             {
-                cameraAutomap.transform.Rotate(rotationAmount, 0.0f, 0.0f, Space.Self);
+                cameraAutomap.transform.Rotate(rotationAmount * Time.unscaledDeltaTime, 0.0f, 0.0f, Space.Self);
                 updateAutomapView();
             }
         }
@@ -1186,7 +1186,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveUpstairs()
         {
-            cameraAutomap.transform.position += Vector3.up * moveUpDownSpeed;
+            cameraAutomap.transform.position += Vector3.up * moveUpDownSpeed * Time.unscaledDeltaTime;
             updateAutomapView();
         }
 
@@ -1195,7 +1195,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveDownstairs()
         {
-            cameraAutomap.transform.position += Vector3.down * moveUpDownSpeed;
+            cameraAutomap.transform.position += Vector3.down * moveUpDownSpeed * Time.unscaledDeltaTime;
             updateAutomapView();
         }
 
@@ -1204,7 +1204,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionIncreaseSliceLevel()
         {
-            daggerfallAutomap.SlicingBiasY += Vector3.up.y * moveUpDownSpeed;
+            daggerfallAutomap.SlicingBiasY += Vector3.up.y * moveUpDownSpeed * Time.unscaledDeltaTime;
             updateAutomapView();
         }
 
@@ -1213,14 +1213,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionDecreaseSliceLevel()
         {
-            daggerfallAutomap.SlicingBiasY += Vector3.down.y * moveUpDownSpeed;
+            daggerfallAutomap.SlicingBiasY += Vector3.down.y * moveUpDownSpeed * Time.unscaledDeltaTime;
             updateAutomapView();
         }
 
         /// <summary>
         /// action for zooming in
         /// </summary>
-        private void ActionZoomIn()
+        private void ActionZoomIn(float zoomSpeed)
         {
             float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
             Vector3 translation = cameraAutomap.transform.forward * zoomSpeedCompensated;
@@ -1231,7 +1231,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// action for zooming out
         /// </summary>
-        private void ActionZoomOut()
+        private void ActionZoomOut(float zoomSpeed)
         {
             float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
             Vector3 translation = -cameraAutomap.transform.forward * zoomSpeedCompensated;
@@ -1246,7 +1246,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (automapViewMode == AutomapViewMode.View3D)
             {
-                fieldOfViewCameraMode3D = Mathf.Max(minFieldOfViewCameraMode3D, Mathf.Min(maxFieldOfViewCameraMode3D, fieldOfViewCameraMode3D + changeSpeedCameraFieldOfView));
+                fieldOfViewCameraMode3D = Mathf.Max(minFieldOfViewCameraMode3D, Mathf.Min(maxFieldOfViewCameraMode3D, fieldOfViewCameraMode3D + changeSpeedCameraFieldOfView * Time.unscaledDeltaTime));
                 cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
                 updateAutomapView();
             }            
@@ -1259,7 +1259,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (automapViewMode == AutomapViewMode.View3D)
             {
-                fieldOfViewCameraMode3D = Mathf.Max(minFieldOfViewCameraMode3D, Mathf.Min(maxFieldOfViewCameraMode3D, fieldOfViewCameraMode3D - changeSpeedCameraFieldOfView));
+                fieldOfViewCameraMode3D = Mathf.Max(minFieldOfViewCameraMode3D, Mathf.Min(maxFieldOfViewCameraMode3D, fieldOfViewCameraMode3D - changeSpeedCameraFieldOfView * Time.unscaledDeltaTime));
                 cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
                 updateAutomapView();
             }
@@ -1408,12 +1408,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseScrollUp()
         {
-            ActionZoomIn();
+            ActionZoomIn(zoomSpeedMouseWheel);
         }
 
         private void PanelAutomap_OnMouseScrollDown()
         {
-            ActionZoomOut();
+            ActionZoomOut(zoomSpeedMouseWheel);
         }
 
         private void PanelAutomap_OnMouseDown(BaseScreenComponent sender, Vector2 position)
