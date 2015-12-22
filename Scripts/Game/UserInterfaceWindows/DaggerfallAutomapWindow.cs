@@ -38,9 +38,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float rotateSpeed = 150.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
         const float zoomSpeed = 3.0f; // zoom with this speed when keyboard hotkey is pressed
         const float zoomSpeedMouseWheel = 0.06f; // mouse wheel inside main area of the automap window will zoom with this speed
-        const float dragSpeed = 0.002f; // hold left mouse button down and move mouse to move geometry with this speed)
-        const float dragRotateSpeed = 0.5f; // hold right mouse button down and move left/right to rotate geometry with this speed
-        const float dragRotateCameraTiltSpeed = 0.15f; // hold right mouse button down and move up/down to change tilt of camera with this speed
+        const float dragSpeedInView3D = 0.002f; // hold left mouse button down and move mouse to move geometry with this speed) - in 3D view mode
+        const float dragSpeedInTopView = 0.0002f; // hold left mouse button down and move mouse to move geometry with this speed) - in top view mode (2D view mode)
+        const float dragRotateSpeedInTopView = 5.0f; // hold right mouse button down and move left/right to rotate geometry with this speed - in 3D view mode
+        const float dragRotateSpeedInView3D = 0.5f; // hold right mouse button down and move left/right to rotate geometry with this speed - in top view mode (2D view mode)
+        const float dragRotateCameraTiltSpeedInView3D = 0.15f; // hold right mouse button down and move up/down to change tilt of camera with this speed - in 3D view mode            
+
         const float changeSpeedCameraFieldOfView = 50.0f; // mouse wheel over grid button will change camera field of view in 3D mode with this speed
 
         const float fieldOfViewCameraMode2D = 15.0f; // camera field of view used for 2D mode
@@ -407,6 +410,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             
             if (daggerfallAutomap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
             {
+                // get initial values for camera transform for view from top
+                resetCameraTransformViewFromTop();
+                saveCameraTransformViewFromTop();
+            
+                // get initial values for camera transform for 3D view
+                resetCameraTransformView3D();
+                saveCameraTransformView3D();
+
                 // reset values to default whenever player enters building or dungeon
                 resetCameraPosition();                
                 fieldOfViewCameraMode3D = defaultFieldOfViewCameraMode3D;
@@ -448,6 +459,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             daggerfallAutomap.IsOpenAutomap = false; // signal DaggerfallAutomap script that automap was closed
 
             // destroy the other gameobjects as well so they don't use system resources
+
+            cameraAutomap.targetTexture = null;
 
             if (renderTextureAutomap != null)
             {
@@ -578,11 +591,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             if (Input.GetKey(HotkeySequence_CameraTiltUp.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CameraTiltUp.modifiers))
             {
-                ActionRotateCameraTilt(dragRotateCameraTiltSpeed);
+                ActionRotateCameraTilt(dragRotateCameraTiltSpeedInView3D);
             }
             if (Input.GetKey(HotkeySequence_CameraTiltDown.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CameraTiltDown.modifiers))
             {
-                ActionRotateCameraTilt(-dragRotateCameraTiltSpeed);
+                ActionRotateCameraTilt(-dragRotateCameraTiltSpeedInView3D);
             }
             if (Input.GetKey(HotkeySequence_Upstairs.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_Upstairs.modifiers))
             {
@@ -622,7 +635,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
 
-                float dragSpeedCompensated = dragSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
+                float dragSpeedCompensated;
+                switch (automapViewMode)
+                {
+                    case AutomapViewMode.View2D:
+                    default:
+                        dragSpeedCompensated = dragSpeedInTopView * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
+                        break;
+                    case AutomapViewMode.View3D:
+                        dragSpeedCompensated = dragSpeedInView3D * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
+                        break;
+                }
+                
                 Vector2 bias = mousePosition - oldMousePosition;
                 Vector3 translation = -cameraAutomap.transform.right * dragSpeedCompensated * bias.x + cameraAutomap.transform.up * dragSpeedCompensated * bias.y;
                 cameraAutomap.transform.position += translation;
@@ -636,9 +660,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 Vector2 bias = mousePosition - oldMousePosition;
 
-                ActionRotateCamera(+dragRotateSpeed * bias.x);
-
-                ActionRotateCameraTilt(+dragRotateCameraTiltSpeed * bias.y);
+                switch (automapViewMode)
+                {
+                    case AutomapViewMode.View2D:
+                    default:
+                        ActionRotateCamera(+dragRotateSpeedInTopView * bias.x);
+                        break;
+                    case AutomapViewMode.View3D:
+                        ActionRotateCamera(+dragRotateSpeedInView3D * bias.x);
+                        ActionRotateCameraTilt(+dragRotateCameraTiltSpeedInView3D * bias.y);
+                        break;
+                }
 
                 updateAutomapView();
                 oldMousePosition = mousePosition;
@@ -808,14 +840,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void resetCameraPosition()
         {
-            // get initial values for camera transform for view from top
-            resetCameraTransformViewFromTop();
-            saveCameraTransformViewFromTop();
-            
-            // get initial values for camera transform for 3D view
-            resetCameraTransformView3D();
-            saveCameraTransformView3D();
-
             // then set camera transform according to grid-button (view mode) setting
             switch (automapViewMode)
             {
@@ -835,6 +859,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             cameraAutomap.transform.position = Camera.main.transform.position + Vector3.up * cameraHeightViewFromTop;
             cameraAutomap.transform.LookAt(Camera.main.transform.position);
+            saveCameraTransformViewFromTop();
         }
 
         /// <summary>
@@ -845,6 +870,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Vector3 viewDirectionInXZ = Vector3.forward;
             cameraAutomap.transform.position = Camera.main.transform.position - viewDirectionInXZ * cameraBackwardDistance + Vector3.up * cameraHeightView3D;
             cameraAutomap.transform.LookAt(Camera.main.transform.position);
+            saveCameraTransformView3D();
         }
 
         /// <summary>
@@ -1346,8 +1372,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             resetRotationPivotAxisPosition(); // reset rotation pivot axis
             daggerfallAutomap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
             resetCameraPosition();
-            fieldOfViewCameraMode3D = defaultFieldOfViewCameraMode3D;
-            cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
+            switch (automapViewMode)
+            {
+                case AutomapViewMode.View2D:
+                    cameraAutomap.fieldOfView = fieldOfViewCameraMode2D;
+                    break;
+                case AutomapViewMode.View3D:
+                    cameraAutomap.fieldOfView = fieldOfViewCameraMode3D;
+                    break;
+            }            
             updateAutomapView();
         }
 
