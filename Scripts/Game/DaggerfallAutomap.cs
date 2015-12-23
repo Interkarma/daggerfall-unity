@@ -500,7 +500,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// does a raycast based hit test with additional protection raycast and marks automap level geometry meshes as discovered and visited in this entering/dungeon run
         /// </summary>
-        private void scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(
+        private RaycastHit? scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(
             Vector3 rayStartPos,    ///< the start position for the detection raycast
             Vector3 rayDirection,   ///< the ray direction of the detection raycast
             float rayDistance,      ///< the ray distance used for the detection raycast
@@ -584,7 +584,7 @@ namespace DaggerfallWorkshop.Game
             //    Debug.Log(String.Format("collider of TGhit1: {0}, collider of TGhit2: {1}, collider of TGhit3: {2}, collider of hit1: {3}, collider of hit2: {4}, collider of hit3: {5}", hitTrueLevelGeometry1.collider.name, hitTrueLevelGeometry2.collider.name, hitTrueLevelGeometry3.collider.name, hit1.collider.name, hit2.collider.name, hit3.collider.name));
             //}
 
-            Debug.Log(String.Format("hit1: {3}, hit1: {4}, hit1: {5}", didHit1, didHit2, didHit3));
+            //Debug.Log(String.Format("hit1: {0}, hit2: {1}, hit3: {2}", didHit1, didHit2, didHit3));
             if ((didHit1) && (didHit2) && (didHit3))
             {
                 Debug.Log(String.Format("distanceTG1: {0}, distanceTG2: {1}, distanceTG3: {2}, distance1: {3}, distance2: {4}, distance3: {4}", hitTrueLevelGeometry1.distance, hitTrueLevelGeometry2.distance, hitTrueLevelGeometry3.distance, hit1.distance, hit2.distance, hit3.distance));
@@ -619,8 +619,9 @@ namespace DaggerfallWorkshop.Game
                     }
                     meshCollider.gameObject.GetComponent<MeshRenderer>().materials = mats;
                 }
+                return (hitTrueLevelGeometry1); // return hit of true level geometry (which should be nearer in some cases than the automap geometry hit
             }
-
+            return (null);
         }
 
         /// <summary>
@@ -648,14 +649,26 @@ namespace DaggerfallWorkshop.Game
                     // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
                     offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
                     rayDistance = raycastDistanceViewDirection;
-                    scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
+                    RaycastHit ?hitForward = scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
 
-                    //reveal geometry that is in front of player (by raycast in forward and downward direction)
-                    rayDirection = Camera.main.transform.rotation * Vector3.forward + Vector3.down / 3.0f;
-                    // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
-                    offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
-                    rayDistance = raycastDistanceViewDirection;
-                    scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
+                    if (hitForward.HasValue)
+                    {
+                        //reveal geometry that is in front of player (by repeatly start further and further in front of the player and raycast in downward direction)                    
+                        Vector3 stepVector = Vector3.zero;
+                        while (true)
+                        {
+                            stepVector += Vector3.Normalize(Camera.main.transform.rotation * Vector3.forward) * 1.0f; // go 1 meters forward                        
+                            if (Vector3.Magnitude(stepVector) >= hitForward.Value.distance)
+                            {
+                                break;
+                            }
+                            rayDirection = Vector3.down;
+                            // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
+                            offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
+                            rayDistance = raycastDistanceDown;
+                            scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos + stepVector, rayDirection, rayDistance, offsetSecondProtectionRaycast);
+                        }
+                    }
 
                     // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
                     gameobjectGeometry.SetActive(false);
