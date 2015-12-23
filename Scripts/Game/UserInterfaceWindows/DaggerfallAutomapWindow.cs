@@ -407,27 +407,47 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // reset values to default whenever automap window is opened
             resetRotationPivotAxisPosition(); // reset rotation pivot axis
             daggerfallAutomap.SlicingBiasY = defaultSlicingBiasY; // reset slicing y-bias
-            
+
             if (daggerfallAutomap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
             {
                 // get initial values for camera transform for view from top
                 resetCameraTransformViewFromTop();
                 saveCameraTransformViewFromTop();
-            
+
                 // get initial values for camera transform for 3D view
                 resetCameraTransformView3D();
                 saveCameraTransformView3D();
 
                 // reset values to default whenever player enters building or dungeon
-                resetCameraPosition();                
+                resetCameraPosition();
                 fieldOfViewCameraMode3D = defaultFieldOfViewCameraMode3D;
+
                 daggerfallAutomap.ResetAutomapSettingsSignalForExternalScript = false; // indicate the settings were reset
             }
             else
             {
+                // backup view mode
+                AutomapViewMode backupValueAutomapViewMode = automapViewMode;
+
+                // focus player in 2D view mode - but keep old camera orientation of 2D view mode camera transform                
+                automapViewMode = AutomapViewMode.View2D; // need to change view mode so that SwitchFocusToGameObject() does the correct thing
+                restoreOldCameraTransformViewFromTop();
+                SwitchFocusToGameObject(gameObjectPlayerAdvanced);
+                saveCameraTransformViewFromTop();
+
+                // focus player in 3D view mode - but keep old camera orientation of 3D view mode camera transform
+                automapViewMode = AutomapViewMode.View3D; // need to change view mode so that SwitchFocusToGameObject() does the correct thing
+                restoreOldCameraTransformView3D();
+                SwitchFocusToGameObject(gameObjectPlayerAdvanced);
+                saveCameraTransformView3D();
+
+                // restore view mode
+                automapViewMode = backupValueAutomapViewMode;
+
                 switch (automapViewMode)
                 {
-                    case AutomapViewMode.View2D: default:
+                    case AutomapViewMode.View2D:
+                    default:
                         restoreOldCameraTransformViewFromTop();
                         break;
                     case AutomapViewMode.View3D:
@@ -836,7 +856,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// resets the automap camera position for both view modes
+        /// resets the automap camera position for active view mode
         /// </summary>
         private void resetCameraPosition()
         {
@@ -1412,6 +1432,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionSwitchFocusToNextBeaconObject()
         {
             GameObject gameobjectInFocus = daggerfallAutomap.switchFocusToNextObject();
+            SwitchFocusToGameObject(gameobjectInFocus);
+        }
+
+        /// <summary>
+        /// switch focus to GameObject gameobjectInFocus
+        /// </summary>
+        /// <param name="gameobjectInFocus"> the GameObject to focus at </param>        
+        private void SwitchFocusToGameObject(GameObject gameobjectInFocus)
+        {
             Vector3 newPosition;
             switch (automapViewMode)
             {
