@@ -55,6 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         bool mouseOverComponent = false;
         bool leftMouseWasHeldDown = false;
+        bool rightMouseWasHeldDown = false;
 
         public delegate void OnMouseEnterHandler();
         public event OnMouseEnterHandler OnMouseEnter;
@@ -70,6 +71,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public delegate void OnMouseClickHandler(BaseScreenComponent sender, Vector2 position);
         public event OnMouseClickHandler OnMouseClick;
+
+        public delegate void OnRightMouseDownHandler(BaseScreenComponent sender, Vector2 position);
+        public event OnRightMouseDownHandler OnRightMouseDown;
+        
+        public delegate void OnRightMouseUpHandler(BaseScreenComponent sender, Vector2 position);
+        public event OnRightMouseUpHandler OnRightMouseUp;
 
         public delegate void OnRightMouseClickHandler(BaseScreenComponent sender, Vector2 position);
         public event OnRightMouseClickHandler OnRightMouseClick;
@@ -348,10 +355,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             bool leftMouseDown = Input.GetMouseButtonDown(0);
             bool rightMouseDown = Input.GetMouseButtonDown(1);
 
-            // Get left mouse down for up/down events
+            // Get left and right mouse down for up/down events
             bool leftMouseHeldDown = Input.GetMouseButton(0);
+            bool rightMouseHeldDown = Input.GetMouseButton(1);
 
-            // Handle mouse down/up events
+            // Handle left mouse down/up events
             // Can only trigger mouse down while over component but can release from anywhere
             if (mouseOverComponent && leftMouseHeldDown && !leftMouseWasHeldDown)
             {
@@ -364,6 +372,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 leftMouseWasHeldDown = false;
                 if (OnMouseUp != null)
                     OnMouseUp(this, scaledMousePosition);
+            }
+
+            // Handle right mouse down/up events
+            // Can only trigger mouse down while over component but can release from anywhere
+            if (mouseOverComponent && rightMouseHeldDown && !rightMouseWasHeldDown)
+            {
+                rightMouseWasHeldDown = true;
+                if (OnRightMouseDown != null)
+                    OnRightMouseDown(this, scaledMousePosition);
+            }
+            if (!rightMouseHeldDown && rightMouseWasHeldDown)
+            {
+                rightMouseWasHeldDown = false;
+                if (OnRightMouseUp != null)
+                    OnRightMouseUp(this, scaledMousePosition);
             }
 
             // Handle left mouse clicks
