@@ -60,10 +60,10 @@ namespace DaggerfallWorkshop.Game
         KeyCode lastKeyCode;
 
         DaggerfallHUD dfHUD;
-        DaggerfallPauseOptionsWindow dfPauseOptions;
-        DaggerfallCharacterSheetWindow dfCharacterSheet;
-        DaggerfallTravelMapWindow dfTravelMap;
-
+        DaggerfallPauseOptionsWindow dfPauseOptionsWindow;
+        DaggerfallCharacterSheetWindow dfCharacterSheetWindow;
+        DaggerfallInventoryWindow dfInventoryWindow;
+        DaggerfallTravelMapWindow dfTravelMapWindow;
         DaggerfallAutomapWindow dfAutomap;
 
         public DaggerfallFont Font1 { get { return GetFont(1); } }
@@ -121,13 +121,17 @@ namespace DaggerfallWorkshop.Game
             audioSource.spatialBlend = 0;
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
 
-            dfPauseOptions = new DaggerfallPauseOptionsWindow(uiManager);
-            dfPauseOptions.OnClose += PauseOptionsDialog_OnClose;
+            dfPauseOptionsWindow = new DaggerfallPauseOptionsWindow(uiManager);
+            dfPauseOptionsWindow.OnClose += PauseOptionsDialog_OnClose;
 
-            dfCharacterSheet = new DaggerfallCharacterSheetWindow(uiManager);
-            dfCharacterSheet.OnClose += CharacterSheetDialog_OnClose;
+            dfCharacterSheetWindow = new DaggerfallCharacterSheetWindow(uiManager);
+            dfCharacterSheetWindow.OnClose += CharacterSheetWindow_OnClose;
 
-            dfTravelMap = new DaggerfallTravelMapWindow(uiManager);
+            dfInventoryWindow = new DaggerfallInventoryWindow(uiManager);
+            dfInventoryWindow.OnClose += InventoryWindow_OnClose;
+
+            dfTravelMapWindow = new DaggerfallTravelMapWindow(uiManager);
+
             dfAutomap = new DaggerfallAutomapWindow(uiManager);
 
             dfAutomap.OnClose += AutomapDialog_OnClose;
@@ -214,16 +218,16 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(new StartNewGameWizard(uiManager));
                     break;
                 case DaggerfallUIMessages.dfuiOpenPauseOptionsDialog:
-                    //GameManager.Instance.PauseGame(true);
-                    uiManager.PushWindow(dfPauseOptions);
+                    uiManager.PushWindow(dfPauseOptionsWindow);
                     break;
-                case DaggerfallUIMessages.dfuiOpenCharacterSheetDialog:
-                    //GameManager.Instance.PauseGame(true);
-                    uiManager.PushWindow(dfCharacterSheet);
+                case DaggerfallUIMessages.dfuiOpenCharacterSheetWindow:
+                    uiManager.PushWindow(dfCharacterSheetWindow);
                     break;
-
-                case DaggerfallUIMessages.dfuiOpenTravelMapDialog:
-                    uiManager.PushWindow(dfTravelMap);
+                case DaggerfallUIMessages.dfuiOpenInventoryWindow:
+                    uiManager.PushWindow(dfInventoryWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
+                    uiManager.PushWindow(dfTravelMapWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenAutomap:
                     if (GameManager.Instance.PlayerEnterExit.IsPlayerInside) // open automap only if player is in interior or dungeon - TODO: location automap for exterior locations
@@ -486,6 +490,10 @@ namespace DaggerfallWorkshop.Game
             return texture;
         }
 
+        /// <summary>
+        /// Loads IMG file to texture using a subrect of source image.
+        /// Origin of source image (0,0) is bottom-left corner.
+        /// </summary>
         public static Texture2D GetTextureFromImg(string name, Rect subRect, TextureFormat format = TextureFormat.ARGB32)
         {
             ImgFile imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, name), FileUsage.UseMemory, true);
@@ -500,7 +508,7 @@ namespace DaggerfallWorkshop.Game
                 ref newColors,
                 new DFSize(bitmap.Width, bitmap.Height),
                 new DFSize((int)subRect.width, (int)subRect.height),
-                new DFPosition((int)subRect.x, (int)(subRect.height - subRect.y)),
+                new DFPosition((int)subRect.x, (int)subRect.y),
                 new DFPosition(0, 0),
                 new DFSize((int)subRect.width, (int)subRect.height));
 
@@ -677,7 +685,12 @@ namespace DaggerfallWorkshop.Game
             GameManager.Instance.PauseGame(false);
         }
 
-        private void CharacterSheetDialog_OnClose()
+        private void CharacterSheetWindow_OnClose()
+        {
+            GameManager.Instance.PauseGame(false);
+        }
+
+        private void InventoryWindow_OnClose()
         {
             GameManager.Instance.PauseGame(false);
         }
