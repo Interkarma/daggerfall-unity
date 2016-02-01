@@ -320,10 +320,10 @@ namespace DaggerfallWorkshop
             // Setup cached material
             DFSize size = results.textureFile.GetSize(record);
             DFSize scale = results.textureFile.GetScale(record);
-            DFSize offset = results.textureFile.GetOffset(record);
+            DFPosition offset = results.textureFile.GetOffset(record);
             Vector2[] recordSizes = new Vector2[1] { new Vector2(size.Width, size.Height) };
             Vector2[] recordScales = new Vector2[1] { new Vector2(scale.Width, scale.Height) };
-            Vector2[] recordOffsets = new Vector2[1] { new Vector2(offset.Width, offset.Height) };
+            Vector2[] recordOffsets = new Vector2[1] { new Vector2(offset.X, offset.Y) };
             CachedMaterial newcm = new CachedMaterial()
             {
                 key = key,

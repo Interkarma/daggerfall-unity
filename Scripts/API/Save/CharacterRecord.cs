@@ -48,24 +48,24 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
-        /// Converts a CharacterRecord to a prototypical CharacterSheet for character import.
+        /// Converts a CharacterRecord to a prototypical CharacterDocument for character import.
         /// </summary>
-        /// <returns>CharacterSheet derived from CharacterRecord data.</returns>
-        public CharacterSheet ToCharacterSheet()
+        /// <returns>CharacterDocument derived from CharacterRecord data.</returns>
+        public CharacterDocument ToCharacterDocument()
         {
-            CharacterSheet sheet = new CharacterSheet();
+            CharacterDocument doc = new CharacterDocument();
             Dictionary<int, RaceTemplate> raceDict = RaceTemplate.GetRaceDictionary();
 
-            sheet.race = raceDict[(int)parsedData.race + 1];
-            sheet.gender = parsedData.gender;
-            sheet.career = parsedData.career;
-            sheet.name = parsedData.characterName;
-            sheet.faceIndex = parsedData.faceIndex;
-            sheet.workingStats = parsedData.currentStats;
-            sheet.workingSkills = parsedData.skills;
-            sheet.reflexes = parsedData.reflexes;
+            doc.race = raceDict[(int)parsedData.race + 1];
+            doc.gender = parsedData.gender;
+            doc.career = parsedData.career;
+            doc.name = parsedData.characterName;
+            doc.faceIndex = parsedData.faceIndex;
+            doc.workingStats = parsedData.currentStats;
+            doc.workingSkills = parsedData.skills;
+            doc.reflexes = parsedData.reflexes;
 
-            return sheet;
+            return doc;
         }
 
         #region Readers

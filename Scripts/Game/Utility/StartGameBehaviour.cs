@@ -37,11 +37,13 @@ namespace DaggerfallWorkshop.Game.Utility
         // Editor properties
         public StartMethods StartMethod = StartMethods.Nothing;
         public int OverrideSaveIndex = -1;
+        public string PostStartMessage = string.Empty;
         public bool EnableVideos = true;
+        public bool NoWorld = false;
         public bool GodMod = false;
 
         // Private fields
-        CharacterSheet characterSheet;
+        CharacterDocument characterDocument;
         int classicSaveIndex = -1;
         GameObject player;
         PlayerEnterExit playerEnterExit;
@@ -51,10 +53,10 @@ namespace DaggerfallWorkshop.Game.Utility
 
         #region Properties
 
-        public CharacterSheet CharacterSheet
+        public CharacterDocument CharacterDocument
         {
-            get { return characterSheet; }
-            set { characterSheet = value; }
+            get { return characterDocument; }
+            set { characterDocument = value; }
         }
 
         public int ClassicSaveIndex
@@ -206,7 +208,11 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
-            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGame);
+
+            if (string.IsNullOrEmpty(PostStartMessage))
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGame);
+            else
+                DaggerfallUI.PostMessage(PostStartMessage);
         }
 
         void StartTitleMenuFromDeath()
@@ -217,7 +223,11 @@ namespace DaggerfallWorkshop.Game.Utility
 
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
-            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGameFromDeath);
+
+            if (string.IsNullOrEmpty(PostStartMessage))
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGameFromDeath);
+            else
+                DaggerfallUI.PostMessage(PostStartMessage);
         }
 
         void StartFromQuickSave()
@@ -226,6 +236,8 @@ namespace DaggerfallWorkshop.Game.Utility
             playerEnterExit.DisableAllParents();
             if (SaveLoadManager.Instance.HasQuickSave())
                 SaveLoadManager.Instance.QuickLoad();
+
+            DaggerfallUI.PostMessage(PostStartMessage);
         }
 
         // Start new character to location specified in INI
@@ -235,7 +247,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Assign character sheet
             PlayerEntity playerEntity = FindPlayerEntity();
-            playerEntity.AssignCharacter(characterSheet);
+            playerEntity.AssignCharacter(characterDocument);
 
             // Set game time
             DaggerfallUnity.Instance.WorldTime.Now.SetClassicGameStartTime();
@@ -254,31 +266,39 @@ namespace DaggerfallWorkshop.Game.Utility
                     hasLocation = false;
             }
 
-            // Start at specified location
-            StreamingWorld streamingWorld = FindStreamingWorld();
-            if (hasLocation && startInDungeon && location.HasDungeon)
+            if (NoWorld)
             {
-                if (streamingWorld)
-                {
-                    streamingWorld.TeleportToCoordinates(mapPixel.X, mapPixel.Y);
-                    streamingWorld.suppressWorld = true;
-                }
-                playerEnterExit.EnableDungeonParent();
-                playerEnterExit.StartDungeonInterior(location);
+                playerEnterExit.DisableAllParents();
             }
             else
             {
-                playerEnterExit.EnableExteriorParent();
-                if (streamingWorld)
+                // Start at specified location
+                StreamingWorld streamingWorld = FindStreamingWorld();
+                if (hasLocation && startInDungeon && location.HasDungeon)
                 {
-                    streamingWorld.SetAutoReposition(StreamingWorld.RepositionMethods.Origin, Vector3.zero);
-                    streamingWorld.suppressWorld = false;
+                    if (streamingWorld)
+                    {
+                        streamingWorld.TeleportToCoordinates(mapPixel.X, mapPixel.Y);
+                        streamingWorld.suppressWorld = true;
+                    }
+                    playerEnterExit.EnableDungeonParent();
+                    playerEnterExit.StartDungeonInterior(location);
+                }
+                else
+                {
+                    playerEnterExit.EnableExteriorParent();
+                    if (streamingWorld)
+                    {
+                        streamingWorld.SetAutoReposition(StreamingWorld.RepositionMethods.Origin, Vector3.zero);
+                        streamingWorld.suppressWorld = false;
+                    }
                 }
             }
 
             // Start game
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
+            DaggerfallUI.PostMessage(PostStartMessage);
         }
 
         #endregion
@@ -310,13 +330,20 @@ namespace DaggerfallWorkshop.Game.Utility
             SaveTree saveTree = saveGames.SaveTree;
             SaveVars saveVars = saveGames.SaveVars;
 
-            // Set player to world position
-            playerEnterExit.EnableExteriorParent();
-            StreamingWorld streamingWorld = FindStreamingWorld();
-            int worldX = saveTree.Header.CharacterPosition.Position.WorldX;
-            int worldZ = saveTree.Header.CharacterPosition.Position.WorldZ;
-            streamingWorld.TeleportToWorldCoordinates(worldX, worldZ);
-            streamingWorld.suppressWorld = false;
+            if (NoWorld)
+            {
+                playerEnterExit.DisableAllParents();
+            }
+            else
+            {
+                // Set player to world position
+                playerEnterExit.EnableExteriorParent();
+                StreamingWorld streamingWorld = FindStreamingWorld();
+                int worldX = saveTree.Header.CharacterPosition.Position.WorldX;
+                int worldZ = saveTree.Header.CharacterPosition.Position.WorldZ;
+                streamingWorld.TeleportToWorldCoordinates(worldX, worldZ);
+                streamingWorld.suppressWorld = false;
+            }
 
             // Set game time
             DaggerfallUnity.Instance.WorldTime.Now.FromClassicDaggerfallTime(saveVars.GameTime);
@@ -326,18 +353,22 @@ namespace DaggerfallWorkshop.Game.Utility
             if (records.Count != 1)
                 throw new Exception("SaveTree CharacterRecord not found.");
 
-            // Get prototypical character sheet data
+            // Get prototypical character document data
             CharacterRecord characterRecord = (CharacterRecord)records[0];
-            characterSheet = characterRecord.ToCharacterSheet();
+            characterDocument = characterRecord.ToCharacterDocument();
 
             // Assign data to player entity
             PlayerEntity playerEntity = FindPlayerEntity();
-            playerEntity.AssignCharacter(characterSheet, characterRecord.ParsedData.level, characterRecord.ParsedData.startingHealth);
+            playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.startingHealth);
+
+            // Assign items to player entity
+            playerEntity.AssignItems(saveTree);
 
             // Start game
             DaggerfallUI.Instance.PopToHUD();
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
+            DaggerfallUI.PostMessage(PostStartMessage);
         }
 
         #endregion

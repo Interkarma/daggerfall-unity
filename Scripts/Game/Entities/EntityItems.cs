@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -22,9 +23,15 @@ namespace DaggerfallWorkshop.Game.Entity
     /// This class is under active development and may change several times before completed.
     /// </summary>
     [Serializable]
-    public class EntityItems
+    public class EntityItems : IEnumerable
     {
         #region Fields
+
+        List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
+
+        #endregion
+
+        #region Properties
         #endregion
 
         #region Structures
@@ -36,25 +43,73 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Public Methods
 
         /// <summary>
-        /// Copies items from another collection.
+        /// Adds a new item to this collection.
         /// </summary>
-        /// <param name="other">Source of items to copy from.</param>
-        public void Copy(EntityItems other)
+        /// <param name="">DaggerfallUnityItem to add.</param>
+        public void AddItem(DaggerfallUnityItem item)
         {
+            items.Add(item);
         }
 
         /// <summary>
-        /// Transfers items from another collection.
-        /// Items will be removed from other collection and placed in this one.
+        /// Clears all items from this collection.
+        /// Items in this collection will be destroyed.
+        /// </summary>
+        public void RemoveAll()
+        {
+            items.Clear();
+        }
+
+        /// <summary>
+        /// Replaces all items in this collection with items from another collection.
+        /// Items in this collection will be destroyed. Source items will not be changed.
+        /// </summary>
+        /// <param name="other">Source of items to copy from.</param>
+        public void ReplaceAll(EntityItems other)
+        {
+            RemoveAll();
+            CopyAll(other);
+        }
+
+        /// <summary>
+        /// Copies all items from another collection.
+        /// Source items will not be changed.
+        /// </summary>
+        /// <param name="other">Source of items to copy from.</param>
+        public void CopyAll(EntityItems other)
+        {
+            for (int i = 0; i < other.items.Count; i++)
+            {
+                items.Add(other.items[i].Copy());
+            }
+        }
+
+        /// <summary>
+        /// Transfers all items from another collection.
+        /// Source items will be removed from other collection and placed in this collection.
         /// </summary>
         /// <param name="other">Source of items to transfer from.</param>
-        public void Transfer(EntityItems other)
+        public void TransferAll(EntityItems other)
         {
+            CopyAll(other);
+            other.RemoveAll();
         }
 
         #endregion
 
         #region Private Methods
+        #endregion
+
+        #region IEnumerable
+
+        public IEnumerator GetEnumerator()
+        {
+            foreach (object o in items)
+            {
+                yield return o;
+            }
+        }
+
         #endregion
     }
 }

@@ -34,15 +34,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Vector2 size;
         bool hasFocus = false;
 
+        ToolTip toolTip = null;
+        string toolTipText = string.Empty;
+
         Vector2 scale = Vector2.one;
         Vector2 localScale = Vector2.one;
-        Scaling scalingMode = Scaling.None;
+        AutoSizeModes autoSizeMode = AutoSizeModes.None;
         HorizontalAlignment horizontalAlignment = HorizontalAlignment.None;
         VerticalAlignment verticalAlignment = VerticalAlignment.None;
 
         float doubleClickDelay = 0.3f;
         float clickTime;
         float lastClickTime;
+
+        float updateTime;
+        float lastUpdateTime;
+        float hoverTime;
 
         Vector2 lastMousePosition;
         Vector2 mousePosition;
@@ -229,7 +236,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Gets interior width between horizontal margins in screen space.
+        /// Gets interior width between horizontal margins.
         /// </summary>
         public int InteriorWidth
         {
@@ -237,7 +244,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Gets interior height between vertical margins in screen space.
+        /// Gets interior height between vertical margins.
         /// </summary>
         public int InteriorHeight
         {
@@ -254,20 +261,39 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Gets or sets scaling mode.
+        /// Gets or sets autosize mode.
+        /// This is how control resizes itself to parent.
         /// </summary>
-        public Scaling ScalingMode
+        public AutoSizeModes AutoSize
         {
-            get { return scalingMode; }
-            set { scalingMode = value; }
+            get { return autoSizeMode; }
+            set { autoSizeMode = value; }
         }
 
         /// <summary>
-        /// Gets atomatic scale value based on scaling mode.
+        /// Gets local scale in screen space based on parent scale and scaling mode.
         /// </summary>
         public Vector2 LocalScale
         {
             get { return localScale; }
+        }
+
+        /// <summary>
+        /// Gets or sets tooltip for this component.
+        /// </summary>
+        public ToolTip ToolTip
+        {
+            get { return toolTip; }
+            set { toolTip = value; }
+        }
+
+        /// <summary>
+        /// Gets or set tooltip text for this component.
+        /// </summary>
+        public string ToolTipText
+        {
+            get { return toolTipText; }
+            set { toolTipText = value; }
         }
 
         // Margin properties
@@ -304,13 +330,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!enabled)
                 return;
 
-            // Ensure position in inside margins
-            // TODO:
-            // Review how this works and rethink intended purpose
-            // Currently adding margins twice
-            //FitMargins();
+            // Update timers
+            lastUpdateTime = updateTime;
+            updateTime = Time.realtimeSinceStartup;
 
-            // Update mouse pos - must to invert mouse position Y as Unity 0,0 is bottom-left
+            // Update mouse pos - must invert mouse position Y as Unity 0,0 is bottom-left
             lastMousePosition = mousePosition;
             mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
             scaledMousePosition = -Vector2.one;
@@ -336,12 +360,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
             }
 
-            // Get scaled mouse position relative to top-left of control
+            // When mouse is inside component
             if (mouseOverComponent)
             {
+                // Update hover time
+                if (lastMousePosition == mousePosition)
+                    hoverTime += updateTime - lastUpdateTime;
+                else
+                    hoverTime = 0;
+
+                // Get scaled mouse position relative to top-left of control
                 scaledMousePosition = mousePosition - new Vector2(myRect.xMin, myRect.yMin);
                 scaledMousePosition.x *= 1f / localScale.x;
                 scaledMousePosition.y *= 1f / localScale.y;
+            }
+            else
+            {
+                hoverTime = 0;
             }
 
             // Get left and right mouse down for general click handling and double-click sampling
@@ -396,6 +431,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     MouseScrollUp();
                 else if (mouseScroll < 0)
                     MouseScrollDown();
+
+                // Not hovering while scrolling
+                hoverTime = 0;
             }
         }
 
@@ -434,6 +472,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 GUI.color = backgroundColor;
                 GUI.DrawTexture(Rectangle, backgroundColorTexture, ScaleMode.StretchToFill);
                 GUI.color = color;
+            }
+
+            // Draw tooltip on mouse hover
+            if (toolTip != null && mouseOverComponent && hoverTime >= toolTip.ToolTipDelay)
+            {
+                toolTip.Draw(toolTipText, parent);
             }
         }
 
@@ -650,29 +694,30 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 // Top-level panel always stretches to fill entire viewport
                 rectangle = parentRect;
+                size = new Vector2(rectangle.width, rectangle.height);
             }
             else
             {
                 // Other panels are scaled within parent area
                 rectangle.x = (int)parentRect.xMin;
                 rectangle.y = (int)parentRect.yMin;
-                rectangle.width = (int)size.x + LeftMargin + RightMargin;
-                rectangle.height = (int)size.y + TopMargin + BottomMargin;
+                rectangle.width = (int)size.x;
+                rectangle.height = (int)size.y;
             }
 
             // Apply scaling
-            switch (scalingMode)
+            switch (autoSizeMode)
             {
-                case Scaling.None:
+                case AutoSizeModes.None:
                     localScale = (parent != null) ? parent.LocalScale : scale;
                     break;
-                case Scaling.StretchToFill:
-                    rectangle = StretchToFill(rectangle);
+                case AutoSizeModes.ResizeToFill:
+                    ResizeToFill();
                     break;
-                case Scaling.ScaleToFit:
+                case AutoSizeModes.ScaleToFit:
                     rectangle = ScaleToFit(rectangle);
                     break;
-                case Scaling.Free:
+                case AutoSizeModes.ScaleFreely:
                     rectangle = ScaleFreely(rectangle);
                     break;
             }
@@ -729,80 +774,40 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         private int GetInteriorWidth()
         {
-            return (int)Rectangle.width - LeftMargin - RightMargin;
+            return (int)Size.x - LeftMargin - RightMargin;
         }
 
         /// <summary>
-        /// Gets interior height between vertical margins
+        /// Gets interior height between vertical margins.
         /// </summary>
         private int GetInteriorHeight()
         {
-            return (int)Rectangle.height - TopMargin - BottomMargin;
+            return (int)Size.y - TopMargin - BottomMargin;
         }
 
         /// <summary>
-        /// Force component to always fit inside margins when smaller than parent.
+        /// Resize to fill parent.
         /// </summary>
-        private void FitMargins()
+        private void ResizeToFill()
         {
-            //if (parent != null)
-            //{
-            //    Rect parentRect = GetParentRectangle();
-            //    Vector2 parentScale = parent.LocalScale;
-
-            //    // Ensure horizontal position is inside margins
-            //    if (size.x < parentRect.width)
-            //    {
-            //        if (position.x < parent.LeftMargin)
-            //            position.x = parent.LeftMargin;
-            //        if (position.x > parentRect.width - parent.RightMargin)
-            //            position.x = parentRect.width - parent.RightMargin - size.x * parentScale.x;
-            //    }
-
-            //    // Ensure vertical position is inside margins
-            //    if (size.y < parentRect.height)
-            //    {
-            //        if (position.y < parent.TopMargin)
-            //            position.y = parent.TopMargin;
-            //        if (position.y > parentRect.height - parent.BottomMargin)
-            //            position.y = parentRect.height - parent.BottomMargin - size.y * parentScale.y;
-            //    }
-            //}
-        }
-
-        /// <summary>
-        /// Stretch to fill parent.
-        /// </summary>
-        private Rect StretchToFill(Rect myRect)
-        {
-            Rect finalRect = myRect;
-
             if (parent != null)
             {
-                Rect parentRect = GetParentRectangle();
-                finalRect.xMin = parentRect.xMin + parent.LeftMargin;
-                finalRect.xMax = parentRect.xMax - parent.RightMargin;
-                finalRect.yMin = parentRect.yMin + parent.TopMargin;
-                finalRect.yMax = parentRect.yMax - parent.BottomMargin;
-
-                localScale.x = finalRect.width / myRect.width;
-                localScale.y = finalRect.height / myRect.height;
+                size.x = parent.InteriorWidth;
+                size.y = parent.InteriorHeight;
             }
-
-            return finalRect;
         }
 
         /// <summary>
         /// Scale to fit parent while maintaining aspect ratio.
         /// </summary>
-        private Rect ScaleToFit(Rect myRect)
+        private Rect ScaleToFit(Rect srcRect)
         {
-            Rect finalRect = myRect;
+            Rect finalRect = srcRect;
 
             if (parent != null)
             {
-                int parentWidth = parent.InteriorWidth;
-                int parentHeight = parent.InteriorHeight;
+                int parentWidth = (int)parent.Size.x;
+                int parentHeight = (int)parent.Size.y;
 
                 float scale;
                 if (parentWidth > parentHeight)
@@ -810,7 +815,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 else
                     scale = parentWidth / size.x;
 
-                if (finalRect.width * scale > parent.InteriorWidth)
+                if (finalRect.width * scale > parentWidth)
                     scale = parentWidth / size.x;
 
                 finalRect.width *= scale;
@@ -823,11 +828,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Scale to fit parent with no regard to aspect ratio.
+        /// Scale to fill parent with no regard to aspect ratio.
         /// </summary>
-        private Rect ScaleFreely(Rect myRect)
+        private Rect ScaleFreely(Rect srcRect)
         {
-            Rect finalRect = myRect;
+            Rect finalRect = srcRect;
 
             if (parent != null)
             {

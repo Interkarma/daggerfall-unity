@@ -25,13 +25,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public abstract class DaggerfallBaseWindow : UserInterfaceWindow
     {
-        public const int nativeScreenWidth = 320;
-        public const int nativeScreenHeight = 200;
+        public const float nativeScreenWidth = 320;
+        public const float nativeScreenHeight = 200;
         public const KeyCode exitKey = KeyCode.Escape;
 
         bool isSetup;
         DaggerfallUnity dfUnity;
         Panel nativePanel = new Panel();      // Native panel is 320x200 child panel scaled to fit parent
+
+        protected ToolTip defaultToolTip = null;
 
         public DaggerfallBaseWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -47,11 +49,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             nativePanel.Size = new Vector2(nativeScreenWidth, nativeScreenHeight);
 
             // Set native panel scaling mode
-            bool freeScale = DaggerfallUnity.Settings.FreeScaling;
-            if (freeScale)
-                nativePanel.ScalingMode = Scaling.Free;
+            if (DaggerfallUnity.Settings.FreeScaling)
+                nativePanel.AutoSize = AutoSizeModes.ScaleFreely;
             else
-                nativePanel.ScalingMode = Scaling.ScaleToFit;
+                nativePanel.AutoSize = AutoSizeModes.ScaleToFit;
+
+            // Setup default tooltip
+            if (DaggerfallUnity.Settings.EnableToolTips)
+            {
+                defaultToolTip = new ToolTip();
+                defaultToolTip.ToolTipDelay = DaggerfallUnity.Settings.ToolTipDelayInSeconds;
+                defaultToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
+                defaultToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;
+                defaultToolTip.Parent = nativePanel;
+            }
         }
 
         protected DaggerfallUnity DaggerfallUnity
@@ -87,11 +98,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             base.Update();
+
+            // Update tooltip last
+            if (defaultToolTip != null)
+                defaultToolTip.Update();
         }
 
         public override void Draw()
         {
             base.Draw();
+
+            // Draw tooltip last
+            if (defaultToolTip != null)
+                defaultToolTip.Draw();
         }
 
         protected abstract void Setup();

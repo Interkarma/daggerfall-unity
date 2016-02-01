@@ -1,15 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
-// Web Site:        http://www.dfworkshop.net
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
-// Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
-// Notes:
-//
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.IO;
 using System.Collections;
 using DaggerfallConnect;
@@ -19,7 +8,7 @@ using DaggerfallConnect.Utility;
 namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
-    /// Basic image processing for DFBitmap, Color32, and FntFile formats.
+    /// Basic image processing.
     /// </summary>
     public static class ImageProcessing
     {
@@ -358,13 +347,17 @@ namespace DaggerfallWorkshop.Utility
         #region Weapon Tinting
 
         /// <summary>
-        /// Tint a weapon image based on metal type.
+        /// Tint an image based on material type (e.g. Steel, Orcish, Daedric).
         /// </summary>
-        /// <param name="srcBitmap">Source weapon image.</param>
-        /// <param name="size">Image size.</param>
-        /// <param name="metalType">Metal type for tint.</param>
-        public static void TintWeaponImage(DFBitmap srcBitmap, MetalTypes metalType)
+        /// <param name="srcBitmap">Source image.</param>
+        /// <param name="metalType">Desired material type.</param>
+        /// <param name="stripOtherMasks">Strip secondary masks like the hair mask on helmets.</param>
+        /// <returns>New DFBitmap tinted by material type.</returns>
+        public static DFBitmap ChangeMaterial(DFBitmap srcBitmap, MetalTypes metalType, bool stripOtherMasks = false)
         {
+            const byte hairMask = 0xff;
+
+            DFBitmap dstBitmap = DFBitmap.CloneDFBitmap(srcBitmap, false);
             byte[] swaps = GetMetalColors(metalType);
 
             int rowPos;
@@ -373,14 +366,28 @@ namespace DaggerfallWorkshop.Utility
                 rowPos = y * srcBitmap.Width;
                 for (int x = 0; x < srcBitmap.Width; x++)
                 {
-                    byte index = srcBitmap.Data[rowPos + x];
+                    int srcOffset = rowPos + x;
+                    byte index = srcBitmap.Data[srcOffset];
+
+                    if (stripOtherMasks)
+                    {
+                        if (index == hairMask)
+                            index = 0;
+                    }
+
                     if (index >= 0x70 && index <= 0x7f)
                     {
-                        int offset = index - 0x70;
-                        srcBitmap.Data[rowPos + x] = swaps[offset];
+                        int tintOffset = index - 0x70;
+                        dstBitmap.Data[srcOffset] = swaps[tintOffset];
+                    }
+                    else
+                    {
+                        dstBitmap.Data[srcOffset] = index;
                     }
                 }
             }
+
+            return dstBitmap;
         }
 
         // Gets colour indices based on metal type
@@ -395,9 +402,8 @@ namespace DaggerfallWorkshop.Utility
                 case MetalTypes.Steel:
                     indices = new byte[] { 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F };
                     break;
+                case MetalTypes.Chain:
                 case MetalTypes.Silver:
-                    indices = new byte[] { 0xE0, 0x70, 0x50, 0x71, 0x51, 0x72, 0x73, 0x52, 0x74, 0x53, 0x75, 0x54, 0x55, 0x56, 0x57, 0x58 };
-                    break;
                 case MetalTypes.Elven:
                     indices = new byte[] { 0xE0, 0x70, 0x50, 0x71, 0x51, 0x72, 0x73, 0x52, 0x74, 0x53, 0x75, 0x54, 0x55, 0x56, 0x57, 0x58 };
                     break;

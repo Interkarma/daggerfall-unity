@@ -21,6 +21,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop
 {
@@ -46,6 +47,7 @@ namespace DaggerfallWorkshop
         MaterialReader materialReader;
         MeshReader meshReader;
         SoundReader soundReader;
+        ItemHelper itemHelper;
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITextProvider textProvider = new DefaultTextProvider();
 
@@ -119,6 +121,11 @@ namespace DaggerfallWorkshop
         public SoundReader SoundReader
         {
             get { return (soundReader != null) ? soundReader : soundReader = GetComponent<SoundReader>(); }
+        }
+
+        public ItemHelper ItemHelper
+        {
+            get { return (itemHelper != null) ? itemHelper : itemHelper = new ItemHelper(); }
         }
 
         public WorldTime WorldTime

@@ -19,6 +19,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -34,6 +35,20 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="id">Text resource ID.</param>
         /// <returns>Text resource tokens.</returns>
         TextFile.Token[] GetRSCTokens(int id);
+
+        /// <summary>
+        /// Gets name of weapon material type.
+        /// </summary>
+        /// <param name="material">Material type of weapon.</param>
+        /// <returns>String for weapon material name.</returns>
+        string GetWeaponMaterialName(WeaponMaterialTypes material);
+
+        /// <summary>
+        /// Gets name of armor material type.
+        /// </summary>
+        /// <param name="material">Material type of armor.</param>
+        /// <returns>String for armor material name.</returns>
+        string GetArmorMaterialName(ArmorMaterialTypes material);
 
         /// <summary>
         /// Gets text for skill name.
@@ -196,6 +211,75 @@ namespace DaggerfallWorkshop.Utility
                 return null;
 
             return TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
+        }
+
+        public string GetWeaponMaterialName(WeaponMaterialTypes material)
+        {
+            switch(material)
+            {
+                case WeaponMaterialTypes.Iron:
+                    return "Iron";
+                case WeaponMaterialTypes.Steel:
+                    return "Steel";
+                case WeaponMaterialTypes.Silver:
+                    return "Silver";
+                case WeaponMaterialTypes.Elven:
+                    return "Elven";
+                case WeaponMaterialTypes.Dwarven:
+                    return "Dwarven";
+                case WeaponMaterialTypes.Mithril:
+                    return "Mithril";
+                case WeaponMaterialTypes.Adamantium:
+                    return "Adamantium";
+                case WeaponMaterialTypes.Ebony:
+                    return "Ebony";
+                case WeaponMaterialTypes.Orcish:
+                    return "Orcish";
+                case WeaponMaterialTypes.Daedric:
+                    return "Daedric";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        public string GetArmorMaterialName(ArmorMaterialTypes material)
+        {
+            switch (material)
+            {
+                case ArmorMaterialTypes.Leather:
+                    return "Leather";
+                case ArmorMaterialTypes.Chain:
+                case ArmorMaterialTypes.Chain2:
+                    return "Chain";
+                case ArmorMaterialTypes.Iron:
+                    return "Iron";
+                case ArmorMaterialTypes.Steel:
+                    return "Steel";
+                case ArmorMaterialTypes.Silver:
+                    return "Silver";
+                case ArmorMaterialTypes.Elven:
+                    return "Elven";
+                case ArmorMaterialTypes.Dwarven:
+                    return "Dwarven";
+                case ArmorMaterialTypes.Mithril:
+                    return "Mithril";
+                case ArmorMaterialTypes.Adamantium:
+                    return "Adamantium";
+                case ArmorMaterialTypes.Ebony:
+                    return "Ebony";
+                case ArmorMaterialTypes.Orcish:
+                    return "Orcish";
+                case ArmorMaterialTypes.Daedric:
+                    return "Daedric";
+            }
+
+            // Standard material type value not found.
+            // Try again using material value masked to material type only.
+            // Some save editors will not write back correct material mask, so we must try to handle this if possible.
+            // Clamping range so we don't end up in infinite loop.
+            int value = (int)material >> 8;
+            value = Mathf.Clamp(value, (int)ArmorMaterialTypes.Iron, (int)ArmorMaterialTypes.Daedric);
+            return GetArmorMaterialName((ArmorMaterialTypes)value);
         }
 
         public string GetSkillName(DFCareer.Skills skill)

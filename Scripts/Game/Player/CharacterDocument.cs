@@ -18,9 +18,9 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop.Game.Player
 {
     /// <summary>
-    /// The character sheet is a document filled in by the character creation process.
+    /// A document filled in by character creation or import definining character starting state.
     /// </summary>
-    public class CharacterSheet
+    public class CharacterDocument
     {
         public RaceTemplate race;
         public Genders gender;
@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.Player
         public DaggerfallSkills workingSkills;
         public PlayerReflexes reflexes;
 
-        public CharacterSheet()
+        public CharacterDocument()
         {
             SetDefaultValues();
         }

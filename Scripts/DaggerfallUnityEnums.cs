@@ -334,6 +334,7 @@ namespace DaggerfallWorkshop
         None,
         Iron,
         Steel,
+        Chain,
         Silver,
         Elven,
         Dwarven,
@@ -427,5 +428,40 @@ namespace DaggerfallWorkshop
         StaticNPC,
         EnemyMonster,
         EnemyClass,
+    }
+
+    /// <summary>
+    /// Supported ImageReader file types.
+    /// </summary>
+    public enum ImageTypes
+    {
+        None,
+        TEXTURE,
+        IMG,
+        CIF,
+        RCI,
+    }
+
+    /// <summary>
+    /// Defines character's hands.
+    /// </summary>
+    public enum CharacterHands
+    {
+        None,
+        Left,
+        Right,
+        Both,
+    }
+
+    /// <summary>
+    /// Defines how an item is held.
+    /// </summary>
+    public enum ItemHands
+    {
+        None,               // Item is not held in the hands
+        Either,             // Can wield in either left or right hand (off-hand equip image available)
+        Both,               // Can wield in both hands only
+        LeftOnly,           // Can wield in left hand only (e.g. shields)
+        RightOnly,          // Can wield in right hand only
     }
 }

@@ -12,12 +12,13 @@
 #region Using Statements
 using System;
 using System.Text;
+using UnityEngine;
 #endregion
 
 namespace DaggerfallConnect
 {
     /// <summary>
-    /// Stores raw bitmap data in indexed or colour byte formats.
+    /// Stores raw bitmap data in indexed format.
     /// </summary>
     public class DFBitmap
     {
@@ -31,6 +32,9 @@ namespace DaggerfallConnect
 
         /// <summary>Image byte array in specified format.</summary>
         public byte[] Data;
+
+        /// <summary>Daggerfall palette.</summary>
+        public DFPalette Palette = new DFPalette();
 
         #endregion
 
@@ -72,6 +76,39 @@ namespace DaggerfallConnect
             this.Data = new byte[this.Width * this.Height];
         }
 
+        /// <summary>
+        /// Gets a Color32 array for engine.
+        /// </summary>
+        /// <param name="alphaIndex">Index to receive transparent alpha.</param>
+        /// <returns>Color32 array.</returns>
+        public Color32[] GetColor32(int alphaIndex = -1)
+        {
+            Color32[] colors = new Color32[Width * Height];
+
+            Color32 c = new Color32();
+            int index, offset, srcRow, dstRow;
+            for (int y = 0; y < Height; y++)
+            {
+                // Get row position
+                srcRow = y * Width;
+                dstRow = (Height - 1 - y) * Width;
+
+                // Write data for this row
+                for (int x = 0; x < Width; x++)
+                {
+                    index = Data[srcRow + x];
+                    offset = Palette.HeaderLength + index * 3;
+                    c.r = Palette.PaletteBuffer[offset];
+                    c.g = Palette.PaletteBuffer[offset + 1];
+                    c.b = Palette.PaletteBuffer[offset + 2];
+                    c.a = (alphaIndex == index) ? (byte)0 : (byte)255;
+                    colors[dstRow + x] = c;
+                }
+            }
+
+            return colors;
+        }
+
         #endregion
 
         #region Static Public Methods
@@ -80,15 +117,20 @@ namespace DaggerfallConnect
         /// Creates a clone of a DFBitmap.
         /// </summary>
         /// <param name="bitmap">DFBitmap source.</param>
+        /// <param name="cloneData">True to clone data.</param>
         /// <returns>Cloned DFBitmap.</returns>
-        static public DFBitmap CloneDFBitmap(DFBitmap bitmap)
+        static public DFBitmap CloneDFBitmap(DFBitmap bitmap, bool cloneData = true)
         {
             // Create destination bitmap to receive normal image
             DFBitmap newBitmap = new DFBitmap();
             newBitmap.Width = bitmap.Width;
             newBitmap.Height = bitmap.Height;
             newBitmap.Data = new byte[bitmap.Data.Length];
-            bitmap.Data.CopyTo(newBitmap.Data, 0);
+            newBitmap.Palette = bitmap.Palette;
+
+            // Clone data
+            if (cloneData)
+                bitmap.Data.CopyTo(newBitmap.Data, 0);
 
             return newBitmap;
         }

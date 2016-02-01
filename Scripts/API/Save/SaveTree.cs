@@ -108,6 +108,21 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
+        /// Finds first record of type in tree starting from root record.
+        /// </summary>
+        /// <param name="type">Type of record to search for.</param>
+        /// <param name="root">Root record to start searching from. If null, will start from RecordRoot.</param>
+        /// <returns>Found item or null if not found.</returns>
+        public SaveTreeBaseRecord FindRecord(RecordTypes type, SaveTreeBaseRecord root = null)
+        {
+            List<SaveTreeBaseRecord> records = FindRecords(type, root);
+            if (records.Count == 0)
+                return null;
+
+            return records[0];
+        }
+
+        /// <summary>
         /// Finds all instances of a specific record type in tree starting from root record.
         /// </summary>
         /// <param name="type">Type of record to search for.</param>
@@ -123,6 +138,28 @@ namespace DaggerfallConnect.Save
             FindRecordsByType(type, root, recordList);
 
             return recordList;
+        }
+
+        /// <summary>
+        /// Filters a record list by parent type.
+        /// </summary>
+        /// <param name="source">Source list.</param>
+        /// <param name="parentType">Parent type to filter for.</param>
+        /// <returns>New list of items with specific parent type.</returns>
+        public List<SaveTreeBaseRecord> FilterRecordsByParentType(List<SaveTreeBaseRecord> source, RecordTypes parentType)
+        {
+            List<SaveTreeBaseRecord> newList = new List<SaveTreeBaseRecord>();
+
+            foreach(SaveTreeBaseRecord record in source)
+            {
+                if (record.Parent == null)
+                    continue;
+
+                if (record.Parent.RecordType == parentType)
+                    newList.Add(record);
+            }
+
+            return newList;
         }
 
         #region Static Methods

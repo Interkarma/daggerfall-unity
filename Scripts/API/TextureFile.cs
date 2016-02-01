@@ -377,13 +377,13 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         /// <param name="record">Index of record.</param>
         /// <returns>Offset values for X and Y in DFSize object.</returns>
-        public DFSize GetOffset(int record)
+        public DFPosition GetOffset(int record)
         {
             // Validate
             if (record < 0 || record >= header.RecordCount || records == null)
-                return new DFSize(0, 0);
+                return new DFPosition(0, 0);
 
-            return new DFSize(records[record].OffsetX, records[record].OffsetY);
+            return new DFPosition(records[record].OffsetX, records[record].OffsetY);
         }
 
         /// <summary>
@@ -611,6 +611,7 @@ namespace DaggerfallConnect.Arena2
             records[record].Frames[0].Width = solidSize;
             records[record].Frames[0].Height = solidSize;
             records[record].Frames[0].Data = new byte[solidSize * solidSize];
+            records[record].Frames[0].Palette = Palette;
 
             // Write image bytes
             int srcPos = 0;
@@ -652,6 +653,7 @@ namespace DaggerfallConnect.Arena2
             records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].Width;
             records[record].Frames[frame].Height = records[record].Height;
+            records[record].Frames[frame].Palette = Palette;
 
             byte[] fileBytes = managedFile.GetBytes();
             long position = records[record].Position + records[record].DataOffset;
@@ -727,8 +729,10 @@ namespace DaggerfallConnect.Arena2
         {
             // Create buffer to hold extracted image
             byte[] data = new byte[records[record].Width * records[record].Height];
+            records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].Width;
             records[record].Frames[frame].Height = records[record].Height;
+            records[record].Frames[frame].Palette = Palette;
 
             // Find offset to special row headers for this frame
             long position = records[record].Position + records[record].DataOffset;

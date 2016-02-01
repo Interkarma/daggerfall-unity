@@ -19,6 +19,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game;
 using IniParser;
 using IniParser.Model;
 
@@ -158,6 +159,30 @@ namespace DaggerfallWorkshop
             set { SetBool(sectionGUI, "FreeScaling", value); }
         }
 
+        public bool EnableToolTips
+        {
+            get { return GetBool(sectionGUI, "EnableToolTips"); }
+            set { SetBool(sectionGUI, "EnableToolTips", value); }
+        }
+
+        public float ToolTipDelayInSeconds
+        {
+            get { return GetFloat(sectionGUI, "ToolTipDelayInSeconds", 0, 10); }
+            set { SetFloat(sectionGUI, "ToolTipDelayInSeconds", value); }
+        }
+
+        public Color32 ToolTipBackgroundColor
+        {
+            get { return GetColor(sectionGUI, "ToolTipBackgroundColor", DaggerfallUI.DaggerfallUnityDefaultToolTipBackgroundColor); }
+            set { SetColor(sectionGUI, "ToolTipBackgroundColor", value); }
+        }
+
+        public Color32 ToolTipTextColor
+        {
+            get { return GetColor(sectionGUI, "ToolTipTextColor", DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor); }
+            set { SetColor(sectionGUI, "ToolTipTextColor", value); }
+        }
+
         // [Controls]
 
         public bool InvertMouseVertical
@@ -295,7 +320,8 @@ namespace DaggerfallWorkshop
                 reader.Close();
                 usingFallback = true;
                 loadedFallbackSettings = true;
-                //Create new settings.ini in data directory from fallback.ini if settings.ini not found
+
+                // Create new settings.ini in data directory from fallback.ini if settings.ini not found
                 if (!Application.isEditor && loadedFallbackSettings && !loadedUserSettings)
                     File.WriteAllBytes(Path.Combine(Application.dataPath, settingsIniName), asset.bytes);
             }
@@ -411,6 +437,49 @@ namespace DaggerfallWorkshop
         void SetFloat(string sectionName, string valueName, float value)
         {
             SetData(sectionName, valueName, value.ToString());
+        }
+
+        Color GetColor(string sectionName, string valueName, Color defaultColor)
+        {
+            try
+            {
+                string colorStr = GetData(sectionName, valueName);
+                Color result = StringToColor(colorStr);
+                return result;
+            }
+            catch
+            {
+                return defaultColor;
+            }
+        }
+
+        void SetColor(string sectionName, string valueName, Color value)
+        {
+            SetData(sectionName, valueName, ColorToString(value));
+        }
+
+        #endregion
+
+        #region Custom Parsers
+
+        string ColorToString(Color32 color)
+        {
+            return string.Format("{0:X02}{1:X02}{2:X02}{3:X02}", color.r, color.g, color.b, color.a);
+        }
+
+        Color32 StringToColor(string colorStr)
+        {
+            const string errorMsg = "Color must be in 32-bit RGBA format, e.g. black is 000000FF.";
+
+            if (colorStr.Length != 8)
+                throw new Exception(errorMsg);
+
+            byte r = byte.Parse(colorStr.Substring(0, 2), NumberStyles.HexNumber);
+            byte g = byte.Parse(colorStr.Substring(2, 2), NumberStyles.HexNumber);
+            byte b = byte.Parse(colorStr.Substring(4, 2), NumberStyles.HexNumber);
+            byte a = byte.Parse(colorStr.Substring(6, 2), NumberStyles.HexNumber);
+
+            return new Color32(r, g, b, a);
         }
 
         #endregion

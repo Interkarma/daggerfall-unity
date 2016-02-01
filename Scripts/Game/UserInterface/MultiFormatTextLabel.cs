@@ -196,7 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         TextLabel AddTextLabel(PixelFont font, Vector2 position, string text)
         {
             TextLabel textLabel = new TextLabel();
-            textLabel.ScalingMode = Scaling.None;
+            textLabel.AutoSize = AutoSizeModes.None;
             textLabel.Font = font;
             textLabel.Position = position;
             textLabel.Text = text;

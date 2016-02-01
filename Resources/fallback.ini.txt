@@ -21,6 +21,10 @@ Crosshair=True
 SwapHealthAndFatigueColors=False
 DimAlphaStrength=0.5
 FreeScaling=False
+EnableToolTips=True
+ToolTipDelayInSeconds=0.0
+ToolTipBackgroundColor=404040D2
+ToolTipTextColor=E6E6C8FF
 
 [Controls]
 InvertMouseVertical=False

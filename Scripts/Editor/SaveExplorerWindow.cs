@@ -22,6 +22,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.Utility;
+using DaggerfallConnect.FallExe;
 
 namespace DaggerfallWorkshop
 {
@@ -34,6 +35,7 @@ namespace DaggerfallWorkshop
         const string menuPath = "Daggerfall Tools/Save Explorer [Beta]";
 
         DaggerfallUnity dfUnity;
+        ItemHelper itemHelper;
         SaveGames saveGames;
         SaveTree[] saveTrees;
         SaveTree currentSaveTree;
@@ -211,11 +213,32 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < currentItems.Length; i++)
             {
                 ItemRecord itemRecord = currentItems[i] as ItemRecord;
+                DaggerfallUnityItem item = new DaggerfallUnityItem(itemRecord);
 
-                string name = itemRecord.ParsedData.name;
-                string type = ((ItemType)itemRecord.ParsedData.category1).ToString();
+                int equippedIndex = GetEquippedIndex(itemRecord);
+                //if (equippedIndex == -1)
+                //    continue;
 
-                string textLabel = string.Format("{0} [Type={1}]", name, type);
+                //string savedName = itemRecord.ParsedData.name;
+                //ItemGroups itemGroup = (ItemGroups)itemRecord.ParsedData.category1;
+                //int itemIndex = itemRecord.ParsedData.category2;
+                //ItemDescription itemDesc = itemHelper.GetItemDescription(itemGroup, itemIndex);
+                ////string cat1 = ((ItemGroups)itemRecord.ParsedData.category1).ToString();
+                ////string cat2 = itemRecord.ParsedData.category2.ToString();
+                ////string subName = ItemHelper.ToSubCategoryName((ItemGroups)itemRecord.ParsedData.category1, itemRecord.ParsedData.category2);
+                ////string other = itemRecord.ParsedData.category2.ToString();
+
+                //string textLabel = string.Format(
+                //    "{0} [mat=0x{1:X4}]",
+                //    itemHelper.ResolveItemName(itemRecord.ParsedData),
+                //    itemRecord.ParsedData.material);
+
+                string textLabel = string.Format("Item [{0}]", item.Name);
+
+                if (equippedIndex != -1)
+                    textLabel = "*" + textLabel;
+
+                //string textLabel = itemHelper.GetClassicItemName(itemRecord.ParsedData);
                 EditorGUILayout.LabelField(textLabel);
             }
         }
@@ -240,7 +263,7 @@ namespace DaggerfallWorkshop
                     int equippedIndex = GetEquippedIndex(parent.Children[i] as ItemRecord);
                     if (equippedIndex != -1)
                     {
-                        textLabel = string.Format("(*={0:00}) {1}", equippedIndex, textLabel);
+                        //textLabel = string.Format("(*={0:00}) {1}", equippedIndex, textLabel);
                     }
                 }
 
@@ -311,6 +334,9 @@ namespace DaggerfallWorkshop
         {
             if (!dfUnity)
                 dfUnity = DaggerfallUnity.Instance;
+
+            if (itemHelper == null)
+                itemHelper = new ItemHelper();
 
             if (!dfUnity.IsReady || string.IsNullOrEmpty(dfUnity.Arena2Path))
                 return false;

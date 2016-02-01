@@ -172,6 +172,24 @@ namespace DaggerfallConnect.Save
             ReadRecordRoot();
         }
 
+        /// <summary>
+        /// Shallow copy record data from this record to another.
+        /// </summary>
+        /// <param name="other">Other record to receive data.</param>
+        public virtual void CopyTo(SaveTreeBaseRecord other)
+        {
+            if (other == null)
+                return;
+
+            other.streamPosition = this.streamPosition;
+            other.streamLength = this.streamLength;
+            other.streamData = (byte[])this.streamData.Clone();
+            other.recordType = this.recordType;
+            other.recordRoot = this.recordRoot;
+            other.parent = this.parent;
+            other.children.AddRange(this.children.ToArray());
+        }
+
         #endregion
 
         #region Private Methods

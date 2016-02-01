@@ -515,6 +515,7 @@ namespace DaggerfallConnect.Arena2
             records[record].Frames[frame].Width = records[record].Header.Width;
             records[record].Frames[frame].Height = records[record].Header.Height;
             records[record].Frames[frame].Data = new byte[records[record].Header.PixelDataLength];
+            records[record].Frames[frame].Palette = Palette;
 
             // Read image bytes
             long position = records[record].Header.DataPosition;
@@ -539,6 +540,7 @@ namespace DaggerfallConnect.Arena2
             records[record].Frames[frame].Width = records[record].AnimHeader.Width;
             records[record].Frames[frame].Height = records[record].AnimHeader.Height;
             records[record].Frames[frame].Data = new byte[length];
+            records[record].Frames[frame].Palette = Palette;
 
             // Extract image data from frame RLE
             long position = records[record].AnimHeader.Position + records[record].AnimHeader.FrameDataOffsetList[frame];
@@ -562,6 +564,7 @@ namespace DaggerfallConnect.Arena2
             records[record].Frames[frame].Width = records[record].Header.Width;
             records[record].Frames[frame].Height = records[record].Header.Height;
             records[record].Frames[frame].Data = new byte[length];
+            records[record].Frames[frame].Palette = Palette;
 
             // Extract image data from RLE
             long position = records[record].Header.DataPosition;

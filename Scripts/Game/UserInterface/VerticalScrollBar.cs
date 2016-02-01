@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int ScrollIndex
         {
             get { return scrollIndex; }
-            set { scrollIndex = value; }
+            set { SetScrollIndex(value); }
         }
 
         /// <summary>
@@ -116,16 +116,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     Vector2 dragDistance = mousePosition - dragStartPosition;
                     float scale = Size.y / (float)totalUnits;
-
                     float unitsMoved = dragDistance.y / scale;
-
-                    int newScrollIndex = dragStartScrollIndex + (int)unitsMoved;
-                    if (newScrollIndex < 0)
-                        newScrollIndex = 0;
-                    if (newScrollIndex >= totalUnits - displayUnits)
-                        newScrollIndex = totalUnits - displayUnits;
-
-                    scrollIndex = newScrollIndex;
+                    SetScrollIndex(dragStartScrollIndex + (int)unitsMoved);
                 }
             }
             else
@@ -152,14 +144,37 @@ namespace DaggerfallWorkshop.Game.UserInterface
             base.MouseClick(clickPosition);
 
             if (clickPosition.y < thumbRect.yMin)
-                RaiseOnScrollUpEvent();
+                ScrollIndex -= 1;
             else if (clickPosition.y > thumbRect.yMax)
-                RaiseOnScrollDownEvent();
+                ScrollIndex += 1;
+        }
+
+        protected override void MouseScrollUp()
+        {
+            base.MouseScrollUp();
+            ScrollIndex -= 1;
+        }
+
+        protected override void MouseScrollDown()
+        {
+            base.MouseScrollDown();
+            ScrollIndex += 1;
         }
 
         #endregion
 
         #region Private Methods
+
+        void SetScrollIndex(int value)
+        {
+            int oldScrollIndex = scrollIndex;
+            scrollIndex = Mathf.Clamp(value, 0, totalUnits - displayUnits);
+
+            if (scrollIndex < oldScrollIndex)
+                RaiseOnScrollUpEvent();
+            else if (scrollIndex > oldScrollIndex)
+                RaiseOnScrollDownEvent();
+        }
 
         void DrawScrollBar()
         {

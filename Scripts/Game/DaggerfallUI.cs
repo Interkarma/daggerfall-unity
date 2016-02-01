@@ -41,6 +41,8 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallAlternateShadowColor1 = new Color32(44, 60, 60, 255);
         public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
         public static Color DaggerfallDefaultTextCursorColor = new Color32(154, 134, 0, 200);
+        public static Color DaggerfallUnityDefaultToolTipBackgroundColor = new Color32(64, 64, 64, 210);
+        public static Color DaggerfallUnityDefaultToolTipTextColor = new Color32(230, 230, 200, 255);
         public static Color DaggerfallUnityNotImplementedColor = new Color(1, 0, 0, 0.5f);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
@@ -132,7 +134,6 @@ namespace DaggerfallWorkshop.Game
             dfTravelMapWindow = new DaggerfallTravelMapWindow(uiManager);
 
             SetupSingleton();
-            PostMessage(startupMessage);
         }
 
         void Start()
@@ -144,6 +145,9 @@ namespace DaggerfallWorkshop.Game
                 uiManager.PushWindow(dfHUD);
                 Debug.Log("HUD pushed to stack.");
             }
+
+            // Post start message
+            PostMessage(startupMessage);
         }
 
         void Update()
@@ -425,7 +429,7 @@ namespace DaggerfallWorkshop.Game
         public static TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, Panel panel = null, int glyphSpacing = 1)
         {
             TextLabel textLabel = new TextLabel();
-            textLabel.ScalingMode = Scaling.None;
+            textLabel.AutoSize = AutoSizeModes.None;
             textLabel.Font = font;
             textLabel.Position = position;
             textLabel.Text = text;
@@ -448,7 +452,7 @@ namespace DaggerfallWorkshop.Game
         public static Outline AddOutline(Rect rect, Color color, Panel panel = null)
         {
             Outline outline = new Outline();
-            outline.ScalingMode = Scaling.None;
+            outline.AutoSize = AutoSizeModes.None;
             outline.Color = color;
             outline.Position = new Vector2(rect.x, rect.y);
             outline.Size = new Vector2(rect.width, rect.height);
@@ -461,9 +465,19 @@ namespace DaggerfallWorkshop.Game
         public static Panel AddPanel(Rect rect, Panel panel = null)
         {
             Panel newPanel = new Panel();
-            newPanel.ScalingMode = Scaling.None;
+            newPanel.AutoSize = AutoSizeModes.None;
             newPanel.Position = new Vector2(rect.x, rect.y);
             newPanel.Size = new Vector2(rect.width, rect.height);
+            if (panel != null)
+                panel.Components.Add(newPanel);
+
+            return newPanel;
+        }
+
+        public static Panel AddPanel(Panel panel = null, AutoSizeModes scaling = AutoSizeModes.ResizeToFill)
+        {
+            Panel newPanel = new Panel();
+            newPanel.AutoSize = scaling;
             if (panel != null)
                 panel.Components.Add(newPanel);
 
@@ -489,6 +503,9 @@ namespace DaggerfallWorkshop.Game
 
             DFBitmap bitmap = imgFile.GetDFBitmap();
             Color32[] colors = imgFile.GetColor32(bitmap, 0);
+
+            // Invert Y as Unity textures have origin 0,0 at bottom-left and UI expects top-left
+            subRect.y = bitmap.Height - subRect.height;
 
             Color32[] newColors = new Color32[(int)subRect.width * (int)subRect.height];
             ImageProcessing.CopyColors(

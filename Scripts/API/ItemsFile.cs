@@ -31,11 +31,12 @@ namespace DaggerfallConnect.FallExe
         public Int32 Unknown1;                      // Holding weight? - From 20 and up seems to be holding weight of container-like items (e.g. bookcase, chest, cart, ship)
         public Int32 baseCost;                      // Base cost before material, mercantile, etc.
         public Int16 enchantmentPoints;             // Enchantment points
+        public Int32 Unknown2Long;                  // Unknown2 read as 32-bits wide
         public Int16 Unknown2;                      // Unknown
         public Byte drawOrder;                      // Ordering of items on paper doll - lower numbered items are drawn first
         public Byte Unknown3;                       // Item type? (known: value & 1 == ingredients) - could be part of a larger bitfield with drawOrder
         public Int16 inventoryTextureBitfield;      // Bitfield for generic texture indices - does not appear to be used for weapons & armor
-        public Int16 paperDollTextureBitfield;      // Bitfield for paper doll texture indices - 0 for items that do not appear on paper doll
+        public Int16 unknownTextureBitfield;        // Bitfield for unknown texture indices, usually a generic icon - seems to be 0 for icons that do not appear on paper doll
     }
 
     /// <summary>
@@ -44,22 +45,25 @@ namespace DaggerfallConnect.FallExe
     /// Passing through unknown values as-is.
     /// </summary>
     [Serializable]
-    public struct ItemDescription
+    public struct ItemTemplate
     {
+        public int position;                        // Position in file this item was read from
+        public int index;                           // Index of this item in list
         public string name;                         // Display name
         public float baseWeight;                    // Base weight before material, etc.
         public int hitPoints;                       // Hit points
         public Int32 Unknown1;                      // Holding weight? - From 20 and up seems to be holding weight of container-like items (e.g. bookcase, chest, cart, ship)
         public int baseCost;                        // Base cost before material, mercantile, etc.
         public int enchantmentPoints;               // Enchantment points
+        public Int32 Unknown2Long;                  // Unknown
         public Int16 Unknown2;                      // Unknown
         public byte drawOrder;                      // Ordering of items on paper doll - lower numbered items are drawn first
         public Byte Unknown3;                       // Item type? (known: value & 1 == ingredients) - could be part of a larger bitfield with drawOrder
         public bool isIngredient;                   // True for ingedient items, derived from Unknown3
         public int inventoryTextureArchive;         // Generic texture archive index
         public int inventoryTextureRecord;          // Generic texture record index
-        public int paperDollTextureArchive;         // Paper doll texture archive index
-        public int paperDollTextureRecord;          // Paper doll texture record index
+        public int unknownTextureArchive;           // Unknown texture archive index
+        public int unknownTextureRecord;            // Unknown texture record index
     }
 
     /// <summary>
@@ -220,25 +224,28 @@ namespace DaggerfallConnect.FallExe
         /// </summary>
         /// <param name="index">Index of item.</param>
         /// <returns>ItemTemplate</returns>
-        public ItemDescription GetItemDescription(int index)
+        public ItemTemplate GetItemDescription(int index)
         {
-            ItemDescription desc = new ItemDescription();
+            ItemTemplate desc = new ItemTemplate();
             if (items.Count > 0 && index >= 0 && index < items.Count)
             {
                 DFItem item = items[index];
+                desc.position = (int)item.position;
+                desc.index = index;
                 desc.name = Encoding.UTF8.GetString(item.name).TrimEnd('\0');
                 desc.baseWeight = (float)item.baseWeightUnits * 0.25f;
                 desc.hitPoints = item.hitPoints;
                 desc.Unknown1 = item.Unknown1;
                 desc.enchantmentPoints = item.enchantmentPoints;
+                desc.Unknown2Long = item.Unknown2Long;
                 desc.Unknown2 = item.Unknown2;
                 desc.drawOrder = item.drawOrder;
                 desc.Unknown3 = item.Unknown3;
                 desc.isIngredient = ((item.Unknown3 & 1) == 1) ? true : false;
                 desc.inventoryTextureArchive = item.inventoryTextureBitfield >> 7;
                 desc.inventoryTextureRecord = item.inventoryTextureBitfield & 0x7f;
-                desc.paperDollTextureArchive = item.paperDollTextureBitfield >> 7;
-                desc.paperDollTextureRecord = item.paperDollTextureBitfield & 0x7f;
+                desc.unknownTextureArchive = item.unknownTextureBitfield >> 7;
+                desc.unknownTextureRecord = item.unknownTextureBitfield & 0x7f;
             }
             
             return desc;
@@ -269,7 +276,7 @@ namespace DaggerfallConnect.FallExe
                 writer.Write(item.drawOrder);
                 writer.Write(item.Unknown3);
                 writer.Write(item.inventoryTextureBitfield);
-                writer.Write(item.paperDollTextureBitfield);
+                writer.Write(item.unknownTextureBitfield);
                 writer.Close();
             }
         }
@@ -335,11 +342,16 @@ namespace DaggerfallConnect.FallExe
             item.Unknown1 = reader.ReadInt32();
             item.baseCost = reader.ReadInt32();
             item.enchantmentPoints = reader.ReadInt16();
+
+            long pos = reader.BaseStream.Position;
+            item.Unknown2Long = reader.ReadInt32();
+            reader.BaseStream.Position = pos;
+
             item.Unknown2 = reader.ReadInt16();
             item.drawOrder = reader.ReadByte();
             item.Unknown3 = reader.ReadByte();
             item.inventoryTextureBitfield = reader.ReadInt16();
-            item.paperDollTextureBitfield = reader.ReadInt16();
+            item.unknownTextureBitfield = reader.ReadInt16();
 
             return item;
         }

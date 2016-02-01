@@ -14,9 +14,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
+using DaggerfallConnect.FallExe;
+using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -47,9 +49,9 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Public Methods
 
         /// <summary>
-        /// Assigns player entity settings from a character sheet.
+        /// Assigns player entity settings from a character document.
         /// </summary>
-        public void AssignCharacter(CharacterSheet character, int level = 1, int maxHealth = 0)
+        public void AssignCharacter(CharacterDocument character, int level = 1, int maxHealth = 0)
         {
             if (character == null)
             {
@@ -78,6 +80,29 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
+        /// Assigns character items from classic save tree.
+        /// </summary>
+        public void AssignItems(SaveTree saveTree)
+        {
+            // Find character record, should always be a singleton
+            CharacterRecord characterRecord = (CharacterRecord)saveTree.FindRecord(RecordTypes.Character);
+            if (characterRecord == null)
+                return;
+
+            // Find all character-owned items
+            List<SaveTreeBaseRecord> itemRecords = saveTree.FindRecords(RecordTypes.Item, characterRecord);
+
+            // Filter for container-based inventory items
+            List<SaveTreeBaseRecord> filteredRecords = saveTree.FilterRecordsByParentType(itemRecords, RecordTypes.Container);
+
+            // Add interim Daggerfall Unity items
+            foreach (var record in filteredRecords)
+            {
+                items.AddItem(new DaggerfallUnityItem((ItemRecord)record));
+            }
+        }
+
+        /// <summary>
         /// Assigns default entity settings.
         /// </summary>
         public override void SetEntityDefaults()
@@ -86,7 +111,7 @@ namespace DaggerfallWorkshop.Game.Entity
             career = DaggerfallEntity.GetClassCareerTemplate(ClassCareers.Mage);
             if (career != null)
             {
-                race = CharacterSheet.GetRaceTemplate(Races.Breton);
+                race = CharacterDocument.GetRaceTemplate(Races.Breton);
                 faceIndex = 0;
                 reflexes = PlayerReflexes.Average;
                 gender = Genders.Male;

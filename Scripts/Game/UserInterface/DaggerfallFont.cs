@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Calculates glyph width up to character length of string (-1 for all characters)
         /// </summary>
-        public float GetCharacterWidth(string text, int length = -1)
+        public float GetCharacterWidth(string text, int length = -1, float scale = 1)
         {
             byte[] asciiBytes = Encoding.ASCII.GetBytes(text);
             if (asciiBytes == null || asciiBytes.Length == 0)
@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     asciiBytes[i] = PixelFont.SpaceASCII;
 
                 PixelFont.GlyphInfo glyph = GetGlyph(asciiBytes[i]);
-                width += glyph.width + GlyphSpacing;
+                width += (glyph.width + GlyphSpacing) * scale;
             }
 
             return width;

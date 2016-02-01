@@ -126,6 +126,24 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
+    /// Data package returned by ImageHelper.GetImageData() methods.
+    /// Supplied Texture2D will always be readable.
+    /// </summary>
+    public struct ImageData
+    {
+        public ImageTypes type;                 // Original type
+        public string filename;                 // Original filename
+        public int record;                      // Original record
+        public int frame;                       // Original frame
+        public bool hasAlpha;                   // Original loaded with alpha cutout
+        public DFBitmap dfBitmap;               // Original indexed bitmap
+        public Texture2D texture;               // Generated texture
+        public DFPosition offset;               // Custom Daggerfall offset position for paper doll inventory, etc.
+        public DFSize scale;                    // Custom Daggerfall size for scaling sprites
+        public DFSize size;                     // Size of image
+    }
+
+    /// <summary>
     /// Defines animation setup for mobile enemies.
     /// </summary>
     [Serializable]

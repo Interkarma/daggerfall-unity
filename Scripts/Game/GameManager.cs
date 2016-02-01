@@ -12,6 +12,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -19,7 +20,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Entity;
-using System.Reflection;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
@@ -59,7 +60,9 @@ namespace DaggerfallWorkshop.Game
         FloatingOrigin floatingOrigin = null;
         FPSWeapon[] playerWeapons = new FPSWeapon[2];
         PlayerActivate playerActivate = null;
-        CharacterController playerController;
+        CharacterController playerController = null;
+        SunlightManager sunlightManager = null;
+        ItemHelper itemHelper = null;
 
         #endregion
 
@@ -205,7 +208,7 @@ namespace DaggerfallWorkshop.Game
 
         public FPSWeapon LeftHandWeapon
         {
-            get { return (playerWeapons[0]) ? playerWeapons[0] : playerWeapons[0] = GetComponentFromObject<FPSWeapon>( GetGameObjectWithName("Left Hand Weapon") ); }
+            get { return (playerWeapons[0]) ? playerWeapons[0] : playerWeapons[0] = GetComponentFromObject<FPSWeapon>(GetGameObjectWithName("Left Hand Weapon") ); }
             set { playerWeapons[0] = value; }
 
         }
@@ -226,6 +229,18 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (playerController) ? playerController : playerController = GetComponentFromObject<CharacterController>(PlayerObject); }
             set { playerController = value; }
+        }
+
+        public SunlightManager SunlightManager
+        {
+            get { return (sunlightManager) ? sunlightManager : sunlightManager = GetComponentFromObject<SunlightManager>(GetGameObjectWithName("SunLight")); }
+            set { sunlightManager = value; }
+        }
+
+        public ItemHelper ItemHelper
+        {
+            get { return (itemHelper != null) ? itemHelper : itemHelper = new ItemHelper(); }
+            set { itemHelper = value; }
         }
 
         public bool IsPlayerOnHUD

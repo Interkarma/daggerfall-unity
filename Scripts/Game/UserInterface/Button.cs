@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// <summary>
     /// A simple button component.
     /// </summary>
-    public class Button : BaseScreenComponent
+    public class Button : Panel
     {
         TextLabel label = new TextLabel();
         AudioClip clickSound;

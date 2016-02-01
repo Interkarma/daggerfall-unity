@@ -38,11 +38,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         SkillsRollout skillsRollout = new SkillsRollout();
         ReflexPicker reflexPicker = new ReflexPicker();
         FacePicker facePicker = new FacePicker();
-        CharacterSheet characterSheet;
+        CharacterDocument characterDocument;
 
-        public CharacterSheet CharacterSheet
+        public CharacterDocument CharacterDocument
         {
-            get { return characterSheet; }
+            get { return characterDocument; }
             set { SetCharacterSheet(value); }
         }
 
@@ -90,22 +90,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        void SetCharacterSheet(CharacterSheet characterSheet)
+        void SetCharacterSheet(CharacterDocument characterDocument)
         {
-            this.characterSheet = characterSheet;
-            this.textBox.Text = characterSheet.name;
-            this.statsRollout.StartingStats = characterSheet.startingStats;
-            this.statsRollout.WorkingStats = characterSheet.workingStats;
+            this.characterDocument = characterDocument;
+            this.textBox.Text = characterDocument.name;
+            this.statsRollout.StartingStats = characterDocument.startingStats;
+            this.statsRollout.WorkingStats = characterDocument.workingStats;
             this.statsRollout.BonusPool = 0;
-            this.skillsRollout.SetClassSkills(characterSheet.career);
-            this.skillsRollout.StartingSkills = characterSheet.startingSkills;
-            this.skillsRollout.WorkingSkills = characterSheet.workingSkills;
+            this.skillsRollout.SetClassSkills(characterDocument.career);
+            this.skillsRollout.StartingSkills = characterDocument.startingSkills;
+            this.skillsRollout.WorkingSkills = characterDocument.workingSkills;
             this.skillsRollout.PrimarySkillBonusPoints = 0;
             this.skillsRollout.MajorSkillBonusPoints = 0;
             this.skillsRollout.MinorSkillBonusPoints = 0;
-            this.facePicker.FaceIndex = characterSheet.faceIndex;
-            this.facePicker.SetFaceTextures(characterSheet.race, characterSheet.gender);
-            this.reflexPicker.PlayerReflexes = characterSheet.reflexes;
+            this.facePicker.FaceIndex = characterDocument.faceIndex;
+            this.facePicker.SetFaceTextures(characterDocument.race, characterDocument.gender);
+            this.reflexPicker.PlayerReflexes = characterDocument.reflexes;
         }
 
         #endregion
