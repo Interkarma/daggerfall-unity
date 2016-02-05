@@ -33,14 +33,12 @@ namespace DaggerfallWorkshop
         const byte grass = 2;
         const byte stone = 3;
 
-        Noise noise = new Noise();
         byte[] lookupTable;
         int[,] tileData;
 
         public TerrainTexturing()
         {
             CreateLookupTable();
-            noise.Seed(seed);
         }
 
         #region Marching Squares - WIP
@@ -48,21 +46,19 @@ namespace DaggerfallWorkshop
         // Very basic marching squares for water > dirt > grass > stone transitions.
         // Cannot handle water > grass or water > stone, etc.
         // Will improve this at later date to use a wider range of transitions.
-        public void AssignTiles(ref MapPixelData mapData, bool march = true)
+        public void AssignTiles(ITerrainSampler terrainSampler, ref MapPixelData mapData, bool march = true)
         {
             // Cache tile data to minimise noise sampling
-            CacheTileData(ref mapData);
+            CacheTileData(terrainSampler, ref mapData);
 
             // Assign tile data to terrain
-            int dim = TerrainHelper.terrainSampleDim;
+            int dim = MapsFile.WorldMapTileDim;
             for (int y = 0; y < dim; y++)
             {
                 for (int x = 0; x < dim; x++)
                 {
-                    int offset = y * dim + x;
-
                     // Do nothing if location tile as texture already set
-                    if (mapData.samples[offset].location)
+                    if (mapData.tilemapSamples[x, y].location)
                         continue;
 
                     // Assign tile texture
@@ -79,22 +75,22 @@ namespace DaggerfallWorkshop
                         int tileID = shape | ring << 4;
 
                         byte val = lookupTable[tileID];
-                        mapData.samples[offset].record = val & 63;
-                        mapData.samples[offset].rotate = ((val & 64) == 64);
-                        mapData.samples[offset].flip = ((val & 128) == 128);
+                        mapData.tilemapSamples[x, y].record = val & 63;
+                        mapData.tilemapSamples[x, y].rotate = ((val & 64) == 64);
+                        mapData.tilemapSamples[x, y].flip = ((val & 128) == 128);
                     }
                     else
                     {
-                        mapData.samples[offset].record = tileData[x, y];
+                        mapData.tilemapSamples[x, y].record = tileData[x, y];
                     }
                 }
             }
         }
 
-        void CacheTileData(ref MapPixelData mapData)
+        void CacheTileData(ITerrainSampler terrainSampler, ref MapPixelData mapData)
         {
             // Create array if required
-            int dim = TerrainHelper.terrainSampleDim + 1;
+            int dim = MapsFile.WorldMapTileDim + 1;
             if (tileData == null)
                 tileData = new int[dim, dim];
 
@@ -104,27 +100,30 @@ namespace DaggerfallWorkshop
                 for (int x = 0; x < dim; x++)
                 {
                     // Height sample for ocean and beach tiles
-                    float height = TerrainHelper.GetClampedHeight(ref mapData.samples, x, y);
+                    float height = TerrainHelper.GetClampedHeight(
+                        ref mapData,
+                        terrainSampler.HeightmapDimension,
+                        (float)x / (float)dim,
+                        (float)y / (float)dim) * terrainSampler.MaxTerrainHeight;
 
                     // Ocean texture
-                    if (height <= TerrainHelper.scaledOceanElevation)
+                    if (height <= terrainSampler.OceanElevation)
                     {
                         tileData[x, y] = water;
                         continue;
                     }
 
+                    // Get latitude and longitude of this tile
+                    int latitude = (int)(mapData.mapPixelX * MapsFile.WorldMapTileDim + x);
+                    int longitude = (int)(MapsFile.MaxWorldTileCoordZ - mapData.mapPixelY * MapsFile.WorldMapTileDim + y);
+
                     // Beach texture
                     // Adds a little +/- randomness to threshold so beach line isn't too regular
-                    // Might look better with perlin noise instead
-                    if (height <= TerrainHelper.scaledBeachElevation + UnityEngine.Random.Range(-1.5f, 1.5f))
+                    if (height <= terrainSampler.BeachElevation + UnityEngine.Random.Range(-1.5f, 1.5f))
                     {
                         tileData[x, y] = dirt;
                         continue;
                     }
-
-                    // Get latitude and longitude of this tile
-                    float latitude = mapData.mapPixelX * MapsFile.WorldMapTileDim + x;
-                    float longitude = MapsFile.MaxWorldTileCoordZ - mapData.mapPixelY * MapsFile.WorldMapTileDim + y;
 
                     // Set texture tile using weighted noise
                     float weight = 0;
@@ -204,11 +203,11 @@ namespace DaggerfallWorkshop
         // Gets noise value
         private float NoiseWeight(float worldX, float worldY)
         {
-            return GetNoise(worldX, worldY, 0.05f, 0.9f, 0.5f, 3);
+            return GetNoise(worldX, worldY, 0.05f, 0.9f, 0.4f, 3, seed);
         }
 
         // Sets texture by range
-        private int GetWeightedRecord(float weight, float lowerGrassSpread = -0.2f, float upperGrassSpread = 0.9f)
+        private int GetWeightedRecord(float weight, float lowerGrassSpread = 0.5f, float upperGrassSpread = 0.95f)
         {
             if (weight < lowerGrassSpread)
                 return dirt;
@@ -225,12 +224,13 @@ namespace DaggerfallWorkshop
             float frequency,
             float amplitude,
             float persistance,
-            int octaves)
+            int octaves,
+            int seed = 0)
         {
             float finalValue = 0f;
             for (int i = 0; i < octaves; ++i)
             {
-                finalValue += noise.Generate(x * frequency, y * frequency) * amplitude;
+                finalValue += Mathf.PerlinNoise(seed + (x * frequency), seed + (y * frequency)) * amplitude;
                 frequency *= 2.0f;
                 amplitude *= persistance;
             }

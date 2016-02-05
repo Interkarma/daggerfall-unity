@@ -303,8 +303,7 @@ namespace DaggerfallConnect.Arena2
         public bool Load(string filePath, FileUsage usage, bool readOnly)
         {
             // Validate filename
-            filePath = filePath.ToUpper();
-            if (!filePath.EndsWith("ARCH3D.BSA"))
+            if (!filePath.EndsWith("ARCH3D.BSA", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file
@@ -556,7 +555,7 @@ namespace DaggerfallConnect.Arena2
         {
             reader.BaseStream.Position = 0;
             records[record].Header.Position = 0;
-            records[record].Header.Version = records[record].MemoryFile.ReadCString(reader, 4);
+            records[record].Header.Version = FileProxy.ReadCString(reader, 4);
             records[record].Header.PointCount = reader.ReadInt32();
             records[record].Header.PlaneCount = reader.ReadInt32();
             records[record].Header.Radius = reader.ReadUInt32();

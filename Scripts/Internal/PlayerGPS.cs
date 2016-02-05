@@ -160,6 +160,11 @@ namespace DaggerfallWorkshop
             get { return new RectOffset(locationWorldRectMinX, locationWorldRectMaxX, locationWorldRectMinZ, locationWorldRectMaxZ); }
         }
 
+        void Awake()
+        {
+            dfUnity = DaggerfallUnity.Instance;
+        }
+
         void Start()
         {
             // Init change trackers for event system
@@ -191,6 +196,19 @@ namespace DaggerfallWorkshop
             PlayerLocationRectCheck();
         }
 
+        #region Public Methods
+
+        /// <summary>
+        /// Force update of world information (climate, politic, etc.) when Update() not running.
+        /// </summary>
+        public void UpdateWorldInfo()
+        {
+            DFPosition pos = CurrentMapPixel;
+            UpdateWorldInfo(pos.X, pos.Y);
+        }
+
+        #endregion
+
         #region Private Methods
 
         private void RaiseEvents()
@@ -219,6 +237,10 @@ namespace DaggerfallWorkshop
 
         private void UpdateWorldInfo(int x, int y)
         {
+            // Requires DaggerfallUnity to be ready
+            if (!ReadyCheck())
+                return;
+
             // Requires MAPS.BSA connection
             if (dfUnity.ContentReader.MapFileReader == null)
                 return;

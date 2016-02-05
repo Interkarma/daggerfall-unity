@@ -181,8 +181,8 @@ namespace DaggerfallConnect.Arena2
                 return true;
 
             // Validate filename
-            filePath = filePath.ToUpper();
-            if (!filePath.EndsWith(".CIF") && !filePath.EndsWith(".RCI"))
+            if (!filePath.EndsWith(".CIF", StringComparison.InvariantCultureIgnoreCase) &&
+                !filePath.EndsWith(".RCI", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file
@@ -228,22 +228,39 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
+        /// Gets X and Y offset of specified record (where appropriate).
+        /// </summary>
+        /// <param name="record">Index of record.</param>
+        /// <returns>DFPosition object.</returns>
+        public DFPosition GetOffset(int record)
+        {
+            // Validate
+            if (record < 0 || record >= RecordCount)
+                return new DFPosition(0, 0);
+
+            if (records[record].Header.FrameCount > 1)
+                return new DFPosition(0, 0);
+            else
+                return new DFPosition(records[record].Header.XOffset, records[record].Header.YOffset);
+        }
+
+        /// <summary>
         /// Gets bitmap data as indexed 8-bit byte array for specified record and frame.
         /// </summary>
         /// <param name="record">Index of record.</param>
         /// <param name="frame">Index of frame.</param>
         /// <returns>DFBitmap object.</returns>
-        public override DFBitmap GetDFBitmap(int fecord, int frame)
+        public override DFBitmap GetDFBitmap(int record, int frame)
         {
             // Validate
-            if (fecord < 0 || fecord >= RecordCount || frame >= GetFrameCount(fecord))
+            if (record < 0 || record >= RecordCount || frame >= GetFrameCount(record))
                 return new DFBitmap();
 
             // Read raw data from file
-            if (!ReadImageData(fecord, frame))
+            if (!ReadImageData(record, frame))
                 return new DFBitmap();
 
-            return records[fecord].Frames[frame];
+            return records[record].Frames[frame];
         }
 
         #endregion
@@ -497,8 +514,6 @@ namespace DaggerfallConnect.Arena2
             records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].Header.Width;
             records[record].Frames[frame].Height = records[record].Header.Height;
-            records[record].Frames[frame].Stride = records[record].Header.Width;
-            records[record].Frames[frame].Format = DFBitmap.Formats.Indexed;
             records[record].Frames[frame].Data = new byte[records[record].Header.PixelDataLength];
 
             // Read image bytes
@@ -523,8 +538,6 @@ namespace DaggerfallConnect.Arena2
             records[record].Frames[frame] = new DFBitmap();
             records[record].Frames[frame].Width = records[record].AnimHeader.Width;
             records[record].Frames[frame].Height = records[record].AnimHeader.Height;
-            records[record].Frames[frame].Stride = records[record].AnimHeader.Width;
-            records[record].Frames[frame].Format = DFBitmap.Formats.Indexed;
             records[record].Frames[frame].Data = new byte[length];
 
             // Extract image data from frame RLE
@@ -548,8 +561,6 @@ namespace DaggerfallConnect.Arena2
             int length = records[record].Header.Width * records[record].Header.Height;
             records[record].Frames[frame].Width = records[record].Header.Width;
             records[record].Frames[frame].Height = records[record].Header.Height;
-            records[record].Frames[frame].Stride = records[record].Header.Width;
-            records[record].Frames[frame].Format = DFBitmap.Formats.Indexed;
             records[record].Frames[frame].Data = new byte[length];
 
             // Extract image data from RLE

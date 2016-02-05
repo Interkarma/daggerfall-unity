@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Lypyl (lypyl@dfworkshop.net)
 // 
 // Notes:
 //
@@ -17,7 +17,8 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Demo;
+using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -61,16 +62,18 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="textureTable">Optional texture table for dungeon.</param>
         /// <param name="allowExitDoors">Add exit doors to block.</param>
         /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
+        /// <param name="serialize">Allow for serialization of supported sub-objects.</param>
         /// <returns>Block GameObject.</returns>
         public static GameObject CreateBaseGameObject(
             string blockName,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             int[] textureTable = null,
             bool allowExitDoors = true,
-            DaggerfallRDBBlock cloneFrom = null)
+            DaggerfallRDBBlock cloneFrom = null,
+            bool serialize = true)
         {
             DFBlock blockData;
-            return CreateBaseGameObject(blockName, ref actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom);
+            return CreateBaseGameObject(blockName, actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom, serialize);
         }
 
         /// <summary>
@@ -81,21 +84,23 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="textureTable">Optional texture table for dungeon.</param>
         /// <param name="allowExitDoors">Add exit doors to block.</param>
         /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
+        /// <param name="serialize">Allow for serialization of supported sub-objects.</param>
         /// <returns>Block GameObject.</returns>
         public static GameObject CreateBaseGameObject(
             string blockName,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             out DFBlock blockDataOut,
             int[] textureTable = null,
             bool allowExitDoors = true,
-            DaggerfallRDBBlock cloneFrom = null)
+            DaggerfallRDBBlock cloneFrom = null,
+            bool serialize = true)
         {
             blockDataOut = new DFBlock();
 
             // Validate
             if (string.IsNullOrEmpty(blockName))
                 return null;
-            if (!blockName.ToUpper().EndsWith(".RDB"))
+            if (!blockName.EndsWith(".RDB", StringComparison.InvariantCultureIgnoreCase))
                 return null;
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -104,7 +109,7 @@ namespace DaggerfallWorkshop.Utility
             // Get block data
             blockDataOut = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
 
-            return CreateBaseGameObject(ref blockDataOut, ref actionLinkDict, textureTable, allowExitDoors, cloneFrom);
+            return CreateBaseGameObject(ref blockDataOut, actionLinkDict, textureTable, allowExitDoors, cloneFrom, serialize);
         }
 
         /// <summary>
@@ -114,13 +119,15 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="textureTable">Optional texture table for dungeon.</param>
         /// <param name="allowExitDoors">Add exit doors to block.</param>
         /// <param name="cloneFrom">Clone and build on a prefab object template.</param>
+        /// <param name="serialize">Allow for serialization of supported sub-objects.</param>
         /// <returns>Block GameObject.</returns>
         public static GameObject CreateBaseGameObject(
             ref DFBlock blockData,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             int[] textureTable = null,
             bool allowExitDoors = true,
-            DaggerfallRDBBlock cloneFrom = null)
+            DaggerfallRDBBlock cloneFrom = null,
+            bool serialize = true)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -159,10 +166,11 @@ namespace DaggerfallWorkshop.Utility
             AddModels(
                 dfUnity,
                 ref blockData,
-                ref actionLinkDict,
+                actionLinkDict,
                 textureTable,
                 allowExitDoors,
                 out exitDoors,
+                serialize,
                 combiner,
                 modelsNode.transform,
                 actionModelsNode.transform);
@@ -195,7 +203,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Add actions doors to block.
         /// </summary>
-        public static void AddActionDoors(GameObject go, ref Dictionary<int, RDBLayout.ActionLink> actionLinkDict, ref DFBlock blockData, int[] textureTable)
+        public static void AddActionDoors(GameObject go, Dictionary<int, ActionLink> actionLinkDict, ref DFBlock blockData, int[] textureTable, bool serialize = true)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -221,20 +229,24 @@ namespace DaggerfallWorkshop.Utility
                 {
                     if (obj.Type == DFBlock.RdbResourceTypes.Model)
                     {
+                        // Create unique LoadID for save sytem
+                        long loadID = 0;
+                        if (serialize)
+                            loadID = (blockData.Index << 24) + obj.This;
+
                         // Look for action doors
                         int modelReference = obj.Resources.ModelResource.ModelIndex;
                         uint modelId = blockData.RdbBlock.ModelReferenceList[modelReference].ModelIdNum;
                         if (IsActionDoor(ref blockData, obj, modelReference))
                         {
-                            GameObject cgo = AddActionDoor(dfUnity, modelId, obj, actionDoorsNode.transform);
+                            GameObject cgo = AddActionDoor(dfUnity, modelId, obj, actionDoorsNode.transform, loadID);
                             cgo.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
 
-                            //add DaggerfallAction component to door if it also has an action
+                            // Add action component to door if it also has an action
                             if (HasAction(obj))
                             {
-                                AddAction(cgo, ref actionLinkDict, blockData, obj, modelReference);
+                                AddActionModelHelper(cgo, actionLinkDict, obj, ref blockData, serialize);
                             }
-
                         }
                     }
                 }
@@ -279,15 +291,18 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public static void AddFlats(
             GameObject go,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             ref DFBlock blockData,
             out DFBlock.RdbObject[] editorObjectsOut,
-            out GameObject[] startMarkersOut)
+            out GameObject[] startMarkersOut,
+            out GameObject[] enterMarkersOut)
         {
             List<DFBlock.RdbObject> editorObjects = new List<DFBlock.RdbObject>();
             List<GameObject> startMarkers = new List<GameObject>();
+            List<GameObject> enterMarkers = new List<GameObject>();
             editorObjectsOut = null;
             startMarkersOut = null;
+            enterMarkersOut = null;
 
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -320,26 +335,35 @@ namespace DaggerfallWorkshop.Utility
                             editorObjects.Add(obj);
                             if (record == 10)
                                 startMarkers.Add(flatObject);
+                            else if (record == 8)
+                                enterMarkers.Add(flatObject);
+
+                            //add editor flats to actionLinkDict
+                            if (!actionLinkDict.ContainsKey(obj.This))
+                            {
+                                ActionLink link;
+                                link.gameObject = flatObject;
+                                link.nextKey = obj.Resources.FlatResource.NextObjectOffset;
+                                link.prevKey = -1;
+                                actionLinkDict.Add(obj.This, link);
+                            }
+
                         }
 
-                        //might only need to add editor markers in future
-                        if (!actionLinkDict.ContainsKey(obj.This))
+                        //add action component to flat if it has an action
+                        if (obj.Resources.FlatResource.Action > 0)
                         {
-                            ActionLink link;
-                            GetActionLink(ref flatObject, obj.Resources.ModelResource.ActionResource, out link);
-                            actionLinkDict.Add(obj.This, link);
+                            AddActionFlatHelper(flatObject, actionLinkDict, ref blockData, obj);
                         }
-                    
+
                     }
-
-                    
-
                 }
             }
 
             // Output editor objects
             editorObjectsOut = editorObjects.ToArray();
             startMarkersOut = startMarkers.ToArray();
+            enterMarkersOut = enterMarkers.ToArray();
         }
 
         /// <summary>
@@ -347,9 +371,12 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="go">GameObject to add monsters to.</param>
         /// <param name="editorObjects">Editor objects containing flats.</param>
+        /// <param name="serialize">Allow for serialization when available.</param>
         public static void AddFixedEnemies(
             GameObject go,
-            DFBlock.RdbObject[] editorObjects)
+            DFBlock.RdbObject[] editorObjects,
+            ref DFBlock blockData,
+            bool serialize = true)
         {
             const int fixedMonsterFlatIndex = 16;
 
@@ -374,7 +401,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Add fixed enemy objects
                 if (editorObjects[i].Resources.FlatResource.TextureRecord == fixedMonsterFlatIndex)
-                    AddFixedRDBEnemy(editorObjects[i], fixedEnemiesNode.transform);
+                    AddFixedRDBEnemy(editorObjects[i], fixedEnemiesNode.transform, ref blockData, serialize);
             }
         }
 
@@ -385,15 +412,18 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="editorObjects">Editor objects containing flats.</param>
         /// <param name="dungeonType">Dungeon type selects the encounter table.</param>
         /// <param name="monsterPower">Value between 0-1 for lowest monster power to highest.</param>
-        /// ?<param name="monsterVariance">Adjust final index +/- this value in encounter table.</param>
+        /// <param name="monsterVariance">Adjust final index +/- this value in encounter table.</param>
         /// <param name="seed">Random seed for encounters.</param>
+        /// <param name="serialize">Allow for serialization when available.</param>
         public static void AddRandomEnemies(
             GameObject go,
             DFBlock.RdbObject[] editorObjects,
             DFRegion.DungeonTypes dungeonType,
             float monsterPower,
+            ref DFBlock blockData,
             int monsterVariance = 4,
-            int seed = 0)
+            int seed = 0,
+            bool serialize = true)
         {
             const int randomMonsterFlatIndex = 15;
 
@@ -421,7 +451,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 // Add random enemy objects
                 if (editorObjects[i].Resources.FlatResource.TextureRecord == randomMonsterFlatIndex)
-                    AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform);
+                    AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform, ref blockData, serialize);
             }
         }
 
@@ -435,10 +465,11 @@ namespace DaggerfallWorkshop.Utility
         private static void AddModels(
             DaggerfallUnity dfUnity,
             ref DFBlock blockData,
-            ref Dictionary<int, ActionLink> actionLinkDict,
+            Dictionary<int, ActionLink> actionLinkDict,
             int[] textureTable,
             bool allowExitDoors,
             out List<StaticDoor> exitDoorsOut,
+            bool serialize,
             ModelCombiner combiner = null,
             Transform modelsParent = null,
             Transform actionModelsParent = null)
@@ -446,13 +477,11 @@ namespace DaggerfallWorkshop.Utility
             exitDoorsOut = new List<StaticDoor>();
 
             // Iterate object groups
-            //int groupIndex = 0;
             foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
             {
                 // Skip empty object groups
                 if (null == group.RdbObjects)
                 {
-                    //groupIndex++;
                     continue;
                 }
 
@@ -513,14 +542,10 @@ namespace DaggerfallWorkshop.Utility
 
                         // Add action
                         if (hasAction && standaloneObject != null)
-                            AddAction(standaloneObject, ref actionLinkDict, blockData, obj, modelReference);
+                            AddActionModelHelper(standaloneObject, actionLinkDict, obj, ref blockData, serialize);
                     }
                 }
-
-                // Increment group index
-               // groupIndex++;
             }
-
 
         }
 
@@ -590,8 +615,6 @@ namespace DaggerfallWorkshop.Utility
             return false;
         }
 
-
-
         /// <summary>
         /// Check is model has action record.
         /// </summary>
@@ -600,27 +623,17 @@ namespace DaggerfallWorkshop.Utility
             DFBlock.RdbActionResource action = obj.Resources.ModelResource.ActionResource;
             if (action.Flags != 0)
                 return true;
-
             return false;
-        }
-
-        //Create a link
-        static void GetActionLink(ref GameObject go, DFBlock.RdbActionResource obj, out ActionLink link)
-        {
-            link = new ActionLink();
-            link.gameObject = go;
-            link.nextKey = obj.NextObjectOffset;
-            link.prevKey = obj.PreviousObjectOffset;
         }
 
         /// <summary>
         /// Constructs a Vector3 from magnitude and direction in RDB action resource.
         /// </summary>
-        private static Vector3 GetActionVector(ref DFBlock.RdbActionResource resource)
+        private static void GetRotationActionVector(ref DaggerfallAction action, DFBlock.RdbActionAxes axis)
         {
             Vector3 vector = Vector3.zero;
-            float magnitude = resource.Magnitude;
-            switch (resource.Axis)
+            float magnitude = action.Magnitude;
+            switch (axis)
             {
                 case DFBlock.RdbActionAxes.NegativeX:
                     vector.x = -magnitude;
@@ -641,48 +654,246 @@ namespace DaggerfallWorkshop.Utility
                 case DFBlock.RdbActionAxes.PositiveZ:
                     vector.z = magnitude;
                     break;
-
                 default:
                     magnitude = 0f;
                     break;
             }
 
-            return vector;
+            action.ActionRotation = vector / BlocksFile.RotationDivisor;
         }
 
-        private static void AddAction(
-            GameObject go,
-            ref Dictionary<int, ActionLink> actionLinkDict,
-            DFBlock blockData,
-            DFBlock.RdbObject obj,
-
-            int modelReference)
+        /// <summary>
+        /// Constructs a Vector3 from magnitude and direction in RDB action resource.
+        /// </summary>
+        private static void GetTranslationActionVector(ref DaggerfallAction action, DFBlock.RdbActionAxes axis)
         {
-            DFBlock.RdbActionResource action = obj.Resources.ModelResource.ActionResource;
-            string description = blockData.RdbBlock.ModelReferenceList[modelReference].Description;
-
-
-            // Check for known action types
-            Vector3 actionRotation = Vector3.zero;
-            Vector3 actionTranslation = Vector3.zero;
-
-            try
+            Vector3 vector = Vector3.zero;
+            float magnitude = action.Magnitude;
+            switch (axis)
             {
-                if ((action.Flags & (int)DFBlock.RdbActionFlags.Rotation) == (int)DFBlock.RdbActionFlags.Rotation)
-                    actionRotation = (GetActionVector(ref action) / BlocksFile.RotationDivisor);
-                else if ((action.Flags & (int)DFBlock.RdbActionFlags.Translation) == (int)DFBlock.RdbActionFlags.Translation)
-                    actionTranslation = GetActionVector(ref action) * MeshReader.GlobalScale;
-                else if ((action.Flags & (int)DFBlock.RdbActionFlags.TranslateAndRotate) == (int)DFBlock.RdbActionFlags.TranslateAndRotate)
+                case DFBlock.RdbActionAxes.NegativeX:
+                    vector.x = magnitude;
+                    break;
+                case DFBlock.RdbActionAxes.NegativeY:
+                    vector.y = -magnitude;
+                    break;
+                case DFBlock.RdbActionAxes.NegativeZ:
+                    vector.z = magnitude;
+                    break;
+
+                case DFBlock.RdbActionAxes.PositiveX:
+                    vector.x = -magnitude;
+                    break;
+                case DFBlock.RdbActionAxes.PositiveY:
+                    vector.y = magnitude;
+                    break;
+                case DFBlock.RdbActionAxes.PositiveZ:
+                    vector.z = -magnitude;
+                    break;
+                default:
+                    magnitude = 0f;
+                    break;
+            }
+            action.ActionTranslation = vector * MeshReader.GlobalScale;
+        }
+
+
+
+        private static void AddActionModelHelper(
+            GameObject go,
+            Dictionary<int, ActionLink> actionLinkDict,
+            DFBlock.RdbObject rdbObj,
+            ref DFBlock blockData,
+            bool serialize)
+        {
+
+            DFBlock.RdbModelResource obj = rdbObj.Resources.ModelResource;
+            string description = blockData.RdbBlock.ModelReferenceList[obj.ModelIndex].Description;
+            int soundID_Index = obj.SoundIndex;
+            float duration = obj.ActionResource.Duration;
+            float magnitude = obj.ActionResource.Magnitude;
+            int axis = obj.ActionResource.Axis;
+            DFBlock.RdbTriggerFlags triggerFlag = DFBlock.RdbTriggerFlags.None;
+            DFBlock.RdbActionFlags actionFlag = DFBlock.RdbActionFlags.None;
+
+            if (actionLinkDict != null)
+            {
+                // Set action flag if valid / known
+                if (Enum.IsDefined(typeof(DFBlock.RdbActionFlags), (DFBlock.RdbActionFlags)obj.ActionResource.Flags))
+                    actionFlag = (DFBlock.RdbActionFlags)obj.ActionResource.Flags;
+
+                // Set trigger flag if valid / known
+                if (Enum.IsDefined(typeof(DFBlock.RdbTriggerFlags), (DFBlock.RdbTriggerFlags)obj.TriggerFlag_StartingLock))
+                    triggerFlag = (DFBlock.RdbTriggerFlags)obj.TriggerFlag_StartingLock;
+
+                // Add action node to actionLink dictionary
+                if (!actionLinkDict.ContainsKey(rdbObj.This))
                 {
-                    actionRotation = (GetActionVector(ref action) / BlocksFile.RotationDivisor);
-                    actionTranslation = GetActionVector(ref action) * MeshReader.GlobalScale;
+                    ActionLink link;
+                    link.nextKey = obj.ActionResource.NextObjectOffset;
+                    link.prevKey = obj.ActionResource.PreviousObjectOffset;
+                    link.gameObject = go;
+                    actionLinkDict.Add(rdbObj.This, link);
                 }
             }
 
-            catch (Exception ex)
-            {
-                Debug.LogError(ex.Message);
+            // Create unique LoadID for save sytem
+            long loadID = 0;
+            if (serialize)
+                loadID = (blockData.Index << 24) + rdbObj.This;
 
+            AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
+        }
+
+        private static void AddActionFlatHelper(
+            GameObject go,
+            Dictionary<int, ActionLink> actionLinkDict,
+            ref DFBlock blockData,
+            DFBlock.RdbObject rdbObj,
+            bool serialize = true)
+        {
+
+            DFBlock.RdbFlatResource obj = rdbObj.Resources.FlatResource;
+            string description = "FLT";
+            int soundID_Index = obj.Sound_index;
+            float duration = 0.0f;
+            float magnitude = obj.Magnitude;
+            int axis = obj.Magnitude;
+            DFBlock.RdbTriggerFlags triggerFlag = DFBlock.RdbTriggerFlags.None;
+            DFBlock.RdbActionFlags actionFlag = DFBlock.RdbActionFlags.None;
+
+            //set action flag if valid / known
+            if (Enum.IsDefined(typeof(DFBlock.RdbActionFlags), (DFBlock.RdbActionFlags)obj.Action))
+                actionFlag = (DFBlock.RdbActionFlags)obj.Action;
+
+            //set trigger flag if valid / known
+            if (Enum.IsDefined(typeof(DFBlock.RdbTriggerFlags), (DFBlock.RdbTriggerFlags)obj.TriggerFlag))
+                triggerFlag = (DFBlock.RdbTriggerFlags)obj.TriggerFlag;
+
+            //add action node to actionLink dictionary
+            if (!actionLinkDict.ContainsKey(rdbObj.This))
+            {
+                ActionLink link;
+                link.nextKey = obj.NextObjectOffset;
+                link.prevKey = -1;
+                link.gameObject = go;
+                actionLinkDict.Add(rdbObj.This, link);
+            }
+
+            // Create unique LoadID for save sytem
+            long loadID = 0;
+            if (serialize)
+                loadID = (blockData.Index << 24) + rdbObj.This;
+
+            AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
+        }
+
+
+        private static void AddAction(
+            GameObject go,
+            string description,
+            int soundID_and_index,
+            float duration,
+            float magnitude,
+            int axis_raw,
+            DFBlock.RdbTriggerFlags triggerFlag,
+            DFBlock.RdbActionFlags actionFlag,
+            long loadID = 0
+            )
+        {
+            DaggerfallAction action = go.AddComponent<DaggerfallAction>();
+            action.ModelDescription = description;
+            action.ActionDuration = duration;
+            action.Magnitude = magnitude;
+            action.Index = soundID_and_index;
+            action.TriggerFlag = triggerFlag;
+            action.ActionFlag = actionFlag;
+            action.LoadID = loadID;
+
+            // If SaveLoadManager present in game then attach SerializableActionObject
+            if (SaveLoadManager.Instance != null)
+            {
+                go.AddComponent<SerializableActionObject>();
+            }
+
+            //if a collision type action or action flat, add DaggerFallActionCollision component
+            if (action.TriggerFlag == DFBlock.RdbTriggerFlags.Collision01 || action.TriggerFlag == DFBlock.RdbTriggerFlags.Collision03 ||
+                action.TriggerFlag == DFBlock.RdbTriggerFlags.DualTrigger || action.TriggerFlag == DFBlock.RdbTriggerFlags.Collision09)
+            {
+                DaggerfallActionCollision collision = go.AddComponent<DaggerfallActionCollision>();
+                collision.isFlat = false;
+            }
+            else if (description == "FLT")
+            {
+                DaggerfallActionCollision collision = go.AddComponent<DaggerfallActionCollision>();
+                collision.isFlat = true;
+            }
+
+
+            switch (action.ActionFlag)
+            {
+                case DFBlock.RdbActionFlags.Translation:
+                    {
+                        action.Magnitude = magnitude;
+                        GetTranslationActionVector(ref action, (DFBlock.RdbActionAxes)axis_raw);
+                    }
+                    break;
+
+                case DFBlock.RdbActionFlags.Rotation:
+                    {
+                        action.Magnitude = magnitude;
+                        GetRotationActionVector(ref action, (DFBlock.RdbActionAxes)axis_raw);
+                    }
+                    break;
+                case DFBlock.RdbActionFlags.PositiveX:
+                    {
+                        action.ActionDuration = 50;
+                        action.Magnitude = axis_raw * 8;
+                        GetTranslationActionVector(ref action, DFBlock.RdbActionAxes.PositiveX);
+                    }
+                    break;
+                case DFBlock.RdbActionFlags.NegativeX:
+                    {
+                        action.ActionDuration = 50;
+                        action.Magnitude = axis_raw * 8;
+                        GetTranslationActionVector(ref action, DFBlock.RdbActionAxes.NegativeX);
+                    }
+                    break;
+                case DFBlock.RdbActionFlags.PositiveY:
+                    {
+                        action.ActionDuration = 50;
+                        action.Magnitude = axis_raw * 8;
+                        GetTranslationActionVector(ref action, DFBlock.RdbActionAxes.PositiveY);
+                    }
+                    break;
+                case DFBlock.RdbActionFlags.NegativeY:
+                    {
+                        action.ActionDuration = 50;
+                        action.Magnitude = axis_raw * 8;
+                        GetTranslationActionVector(ref action, DFBlock.RdbActionAxes.NegativeY);
+
+                    }
+                    break;
+                case DFBlock.RdbActionFlags.PositiveZ:
+                    {
+                        action.ActionDuration = 50;
+                        action.Magnitude = axis_raw * 8;
+                        GetTranslationActionVector(ref action, DFBlock.RdbActionAxes.PositiveZ);
+                    }
+                    break;
+                case DFBlock.RdbActionFlags.NegativeZ:
+                    {
+                        action.ActionDuration = 50;
+                        action.Magnitude = axis_raw * 8;
+                        GetTranslationActionVector(ref action, DFBlock.RdbActionAxes.NegativeZ);
+                    }
+                    break;
+                default:
+                    {
+                        //Dmg actions use axis value to modifiy tot. dmg.
+                        action.Magnitude = axis_raw;
+                    }
+                    break;
             }
 
             // A quick hack to fix special-case rotation issues.
@@ -690,59 +901,17 @@ namespace DaggerfallWorkshop.Utility
             switch (description)
             {
                 case "LID":
-                    actionRotation = new Vector3(0, 0, -90f);       // Coffin lids (e.g. Scourg barrow)
+                    action.ActionRotation = new Vector3(0, 0, -90f);       // Coffin lids (e.g. Scourg barrow)
                     break;
                 case "WHE":
-                    actionRotation = new Vector3(0, -360f, 0);      // Wheels (e.g. Direnni Tower)
+                    action.ActionRotation = new Vector3(0, -360f, 0);      // Wheels (e.g. Direnni Tower)
                     break;
-            }
-
-            // Create action component
-            DaggerfallAction c = go.AddComponent<DaggerfallAction>();
-            c.ActionRotation = actionRotation;
-            c.ActionTranslation = actionTranslation;
-            c.ActionSoundID = obj.Resources.ModelResource.SoundId;
-            c.ModelDescription = description;
-
-            // Using 1/20 of native value in seconds
-            // This seems to match game very closely
-            c.ActionDuration = (float)action.Duration / 20f;
-
-            //set action flag if valid / known, else set to none
-            if (Enum.IsDefined(typeof(DFBlock.RdbActionFlags), (DFBlock.RdbActionFlags)action.Flags))
-                c.ActionFlag = (DFBlock.RdbActionFlags)action.Flags;
-            else
-                c.ActionFlag = DFBlock.RdbActionFlags.None;
-            
-            //set trigger flag if valid / known, else set to none
-            if (Enum.IsDefined(typeof(DaggerfallAction.TriggerType), (DaggerfallAction.TriggerType)obj.Resources.ModelResource.Unknown1))
-                c.TriggerFlag = (DaggerfallAction.TriggerType)obj.Resources.ModelResource.Unknown1;
-            else
-                c.TriggerFlag = DaggerfallAction.TriggerType.none;
-
-            //if a collision type, add DFActionCollision component.  This will add a non-Kinematic Rigidbody and check for collisions
-            //with player.  It's possible (and likely) that some of these trigger flags aren't actually collisions, but more like
-            //proximity / bounds checking.
-            if (c.TriggerFlag == DaggerfallAction.TriggerType.collide || c.TriggerFlag == DaggerfallAction.TriggerType.collide3 ||
-                c.TriggerFlag == DaggerfallAction.TriggerType.collide9)
-            {
-                DFActionCollision coll = go.AddComponent<DFActionCollision>();
-            }
-
-            //add action node to actionLink dictionary
-            if (!actionLinkDict.ContainsKey(obj.This))
-            {
-                ActionLink link;
-                GetActionLink(ref go, action, out link);
-                actionLinkDict.Add(obj.This, link);
             }
 
             //Add audio
-            AddActionAudioSource(go, (uint)c.ActionSoundID);
+            AddActionAudioSource(go, (uint)action.Index);
         }
 
-
-        
 
         /// <summary>
         /// Adds action audio.
@@ -765,28 +934,55 @@ namespace DaggerfallWorkshop.Utility
             if (actionLinkDict.Count == 0)
                 return;
 
-            // Iterate through actions
+            // Iterate through actions #Lypl
             foreach (var item in actionLinkDict)
             {
                 ActionLink link = item.Value;
-                DaggerfallAction action = link.gameObject.GetComponent<DaggerfallAction>();
-                if (action == null) //not gameobjects in action nodes have action script
-                {
+                DaggerfallAction dfAction = link.gameObject.GetComponent<DaggerfallAction>();
+
+                if (dfAction == null)
                     continue;
-                }
-                if (actionLinkDict.ContainsKey(link.nextKey))
-                    link.gameObject.GetComponent<DaggerfallAction>().NextObject = actionLinkDict[link.nextKey].gameObject;
-                if (actionLinkDict.ContainsKey(link.prevKey))
+
+                try
                 {
-                    link.gameObject.GetComponent<DaggerfallAction>().PreviousObject = actionLinkDict[link.prevKey].gameObject;
+                    // Link to next node
+                    if (actionLinkDict.ContainsKey(link.nextKey))
+                        dfAction.NextObject = actionLinkDict[link.nextKey].gameObject;
+
+                    // Link to previous node
+                    if (actionLinkDict.ContainsKey(link.prevKey))
+                        dfAction.PreviousObject = actionLinkDict[link.prevKey].gameObject;
+                }
+                catch (Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(ex.Message, true);
+                    DaggerfallUnity.LogMessage(string.Format("Error in LinkActionNodes; {0} : {1} : {2} : {3}", link.gameObject.name, link.nextKey, link.prevKey, dfAction), true);
                 }
             }
+
+            //// Exit if no actions
+            //if (actionLinkDict.Count == 0)
+            //    return;
+
+            //// Iterate through actions
+            //foreach (var item in actionLinkDict)
+            //{
+            //    ActionLink link = item.Value;
+
+            //    // Link to next node
+            //    if (actionLinkDict.ContainsKey(link.nextKey))
+            //        link.gameObject.GetComponent<DaggerfallAction>().NextObject = actionLinkDict[link.nextKey].gameObject;
+
+            //    // Link to previous node
+            //    if (actionLinkDict.ContainsKey(link.prevKey))
+            //        link.gameObject.GetComponent<DaggerfallAction>().PreviousObject = actionLinkDict[link.prevKey].gameObject;
+            //}
         }
 
         /// <summary>
         /// Adds action door to scene.
         /// </summary>
-        private static GameObject AddActionDoor(DaggerfallUnity dfUnity, uint modelId, DFBlock.RdbObject obj, Transform parent)
+        private static GameObject AddActionDoor(DaggerfallUnity dfUnity, uint modelId, DFBlock.RdbObject obj, Transform parent, long loadID = 0)
         {
             if (dfUnity.Option_DungeonDoorPrefab == null)
                 return null;
@@ -819,6 +1015,18 @@ namespace DaggerfallWorkshop.Utility
             go.transform.Rotate(degreesX, 0, 0, Space.World);
             go.transform.Rotate(0, 0, degreesZ, Space.World);
             go.transform.localPosition = modelMatrix.GetColumn(3);
+
+            // Get action door script
+            DaggerfallActionDoor actionDoor = go.GetComponent<DaggerfallActionDoor>();
+
+            // Set starting lock value
+            if (obj.Resources.ModelResource.TriggerFlag_StartingLock >= 16)
+            {
+                actionDoor.StartingLockValue = (int)obj.Resources.ModelResource.TriggerFlag_StartingLock;
+            }
+
+            // Set LoadID
+            actionDoor.LoadID = loadID;
 
             return go;
         }
@@ -856,7 +1064,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Disable enemy flats
             if (archive == TextureReader.EditorFlatsTextureArchive && (record == 15 || record == 16))
-                go.SetActive(false);   
+                go.SetActive(false);
 
             // Add torch burning sound
             if (archive == TextureReader.LightsTextureArchive)
@@ -896,7 +1104,9 @@ namespace DaggerfallWorkshop.Utility
             DFRegion.DungeonTypes dungeonType,
             float monsterPower,
             int monsterVariance,
-            Transform parent)
+            Transform parent,
+            ref DFBlock blockData,
+            bool serialize)
         {
             // Must have a dungeon type
             if (dungeonType == DFRegion.DungeonTypes.NoDungeon)
@@ -925,8 +1135,13 @@ namespace DaggerfallWorkshop.Utility
                 // Get random monster from table
                 MobileTypes type = table.Enemies[UnityEngine.Random.Range(minMonsterIndex, maxMonsterIndex)];
 
+                // Create unique LoadID for save sytem
+                long loadID = 0;
+                if (serialize)
+                    loadID = (blockData.Index << 24) + obj.This;
+
                 // Add enemy
-                AddEnemy(obj, type, parent);
+                AddEnemy(obj, type, parent, loadID);
             }
             else
             {
@@ -934,28 +1149,33 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent)
+        private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, bool serialize)
         {
             // Get type value and ignore known invalid types
             int typeValue = (int)(obj.Resources.FlatResource.FactionMobileId & 0xff);
             if (typeValue == 99)
                 return;
 
+            // Create unique LoadID for save sytem
+            long loadID = 0;
+            if (serialize)
+                loadID = (blockData.Index << 24) + obj.This;
+
             // Cast to enum
             MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionMobileId & 0xff);
 
-            AddEnemy(obj, type, parent);
+            AddEnemy(obj, type, parent, loadID);
         }
 
         private static void AddEnemy(
             DFBlock.RdbObject obj,
             MobileTypes type,
             Transform parent = null,
-            DFRegion.DungeonTypes dungeonType = DFRegion.DungeonTypes.HumanStronghold)
+            long loadID = 0)
         {
             // Get default reaction
             MobileReactions reaction = MobileReactions.Hostile;
-            if (obj.Resources.FlatResource.FlatData.Reaction == (int)DFBlock.EnemyReactionTypes.Passive)
+            if (obj.Resources.FlatResource.Action == (int)DFBlock.EnemyReactionTypes.Passive)
                 reaction = MobileReactions.Passive;
 
             // Just setup demo enemies at this time
@@ -972,6 +1192,12 @@ namespace DaggerfallWorkshop.Utility
                 DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
                 if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
                     GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
+            }
+
+            DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
+            if (enemy)
+            {
+                enemy.LoadID = loadID;
             }
         }
 

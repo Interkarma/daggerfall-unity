@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Lypyl (lypyl@dfworkshop.net)
 // 
 // Notes:
 //
@@ -428,14 +428,11 @@ namespace DaggerfallWorkshop.Utility
 
             Dictionary<int, RDBLayout.ActionLink> actionLinkDict = new Dictionary<int, RDBLayout.ActionLink>();
 
-
-
             // Create base object
             DFBlock blockData;
-            GameObject go = RDBLayout.CreateBaseGameObject(blockName,ref actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom);
-
+            GameObject go = RDBLayout.CreateBaseGameObject(blockName, actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom);
             // Add action doors
-            RDBLayout.AddActionDoors(go, ref actionLinkDict, ref blockData, textureTable);
+            RDBLayout.AddActionDoors(go, actionLinkDict, ref blockData, textureTable);
 
             // Add lights
             RDBLayout.AddLights(go, ref blockData);
@@ -443,16 +440,17 @@ namespace DaggerfallWorkshop.Utility
             // Add flats
             DFBlock.RdbObject[] editorObjects;
             GameObject[] startMarkers;
-            RDBLayout.AddFlats(go, ref actionLinkDict, ref blockData, out editorObjects, out startMarkers);
+            GameObject[] enterMarkers;
+            RDBLayout.AddFlats(go, actionLinkDict, ref blockData, out editorObjects, out startMarkers, out enterMarkers);
 
-            // Set start markers
+            // Set start and enter markers
             DaggerfallRDBBlock dfBlock = go.GetComponent<DaggerfallRDBBlock>();
             if (dfBlock != null)
-                dfBlock.SetStartMarkers(startMarkers);
+                dfBlock.SetMarkers(startMarkers, enterMarkers);
 
             // Add enemies
-            RDBLayout.AddFixedEnemies(go, editorObjects);
-            RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, monsterVariance, seed);
+            RDBLayout.AddFixedEnemies(go, editorObjects, ref blockData);
+            RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, ref blockData, monsterVariance, seed);
 
             // Link action nodes
             RDBLayout.LinkActionNodes(actionLinkDict);

@@ -32,7 +32,6 @@ namespace DaggerfallWorkshop.Utility
         MonsterFile monsterFileReader;
         WoodsFile woodsFileReader;
         Dictionary<int, MapSummary> mapDict;
-        Noise noise;
 
         public struct MapSummary
         {
@@ -68,11 +67,6 @@ namespace DaggerfallWorkshop.Utility
             get { return woodsFileReader; }
         }
 
-        public Noise Noise
-        {
-            get { return noise; }
-        }
-
         #region Constructors
 
         public ContentReader(string arena2Path)
@@ -103,6 +97,31 @@ namespace DaggerfallWorkshop.Utility
             if (blockOut.Type == DFBlock.BlockTypes.Unknown)
             {
                 DaggerfallUnity.LogMessage(string.Format("Unknown block '{0}'.", name), true);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Attempts to get a Daggerfall location from MAPS.BSA.
+        /// </summary>
+        /// <param name="regionIndex">Index of region.</param>
+        /// <param name="locationIndex">Index of location.</param>
+        /// <param name="locationOut">DFLocation data out.</param>
+        /// <returns>True if successful.</returns>
+        public bool GetLocation(int regionIndex, int locationIndex, out DFLocation locationOut)
+        {
+            locationOut = new DFLocation();
+
+            if (!isReady)
+                return false;
+
+            // Get location data
+            locationOut = mapFileReader.GetLocation(regionIndex, locationIndex);
+            if (!locationOut.Loaded)
+            {
+                DaggerfallUnity.LogMessage(string.Format("Unknown location RegionIndex='{0}', LocationIndex='{1}'.", regionIndex, locationIndex), true);
                 return false;
             }
 
@@ -159,6 +178,27 @@ namespace DaggerfallWorkshop.Utility
             return false;
         }
 
+        /// <summary>
+        /// Determines if the current WorldCoord has a location.
+        /// </summary>
+        /// <param name="mapPixelX">Map pixel X.</param>
+        /// <param name="mapPixelY">Map pixel Y.</param>
+        /// <returns>True if there is a location at this map pixel.</returns>
+        public bool HasLocation(int mapPixelX, int mapPixelY)
+        {
+            if (!isReady)
+            {
+                return false;
+            }
+
+            int id = MapsFile.GetMapPixelID(mapPixelX, mapPixelY);
+            if (mapDict.ContainsKey(id))
+            {
+                return true;
+            }
+            return false;
+        }
+
         #endregion
 
         #region Private Methods
@@ -181,10 +221,6 @@ namespace DaggerfallWorkshop.Utility
             // Build map lookup dictionary
             if (mapDict == null && mapFileReader != null)
                 EnumerateMaps();
-            
-            // Setup noise generator
-            if (noise == null)
-                noise = new Noise();
 
             // Raise ready flag
             isReady = true;

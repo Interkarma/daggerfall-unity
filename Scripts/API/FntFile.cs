@@ -147,8 +147,9 @@ namespace DaggerfallConnect.Arena2
             const string suffix = ".FNT";
 
             // Validate filename
-            string fileName = Path.GetFileName(filePath).ToUpper();
-            if (!fileName.StartsWith(prefix) || !fileName.EndsWith(suffix))
+            string fileName = Path.GetFileName(filePath);
+            if (!fileName.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase) ||
+                !fileName.EndsWith(suffix, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file

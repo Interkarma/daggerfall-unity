@@ -383,8 +383,20 @@ namespace DaggerfallWorkshop
         PageTurn = 362,
         ParchmentScratching = 363,
 
-        // 364-375 sound like racial music from player creation screen.
-        // Fill these out later.
+        // 364-365 TODO
+
+        RaceBreton = 366,
+        RaceRedguard = 367,
+        RaceNord = 368,
+        RaceDarkElf = 369,
+        RaceHighElf = 370,
+        RaceWoodElf = 371,
+        RaceKhajiit = 372,
+        RaceArgonian = 373,
+
+        SelectClassDrums = 374,
+
+        // 375 Sounds like tearing paper
 
         DiceRoll2 = 376,
 

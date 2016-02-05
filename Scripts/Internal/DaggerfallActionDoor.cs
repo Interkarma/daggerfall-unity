@@ -4,30 +4,25 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    LypyL (lypyl@dfworkshop.net)
 // 
 // Notes:
 //
 
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using DaggerfallConnect;
-using DaggerfallConnect.Utility;
-using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// Specialised action component for hinged doors in builings and interiors.
+    /// Specialised action component for hinged doors in buildings interiors and dungeons.
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(BoxCollider))]
     public class DaggerfallActionDoor : MonoBehaviour
     {
         public bool StartOpen = false;                  // Door should start in open state
-        public bool IsLocked = false;                   // Normally locked doors must be unlocked by keys, spells, or force
+        public int CurrentLockValue = 0;                // if > 0, door is locked. Can check w. IsLocked prop
         public bool IsMagicallyHeld = false;            // Magically held locks can be opened by spells only
         public float OpenAngle = -90f;                  // Angle to swing door on axis when opening
         public float OpenDuration = 1.5f;               // How long in seconds for door to open
@@ -40,38 +35,94 @@ namespace DaggerfallWorkshop
         public SoundClips BashSound = SoundClips.PlayerDoorBash;            // Sound clip to use when bashing door
         public SoundClips LockedSound = SoundClips.ActivateLockUnlock;      // Sound clip to use when trying to open locked door
 
-        bool isOpen = false;
-        bool isMoving = false;
-        Vector3 closedTransform;
+        ActionState currentState;
+        int startingLockValue = 0;                      // if > 0, is locked.
+        long loadID = 0;
+
+        Quaternion startingRotation;
         AudioSource audioSource;
         BoxCollider boxCollider;
 
-        public bool IsOpen
+        public int StartingLockValue                    // Use to set starting lock value, will set current lock value as well
         {
-            get { return isOpen; }
+            get { return startingLockValue; }
+            set { startingLockValue = CurrentLockValue = value; }
         }
 
-        public void Start()
+        public long LoadID
         {
-            closedTransform = transform.rotation.eulerAngles;
+            get { return loadID; }
+            set { loadID = value; }
+        }
+
+        public bool IsLocked
+        {
+            get { return CurrentLockValue > 0; }
+        }
+
+        public bool IsOpen
+        {
+            get { return (currentState == ActionState.End); }
+        }
+
+        public bool IsClosed
+        {
+            get { return (currentState == ActionState.Start); }
+        }
+
+        public bool IsMoving
+        {
+            get { return (currentState == ActionState.PlayingForward || currentState == ActionState.PlayingReverse); }
+        }
+
+        public Quaternion ClosedRotation
+        {
+            get { return startingRotation; }
+        }
+
+        public ActionState CurrentState
+        {
+            get { return currentState; }
+            set { currentState = value; }
+        }
+
+        void Awake()
+        {
             audioSource = GetComponent<AudioSource>();
             boxCollider = GetComponent<BoxCollider>();
+        }
 
+        void Start()
+        {
+            currentState = ActionState.Start;
+            startingRotation = transform.rotation;
             if (StartOpen)
                 Open(0, true);
         }
 
         public void ToggleDoor()
         {
-            if (isOpen)
+            if (IsMoving)
+                return;
+
+            if (IsOpen)
                 Close(OpenDuration);
             else
                 Open(OpenDuration);
         }
 
+        public void SetOpen(bool open, bool instant = false, bool ignoreLocks = false)
+        {
+            float duration = (instant) ? 0 : OpenDuration;
+            if (open)
+                Open(duration, ignoreLocks);
+            else
+                Close(duration);
+        }
+
         public void AttemptBash()
         {
-            if (!isOpen)
+            if (!IsOpen)
             {
                 // Play bash sound if flagged and ready
                 if (PlaySounds && BashSound > 0 && audioSource)
@@ -85,11 +136,11 @@ namespace DaggerfallWorkshop
                 if (!IsMagicallyHeld)
                 {
                     // Roll for chance to open
-                    Random.seed = Time.frameCount;
-                    float roll = Random.Range(0f, 1f);
+                    UnityEngine.Random.seed = Time.frameCount;
+                    float roll = UnityEngine.Random.Range(0f, 1f);
                     if (roll >= (1f - ChanceToBash))
                     {
-                        IsLocked = false;
+                        CurrentLockValue = 0;
                         ToggleDoor();
                     }
                 }
@@ -112,12 +163,25 @@ namespace DaggerfallWorkshop
             LockedSound = SoundClips.ActivateLockUnlock;
         }
 
+        /// <summary>
+        /// Restarts a tween in progress. For exmaple, if restoring from save.
+        /// </summary>
+        public void RestartTween(float durationScale = 1)
+        {
+            if (currentState == ActionState.PlayingForward)
+                Open(OpenDuration * durationScale);
+            else if (currentState == ActionState.PlayingReverse)
+                Close(OpenDuration * durationScale);
+            else if (currentState == ActionState.End)
+                MakeTrigger(true);
+        }
+
         #region Private Methods
 
         private void Open(float duration, bool ignoreLocks = false)
         {
             // Do nothing if door cannot be opened right now
-            if (((IsLocked || IsMagicallyHeld) && !ignoreLocks) || isOpen || isMoving)
+            if (((IsLocked || IsMagicallyHeld) && !ignoreLocks) || IsOpen)
             {
                 // Play open sound if flagged and ready
                 if (PlaySounds && LockedSound > 0 && duration > 0 && audioSource)
@@ -132,17 +196,15 @@ namespace DaggerfallWorkshop
 
             // Tween rotation
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                "amount", new Vector3(0f, OpenAngle / 360f, 0f),
-                "space", Space.Self,
+                "rotation", startingRotation.eulerAngles + new Vector3(0, OpenAngle, 0),
                 "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "OnCompleteOpen");
-            __ExternalAssets.iTween.RotateBy(gameObject, rotateParams);
-            isMoving = true;
+            __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
+            currentState = ActionState.PlayingForward;
 
             // Set collider to trigger only
-            if (IsTriggerWhenOpen && boxCollider != null)
-                boxCollider.isTrigger = true;
+            MakeTrigger(true);
 
             // Play open sound if flagged and ready
             if (PlaySounds && OpenSound > 0 && duration > 0 && audioSource)
@@ -153,38 +215,34 @@ namespace DaggerfallWorkshop
             }
 
             // Set flag
-            isOpen = true;
+            IsMagicallyHeld = false;
+            CurrentLockValue = 0;
         }
 
         private void Close(float duration)
         {
             // Do nothing if door cannot be closed right now
-            if (!isOpen || isMoving)
+            if (IsClosed)
                 return;
 
             // Tween rotation
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                "rotation", closedTransform,
+                "rotation", startingRotation.eulerAngles,
                 "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "OnCompleteClose",
                 "oncompleteparams", duration);
             __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
-            isMoving = true;
-
-            // Set flag
-            isOpen = false;
+            currentState = ActionState.PlayingReverse;
         }
 
         private void OnCompleteOpen()
         {
-            isMoving = false;
+            currentState = ActionState.End;
         }
 
         private void OnCompleteClose(float duration)
         {
-            isMoving = false;
-
             // Play close sound if flagged and ready
             if (PlaySounds && CloseSound > 0 && duration > 0 && audioSource)
             {
@@ -193,8 +251,15 @@ namespace DaggerfallWorkshop
             }
 
             // Set collider back to a solid object
+            MakeTrigger(false);
+
+            currentState = ActionState.Start;
+        }
+
+        private void MakeTrigger(bool isTrigger)
+        {
             if (IsTriggerWhenOpen && boxCollider != null)
-                boxCollider.isTrigger = false;
+                boxCollider.isTrigger = isTrigger;
         }
 
         #endregion

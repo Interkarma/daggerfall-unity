@@ -4,13 +4,12 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Lypyl (lypyl@dfworkshop.net)
 // 
 // Notes:
 //
 
 using UnityEngine;
-using UnityEditor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,6 +17,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop
 {
@@ -26,232 +26,180 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaggerfallAction : MonoBehaviour
     {
-        [SerializeField]
-        private Vector3 _actionRoation;
+        public const int TYPE_11_TEXT_INDEX = 8600;
+        public const int TYPE_12_TEXT_INDEX = 5400;
+        public const int ANSWER_TEXT_INDEX = 5656;
 
-        [SerializeField]
-        private Vector3 _actionTranslation;
+        public bool ActionEnabled = false;                                          // Enable/disable action - not currently being used, but some objects are single activate
+        public bool PlaySound = true;                                               // Play sound if present (ActionSound > 0)
+        public string ModelDescription = string.Empty;                              // Description string for this model
+        public DFBlock.RdbActionFlags ActionFlag = DFBlock.RdbActionFlags.None;     // Action flag value
+        public DFBlock.RdbTriggerFlags TriggerFlag = DFBlock.RdbTriggerFlags.None;  // Trigger flag value
+        public Vector3 ActionRotation = Vector3.zero;                               // Rotation to perform
+        public Vector3 ActionTranslation = Vector3.zero;                            // Translation to perform
+        public int Index = 0;                                                       // Index for things like spells, text, and also the raw sound index from daggerfall
+        public float Magnitude = 0.0f;                                              // How far to move, how much damage etc.
+        public float ActionDuration = 0;                                            // Time to reach final state
+        public Space ActionSpace = Space.Self;                                      // Relative space to perform action in (self or world)
 
-        [SerializeField]
-        private Vector3 _startPosition;
+        public GameObject NextObject;                                               // Next object in action chain
+        public GameObject PreviousObject;                                           // Previous object in action chain
 
-        [SerializeField]
-        private float _actionDuration;
+        long loadID = 0;
+        Vector3 startingPosition;
+        Quaternion startingRotation;
 
-        [SerializeField]
-        private string _modelDescription;
+        AudioSource audioSource;
+        ActionState currentState;
 
-        [SerializeField]
-        private int _actionSoundID;
-
-        [SerializeField]
-        private GameObject _nextObject;
-
-        [SerializeField]
-        private GameObject _previousObject;
-
-        [SerializeField]
-        private DFBlock.RdbActionFlags _actionFlag;
-        
-        [SerializeField]
-        private ActionState _currentState;
-        
-        [SerializeField]
-        private TriggerType _triggerFlag;
-
-        private bool _soundSet;
-
-        private AudioSource _actionAudioSource;
-
-        private bool debugMessages = false;
-
-        //will trigger action in update if set to true, uncomment the update block to use in inspector
-        //public bool triggerAction = false;
-        
-        
-        #region poperties
-
-        public Vector3 ActionRotation
+        //lookup for action type12, temp. storing them here
+        static Dictionary<int, string[]> actionTypeTwelveLookup = new Dictionary<int, string[]>()
         {
-            get { return _actionRoation; }
-            set { _actionRoation = value; }
+            {5404, new string[]{"bow","bow arrow","crossbow","bows","crossbows"}},   //sheogorath answer index = 5660
+            {5406, new string[]{"one","1"}},                                         //blind god, answer index = 5662
+            {5423, new string[]{"benefactor","the benefactor"}},                      //benefactor answer index = 5679
+            {5424, new string[]{"shut up","shutup","shaddup"}},                         //shaddup! answer index = 5680
+            {5464, new string[]{"yes","oK","i agree","y","agreed","done","fine","okay","sure","yep"}}, //daggerfall guard answer index = 5720
+        };
+
+        public string[] type12_answers;//answers for action type 12 dialogue questions
+
+
+
+        public long LoadID
+        {
+            get { return loadID; }
+            set { loadID = value; }
         }
 
-        public Vector3 ActionTranslation
+        public Vector3 StartingPosition
         {
-            get { return _actionTranslation; }
-            set { _actionTranslation = value; }
+            get { return startingPosition; }
         }
 
-        public Vector3 StartPosition
+        public Quaternion StartingRotation
         {
-            get { return _startPosition; }
-            set { _startPosition = value; }
-        }
-
-        public float ActionDuration
-        {
-            get { return _actionDuration; }
-            set { _actionDuration = value; }
-        }
-
-        public string ModelDescription
-        {
-            get { return _modelDescription; }
-            set { _modelDescription = value; }
-        }
-
-        public GameObject NextObject
-        {
-            get { return _nextObject; }
-            set { _nextObject = value; }
-        }
-
-        public GameObject PreviousObject
-        {
-            get { return _previousObject; }
-            set { _previousObject = value; }
-        }
-
-        public DFBlock.RdbActionFlags ActionFlag
-        {
-            get { return _actionFlag; }
-            set { _actionFlag = value; }
+            get { return startingRotation; }
         }
 
         public ActionState CurrentState
         {
-            get { return _currentState; }
-            set { _currentState = value; }
+            get { return currentState; }
+            set { SetState(value); }
         }
 
-        public TriggerType TriggerFlag
+        public bool IsMoving
         {
-            get { return _triggerFlag; }
-            set { _triggerFlag = value; }
+            get { return (currentState == ActionState.PlayingForward || currentState == ActionState.PlayingReverse); }
         }
 
-        public bool SoundSet
+        /// <summary>
+        /// Gets the actual duration for timed actions.
+        /// </summary>
+        public float Duration
         {
-            get { return _soundSet; }
-            private set { _soundSet = value; }
+            get { return ActionDuration / 20f; }
         }
-
-        public int ActionSoundID
-        {
-            get { return _actionSoundID; }
-            set { _actionSoundID = value; }
-        }
-
-        public AudioSource ActionAudioSource
-        {
-            get { return _actionAudioSource; }
-            private set { _actionAudioSource = value; }
-        }
-        #endregion
-
-        #region enums
-        //how the action is triggered. unknown1 field
-        //The different collision flags don't all use
-        //collisions in DFall but similiar methods. 
-        //Until they can be worked out, just using collisions in unity
-        public enum TriggerType
-        {
-            none = -1,
-            indirect = 0, //can't be activated by player directly
-            collide = 1,
-            direct = 2,   //levers, switches etc.
-            collide3 = 3, //found on bookcase that rotates when collided w.
-            collide9 = 9,  //red brick door teleporters, and some palace rooms
-            unknown10 = 10, //on the door leading to Cysandra in Daggerfall castle.
-        }
-
-
-
-        public enum ActionState
-        {
-            Start,
-            Playing,
-            End,
-        }
-
-        #endregion
 
         //Action flag -> Action Delegate lookup
         private delegate void ActionDelegate(GameObject obj, DaggerfallAction thisAction);
 
         static Dictionary<DFBlock.RdbActionFlags, ActionDelegate> actionFunctions = new Dictionary<DFBlock.RdbActionFlags, ActionDelegate>()
         {
-        {DFBlock.RdbActionFlags.Translation, new ActionDelegate(Move)},
-        {DFBlock.RdbActionFlags.Rotation, new ActionDelegate(Move)},
-        {DFBlock.RdbActionFlags.Unlock, new ActionDelegate(Unlock)},
-        {DFBlock.RdbActionFlags.Teleport, new ActionDelegate(Teleport)},
-        {DFBlock.RdbActionFlags.Activate, new ActionDelegate(Activate)},
-        {DFBlock.RdbActionFlags.PlaySound, new ActionDelegate(Activate)},
+        {DFBlock.RdbActionFlags.Translation,new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.Rotation,   new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.PositiveX,  new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.NegativeX,  new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.PositiveZ,  new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.NegativeZ,  new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.PositiveY,  new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.NegativeY,  new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.ShowText,   new ActionDelegate(ShowText)},
+        {DFBlock.RdbActionFlags.ShowTextWithInput,   new ActionDelegate(ShowTextWithInput)},
+        {DFBlock.RdbActionFlags.Teleport,   new ActionDelegate(Teleport)},
+        {DFBlock.RdbActionFlags.LockDoor,   new ActionDelegate(LockDoor)},
+        {DFBlock.RdbActionFlags.UnlockDoor, new ActionDelegate(UnlockDoor)},
+        {DFBlock.RdbActionFlags.OpenDoor,   new ActionDelegate(OpenDoor)},
+        {DFBlock.RdbActionFlags.CloseDoor,  new ActionDelegate(CloseDoor)},
+        {DFBlock.RdbActionFlags.Hurt21,     new ActionDelegate(Hurt)},      //lots of damage, varies
+        {DFBlock.RdbActionFlags.Hurt22,     new ActionDelegate(Hurt)},      //22-25; dmg = level x magnitude
+        {DFBlock.RdbActionFlags.Hurt23,     new ActionDelegate(Hurt)},
+        {DFBlock.RdbActionFlags.Hurt24,     new ActionDelegate(Hurt)},
+        {DFBlock.RdbActionFlags.Hurt25,     new ActionDelegate(Hurt)},
+        {DFBlock.RdbActionFlags.Activate,   new ActionDelegate(Activate)},
         };
 
         void Start()
         {
-            StartPosition = transform.position;
-            ActionAudioSource = GetComponent<AudioSource>();
-
-            if (ActionSoundID > 0 && ActionAudioSource)
-                SoundSet = true;
-
-         
+            audioSource = GetComponent<AudioSource>();
+            currentState = ActionState.Start;
+            startingPosition = transform.position;
+            startingRotation = transform.rotation;
         }
-
-        /*
-        void Update()
-        {
-            //this is for testing in editor mode, can be removed
-            if(triggerAction)
-            {
-                triggerAction = false;
-                GameObject obj = (PreviousObject != null) ? PreviousObject : (GameObject.FindGameObjectWithTag("Player"));
-                Play(obj);
-            }
-
-        }
-        */
-
 
         /// <summary>
         /// Handles incoming activations.  
         /// </summary>
-        /// <param name="prev">The gameObject that triggered this action, might be player</param>
-        /// <param name="playerTriggered">true if player triggered this action directly</param>
-        public bool Receive(GameObject prev = null, bool playerTriggered = false)
+        public void Receive(GameObject prev = null, bool playerTriggered = false)
         {
-            DaggerfallUnity.LogMessage(string.Format("{0} Recieved activation, playerTriggered: {1}", gameObject.name, playerTriggered), debugMessages);
-
-            if (playerTriggered && TriggerFlag != TriggerType.direct)
+            if (playerTriggered && TriggerFlag != DFBlock.RdbTriggerFlags.Direct && playerTriggered && TriggerFlag != DFBlock.RdbTriggerFlags.DualTrigger)
             {
-                DaggerfallUnity.LogMessage(string.Format("This action can't be triggered by player directly {0}", TriggerFlag), debugMessages);
-                return false;
+                return;
             }
+
+            //Temp fix to prevent disabled objects from trying to play; 
+            //the move types will get stuck in playing state which prevents other objects from working
+            if (!gameObject.activeSelf || !this.enabled)
+            {
+                return;
+            }
+
 
             if (IsPlaying())
             {
-                DaggerfallUnity.LogMessage(string.Format("Already playing; returning"), debugMessages);
-                return false;
+                DaggerfallUnity.LogMessage(string.Format("Already playing"));
+                return;
             }
 
             //start action sequence
             Play(prev);
-            return true;
+            return;
 
         }
 
-        /// <summary>
-        /// Check if action already playing - right now only used for "Movement" type actions.
-        /// Checks all the Next Objects in the chain, returns true if any are playing.
-        /// </summary>
-        /// <returns></returns>
+        public void Play(GameObject prev)
+        {
+            ActionDelegate d = null;
+            if (actionFunctions.ContainsKey(ActionFlag))
+            {
+                d = actionFunctions[ActionFlag];
+            }
+
+
+            if (ActionFlag != DFBlock.RdbActionFlags.ShowTextWithInput)
+                ActivateNext();
+
+            if (PlaySound && Index > 0 && audioSource)
+            {
+                audioSource.Play();
+            }
+
+            //stop if failed to get valid delegate from lookup - ideally this check should be done before playing
+            //sound & activating next, but for testing purposes is done after
+            if (d == null)
+            {
+                DaggerfallUnity.LogMessage(string.Format("No delegate found for this action flag: {0}", ActionFlag));
+                return;
+            }
+
+
+            d(prev, this);
+        }
+
         public bool IsPlaying()
         {
             // Check if this action or any chained action is playing
-            if (CurrentState == ActionState.Playing)
+            if (currentState == ActionState.PlayingForward || currentState == ActionState.PlayingReverse)
             {
                 return true;
             }
@@ -268,15 +216,7 @@ namespace DaggerfallWorkshop
             }
         }
 
-
-
-        public void SetState(ActionState state)
-        {
-            CurrentState = state;
-        }
-
-
-
+        #region Action Helper Methods
         /// <summary>
         /// Triggers the next action in chain if any
         /// </summary>
@@ -284,7 +224,7 @@ namespace DaggerfallWorkshop
         {
             if (NextObject == null)
             {
-                DaggerfallUnity.LogMessage(string.Format("Next object is null, can't activate"), debugMessages);
+                DaggerfallUnity.LogMessage(string.Format("Next object is null"));
                 return;
             }
             else
@@ -293,173 +233,189 @@ namespace DaggerfallWorkshop
                 if (action != null)
                 {
                     action.Receive(this.gameObject, false);
-                    DaggerfallUnity.LogMessage(string.Format("Activated Next object {0}", NextObject.name), debugMessages);
                 }
             }
 
         }
 
+        public void SetState(ActionState state)
+        {
+            currentState = state;
+        }
+
         /// <summary>
-        /// Get the delegate from the lookup using the actionFlag as key,
-        /// if one is found starts the action sequence.
+        /// Restarts a tween in progress. For exmaple, if restoring from save.
         /// </summary>
-        /// <param name="prev"></param>
-        private void Play(GameObject prev)
+        public void RestartTween(float durationScale = 1)
         {
-            DaggerfallUnity.LogMessage(string.Format("Playing"), debugMessages);
-            ActionDelegate d = null;
-            if (actionFunctions.ContainsKey(ActionFlag))
-            {
-                d = actionFunctions[ActionFlag];
-            }
-
-            //if failed to get valid delegate from lookup, stop
-            if (d == null)
-            {
-                DaggerfallUnity.LogMessage(string.Format("No delegate found for this action flag: {0}", ActionFlag), debugMessages);
-                return;
-            }
-
-            ActivateNext();
-            PlaySound();
-            d(prev, this);
+            if (currentState == ActionState.PlayingForward)
+                TweenToEnd(Duration * durationScale);
+            else if (currentState == ActionState.PlayingReverse)
+                TweenToStart(Duration * durationScale);
         }
 
-        //Play sound if set
-        private void PlaySound()
+        private void TweenToEnd(float duration)
         {
-            DaggerfallUnity.LogMessage(string.Format("Playing Sound: {0}", ActionSoundID), debugMessages);
-
-            if (SoundSet)
-                ActionAudioSource.Play();
-        }
-
-        #region Actions
-        /// <summary>
-        /// Handles translation / rotation type actions.  
-        /// If at Start, will TweenToEnd, if at End, will TweenToStart.
-        /// </summary>
-        /// <param name="prevObj"></param>
-        /// <param name="thisAction"></param>
-        public static void Move(GameObject obj, DaggerfallAction thisAction)
-        {
-            DaggerfallUnity.LogMessage(string.Format("Move action"), thisAction.debugMessages);
-
-
-            if (thisAction.CurrentState == ActionState.Start)
-            {
-                thisAction.CurrentState = ActionState.Playing;
-                thisAction.TweenToEnd();
-            }
-            else if (thisAction.CurrentState == ActionState.End)
-            {
-                thisAction.CurrentState = ActionState.Playing;
-                thisAction.TweenToStart();
-            }
-            else
-                DaggerfallUnity.LogMessage(string.Format("Already playing"), thisAction.debugMessages);
-        }
-
-        public void TweenToEnd()
-        {
-            CurrentState = ActionState.Playing;
-            DaggerfallUnity.LogMessage(string.Format("Tweening to end"), debugMessages);
-
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                "amount", new Vector3(ActionRotation.x / 360f, ActionRotation.y / 360f, ActionRotation.z / 360f),
-                "space", Space.Self,
-                "time", ActionDuration,
+                "rotation", startingRotation.eulerAngles + ActionRotation,
+                "space", ActionSpace,
+                "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear);
 
             Hashtable moveParams = __ExternalAssets.iTween.Hash(
-                "position", StartPosition + ActionTranslation,
-                "time", ActionDuration,
+                "position", startingPosition + ActionTranslation,
+                "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
                 "oncompleteparams", ActionState.End);
 
-            __ExternalAssets.iTween.RotateBy(gameObject, rotateParams);
+            __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
             __ExternalAssets.iTween.MoveTo(gameObject, moveParams);
         }
 
-        private void TweenToStart()
+        private void TweenToStart(float duration)
         {
-            CurrentState = ActionState.Playing;
-            DaggerfallUnity.LogMessage(string.Format("Tweening to start"), debugMessages);
-
-
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                    "amount", new Vector3(-ActionRotation.x / 360f, -ActionRotation.y / 360f, -ActionRotation.z / 360f),
-                    "space", Space.Self,
-                    "time", ActionDuration,
-                    "easetype", __ExternalAssets.iTween.EaseType.linear);
+                "rotation", startingRotation.eulerAngles,
+                "space", ActionSpace,
+                "time", duration,
+                "easetype", __ExternalAssets.iTween.EaseType.linear);
 
             Hashtable moveParams = __ExternalAssets.iTween.Hash(
-                "position", StartPosition,
-                "time", ActionDuration,
+                "position", startingPosition,
+                "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
                 "oncompleteparams", ActionState.Start);
 
-            __ExternalAssets.iTween.RotateBy(gameObject, rotateParams);
+            __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
             __ExternalAssets.iTween.MoveTo(gameObject, moveParams);
         }
 
-
-
-        // <summary>
-        // 30
+        /// <summary>
+        ///  Used by door actions (open / close / unlock), tries to get DaggerfallActionDoor from object
+        ///  returns true if object is a valid action door, false if not
         /// </summary>
-        /// <param name="prevObj"></param>
-        /// <param name="thisAction"></param>
-        public static void Activate(GameObject prevObj, DaggerfallAction thisAction)
+        public static bool GetDoor(GameObject go, out DaggerfallActionDoor door)
         {
-            DaggerfallUnity.LogMessage(string.Format("Activate action"), thisAction.debugMessages);
-            return;
+            door = null;
+            if (go == null)
+                return false;
+
+            door = go.GetComponent<DaggerfallActionDoor>();
+            if (door == null)
+            {
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found to unlock door: {0}", go.name));
+                return false;
+            }
+            else
+                return true;
+        }
+
+        /// <summary>
+        /// Handles the input return event for action type 12
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="userInput"></param>
+        public void UserInputHandler(DaggerfallInputMessageBox sender, string userInput)
+        {
+            if (type12_answers == null || type12_answers.Length == 0)
+            {
+                DaggerfallUnity.LogMessage(string.Format(("No answers to check for: {0} {1}"), this.gameObject.name, this.Index));
+                return;
+            }
+            userInput = userInput.ToLower();
+            for (int i = 0; i < type12_answers.Length; i++)
+            {
+                if (userInput == type12_answers[i].ToLower())
+                {
+                    ActivateNext();
+                    return;
+                }
+            }
+            //Debug.Log("no matching answer found for: " + userInput);
         }
 
 
+        #endregion
+
+        #region Actions
         /// <summary>
-        /// 17
-        /// Unlocks a door. Have only seen it on the door itself.
-        /// Doesn't relock on reverse.  Not sure if can unlock multiple times 
-        /// (ie, if you cast lock on door will it unlock it again.
+        /// 1-8
+        /// Handles translation / rotation type actions.  
         /// </summary>
-        /// <param name="prevObj"></param>
-        /// <param name="thisAction"></param>
-        public static void Unlock(GameObject prevObj, DaggerfallAction thisAction)
+        public static void Move(GameObject obj, DaggerfallAction thisAction)
         {
-            DaggerfallUnity.LogMessage(string.Format("Unlock door action"), thisAction.debugMessages);
-            DaggerfallActionDoor door = thisAction.GetComponent<DaggerfallActionDoor>();
-            if (door == null)
+            if (thisAction.CurrentState == ActionState.Start)
             {
-                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found to unlock door"), thisAction.debugMessages);
+                thisAction.CurrentState = ActionState.PlayingForward;
+                thisAction.TweenToEnd(thisAction.Duration);
+            }
+            else if (thisAction.CurrentState == ActionState.End)
+            {
+                thisAction.CurrentState = ActionState.PlayingReverse;
+                thisAction.TweenToStart(thisAction.Duration);
+            }
+
+        }
+
+        /// <summary>
+        /// 11
+        /// Pop-up text
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="thisAction"></param>
+        public static void ShowText(GameObject obj, DaggerfallAction thisAction)
+        {
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallWorkshop.Game.DaggerfallUI.UIManager, null);
+            messageBox.SetTextTokens(thisAction.Index + TYPE_11_TEXT_INDEX);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.Show();
+        }
+
+        /// <summary>
+        /// 12
+        /// Pop-up text that returns player input
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="thisAction"></param>
+        public static void ShowTextWithInput(GameObject obj, DaggerfallAction thisAction)
+        {
+            int textID = thisAction.Index + TYPE_12_TEXT_INDEX;
+            if (actionTypeTwelveLookup.ContainsKey(textID))
+            {
+                thisAction.type12_answers = actionTypeTwelveLookup[textID];
             }
             else
             {
-                door.IsLocked = false;
+                Debug.LogError(string.Format("Error: invalid key: {0} for action type 12, couldn't get answer(s)", textID));//todo - display error message
             }
-
+            DaggerfallInputMessageBox inputBox = new DaggerfallInputMessageBox(DaggerfallWorkshop.Game.DaggerfallUI.UIManager, textID, 20, "\t> ", true, false, null);
+            inputBox.ParentPanel.BackgroundColor = Color.clear;
+            inputBox.OnGotUserInput += thisAction.UserInputHandler;
+            inputBox.Show();
         }
+
+
+
+
 
         /// <summary>
         /// 14
         /// This is assumes will always be activated by player directly and input object will always be player.
         /// </summary>
-        /// <param name="playerObj"></param>
-        /// <param name="thisAction"></param>
         public static void Teleport(GameObject playerObj, DaggerfallAction thisAction)
         {
-            DaggerfallUnity.LogMessage(string.Format("Teleport action"), thisAction.debugMessages);
 
             if (thisAction.NextObject == null)
             {
-                DaggerfallUnity.LogMessage(string.Format("Teleport next object null - can't teleport"), thisAction.debugMessages);
+                DaggerfallUnity.LogMessage(string.Format("Teleport next object null - can't teleport"));
                 return;
             }
             if (playerObj == null)
             {
-                DaggerfallUnity.LogMessage(string.Format("Player object null - can't teleport"), thisAction.debugMessages);
+                DaggerfallUnity.LogMessage(string.Format("Player object null - can't teleport"));
                 return;
             }
 
@@ -467,6 +423,122 @@ namespace DaggerfallWorkshop
             playerObj.transform.position = thisAction.NextObject.transform.position;
             playerObj.transform.rotation = thisAction.NextObject.transform.rotation;
         }
+
+        /// <summary>
+        /// 16
+        /// Locks door when activated. Lock value used is unknown
+        /// </summary>
+        /// <param name="prevObject"></param>
+        /// <param name="thisAction"></param>
+        public static void LockDoor(GameObject prevObject, DaggerfallAction thisAction)
+        {
+            DaggerfallActionDoor door;
+            if (!GetDoor(thisAction.gameObject, out door))
+            {
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found to lock door"), true);
+
+            }
+            else
+            {
+                if (!door.IsLocked)
+                    door.CurrentLockValue = 16; //don't know what what setting Daggerfall uses here
+            }
+        }
+
+
+        /// <summary>
+        /// 17
+        /// Unlocks a door. Doesn't relock on reverse.
+        /// </summary>
+        public static void UnlockDoor(GameObject prevObj, DaggerfallAction thisAction)
+        {
+            DaggerfallActionDoor door;
+            if (!GetDoor(thisAction.gameObject, out door))
+            {
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found to unlock door"));
+
+            }
+            else
+            {
+                door.CurrentLockValue = 0;
+
+            }
+        }
+
+
+        /// <summary>
+        /// 18
+        /// Opens (and unlocks if is locked) door
+        /// </summary>
+        public static void OpenDoor(GameObject prevObj, DaggerfallAction thisAction)
+        {
+            DaggerfallActionDoor door;
+            if (!GetDoor(thisAction.gameObject, out door))
+            {
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"));
+            }
+            else
+            {
+                if (door.IsOpen)
+                    return;
+                else
+                {
+                    door.CurrentLockValue = 0;
+                    door.ToggleDoor();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 20
+        /// Closes door on activate.  If door has a starting lock value, will re-lock door.
+        /// </summary>
+        public static void CloseDoor(GameObject prevObj, DaggerfallAction thisAction)
+        {
+
+            DaggerfallActionDoor door;
+            if (!GetDoor(thisAction.gameObject, out door))
+            {
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"));
+            }
+            else
+            {
+                if (!door.IsOpen)
+                    return;
+                else
+                {
+                    door.ToggleDoor();
+                    door.CurrentLockValue = door.StartingLockValue;
+                }
+
+            }
+
+        }
+
+        /// <summary>
+        /// This just simulates activating one of the action objects that hurt the player.
+        /// 21 does lots of damage, and varies.  Can only activate once.
+        /// 22-25 do Player Level * Magnitude in Damage. Multiple activation
+        /// </summary>
+        public static void Hurt(GameObject playerObj, DaggerfallAction thisAction)
+        {
+            if (playerObj == null)
+                return;
+
+            playerObj.SendMessage("RemoveHealth", SendMessageOptions.DontRequireReceiver);
+        }
+
+
+        // <summary>
+        /// Just activates next object in chain.
+        /// </summary>
+        public static void Activate(GameObject prevObj, DaggerfallAction thisAction)
+        {
+            return;
+        }
+
+
 
         #endregion
     }

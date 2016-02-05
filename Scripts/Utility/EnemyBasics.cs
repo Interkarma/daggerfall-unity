@@ -15,9 +15,8 @@ using System.Collections.Generic;
 namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
-    /// Static definitions for basic enemies and their animations.
-    /// This is just a starting point!
-    /// You will need to implement more as needed, e.g. spells, resists, AI behaviours, etc.
+    /// Static definitions for enemies and their animations.
+    /// Remaining data is read from MONSTER.BSA.
     /// </summary>
     public static class EnemyBasics
     {
@@ -115,7 +114,9 @@ namespace DaggerfallWorkshop.Utility
 
         #region Enemy Definitions
 
-        // Defines basics of all known enemy types
+        // Defines additional data for known enemy types
+        // Fills in the blanks where source of data in game files is unknown
+        // Suspect at least some of this data is also hard-coded in Daggerfall
         public static MobileEnemy[] Enemies = new MobileEnemy[]
         {
             // Rat
@@ -131,10 +132,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyRatMove,
                 BarkSound = (int)SoundClips.EnemyRatBark,
                 AttackSound = (int)SoundClips.EnemyRatAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 1,
+                MaxDamage = 4,
+                MinHealth = 9,
+                MaxHealth = 16,
             },
 
             // Imp
@@ -150,11 +155,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyImpMove,
                 BarkSound = (int)SoundClips.EnemyImpBark,
                 AttackSound = (int)SoundClips.EnemyImpAttack,
+                MinMetalToHit = MetalTypes.Steel,
+                MinDamage = 2,
+                MaxDamage = 15,
+                MinHealth = 11,
+                MaxHealth = 18,
             },
 
             // Spriggan
@@ -170,10 +179,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemySprigganMove,
                 BarkSound = (int)SoundClips.EnemySprigganBark,
                 AttackSound = (int)SoundClips.EnemySprigganAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 1,
+                MaxDamage = 10,
+                MinHealth = 12,
+                MaxHealth = 26,
             },
 
             // Giant Bat
@@ -189,10 +202,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyGiantBatMove,
                 BarkSound = (int)SoundClips.EnemyGiantBatBark,
                 AttackSound = (int)SoundClips.EnemyGiantBatAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 2,
+                MaxDamage = 12,
+                MinHealth = 12,
+                MaxHealth = 26,
             },
 
             // Grizzly Bear
@@ -208,10 +225,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyBearMove,
                 BarkSound = (int)SoundClips.EnemyBearBark,
                 AttackSound = (int)SoundClips.EnemyBearAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 1,
+                MaxDamage = 10,
+                MinHealth = 13,
+                MaxHealth = 34,
             },
 
             // Sabertooth Tiger
@@ -227,10 +248,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyTigerMove,
                 BarkSound = (int)SoundClips.EnemyTigerBark,
                 AttackSound = (int)SoundClips.EnemyTigerAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 1,
+                MaxDamage = 10,
+                MinHealth = 13,
+                MaxHealth = 34,
             },
 
             // Spider
@@ -246,10 +271,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemySpiderMove,
                 BarkSound = (int)SoundClips.EnemySpiderBark,
                 AttackSound = (int)SoundClips.EnemySpiderAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 13,
+                MaxHealth = 34,
             },
 
             // Orc
@@ -265,11 +294,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyOrcMove,
                 BarkSound = (int)SoundClips.EnemyOrcBark,
                 AttackSound = (int)SoundClips.EnemyOrcAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 1,
+                MaxDamage = 6,
+                MinHealth = 13,
+                MaxHealth = 34,
             },
 
             // Centaur
@@ -285,11 +318,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyCentaurMove,
                 BarkSound = (int)SoundClips.EnemyCentaurBark,
                 AttackSound = (int)SoundClips.EnemyCentaurAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 14,
+                MaxHealth = 46,
             },
 
             // Werewolf
@@ -305,11 +342,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyWerewolfMove,
                 BarkSound = (int)SoundClips.EnemyWerewolfBark,
                 AttackSound = (int)SoundClips.EnemyWerewolfAttack,
+                MinMetalToHit = MetalTypes.Silver,
+                MinDamage = 2,
+                MaxDamage = 12,
+                MinHealth = 17,
+                MaxHealth = 66,
             },
 
             // Nymph
@@ -325,11 +366,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyNymphMove,
                 BarkSound = (int)SoundClips.EnemyNymphBark,
                 AttackSound = (int)SoundClips.EnemyNymphAttack,
+                MinMetalToHit = MetalTypes.Silver,
+                MinDamage = 1,
+                MaxDamage = 5,
+                MinHealth = 15,
+                MaxHealth = 50,
             },
 
             // Slaughterfish
@@ -345,10 +390,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyEelMove,
                 BarkSound = (int)SoundClips.EnemyEelBark,
                 AttackSound = (int)SoundClips.EnemyEelAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 2,
+                MaxDamage = 12,
+                MinHealth = 15,
+                MaxHealth = 50,
             },
 
             // Orc Sergeant
@@ -364,11 +413,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyOrcSergeantMove,
                 BarkSound = (int)SoundClips.EnemyOrcSergeantBark,
                 AttackSound = (int)SoundClips.EnemyOrcSergeantAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 15,
+                MaxHealth = 50,
             },
 
             // Harpy
@@ -384,10 +437,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyHarpyMove,
                 BarkSound = (int)SoundClips.EnemyHarpyBark,
                 AttackSound = (int)SoundClips.EnemyHarpyAttack,
+                MinMetalToHit = MetalTypes.Dwarven,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 16,
+                MaxHealth = 85,
             },
 
             // Wereboar
@@ -403,11 +460,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyWereboarMove,
                 BarkSound = (int)SoundClips.EnemyWereboarBark,
                 AttackSound = (int)SoundClips.EnemyWereboarAttack,
+                MinMetalToHit = MetalTypes.Silver,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 17,
+                MaxHealth = 66,
             },
 
             // Skeletal Warrior
@@ -423,12 +484,16 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 BloodIndex = 2,
                 MoveSound = (int)SoundClips.EnemySkeletonMove,
                 BarkSound = (int)SoundClips.EnemySkeletonBark,
                 AttackSound = (int)SoundClips.EnemySkeletonAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 17,
+                MaxHealth = 66,
             },
 
             // Giant
@@ -444,11 +509,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyGiantMove,
                 BarkSound = (int)SoundClips.EnemyGiantBark,
                 AttackSound = (int)SoundClips.EnemyGiantAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 10,
+                MaxDamage = 30,
+                MinHealth = 18,
+                MaxHealth = 74,
             },
 
             // Zombie
@@ -464,10 +533,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyZombieMove,
                 BarkSound = (int)SoundClips.EnemyZombieBark,
                 AttackSound = (int)SoundClips.EnemyZombieAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 15,
+                MaxDamage = 50,
+                MinHealth = 52,
+                MaxHealth = 66,
             },
 
             // Ghost
@@ -483,11 +556,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 BloodIndex = 2,
                 MoveSound = (int)SoundClips.EnemyGhostMove,
                 BarkSound = (int)SoundClips.EnemyGhostBark,
                 AttackSound = (int)SoundClips.EnemyGhostAttack,
+                MinMetalToHit = MetalTypes.Silver,
+                MinDamage = 10,
+                MaxDamage = 35,
+                MinHealth = 17,
+                MaxHealth = 66,
             },
 
             // Mummy
@@ -503,11 +580,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 BloodIndex = 2,
                 MoveSound = (int)SoundClips.EnemyMummyMove,
                 BarkSound = (int)SoundClips.EnemyMummyBark,
                 AttackSound = (int)SoundClips.EnemyMummyAttack,
+                MinMetalToHit = MetalTypes.Silver,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 17,
+                MaxHealth = 66,
             },
 
             // Giant Scorpian
@@ -523,10 +604,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyScorpionMove,
                 BarkSound = (int)SoundClips.EnemyScorpionBark,
                 AttackSound = (int)SoundClips.EnemyScorpionAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 15,
+                MaxDamage = 25,
+                MinHealth = 18,
+                MaxHealth = 74,
             },
 
             // Orc Shaman
@@ -542,11 +627,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyOrcShamanMove,
                 BarkSound = (int)SoundClips.EnemyOrcShamanBark,
                 AttackSound = (int)SoundClips.EnemyOrcShamanAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 2,
+                MaxDamage = 20,
+                MinHealth = 18,
+                MaxHealth = 74,
             },
 
             // Gargoyle
@@ -562,12 +651,16 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 BloodIndex = 2,
                 MoveSound = (int)SoundClips.EnemyGargoyleMove,
                 BarkSound = (int)SoundClips.EnemyGargoyleBark,
                 AttackSound = -1,
+                MinMetalToHit = MetalTypes.Mithril,
+                MinDamage = 10,
+                MaxDamage = 15,
+                MinHealth = 19,
+                MaxHealth = 82,
             },
 
             // Wraith
@@ -583,11 +676,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 BloodIndex = 2,
                 MoveSound = (int)SoundClips.EnemyWraithMove,
                 BarkSound = (int)SoundClips.EnemyWraithBark,
                 AttackSound = (int)SoundClips.EnemyWraithAttack,
+                MinMetalToHit = MetalTypes.Silver,
+                MinDamage = 20,
+                MaxDamage = 45,
+                MinHealth = 30,
+                MaxHealth = 90,
             },
 
             // Orc Warlord
@@ -603,11 +700,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyOrcWarlordMove,
                 BarkSound = (int)SoundClips.EnemyOrcWarlordBark,
                 AttackSound = (int)SoundClips.EnemyOrcWarlordAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 50,
+                MinHealth = 20,
+                MaxHealth = 90,
             },
 
             // Frost Daedra
@@ -623,11 +724,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyFrostDaedraMove,
                 BarkSound = (int)SoundClips.EnemyFrostDaedraBark,
                 AttackSound = (int)SoundClips.EnemyFrostDaedraAttack,
+                MinMetalToHit = MetalTypes.Mithril,
+                MinDamage = 50,
+                MaxDamage = 100,
+                MinHealth = 25,
+                MaxHealth = 130,
             },
 
             // Fire Daedra
@@ -643,11 +748,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyFireDaedraMove,
                 BarkSound = (int)SoundClips.EnemyFireDaedraBark,
                 AttackSound = (int)SoundClips.EnemyFireDaedraAttack,
+                MinMetalToHit = MetalTypes.Mithril,
+                MinDamage = 15,
+                MaxDamage = 50,
+                MinHealth = 26,
+                MaxHealth = 138,
             },
 
             // Daedroth
@@ -663,10 +772,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyLesserDaedraMove,
                 BarkSound = (int)SoundClips.EnemyLesserDaedraBark,
                 AttackSound = (int)SoundClips.EnemyLesserDaedraAttack,
+                MinMetalToHit = MetalTypes.Mithril,
+                MinDamage = 15,
+                MaxDamage = 50,
+                MinHealth = 27,
+                MaxHealth = 146,
             },
 
             // Vampire
@@ -682,11 +795,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyFemaleVampireMove,
                 BarkSound = (int)SoundClips.EnemyFemaleVampireBark,
                 AttackSound = (int)SoundClips.EnemyFemaleVampireAttack,
+                MinMetalToHit = MetalTypes.Silver,
+                MinDamage = 20,
+                MaxDamage = 50,
+                MinHealth = 28,
+                MaxHealth = 154,
             },
 
             // Daedra Seducer
@@ -702,11 +819,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemySeducerMove,
                 BarkSound = (int)SoundClips.EnemySeducerBark,
                 AttackSound = (int)SoundClips.EnemySeducerAttack,
+                MinMetalToHit = MetalTypes.Mithril,
+                MinDamage = 15,
+                MaxDamage = 50,
+                MinHealth = 27,
+                MaxHealth = 146,
             },
 
             // Vampire Ancient
@@ -722,11 +843,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyVampireMove,
                 BarkSound = (int)SoundClips.EnemyVampireBark,
                 AttackSound = (int)SoundClips.EnemyVampireAttack,
+                MinMetalToHit = MetalTypes.Mithril,
+                MinDamage = 20,
+                MaxDamage = 60,
+                MinHealth = 30,
+                MaxHealth = 170,
             },
 
             // Daedra Lord
@@ -742,11 +867,15 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyDaedraLordMove,
                 BarkSound = (int)SoundClips.EnemyDaedraLordBark,
                 AttackSound = (int)SoundClips.EnemyDaedraLordAttack,
+                MinMetalToHit = MetalTypes.Mithril,
+                MinDamage = 15,
+                MaxDamage = 50,
+                MinHealth = 35,
+                MaxHealth = 210,
             },
 
             // Lich
@@ -762,12 +891,16 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 BloodIndex = 2,
                 MoveSound = (int)SoundClips.EnemyLichMove,
                 BarkSound = (int)SoundClips.EnemyLichBark,
                 AttackSound = (int)SoundClips.EnemyLichAttack,
+                MinMetalToHit = MetalTypes.Mithril,
+                MinDamage = 70,
+                MaxDamage = 100,
+                MinHealth = 30,
+                MaxHealth = 170,
             },
 
             // Ancient Lich
@@ -783,12 +916,16 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 BloodIndex = 2,
                 MoveSound = (int)SoundClips.EnemyLichKingMove,
                 BarkSound = (int)SoundClips.EnemyLichKingBark,
                 AttackSound = (int)SoundClips.EnemyLichKingAttack,
+                MinMetalToHit = MetalTypes.Mithril,
+                MinDamage = 70,
+                MaxDamage = 100,
+                MinHealth = 30,
+                MaxHealth = 170,
             },
 
             // Dragonling
@@ -804,10 +941,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyFaeryDragonMove,
                 BarkSound = (int)SoundClips.EnemyFaeryDragonBark,
                 AttackSound = (int)SoundClips.EnemyFaeryDragonAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 14,
+                MaxHealth = 42,
             },
 
             // Fire Atronach
@@ -823,10 +964,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyFireAtronachMove,
                 BarkSound = (int)SoundClips.EnemyFireAtronachBark,
                 AttackSound = (int)SoundClips.EnemyFireAtronachAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 25,
+                MaxHealth = 130,
             },
 
             // Iron Atronach
@@ -842,10 +987,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyIronAtronachMove,
                 BarkSound = (int)SoundClips.EnemyIronAtronachBark,
                 AttackSound = (int)SoundClips.EnemyIronAtronachAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 25,
+                MaxHealth = 130,
             },
 
             // Flesh Atronach
@@ -861,10 +1010,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyFleshAtronachMove,
                 BarkSound = (int)SoundClips.EnemyFleshAtronachBark,
                 AttackSound = (int)SoundClips.EnemyFleshAtronachAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 25,
+                MaxHealth = 130,
             },
 
             // Ice Atronach
@@ -880,10 +1033,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyIceAtronachMove,
                 BarkSound = (int)SoundClips.EnemyIceAtronachBark,
                 AttackSound = (int)SoundClips.EnemyIceAtronachAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 25,
+                MaxHealth = 130,
             },
 
             // Dragonling
@@ -899,10 +1056,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyFaeryDragonMove,
                 BarkSound = (int)SoundClips.EnemyFaeryDragonBark,
                 AttackSound = (int)SoundClips.EnemyFaeryDragonAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 14,
+                MaxHealth = 42,
             },
 
             // Dreugh
@@ -918,10 +1079,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyDreughMove,
                 BarkSound = (int)SoundClips.EnemyDreughBark,
                 AttackSound = (int)SoundClips.EnemyDreughAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 13,
+                MaxHealth = 34,
             },
 
             // Lamia
@@ -937,10 +1102,14 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = false,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 MoveSound = (int)SoundClips.EnemyLamiaMove,
                 BarkSound = (int)SoundClips.EnemyLamiaBark,
                 AttackSound = (int)SoundClips.EnemyLamiaAttack,
+                MinMetalToHit = MetalTypes.None,
+                MinDamage = 5,
+                MaxDamage = 15,
+                MinHealth = 16,
+                MaxHealth = 58,
             },
 
             // Mage
@@ -956,7 +1125,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -976,7 +1144,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,       // Female has RangedAttack2, male variant does not. Setting false for consistency.
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -996,7 +1163,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = true,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1016,7 +1182,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1036,7 +1201,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1056,7 +1220,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = true,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1076,7 +1239,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1096,7 +1258,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1116,7 +1277,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1136,7 +1296,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1156,7 +1315,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1176,7 +1334,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1196,7 +1353,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1216,7 +1372,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 PrefersRanged = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
@@ -1237,7 +1392,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1257,7 +1411,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1277,7 +1430,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1297,7 +1449,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = true,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
@@ -1317,7 +1468,6 @@ namespace DaggerfallWorkshop.Utility
                 HasIdle = true,
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
-                Health = 100,
                 CanOpenDoors = true,
                 MoveSound = (int)SoundClips.None,
                 BarkSound = (int)SoundClips.Halt,
@@ -1375,6 +1525,29 @@ namespace DaggerfallWorkshop.Utility
             for (int i = 0; i < Enemies.Length; i++)
             {
                 if (Enemies[i].ID == id)
+                {
+                    mobileEnemyOut = Enemies[i];
+                    return true;
+                }
+            }
+
+            // No match found, just return an empty definition
+            mobileEnemyOut = new MobileEnemy();
+            return false;
+        }
+
+        /// <summary>
+        /// Gets enemy definition based on name.
+        /// Runs a brute force search for ID, so use sparingly.
+        /// </summary>
+        /// <param name="name">Enemy name to extract definition.</param>
+        /// <param name="mobileEnemyOut">Receives details of enemy type if found.</param>
+        /// <returns>True if successful.</returns>
+        public static bool GetEnemy(string name, out MobileEnemy mobileEnemyOut)
+        {
+            for (int i = 0; i < Enemies.Length; i++)
+            {
+                if (0 == string.Compare(Enemies[i].Name, name, StringComparison.InvariantCultureIgnoreCase))
                 {
                     mobileEnemyOut = Enemies[i];
                     return true;

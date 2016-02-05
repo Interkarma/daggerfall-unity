@@ -111,7 +111,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public TextureReader TextureReader
         {
-            get { return textureReader; }
+            get { return (IsReady) ? textureReader : null; }
         }
 
         /// <summary>
@@ -318,9 +318,9 @@ namespace DaggerfallWorkshop
             }
 
             // Setup cached material
-            DFSize size = textureReader.TextureFile.GetSize(record);
-            DFSize scale = textureReader.TextureFile.GetScale(record);
-            DFSize offset = textureReader.TextureFile.GetOffset(record);
+            DFSize size = results.textureFile.GetSize(record);
+            DFSize scale = results.textureFile.GetScale(record);
+            DFSize offset = results.textureFile.GetOffset(record);
             Vector2[] recordSizes = new Vector2[1] { new Vector2(size.Width, size.Height) };
             Vector2[] recordScales = new Vector2[1] { new Vector2(scale.Width, scale.Height) };
             Vector2[] recordOffsets = new Vector2[1] { new Vector2(offset.Width, offset.Height) };
@@ -338,7 +338,7 @@ namespace DaggerfallWorkshop
                 recordSizes = recordSizes,
                 recordScales = recordScales,
                 recordOffsets = recordOffsets,
-                singleFrameCount = textureReader.TextureFile.GetFrameCount(record),
+                singleFrameCount = results.textureFile.GetFrameCount(record),
             };
             materialDict.Add(key, newcm);
 
@@ -549,6 +549,29 @@ namespace DaggerfallWorkshop
             cachedMaterialOut = materialDict[key];
 
             return true;
+        }
+
+        /// <summary>
+        /// Sets CachedMaterial properties.
+        /// existing Material will be updated in cache with cachedMaterialIn.
+        /// </summary>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index.</param>
+        /// <param name="cachedMaterialIn">the CachedMaterial used to update the cache.</param>
+        /// <returns>True if CachedMaterial was found and updated successfully.</returns>
+        public bool SetCachedMaterial(int archive, int record, int frame, CachedMaterial cachedMaterialIn)
+        {
+            int key = MakeTextureKey((short)archive, (byte)record, (byte)frame);
+            if (materialDict.ContainsKey(key))
+            {
+                materialDict[key] = cachedMaterialIn;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>

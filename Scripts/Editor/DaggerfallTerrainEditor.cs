@@ -43,10 +43,10 @@ namespace DaggerfallWorkshop
         {
             DrawDefaultInspector();
 
-            if (GUILayout.Button("Update Terrain"))
-            {
-                dfTerrain.__EditorUpdateTerrain();
-            }
+            //if (GUILayout.Button("Update Terrain"))
+            //{
+            //    dfTerrain.__EditorUpdateTerrain();
+            //}
         }
     }
 }

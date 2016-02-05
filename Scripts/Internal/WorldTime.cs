@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class WorldTime : MonoBehaviour
     {
-        public DaggerfallDateTime WorldDateTime = new DaggerfallDateTime();
+        public DaggerfallDateTime DaggerfallDateTime = new DaggerfallDateTime();
         public float TimeScale = 10f;
         public bool ShowDebugString = false;
 
@@ -37,21 +37,21 @@ namespace DaggerfallWorkshop
 
         public DaggerfallDateTime Now
         {
-            get { return WorldDateTime; }
+            get { return DaggerfallDateTime; }
         }
 
         void Start()
         {
             // Init time change trackers to start time
-            lastHour = WorldDateTime.Hour;
-            lastDay = WorldDateTime.Day;
-            lastMonth = WorldDateTime.Month;
-            lastYear = WorldDateTime.Year;
+            lastHour = DaggerfallDateTime.Hour;
+            lastDay = DaggerfallDateTime.Day;
+            lastMonth = DaggerfallDateTime.Month;
+            lastYear = DaggerfallDateTime.Year;
         }
 
         void Update()
         {
-            WorldDateTime.RaiseTime(Time.deltaTime * TimeScale);
+            DaggerfallDateTime.RaiseTime(Time.deltaTime * TimeScale);
             RaiseEvents();
         }
 
@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop
             {
                 GUIStyle style = new GUIStyle();
                 style.normal.textColor = Color.black;
-                string text = WorldDateTime.LongDateTimeString();
+                string text = DaggerfallDateTime.LongDateTimeString();
                 GUI.Label(new Rect(10, 10, 500, 24), text, style);
                 GUI.Label(new Rect(8, 8, 500, 24), text);
             }
@@ -70,66 +70,66 @@ namespace DaggerfallWorkshop
         void RaiseEvents()
         {
             // Dawn event
-            if (lastHour != DaggerfallDateTime.DawnHour && WorldDateTime.Hour == DaggerfallDateTime.DawnHour)
+            if (lastHour != DaggerfallDateTime.DawnHour && DaggerfallDateTime.Hour == DaggerfallDateTime.DawnHour)
             {
                 RaiseOnDawnEvent();
             }
 
             // Dusk event
-            if (lastHour != DaggerfallDateTime.DuskHour && WorldDateTime.Hour == DaggerfallDateTime.DuskHour)
+            if (lastHour != DaggerfallDateTime.DuskHour && DaggerfallDateTime.Hour == DaggerfallDateTime.DuskHour)
             {
                 RaiseOnDuskEvent();
             }
 
             // Midday event
-            if (lastHour != DaggerfallDateTime.MiddayHour && WorldDateTime.Hour == DaggerfallDateTime.MiddayHour)
+            if (lastHour != DaggerfallDateTime.MiddayHour && DaggerfallDateTime.Hour == DaggerfallDateTime.MiddayHour)
             {
                 RaiseOnMiddayEvent();
             }
 
             // Midnight event
-            if (lastHour != DaggerfallDateTime.MidnightHour && WorldDateTime.Hour == DaggerfallDateTime.MidnightHour)
+            if (lastHour != DaggerfallDateTime.MidnightHour && DaggerfallDateTime.Hour == DaggerfallDateTime.MidnightHour)
             {
                 RaiseOnMidnightEvent();
             }
 
             // City lights on event
-            if (lastHour != DaggerfallDateTime.LightsOnHour && WorldDateTime.Hour == DaggerfallDateTime.LightsOnHour)
+            if (lastHour != DaggerfallDateTime.LightsOnHour && DaggerfallDateTime.Hour == DaggerfallDateTime.LightsOnHour)
             {
                 RaiseOnCityLightsOnEvent();
             }
 
             // City lights off event
-            if (lastHour != DaggerfallDateTime.LightsOffHour && WorldDateTime.Hour == DaggerfallDateTime.LightsOffHour)
+            if (lastHour != DaggerfallDateTime.LightsOffHour && DaggerfallDateTime.Hour == DaggerfallDateTime.LightsOffHour)
             {
                 RaiseOnCityLightsOffEvent();
             }
 
             // New hour event
-            if (lastHour != WorldDateTime.Hour)
+            if (lastHour != DaggerfallDateTime.Hour)
             {
-                lastHour = WorldDateTime.Hour;
+                lastHour = DaggerfallDateTime.Hour;
                 RaiseOnNewHourEvent();
             }
 
             // New day event
-            if (lastDay != WorldDateTime.Day)
+            if (lastDay != DaggerfallDateTime.Day)
             {
-                lastDay = WorldDateTime.Day;
+                lastDay = DaggerfallDateTime.Day;
                 RaiseOnNewDayEvent();
             }
 
             // New month event
-            if (lastMonth != WorldDateTime.Month)
+            if (lastMonth != DaggerfallDateTime.Month)
             {
-                lastMonth = WorldDateTime.Month;
+                lastMonth = DaggerfallDateTime.Month;
                 RaiseOnNewMonthEvent();
             }
 
             // New year event
-            if (lastYear != WorldDateTime.Year)
+            if (lastYear != DaggerfallDateTime.Year)
             {
-                lastYear = WorldDateTime.Year;
+                lastYear = DaggerfallDateTime.Year;
                 RaiseOnNewYearEvent();
             }
         }

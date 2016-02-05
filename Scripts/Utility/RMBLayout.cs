@@ -25,7 +25,10 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public static class RMBLayout
     {
+        public const int RMBTilesPerBlock = 16;
+        public const int RMBTilesPerTerrain = 128;
         public const float RMBSide = 4096f * MeshReader.GlobalScale;
+        public const float RMBTileSide = 256f * MeshReader.GlobalScale;
 
         const float propsOffsetY = -4f;
         const float blockFlatsOffsetY = -6f;
@@ -59,7 +62,7 @@ namespace DaggerfallWorkshop.Utility
             // Validate
             if (string.IsNullOrEmpty(blockName))
                 return null;
-            if (!blockName.ToUpper().EndsWith(".RMB"))
+            if (!blockName.EndsWith(".RMB", StringComparison.InvariantCultureIgnoreCase))
                 return null;
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)

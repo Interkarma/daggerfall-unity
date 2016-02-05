@@ -120,9 +120,9 @@ namespace DaggerfallConnect.Arena2
                 return true;
 
             // Validate filename
-            filePath = filePath.ToUpper();
             string fn = Path.GetFileName(filePath);
-            if (!fn.StartsWith("SKY") && !fn.EndsWith(".DAT"))
+            if (!fn.StartsWith("SKY", StringComparison.InvariantCultureIgnoreCase) &&
+                !fn.EndsWith(".DAT", StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
             // Load file
@@ -245,8 +245,6 @@ namespace DaggerfallConnect.Arena2
                 bitmaps[index] = new DFBitmap();
                 bitmaps[index].Width = frameWidth;
                 bitmaps[index].Height = frameHeight;
-                bitmaps[index].Stride = frameWidth;
-                bitmaps[index].Format = DFBitmap.Formats.Indexed;
                 bitmaps[index].Data = Reader.ReadBytes(frameDataLength);
             }
 

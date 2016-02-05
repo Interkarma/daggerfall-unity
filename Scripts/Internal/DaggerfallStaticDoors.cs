@@ -138,6 +138,137 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Find closest door to player position in world space.
+        /// Owner position and rotation must be set.
+        /// </summary>
+        /// <param name="playerPos">Player position in world space.</param>
+        /// <param name="record">Door record index.</param>
+        /// <param name="doorPosOut">Position of closest door in world space.</param>
+        /// <param name="doorIndexOut">Door index in Doors array of closest door.</param>
+        /// <returns></returns>
+        public static bool FindClosestDoorToPlayer(Vector3 playerPos, StaticDoor[] doors, out Vector3 doorPosOut, out int doorIndexOut)
+        {
+            // Init output
+            doorPosOut = playerPos;
+            doorIndexOut = -1;
+
+            // Must have door array
+            if (doors == null || doors.Length == 0)
+                return false;
+
+            // Find closest door to player position
+            float minDistance = float.MaxValue;
+            for (int i = 0; i < doors.Length; i++)
+            {
+                // Get this door centre in world space
+                Vector3 centre = doors[i].ownerRotation * doors[i].buildingMatrix.MultiplyPoint3x4(doors[i].centre) + doors[i].ownerPosition;
+
+                // Check distance and save closest
+                float distance = Vector3.Distance(playerPos, centre);
+                if (distance < minDistance)
+                {
+                    doorPosOut = centre;
+                    doorIndexOut = i;
+                    minDistance = distance;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Finds closest door in any array of static doors.
+        /// Owner position and rotation must be set.
+        /// </summary>
+        /// <param name="position">Position to find closest door to.</param>
+        /// <param name="doors">Door array.</param>
+        /// <returns>Position of closest door in world space.</returns>
+        public static Vector3 FindClosestDoor(Vector3 position, StaticDoor[] doors, out StaticDoor closestDoorOut)
+        {
+            closestDoorOut = new StaticDoor();
+            Vector3 closestDoorPos = position;
+            float minDistance = float.MaxValue;
+            for (int i = 0; i < doors.Length; i++)
+            {
+                // Get this door centre in world space
+                Vector3 centre = doors[i].ownerRotation * doors[i].buildingMatrix.MultiplyPoint3x4(doors[i].centre) + doors[i].ownerPosition;
+
+                // Check distance and store closest
+                float distance = Vector3.Distance(position, centre);
+                if (distance < minDistance)
+                {
+                    closestDoorPos = centre;
+                    minDistance = distance;
+                    closestDoorOut = doors[i];
+                }
+            }
+
+            return closestDoorPos;
+        }
+
+        /// <summary>
+        /// Gets door position in world space.
+        /// Owner position and rotation must be set.
+        /// </summary>
+        /// <param name="index">Door index.</param>
+        /// <returns>Door position in world space.</returns>
+        public static Vector3 GetDoorPosition(StaticDoor door)
+        {
+            Vector3 centre = door.ownerRotation * door.buildingMatrix.MultiplyPoint3x4(door.centre) + door.ownerPosition;
+
+            return centre;
+        }
+
+        /// <summary>
+        /// Gets door normal in world space.
+        /// Owner position and rotation must be set.
+        /// </summary>
+        /// <param name="door">Door to calculate normal for.</param>
+        /// <returns>Normal pointing away from door in world.</returns>
+        public static Vector3 GetDoorNormal(StaticDoor door)
+        {
+            return Vector3.Normalize(door.ownerRotation * door.buildingMatrix.MultiplyVector(door.normal));
+        }
+
+        /// <summary>
+        /// Finds all doors of type across multiple door collections.
+        /// </summary>
+        /// <param name="doorCollections">Door collections.</param>
+        /// <param name="type">Type of door to search for.</param>
+        /// <returns>Array of matching doors.</returns>
+        public static StaticDoor[] FindDoorsInCollections(DaggerfallStaticDoors[] doorCollections, DoorTypes type)
+        {
+            List<StaticDoor> doorsOut = new List<StaticDoor>();
+            foreach (var collection in doorCollections)
+            {
+                for (int i = 0; i < collection.Doors.Length; i++)
+                {
+                    if (collection.Doors[i].doorType == type)
+                    {
+                        StaticDoor newDoor = collection.Doors[i];
+                        newDoor.ownerPosition = collection.transform.position;
+                        newDoor.ownerRotation = collection.transform.rotation;
+                        doorsOut.Add(newDoor);
+                    }
+                }
+            }
+
+            return doorsOut.ToArray();
+        }
+
+        /// <summary>
+        /// Gets door position in world space.
+        /// </summary>
+        /// <param name="index">Door index.</param>
+        /// <returns>Door position in world space.</returns>
+        public Vector3 GetDoorPosition(int index)
+        {
+            Vector3 centre = transform.rotation * Doors[index].buildingMatrix.MultiplyPoint3x4(Doors[index].centre) + transform.position;
+
+            return centre;
+        }
+
+        /// <summary>
         /// Gets world transformed normal of door at index.
         /// </summary>
         /// <param name="index">Door index.</param>
