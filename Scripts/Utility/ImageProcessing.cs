@@ -344,6 +344,52 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
+        #region Clothes Dye
+
+        /// <summary>
+        /// Dye a clothing image based on dye index.
+        /// </summary>
+        /// <param name="srcBitmap">Source image.</param>
+        /// <param name="dye">Dye index.</param>
+        /// <param name="ignoreMask">Treats background mask as transparent.</param>
+        /// <returns>New DFBitmap dyed to specified colour.</returns>
+        public static DFBitmap ChangeDye(DFBitmap srcBitmap, DyeColors dye, bool ignoreMask = false)
+        {
+            const byte maskIndex = 0xff;
+
+            DFBitmap dstBitmap = DFBitmap.CloneDFBitmap(srcBitmap, false);
+            byte[] swaps = GetDyeColors(dye);
+
+            // Swap indices 0x60 - 0x6F for clothing
+            int rowPos;
+            for (int y = 0; y < srcBitmap.Height; y++)
+            {
+                rowPos = y * srcBitmap.Width;
+                for (int x = 0; x < srcBitmap.Width; x++)
+                {
+                    int srcOffset = rowPos + x;
+                    byte index = srcBitmap.Data[srcOffset];
+
+                    if (ignoreMask && index == maskIndex)
+                            index = 0;
+
+                    if (index >= 0x60 && index <= 0x6f)
+                    {
+                        int tintOffset = index - 0x60;
+                        dstBitmap.Data[srcOffset] = swaps[tintOffset];
+                    }
+                    else
+                    {
+                        dstBitmap.Data[srcOffset] = index;
+                    }
+                }
+            }
+
+            return dstBitmap;
+        }
+
+        #endregion
+
         #region Weapon Tinting
 
         /// <summary>
@@ -431,6 +477,54 @@ namespace DaggerfallWorkshop.Utility
             }
 
             return indices;
+        }
+
+        // Gets dye table for 10 known clothing dyes
+        public static byte[] GetDyeColors(DyeColors dye)
+        {
+            int start = 0x60;
+            switch (dye)
+            {
+                case DyeColors.Blue:
+                    start = 0x60;
+                    break;
+                case DyeColors.Grey:
+                    start = 0x50;
+                    break;
+                case DyeColors.Red:
+                    start = 0xEF;
+                    break;
+                case DyeColors.DarkBrown:
+                    start = 0x20;
+                    break;
+                case DyeColors.Purple:
+                    start = 0x30;
+                    break;
+                case DyeColors.LightBrown:
+                    start = 0x40;
+                    break;
+                case DyeColors.White:
+                    start = 0x70;
+                    break;
+                case DyeColors.Aquamarine:
+                    start = 0x80;
+                    break;
+                case DyeColors.Yellow:
+                    start = 0x90;
+                    break;
+                case DyeColors.Green:
+                    start = 0xA0;
+                    break;
+            }
+
+            // Geneate index swaps
+            byte[] swaps = new byte[16];
+            for (int i = 0; i < 16; i++)
+            {
+                swaps[i] = (byte)(start + i);
+            }
+
+            return swaps;
         }
 
         #endregion

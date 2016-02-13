@@ -346,6 +346,25 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
+    /// Available dye colours on clothing.
+    /// Order matches known Daggerfall clothing color indices.
+    /// May change at a later date with new research.
+    /// </summary>
+    public enum DyeColors
+    {
+        Blue,
+        Grey,
+        Red,
+        DarkBrown,
+        Purple,
+        LightBrown,
+        White,
+        Aquamarine,
+        Yellow,
+        Green,
+    }
+
+    /// <summary>
     /// Generic weapon types in Daggerfall.
     /// </summary>
     public enum WeaponTypes

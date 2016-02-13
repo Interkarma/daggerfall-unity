@@ -97,8 +97,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// Flags tooltip to be drawn at end of UI update.
         /// </summary>
         /// <param name="text">Text to render inside tooltip.</param>
-        /// <param name="owner">Owner for scaling purposes.</param>
-        public void Draw(string text, BaseScreenComponent owner = null)
+        public void Draw(string text)
         {
             // Validate
             if (font == null || string.IsNullOrEmpty(text))

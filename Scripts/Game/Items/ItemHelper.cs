@@ -17,6 +17,7 @@ using DaggerfallConnect.Save;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -169,8 +170,14 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>ImageData.</returns>
         public ImageData GetItemImage(DaggerfallUnityItem item, bool rightHand = false, bool stripOtherMasks = false)
         {
-            // Get metal type
+            // Get color index for cache
+            int color = 0;
             MetalTypes metalType = ConvertItemMaterialToAPIMetalType(item);
+            ItemGroups group = item.ItemGroup;
+            if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
+                color = (int)metalType;
+            else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
+                color = item.ItemRecord.ParsedData.color;
 
             // Get archive and record indices
             int bitfield = (int)item.ItemRecord.ParsedData.image1;
@@ -188,7 +195,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Get unique key
-            int key = MakeImageKey(metalType, rightHand, archive, record, stripOtherMasks);
+            int key = MakeImageKey(color, rightHand, archive, record, stripOtherMasks);
 
             // Get existing icon if in cache
             if (itemImages.ContainsKey(key))
@@ -201,7 +208,10 @@ namespace DaggerfallWorkshop.Game.Items
                 throw new Exception("GetItemImage() could not load image data.");
 
             // Apply metal type
-            data = ApplyMetalType(data, metalType, stripOtherMasks);
+            if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
+                data = ApplyMetalType(data, metalType, stripOtherMasks);
+            else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
+                data = SetDyeColor(data, (DyeColors)color, stripOtherMasks);
 
             // Add to cache
             itemImages.Add(key, data);
@@ -285,6 +295,32 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 return MetalTypes.None;
             }
+        }
+
+        /// <summary>
+        /// Checks legacy item ID against legacy equip index to determine if item is equipped to a slot.
+        /// Must have previously used SetLegacyEquipTable to EntityItems provided.
+        /// </summary>
+        /// <param name="item">Item to test.</param>
+        /// <param name="entityItems">EntityItems with legacy equip table set.</param>
+        /// <returns>Index of item in equip table or -1 if not equipped.</returns>
+        public int GetLegacyEquipIndex(DaggerfallUnityItem item, EntityItems entityItems)
+        {
+            // Interim use of classic data
+            ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
+            uint[] legacyEquipTable = (GameManager.Instance.PlayerEntity as DaggerfallEntity).Items.LegacyEquipTable;
+            if (legacyEquipTable == null || legacyEquipTable.Length == 0)
+                return -1;
+
+            // Try to match item RecordID with equipped item IDs
+            // Item RecordID must be shifted right 8 bits
+            for (int i = 0; i < legacyEquipTable.Length; i++)
+            {
+                if (legacyEquipTable[i] == (item.ItemRecord.RecordRoot.RecordID >> 8))
+                    return i;
+            }
+
+            return -1;
         }
 
         #endregion
@@ -401,17 +437,17 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Makes a unique image key based on item variables.
         /// </summary>
-        int MakeImageKey(MetalTypes metalType, bool rightHand, int archive, int record, bool stripOtherMasks)
+        int MakeImageKey(int color, bool rightHand, int archive, int record, bool stripOtherMasks)
         {
             int hand = (rightHand) ? 1 : 0;
             int mask = (stripOtherMasks) ? 1 : 0;
 
-            // 4 bits for metal type
+            // 4 bits for color
             // 1 bits for hand
             // 9 bits for archive
             // 7 bits for record
             // 1 bits for mask stripped
-            return ((int)metalType << 28) + ((int)hand << 27) + (archive << 18) + (record << 11) + (mask << 10);
+            return ((int)color << 28) + ((int)hand << 27) + (archive << 18) + (record << 11) + (mask << 10);
         }
 
         /// <summary>
@@ -420,6 +456,17 @@ namespace DaggerfallWorkshop.Game.Items
         ImageData ApplyMetalType(ImageData imageData, MetalTypes metalType, bool stripOtherMasks)
         {
             imageData.dfBitmap = ImageProcessing.ChangeMaterial(imageData.dfBitmap, metalType, stripOtherMasks);
+            ImageReader.UpdateTexture(ref imageData);
+
+            return imageData;
+        }
+
+        /// <summary>
+        /// Assigns a new Texture2D based on dye colour.
+        /// </summary>
+        ImageData SetDyeColor(ImageData imageData, DyeColors dye, bool stripOtherMasks = false)
+        {
+            imageData.dfBitmap = ImageProcessing.ChangeDye(imageData.dfBitmap, dye, stripOtherMasks);
             ImageReader.UpdateTexture(ref imageData);
 
             return imageData;

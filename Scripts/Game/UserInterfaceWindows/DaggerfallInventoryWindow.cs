@@ -251,6 +251,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public void Refresh()
         {
+            playerEntity = GameManager.Instance.PlayerEntity;
             RefreshItemLists();
             characterPortrait.Refresh();
         }
@@ -407,10 +408,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 myItemIconPanels[i].BackgroundTexture = myItemImages[i].texture;
 
                 // Set tooltip text
-                //string text = item.Name;
+                string text = item.Name;
 
+                // Try to find equip index
                 ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
-                string text = string.Format("{0}\ri:{1}", item.Name, template.Unknown3);
+                int equipIndex = DaggerfallUnity.Instance.ItemHelper.GetLegacyEquipIndex(item, playerEntity.Items);
+                text += string.Format("\rcolr:{0}", item.ItemRecord.ParsedData.color);
+                if (equipIndex != -1)
+                    text += string.Format(" slot:{0}", equipIndex);
+
+                //ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
+                //string text = string.Format("{0}\ri:{1}", item.Name, template.Unknown3);
 
                 myItemIconPanels[i].ToolTipText = text;
             }
@@ -461,9 +469,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             foreach(DaggerfallUnityItem item in playerItems)
             {
                 ItemGroups group = (ItemGroups)item.ItemRecord.ParsedData.category1;
-
-                if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
+                if (group == ItemGroups.Weapons || group == ItemGroups.Armor ||
+                    group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)     // Testing
+                {
                     weaponsAndArmorList.Add(item);
+                }
             }
 
             // Reset scroll positions

@@ -477,7 +477,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Draw tooltip on mouse hover
             if (toolTip != null && mouseOverComponent && hoverTime >= toolTip.ToolTipDelay)
             {
-                toolTip.Draw(toolTipText, parent);
+                toolTip.Draw(toolTipText);
             }
         }
 

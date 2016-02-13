@@ -100,6 +100,9 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 items.AddItem(new DaggerfallUnityItem((ItemRecord)record));
             }
+
+            // Set interim legacy equip table
+            items.SetLegacyEquipTable(characterRecord);
         }
 
         /// <summary>

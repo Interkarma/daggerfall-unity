@@ -47,6 +47,11 @@ namespace DaggerfallWorkshop.Game.Items
             set { SetItemRecord(value); }
         }
 
+        public ItemGroups ItemGroup
+        {
+            get { return GetItemGroup(); }
+        }
+
         #endregion
 
         #region Constructors
@@ -112,6 +117,15 @@ namespace DaggerfallWorkshop.Game.Items
             itemRecord.CopyTo(newItem.itemRecord);
 
             return newItem;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        ItemGroups GetItemGroup()
+        {
+            return (ItemGroups)itemRecord.ParsedData.category1;
         }
 
         #endregion

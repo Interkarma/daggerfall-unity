@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.Entity
@@ -28,10 +29,20 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Fields
 
         List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
+        uint[] legacyEquipTable;
 
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets legacy equip table previous set by SetLegacyEquipTable().
+        /// </summary>
+        public uint[] LegacyEquipTable
+        {
+            get { return legacyEquipTable; }
+        }
+
         #endregion
 
         #region Structures
@@ -93,6 +104,15 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             CopyAll(other);
             other.RemoveAll();
+        }
+
+        /// <summary>
+        /// Gets a copy of legacy equip table from a CharacterRecord.
+        /// </summary>
+        /// <param name="characterRecord"></param>
+        public void SetLegacyEquipTable(CharacterRecord characterRecord)
+        {
+            legacyEquipTable = (uint[])characterRecord.ParsedData.equippedItems.Clone();
         }
 
         #endregion
