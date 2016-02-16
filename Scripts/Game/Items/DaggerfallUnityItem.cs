@@ -119,6 +119,21 @@ namespace DaggerfallWorkshop.Game.Items
             return newItem;
         }
 
+        /// <summary>
+        /// Checks if item matches specified group and index.
+        /// </summary>
+        /// <returns>True if item matches type.</returns>
+        public bool IsOfType(ItemGroups group, int index)
+        {
+            if (ItemGroup == group)
+            {
+                if (itemRecord.ParsedData.category2 == index)
+                    return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region Private Methods

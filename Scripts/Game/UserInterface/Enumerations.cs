@@ -81,9 +81,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
     }
 
     /// <summary>
-    /// Defines layout of certain textures, such as backgrounds.
+    /// Defines layout of background textures.
     /// </summary>
-    public enum TextureLayout
+    public enum BackgroundLayout
     {
         Tile,                           // Texture is tiled inside parent
         StretchToFill,                  // Texture will stretch to fill parent

@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Native panel
             nativePanel.HorizontalAlignment = HorizontalAlignment.Center;
             nativePanel.VerticalAlignment = VerticalAlignment.Middle;
-            nativePanel.BackgroundTextureLayout = TextureLayout.StretchToFill;
+            nativePanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
             nativePanel.Size = new Vector2(nativeScreenWidth, nativeScreenHeight);
 
             // Set native panel scaling mode

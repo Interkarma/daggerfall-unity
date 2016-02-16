@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             pickerPanel.HorizontalAlignment = HorizontalAlignment.Center;
             pickerPanel.VerticalAlignment = VerticalAlignment.Middle;
             pickerPanel.BackgroundTexture = nativeTexture;
-            pickerPanel.BackgroundTextureLayout = TextureLayout.StretchToFill;
+            pickerPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
             NativePanel.Components.Add(pickerPanel);
 
             // Create list box

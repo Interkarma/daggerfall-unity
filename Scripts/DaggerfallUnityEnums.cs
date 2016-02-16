@@ -328,6 +328,8 @@ namespace DaggerfallWorkshop
 
     /// <summary>
     /// Various metal types in Daggerfall.
+    /// This is a Daggerfall Unity enum.
+    /// For enum matching native data see Items/ItemEnums.cs.
     /// </summary>
     public enum MetalTypes
     {
@@ -346,22 +348,47 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
-    /// Available dye colours on clothing.
-    /// Order matches known Daggerfall clothing color indices.
+    /// Available dye colours for armour, weapons, and clothing.
+    /// Values match known Daggerfall colour indices.
     /// May change at a later date with new research.
     /// </summary>
     public enum DyeColors
     {
-        Blue,
-        Grey,
-        Red,
-        DarkBrown,
-        Purple,
-        LightBrown,
-        White,
-        Aquamarine,
-        Yellow,
-        Green,
+        // Clothing dyes
+        Blue = 0,
+        Grey = 1,
+        Red = 2,
+        DarkBrown = 3,
+        Purple = 4,
+        LightBrown = 5,
+        White = 6,
+        Aquamarine = 7,
+        Yellow = 8,
+        Green = 9,
+
+        // 10-14 Unknown or not observed
+
+        // Weapon and armour dyes
+        Iron = 15,
+        Steel = 16,
+        Chain = 17,
+        Unchanged = 18,
+        SilverOrElven = 19,
+        Dwarven = 20,
+        Mithril = 21,
+        Adamantium = 22,
+        Ebony = 23,
+        Orcish = 24,
+        Daedric = 25,
+    }
+
+    /// <summary>
+    /// Supported targets for dye changes.
+    /// </summary>
+    public enum DyeTargets
+    {
+        Clothing,
+        WeaponsAndArmor,
     }
 
     /// <summary>
@@ -482,5 +509,25 @@ namespace DaggerfallWorkshop
         Both,               // Can wield in both hands only
         LeftOnly,           // Can wield in left hand only (e.g. shields)
         RightOnly,          // Can wield in right hand only
+    }
+
+    /// <summary>
+    /// Various containers for inventory management.
+    /// Not sure if all of these are used.
+    /// May change at a later date.
+    /// </summary>
+    public enum ContainerTypes
+    {
+        Corpse1,
+        Corpse2,
+        Ground,
+        Wagon,
+        Shelves,
+        Chest,
+        Merchant,
+        Table,
+        Magic,
+        Backpack,
+        Corpse3,
     }
 }

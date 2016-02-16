@@ -223,16 +223,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             myItemsListPanel.OnMouseScrollUp += MyItemsListPanel_OnMouseScrollUp;
             myItemsListPanel.OnMouseScrollDown += MyItemsListPanel_OnMouseScrollDown;
 
-            // Setup buttons and interior image panels
+            // Setup buttons
             const int marginSize = 2;
             for (int i = 0; i < listDisplayUnits; i++)
             {
+                // Button
                 myItemsButtons[i] = DaggerfallUI.AddButton(myItemsButtonRects[i], myItemsListPanel);
                 myItemsButtons[i].SetMargins(Margins.All, marginSize);
-                myItemIconPanels[i] = DaggerfallUI.AddPanel(myItemsButtons[i]);
-                myItemIconPanels[i].BackgroundTextureLayout = TextureLayout.ScaleToFit;
+                myItemsButtons[i].ToolTip = defaultToolTip;
+
+                // Icon image panel
+                myItemIconPanels[i] = DaggerfallUI.AddPanel(myItemsButtons[i], AutoSizeModes.ScaleToFit);
+                myItemIconPanels[i].HorizontalAlignment = HorizontalAlignment.Center;
+                myItemIconPanels[i].VerticalAlignment = VerticalAlignment.Middle;
+                myItemIconPanels[i].MaxAutoScale = 1f;
                 myItemIconPanels[i].BackgroundColor = new Color(1, 0, 0, 0.25f);
-                myItemIconPanels[i].ToolTip = defaultToolTip;
             }
         }
 
@@ -394,33 +399,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Get images for inventory items
             for (int i = 0; i < listDisplayUnits; i++)
             {
-                // Break on overflow
+                // Skip when display larger than total units
                 if (index + i >= items.Count)
-                    break;
+                {
+                    myItemsButtons[i].ToolTipText = string.Empty;
+                    continue;
+                }
 
                 // Get item
                 DaggerfallUnityItem item = items[index + i];
 
                 // Get inventory image
-                myItemImages[i] = DaggerfallUnity.ItemHelper.GetItemImage(item, false, true);
+                if (item.IsOfType(ItemGroups.Transportation, 0))
+                {
+                    // Handle small cart - the template image for this is not correct
+                    // Correct image actually in CIF files
+                    myItemImages[i] = DaggerfallUnity.ItemHelper.GetContainerImage(ContainerTypes.Wagon);
+                }
+                else
+                {
+                    // Get inventory image
+                    myItemImages[i] = DaggerfallUnity.ItemHelper.GetItemImage(item, 0, true);
+                }
 
                 // Set image to button icon
                 myItemIconPanels[i].BackgroundTexture = myItemImages[i].texture;
+                myItemIconPanels[i].Size = new Vector2(myItemImages[i].texture.width, myItemImages[i].texture.height);
 
                 // Set tooltip text
                 string text = item.Name;
 
                 // Try to find equip index
-                ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
-                int equipIndex = DaggerfallUnity.Instance.ItemHelper.GetLegacyEquipIndex(item, playerEntity.Items);
-                text += string.Format("\rcolr:{0}", item.ItemRecord.ParsedData.color);
-                if (equipIndex != -1)
-                    text += string.Format(" slot:{0}", equipIndex);
+                //ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
+                //int equipIndex = DaggerfallUnity.Instance.ItemHelper.GetLegacyEquipIndex(item, playerEntity.Items);
+                //if (equipIndex != -1)
+                //    text += string.Format(" slot:{0}", equipIndex);
 
                 //ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
-                //string text = string.Format("{0}\ri:{1}", item.Name, template.Unknown3);
+                //text += string.Format("\rvariants:{0}", template.variants);
 
-                myItemIconPanels[i].ToolTipText = text;
+                myItemsButtons[i].ToolTipText = text;
             }
         }
 
@@ -468,9 +486,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Enumerate items to group lists
             foreach(DaggerfallUnityItem item in playerItems)
             {
-                ItemGroups group = (ItemGroups)item.ItemRecord.ParsedData.category1;
-                if (group == ItemGroups.Weapons || group == ItemGroups.Armor ||
-                    group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)     // Testing
+                ItemGroups group = item.ItemGroup;
+                //if (group == ItemGroups.Weapons || group == ItemGroups.Armor ||
+                    //group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)     // Testing
                 {
                     weaponsAndArmorList.Add(item);
                 }

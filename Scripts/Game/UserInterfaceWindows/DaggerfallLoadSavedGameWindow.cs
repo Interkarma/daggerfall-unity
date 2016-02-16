@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Setup image button
                 saveImageButtons[i] = DaggerfallUI.AddButton(saveImageButtonDims[i], NativePanel);
                 saveImageButtons[i].BackgroundTexture = saveTexture;
-                saveImageButtons[i].BackgroundTextureLayout = TextureLayout.ScaleToFit;
+                saveImageButtons[i].BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
                 saveImageButtons[i].Tag = i;
                 saveImageButtons[i].OnMouseClick += SaveGame_OnMouseClick;
                 saveImageButtons[i].OnMouseDoubleClick += SaveGame_OnMouseDoubleClick;

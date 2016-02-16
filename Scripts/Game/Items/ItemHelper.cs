@@ -29,9 +29,11 @@ namespace DaggerfallWorkshop.Game.Items
         #region Fields
 
         const string itemTemplatesFilename = "ItemTemplates";
+        const string containerIconsFilename = "INVE16I0.CIF";
 
         List<ItemTemplate> itemTemplates = new List<ItemTemplate>();
         Dictionary<int, ImageData> itemImages = new Dictionary<int, ImageData>();
+        Dictionary<ContainerTypes, ImageData> containerImages = new Dictionary<ContainerTypes, ImageData>();
 
         #endregion
 
@@ -165,37 +167,21 @@ namespace DaggerfallWorkshop.Game.Items
         /// Image will be cached based on material and hand for faster subsequent fetches.
         /// </summary>
         /// <param name="item">Item fetch image for.</param>
-        /// <param name="rightHand">Attempts to get right-hand specific image when present.</param>
-        /// <param name="stripOtherMasks">Remove other masks, such as the hair mask.</param>
+        /// <param name="variant">Variant of image (e.g. hood up/down or hand left/right).</param>
+        /// <param name="ignoreMask">Remove background mask.</param>
         /// <returns>ImageData.</returns>
-        public ImageData GetItemImage(DaggerfallUnityItem item, bool rightHand = false, bool stripOtherMasks = false)
+        public ImageData GetItemImage(DaggerfallUnityItem item, int variant = 0, bool ignoreMask = false)
         {
-            // Get color index for cache
-            int color = 0;
-            MetalTypes metalType = ConvertItemMaterialToAPIMetalType(item);
-            ItemGroups group = item.ItemGroup;
-            if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
-                color = (int)metalType;
-            else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
-                color = item.ItemRecord.ParsedData.color;
+            // Get colour
+            int color = item.ItemRecord.ParsedData.color;
 
             // Get archive and record indices
             int bitfield = (int)item.ItemRecord.ParsedData.image1;
             int archive = bitfield >> 7;
-            int record = bitfield & 0x7f;
-
-            // Try right-hand image if requested
-            if (rightHand)
-            {
-                // Images that can be used in either hand store right-hand icon at record index + 1
-                if (GetItemHands(item) == ItemHands.Either)
-                    record++;
-                else
-                    rightHand = false;
-            }
+            int record = (bitfield & 0x7f) + variant;
 
             // Get unique key
-            int key = MakeImageKey(color, rightHand, archive, record, stripOtherMasks);
+            int key = MakeImageKey(color, variant, archive, record, ignoreMask);
 
             // Get existing icon if in cache
             if (itemImages.ContainsKey(key))
@@ -207,11 +193,15 @@ namespace DaggerfallWorkshop.Game.Items
             if (data.type == ImageTypes.None)
                 throw new Exception("GetItemImage() could not load image data.");
 
-            // Apply metal type
+            // Change dye or just update texture
+            ItemGroups group = item.ItemGroup;
+            DyeColors dye = (DyeColors)color;
             if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
-                data = ApplyMetalType(data, metalType, stripOtherMasks);
+                data = ChangeDye(data, dye, DyeTargets.WeaponsAndArmor, ignoreMask);
             else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
-                data = SetDyeColor(data, (DyeColors)color, stripOtherMasks);
+                data = ChangeDye(data, dye, DyeTargets.Clothing, ignoreMask);
+            else
+                ImageReader.UpdateTexture(ref data);
 
             // Add to cache
             itemImages.Add(key, data);
@@ -220,7 +210,27 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Converts weapon and armor item material types back to API metal type for tinting.
+        /// Gets icon for a container object, such as the wagon.
+        /// </summary>
+        /// <param name="type">Container type.</param>
+        /// <returns>ImageData.</returns>
+        public ImageData GetContainerImage(ContainerTypes type)
+        {
+            // Get existing icon if in cache
+            if (containerImages.ContainsKey(type))
+                return containerImages[type];
+
+            // Load image data
+            ImageData data = ImageReader.GetImageData(containerIconsFilename, (int)type, 0, true, true);
+
+            // Add to cache
+            containerImages.Add(type, data);
+
+            return data;
+        }
+
+        /// <summary>
+        /// Converts native Daggerfall weapon and armor material types to generic Daggerfall Unity MetalType.
         /// </summary>
         /// <param name="item">Item to convert material to metal type.</param>
         /// <returns>MetalType.</returns>
@@ -437,36 +447,24 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Makes a unique image key based on item variables.
         /// </summary>
-        int MakeImageKey(int color, bool rightHand, int archive, int record, bool stripOtherMasks)
+        int MakeImageKey(int color, int variant, int archive, int record, bool ignoreMask)
         {
-            int hand = (rightHand) ? 1 : 0;
-            int mask = (stripOtherMasks) ? 1 : 0;
+            int mask = (ignoreMask) ? 1 : 0;
 
-            // 4 bits for color
-            // 1 bits for hand
+            // 5 bits for color
+            // 3 bits for variant
             // 9 bits for archive
             // 7 bits for record
-            // 1 bits for mask stripped
-            return ((int)color << 28) + ((int)hand << 27) + (archive << 18) + (record << 11) + (mask << 10);
-        }
-
-        /// <summary>
-        /// Assigns new Texture2D based on metal type.
-        /// </summary>
-        ImageData ApplyMetalType(ImageData imageData, MetalTypes metalType, bool stripOtherMasks)
-        {
-            imageData.dfBitmap = ImageProcessing.ChangeMaterial(imageData.dfBitmap, metalType, stripOtherMasks);
-            ImageReader.UpdateTexture(ref imageData);
-
-            return imageData;
+            // 1 bits for mask
+            return (color << 27) + (variant << 24) + (archive << 15) + (record << 8) + (mask << 7);
         }
 
         /// <summary>
         /// Assigns a new Texture2D based on dye colour.
         /// </summary>
-        ImageData SetDyeColor(ImageData imageData, DyeColors dye, bool stripOtherMasks = false)
+        ImageData ChangeDye(ImageData imageData, DyeColors dye, DyeTargets target, bool ignoreMask = false)
         {
-            imageData.dfBitmap = ImageProcessing.ChangeDye(imageData.dfBitmap, dye, stripOtherMasks);
+            imageData.dfBitmap = ImageProcessing.ChangeDye(imageData.dfBitmap, dye, target, ignoreMask);
             ImageReader.UpdateTexture(ref imageData);
 
             return imageData;

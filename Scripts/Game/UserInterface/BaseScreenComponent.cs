@@ -58,10 +58,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color backgroundColor = Color.clear;
         Texture2D backgroundColorTexture;
         protected Texture2D backgroundTexture;
-        protected TextureLayout backgroundTextureLayout = TextureLayout.StretchToFill;
+        protected BackgroundLayout backgroundTextureLayout = BackgroundLayout.StretchToFill;
 
         bool mouseOverComponent = false;
         bool leftMouseWasHeldDown = false;
+
+        float minAutoScale = 0;
+        float maxAutoScale = 0;
 
         public delegate void OnMouseEnterHandler();
         public event OnMouseEnterHandler OnMouseEnter;
@@ -229,7 +232,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Gets or sets background texture layout behaviour.
         /// </summary>
-        public TextureLayout BackgroundTextureLayout
+        public BackgroundLayout BackgroundTextureLayout
         {
             get { return backgroundTextureLayout; }
             set { backgroundTextureLayout = value; }
@@ -294,6 +297,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return toolTipText; }
             set { toolTipText = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets lower autoscale clamp. 0 to disable.
+        /// </summary>
+        public float MinAutoScale
+        {
+            get { return minAutoScale; }
+            set { minAutoScale = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets upper autoscale clamp. 0 to disable.
+        /// </summary>
+        public float MaxAutoScale
+        {
+            get { return maxAutoScale; }
+            set { maxAutoScale = value; }
         }
 
         // Margin properties
@@ -452,15 +473,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 switch (backgroundTextureLayout)
                 {
-                    case TextureLayout.Tile:
+                    case BackgroundLayout.Tile:
                         backgroundTexture.wrapMode = TextureWrapMode.Repeat;
                         GUI.DrawTextureWithTexCoords(Rectangle, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
                         break;
-                    case TextureLayout.StretchToFill:
+                    case BackgroundLayout.StretchToFill:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
                         GUI.DrawTexture(Rectangle, backgroundTexture, ScaleMode.StretchToFill);
                         break;
-                    case TextureLayout.ScaleToFit:
+                    case BackgroundLayout.ScaleToFit:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
                         GUI.DrawTexture(Rectangle, backgroundTexture, ScaleMode.ScaleToFit);
                         break;
@@ -712,7 +733,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     localScale = (parent != null) ? parent.LocalScale : scale;
                     break;
                 case AutoSizeModes.ResizeToFill:
-                    ResizeToFill();
+                    rectangle = ResizeToFill(rectangle);
                     break;
                 case AutoSizeModes.ScaleToFit:
                     rectangle = ScaleToFit(rectangle);
@@ -788,13 +809,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Resize to fill parent.
         /// </summary>
-        private void ResizeToFill()
+        private Rect ResizeToFill(Rect srcRect)
         {
+            Rect finalRect = srcRect;
+
             if (parent != null)
             {
                 size.x = parent.InteriorWidth;
                 size.y = parent.InteriorHeight;
+
+                finalRect.width = size.x;
+                finalRect.height = size.y;
             }
+
+            return finalRect;
         }
 
         /// <summary>
@@ -806,8 +834,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (parent != null)
             {
-                int parentWidth = (int)parent.Size.x;
-                int parentHeight = (int)parent.Size.y;
+                int parentWidth = parent.InteriorWidth;
+                int parentHeight = parent.InteriorHeight;
 
                 float scale;
                 if (parentWidth > parentHeight)
@@ -817,6 +845,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 if (finalRect.width * scale > parentWidth)
                     scale = parentWidth / size.x;
+
+                // Clamp minimum autoscale
+                if (minAutoScale != 0)
+                    if (scale < minAutoScale) scale = minAutoScale;
+
+                // Clamp maximum autoscale
+                if (maxAutoScale != 0)
+                    if (scale > maxAutoScale) scale = maxAutoScale;
 
                 finalRect.width *= scale;
                 finalRect.height *= scale;

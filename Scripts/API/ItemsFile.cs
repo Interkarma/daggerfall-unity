@@ -26,17 +26,17 @@ namespace DaggerfallConnect.FallExe
     {
         public long position;                       // Position record was read from FALL.EXE
         public Byte[] name;                         // Display name
-        public Int32 baseWeightUnits;               // Base weight in number of 0.25 units
+        public Int32 baseWeightUnits;               // Base weight in 0.25kg units
         public Int16 hitPoints;                     // Hit points
-        public Int32 Unknown1;                      // Holding weight? - From 20 and up seems to be holding weight of container-like items (e.g. bookcase, chest, cart, ship)
-        public Int32 baseCost;                      // Base cost before material, mercantile, etc.
-        public Int16 enchantmentPoints;             // Enchantment points
-        public Int32 Unknown2Long;                  // Unknown2 read as 32-bits wide
-        public Int16 Unknown2;                      // Unknown
-        public Byte drawOrder;                      // Ordering of items on paper doll - lower numbered items are drawn first
-        public Byte Unknown3;                       // Item type? (known: value & 1 == ingredients) - could be part of a larger bitfield with drawOrder
-        public Int16 inventoryTextureBitfield;      // Bitfield for generic texture indices - does not appear to be used for weapons & armor
-        public Int16 unknownTextureBitfield;        // Bitfield for unknown texture indices, usually a generic icon - seems to be 0 for icons that do not appear on paper doll
+        public Int32 capacityOrTarget;              // Capacity of container or target of effect
+        public Int32 basePrice;                     // Base price before material, mercantile, etc. modify value
+        public Int16 enchantmentPoints;             // Base enchantment points before material
+        public Byte unknown;                        // Unknown value
+        public Byte variants;                       // Number of variants for wearable items, unknown for non-wearable items
+        public Byte drawOrderOrEffect;              // Ordering of items on paper doll (sort lowest to highest) or effect for ingredients
+        public Byte propertiesBitfield;             // Bitfield with some other item properties
+        public Int16 inventoryTextureBitfield;      // Bitfield for inventory texture indices
+        public Int16 unknownTextureBitfield;        // Bitfield for unknown texture indices, seems to be world icon (e.g. when dropped)
     }
 
     /// <summary>
@@ -47,21 +47,22 @@ namespace DaggerfallConnect.FallExe
     [Serializable]
     public struct ItemTemplate
     {
-        public int position;                        // Position in file this item was read from
         public int index;                           // Index of this item in list
         public string name;                         // Display name
-        public float baseWeight;                    // Base weight before material, etc.
+        public float baseWeight;                    // Base weight in kilograms before material, etc.
         public int hitPoints;                       // Hit points
-        public Int32 Unknown1;                      // Holding weight? - From 20 and up seems to be holding weight of container-like items (e.g. bookcase, chest, cart, ship)
-        public int baseCost;                        // Base cost before material, mercantile, etc.
-        public int enchantmentPoints;               // Enchantment points
-        public Int32 Unknown2Long;                  // Unknown
-        public Int16 Unknown2;                      // Unknown
-        public byte drawOrder;                      // Ordering of items on paper doll - lower numbered items are drawn first
-        public Byte Unknown3;                       // Item type? (known: value & 1 == ingredients) - could be part of a larger bitfield with drawOrder
-        public bool isIngredient;                   // True for ingedient items, derived from Unknown3
-        public int inventoryTextureArchive;         // Generic texture archive index
-        public int inventoryTextureRecord;          // Generic texture record index
+        public int capacityOrTarget;                // Capacity of container or target of effect
+        public int basePrice;                       // Base price before material, mercantile, etc. modify value
+        public int enchantmentPoints;               // Base enchantment points before material
+        public byte unknown;                        // Unknown value
+        public byte variants;                       // Number of variants for wearable items, unknown for non-wearable items
+        public byte drawOrderOrEffect;              // Ordering of items on paper doll (sort lowest to highest) or effect for ingredients
+        public bool isBluntWeapon;                  // True for blunt weapons
+        public bool isLiquid;                       // True for liquids
+        public bool isOneHanded;                    // True for one-handed item/weapons
+        public bool isIngredient;                   // True for ingedient items
+        public int inventoryTextureArchive;         // Inventory texture archive index
+        public int inventoryTextureRecord;          // Inventory texture record index
         public int unknownTextureArchive;           // Unknown texture archive index
         public int unknownTextureRecord;            // Unknown texture record index
     }
@@ -230,18 +231,20 @@ namespace DaggerfallConnect.FallExe
             if (items.Count > 0 && index >= 0 && index < items.Count)
             {
                 DFItem item = items[index];
-                desc.position = (int)item.position;
                 desc.index = index;
                 desc.name = Encoding.UTF8.GetString(item.name).TrimEnd('\0');
                 desc.baseWeight = (float)item.baseWeightUnits * 0.25f;
                 desc.hitPoints = item.hitPoints;
-                desc.Unknown1 = item.Unknown1;
+                desc.capacityOrTarget = item.capacityOrTarget;
+                desc.basePrice = item.basePrice;
                 desc.enchantmentPoints = item.enchantmentPoints;
-                desc.Unknown2Long = item.Unknown2Long;
-                desc.Unknown2 = item.Unknown2;
-                desc.drawOrder = item.drawOrder;
-                desc.Unknown3 = item.Unknown3;
-                desc.isIngredient = ((item.Unknown3 & 1) == 1) ? true : false;
+                desc.unknown = item.unknown;
+                desc.variants = item.variants;
+                desc.drawOrderOrEffect = item.drawOrderOrEffect;
+                desc.isBluntWeapon = (((item.propertiesBitfield >> 4) & 1) == 1) ? true : false;
+                desc.isLiquid = (((item.propertiesBitfield >> 3) & 1) == 1) ? true : false;
+                desc.isOneHanded = (((item.propertiesBitfield >> 2) & 1) == 1) ? true : false;
+                desc.isIngredient = ((item.propertiesBitfield & 1) == 1) ? true : false;
                 desc.inventoryTextureArchive = item.inventoryTextureBitfield >> 7;
                 desc.inventoryTextureRecord = item.inventoryTextureBitfield & 0x7f;
                 desc.unknownTextureArchive = item.unknownTextureBitfield >> 7;
@@ -269,12 +272,13 @@ namespace DaggerfallConnect.FallExe
                 writer.Write(item.name);
                 writer.Write(item.baseWeightUnits);
                 writer.Write(item.hitPoints);
-                writer.Write(item.Unknown1);
-                writer.Write(item.baseCost);
+                writer.Write(item.capacityOrTarget);
+                writer.Write(item.basePrice);
                 writer.Write(item.enchantmentPoints);
-                writer.Write(item.Unknown2);
-                writer.Write(item.drawOrder);
-                writer.Write(item.Unknown3);
+                writer.Write(item.unknown);
+                writer.Write(item.variants);
+                writer.Write(item.drawOrderOrEffect);
+                writer.Write(item.propertiesBitfield);
                 writer.Write(item.inventoryTextureBitfield);
                 writer.Write(item.unknownTextureBitfield);
                 writer.Close();
@@ -339,17 +343,13 @@ namespace DaggerfallConnect.FallExe
             item.name = reader.ReadBytes(nameLength);
             item.baseWeightUnits = reader.ReadInt32();
             item.hitPoints = reader.ReadInt16();
-            item.Unknown1 = reader.ReadInt32();
-            item.baseCost = reader.ReadInt32();
+            item.capacityOrTarget = reader.ReadInt32();
+            item.basePrice = reader.ReadInt32();
             item.enchantmentPoints = reader.ReadInt16();
-
-            long pos = reader.BaseStream.Position;
-            item.Unknown2Long = reader.ReadInt32();
-            reader.BaseStream.Position = pos;
-
-            item.Unknown2 = reader.ReadInt16();
-            item.drawOrder = reader.ReadByte();
-            item.Unknown3 = reader.ReadByte();
+            item.unknown = reader.ReadByte();
+            item.variants = reader.ReadByte();
+            item.drawOrderOrEffect = reader.ReadByte();
+            item.propertiesBitfield = reader.ReadByte();
             item.inventoryTextureBitfield = reader.ReadInt16();
             item.unknownTextureBitfield = reader.ReadInt16();
 

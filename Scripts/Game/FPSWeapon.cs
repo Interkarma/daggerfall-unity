@@ -426,7 +426,7 @@ namespace DaggerfallWorkshop.Game
             // Tint based on metal type
             // But not for steel as that is default colour in files
             if (metalType != MetalTypes.Steel)
-                dfBitmap = ImageProcessing.ChangeMaterial(dfBitmap, metalType);
+                dfBitmap = ImageProcessing.ChangeDye(dfBitmap, ImageProcessing.GetMetalDyeColor(metalType), DyeTargets.WeaponsAndArmor);
 
             // Get Color32 array
             DFSize sz;
