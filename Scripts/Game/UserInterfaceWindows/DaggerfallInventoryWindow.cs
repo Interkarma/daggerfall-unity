@@ -429,14 +429,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Set tooltip text
                 string text = item.Name;
 
-                // Try to find equip index
-                //ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
-                //int equipIndex = DaggerfallUnity.Instance.ItemHelper.GetLegacyEquipIndex(item, playerEntity.Items);
-                //if (equipIndex != -1)
-                //    text += string.Format(" slot:{0}", equipIndex);
-
-                //ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
-                //text += string.Format("\rvariants:{0}", template.variants);
+                // Show some debug data
+                ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
+                int equipIndex = DaggerfallUnity.Instance.ItemHelper.GetLegacyEquipIndex(item, playerEntity.Items);
+                if (equipIndex != -1) text += string.Format("\re:{0}", equipIndex);
+                //text += string.Format("\ra:{0} r:{1} v:{2}", template.playerTextureArchive, template.playerTextureRecord, template.variants);
 
                 myItemsButtons[i].ToolTipText = text;
             }
@@ -487,8 +484,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             foreach(DaggerfallUnityItem item in playerItems)
             {
                 ItemGroups group = item.ItemGroup;
-                //if (group == ItemGroups.Weapons || group == ItemGroups.Armor ||
-                    //group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)     // Testing
+                if (group == ItemGroups.Weapons || group == ItemGroups.Armor ||
+                    group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)     // Testing
                 {
                     weaponsAndArmorList.Add(item);
                 }

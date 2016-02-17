@@ -35,8 +35,8 @@ namespace DaggerfallConnect.FallExe
         public Byte variants;                       // Number of variants for wearable items, unknown for non-wearable items
         public Byte drawOrderOrEffect;              // Ordering of items on paper doll (sort lowest to highest) or effect for ingredients
         public Byte propertiesBitfield;             // Bitfield with some other item properties
-        public Int16 inventoryTextureBitfield;      // Bitfield for inventory texture indices
-        public Int16 unknownTextureBitfield;        // Bitfield for unknown texture indices, seems to be world icon (e.g. when dropped)
+        public Int16 worldTextureBitfield;          // Bitfield for unknown texture indices, seems to be world icon (e.g. when dropped)
+        public Int16 playerTextureBitfield;         // Bitfield for player inventory texture indices
     }
 
     /// <summary>
@@ -61,10 +61,10 @@ namespace DaggerfallConnect.FallExe
         public bool isLiquid;                       // True for liquids
         public bool isOneHanded;                    // True for one-handed item/weapons
         public bool isIngredient;                   // True for ingedient items
-        public int inventoryTextureArchive;         // Inventory texture archive index
-        public int inventoryTextureRecord;          // Inventory texture record index
-        public int unknownTextureArchive;           // Unknown texture archive index
-        public int unknownTextureRecord;            // Unknown texture record index
+        public int worldTextureArchive;             // World texture archive index
+        public int worldTextureRecord;              // World texture record index
+        public int playerTextureArchive;            // Player inventory texture archive index
+        public int playerTextureRecord;             // Player inventory texture record index
     }
 
     /// <summary>
@@ -245,10 +245,10 @@ namespace DaggerfallConnect.FallExe
                 desc.isLiquid = (((item.propertiesBitfield >> 3) & 1) == 1) ? true : false;
                 desc.isOneHanded = (((item.propertiesBitfield >> 2) & 1) == 1) ? true : false;
                 desc.isIngredient = ((item.propertiesBitfield & 1) == 1) ? true : false;
-                desc.inventoryTextureArchive = item.inventoryTextureBitfield >> 7;
-                desc.inventoryTextureRecord = item.inventoryTextureBitfield & 0x7f;
-                desc.unknownTextureArchive = item.unknownTextureBitfield >> 7;
-                desc.unknownTextureRecord = item.unknownTextureBitfield & 0x7f;
+                desc.worldTextureArchive = item.worldTextureBitfield >> 7;
+                desc.worldTextureRecord = item.worldTextureBitfield & 0x7f;
+                desc.playerTextureArchive = item.playerTextureBitfield >> 7;
+                desc.playerTextureRecord = item.playerTextureBitfield & 0x7f;
             }
             
             return desc;
@@ -279,8 +279,8 @@ namespace DaggerfallConnect.FallExe
                 writer.Write(item.variants);
                 writer.Write(item.drawOrderOrEffect);
                 writer.Write(item.propertiesBitfield);
-                writer.Write(item.inventoryTextureBitfield);
-                writer.Write(item.unknownTextureBitfield);
+                writer.Write(item.worldTextureBitfield);
+                writer.Write(item.playerTextureBitfield);
                 writer.Close();
             }
         }
@@ -350,8 +350,8 @@ namespace DaggerfallConnect.FallExe
             item.variants = reader.ReadByte();
             item.drawOrderOrEffect = reader.ReadByte();
             item.propertiesBitfield = reader.ReadByte();
-            item.inventoryTextureBitfield = reader.ReadInt16();
-            item.unknownTextureBitfield = reader.ReadInt16();
+            item.worldTextureBitfield = reader.ReadInt16();
+            item.playerTextureBitfield = reader.ReadInt16();
 
             return item;
         }
