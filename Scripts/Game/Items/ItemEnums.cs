@@ -99,6 +99,43 @@ namespace DaggerfallWorkshop.Game.Items
         Daedric     = 0x0209,
     }
 
+    /// <summary>
+    /// Equipment slots available to equip items.
+    /// Indices match Daggerfall's legacy equip slots for import.
+    /// Some unknowns still need to be resolved.
+    /// </summary>
+    public enum EquipSlots
+    {
+        None = -1,
+        Amulet0 = 0,            // Amulets / Torcs
+        Amulet1 = 1,
+        Bracelet0 = 2,          // Bracelets
+        Bracelet1 = 3,
+        Ring0 = 4,              // Rings
+        Ring1 = 5,
+        Bracer0 = 6,            // Bracers
+        Bracer1 = 7,
+        Mark0 = 8,              // Marks
+        Mark1 = 9,
+        Crystal0 = 10,          // Gems
+        Crystal1 = 11,
+        Head = 12,              // Helm
+        RightArm = 13,          // Right pauldron
+        Cloak1 = 14,            // Cloaks
+        LeftArm = 15,           // Left pauldron
+        Cloak2 = 16,            // Cloaks
+        ChestClothes = 17,      // Shirt / Straps / Armband / Eodoric / Tunic / Surcoat / Plain robes / etc.
+        ChestArmor = 18,        // Cuirass
+        RightHand = 19,         // Right weapon / Two-handed weapon
+        Gloves = 20,            // Gauntlets
+        LeftHand = 21,          // Left weapon / Shields
+        Unknown1 = 22,
+        LegsArmor = 23,         // Greaves
+        LegsClothes = 24,       // Khajiit suit / Loincloth / Skirt / etc.
+        Unknown2 = 25,
+        Feet = 26,              // Boots / Shoes / Sandals / etc.
+    }
+
     public enum Drugs //checked
     {
         Indulcet = 78,
@@ -210,7 +247,7 @@ namespace DaggerfallWorkshop.Game.Items
         Short_skirt = 153,
         Casual_cloak = 154,
         Formal_cloak = 155,
-        Khajit_suit = 156,
+        Khajiit_suit = 156,
         Dwynnen_surcoat = 157,
         Short_tunic = 158,
         Formal_tunic = 159,
@@ -295,7 +332,7 @@ namespace DaggerfallWorkshop.Game.Items
         Casual_pants = 190,
         Casual_cloak = 191,
         Formal_cloak = 192,
-        Khajitt_suit = 193,
+        Khajiitt_suit = 193,
         Formal_eodoric = 194,
         Evening_gown = 195,
         Day_gown = 196,

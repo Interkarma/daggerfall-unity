@@ -71,6 +71,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button[] myItemsButtons = new Button[listDisplayUnits];
         Panel[] myItemIconPanels = new Panel[listDisplayUnits];
 
+        PaperDoll paperDoll = new PaperDoll();
+
         #endregion
 
         #region UI Textures
@@ -110,8 +112,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         PlayerEntity playerEntity;
         int[] scrollPositions = new int[4];
-
-        CharacterPortrait characterPortrait = new CharacterPortrait();
 
         TabPages selectedTabPage = TabPages.WeaponsAndArmor;
         List<DaggerfallUnityItem> weaponsAndArmorList = new List<DaggerfallUnityItem>();
@@ -162,9 +162,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.BackgroundTexture = baseTexture;
 
             // Character portrait
-            NativePanel.Components.Add(characterPortrait);
-            characterPortrait.Position = new Vector2(49, 13);
-            characterPortrait.Refresh();
+            NativePanel.Components.Add(paperDoll);
+            paperDoll.Position = new Vector2(49, 13);
+            paperDoll.Refresh();
 
             // Setup UI
             SetupTabPageButtons();
@@ -231,6 +231,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 myItemsButtons[i] = DaggerfallUI.AddButton(myItemsButtonRects[i], myItemsListPanel);
                 myItemsButtons[i].SetMargins(Margins.All, marginSize);
                 myItemsButtons[i].ToolTip = defaultToolTip;
+                myItemsButtons[i].Tag = i;
+                myItemsButtons[i].OnMouseDoubleClick += DaggerfallInventoryWindow_OnMouseDoubleClick;
 
                 // Icon image panel
                 myItemIconPanels[i] = DaggerfallUI.AddPanel(myItemsButtons[i], AutoSizeModes.ScaleToFit);
@@ -239,6 +241,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 myItemIconPanels[i].MaxAutoScale = 1f;
                 myItemIconPanels[i].BackgroundColor = new Color(1, 0, 0, 0.25f);
             }
+        }
+
+        private void DaggerfallInventoryWindow_OnMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
+        {
+            int index = scrollPositions[(int)selectedTabPage] + (int)sender.Tag;
+
+            // Get selected items list
+            List<DaggerfallUnityItem> items = SelectedMyItemsList();
+            if (items == null)
+                return;
+
+            // Get item
+            DaggerfallUnityItem item = items[index];
+
+            // Equip item
+            playerEntity.ItemEquipTable.EquipItem(item);
+            Refresh();
         }
 
         public override void OnPush()
@@ -258,7 +277,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             playerEntity = GameManager.Instance.PlayerEntity;
             RefreshItemLists();
-            characterPortrait.Refresh();
+            paperDoll.Refresh();
         }
 
         #endregion
@@ -430,10 +449,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 string text = item.Name;
 
                 // Show some debug data
-                ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
+                //ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
                 int equipIndex = DaggerfallUnity.Instance.ItemHelper.GetLegacyEquipIndex(item, playerEntity.Items);
                 if (equipIndex != -1) text += string.Format("\re:{0}", equipIndex);
-                //text += string.Format("\ra:{0} r:{1} v:{2}", template.playerTextureArchive, template.playerTextureRecord, template.variants);
+                text += string.Format("\ra:{0} i:{1} c:{2}", item.ItemRecord.ParsedData.image1 >> 7, item.ItemRecord.ParsedData.image1 & 0x7f, item.ItemRecord.ParsedData.color);
 
                 myItemsButtons[i].ToolTipText = text;
             }

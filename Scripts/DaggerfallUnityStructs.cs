@@ -136,6 +136,8 @@ namespace DaggerfallWorkshop
         public int record;                      // Original record
         public int frame;                       // Original frame
         public bool hasAlpha;                   // Original loaded with alpha cutout
+        public int width;                       // Original image width
+        public int height;                      // Original image height
         public DFBitmap dfBitmap;               // Original indexed bitmap
         public Texture2D texture;               // Generated texture
         public DFPosition offset;               // Custom Daggerfall offset position for paper doll inventory, etc.

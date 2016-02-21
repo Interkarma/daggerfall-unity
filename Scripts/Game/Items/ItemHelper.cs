@@ -62,14 +62,16 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Gets how item is held in the hands.
+        /// Item templates define whether item is 1 or 2 handed, but this method
+        /// provides more exact information about which hand item can be used in.
         /// </summary>
         public ItemHands GetItemHands(DaggerfallUnityItem item)
         {
             // Interim use of classic data
             ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
 
-            // Check if weapon or armor (for shields)
-            if ((ItemGroups)itemRecord.category1 != ItemGroups.Weapons ||
+            // Must be of group Weapons or Armor (for shields)
+            if ((ItemGroups)itemRecord.category1 != ItemGroups.Weapons &&
                 (ItemGroups)itemRecord.category1 != ItemGroups.Armor)
             {
                 return ItemHands.None;
@@ -94,7 +96,7 @@ namespace DaggerfallWorkshop.Game.Items
                 case Weapons.Mace:
                     return ItemHands.Either;
 
-                // Two-handed weapons
+                // Two-handed weapons only
                 case Weapons.Claymore:
                 case Weapons.Dai_Katana:
                 case Weapons.War_Axe:
@@ -333,33 +335,12 @@ namespace DaggerfallWorkshop.Game.Items
             return -1;
         }
 
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Loads item templates from JSON file.
-        /// This data was exported from Daggerfall's FALL.EXE file.
-        /// </summary>
-        void LoadItemTemplates()
-        {
-            try
-            {
-                TextAsset templates = Resources.Load<TextAsset>(itemTemplatesFilename) as TextAsset;
-                itemTemplates = SaveLoadManager.Deserialize(typeof(List<ItemTemplate>), templates.text) as List<ItemTemplate>;
-            }
-            catch
-            {
-                Debug.Log("Could not load ItemTemplates database from Resources. Check file exists and is in correct format.");
-            }
-        }
-
         /// <summary>
         /// Helps bridge classic item index pair back to item template index.
         /// </summary>
         /// <param name="group">Group enum to retrieve.</param>
         /// <return>Array of group enum values.</return>
-        Array GetEnumArray(ItemGroups group)
+        public Array GetEnumArray(ItemGroups group)
         {
             switch (group)
             {
@@ -426,6 +407,27 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Loads item templates from JSON file.
+        /// This data was exported from Daggerfall's FALL.EXE file.
+        /// </summary>
+        void LoadItemTemplates()
+        {
+            try
+            {
+                TextAsset templates = Resources.Load<TextAsset>(itemTemplatesFilename) as TextAsset;
+                itemTemplates = SaveLoadManager.Deserialize(typeof(List<ItemTemplate>), templates.text) as List<ItemTemplate>;
+            }
+            catch
+            {
+                Debug.Log("Could not load ItemTemplates database from Resources. Check file exists and is in correct format.");
+            }
+        }
+
         /// <summary>
         /// Gets classic item template data using group and index.
         /// </summary>
@@ -462,7 +464,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Assigns a new Texture2D based on dye colour.
         /// </summary>
-        ImageData ChangeDye(ImageData imageData, DyeColors dye, DyeTargets target, bool ignoreMask = false)
+        public ImageData ChangeDye(ImageData imageData, DyeColors dye, DyeTargets target, bool ignoreMask = false)
         {
             imageData.dfBitmap = ImageProcessing.ChangeDye(imageData.dfBitmap, dye, target, ignoreMask);
             ImageReader.UpdateTexture(ref imageData);

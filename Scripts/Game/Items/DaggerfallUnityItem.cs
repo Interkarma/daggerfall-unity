@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Save;
+using DaggerfallConnect.FallExe;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -30,6 +31,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         // New item data - to be expanded
         string name;
+        EquipSlots equipSlot = EquipSlots.None;
 
         #endregion
 
@@ -50,6 +52,22 @@ namespace DaggerfallWorkshop.Game.Items
         public ItemGroups ItemGroup
         {
             get { return GetItemGroup(); }
+        }
+
+        public int ItemIndex
+        {
+            get { return GetItemIndex(); }
+        }
+
+        public ItemTemplate ItemTemplate
+        {
+            get { return GetItemTemplate(); }
+        }
+
+        public EquipSlots EquipSlot
+        {
+            get { return equipSlot; }
+            set { equipSlot = value; }
         }
 
         #endregion
@@ -141,6 +159,16 @@ namespace DaggerfallWorkshop.Game.Items
         ItemGroups GetItemGroup()
         {
             return (ItemGroups)itemRecord.ParsedData.category1;
+        }
+
+        int GetItemIndex()
+        {
+            return itemRecord.ParsedData.category2;
+        }
+
+        ItemTemplate GetItemTemplate()
+        {
+            return DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(this);
         }
 
         #endregion

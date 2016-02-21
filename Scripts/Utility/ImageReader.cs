@@ -39,11 +39,43 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Texture2D.</returns>
         public static Texture2D GetTexture(string filename, int record = 0, int frame = 0, bool hasAlpha = false)
         {
-            ImageData? data = GetImageData(filename, record, frame, hasAlpha);
-            if (data == null)
+            ImageData data = GetImageData(filename, record, frame, hasAlpha);
+            if (data.type == ImageTypes.None)
                 return null;
 
-            return data.Value.texture;
+            return data.texture;
+        }
+
+        /// <summary>
+        /// Gets texture from source Color32 array.
+        /// </summary>
+        /// <param name="colors">Source Color32 array.</param>
+        /// <param name="srcWidth">Source width.</param>
+        /// <param name="srcHeight">Source height.</param>
+        /// <returns>Texture2D.</returns>
+        public static Texture2D GetTexture(Color32[] colors, int srcWidth, int srcHeight)
+        {
+            Texture2D texture = new Texture2D(srcWidth, srcHeight, TextureFormat.ARGB32, false);
+            texture.SetPixels32(colors, 0);
+            texture.Apply(false, false);
+            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+
+            return texture;
+        }
+
+        /// <summary>
+        /// Gets Color32 array from texture. Generates texture if not present.
+        /// Origin 0,0 will always be at Unity texture bottom-left.
+        /// </summary>
+        /// <param name="imageData">Source ImageData.</param>
+        /// <returns>Color32 array.</returns>
+        public static Color32[] GetColors(ImageData imageData)
+        {
+            // Generate texture if not present
+            if (imageData.texture == null)
+                UpdateTexture(ref imageData);
+
+            return imageData.texture.GetPixels32();
         }
 
         /// <summary>
@@ -66,11 +98,29 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Cuts out a sub-texture from source ImageData.
+        /// Texture
+        /// </summary>
+        /// <param name="imageData">Source ImageData.</param>
+        /// <param name="subRect">Rectangle of source image to extract. Origin 0,0 is top-left.</param>
+        /// <returns>New Texture2D containing sub-texture.</returns>
+        public static Texture2D GetSubTexture(ImageData imageData, Rect subRect)
+        {
+            if (imageData.texture != null)
+                return GetSubTexture(imageData.texture, subRect);
+
+            Color32[] colors = GetColors(imageData);
+            return GetSubTexture(colors, subRect, imageData.dfBitmap.Width, imageData.dfBitmap.Height);
+        }
+
+        /// <summary>
         /// Cuts out a sub-texture from source Color32 array.
         /// Useful for slicing up native UI elements into smaller functional units.
         /// </summary>
         /// <param name="colors">Source Color32 array.</param>
         /// <param name="subRect">Rectangle of source image to extract. Origin 0,0 is top-left.</param>
+        /// <param name="srcWidth">Source width.</param>
+        /// <param name="srcHeight">Source height.</param>
         /// <returns>New Texture2D containing sub-texture.</returns>
         public static Texture2D GetSubTexture(Color32[] colors, Rect subRect, int srcWidth, int srcHeight)
         {
@@ -81,6 +131,26 @@ namespace DaggerfallWorkshop.Utility
             // Invert Y as Unity textures have origin 0,0 at bottom-left and we use top-left
             subRect.y = srcHeight - subRect.y - subRect.height;
 
+            // Create new texture
+            Color32[] newColors = GetSubColors(colors, subRect, srcWidth, srcHeight);
+            Texture2D newTexture = new Texture2D((int)subRect.width, (int)subRect.height, TextureFormat.ARGB32, false);
+            newTexture.SetPixels32(newColors, 0);
+            newTexture.Apply(false, false);
+            newTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+
+            return newTexture;
+        }
+
+        /// <summary>
+        /// Gets sub-rect of Color32 array.
+        /// </summary>
+        /// <param name="colors">Source Color32 array.</param>
+        /// <param name="subRect">Rectangle of source image to extract.</param>
+        /// <param name="srcWidth">Source width.</param>
+        /// <param name="srcHeight">Source height.</param>
+        /// <returns>Color32 array containing sub-rect.</returns>
+        public static Color32[] GetSubColors(Color32[] colors, Rect subRect, int srcWidth, int srcHeight)
+        {
             // Create new Color32 array
             Color32[] newColors = new Color32[(int)subRect.width * (int)subRect.height];
             ImageProcessing.CopyColors(
@@ -92,13 +162,7 @@ namespace DaggerfallWorkshop.Utility
                 new DFPosition(0, 0),
                 new DFSize((int)subRect.width, (int)subRect.height));
 
-            // Create new texture
-            Texture2D newTexture = new Texture2D((int)subRect.width, (int)subRect.height, TextureFormat.ARGB32, false);
-            newTexture.SetPixels32(newColors, 0);
-            newTexture.Apply(false, false);
-            newTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
-
-            return newTexture;
+            return newColors;
         }
 
         /// <summary>
@@ -153,6 +217,8 @@ namespace DaggerfallWorkshop.Utility
                     ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, filename), FileUsage.UseMemory, true);
                     imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
                     dfBitmap = imgFile.GetDFBitmap();
+                    data.offset = imgFile.ImageOffset;
+                    data.scale = new DFSize();
                     data.size = imgFile.GetSize(0);
                     break;
 
@@ -162,6 +228,7 @@ namespace DaggerfallWorkshop.Utility
                     cifFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cifFile.PaletteName));
                     dfBitmap = cifFile.GetDFBitmap(record, frame);
                     data.offset = cifFile.GetOffset(record);
+                    data.scale = new DFSize();
                     data.size = cifFile.GetSize(record);
                     break;
 
@@ -169,17 +236,19 @@ namespace DaggerfallWorkshop.Utility
                     return new ImageData();
             }
 
-            // Get colors array
-            Color32[] colors = dfBitmap.GetColor32((hasAlpha) ? 0 : -1);
-            if (colors == null)
-                return new ImageData();
-
             // Store bitmap
             data.dfBitmap = dfBitmap;
+            data.width = dfBitmap.Width;
+            data.height = dfBitmap.Height;
 
             // Create Texture2D
             if (createTexture)
             {
+                // Get colors array
+                Color32[] colors = GetColors(data);
+                if (colors == null)
+                    return new ImageData();
+
                 Texture2D texture = new Texture2D(data.size.Width, data.size.Height, TextureFormat.ARGB32, false);
                 texture.SetPixels32(colors);
                 texture.Apply(false, false);
