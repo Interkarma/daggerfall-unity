@@ -49,39 +49,21 @@ namespace DaggerfallWorkshop.Game.Items
         #region Public Methods
 
         /// <summary>
-        /// Quickly get template index.
-        /// </summary>
-        public int GetTemplateIndex(DaggerfallUnityItem item)
-        {
-            // Interim use of classic data
-            ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
-
-            Array values = DaggerfallUnity.Instance.ItemHelper.GetEnumArray((ItemGroups)itemRecord.category1);
-            return Convert.ToInt32(values.GetValue(itemRecord.category2));
-        }
-
-        /// <summary>
         /// Gets how item is held in the hands.
         /// Item templates define whether item is 1 or 2 handed, but this method
         /// provides more exact information about which hand item can be used in.
         /// </summary>
         public ItemHands GetItemHands(DaggerfallUnityItem item)
         {
-            // Interim use of classic data
-            ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
-
             // Must be of group Weapons or Armor (for shields)
-            if ((ItemGroups)itemRecord.category1 != ItemGroups.Weapons &&
-                (ItemGroups)itemRecord.category1 != ItemGroups.Armor)
+            if (item.ItemGroup != ItemGroups.Weapons &&
+                item.ItemGroup != ItemGroups.Armor)
             {
                 return ItemHands.None;
             }
 
-            // Get template index
-            int templateIndex = GetTemplateIndex(item);
-
             // Compare against supported weapon types
-            switch((Weapons)templateIndex)
+            switch((Weapons)item.TemplateIndex)
             {
                 // These weapons can be used in either hand
                 case Weapons.Dagger:
@@ -109,7 +91,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Compare against supported armor types
-            switch ((Armor)templateIndex)
+            switch ((Armor)item.TemplateIndex)
             {
                 case Armor.Buckler:
                 case Armor.Round_Shield:
@@ -124,7 +106,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         public ItemTemplate GetItemTemplate(DaggerfallUnityItem item)
         {
-            return GetItemTemplate((ItemGroups)item.ItemRecord.ParsedData.category1, item.ItemRecord.ParsedData.category2);
+            return GetItemTemplate(item.ItemGroup, item.ItemIndex);
         }
 
         /// <summary>
@@ -139,14 +121,13 @@ namespace DaggerfallWorkshop.Game.Items
             string result = itemRecord.name;
 
             // Get item template
-            ItemGroups group = (ItemGroups)itemRecord.category1;
-            ItemTemplate template = GetItemTemplate(group, itemRecord.category2);
+            ItemTemplate template = item.ItemTemplate;
 
             // Resolve %it parameter
             result = result.Replace("%it", template.name);
 
             // Resolve weapon material
-            if (group == ItemGroups.Weapons)
+            if (item.ItemGroup == ItemGroups.Weapons)
             {
                 WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)itemRecord.material;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName(weaponMaterial);
@@ -154,7 +135,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Resolve armor material
-            if (group == ItemGroups.Armor)
+            if (item.ItemGroup == ItemGroups.Armor)
             {
                 ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)itemRecord.material;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName(armorMaterial);
@@ -168,7 +149,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Gets inventory/equip image for specified item.
         /// Image will be cached based on material and hand for faster subsequent fetches.
         /// </summary>
-        /// <param name="item">Item fetch image for.</param>
+        /// <param name="item">Item to fetch image for.</param>
         /// <param name="variant">Variant of image (e.g. hood up/down or hand left/right).</param>
         /// <param name="ignoreMask">Remove background mask.</param>
         /// <returns>ImageData.</returns>
@@ -178,9 +159,8 @@ namespace DaggerfallWorkshop.Game.Items
             int color = item.ItemRecord.ParsedData.color;
 
             // Get archive and record indices
-            int bitfield = (int)item.ItemRecord.ParsedData.image1;
-            int archive = bitfield >> 7;
-            int record = (bitfield & 0x7f) + variant;
+            int archive = item.PlayerTextureArchive;
+            int record = item.PlayerTextureRecord;
 
             // Get unique key
             int key = MakeImageKey(color, variant, archive, record, ignoreMask);
@@ -188,6 +168,9 @@ namespace DaggerfallWorkshop.Game.Items
             // Get existing icon if in cache
             if (itemImages.ContainsKey(key))
                 return itemImages[key];
+
+            // Add variant to record index
+            record += variant;
 
             // Load image data
             string filename = TextureFile.IndexToFileName(archive);
@@ -227,6 +210,45 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Add to cache
             containerImages.Add(type, data);
+
+            return data;
+        }
+
+        /// <summary>
+        /// Helper to get interior parts of cloak.
+        /// This is not cached as only seen on paper doll during refresh.
+        /// </summary>
+        /// <param name="item">Item - must be a formal or casual cloak.</param>
+        /// <returns>ImageData.</returns>
+        public ImageData GetCloakInteriorImage(DaggerfallUnityItem item)
+        {
+            // Must be a formal or casual cloak
+            switch (item.TemplateIndex)
+            {
+                case (int)MensClothing.Formal_cloak:
+                case (int)MensClothing.Casual_cloak:
+                case (int)WomensClothing.Formal_cloak:
+                case (int)WomensClothing.Casual_cloak:
+                    break;
+                default:
+                    return new ImageData();
+            }
+
+            // Get colour
+            int color = item.ItemRecord.ParsedData.color;
+
+            // Cloak interior source is combination of player texture archive index and template record index
+            int archive = item.PlayerTextureArchive;
+            int record = item.ItemTemplate.playerTextureRecord;
+
+            // Load image data
+            string filename = TextureFile.IndexToFileName(archive);
+            ImageData data = ImageReader.GetImageData(filename, record, 0, true, false);
+            if (data.type == ImageTypes.None)
+                throw new Exception("GetCloakBackImage() could not load image data.");
+
+            // Change dye
+            data = ChangeDye(data, (DyeColors)color, DyeTargets.Clothing);
 
             return data;
         }

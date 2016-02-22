@@ -257,7 +257,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Equip item
             playerEntity.ItemEquipTable.EquipItem(item);
-            Refresh();
+            paperDoll.Refresh();
         }
 
         public override void OnPush()
@@ -429,7 +429,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem item = items[index + i];
 
                 // Get inventory image
-                if (item.IsOfType(ItemGroups.Transportation, 0))
+                if (item.IsOfTemplate(ItemGroups.Transportation, (int)Transportation.Small_cart))
                 {
                     // Handle small cart - the template image for this is not correct
                     // Correct image actually in CIF files
@@ -449,10 +449,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 string text = item.Name;
 
                 // Show some debug data
-                //ItemTemplate template = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(item);
-                int equipIndex = DaggerfallUnity.Instance.ItemHelper.GetLegacyEquipIndex(item, playerEntity.Items);
-                if (equipIndex != -1) text += string.Format("\re:{0}", equipIndex);
-                text += string.Format("\ra:{0} i:{1} c:{2}", item.ItemRecord.ParsedData.image1 >> 7, item.ItemRecord.ParsedData.image1 & 0x7f, item.ItemRecord.ParsedData.color);
+                //ItemTemplate template = item.ItemTemplate;
+                //int equipIndex = DaggerfallUnity.Instance.ItemHelper.GetLegacyEquipIndex(item, playerEntity.Items);
+                //if (equipIndex != -1) text += string.Format("\re:{0}", equipIndex);
+                //text += string.Format("\ra:{0} i:{1} c:{2}", item.ItemRecord.ParsedData.image1 >> 7, item.ItemRecord.ParsedData.image1 & 0x7f, item.ItemRecord.ParsedData.color);
+                //text += string.Format("\ra:{0} i:{1}", template.playerTextureArchive, template.playerTextureRecord);
 
                 myItemsButtons[i].ToolTipText = text;
             }

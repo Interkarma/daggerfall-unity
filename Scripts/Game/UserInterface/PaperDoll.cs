@@ -12,6 +12,7 @@
 using UnityEngine;
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
@@ -128,6 +129,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             BlitBody(playerEntity);
             BlitItems(playerEntity);
 
+            // Destroy old paper doll texture
+            characterPanel.BackgroundTexture = null;
+            GameObject.Destroy(paperDollTexture);
+            paperDollTexture = null;
+
             // Update paper doll texture
             paperDollTexture = ImageReader.GetTexture(paperDollColors, paperDollWidth, paperDollHeight);
             characterPanel.BackgroundTexture = paperDollTexture;
@@ -204,52 +210,57 @@ namespace DaggerfallWorkshop.Game.UserInterface
             BlitPaperDoll(head);
         }
 
+        // Blit items
         void BlitItems(PlayerEntity entity)
         {
-            // Create ordered list of all equipped items
-            List<DaggerfallUnityItem> orderedItems = new List<DaggerfallUnityItem>();
+            // Create list of all equipped items
+            List<DaggerfallUnityItem> equippedItems = new List<DaggerfallUnityItem>();
 
-            // Get equipped items
+            // Find equipped slots, skip empty slots
             foreach (var item in entity.ItemEquipTable.EquipTable)
             {
                 if (item != null)
                 {
-                    orderedItems.Add(item);
+                    equippedItems.Add(item);
                 }
             }
 
             // Sort equipped items
-            orderedItems.Sort(CompareDrawOrder);
+            List<DaggerfallUnityItem> orderedItems = equippedItems.OrderBy(o => o.DrawOrder).ToList();
 
-            // Blit items
+            // Blit item images
             foreach(var item in orderedItems)
             {
+                // Get item image
                 ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item);
-                Color32[] colors = ImageReader.GetColors(source);
 
-                BlitImage(
-                    ref colors,
-                    ref paperDollColors,
-                    new Vector2(source.width, source.height),
-                    new Vector2(paperDollWidth, paperDollHeight),
-                    new Vector2(source.offset.X, source.offset.Y),
-                    maskColor);
+                // Some items need special handling
+                switch (item.TemplateIndex)
+                {
+                    case (int)MensClothing.Formal_cloak:
+                    case (int)MensClothing.Casual_cloak:
+                    case (int)WomensClothing.Formal_cloak:
+                    case (int)WomensClothing.Casual_cloak:
+                        BlitCloak(item);
+                        break;
+
+                    default:
+                        BlitPaperDoll(source);
+                        break;
+                }
             }
         }
 
-        int CompareDrawOrder(DaggerfallUnityItem item1, DaggerfallUnityItem item2)
+        // Formal/casual cloaks require special blit handling for cloak interior
+        void BlitCloak(DaggerfallUnityItem item)
         {
-            // Get item templates
-            int x = item1.ItemTemplate.drawOrderOrEffect;
-            int y = item2.ItemTemplate.drawOrderOrEffect;
+            // Get cloak images
+            ImageData interior = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(item);
+            ImageData exterior = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item);
 
-            // Return comparison
-            if (x < y)
-                return y - x;
-            else if (x > y)
-                return x - y;
-            else
-                return 0;
+            // Blit images
+            BlitPaperDoll(interior);
+            BlitPaperDoll(exterior);
         }
 
         #endregion

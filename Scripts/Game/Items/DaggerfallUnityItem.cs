@@ -28,10 +28,14 @@ namespace DaggerfallWorkshop.Game.Items
 
         // Interim native item data from save game import
         ItemRecord itemRecord = new ItemRecord();
+        ItemTemplate itemTemplate = new ItemTemplate();
 
         // New item data - to be expanded
         string name;
         EquipSlots equipSlot = EquipSlots.None;
+        int playerTextureArchive;
+        int playerTextureRecord;
+        int drawOrder;
 
         #endregion
 
@@ -61,13 +65,36 @@ namespace DaggerfallWorkshop.Game.Items
 
         public ItemTemplate ItemTemplate
         {
-            get { return GetItemTemplate(); }
+            get { return itemTemplate; }
+        }
+
+        public int TemplateIndex
+        {
+            get { return itemTemplate.index; }
         }
 
         public EquipSlots EquipSlot
         {
             get { return equipSlot; }
             set { equipSlot = value; }
+        }
+
+        public int PlayerTextureArchive
+        {
+            get { return playerTextureArchive; }
+            set { playerTextureArchive = value; }
+        }
+
+        public int PlayerTextureRecord
+        {
+            get { return playerTextureRecord; }
+            set { playerTextureRecord = value; }
+        }
+
+        public int DrawOrder
+        {
+            get { return drawOrder; }
+            set { drawOrder = value; }
         }
 
         #endregion
@@ -96,6 +123,7 @@ namespace DaggerfallWorkshop.Game.Items
         {
             // Assign interim data
             this.itemRecord = itemRecord;
+            itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(this);
 
             // Promote leather helms to chain
             // Daggerfall seems to do this also as "leather" helms have the chain tint in-game
@@ -105,8 +133,7 @@ namespace DaggerfallWorkshop.Game.Items
             if (group == ItemGroups.Armor)
             {
                 // Check if helm
-                int templateIndex = DaggerfallUnity.Instance.ItemHelper.GetTemplateIndex(this);
-                if (templateIndex == (int)Armor.Helm)
+                if (TemplateIndex == (int)Armor.Helm)
                 {
                     // Change material to chain and leave other stats the same
                     ItemRecord.ItemRecordData parsedData = this.itemRecord.ParsedData;
@@ -115,8 +142,16 @@ namespace DaggerfallWorkshop.Game.Items
                 }
             }
 
+            // Get player image
+            int bitfield = (int)itemRecord.ParsedData.image1;
+            int archive = bitfield >> 7;
+            int record = (bitfield & 0x7f);
+
             // Assign new data
             name = DaggerfallUnity.Instance.ItemHelper.ResolveItemName(this);
+            drawOrder = itemTemplate.drawOrderOrEffect;
+            playerTextureArchive = archive;
+            playerTextureRecord = record;   
         }
 
         /// <summary>
@@ -138,18 +173,17 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Checks if item matches specified group and index.
+        /// Checks if item matches specified template group and index.
         /// </summary>
+        /// <param name="group">Item group.</param>
+        /// <param name="templateIndex">Template index.</param>
         /// <returns>True if item matches type.</returns>
-        public bool IsOfType(ItemGroups group, int index)
+        public bool IsOfTemplate(ItemGroups group, int templateIndex)
         {
-            if (ItemGroup == group)
-            {
-                if (itemRecord.ParsedData.category2 == index)
-                    return true;
-            }
-
-            return false;
+            if (ItemGroup == group && TemplateIndex == templateIndex)
+                return true;
+            else
+                return false;
         }
 
         #endregion
@@ -166,9 +200,9 @@ namespace DaggerfallWorkshop.Game.Items
             return itemRecord.ParsedData.category2;
         }
 
-        ItemTemplate GetItemTemplate()
+        int GetTemplateIndex()
         {
-            return DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(this);
+            return itemTemplate.index;
         }
 
         #endregion
