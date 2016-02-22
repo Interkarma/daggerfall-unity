@@ -193,12 +193,12 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Create base image data
-            ImageData data = new ImageData();
-            data.type = fileType;
-            data.filename = filename;
-            data.record = record;
-            data.frame = frame;
-            data.hasAlpha = hasAlpha;
+            ImageData imageData = new ImageData();
+            imageData.type = fileType;
+            imageData.filename = filename;
+            imageData.record = record;
+            imageData.frame = frame;
+            imageData.hasAlpha = hasAlpha;
 
             // Read supported image files
             DFBitmap dfBitmap = null;
@@ -208,18 +208,18 @@ namespace DaggerfallWorkshop.Utility
                     TextureFile textureFile = new TextureFile(Path.Combine(dfUnity.Arena2Path, filename), FileUsage.UseMemory, true);
                     textureFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, textureFile.PaletteName));
                     dfBitmap = textureFile.GetDFBitmap(record, frame);
-                    data.offset = textureFile.GetOffset(record);
-                    data.scale = textureFile.GetScale(record);
-                    data.size = textureFile.GetSize(record);
+                    imageData.offset = textureFile.GetOffset(record);
+                    imageData.scale = textureFile.GetScale(record);
+                    imageData.size = textureFile.GetSize(record);
                     break;
 
                 case ImageTypes.IMG:
                     ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, filename), FileUsage.UseMemory, true);
                     imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
                     dfBitmap = imgFile.GetDFBitmap();
-                    data.offset = imgFile.ImageOffset;
-                    data.scale = new DFSize();
-                    data.size = imgFile.GetSize(0);
+                    imageData.offset = imgFile.ImageOffset;
+                    imageData.scale = new DFSize();
+                    imageData.size = imgFile.GetSize(0);
                     break;
 
                 case ImageTypes.CIF:
@@ -227,9 +227,9 @@ namespace DaggerfallWorkshop.Utility
                     CifRciFile cifFile = new CifRciFile(Path.Combine(dfUnity.Arena2Path, filename), FileUsage.UseMemory, true);
                     cifFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cifFile.PaletteName));
                     dfBitmap = cifFile.GetDFBitmap(record, frame);
-                    data.offset = cifFile.GetOffset(record);
-                    data.scale = new DFSize();
-                    data.size = cifFile.GetSize(record);
+                    imageData.offset = cifFile.GetOffset(record);
+                    imageData.scale = new DFSize();
+                    imageData.size = cifFile.GetSize(record);
                     break;
 
                 default:
@@ -237,32 +237,29 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Store bitmap
-            data.dfBitmap = dfBitmap;
-            data.width = dfBitmap.Width;
-            data.height = dfBitmap.Height;
+            imageData.dfBitmap = dfBitmap;
+            imageData.width = dfBitmap.Width;
+            imageData.height = dfBitmap.Height;
 
             // Create Texture2D
             if (createTexture)
             {
                 // Get colors array
-                Color32[] colors = GetColors(data);
+                Color32[] colors = GetColors(imageData);
                 if (colors == null)
                     return new ImageData();
 
-                Texture2D texture = new Texture2D(data.size.Width, data.size.Height, TextureFormat.ARGB32, false);
-                texture.SetPixels32(colors);
-                texture.Apply(false, false);
-                texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
-                data.texture = texture;
+                // Create new Texture2D
+                imageData.texture = GetTexture(colors, imageData.width, imageData.height);
             }
 
-            return data;
+            return imageData;
         }
 
         /// <summary>
         /// Updates Texture2D from DFBitmap data.
         /// </summary>
-        /// <param name="imageData">ImageData to update texture.</param>
+        /// <param name="imageData">Source ImageData.</param>
         public static void UpdateTexture(ref ImageData imageData)
         {
             // Get colors array
@@ -271,11 +268,23 @@ namespace DaggerfallWorkshop.Utility
                 return;
 
             // Create new Texture2D
-            Texture2D texture = new Texture2D(imageData.dfBitmap.Width, imageData.dfBitmap.Height, TextureFormat.ARGB32, false);
-            texture.SetPixels32(colors);
-            texture.Apply(false, false);
-            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
-            imageData.texture = texture;
+            imageData.texture = GetTexture(colors, imageData.width, imageData.height);
+        }
+
+        /// <summary>
+        /// Updates Texture2D from DFBitmap data.
+        /// </summary>
+        /// <param name="imageData">Source ImageData.</param>
+        /// <param name="maskColor">Set mask pixels to this colour.</param>
+        public static void UpdateTexture(ref ImageData imageData, Color maskColor)
+        {
+            // Get colors array
+            Color32[] colors = imageData.dfBitmap.GetColor32((imageData.hasAlpha) ? 0 : -1, 0xff, maskColor);
+            if (colors == null)
+                return;
+
+            // Create new Texture2D
+            imageData.texture = GetTexture(colors, imageData.width, imageData.height);
         }
 
         #endregion

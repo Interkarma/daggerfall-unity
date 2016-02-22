@@ -231,10 +231,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Blit item images
             foreach(var item in orderedItems)
             {
-                // Get item image
-                ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item);
-
-                // Some items need special handling
+                // Blit based on item template
+                // Some items require special handling
                 switch (item.TemplateIndex)
                 {
                     case (int)MensClothing.Formal_cloak:
@@ -243,12 +241,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     case (int)WomensClothing.Casual_cloak:
                         BlitCloak(item);
                         break;
-
                     default:
-                        BlitPaperDoll(source);
+                        BlitItem(item);
                         break;
                 }
             }
+        }
+
+        // Blits a normal item
+        void BlitItem(DaggerfallUnityItem item)
+        {
+            ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, maskColor);
+            BlitPaperDoll(source);
         }
 
         // Formal/casual cloaks require special blit handling for cloak interior
@@ -256,7 +260,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Get cloak images
             ImageData interior = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(item);
-            ImageData exterior = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item);
+            ImageData exterior = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, maskColor);
 
             // Blit images
             BlitPaperDoll(interior);

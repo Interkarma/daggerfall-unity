@@ -144,6 +144,7 @@ namespace DaggerfallWorkshop.Game.Items
                     result = GetMensClothingSlot(item);
                     break;
                 case ItemGroups.WomensClothing:
+                    result = GetWomensClothingSlot(item);
                     break;
             }
 

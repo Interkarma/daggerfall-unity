@@ -83,6 +83,18 @@ namespace DaggerfallConnect
         /// <returns>Color32 array.</returns>
         public Color32[] GetColor32(int alphaIndex = -1)
         {
+            return GetColor32(alphaIndex, -1, Color.clear);
+        }
+
+        /// <summary>
+        /// Gets a Color32 array for engine.
+        /// </summary>
+        /// <param name="alphaIndex">Index to receive transparent alpha.</param>
+        /// <param name="maskIndex">Index to receive mask colour.</param>
+        /// <param name="maskColor">New mask color.</param>
+        /// <returns>Color32 array.</returns>
+        public Color32[] GetColor32(int alphaIndex, int maskIndex, Color maskColor)
+        {
             Color32[] colors = new Color32[Width * Height];
 
             Color32 c = new Color32();
@@ -97,12 +109,19 @@ namespace DaggerfallConnect
                 for (int x = 0; x < Width; x++)
                 {
                     index = Data[srcRow + x];
-                    offset = Palette.HeaderLength + index * 3;
-                    c.r = Palette.PaletteBuffer[offset];
-                    c.g = Palette.PaletteBuffer[offset + 1];
-                    c.b = Palette.PaletteBuffer[offset + 2];
-                    c.a = (alphaIndex == index) ? (byte)0 : (byte)255;
-                    colors[dstRow + x] = c;
+                    if (index == maskIndex)
+                    {
+                        colors[dstRow + x] = maskColor;
+                    }
+                    else
+                    {
+                        offset = Palette.HeaderLength + index * 3;
+                        c.r = Palette.PaletteBuffer[offset];
+                        c.g = Palette.PaletteBuffer[offset + 1];
+                        c.b = Palette.PaletteBuffer[offset + 2];
+                        c.a = (alphaIndex == index) ? (byte)0 : (byte)255;
+                        colors[dstRow + x] = c;
+                    }
                 }
             }
 

@@ -344,7 +344,33 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
-        #region Dyes
+        #region Dyes & Masks
+
+        /// <summary>
+        /// Changes mask index to another index.
+        /// </summary>
+        /// <param name="srcBitmap">Source image.</param>
+        /// <param name="replaceWith">Index to substitute for mask index.</param>
+        /// <returns>New DFBitmap with modified mask.</returns>
+        public static DFBitmap ChangeMask(DFBitmap srcBitmap, byte replaceWith = 0)
+        {
+            const int mask = 0xff;
+
+            // Clone bitmap
+            DFBitmap dstBitmap = DFBitmap.CloneDFBitmap(srcBitmap, false);
+
+            // Remove all instances of mask index
+            for (int i = 0; i < srcBitmap.Data.Length; i++)
+            {
+                byte index = srcBitmap.Data[i];
+                if (index == mask)
+                    dstBitmap.Data[i] = replaceWith;
+                else
+                    dstBitmap.Data[i] = index;
+            }
+
+            return dstBitmap;
+        }
 
         /// <summary>
         /// Dye supported bitmap image based on dye index and type.
@@ -352,13 +378,11 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="srcBitmap">Source image.</param>
         /// <param name="dye">Dye index.</param>
         /// <param name="target">Dye target.</param>
-        /// <param name="ignoreMask">Treats background mask as transparent.</param>
         /// <returns>New DFBitmap dyed to specified colour.</returns>
-        public static DFBitmap ChangeDye(DFBitmap srcBitmap, DyeColors dye, DyeTargets target, bool ignoreMask = false)
+        public static DFBitmap ChangeDye(DFBitmap srcBitmap, DyeColors dye, DyeTargets target)
         {
             const int clothingStart = 0x60;
             const int weaponsAndArmorStart = 0x70;
-            const byte maskIndex = 0xff;
 
             // Clone bitmap and get colour table for swaps
             DFBitmap dstBitmap = DFBitmap.CloneDFBitmap(srcBitmap, false);
@@ -387,9 +411,6 @@ namespace DaggerfallWorkshop.Utility
                 {
                     int srcOffset = rowPos + x;
                     byte index = srcBitmap.Data[srcOffset];
-
-                    if (ignoreMask && index == maskIndex)
-                            index = 0;
 
                     if (index >= start && index <= start + 0x0f)
                     {

@@ -151,9 +151,9 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="item">Item to fetch image for.</param>
         /// <param name="variant">Variant of image (e.g. hood up/down or hand left/right).</param>
-        /// <param name="ignoreMask">Remove background mask.</param>
+        /// <param name="removeMask">Removes mask index (e.g. around helmets) from final image.</param>
         /// <returns>ImageData.</returns>
-        public ImageData GetItemImage(DaggerfallUnityItem item, int variant = 0, bool ignoreMask = false)
+        public ImageData GetItemImage(DaggerfallUnityItem item, int variant = 0, bool removeMask = false)
         {
             // Get colour
             int color = item.ItemRecord.ParsedData.color;
@@ -163,7 +163,7 @@ namespace DaggerfallWorkshop.Game.Items
             int record = item.PlayerTextureRecord;
 
             // Get unique key
-            int key = MakeImageKey(color, variant, archive, record, ignoreMask);
+            int key = MakeImageKey(color, variant, archive, record, removeMask);
 
             // Get existing icon if in cache
             if (itemImages.ContainsKey(key))
@@ -178,13 +178,17 @@ namespace DaggerfallWorkshop.Game.Items
             if (data.type == ImageTypes.None)
                 throw new Exception("GetItemImage() could not load image data.");
 
+            // Remove mask if requested
+            if (removeMask)
+                data.dfBitmap = ImageProcessing.ChangeMask(data.dfBitmap);
+
             // Change dye or just update texture
             ItemGroups group = item.ItemGroup;
             DyeColors dye = (DyeColors)color;
             if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
-                data = ChangeDye(data, dye, DyeTargets.WeaponsAndArmor, ignoreMask);
+                data = ChangeDye(data, dye, DyeTargets.WeaponsAndArmor);
             else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
-                data = ChangeDye(data, dye, DyeTargets.Clothing, ignoreMask);
+                data = ChangeDye(data, dye, DyeTargets.Clothing);
             else
                 ImageReader.UpdateTexture(ref data);
 
@@ -192,6 +196,22 @@ namespace DaggerfallWorkshop.Game.Items
             itemImages.Add(key, data);
 
             return data;
+        }
+
+        /// <summary>
+        /// Gets item image with custom mask colour.
+        /// </summary>
+        /// <param name="item">Item to fetch image for.</param>
+        /// <param name="maskColor">New mask colour.</param>
+        /// <param name="variant">Variant of image (e.g. hood up/down or hand left/right).</param>
+        /// <returns></returns>
+        public ImageData GetItemImage(DaggerfallUnityItem item, Color maskColor, int variant = 0)
+        {
+            // Get base item with mask intact
+            ImageData result = GetItemImage(item, variant, false);
+            ImageReader.UpdateTexture(ref result, maskColor);
+
+            return result;
         }
 
         /// <summary>
@@ -471,9 +491,9 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Makes a unique image key based on item variables.
         /// </summary>
-        int MakeImageKey(int color, int variant, int archive, int record, bool ignoreMask)
+        int MakeImageKey(int color, int variant, int archive, int record, bool removeMask)
         {
-            int mask = (ignoreMask) ? 1 : 0;
+            int mask = (removeMask) ? 1 : 0;
 
             // 5 bits for color
             // 3 bits for variant
@@ -486,9 +506,9 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Assigns a new Texture2D based on dye colour.
         /// </summary>
-        public ImageData ChangeDye(ImageData imageData, DyeColors dye, DyeTargets target, bool ignoreMask = false)
+        public ImageData ChangeDye(ImageData imageData, DyeColors dye, DyeTargets target)
         {
-            imageData.dfBitmap = ImageProcessing.ChangeDye(imageData.dfBitmap, dye, target, ignoreMask);
+            imageData.dfBitmap = ImageProcessing.ChangeDye(imageData.dfBitmap, dye, target);
             ImageReader.UpdateTexture(ref imageData);
 
             return imageData;

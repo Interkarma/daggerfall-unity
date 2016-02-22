@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Sets native save ItemRecord.
-        /// This is an interim way to store item data while DaggerfallUnityItem class under development.
+        /// This is an interim way to generate item data while DaggerfallUnityItem class under development.
         /// </summary>
         /// <param name="SetItemRecord">ItemRecord.</param>
         public void SetItemRecord(ItemRecord itemRecord)
@@ -129,15 +129,20 @@ namespace DaggerfallWorkshop.Game.Items
             // Daggerfall seems to do this also as "leather" helms have the chain tint in-game
             // Is this why Daggerfall intentionally leaves off the material type from helms and shields?
             // Might need to revisit this later
-            ItemGroups group = (ItemGroups)itemRecord.ParsedData.category1;
-            if (group == ItemGroups.Armor)
+            if (IsOfTemplate(ItemGroups.Armor, (int)Armor.Helm))
             {
-                // Check if helm
-                if (TemplateIndex == (int)Armor.Helm)
-                {
+                // Check if leather
+                if ((ArmorMaterialTypes)itemRecord.ParsedData.material == ArmorMaterialTypes.Leather)
+                { 
                     // Change material to chain and leave other stats the same
                     ItemRecord.ItemRecordData parsedData = this.itemRecord.ParsedData;
                     parsedData.material = (ushort)ArmorMaterialTypes.Chain;
+
+                    // Change dye to chain if not set
+                    if (parsedData.color == (int)DyeColors.Unchanged)
+                        parsedData.color = (int)DyeColors.Chain;
+
+                    // Store updated data
                     this.itemRecord.ParsedData = parsedData;
                 }
             }
