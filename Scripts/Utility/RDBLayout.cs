@@ -691,7 +691,6 @@ namespace DaggerfallWorkshop.Utility
                     vector.z = -magnitude;
                     break;
                 default:
-                    magnitude = 0f;
                     break;
             }
             action.ActionTranslation = vector * MeshReader.GlobalScale;
@@ -809,6 +808,7 @@ namespace DaggerfallWorkshop.Utility
             action.TriggerFlag = triggerFlag;
             action.ActionFlag = actionFlag;
             action.LoadID = loadID;
+            action.ActionAxisRawValue = axis_raw;
 
             // If SaveLoadManager present in game then attach SerializableActionObject
             if (SaveLoadManager.Instance != null)
@@ -816,19 +816,22 @@ namespace DaggerfallWorkshop.Utility
                 go.AddComponent<SerializableActionObject>();
             }
 
+            if (description == "FLT")
+            {
+                action.IsFlat = true;
+                //add box collider to flats with actions for raycasting - only flats that can be activated directly need this, so this can possibly be restricted in future
+                Collider col = go.AddComponent<BoxCollider>();
+                col.isTrigger = true;
+            }
+            else
+                action.IsFlat = false;
+
             //if a collision type action or action flat, add DaggerFallActionCollision component
             if (action.TriggerFlag == DFBlock.RdbTriggerFlags.Collision01 || action.TriggerFlag == DFBlock.RdbTriggerFlags.Collision03 ||
-                action.TriggerFlag == DFBlock.RdbTriggerFlags.DualTrigger || action.TriggerFlag == DFBlock.RdbTriggerFlags.Collision09)
+                action.TriggerFlag == DFBlock.RdbTriggerFlags.MultiTrigger || action.TriggerFlag == DFBlock.RdbTriggerFlags.Collision09)
             {
-                DaggerfallActionCollision collision = go.AddComponent<DaggerfallActionCollision>();
-                collision.isFlat = false;
+                go.AddComponent<DaggerfallActionCollision>();
             }
-            else if (description == "FLT")
-            {
-                DaggerfallActionCollision collision = go.AddComponent<DaggerfallActionCollision>();
-                collision.isFlat = true;
-            }
-
 
             switch (action.ActionFlag)
             {
@@ -890,8 +893,6 @@ namespace DaggerfallWorkshop.Utility
                     break;
                 default:
                     {
-                        //Dmg actions use axis value to modifiy tot. dmg.
-                        action.Magnitude = axis_raw;
                     }
                     break;
             }
@@ -934,7 +935,7 @@ namespace DaggerfallWorkshop.Utility
             if (actionLinkDict.Count == 0)
                 return;
 
-            // Iterate through actions #Lypl
+            // Iterate through actions
             foreach (var item in actionLinkDict)
             {
                 ActionLink link = item.Value;
@@ -960,23 +961,6 @@ namespace DaggerfallWorkshop.Utility
                 }
             }
 
-            //// Exit if no actions
-            //if (actionLinkDict.Count == 0)
-            //    return;
-
-            //// Iterate through actions
-            //foreach (var item in actionLinkDict)
-            //{
-            //    ActionLink link = item.Value;
-
-            //    // Link to next node
-            //    if (actionLinkDict.ContainsKey(link.nextKey))
-            //        link.gameObject.GetComponent<DaggerfallAction>().NextObject = actionLinkDict[link.nextKey].gameObject;
-
-            //    // Link to previous node
-            //    if (actionLinkDict.ContainsKey(link.prevKey))
-            //        link.gameObject.GetComponent<DaggerfallAction>().PreviousObject = actionLinkDict[link.prevKey].gameObject;
-            //}
         }
 
         /// <summary>

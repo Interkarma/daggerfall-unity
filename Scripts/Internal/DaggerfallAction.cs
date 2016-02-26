@@ -18,6 +18,8 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop
 {
@@ -38,6 +40,8 @@ namespace DaggerfallWorkshop
         public Vector3 ActionRotation = Vector3.zero;                               // Rotation to perform
         public Vector3 ActionTranslation = Vector3.zero;                            // Translation to perform
         public int Index = 0;                                                       // Index for things like spells, text, and also the raw sound index from daggerfall
+        public int ActionAxisRawValue = 0;                                          // Used for some actions in place of magnitude
+        public int activationCount = 0;                                             //how many times action has been activated
         public float Magnitude = 0.0f;                                              // How far to move, how much damage etc.
         public float ActionDuration = 0;                                            // Time to reach final state
         public Space ActionSpace = Space.Self;                                      // Relative space to perform action in (self or world)
@@ -93,6 +97,8 @@ namespace DaggerfallWorkshop
             get { return (currentState == ActionState.PlayingForward || currentState == ActionState.PlayingReverse); }
         }
 
+        public bool IsFlat { get; set; }
+
         /// <summary>
         /// Gets the actual duration for timed actions.
         /// </summary>
@@ -114,6 +120,7 @@ namespace DaggerfallWorkshop
         {DFBlock.RdbActionFlags.NegativeZ,  new ActionDelegate(Move)},
         {DFBlock.RdbActionFlags.PositiveY,  new ActionDelegate(Move)},
         {DFBlock.RdbActionFlags.NegativeY,  new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.CastSpell,new ActionDelegate(Move)},
         {DFBlock.RdbActionFlags.ShowText,   new ActionDelegate(ShowText)},
         {DFBlock.RdbActionFlags.ShowTextWithInput,   new ActionDelegate(ShowTextWithInput)},
         {DFBlock.RdbActionFlags.Teleport,   new ActionDelegate(Teleport)},
@@ -121,13 +128,25 @@ namespace DaggerfallWorkshop
         {DFBlock.RdbActionFlags.UnlockDoor, new ActionDelegate(UnlockDoor)},
         {DFBlock.RdbActionFlags.OpenDoor,   new ActionDelegate(OpenDoor)},
         {DFBlock.RdbActionFlags.CloseDoor,  new ActionDelegate(CloseDoor)},
-        {DFBlock.RdbActionFlags.Hurt21,     new ActionDelegate(Hurt)},      //lots of damage, varies
-        {DFBlock.RdbActionFlags.Hurt22,     new ActionDelegate(Hurt)},      //22-25; dmg = level x magnitude
-        {DFBlock.RdbActionFlags.Hurt23,     new ActionDelegate(Hurt)},
-        {DFBlock.RdbActionFlags.Hurt24,     new ActionDelegate(Hurt)},
-        {DFBlock.RdbActionFlags.Hurt25,     new ActionDelegate(Hurt)},
+        {DFBlock.RdbActionFlags.Hurt21,     new ActionDelegate(DrainHealth21)},      //random range damage
+        {DFBlock.RdbActionFlags.Hurt22,     new ActionDelegate(DrainHealth)},       //22-25; dmg = level x magnitude
+        {DFBlock.RdbActionFlags.Hurt23,     new ActionDelegate(DrainHealth)},
+        {DFBlock.RdbActionFlags.Hurt24,     new ActionDelegate(DrainHealth)},
+        {DFBlock.RdbActionFlags.Hurt25,     new ActionDelegate(DrainHealth)},
+        {DFBlock.RdbActionFlags.Poison,     new ActionDelegate(Poison)},
+        {DFBlock.RdbActionFlags.DrainMagicka28,     new ActionDelegate(DrainMagicka)},
         {DFBlock.RdbActionFlags.Activate,   new ActionDelegate(Activate)},
         };
+
+        public enum TriggerTypes
+        {
+            ActionObject, //sent from other action object
+            Direct,     //player clicked on this
+            WalkOn,     //Only using WalkInto for now
+            WalkInto,   //player collided with this object...doesn't normally trigger w/ floating up down, climbing etc
+            Attack,     //player hit with weapon
+            Door,       //door this attached to opened / closed
+        }
 
         void Start()
         {
@@ -137,52 +156,98 @@ namespace DaggerfallWorkshop
             startingRotation = transform.rotation;
         }
 
-        /// <summary>
-        /// Handles incoming activations.  
-        /// </summary>
-        public void Receive(GameObject prev = null, bool playerTriggered = false)
+        public void Receive(GameObject prev = null, TriggerTypes triggerType = TriggerTypes.ActionObject)
         {
-            if (playerTriggered && TriggerFlag != DFBlock.RdbTriggerFlags.Direct && playerTriggered && TriggerFlag != DFBlock.RdbTriggerFlags.DualTrigger)
-            {
-                return;
-            }
-
-            //Temp fix to prevent disabled objects from trying to play; 
-            //the move types will get stuck in playing state which prevents other objects from working
             if (!gameObject.activeSelf || !this.enabled)
-            {
                 return;
-            }
-
 
             if (IsPlaying())
-            {
-                DaggerfallUnity.LogMessage(string.Format("Already playing"));
                 return;
+
+
+            //assume actions triggered by other action objects are always valid, 
+            //otherwise make sure trigger type is valid for this action
+            if(triggerType != TriggerTypes.ActionObject)
+            {
+                switch (TriggerFlag)
+                {
+                    case DFBlock.RdbTriggerFlags.None:
+                        {
+                            if (triggerType != TriggerTypes.ActionObject)
+                                return;
+                        }
+                        break;
+                    case DFBlock.RdbTriggerFlags.Collision01:
+                        {
+                            if (triggerType != TriggerTypes.WalkInto) //In daggerfall this is WalkOn only - using WalkInto for all collisions currently
+                                return;
+                        }
+                        break;
+                    case DFBlock.RdbTriggerFlags.Direct:
+                        {
+                            if (triggerType != TriggerTypes.Direct)
+                                return;
+                        }
+                        break;
+                    case DFBlock.RdbTriggerFlags.Collision03:
+                        {
+                            if (triggerType != TriggerTypes.WalkInto && this.IsFlat)
+                                return;
+                        }
+                        break;
+                    case DFBlock.RdbTriggerFlags.Attack:
+                        {
+                            if (triggerType != TriggerTypes.Attack)
+                                return;
+                        }
+                        break;
+                    case DFBlock.RdbTriggerFlags.Direct6:
+                        {
+                            if (triggerType != TriggerTypes.Direct)
+                                return;
+                        }
+                        break;
+                    case DFBlock.RdbTriggerFlags.MultiTrigger:
+                        {
+                            if (triggerType != TriggerTypes.Direct && triggerType != TriggerTypes.Attack && triggerType != TriggerTypes.WalkInto)
+                                return;
+                        }
+                        break;
+                    case DFBlock.RdbTriggerFlags.Collision09:
+                        {
+                            if (triggerType != TriggerTypes.Direct && triggerType != TriggerTypes.WalkInto )
+                                return;
+                        }
+                        break;
+                    case DFBlock.RdbTriggerFlags.Door:
+                        {
+                            if (triggerType != TriggerTypes.Door)
+                                return;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
 
-            //start action sequence
+            //increment activation counter
+            activationCount++;
             Play(prev);
             return;
-
         }
 
         public void Play(GameObject prev)
         {
             ActionDelegate d = null;
             if (actionFunctions.ContainsKey(ActionFlag))
-            {
                 d = actionFunctions[ActionFlag];
-            }
 
 
             if (ActionFlag != DFBlock.RdbActionFlags.ShowTextWithInput)
                 ActivateNext();
 
             if (PlaySound && Index > 0 && audioSource)
-            {
                 audioSource.Play();
-            }
 
             //stop if failed to get valid delegate from lookup - ideally this check should be done before playing
             //sound & activating next, but for testing purposes is done after
@@ -200,9 +265,7 @@ namespace DaggerfallWorkshop
         {
             // Check if this action or any chained action is playing
             if (currentState == ActionState.PlayingForward || currentState == ActionState.PlayingReverse)
-            {
                 return true;
-            }
             else
             {
                 if (NextObject == null)
@@ -224,16 +287,14 @@ namespace DaggerfallWorkshop
         {
             if (NextObject == null)
             {
-                DaggerfallUnity.LogMessage(string.Format("Next object is null"));
+                DaggerfallUnity.LogMessage(string.Format("Next action object in chain is null"));
                 return;
             }
             else
             {
                 DaggerfallAction action = NextObject.GetComponent<DaggerfallAction>();
                 if (action != null)
-                {
-                    action.Receive(this.gameObject, false);
-                }
+                    action.Receive(this.gameObject, TriggerTypes.ActionObject);
             }
 
         }
@@ -257,38 +318,44 @@ namespace DaggerfallWorkshop
         private void TweenToEnd(float duration)
         {
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                "rotation", startingRotation.eulerAngles + ActionRotation,
+                 "amount", new Vector3(ActionRotation.x / 360f, ActionRotation.y / 360f, ActionRotation.z / 360f),
                 "space", ActionSpace,
-                "time", duration,
-                "easetype", __ExternalAssets.iTween.EaseType.linear);
+                "time", Duration,
+                 "easetype", __ExternalAssets.iTween.EaseType.linear,
+                "oncomplete", "SetState",
+                "oncompleteparams", ActionState.End);
 
             Hashtable moveParams = __ExternalAssets.iTween.Hash(
-                "position", startingPosition + ActionTranslation,
-                "time", duration,
+                "position", StartingPosition + ActionTranslation,
+                "time", Duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
                 "oncompleteparams", ActionState.End);
 
-            __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
+            __ExternalAssets.iTween.RotateBy(gameObject, rotateParams);
             __ExternalAssets.iTween.MoveTo(gameObject, moveParams);
         }
 
+        //in daggerfall, if the player directly activates a move type action object, it does not go back to its start position.  Not aware of any objects that actually
+        //use this feature.
         private void TweenToStart(float duration)
         {
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                "rotation", startingRotation.eulerAngles,
+                 "amount", new Vector3(-ActionRotation.x / 360f, -ActionRotation.y / 360f, -ActionRotation.z / 360f),
                 "space", ActionSpace,
-                "time", duration,
-                "easetype", __ExternalAssets.iTween.EaseType.linear);
+                "time", Duration,
+                 "easetype", __ExternalAssets.iTween.EaseType.linear,
+                "oncomplete", "SetState",
+                "oncompleteparams", ActionState.Start);
 
             Hashtable moveParams = __ExternalAssets.iTween.Hash(
                 "position", startingPosition,
-                "time", duration,
+                "time", Duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "SetState",
                 "oncompleteparams", ActionState.Start);
 
-            __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
+            __ExternalAssets.iTween.RotateBy(gameObject, rotateParams);
             __ExternalAssets.iTween.MoveTo(gameObject, moveParams);
         }
 
@@ -310,6 +377,15 @@ namespace DaggerfallWorkshop
             }
             else
                 return true;
+        }
+
+        public static bool GetPlayer(out GameObject playerObject, out PlayerEntity playerEntity)
+        {
+            playerObject = GameManager.Instance.PlayerObject;
+            playerEntity = GameManager.Instance.PlayerEntity;
+
+            return (playerObject != null & playerEntity != null);
+
         }
 
         /// <summary>
@@ -344,7 +420,7 @@ namespace DaggerfallWorkshop
         /// 1-8
         /// Handles translation / rotation type actions.  
         /// </summary>
-        public static void Move(GameObject obj, DaggerfallAction thisAction)
+        public static void Move(GameObject triggerObj, DaggerfallAction thisAction)
         {
             if (thisAction.CurrentState == ActionState.Start)
             {
@@ -359,13 +435,26 @@ namespace DaggerfallWorkshop
 
         }
 
+
+        /// <summary>
+        /// 9
+        /// Creates spell. Use Action's index to get the spell by index from Spells.STD
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="thisAction"></param>
+        public static void CastSpell(GameObject triggerObj, DaggerfallAction thisAction)
+        {
+            Debug.Log("Action Type 9: CastSpell");
+
+        }
+
         /// <summary>
         /// 11
         /// Pop-up text
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="thisAction"></param>
-        public static void ShowText(GameObject obj, DaggerfallAction thisAction)
+        public static void ShowText(GameObject triggerObj, DaggerfallAction thisAction)
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallWorkshop.Game.DaggerfallUI.UIManager, null);
             messageBox.SetTextTokens(thisAction.Index + TYPE_11_TEXT_INDEX);
@@ -380,7 +469,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="thisAction"></param>
-        public static void ShowTextWithInput(GameObject obj, DaggerfallAction thisAction)
+        public static void ShowTextWithInput(GameObject triggerObj, DaggerfallAction thisAction)
         {
             int textID = thisAction.Index + TYPE_12_TEXT_INDEX;
             if (actionTypeTwelveLookup.ContainsKey(textID))
@@ -403,9 +492,9 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// 14
-        /// This is assumes will always be activated by player directly and input object will always be player.
+        /// Teleports player to next object position.
         /// </summary>
-        public static void Teleport(GameObject playerObj, DaggerfallAction thisAction)
+        public static void Teleport(GameObject triggerObj, DaggerfallAction thisAction)
         {
 
             if (thisAction.NextObject == null)
@@ -413,15 +502,17 @@ namespace DaggerfallWorkshop
                 DaggerfallUnity.LogMessage(string.Format("Teleport next object null - can't teleport"));
                 return;
             }
-            if (playerObj == null)
+
+            GameObject playerObject;
+            PlayerEntity playerEntity;
+
+            if (!GetPlayer(out playerObject, out playerEntity))
             {
-                DaggerfallUnity.LogMessage(string.Format("Player object null - can't teleport"));
+                DaggerfallUnity.LogMessage("Failed to get Player or Player entity", true);
                 return;
             }
-
-            //Might need to adjust for player collider height
-            playerObj.transform.position = thisAction.NextObject.transform.position;
-            playerObj.transform.rotation = thisAction.NextObject.transform.rotation;
+            playerObject.transform.position = thisAction.NextObject.transform.position;
+            playerObject.transform.rotation = thisAction.NextObject.transform.rotation;
         }
 
         /// <summary>
@@ -430,14 +521,11 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <param name="prevObject"></param>
         /// <param name="thisAction"></param>
-        public static void LockDoor(GameObject prevObject, DaggerfallAction thisAction)
+        public static void LockDoor(GameObject triggerObj, DaggerfallAction thisAction)
         {
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-            {
                 DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found to lock door"), true);
-
-            }
             else
             {
                 if (!door.IsLocked)
@@ -448,21 +536,15 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// 17
-        /// Unlocks a door. Doesn't relock on reverse.
+        /// Unlocks a door
         /// </summary>
-        public static void UnlockDoor(GameObject prevObj, DaggerfallAction thisAction)
+        public static void UnlockDoor(GameObject triggerObj, DaggerfallAction thisAction)
         {
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-            {
                 DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found to unlock door"));
-
-            }
             else
-            {
                 door.CurrentLockValue = 0;
-
-            }
         }
 
 
@@ -470,13 +552,11 @@ namespace DaggerfallWorkshop
         /// 18
         /// Opens (and unlocks if is locked) door
         /// </summary>
-        public static void OpenDoor(GameObject prevObj, DaggerfallAction thisAction)
+        public static void OpenDoor(GameObject triggerObj, DaggerfallAction thisAction)
         {
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-            {
                 DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"));
-            }
             else
             {
                 if (door.IsOpen)
@@ -494,14 +574,12 @@ namespace DaggerfallWorkshop
         /// 20
         /// Closes door on activate.  If door has a starting lock value, will re-lock door.
         /// </summary>
-        public static void CloseDoor(GameObject prevObj, DaggerfallAction thisAction)
+        public static void CloseDoor(GameObject triggerObj, DaggerfallAction thisAction)
         {
 
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-            {
                 DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"));
-            }
             else
             {
                 if (!door.IsOpen)
@@ -517,23 +595,103 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// This just simulates activating one of the action objects that hurt the player.
-        /// 21 does lots of damage, and varies.  Can only activate once.
-        /// 22-25 do Player Level * Magnitude in Damage. Multiple activation
+        /// 21
+        /// Damages players health, uses random range & activates sporadically
         /// </summary>
-        public static void Hurt(GameObject playerObj, DaggerfallAction thisAction)
+        /// <param name="prevObj"></param>
+        /// <param name="thisAction"></param>
+        public static void DrainHealth21(GameObject triggerObj, DaggerfallAction thisAction)
         {
-            if (playerObj == null)
+            //action type 21 activates every ~20 times for some reason.  Might be better to rand instead
+            if (thisAction.activationCount % 20 != 0)
                 return;
 
-            playerObj.SendMessage("RemoveHealth", SendMessageOptions.DontRequireReceiver);
+            GameObject playerObject;
+            PlayerEntity playerEntity;
+
+            if(!GetPlayer(out playerObject, out playerEntity))
+            {
+                DaggerfallUnity.LogMessage("Failed to get Player or Player entity", true);
+                return;
+            }
+
+            int damage = 0;
+            damage = UnityEngine.Random.Range(Mathf.Max(1, (int)thisAction.Magnitude), Mathf.Max(1, thisAction.Index)) * Mathf.Max(playerEntity.Level, 1);
+            playerObject.SendMessage("RemoveHealth", damage);
+            //DaggerfallUnity.LogMessage("DrainHealth21, damage: " + damage, true);
+        }
+
+
+        /// <summary>
+        /// 22-25
+        /// Damages players health every hit
+        /// </summary>
+        /// <param name="prevObj"></param>
+        /// <param name="thisAction"></param>
+        public static void DrainHealth(GameObject triggerObj, DaggerfallAction thisAction)
+        {
+
+            GameObject playerObject;
+            PlayerEntity playerEntity;
+
+            if (!GetPlayer(out playerObject, out playerEntity))
+            {
+                DaggerfallUnity.LogMessage("Failed to get Player or Player entity", true);
+                return;
+            }
+
+            int damage = 0;
+            if(thisAction.IsFlat)
+                damage = (int)thisAction.Magnitude * Mathf.Max(playerEntity.Level, 1);
+            else
+                damage = (int)thisAction.ActionAxisRawValue * Mathf.Max(playerEntity.Level, 1);
+
+            playerObject.SendMessage("RemoveHealth", damage);
+
+            //DaggerfallUnity.LogMessage("DrainHealth damage: " + damage, true);
+        }
+
+
+        /// <summary>
+        /// 26
+        /// Seems to poison / infect player.
+        /// </summary>
+        /// <param name="triggerObj"></param>
+        /// <param name="thisAction"></param>
+        public static void Poison(GameObject triggerObj, DaggerfallAction thisAction)
+        {
+            Debug.Log("Action Type 26: Poison");
+
+        }
+
+        /// <summary>
+        /// 28
+        /// Drains Magicka
+        /// Only on models in vanilla daggerfall (usually on bottom of pits, drains magica while you walk around)
+        /// </summary>
+        /// <param name="playerObj"></param>
+        /// <param name="thisAction"></param>
+        public static void DrainMagicka(GameObject triggerObj, DaggerfallAction thisAction)
+        {
+            GameObject playerObject;
+            PlayerEntity playerEntity;
+
+            if (!GetPlayer(out playerObject, out playerEntity))
+            {
+                DaggerfallUnity.LogMessage("Failed to get Player or Player entity", true);
+                return;
+            }
+            if(thisAction.IsFlat)
+                playerEntity.DecreaseMagicka((int)Mathf.Max(1, thisAction.Magnitude));
+            else
+                playerEntity.DecreaseMagicka((int)Mathf.Max(1, thisAction.ActionAxisRawValue));
         }
 
 
         // <summary>
         /// Just activates next object in chain.
         /// </summary>
-        public static void Activate(GameObject prevObj, DaggerfallAction thisAction)
+        public static void Activate(GameObject triggerObj, DaggerfallAction thisAction)
         {
             return;
         }

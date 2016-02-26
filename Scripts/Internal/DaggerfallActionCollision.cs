@@ -9,76 +9,88 @@
 // Notes:
 //
 
+
+using DaggerfallWorkshop.Game;
 using UnityEngine;
 
 namespace DaggerfallWorkshop
 {
-    [RequireComponent(typeof(MeshCollider))]
+    [RequireComponent(typeof(Rigidbody))]
     public class DaggerfallActionCollision : MonoBehaviour
     {
-        [SerializeField]
-        private bool readyToPlayAgain = true;
         private DaggerfallAction thisAction = null;
-        private Rigidbody rigBody = null;
-        public bool isFlat = false;
+        private Rigidbody rigBody           = null;
+        float timer                         = 0;
+        public bool colliding               = false;
+        public float timeout                = .125f;
 
         // Use this for initialization
-        void Start()
+        void Awake()
         {
-            if (!thisAction)
-                thisAction = GetComponent<DaggerfallAction>();
-            if (!rigBody)
-                rigBody = this.GetComponent<Rigidbody>();
-
             SetupCollision();
         }
 
 
         public void SetupCollision()
         {
-            if (isFlat)
-            {
-                try
-                {
-                    GameObject player = GameObject.FindGameObjectWithTag("Player");
-                    Physics.IgnoreCollision(this.GetComponent<MeshCollider>(), player.GetComponent<CharacterController>());
-                }
-                catch (System.Exception ex)
-                {
-                    Debug.LogError(ex.Message);
-                }
-            }
-            else
-            {
-                if (!rigBody)
-                    rigBody = gameObject.AddComponent<Rigidbody>();
-                rigBody.isKinematic = true;
-                rigBody.useGravity = false;
-                rigBody.hideFlags = HideFlags.NotEditable;
-            }
+            if (!thisAction)
+                thisAction = GetComponent<DaggerfallAction>();
+            if(!rigBody)
+                rigBody = GetComponent<Rigidbody>();
+
+            rigBody.isKinematic     = true;
+            rigBody.useGravity      = false;
+            rigBody.freezeRotation  = true;
 
         }
 
         void OnTriggerEnter(Collider col)
         {
-
-            if (thisAction == null || isFlat)
+            if (col.transform.gameObject.tag != "Player")
                 return;
+            colliding = true;
+        }
 
-            if (!thisAction.IsPlaying() && readyToPlayAgain)
-            {
-                readyToPlayAgain = false;
-                thisAction.Receive(col.gameObject, false);
-            }
-
+        void OnTriggerStay(Collider col)
+        {
+            if (col.transform.gameObject.tag != "Player")
+                return;
+            colliding = true;
         }
 
         void OnTriggerExit(Collider col)
         {
-            readyToPlayAgain = true;
-
+            if (col.transform.gameObject.tag != "Player")
+                return;
+            colliding = false;
         }
 
+
+        void Update()
+        {
+            if(!colliding)
+                return;
+            if ((timer += Time.deltaTime) < timeout)
+                return;
+            else
+                timer = 0;
+
+            //only trigger collision when player has moved
+            if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards)
+                    || InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards)
+                    || InputManager.Instance.HasAction(InputManager.Actions.MoveLeft)
+                    || InputManager.Instance.HasAction(InputManager.Actions.MoveRight)
+                    //|| InputManager.Instance.HasAction(InputManager.Actions.FloatUp)        //up/down don't seem to trigger collisions in daggerfall
+                    //|| InputManager.Instance.HasAction(InputManager.Actions.FloatDown)
+                    || InputManager.Instance.HasAction(InputManager.Actions.Jump)
+                )
+            {
+                //start action
+                //TODO: Determine if colloision is something player is walking on or into like wall, and set TriggerType accordingly
+               thisAction.Receive(GameManager.Instance.PlayerObject, DaggerfallAction.TriggerTypes.WalkInto);
+            }
+
+        }
 
     }
 
