@@ -214,6 +214,9 @@ namespace DaggerfallWorkshop
                     dfAudioSource.PlayOneShot(OpenSound);
             }
 
+            //For Doors that are also action objects, executes action when door opened / closed
+            ExecuteActionOnToggle();
+
             // Set flag
             IsMagicallyHeld = false;
             CurrentLockValue = 0;
@@ -234,6 +237,9 @@ namespace DaggerfallWorkshop
                 "oncompleteparams", duration);
             __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
             currentState = ActionState.PlayingReverse;
+
+            //For Doors that are also action objects, executes action when door opened / closed
+            ExecuteActionOnToggle();
         }
 
         private void OnCompleteOpen()
@@ -260,6 +266,15 @@ namespace DaggerfallWorkshop
         {
             if (IsTriggerWhenOpen && boxCollider != null)
                 boxCollider.isTrigger = isTrigger;
+        }
+
+        //For Doors that are also action objects, executes action when door opened / closed
+        private void ExecuteActionOnToggle()
+        {
+            DaggerfallAction action = GetComponent<DaggerfallAction>();
+            if(action != null)
+                action.Receive(gameObject, DaggerfallAction.TriggerTypes.Door);
+
         }
 
         #endregion
