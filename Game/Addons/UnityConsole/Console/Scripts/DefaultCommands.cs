@@ -43,7 +43,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(SetTimeScale.name, SetTimeScale.description, SetTimeScale.usage, SetTimeScale.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetGravity.name, SetGravity.description, SetGravity.usage, SetGravity.Execute);
 
-            ConsoleCommandsDatabase.RegisterCommand(GotoLocation.name, GotoLocation.description, GotoLocation.usage, GotoLocation.Execute);            
+            ConsoleCommandsDatabase.RegisterCommand(GotoLocation.name, GotoLocation.description, GotoLocation.usage, GotoLocation.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(GetLocationMapPixel.name, GetLocationMapPixel.description, GetLocationMapPixel.usage, GetLocationMapPixel.Execute);
         }
 
 
@@ -63,11 +64,7 @@ namespace Wenzil.Console
                     return string.Format("Godmode enabled: {0}", playerHealth.GodMode);
                 }
                 else
-                {
                     return error;
-                }
-
-
             }
         }
 
@@ -119,11 +116,7 @@ namespace Wenzil.Console
                     return string.Format("Set health to: {0}", playerBehavior.Entity.CurrentHealth);
                 }
                 else
-                {
                     return error;
-
-                }
-
             }
         }
 
@@ -140,17 +133,12 @@ namespace Wenzil.Console
                 DaggerfallEntityBehaviour playerBehavior = GameManager.Instance.PlayerEntityBehaviour;
 
                 if (playerBehavior == null)
-                {
                     return error;
-                }
                 else
                 {
                     playerBehavior.Entity.SetHealth(0);
                     return "Are you still there?";
                 }
-
-
-
             }
         }
 
@@ -166,10 +154,8 @@ namespace Wenzil.Console
                 int weatherType = 0;
                 
                 if (args == null || args.Length < 1)
-                {
                     return HelpCommand.Execute(SetWeather.name);
 
-                }
                 else if (weatherManager == null)
                 {
                     return HelpCommand.Execute(SetWeather.name);
@@ -188,15 +174,11 @@ namespace Wenzil.Console
                         else if (weatherType == 3)
                             weatherManager.StartSnowing();
                         return "Set weather.";
-                        
-
                     }
- 
+
                 }
-                
+
                 return HelpCommand.Execute(SetWeather.name);
-
-
 
             }
         }
@@ -214,10 +196,8 @@ namespace Wenzil.Console
                 PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
 
                 if (playerMotor == null)
-                {
                     return error;
 
-                }
                 if (args == null || args.Length < 1)
                 {
                     try
@@ -233,16 +213,12 @@ namespace Wenzil.Console
 
                 }
                 else if (!int.TryParse(args[0], out speed))
-                {
                     return error;
-                }
                 else
                 {
                     playerMotor.walkSpeed = speed;
                     return string.Format("Walk speed set to: {0}", speed);
                 }
-
-
 
             }
         }
@@ -260,10 +236,8 @@ namespace Wenzil.Console
                 PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
 
                 if (playerMotor == null)
-                {
                     return error;
 
-                }
                 if (args == null || args.Length < 1)
                 {
                     try
@@ -288,9 +262,6 @@ namespace Wenzil.Console
                     playerMotor.runSpeed = speed;
                     return string.Format("Run speed set to: {0}", speed);
                 }
-
-
-
             }
         }
 
@@ -307,10 +278,8 @@ namespace Wenzil.Console
                 DaggerfallWorkshop.DaggerfallUnity daggerfallUnity = DaggerfallWorkshop.DaggerfallUnity.Instance;
 
                 if (daggerfallUnity == null)
-                {
                     return error;
 
-                }
                 if (args == null || args.Length < 1)
                 {
                     try
@@ -325,9 +294,7 @@ namespace Wenzil.Console
 
                 }
                 else if (!int.TryParse(args[0], out speed))
-                {
                     return error;
-                }
                 else
                 {
                     try
@@ -338,12 +305,9 @@ namespace Wenzil.Console
                     catch
                     {
                         return "Unspecified error; failed to set timescale";
-
                     }
 
                 }
-
-
 
             }
         }
@@ -366,9 +330,7 @@ namespace Wenzil.Console
                     return HelpCommand.Execute(SetMouseSensitivity.name);
                 }
                 else if (mLook == null)
-                {
                     return error;
-                }
                 else
                 {
                     mLook.sensitivity = new Vector2(speed, speed);
@@ -390,9 +352,7 @@ namespace Wenzil.Console
             {
                 PlayerMouseLook mLook = GameManager.Instance.PlayerMouseLook;//GameObject.FindObjectOfType<PlayerMouseLook>();
                 if (mLook == null)
-                {
                     return error;
-                }
                 else
                 {
                     //mLook.smoothing = new Vector2(speed, speed);
@@ -422,9 +382,7 @@ namespace Wenzil.Console
                     return HelpCommand.Execute(SetMouseSmoothing.name);
                 }
                 else if (mLook == null)
-                {
                     return error;
-                }
                 else
                 {
                     mLook.smoothing = new Vector2(speed, speed);
@@ -448,7 +406,6 @@ namespace Wenzil.Console
                 {
                     Console.Log(string.Format("Current VSync Count: {0}", UnityEngine.QualitySettings.vSyncCount));
                     return HelpCommand.Execute(SetVSync.name);
-
                 }
                 else if (!int.TryParse(args[0], out count))
                 {
@@ -459,17 +416,10 @@ namespace Wenzil.Console
                 {
                     UnityEngine.QualitySettings.vSyncCount = count;
                     return string.Format("Set vSyncCount to: {0}", UnityEngine.QualitySettings.vSyncCount.ToString());
-
                 }
                 else
-                {
                     return error;
-                }
-
-
             }
-
-
         }
 
 
@@ -490,36 +440,28 @@ namespace Wenzil.Console
                 PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
 
                 if (playerMotor == null)
-                {
                     return error;
 
-                }
                 if (args == null || args.Length < 1)
                 {
                     try
                     {
                         Console.Log(string.Format("Current gravity: {0}", playerMotor.gravity));
                         return HelpCommand.Execute(SetGravity.name);
-
                     }
                     catch
                     {
                         return HelpCommand.Execute(SetGravity.name);
                     }
 
-
                 }
                 else if (!int.TryParse(args[0], out gravity))
-                {
                     return error;
-                }
                 else
                 {
                     playerMotor.gravity = gravity;
                     return string.Format("Gravity set to: {0}", playerMotor.gravity);
                 }
-
-
 
             }
         }
@@ -557,9 +499,8 @@ namespace Wenzil.Console
 
                 }
                 else if (!int.TryParse(args[0], out speed))
-                {
                     return error;
-                }
+
                 else
                 {
                     playerMotor.jumpSpeed = speed;
@@ -584,17 +525,12 @@ namespace Wenzil.Console
                 PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;//GameObject.FindObjectOfType<PlayerMotor>();
 
                 if (playerMotor == null)
-                {
                     return error;
-                }
                 else
                 {
                     playerMotor.airControl = !playerMotor.airControl;
                     return string.Format("air control set to: {0}", playerMotor.airControl);
                 }
-
-
-
             }
         }
 
@@ -612,20 +548,15 @@ namespace Wenzil.Console
                 PlayerEnterExit playerEE = GameManager.Instance.PlayerEnterExit;//GameObject.FindObjectOfType<PlayerEnterExit>();
 
                 if (args == null || args.Length < 2)
-                {
                     return HelpCommand.Execute(TeleportToMapPixel.name);
 
-                }
                 else if (streamingWorld == null)
-                {
                     return "Could not locate Streaming world object";
 
-                }
+
                 else if (playerEE == null || playerEE.IsPlayerInside)
-                {
                     return "PlayerEnterExit could not be found or player inside";
 
-                }
                 else if (int.TryParse(args[0], out x) && int.TryParse(args[1], out y))
                 {
                     if (x <= 0 || y <= 0)
@@ -633,18 +564,11 @@ namespace Wenzil.Console
                     else if (x >= MapsFile.MaxMapPixelX || y >= MapsFile.MaxMapPixelY)
                         return "Invalid coordiantes";
                     else
-                    {
                         streamingWorld.TeleportToCoordinates(x, y);
                         return string.Format("Teleporting player to: {0} {1}", x, y);
-
-                    }
-
                 }
-
                 return "Invalid coordiantes";
             }
-
-
         }
 
         private static class GotoLocation
@@ -659,20 +583,15 @@ namespace Wenzil.Console
                 PlayerEnterExit playerEE = GameManager.Instance.PlayerEnterExit;//GameObject.FindObjectOfType<PlayerEnterExit>();
 
                 if (args == null || args.Length < 1)
-                {
                     return HelpCommand.Execute(GotoLocation.name);
 
-                }
                 else if (streamingWorld == null)
-                {
                     return "Could not locate Streaming world object";
 
-                }
                 else if (playerEE == null || playerEE.IsPlayerInside)
-                {
                     return "PlayerEnterExit could not be found or player inside";
 
-                }
+
                 else if (int.TryParse(args[0], out n))
                 {
                     if (n < 0 || n > 9)
@@ -724,12 +643,10 @@ namespace Wenzil.Console
                             default:
                                 break;
                         }
-
                         return "Teleported successfully.";
                     }
 
                 }
-
                 return "Invalid location index";
             }
         }
@@ -764,8 +681,6 @@ namespace Wenzil.Console
                         }
 
                         return "Transitioning to exterior";
-
-
                     }
                     catch
                     {
@@ -773,9 +688,6 @@ namespace Wenzil.Console
                     }
 
                 }
-
-
-
 
             }
 
@@ -842,18 +754,12 @@ namespace Wenzil.Console
                             doors[i].SetOpen(true, false, true);
                             count++;
                         }
-
                     }
-
                     return string.Format("Finished.  Opened {0} doors out of {1}", count, doors.Count());
-
 
                 }
 
             }
-
-
-
         }
 
 
@@ -879,14 +785,43 @@ namespace Wenzil.Console
                 }
                 return string.Format("Finished.  Killed: {0} enemies.", count);
             }
-
-
         }
 
 
+        private static class GetLocationMapPixel
+        {
+            public static readonly string name = "getlocpixel";
+            public static readonly string description = "get pixel coordinates for a location";
+            public static readonly string usage = "getlocpixel <region name>/<location name> (no space between region name & location name)";
+
+            public static string Execute(params string[] args)
+            {
+                if(args == null || args.Count() < 1)
+                {
+                    return string.Format("Invalid paramaters; \n {0}", usage);
+                }
+
+                DaggerfallConnect.DFLocation loc;
+
+                string name = args[0];
+                for (int i = 1; i < args.Count(); i++)
+                {
+                    name += " " + args[i];
+                }
 
 
+                if(DaggerfallWorkshop.Utility.GameObjectHelper.FindMultiNameLocation(name, out loc ))
+                {
+                    DaggerfallConnect.Utility.DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)loc.MapTableData.Longitude, (int)loc.MapTableData.Latitude);
+                    return string.Format("{0} found; Pixel Coordinates: \nx: {1} y: {2}", name, pos.X, pos.Y);
+                }
+                else
+                {
+                    return "Invalid location.  Check spelling?";
+                }
+            }
 
+        }
 
     }
 }
