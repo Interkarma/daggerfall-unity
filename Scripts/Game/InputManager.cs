@@ -262,11 +262,20 @@ namespace DaggerfallWorkshop.Game
             posVerticalImpulse = false;
             negVerticalImpulse = false;
 
-            // Do nothing if paused
-            if (isPaused)
+            // Do nothing if paused or death animation in progress
+            // prevents player from opening char. windows etc. while dying
+            if (isPaused || GameManager.Instance.PlayerDeath.DeathInProgress)
             {
                 frameSkipCount = 0;
                 wasPaused = true;
+
+                //temp fix for player cont. moving forward after dying
+                if(GameManager.Instance.PlayerDeath.DeathInProgress)
+                {
+                    horizontal = 0;
+                    vertical = 0;
+                }
+
                 return;
             }
 
