@@ -162,6 +162,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return (selectedRegionMapNames.Length > 2) ? true : false; }
         }
 
+        bool RegionSelected
+        {
+            get { return selectedRegion != -1; }
+        }
+
+        bool MouseOverRegion
+        {
+            get { return mouseOverRegion != -1; }
+        }
+
+        bool MouseOverOtherRegion
+        {
+            get { return RegionSelected && (selectedRegion != mouseOverRegion); }
+        }
+
         #endregion
 
 
@@ -285,16 +300,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (findingLocation || identifyingRegion)
                     StopRegionIdentify();
-                else if (selectedRegion != -1)
+                else if (RegionSelected == true)
                     CloseTravelWindows();
             }
-            if (Input.GetKeyDown(KeyCode.F) && selectedRegion != -1)
+            if (Input.GetKeyDown(KeyCode.F) && RegionSelected == true)
                 FindlocationButtonClickHandler(null, Vector2.zero);
 
             // Play identify animations
-            if (identifyingRegion && selectedRegion == -1)
+            if (identifyingRegion && RegionSelected == false)
                 AnimateRegionIdentify(identifyRegionPanel);
-            else if (identifyingRegion && selectedRegion != -1)
+            else if (identifyingRegion && RegionSelected == true)
                 AnimateRegionIdentify(crossHairPanel);
 
             Vector2 currentMousePos = NativePanel.ScaledMousePosition;
@@ -303,7 +318,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 lastMousePos = currentMousePos;
                 UpdateMouseOverRegion();
                 UpdateRegionLabel();
-                if (selectedRegion != -1)
+                if (RegionSelected == true)
                     UpdateMouseOverLocation();
             }
 
@@ -473,7 +488,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <param name="mapPixelY"></param>
         void CreateCrossHair(int mapPixelX, int mapPixelY, int regionIndex)
         {
-            if (selectedRegion == -1)
+            if (RegionSelected == false)
                 return;
 
             string mapName = selectedRegionMapNames[mapIndex];
@@ -576,7 +591,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (position.x < 0 || position.x > regionTextureOverlayPanelRect.width || position.y < 0 || position.y > regionTextureOverlayPanelRect.height) //make sure clicks are inside region texture
                 return;
 
-            if (selectedRegion == -1 && mouseOverRegion != -1)
+            if (RegionSelected == false && MouseOverRegion)
                 OpenRegionPanel(mouseOverRegion);
 
             else if(locationSelected)
@@ -612,7 +627,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void AtButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             // Identify region or map location
-            if (selectedRegion == -1)
+            if (RegionSelected == false)
                 StartRegionIdentify();
             else
             {
@@ -623,7 +638,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void FindlocationButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
-            if (selectedRegion == -1)           // Do nothing
+            if (RegionSelected == false)           // Do nothing
                 return;
             else                                // Open find location pop-up
             {
@@ -652,7 +667,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void HorizontalArrowButtonClickHander(BaseScreenComponent sender, Vector2 position)
         {
-            if (selectedRegion == -1 || !HasMultipleMaps)
+            if (RegionSelected == false || !HasMultipleMaps)
                 return;
 
             int newIndex = mapIndex;
@@ -669,7 +684,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void VerticalArrowButtonClickHander(BaseScreenComponent sender, Vector2 position)
         {
-            if (selectedRegion == -1 || !HasVerticalMaps)
+            if (RegionSelected == false || !HasVerticalMaps)
                 return;
 
             int newIndex = mapIndex;
@@ -693,7 +708,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 dungeonsFilterButton.BackgroundTexture = dungeonFilterButtonEnabled;
 
-            if (selectedRegion == -1)
+            if (RegionSelected == false)
                 return;
 
             UpdateLocationCluster();
@@ -708,7 +723,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 templesFilterButton.BackgroundTexture = templesFilterButtonEnabled;
 
-            if (selectedRegion == -1)
+            if (RegionSelected == false)
                 return;
 
             UpdateLocationCluster();
@@ -723,7 +738,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 homesFilterButton.BackgroundTexture = homesFilterButtonEnabled;
 
-            if (selectedRegion == -1)
+            if (RegionSelected == false)
                 return;
 
             UpdateLocationCluster();
@@ -738,7 +753,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 townsFilterButton.BackgroundTexture = townsFilterButtonEnabled;
 
-            if (selectedRegion == -1)
+            if (RegionSelected == false)
                 return;
 
             UpdateLocationCluster();
@@ -856,7 +871,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //checks if player mouse over valid location while region selected & not finding location
         void UpdateMouseOverLocation()
         {
-            if (selectedRegion == -1 || findingLocation)
+            if (RegionSelected == false || findingLocation)
                 return;
             string mapName = selectedRegionMapNames[mapIndex];
             Vector2 origin = offsetLookup[mapName];
@@ -909,7 +924,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Updates the text label at top of screen
         void UpdateRegionLabel()
         {
-            if (selectedRegion == -1)
+            if (RegionSelected == false)
                 regionLabel.Text = GetRegionName(mouseOverRegion);
             else if (locationSelected)
                 regionLabel.Text = string.Format("{0} : {1}", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(selectedRegion), currentRegion.MapNames[locationSummary.MapIndex]);
@@ -920,7 +935,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Closes windows based on context
         void CloseTravelWindows(bool forceClose = false)
         {
-            if (selectedRegion == -1 || forceClose)
+            if (RegionSelected == false || forceClose)
             {
                 // TODO: Need to ensure this does not "fall through" into general input and pause game
                 CloseWindow();
@@ -1196,13 +1211,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Animate region identification & location crosshair
         void AnimateRegionIdentify(Panel atPanel)
         {
-            // Must have an overlay texture and not have a region selected
-            //if (!identifyRegionOverlayTexture || selectedRegion != -1)
-            //{
-               // StopRegionIdentify();
-                //return;
-            //}
-
             if(!atPanel.BackgroundTexture)
             {
                 StopRegionIdentify();
