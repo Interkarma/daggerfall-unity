@@ -313,14 +313,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 AnimateRegionIdentify(crossHairPanel);
 
             Vector2 currentMousePos = NativePanel.ScaledMousePosition;
-            if(currentMousePos != lastMousePos)
+            if (currentMousePos != lastMousePos)
             {
                 lastMousePos = currentMousePos;
-                UpdateMouseOverRegion();
-                UpdateRegionLabel();
                 if (RegionSelected == true)
-                    UpdateMouseOverLocation();
+                    UpdateMouseOverLocation(lastMousePos);
+                else
+                    UpdateMouseOverRegion(lastMousePos);
+                //Debug.Log(string.Format("New Mouse Pos: {0} Last Mouse Pos: {1} Has Location: {2} Title {3}", currentMousePos, lastMousePos, locationSelected, regionLabel.Text));
             }
+            UpdateRegionLabel();
 
         }
 
@@ -869,18 +871,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         //checks if player mouse over valid location while region selected & not finding location
-        void UpdateMouseOverLocation()
+        void UpdateMouseOverLocation(Vector2 position)
         {
             if (RegionSelected == false || findingLocation)
                 return;
+
+            locationSelected = false;
+            mouseOverRegion = selectedRegion;
+
+            if (position.x < regionPanelOffset || position.x > regionTextureOverlayPanelRect.width - regionPanelOffset || position.y < regionPanelOffset || position.y > regionTextureOverlayPanel.Size.y + regionPanelOffset)
+                return;
+
             string mapName = selectedRegionMapNames[mapIndex];
             Vector2 origin = offsetLookup[mapName];
+
             scale = GetRegionMapScale(selectedRegion);
-            Vector2 position = NativePanel.ScaledMousePosition;
-            int x = (int)(((position.x + origin.x)) * scale);
-            int y = (int)(((position.y + origin.y - 12)) * scale);
+            int x = (int)(position.x / scale + origin.x);
+            int y = (int)(position.y / scale + origin.y - regionPanelOffset);
+
+            if (selectedRegion == 19) //if betony, add 129 to y value...129 + current y origin seems to be approx. correct map pixel for upper left corner of betony
+                y += 129;
+
             int sampleRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(x, y) - 128;
-            locationSelected = false;
             if (sampleRegion != selectedRegion)
                 return;
 
@@ -896,18 +908,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (index == -1)
                         return;
                     locationSelected = true;
-                    // regionLabel.Text = string.Format("{0} : {1}", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(selectedRegion), currentRegion.MapNames[locationSummary.MapIndex]);
                 }
             }
         }
 
 
-        void UpdateMouseOverRegion()
+        void UpdateMouseOverRegion(Vector2 position)
         {
             mouseOverRegion = -1;
 
             // Get offset into region picker bitmap
-            Vector2 position = NativePanel.ScaledMousePosition;
             int offset = (int)position.y * regionPickerBitmap.Width + (int)position.x;
             if (offset < 0 || offset >= regionPickerBitmap.Data.Length)
                 return;
@@ -933,13 +943,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Closes windows based on context
-        void CloseTravelWindows(bool forceClose = false)
+        public void CloseTravelWindows(bool forceClose = false)
         {
             if (RegionSelected == false || forceClose)
-            {
-                // TODO: Need to ensure this does not "fall through" into general input and pause game
                 CloseWindow();
-            }
 
             // Close region panel
             CloseRegionPanel();
