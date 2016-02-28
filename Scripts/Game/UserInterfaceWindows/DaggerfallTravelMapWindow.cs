@@ -36,19 +36,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Fields
 
-        const string nativeImgName = "TRAV0I00.IMG";
-        const string regionPickerImgName = "TRAV0I01.IMG";
-        const string findAtButtonImgName = "TRAV0I03.IMG";
-        const string locationFilterButtonEnabledImgName = "TRAV01I0.IMG";
-        const string locationFilterButtonDisabledImgName = "TRAV01I1.IMG";
-        const string downArrowImgName = "TRAVAI05.IMG";
-        const string upArrowImgName = "TRAVBI05.IMG";
-        const string rightArrowImgName = "TRAVCI05.IMG";
-        const string leftArrowImgName = "TRAVDI05.IMG";
-        const string regionBorderImgName = "MBRD00I0.IMG";
-
-        const int identifyFlashCount = 4;
-        const float identifyFlashInterval = 0.5f;
+        const string nativeImgName                          = "TRAV0I00.IMG";
+        const string regionPickerImgName                    = "TRAV0I01.IMG";
+        const string findAtButtonImgName                    = "TRAV0I03.IMG";
+        const string locationFilterButtonEnabledImgName     = "TRAV01I0.IMG";
+        const string locationFilterButtonDisabledImgName    = "TRAV01I1.IMG";
+        const string downArrowImgName                       = "TRAVAI05.IMG";
+        const string upArrowImgName                         = "TRAVBI05.IMG";
+        const string rightArrowImgName                      = "TRAVCI05.IMG";
+        const string leftArrowImgName                       = "TRAVDI05.IMG";
+        const string regionBorderImgName                    = "MBRD00I0.IMG";
+        const int regionPanelOffset                         = 12;
+        const int identifyFlashCount                        = 4;
+        const float identifyFlashInterval                   = 0.5f;
 
         Dictionary<string, Vector2> offsetLookup = new Dictionary<string, Vector2>();
 
@@ -92,12 +92,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button homesFilterButton = new Button();
         Button townsFilterButton = new Button();
 
-        Rect regionTextureOverlayPanelRect = new Rect(0, 12, 320, 160);
+        Rect regionTextureOverlayPanelRect = new Rect(0, regionPanelOffset, 320, 160);
         Rect dungeonsFilterButtonSrcRect = new Rect(0, 11, 99, 11);
         Rect templesFilterButtonSrcRect = new Rect(0, 0, 99, 11);
         Rect homesFilterButtonSrcRect = new Rect(99, 11, 80, 11);
         Rect townsFilterButtonSrcRect = new Rect(99, 0, 80, 11);
-        Rect crossHairRect = new Rect(12, 12, 296, 160);//x pos + 12 & size - 24 to comp. for borders
+        Rect crossHairRect = new Rect(regionPanelOffset, regionPanelOffset, 296, 160);//x pos + 12 & size - 24 to comp. for borders
 
         int mouseOverRegion = -1;
         int selectedRegion = -1;
@@ -241,9 +241,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //crosshair panel
             //CreateCrossHair(GetPlayerMapPosition());
             crossHairPanel = new Panel();
-            crossHairPanel.Position = crossHairRect.position;//new Vector2(12, regionTextureOverlayPanelRect.position.y);
-            crossHairPanel.Size = crossHairRect.size;//new Vector2(regionTextureOverlayPanelRect.size.x-24, regionTextureOverlayPanelRect.size.y);
-            crossHairPanel.BackgroundTexture = crossHairTexture;
+            crossHairPanel.Position = crossHairRect.position;
+            crossHairPanel.Size = crossHairRect.size;
             crossHairPanel.Enabled = false;
             NativePanel.Components.Add(crossHairPanel);
 
@@ -482,7 +481,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             scale = GetRegionMapScale(regionIndex);
 
             int scaledX = (int)((mapPixelX - origin.x) / scale);
-            int scaledY = (int)((mapPixelY - origin.y + 12) / scale);
+            int scaledY = (int)((mapPixelY - origin.y + regionPanelOffset) / scale);
 
             if (crossHairTexture == null)
                 crossHairTexture = new Texture2D((int)crossHairPanel.Size.x, (int)crossHairPanel.Size.y);
@@ -491,7 +490,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 for (int y = 0; y < crossHairTexture.height; y++)
                 {
-                    if (x + 12 == scaledX || y + 12 == scaledY)
+                    if (x + regionPanelOffset == scaledX || y + regionPanelOffset == scaledY)
                         crossHairTexture.SetPixel(x, crossHairTexture.height - y - 1, identifyFlashColor);
                     else
                         crossHairTexture.SetPixel(x, crossHairTexture.height - y - 1, Color.clear);
@@ -572,13 +571,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <param name="position"></param>
         void ClickHandler(BaseScreenComponent sender, Vector2 position)
         {
+            position.y -= regionPanelOffset;
+
+            if (position.x < 0 || position.x > regionTextureOverlayPanelRect.width || position.y < 0 || position.y > regionTextureOverlayPanelRect.height) //make sure clicks are inside region texture
+                return;
+
             if (selectedRegion == -1 && mouseOverRegion != -1)
                 OpenRegionPanel(mouseOverRegion);
 
             else if(locationSelected)
-            {
-                if (position.x < 0 || position.x > regionTextureOverlayPanelRect.width || position.y < 12 || position.y > regionTextureOverlayPanelRect.height) //make sure clicks are inside region texture
-                    return;                                                                                                                                     //to prevent creating popup when player clicking buttons etc.
+            {                                                                                                                                  //to prevent creating popup when player clicking buttons etc.
                 TextFile.Token[] textTokens = new TextFile.Token[2];
                 //int index = currentRegion.MapIdLookup[locationSummary.MapIndex];
                 textTokens[0].text = string.Format("Travel to  {0} : {1} ?", currentRegion.Name, currentRegion.MapNames[locationSummary.MapIndex]);
