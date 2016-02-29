@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool identifyingRegion = false;
         bool findingLocation = false;
         bool locationSelected = false;
-        DFRegion currentRegion;
+        DFRegion currentDFRegion;
         ContentReader.MapSummary locationSummary;
 
         static bool filterDungeons = false;
@@ -600,7 +600,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {                                                                                                                                  //to prevent creating popup when player clicking buttons etc.
                 TextFile.Token[] textTokens = new TextFile.Token[2];
                 //int index = currentRegion.MapIdLookup[locationSummary.MapIndex];
-                textTokens[0].text = string.Format("Travel to  {0} : {1} ?", currentRegion.Name, currentRegion.MapNames[locationSummary.MapIndex]);
+                textTokens[0].text = string.Format("Travel to  {0} : {1} ?", currentDFRegion.Name, currentDFRegion.MapNames[locationSummary.MapIndex]);
                 textTokens[0].formatting = TextFile.Formatting.Text;
                 textTokens[1].text = null;
                 textTokens[1].formatting = TextFile.Formatting.NewLine;
@@ -660,7 +660,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                DFRegion.RegionMapTable map = currentRegion.MapTable[locationSummary.MapIndex];
+                DFRegion.RegionMapTable map = currentDFRegion.MapTable[locationSummary.MapIndex];
                 TravelToLocation(MapsFile.LongitudeLatitudeToMapPixel((int)map.Longitude, (int)map.Latitude));
             }
             else
@@ -787,7 +787,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
 
 
-            currentRegion = DaggerfallUnity.ContentReader.MapFileReader.GetRegion(region);
+            currentDFRegion = DaggerfallUnity.ContentReader.MapFileReader.GetRegion(region);
             UpdateLocationCluster();
         }
 
@@ -900,7 +900,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 DaggerfallUnity.ContentReader.HasLocation(x, y, out locationSummary);
 
-                if (locationSummary.MapIndex < 0 || locationSummary.MapIndex >= currentRegion.MapNames.Length)
+                if (locationSummary.MapIndex < 0 || locationSummary.MapIndex >= currentDFRegion.MapNames.Length)
                     return;
                 else
                 {
@@ -937,7 +937,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (RegionSelected == false)
                 regionLabel.Text = GetRegionName(mouseOverRegion);
             else if (locationSelected)
-                regionLabel.Text = string.Format("{0} : {1}", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(selectedRegion), currentRegion.MapNames[locationSummary.MapIndex]);
+                regionLabel.Text = string.Format("{0} : {1}", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(selectedRegion), currentDFRegion.MapNames[locationSummary.MapIndex]);
             else
                 regionLabel.Text = GetRegionName(selectedRegion);
         }
@@ -1088,20 +1088,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return false;
             }
 
-            string[] locations = currentRegion.MapNames.OrderBy(p => p).ToArray();
+            string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
             name = name.ToLower();
 
             for (int i = 0; i < locations.Count(); i++)
             {
                 if (locations[i].ToLower().StartsWith(name))                        // Valid location found,
                 {
-                    if (!currentRegion.MapNameLookup.ContainsKey(locations[i]))
+                    if (!currentDFRegion.MapNameLookup.ContainsKey(locations[i]))
                     {
                         DaggerfallUnity.LogMessage("Error: location name key not found in Region MapNameLookup dictionary");
                         return false;
                     }
-                    int index = currentRegion.MapNameLookup[locations[i]];
-                    locationInfo = currentRegion.MapTable[index];
+                    int index = currentDFRegion.MapNameLookup[locations[i]];
+                    locationInfo = currentDFRegion.MapTable[index];
                     DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
                     if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
                         return true;
