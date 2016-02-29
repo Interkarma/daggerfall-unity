@@ -324,7 +324,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     AnimateRegionIdentify(crossHairPanel);
             }
-            //else if (identifyingRegion && RegionSelected == true)
 
             Vector2 currentMousePos = NativePanel.ScaledMousePosition;
             if (currentMousePos != lastMousePos)
