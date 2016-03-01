@@ -26,7 +26,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     ///TODO:
     ///1. Betony
     ///2. Zoom
-    ///3. Final travel options window + pathfinding
 
 
     /// <summary>
@@ -49,6 +48,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int regionPanelOffset                         = 12;
         const int identifyFlashCount                        = 4;
         const float identifyFlashInterval                   = 0.5f;
+
+        DaggerfallTravelPopUp popUp;
 
         Dictionary<string, Vector2> offsetLookup = new Dictionary<string, Vector2>();
 
@@ -653,10 +654,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
-            {
-                DFRegion.RegionMapTable map = currentDFRegion.MapTable[locationSummary.MapIndex];
-                TravelToLocation(MapsFile.LongitudeLatitudeToMapPixel((int)map.Longitude, (int)map.Latitude));
-            }
+                CreatePopUpWindow();
             else
                 StopRegionIdentify();
         }
@@ -1104,26 +1102,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return false;
         }
 
-        // Teleports player to position
-        void TravelToLocation(DFPosition pos)
-        {
-            TravelToLocation(pos.X, pos.Y);
-        }
-
-        // Teleports player to coordinates of location
-        void TravelToLocation(int x, int y)
-        {
-            try
-            {
-                GameObject.FindObjectOfType<StreamingWorld>().TeleportToCoordinates(x, y);
-                CloseTravelWindows(true);
-            }
-            catch (Exception ex)
-            {
-                DaggerfallUnity.LogMessage(ex.Message);
-            }
-        }
-
         // Gets current player position in map pixels
         DFPosition GetPlayerMapPosition()
         {
@@ -1193,6 +1171,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
             messageBox.OnButtonClick += ConfirmTravelPopupButtonClick;
             uiManager.PushWindow(messageBox);
+        }
+
+        void CreatePopUpWindow()
+        {
+            if (popUp != null)
+            {
+                DFPosition pos = MapsFile.GetPixelFromPixelID(locationSummary.ID);
+                popUp.EndPos = pos;
+                DaggerfallUI.UIManager.PushWindow(popUp);
+            }
+            else
+            {
+                popUp = new DaggerfallTravelPopUp(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow, this);
+                DFPosition pos = MapsFile.GetPixelFromPixelID(locationSummary.ID);
+                popUp.EndPos = pos;
+                DaggerfallUI.UIManager.PushWindow(popUp);
+            }
+
         }
 
         #endregion
