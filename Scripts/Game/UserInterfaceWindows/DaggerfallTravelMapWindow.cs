@@ -392,7 +392,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             horizontalArrowButton.Size = new Vector2(leftArrowTexture.width, leftArrowTexture.height);
             horizontalArrowButton.Enabled = false;
             NativePanel.Components.Add(horizontalArrowButton);
-            horizontalArrowButton.OnMouseClick += HorizontalArrowButtonClickHander;
+            horizontalArrowButton.OnMouseClick += HorizontalArrowButtonClickHandler;
 
             // Vertical arrow button
             verticalArrowButton.Position = new Vector2(254, 176);
@@ -659,7 +659,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 StopRegionIdentify();
         }
 
-        void HorizontalArrowButtonClickHander(BaseScreenComponent sender, Vector2 position)
+        void HorizontalArrowButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             if (RegionSelected == false || !HasMultipleMaps)
                 return;
@@ -672,7 +672,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             mapIndex = newIndex;
             SetupArrowButtons();
-            regionTextureOverlayPanel.BackgroundTexture = DaggerfallUI.GetTextureFromImg(selectedRegionMapNames[mapIndex]);
+            SetRegionTexture();
             UpdateLocationCluster();
         }
 
@@ -689,7 +689,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             mapIndex = newIndex;
             SetupArrowButtons();
-            regionTextureOverlayPanel.BackgroundTexture = DaggerfallUI.GetTextureFromImg(selectedRegionMapNames[mapIndex]);
+            SetRegionTexture();
             UpdateLocationCluster();
         }
 
@@ -773,7 +773,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupArrowButtons();
 
             regionTextureOverlayPanel.Enabled = true;
-            regionTexture = DaggerfallUI.GetTextureFromImg(mapNames[0]);
+            SetRegionTexture();
             regionTextureOverlayPanel.BackgroundTexture = regionTexture;
 
             //enable find button
@@ -799,6 +799,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //disable find button
             findButton.Enabled = false;
             StartRegionIdentify();
+        }
+
+        void SetRegionTexture()
+        {
+            if (regionTexture != null)
+                UnityEngine.Object.Destroy(regionTexture);
+
+            regionTexture = DaggerfallUI.GetTextureFromImg(selectedRegionMapNames[mapIndex]);
+            regionTextureOverlayPanel.BackgroundTexture = regionTexture;
         }
 
         // Updates location cluster texture
