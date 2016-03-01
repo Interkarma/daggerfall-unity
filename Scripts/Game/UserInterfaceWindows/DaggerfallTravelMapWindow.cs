@@ -614,6 +614,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     CreateConfirmationPopUp();
             }
+            else if (MouseOverOtherRegion)      //if clicked while mouse over other region & not a location, switch to that region
+                OpenRegionPanel(mouseOverRegion);
         }
 
         void ExitButtonClickHandler(BaseScreenComponent sender, Vector2 position)
@@ -787,6 +789,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void CloseRegionPanel()
         {
             selectedRegion = -1;
+            mouseOverRegion = -1;
             locationSelected = false;
             mapIndex = 0;
             StopRegionIdentify();
@@ -888,8 +891,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 y += 129;
 
             int sampleRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(x, y) - 128;
-            if (sampleRegion != selectedRegion)
+            if (sampleRegion != selectedRegion && sampleRegion >= 0 && sampleRegion < DaggerfallUnity.Instance.ContentReader.MapFileReader.RegionCount)
+            {
+                mouseOverRegion = sampleRegion;
                 return;
+            }
 
             if (DaggerfallUnity.ContentReader.HasLocation(x, y) && !FindingLocation)
             {
@@ -932,9 +938,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (RegionSelected == false)
                 regionLabel.Text = GetRegionName(mouseOverRegion);
             else if (locationSelected)
-                regionLabel.Text = string.Format("{0} : {1}", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(selectedRegion), currentDFRegion.MapNames[locationSummary.MapIndex]);
+                regionLabel.Text = string.Format("{0} : {1}", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(mouseOverRegion), currentDFRegion.MapNames[locationSummary.MapIndex]);
+            else if (MouseOverOtherRegion)
+                regionLabel.Text = string.Format("Switch To: {0} Region", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(mouseOverRegion));
             else
-                regionLabel.Text = GetRegionName(selectedRegion);
+                regionLabel.Text = GetRegionName(mouseOverRegion);
         }
 
         // Closes windows based on context
