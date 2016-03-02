@@ -10,13 +10,10 @@
 //
 
 using UnityEngine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect;
-using DaggerfallConnect.Utility;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
@@ -140,6 +137,7 @@ namespace DaggerfallWorkshop
 
         public enum TriggerTypes
         {
+            None,
             ActionObject, //sent from other action object
             Direct,     //player clicked on this
             WalkOn,     //Only using WalkInto for now
@@ -179,7 +177,7 @@ namespace DaggerfallWorkshop
                         break;
                     case DFBlock.RdbTriggerFlags.Collision01:
                         {
-                            if (triggerType != TriggerTypes.WalkInto) //In daggerfall this is WalkOn only - using WalkInto for all collisions currently
+                            if (triggerType != TriggerTypes.WalkOn)
                                 return;
                         }
                         break;
@@ -191,7 +189,7 @@ namespace DaggerfallWorkshop
                         break;
                     case DFBlock.RdbTriggerFlags.Collision03:
                         {
-                            if (triggerType != TriggerTypes.WalkInto && this.IsFlat)
+                            if (triggerType != TriggerTypes.WalkInto)
                                 return;
                         }
                         break;
@@ -215,7 +213,7 @@ namespace DaggerfallWorkshop
                         break;
                     case DFBlock.RdbTriggerFlags.Collision09:
                         {
-                            if (triggerType != TriggerTypes.Direct && triggerType != TriggerTypes.WalkInto )
+                            if (triggerType != TriggerTypes.Direct && triggerType != TriggerTypes.WalkInto)
                                 return;
                         }
                         break;
@@ -226,7 +224,7 @@ namespace DaggerfallWorkshop
                         }
                         break;
                     default:
-                        break;
+                        return;
                 }
             }
 
