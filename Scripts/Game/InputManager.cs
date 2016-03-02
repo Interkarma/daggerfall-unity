@@ -270,11 +270,20 @@ namespace DaggerfallWorkshop.Game
             posVerticalImpulse = false;
             negVerticalImpulse = false;
 
-            // Do nothing if paused
-            if (isPaused)
+            // Do nothing if paused or death animation in progress
+            // prevents player from opening char. windows etc. while dying
+            if (isPaused || GameManager.Instance.PlayerDeath.DeathInProgress)
             {
                 frameSkipCount = 0;
                 wasPaused = true;
+
+                //temp fix for player cont. moving forward after dying
+                if(GameManager.Instance.PlayerDeath.DeathInProgress)
+                {
+                    horizontal = 0;
+                    vertical = 0;
+                }
+
                 return;
             }
 
@@ -413,6 +422,7 @@ namespace DaggerfallWorkshop.Game
             actionKeyDict.Clear();
 
             SetBinding(KeyCode.Escape, Actions.Escape);
+            SetBinding(KeyCode.BackQuote, Actions.ToggleConsole);
 
             SetBinding(KeyCode.W, Actions.MoveForwards);
             SetBinding(KeyCode.S, Actions.MoveBackwards);
@@ -594,6 +604,7 @@ namespace DaggerfallWorkshop.Game
             keyBindsData.actionKeyBinds = actionKeyDict;
             string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
             File.WriteAllText(path, json);
+            RaiseSavedKeyBindsEvent();
         }
 
         void LoadKeyBinds()
@@ -610,6 +621,34 @@ namespace DaggerfallWorkshop.Game
                     actionKeyDict.Add(item.Key, item.Value);
             }
             //actionKeyDict = keyBindsData.actionKeyBinds;
+            RaiseLoadedKeyBindsEvent();
+        }
+
+        #endregion
+
+        #region Events
+
+        public delegate void OnLoadSaveKeyBinds();
+        public static event OnLoadSaveKeyBinds OnLoadedKeyBinds;
+        protected virtual void RaiseLoadedKeyBindsEvent()
+        {
+            if (OnLoadedKeyBinds != null)
+                OnLoadedKeyBinds();
+        }
+
+        public static event OnLoadSaveKeyBinds OnSavedKeyBinds;
+        protected virtual void RaiseSavedKeyBindsEvent()
+        {
+            if (OnSavedKeyBinds != null)
+                OnSavedKeyBinds();
+        }
+
+        public delegate void OnUpdateKeyBind(KeyCode code);
+        public static event OnUpdateKeyBind OnUpdatedKeyBind;
+        protected virtual void RaiseUpdatedKeyBindsEvent(KeyCode code)
+        {
+            if (OnUpdatedKeyBind != null)
+                OnUpdatedKeyBind(code);
         }
 
         #endregion
