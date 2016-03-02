@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop
         {DFBlock.RdbActionFlags.NegativeZ,  new ActionDelegate(Move)},
         {DFBlock.RdbActionFlags.PositiveY,  new ActionDelegate(Move)},
         {DFBlock.RdbActionFlags.NegativeY,  new ActionDelegate(Move)},
-        {DFBlock.RdbActionFlags.CastSpell,new ActionDelegate(Move)},
+        {DFBlock.RdbActionFlags.CastSpell,  new ActionDelegate(Move)},
         {DFBlock.RdbActionFlags.ShowText,   new ActionDelegate(ShowText)},
         {DFBlock.RdbActionFlags.ShowTextWithInput,   new ActionDelegate(ShowTextWithInput)},
         {DFBlock.RdbActionFlags.Teleport,   new ActionDelegate(Teleport)},
@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop
         {DFBlock.RdbActionFlags.Hurt24,     new ActionDelegate(DrainHealth)},
         {DFBlock.RdbActionFlags.Hurt25,     new ActionDelegate(DrainHealth)},
         {DFBlock.RdbActionFlags.Poison,     new ActionDelegate(Poison)},
-        {DFBlock.RdbActionFlags.DrainMagicka28,     new ActionDelegate(DrainMagicka)},
+        {DFBlock.RdbActionFlags.DrainMagicka, new ActionDelegate(DrainMagicka)},
         {DFBlock.RdbActionFlags.Activate,   new ActionDelegate(Activate)},
         };
 
@@ -251,7 +251,7 @@ namespace DaggerfallWorkshop
             //sound & activating next, but for testing purposes is done after
             if (d == null)
             {
-                DaggerfallUnity.LogMessage(string.Format("No delegate found for this action flag: {0}", ActionFlag));
+                //DaggerfallUnity.LogMessage(string.Format("No delegate found for this action flag: {0}", ActionFlag));
                 return;
             }
 
@@ -285,7 +285,7 @@ namespace DaggerfallWorkshop
         {
             if (NextObject == null)
             {
-                DaggerfallUnity.LogMessage(string.Format("Next action object in chain is null"));
+                //DaggerfallUnity.LogMessage(string.Format("Next action object in chain is null"));
                 return;
             }
             else
@@ -369,10 +369,8 @@ namespace DaggerfallWorkshop
 
             door = go.GetComponent<DaggerfallActionDoor>();
             if (door == null)
-            {
-                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found to unlock door: {0}", go.name));
                 return false;
-            }
+
             else
                 return true;
         }
@@ -442,8 +440,7 @@ namespace DaggerfallWorkshop
         /// <param name="thisAction"></param>
         public static void CastSpell(GameObject triggerObj, DaggerfallAction thisAction)
         {
-            Debug.Log("Action Type 9: CastSpell");
-
+            //Debug.Log("Action Type 9: CastSpell");
         }
 
         /// <summary>
@@ -497,7 +494,7 @@ namespace DaggerfallWorkshop
 
             if (thisAction.NextObject == null)
             {
-                DaggerfallUnity.LogMessage(string.Format("Teleport next object null - can't teleport"));
+                DaggerfallUnity.LogMessage(string.Format("Teleport next object null - can't teleport"), true);
                 return;
             }
 
@@ -540,7 +537,7 @@ namespace DaggerfallWorkshop
         {
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found to unlock door"));
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found to unlock door"), true);
             else
                 door.CurrentLockValue = 0;
         }
@@ -554,7 +551,7 @@ namespace DaggerfallWorkshop
         {
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"));
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"), true);
             else
             {
                 if (door.IsOpen)
@@ -577,7 +574,7 @@ namespace DaggerfallWorkshop
 
             DaggerfallActionDoor door;
             if (!GetDoor(thisAction.gameObject, out door))
-                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"));
+                DaggerfallUnity.LogMessage(string.Format("No DaggerfallActionDoor component found"), true);
             else
             {
                 if (!door.IsOpen)
@@ -658,8 +655,7 @@ namespace DaggerfallWorkshop
         /// <param name="thisAction"></param>
         public static void Poison(GameObject triggerObj, DaggerfallAction thisAction)
         {
-            Debug.Log("Action Type 26: Poison");
-
+            //Debug.Log("Action Type 26: Poison");
         }
 
         /// <summary>

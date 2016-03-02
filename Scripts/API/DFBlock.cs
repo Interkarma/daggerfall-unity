@@ -672,7 +672,7 @@ namespace DaggerfallConnect
             Unknown27 = 0x1B,
 
             ///<summary>28 drain magicka. 1 magnitude = 1 pt magica </summary>
-            DrainMagicka28 = 0x1C,
+            DrainMagicka = 0x1C,
 
             ///<summary>29 Dialogue. Seems to ignore trigger flag</summary>
             Dialogue = 0x1D,
