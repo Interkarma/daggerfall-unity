@@ -280,6 +280,13 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Range - SphereCastRadius))
             {
+                //check if hit has an DaggerfallAction component
+                DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
+                if (action)
+                {
+                    action.Receive(player, DaggerfallAction.TriggerTypes.Attack);
+                }
+
                 // Check if hit has an DaggerfallActionDoor component
                 DaggerfallActionDoor actionDoor = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
                 if (actionDoor)

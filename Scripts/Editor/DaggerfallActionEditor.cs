@@ -11,12 +11,15 @@ public class DaggerfallActionEditor : Editor
         DrawDefaultInspector();
         DaggerfallAction thisAction = (DaggerfallAction)target;
 
-        if (GUILayout.Button("Activate") && EditorApplication.isPlaying)
+        if(EditorApplication.isPlaying)
         {
-            if (thisAction.PreviousObject == null)
-                thisAction.Play(GameObject.FindGameObjectWithTag("Player"));
-            else
-                thisAction.Play(thisAction.PreviousObject);
+            if (GUILayout.Button("Activate") )
+            {
+                if (thisAction.PreviousObject == null)
+                    thisAction.Play(GameObject.FindGameObjectWithTag("Player"));
+                else
+                    thisAction.Play(thisAction.PreviousObject);
+            }
         }
     }
 }
