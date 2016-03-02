@@ -17,11 +17,23 @@ namespace DaggerfallWorkshop.Game
 
     public class PlayerCollision : MonoBehaviour
     {
+        GameObject cachedObject;
+        PlayerCollisionHandler cachedCH;
+
         void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            PlayerCollisionHandler ch = hit.gameObject.GetComponent<PlayerCollisionHandler>();
-            if (ch)
-                ch.OnCharacterCollided(hit, transform);
+            if (cachedObject == hit.transform.gameObject)
+                if (cachedCH)
+                    cachedCH.OnCharacterCollided(hit, transform);
+                else
+                    return;
+            else
+            {
+                cachedObject = hit.transform.gameObject;
+                cachedCH = hit.transform.gameObject.GetComponent<PlayerCollisionHandler>();
+            }
+            if (cachedCH)
+                cachedCH.OnCharacterCollided(hit, transform);
         }
 
     }
