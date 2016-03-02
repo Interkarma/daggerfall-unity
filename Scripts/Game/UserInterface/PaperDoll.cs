@@ -45,15 +45,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Fields
 
+        //int imageCounter = 0;
+
         static Color32 maskColor = new Color(255, 0, 200, 0);   // Special mask colour used on helmets, cloaks, etc.
         DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
 
         bool showBackgroundLayer = true;
         bool showCharacterLayer = true;
-        bool showSelectionLayer = false;
 
         Color32[] paperDollColors;                  // Paper doll as shown to player
-        Color32[] paperDollSelectionColors;         // Paper doll selection mask - using Color32 so it can be rendered visibly for testing
+        byte[] paperDollIndices;                    // Paper doll selection indices
 
         Texture2D paperDollTexture;
 
@@ -79,7 +80,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Create target arrays
             paperDollColors = new Color32[paperDollWidth * paperDollHeight];
-            paperDollSelectionColors = new Color32[paperDollWidth * paperDollHeight];
+            paperDollIndices = new byte[paperDollWidth * paperDollHeight];
 
             // Setup panels
             characterPanel.Size = new Vector2(paperDollWidth, paperDollHeight);
@@ -123,9 +124,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 playerEntity = GameManager.Instance.PlayerEntity;
 
             // Update paper doll
-            ClearColors(ref paperDollColors);
-            ClearColors(ref paperDollSelectionColors);
+            ClearPaperDoll();
             RefreshBackground(playerEntity);
+            BlitCloakInterior(playerEntity);
             BlitBody(playerEntity);
             BlitItems(playerEntity);
 
@@ -137,18 +138,36 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Update paper doll texture
             paperDollTexture = ImageReader.GetTexture(paperDollColors, paperDollWidth, paperDollHeight);
             characterPanel.BackgroundTexture = paperDollTexture;
+
+            //// Create image from selection mask
+            //DFPalette palette = new DFPalette();
+            //byte value = 20;
+            //for (int i = 0; i < 256; i++)
+            //{
+            //    palette.Set(i, value, value, value);
+            //    value += 8;
+            //}
+            //DFBitmap bitmap = new DFBitmap(paperDollWidth, paperDollHeight);
+            //bitmap.Palette = palette;
+            //bitmap.Data = (byte[])paperDollIndices.Clone();
+            //Color32[] testColors = bitmap.GetColor32(255);
+            //string path = @"d:\test\blits\selection.png";
+            //Texture2D texture = ImageProcessing.MakeTexture2D(ref testColors, paperDollWidth, paperDollHeight, TextureFormat.RGBA32, false);
+            //ImageProcessing.SaveTextureAsPng(texture, path);
         }
 
         #endregion
 
         #region Private Methods
 
-        // Simple clear of array
-        void ClearColors(ref Color32[] colors)
+        // Clear paper doll colours and indices
+        void ClearPaperDoll()
         {
-            for (int i = 0; i < colors.Length; i++)
+            //imageCounter = 0;
+            for (int i = 0; i < paperDollWidth * paperDollHeight; i++)
             {
-                colors[i] = Color.clear;
+                paperDollColors[i] = Color.clear;
+                paperDollIndices[i] = 0xff;
             }
         }
 
@@ -163,6 +182,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 backgroundPanel.BackgroundTexture = texture;
                 backgroundPanel.Size = new Vector2(texture.width, texture.height);
                 lastBackgroundName = entity.Race.PaperDollBackground;
+            }
+        }
+
+        void BlitCloakInterior(PlayerEntity entity)
+        {
+            // Draw cloak2 interior - stops here if this cloak is drawn
+            DaggerfallUnityItem cloak2 = entity.ItemEquipTable.GetItem(EquipSlots.Cloak2);
+            if (cloak2 != null)
+            {
+                ImageData interior2 = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(cloak2);
+                BlitPaperDoll(interior2, (byte)cloak2.EquipSlot);
+                return;
+            }
+
+            // Draw cloak1 interior
+            DaggerfallUnityItem cloak1 = entity.ItemEquipTable.GetItem(EquipSlots.Cloak1);
+            if (cloak1 != null)
+            {
+                ImageData interior1 = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(cloak1);
+                BlitPaperDoll(interior1, (byte)cloak1.EquipSlot);
             }
         }
 
@@ -231,20 +270,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Blit item images
             foreach(var item in orderedItems)
             {
-                // Blit based on item template
-                // Some items require special handling
-                switch (item.TemplateIndex)
-                {
-                    case (int)MensClothing.Formal_cloak:
-                    case (int)MensClothing.Casual_cloak:
-                    case (int)WomensClothing.Formal_cloak:
-                    case (int)WomensClothing.Casual_cloak:
-                        BlitCloak(item);
-                        break;
-                    default:
-                        BlitItem(item);
-                        break;
-                }
+                BlitItem(item);
             }
         }
 
@@ -252,19 +278,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void BlitItem(DaggerfallUnityItem item)
         {
             ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, maskColor);
-            BlitPaperDoll(source);
-        }
-
-        // Formal/casual cloaks require special blit handling for cloak interior
-        void BlitCloak(DaggerfallUnityItem item)
-        {
-            // Get cloak images
-            ImageData interior = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(item);
-            ImageData exterior = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, maskColor);
-
-            // Blit images
-            BlitPaperDoll(interior);
-            BlitPaperDoll(exterior);
+            BlitPaperDoll(source, (byte)item.EquipSlot);
         }
 
         #endregion
@@ -272,27 +286,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region Custom Image Processing
 
         // Blit source ImageData onto paper doll
-        void BlitPaperDoll(ImageData source)
+        void BlitPaperDoll(ImageData source, byte index = 0xff)
         {
             Color32[] colors = ImageReader.GetColors(source);
 
             BlitImage(
                 ref colors,
-                ref paperDollColors,
-                new Vector2(source.width, source.height),
-                new Vector2(paperDollWidth, paperDollHeight),
-                new Vector2(source.offset.X, source.offset.Y),
-                maskColor);
-        }
-
-        // Blit source ImageData as an index mask onto selection layer
-        void BlitSelectionLayer(ImageData source, int index)
-        {
-            Color32[] colors = ImageReader.GetColors(source);
-
-            BlitImage(
-                ref colors,
-                ref paperDollSelectionColors,
                 new Vector2(source.width, source.height),
                 new Vector2(paperDollWidth, paperDollHeight),
                 new Vector2(source.offset.X, source.offset.Y),
@@ -301,22 +300,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         // Special-purpose blit function to build paper doll image in 32-bit RGBA.
-        // Copies source Color32 array into target Color32 array with mask colour and optional forced red channel value for selection masks
         public void BlitImage(
             ref Color32[] source,
-            ref Color32[] target,
             Vector2 sourceSize,
             Vector2 targetSize,
             Vector2 targetPosition,
             Color32 maskColor,
-            int selectionValue = -1)
+            byte index = 0xff)
         {
             // Calculate image offsets
             int xOffset = (int)targetPosition.x - paperDollOrigin.X;
             int yOffset = (int)((targetSize.y - sourceSize.y) - (targetPosition.y - paperDollOrigin.Y));
-
-            // Create selection colour
-            Color selectionColor = new Color32((byte)selectionValue, 0, 0, 128);
 
             // Copy image data
             for (int y = 0; y < sourceSize.y; y++)
@@ -329,21 +323,35 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         continue;
 
                     // Handle item masking
+                    bool isMask = false;
                     if (col == maskColor)
-                        col = Color.clear;
-
-                    // Handle forced value for generating selection mask
-                    if (selectionValue >= 0)
-                        col = selectionColor;
-
-                    // Write to target
-                    int targetOffset = (yOffset + y) * (int)targetSize.x + xOffset + x;
-                    if (targetOffset >= 0 && targetOffset < target.Length)
                     {
-                        target[targetOffset] = col;
+                        col = Color.clear;
+                        isMask = true;
                     }
+
+                    // Get target offsets and ensure inside paper doll area
+                    int targetX = xOffset + x;
+                    int targetY = yOffset + y;
+                    if (targetX < 0 || targetX >= paperDollWidth) continue;
+                    if (targetY < 0 || targetY >= paperDollHeight) continue;
+
+                    // Write colour to target array
+                    int targetOffset = targetY * paperDollWidth + targetX;
+                    paperDollColors[targetOffset] = col;
+
+                    // Write index to target array
+                    if (isMask)
+                        paperDollIndices[targetOffset] = 0xff;
+                    else
+                        paperDollIndices[targetOffset] = index;
                 }
             }
+
+            //// Generate a test texture
+            //string path = @"d:\test\blits\" + imageCounter++;
+            //Texture2D texture = ImageProcessing.MakeTexture2D(ref paperDollColors, paperDollWidth, paperDollHeight, TextureFormat.RGBA32, false);
+            //ImageProcessing.SaveTextureAsPng(texture, path);
         }
 
         #endregion
@@ -360,7 +368,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             BlitImage(
                 ref newColors,
-                ref paperDollColors,
                 new Vector2(rect.width, rect.height),
                 new Vector2(paperDollWidth, paperDollHeight),
                 new Vector2(body.offset.X, body.offset.Y),
@@ -376,7 +383,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             BlitImage(
                 ref newColors,
-                ref paperDollColors,
                 new Vector2(rect.width, rect.height),
                 new Vector2(paperDollWidth, paperDollHeight),
                 new Vector2(body.offset.X, body.offset.Y + waistHeight),

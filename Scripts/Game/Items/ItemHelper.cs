@@ -243,16 +243,8 @@ namespace DaggerfallWorkshop.Game.Items
         public ImageData GetCloakInteriorImage(DaggerfallUnityItem item)
         {
             // Must be a formal or casual cloak
-            switch (item.TemplateIndex)
-            {
-                case (int)MensClothing.Formal_cloak:
-                case (int)MensClothing.Casual_cloak:
-                case (int)WomensClothing.Formal_cloak:
-                case (int)WomensClothing.Casual_cloak:
-                    break;
-                default:
-                    return new ImageData();
-            }
+            if (!IsCloak(item))
+                return new ImageData();
 
             // Get colour
             int color = item.ItemRecord.ParsedData.color;
@@ -271,6 +263,26 @@ namespace DaggerfallWorkshop.Game.Items
             data = ChangeDye(data, (DyeColors)color, DyeTargets.Clothing);
 
             return data;
+        }
+
+        /// <summary>
+        /// Checks if this item is a formal or casual cloak.
+        /// </summary>
+        /// <param name="item">Item to check.</param>
+        /// <returns>True if formal or casual cloak.</returns>
+        public bool IsCloak(DaggerfallUnityItem item)
+        {
+            // Must be a formal or casual cloak
+            switch (item.TemplateIndex)
+            {
+                case (int)MensClothing.Formal_cloak:
+                case (int)MensClothing.Casual_cloak:
+                case (int)WomensClothing.Formal_cloak:
+                case (int)WomensClothing.Casual_cloak:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         /// <summary>

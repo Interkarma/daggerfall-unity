@@ -59,6 +59,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { maxCharacters = value; }
         }
 
+        public PixelFont Font
+        {
+            get { return font; }
+            set { font = value; }
+        }
+
         public int ScrollIndex
         {
             get { return scrollIndex; }
@@ -143,12 +149,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-                SelectPrevious();
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-                SelectNext();
-            else if (Input.GetKeyDown(KeyCode.Return))
-                UseSelectedItem();
+            if (MouseOverComponent)
+            {
+                if (Input.GetKeyDown(KeyCode.UpArrow))
+                    SelectPrevious();
+                else if (Input.GetKeyDown(KeyCode.DownArrow))
+                    SelectNext();
+                else if (Input.GetKeyDown(KeyCode.Return))
+                    UseSelectedItem();
+            }
         }
 
         public override void Draw()
@@ -187,8 +196,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.MouseClick(clickPosition);
 
-            int row = (int)(clickPosition.y / (font.GlyphHeight + rowSpacing));
+            if (listItems.Count == 0)
+                return;
 
+            int row = (int)(clickPosition.y / (font.GlyphHeight + rowSpacing));
             selectedIndex = scrollIndex + row;
             RaiseOnSelectItemEvent();
         }
@@ -218,19 +229,30 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Public Methods
 
-        public void AddItem(string text)
+        public void ClearItems()
+        {
+            listItems.Clear();
+            scrollIndex = 0;
+        }
+
+        public void AddItem(string text, int position = -1)
         {
             if (font == null)
                 font = DaggerfallUI.DefaultFont;
 
             TextLabel textLabel = new TextLabel();
+            textLabel.MaxWidth = (int)Size.x;
             textLabel.AutoSize = AutoSizeModes.None;
             textLabel.HorizontalAlignment = rowAlignment;
             textLabel.Font = font;
             textLabel.MaxCharacters = maxCharacters;
             textLabel.Text = text;
             textLabel.Parent = this;
-            listItems.Add(textLabel);
+
+            if (position < 0)
+                listItems.Add(textLabel);
+            else
+                listItems.Insert(position, textLabel);
         }
 
         public void RemoveItem(int index)
@@ -261,7 +283,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 listItems[indexA] = listItems[indexB];
                 listItems[indexB] = temp;
             }
-
         }
 
         public void SelectPrevious()
@@ -326,6 +347,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public void SetRowsDisplayedByHeight()
+        {
+            if (Count == 0)
+                return;
+
+            rowsDisplayed = (int)(Size.y / font.GlyphHeight) - 1;
+        }
+
         #endregion
 
         #region Event Handlers
@@ -366,6 +395,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public event OnSelectItemEventHandler OnSelectItem;
         void RaiseOnSelectItemEvent()
         {
+            if (selectedIndex < 0 || selectedIndex >= Count)
+                return;
+
             if (OnSelectItem != null)
                 OnSelectItem();
         }
@@ -374,6 +406,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public event OnUseSelectedItemEventHandler OnUseSelectedItem;
         void RaiseOnUseItemEvent()
         {
+            if (selectedIndex < 0 || selectedIndex >= Count)
+                return;
+
             if (OnUseSelectedItem != null)
                 OnUseSelectedItem();
         }

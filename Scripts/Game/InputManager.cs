@@ -232,7 +232,15 @@ namespace DaggerfallWorkshop.Game
             try
             {
                 if (HasKeyBindsSave())
+                {
+                    // Load user's keybinds over defaults
                     LoadKeyBinds();
+                }
+                else
+                {
+                    // Deploy defaults to new keybinds file
+                    SaveKeyBinds();
+                }
             }
             catch(Exception ex)
             {
@@ -295,6 +303,11 @@ namespace DaggerfallWorkshop.Game
 
             // Apply friction to movement force
             ApplyFriction();
+        }
+
+        void OnApplicationQuit()
+        {
+            SaveKeyBinds();
         }
 
         #endregion
@@ -562,7 +575,7 @@ namespace DaggerfallWorkshop.Game
 
         string GetKeyBindsSavePath()
         {
-            return Path.Combine(Application.dataPath, keyBindsFilename);
+            return Path.Combine(Application.persistentDataPath, keyBindsFilename);
         }
 
         bool HasKeyBindsSave()
@@ -589,7 +602,14 @@ namespace DaggerfallWorkshop.Game
 
             string json = File.ReadAllText(path);
             KeyBindData_v1 keyBindsData = SaveLoadManager.Deserialize(typeof(KeyBindData_v1), json) as KeyBindData_v1;
-            actionKeyDict = keyBindsData.actionKeyBinds;
+            foreach(var item in keyBindsData.actionKeyBinds)
+            {
+                if (actionKeyDict.ContainsKey(item.Key))
+                    actionKeyDict[item.Key] = item.Value;
+                else
+                    actionKeyDict.Add(item.Key, item.Value);
+            }
+            //actionKeyDict = keyBindsData.actionKeyBinds;
         }
 
         #endregion

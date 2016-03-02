@@ -310,7 +310,7 @@ namespace DaggerfallWorkshop
             }
             else
             {
-                LogMessage(string.Format("Could not find arena2 path. Try setting MyDaggerfallPath in Resources/fallback.ini."), true);
+                LogMessage(string.Format("Could not find arena2 path. Try setting MyDaggerfallPath in settings.ini."), true);
             }
 
             // No path was found but we can try to carry on without one
@@ -319,20 +319,6 @@ namespace DaggerfallWorkshop
 
             // Singleton is now ready
             RaiseOnReadyEvent();
-        }
-
-        string TestArena2Exists(string parent)
-        {
-            // Accept either upper or lower case
-            string pathLower = Path.Combine(parent, "arena2");
-            string pathUpper = Path.Combine(parent, "ARENA2");
-
-            if (Directory.Exists(pathLower))
-                return pathLower;
-            else if (Directory.Exists(pathUpper))
-                return pathUpper;
-            else
-                return string.Empty;
         }
 
         private void SetupContentReaders(bool force = false)
@@ -372,6 +358,20 @@ namespace DaggerfallWorkshop
             }
 
             return true;
+        }
+
+        public static string TestArena2Exists(string parent)
+        {
+            // Accept either upper or lower case
+            string pathLower = Path.Combine(parent, "arena2");
+            string pathUpper = Path.Combine(parent, "ARENA2");
+
+            if (Directory.Exists(pathLower))
+                return pathLower;
+            else if (Directory.Exists(pathUpper))
+                return pathUpper;
+            else
+                return string.Empty;
         }
 
         public static bool ValidateArena2Path(string path)

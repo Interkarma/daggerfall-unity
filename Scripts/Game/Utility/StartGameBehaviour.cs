@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.Utility
         #region Fields
 
         // Editor properties
-        public StartMethods StartMethod = StartMethods.Nothing;
+        public StartMethods StartMethod = StartMethods.DoNothing;
         public int OverrideSaveIndex = -1;
         public string PostStartMessage = string.Empty;
         public bool EnableVideos = true;
@@ -71,7 +71,8 @@ namespace DaggerfallWorkshop.Game.Utility
 
         public enum StartMethods
         {
-            Nothing,                                // No startup action
+            DoNothing,                              // No startup action
+            Void,                                   // Start to the Void
             TitleMenu,                              // Open title menu
             TitleMenuFromDeath,                     // Open title menu after death
             NewCharacter,                           // Spawn character to start location in INI
@@ -100,11 +101,11 @@ namespace DaggerfallWorkshop.Game.Utility
         void Update()
         {
             // Restart game using method provided
-            if (StartMethod != StartMethods.Nothing)
+            if (StartMethod != StartMethods.DoNothing)
             {
                 GameManager.Instance.PauseGame(true);
                 InvokeStartMethod();
-                StartMethod = StartMethods.Nothing;
+                StartMethod = StartMethods.DoNothing;
             }
         }
 
@@ -116,6 +117,9 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             switch (StartMethod)
             {
+                case StartMethods.Void:
+                    StartVoid();
+                    break;
                 case StartMethods.TitleMenu:
                     StartTitleMenu();
                     break;
@@ -203,6 +207,13 @@ namespace DaggerfallWorkshop.Game.Utility
         #endregion
 
         #region Startup Methods
+
+        void StartVoid()
+        {
+            DaggerfallUI.Instance.PopToHUD();
+            playerEnterExit.DisableAllParents();
+            NoWorld = true;
+        }
 
         void StartTitleMenu()
         {

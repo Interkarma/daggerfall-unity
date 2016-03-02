@@ -57,6 +57,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Constructors
 
+        public DaggerfallFont(FontName font = FontName.FONT0003)
+        {
+            this.arena2Path = string.Empty;
+            this.font = font;
+            LoadFont();
+        }
+
         public DaggerfallFont(string arena2Path, FontName font = FontName.FONT0003)
         {
             this.arena2Path = arena2Path;

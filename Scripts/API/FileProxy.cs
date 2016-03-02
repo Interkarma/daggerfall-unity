@@ -207,7 +207,7 @@ namespace DaggerfallConnect.Utility
         /// <param name="usage">Specify if file will be accessed from disk, or loaded into RAM.</param>
         /// <param name="readOnly">File will be read-only if true, read-write if false.</param>
         /// <returns>True if successful, otherwise false.</returns>
-        public bool Load(string filePath, FileUsage usage, bool readOnly)
+        public bool Load(string filePath, FileUsage usage = FileUsage.UseMemory, bool readOnly = true)
         {
             // Determine file access settings
             FileAccess fileAccess;

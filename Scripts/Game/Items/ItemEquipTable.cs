@@ -330,7 +330,7 @@ namespace DaggerfallWorkshop.Game.Items
 
                 case MensClothing.Casual_cloak:
                 case MensClothing.Formal_cloak:
-                    return GetFirstSlot(EquipSlots.Cloak1, EquipSlots.Cloak2);
+                    return GetFirstSlot(EquipSlots.Cloak2, EquipSlots.Cloak1);
 
                 default:
                     return EquipSlots.None;
@@ -383,7 +383,7 @@ namespace DaggerfallWorkshop.Game.Items
 
                 case WomensClothing.Casual_cloak:
                 case WomensClothing.Formal_cloak:
-                    return GetFirstSlot(EquipSlots.Cloak1, EquipSlots.Cloak2);
+                    return GetFirstSlot(EquipSlots.Cloak2, EquipSlots.Cloak1);
 
                 default:
                     return EquipSlots.None;

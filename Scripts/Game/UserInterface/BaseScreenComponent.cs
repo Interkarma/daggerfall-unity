@@ -317,6 +317,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { maxAutoScale = value; }
         }
 
+        /// <summary>
+        /// True if mouse over this component.
+        /// </summary>
+        public bool MouseOverComponent
+        {
+            get { return mouseOverComponent; }
+        }
+
         // Margin properties
         public int TopMargin { get; set; }
         public int BottomMargin { get; set; }

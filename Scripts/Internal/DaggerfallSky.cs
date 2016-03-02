@@ -472,9 +472,9 @@ namespace DaggerfallWorkshop
                 return false;
 
             // Do nothing if DaggerfallUnity not ready
-            if (!dfUnity.IsReady)
+            if (!dfUnity.IsReady || !dfUnity.IsPathValidated)
             {
-                DaggerfallUnity.LogMessage("DaggerfallSky: DaggerfallUnity component is not ready. Have you set your Arena2 path?");
+                //DaggerfallUnity.LogMessage("DaggerfallSky: DaggerfallUnity component is not ready. Have you set your Arena2 path?");
                 return false;
             }
 

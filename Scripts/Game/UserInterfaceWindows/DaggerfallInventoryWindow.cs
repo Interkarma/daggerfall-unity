@@ -454,6 +454,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 //if (equipIndex != -1) text += string.Format("\re:{0}", equipIndex);
                 //text += string.Format("\ra:{0} i:{1} c:{2}", item.ItemRecord.ParsedData.image1 >> 7, item.ItemRecord.ParsedData.image1 & 0x7f, item.ItemRecord.ParsedData.color);
                 //text += string.Format("\ra:{0} i:{1}", template.playerTextureArchive, template.playerTextureRecord);
+                //text += string.Format("\rdraw:{0}", item.DrawOrder);
 
                 myItemsButtons[i].ToolTipText = text;
             }

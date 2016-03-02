@@ -37,6 +37,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
 
+        int maxWidth = -1;
+
         /// <summary>
         /// Maximum length of label string.
         /// Setting to -1 allows for any length.
@@ -90,6 +92,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int TextHeight
         {
             get { return totalHeight; }
+        }
+
+        public int MaxWidth
+        {
+            get { return maxWidth; }
+            set { maxWidth = value; }
+        }
+
+        public TextLabel(DaggerfallFont font = null)
+        {
+            if (font != null)
+                Font = font;
         }
 
         public override void Draw()
@@ -153,6 +167,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 width += glyph.width + font.GlyphSpacing;
             }
 
+            if (maxWidth > 0 && width > maxWidth)
+                width = maxWidth;
+
             // Create target label texture
             totalWidth = width;
             totalHeight = font.GlyphHeight;
@@ -165,6 +182,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             for (int i = 0; i < asciiBytes.Length; i++)
             {
                 PixelFont.GlyphInfo glyph = font.GetGlyph(asciiBytes[i]);
+                if (xpos + glyph.width >= totalWidth)
+                    break;
+
                 labelTexture.SetPixels32(xpos, 0, glyph.width, totalHeight, glyph.colors);
                 xpos += glyph.width + font.GlyphSpacing;
             }

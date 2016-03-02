@@ -25,19 +25,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// </summary>
     public class MultiFormatTextLabel : BaseScreenComponent
     {
+        const int tabWidth = 45;
+
         PixelFont font;
         int rowLeading = 0;
         Vector2 shadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
         Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
+        HorizontalAlignment textAlignment = HorizontalAlignment.None;
         List<TextLabel> labels = new List<TextLabel>();
         TextLabel lastLabel;
+
         int totalWidth = 0;
         int totalHeight = 0;
+        int cursorX = 0;
+        int cursorY = 0;
+        int tabStop = 0;
 
         public PixelFont Font
         {
-            get { return font; }
+            get { return GetFont(); }
             set { font = value; }
         }
 
@@ -68,6 +75,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { shadowColor = value; }
         }
 
+        public HorizontalAlignment TextAlignment
+        {
+            get { return textAlignment; }
+            set { textAlignment = value; }
+        }
+
         public override void Draw()
         {
             base.Draw();
@@ -82,15 +95,89 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Sets the formatted text from a token array.
+        /// Adds formatted text labels from a RSC token array.
         /// </summary>
-        /// <param name="tokens">Format token array.</param>
-        public virtual void SetTextTokens(TextFile.Token[] tokens)
+        /// <param name="tokens">Daggerfall RSC token array.</param>
+        public virtual void SetText(TextFile.Token[] tokens)
+        {
+            LayoutTextElements(tokens);
+        }
+
+        /// <summary>
+        /// Adds formatted text labels from a TextAsset.
+        /// Currently only supports newlines, not tabs or other formatting characters.
+        /// </summary>
+        /// <param name="textAsset">Source TextAsset.</param>
+        public virtual void SetText(TextAsset textAsset)
+        {
+            StringReader reader = new StringReader(textAsset.text);
+            if (reader == null)
+                return;
+
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                AddTextLabel(line);
+                NewLine();
+            }
+        }
+
+        /// <summary>
+        /// Adds a single text item.
+        /// Each subsequent text item will be appended to the previous text item position.
+        /// Call NewLine() to start a new line.
+        /// </summary>
+        /// <param name="text">Text for this label.</param>
+        /// <param name="font">Font for this label.</param>
+        /// <returns>TextLabel.</returns>
+        public TextLabel AddTextLabel(string text, PixelFont font = null)
         {
             if (font == null)
-                font = DaggerfallUI.DefaultFont;
+                font = GetFont();
 
-            LayoutTextElements(tokens);
+            TextLabel textLabel = new TextLabel();
+            textLabel.AutoSize = AutoSizeModes.None;
+            textLabel.Font = font;
+            textLabel.Position = new Vector2(cursorX, cursorY);
+            textLabel.Text = text;
+            textLabel.Parent = this;
+
+            textLabel.TextColor = TextColor;
+            textLabel.ShadowColor = ShadowColor;
+            textLabel.ShadowPosition = ShadowPosition;
+
+            if (textAlignment != HorizontalAlignment.None)
+                textLabel.HorizontalAlignment = textAlignment;
+
+            labels.Add(textLabel);
+            lastLabel = textLabel;
+
+            cursorX += textLabel.TextWidth;
+
+            return textLabel;
+        }
+
+        /// <summary>
+        /// Start a new line.
+        /// </summary>
+        public void NewLine()
+        {
+            cursorX = 0;
+            cursorY += LineHeight;
+            totalHeight += LineHeight;
+            tabStop = 0;
+        }
+
+        /// <summary>
+        /// Clears current labels.
+        /// </summary>
+        public void Clear()
+        {
+            labels.Clear();
+            totalWidth = 0;
+            totalHeight = 0;
+            cursorX = 0;
+            cursorY = 0;
         }
 
         #region Protected Methods
@@ -104,32 +191,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Private Methods
 
-        const int tabWidth = 45;
-
-        int cursorX = 0;
-        int cursorY = 0;
-        int tabStop = 0;
-
         int LineHeight
         {
-            get { return font.GlyphHeight + rowLeading; }
-        }
-
-        void NewLine()
-        {
-            cursorX = 0;
-            cursorY += LineHeight;
-            totalHeight += LineHeight;
-            tabStop = 0;
+            get { return GetFont().GlyphHeight + rowLeading; }
         }
 
         void LayoutTextElements(TextFile.Token[] tokens)
         {
-            labels.Clear();
-            totalWidth = 0;
-            totalHeight = 0;
-            cursorX = 0;
-            cursorY = 0;
+            Clear();
 
             TextFile.Token token = new TextFile.Token();
             TextFile.Token nextToken = new TextFile.Token();
@@ -169,13 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         }
                         break;
                     case TextFile.Formatting.Text:
-                        TextLabel label = AddTextLabel(font, new Vector2(cursorX, cursorY), token.text);
-                        label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
-                        label.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
-                        label.ShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
-                        labels.Add(label);
-                        lastLabel = label;
-                        cursorX += label.TextWidth;
+                        TextLabel label = AddTextLabel(token.text, font);
                         break;
                     default:
                         Debug.Log("MultilineTextLabel: Unknown formatting token: " + (int)token.formatting);
@@ -193,16 +256,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Size = new Vector2(totalWidth, totalHeight);
         }
 
-        TextLabel AddTextLabel(PixelFont font, Vector2 position, string text)
+        PixelFont GetFont()
         {
-            TextLabel textLabel = new TextLabel();
-            textLabel.AutoSize = AutoSizeModes.None;
-            textLabel.Font = font;
-            textLabel.Position = position;
-            textLabel.Text = text;
-            textLabel.Parent = this;
+            if (font == null)
+                font = DaggerfallUI.DefaultFont;
 
-            return textLabel;
+            return font;
         }
 
         #endregion

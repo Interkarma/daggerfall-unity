@@ -27,13 +27,14 @@ namespace DaggerfallWorkshop
 {
     /// <summary>
     /// Settings manager for reading game configuration from INI file.
-    /// Can read from settings.ini in game data directory or from built-in fallback.ini in Resources.
-    /// For any setting failing a read (or settings.ini missing), fallback.ini will be used instead.
+    /// Can read from settings.ini in persistent data directory
+    /// Deploys default settings to persistent data directory if not present.
+    /// For any setting failing a read (or settings.ini missing), defaults.ini will be used instead.
     /// </summary>
     public class SettingsManager
     {
+        const string defaultsIniName = "defaults.ini";
         const string settingsIniName = "settings.ini";
-        const string fallbackIniName = "fallback.ini";
 
         const string sectionDaggerfall = "Daggerfall";
         const string sectionVideo = "Video";
@@ -43,9 +44,8 @@ namespace DaggerfallWorkshop
         const string sectionStartup = "Startup";
         const string sectionEnhancements = "Enhancements";
 
-        bool usingFallback = false;
         FileIniDataParser iniParser = new FileIniDataParser();
-        IniData fallbackIniData = null;
+        IniData defaultIniData = null;
         IniData userIniData = null;
 
         public SettingsManager()
@@ -300,48 +300,37 @@ namespace DaggerfallWorkshop
 
         void ReadSettings()
         {
-            // Attempt to load settings.ini
-            bool loadedUserSettings = false;
-            string userIniPath = Path.Combine(Application.dataPath, settingsIniName);
-            if (File.Exists(userIniPath))
+            // Load defaults.ini
+            TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
+            MemoryStream stream = new MemoryStream(asset.bytes);
+            StreamReader reader = new StreamReader(stream);
+            defaultIniData = iniParser.ReadData(reader);
+            reader.Close();
+
+            // Must have settings.ini in persistent data path
+            string userIniPath = Path.Combine(Application.persistentDataPath, settingsIniName);
+            if (!File.Exists(userIniPath))
             {
-                userIniData = iniParser.ReadFile(userIniPath);
-                loadedUserSettings = true;
+                // Create file
+                string message = string.Format("Creating new '{0}' at path '{1}'", settingsIniName, userIniPath);
+                File.WriteAllBytes(userIniPath, asset.bytes);
+                Debug.Log(message);
             }
 
-            // Load fallback.ini
-            bool loadedFallbackSettings = false;
-            TextAsset asset = Resources.Load<TextAsset>(fallbackIniName);
-            if (asset != null)
-            {
-                MemoryStream stream = new MemoryStream(asset.bytes);
-                StreamReader reader = new StreamReader(stream);
-                fallbackIniData = iniParser.ReadData(reader);
-                reader.Close();
-                usingFallback = true;
-                loadedFallbackSettings = true;
+            // Load settings.ini or set as read-only
+            userIniData = iniParser.ReadFile(userIniPath);
 
-                // Create new settings.ini in data directory from fallback.ini if settings.ini not found
-                if (!Application.isEditor && loadedFallbackSettings && !loadedUserSettings)
-                    File.WriteAllBytes(Path.Combine(Application.dataPath, settingsIniName), asset.bytes);
-            }
-
-            // Report on primary ini file
-            if (loadedUserSettings)
-                DaggerfallUnity.LogMessage("Using settings.ini.");
-            else if (!loadedUserSettings && loadedFallbackSettings)
-                DaggerfallUnity.LogMessage("Using fallback.ini");
-            else
-                DaggerfallUnity.LogMessage("Failed to load fallback.ini.");
+            // Ensure user ini data in sync with default ini data
+            SyncIniData();
         }
 
         void WriteSettings()
         {
-            if (iniParser != null && !usingFallback)
+            if (iniParser != null)
             {
                 try
                 {
-                    string path = Path.Combine(Application.dataPath, settingsIniName);
+                    string path = Path.Combine(Application.persistentDataPath, settingsIniName);
                     if (File.Exists(path))
                     {
                         iniParser.WriteFile(path, userIniData);
@@ -365,10 +354,10 @@ namespace DaggerfallWorkshop
             }
             catch
             {
-                if (fallbackIniData != null)
-                    return fallbackIniData[sectionName][valueName];
+                if (defaultIniData != null)
+                    return defaultIniData[sectionName][valueName];
                 else
-                    throw new Exception("GetData() could not find settings.ini or fallback.ini.");
+                    throw new Exception("GetData() could not find settings.ini or defaults.ini.");
             }
         }
 
@@ -480,6 +469,113 @@ namespace DaggerfallWorkshop
             byte a = byte.Parse(colorStr.Substring(6, 2), NumberStyles.HexNumber);
 
             return new Color32(r, g, b, a);
+        }
+
+        #endregion
+
+        #region Syncing
+
+        void SyncIniData()
+        {
+            // Default and user settings must both be loaded
+            if (defaultIniData == null || userIniData == null)
+                return;
+
+            // Sync sections
+            AddSections(defaultIniData, userIniData);
+            RemoveSections(defaultIniData, userIniData);
+
+            // Sync settings
+            foreach (var srcSection in defaultIniData.Sections)
+            {
+                SectionData dstSection = userIniData.Sections.GetSectionData(srcSection.SectionName);
+                if (dstSection != null)
+                {
+                    AddSettings(srcSection, dstSection);
+                    RemoveSettings(srcSection, dstSection);
+                }
+            }
+
+            // Write updated settings
+            WriteSettings();
+        }
+
+        void AddSections(IniData srcData, IniData dstData)
+        {
+            // Must have data
+            if (srcData == null || dstData == null)
+                return;
+
+            // Add any sections missing from source
+            foreach (var section in srcData.Sections)
+            {
+                if (!dstData.Sections.ContainsSection(section.SectionName))
+                {
+                    Debug.Log("SettingsManager: Adding section " + section.SectionName);
+                    dstData.Sections.AddSection(section.SectionName);
+                }
+            }
+        }
+
+        void RemoveSections(IniData srcData, IniData dstData)
+        {
+            // Must have data
+            if (srcData == null || dstData == null)
+                return;
+
+            // Gather all sections not present in source
+            List<string> sectionsToRemove = new List<string>();
+            foreach (var section in dstData.Sections)
+            {
+                if (!srcData.Sections.ContainsSection(section.SectionName))
+                    sectionsToRemove.Add(section.SectionName);
+            }
+
+            // Remove sections
+            foreach (var name in sectionsToRemove)
+            {
+                Debug.Log("SettingsManager: Removing section " + name);
+                dstData.Sections.RemoveSection(name);
+            }
+        }
+
+        void AddSettings(SectionData srcSection, SectionData dstSection)
+        {
+            // Must have data
+            if (srcSection == null || dstSection == null)
+                return;
+
+            // Add source keys missing in destination
+            foreach (var key in srcSection.Keys)
+            {
+                if (!dstSection.Keys.ContainsKey(key.KeyName))
+                {
+                    Debug.Log("SettingsManager: Adding setting " + key.KeyName);
+                    dstSection.Keys.AddKey(key);
+                }
+            }
+        }
+
+        void RemoveSettings(SectionData srcSection, SectionData dstSection)
+        {
+            // Must have data
+            if (srcSection == null || dstSection == null)
+                return;
+
+            // Gather all keys missing in source
+            List<string> keysToRemove = new List<string>();
+            foreach (var key in dstSection.Keys)
+            {
+                if (!srcSection.Keys.ContainsKey(key.KeyName))
+                    keysToRemove.Add(key.KeyName);
+            }
+
+            // Remove keys
+            foreach(var name in keysToRemove)
+            {
+                Debug.Log("SettingsManager: Removing setting " + name);
+                dstSection.Keys.RemoveKey(name);
+            }
         }
 
         #endregion
