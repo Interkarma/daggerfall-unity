@@ -122,6 +122,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set tooltip position
             Position = Parent.ScaledMousePosition + MouseOffset;
 
+            // Ensure tooltip inside screen area
+            Rect rect = Rectangle;
+            if (rect.xMax > Screen.width)
+            {
+                float difference = (rect.xMax - Screen.width) * 1f / LocalScale.x;
+                Vector2 newPosition = new Vector2(Position.x - difference, Position.y);
+                Position = newPosition;
+            }
+            if (rect.yMax > Screen.height)
+            {
+                float difference = (rect.yMax - Screen.height) * 1f / LocalScale.y;
+                Vector2 newPosition = new Vector2(Position.x, Position.y - difference);
+                Position = newPosition;
+            }
+
             // Raise flag to draw tooltip
             drawToolTip = true;
         }
@@ -137,6 +152,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Vector2 textPos = new Vector2(
                     rect.x + LeftMargin * LocalScale.x,
                     rect.y + TopMargin * LocalScale.y);
+
+                //if (rect.xMax > Screen.width) textPos.x -= (rect.xMax - Screen.width);
 
                 // Draw tooltip text
                 for (int i = 0; i < textRows.Length; i++)

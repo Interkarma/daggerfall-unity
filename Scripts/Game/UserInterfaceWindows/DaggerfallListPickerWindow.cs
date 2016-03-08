@@ -94,7 +94,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (scrollBar.DraggingThumb)
             {
                 listBox.ScrollIndex = scrollBar.ScrollIndex;
-                listBox.ClampSelectionToVisibleRange();
+                //listBox.ClampSelectionToVisibleRange();
             }
             else
             {

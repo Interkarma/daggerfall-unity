@@ -12,20 +12,28 @@
 using UnityEngine;
 using System.Collections;
 
-namespace DaggerfallWorkshop.Game
+namespace DaggerfallWorkshop.Game.Utility
 {
+    /// <summary>
+    /// Launches game or startup scene based on path validation.
+    /// </summary>
     public class SceneControl : MonoBehaviour
     {
         public const int StartupSceneIndex = 0;
         public const int GameSceneIndex = 1;
+        public GameObject defaultSky = null;
 
         void Start()
         {
             // Check arena2 path is validated OK, otherwise start game setup
             if (!DaggerfallUnity.Instance.IsPathValidated)
             {
+                // Enable sky for test models
+                if (defaultSky != null)
+                    defaultSky.SetActive(true);
+
+                // Post message to launch game setup
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiSetupGameWizard);
-                return;
             }
             else
             {

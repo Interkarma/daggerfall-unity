@@ -236,7 +236,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // But only if censored part of body is actually unclothed.
             // Otherwise welded-on clothes can be visible around equipped clothes.
             // This involves a special blit to draw top and bottom halves independently.
-            if (DaggerfallUnity.Settings.NoPlayerNudity)
+            if (!DaggerfallUnity.Settings.PlayerNudity)
             {
                 if (!entity.ItemEquipTable.IsUpperClothed())
                     BlitUpperBody(clothedBody);

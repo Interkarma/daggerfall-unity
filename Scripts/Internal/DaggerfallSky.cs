@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop
         // Maximum timescale supported by SetByWorldTime()
         public static float MaxTimeScale = 2000;
 
+        public bool AutoCameraSetup = true;                                 // Automatically setup camera on enable/disable
         public PlayerGPS LocalPlayerGPS;                                    // Set to local PlayerGPS
         [Range(0, 31)]
         public int SkyIndex = 16;                                           // Sky index for daytime skies
@@ -48,6 +49,7 @@ namespace DaggerfallWorkshop
         public float SkyColorScale = 1.0f;                                  // Scales sky color brighter or darker
         public WeatherStyle WeatherStyle = WeatherStyle.Normal;             // Style of weather for texture changes
 
+        const int myCameraDepth = -3;           // Relative camera depth to main camera
         const int skyNativeWidth = 512;         // Native image width of sky image
         const int skyNativeHalfWidth = 256;     // Half native image width
         const int skyNativeHeight = 220;        // Native image height
@@ -459,10 +461,14 @@ namespace DaggerfallWorkshop
 
             myCamera.enabled = true;
             myCamera.renderingPath = mainCamera.renderingPath;
-            //myCamera.depth = mainCamera.depth - 1;
             myCamera.cullingMask = 0;
             myCamera.clearFlags = CameraClearFlags.SolidColor;
-            //mainCamera.clearFlags = CameraClearFlags.Nothing;
+
+            if (AutoCameraSetup)
+            {
+                myCamera.depth = mainCamera.depth + myCameraDepth;
+                mainCamera.clearFlags = CameraClearFlags.Nothing;
+            }
         }
 
         private bool ReadyCheck()

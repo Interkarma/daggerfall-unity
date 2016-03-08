@@ -147,6 +147,12 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void ApplyStartSettings()
         {
+            // Resolution
+            Screen.SetResolution(
+                DaggerfallUnity.Settings.ResolutionWidth,
+                DaggerfallUnity.Settings.ResolutionHeight,
+                DaggerfallUnity.Settings.Fullscreen);
+
             // Camera settings
             GameObject cameraObject = GameObject.FindGameObjectWithTag("MainCamera");
             if (cameraObject)
@@ -190,7 +196,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Weapon hand settings
             WeaponManager weaponManager = GameManager.Instance.WeaponManager;
-            weaponManager.RightHandWeapon.LeftHand = DaggerfallUnity.Settings.ShowWeaponLeftHand;
+            weaponManager.RightHandWeapon.LeftHand = DaggerfallUnity.Settings.LeftHandWeapons;
 
             // Weapon swing settings
             weaponManager.HorizontalThreshold = DaggerfallUnity.Settings.WeaponSwingThreshold;

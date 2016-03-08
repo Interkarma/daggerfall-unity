@@ -223,26 +223,23 @@ namespace DaggerfallWorkshop.Game
         void Awake()
         {
             SetupSingleton();
-            SetupDefaults();
         }
 
         void Start()
         {
-            // Load a keybind file if possible
             try
             {
+                // Load a keybind file if possible
                 if (HasKeyBindsSave())
-                {
-                    // Load user's keybinds over defaults
                     LoadKeyBinds();
-                }
-                else
-                {
-                    // Deploy defaults to new keybinds file
-                    SaveKeyBinds();
-                }
+
+                // Ensure defaults are deployed if missing
+                SetupDefaults();
+
+                // Update keybinds save
+                SaveKeyBinds();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DaggerfallUnity.LogMessage(string.Format("Could not load keybinds file. The exception was: '{0}'", ex.Message), true);
                 DaggerfallUnity.LogMessage("Setting default key binds after failed load.", true);
@@ -420,65 +417,64 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        // Deploys default values if action missing from loaded keybinds
         void SetupDefaults()
         {
-            actionKeyDict.Clear();
+            TestSetBinding(KeyCode.Escape, Actions.Escape);
+            TestSetBinding(KeyCode.BackQuote, Actions.ToggleConsole);
 
-            SetBinding(KeyCode.Escape, Actions.Escape);
-            SetBinding(KeyCode.BackQuote, Actions.ToggleConsole);
+            TestSetBinding(KeyCode.W, Actions.MoveForwards);
+            TestSetBinding(KeyCode.S, Actions.MoveBackwards);
+            TestSetBinding(KeyCode.A, Actions.MoveLeft);
+            TestSetBinding(KeyCode.D, Actions.MoveRight);
+            TestSetBinding(KeyCode.LeftArrow, Actions.TurnLeft);
+            TestSetBinding(KeyCode.RightArrow, Actions.TurnRight);
 
-            SetBinding(KeyCode.W, Actions.MoveForwards);
-            SetBinding(KeyCode.S, Actions.MoveBackwards);
-            SetBinding(KeyCode.A, Actions.MoveLeft);
-            SetBinding(KeyCode.D, Actions.MoveRight);
-            SetBinding(KeyCode.LeftArrow, Actions.TurnLeft);
-            SetBinding(KeyCode.RightArrow, Actions.TurnRight);
+            TestSetBinding(KeyCode.PageUp, Actions.FloatUp);
+            TestSetBinding(KeyCode.PageDown, Actions.FloatDown);
+            TestSetBinding(KeyCode.Space, Actions.Jump);
+            TestSetBinding(KeyCode.C, Actions.Crouch);
+            TestSetBinding(KeyCode.LeftControl, Actions.Slide);
+            TestSetBinding(KeyCode.RightControl, Actions.Slide);
+            TestSetBinding(KeyCode.LeftShift, Actions.Run);
+            TestSetBinding(KeyCode.RightShift, Actions.Run);
 
-            SetBinding(KeyCode.PageUp, Actions.FloatUp);
-            SetBinding(KeyCode.PageDown, Actions.FloatDown);
-            SetBinding(KeyCode.Space, Actions.Jump);
-            SetBinding(KeyCode.C, Actions.Crouch);
-            SetBinding(KeyCode.LeftControl, Actions.Slide);
-            SetBinding(KeyCode.RightControl, Actions.Slide);
-            SetBinding(KeyCode.LeftShift, Actions.Run);
-            SetBinding(KeyCode.RightShift, Actions.Run);
+            TestSetBinding(KeyCode.R, Actions.Rest);
+            TestSetBinding(KeyCode.T, Actions.Transport);
+            TestSetBinding(KeyCode.F1, Actions.StealMode);
+            TestSetBinding(KeyCode.F2, Actions.GrabMode);
+            TestSetBinding(KeyCode.F3, Actions.InfoMode);
+            TestSetBinding(KeyCode.F4, Actions.TalkMode);
 
-            SetBinding(KeyCode.R, Actions.Rest);
-            SetBinding(KeyCode.T, Actions.Transport);
-            SetBinding(KeyCode.F1, Actions.StealMode);
-            SetBinding(KeyCode.F2, Actions.GrabMode);
-            SetBinding(KeyCode.F3, Actions.InfoMode);
-            SetBinding(KeyCode.F4, Actions.TalkMode);
+            TestSetBinding(KeyCode.Backspace, Actions.CastSpell);
+            TestSetBinding(KeyCode.Q, Actions.RecastSpell);
+            TestSetBinding(KeyCode.E, Actions.AbortSpell);
+            TestSetBinding(KeyCode.U, Actions.UseMagicItem);
 
-            SetBinding(KeyCode.Backspace, Actions.CastSpell);
-            SetBinding(KeyCode.Q, Actions.RecastSpell);
-            SetBinding(KeyCode.E, Actions.AbortSpell);
-            SetBinding(KeyCode.U, Actions.UseMagicItem);
+            TestSetBinding(KeyCode.Z, Actions.ReadyWeapon);
+            TestSetBinding(KeyCode.Mouse1, Actions.SwingWeapon);
+            TestSetBinding(KeyCode.H, Actions.SwitchHand);
 
-            SetBinding(KeyCode.Z, Actions.ReadyWeapon);
-            SetBinding(KeyCode.Mouse1, Actions.SwingWeapon);
-            SetBinding(KeyCode.H, Actions.SwitchHand);
+            TestSetBinding(KeyCode.I, Actions.Status);
+            TestSetBinding(KeyCode.F5, Actions.CharacterSheet);
+            TestSetBinding(KeyCode.F6, Actions.Inventory);
 
-            SetBinding(KeyCode.I, Actions.Status);
-            SetBinding(KeyCode.F5, Actions.CharacterSheet);
-            SetBinding(KeyCode.F6, Actions.Inventory);
+            TestSetBinding(KeyCode.Mouse0, Actions.ActivateCenterObject);
+            TestSetBinding(KeyCode.Return, Actions.ActivateCursor);
 
-            SetBinding(KeyCode.Mouse0, Actions.ActivateCenterObject);
-            SetBinding(KeyCode.Return, Actions.ActivateCursor);
+            TestSetBinding(KeyCode.Insert, Actions.LookUp);
+            TestSetBinding(KeyCode.Delete, Actions.LookDown);
+            TestSetBinding(KeyCode.Home, Actions.CenterView);
+            TestSetBinding(KeyCode.LeftAlt, Actions.Sneak);
+            TestSetBinding(KeyCode.RightAlt, Actions.Sneak);
 
-            SetBinding(KeyCode.Insert, Actions.LookUp);
-            SetBinding(KeyCode.Delete, Actions.LookDown);
-            SetBinding(KeyCode.Home, Actions.CenterView);
-            SetBinding(KeyCode.LeftAlt, Actions.Sneak);
-            SetBinding(KeyCode.RightAlt, Actions.Sneak);
+            TestSetBinding(KeyCode.L, Actions.LogBook);
+            TestSetBinding(KeyCode.N, Actions.NoteBook);
+            TestSetBinding(KeyCode.M, Actions.AutoMap);
+            TestSetBinding(KeyCode.V, Actions.TravelMap);
 
-            SetBinding(KeyCode.L, Actions.LogBook);
-            SetBinding(KeyCode.N, Actions.NoteBook);
-            SetBinding(KeyCode.M, Actions.AutoMap);
-            SetBinding(KeyCode.V, Actions.TravelMap);
-
-            SetBinding(KeyCode.F9, Actions.QuickSave);
-            SetBinding(KeyCode.F12, Actions.QuickLoad);
+            TestSetBinding(KeyCode.F9, Actions.QuickSave);
+            TestSetBinding(KeyCode.F12, Actions.QuickLoad);
         }
 
         // Bind a KeyCode to an action
@@ -501,6 +497,17 @@ namespace DaggerfallWorkshop.Game
             if (actionKeyDict.ContainsKey(code))
             {
                 actionKeyDict.Remove(code);
+            }
+        }
+
+        // Sets KeyCode binding only if action is missing
+        // This is to ensure default actions are restored if missing
+        // and to push out new actions to existing keybind files
+        void TestSetBinding(KeyCode code, Actions action)
+        {
+            if (!actionKeyDict.ContainsValue(action))
+            {
+                SetBinding(code, action);
             }
         }
 
@@ -618,12 +625,9 @@ namespace DaggerfallWorkshop.Game
             KeyBindData_v1 keyBindsData = SaveLoadManager.Deserialize(typeof(KeyBindData_v1), json) as KeyBindData_v1;
             foreach(var item in keyBindsData.actionKeyBinds)
             {
-                if (actionKeyDict.ContainsKey(item.Key))
-                    actionKeyDict[item.Key] = item.Value;
-                else
+                if (!actionKeyDict.ContainsKey(item.Key))
                     actionKeyDict.Add(item.Key, item.Value);
             }
-            //actionKeyDict = keyBindsData.actionKeyBinds;
             RaiseLoadedKeyBindsEvent();
         }
 

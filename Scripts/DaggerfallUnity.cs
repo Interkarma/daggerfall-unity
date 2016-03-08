@@ -245,6 +245,17 @@ namespace DaggerfallWorkshop
 
         #region Startup and Shutdown
 
+        /// <summary>
+        /// Sets new arena2 path and sets up DaggerfallUnity.
+        /// </summary>
+        /// <param name="arena2Path">New arena2 path. Must be valid.</param>
+        public void ChangeArena2Path(string arena2Path)
+        {
+            Arena2Path = arena2Path;
+            SetupArena2Path();
+            SetupContentReaders(true);
+        }
+
         private void SetupArena2Path()
         {
             // Clear path validated flag

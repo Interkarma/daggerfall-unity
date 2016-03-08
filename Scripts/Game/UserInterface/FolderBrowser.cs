@@ -308,6 +308,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void FolderList_OnUseSelectedItem()
         {
+            if (folderList.SelectedIndex < 0 || folderList.Count == 0)
+                return;
+
             // Get new path
             string newPath = string.Empty;
             if (folderList.SelectedItem == "..")
@@ -362,6 +365,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (confirmEnabled)
                 RaiseOnConfirmPathEvent();
+            else
+                FolderList_OnUseSelectedItem();
         }
 
         #endregion

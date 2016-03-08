@@ -71,28 +71,28 @@ namespace DaggerfallWorkshop
 
         // [Video]
 
-        public int ViewportX
+        public int ResolutionWidth
         {
-            get { return GetInt(sectionVideo, "ViewportX"); }
-            set { SetInt(sectionVideo, "ViewportX", value); }
+            get { return GetInt(sectionVideo, "ResolutionWidth"); }
+            set { SetInt(sectionVideo, "ResolutionWidth", value); }
         }
 
-        public int ViewportY
+        public int ResolutionHeight
         {
-            get { return GetInt(sectionVideo, "ViewportY"); }
-            set { SetInt(sectionVideo, "ViewportY", value); }
-        }
-
-        public bool Fullscreen
-        {
-            get { return GetBool(sectionVideo, "Fullscreen"); }
-            set { SetBool(sectionVideo, "Fullscreen", value); }
+            get { return GetInt(sectionVideo, "ResolutionHeight"); }
+            set { SetInt(sectionVideo, "ResolutionHeight", value); }
         }
 
         public bool VSync
         {
             get { return GetBool(sectionVideo, "VSync"); }
             set { SetBool(sectionVideo, "VSync", value); }
+        }
+
+        public bool Fullscreen
+        {
+            get { return GetBool(sectionVideo, "Fullscreen"); }
+            set { SetBool(sectionVideo, "Fullscreen", value); }
         }
 
         public int FieldOfView
@@ -107,6 +107,12 @@ namespace DaggerfallWorkshop
             set { SetInt(sectionVideo, "MainFilterMode", value); }
         }
 
+        public int Qualitylevel
+        {
+            get { return GetInt(sectionVideo, "QualityLevel", 0, 5); }
+            set { SetInt(sectionVideo, "QualityLevel", value); }
+        }
+
         public bool UseLegacyDeferred
         {
             get { return GetBool(sectionVideo, "UseLegacyDeferred"); }
@@ -115,10 +121,10 @@ namespace DaggerfallWorkshop
 
         // [ChildGuard]
 
-        public bool NoPlayerNudity
+        public bool PlayerNudity
         {
-            get { return GetBool(sectionChildGuard, "NoPlayerNudity"); }
-            set { SetBool(sectionChildGuard, "NoPlayerNudity", value); }
+            get { return GetBool(sectionChildGuard, "PlayerNudity"); }
+            set { SetBool(sectionChildGuard, "PlayerNudity", value); }
         }
 
         // [GUI]
@@ -209,10 +215,10 @@ namespace DaggerfallWorkshop
             set { SetBool(sectionControls, "HeadBobbing", value); }
         }
 
-        public bool ShowWeaponLeftHand
+        public bool LeftHandWeapons
         {
-            get { return GetBool(sectionControls, "ShowWeaponLeftHand"); }
-            set { SetBool(sectionControls, "ShowWeaponLeftHand", value); }
+            get { return GetBool(sectionControls, "LeftHandWeapons"); }
+            set { SetBool(sectionControls, "LeftHandWeapons", value); }
         }
 
         public float WeaponSwingThreshold
@@ -292,6 +298,11 @@ namespace DaggerfallWorkshop
         public void RereadSettings()
         {
             ReadSettings();
+        }
+
+        public void SaveSettings()
+        {
+            WriteSettings();
         }
 
         #endregion

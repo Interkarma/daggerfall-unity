@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int SelectedIndex
         {
             get { return selectedIndex; }
-            set { selectedIndex = value; RaiseOnSelectItemEvent(); }
+            set { SelectIndex(value); }
         }
 
         public string SelectedItem
@@ -200,8 +200,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             int row = (int)(clickPosition.y / (font.GlyphHeight + rowSpacing));
-            selectedIndex = scrollIndex + row;
-            RaiseOnSelectItemEvent();
+            int index = scrollIndex + row;
+            if (index >= 0 && index < Count)
+            {
+                selectedIndex = index;
+                RaiseOnSelectItemEvent();
+            }
         }
 
         protected override void MouseDoubleClick(Vector2 clickPosition)
@@ -309,6 +313,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
             RaiseOnSelectNextEvent();
         }
 
+        public void SelectIndex(int index)
+        {
+            if (index < 0 || index >= listItems.Count)
+                return;
+
+            selectedIndex = index;
+            RaiseOnSelectItemEvent();
+        }
+
+        public void ScrollToSelected()
+        {
+            scrollIndex = selectedIndex;
+            scrollIndex = Mathf.Clamp(scrollIndex, 0, (listItems.Count - 1) - (rowsDisplayed - 1));
+        }
+
         public void UseSelectedItem()
         {
             RaiseOnUseItemEvent();
@@ -319,7 +338,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (scrollIndex > 0)
                 scrollIndex--;
 
-            ClampSelectionToVisibleRange();
+            //ClampSelectionToVisibleRange();
             RaiseOnScrollUpEvent();
         }
 
@@ -328,12 +347,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (scrollIndex < listItems.Count - rowsDisplayed)
                 scrollIndex++;
 
-            ClampSelectionToVisibleRange();
+            //ClampSelectionToVisibleRange();
             RaiseOnScrollDownEvent();
         }
 
         // Clamps selection to inside visible range like Daggerfall
-        public void ClampSelectionToVisibleRange()
+        // Deprecated for now as this behaviour does not feel right
+        public void ClampSelectionToVisibleRange_Deprecated()
         {
             if (selectedIndex > scrollIndex + rowsDisplayed - 1)
             {
