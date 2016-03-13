@@ -21,6 +21,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop
 {
@@ -46,6 +47,7 @@ namespace DaggerfallWorkshop
         MaterialReader materialReader;
         MeshReader meshReader;
         SoundReader soundReader;
+        ItemHelper itemHelper;
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITextProvider textProvider = new DefaultTextProvider();
 
@@ -119,6 +121,11 @@ namespace DaggerfallWorkshop
         public SoundReader SoundReader
         {
             get { return (soundReader != null) ? soundReader : soundReader = GetComponent<SoundReader>(); }
+        }
+
+        public ItemHelper ItemHelper
+        {
+            get { return (itemHelper != null) ? itemHelper : itemHelper = new ItemHelper(); }
         }
 
         public WorldTime WorldTime
@@ -238,6 +245,17 @@ namespace DaggerfallWorkshop
 
         #region Startup and Shutdown
 
+        /// <summary>
+        /// Sets new arena2 path and sets up DaggerfallUnity.
+        /// </summary>
+        /// <param name="arena2Path">New arena2 path. Must be valid.</param>
+        public void ChangeArena2Path(string arena2Path)
+        {
+            Arena2Path = arena2Path;
+            SetupArena2Path();
+            SetupContentReaders(true);
+        }
+
         private void SetupArena2Path()
         {
             // Clear path validated flag
@@ -303,7 +321,7 @@ namespace DaggerfallWorkshop
             }
             else
             {
-                LogMessage(string.Format("Could not find arena2 path. Try setting MyDaggerfallPath in Resources/fallback.ini."), true);
+                LogMessage(string.Format("Could not find arena2 path. Try setting MyDaggerfallPath in settings.ini."), true);
             }
 
             // No path was found but we can try to carry on without one
@@ -312,20 +330,6 @@ namespace DaggerfallWorkshop
 
             // Singleton is now ready
             RaiseOnReadyEvent();
-        }
-
-        string TestArena2Exists(string parent)
-        {
-            // Accept either upper or lower case
-            string pathLower = Path.Combine(parent, "arena2");
-            string pathUpper = Path.Combine(parent, "ARENA2");
-
-            if (Directory.Exists(pathLower))
-                return pathLower;
-            else if (Directory.Exists(pathUpper))
-                return pathUpper;
-            else
-                return string.Empty;
         }
 
         private void SetupContentReaders(bool force = false)
@@ -365,6 +369,20 @@ namespace DaggerfallWorkshop
             }
 
             return true;
+        }
+
+        public static string TestArena2Exists(string parent)
+        {
+            // Accept either upper or lower case
+            string pathLower = Path.Combine(parent, "arena2");
+            string pathUpper = Path.Combine(parent, "ARENA2");
+
+            if (Directory.Exists(pathLower))
+                return pathLower;
+            else if (Directory.Exists(pathUpper))
+                return pathUpper;
+            else
+                return string.Empty;
         }
 
         public static bool ValidateArena2Path(string path)

@@ -105,11 +105,12 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
-        /// Gets parent of this record.
+        /// Gets or sets parent of this record.
         /// </summary>
         public SaveTreeBaseRecord Parent
         {
             get { return parent; }
+            set { parent = value; }
         }
 
         /// <summary>
@@ -161,7 +162,7 @@ namespace DaggerfallConnect.Save
 
             // Peek record type and adjust for dungeon size
             recordType = SaveTree.PeekRecordType(reader);
-            if (recordType == RecordTypes.DungeonData)
+            if (recordType == RecordTypes.DungeonInformation)
                 streamLength *= DungeonDataLengthMultiplier;
 
             // Read raw record data
@@ -169,6 +170,24 @@ namespace DaggerfallConnect.Save
 
             // Read RecordRoot data from start of memory buffer
             ReadRecordRoot();
+        }
+
+        /// <summary>
+        /// Shallow copy record data from this record to another.
+        /// </summary>
+        /// <param name="other">Other record to receive data.</param>
+        public virtual void CopyTo(SaveTreeBaseRecord other)
+        {
+            if (other == null)
+                return;
+
+            other.streamPosition = this.streamPosition;
+            other.streamLength = this.streamLength;
+            other.streamData = (byte[])this.streamData.Clone();
+            other.recordType = this.recordType;
+            other.recordRoot = this.recordRoot;
+            other.parent = this.parent;
+            other.children.AddRange(this.children.ToArray());
         }
 
         #endregion

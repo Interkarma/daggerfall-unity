@@ -3,16 +3,17 @@ MyDaggerfallPath=
 MyDaggerfallUnitySavePath=
 
 [Video]
-ViewportX=1280
-ViewportY=720
+ResolutionWidth=1280
+ResolutionHeight=720
 VSync=True
-Fullscreen=True
+Fullscreen=False
 FieldOfView=65
 MainFilterMode=0
+QualityLevel=5
 UseLegacyDeferred=False
 
 [ChildGuard]
-NoPlayerNudity=True
+PlayerNudity=False
 
 [GUI]
 GUIFilterMode=0
@@ -21,13 +22,17 @@ Crosshair=True
 SwapHealthAndFatigueColors=False
 DimAlphaStrength=0.5
 FreeScaling=False
+EnableToolTips=True
+ToolTipDelayInSeconds=0.0
+ToolTipBackgroundColor=404040D2
+ToolTipTextColor=E6E6C8FF
 
 [Controls]
 InvertMouseVertical=False
 MouseLookSmoothing=True
 MouseLookSensitivity=1.0
 HeadBobbing=False
-ShowWeaponLeftHand=False
+LeftHandWeapons=False
 WeaponSwingThreshold=0.8
 WeaponSwingTriggerCount=3
 

@@ -23,9 +23,21 @@ namespace DaggerfallConnect.Utility
 
     /// <summary>
     /// Static methods to validate ARENA2 folder.
+    /// Does not verify contents, just that critical files exist in minimum quantities.
+    /// This allows test to be fast enough to be run at startup.
     /// </summary>
     public class DFValidator
     {
+        #region Fields
+
+        const string textureSearchPattern = "TEXTURE.???";
+        const string vidSearchPattern = "*.VID";
+        const string vidAlternateTestFile = "ANIM0011.VID";
+
+        const int minTextureCount = 472;
+        const int minVidCount = 17;
+
+        #endregion
 
         #region Structures
 
@@ -43,8 +55,8 @@ namespace DaggerfallConnect.Utility
             /// <summary>True if folder exists.</summary>
             public bool FolderValid;
 
-            ///// <summary>True if texture count is correct.</summary>
-            //public bool TexturesValid;
+            /// <summary>True if texture count is correct.</summary>
+            public bool TexturesValid;
 
             /// <summary>True if ARCH3D.BSA exists.</summary>
             public bool ModelsValid;
@@ -60,6 +72,9 @@ namespace DaggerfallConnect.Utility
 
             /// <summary>True if WOODS.WLD exists.</summary>
             public bool WoodsValid;
+
+            /// <summary>True if all .VID files present.</summary>
+            public bool VideosValid;
         }
 
         #endregion
@@ -71,11 +86,11 @@ namespace DaggerfallConnect.Utility
         ///  This currently just checks the right major files exist in the right quantities.
         ///  Does not verify contents so test is quite speedy and can be performed at startup.
         ///  Will also look for main .BSA files in Unity Resources folder.
-        ///  Does not verify texture/image files.
         /// </summary>
         /// <param name="path">Full path of ARENA2 folder to validate.</param>
         /// <param name="results">Output results.</param>
-        public static void ValidateArena2Folder(string path, out ValidationResults results)
+        /// <param name="requireVideos">Videos must be present to pass final validation.</param>
+        public static void ValidateArena2Folder(string path, out ValidationResults results, bool requireVideos = false)
         {
             results = new ValidationResults();
             results.PathTested = path;
@@ -87,16 +102,17 @@ namespace DaggerfallConnect.Utility
                 results.FolderValid = true;
 
             // Get files
-            //string[] textures = Directory.GetFiles(path, "TEXTURE.???");
+            string[] textures = Directory.GetFiles(path, textureSearchPattern);
             string[] models = Directory.GetFiles(path, Arch3dFile.Filename);
             string[] blocks = Directory.GetFiles(path, BlocksFile.Filename);
             string[] maps = Directory.GetFiles(path, MapsFile.Filename);
             string[] sounds = Directory.GetFiles(path, SndFile.Filename);
             string[] woods = Directory.GetFiles(path, WoodsFile.Filename);
+            string[] videos = Directory.GetFiles(path, vidSearchPattern);
 
-            //// Validate texture count
-            //if (textures.Length >= 472)
-            //    results.TexturesValid = true;
+            // Validate texture count
+            if (textures.Length >= minTextureCount)
+                results.TexturesValid = true;
 
             // Validate models count
             if (models.Length >= 1)
@@ -117,6 +133,10 @@ namespace DaggerfallConnect.Utility
             // Validate woods count
             if (woods.Length >= 1)
                 results.WoodsValid = true;
+
+            // Validate videos count
+            if (videos.Length >= minVidCount)
+                results.VideosValid = true;
 
             // Support alternate ARCH3D.BSA from Resources if available
             if (!results.ModelsValid)
@@ -158,9 +178,19 @@ namespace DaggerfallConnect.Utility
                     results.WoodsValid = true;
             }
 
+            // Supports alternate *.VID from Resources if available
+            // Just tests for smallest video for performance reasons
+            // Assumes build creator has added all other videos
+            if (!results.VideosValid)
+            {
+                UnityEngine.TextAsset videoAsset = UnityEngine.Resources.Load(vidAlternateTestFile) as UnityEngine.TextAsset;
+                if (videoAsset != null)
+                    results.VideosValid = true;
+            }
+
             // If everything else is valid then set AppearsValid flag
             if (results.FolderValid &&
-                //results.TexturesValid &&
+                results.TexturesValid &&
                 results.ModelsValid &&
                 results.BlocksValid &&
                 results.MapsValid &&
@@ -169,6 +199,10 @@ namespace DaggerfallConnect.Utility
             {
                 results.AppearsValid = true;
             }
+
+            // Check videos
+            if (requireVideos && !results.VideosValid)
+                results.AppearsValid = false;
         }
 
         #endregion

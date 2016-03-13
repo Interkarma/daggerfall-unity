@@ -243,7 +243,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             lastPresets = Presets;
-            dfAudioSource.SetSound(0, AudioPresets.OnDemand, 0);
+            dfAudioSource.SetSound(-1, AudioPresets.OnDemand, 0);
         }
 
         #endregion

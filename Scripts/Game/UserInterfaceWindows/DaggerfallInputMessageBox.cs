@@ -174,7 +174,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!IsSetup)
                 Setup();
 
-            label.SetTextTokens(tokens);
+            label.SetText(tokens);
             //UpdatePanelSizes();
         }
 

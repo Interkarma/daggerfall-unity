@@ -1,0 +1,46 @@
+﻿// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
+// Web Site:        http://www.dfworkshop.net
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
+// 
+// Notes:
+//
+
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections;
+
+namespace DaggerfallWorkshop.Game.Utility
+{
+    /// <summary>
+    /// Launches game or startup scene based on path validation.
+    /// </summary>
+    public class SceneControl : MonoBehaviour
+    {
+        public const int StartupSceneIndex = 0;
+        public const int GameSceneIndex = 1;
+        public GameObject defaultSky = null;
+
+        void Start()
+        {
+            // Check arena2 path is validated OK, otherwise start game setup
+            if (!DaggerfallUnity.Instance.IsPathValidated)
+            {
+                // Enable sky for test models
+                if (defaultSky != null)
+                    defaultSky.SetActive(true);
+
+                // Post message to launch game setup
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiSetupGameWizard);
+            }
+            else
+            {
+                //Application.LoadLevel(GameSceneIndex);
+                SceneManager.LoadScene(GameSceneIndex);
+            }
+        }
+    }
+}

@@ -1,15 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2015 Daggerfall Workshop
-// Web Site:        http://www.dfworkshop.net
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
-// Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
-// Notes:
-//
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.IO;
 using System.Collections;
 using DaggerfallConnect;
@@ -19,7 +8,7 @@ using DaggerfallConnect.Utility;
 namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
-    /// Basic image processing for DFBitmap, Color32, and FntFile formats.
+    /// Basic image processing.
     /// </summary>
     public static class ImageProcessing
     {
@@ -355,36 +344,182 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
-        #region Weapon Tinting
+        #region Dyes & Masks
 
         /// <summary>
-        /// Tint a weapon image based on metal type.
+        /// Changes mask index to another index.
         /// </summary>
-        /// <param name="srcBitmap">Source weapon image.</param>
-        /// <param name="size">Image size.</param>
-        /// <param name="metalType">Metal type for tint.</param>
-        public static void TintWeaponImage(DFBitmap srcBitmap, MetalTypes metalType)
+        /// <param name="srcBitmap">Source image.</param>
+        /// <param name="replaceWith">Index to substitute for mask index.</param>
+        /// <returns>New DFBitmap with modified mask.</returns>
+        public static DFBitmap ChangeMask(DFBitmap srcBitmap, byte replaceWith = 0)
         {
-            byte[] swaps = GetMetalColors(metalType);
+            const int mask = 0xff;
 
+            // Clone bitmap
+            DFBitmap dstBitmap = DFBitmap.CloneDFBitmap(srcBitmap, false);
+
+            // Remove all instances of mask index
+            for (int i = 0; i < srcBitmap.Data.Length; i++)
+            {
+                byte index = srcBitmap.Data[i];
+                if (index == mask)
+                    dstBitmap.Data[i] = replaceWith;
+                else
+                    dstBitmap.Data[i] = index;
+            }
+
+            return dstBitmap;
+        }
+
+        /// <summary>
+        /// Dye supported bitmap image based on dye index and type.
+        /// </summary>
+        /// <param name="srcBitmap">Source image.</param>
+        /// <param name="dye">Dye index.</param>
+        /// <param name="target">Dye target.</param>
+        /// <returns>New DFBitmap dyed to specified colour.</returns>
+        public static DFBitmap ChangeDye(DFBitmap srcBitmap, DyeColors dye, DyeTargets target)
+        {
+            const int clothingStart = 0x60;
+            const int weaponsAndArmorStart = 0x70;
+
+            // Clone bitmap and get colour table for swaps
+            DFBitmap dstBitmap = DFBitmap.CloneDFBitmap(srcBitmap, false);
+            byte[] swaps = GetDyeColorTable(dye, target);
+
+            // Swaps range is based on target type
+            int start;
+            switch(target)
+            {
+                case DyeTargets.Clothing:
+                    start = clothingStart;
+                    break;
+                case DyeTargets.WeaponsAndArmor:
+                    start = weaponsAndArmorStart;
+                    break;
+                default:
+                    return dstBitmap;
+            }
+
+            // Swap indices start through start + 15 with colour table
             int rowPos;
             for (int y = 0; y < srcBitmap.Height; y++)
             {
                 rowPos = y * srcBitmap.Width;
                 for (int x = 0; x < srcBitmap.Width; x++)
                 {
-                    byte index = srcBitmap.Data[rowPos + x];
-                    if (index >= 0x70 && index <= 0x7f)
+                    int srcOffset = rowPos + x;
+                    byte index = srcBitmap.Data[srcOffset];
+
+                    if (index >= start && index <= start + 0x0f)
                     {
-                        int offset = index - 0x70;
-                        srcBitmap.Data[rowPos + x] = swaps[offset];
+                        int tintOffset = index - start;
+                        dstBitmap.Data[srcOffset] = swaps[tintOffset];
+                    }
+                    else
+                    {
+                        dstBitmap.Data[srcOffset] = index;
                     }
                 }
             }
+
+            return dstBitmap;
         }
 
-        // Gets colour indices based on metal type
-        public static byte[] GetMetalColors(MetalTypes metalType)
+        /// <summary>
+        /// Gets colour table for all supported dyes.
+        /// </summary>
+        public static byte[] GetDyeColorTable(DyeColors dye, DyeTargets target)
+        {
+            // Dye targets require slightly different handling
+            if (target == DyeTargets.Clothing)
+            {
+                // Clothing
+                int start = 0x60;
+                byte[] swaps = new byte[16];
+                switch (dye)
+                {
+                    case DyeColors.Blue:
+                        start = 0x60;
+                        break;
+                    case DyeColors.Grey:
+                        start = 0x50;
+                        break;
+                    case DyeColors.Red:
+                        start = 0xEF;
+                        break;
+                    case DyeColors.DarkBrown:
+                        start = 0x20;
+                        break;
+                    case DyeColors.Purple:
+                        start = 0x30;
+                        break;
+                    case DyeColors.LightBrown:
+                        start = 0x40;
+                        break;
+                    case DyeColors.White:
+                        start = 0x70;
+                        break;
+                    case DyeColors.Aquamarine:
+                        start = 0x80;
+                        break;
+                    case DyeColors.Yellow:
+                        start = 0x90;
+                        break;
+                    case DyeColors.Green:
+                        start = 0xA0;
+                        break;
+                    default:
+                        start = 0x60;
+                        break;
+                }
+
+                // Geneate index swaps
+                for (int i = 0; i < 16; i++)
+                {
+                    swaps[i] = (byte)(start + i);
+                }
+
+                return swaps;
+            }
+            else if (target == DyeTargets.WeaponsAndArmor)
+            {
+                // Metals
+                switch (dye)
+                {
+                    case DyeColors.Iron:
+                        return GetMetalColorTable(MetalTypes.Iron);
+                    case DyeColors.Steel:
+                        return GetMetalColorTable(MetalTypes.Steel);
+                    case DyeColors.Chain:
+                        return GetMetalColorTable(MetalTypes.Chain);
+                    case DyeColors.SilverOrElven:
+                        return GetMetalColorTable(MetalTypes.Silver);
+                    case DyeColors.Dwarven:
+                        return GetMetalColorTable(MetalTypes.Dwarven);
+                    case DyeColors.Mithril:
+                        return GetMetalColorTable(MetalTypes.Mithril);
+                    case DyeColors.Adamantium:
+                        return GetMetalColorTable(MetalTypes.Adamantium);
+                    case DyeColors.Ebony:
+                        return GetMetalColorTable(MetalTypes.Ebony);
+                    case DyeColors.Orcish:
+                        return GetMetalColorTable(MetalTypes.Orcish);
+                    case DyeColors.Daedric:
+                        return GetMetalColorTable(MetalTypes.Daedric);
+                    default:
+                        return GetMetalColorTable(MetalTypes.None);
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets colour table for each metal type.
+        /// </summary>
+        public static byte[] GetMetalColorTable(MetalTypes metalType)
         {
             byte[] indices;
             switch (metalType)
@@ -395,9 +530,8 @@ namespace DaggerfallWorkshop.Utility
                 case MetalTypes.Steel:
                     indices = new byte[] { 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F };
                     break;
+                case MetalTypes.Chain:
                 case MetalTypes.Silver:
-                    indices = new byte[] { 0xE0, 0x70, 0x50, 0x71, 0x51, 0x72, 0x73, 0x52, 0x74, 0x53, 0x75, 0x54, 0x55, 0x56, 0x57, 0x58 };
-                    break;
                 case MetalTypes.Elven:
                     indices = new byte[] { 0xE0, 0x70, 0x50, 0x71, 0x51, 0x72, 0x73, 0x52, 0x74, 0x53, 0x75, 0x54, 0x55, 0x56, 0x57, 0x58 };
                     break;
@@ -425,6 +559,38 @@ namespace DaggerfallWorkshop.Utility
             }
 
             return indices;
+        }
+
+        /// <summary>
+        /// Converts a DaggerfallUnity metal type to dye colour.
+        /// </summary>
+        public static DyeColors GetMetalDyeColor(MetalTypes metalType)
+        {
+            switch(metalType)
+            {
+                case MetalTypes.Iron:
+                    return DyeColors.Iron;
+                case MetalTypes.Steel:
+                    return DyeColors.Steel;
+                case MetalTypes.Chain:
+                case MetalTypes.Silver:
+                case MetalTypes.Elven:
+                    return DyeColors.SilverOrElven;
+                case MetalTypes.Dwarven:
+                    return DyeColors.Dwarven;
+                case MetalTypes.Mithril:
+                    return DyeColors.Mithril;
+                case MetalTypes.Adamantium:
+                    return DyeColors.Adamantium;
+                case MetalTypes.Ebony:
+                    return DyeColors.Ebony;
+                case MetalTypes.Orcish:
+                    return DyeColors.Orcish;
+                case MetalTypes.Daedric:
+                    return DyeColors.Daedric;
+                default:
+                    return DyeColors.Unchanged;
+            }
         }
 
         #endregion

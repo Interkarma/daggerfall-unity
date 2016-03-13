@@ -328,12 +328,15 @@ namespace DaggerfallWorkshop
 
     /// <summary>
     /// Various metal types in Daggerfall.
+    /// This is a Daggerfall Unity enum.
+    /// For enum matching native data see Items/ItemEnums.cs.
     /// </summary>
     public enum MetalTypes
     {
         None,
         Iron,
         Steel,
+        Chain,
         Silver,
         Elven,
         Dwarven,
@@ -342,6 +345,50 @@ namespace DaggerfallWorkshop
         Ebony,
         Orcish,
         Daedric,
+    }
+
+    /// <summary>
+    /// Available dye colours for armour, weapons, and clothing.
+    /// Values match known Daggerfall colour indices.
+    /// May change at a later date with new research.
+    /// </summary>
+    public enum DyeColors
+    {
+        // Clothing dyes
+        Blue = 0,
+        Grey = 1,
+        Red = 2,
+        DarkBrown = 3,
+        Purple = 4,
+        LightBrown = 5,
+        White = 6,
+        Aquamarine = 7,
+        Yellow = 8,
+        Green = 9,
+
+        // 10-14 Unknown or not observed
+
+        // Weapon and armour dyes
+        Iron = 15,
+        Steel = 16,
+        Chain = 17,
+        Unchanged = 18,
+        SilverOrElven = 19,
+        Dwarven = 20,
+        Mithril = 21,
+        Adamantium = 22,
+        Ebony = 23,
+        Orcish = 24,
+        Daedric = 25,
+    }
+
+    /// <summary>
+    /// Supported targets for dye changes.
+    /// </summary>
+    public enum DyeTargets
+    {
+        Clothing,
+        WeaponsAndArmor,
     }
 
     /// <summary>
@@ -427,5 +474,60 @@ namespace DaggerfallWorkshop
         StaticNPC,
         EnemyMonster,
         EnemyClass,
+    }
+
+    /// <summary>
+    /// Supported ImageReader file types.
+    /// </summary>
+    public enum ImageTypes
+    {
+        None,
+        TEXTURE,
+        IMG,
+        CIF,
+        RCI,
+    }
+
+    /// <summary>
+    /// Defines character's hands.
+    /// </summary>
+    public enum CharacterHands
+    {
+        None,
+        Left,
+        Right,
+        Both,
+    }
+
+    /// <summary>
+    /// Defines how an item is held.
+    /// </summary>
+    public enum ItemHands
+    {
+        None,               // Item is not held in the hands
+        Either,             // Can wield in either left or right hand (off-hand equip image available)
+        Both,               // Can wield in both hands only
+        LeftOnly,           // Can wield in left hand only (e.g. shields)
+        RightOnly,          // Can wield in right hand only
+    }
+
+    /// <summary>
+    /// Various containers for inventory management.
+    /// Not sure if all of these are used.
+    /// May change at a later date.
+    /// </summary>
+    public enum ContainerTypes
+    {
+        Corpse1,
+        Corpse2,
+        Ground,
+        Wagon,
+        Shelves,
+        Chest,
+        Merchant,
+        Table,
+        Magic,
+        Backpack,
+        Corpse3,
     }
 }

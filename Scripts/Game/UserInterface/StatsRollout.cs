@@ -103,7 +103,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public void Reroll(DFCareer dfClass)
         {
             // Assign base stats from class template
-            DaggerfallStats rolledStats = CharacterSheet.GetClassBaseStats(dfClass);
+            DaggerfallStats rolledStats = CharacterDocument.GetClassBaseStats(dfClass);
 
             // Roll bonus value for each base stat
             // Using maxBonusRoll + 1 as Unity's Random.Range(int,int) is exclusive

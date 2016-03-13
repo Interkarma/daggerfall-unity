@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel healthLabel = new TextLabel();
         //TextLabel encumbranceLabel = new TextLabel();
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
-        CharacterPortrait characterPortrait = new CharacterPortrait();
+        PaperDoll characterPortrait = new PaperDoll();
 
         PlayerEntity PlayerEntity
         {

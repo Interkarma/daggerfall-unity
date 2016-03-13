@@ -439,6 +439,7 @@ namespace DaggerfallConnect.Arena2
             imgRecord.Width = header.Width;
             imgRecord.Height = header.Height;
             imgRecord.Data = new byte[header.Width * header.Height];
+            imgRecord.Palette = Palette;
 
             // Create reader
             BinaryReader Reader = managedFile.GetReader(imageDataPosition);

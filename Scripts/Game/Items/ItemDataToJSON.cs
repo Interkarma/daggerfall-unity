@@ -10,15 +10,17 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.FallExe;
 using FullSerializer;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Items
 {
     /// <summary>
-    /// Handles exporting item base template data from FALL.EXE to human-readable JSON.
+    /// Handles exporting item template data from FALL.EXE to JSON.
     /// </summary>
     public class ItemDataToJSON
     {
@@ -30,11 +32,14 @@ namespace DaggerfallWorkshop.Game.Items
         public static void CreateJSON(string fallExePath, string outputPath)
         {
             ItemsFile itemsFile = new ItemsFile(fallExePath);
-            List<ItemDescription> itemDescriptions = new List<ItemDescription>(itemsFile.ItemsCount);
+            List<ItemTemplate> itemDescriptions = new List<ItemTemplate>(itemsFile.ItemsCount);
             for (int i = 0; i < itemsFile.ItemsCount; i++)
             {
                 itemDescriptions.Add(itemsFile.GetItemDescription(i));
             }
+
+            string json = SaveLoadManager.Serialize(itemDescriptions.GetType(), itemDescriptions);
+            File.WriteAllText(outputPath, json);
         }
     }
 }

@@ -81,9 +81,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
     }
 
     /// <summary>
-    /// Defines layout of certain textures, such as backgrounds.
+    /// Defines layout of background textures.
     /// </summary>
-    public enum TextureLayout
+    public enum BackgroundLayout
     {
         Tile,                           // Texture is tiled inside parent
         StretchToFill,                  // Texture will stretch to fill parent
@@ -91,13 +91,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
     }
 
     /// <summary>
-    /// Defines how component should scale itself to parent.
+    /// Defines how component should size itself relative to parent.
     /// </summary>
-    public enum Scaling
+    public enum AutoSizeModes
     {
-        None,                           // Panel scale is fixed
-        StretchToFill,                  // Panel will stretch to fill parent
+        None,                           // Panel will not resize or scale
+        ResizeToFill,                   // Panel will resize to fill parent vertically and horizontally
         ScaleToFit,                     // Panel will scale to fit parent while maintaining aspect ratio
-        Free,                           // Panel will scale to fit parent with no regard to aspect ratio
+        ScaleFreely,                    // Panel will scale to fit parent with no regard to aspect ratio
     }
 }

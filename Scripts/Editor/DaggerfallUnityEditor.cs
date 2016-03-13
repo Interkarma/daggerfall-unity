@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop
 
 #if UNITY_EDITOR_LINUX
             string message = string.Empty;
-            message += "Linux users please set your Daggerfall installation path (i.e. parent folder of complete Daggerfall install) in Resources/fallback.ini then click 'Update Path' below.";
+            message += "Linux users please set your Daggerfall installation path (i.e. parent folder of complete Daggerfall install) in Resources/defaults.ini then click 'Update Path' below.";
             message += " This is a temporary limitation to work around Inspector bugs in experimental Linux build.";
             EditorGUILayout.HelpBox(message, MessageType.Info);
             EditorGUILayout.SelectableLabel(dfUnity.Arena2Path, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));

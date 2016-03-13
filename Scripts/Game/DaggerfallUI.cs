@@ -41,6 +41,8 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallAlternateShadowColor1 = new Color32(44, 60, 60, 255);
         public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
         public static Color DaggerfallDefaultTextCursorColor = new Color32(154, 134, 0, 200);
+        public static Color DaggerfallUnityDefaultToolTipBackgroundColor = new Color32(64, 64, 64, 210);
+        public static Color DaggerfallUnityDefaultToolTipTextColor = new Color32(230, 230, 200, 255);
         public static Color DaggerfallUnityNotImplementedColor = new Color(1, 0, 0, 0.5f);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
@@ -52,6 +54,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallUnity dfUnity;
         AudioSource audioSource;
         DaggerfallAudioSource dfAudioSource;
+        DaggerfallSongPlayer dfSongPlayer;
         UserInterfaceManager uiManager = new UserInterfaceManager();
 
         Texture2D[] daggerfallParchmentTextures;
@@ -59,6 +62,7 @@ namespace DaggerfallWorkshop.Game
         char lastCharacterTyped;
         KeyCode lastKeyCode;
 
+        bool hudSetup = false;
         DaggerfallHUD dfHUD;
         DaggerfallPauseOptionsWindow dfPauseOptionsWindow;
         DaggerfallCharacterSheetWindow dfCharacterSheetWindow;
@@ -86,6 +90,11 @@ namespace DaggerfallWorkshop.Game
         public DaggerfallAudioSource DaggerfallAudioSource
         {
             get { return dfAudioSource; }
+        }
+
+        public DaggerfallSongPlayer DaggerfallSongPlayer
+        {
+            get { return dfSongPlayer; }
         }
 
         public FilterMode GlobalFilterMode
@@ -120,6 +129,7 @@ namespace DaggerfallWorkshop.Game
             audioSource = GetComponent<AudioSource>();
             audioSource.spatialBlend = 0;
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
+            dfSongPlayer = GetComponent<DaggerfallSongPlayer>();
 
             dfPauseOptionsWindow = new DaggerfallPauseOptionsWindow(uiManager);
             dfPauseOptionsWindow.OnClose += PauseOptionsDialog_OnClose;
@@ -136,22 +146,28 @@ namespace DaggerfallWorkshop.Game
             dfAutomapWindow.OnClose += AutomapDialog_OnClose;
 
             SetupSingleton();
-            PostMessage(startupMessage);
         }
 
         void Start()
         {
-            // HUD is first window on stack when enabled
-            if (enableHUD && DaggerfallUnity.Instance.IsPathValidated)
-            {
-                dfHUD = new DaggerfallHUD(uiManager);
-                uiManager.PushWindow(dfHUD);
-                Debug.Log("HUD pushed to stack.");
-            }
+            // Post start message
+            PostMessage(startupMessage);
         }
 
         void Update()
         {
+            // HUD is always first window on stack when ready
+            if (dfUnity.IsPathValidated && !hudSetup)
+            {
+                if (enableHUD)
+                {
+                    dfHUD = new DaggerfallHUD(uiManager);
+                    uiManager.PushWindow(dfHUD);
+                    Debug.Log("HUD pushed to stack.");
+                }
+                hudSetup = true;
+            }
+
             // Route messages to top window or handle locally
             if (uiManager.MessageCount > 0)
             {
@@ -196,22 +212,16 @@ namespace DaggerfallWorkshop.Game
 
         void ProcessMessages()
         {
-            // Do nothing if DaggerfallUnity path not valid
-            if (!DaggerfallUnity.Instance.IsPathValidated)
-                return;
-
             switch (uiManager.GetMessage())
             {
+                case DaggerfallUIMessages.dfuiSetupGameWizard:
+                    uiManager.PushWindow(new DaggerfallUnitySetupGameWizard(uiManager));
+                    break;
                 case DaggerfallUIMessages.dfuiInitGame:
-                    //uiManager.PushWindow(dfTravelMap);
-                    uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
-                    if (enableVideos)
-                        uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, splashVideo));
+                    InitGame(splashVideo);
                     break;
                 case DaggerfallUIMessages.dfuiInitGameFromDeath:
-                    uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
-                    if (enableVideos)
-                        uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, deathVideo));
+                    InitGame(deathVideo);
                     break;
                 case DaggerfallUIMessages.dfuiStartNewGameWizard:
                     uiManager.PushWindow(new StartNewGameWizard(uiManager));
@@ -278,31 +288,33 @@ namespace DaggerfallWorkshop.Game
 
         public DaggerfallFont GetFont(int index)
         {
-            // Do nothing if DaggerfallUnity path not valid
-            if (!DaggerfallUnity.Instance.IsPathValidated)
-                return null;
+            // Set path
+            string path = string.Empty;
+            if (dfUnity.IsPathValidated)
+                path = dfUnity.Arena2Path;
 
+            // Try to load font from either Daggerfall path or Resources
             switch (index)
             {
                 case 1:
-                    if (daggerfallFonts[0] == null) daggerfallFonts[0] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0000);
+                    if (daggerfallFonts[0] == null) daggerfallFonts[0] = new DaggerfallFont(path, DaggerfallFont.FontName.FONT0000);
                     daggerfallFonts[0].FilterMode = globalFilterMode;
                     return daggerfallFonts[0];
                 case 2:
-                    if (daggerfallFonts[1] == null) daggerfallFonts[1] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0001);
+                    if (daggerfallFonts[1] == null) daggerfallFonts[1] = new DaggerfallFont(path, DaggerfallFont.FontName.FONT0001);
                     daggerfallFonts[1].FilterMode = globalFilterMode;
                     return daggerfallFonts[1];
                 case 3:
-                    if (daggerfallFonts[2] == null) daggerfallFonts[2] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0002);
+                    if (daggerfallFonts[2] == null) daggerfallFonts[2] = new DaggerfallFont(path, DaggerfallFont.FontName.FONT0002);
                     daggerfallFonts[2].FilterMode = globalFilterMode;
                     return daggerfallFonts[2];
                 case 4:
                 default:
-                    if (daggerfallFonts[3] == null) daggerfallFonts[3] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0003);
+                    if (daggerfallFonts[3] == null) daggerfallFonts[3] = new DaggerfallFont(path, DaggerfallFont.FontName.FONT0003);
                     daggerfallFonts[3].FilterMode = globalFilterMode;
                     return daggerfallFonts[3];
                 case 5:
-                    if (daggerfallFonts[4] == null) daggerfallFonts[4] = new DaggerfallFont(dfUnity.Arena2Path, DaggerfallFont.FontName.FONT0004);
+                    if (daggerfallFonts[4] == null) daggerfallFonts[4] = new DaggerfallFont(path, DaggerfallFont.FontName.FONT0004);
                     daggerfallFonts[4].FilterMode = globalFilterMode;
                     return daggerfallFonts[4];
             }
@@ -333,7 +345,7 @@ namespace DaggerfallWorkshop.Game
                     globalFilterMode);
             }
 
-            panel.SetMargins(Margins.All, 16);
+            panel.SetMargins(Margins.All, 12);
         }
 
         void LoadDaggerfallParchmentTextures()
@@ -437,7 +449,7 @@ namespace DaggerfallWorkshop.Game
         public static TextLabel AddTextLabel(PixelFont font, Vector2 position, string text, Panel panel = null, int glyphSpacing = 1)
         {
             TextLabel textLabel = new TextLabel();
-            textLabel.ScalingMode = Scaling.None;
+            textLabel.AutoSize = AutoSizeModes.None;
             textLabel.Font = font;
             textLabel.Position = position;
             textLabel.Text = text;
@@ -460,7 +472,7 @@ namespace DaggerfallWorkshop.Game
         public static Outline AddOutline(Rect rect, Color color, Panel panel = null)
         {
             Outline outline = new Outline();
-            outline.ScalingMode = Scaling.None;
+            outline.AutoSize = AutoSizeModes.None;
             outline.Color = color;
             outline.Position = new Vector2(rect.x, rect.y);
             outline.Size = new Vector2(rect.width, rect.height);
@@ -473,9 +485,19 @@ namespace DaggerfallWorkshop.Game
         public static Panel AddPanel(Rect rect, Panel panel = null)
         {
             Panel newPanel = new Panel();
-            newPanel.ScalingMode = Scaling.None;
+            newPanel.AutoSize = AutoSizeModes.None;
             newPanel.Position = new Vector2(rect.x, rect.y);
             newPanel.Size = new Vector2(rect.width, rect.height);
+            if (panel != null)
+                panel.Components.Add(newPanel);
+
+            return newPanel;
+        }
+
+        public static Panel AddPanel(Panel panel = null, AutoSizeModes scaling = AutoSizeModes.ResizeToFill)
+        {
+            Panel newPanel = new Panel();
+            newPanel.AutoSize = scaling;
             if (panel != null)
                 panel.Components.Add(newPanel);
 
@@ -501,6 +523,9 @@ namespace DaggerfallWorkshop.Game
 
             DFBitmap bitmap = imgFile.GetDFBitmap();
             Color32[] colors = imgFile.GetColor32(bitmap, 0);
+
+            // Invert Y as Unity textures have origin 0,0 at bottom-left and UI expects top-left
+            subRect.y = bitmap.Height - subRect.height;
 
             Color32[] newColors = new Color32[(int)subRect.width * (int)subRect.height];
             ImageProcessing.CopyColors(
@@ -732,6 +757,17 @@ namespace DaggerfallWorkshop.Game
             // Pop window if specified
             if (popWindowOnCompletion)
                 uiManager.PopWindow();
+        }
+
+        // Re-init game with specified video
+        void InitGame(string video)
+        {
+            if (dfUnity.IsPathValidated)
+            {
+                uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
+                if (!string.IsNullOrEmpty(video) && enableVideos)
+                    uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, splashVideo));
+            }
         }
 
         #endregion

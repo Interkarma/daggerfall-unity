@@ -17,10 +17,12 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.Utility;
+using DaggerfallConnect.FallExe;
 
 namespace DaggerfallWorkshop
 {
@@ -33,14 +35,23 @@ namespace DaggerfallWorkshop
         const string menuPath = "Daggerfall Tools/Save Explorer [Beta]";
 
         DaggerfallUnity dfUnity;
+        ItemHelper itemHelper;
         SaveGames saveGames;
         SaveTree[] saveTrees;
         SaveTree currentSaveTree;
+        SaveTreeBaseRecord[] currentItems;
         GUIContent[] saveNames;
         Texture2D[] saveTextures;
-        int selectedSave = 0;
         bool showImageFoldout = false;
+
+        int lastSelectedSave = -1;
+        int selectedSave = 0;
+
         Vector2 scrollPos;
+        bool showItemsFoldout = true;
+        bool showSaveTreeFoldout = false;
+
+        CharacterRecord characterRecord = null;
 
         [MenuItem(menuPath)]
         static void Init()
@@ -61,9 +72,16 @@ namespace DaggerfallWorkshop
                 return;
             }
 
-            currentSaveTree = saveTrees[selectedSave];
-            if (currentSaveTree == null)
-                return;
+            if (selectedSave != lastSelectedSave || currentSaveTree == null)
+            {
+                currentSaveTree = saveTrees[selectedSave];
+                if (currentSaveTree == null)
+                    return;
+
+                currentItems = currentSaveTree.FindRecords(RecordTypes.Item).ToArray();
+
+                lastSelectedSave = selectedSave;
+            }
 
             if (saveTrees != null && saveTrees.Length > 0)
             {
@@ -72,11 +90,24 @@ namespace DaggerfallWorkshop
                 DisplaySaveStatsGUI();
                 DisplaySaveCharacterGUI();
 
-                EditorGUILayout.Space();
-                EditorGUILayout.HelpBox("Temporarily Filtering out records of type UnknownTownLink and UnknownItemRecord to keep list manageable.", MessageType.Info);
                 scrollPos = GUILayoutHelper.ScrollView(scrollPos, () =>
                 {
-                    DisplaySaveTree(currentSaveTree.RootRecord);
+                    EditorGUILayout.Space();
+                    showItemsFoldout = GUILayoutHelper.Foldout(showItemsFoldout, new GUIContent("Items"), () =>
+                    {
+                        GUILayoutHelper.Indent(() =>
+                        {
+                            DisplayItemsFoldout();
+                        });
+                    });
+
+                    EditorGUILayout.Space();
+                    showSaveTreeFoldout = GUILayoutHelper.Foldout(showSaveTreeFoldout, new GUIContent("SaveTree"), () =>
+                    {
+                        EditorGUILayout.HelpBox("Temporarily Filtering out records of type UnknownTownLink and UnknownItemRecord to keep list manageable.", MessageType.Info);
+
+                        DisplaySaveTree(currentSaveTree.RootRecord);
+                    });
                 });
             }
         }
@@ -103,6 +134,9 @@ namespace DaggerfallWorkshop
 
         void DisplaySaveStatsGUI()
         {
+            if (currentSaveTree == null)
+                return;
+
             EditorGUILayout.Space();
             GUILayoutHelper.Horizontal(() =>
             {
@@ -144,12 +178,15 @@ namespace DaggerfallWorkshop
 
         void DisplaySaveCharacterGUI()
         {
+            if (currentSaveTree == null)
+                return;
+
             // Get character record
             List<SaveTreeBaseRecord> records = currentSaveTree.FindRecords(RecordTypes.Character);
             if (records.Count != 1)
                 return;
 
-            CharacterRecord characterRecord = (CharacterRecord)records[0];
+            characterRecord = (CharacterRecord)records[0];
             //CharacterSheet characterSheet = characterRecord.ToCharacterSheet();
 
             EditorGUILayout.Space();
@@ -163,6 +200,47 @@ namespace DaggerfallWorkshop
                 EditorGUILayout.LabelField(new GUIContent("Gender"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
                 EditorGUILayout.SelectableLabel(((int)characterRecord.ParsedData.gender).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             });
+        }
+
+        void DisplayItemsFoldout()
+        {
+            if (currentItems == null || currentItems.Length == 0)
+            {
+                EditorGUILayout.HelpBox("No items found.", MessageType.Info);
+                return;
+            }
+
+            for (int i = 0; i < currentItems.Length; i++)
+            {
+                ItemRecord itemRecord = currentItems[i] as ItemRecord;
+                DaggerfallUnityItem item = new DaggerfallUnityItem(itemRecord);
+
+                int equippedIndex = GetEquippedIndex(itemRecord);
+                //if (equippedIndex == -1)
+                //    continue;
+
+                //string savedName = itemRecord.ParsedData.name;
+                //ItemGroups itemGroup = (ItemGroups)itemRecord.ParsedData.category1;
+                //int itemIndex = itemRecord.ParsedData.category2;
+                //ItemDescription itemDesc = itemHelper.GetItemDescription(itemGroup, itemIndex);
+                ////string cat1 = ((ItemGroups)itemRecord.ParsedData.category1).ToString();
+                ////string cat2 = itemRecord.ParsedData.category2.ToString();
+                ////string subName = ItemHelper.ToSubCategoryName((ItemGroups)itemRecord.ParsedData.category1, itemRecord.ParsedData.category2);
+                ////string other = itemRecord.ParsedData.category2.ToString();
+
+                //string textLabel = string.Format(
+                //    "{0} [mat=0x{1:X4}]",
+                //    itemHelper.ResolveItemName(itemRecord.ParsedData),
+                //    itemRecord.ParsedData.material);
+
+                string textLabel = string.Format("Item [{0}]", item.Name);
+
+                if (equippedIndex != -1)
+                    textLabel = "*" + textLabel;
+
+                //string textLabel = itemHelper.GetClassicItemName(itemRecord.ParsedData);
+                EditorGUILayout.LabelField(textLabel);
+            }
         }
 
         void DisplaySaveTree(SaveTreeBaseRecord parent)
@@ -179,12 +257,39 @@ namespace DaggerfallWorkshop
                     textLabel += string.Format(" [{0}]", GetItemOrSpellName(parent.Children[i]));
                 }
 
+                // Check if item equipped
+                if (recordType == RecordTypes.Item)
+                {
+                    int equippedIndex = GetEquippedIndex(parent.Children[i] as ItemRecord);
+                    if (equippedIndex != -1)
+                    {
+                        //textLabel = string.Format("(*={0:00}) {1}", equippedIndex, textLabel);
+                    }
+                }
+
                 EditorGUILayout.LabelField(textLabel);
                 GUILayoutHelper.Indent(() =>
                 {
                     DisplaySaveTree(parent.Children[i]);
                 });
             }
+        }
+
+        int GetEquippedIndex(ItemRecord record)
+        {
+            if (characterRecord == null || record.RecordType != RecordTypes.Item || record.Parent == null)
+                return -1;
+
+            // Try to match item RecordID with equipped item IDs
+            // Item RecordID must be shifted right 8 bits
+            uint[] equippedItems = characterRecord.ParsedData.equippedItems;
+            for (int i = 0; i < equippedItems.Length; i++)
+            {
+                if (equippedItems[i] == (record.RecordRoot.RecordID >> 8))
+                    return i;
+            }
+
+            return -1;
         }
 
         string GetItemOrSpellName(SaveTreeBaseRecord record)
@@ -229,6 +334,9 @@ namespace DaggerfallWorkshop
         {
             if (!dfUnity)
                 dfUnity = DaggerfallUnity.Instance;
+
+            if (itemHelper == null)
+                itemHelper = new ItemHelper();
 
             if (!dfUnity.IsReady || string.IsNullOrEmpty(dfUnity.Arena2Path))
                 return false;

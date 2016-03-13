@@ -112,7 +112,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             messagePanel.HorizontalAlignment = HorizontalAlignment.Center;
             messagePanel.VerticalAlignment = VerticalAlignment.Middle;
-            messagePanel.OnMouseClick += MessagePanel_OnMouseClick;
             DaggerfallUI.Instance.SetDaggerfallPopupStyle(DaggerfallUI.PopupStyle.Parchment, messagePanel);
             NativePanel.Components.Add(messagePanel);
 
@@ -125,6 +124,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messagePanel.Components.Add(buttonPanel);
 
             IsSetup = true;
+        }
+
+        public override void OnPush()
+        {
+            base.OnPush();
+            parentPanel.OnMouseClick += ParentPanel_OnMouseClick;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            parentPanel.OnMouseClick -= ParentPanel_OnMouseClick;
         }
 
         #region Public Methods
@@ -145,7 +156,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D background = DaggerfallUI.GetTextureFromCifRci(buttonsFilename, (int)messageBoxButton);
             Button button = DaggerfallUI.AddButton(Vector2.zero, new Vector2(background.width, background.height), buttonPanel);
             button.BackgroundTexture = background;
-            button.BackgroundTextureLayout = TextureLayout.StretchToFill;
+            button.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
             button.Tag = messageBoxButton;
             button.OnMouseClick += ButtonClickHandler;
             buttons.Add(button);
@@ -189,7 +200,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!IsSetup)
                 Setup();
 
-            label.SetTextTokens(tokens);
+            label.SetText(tokens);
             UpdatePanelSizes();
         }
 
@@ -230,7 +241,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             buttonPanel.Size = finalSize;
-            messagePanel.Size = new Vector2(label.Size.x, label.Size.y + buttonPanel.Size.y + buttonTextDistance);
+            messagePanel.Size = new Vector2(
+                label.Size.x + messagePanel.LeftMargin + messagePanel.RightMargin,
+                label.Size.y + buttonPanel.Size.y + buttonTextDistance + messagePanel.TopMargin + messagePanel.BottomMargin);
         }
 
         void SetupBox(int textId, CommonMessageBoxButtons buttons)
@@ -249,9 +262,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        void MessagePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ParentPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (clickAnywhereToClose)
+            if (uiManager.TopWindow == this && clickAnywhereToClose)
                 CloseWindow();
         }
 
