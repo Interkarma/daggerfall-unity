@@ -278,7 +278,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup automap render panel (into this the level geometry is rendered) - use dummyPanelAutomap to get size
             Rect positionPanelRenderAutomap = dummyPanelAutomap.Rectangle;            
             panelRenderAutomap = DaggerfallUI.AddPanel(positionPanelRenderAutomap, ParentPanel);
-            panelRenderAutomap.ScalingMode = Scaling.None;
+            panelRenderAutomap.AutoSize = AutoSizeModes.None;
             
             panelRenderAutomap.OnMouseScrollUp += PanelAutomap_OnMouseScrollUp;
             panelRenderAutomap.OnMouseScrollDown += PanelAutomap_OnMouseScrollDown;
