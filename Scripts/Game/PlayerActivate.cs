@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Game
                         DaggerfallAction action;
                         if (ActionCheck(hits[i], out action))
                         {
-                            action.Receive(this.gameObject, true);
+                            action.Receive(this.gameObject, DaggerfallAction.TriggerTypes.Direct);
                         }
                     }
                 }
