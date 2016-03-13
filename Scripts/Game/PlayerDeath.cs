@@ -42,6 +42,12 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
+        #region properties
+
+        public bool DeathInProgress { get { return deathInProgress;} }
+
+        #endregion
+
         #region Unity
 
         void Awake()
@@ -128,7 +134,7 @@ namespace DaggerfallWorkshop.Game
 
             // Start camera falling and fading to black
             startCameraHeight = mainCamera.transform.localPosition.y;
-            targetCameraHeight -= playerController.height / 3;
+            targetCameraHeight = playerController.height - (playerController.height * 1.25f);
             currentCameraHeight = startCameraHeight;
             DaggerfallUI.Instance.FadeHUDToBlack(FadeDuration);
         }

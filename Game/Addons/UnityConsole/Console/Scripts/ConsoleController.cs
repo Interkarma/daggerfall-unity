@@ -14,14 +14,12 @@ namespace Wenzil.Console
     public class ConsoleController : MonoBehaviour
     {
         private const int inputHistoryCapacity = 20;
- 
+
         public ConsoleUI ui;
         public KeyCode toggleKey = KeyCode.BackQuote;
         public bool closeOnEscape = false;
-        
 
-
-        private ConsoleInputHistory inputHistory = new ConsoleInputHistory(inputHistoryCapacity); 
+        private ConsoleInputHistory inputHistory = new ConsoleInputHistory(inputHistoryCapacity);
 
         void Awake()
         {
@@ -32,31 +30,22 @@ namespace Wenzil.Console
 
         void Start()
         {
-            toggleKey = DaggerfallWorkshop.Game.InputManager.Instance.GetBinding(DaggerfallWorkshop.Game.InputManager.Actions.ToggleConsole);
-            if (toggleKey == KeyCode.None)
-                toggleKey = KeyCode.BackQuote;
-
         }
 
         void OnEnable()
         {
+            DaggerfallWorkshop.Game.InputManager.OnLoadedKeyBinds += GetConsoleKeyBind;
             Console.OnConsoleLog += ui.AddNewOutputLine;
             ui.onSubmitCommand += ExecuteCommand;
             ui.onClearConsole += inputHistory.Clear;
-
-            
-
         }
 
         void OnDisable()
         {
+            DaggerfallWorkshop.Game.InputManager.OnLoadedKeyBinds -= GetConsoleKeyBind;
             Console.OnConsoleLog -= ui.AddNewOutputLine;
             ui.onSubmitCommand -= ExecuteCommand;
             ui.onClearConsole -= inputHistory.Clear;
-
-           
-
-
         }
 
         void Update()
@@ -69,9 +58,6 @@ namespace Wenzil.Console
                 NavigateInputHistory(true);
             else if (Input.GetKeyDown(KeyCode.DownArrow))
                 NavigateInputHistory(false);
-
-        
-
         }
 
         private void NavigateInputHistory(bool up)
@@ -85,12 +71,19 @@ namespace Wenzil.Console
             string[] parts = input.Split(' ');
             string command = parts[0];
             string[] args = parts.Skip(1).ToArray();
-        
+
             Console.Log("> " + input);
             Console.Log(ConsoleCommandsDatabase.ExecuteCommand(command, args));
             inputHistory.AddNewInputEntry(input);
         }
 
+
+        public void GetConsoleKeyBind()
+        {
+            toggleKey = DaggerfallWorkshop.Game.InputManager.Instance.GetBinding(DaggerfallWorkshop.Game.InputManager.Actions.ToggleConsole);
+            if (toggleKey == KeyCode.None)
+                toggleKey = KeyCode.BackQuote;
+        }
 
 
 
