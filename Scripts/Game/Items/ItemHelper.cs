@@ -373,7 +373,7 @@ namespace DaggerfallWorkshop.Game.Items
         public int GetLegacyEquipIndex(DaggerfallUnityItem item, EntityItems entityItems)
         {
             // Interim use of classic data
-            ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
+            //ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
             uint[] legacyEquipTable = (GameManager.Instance.PlayerEntity as DaggerfallEntity).Items.LegacyEquipTable;
             if (legacyEquipTable == null || legacyEquipTable.Length == 0)
                 return -1;

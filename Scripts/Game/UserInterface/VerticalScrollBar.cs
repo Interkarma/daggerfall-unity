@@ -167,13 +167,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SetScrollIndex(int value)
         {
-            int oldScrollIndex = scrollIndex;
             scrollIndex = Mathf.Clamp(value, 0, totalUnits - displayUnits);
-
-            if (scrollIndex < oldScrollIndex)
-                RaiseOnScrollUpEvent();
-            else if (scrollIndex > oldScrollIndex)
-                RaiseOnScrollDownEvent();
+            RaiseOnScrollEvent();
         }
 
         void DrawScrollBar()
@@ -199,26 +194,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region EventHandlers
 
-        public delegate void OnScrollUpHandler();
-        public event OnScrollUpHandler OnScrollUp;
-        void RaiseOnScrollUpEvent()
+        public delegate void OnScrollHandler();
+        public event OnScrollHandler OnScroll;
+        void RaiseOnScrollEvent()
         {
-            if (scrollIndex < 0 || scrollIndex >= (totalUnits - displayUnits))
+            if (scrollIndex < 0 || scrollIndex > (totalUnits - displayUnits))
                 return;
 
-            if (OnScrollUp != null)
-                OnScrollUp();
-        }
-
-        public delegate void OnScrollDownHandler();
-        public event OnScrollDownHandler OnScrollDown;
-        void RaiseOnScrollDownEvent()
-        {
-            if (scrollIndex < 0 || scrollIndex >= (totalUnits - displayUnits))
-                return;
-
-            if (OnScrollDown != null)
-                OnScrollDown();
+            if (OnScroll != null)
+                OnScroll();
         }
 
         #endregion

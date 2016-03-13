@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System;
 using System.IO;
 using System.Collections;
@@ -46,6 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel resolutionPanel = new Panel();
         Panel optionsPanel = new Panel();
         Panel summaryPanel = new Panel();
+        VerticalScrollBar resolutionScroller = new VerticalScrollBar();
         FolderBrowser browser = new FolderBrowser();
         TextLabel helpLabel = new TextLabel();
         Checkbox fullscreenCheckbox = new Checkbox();
@@ -234,7 +236,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.BackgroundColor = Color.clear;
 
             // Add a block into the scene
-            GameObject block1 = GameObjectHelper.CreateRMBBlockGameObject("CUSTAA06.RMB");
+            GameObjectHelper.CreateRMBBlockGameObject("CUSTAA06.RMB");
 
             // Add resolution panel
             resolutionPanel.Outline.Enabled = true;
@@ -265,7 +267,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             resolutionList.SelectedShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
             resolutionList.SelectedShadowColor = Color.black;
             resolutionList.OnMouseClick += ResolutionList_OnMouseClick;
+            resolutionList.OnScroll += ResolutionList_OnScroll;
             resolutionPanel.Components.Add(resolutionList);
+
+            // Add resolution scrollbar
+            resolutionScroller.Position = new Vector2(100, 12);
+            resolutionScroller.Size = new Vector2(5, 62);
+            resolutionScroller.OnScroll += ResolutionScroller_OnScroll;
+            resolutionPanel.Components.Add(resolutionScroller);
 
             // Add resolutions
             for (int i = 0; i < availableResolutions.Length; i++)
@@ -280,6 +289,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
             }
             resolutionList.ScrollToSelected();
+
+            // Setup scroller
+            resolutionScroller.DisplayUnits = 8;
+            resolutionScroller.TotalUnits = resolutionList.Count;
+            resolutionScroller.BackgroundColor = resolutionList.BackgroundColor;
 
             // Add fullscreen checkbox
             fullscreenCheckbox.Label.Text = "Fullscreen";
@@ -310,7 +324,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             qualityList.RowsDisplayed = 6;
             qualityList.RowAlignment = HorizontalAlignment.Center;
             qualityList.Position = new Vector2(0, 102);
-            qualityList.Size = new Vector2(80, 46);
+            qualityList.Size = new Vector2(85, 46);
             qualityList.SelectedShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
             qualityList.SelectedShadowColor = Color.black;
             qualityList.OnMouseClick += QualityList_OnMouseClick;
@@ -354,31 +368,43 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup options checkboxes
             vsync.Label.Text = "Vertical Sync";
+            vsync.Label.TextColor = selectedTextColor;
+            vsync.CheckBoxColor = selectedTextColor;
             vsync.ToolTip = defaultToolTip;
             vsync.ToolTipText = "Sync FPS with monitor refresh";
             vsync.IsChecked = DaggerfallUnity.Settings.VSync;
 
             swapHealthAndFatigue.Label.Text = "Swap Health & Fatigue";
+            swapHealthAndFatigue.Label.TextColor = selectedTextColor;
+            swapHealthAndFatigue.CheckBoxColor = selectedTextColor;
             swapHealthAndFatigue.ToolTip = defaultToolTip;
             swapHealthAndFatigue.ToolTipText = "Swap health & fatigue bar colors";
             swapHealthAndFatigue.IsChecked = DaggerfallUnity.Settings.SwapHealthAndFatigueColors;
 
             invertMouseVertical.Label.Text = "Invert Mouse";
+            invertMouseVertical.Label.TextColor = selectedTextColor;
+            invertMouseVertical.CheckBoxColor = selectedTextColor;
             invertMouseVertical.ToolTip = defaultToolTip;
             invertMouseVertical.ToolTipText = "Invert mouse-look vertical";
             invertMouseVertical.IsChecked = DaggerfallUnity.Settings.InvertMouseVertical;
 
             mouseSmoothing.Label.Text = "Mouse Smoothing";
+            mouseSmoothing.Label.TextColor = selectedTextColor;
+            mouseSmoothing.CheckBoxColor = selectedTextColor;
             mouseSmoothing.ToolTip = defaultToolTip;
             mouseSmoothing.ToolTipText = "Smooth mouse-look sampling";
             mouseSmoothing.IsChecked = DaggerfallUnity.Settings.MouseLookSmoothing;
 
             leftHandWeapons.Label.Text = "Left Hand Weapons";
+            leftHandWeapons.Label.TextColor = selectedTextColor;
+            leftHandWeapons.CheckBoxColor = selectedTextColor;
             leftHandWeapons.ToolTip = defaultToolTip;
             leftHandWeapons.ToolTipText = "Draw weapons on left side of screen";
             leftHandWeapons.IsChecked = DaggerfallUnity.Settings.LeftHandWeapons;
 
             playerNudity.Label.Text = "Player Nudity";
+            playerNudity.Label.TextColor = selectedTextColor;
+            playerNudity.CheckBoxColor = selectedTextColor;
             playerNudity.ToolTip = defaultToolTip;
             playerNudity.ToolTipText = "Allow nudity on paper doll";
             playerNudity.IsChecked = DaggerfallUnity.Settings.PlayerNudity;
@@ -494,7 +520,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     ShowSummaryPanel();
                     break;
                 case SetupStages.LaunchGame:
-                    Application.LoadLevel(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
+                    //Application.LoadLevel(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
+                    SceneManager.LoadScene(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
                     break;
             }
         }
@@ -610,6 +637,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SummaryConfirmButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             moveNextStage = true;
+        }
+
+        private void ResolutionScroller_OnScroll()
+        {
+            resolutionList.ScrollIndex = resolutionScroller.ScrollIndex;
+        }
+
+        private void ResolutionList_OnScroll()
+        {
+            resolutionScroller.ScrollIndex = resolutionList.ScrollIndex;
         }
 
         #endregion

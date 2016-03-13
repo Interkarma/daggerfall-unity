@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 namespace DaggerfallWorkshop.Game.Utility
@@ -37,7 +38,8 @@ namespace DaggerfallWorkshop.Game.Utility
             }
             else
             {
-                Application.LoadLevel(GameSceneIndex);
+                //Application.LoadLevel(GameSceneIndex);
+                SceneManager.LoadScene(GameSceneIndex);
             }
         }
     }

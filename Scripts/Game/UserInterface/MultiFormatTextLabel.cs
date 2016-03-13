@@ -238,7 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         }
                         break;
                     case TextFile.Formatting.Text:
-                        TextLabel label = AddTextLabel(token.text, font);
+                        AddTextLabel(token.text, font);
                         break;
                     default:
                         Debug.Log("MultilineTextLabel: Unknown formatting token: " + (int)token.formatting);

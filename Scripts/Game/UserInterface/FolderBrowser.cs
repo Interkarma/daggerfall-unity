@@ -151,16 +151,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             folderList.SelectedTextColor = DaggerfallUI.DaggerfallDefaultTextColor;
             folderList.ShadowPosition = Vector2.zero;
             folderList.OnUseSelectedItem += FolderList_OnUseSelectedItem;
-            folderList.OnScrollUp += FolderList_OnScrollUp;
-            folderList.OnScrollDown += FolderList_OnScrollDown;
+            folderList.OnScroll += FolderList_OnScroll;
+            //folderList.OnScrollUp += FolderList_OnScrollUp;
+            //folderList.OnScrollDown += FolderList_OnScrollDown;
 
             // Setup path label
             pathPanel.Components.Add(pathLabel);
 
             // Setup scrollbar
             folderPanel.Components.Add(folderScroller);
-            folderScroller.OnScrollUp += FolderScroller_OnScrollUp;
-            folderScroller.OnScrollDown += FolderScroller_OnScrollDown;
+            folderScroller.OnScroll += FolderScroller_OnScroll;
+            //folderScroller.OnScrollUp += FolderScroller_OnScrollUp;
+            //folderScroller.OnScrollDown += FolderScroller_OnScrollDown;
 
             // Setup initial folder conditions
             RefreshDrives();
@@ -337,28 +339,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (currentPath != drives[driveList.SelectedIndex])
                     folderList.AddItem("..", 0);
 
+                // Update scroller units
+                folderScroller.TotalUnits = folderList.Count;
+
                 UpdatePathText();
             }
         }
 
-        private void FolderList_OnScrollUp()
-        {
-            folderScroller.ScrollIndex = folderList.ScrollIndex;
-        }
-
-        private void FolderList_OnScrollDown()
-        {
-            folderScroller.ScrollIndex = folderList.ScrollIndex;
-        }
-
-        private void FolderScroller_OnScrollUp()
+        private void FolderScroller_OnScroll()
         {
             folderList.ScrollIndex = folderScroller.ScrollIndex;
         }
 
-        private void FolderScroller_OnScrollDown()
+        private void FolderList_OnScroll()
         {
-            folderList.ScrollIndex = folderScroller.ScrollIndex;
+            folderScroller.ScrollIndex = folderList.ScrollIndex;
         }
 
         private void ConfirmButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

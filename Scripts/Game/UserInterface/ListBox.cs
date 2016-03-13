@@ -326,6 +326,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             scrollIndex = selectedIndex;
             scrollIndex = Mathf.Clamp(scrollIndex, 0, (listItems.Count - 1) - (rowsDisplayed - 1));
+            RaiseOnScrollEvent();
         }
 
         public void UseSelectedItem()
@@ -338,8 +339,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (scrollIndex > 0)
                 scrollIndex--;
 
-            //ClampSelectionToVisibleRange();
-            RaiseOnScrollUpEvent();
+            RaiseOnScrollEvent();
         }
 
         public void ScrollDown()
@@ -347,24 +347,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (scrollIndex < listItems.Count - rowsDisplayed)
                 scrollIndex++;
 
-            //ClampSelectionToVisibleRange();
-            RaiseOnScrollDownEvent();
-        }
-
-        // Clamps selection to inside visible range like Daggerfall
-        // Deprecated for now as this behaviour does not feel right
-        public void ClampSelectionToVisibleRange_Deprecated()
-        {
-            if (selectedIndex > scrollIndex + rowsDisplayed - 1)
-            {
-                selectedIndex = scrollIndex + rowsDisplayed - 1;
-                RaiseOnSelectItemEvent();
-            }
-            if (selectedIndex < scrollIndex)
-            {
-                selectedIndex = scrollIndex;
-                RaiseOnSelectItemEvent();
-            }
+            RaiseOnScrollEvent();
         }
 
         public void SetRowsDisplayedByHeight()
@@ -395,22 +378,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 OnSelectNext();
         }
 
-        public delegate void OnScrollUpEventHandler();
-        public event OnScrollUpEventHandler OnScrollUp;
-        void RaiseOnScrollUpEvent()
-        {
-            if (OnScrollUp != null)
-                OnScrollUp();
-        }
-
-        public delegate void OnScrollDownEventHandler();
-        public event OnScrollDownEventHandler OnScrollDown;
-        void RaiseOnScrollDownEvent()
-        {
-            if (OnScrollDown != null)
-                OnScrollDown();
-        }
-
         public delegate void OnSelectItemEventHandler();
         public event OnSelectItemEventHandler OnSelectItem;
         void RaiseOnSelectItemEvent()
@@ -431,6 +398,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (OnUseSelectedItem != null)
                 OnUseSelectedItem();
+        }
+
+        public delegate void OnScrollHandler();
+        public event OnScrollHandler OnScroll;
+        void RaiseOnScrollEvent()
+        {
+            if (OnScroll != null)
+                OnScroll();
         }
 
         #endregion

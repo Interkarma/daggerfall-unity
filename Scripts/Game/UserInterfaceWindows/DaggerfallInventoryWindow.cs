@@ -198,8 +198,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             myItemsScrollBar.Position = new Vector2(164, 66);
             myItemsScrollBar.Size = new Vector2(6, 117);
             myItemsScrollBar.DisplayUnits = listDisplayUnits;
-            myItemsScrollBar.OnScrollUp += MyItemsScrollBar_OnScrollUp;
-            myItemsScrollBar.OnScrollDown += MyItemsScrollBar_OnScrollDown;
+            myItemsScrollBar.OnScroll += MyItemsScrollBar_OnScroll;
             NativePanel.Components.Add(myItemsScrollBar);
 
             // Other items list scroll bar (i.e. items in shop, monster, loot pile, etc.)
@@ -547,15 +546,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region ScrollBar Event Handlers
 
-        private void MyItemsScrollBar_OnScrollDown()
-        {
-            // Save new scroll position and update button states
-            scrollPositions[(int)selectedTabPage] = myItemsScrollBar.ScrollIndex;
-            UpdateMyItemsScrollButtons();
-            UpdateMyItemsImages();
-        }
-
-        private void MyItemsScrollBar_OnScrollUp()
+        private void MyItemsScrollBar_OnScroll()
         {
             // Save new scroll position and update button states
             scrollPositions[(int)selectedTabPage] = myItemsScrollBar.ScrollIndex;

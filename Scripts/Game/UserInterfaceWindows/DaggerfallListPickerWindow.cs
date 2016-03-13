@@ -79,8 +79,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             scrollBar = new VerticalScrollBar();
             scrollBar.Position = new Vector2(181, 23);
             scrollBar.Size = new Vector2(5, 82);
-            scrollBar.OnScrollUp += ScrollBar_OnScrollUp;
-            scrollBar.OnScrollDown += ScrollBar_OnScrollDown;
+            scrollBar.OnScroll += ScrollBar_OnScroll;
             pickerPanel.Components.Add(scrollBar);
         }
 
@@ -112,14 +111,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             listBox.SelectNext();
         }
 
-        void ScrollBar_OnScrollUp()
+        private void ScrollBar_OnScroll()
         {
-            listBox.ScrollUp();
-        }
-
-        void ScrollBar_OnScrollDown()
-        {
-            listBox.ScrollDown();
+            listBox.ScrollIndex = scrollBar.ScrollIndex;
         }
 
         void ListBox_OnUseSelectedItem()

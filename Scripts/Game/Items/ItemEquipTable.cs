@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Game.Items
             EquipSlots result = EquipSlots.None;
 
             // Interim use of classic data
-            ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
+            //ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
 
             // Resolve based on equipment category
             switch (item.ItemGroup)
