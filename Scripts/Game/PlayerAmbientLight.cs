@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -21,7 +22,8 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class PlayerAmbientLight : MonoBehaviour
     {
-        public Color ExteriorAmbientLight = new Color(0.12f, 0.12f, 0.12f);
+        public Color ExteriorNoonAmbientLight = new Color(0.9f, 0.9f, 0.9f);
+        public Color ExteriorNightAmbientLight = new Color(0.25f, 0.25f, 0.25f);
         public Color InteriorAmbientLight = new Color(0.18f, 0.18f, 0.18f);
         public Color DungeonAmbientLight = new Color(0.12f, 0.12f, 0.12f);
         public Color PalaceAmbientLight = new Color(0.58f, 0.58f, 0.58f);
@@ -29,12 +31,14 @@ namespace DaggerfallWorkshop.Game
         public float FadeStep = 0.1f;
 
         PlayerEnterExit playerEnterExit;
+        SunlightManager sunlightManager;
         Color targetAmbientLight;
         bool fadeRunning;
 
         void Start()
         {
             playerEnterExit = GetComponent<PlayerEnterExit>();
+            sunlightManager = GameManager.Instance.SunlightManager;
             StartCoroutine(ManageAmbientLight());
         }
 
@@ -53,7 +57,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (!playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
                 {
-                    targetAmbientLight = ExteriorAmbientLight;
+                    targetAmbientLight = CalcDaytimeAmbientLight();
                 }
                 else if (playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
                 {
@@ -87,6 +91,13 @@ namespace DaggerfallWorkshop.Game
 
             UnityEngine.RenderSettings.ambientLight = targetAmbientLight;
             fadeRunning = false;
+        }
+
+        Color CalcDaytimeAmbientLight()
+        {
+            float scale = sunlightManager.DaylightScale * sunlightManager.ScaleFactor;
+
+            return Color.Lerp(ExteriorNightAmbientLight, ExteriorNoonAmbientLight, scale);
         }
     }
 }

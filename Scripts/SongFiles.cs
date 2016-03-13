@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop
         song_04fm,
         song_05,
         song_05fm,
+        song_5strong,
         song_06,
         song_06fm,
         song_07,

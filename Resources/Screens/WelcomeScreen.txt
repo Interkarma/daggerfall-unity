@@ -1,0 +1,2 @@
+Welcome to Daggerfall Unity
+Please set the path to your Daggerfall game files

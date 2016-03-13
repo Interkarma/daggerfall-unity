@@ -57,6 +57,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Draw();
 
+            if (outlineThickness == 0 || !Enabled)
+                return;
+
             Color guiColor = GUI.color;
 
             GUI.color = outlineColor;

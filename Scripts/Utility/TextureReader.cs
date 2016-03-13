@@ -313,7 +313,7 @@ namespace DaggerfallWorkshop.Utility
                 // Get record information
                 DFSize size = textureFile.GetSize(record);
                 DFSize scale = textureFile.GetScale(record);
-                DFSize offset = textureFile.GetOffset(record);
+                DFPosition offset = textureFile.GetOffset(record);
                 RecordIndex ri = new RecordIndex()
                 {
                     startIndex = albedoTextures.Count,
@@ -341,7 +341,7 @@ namespace DaggerfallWorkshop.Utility
 
                 results.atlasSizes.Add(new Vector2(size.Width, size.Height));
                 results.atlasScales.Add(new Vector2(scale.Width, scale.Height));
-                results.atlasOffsets.Add(new Vector2(offset.Width, offset.Height));
+                results.atlasOffsets.Add(new Vector2(offset.X, offset.Y));
                 results.atlasFrameCounts.Add(frames);
                 results.textureFile = textureFile;
             }

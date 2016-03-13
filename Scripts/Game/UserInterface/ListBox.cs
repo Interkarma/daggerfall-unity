@@ -59,6 +59,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { maxCharacters = value; }
         }
 
+        public PixelFont Font
+        {
+            get { return font; }
+            set { font = value; }
+        }
+
         public int ScrollIndex
         {
             get { return scrollIndex; }
@@ -68,7 +74,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int SelectedIndex
         {
             get { return selectedIndex; }
-            set { selectedIndex = value; RaiseOnSelectItemEvent(); }
+            set { SelectIndex(value); }
         }
 
         public string SelectedItem
@@ -143,12 +149,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-                SelectPrevious();
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-                SelectNext();
-            else if (Input.GetKeyDown(KeyCode.Return))
-                UseSelectedItem();
+            if (MouseOverComponent)
+            {
+                if (Input.GetKeyDown(KeyCode.UpArrow))
+                    SelectPrevious();
+                else if (Input.GetKeyDown(KeyCode.DownArrow))
+                    SelectNext();
+                else if (Input.GetKeyDown(KeyCode.Return))
+                    UseSelectedItem();
+            }
         }
 
         public override void Draw()
@@ -187,10 +196,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.MouseClick(clickPosition);
 
-            int row = (int)(clickPosition.y / (font.GlyphHeight + rowSpacing));
+            if (listItems.Count == 0)
+                return;
 
-            selectedIndex = scrollIndex + row;
-            RaiseOnSelectItemEvent();
+            int row = (int)(clickPosition.y / (font.GlyphHeight + rowSpacing));
+            int index = scrollIndex + row;
+            if (index >= 0 && index < Count)
+            {
+                selectedIndex = index;
+                RaiseOnSelectItemEvent();
+            }
         }
 
         protected override void MouseDoubleClick(Vector2 clickPosition)
@@ -218,19 +233,30 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Public Methods
 
-        public void AddItem(string text)
+        public void ClearItems()
+        {
+            listItems.Clear();
+            scrollIndex = 0;
+        }
+
+        public void AddItem(string text, int position = -1)
         {
             if (font == null)
                 font = DaggerfallUI.DefaultFont;
 
             TextLabel textLabel = new TextLabel();
-            textLabel.ScalingMode = Scaling.None;
+            textLabel.MaxWidth = (int)Size.x;
+            textLabel.AutoSize = AutoSizeModes.None;
             textLabel.HorizontalAlignment = rowAlignment;
             textLabel.Font = font;
             textLabel.MaxCharacters = maxCharacters;
             textLabel.Text = text;
             textLabel.Parent = this;
-            listItems.Add(textLabel);
+
+            if (position < 0)
+                listItems.Add(textLabel);
+            else
+                listItems.Insert(position, textLabel);
         }
 
         public void RemoveItem(int index)
@@ -261,7 +287,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 listItems[indexA] = listItems[indexB];
                 listItems[indexB] = temp;
             }
-
         }
 
         public void SelectPrevious()
@@ -288,6 +313,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
             RaiseOnSelectNextEvent();
         }
 
+        public void SelectIndex(int index)
+        {
+            if (index < 0 || index >= listItems.Count)
+                return;
+
+            selectedIndex = index;
+            RaiseOnSelectItemEvent();
+        }
+
+        public void ScrollToSelected()
+        {
+            scrollIndex = selectedIndex;
+            scrollIndex = Mathf.Clamp(scrollIndex, 0, (listItems.Count - 1) - (rowsDisplayed - 1));
+            RaiseOnScrollEvent();
+        }
+
         public void UseSelectedItem()
         {
             RaiseOnUseItemEvent();
@@ -298,8 +339,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (scrollIndex > 0)
                 scrollIndex--;
 
-            ClampSelectionToVisibleRange();
-            RaiseOnScrollUpEvent();
+            RaiseOnScrollEvent();
         }
 
         public void ScrollDown()
@@ -307,23 +347,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (scrollIndex < listItems.Count - rowsDisplayed)
                 scrollIndex++;
 
-            ClampSelectionToVisibleRange();
-            RaiseOnScrollDownEvent();
+            RaiseOnScrollEvent();
         }
 
-        // Clamps selection to inside visible range like Daggerfall
-        public void ClampSelectionToVisibleRange()
+        public void SetRowsDisplayedByHeight()
         {
-            if (selectedIndex > scrollIndex + rowsDisplayed - 1)
-            {
-                selectedIndex = scrollIndex + rowsDisplayed - 1;
-                RaiseOnSelectItemEvent();
-            }
-            if (selectedIndex < scrollIndex)
-            {
-                selectedIndex = scrollIndex;
-                RaiseOnSelectItemEvent();
-            }
+            if (Count == 0)
+                return;
+
+            rowsDisplayed = (int)(Size.y / font.GlyphHeight) - 1;
         }
 
         #endregion
@@ -346,26 +378,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 OnSelectNext();
         }
 
-        public delegate void OnScrollUpEventHandler();
-        public event OnScrollUpEventHandler OnScrollUp;
-        void RaiseOnScrollUpEvent()
-        {
-            if (OnScrollUp != null)
-                OnScrollUp();
-        }
-
-        public delegate void OnScrollDownEventHandler();
-        public event OnScrollDownEventHandler OnScrollDown;
-        void RaiseOnScrollDownEvent()
-        {
-            if (OnScrollDown != null)
-                OnScrollDown();
-        }
-
         public delegate void OnSelectItemEventHandler();
         public event OnSelectItemEventHandler OnSelectItem;
         void RaiseOnSelectItemEvent()
         {
+            if (selectedIndex < 0 || selectedIndex >= Count)
+                return;
+
             if (OnSelectItem != null)
                 OnSelectItem();
         }
@@ -374,8 +393,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public event OnUseSelectedItemEventHandler OnUseSelectedItem;
         void RaiseOnUseItemEvent()
         {
+            if (selectedIndex < 0 || selectedIndex >= Count)
+                return;
+
             if (OnUseSelectedItem != null)
                 OnUseSelectedItem();
+        }
+
+        public delegate void OnScrollHandler();
+        public event OnScrollHandler OnScroll;
+        void RaiseOnScrollEvent()
+        {
+            if (OnScroll != null)
+                OnScroll();
         }
 
         #endregion

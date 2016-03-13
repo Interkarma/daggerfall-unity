@@ -626,8 +626,8 @@ namespace DaggerfallConnect
             ///<summary>8 Rotation. </summary>
             Rotation = 0x08,
 
-            ///<summary>9 Cast spell / create spell effect. </summary>
-            CreateSpell = 0x09,
+            ///<summary>9 Cast spell / spell effect. </summary>
+            CastSpell = 0x09,
 
             ///<summary>11 Appears to display a text on activation </summary>
             ShowText = 0x0B,
@@ -650,7 +650,7 @@ namespace DaggerfallConnect
             ///<summary>20 Close door, lock if it has a starting lock value </summary>
             CloseDoor = 0x14,
 
-            ///<summary>21 Hurt Player, large amount of damage, 1 time activate </summary>
+            ///<summary>21 Hurt Player, random range </summary>
             Hurt21 = 0x15,
 
             ///<summary>22 Hurt player, damage = level * magnitude </summary>
@@ -665,11 +665,14 @@ namespace DaggerfallConnect
             ///<summary>25 Hurt player, damage = level * magnitude</summary>
             Hurt25 = 0x19,
 
+            ///<summary>26 Seems to Poison Player</summary>
+            Poison = 0x1A,
+
             ///<summary>27 Unknown</summary>
             Unknown27 = 0x1B,
 
             ///<summary>28 drain magicka. 1 magnitude = 1 pt magica </summary>
-            DrainMagicka28 = 0x1C,
+            DrainMagicka = 0x1C,
 
             ///<summary>29 Dialogue. Seems to ignore trigger flag</summary>
             Dialogue = 0x1D,
@@ -704,29 +707,29 @@ namespace DaggerfallConnect
             /// <summary> None</summary>
             None = 0x00,
 
-            /// <summary> Activated by collision / walking on </summary>
+            /// <summary> Activated by collision / walking on; flats + models </summary>
             Collision01 = 0x01,
 
-            /// <summary> Activated by clicking on </summary>
+            /// <summary> Activated by clicking on; flats + models </summary>
             Direct = 0x02,
 
-            /// <summary> Activated by collision / walking on </summary>
+            /// <summary> Activated by colliding with (not walking on) - models only </summary>
             Collision03 = 0x03,
 
-            /// <summary>  Unknown      </summary>
-            Unknown5 = 0x05,
+            /// <summary> Activated by attacking, flats + models </summary>
+            Attack = 0x05,
 
-            /// <summary> Unknown       </summary>
-            Unknown6 = 0x06,
+            /// <summary> Seems to work just like flag 2; this appears to be only doors w/ actions; flats + models </summary>
+            Direct6 = 0x06,
 
-            /// <summary> Activated by clicking on and collisions</summary>
-            DualTrigger = 0x08,
+            /// <summary> Activated by clicking, attacking or colliding with action obj; flats + models</summary>
+            MultiTrigger = 0x08,
 
-            /// <summary> Activated by collision / walking on </summary>
+            /// <summary> Activated by collision / walking on; flats + models </summary>
             Collision09 = 0x09,
 
-            /// <summary> Mostly on doors in palaces </summary>
-            Unknown10 = 0x0A,
+            /// <summary> Activated by door opening/closing; doors only (have only tested standard doors - need to check trap doors etc) </summary>
+            Door = 0x0A,
         }
 
         /// <summary>

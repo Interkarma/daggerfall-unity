@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (previousWindow != null)
             {
                 previousWindow.Draw();
-                parentPanel.BackgroundColor = screenDimColor;
+                parentPanel.BackgroundColor = ScreenDimColor;
             }
 
             base.Draw();

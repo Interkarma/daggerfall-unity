@@ -39,6 +39,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Rect rightBorderRect = new Rect();
         Rect bottomBorderRect = new Rect();
 
+        Outline outline = new Outline();
+
         ScreenComponentCollection components;
         public ScreenComponentCollection Components
         {
@@ -51,10 +53,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         public bool EnableBorder { get; set; }
 
+        public Outline Outline
+        {
+            get { return outline; }
+        }
+
         public Panel()
             :base()
         {
             this.components = new ScreenComponentCollection(this);
+            this.components.Add(outline);
+
+            outline.AutoSize = AutoSizeModes.ResizeToFill;
+            outline.Enabled = false;
         }
 
         public override void Update()

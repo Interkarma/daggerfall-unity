@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string newGameCinematic3 = "DAG2.VID";
 
         WizardStages wizardStage;
-        CharacterSheet characterSheet = new CharacterSheet();
+        CharacterDocument characterDocument = new CharacterDocument();
         StartGameBehaviour startGameBehaviour;
 
         CreateCharRaceSelect createCharRaceSelectWindow;
@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             createCharRaceSelectWindow.Reset();
-            characterSheet.race = null;
+            characterDocument.race = null;
 
             wizardStage = WizardStages.SelectRace;
 
@@ -160,7 +160,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 createCharFaceSelectWindow.OnClose += FaceSelectWindow_OnClose;
             }
 
-            createCharFaceSelectWindow.SetFaceTextures(characterSheet.race, characterSheet.gender);
+            createCharFaceSelectWindow.SetFaceTextures(characterDocument.race, characterDocument.gender);
 
             wizardStage = WizardStages.SelectFace;
             uiManager.PushWindow(createCharFaceSelectWindow);
@@ -172,14 +172,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 createCharAddBonusStatsWindow = new CreateCharAddBonusStats(uiManager);
                 createCharAddBonusStatsWindow.OnClose += AddBonusStatsWindow_OnClose;
-                createCharAddBonusStatsWindow.DFClass = characterSheet.career;
+                createCharAddBonusStatsWindow.DFClass = characterDocument.career;
                 createCharAddBonusStatsWindow.Reroll();
             }
 
             // Update class and reroll if player changed class selection
-            if (createCharAddBonusStatsWindow.DFClass != characterSheet.career)
+            if (createCharAddBonusStatsWindow.DFClass != characterDocument.career)
             {
-                createCharAddBonusStatsWindow.DFClass = characterSheet.career;
+                createCharAddBonusStatsWindow.DFClass = characterDocument.career;
                 createCharAddBonusStatsWindow.Reroll();
             }
 
@@ -193,13 +193,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 createCharAddBonusSkillsWindow = new CreateCharAddBonusSkills(uiManager);
                 createCharAddBonusSkillsWindow.OnClose += AddBonusSkillsWindow_OnClose;
-                createCharAddBonusSkillsWindow.DFClass = characterSheet.career;
+                createCharAddBonusSkillsWindow.DFClass = characterDocument.career;
             }
 
             // Update class if player changes class selection
-            if (createCharAddBonusSkillsWindow.DFClass != characterSheet.career)
+            if (createCharAddBonusSkillsWindow.DFClass != characterDocument.career)
             {
-                createCharAddBonusSkillsWindow.DFClass = characterSheet.career;
+                createCharAddBonusSkillsWindow.DFClass = characterDocument.career;
             }
 
             wizardStage = WizardStages.AddBonusSkills;
@@ -227,7 +227,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 createCharSummaryWindow.OnClose += SummaryWindow_OnClose;
             }
 
-            createCharSummaryWindow.CharacterSheet = characterSheet;
+            createCharSummaryWindow.CharacterDocument = characterDocument;
 
             wizardStage = WizardStages.Summary;
             uiManager.PushWindow(createCharSummaryWindow);
@@ -241,12 +241,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharRaceSelectWindow.Cancelled)
             {
-                characterSheet.race = createCharRaceSelectWindow.SelectedRace;
+                characterDocument.race = createCharRaceSelectWindow.SelectedRace;
                 SetGenderSelectWindow();
             }
             else
             {
-                characterSheet.race = null;
+                characterDocument.race = null;
             }
         }
 
@@ -254,7 +254,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharGenderSelectWindow.Cancelled)
             {
-                characterSheet.gender = createCharGenderSelectWindow.SelectedGender;
+                characterDocument.gender = createCharGenderSelectWindow.SelectedGender;
                 SetClassSelectWindow();
             }
             else
@@ -267,7 +267,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharClassSelectWindow.Cancelled)
             {
-                characterSheet.career = createCharClassSelectWindow.SelectedClass;
+                characterDocument.career = createCharClassSelectWindow.SelectedClass;
                 SetNameSelectWindow();
             }
             else
@@ -280,7 +280,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharNameSelectWindow.Cancelled)
             {
-                characterSheet.name = createCharNameSelectWindow.CharacterName;
+                characterDocument.name = createCharNameSelectWindow.CharacterName;
                 SetFaceSelectWindow();
             }
             else
@@ -293,7 +293,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharFaceSelectWindow.Cancelled)
             {
-                characterSheet.faceIndex = createCharFaceSelectWindow.FaceIndex;
+                characterDocument.faceIndex = createCharFaceSelectWindow.FaceIndex;
                 SetAddBonusStatsWindow();
             }
             else
@@ -306,8 +306,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharAddBonusStatsWindow.Cancelled)
             {
-                characterSheet.startingStats = createCharAddBonusStatsWindow.StartingStats;
-                characterSheet.workingStats = createCharAddBonusStatsWindow.WorkingStats;
+                characterDocument.startingStats = createCharAddBonusStatsWindow.StartingStats;
+                characterDocument.workingStats = createCharAddBonusStatsWindow.WorkingStats;
                 SetAddBonusSkillsWindow();
             }
             else
@@ -320,8 +320,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharAddBonusSkillsWindow.Cancelled)
             {
-                characterSheet.startingSkills = createCharAddBonusSkillsWindow.StartingSkills;
-                characterSheet.workingSkills = createCharAddBonusSkillsWindow.WorkingSkills;
+                characterDocument.startingSkills = createCharAddBonusSkillsWindow.StartingSkills;
+                characterDocument.workingSkills = createCharAddBonusSkillsWindow.WorkingSkills;
                 SetSelectReflexesWindow();
             }
             else
@@ -334,7 +334,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharReflexSelectWindow.Cancelled)
             {
-                characterSheet.reflexes = createCharReflexSelectWindow.PlayerReflexes;
+                characterDocument.reflexes = createCharReflexSelectWindow.PlayerReflexes;
                 SetSummaryWindow();
             }
             else
@@ -366,8 +366,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void StartNewGame()
         {
-            // Assign character sheet to player entity
-            startGameBehaviour.CharacterSheet = characterSheet;
+            // Assign character document to player entity
+            startGameBehaviour.CharacterDocument = characterDocument;
 
             if (DaggerfallUI.Instance.enableVideos)
             {

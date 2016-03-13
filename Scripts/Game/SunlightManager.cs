@@ -31,8 +31,17 @@ namespace DaggerfallWorkshop.Game
         Light myLight;
         float keyLightIntensity;
         float[] otherLightsIntensity;
+        float daylightScale;
 
         DaggerfallUnity dfUnity;
+
+        /// <summary>
+        /// Gets daylight light scale which peaks at midday and wanes at dusk at dawn.
+        /// </summary>
+        public float DaylightScale
+        {
+            get { return daylightScale; }
+        }
 
         void Start()
         {
@@ -80,23 +89,20 @@ namespace DaggerfallWorkshop.Game
             // Set angle of rotation based on time of day and user value
             float xrot = 180f * lerp;
             myLight.transform.rotation = Quaternion.Euler(xrot, Angle, 0);
-            //myLight.transform.rotation = Quaternion.Lerp(myLight.transform.rotation, Quaternion.Euler(xrot, Angle, 0), Time.deltaTime);
 
             // Set sun direction and scale
             if (myLight.enabled)
             {
                 // Set light intensity
-                float scale;
                 if (lerp < 0.5f)
-                    scale = lerp * 2f;
+                    daylightScale = lerp * 2f;
                 else
-                    scale = 1f - ((lerp - 0.5f) * 2f);
+                    daylightScale = 1f - ((lerp - 0.5f) * 2f);
 
                 // Adjust for custom scale factor
-                scale *= ScaleFactor;
+                daylightScale *= ScaleFactor;
 
-                //float scale = (lerp < 0.5f) ? lerp * 2f :  -lerp * 2f;
-                SetLightIntensity(scale);
+                SetLightIntensity(daylightScale);
             }
         }
 

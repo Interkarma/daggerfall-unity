@@ -20,6 +20,7 @@ namespace DaggerfallWorkshop.Game
         public const string dfuiInitGameFromDeath = "dfuiInitGameFromDeath";
 
         // "Start Game" window messages
+        public const string dfuiSetupGameWizard = "dfuiSetupGameWizard";
         public const string dfuiOpenLoadSavedGameWindow = "dfuiOpenLoadSavedGameWindow";
         public const string dfuiStartNewGame = "dfuiStartNewGame";
         public const string dfuiExitGame = "dfuiExitGame";
@@ -46,5 +47,7 @@ namespace DaggerfallWorkshop.Game
         public const string dfuiOpenCharacterSheetWindow = "dfuiOpenCharacterSheetWindow";
         public const string dfuiOpenInventoryWindow = "dfuiOpenInventoryWindow";
         public const string dfuiOpenTravelMapWindow = "dfuiOpenTravelMapWindow";
+
+        public const string dfuiOpenAutomap = "dfuiOpenAutomap";
     }
 }

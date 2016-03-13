@@ -12,6 +12,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -19,7 +20,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Entity;
-using System.Reflection;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
@@ -34,7 +35,7 @@ namespace DaggerfallWorkshop.Game
         bool isGamePaused = false;
         float savedTimeScale;
         Texture2D pauseScreenshot;
-        
+
         GameObject playerObject = null;
         Camera mainCamera = null;
         PlayerMouseLook playerMouseLook = null;
@@ -59,7 +60,9 @@ namespace DaggerfallWorkshop.Game
         FloatingOrigin floatingOrigin = null;
         FPSWeapon[] playerWeapons = new FPSWeapon[2];
         PlayerActivate playerActivate = null;
-        CharacterController playerController;
+        CharacterController playerController = null;
+        SunlightManager sunlightManager = null;
+        ItemHelper itemHelper = null;
 
         #endregion
 
@@ -205,7 +208,7 @@ namespace DaggerfallWorkshop.Game
 
         public FPSWeapon LeftHandWeapon
         {
-            get { return (playerWeapons[0]) ? playerWeapons[0] : playerWeapons[0] = GetComponentFromObject<FPSWeapon>( GetGameObjectWithName("Left Hand Weapon") ); }
+            get { return (playerWeapons[0]) ? playerWeapons[0] : playerWeapons[0] = GetComponentFromObject<FPSWeapon>(GetGameObjectWithName("Left Hand Weapon") ); }
             set { playerWeapons[0] = value; }
 
         }
@@ -226,6 +229,18 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (playerController) ? playerController : playerController = GetComponentFromObject<CharacterController>(PlayerObject); }
             set { playerController = value; }
+        }
+
+        public SunlightManager SunlightManager
+        {
+            get { return (sunlightManager) ? sunlightManager : sunlightManager = GetComponentFromObject<SunlightManager>(GetGameObjectWithName("SunLight")); }
+            set { sunlightManager = value; }
+        }
+
+        public ItemHelper ItemHelper
+        {
+            get { return (itemHelper != null) ? itemHelper : itemHelper = new ItemHelper(); }
+            set { itemHelper = value; }
         }
 
         public bool IsPlayerOnHUD
@@ -290,30 +305,6 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             SetupSingleton();
-            
-            // Check arena2 path is validated OK and exit if not
-            if (!DaggerfallUnity.Instance.IsPathValidated)
-            {
-                Debug.Log("DaggerfallUnity.Arena2Path failed validation.");
-
-                // Eject error into console
-                Wenzil.Console.ConsoleUI consoleUI = FindObjectOfType<Wenzil.Console.ConsoleUI>();
-                if (consoleUI)
-                {
-                    if (!consoleUI.isConsoleOpen)
-                        consoleUI.ToggleConsole(true);
-                    consoleUI.AddNewOutputLine("Failed to open MyDaggerfallPath or Arena2Path. Please verify the following paths exist and match casing below:");
-                    consoleUI.AddNewOutputLine("");
-                    consoleUI.AddNewOutputLine("MyDaggerfallPath: " + DaggerfallUnity.Settings.MyDaggerfallPath);
-                    if (!string.IsNullOrEmpty(DaggerfallUnity.Instance.Arena2Path))
-                        consoleUI.AddNewOutputLine("Arena2Path: " + DaggerfallUnity.Instance.Arena2Path);
-                    consoleUI.AddNewOutputLine("");
-                    consoleUI.AddNewOutputLine("Enter QUIT to exit game.");
-                    PauseGame(true, true);
-                }
-
-                return;
-            }
 
             // Try to set all properties at startup
             GetProperties();
@@ -346,6 +337,11 @@ namespace DaggerfallWorkshop.Game
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.TravelMap))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
+            }
+
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoMap))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenAutomap);
             }
 
             // Handle quick save and load
@@ -487,7 +483,7 @@ namespace DaggerfallWorkshop.Game
             if (GameManager.HasInstance)
             {
                 IsReady = true;
-                DaggerfallUnity.LogMessage("GameManager ready");
+                DaggerfallUnity.LogMessage("GameManager ready.");
             }
                 
         }

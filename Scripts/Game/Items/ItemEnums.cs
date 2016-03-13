@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: LypyL (lypyl@dfworkshop.net)
-// Contributors:    
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
@@ -13,114 +13,197 @@ using System;
 
 namespace DaggerfallWorkshop.Game.Items
 {
-    public enum ItemType
+    // This data is primarily for backward compatibility with classic items.
+    // Enums should not be changed as this will effect items imported from classic saves.
+
+    // Daggerfall item templates are addressed using two integers forming an index pair:
+    // First integer is item group or category.
+    // Second integer is index to item template within that group.
+
+    // Enum order follows Daggerfall's item index pairs and have values matching template index.
+    // Some items may appear in multiple groups with a different purpose in each group.
+
+    /// <summary>
+    /// Base group of item.
+    /// </summary>
+    public enum ItemGroups
     {
         None = -1,
-        Drug = 0,
-        Useless_item,
+        Drugs = 0,
+        UselessItems1,
         Armor,
-        Weapon,
-        Magic_item,
-        Artifact,
-        Mens_clothing,
-        Book,
-        Error,  //Not sure what this is for - from Dagged.
-        Useless_items2,
-        Relgious_items,
+        Weapons,
+        MagicItems,
+        Artifacts,
+        MensClothing,
+        Books,
+        Error,                                      // Not sure what this is for - from Dagged
+        UselessItems2,
+        ReligiousItems,
         Maps,
-        Womens_Clothing,
+        WomensClothing,
         Paintings,
-        Crystals,
-        Plant_ingredients1,
-        Plant_ingredients2,
-        Creature_ingredients1,
-        Creature_ingredients2,
-        Creature_ingredients3,
-        Miscellaneous_ingredients,
-        Mineral_ingredients,
-        Miscellaneous_ingredients2,
+        Gems,
+        PlantIngredients1,
+        PlantIngredients2,
+        CreatureIngredients1,
+        CreatureIngredients2,
+        CreatureIngredients3,
+        MiscellaneousIngredients1,
+        MetalIngredients,
+        MiscellaneousIngredients2,
         Transportation,
-        Deeds_to_houses,
-        Jewelry,
-        Quest_items,
-        Misc_Items,
-        Gold
+        Deeds,
+        Jewellery,
+        QuestItems,
+        MiscItems,
+        Currency,
     }
 
+    /// <summary>
+    /// Weapon material values.
+    /// </summary>
+    public enum WeaponMaterialTypes
+    {
+        None        = -1,
+        Iron        = 0x0000,
+        Steel       = 0x0001,
+        Silver      = 0x0002,
+        Elven       = 0x0003,
+        Dwarven     = 0x0004,
+        Mithril     = 0x0005,
+        Adamantium  = 0x0006,
+        Ebony       = 0x0007,
+        Orcish      = 0x0008,
+        Daedric     = 0x0009,
+    }
+
+    /// <summary>
+    /// Armor material values.
+    /// </summary>
+    public enum ArmorMaterialTypes
+    {
+        None        = -1,
+        Leather     = 0x0000,
+        Chain       = 0x0100,
+        Chain2      = 0x0103,
+        Iron        = 0x0200,
+        Steel       = 0x0201,
+        Silver      = 0x0202,
+        Elven       = 0x0203,
+        Dwarven     = 0x0204,
+        Mithril     = 0x0205,
+        Adamantium  = 0x0206,
+        Ebony       = 0x0207,
+        Orcish      = 0x0208,
+        Daedric     = 0x0209,
+    }
+
+    /// <summary>
+    /// Equipment slots available to equip items.
+    /// Indices match Daggerfall's legacy equip slots for import.
+    /// Some unknowns still need to be resolved.
+    /// </summary>
+    public enum EquipSlots
+    {
+        None = -1,
+        Amulet0 = 0,            // Amulets / Torcs
+        Amulet1 = 1,
+        Bracelet0 = 2,          // Bracelets
+        Bracelet1 = 3,
+        Ring0 = 4,              // Rings
+        Ring1 = 5,
+        Bracer0 = 6,            // Bracers
+        Bracer1 = 7,
+        Mark0 = 8,              // Marks
+        Mark1 = 9,
+        Crystal0 = 10,          // Gems
+        Crystal1 = 11,
+        Head = 12,              // Helm
+        RightArm = 13,          // Right pauldron
+        Cloak1 = 14,            // Cloaks
+        LeftArm = 15,           // Left pauldron
+        Cloak2 = 16,            // Cloaks
+        ChestClothes = 17,      // Shirt / Straps / Armband / Eodoric / Tunic / Surcoat / Plain robes / etc.
+        ChestArmor = 18,        // Cuirass
+        RightHand = 19,         // Right weapon / Two-handed weapon
+        Gloves = 20,            // Gauntlets
+        LeftHand = 21,          // Left weapon / Shields
+        Unknown1 = 22,
+        LegsArmor = 23,         // Greaves
+        LegsClothes = 24,       // Khajiit suit / Loincloth / Skirt / etc.
+        Unknown2 = 25,
+        Feet = 26,              // Boots / Shoes / Sandals / etc.
+    }
 
     public enum Drugs //checked
     {
-        Indulcet,
-        Sursam,
-        Quaesto_Vil,
-        Aegrotat,
+        Indulcet = 78,
+        Sursum = 79,
+        Quaesto_Vil = 80,
+        Aegrotat = 81,
     }
 
-    public enum UselessItems //checked
+    public enum UselessItems1 //checked
     {
-        Glass_Jar,
-        Glass_Bottle,
-        Decanter,
-        Clay_Jar,
-        Small_Sack,
-        Large_Sack,
-        Quiver,
-        Backpack,
-        Small_Chest,
-        Wine_Rack,
-        Large_Chest,
+        Glass_Jar = 82,
+        Glass_Bottle = 83,
+        Decanter = 84,
+        Clay_Jar = 85,
+        Small_Sack = 86,
+        Large_Sack = 87,
+        Quiver = 88,
+        Backpack = 89,
+        Small_Chest = 90,
+        Wine_Rack = 91,
+        Large_Chest = 92,
     }
 
     public enum Armor   //checked
     {
-        None = -1,
-        Cuirass = 0,
-        Gauntlets,
-        Grieves,
-        Left_Pauldron,
-        Right_Pauldron,
-        Helmet,
-        Boots,
-        Buckler,
-        Round_Shield,
-        Kite_Shield,
-        Tower_Shield,
+        Cuirass = 102,
+        Gauntlets = 103,
+        Greaves = 104,
+        Left_Pauldron = 105,
+        Right_Pauldron = 106,
+        Helm = 107,
+        Boots = 108,
+        Buckler = 109,
+        Round_Shield = 110,
+        Kite_Shield = 111,
+        Tower_Shield = 112,
     }
 
     public enum Weapons  //checked
     {
-        None = -1,
-        Dagger,
-        Tanto,
-        Staff,
-        Short_Sword,
-        Wakizashi,
-        Broard_Sword,
-        Sabre,
-        Long_Sword,
-        Katana,
-        Claymore,
-        Dai_Katana,
-        Mace,
-        Flail,
-        Warhammer,
-        Battle_Axe,
-        War_Axe,
-        Short_Bow,
-        Long_Bow,
-        Arrow,
+        Dagger = 113,
+        Tanto = 114,
+        Staff = 115,
+        Shortsword = 116,
+        Wakazashi = 117,
+        Broadsword = 118,
+        Saber = 119,
+        Longsword = 120,
+        Katana = 121,
+        Claymore = 122,
+        Dai_Katana = 123,
+        Mace = 124,
+        Flail = 125,
+        Warhammer = 126,
+        Battle_Axe = 127,
+        War_Axe = 128,
+        Short_Bow = 129,
+        Long_Bow = 130,
+        Arrow = 131,
     }
 
-
-    public enum MagicItemSubTypes
+    public enum MagicItemSubTypes                   // Not mapped to a specific item template index
     {
-        None = -1,
-        A_Magic_Item,
+        MagicItem,
     }
 
-    public enum ArtifactsSubTypes //not sure how these work, but DEFEDIT sets these as follows
+    public enum ArtifactsSubTypes                   // Mapped to artifact definitions in MAGIC.DEF
     {
-        None = -1,
         Masque_of_Clavicus = 0,
         Mehrunes_Razor = 1,
         Mace_of_Molag_Bal = 2,
@@ -145,350 +228,320 @@ namespace DaggerfallWorkshop.Game.Items
         Skeleton_Key = 21,
         Ebony_Blade = 22,
         Daves_Blade = 23,
-
     }
 
     public enum MensClothing  //check
     {
-        None = -1,
-        Straps,
-        Armbands,
-        Kimono,
-        Fancy_Armbands,
-        Sash,
-        Eodoric,
-        Shoes,
-        Tall_Boots,
-        Boots,
-        Sandals,
-        Casual_Pants,
-        Breeches,
-        Short_skirt,
-        Casual_cloak,
-        Formal_cloak,
-        Khajit_suit,
-        Dwynnen_surcoat,
-        Short_tunic,
-        Formal_tunic,
-        Toga,
-        Reversible_tunic,
-        Loincloth,
-        Plain_Robes,
-        Priest_Robes,
-        Short_Shirt,
-        Short_shirt_with_belt,
-        Long_shirt,
-        Long_shirt_with_belt,
-        Short_shirt_closed_top,
-        Short_shirt_closed_top2,
-        Long_shirt_closed_top,
-        Long_shirt_closed_top2,
-        Open_Tunic,
-        Wrap,
-        Long_Skirt,
-        Anticlere_Surcoat,
-        Challenger_Straps,
-        Short_shirt_unchangeable,
-        Long_shirt_unchangeable,
-        Vest,
-        Champion_straps,
+        Straps = 141,
+        Armbands = 142,
+        Kimono = 143,
+        Fancy_Armbands = 144,
+        Sash = 145,
+        Eodoric = 146,
+        Shoes = 147,
+        Tall_Boots = 148,
+        Boots = 149,
+        Sandals = 150,
+        Casual_Pants = 151,
+        Breeches = 152,
+        Short_skirt = 153,
+        Casual_cloak = 154,
+        Formal_cloak = 155,
+        Khajiit_suit = 156,
+        Dwynnen_surcoat = 157,
+        Short_tunic = 158,
+        Formal_tunic = 159,
+        Toga = 160,
+        Reversible_tunic = 161,
+        Loincloth = 162,
+        Plain_Robes = 163,
+        Priest_Robes = 164,
+        Short_Shirt = 165,
+        Short_shirt_with_belt = 166,
+        Long_shirt = 167,
+        Long_shirt_with_belt = 168,
+        Short_shirt_closed_top = 169,
+        Short_shirt_closed_top2 = 170,
+        Long_shirt_closed_top = 171,
+        Long_shirt_closed_top2 = 172,
+        Open_Tunic = 173,
+        Wrap = 174,
+        Long_Skirt = 175,
+        Anticlere_Surcoat = 176,
+        Challenger_Straps = 177,
+        Short_shirt_unchangeable = 178,
+        Long_shirt_unchangeable = 179,
+        Vest = 180,
+        Champion_straps = 181,
     }
 
     public enum Books  //checked
     {
-        None = -1,
-        a_Book,
+        Book = 277,
+        Potion_recipe = 278,
+        Parchment = 279,
     }
 
-    public enum ERROR           //?
+    public enum ERROR                               // ?
     {
-        None = -1,
         ERROR,
-
     }
 
     public enum UselessItems2 //checked
     {
-        None = -1,
-        Torch,
-        Lantern,
-        Bandage,
-        Oil,
-        Candle,
-        Parchment,
+        Torch = 247,
+        Lantern = 248,
+        Bandage = 249,
+        Oil = 252,
+        Candle = 253,
+        Parchment = 279,
     }
 
     public enum ReligiousItems  //checked
     {
-        None = -1,
-        Prayer_beads,
-        Rare_symbol,
-        Common_symbol,
-        Belt,
-        Holy_water,
-        Tailsman,
-        Religious_item,
-        Small_statue,
-        Icon,
-        Scarab,
-        Holy_candle,
-        Holy_dagger,
-        Holy_tome,
-
-
+        Prayer_beads = 258,
+        Rare_symbol = 259,
+        Common_symbol = 260,
+        Bell = 261,
+        Holy_water = 262,
+        Tailsman = 263,
+        Religious_item = 264,
+        Small_statue = 265,
+        Icon = 267,
+        Scarab = 268,
+        Holy_candle = 269,
+        Holy_dagger = 270,
+        Holy_tome = 271,
     }
 
     public enum Maps //checked
     {
-        None = -1,
-        a_Map
+        Map = 287,
     }
 
-    public enum Womens_Clothing  //checked
+    public enum WomensClothing  //checked
     {
-        None = -1,
-        Brassier,
-        Formal_brassier,
-        Peasant_blouse,
-        Eodoric,
-        Shoes,
-        Tall_boots,
-        Boots,
-        Sandals,
-        Casual_pants,
-        Casual_cloak,
-        Formal_cloak,
-        Khajitt_suit,
-        Formal_eodoric,
-        Evening_gown,
-        Day_gown,
-        Casual_dress,
-        Strapless_dress,
-        Loincloth,
-        Plain_robes,
-        Priestess_robes,
-        Short_shirt,
-        Short_shirt_belt,
-        Long_shirt,
-        Long_shirt_belt,
-        Short_shirt_closed,
-        Short_shirt_closed_belt,
-        Long_shirt_closed,
-        Long_shirt_closed_belt,
-        Open_tunic,
-        Wrap,
-        Long_skirt,
-        Tights,
-        Short_skirt_unchangeable,
-        Long_skirt_unchangeable,
-        Vest,
+        Brassier = 182,
+        Formal_brassier = 183,
+        Peasant_blouse = 184,
+        Eodoric = 185,
+        Shoes = 186,
+        Tall_boots = 187,
+        Boots = 188,
+        Sandals = 189,
+        Casual_pants = 190,
+        Casual_cloak = 191,
+        Formal_cloak = 192,
+        Khajiitt_suit = 193,
+        Formal_eodoric = 194,
+        Evening_gown = 195,
+        Day_gown = 196,
+        Casual_dress = 197,
+        Strapless_dress = 198,
+        Loincloth = 199,
+        Plain_robes = 200,
+        Priestess_robes = 201,
+        Short_shirt = 202,
+        Short_shirt_belt = 203,
+        Long_shirt = 204,
+        Long_shirt_belt = 205,
+        Short_shirt_closed = 206,
+        Short_shirt_closed_belt = 207,
+        Long_shirt_closed = 208,
+        Long_shirt_closed_belt = 209,
+        Open_tunic = 210,
+        Wrap = 211,
+        Long_skirt = 212,
+        Tights = 213,
+        Short_shirt_unchangeable = 214,
+        Long_shirt_unchangeable = 215,
+        Vest = 216,
     }
 
-    public enum Paintings //DEFEDIT sets subgroup to 255? ... correct group # though
+    public enum Paintings                           // DEFEDIT sets subgroup to 255? ... correct group # though
     {
-        None = -1,
-        a_Painting,
+        Painting = 284,
     }
 
-    public enum Crystals  //checked
+    public enum Gems  //checked
     {
-        None = -1,
-        Ruby,
-        Emerald,
-        Sapphire,
-        Diamond,
-        Jade,
-        Turquiose,
-        Malachite,
-        Amber,
-
+        Ruby = 0,
+        Emerald = 1,
+        Sapphire = 2,
+        Diamond = 3,
+        Jade = 4,
+        Turquiose = 5,
+        Malachite = 6,
+        Amber = 7,
     }
 
     public enum PlantIngredients1 //checked
     {
-        None = -1,
-        Twigs,
-        Green_leaves,
-        Red_flowers,
-        Yellow_flowers,
-        Root_tendrils,
-        Root_bulb,
-        Pine_branch,
-        Green_berries,
-        Red_berries,
-        Yellow_berries,
-        Clover,
-        Red_rose,
-        Yellow_rose,
-        Red_poppy,
-        Yellow_poppy,
-
+        Twigs = 8,
+        Green_leaves = 9,
+        Red_flowers = 10,
+        Yellow_flowers = 11,
+        Root_tendrils = 12,
+        Root_bulb = 13,
+        Pine_branch = 14,
+        Green_berries = 15,
+        Red_berries = 16,
+        Yellow_berries = 17,
+        Clover = 18,
+        Red_rose = 19,
+        Yellow_rose = 20,
+        Red_poppy = 23,
+        Golden_poppy = 25,
     }
 
     public enum PlantIngredients2  //checked
     {
-        None = -1,
-        Twigs,
-        Green_leaves,
-        Red_flowers,
-        Yellow_flowers,
-        Root_tendrils,
-        Root_bulb,
-        Green_berries,
-        Red_berries,
-        Yellow_berries,
-        Black_rose,
-        White_rose,
-        Black_poppy,
-        White_poppy,
-        Ginkgo_leaves,
-        Bamboo,
-        Palm,
-        Aloe,
-        Fig,
-        Cactus,
+        Twigs = 8,
+        Green_leaves = 9,
+        Red_flowers = 10,
+        Yellow_flowers = 11,
+        Root_tendrils = 12,
+        Root_bulb = 13,
+        Green_berries = 15,
+        Red_berries = 16,
+        Yellow_berries = 17,
+        Black_rose = 21,
+        White_rose = 22,
+        Black_poppy = 24,
+        White_poppy = 26,
+        Ginkgo_leaves = 27,
+        Bamboo = 28,
+        Palm = 29,
+        Aloe = 30,
+        Fig = 31,
+        Cactus = 32,
     }
 
     public enum CreatureIngredients1  //checked
     {
-        None = -1,
-        Werewolfs_blood,
-        Fairy_dragon_scales,
-        Wraith_essence,
-        Ectoplasm,
-        Ghouls_tongue,
-        Spider_venom,
-        Troll_blood,
-        Snake_venom,
-        Grogon_snake,
-        Lich_dust,
-        Giant_blood,
-        Basilisk_eye,
-        Daedra_heart,
-        Saint_hair,
-        Orc_blood
+        Werewolfs_blood = 33,
+        Fairy_dragon_scales = 35,
+        Wraith_essence = 38,
+        Ectoplasm = 39,
+        Ghouls_tongue = 40,
+        Spider_venom = 41,
+        Troll_blood = 42,
+        Snake_venom = 43,
+        Grogon_snake = 44,
+        Lich_dust = 45,
+        Giant_blood = 50,
+        Basilisk_eye = 51,
+        Daedra_heart = 53,
+        Saints_hair = 54,
+        Orcs_blood = 61,
     }
 
     public enum CreatureIngredients2  //checked
     {
-        None = -1,
-        Dragon_scales,
-        Giant_scorpion_stinger,
-        Small_scorpion_stinger,
-        Mummy_wrappings,
-        Gryphon_Feather,
-
+        Dragons_scales = 46,
+        Giant_scorpion_stinger = 47,
+        Small_scorpion_stinger = 48,
+        Mummy_wrappings = 49,
+        Gryphon_Feather = 52,
     }
 
     public enum CreatureIngredients3 //checked
     {
-        None = -1,
-        Wearboar_tusk,
-        Nymph_hair,
-        Unicorn_horn,
+        Wearboar_tusk = 34,
+        Nymph_hair = 36,
+        Unicorn_horn = 37,
     }
 
-    public enum MiscIngredients1  //checked
+    public enum MiscellaneousIngredients1  //checked
     {
-        None = -1,
-        Holy_relic,
-        Big_tooth,
-        Medium_tooth,
-        Small_tooth,
-        Pure_water,
-        Rain_water,
-        Elixir_vitae,
-        Nectar,
-        Ichor,
+        Holy_relic = 55,
+        Big_tooth = 56,
+        Medium_tooth = 57,
+        Small_tooth = 58,
+        Pure_water = 59,
+        Rain_water = 60,
+        Elixir_vitae = 62,
+        Nectar = 63,
+        Ichor = 64,
     }
 
-    public enum MineralIngredients  //Checked
+    public enum MetalIngredients  //Checked
     {
-        None = -1,
-        Mercury,
-        Tin,
-        Brass,
-        Lodestone,
-        Sulphur,
-        Lead,
-        Iron,
-        Copper,
-        Silver,
-        Gold,
-        Platinum,
+        Mercury = 65,
+        Tin = 66,
+        Brass = 67,
+        Lodestone = 68,
+        Sulphur = 69,
+        Lead = 70,
+        Iron = 71,
+        Copper = 72,
+        Silver = 73,
+        Gold = 74,
+        Platinum = 75,
     }
 
-    public enum MiscIngredients2 //checked
+    public enum MiscellaneousIngredients2 //checked
     {
-        None = -1,
         Ivory,
         Pearl,
     }
 
     public enum Transportation  //Checked
     {
-        None = -1,
-        Small_cart,
-        Horse,
-        Rowboat,
-        Large_boat,
-        Small_ship,
-        Large_Galley
-
+        Small_cart = 93,
+        Horse = 94,
+        Rowboat = 95,
+        Large_boat = 96,
+        Small_ship = 97,
+        Large_Galley = 98,
     }
 
     public enum Deeds  //checked
     {
-        None = -1,
         Deed_to_townhouse,
         Deed_to_house,
         Deed_to_manor,
-
     }
 
-    public enum Jewlry  //checked
+    public enum Jewellery  //checked
     {
-        None = -1,
-        Amulet,
-        Bracer,
-        Ring,
-        Bracelet,
-        Mark,
-        Torc,
-        Cloth_amulet,
-        Wand,
+        Amulet = 133,
+        Bracer = 134,
+        Ring = 135,
+        Bracelet = 136,
+        Mark = 137,
+        Torc = 138,
+        Cloth_amulet = 139,
+        Wand = 140,
     }
 
-    public enum Quest_Items  //checked
+    public enum QuestItems  //checked
     {
-        None = -1,
-        Telescope,
-        Scales,
-        Globe,
-        Skeleton,
-        Totem,
-        Dead_body,
-        Mantella,
-        Finger,
+        Telescope = 254,
+        Scales = 255,
+        Globe = 256,
+        Skeleton = 257,
+        Totem = 280,
+        Dead_body = 281,
+        Mantella = 282,
+        Finger = 283,
     }
 
-    public enum Misc_Items  //checked
+    public enum MiscItems  //checked
     {
-        None = -1,
-        Spellbook,
-        Soul_trap,
-        Letter_of_credit,
-        Ruby,
-        Recipe,
-        Dead_Body,
-        Deed_For_House, //checked
-        Ship_Deed,
-        a_Map,
+        Spellbook = 132,
+        Soul_trap = 274,
+        Letter_of_credit = 275,
+        Ruby = 0,
+        Potion_recipe = 278,
+        Dead_Body = 281,
+        House_Deed = 285,
+        Ship_Deed = 286,
+        Map = 287,
     }
 
-    public enum Gold  //checked
+    public enum Currency  //checked
     {
-        None = -1,
-        Gold,
+        Gold_pieces = 276,
     }
 }

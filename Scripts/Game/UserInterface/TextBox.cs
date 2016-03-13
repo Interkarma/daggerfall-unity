@@ -54,9 +54,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { maxSize = value; }
         }
 
-        public TextBox()
+        public TextBox(DaggerfallFont font = null)
         {
-            font = DaggerfallUI.DefaultFont;
+            if (font == null)
+                this.font = DaggerfallUI.DefaultFont;
+            else
+                this.font = font;
+
             Components.Add(textCursor);
             MaxSize = CalculateMaximumSize();
             this.Size = CalculateCurrentSize();

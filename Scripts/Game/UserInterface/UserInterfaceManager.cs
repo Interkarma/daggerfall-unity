@@ -168,7 +168,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             windows.Push(window);
             window.OnPush();
             //OnWindowChange += window.WindowChanged;
-            if(window.PauseWhileOpen)
+            if(window.PauseWhileOpen && GameManager.HasInstance)
                 GameManager.Instance.PauseGame(true);
         }
 
@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 oldWindow.OnPop();
                 windows.Pop();
             }
-            if (windows.Count <= 1)
+            if (windows.Count <= 1 && GameManager.HasInstance)
                 GameManager.Instance.PauseGame(false);
         }
 

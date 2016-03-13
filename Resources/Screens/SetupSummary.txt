@@ -1,0 +1,8 @@
+Congratulations!
+
+Daggerfall Unity now ready to play.
+
+Please refer to manual for more information
+on advanced setup, including keybinds.
+
+Good luck in your adventures!
