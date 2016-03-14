@@ -420,7 +420,7 @@ namespace DaggerfallWorkshop.Game
             StaticDoor closestDoor;
             Vector3 closestDoorPos = DaggerfallStaticDoors.FindClosestDoor(transform.position, exteriorDoors, out closestDoor);
             Vector3 normal = DaggerfallStaticDoors.GetDoorNormal(closestDoor);
-            Vector3 position = closestDoorPos + normal * (controller.radius * 2f);
+            Vector3 position = closestDoorPos + normal * (controller.radius * 3f);
             world.SetAutoReposition(StreamingWorld.RepositionMethods.Offset, position);
 
             EnableExteriorParent();
