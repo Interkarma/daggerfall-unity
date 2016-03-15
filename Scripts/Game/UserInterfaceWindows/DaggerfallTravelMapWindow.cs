@@ -64,6 +64,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeTexture;
         Texture2D regionTexture;
 
+        Texture2D findButtonTexture;
+        Texture2D atButtonTexture;
         Texture2D dungeonFilterButtonEnabled;
         Texture2D dungeonFilterButtonDisabled;
         Texture2D templesFilterButtonEnabled;
@@ -94,10 +96,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button townsFilterButton        = new Button();
 
         Rect regionTextureOverlayPanelRect  = new Rect(0, regionPanelOffset, 320, 160);
-        Rect dungeonsFilterButtonSrcRect    = new Rect(0, 11, 99, 11);
-        Rect templesFilterButtonSrcRect     = new Rect(0, 0, 99, 11);
-        Rect homesFilterButtonSrcRect       = new Rect(99, 11, 80, 11);
-        Rect townsFilterButtonSrcRect       = new Rect(99, 0, 80, 11);
+        Rect dungeonsFilterButtonSrcRect    = new Rect(0, 0, 99, 11);
+        Rect templesFilterButtonSrcRect     = new Rect(0, 11, 99, 11);
+        Rect homesFilterButtonSrcRect       = new Rect(99, 0, 80, 11);
+        Rect townsFilterButtonSrcRect       = new Rect(99, 11, 80, 11);
+        Rect findButtonRect                 = new Rect(0, 0, 45, 11);
+        Rect atButtonRect                   = new Rect(0, 11, 45, 11);
         Rect crossHairRect                  = new Rect(regionPanelOffset, regionPanelOffset, 296, 160);//x pos + 12 & size - 24 to comp. for borders
 
         int mouseOverRegion             = -1;
@@ -352,13 +356,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButtonClickHandler;
 
             // Find button
-            Texture2D findButtonTexture = DaggerfallUI.GetTextureFromImg(findAtButtonImgName, new Rect(0, 11, 45, 11));
             findButton = DaggerfallUI.AddButton(new Rect(3, 175, findButtonTexture.width, findButtonTexture.height), NativePanel);
             findButton.BackgroundTexture = findButtonTexture;
             findButton.OnMouseClick += FindlocationButtonClickHandler;
 
             // I'm At button
-            Texture2D atButtonTexture = DaggerfallUI.GetTextureFromImg(findAtButtonImgName, new Rect(0, 0, 45, 11));
             atButton = DaggerfallUI.AddButton(new Rect(3, 186, findButtonTexture.width, findButtonTexture.height), NativePanel);
             atButton.BackgroundTexture = atButtonTexture;
             atButton.OnMouseClick += AtButtonClickHandler;
@@ -427,27 +429,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Loads textures for buttons
         void LoadButtonTextures()
         {
-            // Dungeons toggle button
-            dungeonFilterButtonEnabled = DaggerfallUI.GetTextureFromImg(locationFilterButtonEnabledImgName, dungeonsFilterButtonSrcRect);
-            dungeonFilterButtonDisabled = DaggerfallUI.GetTextureFromImg(locationFilterButtonDisabledImgName, dungeonsFilterButtonSrcRect);
+            Texture2D baselocationFilterButtonEnabledText = ImageReader.GetTexture(locationFilterButtonEnabledImgName);
+            Texture2D baselocationFilterButtonDisabledText = ImageReader.GetTexture(locationFilterButtonDisabledImgName);
 
             // Dungeons toggle button
-            templesFilterButtonEnabled = DaggerfallUI.GetTextureFromImg(locationFilterButtonEnabledImgName, templesFilterButtonSrcRect);
-            templesFilterButtonDisabled = DaggerfallUI.GetTextureFromImg(locationFilterButtonDisabledImgName, templesFilterButtonSrcRect);
+            dungeonFilterButtonEnabled = ImageReader.GetSubTexture(baselocationFilterButtonEnabledText, dungeonsFilterButtonSrcRect);
+            dungeonFilterButtonDisabled = ImageReader.GetSubTexture(baselocationFilterButtonDisabledText, dungeonsFilterButtonSrcRect);
+
+            // Dungeons toggle button
+            templesFilterButtonEnabled = ImageReader.GetSubTexture(baselocationFilterButtonEnabledText, templesFilterButtonSrcRect);
+            templesFilterButtonDisabled = ImageReader.GetSubTexture(baselocationFilterButtonDisabledText, templesFilterButtonSrcRect);
 
             // Homes toggle button
-            homesFilterButtonEnabled = DaggerfallUI.GetTextureFromImg(locationFilterButtonEnabledImgName, homesFilterButtonSrcRect);
-            homesFilterButtonDisabled = DaggerfallUI.GetTextureFromImg(locationFilterButtonDisabledImgName, homesFilterButtonSrcRect);
+            homesFilterButtonEnabled = ImageReader.GetSubTexture(baselocationFilterButtonEnabledText, homesFilterButtonSrcRect);
+            homesFilterButtonDisabled = ImageReader.GetSubTexture(baselocationFilterButtonDisabledText, homesFilterButtonSrcRect);
 
             // Towns toggle button
-            townsFilterButtonEnabled = DaggerfallUI.GetTextureFromImg(locationFilterButtonEnabledImgName, townsFilterButtonSrcRect);
-            townsFilterButtonDisabled = DaggerfallUI.GetTextureFromImg(locationFilterButtonDisabledImgName, townsFilterButtonSrcRect);
+            townsFilterButtonEnabled = ImageReader.GetSubTexture(baselocationFilterButtonEnabledText, townsFilterButtonSrcRect);
+            townsFilterButtonDisabled = ImageReader.GetSubTexture(baselocationFilterButtonDisabledText, townsFilterButtonSrcRect);
+
+            findButtonTexture = ImageReader.GetTexture(findAtButtonImgName);
+            findButtonTexture = ImageReader.GetSubTexture(findButtonTexture, findButtonRect);
+
+            atButtonTexture = ImageReader.GetTexture(findAtButtonImgName);
+            atButtonTexture = ImageReader.GetSubTexture(atButtonTexture, atButtonRect);
+
 
             // Arrows
-            upArrowTexture = DaggerfallUI.GetTextureFromImg(upArrowImgName);
-            downArrowTexture = DaggerfallUI.GetTextureFromImg(downArrowImgName);
-            leftArrowTexture = DaggerfallUI.GetTextureFromImg(leftArrowImgName);
-            rightArrowTexture = DaggerfallUI.GetTextureFromImg(rightArrowImgName);
+            upArrowTexture      = ImageReader.GetTexture(upArrowImgName);//DaggerfallUI.GetTextureFromImg(upArrowImgName);
+            downArrowTexture    = ImageReader.GetTexture(downArrowImgName);//DaggerfallUI.GetTextureFromImg(downArrowImgName);
+            leftArrowTexture    = ImageReader.GetTexture(leftArrowImgName);//DaggerfallUI.GetTextureFromImg(leftArrowImgName);
+            rightArrowTexture   = ImageReader.GetTexture(rightArrowImgName);//DaggerfallUI.GetTextureFromImg(rightArrowImgName);
+
+            UnityEngine.Object.Destroy(baselocationFilterButtonEnabledText);
+            UnityEngine.Object.Destroy(baselocationFilterButtonDisabledText);
         }
 
         // Creates the region overlay for current player region

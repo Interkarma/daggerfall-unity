@@ -359,12 +359,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Refresh();
             Debug.Log("Final Travel Time: " + finalTravelTime);
-            GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y);
-            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((float)finalTravelTime * 3600);
+            GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
+            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((float)finalTravelTime * 60);
             terrains.Clear();
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
             travelWindow.CloseTravelWindows(true);
-            //CalculateTravelTime(new Vector2(109, 158), new Vector2(207, 213));
         }
 
         public void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
