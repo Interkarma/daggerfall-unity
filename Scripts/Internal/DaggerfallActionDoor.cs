@@ -23,7 +23,6 @@ namespace DaggerfallWorkshop
     {
         public bool StartOpen = false;                  // Door should start in open state
         public int CurrentLockValue = 0;                // if > 0, door is locked. Can check w. IsLocked prop
-        public bool IsMagicallyHeld = false;            // Magically held locks can be opened by spells only
         public float OpenAngle = -90f;                  // Angle to swing door on axis when opening
         public float OpenDuration = 1.5f;               // How long in seconds for door to open
         public bool IsTriggerWhenOpen = true;           // Collider is disabled when door opens
@@ -73,6 +72,11 @@ namespace DaggerfallWorkshop
         public bool IsMoving
         {
             get { return (currentState == ActionState.PlayingForward || currentState == ActionState.PlayingReverse); }
+        }
+
+        public bool IsMagicallyHeld
+        {
+            get { return CurrentLockValue >= 160; }
         }
 
         public Quaternion ClosedRotation
@@ -181,7 +185,7 @@ namespace DaggerfallWorkshop
         private void Open(float duration, bool ignoreLocks = false)
         {
             // Do nothing if door cannot be opened right now
-            if (((IsLocked || IsMagicallyHeld) && !ignoreLocks) || IsOpen)
+            if ((IsLocked && !ignoreLocks) || IsOpen)
             {
                 // Play open sound if flagged and ready
                 if (PlaySounds && LockedSound > 0 && duration > 0 && audioSource)
@@ -191,6 +195,14 @@ namespace DaggerfallWorkshop
                         dfAudioSource.PlayOneShot(LockedSound);
                 }
 
+                //Just a temp. setup to provide feedback on locks until lockpicking is added
+                if(!IsOpen)
+                {
+                    string lockedDoorMessage = "This door is locked";
+                    if (IsMagicallyHeld)
+                        lockedDoorMessage = "This is a magically held door";
+                    DaggerfallWorkshop.Game.DaggerfallUI.Instance.PopupMessage(lockedDoorMessage);
+                }
                 return;
             }
 
@@ -218,7 +230,7 @@ namespace DaggerfallWorkshop
             ExecuteActionOnToggle();
 
             // Set flag
-            IsMagicallyHeld = false;
+            //IsMagicallyHeld = false;
             CurrentLockValue = 0;
         }
 
