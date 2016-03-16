@@ -7,7 +7,13 @@
 // Contributors:
 //
 // Notes:
+// Format:
 //
+//     Multiline Text Label (optional)
+//      :::                 :::
+//      :::TextPanelDistance:::
+//      :::                 :::
+//     Text Label (prompt):::InputDistance:::Text Input Box
 
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -22,16 +28,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         private Panel messagePanel = new Panel();
         private Panel textPanel = new Panel();
-        private MultiFormatTextLabel label = new MultiFormatTextLabel();
+        private MultiFormatTextLabel multiLineLabel = new MultiFormatTextLabel();
         private TextBox textBox = new TextBox();
         private TextLabel textBoxLabel = new TextLabel();
         private Color parentPanelColor = Color.clear;
 
-        private int textPanelDistance = 12;             //distance between the text panel & the top label
+        private int textPanelDistance = 12;             //distance between the text prompt / input & the multiline label
         private int inputDistance = 4;                  //distance between the input label & input box
-        private int minWidth = 160;
         private bool useParchmentStyle = true;          //if true, box will use PopupStyle Parchment background
-        private bool maxFit = true;                     //size panel to fit at least max # charcters; assumes all widest glyphs;
         private bool clickAnywhereToClose = false;
 
         public bool ClickAnywhereToClose
@@ -52,17 +56,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { inputDistance = value; }
         }
 
-        public int MinWidth
-        {
-            get { return minWidth; }
-            set { minWidth = value; }
-        }
-
-        public bool MaxFit
-        {
-            get { return maxFit; }
-            set { maxFit = value; }
-        }
+        //public int MinWidth
+        //{
+        //    get { return minWidth; }
+        //    set { minWidth = value; }
+        //}
 
         public Color ParentPanelColor
         {
@@ -80,13 +78,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int textId,
             int maxCharacters = 31,
             string textBoxLabel = null,
-            bool maxFit = true,
             bool useParchmentBackGround = true,
             UserInterfaceWindow previous = null)
             : base(uiManager, previous)
         {
             this.textBox.MaxCharacters = maxCharacters;
-            this.MaxFit = maxFit;
             this.useParchmentStyle = useParchmentBackGround;
             this.SetTextBoxLabel(textBoxLabel);
             SetupBox(textId);
@@ -97,13 +93,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TextFile.Token[] textTokens,
             int maxCharacters = 31,
             string textBoxLabel = null,
-            bool maxFit = true,
             bool useParchmentBackGround = true,
             UserInterfaceWindow previous = null)
             : base(uiManager, previous)
         {
             this.textBox.MaxCharacters = maxCharacters;
-            this.MaxFit = maxFit;
             this.useParchmentStyle = useParchmentBackGround;
             this.SetTextBoxLabel(textBoxLabel);
             SetupBox(textTokens);
@@ -111,9 +105,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            if (IsSetup)
-                return;
-
             base.Setup();
 
             if (useParchmentStyle)
@@ -123,30 +114,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messagePanel.OnMouseClick += MessagePanel_OnMouseClick;
             NativePanel.Components.Add(messagePanel);
 
-            label.HorizontalAlignment = HorizontalAlignment.Center;
-            label.VerticalAlignment = VerticalAlignment.Top;
-            messagePanel.Components.Add(label);
+            multiLineLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            multiLineLabel.VerticalAlignment = VerticalAlignment.Top;
+            messagePanel.Components.Add(multiLineLabel);
 
             messagePanel.Components.Add(textPanel);
             textPanel.Components.Add(textBoxLabel);
             textPanel.Components.Add(textBox);
             ParentPanel.BackgroundColor = ParentPanelColor;
-
-            IsSetup = true;
+            UpdatePanelSizes();
         }
 
         public void Show()
         {
-            if (!IsSetup)
-                Setup();
-
             uiManager.PushWindow(this);
         }
 
         public override void Update()
         {
             base.Update();
-            UpdatePanelSizes();
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
@@ -171,17 +157,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void SetTextTokens(TextFile.Token[] tokens)
         {
-            if (!IsSetup)
-                Setup();
-
-            label.SetText(tokens);
-            //UpdatePanelSizes();
+            multiLineLabel.SetText(tokens);
         }
 
         public void SetTextTokens(int id)
         {
-            if (!IsSetup)
-                Setup();
 
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(id);
             SetTextTokens(tokens);
@@ -189,8 +169,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void SetTextBoxLabel(string label)
         {
-            if (!IsSetup)
-                Setup();
             if (label == null)
                 return;
             textBoxLabel.Text = label;
@@ -198,22 +176,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpdatePanelSizes()
         {
-            Vector2 textBoxSize;
-            if (MaxFit)
-            {
-                textBoxSize = textBox.MaxSize;
-            }
-            else
-            {
-                textBoxSize = textBox.Size;
-            }
-
-            textPanel.Position = new Vector2(textPanel.Position.x, label.Position.y + label.Size.y + textPanelDistance);
-            float width = textBoxLabel.Position.x + textBoxLabel.Size.x + inputDistance + textBoxSize.x;
-            float height = Mathf.Max(textBox.Size.y, textBoxSize.y);
-            textPanel.Size = new Vector2(Mathf.Max(width, minWidth), height);
-            textBox.Position = new Vector2(textBoxLabel.Position.x + inputDistance + textBoxLabel.Size.x, textBoxLabel.Position.y);
-            messagePanel.Size = new Vector2(Mathf.Max(textPanel.Size.x, label.Size.x), label.Size.y + textPanelDistance + textPanel.Size.y);
+            float height = (messagePanel.TopMargin + multiLineLabel.Size.y + textPanelDistance + Mathf.Max(textBox.MaxSize.y, textBoxLabel.Size.y) + messagePanel.BottomMargin);
+            float width = (Mathf.Max(multiLineLabel.Size.x, (textBoxLabel.Size.x + inputDistance + textBox.MaxSize.x)));
+            messagePanel.Size = new Vector2(width, height);
+            textBoxLabel.Position = new Vector2(messagePanel.RightMargin, multiLineLabel.Position.y + multiLineLabel.Size.y + textPanelDistance);
+            textBox.Position = new Vector2(textBoxLabel.Position.x + textBoxLabel.Size.x + inputDistance, textBoxLabel.Position.y);
         }
 
         private void MessagePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
