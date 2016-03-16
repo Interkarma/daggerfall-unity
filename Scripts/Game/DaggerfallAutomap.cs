@@ -231,10 +231,16 @@ namespace DaggerfallWorkshop.Game
         {
             if (!gameobjectGeometry)
             {
+                // test if startup was inside dungeon or interior (and no transition event happened)                
                 InitWhenInInteriorOrDungeon();
+                // do initial geometry discovery
+                gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
+                CheckForNewlyDiscoveredMeshes();
             }
 
-            gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)            
+            gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
+
+            gameobjectBeacons.SetActive(true);
 
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
@@ -267,6 +273,8 @@ namespace DaggerfallWorkshop.Game
             // then it will be necessary to either only disable the colliders on the automap level geometry or
             // make player collision ignore colliders of objects in automap layer - I would clearly prefer this option
             gameobjectGeometry.SetActive(false); // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
+            
+            gameobjectBeacons.SetActive(false);
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
             {
@@ -446,9 +454,6 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeonInterior;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
-
-            //StreamingWorld.OnInitWorld += InitWhenInInteriorOrDungeon;
-
         }
 
         void OnDisable()
@@ -457,8 +462,6 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeonInterior;
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
-
-            //StreamingWorld.OnInitWorld -= InitWhenInInteriorOrDungeon;
         }
 
         void Start()
@@ -487,27 +490,29 @@ namespace DaggerfallWorkshop.Game
 
             }
 
-            // test if startup was inside dungeon or interior
-            InitWhenInInteriorOrDungeon();
-
             // coroutine for periodically update discovery state of automap level geometry
-            StartCoroutine(CheckForNewlyDiscoveredMeshes());
+            StartCoroutine(CoroutineCheckForNewlyDiscoveredMeshes());
         }
 
         void InitWhenInInteriorOrDungeon()
         {
             //if (GameManager.Instance.IsPlayerInsideBuilding)
             //{
-            //    createIndoorGeometryForAutomap(GameManager. SerializablePlayer .TransitionEventArgs.);
+            //    StaticDoor[] exteriorDoors = GameManager.Instance.PlayerEnterExit.ExteriorDoors;
+            //    createIndoorGeometryForAutomap(exteriorDoors[0]); // THIS DID NOT WORK - fortunately the OnTransitionToInterior event fires when starting or loading indoor scenes
             //    restoreStateAutomapDungeon(true);
             //    resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
+            //    gameobjectGeometry.SetActive(false);
+            //    gameobjectBeacons.SetActive(false);
             //}
-            //else 
-            if (GameManager.Instance.IsPlayerInsideDungeon)
+            //else
+            if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
             {
                 createDungeonGeometryForAutomap();
                 restoreStateAutomapDungeon(true);
                 resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
+                gameobjectGeometry.SetActive(false);
+                gameobjectBeacons.SetActive(false);
             }
         }
 
@@ -654,53 +659,64 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// basic automap level geometry revealing functionality - this function is periodically invoked
+        /// basic automap level geometry revealing functionality
         /// </summary>
-        IEnumerator CheckForNewlyDiscoveredMeshes()
+        void CheckForNewlyDiscoveredMeshes()
+        {
+            if ((gameobjectGeometry != null) && ((GameManager.Instance.IsPlayerInsideBuilding) || (GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace)))
+            {
+                // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
+                gameobjectGeometry.SetActive(true);
+
+                // reveal geometry right below player - raycast down from player head position
+                Vector3 rayStartPos = gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition;
+                Vector3 rayDirection = Vector3.down;
+                float rayDistance = raycastDistanceDown;
+                Vector3 offsetSecondProtectionRaycast = Vector3.left * 0.1f; // will be used for protection raycast with slight offset of 10cm (protection against hole in daggerfall geometry prevention)            
+                scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
+
+                // reveal geometry which player is looking at (and which is near enough)
+                rayDirection = Camera.main.transform.rotation * Vector3.forward;
+                // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
+                offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
+                rayDistance = raycastDistanceViewDirection;
+                RaycastHit? hitForward = scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
+
+                if (hitForward.HasValue)
+                {
+                    //reveal geometry that is in front of player (by repeatly start further and further in front of the player and raycast in downward direction)                    
+                    Vector3 stepVector = Vector3.zero;
+                    while (true)
+                    {
+                        stepVector += Vector3.Normalize(Camera.main.transform.rotation * Vector3.forward) * 1.0f; // go 1 meters forward                        
+                        if (Vector3.Magnitude(stepVector) >= hitForward.Value.distance)
+                        {
+                            break;
+                        }
+                        rayDirection = Vector3.down;
+                        // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
+                        offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
+                        rayDistance = raycastDistanceDown;
+                        scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos + stepVector, rayDirection, rayDistance, offsetSecondProtectionRaycast);
+                    }
+                }
+
+                // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
+                gameobjectGeometry.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// coroutine for basic automap level geometry revealing functionality - this function is periodically invoked
+        /// </summary>
+        IEnumerator CoroutineCheckForNewlyDiscoveredMeshes()
         {
             while (true)
             {
                 // only proceed if automap is not opened (otherwise command gameobjectGeometry.SetActive(false); will mess with automap rendering when scheduling is a bitch and overwrites changes from updateAutomapStateOnWindowPush()
-                if ((!isOpenAutomap) && (gameobjectGeometry != null) && ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace)))
+                if (!isOpenAutomap)
                 {
-                    // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
-                    gameobjectGeometry.SetActive(true);                 
-
-                    // reveal geometry right below player - raycast down from player head position
-                    Vector3 rayStartPos = gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition;
-                    Vector3 rayDirection = Vector3.down;
-                    float rayDistance = raycastDistanceDown;
-                    Vector3 offsetSecondProtectionRaycast = Vector3.left * 0.1f; // will be used for protection raycast with slight offset of 10cm (protection against hole in daggerfall geometry prevention)            
-                    scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
-                    
-                    // reveal geometry which player is looking at (and which is near enough)
-                    rayDirection = Camera.main.transform.rotation * Vector3.forward;
-                    // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
-                    offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
-                    rayDistance = raycastDistanceViewDirection;
-                    RaycastHit ?hitForward = scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos, rayDirection, rayDistance, offsetSecondProtectionRaycast);
-
-                    if (hitForward.HasValue)
-                    {
-                        //reveal geometry that is in front of player (by repeatly start further and further in front of the player and raycast in downward direction)                    
-                        Vector3 stepVector = Vector3.zero;
-                        while (true)
-                        {
-                            stepVector += Vector3.Normalize(Camera.main.transform.rotation * Vector3.forward) * 1.0f; // go 1 meters forward                        
-                            if (Vector3.Magnitude(stepVector) >= hitForward.Value.distance)
-                            {
-                                break;
-                            }
-                            rayDirection = Vector3.down;
-                            // shift 10cm to the side (computed by normalized cross product of forward vector of view direction and down vector of view direction)
-                            offsetSecondProtectionRaycast = Vector3.Normalize(Vector3.Cross(Camera.main.transform.rotation * Vector3.down, rayDirection)) * 0.1f;
-                            rayDistance = raycastDistanceDown;
-                            scanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos + stepVector, rayDirection, rayDistance, offsetSecondProtectionRaycast);
-                        }
-                    }
-
-                    // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
-                    gameobjectGeometry.SetActive(false);
+                    CheckForNewlyDiscoveredMeshes();
                 }
                 yield return new WaitForSeconds(1.0f / scanRateGeometryDiscoveryInHertz);
             }
@@ -1384,6 +1400,8 @@ namespace DaggerfallWorkshop.Game
             createIndoorGeometryForAutomap(args.StaticDoor);
             restoreStateAutomapInterior(false);
             resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
+            gameobjectGeometry.SetActive(false);
+            gameobjectBeacons.SetActive(false);
         }
 
         private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
@@ -1391,6 +1409,8 @@ namespace DaggerfallWorkshop.Game
             createDungeonGeometryForAutomap();
             restoreStateAutomapDungeon(true);
             resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
+            gameobjectGeometry.SetActive(false);
+            gameobjectBeacons.SetActive(false);
         }
 
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
