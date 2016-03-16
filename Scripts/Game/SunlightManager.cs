@@ -26,10 +26,13 @@ namespace DaggerfallWorkshop.Game
         public float Angle = -90f;                          // Sunlight direction throughout day
         [Range(0, 1)]
         public float ScaleFactor = defaultScaleFactor;      // Scale all lights by this amount
+        public Light IndirectLight;                         // Point light that follows player to simulate indirect lighting
+        public GameObject LocalPlayer;                      // Player for indirect light positioning
         public Light[] OtherLights;                         // Other lights to scale and enable/disable
 
         Light myLight;
         float keyLightIntensity;
+        float indirectLightIntensity;
         float[] otherLightsIntensity;
         float daylightScale;
 
@@ -59,6 +62,12 @@ namespace DaggerfallWorkshop.Game
             if (!ReadyCheck())
                 return;
 
+            // Position indirect light
+            if (IndirectLight != null && LocalPlayer != null)
+            {
+                IndirectLight.transform.position = LocalPlayer.transform.position;
+            }
+
             // Change to night
             if (dfUnity.WorldTime.Now.IsNight && myLight.enabled)
             {
@@ -67,6 +76,10 @@ namespace DaggerfallWorkshop.Game
                 {
                     for (int i = 0; i < OtherLights.Length; i++)
                         OtherLights[i].enabled = false;
+                }
+                if (IndirectLight != null)
+                {
+                    IndirectLight.enabled = false;
                 }
             }
 
@@ -78,6 +91,10 @@ namespace DaggerfallWorkshop.Game
                 {
                     for (int i = 0; i < OtherLights.Length; i++)
                         OtherLights[i].enabled = true;
+                }
+                if (IndirectLight != null)
+                {
+                    IndirectLight.enabled = true;
                 }
             }
 
@@ -142,6 +159,10 @@ namespace DaggerfallWorkshop.Game
                     otherLightsIntensity[i] = OtherLights[i].intensity;
                 }
             }
+            if (IndirectLight != null)
+            {
+                indirectLightIntensity = IndirectLight.intensity;
+            }
         }
 
         void SetLightIntensity(float scale)
@@ -157,6 +178,10 @@ namespace DaggerfallWorkshop.Game
                         continue;
                     OtherLights[i].intensity = otherLightsIntensity[i] * scale;
                 }
+            }
+            if (IndirectLight != null)
+            {
+                IndirectLight.intensity = indirectLightIntensity * scale;
             }
         }
 

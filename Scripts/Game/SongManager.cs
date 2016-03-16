@@ -106,15 +106,13 @@ namespace DaggerfallWorkshop.Game
             dfUnity = DaggerfallUnity.Instance;
             songPlayer = GetComponent<DaggerfallSongPlayer>();
 
-            // Try to find local player GPS if not set
+            // Get local player GPS if not set
             if (LocalPlayerGPS == null)
-            {
-                GameObject player = GameObject.FindGameObjectWithTag("Player");
-                if (player)
-                {
-                    LocalPlayerGPS = player.GetComponent<PlayerGPS>();
-                }
-            }
+                LocalPlayerGPS = GameManager.Instance.PlayerGPS;
+
+            // Get streaming world if not set
+            if (StreamingWorld == null)
+                StreamingWorld = GameManager.Instance.StreamingWorld;
 
             // Get required player components
             if (LocalPlayerGPS)
