@@ -1,5 +1,5 @@
 [Daggerfall]
-MyDaggerfallPath=
+MyDaggerfallPath=D:\Unity\Daggerfall\DAGGER\ARENA2
 MyDaggerfallUnitySavePath=
 
 [Video]
@@ -43,8 +43,8 @@ StartInDungeon=True
 
 [Enhancements]
 LypyL_GameConsole=True
-LypyL_EnhancedSky=False
-Nystul_IncreasedTerrainDistance=False
-Nystul_RealtimeReflections=False
-UncannyValley_RealGrass=False
+LypyL_EnhancedSky=True
+Nystul_IncreasedTerrainDistance=True
+Nystul_RealtimeReflections=True
+UncannyValley_RealGrass=True
 UncannyValley_BirdsInDaggerfall=False

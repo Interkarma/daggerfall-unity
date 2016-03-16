@@ -229,6 +229,11 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void updateAutomapStateOnWindowPush()
         {
+            if (!gameobjectGeometry)
+            {
+                InitWhenInInteriorOrDungeon();
+            }
+
             gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)            
 
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
@@ -442,6 +447,8 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
 
+            //StreamingWorld.OnInitWorld += InitWhenInInteriorOrDungeon;
+
         }
 
         void OnDisable()
@@ -450,6 +457,8 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeonInterior;
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
+
+            //StreamingWorld.OnInitWorld -= InitWhenInInteriorOrDungeon;
         }
 
         void Start()
@@ -478,8 +487,28 @@ namespace DaggerfallWorkshop.Game
 
             }
 
+            // test if startup was inside dungeon or interior
+            InitWhenInInteriorOrDungeon();
+
             // coroutine for periodically update discovery state of automap level geometry
             StartCoroutine(CheckForNewlyDiscoveredMeshes());
+        }
+
+        void InitWhenInInteriorOrDungeon()
+        {
+            //if (GameManager.Instance.IsPlayerInsideBuilding)
+            //{
+            //    createIndoorGeometryForAutomap(GameManager. SerializablePlayer .TransitionEventArgs.);
+            //    restoreStateAutomapDungeon(true);
+            //    resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
+            //}
+            //else 
+            if (GameManager.Instance.IsPlayerInsideDungeon)
+            {
+                createDungeonGeometryForAutomap();
+                restoreStateAutomapDungeon(true);
+                resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
+            }
         }
 
         void Update()
@@ -881,10 +910,9 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// creates the indoor geometry used for automap rendering
         /// </summary>
-        /// <param name="args"> the transition event arguments used to extract door information for loading the correct interior </param>
-        private void createIndoorGeometryForAutomap(PlayerEnterExit.TransitionEventArgs args)
+        /// <param name="args"> the static door for loading the correct interior </param>
+        private void createIndoorGeometryForAutomap(StaticDoor door)
         {
-            StaticDoor door = args.StaticDoor;
             String newGeometryName = string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex);
 
             // obsolete block commented out - now solved with the AutomapGeometryBlockState state
@@ -1353,7 +1381,7 @@ namespace DaggerfallWorkshop.Game
 
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
         {
-            createIndoorGeometryForAutomap(args);
+            createIndoorGeometryForAutomap(args.StaticDoor);
             restoreStateAutomapInterior(false);
             resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
         }
@@ -1368,11 +1396,27 @@ namespace DaggerfallWorkshop.Game
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             saveStateAutomapInterior();
+            if (gameobjectGeometry != null)
+            {
+                UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+            }
+            if (gameobjectBeacons != null)
+            {
+                UnityEngine.Object.DestroyImmediate(gameobjectBeacons);
+            }
         }
 
         private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             saveStateAutomapDungeon();
+            if (gameobjectGeometry != null)
+            {                
+                UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+            }
+            if (gameobjectBeacons != null)
+            {
+                UnityEngine.Object.DestroyImmediate(gameobjectBeacons);
+            }
         }
 
         #endregion
