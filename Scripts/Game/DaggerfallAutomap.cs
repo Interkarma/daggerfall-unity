@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Serialization;
 using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game
@@ -445,6 +446,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeonInterior;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
+            SaveLoadManager.OnLoad += OnLoadEvent;
         }
 
         void OnDisable()
@@ -453,6 +455,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeonInterior;
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
+            SaveLoadManager.OnLoad -= OnLoadEvent;
         }
 
         void Start()
@@ -485,18 +488,28 @@ namespace DaggerfallWorkshop.Game
             StartCoroutine(CoroutineCheckForNewlyDiscoveredMeshes());
         }
 
-        void InitWhenInInteriorOrDungeon()
+        void OnLoadEvent(SaveData_v1 saveData)
         {
-            //if (GameManager.Instance.IsPlayerInsideBuilding)
-            //{
-            //    StaticDoor[] exteriorDoors = GameManager.Instance.PlayerEnterExit.ExteriorDoors;
-            //    createIndoorGeometryForAutomap(exteriorDoors[0]); // THIS DID NOT WORK - fortunately the OnTransitionToInterior event fires when starting or loading indoor scenes
-            //    restoreStateAutomapDungeon(true);
-            //    resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
-            //    gameobjectGeometry.SetActive(false);
-            //    gameobjectBeacons.SetActive(false);
-            //}
-            //else
+            StaticDoor[] exteriorDoors = saveData.playerData.playerPosition.exteriorDoors;            
+            StaticDoor? door = null;
+            if (exteriorDoors != null)
+            {
+                door = exteriorDoors[0];
+            }
+            InitWhenInInteriorOrDungeon(door);
+        }
+
+        void InitWhenInInteriorOrDungeon(StaticDoor? door = null)
+        {
+            if ((GameManager.Instance.IsPlayerInsideBuilding) && (door.HasValue))
+            {                
+                createIndoorGeometryForAutomap(door.Value);
+                restoreStateAutomapDungeon(true);
+                resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
+                gameobjectGeometry.SetActive(false);
+                gameobjectBeacons.SetActive(false);
+            }
+            else
             if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
             {
                 createDungeonGeometryForAutomap();
