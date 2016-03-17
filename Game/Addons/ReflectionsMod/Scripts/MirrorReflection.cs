@@ -126,7 +126,7 @@ namespace ReflectionsMod
 	    void OnDisable()
 	    {
 		    if( m_ReflectionTexture ) {
-			    DestroyImmediate( m_ReflectionTexture );
+			    Destroy( m_ReflectionTexture );
 			    m_ReflectionTexture = null;
 		    }
 		    //foreach( DictionaryEntry kvp in m_ReflectionCameras )
@@ -182,7 +182,7 @@ namespace ReflectionsMod
 		    if( !m_ReflectionTexture || m_OldReflectionTextureSize != m_TextureSize )
 		    {
 			    if( m_ReflectionTexture )
-				    DestroyImmediate( m_ReflectionTexture );
+				    Destroy( m_ReflectionTexture );
                 m_ReflectionTexture = new RenderTexture(m_TextureSize, m_TextureSize, 16); //, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
 
 			    m_ReflectionTexture.name = "__MirrorReflection" + GetInstanceID();

@@ -276,15 +276,15 @@ namespace DaggerfallWorkshop.Game
                     gameObjectInteriorLightRig.SetActive(true);
                 }
                 // and get rid of lights used to light the automap level geometry
-                UnityEngine.Object.DestroyImmediate(gameobjectAutomapKeyLight);
-                UnityEngine.Object.DestroyImmediate(gameobjectAutomapFillLight);
-                UnityEngine.Object.DestroyImmediate(gameobjectAutomapBackLight);
+                UnityEngine.Object.Destroy(gameobjectAutomapKeyLight);
+                UnityEngine.Object.Destroy(gameobjectAutomapFillLight);
+                UnityEngine.Object.Destroy(gameobjectAutomapBackLight);
             }
 
             // destroy the camera so it does not use system resources
             if (gameObjectCameraAutomap != null)
             {
-                UnityEngine.Object.DestroyImmediate(gameObjectCameraAutomap);
+                UnityEngine.Object.Destroy(gameObjectCameraAutomap);
             }
         }
 
@@ -873,7 +873,7 @@ namespace DaggerfallWorkshop.Game
             if (!gameobjectBeaconPlayerPosition)
             {
                 gameobjectBeaconPlayerPosition = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                UnityEngine.Object.DestroyImmediate(gameobjectBeaconPlayerPosition.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(gameobjectBeaconPlayerPosition.GetComponent<Collider>());
                 gameobjectBeaconPlayerPosition.name = "BeaconPlayerPosition";
                 gameobjectBeaconPlayerPosition.transform.SetParent(gameobjectBeacons.transform);
                 gameobjectBeaconPlayerPosition.layer = layerAutomap;                
@@ -887,7 +887,7 @@ namespace DaggerfallWorkshop.Game
             if (!gameobjectBeaconRotationPivotAxis)
             {
                 gameobjectBeaconRotationPivotAxis = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                UnityEngine.Object.DestroyImmediate(gameobjectBeaconRotationPivotAxis.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(gameobjectBeaconRotationPivotAxis.GetComponent<Collider>());
                 gameobjectBeaconRotationPivotAxis.name = "BeaconRotationPivotAxis";
                 gameobjectBeaconRotationPivotAxis.transform.SetParent(gameobjectBeacons.transform);
                 gameobjectBeaconRotationPivotAxis.layer = layerAutomap;                
@@ -905,7 +905,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectBeaconEntrancePosition.layer = layerAutomap;
 
                 GameObject gameobjectRay = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                UnityEngine.Object.DestroyImmediate(gameobjectRay.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(gameobjectRay.GetComponent<Collider>());
                 gameobjectRay.name = "BeaconEntracePositionMarker";
                 gameobjectRay.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
                 gameobjectRay.layer = layerAutomap;
@@ -915,7 +915,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectRay.GetComponent<MeshRenderer>().material = material;
 
                 GameObject gameObjectCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.DestroyImmediate(gameObjectCubeMarker.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(gameObjectCubeMarker.GetComponent<Collider>());
                 gameObjectCubeMarker.name = "CubeEntracePositionMarker";
                 gameObjectCubeMarker.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
                 gameObjectCubeMarker.GetComponent<MeshRenderer>().material = material;
@@ -964,7 +964,7 @@ namespace DaggerfallWorkshop.Game
 
             if (gameobjectGeometry != null)
             {
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+                UnityEngine.Object.Destroy(gameobjectGeometry);
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Interior)");
@@ -1028,7 +1028,7 @@ namespace DaggerfallWorkshop.Game
 
             if (gameobjectGeometry != null)
             {
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+                UnityEngine.Object.Destroy(gameobjectGeometry);
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Dungeon)");
@@ -1435,11 +1435,11 @@ namespace DaggerfallWorkshop.Game
             saveStateAutomapInterior();
             if (gameobjectGeometry != null)
             {
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+                UnityEngine.Object.Destroy(gameobjectGeometry);
             }
             if (gameobjectBeacons != null)
             {
-                UnityEngine.Object.DestroyImmediate(gameobjectBeacons);
+                UnityEngine.Object.Destroy(gameobjectBeacons);
             }
         }
 
@@ -1448,11 +1448,11 @@ namespace DaggerfallWorkshop.Game
             saveStateAutomapDungeon();
             if (gameobjectGeometry != null)
             {                
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+                UnityEngine.Object.Destroy(gameobjectGeometry);
             }
             if (gameobjectBeacons != null)
             {
-                UnityEngine.Object.DestroyImmediate(gameobjectBeacons);
+                UnityEngine.Object.Destroy(gameobjectBeacons);
             }
         }
 

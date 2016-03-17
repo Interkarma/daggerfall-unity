@@ -484,12 +484,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (renderTextureAutomap != null)
             {
-                UnityEngine.Object.DestroyImmediate(renderTextureAutomap);
+                UnityEngine.Object.Destroy(renderTextureAutomap);
             }
 
             if (textureAutomap != null)
             {
-                UnityEngine.Object.DestroyImmediate(textureAutomap);
+                UnityEngine.Object.Destroy(textureAutomap);
             }
 
             daggerfallAutomap.updateAutomapStateOnWindowPop(); // signal DaggerfallAutomap script that automap window was closed
@@ -841,9 +841,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 cameraAutomap.targetTexture = null;
                 if (renderTextureAutomap)
-                    UnityEngine.Object.DestroyImmediate(renderTextureAutomap);
+                    UnityEngine.Object.Destroy(renderTextureAutomap);
                 if (textureAutomap)
-                    UnityEngine.Object.DestroyImmediate(textureAutomap);
+                    UnityEngine.Object.Destroy(textureAutomap);
 
                 renderTextureAutomap = new RenderTexture(width, height, renderTextureAutomapDepth);
                 cameraAutomap.targetTexture = renderTextureAutomap;
