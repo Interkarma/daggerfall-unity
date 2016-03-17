@@ -27,6 +27,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(TeleportToMapPixel.name, TeleportToMapPixel.description, TeleportToMapPixel.usage, TeleportToMapPixel.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToDungeonDoor.name, TeleportToDungeonDoor.description, TeleportToDungeonDoor.usage, TeleportToDungeonDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(OpenDoor.name, OpenDoor.description, OpenDoor.usage, OpenDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(KillAllEnemies.name, KillAllEnemies.description, KillAllEnemies.usage, KillAllEnemies.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TransitionToExterior.name, TransitionToExterior.description, TransitionToExterior.usage, TransitionToExterior.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetHealth.name, SetHealth.description, SetHealth.usage, SetHealth.Execute);
@@ -732,17 +733,14 @@ namespace Wenzil.Console
         private static class OpenAllDoors
         {
             public static readonly string name = "openalldoors";
-            public static readonly string error = "Player not inside";
+            public static readonly string error = "You are not inside";
             public static readonly string description = "Opens all doors in an interior or dungeon, regardless of locked state";
             public static readonly string usage = "openalldoors";
 
             public static string Execute(params string[] args)
             {
                 if (!GameManager.Instance.IsPlayerInside)
-                {
-
                     return error;
-                }
                 else
                 {
                     DaggerfallActionDoor[] doors = GameObject.FindObjectsOfType<DaggerfallActionDoor>();
@@ -762,6 +760,37 @@ namespace Wenzil.Console
             }
         }
 
+        private static class OpenDoor
+        {
+            public static readonly string name = "opendoor";
+            public static readonly string error = "No door type object found";
+            public static readonly string description = "Opens a single door the player is looking at, regardless of locked state";
+            public static readonly string usage = "opendoor";
+
+            public static string Execute(params string[] args)
+            {
+                if (!GameManager.Instance.IsPlayerInside)
+                    return "You are not inside";
+                else
+                {
+                    DaggerfallActionDoor door;
+                    RaycastHit hitInfo;
+                    Ray ray = Camera.main.ViewportPointToRay (new Vector3(0.5f, 0.5f, 0));
+                    if(!(Physics.Raycast(ray, out hitInfo, 1000)))
+                        return error;
+                    else
+                    {
+                        door = hitInfo.transform.GetComponent<DaggerfallActionDoor>();
+                        if (door == null)
+                            return error;
+                        else
+                            door.SetOpen(true, false, true);
+                    }
+                    return string.Format("Finished");
+                }
+
+            }
+        }
 
 
         private static class KillAllEnemies
