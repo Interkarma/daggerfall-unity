@@ -70,6 +70,8 @@ namespace ProjectIncreasedTerrainDistance
         [Range(0.0f, 300000.0f)]
         public float blendEnd = 145000.0f;
 
+        public RenderTexture reflectionSeaTexture = null;
+
         bool isActiveReflectionsMod = false;
         bool isActiveEnhancedSkyMod = false;
 
@@ -1016,7 +1018,7 @@ namespace ProjectIncreasedTerrainDistance
             #if REFLECTIONSMOD_CODE_AVAILABLE
             if (isActiveReflectionsMod)
             {
-                RenderTexture reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
+                reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
                 if (reflectionSeaTexture != null)
                 {
                     terrainMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
