@@ -38,12 +38,9 @@ namespace DaggerfallWorkshop.Game
         DaggerfallInterior interior;
         DaggerfallDungeon dungeon;
         StreamingWorld world;
-        //GameObject mainCamera;
         PlayerGPS playerGPS;
 
-        StaticDoor[] exteriorDoors;
-        //Vector3 dungeonEntrancePosition;
-        //Vector3 dungeonEntranceForward;
+        List<StaticDoor> exteriorDoors = new List<StaticDoor>();
 
         public GameObject ExteriorParent;
         public GameObject InteriorParent;
@@ -134,19 +131,18 @@ namespace DaggerfallWorkshop.Game
         }
         
         /// <summary>
-        /// Gets or set exterior door player last clicked on.
+        /// Gets or sets exterior doors of current interior.
+        /// Returns empty array if player not inside.
         /// </summary>
         public StaticDoor[] ExteriorDoors
         {
-            get { return (StaticDoor[])exteriorDoors.Clone(); }
-            set { exteriorDoors = (StaticDoor[])value.Clone(); }
+            get { return exteriorDoors.ToArray(); }
+            set { SetExteriorDoors(value); }
         }
 
         void Awake()
         {
             dfUnity = DaggerfallUnity.Instance;
-            //mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-            //playerMouseLook = GetComponent<PlayerMouseLook>();
             playerGPS = GetComponent<PlayerGPS>();
             world = FindObjectOfType<StreamingWorld>();
         }
@@ -211,7 +207,7 @@ namespace DaggerfallWorkshop.Game
 
             // Start respawn process
             isRespawning = true;
-            this.exteriorDoors = exteriorDoors;
+            SetExteriorDoors(exteriorDoors);
             StartCoroutine(Respawner(worldX, worldZ, insideDungeon, insideBuilding, forceReposition));
         }
 
@@ -364,7 +360,7 @@ namespace DaggerfallWorkshop.Game
                         buildingDoors.Add(newDoor);
                     }
                 }
-                exteriorDoors = buildingDoors.ToArray();
+                SetExteriorDoors(buildingDoors.ToArray());
             }
 
             // Assign new interior to parent
@@ -402,39 +398,14 @@ namespace DaggerfallWorkshop.Game
             // Raise event
             RaiseOnPreTransitionEvent(TransitionType.ToBuildingExterior);
 
-            //// Find closest exterior door
-            //Vector3 exitDoorPos = Vector3.zero;
-            //int doorIndex = -1;
-            //DaggerfallStaticDoors exteriorDoors = interior.ExteriorDoors;
-            //if (exteriorDoors)
-            //{
-            //    if (!exteriorDoors.FindClosestDoorToPlayer(transform.position, interior.EntryDoor.recordIndex, out exitDoorPos, out doorIndex))
-            //    {
-            //        // Could not find exterior door or fall back to entry door
-            //        // Just push player outside of building, better than having them trapped inside
-            //        exitDoorPos = transform.position + transform.forward * 4;
-            //    }
-            //}
-
             // Find closest door and position player outside of it
             StaticDoor closestDoor;
-            Vector3 closestDoorPos = DaggerfallStaticDoors.FindClosestDoor(transform.position, exteriorDoors, out closestDoor);
+            Vector3 closestDoorPos = DaggerfallStaticDoors.FindClosestDoor(transform.position, ExteriorDoors, out closestDoor);
             Vector3 normal = DaggerfallStaticDoors.GetDoorNormal(closestDoor);
             Vector3 position = closestDoorPos + normal * (controller.radius * 3f);
             world.SetAutoReposition(StreamingWorld.RepositionMethods.Offset, position);
 
             EnableExteriorParent();
-
-            //// Set player outside exterior door position
-            //transform.position = exitDoorPos;
-            //if (doorIndex >= 0)
-            //{
-            //    // Adjust player position and facing
-            //    Vector3 normal = exteriorDoors.GetDoorNormal(doorIndex);
-            //    transform.position += normal * (controller.radius * 2f);
-            //    //SetFacing(normal);
-            //    SetStanding();
-            //}
 
             // Player is now outside building
             isPlayerInside = false;
@@ -594,12 +565,10 @@ namespace DaggerfallWorkshop.Game
             {
                 if (dungeon) Destroy(dungeon.gameObject);
                 if (interior) Destroy(interior.gameObject);
-                exteriorDoors = null;
+                SetExteriorDoors(null);
             }
             DisableAllParents(false);
             if (ExteriorParent != null) ExteriorParent.SetActive(true);
-            //if (InteriorParent != null) InteriorParent.SetActive(false);
-            //if (DungeonParent != null) DungeonParent.SetActive(false);
 
             world.suppressWorld = false;
             isPlayerInside = false;
@@ -617,8 +586,6 @@ namespace DaggerfallWorkshop.Game
             }
             DisableAllParents(false);
             if (InteriorParent != null) InteriorParent.SetActive(true);
-            //if (ExteriorParent != null) ExteriorParent.SetActive(false);
-            //if (DungeonParent != null) DungeonParent.SetActive(false);
 
             isPlayerInside = true;
             isPlayerInsideDungeon = false;
@@ -635,8 +602,6 @@ namespace DaggerfallWorkshop.Game
             }
             DisableAllParents(false);
             if (DungeonParent != null) DungeonParent.SetActive(true);
-            //if (ExteriorParent != null) ExteriorParent.SetActive(false);
-            //if (InteriorParent != null) InteriorParent.SetActive(false);
 
             isPlayerInside = true;
             isPlayerInsideDungeon = true;
@@ -675,11 +640,6 @@ namespace DaggerfallWorkshop.Game
 
             EnableExteriorParent();
 
-            // Set player outside exterior door position and set facing
-            //transform.position = dungeonEntrancePosition;
-            //SetFacing(-dungeonEntranceForward);
-            //SetStanding();
-
             // Player is now outside dungeon
             isPlayerInside = false;
             isPlayerInsideDungeon = false;
@@ -699,6 +659,8 @@ namespace DaggerfallWorkshop.Game
         }
 
         #endregion
+
+        #region Private Methods
 
         // Check if current block is a palace block
         private void PalaceCheck()
@@ -734,7 +696,6 @@ namespace DaggerfallWorkshop.Game
             if (Physics.Raycast(ray, out hit, controller.height * 2f))
             {
                 // Position player at hit position plus just over half controller height up
-                //transform.position = hit.point + Vector3.up * (controller.height * 0.7f);
                 Vector3 pos = hit.point;
                 pos.y += controller.height / 2f + 0.15f;
                 transform.position = pos;
@@ -753,6 +714,15 @@ namespace DaggerfallWorkshop.Game
 
             return true;
         }
+
+        private void SetExteriorDoors(StaticDoor[] doors)
+        {
+            exteriorDoors.Clear();
+            if (doors != null && doors.Length > 0)
+                exteriorDoors.AddRange(doors);
+        }
+
+        #endregion
 
         #region Event Arguments
 

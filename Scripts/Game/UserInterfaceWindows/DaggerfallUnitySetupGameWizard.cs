@@ -10,7 +10,7 @@
 //
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
+//using UnityEngine.SceneManagement;
 using System;
 using System.IO;
 using System.Collections;
@@ -520,8 +520,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     ShowSummaryPanel();
                     break;
                 case SetupStages.LaunchGame:
-                    //Application.LoadLevel(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
-                    SceneManager.LoadScene(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
+                    Application.LoadLevel(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
+                    //SceneManager.LoadScene(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
                     break;
             }
         }

@@ -142,11 +142,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Build save data
             SaveData_v1 saveData = BuildSaveData();
 
-            // Serialize save data to JSON string
-            string json = Serialize(saveData.GetType(), saveData);
-
-            // Save data to file
-            WriteSaveFile(Path.Combine(UnitySavePath, quickSaveFilename), json);
+            // Write save data
+            SaveGame(saveData, Path.Combine(UnitySavePath, quickSaveFilename));
 
             // Notify
             DaggerfallUI.Instance.PopupMessage(HardStrings.gameSaved);
@@ -555,6 +552,18 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Utility
 
+        void SaveGame(SaveData_v1 saveData, string path)
+        {
+            // Serialize save data to JSON string
+            string json = Serialize(saveData.GetType(), saveData);
+
+            // Save data to file
+            WriteSaveFile(path, json);
+
+            // Raise OnSaveEvent
+            RaiseOnSaveEvent(saveData);
+        }
+
         IEnumerator LoadGame(SaveData_v1 saveData)
         {
             // Must have a serializable player
@@ -637,6 +646,31 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore save data to objects in newly spawned world
             RestoreSaveData(saveData);
+
+            // Raise OnLoad event
+            RaiseOnLoadEvent(saveData);
+        }
+
+        #endregion
+
+        #region Events
+
+        // OnSave
+        public delegate void OnSaveEventHandler(SaveData_v1 saveData);
+        public static event OnSaveEventHandler OnSave;
+        protected virtual void RaiseOnSaveEvent(SaveData_v1 saveData)
+        {
+            if (OnSave != null)
+                OnSave(saveData);
+        }
+
+        // OnLoad
+        public delegate void OnLoadEventHandler(SaveData_v1 saveData);
+        public static event OnLoadEventHandler OnLoad;
+        protected virtual void RaiseOnLoadEvent(SaveData_v1 saveData)
+        {
+            if (OnLoad != null)
+                OnLoad(saveData);
         }
 
         #endregion
