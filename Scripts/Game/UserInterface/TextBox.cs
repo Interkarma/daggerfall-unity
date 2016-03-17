@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int MaxCharacters
         {
             get { return maxCharacters; }
-            set { maxCharacters = value; }
+            set { maxCharacters = value; MaxSize = CalculateMaximumSize(); }
         }
 
         public DaggerfallFont Font
