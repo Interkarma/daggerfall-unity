@@ -42,6 +42,10 @@ namespace DaggerfallWorkshop.Game.Utility
         public bool NoWorld = false;
         public bool GodMod = false;
 
+        //events used to update state in state manager
+        public static System.EventHandler OnStartMenu;
+        public static System.EventHandler OnStartGame;
+
         // Private fields
         CharacterDocument characterDocument;
         int classicSaveIndex = -1;
@@ -230,6 +234,9 @@ namespace DaggerfallWorkshop.Game.Utility
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGame);
             else
                 DaggerfallUI.PostMessage(PostStartMessage);
+
+            if (OnStartMenu != null)
+                OnStartMenu(this, null);
         }
 
         void StartTitleMenuFromDeath()
@@ -245,6 +252,9 @@ namespace DaggerfallWorkshop.Game.Utility
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGameFromDeath);
             else
                 DaggerfallUI.PostMessage(PostStartMessage);
+
+            if (OnStartMenu != null)
+                OnStartMenu(this, null);
         }
 
         void StartFromQuickSave()
@@ -316,6 +326,9 @@ namespace DaggerfallWorkshop.Game.Utility
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
             DaggerfallUI.PostMessage(PostStartMessage);
+
+            if (OnStartGame != null)
+                OnStartGame(this, null);
         }
 
         #endregion
@@ -386,6 +399,9 @@ namespace DaggerfallWorkshop.Game.Utility
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
             DaggerfallUI.PostMessage(PostStartMessage);
+
+            if (OnStartGame != null)
+                OnStartGame(this, null);
         }
 
         #endregion
