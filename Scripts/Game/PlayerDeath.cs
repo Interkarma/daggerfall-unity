@@ -24,6 +24,8 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        public static System.EventHandler OnPlayerDeath;
+
         const float fallSpeed = 2.5f;
 
         public float FadeDuration = 2f;
@@ -137,6 +139,9 @@ namespace DaggerfallWorkshop.Game
             targetCameraHeight = playerController.height - (playerController.height * 1.25f);
             currentCameraHeight = startCameraHeight;
             DaggerfallUI.Instance.FadeHUDToBlack(FadeDuration);
+
+            if (OnPlayerDeath != null)
+                OnPlayerDeath(this, null);
         }
 
         #endregion
