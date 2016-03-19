@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game
         CharacterController playerController = null;
         SunlightManager sunlightManager = null;
         ItemHelper itemHelper = null;
-
+        StateManager stateManager = null;
         #endregion
 
         #region Properties
@@ -73,6 +73,12 @@ namespace DaggerfallWorkshop.Game
         public static bool IsGamePaused
         {
             get { return Instance.isGamePaused; }
+        }
+
+        public StateManager StateManager
+        {
+            get { return (stateManager != null) ? stateManager : stateManager = new StateManager(StateManager.StateTypes.Start); }
+            set { stateManager = value; }
         }
 
         public Camera MainCamera
@@ -315,6 +321,7 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+
             if (!IsPlayingGame())
                 return;
 
