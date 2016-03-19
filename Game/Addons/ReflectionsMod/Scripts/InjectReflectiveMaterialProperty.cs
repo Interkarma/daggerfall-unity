@@ -7,6 +7,7 @@
 
 using UnityEngine;
 using UnityEngine.Rendering;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect;
@@ -34,7 +35,18 @@ namespace ReflectionsMod
 
         private DaggerfallUnity dfUnity;
 
-        UpdateReflectionTextures reflectionTexturesScript = null;
+        private struct TextureRecord
+        {
+            public int archive;
+            public int record;
+            public int frame;
+            public bool useMetallicGlossMap;
+            public Texture2D metallicGlossMap;
+            public float reflectivity;
+            public float smoothness;
+            public Texture2D albedoMap;
+            public Texture2D normalMap;
+        }
 
         IniParser.FileIniDataParser iniParser = new FileIniDataParser();
         IniParser.Model.IniData iniData;
@@ -77,8 +89,6 @@ namespace ReflectionsMod
         {
             dfUnity = DaggerfallUnity.Instance;
 
-            reflectionTexturesScript = GameObject.Find("ReflectionsMod").GetComponent<UpdateReflectionTextures>();
-
             if (!streamingWorld)
                 streamingWorld = GameObject.Find("StreamingWorld").GetComponent<StreamingWorld>();
             if (!streamingWorld)
@@ -109,7 +119,7 @@ namespace ReflectionsMod
         }
 
         void Awake()        
-        {            
+        {
             StreamingWorld.OnInitWorld += InjectMaterialProperties;
 
             StreamingWorld.OnTeleportToCoordinates += InjectMaterialProperties;
@@ -142,7 +152,7 @@ namespace ReflectionsMod
 
         public void OnWillRenderObject()
         {
-            if (reflectionTexturesScript.isOutdoorEnvironment())
+            if (!GameManager.Instance.IsPlayerInside)
             {
                 if (!gameObjectStreamingTarget)
                     return;
@@ -168,7 +178,7 @@ namespace ReflectionsMod
                 }
             }
 
-            if (reflectionTexturesScript.isIndoorEnvironment())
+            if (GameManager.Instance.IsPlayerInside)
             {
                 Renderer[] renderers = null;
 
@@ -188,7 +198,8 @@ namespace ReflectionsMod
                 {
                     foreach (Renderer r in renderers)
                     {
-                        foreach (Material m in r.sharedMaterials)
+                        Material[] mats = r.sharedMaterials;
+                        foreach (Material m in mats)
                         {
                             if (m.shader.name == "Daggerfall/FloorMaterialWithReflections")
                             {
@@ -196,6 +207,7 @@ namespace ReflectionsMod
                                 m.SetFloat("_LowerLevelHeight", gameObjectReflectionPlaneLowerLevel.transform.position.y);
                             }
                         }
+                        r.sharedMaterials = mats;
                     }
                 }
             }
@@ -239,22 +251,21 @@ namespace ReflectionsMod
 
         void InjectMaterialProperties(int worldPosX, int worldPosY)
         {
-            // for some reason indoor reflections do not work on first transition to interior if this line is uncommented - TODO: further investigate
-            // (seems like indoor floor textures in cache are somehow "initialized" differently if the callback is invoked on startup although player is outdoors but indoor textures are also injected here)
-            // even more mysterious is that trying to debug freezes unity if one sets a break point on the InjectMaterialPropertiesIndoor() line and the if statement is active, if it is commented out no freeze occurs
-            //if (reflectionTexturesScript.isIndoorEnvironment())
-           //{
-               InjectMaterialPropertiesIndoor();
-           //}
+            if (GameManager.Instance.IsPlayerInside)
+            {
+                InjectMaterialPropertiesIndoor();
+            }
 
-           if (reflectionTexturesScript.isOutdoorEnvironment())
-           {
-               InjectMaterialPropertiesOutdoor();
-           }
+            if (!GameManager.Instance.IsPlayerInside)
+            {
+                InjectMaterialPropertiesOutdoor();
+            }
         }
 
         void InjectMaterialPropertiesIndoor()
         {
+            List<TextureRecord> listInjectedTextures = new List<TextureRecord>();
+
             // mages guild 4 floors debuging worldpos: 704,337
             IniParser.Model.IniData textureInjectionData = iniData;
             if (iniData != null)
@@ -265,11 +276,23 @@ namespace ReflectionsMod
                     int textureRecord = int.Parse(textureInjectionData[section.SectionName]["textureRecord"]);
                     int textureFrame = int.Parse(textureInjectionData[section.SectionName]["textureFrame"]);
 
+                    TextureRecord texRecord = new TextureRecord();
+                    texRecord.archive = textureArchive;
+                    texRecord.record = textureRecord;
+                    texRecord.frame = textureFrame;
+                    texRecord.albedoMap = null;
+                    texRecord.normalMap = null;
+                    texRecord.useMetallicGlossMap = false;
+                    texRecord.metallicGlossMap = null;
+                    texRecord.reflectivity = 0.0f;
+                    texRecord.smoothness = 0.0f;
+
                     Texture2D albedoTexture = null;
                     if (textureInjectionData[section.SectionName].ContainsKey("filenameAlbedoMap"))
                     {
                         string fileAlbedoMap = textureInjectionData[section.SectionName]["filenameAlbedoMap"];
                         albedoTexture = Resources.Load(fileAlbedoMap) as Texture2D;
+                        texRecord.albedoMap = albedoTexture;
                     }
 
                     Texture2D normalTexture = null;
@@ -277,24 +300,144 @@ namespace ReflectionsMod
                     {
                         string fileNormalMap = textureInjectionData[section.SectionName]["filenameNormalMap"];
                         normalTexture = Resources.Load(fileNormalMap) as Texture2D;
+                        texRecord.normalMap = normalTexture;
                     }
 
                     bool useMetallicGlossMap = bool.Parse(textureInjectionData[section.SectionName]["useMetallicGlossMap"]);
+
+                    texRecord.useMetallicGlossMap = useMetallicGlossMap;
 
                     if (useMetallicGlossMap)
                     {
                         string fileNameMetallicGlossMap = textureInjectionData[section.SectionName]["filenameMetallicGlossMap"];
                         Texture2D metallicGlossMapTexture = Resources.Load(fileNameMetallicGlossMap) as Texture2D;
                         updateMaterial(textureArchive, textureRecord, textureFrame, albedoTexture, normalTexture, metallicGlossMapTexture);
+                        texRecord.metallicGlossMap = metallicGlossMapTexture;
                     }
                     else
                     {
                         float reflectivity = float.Parse(textureInjectionData[section.SectionName]["reflectivity"]);
                         float smoothness = float.Parse(textureInjectionData[section.SectionName]["smoothness"]);
                         updateMaterial(textureArchive, textureRecord, textureFrame, albedoTexture, normalTexture, reflectivity, smoothness);
+                        texRecord.reflectivity = reflectivity;
+                        texRecord.smoothness = smoothness;
                     }
+
+                    listInjectedTextures.Add(texRecord);
                 }
             }
+
+            // force update to textures loaded in current interior/dungeon models (TODO: find a better way to replace the long code section starting from here to the end of the function)
+            Renderer[] renderers = null;
+
+            // TODO: find a way to eliminate GameObject.Find() here and determine if inside building or dungeon
+            GameObject gameObjectInterior = GameObject.Find("Interior");
+            GameObject gameObjectDungeon = GameObject.Find("Dungeon");
+            if (gameObjectInterior != null)
+            {
+                renderers = gameObjectInterior.GetComponentsInChildren<Renderer>();
+            }
+            else if (gameObjectDungeon != null)
+            {
+                renderers = gameObjectDungeon.GetComponentsInChildren<Renderer>();
+            }
+            if (renderers != null)
+            {
+                Debug.Log(String.Format("renderers: {0}", renderers.Length));
+                foreach (Renderer r in renderers)
+                {
+                    Material[] mats = r.sharedMaterials;
+                    for (int i=0; i<mats.Length; i++)
+                    {
+                        Material m = mats[i];
+                        try
+                        {
+                            // name is in format TEXTURE.xxx [Index=y] - if atlas texture - different format then exception will be thrown - so everything is in try-catch block 
+                            string[] parts = m.name.Split('.');
+                            parts = parts[1].Split(' ');
+                            int archive = Convert.ToInt32(parts[0]);
+                            string tmp = parts[1].Replace("[Index=", "").Replace("]", "");
+                            //Debug.Log(String.Format("archive: {0}, record: {1}", parts[0], tmp));
+                            int record = Convert.ToInt32(tmp);
+                            int frame = 0;
+
+                            TextureRecord ?texRecord = listInjectedTextures.Find(x => (x.archive == archive) && (x.record == record) && (x.frame == frame));
+                            if (texRecord != null)
+                            {
+                                CachedMaterial cmat;
+                                if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
+                                {
+                                    if (!texRecord.Value.useMetallicGlossMap)
+                                    {
+                                        Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                                        newMat.CopyPropertiesFromMaterial(cmat.material);
+                                        newMat.name = cmat.material.name;
+                                        Texture tex = GameObject.Find("ReflectionPlaneBottom").GetComponent<MirrorReflection>().m_ReflectionTexture;
+                                        if (tex)
+                                        {
+                                            newMat.SetTexture("_ReflectionGroundTex", tex);
+                                        }
+                                        tex = GameObject.Find("ReflectionPlaneSeaLevel").GetComponent<MirrorReflection>().m_ReflectionTexture;
+                                        if (tex)
+                                        {
+                                            newMat.SetTexture("_ReflectionLowerLevelTex", tex);
+                                        }
+                                        newMat.SetFloat("_Metallic", texRecord.Value.reflectivity);
+                                        newMat.SetFloat("_Smoothness", texRecord.Value.smoothness);
+
+                                        if (texRecord.Value.albedoMap != null)
+                                        {
+                                            newMat.SetTexture("_MainTex", texRecord.Value.albedoMap);
+                                        }
+
+                                        if (texRecord.Value.normalMap != null)
+                                        {
+                                            newMat.SetTexture("_BumpMap", texRecord.Value.normalMap);
+                                        }
+
+                                        m = newMat;
+                                    }
+                                    else
+                                    {
+                                        Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                                        newMat.CopyPropertiesFromMaterial(cmat.material);
+                                        newMat.name = cmat.material.name;
+                                        Texture tex = GameObject.Find("ReflectionPlaneBottom").GetComponent<MirrorReflection>().m_ReflectionTexture;
+                                        if (tex)
+                                        {
+                                            newMat.SetTexture("_ReflectionGroundTex", tex);
+                                        }
+                                        tex = GameObject.Find("ReflectionPlaneSeaLevel").GetComponent<MirrorReflection>().m_ReflectionTexture;
+                                        if (tex)
+                                        {
+                                            newMat.SetTexture("_ReflectionLowerLevelTex", tex);
+                                        }
+                                        newMat.EnableKeyword("USE_METALLICGLOSSMAP");
+                                        newMat.SetTexture("_MetallicGlossMap", texRecord.Value.metallicGlossMap);
+
+                                        if (texRecord.Value.albedoMap != null)
+                                        {
+                                            newMat.SetTexture("_MainTex", texRecord.Value.albedoMap);
+                                        }
+
+                                        if (texRecord.Value.normalMap != null)
+                                        {
+                                            newMat.SetTexture("_BumpMap", texRecord.Value.normalMap);
+                                        }
+
+                                        m = newMat;
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                        }
+                        mats[i] = m;
+                    }
+                    r.sharedMaterials = mats;
+                }
+            }            
         }
 
         void InjectMaterialPropertiesOutdoor()
@@ -400,7 +543,7 @@ namespace ReflectionsMod
         }
 
         void updateMaterial(int archive, int record, int frame, Texture2D albedoMap, Texture2D normalMap, Texture2D metallicGlossMap)
-        {
+        {            
             CachedMaterial cmat;
             if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
             {
