@@ -3,7 +3,6 @@
 //http://www.dfworkshop.net/
 //Author: Michael Rauter (a.k.a. Nystul)
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
-//Version: 1.54
 
 Shader "Daggerfall/IncreasedTerrainTilemap" {
 	Properties {

@@ -953,7 +953,7 @@ namespace DaggerfallWorkshop.Game
             //{
             //    if (oldGeometryName != newGeometryName)
             //    {
-            //        UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+            //        UnityEngine.Object.Destroy(gameobjectGeometry);
             //    }
             //    else
             //    {
@@ -1017,7 +1017,7 @@ namespace DaggerfallWorkshop.Game
             //{
             //    if (oldGeometryName != newGeometryName)
             //    {
-            //        UnityEngine.Object.DestroyImmediate(gameobjectGeometry);
+            //        UnityEngine.Object.Destroy(gameobjectGeometry);
             //    }
             //    else
             //    {

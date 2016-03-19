@@ -3,19 +3,9 @@
 //http://www.dfworkshop.net/
 //Author: Michael Rauter (a.k.a. Nystul)
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
-//Version: 1.54
 
 using UnityEngine;
-//using System;
-//using System.Collections;
-//using System.Collections.Generic;
-//using System.IO;
-//using DaggerfallConnect;
-//using DaggerfallConnect.Arena2;
-//using DaggerfallConnect.Utility;
-//using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
-//using DaggerfallWorkshop.Utility;
 
 namespace ProjectIncreasedTerrainDistance
 {
