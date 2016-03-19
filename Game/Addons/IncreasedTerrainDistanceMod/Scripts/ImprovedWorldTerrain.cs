@@ -3,7 +3,6 @@
 //http://www.dfworkshop.net/
 //Author: Michael Rauter (a.k.a. Nystul)
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
-//Version: 1.54
 
 // only define CREATE_* if you want to manually create the maps - usually this should not be necessary (and never do in executable build - only from editor - otherwise paths are wrong)
 //#define CREATE_PERSISTENT_LOCATION_RANGE_MAPS 
