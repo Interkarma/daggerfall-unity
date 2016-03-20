@@ -29,7 +29,7 @@ namespace ReflectionsMod
         private Texture texReflectionGround = null;
         private Texture texReflectionLowerLevel = null;
         private bool playerInside = false;
-        private enum InsideSpecification {Building, DungeonOrPalace, Unknown};
+        private enum InsideSpecification { Building, DungeonOrPalace, Unknown };
         InsideSpecification whereInside = InsideSpecification.Unknown;
         private GameObject gameObjectInterior = null;
         private GameObject gameObjectDungeon = null;
@@ -90,6 +90,22 @@ namespace ReflectionsMod
                 path = "/" + obj.name + path;
             }
             return path;
+        }
+
+        void Awake()
+        {
+            StreamingWorld.OnInitWorld += InjectMaterialProperties;
+            StreamingWorld.OnTeleportToCoordinates += InjectMaterialProperties;
+            FloatingOrigin.OnPositionUpdate += InjectMaterialProperties;
+            DaggerfallTerrain.OnInstantiateTerrain += InjectMaterialProperties;
+        }
+
+        void OnDestroy()
+        {
+            StreamingWorld.OnInitWorld -= InjectMaterialProperties;
+            StreamingWorld.OnTeleportToCoordinates -= InjectMaterialProperties;
+            FloatingOrigin.OnPositionUpdate -= InjectMaterialProperties;
+            DaggerfallTerrain.OnInstantiateTerrain -= InjectMaterialProperties;
         }
 
         void Start()
@@ -164,7 +180,7 @@ namespace ReflectionsMod
 
                 // transition: dungeon/palace -> building
                 if ((GameManager.Instance.IsPlayerInsideBuilding) && (whereInside == InsideSpecification.DungeonOrPalace))
-                {                    
+                {
                     gameObjectInterior = GameObject.Find("Interior");
                     gameObjectDungeon = null;
                     InjectMaterialPropertiesIndoor();
@@ -172,8 +188,8 @@ namespace ReflectionsMod
                     whereInside = InsideSpecification.Building;
                 }
                 // transition: building -> dungeon/palace
-                else if (((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsidePalace)) && (whereInside == InsideSpecification.Building))
-                {                    
+                else if (((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace)) && (whereInside == InsideSpecification.Building))
+                {
                     gameObjectDungeon = GameObject.Find("Dungeon");
                     gameObjectInterior = null;
                     InjectMaterialPropertiesIndoor();
@@ -199,7 +215,7 @@ namespace ReflectionsMod
                     DaggerfallTerrain dfTerrain = child.GetComponent<DaggerfallTerrain>();
                     if (!dfTerrain)
                         continue;
-  
+
                     Terrain terrain = child.GetComponent<Terrain>();
                     if (terrain)
                     {
@@ -215,7 +231,7 @@ namespace ReflectionsMod
                 }
             }
             else if (GameManager.Instance.IsPlayerInside)
-            {              
+            {
                 Renderer[] renderers = null;
                 // renderers must be aquired here and not in Update() because it seems that this function's execution can happen in parallel to Update() - so a concurrent conflict can occur (and does)
                 if (gameObjectInterior != null)
@@ -314,7 +330,7 @@ namespace ReflectionsMod
             }
 
             // force update to textures loaded in current interior/dungeon models            
-            Renderer[] renderers = null;            
+            Renderer[] renderers = null;
             if (GameManager.Instance.IsPlayerInsideBuilding)
             {
                 renderers = gameObjectInterior.GetComponentsInChildren<Renderer>();
@@ -329,7 +345,7 @@ namespace ReflectionsMod
                 foreach (Renderer r in renderers)
                 {
                     Material[] mats = r.sharedMaterials;
-                    for (int i=0; i<mats.Length; i++)
+                    for (int i = 0; i < mats.Length; i++)
                     {
                         Material m = mats[i];
                         try
@@ -343,7 +359,7 @@ namespace ReflectionsMod
                             int record = Convert.ToInt32(tmp);
                             int frame = 0;
 
-                            TextureRecord ?texRecord = listInjectedTextures.Find(x => (x.archive == archive) && (x.record == record) && (x.frame == frame));
+                            TextureRecord? texRecord = listInjectedTextures.Find(x => (x.archive == archive) && (x.record == record) && (x.frame == frame));
                             if (texRecord != null)
                             {
                                 CachedMaterial cmat;
@@ -357,7 +373,7 @@ namespace ReflectionsMod
                                         if (texReflectionGround)
                                         {
                                             newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
-                                        }                                       
+                                        }
                                         if (texReflectionLowerLevel)
                                         {
                                             newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
@@ -415,7 +431,7 @@ namespace ReflectionsMod
                     }
                     r.sharedMaterials = mats;
                 }
-            }            
+            }
         }
 
         void InjectMaterialPropertiesOutdoor()
@@ -464,7 +480,7 @@ namespace ReflectionsMod
 
                         newMat.SetTexture("_ReflectionSeaTex", texReflectionLowerLevel);
 
-                        newMat.SetFloat("_SeaLevelHeight", gameObjectReflectionPlaneSeaLevel.transform.position.y);                            
+                        newMat.SetFloat("_SeaLevelHeight", gameObjectReflectionPlaneSeaLevel.transform.position.y);
 
                         WeatherManager weatherManager = GameObject.Find("WeatherManager").GetComponent<WeatherManager>();
                         if (!weatherManager.IsRaining)
@@ -519,7 +535,7 @@ namespace ReflectionsMod
         }
 
         void updateMaterial(int archive, int record, int frame, Texture2D albedoMap, Texture2D normalMap, Texture2D metallicGlossMap)
-        {            
+        {
             CachedMaterial cmat;
             if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
             {
@@ -552,5 +568,36 @@ namespace ReflectionsMod
             }
         }
 
+        //overloaded variant
+        void InjectMaterialProperties(DaggerfallTerrain sender)
+        {
+            InjectMaterialProperties(-1, -1);
+        }
+
+        //overloaded variant
+        void InjectMaterialProperties(DFPosition worldPos)
+        {
+            InjectMaterialProperties(worldPos.X, worldPos.Y);
+        }
+
+        //overloaded variant
+        void InjectMaterialProperties(Vector3 offset)
+        {
+            InjectMaterialProperties();
+        }
+
+        //overloaded variant
+        void InjectMaterialProperties()
+        {
+            InjectMaterialProperties(-1, -1);
+        }
+
+        void InjectMaterialProperties(int worldPosX, int worldPosY)
+        {
+            if (!GameManager.Instance.IsPlayerInside)
+            {
+                InjectMaterialPropertiesOutdoor();
+            }
+        }
     }
 }
