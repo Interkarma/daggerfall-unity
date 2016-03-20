@@ -318,6 +318,8 @@ namespace ReflectionsMod
 
         void OnDestroy()
         {
+            if (!DaggerfallUnity.Settings.Nystul_RealtimeReflections)
+                return;
             PlayerEnterExit.OnTransitionInterior -= OnTransitionToInterior;
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToInterior;

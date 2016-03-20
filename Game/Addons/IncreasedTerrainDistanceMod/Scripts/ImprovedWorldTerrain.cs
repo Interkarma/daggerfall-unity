@@ -39,7 +39,7 @@ namespace ProjectIncreasedTerrainDistance
 
         const float minDistanceFromWaterForExtraExaggeration = 3.0f; // when does exaggeration start in terms of how far does terrain have to be away from water
         const float exaggerationFactorWaterDistance = 0.15f; // how strong is the distance from water incorporated into the multiplier
-        const float extraExaggerationFactorLocationDistance = 0.00075f; // how strong is the distance from locations incorporated into the multiplier
+        const float extraExaggerationFactorLocationDistance = 0.0275f; // how strong is the distance from locations incorporated into the multiplier
         const float maxHeightsExaggerationMultiplier = 25.0f; // this directly affects maxTerrainHeight in TerrainHelper.cs: maxTerrainHeight should be maxHeightsExaggerationMultiplier * baseHeightScale * 128 + noiseMapScale * 128 + extraNoiseScale
 
         // 2D distance transform image - squared distance to water pixels of the world map
@@ -307,7 +307,7 @@ namespace ProjectIncreasedTerrainDistance
                         for (int x = 0; x < width; x++)
                         {
                             ContentReader.MapSummary summary;
-                            if (contentReader.HasLocation(x + 1, height - 1 - y, out summary))
+                            if (contentReader.HasLocation(x + 1, y+1, out summary))
                                 mapLocations[y * width + x] = 1;
                             else
                                 mapLocations[y * width + x] = 0;
