@@ -12,13 +12,8 @@
 using UnityEngine;
 using System;
 using System.Globalization;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
-using DaggerfallConnect.Utility;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
 using IniParser;
 using IniParser.Model;
@@ -27,9 +22,10 @@ namespace DaggerfallWorkshop
 {
     /// <summary>
     /// Settings manager for reading game configuration from INI file.
-    /// Can read from settings.ini in persistent data directory
-    /// Deploys default settings to persistent data directory if not present.
-    /// For any setting failing a read (or settings.ini missing), defaults.ini will be used instead.
+    /// Deploys new settings from Resources/defaults.ini to persistentDataPath/settings.ini.
+    /// Settings no longer present in defaults.ini are removed from settings.ini.
+    /// Reads on start to public property cache. This prevents expensive string parsing if property checked every frame.
+    /// Transfers settings from public property cache back to ini data on save.
     /// </summary>
     public class SettingsManager
     {
@@ -50,266 +46,167 @@ namespace DaggerfallWorkshop
 
         public SettingsManager()
         {
-            ReadSettings();
+            LoadSettings();
         }
 
-        #region Settings Properties
+        #region Public Settings Properties
 
         // [Daggerfall]
-
-        public string MyDaggerfallPath
-        {
-            get { return GetString(sectionDaggerfall, "MyDaggerfallPath"); }
-            set { SetString(sectionDaggerfall, "MyDaggerfallPath", value); }
-        }
-
-        public string MyDaggerfallUnitySavePath
-        {
-            get { return GetString(sectionDaggerfall, "MyDaggerfallUnitySavePath"); }
-            set { SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", value); }
-        }
+        public string MyDaggerfallPath { get; set; }
+        public string MyDaggerfallUnitySavePath { get; set; }
 
         // [Video]
-
-        public int ResolutionWidth
-        {
-            get { return GetInt(sectionVideo, "ResolutionWidth"); }
-            set { SetInt(sectionVideo, "ResolutionWidth", value); }
-        }
-
-        public int ResolutionHeight
-        {
-            get { return GetInt(sectionVideo, "ResolutionHeight"); }
-            set { SetInt(sectionVideo, "ResolutionHeight", value); }
-        }
-
-        public bool VSync
-        {
-            get { return GetBool(sectionVideo, "VSync"); }
-            set { SetBool(sectionVideo, "VSync", value); }
-        }
-
-        public bool Fullscreen
-        {
-            get { return GetBool(sectionVideo, "Fullscreen"); }
-            set { SetBool(sectionVideo, "Fullscreen", value); }
-        }
-
-        public int FieldOfView
-        {
-            get { return GetInt(sectionVideo, "FieldOfView", 60, 80); }
-            set { SetInt(sectionVideo, "FieldOfView", value); }
-        }
-
-        public int MainFilterMode
-        {
-            get { return GetInt(sectionVideo, "MainFilterMode", 0, 2); }
-            set { SetInt(sectionVideo, "MainFilterMode", value); }
-        }
-
-        public int Qualitylevel
-        {
-            get { return GetInt(sectionVideo, "QualityLevel", 0, 5); }
-            set { SetInt(sectionVideo, "QualityLevel", value); }
-        }
-
-        public bool UseLegacyDeferred
-        {
-            get { return GetBool(sectionVideo, "UseLegacyDeferred"); }
-            set { SetBool(sectionVideo, "UseLegacyDeferred", value); }
-        }
+        public int ResolutionWidth { get; set; }
+        public int ResolutionHeight { get; set; }
+        public bool VSync { get; set; }
+        public bool Fullscreen { get; set; }
+        public int FieldOfView { get; set; }
+        public int MainFilterMode { get; set; }
+        public int QualityLevel { get; set; }
+        public bool UseLegacyDeferred { get; set; }
 
         // [ChildGuard]
-
-        public bool PlayerNudity
-        {
-            get { return GetBool(sectionChildGuard, "PlayerNudity"); }
-            set { SetBool(sectionChildGuard, "PlayerNudity", value); }
-        }
+        public bool PlayerNudity { get; set; }
 
         // [GUI]
-
-        public int GUIFilterMode
-        {
-            get { return GetInt(sectionGUI, "GUIFilterMode", 0, 2); }
-            set { SetInt(sectionGUI, "GUIFilterMode", value); }
-        }
-
-        public int VideoFilterMode
-        {
-            get { return GetInt(sectionGUI, "VideoFilterMode"); }
-            set { SetInt(sectionGUI, "VideoFilterMode", value); }
-        }
-
-        public bool Crosshair
-        {
-            get { return GetBool(sectionGUI, "Crosshair"); }
-            set { SetBool(sectionGUI, "Crosshair", value); }
-        }
-
-        public bool SwapHealthAndFatigueColors
-        {
-            get { return GetBool(sectionGUI, "SwapHealthAndFatigueColors"); }
-            set { SetBool(sectionGUI, "SwapHealthAndFatigueColors", value); }
-        }
-
-        public float DimAlphaStrength
-        {
-            get { return GetFloat(sectionGUI, "DimAlphaStrength", 0, 1); }
-            set { SetFloat(sectionGUI, "DimAlphaStrength", value); }
-        }
-
-        public bool FreeScaling
-        {
-            get { return GetBool(sectionGUI, "FreeScaling"); }
-            set { SetBool(sectionGUI, "FreeScaling", value); }
-        }
-
-        public bool EnableToolTips
-        {
-            get { return GetBool(sectionGUI, "EnableToolTips"); }
-            set { SetBool(sectionGUI, "EnableToolTips", value); }
-        }
-
-        public float ToolTipDelayInSeconds
-        {
-            get { return GetFloat(sectionGUI, "ToolTipDelayInSeconds", 0, 10); }
-            set { SetFloat(sectionGUI, "ToolTipDelayInSeconds", value); }
-        }
-
-        public Color32 ToolTipBackgroundColor
-        {
-            get { return GetColor(sectionGUI, "ToolTipBackgroundColor", DaggerfallUI.DaggerfallUnityDefaultToolTipBackgroundColor); }
-            set { SetColor(sectionGUI, "ToolTipBackgroundColor", value); }
-        }
-
-        public Color32 ToolTipTextColor
-        {
-            get { return GetColor(sectionGUI, "ToolTipTextColor", DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor); }
-            set { SetColor(sectionGUI, "ToolTipTextColor", value); }
-        }
+        public int GUIFilterMode { get; set; }
+        public int VideoFilterMode { get; set; }
+        public bool Crosshair { get; set; }
+        public bool SwapHealthAndFatigueColors { get; set; }
+        public float DimAlphaStrength { get; set; }
+        public bool FreeScaling { get; set; }
+        public bool EnableToolTips { get; set; }
+        public float ToolTipDelayInSeconds { get; set; }
+        public Color32 ToolTipBackgroundColor { get; set; }
+        public Color32 ToolTipTextColor { get; set; }
 
         // [Controls]
-
-        public bool InvertMouseVertical
-        {
-            get { return GetBool(sectionControls, "InvertMouseVertical"); }
-            set { SetBool(sectionControls, "InvertMouseVertical", value); }
-        }
-
-        public bool MouseLookSmoothing
-        {
-            get { return GetBool(sectionControls, "MouseLookSmoothing"); }
-            set { SetBool(sectionControls, "MouseLookSmoothing", value); }
-        }
-
-        public float MouseLookSensitivity
-        {
-            get { return GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f); }
-            set { SetFloat(sectionControls, "MouseLookSensitivity", value); }
-        }
-
-        public bool HeadBobbing
-        {
-            get { return GetBool(sectionControls, "HeadBobbing"); }
-            set { SetBool(sectionControls, "HeadBobbing", value); }
-        }
-
-        public bool LeftHandWeapons
-        {
-            get { return GetBool(sectionControls, "LeftHandWeapons"); }
-            set { SetBool(sectionControls, "LeftHandWeapons", value); }
-        }
-
-        public float WeaponSwingThreshold
-        {
-            get { return GetFloat(sectionControls, "WeaponSwingThreshold", 0.1f, 1.0f); }
-            set { SetFloat(sectionControls, "WeaponSwingThreshold", value); }
-        }
-
-        public int WeaponSwingTriggerCount
-        {
-            get { return GetInt(sectionControls, "WeaponSwingTriggerCount", 1, 10); }
-            set { SetInt(sectionControls, "WeaponSwingTriggerCount", value); }
-        }
+        public bool InvertMouseVertical { get; set; }
+        public bool MouseLookSmoothing { get; set; }
+        public float MouseLookSensitivity { get; set; }
+        public bool HeadBobbing { get; set; }
+        public bool LeftHandWeapons { get; set; }
+        public float WeaponSwingThreshold { get; set; }
+        public int WeaponSwingTriggerCount { get; set; }
 
         // [Startup]
-
-        public int StartCellX
-        {
-            get { return GetInt(sectionStartup, "StartCellX", 2, 997); }
-            set { SetInt(sectionStartup, "StartCellX", value); }
-        }
-
-        public int StartCellY
-        {
-            get { return GetInt(sectionStartup, "StartCellY", 2, 497); }
-            set { SetInt(sectionStartup, "StartCellY", value); }
-        }
-
-        public bool StartInDungeon
-        {
-            get { return GetBool(sectionStartup, "StartInDungeon"); }
-            set { SetBool(sectionStartup, "StartInDungeon", value); }
-        }
+        public int StartCellX { get; set; }
+        public int StartCellY { get; set; }
+        public bool StartInDungeon { get; set; }
 
         // [Enhancements]
-
-        public bool LypyL_GameConsole
-        {
-            get { return GetBool(sectionEnhancements, "LypyL_GameConsole"); }
-            set { SetBool(sectionEnhancements, "LypyL_GameConsole", value); }
-        }
-
-        public bool LypyL_EnhancedSky
-        {
-            get { return GetBool(sectionEnhancements, "LypyL_EnhancedSky"); }
-            set { SetBool(sectionEnhancements, "LypyL_EnhancedSky", value); }
-        }
-
-        public bool Nystul_IncreasedTerrainDistance
-        {
-            get { return GetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance"); }
-            set { SetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance", value); }
-        }
-
-        public bool Nystul_RealtimeReflections
-        {
-            get { return GetBool(sectionEnhancements, "Nystul_RealtimeReflections"); }
-            set { SetBool(sectionEnhancements, "Nystul_RealtimeReflections", value); }
-        }
-
-        public bool UncannyValley_RealGrass
-        {
-            get { return GetBool(sectionEnhancements, "UncannyValley_RealGrass"); }
-            set { SetBool(sectionEnhancements, "UncannyValley_RealGrass", value); }
-        }
-
-        public bool UncannyValley_BirdsInDaggerfall
-        {
-            get { return GetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall"); }
-            set { SetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall", value); }
-        }
+        public bool LypyL_GameConsole { get; set; }
+        public bool LypyL_EnhancedSky { get; set; }
+        public bool Nystul_IncreasedTerrainDistance { get; set; }
+        public bool Nystul_RealtimeReflections { get; set; }
+        public bool UncannyValley_RealGrass { get; set; }
+        public bool UncannyValley_BirdsInDaggerfall { get; set; }
 
         #endregion
 
         #region Public Methods
 
-        public void RereadSettings()
+        /// <summary>
+        /// Load settings from settings.ini to live properties.
+        /// </summary>
+        public void LoadSettings()
         {
-            ReadSettings();
+            // Read settings from persistent file
+            ReadSettingsFile();
+
+            // Read ini data to property cache
+            MyDaggerfallPath = GetString(sectionDaggerfall, "MyDaggerfallPath");
+            MyDaggerfallUnitySavePath = GetString(sectionDaggerfall, "MyDaggerfallUnitySavePath");
+            ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
+            ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
+            VSync = GetBool(sectionVideo, "VSync");
+            Fullscreen = GetBool(sectionVideo, "Fullscreen");
+            FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
+            MainFilterMode = GetInt(sectionVideo, "MainFilterMode", 0, 2);
+            QualityLevel = GetInt(sectionVideo, "QualityLevel", 0, 5);
+            UseLegacyDeferred = GetBool(sectionVideo, "UseLegacyDeferred");
+            PlayerNudity = GetBool(sectionChildGuard, "PlayerNudity");
+            GUIFilterMode = GetInt(sectionGUI, "GUIFilterMode", 0, 2);
+            VideoFilterMode = GetInt(sectionGUI, "VideoFilterMode");
+            Crosshair = GetBool(sectionGUI, "Crosshair");
+            SwapHealthAndFatigueColors = GetBool(sectionGUI, "SwapHealthAndFatigueColors");
+            DimAlphaStrength = GetFloat(sectionGUI, "DimAlphaStrength", 0, 1);
+            FreeScaling = GetBool(sectionGUI, "FreeScaling");
+            EnableToolTips = GetBool(sectionGUI, "EnableToolTips");
+            ToolTipDelayInSeconds = GetFloat(sectionGUI, "ToolTipDelayInSeconds", 0, 10);
+            ToolTipBackgroundColor = GetColor(sectionGUI, "ToolTipBackgroundColor", DaggerfallUI.DaggerfallUnityDefaultToolTipBackgroundColor);
+            ToolTipTextColor = GetColor(sectionGUI, "ToolTipTextColor", DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor);
+            InvertMouseVertical = GetBool(sectionControls, "InvertMouseVertical");
+            MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
+            MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f);
+            HeadBobbing = GetBool(sectionControls, "HeadBobbing");
+            LeftHandWeapons = GetBool(sectionControls, "LeftHandWeapons");
+            WeaponSwingThreshold = GetFloat(sectionControls, "WeaponSwingThreshold", 0.1f, 1.0f);
+            WeaponSwingTriggerCount = GetInt(sectionControls, "WeaponSwingTriggerCount", 1, 10);
+            StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
+            StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
+            StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
+            LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
+            LypyL_EnhancedSky = GetBool(sectionEnhancements, "LypyL_EnhancedSky");
+            Nystul_IncreasedTerrainDistance = GetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance");
+            Nystul_RealtimeReflections = GetBool(sectionEnhancements, "Nystul_RealtimeReflections");
+            UncannyValley_RealGrass = GetBool(sectionEnhancements, "UncannyValley_RealGrass");
+            UncannyValley_BirdsInDaggerfall = GetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall");
         }
 
+        /// <summary>
+        /// Save live properties back to settings.ini.
+        /// </summary>
         public void SaveSettings()
         {
-            WriteSettings();
+            // Write property cache to ini data
+            SetString(sectionDaggerfall, "MyDaggerfallPath", MyDaggerfallPath);
+            SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", MyDaggerfallUnitySavePath);
+            SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
+            SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);
+            SetBool(sectionVideo, "VSync", VSync);
+            SetBool(sectionVideo, "Fullscreen", Fullscreen);
+            SetInt(sectionVideo, "FieldOfView", FieldOfView);
+            SetInt(sectionVideo, "MainFilterMode", MainFilterMode);
+            SetInt(sectionVideo, "QualityLevel", QualityLevel);
+            SetBool(sectionVideo, "UseLegacyDeferred", UseLegacyDeferred);
+            SetBool(sectionChildGuard, "PlayerNudity", PlayerNudity);
+            SetInt(sectionGUI, "GUIFilterMode", GUIFilterMode);
+            SetInt(sectionGUI, "VideoFilterMode", VideoFilterMode);
+            SetBool(sectionGUI, "Crosshair", Crosshair);
+            SetBool(sectionGUI, "SwapHealthAndFatigueColors", SwapHealthAndFatigueColors);
+            SetFloat(sectionGUI, "DimAlphaStrength", DimAlphaStrength);
+            SetBool(sectionGUI, "FreeScaling", FreeScaling);
+            SetBool(sectionGUI, "EnableToolTips", EnableToolTips);
+            SetFloat(sectionGUI, "ToolTipDelayInSeconds", ToolTipDelayInSeconds);
+            SetColor(sectionGUI, "ToolTipBackgroundColor", ToolTipBackgroundColor);
+            SetColor(sectionGUI, "ToolTipTextColor", ToolTipTextColor);
+            SetBool(sectionControls, "InvertMouseVertical", InvertMouseVertical);
+            SetBool(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
+            SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);
+            SetBool(sectionControls, "HeadBobbing", HeadBobbing);
+            SetBool(sectionControls, "LeftHandWeapons", LeftHandWeapons);
+            SetFloat(sectionControls, "WeaponSwingThreshold", WeaponSwingThreshold);
+            SetInt(sectionControls, "WeaponSwingTriggerCount", WeaponSwingTriggerCount);
+            SetInt(sectionStartup, "StartCellX", StartCellX);
+            SetInt(sectionStartup, "StartCellY", StartCellY);
+            SetBool(sectionStartup, "StartInDungeon", StartInDungeon);
+            SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
+            SetBool(sectionEnhancements, "LypyL_EnhancedSky", LypyL_EnhancedSky);
+            SetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance", Nystul_IncreasedTerrainDistance);
+            SetBool(sectionEnhancements, "Nystul_RealtimeReflections", Nystul_RealtimeReflections);
+            SetBool(sectionEnhancements, "UncannyValley_RealGrass", UncannyValley_RealGrass);
+            SetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall", UncannyValley_BirdsInDaggerfall);
+
+            // Write settings to persistent file
+            WriteSettingsFile();
         }
 
         #endregion
 
         #region Private Methods
 
-        void ReadSettings()
+        void ReadSettingsFile()
         {
             // Load defaults.ini
             TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
@@ -335,7 +232,7 @@ namespace DaggerfallWorkshop
             SyncIniData();
         }
 
-        void WriteSettings()
+        void WriteSettingsFile()
         {
             if (iniParser != null)
             {
@@ -508,7 +405,7 @@ namespace DaggerfallWorkshop
             }
 
             // Write updated settings
-            WriteSettings();
+            WriteSettingsFile();
         }
 
         void AddSections(IniData srcData, IniData dstData)

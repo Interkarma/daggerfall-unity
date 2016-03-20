@@ -333,7 +333,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 qualityList.AddItem(name);
             }
-            qualityList.SelectedIndex = DaggerfallUnity.Settings.Qualitylevel;
+            qualityList.SelectedIndex = DaggerfallUnity.Settings.QualityLevel;
 
             // Test/confirm button
             testOrConfirmButton.Position = new Vector2(0, 160);
@@ -617,7 +617,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.ResolutionWidth = selectedResolution.width;
                 DaggerfallUnity.Settings.ResolutionHeight = selectedResolution.height;
                 DaggerfallUnity.Settings.Fullscreen = fullscreenCheckbox.IsChecked;
-                DaggerfallUnity.Settings.Qualitylevel = qualityList.SelectedIndex;
+                DaggerfallUnity.Settings.QualityLevel = qualityList.SelectedIndex;
                 moveNextStage = true;
             }
         }
