@@ -410,7 +410,12 @@ namespace ProjectIncreasedTerrainDistance
                 isActiveEnhancedSkyMod = true;
 
             if (GameObject.Find("ReflectionsMod") != null)
-                isActiveReflectionsMod = true;
+            {
+                if (DaggerfallUnity.Settings.Nystul_RealtimeReflections)
+                {
+                    isActiveReflectionsMod = true;
+                }
+            }
 
             SetUpCameras();
 
@@ -428,6 +433,9 @@ namespace ProjectIncreasedTerrainDistance
 
         void OnDestroy()
         {
+            if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
+                return;
+
             ImprovedWorldTerrain.Unload();
 
             worldHeights = null;
@@ -611,6 +619,9 @@ namespace ProjectIncreasedTerrainDistance
 
         void Update()
         {
+            if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
+                return;
+
             if (worldTerrainGameObject != null)
             {
                 // TODO: make sure this block is not executed when in floating origin mode (otherwise position update is done twice)
