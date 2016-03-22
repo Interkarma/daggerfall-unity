@@ -503,8 +503,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Enumerate items to group lists
             foreach(DaggerfallUnityItem item in playerItems)
             {
-                if (item.itemGroup == ItemGroups.Weapons || item.itemGroup == ItemGroups.Armor ||
-                    item.itemGroup == ItemGroups.MensClothing || item.itemGroup == ItemGroups.WomensClothing)     // Testing
+                if (item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Armor ||
+                    item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)     // Testing
                 {
                     weaponsAndArmorList.Add(item);
                 }

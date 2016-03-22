@@ -56,8 +56,8 @@ namespace DaggerfallWorkshop.Game.Items
         public ItemHands GetItemHands(DaggerfallUnityItem item)
         {
             // Must be of group Weapons or Armor (for shields)
-            if (item.itemGroup != ItemGroups.Weapons &&
-                item.itemGroup != ItemGroups.Armor)
+            if (item.ItemGroup != ItemGroups.Weapons &&
+                item.ItemGroup != ItemGroups.Armor)
             {
                 return ItemHands.None;
             }
@@ -105,14 +105,6 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets item template data from an item.
-        /// </summary>
-        public ItemTemplate GetItemTemplate(DaggerfallUnityItem item)
-        {
-            return GetItemTemplate(item.itemGroup, item.itemIndex);
-        }
-
-        /// <summary>
         /// Gets item template data using group and index.
         /// </summary>
         public ItemTemplate GetItemTemplate(ItemGroups group, int index)
@@ -145,7 +137,7 @@ namespace DaggerfallWorkshop.Game.Items
             result = result.Replace("%it", template.name);
 
             // Resolve weapon material
-            if (item.itemGroup == ItemGroups.Weapons)
+            if (item.ItemGroup == ItemGroups.Weapons)
             {
                 WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName(weaponMaterial);
@@ -153,7 +145,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Resolve armor material
-            if (item.itemGroup == ItemGroups.Armor)
+            if (item.ItemGroup == ItemGroups.Armor)
             {
                 ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName(armorMaterial);
@@ -201,11 +193,11 @@ namespace DaggerfallWorkshop.Game.Items
                 data.dfBitmap = ImageProcessing.ChangeMask(data.dfBitmap);
 
             // Change dye or just update texture
-            ItemGroups group = item.itemGroup;
+            ItemGroups group = item.ItemGroup;
             DyeColors dye = (DyeColors)color;
             if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
                 data = ChangeDye(data, dye, DyeTargets.WeaponsAndArmor);
-            else if (item.itemGroup == ItemGroups.MensClothing || item.itemGroup == ItemGroups.WomensClothing)
+            else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
                 data = ChangeDye(data, dye, DyeTargets.Clothing);
             else
                 ImageReader.UpdateTexture(ref data);
@@ -311,7 +303,7 @@ namespace DaggerfallWorkshop.Game.Items
         public MetalTypes ConvertItemMaterialToAPIMetalType(DaggerfallUnityItem item)
         {
             // Determine metal type
-            if (item.itemGroup == ItemGroups.Weapons)
+            if (item.ItemGroup == ItemGroups.Weapons)
             {
                 WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)item.nativeMaterialValue;
                 switch (weaponMaterial)
@@ -340,7 +332,7 @@ namespace DaggerfallWorkshop.Game.Items
                         return MetalTypes.None;
                 }
             }
-            else if (item.itemGroup == ItemGroups.Armor)
+            else if (item.ItemGroup == ItemGroups.Armor)
             {
                 ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)item.nativeMaterialValue;
                 switch (armorMaterial)

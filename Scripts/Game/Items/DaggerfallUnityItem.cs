@@ -25,9 +25,8 @@ namespace DaggerfallWorkshop.Game.Items
     {
         #region Fields
 
+        // Public item values
         public string shortName;
-        public ItemGroups itemGroup;
-        public int itemIndex;
         public int playerTextureArchive;
         public int playerTextureRecord;
         public int nativeMaterialValue;
@@ -43,11 +42,15 @@ namespace DaggerfallWorkshop.Game.Items
         //int message;
         //int[] magic;
 
+        // Private item values
+        ItemGroups itemGroup;
+        int itemIndex;
+
         // Item template is cached for faster checks
         // Does not need to be serialized
-        ItemTemplate cachedItemTemplate;
-        ItemGroups cachedItemGroup = ItemGroups.None;
-        int cachedItemIndex = -1;
+        [NonSerialized] ItemTemplate cachedItemTemplate;
+        [NonSerialized] ItemGroups cachedItemGroup = ItemGroups.None;
+        [NonSerialized] int cachedItemIndex = -1;
 
         // Temp
         EquipSlots equipSlot = EquipSlots.None;
@@ -55,6 +58,26 @@ namespace DaggerfallWorkshop.Game.Items
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets item group.
+        /// Setting will reset item data from new template.
+        /// </summary>
+        public ItemGroups ItemGroup
+        {
+            get { return itemGroup; }
+            set { SetItem(value, itemIndex); }
+        }
+
+        /// <summary>
+        /// Gets or sets item index.
+        /// Setting will reset item data from new template.
+        /// </summary>
+        public int ItemIndex
+        {
+            get { return itemIndex; }
+            set { SetItem(itemGroup, value); }
+        }
 
         /// <summary>
         /// Get this item's template data.
@@ -100,9 +123,20 @@ namespace DaggerfallWorkshop.Game.Items
         {
         }
 
+        /// <summary>
+        /// Construct from item group and index.
+        /// </summary>
         public DaggerfallUnityItem(ItemGroups itemGroup, int itemIndex)
         {
-            FromItemIndices(itemGroup, itemIndex);
+            SetItem(itemGroup, itemIndex);
+        }
+
+        /// <summary>
+        /// Construct from another item.
+        /// </summary>
+        public DaggerfallUnityItem(DaggerfallUnityItem item)
+        {
+            FromItem(item);
         }
 
         /// <summary>
@@ -118,29 +152,6 @@ namespace DaggerfallWorkshop.Game.Items
         #region Public Methods
 
         /// <summary>
-        /// Creates a new copy of this item.
-        /// </summary>
-        /// <returns>New DaggerfallUnityItem.</returns>
-        public DaggerfallUnityItem Clone()
-        {
-            // Create new item
-            DaggerfallUnityItem newItem = new DaggerfallUnityItem();
-
-            // Copy local data
-            newItem.shortName = shortName;
-            newItem.itemGroup = itemGroup;
-            newItem.itemIndex = itemIndex;
-            newItem.playerTextureArchive = playerTextureArchive;
-            newItem.playerTextureRecord = playerTextureRecord;
-            newItem.nativeMaterialValue = nativeMaterialValue;
-            newItem.dyeColor = dyeColor;
-            newItem.weightInKg = weightInKg;
-            newItem.drawOrder = drawOrder;
-
-            return newItem;
-        }
-
-        /// <summary>
         /// Checks if item matches specified template group and index.
         /// </summary>
         /// <param name="group">Item group.</param>
@@ -154,11 +165,22 @@ namespace DaggerfallWorkshop.Game.Items
                 return false;
         }
 
-        #endregion
+        /// <summary>
+        /// Creates a new copy of this item.
+        /// </summary>
+        /// <returns></returns>
+        public DaggerfallUnityItem Clone()
+        {
+            return new DaggerfallUnityItem(this);
+        }
 
-        #region Private Methods
-
-        void FromItemIndices(ItemGroups group, int index)
+        /// <summary>
+        /// Sets item from group and index.
+        /// Resets item data from new template.
+        /// </summary>
+        /// <param name="group">Item group.</param>
+        /// <param name="index">Item index.</param>
+        public void SetItem(ItemGroups group, int index)
         {
             // Get template data
             ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(group, index);
@@ -173,6 +195,32 @@ namespace DaggerfallWorkshop.Game.Items
             dyeColor = DyeColors.Unchanged;
             weightInKg = itemTemplate.baseWeight;
             drawOrder = itemTemplate.drawOrderOrEffect;
+
+            // Fix leather helms
+            FixHelm();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Creates from another item instance.
+        /// </summary>
+        void FromItem(DaggerfallUnityItem other)
+        {
+            shortName = other.shortName;
+            itemGroup = other.itemGroup;
+            itemIndex = other.itemIndex;
+            playerTextureArchive = other.playerTextureArchive;
+            playerTextureRecord = other.playerTextureRecord;
+            nativeMaterialValue = other.nativeMaterialValue;
+            dyeColor = other.dyeColor;
+            weightInKg = other.weightInKg;
+            drawOrder = other.drawOrder;
+
+            // Fix leather helms
+            FixHelm();
         }
 
         /// <summary>
@@ -181,7 +229,9 @@ namespace DaggerfallWorkshop.Game.Items
         void FromItemRecord(ItemRecord itemRecord)
         {
             // Get template data
-            ItemTemplate itemTemplate = ItemTemplate;
+            ItemGroups group = (ItemGroups)itemRecord.ParsedData.category1;
+            int index = itemRecord.ParsedData.category2;
+            ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(group, index);
 
             // Get player image
             int bitfield = (int)itemRecord.ParsedData.image1;
@@ -190,8 +240,8 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Assign new data
             shortName = itemRecord.ParsedData.name;
-            itemGroup = (ItemGroups)itemRecord.ParsedData.category1;
-            itemIndex = itemRecord.ParsedData.category2;
+            itemGroup = group;
+            itemIndex = index;
             playerTextureArchive = archive;
             playerTextureRecord = record;
             nativeMaterialValue = itemRecord.ParsedData.material;
@@ -199,6 +249,24 @@ namespace DaggerfallWorkshop.Game.Items
             weightInKg = (float)itemRecord.ParsedData.weight * 0.25f;
             drawOrder = itemTemplate.drawOrderOrEffect;
 
+            // Fix leather helms
+            FixHelm();
+        }
+
+        ItemTemplate GetCachedItemTemplate()
+        {
+            if (itemGroup != cachedItemGroup || itemIndex != cachedItemIndex)
+            {
+                cachedItemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, itemIndex);
+                cachedItemGroup = itemGroup;
+                cachedItemIndex = itemIndex;
+            }
+
+            return cachedItemTemplate;
+        }
+
+        void FixHelm()
+        {
             // Promote leather helms to chain
             // Daggerfall seems to do this also as "leather" helms have the chain tint in-game
             // Is this why Daggerfall intentionally leaves off the material type from helms and shields?
@@ -216,18 +284,6 @@ namespace DaggerfallWorkshop.Game.Items
                         dyeColor = DyeColors.Chain;
                 }
             }
-        }
-
-        ItemTemplate GetCachedItemTemplate()
-        {
-            if (itemGroup != cachedItemGroup || itemIndex != cachedItemIndex)
-            {
-                cachedItemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(this);
-                cachedItemGroup = itemGroup;
-                cachedItemIndex = itemIndex;
-            }
-
-            return cachedItemTemplate;
         }
 
         #endregion

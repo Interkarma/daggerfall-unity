@@ -71,21 +71,21 @@ namespace DaggerfallWorkshop.Game.Items
         public bool EquipItem(DaggerfallUnityItem item, bool alwaysEquip = true)
         {
             // Get slot for this item
-            //EquipSlots slot = GetEquipSlot(item);
-            //if (slot == EquipSlots.None)
-            //    return false;
+            EquipSlots slot = GetEquipSlot(item);
+            if (slot == EquipSlots.None)
+                    return false;
 
-            //// Unequip any previous item
-            //if (!IsSlotOpen(slot) && !alwaysEquip)
-            //    return false;
-            //else
-            //    UnequipItem(slot);
+            // Unequip any previous item
+            if (!IsSlotOpen(slot) && !alwaysEquip)
+                return false;
+            else
+                UnequipItem(slot);
 
-            //// Equip item to slot
-            //item.EquipSlot = slot;
-            //equipTable[(int)slot] = item;
+            // Equip item to slot
+            item.EquipSlot = slot;
+            equipTable[(int)slot] = item;
 
-            //Debug.Log("Equipped item: " + item.Name);
+            Debug.Log("Equipped item: " + item.LongName);
 
             return true;
         }
@@ -97,13 +97,13 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>True if item unequipped, otherwise false.</returns>
         public bool UnequipItem(EquipSlots slot)
         {
-            //if (!IsSlotOpen(slot))
-            //{
-            //    equipTable[(int)slot].EquipSlot = EquipSlots.None;
-            //    equipTable[(int)slot] = null;
+            if (!IsSlotOpen(slot))
+            {
+                equipTable[(int)slot].EquipSlot = EquipSlots.None;
+                equipTable[(int)slot] = null;
 
-            //    return true;
-            //}
+                return true;
+            }
 
             return false;
         }
@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.Items
             //ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
 
             // Resolve based on equipment category
-            switch (item.itemGroup)
+            switch (item.ItemGroup)
             {
                 case ItemGroups.Gems:
                     result = GetGemSlot(item);
