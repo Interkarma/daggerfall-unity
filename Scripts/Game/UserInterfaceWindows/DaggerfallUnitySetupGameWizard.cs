@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox swapHealthAndFatigue = new Checkbox();
         Checkbox invertMouseVertical = new Checkbox();
         Checkbox mouseSmoothing = new Checkbox();
-        Checkbox leftHandWeapons = new Checkbox();
+        //Checkbox leftHandWeapons = new Checkbox();
         Checkbox playerNudity = new Checkbox();
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -395,12 +395,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mouseSmoothing.ToolTipText = "Smooth mouse-look sampling";
             mouseSmoothing.IsChecked = DaggerfallUnity.Settings.MouseLookSmoothing;
 
-            leftHandWeapons.Label.Text = "Left Hand Weapons";
-            leftHandWeapons.Label.TextColor = selectedTextColor;
-            leftHandWeapons.CheckBoxColor = selectedTextColor;
-            leftHandWeapons.ToolTip = defaultToolTip;
-            leftHandWeapons.ToolTipText = "Draw weapons on left side of screen";
-            leftHandWeapons.IsChecked = DaggerfallUnity.Settings.LeftHandWeapons;
+            //leftHandWeapons.Label.Text = "Left Hand Weapons";
+            //leftHandWeapons.Label.TextColor = selectedTextColor;
+            //leftHandWeapons.CheckBoxColor = selectedTextColor;
+            //leftHandWeapons.ToolTip = defaultToolTip;
+            //leftHandWeapons.ToolTipText = "Draw weapons on left side of screen";
+            //leftHandWeapons.IsChecked = DaggerfallUnity.Settings.LeftHandWeapons;
 
             playerNudity.Label.Text = "Player Nudity";
             playerNudity.Label.TextColor = selectedTextColor;
@@ -414,7 +414,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             swapHealthAndFatigue.Position = new Vector2(2, 24);
             invertMouseVertical.Position = new Vector2(2, 36);
             mouseSmoothing.Position = new Vector2(2, 48);
-            leftHandWeapons.Position = new Vector2(2, 60);
+            //leftHandWeapons.Position = new Vector2(2, 60);
             playerNudity.Position = new Vector2(2, 72);
 
             // Add options
@@ -422,7 +422,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             optionsPanel.Components.Add(swapHealthAndFatigue);
             optionsPanel.Components.Add(invertMouseVertical);
             optionsPanel.Components.Add(mouseSmoothing);
-            optionsPanel.Components.Add(leftHandWeapons);
+            //optionsPanel.Components.Add(leftHandWeapons);
             optionsPanel.Components.Add(playerNudity);
 
             // Confirm button
@@ -628,7 +628,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.SwapHealthAndFatigueColors = swapHealthAndFatigue.IsChecked;
             DaggerfallUnity.Settings.InvertMouseVertical = invertMouseVertical.IsChecked;
             DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothing.IsChecked;
-            DaggerfallUnity.Settings.LeftHandWeapons = leftHandWeapons.IsChecked;
+            //DaggerfallUnity.Settings.LeftHandWeapons = leftHandWeapons.IsChecked;
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
             DaggerfallUnity.Settings.SaveSettings();
             moveNextStage = true;

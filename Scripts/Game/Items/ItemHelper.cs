@@ -56,8 +56,8 @@ namespace DaggerfallWorkshop.Game.Items
         public ItemHands GetItemHands(DaggerfallUnityItem item)
         {
             // Must be of group Weapons or Armor (for shields)
-            if (item.ItemGroup != ItemGroups.Weapons &&
-                item.ItemGroup != ItemGroups.Armor)
+            if (item.itemGroup != ItemGroups.Weapons &&
+                item.itemGroup != ItemGroups.Armor)
             {
                 return ItemHands.None;
             }
@@ -104,9 +104,30 @@ namespace DaggerfallWorkshop.Game.Items
             return ItemHands.None;
         }
 
+        /// <summary>
+        /// Gets item template data from an item.
+        /// </summary>
         public ItemTemplate GetItemTemplate(DaggerfallUnityItem item)
         {
-            return GetItemTemplate(item.ItemGroup, item.ItemIndex);
+            return GetItemTemplate(item.itemGroup, item.itemIndex);
+        }
+
+        /// <summary>
+        /// Gets item template data using group and index.
+        /// </summary>
+        public ItemTemplate GetItemTemplate(ItemGroups group, int index)
+        {
+            Array values = GetEnumArray(group);
+            if (index < 0 || index >= values.Length)
+            {
+                string message = string.Format("Item index out of range: Group={0} Index={1}", group.ToString(), index);
+                Debug.Log(message);
+                return new ItemTemplate();
+            }
+
+            int templateIndex = Convert.ToInt32(values.GetValue(index));
+
+            return itemTemplates[templateIndex];
         }
 
         /// <summary>
@@ -114,11 +135,8 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public string ResolveItemName(DaggerfallUnityItem item)
         {
-            // Interim use of classic data
-            ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
-
             // Start with base name
-            string result = itemRecord.name;
+            string result = item.shortName;
 
             // Get item template
             ItemTemplate template = item.ItemTemplate;
@@ -127,17 +145,17 @@ namespace DaggerfallWorkshop.Game.Items
             result = result.Replace("%it", template.name);
 
             // Resolve weapon material
-            if (item.ItemGroup == ItemGroups.Weapons)
+            if (item.itemGroup == ItemGroups.Weapons)
             {
-                WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)itemRecord.material;
+                WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName(weaponMaterial);
                 result = string.Format("{0} {1}", materialName, result);
             }
 
             // Resolve armor material
-            if (item.ItemGroup == ItemGroups.Armor)
+            if (item.itemGroup == ItemGroups.Armor)
             {
-                ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)itemRecord.material;
+                ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName(armorMaterial);
                 result = string.Format("{0} {1}", materialName, result);
             }
@@ -156,11 +174,11 @@ namespace DaggerfallWorkshop.Game.Items
         public ImageData GetItemImage(DaggerfallUnityItem item, int variant = 0, bool removeMask = false)
         {
             // Get colour
-            int color = item.ItemRecord.ParsedData.color;
+            int color = (int)item.dyeColor;
 
             // Get archive and record indices
-            int archive = item.PlayerTextureArchive;
-            int record = item.PlayerTextureRecord;
+            int archive = item.playerTextureArchive;
+            int record = item.playerTextureRecord;
 
             // Get unique key
             int key = MakeImageKey(color, variant, archive, record, removeMask);
@@ -183,11 +201,11 @@ namespace DaggerfallWorkshop.Game.Items
                 data.dfBitmap = ImageProcessing.ChangeMask(data.dfBitmap);
 
             // Change dye or just update texture
-            ItemGroups group = item.ItemGroup;
+            ItemGroups group = item.itemGroup;
             DyeColors dye = (DyeColors)color;
             if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
                 data = ChangeDye(data, dye, DyeTargets.WeaponsAndArmor);
-            else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
+            else if (item.itemGroup == ItemGroups.MensClothing || item.itemGroup == ItemGroups.WomensClothing)
                 data = ChangeDye(data, dye, DyeTargets.Clothing);
             else
                 ImageReader.UpdateTexture(ref data);
@@ -247,10 +265,10 @@ namespace DaggerfallWorkshop.Game.Items
                 return new ImageData();
 
             // Get colour
-            int color = item.ItemRecord.ParsedData.color;
+            int color = (int)item.dyeColor;
 
             // Cloak interior source is combination of player texture archive index and template record index
-            int archive = item.PlayerTextureArchive;
+            int archive = item.playerTextureArchive;
             int record = item.ItemTemplate.playerTextureRecord;
 
             // Load image data
@@ -292,13 +310,10 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>MetalType.</returns>
         public MetalTypes ConvertItemMaterialToAPIMetalType(DaggerfallUnityItem item)
         {
-            // Get item group
-            ItemGroups group = (ItemGroups)item.ItemRecord.ParsedData.category1;
-
             // Determine metal type
-            if (group == ItemGroups.Weapons)
+            if (item.itemGroup == ItemGroups.Weapons)
             {
-                WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)item.ItemRecord.ParsedData.material;
+                WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)item.nativeMaterialValue;
                 switch (weaponMaterial)
                 {
                     case WeaponMaterialTypes.Iron:
@@ -325,9 +340,9 @@ namespace DaggerfallWorkshop.Game.Items
                         return MetalTypes.None;
                 }
             }
-            else if (group == ItemGroups.Armor)
+            else if (item.itemGroup == ItemGroups.Armor)
             {
-                ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)item.ItemRecord.ParsedData.material;
+                ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)item.nativeMaterialValue;
                 switch (armorMaterial)
                 {
                     case ArmorMaterialTypes.Iron:
@@ -363,31 +378,31 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        /// <summary>
-        /// Checks legacy item ID against legacy equip index to determine if item is equipped to a slot.
-        /// Must have previously used SetLegacyEquipTable to EntityItems provided.
-        /// </summary>
-        /// <param name="item">Item to test.</param>
-        /// <param name="entityItems">EntityItems with legacy equip table set.</param>
-        /// <returns>Index of item in equip table or -1 if not equipped.</returns>
-        public int GetLegacyEquipIndex(DaggerfallUnityItem item, EntityItems entityItems)
-        {
-            // Interim use of classic data
-            //ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
-            uint[] legacyEquipTable = (GameManager.Instance.PlayerEntity as DaggerfallEntity).Items.LegacyEquipTable;
-            if (legacyEquipTable == null || legacyEquipTable.Length == 0)
-                return -1;
+        ///// <summary>
+        ///// Checks legacy item ID against legacy equip index to determine if item is equipped to a slot.
+        ///// Must have previously used SetLegacyEquipTable to EntityItems provided.
+        ///// </summary>
+        ///// <param name="item">Item to test.</param>
+        ///// <param name="entityItems">EntityItems with legacy equip table set.</param>
+        ///// <returns>Index of item in equip table or -1 if not equipped.</returns>
+        //public int GetLegacyEquipIndex(DaggerfallUnityItem item, EntityItems entityItems)
+        //{
+        //    // Interim use of classic data
+        //    //ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
+        //    uint[] legacyEquipTable = (GameManager.Instance.PlayerEntity as DaggerfallEntity).Items.LegacyEquipTable;
+        //    if (legacyEquipTable == null || legacyEquipTable.Length == 0)
+        //        return -1;
 
-            // Try to match item RecordID with equipped item IDs
-            // Item RecordID must be shifted right 8 bits
-            for (int i = 0; i < legacyEquipTable.Length; i++)
-            {
-                if (legacyEquipTable[i] == (item.ItemRecord.RecordRoot.RecordID >> 8))
-                    return i;
-            }
+        //    // Try to match item RecordID with equipped item IDs
+        //    // Item RecordID must be shifted right 8 bits
+        //    for (int i = 0; i < legacyEquipTable.Length; i++)
+        //    {
+        //        if (legacyEquipTable[i] == (item.ItemRecord.RecordRoot.RecordID >> 8))
+        //            return i;
+        //    }
 
-            return -1;
-        }
+        //    return -1;
+        //}
 
         /// <summary>
         /// Helps bridge classic item index pair back to item template index.
@@ -480,24 +495,6 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 Debug.Log("Could not load ItemTemplates database from Resources. Check file exists and is in correct format.");
             }
-        }
-
-        /// <summary>
-        /// Gets classic item template data using group and index.
-        /// </summary>
-        ItemTemplate GetItemTemplate(ItemGroups group, int index)
-        {
-            Array values = GetEnumArray(group);
-            if (index < 0 || index >= values.Length)
-            {
-                string message = string.Format("Item index out of range: Group={0} Index={1}", group.ToString(), index);
-                Debug.Log(message);
-                return new ItemTemplate();
-            }
-
-            int templateIndex = Convert.ToInt32(values.GetValue(index));
-
-            return itemTemplates[templateIndex];
         }
 
         /// <summary>

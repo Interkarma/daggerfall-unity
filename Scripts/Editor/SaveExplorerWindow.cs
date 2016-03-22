@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop
                 //    itemHelper.ResolveItemName(itemRecord.ParsedData),
                 //    itemRecord.ParsedData.material);
 
-                string textLabel = string.Format("Item [{0}]", item.Name);
+                string textLabel = string.Format("Item [{0}]", item.LongName);
 
                 if (equippedIndex != -1)
                     textLabel = "*" + textLabel;

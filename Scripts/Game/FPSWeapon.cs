@@ -22,26 +22,24 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// Example weapon component.
+    /// Renders first-person weapons and attack animations.
     /// Recommended for this component to be on its own game object.
-    /// Will modify pitch of audio source for different weapon effects.
+    /// Cam modify pitch of audio source for different weapon speed effects.
     /// </summary>
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class FPSWeapon : MonoBehaviour
     {
         public bool ShowWeapon = true;
         public bool LeftHand = false;
-        public WeaponTypes WeaponType = WeaponTypes.Dagger;
-        public MetalTypes MetalType = MetalTypes.Dwarven;
-        public float Range = 2.5f;
-        public float MinDamage = 5f;
-        public float MaxDamage = 25f;
+        public WeaponTypes WeaponType = WeaponTypes.None;
+        public MetalTypes MetalType = MetalTypes.None;
+        public float Reach = 2.5f;
         public float AttackSpeedScale = 1.0f;
         public SoundClips DrawWeaponSound = SoundClips.DrawWeapon;
         public SoundClips SwingWeaponSound = SoundClips.PlayerSwing;
 
-        WeaponTypes lastWeaponType;
-        MetalTypes lastMetalType;
+        //WeaponTypes lastWeaponType;
+        //MetalTypes lastMetalType;
 
         const int nativeScreenWidth = 320;
         const int nativeScreenHeight = 200;
@@ -70,7 +68,7 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
-            if (!ReadyCheck() || GameManager.IsGamePaused)
+            if (!ReadyCheck() || WeaponType == WeaponTypes.None || GameManager.IsGamePaused)
             {
                 return;
             }
@@ -184,10 +182,12 @@ namespace DaggerfallWorkshop.Game
             // Do nothing if weapon not ready
             if (weaponAtlas == null || weaponAnims == null ||
                 weaponRects == null || weaponIndices == null)
+            {
                 return;
+            }
 
             // Reset state if weapon not visible
-            if (!ShowWeapon)
+            if (!ShowWeapon || WeaponType == WeaponTypes.None)
             {
                 weaponState = WeaponStates.Idle;
                 return;
@@ -293,16 +293,16 @@ namespace DaggerfallWorkshop.Game
                 cifFile.Palette.Load(Path.Combine(dfUnity.Arena2Path, cifFile.PaletteName));
             }
 
-            // Must have weapon texture atlas
-            if (weaponAtlas == null ||
-                WeaponType != lastWeaponType ||
-                MetalType != lastMetalType)
-            {
-                LoadWeaponAtlas();
-                if (weaponAtlas == null)
-                    return false;
-                UpdateWeapon();
-            }
+            //// Must have weapon texture atlas
+            //if (weaponAtlas == null ||
+            //    WeaponType != lastWeaponType ||
+            //    MetalType != lastMetalType)
+            //{
+            //    LoadWeaponAtlas();
+            //    if (weaponAtlas == null)
+            //        return false;
+            //    UpdateWeapon();
+            //}
 
             return true;
         }
@@ -348,8 +348,8 @@ namespace DaggerfallWorkshop.Game
             weaponAnims = (WeaponAnimation[])WeaponBasics.GetWeaponAnims(WeaponType).Clone();
 
             // Store current weapon
-            lastWeaponType = WeaponType;
-            lastMetalType = MetalType;
+            //lastWeaponType = WeaponType;
+            //lastMetalType = MetalType;
         }
 
         #endregion

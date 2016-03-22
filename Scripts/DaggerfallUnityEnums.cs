@@ -396,6 +396,7 @@ namespace DaggerfallWorkshop
     /// </summary>
     public enum WeaponTypes
     {
+        None = -1,
         LongBlade,
         LongBlade_Magic,
         Staff,
@@ -529,5 +530,16 @@ namespace DaggerfallWorkshop
         Magic,
         Backpack,
         Corpse3,
+    }
+
+    /// <summary>
+    /// Controls how weapons are held in the player's hands.
+    /// </summary>
+    public enum Handedness
+    {
+        DrawRight,      // Classic Daggerfall behaviour
+        DrawLeft,       // Same as classic, but drawn in left hand
+        DrawByHand,     // Draws based on hand equipped
+        DuelWield,      // Draws based on hand plus dual-wield
     }
 }
