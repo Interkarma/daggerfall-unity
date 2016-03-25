@@ -13,8 +13,8 @@ namespace DaggerfallWorkshop.Game
 	/// </summary>
 	public class RealGrass : MonoBehaviour
 	{
-		[SerializeField] private Texture2D greenGrass;
-        [SerializeField] private Texture2D brownGrass;
+		public Texture2D greenGrass;
+        public Texture2D brownGrass;
 
         private DetailPrototype[] detailPrototype;
 

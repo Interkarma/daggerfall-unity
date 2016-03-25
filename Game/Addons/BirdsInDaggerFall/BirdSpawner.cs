@@ -6,10 +6,8 @@ namespace DaggerfallWorkshop.Game
 {
     public class BirdSpawner : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject birdSpawner;
-        [SerializeField]
-        private GameObject[] birdSpawn;
+        public GameObject birdSpawner;
+        public GameObject[] birdSpawn;
 
         private GameObject mainCamera; //The mainCamera is used as the reference point to spawn birds
 

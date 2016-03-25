@@ -278,7 +278,7 @@ namespace DaggerfallWorkshop.Game
             // Fire ray along player facing using weapon range
             RaycastHit hit;
             Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
-            if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Range - SphereCastRadius))
+            if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach - SphereCastRadius))
             {
                 //check if hit has an DaggerfallAction component
                 DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
@@ -295,7 +295,9 @@ namespace DaggerfallWorkshop.Game
                     return;
                 }
 
-                int damage = Random.Range((int)weapon.MinDamage, (int)(weapon.MaxDamage + 1));
+                // TODO: Use correct damage based on weapon and swing type
+                // Just using fudge values during development
+                int damage = Random.Range(1, 25);
 
                 // Check if hit has an EnemyHealth
                 // This is part of the old Demo code and will eventually be removed

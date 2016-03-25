@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop
         public bool MouseLookSmoothing { get; set; }
         public float MouseLookSensitivity { get; set; }
         public bool HeadBobbing { get; set; }
-        public bool LeftHandWeapons { get; set; }
+        public int Handedness { get; set; }
         public float WeaponSwingThreshold { get; set; }
         public int WeaponSwingTriggerCount { get; set; }
 
@@ -140,7 +140,7 @@ namespace DaggerfallWorkshop
             MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f);
             HeadBobbing = GetBool(sectionControls, "HeadBobbing");
-            LeftHandWeapons = GetBool(sectionControls, "LeftHandWeapons");
+            Handedness = GetInt(sectionControls, "Handedness", 0, 3);
             WeaponSwingThreshold = GetFloat(sectionControls, "WeaponSwingThreshold", 0.1f, 1.0f);
             WeaponSwingTriggerCount = GetInt(sectionControls, "WeaponSwingTriggerCount", 1, 10);
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
@@ -185,7 +185,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);
             SetBool(sectionControls, "HeadBobbing", HeadBobbing);
-            SetBool(sectionControls, "LeftHandWeapons", LeftHandWeapons);
+            SetInt(sectionControls, "Handedness", Handedness);
             SetFloat(sectionControls, "WeaponSwingThreshold", WeaponSwingThreshold);
             SetInt(sectionControls, "WeaponSwingTriggerCount", WeaponSwingTriggerCount);
             SetInt(sectionStartup, "StartCellX", StartCellX);

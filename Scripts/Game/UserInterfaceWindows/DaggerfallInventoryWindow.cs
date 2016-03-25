@@ -445,7 +445,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 myItemIconPanels[i].Size = new Vector2(myItemImages[i].texture.width, myItemImages[i].texture.height);
 
                 // Set tooltip text
-                string text = item.Name;
+                string text = item.LongName;
 
                 // Show some debug data
                 //ItemTemplate template = item.ItemTemplate;
@@ -503,9 +503,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Enumerate items to group lists
             foreach(DaggerfallUnityItem item in playerItems)
             {
-                ItemGroups group = item.ItemGroup;
-                if (group == ItemGroups.Weapons || group == ItemGroups.Armor ||
-                    group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)     // Testing
+                if (item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Armor ||
+                    item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)     // Testing
                 {
                     weaponsAndArmorList.Add(item);
                 }
