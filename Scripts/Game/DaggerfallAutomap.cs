@@ -532,7 +532,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
                     CheckForNewlyDiscoveredMeshes();
-                }
+                }                
             }
 
             if (isOpenAutomap) // only do this stuff if automap is indeed open
@@ -846,14 +846,14 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// inital setup for geometry creation: lazy creation of player marker arrow and beacons including
+        /// setup beacons: lazy creation of player marker arrow and beacons including
         /// player position beacon, dungeon entrance position beacon and rotation pivot axis position beacon
         /// will always get the current player position and update the player marker arrow position and the player position beacon
-        /// will always get the rotation pivot axis position, will always set the dungeon entrance position (just takes the
-        /// player position since this function is only called when geometry is created (when entering the dungeon or interior)) -
-        /// so the player position is at the entrance
+        /// will always get the rotation pivot axis position, will always set the dungeon entrance position (for interior: just takes the
+        /// player position since this function is only called when geometry is created (when entering the dungeon or interior) -
+        /// so the player position is at the entrance), for dungeon: will get the start marker from DaggerfallDungeon component
         /// </summary>
-        private void doInitialSetupForGeometryCreation()
+        private void setupBeacons()
         {
             if (!gameobjectBeacons)
             {
@@ -876,7 +876,7 @@ namespace DaggerfallWorkshop.Game
                 UnityEngine.Object.Destroy(gameobjectBeaconPlayerPosition.GetComponent<Collider>());
                 gameobjectBeaconPlayerPosition.name = "BeaconPlayerPosition";
                 gameobjectBeaconPlayerPosition.transform.SetParent(gameobjectBeacons.transform);
-                gameobjectBeaconPlayerPosition.layer = layerAutomap;                
+                gameobjectBeaconPlayerPosition.layer = layerAutomap;
                 gameobjectBeaconPlayerPosition.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(1.0f, 0.0f, 0.0f);
@@ -890,7 +890,7 @@ namespace DaggerfallWorkshop.Game
                 UnityEngine.Object.Destroy(gameobjectBeaconRotationPivotAxis.GetComponent<Collider>());
                 gameobjectBeaconRotationPivotAxis.name = "BeaconRotationPivotAxis";
                 gameobjectBeaconRotationPivotAxis.transform.SetParent(gameobjectBeacons.transform);
-                gameobjectBeaconRotationPivotAxis.layer = layerAutomap;                
+                gameobjectBeaconRotationPivotAxis.layer = layerAutomap;
                 gameobjectBeaconRotationPivotAxis.transform.localScale = new Vector3(0.3f, 50.0f, 0.3f);
                 Material material = new Material(Shader.Find("Standard"));
                 material.color = new Color(0.0f, 0.0f, 1.0f);
@@ -922,7 +922,18 @@ namespace DaggerfallWorkshop.Game
                 gameObjectCubeMarker.layer = layerAutomap;
                 gameObjectCubeMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
             }
-            gameobjectBeaconEntrancePosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayEntrancePosOffset;
+
+            if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
+            {
+                // entrance marker to dungeon start marker
+                DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();                
+                gameobjectBeaconEntrancePosition.transform.position = dungeon.StartMarker.transform.position + rayEntrancePosOffset;
+            }
+            else
+            {
+                // entrance marker to current position (position player entered)
+                gameobjectBeaconEntrancePosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayEntrancePosOffset;
+            }
         }
 
         /// <summary>
@@ -969,8 +980,6 @@ namespace DaggerfallWorkshop.Game
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Interior)");
 
-            doInitialSetupForGeometryCreation();
-
             foreach (Transform elem in GameManager.Instance.InteriorParent.transform)
             {
                 if (elem.name.Contains("DaggerfallInterior"))
@@ -991,6 +1000,8 @@ namespace DaggerfallWorkshop.Game
                     // copy position and rotation from real level geometry
                     gameobjectGeometry.transform.position = elem.transform.position;
                     gameobjectGeometry.transform.rotation = elem.transform.rotation;
+
+                    setupBeacons();
                 }
             }
 
@@ -1033,8 +1044,6 @@ namespace DaggerfallWorkshop.Game
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Dungeon)");
 
-            doInitialSetupForGeometryCreation();
-
             // disable this option to get all small dungeon parts as individual models
             DaggerfallUnity.Instance.Option_CombineRDB = false;
 
@@ -1067,6 +1076,8 @@ namespace DaggerfallWorkshop.Game
                     gameobjectGeometry.transform.position = elem.transform.position;
                     gameobjectGeometry.transform.rotation = elem.transform.rotation;
 
+                    setupBeacons();
+
                     break;
                 }
             }
@@ -1076,7 +1087,7 @@ namespace DaggerfallWorkshop.Game
 
             // put all objects inside gameobjectGeometry in layer "Automap"
             SetLayerRecursively(gameobjectGeometry, layerAutomap);
-            gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
+            gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);            
 
             // inject all materials of automap geometry with automap shader and reset MeshRenderer enabled state (this is used for the discovery mechanism)
             injectMeshAndMaterialProperties();
