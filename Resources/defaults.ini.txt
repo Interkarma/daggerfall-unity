@@ -32,7 +32,7 @@ InvertMouseVertical=False
 MouseLookSmoothing=True
 MouseLookSensitivity=1.0
 HeadBobbing=False
-LeftHandWeapons=False
+Handedness=0
 WeaponSwingThreshold=0.8
 WeaponSwingTriggerCount=3
 

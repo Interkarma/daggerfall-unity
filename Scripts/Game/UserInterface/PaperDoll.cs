@@ -265,7 +265,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Sort equipped items
-            List<DaggerfallUnityItem> orderedItems = equippedItems.OrderBy(o => o.DrawOrder).ToList();
+            List<DaggerfallUnityItem> orderedItems = equippedItems.OrderBy(o => o.drawOrder).ToList();
 
             // Blit item images
             foreach(var item in orderedItems)

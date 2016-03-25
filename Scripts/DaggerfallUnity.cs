@@ -225,7 +225,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void EditorResetArena2Path()
         {
-            Settings.RereadSettings();
+            Settings.LoadSettings();
             SetupArena2Path();
             SetupContentReaders(true);
         }

@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             for (int i = 0; i < other.items.Count; i++)
             {
-                items.Add(other.items[i].Copy());
+                items.Add(other.items[i].Clone());
             }
         }
 

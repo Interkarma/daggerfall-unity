@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.Items
             // Get slot for this item
             EquipSlots slot = GetEquipSlot(item);
             if (slot == EquipSlots.None)
-                return false;
+                    return false;
 
             // Unequip any previous item
             if (!IsSlotOpen(slot) && !alwaysEquip)
@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop.Game.Items
             item.EquipSlot = slot;
             equipTable[(int)slot] = item;
 
-            Debug.Log("Equipped item: " + item.Name);
+            Debug.Log("Equipped item: " + item.LongName);
 
             return true;
         }

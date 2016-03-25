@@ -46,8 +46,8 @@ namespace Wenzil.Console
 
             ConsoleCommandsDatabase.RegisterCommand(GotoLocation.name, GotoLocation.description, GotoLocation.usage, GotoLocation.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GetLocationMapPixel.name, GetLocationMapPixel.description, GetLocationMapPixel.usage, GetLocationMapPixel.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(Teleport.name, Teleport.description, Teleport.usage, Teleport.Execute);
         }
-
 
         private static class GodCommand
         {
@@ -848,6 +848,94 @@ namespace Wenzil.Console
                 {
                     return "Invalid location.  Check spelling?";
                 }
+            }
+
+        }
+
+        /// <summary>
+        /// Short distance teleport, uses raycast to move player to where they are looking
+        /// </summary>
+        private static class Teleport
+        {
+            public static readonly string name = "teleport";
+            public static readonly string description = "teleport player to object they are looking at";
+            public static readonly string usage = "teleport \noptional paramaters: \n{true/false} always teleport if true, even if looking at empty space (default false) \n{max distance}" +
+                "max distance to teleport (default 500) \n{up/down/left/right} final position adjustment (default up) \n Example: teleport force 500 up";
+
+            public static string Execute(params string[] args)
+            {
+
+                bool forceTeleOnNoHit = false;              //teleport maxDistance even if raycast doesn't hit
+                float maxDistance = 500;                    //distance to use if forceTeleOnNoHit is true and raycast doesn't hit
+                int step = 0;
+                Vector3 dir = Camera.main.transform.up;
+                Vector3 loc;
+
+                if(args != null)
+                {
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        float temp = 0;
+                        if (string.IsNullOrEmpty(args[i]))
+                            continue;
+                        else if (args[i] == "true" || args[i] == "false")
+                            Boolean.TryParse(args[i], out forceTeleOnNoHit);
+                        else if (float.TryParse(args[i], out temp))
+                            maxDistance = temp;
+                        else if (args[i].ToLower() == "up")
+                            dir = Camera.main.transform.up;
+                        else if (args[i].ToLower() == "down")
+                            dir = Camera.main.transform.up * -1;
+                        else if (args[i].ToLower() == "right")
+                            dir = Camera.main.transform.right;
+                        else if (args[i].ToLower() == "left")
+                            dir = Camera.main.transform.right * -1;
+                        else if (args[i].ToLower() == "forward")
+                            dir = Camera.main.transform.forward;
+                        else if (args[i].ToLower() == "back")
+                            dir = Camera.main.transform.forward * -1;
+                    }
+                }
+
+                RaycastHit hitInfo;
+                Vector3 origin = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0));
+                Ray ray = new Ray(origin + Camera.main.transform.forward * .2f, Camera.main.transform.forward);
+                //Debug.DrawRay(ray.origin, ray.direction, Color.yellow, 15);
+
+                if (!(Physics.Raycast(ray, out hitInfo)))
+                {
+                    Console.Log("Didn't hit anything...");
+                    if(forceTeleOnNoHit)
+                    {
+                        if (!GameManager.Instance.PlayerHealth.GodMode)
+                        {
+                            GameManager.Instance.PlayerHealth.GodMode = true;
+                            Console.Log(string.Format("\n##########################\n\nENABLING GOD MODE - USE CONSOLE COMMAND: tgm \nTO DISABLE\n\n##########################\n"));
+                        }
+
+                        GameManager.Instance.PlayerObject.transform.position = ray.GetPoint(maxDistance);
+                        Console.Log("...teleporting anyways");
+                    }
+                }
+                else
+                {
+                    //enable god mode to prevent death by falling damage, & display message
+                    if (!GameManager.Instance.PlayerHealth.GodMode)
+                    {
+                        GameManager.Instance.PlayerHealth.GodMode = true;
+                        Console.Log(string.Format("\n##########################\n\nENABLING GOD MODE - USE CONSOLE COMMAND: tgm \nTO DISABLE\n\n##########################\n"));
+                    }
+
+                    loc = hitInfo.point;
+
+                    while (Physics.CheckCapsule(loc, loc + dir, GameManager.Instance.PlayerController.radius + .1f) && step < 50)
+                    {
+                        loc = dir + loc;
+                        step++;
+                    }
+                    GameManager.Instance.PlayerObject.transform.position = loc;
+                }
+                    return "Finished";
             }
 
         }
