@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.Entity
         const int testPlayerLevel = 1;
         const string testPlayerName = "Nameless";
 
-        protected RaceTemplate race;
+        protected RaceTemplate raceTemplate;
         protected int faceIndex;
         protected PlayerReflexes reflexes;
 
@@ -40,7 +40,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #region Properties
 
-        public RaceTemplate Race { get { return race; } set { race = value; } }
+        public Races Race { get { return (Races)RaceTemplate.ID; } }
+        public RaceTemplate RaceTemplate { get { return raceTemplate; } set { raceTemplate = value; } }
         public int FaceIndex { get { return faceIndex; } set { faceIndex = value; } }
         public PlayerReflexes Reflexes { get { return reflexes; } set { reflexes = value; } }
 
@@ -61,7 +62,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
             this.level = level;
             this.gender = character.gender;
-            this.race = character.race;
+            this.raceTemplate = character.raceTemplate;
             this.career = character.career;
             this.name = character.name;
             this.faceIndex = character.faceIndex;
@@ -114,7 +115,7 @@ namespace DaggerfallWorkshop.Game.Entity
             career = DaggerfallEntity.GetClassCareerTemplate(ClassCareers.Mage);
             if (career != null)
             {
-                race = CharacterDocument.GetRaceTemplate(Races.Breton);
+                raceTemplate = CharacterDocument.GetRaceTemplate(Races.Breton);
                 faceIndex = 0;
                 reflexes = PlayerReflexes.Average;
                 gender = Genders.Male;

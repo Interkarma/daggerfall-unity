@@ -49,77 +49,53 @@ namespace DaggerfallWorkshop.Game.Items
         #region Public Methods
 
         /// <summary>
-        /// Gets how item is held in the hands.
-        /// Item templates define whether item is 1 or 2 handed, but this method
-        /// provides more exact information about which hand item can be used in.
-        /// </summary>
-        public ItemHands GetItemHands(DaggerfallUnityItem item)
-        {
-            // Must be of group Weapons or Armor (for shields)
-            if (item.ItemGroup != ItemGroups.Weapons &&
-                item.ItemGroup != ItemGroups.Armor)
-            {
-                return ItemHands.None;
-            }
-
-            // Compare against supported weapon types
-            switch((Weapons)item.TemplateIndex)
-            {
-                // These weapons can be used in either hand
-                case Weapons.Dagger:
-                case Weapons.Tanto:
-                case Weapons.Shortsword:
-                case Weapons.Wakazashi:
-                case Weapons.Broadsword:
-                case Weapons.Saber:
-                case Weapons.Longsword:
-                case Weapons.Katana:
-                case Weapons.Battle_Axe:
-                case Weapons.Mace:
-                    return ItemHands.Either;
-
-                // Two-handed weapons only
-                case Weapons.Claymore:
-                case Weapons.Dai_Katana:
-                case Weapons.War_Axe:
-                case Weapons.Staff:
-                case Weapons.Flail:
-                case Weapons.Warhammer:
-                case Weapons.Short_Bow:
-                case Weapons.Long_Bow:
-                    return ItemHands.Both;
-            }
-
-            // Compare against supported armor types
-            switch ((Armor)item.TemplateIndex)
-            {
-                case Armor.Buckler:
-                case Armor.Round_Shield:
-                case Armor.Kite_Shield:
-                case Armor.Tower_Shield:
-                    return ItemHands.LeftOnly;
-            }
-
-            // Nothing found
-            return ItemHands.None;
-        }
-
-        /// <summary>
         /// Gets item template data using group and index.
         /// </summary>
-        public ItemTemplate GetItemTemplate(ItemGroups group, int index)
+        public ItemTemplate GetItemTemplate(ItemGroups itemGroup, int groupIndex)
         {
-            Array values = GetEnumArray(group);
-            if (index < 0 || index >= values.Length)
+            Array values = GetEnumArray(itemGroup);
+            if (groupIndex < 0 || groupIndex >= values.Length)
             {
-                string message = string.Format("Item index out of range: Group={0} Index={1}", group.ToString(), index);
+                string message = string.Format("Item index out of range: Group={0} Index={1}", itemGroup.ToString(), groupIndex);
                 Debug.Log(message);
                 return new ItemTemplate();
             }
 
-            int templateIndex = Convert.ToInt32(values.GetValue(index));
+            int templateIndex = Convert.ToInt32(values.GetValue(groupIndex));
 
             return itemTemplates[templateIndex];
+        }
+
+        /// <summary>
+        /// Gets item template from direct template index.
+        /// </summary>
+        public ItemTemplate GetItemTemplate(int templateIndex)
+        {
+            if (templateIndex < 0 || templateIndex >= itemTemplates.Count)
+            {
+                string message = string.Format("Item template index out of range: TemplateIndex={1}", templateIndex);
+                Debug.Log(message);
+                return new ItemTemplate();
+            }
+
+            return itemTemplates[templateIndex];
+        }
+
+        /// <summary>
+        /// Gets item group index from group and template index.
+        /// </summary>
+        /// <returns>Item group index, or -1 if not found.</returns>
+        public int GetGroupIndex(ItemGroups itemGroup, int templateIndex)
+        {
+            Array values = GetEnumArray(itemGroup);
+            for (int i = 0; i < values.Length; i++)
+            {
+                int checkTemplateIndex = Convert.ToInt32(values.GetValue(i));
+                if (checkTemplateIndex == templateIndex)
+                    return i;
+            }
+
+            return -1;
         }
 
         /// <summary>
@@ -160,27 +136,35 @@ namespace DaggerfallWorkshop.Game.Items
         /// Image will be cached based on material and hand for faster subsequent fetches.
         /// </summary>
         /// <param name="item">Item to fetch image for.</param>
-        /// <param name="variant">Variant of image (e.g. hood up/down or hand left/right).</param>
         /// <param name="removeMask">Removes mask index (e.g. around helmets) from final image.</param>
+        /// <param name="forPaperDoll">Image is for paper doll.</param>
         /// <returns>ImageData.</returns>
-        public ImageData GetItemImage(DaggerfallUnityItem item, int variant = 0, bool removeMask = false)
+        public ImageData GetItemImage(DaggerfallUnityItem item, bool removeMask = false, bool forPaperDoll = false)
         {
             // Get colour
             int color = (int)item.dyeColor;
 
             // Get archive and record indices
-            int archive = item.playerTextureArchive;
-            int record = item.playerTextureRecord;
+            int archive = item.PlayerTextureArchive;
+            int record = item.PlayerTextureRecord;
+
+            // Paper doll handling
+            if (forPaperDoll)
+            {
+                // 1H Weapons in right hand need record + 1
+                if (item.ItemGroup == ItemGroups.Weapons && item.EquipSlot == EquipSlots.RightHand)
+                {
+                    if (ItemEquipTable.GetItemHands(item) == ItemHands.Either)
+                        record += 1;
+                }
+            }
 
             // Get unique key
-            int key = MakeImageKey(color, variant, archive, record, removeMask);
+            int key = MakeImageKey(color, archive, record, removeMask);
 
             // Get existing icon if in cache
             if (itemImages.ContainsKey(key))
                 return itemImages[key];
-
-            // Add variant to record index
-            record += variant;
 
             // Load image data
             string filename = TextureFile.IndexToFileName(archive);
@@ -213,12 +197,12 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="item">Item to fetch image for.</param>
         /// <param name="maskColor">New mask colour.</param>
-        /// <param name="variant">Variant of image (e.g. hood up/down or hand left/right).</param>
-        /// <returns></returns>
-        public ImageData GetItemImage(DaggerfallUnityItem item, Color maskColor, int variant = 0)
+        /// <param name="forPaperDoll">Image is for paper doll.</param>
+        /// <returns>ImageData.</returns>
+        public ImageData GetItemImage(DaggerfallUnityItem item, Color maskColor, bool forPaperDoll = false)
         {
             // Get base item with mask intact
-            ImageData result = GetItemImage(item, variant, false);
+            ImageData result = GetItemImage(item, false, forPaperDoll);
             ImageReader.UpdateTexture(ref result, maskColor);
 
             return result;
@@ -260,7 +244,7 @@ namespace DaggerfallWorkshop.Game.Items
             int color = (int)item.dyeColor;
 
             // Cloak interior source is combination of player texture archive index and template record index
-            int archive = item.playerTextureArchive;
+            int archive = item.PlayerTextureArchive;
             int record = item.ItemTemplate.playerTextureRecord;
 
             // Load image data
@@ -296,10 +280,68 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Converts Daggerfall weapon to generic API WeaponType.
+        /// </summary>
+        /// <param name="item">Weapon to convert.</param>
+        /// <returns>WeaponTypes.</returns>
+        public WeaponTypes ConvertItemToAPIWeaponType(DaggerfallUnityItem item)
+        {
+            // Must be a weapon
+            if (item.ItemGroup != ItemGroups.Weapons)
+                return WeaponTypes.None;
+
+            // Find FPS animation set for this weapon type
+            // Daggerfall re-uses the same animations for many different weapons
+            WeaponTypes result = WeaponTypes.None;
+            switch (item.TemplateIndex)
+            {
+                case (int)Weapons.Dagger:
+                    result = WeaponTypes.Dagger;
+                    break;
+                case (int)Weapons.Staff:
+                    result = WeaponTypes.Staff;
+                    break;
+                case (int)Weapons.Tanto:
+                case (int)Weapons.Shortsword:
+                case (int)Weapons.Wakazashi:
+                case (int)Weapons.Broadsword:
+                case (int)Weapons.Saber:
+                case (int)Weapons.Longsword:
+                case (int)Weapons.Katana:
+                case (int)Weapons.Claymore:
+                case (int)Weapons.Dai_Katana:
+                    result = WeaponTypes.LongBlade;
+                    break;
+                case (int)Weapons.Mace:
+                    result = WeaponTypes.Mace;
+                    break;
+                case (int)Weapons.Flail:
+                    result = WeaponTypes.Flail;
+                    break;
+                case (int)Weapons.Warhammer:
+                    result = WeaponTypes.Warhammer;
+                    break;
+                case (int)Weapons.Battle_Axe:
+                case (int)Weapons.War_Axe:
+                    result = WeaponTypes.Battleaxe;
+                    break;
+                case (int)Weapons.Short_Bow:
+                case (int)Weapons.Long_Bow:
+                    result = WeaponTypes.Bow;
+                    break;
+                default:
+                    return WeaponTypes.None;
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Converts native Daggerfall weapon and armor material types to generic Daggerfall Unity MetalType.
+        /// The old metal type enum may be retired as true materials become better integrated.
         /// </summary>
         /// <param name="item">Item to convert material to metal type.</param>
-        /// <returns>MetalType.</returns>
+        /// <returns>MetalTypes.</returns>
         public MetalTypes ConvertItemMaterialToAPIMetalType(DaggerfallUnityItem item)
         {
             // Determine metal type
@@ -367,6 +409,77 @@ namespace DaggerfallWorkshop.Game.Items
             else
             {
                 return MetalTypes.None;
+            }
+        }
+
+        /// <summary>
+        /// Converts weapon material to appropriate dye colour.
+        /// </summary>
+        /// <param name="material">WeaponMaterialTypes.</param>
+        /// <returns>DyeColors.</returns>
+        public DyeColors GetWeaponDyeColor(WeaponMaterialTypes material)
+        {
+            switch (material)
+            {
+                case WeaponMaterialTypes.Iron:
+                    return DyeColors.Iron;
+                case WeaponMaterialTypes.Steel:
+                    return DyeColors.Steel;
+                case WeaponMaterialTypes.Silver:
+                case WeaponMaterialTypes.Elven:
+                    return DyeColors.SilverOrElven;
+                case WeaponMaterialTypes.Dwarven:
+                    return DyeColors.Dwarven;
+                case WeaponMaterialTypes.Mithril:
+                    return DyeColors.Mithril;
+                case WeaponMaterialTypes.Adamantium:
+                    return DyeColors.Adamantium;
+                case WeaponMaterialTypes.Ebony:
+                    return DyeColors.Ebony;
+                case WeaponMaterialTypes.Orcish:
+                    return DyeColors.Orcish;
+                case WeaponMaterialTypes.Daedric:
+                    return DyeColors.Daedric;
+                default:
+                    return DyeColors.Unchanged;
+
+            }
+        }
+
+        /// <summary>
+        /// Converts armor material to appropriate dye colour.
+        /// </summary>
+        /// <param name="material">ArmorMaterialTypes.</param>
+        /// <returns>DyeColors.</returns>
+        public DyeColors GetArmorDyeColor(ArmorMaterialTypes material)
+        {
+            switch (material)
+            {
+                case ArmorMaterialTypes.Chain:
+                case ArmorMaterialTypes.Chain2:
+                    return DyeColors.Chain;
+                case ArmorMaterialTypes.Iron:
+                    return DyeColors.Iron;
+                case ArmorMaterialTypes.Steel:
+                    return DyeColors.Steel;
+                case ArmorMaterialTypes.Silver:
+                case ArmorMaterialTypes.Elven:
+                    return DyeColors.SilverOrElven;
+                case ArmorMaterialTypes.Dwarven:
+                    return DyeColors.Dwarven;
+                case ArmorMaterialTypes.Mithril:
+                    return DyeColors.Mithril;
+                case ArmorMaterialTypes.Adamantium:
+                    return DyeColors.Adamantium;
+                case ArmorMaterialTypes.Ebony:
+                    return DyeColors.Ebony;
+                case ArmorMaterialTypes.Orcish:
+                    return DyeColors.Orcish;
+                case ArmorMaterialTypes.Daedric:
+                    return DyeColors.Daedric;
+                default:
+                    return DyeColors.Unchanged;
+
             }
         }
 
@@ -468,6 +581,51 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
+        /// <summary>
+        /// Assigns basic starting gear to a new character.
+        /// </summary>
+        public void AssignStartingGear(PlayerEntity playerEntity)
+        {
+            // Get references
+            EntityItems items = playerEntity.Items;
+            ItemEquipTable equipTable = playerEntity.ItemEquipTable;
+
+            // Starting clothes are gender-specific
+            DaggerfallUnityItem shortShirt = null;
+            DaggerfallUnityItem casualPants = null;
+            if (playerEntity.Gender == Genders.Female)
+            {
+                shortShirt = ItemBuilder.CreateWomensClothing(WomensClothing.Short_shirt_closed, playerEntity.Race, 1);
+                casualPants = ItemBuilder.CreateWomensClothing(WomensClothing.Casual_pants, playerEntity.Race);
+            }
+            else
+            {
+                shortShirt = ItemBuilder.CreateMensClothing(MensClothing.Short_shirt_closed_top, playerEntity.Race, 1);
+                casualPants = ItemBuilder.CreateMensClothing(MensClothing.Casual_pants, playerEntity.Race);
+            }
+
+            // Randomise shirt dye and pants variant
+            shortShirt.dyeColor = ItemBuilder.RandomClothingDye();
+            ItemBuilder.RandomizeVariant(casualPants);
+
+            // Add and equip clothing
+            items.AddItem(shortShirt);
+            items.AddItem(casualPants);
+            equipTable.EquipItem(shortShirt);
+            equipTable.EquipItem(casualPants);
+
+            // Always add ebony dagger until biography implemented
+            items.AddItem(ItemBuilder.CreateWeapon(Weapons.Dagger, WeaponMaterialTypes.Ebony));
+
+            // Add a cuirass
+            items.AddItem(ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, Armor.Cuirass, ArmorMaterialTypes.Leather));
+
+            // Add alternate weapons
+            items.AddItem(ItemBuilder.CreateWeapon(Weapons.Longsword, WeaponMaterialTypes.Steel));
+            items.AddItem(ItemBuilder.CreateWeapon(Weapons.Katana, WeaponMaterialTypes.Iron));
+            items.AddItem(ItemBuilder.CreateWeapon(Weapons.Staff, WeaponMaterialTypes.Silver));
+        }
+
         #endregion
 
         #region Private Methods
@@ -492,16 +650,15 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Makes a unique image key based on item variables.
         /// </summary>
-        int MakeImageKey(int color, int variant, int archive, int record, bool removeMask)
+        int MakeImageKey(int color, int archive, int record, bool removeMask)
         {
             int mask = (removeMask) ? 1 : 0;
 
             // 5 bits for color
-            // 3 bits for variant
             // 9 bits for archive
             // 7 bits for record
             // 1 bits for mask
-            return (color << 27) + (variant << 24) + (archive << 15) + (record << 8) + (mask << 7);
+            return (color << 27) + (archive << 18) + (record << 11) + (mask << 10);
         }
 
         /// <summary>

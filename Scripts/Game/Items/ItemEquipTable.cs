@@ -70,6 +70,16 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>True when item equipped, otherwise false.</returns>
         public bool EquipItem(DaggerfallUnityItem item, bool alwaysEquip = true)
         {
+            if (item == null)
+                return false;
+
+            // Equipping a 2H weapons will always unequip both hands
+            if (item.ItemGroup == ItemGroups.Weapons && GetItemHands(item) == ItemHands.Both)
+            {
+                UnequipItem(EquipSlots.LeftHand);
+                UnequipItem(EquipSlots.RightHand);
+            }
+
             // Get slot for this item
             EquipSlots slot = GetEquipSlot(item);
             if (slot == EquipSlots.None)
@@ -85,7 +95,7 @@ namespace DaggerfallWorkshop.Game.Items
             item.EquipSlot = slot;
             equipTable[(int)slot] = item;
 
-            Debug.Log("Equipped item: " + item.LongName);
+            Debug.Log(string.Format("Equipped {0} to {1}", item.LongName, slot.ToString()));
 
             return true;
         }
@@ -121,9 +131,6 @@ namespace DaggerfallWorkshop.Game.Items
         public EquipSlots GetEquipSlot(DaggerfallUnityItem item)
         {
             EquipSlots result = EquipSlots.None;
-
-            // Interim use of classic data
-            //ItemRecord.ItemRecordData itemRecord = item.ItemRecord.ParsedData;
 
             // Resolve based on equipment category
             switch (item.ItemGroup)
@@ -263,7 +270,16 @@ namespace DaggerfallWorkshop.Game.Items
 
         EquipSlots GetWeaponSlot(DaggerfallUnityItem item)
         {
-            ItemHands hands = DaggerfallUnity.Instance.ItemHelper.GetItemHands(item);
+            // If a 2H weapon is currently equipped then next weapon will always replace it in right hand
+            DaggerfallUnityItem rightHandItem = equipTable[(int)EquipSlots.RightHand];
+            if (rightHandItem != null)
+            {
+                if (GetItemHands(rightHandItem) == ItemHands.Both)
+                    return EquipSlots.RightHand;
+            }
+
+            // Find best hand for this item
+            ItemHands hands = GetItemHands(item);
             switch (hands)
             {
                 case ItemHands.RightOnly:
@@ -294,9 +310,9 @@ namespace DaggerfallWorkshop.Game.Items
                 case MensClothing.Formal_tunic:
                 case MensClothing.Toga:
                 case MensClothing.Reversible_tunic:
-                case MensClothing.Plain_Robes:
-                case MensClothing.Priest_Robes:
-                case MensClothing.Short_Shirt:
+                case MensClothing.Plain_robes:
+                case MensClothing.Priest_robes:
+                case MensClothing.Short_shirt:
                 case MensClothing.Short_shirt_with_belt:
                 case MensClothing.Long_shirt:
                 case MensClothing.Long_shirt_with_belt:
@@ -319,7 +335,7 @@ namespace DaggerfallWorkshop.Game.Items
                 case MensClothing.Sandals:
                     return EquipSlots.Feet;
 
-                case MensClothing.Casual_Pants:
+                case MensClothing.Casual_pants:
                 case MensClothing.Breeches:
                 case MensClothing.Short_skirt:
                 case MensClothing.Khajiit_suit:
@@ -374,7 +390,7 @@ namespace DaggerfallWorkshop.Game.Items
                     return EquipSlots.Feet;
 
                 case WomensClothing.Casual_pants:
-                case WomensClothing.Khajiitt_suit:
+                case WomensClothing.Khajiit_suit:
                 case WomensClothing.Loincloth:
                 case WomensClothing.Wrap:
                 case WomensClothing.Long_skirt:
@@ -388,6 +404,66 @@ namespace DaggerfallWorkshop.Game.Items
                 default:
                     return EquipSlots.None;
             }
+        }
+
+        #endregion
+
+        #region Public Static Methods
+
+        /// <summary>
+        /// Gets how item is held in the hands.
+        /// Item templates define whether item is 1 or 2 handed, but this method
+        /// provides more exact information about which hand item can be used in.
+        /// </summary>
+        public static ItemHands GetItemHands(DaggerfallUnityItem item)
+        {
+            // Must be of group Weapons or Armor (for shields)
+            if (item.ItemGroup != ItemGroups.Weapons &&
+                item.ItemGroup != ItemGroups.Armor)
+            {
+                return ItemHands.None;
+            }
+
+            // Compare against supported weapon types
+            switch ((Weapons)item.TemplateIndex)
+            {
+                // These weapons can be used in either hand
+                case Weapons.Dagger:
+                case Weapons.Tanto:
+                case Weapons.Shortsword:
+                case Weapons.Wakazashi:
+                case Weapons.Broadsword:
+                case Weapons.Saber:
+                case Weapons.Longsword:
+                case Weapons.Katana:
+                case Weapons.Battle_Axe:
+                case Weapons.Mace:
+                    return ItemHands.Either;
+
+                // Two-handed weapons only
+                case Weapons.Claymore:
+                case Weapons.Dai_Katana:
+                case Weapons.War_Axe:
+                case Weapons.Staff:
+                case Weapons.Flail:
+                case Weapons.Warhammer:
+                case Weapons.Short_Bow:
+                case Weapons.Long_Bow:
+                    return ItemHands.Both;
+            }
+
+            // Compare against supported armor types
+            switch ((Armor)item.TemplateIndex)
+            {
+                case Armor.Buckler:
+                case Armor.Round_Shield:
+                case Armor.Kite_Shield:
+                case Armor.Tower_Shield:
+                    return ItemHands.LeftOnly;
+            }
+
+            // Nothing found
+            return ItemHands.None;
         }
 
         #endregion

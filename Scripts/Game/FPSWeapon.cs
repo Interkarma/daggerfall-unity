@@ -38,8 +38,8 @@ namespace DaggerfallWorkshop.Game
         public SoundClips DrawWeaponSound = SoundClips.DrawWeapon;
         public SoundClips SwingWeaponSound = SoundClips.PlayerSwing;
 
-        //WeaponTypes lastWeaponType;
-        //MetalTypes lastMetalType;
+        WeaponTypes currentWeaponType;
+        MetalTypes currentMetalType;
 
         const int nativeScreenWidth = 320;
         const int nativeScreenHeight = 200;
@@ -68,9 +68,18 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
+            // Must be ready
             if (!ReadyCheck() || WeaponType == WeaponTypes.None || GameManager.IsGamePaused)
-            {
                 return;
+
+            // Must have current weapon texture atlas
+            if (weaponAtlas == null || WeaponType != currentWeaponType || MetalType != currentMetalType)
+            {
+                LoadWeaponAtlas();
+                if (weaponAtlas == null)
+                    return;
+
+                UpdateWeapon();
             }
 
             if (Event.current.type.Equals(EventType.Repaint) && ShowWeapon)
@@ -348,8 +357,8 @@ namespace DaggerfallWorkshop.Game
             weaponAnims = (WeaponAnimation[])WeaponBasics.GetWeaponAnims(WeaponType).Clone();
 
             // Store current weapon
-            //lastWeaponType = WeaponType;
-            //lastMetalType = MetalType;
+            currentWeaponType = WeaponType;
+            currentMetalType = MetalType;
         }
 
         #endregion

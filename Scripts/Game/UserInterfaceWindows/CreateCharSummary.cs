@@ -104,7 +104,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             this.skillsRollout.MajorSkillBonusPoints = 0;
             this.skillsRollout.MinorSkillBonusPoints = 0;
             this.facePicker.FaceIndex = characterDocument.faceIndex;
-            this.facePicker.SetFaceTextures(characterDocument.race, characterDocument.gender);
+            this.facePicker.SetFaceTextures(characterDocument.raceTemplate, characterDocument.gender);
             this.reflexPicker.PlayerReflexes = characterDocument.reflexes;
         }
 

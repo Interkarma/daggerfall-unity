@@ -174,14 +174,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // Update player background panel
         void RefreshBackground(PlayerEntity entity)
         {
-            if (lastBackgroundName != entity.Race.PaperDollBackground)
+            if (lastBackgroundName != entity.RaceTemplate.PaperDollBackground)
             {
-                ImageData data = ImageReader.GetImageData(entity.Race.PaperDollBackground, 0, 0, false, false);
+                ImageData data = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBackground, 0, 0, false, false);
                 Texture2D texture = ImageReader.GetSubTexture(data, backgroundSubRect);
 
                 backgroundPanel.BackgroundTexture = texture;
                 backgroundPanel.Size = new Vector2(texture.width, texture.height);
-                lastBackgroundName = entity.Race.PaperDollBackground;
+                lastBackgroundName = entity.RaceTemplate.PaperDollBackground;
             }
         }
 
@@ -214,15 +214,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ImageData head = new ImageData();
             if (entity.Gender == Genders.Male)
             {
-                nudeBody = ImageReader.GetImageData(entity.Race.PaperDollBodyMaleUnclothed, 0, 0, true);
-                clothedBody = ImageReader.GetImageData(entity.Race.PaperDollBodyMaleClothed, 0, 0, true);
-                head = ImageReader.GetImageData(entity.Race.PaperDollHeadsMale, entity.FaceIndex, 0, true);
+                nudeBody = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBodyMaleUnclothed, 0, 0, true);
+                clothedBody = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBodyMaleClothed, 0, 0, true);
+                head = ImageReader.GetImageData(entity.RaceTemplate.PaperDollHeadsMale, entity.FaceIndex, 0, true);
             }
             else if (entity.Gender == Genders.Female)
             {
-                nudeBody = ImageReader.GetImageData(entity.Race.PaperDollBodyFemaleUnclothed, 0, 0, true);
-                clothedBody = ImageReader.GetImageData(entity.Race.PaperDollBodyFemaleClothed, 0, 0, true);
-                head = ImageReader.GetImageData(entity.Race.PaperDollHeadsFemale, entity.FaceIndex, 0, true);
+                nudeBody = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBodyFemaleUnclothed, 0, 0, true);
+                clothedBody = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBodyFemaleClothed, 0, 0, true);
+                head = ImageReader.GetImageData(entity.RaceTemplate.PaperDollHeadsFemale, entity.FaceIndex, 0, true);
             }
             else
             {
@@ -277,7 +277,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // Blits a normal item
         void BlitItem(DaggerfallUnityItem item)
         {
-            ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, maskColor);
+            ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, maskColor, true);
             BlitPaperDoll(source, (byte)item.EquipSlot);
         }
 

@@ -264,6 +264,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
+        public override void OnPop()
+        {
+            // Update weapons in hands
+            GameManager.Instance.WeaponManager.UpdateWeapons(playerEntity.ItemEquipTable);
+        }
+
         #endregion
 
         #region Public Methods
@@ -428,7 +434,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem item = items[index + i];
 
                 // Get inventory image
-                if (item.IsOfTemplate(ItemGroups.Transportation, (int)Transportation.Small_cart))
+                if (item.TemplateIndex == (int)Transportation.Small_cart)
                 {
                     // Handle small cart - the template image for this is not correct
                     // Correct image actually in CIF files
@@ -437,7 +443,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                 {
                     // Get inventory image
-                    myItemImages[i] = DaggerfallUnity.ItemHelper.GetItemImage(item, 0, true);
+                    myItemImages[i] = DaggerfallUnity.ItemHelper.GetItemImage(item, true);
                 }
 
                 // Set image to button icon
@@ -451,7 +457,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 //ItemTemplate template = item.ItemTemplate;
                 //int equipIndex = DaggerfallUnity.Instance.ItemHelper.GetLegacyEquipIndex(item, playerEntity.Items);
                 //if (equipIndex != -1) text += string.Format("\re:{0}", equipIndex);
-                //text += string.Format("\ra:{0} i:{1} c:{2}", item.ItemRecord.ParsedData.image1 >> 7, item.ItemRecord.ParsedData.image1 & 0x7f, item.ItemRecord.ParsedData.color);
+                //text += string.Format("\ra:{0} i:{1} c:{2}", item.playerTextureArchive, item.playerTextureRecord, item.dyeColor);
                 //text += string.Format("\ra:{0} i:{1}", template.playerTextureArchive, template.playerTextureRecord);
                 //text += string.Format("\rdraw:{0}", item.DrawOrder);
 
