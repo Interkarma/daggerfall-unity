@@ -1009,27 +1009,27 @@ namespace DaggerfallWorkshop.Game
             }
             if (gameobjectPlayerMarkerArrow != null)
             {
-                UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrow);
+                //UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrow);
                 gameobjectPlayerMarkerArrow = null;
             }
             if (gameobjectBeaconPlayerPosition != null)
             {
-                UnityEngine.Object.Destroy(gameobjectBeaconPlayerPosition);
+                //UnityEngine.Object.Destroy(gameobjectBeaconPlayerPosition);
                 gameobjectBeaconPlayerPosition = null;
             }
             if (gameobjectBeaconRotationPivotAxis != null)
             {
-                UnityEngine.Object.Destroy(gameobjectBeaconRotationPivotAxis);
+                //UnityEngine.Object.Destroy(gameobjectBeaconRotationPivotAxis);
                 gameobjectBeaconRotationPivotAxis = null;
             }
             if (gameobjectBeaconEntrancePosition != null)
             {
-                UnityEngine.Object.Destroy(gameobjectBeaconEntrancePosition);
+                //UnityEngine.Object.Destroy(gameobjectBeaconEntrancePosition);
                 gameobjectBeaconEntrancePosition = null;
             }
             if (gameObjectEntrancePositionCubeMarker != null)
             {
-                UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker);
+                //UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker);
                 gameObjectEntrancePositionCubeMarker = null;
             }
         }
