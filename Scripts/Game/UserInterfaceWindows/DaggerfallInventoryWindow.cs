@@ -53,6 +53,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect upArrowRect = new Rect(0, 0, 9, 16);
         Rect downArrowRect = new Rect(0, 136, 9, 16);
 
+        Rect wagonButtonRect = new Rect(226, 14, 31, 14);
+        Rect infoButtonRect = new Rect(226, 36, 31, 14);
+        Rect equipButtonRect = new Rect(226, 58, 31, 14);
+        Rect removeButtonRect = new Rect(226, 80, 31, 14);
+        Rect useButtonRect = new Rect(226, 103, 31, 14);
+        Rect goldButtonRect = new Rect(226, 126, 31, 14);
+
         #endregion
 
         #region UI Controls
@@ -61,6 +68,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button magicItemsButton;
         Button clothingAndMiscButton;
         Button ingredientsButton;
+
+        Button wagonButton;
+        Button infoButton;
+        Button equipButton;
+        Button removeButton;
+        Button useButton;
+        Button goldButton;
 
         Button myItemsUpButton;
         Button myItemsDownButton;
@@ -89,6 +103,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D clothingAndMiscSelected;
         Texture2D ingredientsSelected;
 
+        Texture2D wagonNotSelected;
+        Texture2D infoNotSelected;
+        Texture2D equipNotSelected;
+        Texture2D wagonSelected;
+        Texture2D infoSelected;
+        Texture2D equipSelected;
+
         Texture2D redUpArrow;
         Texture2D greenUpArrow;
         Texture2D redDownArrow;
@@ -116,6 +137,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TabPages selectedTabPage = TabPages.WeaponsAndArmor;
         List<DaggerfallUnityItem> weaponsAndArmorList = new List<DaggerfallUnityItem>();
 
+        ActionModes selectedActionMode = ActionModes.Equip;
+
         #endregion
 
         #region Enums
@@ -126,6 +149,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             MagicItems,
             ClothingAndMisc,
             Ingredients,
+        }
+
+        enum ActionModes
+        {
+            Wagon,
+            Info,
+            Equip,
+            //Remove,
+            //Use,
         }
 
         #endregion
@@ -168,12 +200,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup UI
             SetupTabPageButtons();
+            SetupActionButtons();
             SetupScrollBars();
             SetupScrollButtons();
             SetupMyItemsButtons();
 
-            // Set initial tab page
+            // Set initial tab page and mode
             SelectTabPage(TabPages.WeaponsAndArmor);
+            SelectActionMode(ActionModes.Equip);
         }
 
         void SetupTabPageButtons()
@@ -189,6 +223,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             ingredientsButton = DaggerfallUI.AddButton(ingredientsRect, NativePanel);
             ingredientsButton.OnMouseClick += Ingredients_OnMouseClick;
+        }
+
+        void SetupActionButtons()
+        {
+            wagonButton = DaggerfallUI.AddButton(wagonButtonRect, NativePanel);
+            wagonButton.OnMouseClick += WagonButton_OnMouseClick;
+
+            infoButton = DaggerfallUI.AddButton(infoButtonRect, NativePanel);
+            infoButton.OnMouseClick += InfoButton_OnMouseClick;
+
+            equipButton = DaggerfallUI.AddButton(equipButtonRect, NativePanel);
+            equipButton.OnMouseClick += EquipButton_OnMouseClick;
+
+            removeButton = DaggerfallUI.AddButton(removeButtonRect, NativePanel);
+            removeButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+
+            useButton = DaggerfallUI.AddButton(useButtonRect, NativePanel);
+            useButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+
+            goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
+            goldButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
         }
 
         void SetupScrollBars()
@@ -322,6 +377,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             UpdateMyItemsScrollButtons();
             UpdateMyItemsImages();
+        }
+
+        void SelectActionMode(ActionModes mode)
+        {
+            selectedActionMode = mode;
+
+            // Clear all button selections
+            wagonButton.BackgroundTexture = wagonNotSelected;
+            infoButton.BackgroundTexture = infoNotSelected;
+            equipButton.BackgroundTexture = equipNotSelected;
+
+            // Set button selected texture
+            switch(mode)
+            {
+                case ActionModes.Wagon:
+                    wagonButton.BackgroundTexture = wagonSelected;
+                    break;
+                case ActionModes.Info:
+                    infoButton.BackgroundTexture = infoSelected;
+                    break;
+                case ActionModes.Equip:
+                    equipButton.BackgroundTexture = equipSelected;
+                    break;
+            }
         }
 
         void ShowWeaponsAndArmorPage()
@@ -496,6 +575,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D greenArrowsTexture = ImageReader.GetTexture(greenArrowsTextureName);
             greenUpArrow = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRect);
             greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect);
+
+            // Cut out action mode not selected buttons
+            wagonNotSelected = ImageReader.GetSubTexture(baseTexture, wagonButtonRect);
+            infoNotSelected = ImageReader.GetSubTexture(baseTexture, infoButtonRect);
+            equipNotSelected = ImageReader.GetSubTexture(baseTexture, equipButtonRect);
+
+            // Cut out action mode selected buttons
+            wagonSelected = ImageReader.GetSubTexture(goldTexture, wagonButtonRect);
+            infoSelected = ImageReader.GetSubTexture(goldTexture, infoButtonRect);
+            equipSelected = ImageReader.GetSubTexture(goldTexture, equipButtonRect);
         }
 
         void RefreshItemLists()
@@ -545,6 +634,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void Ingredients_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectTabPage(TabPages.Ingredients);
+        }
+
+        #endregion
+
+        #region Action Button Event Handlers
+
+        private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            SelectActionMode(ActionModes.Wagon);
+        }
+
+        private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            SelectActionMode(ActionModes.Info);
+        }
+
+        private void EquipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            SelectActionMode(ActionModes.Equip);
         }
 
         #endregion
