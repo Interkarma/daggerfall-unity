@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectBeaconEntrancePosition = null; // GameObject which will hold (dungeon) entrance marker ray (green ray)
         GameObject gameobjectBeaconRotationPivotAxis = null; // GameObject which will hold rotation pivot axis ray (blue ray)
 
-        GameObject gameObjectCubeMarker = null; // used for entrance marker discovery
+        GameObject gameObjectEntrancePositionCubeMarker = null; // used for entrance marker discovery
 
         Collider playerCollider = null;
 
@@ -722,7 +722,7 @@ namespace DaggerfallWorkshop.Game
                 RaycastHit[] hitsTrueLevelGeometry;
                 float nearestDistance;
 
-                Vector3 entranceMarkerPos = gameObjectCubeMarker.transform.position;
+                Vector3 entranceMarkerPos = gameObjectEntrancePositionCubeMarker.transform.position;
                 Vector3 playerColliderPos = playerCollider.transform.position; //GameManager.Instance.PlayerGPS.transform.position; //Camera.main.transform.position;
                 // raycast 1
                 Vector3 rayStartPos = entranceMarkerPos;
@@ -976,13 +976,13 @@ namespace DaggerfallWorkshop.Game
                 material.color = new Color(0.0f, 1.0f, 0.0f);
                 gameobjectRay.GetComponent<MeshRenderer>().material = material;
 
-                gameObjectCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.Destroy(gameObjectCubeMarker.GetComponent<Collider>());
-                gameObjectCubeMarker.name = "CubeEntracePositionMarker";
-                gameObjectCubeMarker.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
-                gameObjectCubeMarker.GetComponent<MeshRenderer>().material = material;
-                gameObjectCubeMarker.layer = layerAutomap;
-                gameObjectCubeMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+                gameObjectEntrancePositionCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker.GetComponent<Collider>());
+                gameObjectEntrancePositionCubeMarker.name = "CubeEntracePositionMarker";
+                gameObjectEntrancePositionCubeMarker.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
+                gameObjectEntrancePositionCubeMarker.GetComponent<MeshRenderer>().material = material;
+                gameObjectEntrancePositionCubeMarker.layer = layerAutomap;
+                gameObjectEntrancePositionCubeMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
             }
 
             if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
@@ -997,6 +997,42 @@ namespace DaggerfallWorkshop.Game
                 // entrance marker to current position (position player entered)
                 gameobjectBeaconEntrancePosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayEntrancePosOffset;
                 gameobjectBeaconEntrancePosition.SetActive(true); // set do discovered
+            }
+        }
+
+        void DestroyBeacons()
+        {
+            if (gameobjectBeacons != null)
+            {
+                // after Destroy() set GameObject to null - this is necessary so that the handle is invalid immediately
+                UnityEngine.Object.Destroy(gameobjectBeacons);
+                gameobjectBeacons = null;
+            }
+            // also do this for all sub-GameObjects inside gameobjectBeacons
+            if (gameobjectPlayerMarkerArrow != null)
+            {
+                //UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrow);
+                gameobjectPlayerMarkerArrow = null;
+            }
+            if (gameobjectBeaconPlayerPosition != null)
+            {
+                //UnityEngine.Object.Destroy(gameobjectBeaconPlayerPosition);
+                gameobjectBeaconPlayerPosition = null;
+            }
+            if (gameobjectBeaconRotationPivotAxis != null)
+            {
+                //UnityEngine.Object.Destroy(gameobjectBeaconRotationPivotAxis);
+                gameobjectBeaconRotationPivotAxis = null;
+            }
+            if (gameobjectBeaconEntrancePosition != null)
+            {
+                //UnityEngine.Object.Destroy(gameobjectBeaconEntrancePosition);
+                gameobjectBeaconEntrancePosition = null;
+            }
+            if (gameObjectEntrancePositionCubeMarker != null)
+            {
+                //UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker);
+                gameObjectEntrancePositionCubeMarker = null;
             }
         }
 
@@ -1025,7 +1061,8 @@ namespace DaggerfallWorkshop.Game
 
             if (gameobjectGeometry != null)
             {
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry); // DestroyImmediate on purpose - since directly afterwards the new instance will be created - just Destroy() resulted in serious problems
+                UnityEngine.Object.Destroy(gameobjectGeometry);
+                gameobjectGeometry = null;
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Interior)");
@@ -1077,7 +1114,8 @@ namespace DaggerfallWorkshop.Game
 
             if (gameobjectGeometry != null)
             {
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry); // DestroyImmediate on purpose - since directly afterwards the new instance will be created - just Destroy() resulted in serious problems
+                UnityEngine.Object.Destroy(gameobjectGeometry);
+                gameobjectGeometry = null;
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Dungeon)");
@@ -1504,39 +1542,18 @@ namespace DaggerfallWorkshop.Game
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             saveStateAutomapInterior();
-            if (gameobjectGeometry != null)
-            {
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry); // DestroyImmediate on purpose - since directly afterwards the new instance could be created - just Destroy() resulted in serious problems
-            }
-            if (gameobjectBeacons != null)
-            {
-                UnityEngine.Object.DestroyImmediate(gameobjectBeacons); // DestroyImmediate on purpose - since directly afterwards the new instance could be created - just Destroy() resulted in serious problems
-            }
+            DestroyBeacons();
         }
 
         private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             saveStateAutomapDungeon();
-            if (gameobjectGeometry != null)
-            {
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry); // DestroyImmediate on purpose - since directly afterwards the new instance could be created - just Destroy() resulted in serious problems
-            }
-            if (gameobjectBeacons != null)
-            {
-                UnityEngine.Object.DestroyImmediate(gameobjectBeacons); // DestroyImmediate on purpose - since directly afterwards the new instance could be created - just Destroy() resulted in serious problems
-            }
+            DestroyBeacons();
         }
 
         void OnLoadEvent(SaveData_v1 saveData)
         {
-            if (gameobjectGeometry != null)
-            {
-                UnityEngine.Object.DestroyImmediate(gameobjectGeometry); // DestroyImmediate on purpose - since directly afterwards the new instance will be created - just Destroy() resulted in serious problems
-            }
-            if (gameobjectBeacons != null)
-            {
-                UnityEngine.Object.DestroyImmediate(gameobjectBeacons); // DestroyImmediate on purpose - since directly afterwards the new instance will be created - just Destroy() resulted in serious problems
-            }
+            DestroyBeacons();
 
             if (GameManager.Instance.IsPlayerInside)
             {
