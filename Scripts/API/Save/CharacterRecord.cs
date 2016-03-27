@@ -56,7 +56,7 @@ namespace DaggerfallConnect.Save
             CharacterDocument doc = new CharacterDocument();
             Dictionary<int, RaceTemplate> raceDict = RaceTemplate.GetRaceDictionary();
 
-            doc.race = raceDict[(int)parsedData.race + 1];
+            doc.raceTemplate = raceDict[(int)parsedData.race + 1];
             doc.gender = parsedData.gender;
             doc.career = parsedData.career;
             doc.name = parsedData.characterName;

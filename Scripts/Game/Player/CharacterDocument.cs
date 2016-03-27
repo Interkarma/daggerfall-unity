@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Game.Player
     /// </summary>
     public class CharacterDocument
     {
-        public RaceTemplate race;
+        public RaceTemplate raceTemplate;
         public Genders gender;
         public DFCareer career;
         public string name;
@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.Player
         // Set some default values for testing during development
         void SetDefaultValues()
         {
-            race = GetRaceTemplate(Races.Breton);
+            raceTemplate = GetRaceTemplate(Races.Breton);
             gender = Genders.Male;
             career = DaggerfallEntity.GetClassCareerTemplate(ClassCareers.Mage);
             name = "Nameless";

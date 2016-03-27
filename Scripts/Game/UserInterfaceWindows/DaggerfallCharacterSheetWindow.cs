@@ -235,7 +235,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Update main labels
             nameLabel.Text = PlayerEntity.Name;
-            raceLabel.Text = PlayerEntity.Race.Name;
+            raceLabel.Text = PlayerEntity.RaceTemplate.Name;
             classLabel.Text = PlayerEntity.Career.Name;
             levelLabel.Text = PlayerEntity.Level.ToString();
             fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue, PlayerEntity.MaxFatigue);

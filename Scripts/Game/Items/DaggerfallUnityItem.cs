@@ -27,8 +27,6 @@ namespace DaggerfallWorkshop.Game.Items
 
         // Public item values
         public string shortName;
-        public int playerTextureArchive;
-        public int playerTextureRecord;
         public int nativeMaterialValue;
         public DyeColors dyeColor;
         public float weightInKg;
@@ -42,22 +40,44 @@ namespace DaggerfallWorkshop.Game.Items
         //int message;
         //int[] magic;
 
-        // Private item values
+        // Private item fields
+        int playerTextureArchive;
+        int playerTextureRecord;
         ItemGroups itemGroup;
-        int itemIndex;
+        int groupIndex;
+        int currentVariant = 0;
 
         // Item template is cached for faster checks
         // Does not need to be serialized
-        [NonSerialized] ItemTemplate cachedItemTemplate;
-        [NonSerialized] ItemGroups cachedItemGroup = ItemGroups.None;
-        [NonSerialized] int cachedItemIndex = -1;
+        ItemTemplate cachedItemTemplate;
+        ItemGroups cachedItemGroup = ItemGroups.None;
+        int cachedGroupIndex = -1;
 
-        // Temp
+        // References current slot if equipped
         EquipSlots equipSlot = EquipSlots.None;
 
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets texture archive.
+        /// Should be set by template and body morphology.
+        /// Or directly as imported from classic save.
+        /// </summary>
+        public int PlayerTextureArchive
+        {
+            get { return playerTextureArchive; }
+            set { playerTextureArchive = value; }
+        }
+
+        /// <summary>
+        /// Gets texture record based on variant.
+        /// </summary>
+        public int PlayerTextureRecord
+        {
+            get { return GetPlayerTextureRecord(); }
+        }
 
         /// <summary>
         /// Gets or sets item group.
@@ -66,16 +86,16 @@ namespace DaggerfallWorkshop.Game.Items
         public ItemGroups ItemGroup
         {
             get { return itemGroup; }
-            set { SetItem(value, itemIndex); }
+            set { SetItem(value, groupIndex); }
         }
 
         /// <summary>
-        /// Gets or sets item index.
+        /// Gets or sets item group index.
         /// Setting will reset item data from new template.
         /// </summary>
-        public int ItemIndex
+        public int GroupIndex
         {
-            get { return itemIndex; }
+            get { return groupIndex; }
             set { SetItem(itemGroup, value); }
         }
 
@@ -112,6 +132,23 @@ namespace DaggerfallWorkshop.Game.Items
             set { equipSlot = value; }
         }
 
+        /// <summary>
+        /// Gets total variants of this item.
+        /// </summary>
+        public int TotalVariants
+        {
+            get { return ItemTemplate.variants; }
+        }
+
+        /// <summary>
+        /// Gets current variant of this item.
+        /// </summary>
+        public int CurrentVariant
+        {
+            get { return currentVariant; }
+            set { SetCurrentVariant(value); }
+        }
+
         #endregion
 
         #region Constructors
@@ -126,9 +163,9 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Construct from item group and index.
         /// </summary>
-        public DaggerfallUnityItem(ItemGroups itemGroup, int itemIndex)
+        public DaggerfallUnityItem(ItemGroups itemGroup, int groupIndex)
         {
-            SetItem(itemGroup, itemIndex);
+            SetItem(itemGroup, groupIndex);
         }
 
         /// <summary>
@@ -152,20 +189,6 @@ namespace DaggerfallWorkshop.Game.Items
         #region Public Methods
 
         /// <summary>
-        /// Checks if item matches specified template group and index.
-        /// </summary>
-        /// <param name="group">Item group.</param>
-        /// <param name="templateIndex">Template index.</param>
-        /// <returns>True if item matches type.</returns>
-        public bool IsOfTemplate(ItemGroups group, int templateIndex)
-        {
-            if (itemGroup == group && TemplateIndex == templateIndex)
-                return true;
-            else
-                return false;
-        }
-
-        /// <summary>
         /// Creates a new copy of this item.
         /// </summary>
         /// <returns></returns>
@@ -178,26 +201,49 @@ namespace DaggerfallWorkshop.Game.Items
         /// Sets item from group and index.
         /// Resets item data from new template.
         /// </summary>
-        /// <param name="group">Item group.</param>
-        /// <param name="index">Item index.</param>
-        public void SetItem(ItemGroups group, int index)
+        /// <param name="itemGroup">Item group.</param>
+        /// <param name="groupIndex">Item group index.</param>
+        public void SetItem(ItemGroups itemGroup, int groupIndex)
         {
             // Get template data
-            ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(group, index);
+            ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, groupIndex);
 
             // Assign new data
             shortName = itemTemplate.name;
-            itemGroup = group;
-            itemIndex = index;
+            this.itemGroup = itemGroup;
+            this.groupIndex = groupIndex;
             playerTextureArchive = itemTemplate.playerTextureArchive;
             playerTextureRecord = itemTemplate.playerTextureRecord;
             nativeMaterialValue = 0;
             dyeColor = DyeColors.Unchanged;
             weightInKg = itemTemplate.baseWeight;
             drawOrder = itemTemplate.drawOrderOrEffect;
+            currentVariant = 0;
 
             // Fix leather helms
-            FixHelm();
+            ItemBuilder.FixLeatherHelm(this);
+        }
+
+        public bool IsOfTemplate(ItemGroups itemGroup, int templateIndex)
+        {
+            if (ItemGroup == itemGroup && TemplateIndex == templateIndex)
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Cycles through variants.
+        /// </summary>
+        public void NextVariant()
+        {
+            // Cycle through variants
+            int variant = CurrentVariant + 1;
+            if (variant >= TotalVariants)
+                variant = 0;
+
+            // Update image
+            playerTextureRecord = ItemTemplate.playerTextureRecord + variant;
         }
 
         #endregion
@@ -211,16 +257,17 @@ namespace DaggerfallWorkshop.Game.Items
         {
             shortName = other.shortName;
             itemGroup = other.itemGroup;
-            itemIndex = other.itemIndex;
+            groupIndex = other.groupIndex;
             playerTextureArchive = other.playerTextureArchive;
             playerTextureRecord = other.playerTextureRecord;
             nativeMaterialValue = other.nativeMaterialValue;
             dyeColor = other.dyeColor;
             weightInKg = other.weightInKg;
             drawOrder = other.drawOrder;
+            currentVariant = other.currentVariant;
 
             // Fix leather helms
-            FixHelm();
+            ItemBuilder.FixLeatherHelm(this);
         }
 
         /// <summary>
@@ -241,49 +288,85 @@ namespace DaggerfallWorkshop.Game.Items
             // Assign new data
             shortName = itemRecord.ParsedData.name;
             itemGroup = group;
-            itemIndex = index;
+            groupIndex = index;
             playerTextureArchive = archive;
             playerTextureRecord = record;
             nativeMaterialValue = itemRecord.ParsedData.material;
             dyeColor = (DyeColors)itemRecord.ParsedData.color;
             weightInKg = (float)itemRecord.ParsedData.weight * 0.25f;
             drawOrder = itemTemplate.drawOrderOrEffect;
+            currentVariant = record - itemTemplate.playerTextureRecord;
 
             // Fix leather helms
-            FixHelm();
+            ItemBuilder.FixLeatherHelm(this);
         }
 
+        /// <summary>
+        /// Caches item template.
+        /// </summary>
         ItemTemplate GetCachedItemTemplate()
         {
-            if (itemGroup != cachedItemGroup || itemIndex != cachedItemIndex)
+            if (itemGroup != cachedItemGroup || groupIndex != cachedGroupIndex)
             {
-                cachedItemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, itemIndex);
+                cachedItemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, groupIndex);
                 cachedItemGroup = itemGroup;
-                cachedItemIndex = itemIndex;
+                cachedGroupIndex = groupIndex;
             }
 
             return cachedItemTemplate;
         }
 
-        void FixHelm()
+        /// <summary>
+        /// Gets player texture record based on variant and other properties.
+        /// </summary>
+        int GetPlayerTextureRecord()
         {
-            // Promote leather helms to chain
-            // Daggerfall seems to do this also as "leather" helms have the chain tint in-game
-            // Is this why Daggerfall intentionally leaves off the material type from helms and shields?
-            // Might need to revisit this later
-            if (IsOfTemplate(ItemGroups.Armor, (int)Armor.Helm))
-            {
-                // Check if leather
-                if ((ArmorMaterialTypes)nativeMaterialValue == ArmorMaterialTypes.Leather)
-                {
-                    // Change material to chain and leave other stats the same
-                    nativeMaterialValue = (int)ArmorMaterialTypes.Chain;
+            // Get starting record from template
+            int start = ItemTemplate.playerTextureRecord;
 
-                    // Change dye to chain if not set
-                    if (dyeColor == DyeColors.Unchanged)
-                        dyeColor = DyeColors.Chain;
+            // Cloaks have a special interior image, need to increment for first actual cloak image
+            if (IsCloak())
+                start += 1;
+
+            return start + currentVariant;
+        }
+
+        bool IsCloak()
+        {
+            // Mens cloaks
+            if (ItemGroup == ItemGroups.MensClothing)
+            {
+                if (TemplateIndex == (int)MensClothing.Casual_cloak ||
+                    TemplateIndex == (int)MensClothing.Formal_cloak)
+                {
+                    return true;
                 }
             }
+
+            // Womens cloaks
+            if (ItemGroup == ItemGroups.WomensClothing)
+            {
+                if (TemplateIndex == (int)WomensClothing.Casual_cloak ||
+                    TemplateIndex == (int)WomensClothing.Formal_cloak)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Sets current variant and clamps within valid range.
+        /// </summary>
+        void SetCurrentVariant(int variant)
+        {
+            if (variant < 0)
+                currentVariant = 0;
+            else if (variant >= TotalVariants)
+                currentVariant = TotalVariants - 1;
+            else
+                currentVariant = variant;
         }
 
         #endregion

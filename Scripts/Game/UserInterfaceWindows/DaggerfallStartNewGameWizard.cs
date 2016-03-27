@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             createCharRaceSelectWindow.Reset();
-            characterDocument.race = null;
+            characterDocument.raceTemplate = null;
 
             wizardStage = WizardStages.SelectRace;
 
@@ -160,7 +160,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 createCharFaceSelectWindow.OnClose += FaceSelectWindow_OnClose;
             }
 
-            createCharFaceSelectWindow.SetFaceTextures(characterDocument.race, characterDocument.gender);
+            createCharFaceSelectWindow.SetFaceTextures(characterDocument.raceTemplate, characterDocument.gender);
 
             wizardStage = WizardStages.SelectFace;
             uiManager.PushWindow(createCharFaceSelectWindow);
@@ -241,12 +241,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharRaceSelectWindow.Cancelled)
             {
-                characterDocument.race = createCharRaceSelectWindow.SelectedRace;
+                characterDocument.raceTemplate = createCharRaceSelectWindow.SelectedRace;
                 SetGenderSelectWindow();
             }
             else
             {
-                characterDocument.race = null;
+                characterDocument.raceTemplate = null;
             }
         }
 
