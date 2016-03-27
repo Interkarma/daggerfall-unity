@@ -1004,9 +1004,11 @@ namespace DaggerfallWorkshop.Game
         {
             if (gameobjectBeacons != null)
             {
+                // after Destroy() set GameObject to null - this is necessary so that the handle is invalid immediately
                 UnityEngine.Object.Destroy(gameobjectBeacons);
                 gameobjectBeacons = null;
             }
+            // also do this for all sub-GameObjects inside gameobjectBeacons
             if (gameobjectPlayerMarkerArrow != null)
             {
                 //UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrow);
