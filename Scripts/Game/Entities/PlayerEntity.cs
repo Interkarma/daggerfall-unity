@@ -35,6 +35,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected RaceTemplate raceTemplate;
         protected int faceIndex;
         protected PlayerReflexes reflexes;
+        protected EntityItems wagonItems = new EntityItems();
+        protected EntityItems otherItems = new EntityItems();
 
         #endregion
 
@@ -44,6 +46,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public RaceTemplate RaceTemplate { get { return raceTemplate; } set { raceTemplate = value; } }
         public int FaceIndex { get { return faceIndex; } set { faceIndex = value; } }
         public PlayerReflexes Reflexes { get { return reflexes; } set { reflexes = value; } }
+        public EntityItems WagonItems { get { return wagonItems; } set { wagonItems.ReplaceAll(value); } }
+        public EntityItems OtherItems { get { return otherItems; } set { otherItems.ReplaceAll(value); } }
 
         #endregion
 

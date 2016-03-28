@@ -106,6 +106,21 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Creates a generic item from group and template index.
+        /// </summary>
+        /// <param name="itemGroup">Item group.</param>
+        /// <param name="itemIndex">Template index.</param>
+        /// <returns>DaggerfallUnityItem.</returns>
+        public static DaggerfallUnityItem CreateItem(ItemGroups itemGroup, int templateIndex)
+        {
+            // Create item
+            int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, templateIndex);
+            DaggerfallUnityItem newItem = new DaggerfallUnityItem(itemGroup, groupIndex);
+
+            return newItem;
+        }
+
+        /// <summary>
         /// Generates men's clothing.
         /// </summary>
         /// <param name="item">Item type to generate.</param>
@@ -171,9 +186,9 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Generates armour.
         /// </summary>
-        /// <param name="armor"></param>
-        /// <param name="material"></param>
-        /// <returns></returns>
+        /// <param name="armor">Armor item.</param>
+        /// <param name="material">Material.</param>
+        /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateArmor(Genders gender, Races race, Armor armor, ArmorMaterialTypes material, int variant = 0)
         {
             const int firstFemaleArchive = 245;
@@ -198,6 +213,56 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Adjust for variant
             SetVariant(newItem, variant);
+
+            return newItem;
+        }
+
+        /// <summary>
+        /// Creates a random ingredient from a random ingredient group.
+        /// </summary>
+        /// <returns>DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreateRandomIngredient()
+        {
+            // Randomise ingredient group
+            ItemGroups itemGroup = ItemGroups.None;
+            int group = UnityEngine.Random.Range(0, 7);
+            Array enumArray;
+            switch (group)
+            {
+                case 0:
+                    itemGroup = ItemGroups.CreatureIngredients1;
+                    break;
+                case 1:
+                    itemGroup = ItemGroups.CreatureIngredients2;
+                    break;
+                case 2:
+                    itemGroup = ItemGroups.CreatureIngredients3;
+                    break;
+                case 3:
+                    itemGroup = ItemGroups.MetalIngredients;
+                    break;
+                case 4:
+                    itemGroup = ItemGroups.MiscellaneousIngredients1;
+                    break;
+                case 5:
+                    itemGroup = ItemGroups.MiscellaneousIngredients2;
+                    break;
+                case 6:
+                    itemGroup = ItemGroups.PlantIngredients1;
+                    break;
+                case 7:
+                    itemGroup = ItemGroups.PlantIngredients2;
+                    break;
+                default:
+                    return null;
+            }
+
+            // Randomise ingredient within group
+            enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(itemGroup);
+            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
+
+            // Create item
+            DaggerfallUnityItem newItem = new DaggerfallUnityItem(itemGroup, groupIndex);
 
             return newItem;
         }

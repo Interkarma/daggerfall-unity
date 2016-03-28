@@ -536,7 +536,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 //ItemTemplate template = item.ItemTemplate;
                 //int equipIndex = DaggerfallUnity.Instance.ItemHelper.GetLegacyEquipIndex(item, playerEntity.Items);
                 //if (equipIndex != -1) text += string.Format("\re:{0}", equipIndex);
-                //text += string.Format("\ra:{0} i:{1} c:{2}", item.playerTextureArchive, item.playerTextureRecord, item.dyeColor);
+                //text += string.Format("\ra:{0} i:{1} c:{2}", item.PlayerTextureArchive, item.PlayerTextureRecord, item.dyeColor);
                 //text += string.Format("\ra:{0} i:{1}", template.playerTextureArchive, template.playerTextureRecord);
                 //text += string.Format("\rdraw:{0}", item.DrawOrder);
 
@@ -598,11 +598,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Enumerate items to group lists
             foreach(DaggerfallUnityItem item in playerItems)
             {
-                if (item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Armor ||
-                    item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)     // Testing
-                {
-                    weaponsAndArmorList.Add(item);
-                }
+                // Only add appropriate items
+                //if (item.ItemGroup == ItemGroups.Weapons || item.ItemGroup == ItemGroups.Armor)
+                //{
+                //    weaponsAndArmorList.Add(item);
+                //}
+
+                // TEST: Just add all items for now
+                weaponsAndArmorList.Add(item);
             }
 
             // Reset scroll positions

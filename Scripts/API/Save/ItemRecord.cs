@@ -123,7 +123,14 @@ namespace DaggerfallConnect.Save
             parsedData.weight = reader.ReadUInt32();
             parsedData.enchantmentPoints = reader.ReadUInt16();
             parsedData.message = reader.ReadUInt16();
-            // TODO: Read magic effect array
+
+            // Read magic effect array
+            const int effectCount = 12;
+            parsedData.magic = new ushort[effectCount];
+            for (int i = 0; i < effectCount; i++)
+            {
+                parsedData.magic[i] = reader.ReadUInt16();
+            }
 
             // Close stream
             reader.Close();
