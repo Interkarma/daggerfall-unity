@@ -47,6 +47,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(GotoLocation.name, GotoLocation.description, GotoLocation.usage, GotoLocation.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GetLocationMapPixel.name, GetLocationMapPixel.description, GetLocationMapPixel.usage, GetLocationMapPixel.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Teleport.name, Teleport.description, Teleport.usage, Teleport.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(Groundme.name, Groundme.description, Groundme.usage, Groundme.Execute);
         }
 
         private static class GodCommand
@@ -910,7 +911,36 @@ namespace Wenzil.Console
                 }
                     return "Finished";
             }
+        }
 
+
+        private static class Groundme
+        {
+            public static readonly string name = "groundme";
+            public static readonly string description = "Move back to last known good position";
+            public static readonly string usage = "groundme";
+
+            public static string Execute(params string[] args)
+            {
+                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
+                CharacterController cc = GameManager.Instance.PlayerController;
+                playerMotor.ClearFallingDamage();
+
+                RaycastHit hitInfo;
+                Vector3 origin = playerMotor.ContactPoint;
+                origin.y += cc.height;
+                Ray ray = new Ray(origin, Vector3.down);
+                if (!(Physics.Raycast(ray, out hitInfo, cc.height * 2)))
+                {
+                    return "Failed to reposition - try Teleport or if inside tele2exit";
+                }
+                else
+                {
+                    GameManager.Instance.PlayerObject.transform.position = playerMotor.ContactPoint;
+                    playerMotor.FixStanding(cc.height/2);
+                    return "Finished - moved to last known good location at " + playerMotor.ContactPoint.ToString();
+                }
+            }
         }
 
     }
