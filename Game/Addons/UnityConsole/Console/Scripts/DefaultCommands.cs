@@ -424,10 +424,6 @@ namespace Wenzil.Console
         }
 
 
-
-
-
-
         private static class SetGravity
         {
             public static readonly string name = "set_grav";
@@ -482,7 +478,6 @@ namespace Wenzil.Console
                 if (playerMotor == null)
                 {
                     return error;
-
                 }
                 if (args == null || args.Length < 1)
                 {
@@ -490,26 +485,19 @@ namespace Wenzil.Console
                     {
                         Console.Log(string.Format("Current Jump Speed: {0}", playerMotor.jumpSpeed));
                         return HelpCommand.Execute(SetJumpSpeed.name);
-
                     }
                     catch
                     {
                         return HelpCommand.Execute(SetJumpSpeed.name);
                     }
-
-
                 }
                 else if (!int.TryParse(args[0], out speed))
                     return error;
-
                 else
                 {
                     playerMotor.jumpSpeed = speed;
                     return string.Format("Jump speed set to: {0}", playerMotor.jumpSpeed);
                 }
-
-
-
             }
         }
 
@@ -858,15 +846,15 @@ namespace Wenzil.Console
         private static class Teleport
         {
             public static readonly string name = "teleport";
-            public static readonly string description = "teleport player to object they are looking at";
+            public static readonly string description = "teleport player to object they are looking at.  God mode recommended";
             public static readonly string usage = "teleport \noptional paramaters: \n{true/false} always teleport if true, even if looking at empty space (default false) \n{max distance}" +
-                "max distance to teleport (default 500) \n{up/down/left/right} final position adjustment (default up) \n Example: teleport force 500 up";
+                "max distance to teleport (default 500) \n{up/down/left/right} final position adjustment (default up) \n Examples:\nteleport \n teleport up \n teleport 999 left true";
 
             public static string Execute(params string[] args)
             {
 
                 bool forceTeleOnNoHit = false;              //teleport maxDistance even if raycast doesn't hit
-                float maxDistance = 500;                    //distance to use if forceTeleOnNoHit is true and raycast doesn't hit
+                float maxDistance = 500;                    //max distance
                 int step = 0;
                 Vector3 dir = Camera.main.transform.up;
                 Vector3 loc;
