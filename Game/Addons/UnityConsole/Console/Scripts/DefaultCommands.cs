@@ -900,34 +900,19 @@ namespace Wenzil.Console
                 RaycastHit hitInfo;
                 Vector3 origin = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0));
                 Ray ray = new Ray(origin + Camera.main.transform.forward * .2f, Camera.main.transform.forward);
-                //Debug.DrawRay(ray.origin, ray.direction, Color.yellow, 15);
-
-                if (!(Physics.Raycast(ray, out hitInfo)))
+                GameManager.Instance.PlayerMotor.ClearFallingDamage();
+                if (!(Physics.Raycast(ray, out hitInfo, maxDistance)))
                 {
                     Console.Log("Didn't hit anything...");
                     if(forceTeleOnNoHit)
                     {
-                        if (!GameManager.Instance.PlayerHealth.GodMode)
-                        {
-                            GameManager.Instance.PlayerHealth.GodMode = true;
-                            Console.Log(string.Format("\n##########################\n\nENABLING GOD MODE - USE CONSOLE COMMAND: tgm \nTO DISABLE\n\n##########################\n"));
-                        }
-
                         GameManager.Instance.PlayerObject.transform.position = ray.GetPoint(maxDistance);
                         Console.Log("...teleporting anyways");
                     }
                 }
                 else
                 {
-                    //enable god mode to prevent death by falling damage, & display message
-                    if (!GameManager.Instance.PlayerHealth.GodMode)
-                    {
-                        GameManager.Instance.PlayerHealth.GodMode = true;
-                        Console.Log(string.Format("\n##########################\n\nENABLING GOD MODE - USE CONSOLE COMMAND: tgm \nTO DISABLE\n\n##########################\n"));
-                    }
-
                     loc = hitInfo.point;
-
                     while (Physics.CheckCapsule(loc, loc + dir, GameManager.Instance.PlayerController.radius + .1f) && step < 50)
                     {
                         loc = dir + loc;
