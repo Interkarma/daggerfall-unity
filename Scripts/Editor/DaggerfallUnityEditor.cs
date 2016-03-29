@@ -62,6 +62,13 @@ namespace DaggerfallWorkshop
             set { EditorPrefs.SetBool(showAssetExportFoldout, value); }
         }
 
+        private const string showTagManagerFoldout = "DaggerfallUnity_ShowTagManagerFoldOut";
+        public bool ShowTagManagerFoldout
+        {
+            get { return EditorPrefs.GetBool(showTagManagerFoldout, false); }
+            set { EditorPrefs.SetBool(showTagManagerFoldout, value); }
+        }
+
         SerializedProperty Prop(string name)
         {
             return serializedObject.FindProperty(name);
@@ -128,6 +135,7 @@ namespace DaggerfallWorkshop
             // Display other GUI items
             DisplayOptionsGUI();
             DisplayImporterGUI();
+            DisplayTagManagerSettingsGUI();
 
             // Save modified properties
             serializedObject.ApplyModifiedProperties();
@@ -356,5 +364,106 @@ namespace DaggerfallWorkshop
                 });
             });
         }
+
+        private void DisplayTagManagerSettingsGUI()
+        {
+            EditorGUILayout.Space();
+
+            ShowTagManagerFoldout = GUILayoutHelper.Foldout(ShowTagManagerFoldout, new GUIContent("Tag Manager Settings"), () =>
+            {
+                if (GUILayout.Button("Update Tags & Layers settings"))
+                {
+                    try
+                    {
+                        // Open tag manager
+                        SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+                        SerializedProperty tagsProp = tagManager.FindProperty("tags");
+                        SerializedProperty layersProp = tagManager.FindProperty("layers");
+                        SerializedProperty sp = null;
+
+                        //add tags
+                        string[] tags = System.Enum.GetNames(typeof(Tags));
+                        for (int i = tags.Length - 1; i >= 0; i--)
+                        {
+                            if (string.IsNullOrEmpty(tags[i]))
+                                continue;
+
+                            // First check if it is not already present
+                            bool found = false;
+                            for (int j = 0; j < tagsProp.arraySize; j++)
+                            {
+                                sp = tagsProp.GetArrayElementAtIndex(j);
+                                if (sp.stringValue.Equals(tags[i]))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            // if not found, add tag
+                            if (!found)
+                            {
+                                tagsProp.InsertArrayElementAtIndex(0);
+                                sp = tagsProp.GetArrayElementAtIndex(0);
+                                sp.stringValue = tags[i];
+                            }
+                        }
+
+                        //add layers
+                        string[] layers = System.Enum.GetNames(typeof(Layers));
+                        for (int i = layers.Length - 1; i >= 0; i--)
+                        {
+                            if (string.IsNullOrEmpty(layers[i]))
+                                continue;
+
+                            int index = (int)(Layers)System.Enum.Parse(typeof(Layers), layers[i]);
+
+                            if (index < 8 || index > 31)
+                            {
+                                Debug.LogWarning(string.Format("index for layer: {0} is out of bounds: {1}", layers[i], index));
+                                continue;
+                            }
+
+                            for (int j = 0; j < layersProp.arraySize; j++)
+                            {
+                                sp = layersProp.GetArrayElementAtIndex(j);
+
+                                if (j == index && sp.stringValue.Equals(layers[i]))//layer at correct index
+                                {
+                                    continue;
+                                }
+                                else if (j == index && !sp.stringValue.Equals(layers[i]))//correct index, wrong layer
+                                {
+                                    sp.stringValue = layers[i];
+                                }
+                                else if (j != index && sp.stringValue.Equals(layers[i]))//found layer at wrong index
+                                {
+                                    sp.stringValue = null;
+                                }
+                            }
+                        }
+
+                        tagManager.ApplyModifiedProperties();//apply changes
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError(ex.Message);
+                        return;
+                    }
+                }
+
+                if (GUILayout.Button("Clear Tags & Layers"))
+                {
+                    SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+                    SerializedProperty tagsProp = tagManager.FindProperty("tags");
+                    SerializedProperty layersProp = tagManager.FindProperty("layers");
+
+                    tagsProp.ClearArray();
+                    layersProp.ClearArray();
+                    tagManager.ApplyModifiedProperties();
+                }
+
+            });
+        }
+
     }
 }
