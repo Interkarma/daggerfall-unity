@@ -356,5 +356,12 @@ namespace DaggerfallWorkshop.Game
         {
             SendMessage("HardFallAlert", fallDistance, SendMessageOptions.DontRequireReceiver);
         }
+
+        public void ClearFallingDamage()
+        {
+            falling = false;
+            fallStartLevel = transform.position.y;
+        }
+
     }
 }
