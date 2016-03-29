@@ -48,8 +48,8 @@ namespace DaggerfallWorkshop
         int selectedSave = 0;
 
         Vector2 scrollPos;
-        bool showItemsFoldout = true;
-        bool showSaveTreeFoldout = false;
+        bool showItemsFoldout = false;
+        bool showSaveTreeFoldout = true;
 
         CharacterRecord characterRecord = null;
 
@@ -260,11 +260,22 @@ namespace DaggerfallWorkshop
                 // Check if item equipped
                 if (recordType == RecordTypes.Item)
                 {
+                    //ItemRecord itemRecord = (ItemRecord)parent.Children[i];
+                    //textLabel += string.Format(" [id={0}]", itemRecord.RecordRoot.RecordID);
+
                     int equippedIndex = GetEquippedIndex(parent.Children[i] as ItemRecord);
                     if (equippedIndex != -1)
                     {
                         //textLabel = string.Format("(*={0:00}) {1}", equippedIndex, textLabel);
                     }
+                }
+
+                // Tag wagon container
+                if (recordType == RecordTypes.Container && parent.RecordType == RecordTypes.Character)
+                {
+                    ContainerRecord containerRecord = (ContainerRecord)parent.Children[i];
+                    if (containerRecord.IsWagon)
+                        textLabel += " [Wagon]";
                 }
 
                 EditorGUILayout.LabelField(textLabel);

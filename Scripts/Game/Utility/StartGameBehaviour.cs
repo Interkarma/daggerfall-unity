@@ -259,6 +259,10 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             DaggerfallUI.Instance.PopToHUD();
 
+            // Must have a character document
+            if (characterDocument == null)
+                characterDocument = new CharacterDocument();
+
             // Assign character sheet
             PlayerEntity playerEntity = FindPlayerEntity();
             playerEntity.AssignCharacter(characterDocument);
@@ -308,6 +312,12 @@ namespace DaggerfallWorkshop.Game.Utility
                     }
                 }
             }
+
+            // Assign starting gear to player entity
+            DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity);
+
+            // Update weapons on start
+            GameManager.Instance.WeaponManager.UpdateWeapons(playerEntity.ItemEquipTable);
 
             // Start game
             GameManager.Instance.PauseGame(false);

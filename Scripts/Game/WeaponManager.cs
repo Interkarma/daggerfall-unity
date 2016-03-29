@@ -12,6 +12,7 @@
 using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -124,6 +125,60 @@ namespace DaggerfallWorkshop.Game
             Sheathed = true;
             ShowWeapons(false);
         }
+
+        public void UpdateWeapons(ItemEquipTable equipTable, bool notify = false)
+        {
+            if (equipTable.IsSlotOpen(EquipSlots.RightHand))
+                SetMelee(RightHandWeapon);
+            else
+                SetWeapon(RightHandWeapon, equipTable.GetItem(EquipSlots.RightHand));
+
+            //if (equipTable.IsSlotOpen(EquipSlots.LeftHand))
+            //    SetMelee(LeftHandWeapon);
+            //else
+            //    SetWeapon(LeftHandWeapon, equipTable.GetItem(EquipSlots.LeftHand));
+
+            //bool wasRightEquipped;
+            //if (RightHandWeapon.WeaponType == WeaponTypes.None || RightHandWeapon.WeaponType == WeaponTypes.Melee)
+            //    wasRightEquipped = false;
+            //else
+            //    wasRightEquipped = true;
+
+            //bool wasLeftEquipped;
+            //if (LeftHandWeapon.WeaponType == WeaponTypes.None || LeftHandWeapon.WeaponType == WeaponTypes.Melee)
+            //    wasLeftEquipped = false;
+            //else
+            //    wasLeftEquipped = true;
+        }
+
+        #region Weapon Setup Methods
+
+        void SetMelee(FPSWeapon target)
+        {
+            target.WeaponType = WeaponTypes.Melee;
+            target.MetalType = MetalTypes.None;
+            target.DrawWeaponSound = SoundClips.None;
+            target.SwingWeaponSound = SoundClips.PlayerSwing;
+
+            // TODO: Adjust FPSWeapon attack speed scale for swing pitch variance
+        }
+
+        void SetWeapon(FPSWeapon target, DaggerfallUnityItem weapon)
+        {
+            // Must be a weapon
+            if (weapon.ItemGroup != ItemGroups.Weapons)
+                return;
+
+            // Setup target
+            target.WeaponType = DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(weapon);
+            target.MetalType = DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(weapon);
+            target.DrawWeaponSound = SoundClips.DrawWeapon;
+            target.SwingWeaponSound = SoundClips.PlayerSwing;
+
+            // TODO: Adjust FPSWeapon attack speed scale for swing pitch variance
+        }
+
+        #endregion
 
         #region Private Methods
 

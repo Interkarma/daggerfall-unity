@@ -244,6 +244,9 @@ namespace DaggerfallConnect.Save
                     case RecordTypes.Character:
                         record = new CharacterRecord(reader, length);
                         break;
+                    case RecordTypes.Container:
+                        record = new ContainerRecord(reader, length);
+                        break;
                     //case RecordTypes.UnknownTownLink:
                     //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
                     //    continue;

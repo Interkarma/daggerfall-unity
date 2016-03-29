@@ -59,7 +59,10 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <param name="">DaggerfallUnityItem to add.</param>
         public void AddItem(DaggerfallUnityItem item)
         {
-            items.Add(item);
+            if (item != null)
+            {
+                items.Add(item);
+            }
         }
 
         /// <summary>

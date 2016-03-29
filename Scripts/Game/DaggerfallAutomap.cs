@@ -103,8 +103,6 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap
         int layerAutomap; // layer used for level geometry of automap
 
-        //String oldGeometryName = "";
-
         GameObject gameObjectCameraAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
         Camera cameraAutomap = null; // camera for automap camera
 
@@ -143,7 +141,9 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectBeaconEntrancePosition = null; // GameObject which will hold (dungeon) entrance marker ray (green ray)
         GameObject gameobjectBeaconRotationPivotAxis = null; // GameObject which will hold rotation pivot axis ray (blue ray)
 
-        GameObject gameObjectCubeMarker = null; // used for entrance marker discovery
+        GameObject gameObjectEntrancePositionCubeMarker = null; // used for entrance marker discovery
+
+        Collider playerCollider = null;
 
         // specifies which object should have focus ()
         public enum AutomapFocusObject
@@ -473,6 +473,16 @@ namespace DaggerfallWorkshop.Game
                     Application.Quit();
             }
 
+            playerCollider = GameManager.Instance.PlayerGPS.gameObject.GetComponent<CharacterController>().GetComponent<Collider>();
+            if (playerCollider == null)
+            {
+                DaggerfallUnity.LogMessage("Collider on PlayerGPS not found!\"", true);
+                if (Application.isEditor)
+                    Debug.Break();
+                else
+                    Application.Quit();
+            }
+
             // set default automap render mode
             switchToAutomapRenderModeCutout();
 
@@ -697,13 +707,13 @@ namespace DaggerfallWorkshop.Game
                 gameobjectGeometry.SetActive(false);
             }
 
-            // entrance marker discovery check
-            if (gameobjectBeaconEntrancePosition)
+            // entrance marker discovery check - only do as long as undiscovered
+            if ((gameobjectBeaconEntrancePosition) && (!gameobjectBeaconEntrancePosition.activeSelf))
             {
-                // store enabled state of capsule collider of GameObject "PlayerAdvanced"
-                bool oldValueEnabledPlayerAdvancedCapsuleCollider = gameObjectPlayerAdvanced.GetComponent<CapsuleCollider>().enabled;
+                // store enabled state of player collider
+                bool oldValueEnabledPlayerCollider = playerCollider.enabled;
                 // enable capsule collider (for correct raycasting)
-                gameObjectPlayerAdvanced.GetComponent<CapsuleCollider>().enabled = true;
+                playerCollider.enabled = true;
 
                 // cast 3 raycasts (each with a different small offset) starting from entrance marker and see if it has direct line of sight to player head position
                 RaycastHit hitTrueLevelGeometry1 = new RaycastHit();
@@ -712,11 +722,11 @@ namespace DaggerfallWorkshop.Game
                 RaycastHit[] hitsTrueLevelGeometry;
                 float nearestDistance;
 
-                Vector3 entranceMarkerPos = gameObjectCubeMarker.transform.position;
-
+                Vector3 entranceMarkerPos = gameObjectEntrancePositionCubeMarker.transform.position;
+                Vector3 playerColliderPos = playerCollider.transform.position; //GameManager.Instance.PlayerGPS.transform.position; //Camera.main.transform.position;
                 // raycast 1
                 Vector3 rayStartPos = entranceMarkerPos;
-                Vector3 rayToPlayer = Camera.main.transform.position - rayStartPos;                
+                Vector3 rayToPlayer = playerColliderPos - rayStartPos;                
                 hitsTrueLevelGeometry = Physics.RaycastAll(rayStartPos, rayToPlayer, raycastDistanceEntranceMarkerReveal, 1 << 0);                
                 nearestDistance = float.MaxValue;
                 foreach (RaycastHit hit in hitsTrueLevelGeometry)
@@ -730,8 +740,8 @@ namespace DaggerfallWorkshop.Game
 
                 // raycast 2
                 rayStartPos = entranceMarkerPos + Vector3.left * 0.1f;
-                rayToPlayer = Camera.main.transform.position - rayStartPos;
-                hitsTrueLevelGeometry = Physics.RaycastAll(rayStartPos, rayToPlayer, raycastDistanceEntranceMarkerReveal, 1 << 0);
+                rayToPlayer = playerColliderPos - rayStartPos;                
+                hitsTrueLevelGeometry = Physics.RaycastAll(rayStartPos, rayToPlayer, raycastDistanceEntranceMarkerReveal, 1 << 0);                
                 nearestDistance = float.MaxValue;
                 foreach (RaycastHit hit in hitsTrueLevelGeometry)
                 {
@@ -744,7 +754,7 @@ namespace DaggerfallWorkshop.Game
 
                 // raycast 3
                 rayStartPos = entranceMarkerPos + Vector3.forward * 0.1f + Vector3.up * 0.1f;
-                rayToPlayer = Camera.main.transform.position - rayStartPos;                
+                rayToPlayer = playerColliderPos - rayStartPos;                
                 hitsTrueLevelGeometry = Physics.RaycastAll(rayStartPos, rayToPlayer, raycastDistanceEntranceMarkerReveal, 1 << 0);
                 nearestDistance = float.MaxValue;
                 foreach (RaycastHit hit in hitsTrueLevelGeometry)
@@ -756,13 +766,13 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
 
-                // if all 3 raycasts hit the GameObject "PlayerAdvanced" then the entrance was discovered
+                // if all 3 raycasts hit the player collider then the entrance was discovered
                 if ((hitTrueLevelGeometry1.collider) && (hitTrueLevelGeometry2.collider) && (hitTrueLevelGeometry3.collider))
                 {
                     if (
-                        (hitTrueLevelGeometry1.collider.gameObject.name.Equals("PlayerAdvanced")) &&
-                        (hitTrueLevelGeometry2.collider.gameObject.name.Equals("PlayerAdvanced")) &&
-                        (hitTrueLevelGeometry3.collider.gameObject.name.Equals("PlayerAdvanced"))
+                        (hitTrueLevelGeometry1.collider == playerCollider) &&
+                        (hitTrueLevelGeometry2.collider == playerCollider) &&
+                        (hitTrueLevelGeometry3.collider == playerCollider)
                        )
                     {
                         // so set the entrance beacon to active (discovered)
@@ -770,8 +780,8 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
 
-                // restore enabled state of capsule collider on GameObject "PlayerAdvanced"
-                gameObjectPlayerAdvanced.GetComponent<CapsuleCollider>().enabled = oldValueEnabledPlayerAdvancedCapsuleCollider;
+                // restore enabled state of player collider
+                playerCollider.enabled = oldValueEnabledPlayerCollider;
             }
         }
 
@@ -966,13 +976,13 @@ namespace DaggerfallWorkshop.Game
                 material.color = new Color(0.0f, 1.0f, 0.0f);
                 gameobjectRay.GetComponent<MeshRenderer>().material = material;
 
-                gameObjectCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.Destroy(gameObjectCubeMarker.GetComponent<Collider>());
-                gameObjectCubeMarker.name = "CubeEntracePositionMarker";
-                gameObjectCubeMarker.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
-                gameObjectCubeMarker.GetComponent<MeshRenderer>().material = material;
-                gameObjectCubeMarker.layer = layerAutomap;
-                gameObjectCubeMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+                gameObjectEntrancePositionCubeMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker.GetComponent<Collider>());
+                gameObjectEntrancePositionCubeMarker.name = "CubeEntracePositionMarker";
+                gameObjectEntrancePositionCubeMarker.transform.SetParent(gameobjectBeaconEntrancePosition.transform);
+                gameObjectEntrancePositionCubeMarker.GetComponent<MeshRenderer>().material = material;
+                gameObjectEntrancePositionCubeMarker.layer = layerAutomap;
+                gameObjectEntrancePositionCubeMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
             }
 
             if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
@@ -987,6 +997,42 @@ namespace DaggerfallWorkshop.Game
                 // entrance marker to current position (position player entered)
                 gameobjectBeaconEntrancePosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayEntrancePosOffset;
                 gameobjectBeaconEntrancePosition.SetActive(true); // set do discovered
+            }
+        }
+
+        void DestroyBeacons()
+        {
+            if (gameobjectBeacons != null)
+            {
+                // after Destroy() set GameObject to null - this is necessary so that the handle is invalid immediately
+                UnityEngine.Object.Destroy(gameobjectBeacons);
+                gameobjectBeacons = null;
+            }
+            // also do this for all sub-GameObjects inside gameobjectBeacons
+            if (gameobjectPlayerMarkerArrow != null)
+            {
+                //UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrow);
+                gameobjectPlayerMarkerArrow = null;
+            }
+            if (gameobjectBeaconPlayerPosition != null)
+            {
+                //UnityEngine.Object.Destroy(gameobjectBeaconPlayerPosition);
+                gameobjectBeaconPlayerPosition = null;
+            }
+            if (gameobjectBeaconRotationPivotAxis != null)
+            {
+                //UnityEngine.Object.Destroy(gameobjectBeaconRotationPivotAxis);
+                gameobjectBeaconRotationPivotAxis = null;
+            }
+            if (gameobjectBeaconEntrancePosition != null)
+            {
+                //UnityEngine.Object.Destroy(gameobjectBeaconEntrancePosition);
+                gameobjectBeaconEntrancePosition = null;
+            }
+            if (gameObjectEntrancePositionCubeMarker != null)
+            {
+                //UnityEngine.Object.Destroy(gameObjectEntrancePositionCubeMarker);
+                gameObjectEntrancePositionCubeMarker = null;
             }
         }
 
@@ -1013,23 +1059,10 @@ namespace DaggerfallWorkshop.Game
         {
             String newGeometryName = string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex);
 
-            // obsolete block commented out - now solved with the AutomapGeometryBlockState state
-            //if (gameobjectGeometry != null)
-            //{
-            //    if (oldGeometryName != newGeometryName)
-            //    {
-            //        UnityEngine.Object.Destroy(gameobjectGeometry);
-            //    }
-            //    else
-            //    {
-            //        injectMeshAndMaterialProperties(false);
-            //        return;
-            //    }
-            //}
-
             if (gameobjectGeometry != null)
             {
                 UnityEngine.Object.Destroy(gameobjectGeometry);
+                gameobjectGeometry = null;
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Interior)");
@@ -1078,23 +1111,11 @@ namespace DaggerfallWorkshop.Game
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
             String newGeometryName = string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name);
 
-            // obsolete block commented out - now solved with the AutomapGeometryDungeonState state
-            //if (gameobjectGeometry != null)
-            //{
-            //    if (oldGeometryName != newGeometryName)
-            //    {
-            //        UnityEngine.Object.Destroy(gameobjectGeometry);
-            //    }
-            //    else
-            //    {
-            //        injectMeshAndMaterialProperties(false);
-            //        return;
-            //    }
-            //}
 
             if (gameobjectGeometry != null)
             {
                 UnityEngine.Object.Destroy(gameobjectGeometry);
+                gameobjectGeometry = null;
             }
 
             gameobjectGeometry = new GameObject("GeometryAutomap (Dungeon)");
@@ -1521,39 +1542,18 @@ namespace DaggerfallWorkshop.Game
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             saveStateAutomapInterior();
-            if (gameobjectGeometry != null)
-            {
-                UnityEngine.Object.Destroy(gameobjectGeometry);
-            }
-            if (gameobjectBeacons != null)
-            {
-                UnityEngine.Object.Destroy(gameobjectBeacons);
-            }
+            DestroyBeacons();
         }
 
         private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             saveStateAutomapDungeon();
-            if (gameobjectGeometry != null)
-            {                
-                UnityEngine.Object.Destroy(gameobjectGeometry);
-            }
-            if (gameobjectBeacons != null)
-            {
-                UnityEngine.Object.Destroy(gameobjectBeacons);
-            }
+            DestroyBeacons();
         }
 
         void OnLoadEvent(SaveData_v1 saveData)
         {
-            if (gameobjectGeometry != null)
-            {
-                UnityEngine.Object.Destroy(gameobjectGeometry);
-            }
-            if (gameobjectBeacons != null)
-            {
-                UnityEngine.Object.Destroy(gameobjectBeacons);
-            }
+            DestroyBeacons();
 
             if (GameManager.Instance.IsPlayerInside)
             {
