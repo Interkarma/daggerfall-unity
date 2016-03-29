@@ -530,4 +530,24 @@ namespace DaggerfallWorkshop
         Backpack,
         Corpse3,
     }
+
+    /// <summary>
+    /// Tags set in tag manager - not guarenteed to equal their enum value
+    /// </summary>
+    public enum Tags
+    {
+        ExampleTag00,
+        ExampleTag01,
+        ExampleTag02,
+    }
+
+    /// <summary>
+    /// Layers set in tag manager - should always equal their enum value
+    /// </summary>
+    public enum Layers
+    {
+        ExampleLayer00 = 8,
+        ExampleLayer12 = 12,
+        Automap = 31
+    }
 }
