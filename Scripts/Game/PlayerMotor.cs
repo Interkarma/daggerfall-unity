@@ -99,6 +99,11 @@ namespace DaggerfallWorkshop.Game
             get { return activePlatform; }
         }
 
+        public Vector3 ContactPoint
+        {
+            get { return contactPoint; }
+        }
+
         void Start()
         {
             controller = GetComponent<CharacterController>();
