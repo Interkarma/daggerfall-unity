@@ -145,8 +145,8 @@ namespace DaggerfallWorkshop.Game.Items
             int color = (int)item.dyeColor;
 
             // Get archive and record indices
-            int archive = item.PlayerTextureArchive;
-            int record = item.PlayerTextureRecord;
+            int archive = item.InventoryTextureArchive;
+            int record = item.InventoryTextureRecord;
 
             // Paper doll handling
             if (forPaperDoll)
@@ -244,7 +244,7 @@ namespace DaggerfallWorkshop.Game.Items
             int color = (int)item.dyeColor;
 
             // Cloak interior source is combination of player texture archive index and template record index
-            int archive = item.PlayerTextureArchive;
+            int archive = item.InventoryTextureArchive;
             int record = item.ItemTemplate.playerTextureRecord;
 
             // Load image data
@@ -608,6 +608,15 @@ namespace DaggerfallWorkshop.Game.Items
             shortShirt.dyeColor = ItemBuilder.RandomClothingDye();
             ItemBuilder.RandomizeVariant(casualPants);
 
+            // Add a wagon
+            // This is required for now as shops not currently implemented
+            // Wagon is easy to obtain anyway (150g) and most player can affored right out of Privateer's Hold
+            // TODO: Remove this once shops can sell this item to players as normal
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.Transportation, (int)Transportation.Small_cart));
+
+            // Add spellbook, all players start with one
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));
+
             // Add and equip clothing
             items.AddItem(shortShirt);
             items.AddItem(casualPants);
@@ -624,6 +633,12 @@ namespace DaggerfallWorkshop.Game.Items
             items.AddItem(ItemBuilder.CreateWeapon(Weapons.Longsword, WeaponMaterialTypes.Steel));
             items.AddItem(ItemBuilder.CreateWeapon(Weapons.Katana, WeaponMaterialTypes.Iron));
             items.AddItem(ItemBuilder.CreateWeapon(Weapons.Staff, WeaponMaterialTypes.Silver));
+
+            // Add some ingredients
+            for (int i = 0; i < 10; i++)
+            {
+                items.AddItem(ItemBuilder.CreateRandomIngredient());
+            }
         }
 
         #endregion

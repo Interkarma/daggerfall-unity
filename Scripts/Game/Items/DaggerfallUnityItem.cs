@@ -31,18 +31,20 @@ namespace DaggerfallWorkshop.Game.Items
         public DyeColors dyeColor;
         public float weightInKg;
         public int drawOrder;
-        //public UInt32 value1;             // TODO: Not currently imported from template / native record
-        //public UInt32 value2;
-        //public UInt16 hits1;
-        //public UInt16 hits2;
-        //public UInt16 hits3;
-        //int enchantmentPoints;
-        //int message;
-        //int[] magic;
+        public int value1;
+        public int value2;
+        public int hits1;
+        public int hits2;
+        public int hits3;
+        int enchantmentPoints;
+        int message;
+        int[] legacyMagic = null;
 
         // Private item fields
         int playerTextureArchive;
         int playerTextureRecord;
+        int worldTextureArchive;
+        int worldTextureRecord;
         ItemGroups itemGroup;
         int groupIndex;
         int currentVariant = 0;
@@ -61,9 +63,8 @@ namespace DaggerfallWorkshop.Game.Items
         #region Properties
 
         /// <summary>
-        /// Gets or sets texture archive.
-        /// Should be set by template and body morphology.
-        /// Or directly as imported from classic save.
+        /// Gets or sets player texture archive.
+        /// Used during item creation to set correct body morphology.
         /// </summary>
         public int PlayerTextureArchive
         {
@@ -72,11 +73,19 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets texture record based on variant.
+        /// Gets inventory texture archive.
         /// </summary>
-        public int PlayerTextureRecord
+        public int InventoryTextureArchive
         {
-            get { return GetPlayerTextureRecord(); }
+            get { return GetInventoryTextureArchive(); }
+        }
+
+        /// <summary>
+        /// Gets inventory texture record.
+        /// </summary>
+        public int InventoryTextureRecord
+        {
+            get { return GetInventoryTextureRecord(); }
         }
 
         /// <summary>
@@ -214,11 +223,20 @@ namespace DaggerfallWorkshop.Game.Items
             this.groupIndex = groupIndex;
             playerTextureArchive = itemTemplate.playerTextureArchive;
             playerTextureRecord = itemTemplate.playerTextureRecord;
+            worldTextureArchive = itemTemplate.worldTextureArchive;
+            worldTextureRecord = itemTemplate.worldTextureRecord;
             nativeMaterialValue = 0;
             dyeColor = DyeColors.Unchanged;
             weightInKg = itemTemplate.baseWeight;
             drawOrder = itemTemplate.drawOrderOrEffect;
             currentVariant = 0;
+            value1 = itemTemplate.basePrice;
+            value2 = itemTemplate.basePrice;
+            hits1 = itemTemplate.hitPoints;
+            hits2 = itemTemplate.hitPoints;
+            hits3 = itemTemplate.hitPoints;
+            enchantmentPoints = itemTemplate.enchantmentPoints;
+            message = 0;
 
             // Fix leather helms
             ItemBuilder.FixLeatherHelm(this);
@@ -260,14 +278,21 @@ namespace DaggerfallWorkshop.Game.Items
             groupIndex = other.groupIndex;
             playerTextureArchive = other.playerTextureArchive;
             playerTextureRecord = other.playerTextureRecord;
+            worldTextureArchive = other.worldTextureArchive;
+            worldTextureRecord = other.worldTextureRecord;
             nativeMaterialValue = other.nativeMaterialValue;
             dyeColor = other.dyeColor;
             weightInKg = other.weightInKg;
             drawOrder = other.drawOrder;
             currentVariant = other.currentVariant;
-
-            // Fix leather helms
-            ItemBuilder.FixLeatherHelm(this);
+            value1 = other.value1;
+            value2 = other.value2;
+            hits1 = other.hits1;
+            hits2 = other.hits2;
+            hits3 = other.hits3;
+            enchantmentPoints = other.enchantmentPoints;
+            message = other.message;
+            legacyMagic = (int[])legacyMagic.Clone();
         }
 
         /// <summary>
@@ -281,21 +306,54 @@ namespace DaggerfallWorkshop.Game.Items
             ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(group, index);
 
             // Get player image
-            int bitfield = (int)itemRecord.ParsedData.image1;
-            int archive = bitfield >> 7;
-            int record = (bitfield & 0x7f);
+            int playerBitfield = (int)itemRecord.ParsedData.image1;
+            int playerArchive = playerBitfield >> 7;
+            int playerRecord = (playerBitfield & 0x7f);
+
+            // Get world image
+            int worldBitfield = (int)itemRecord.ParsedData.image2;
+            int worldArchive = worldBitfield >> 7;
+            int worldRecord = (worldBitfield & 0x7f);
 
             // Assign new data
             shortName = itemRecord.ParsedData.name;
             itemGroup = group;
             groupIndex = index;
-            playerTextureArchive = archive;
-            playerTextureRecord = record;
+            playerTextureArchive = playerArchive;
+            playerTextureRecord = playerRecord;
+            worldTextureArchive = worldArchive;
+            worldTextureRecord = worldRecord;
             nativeMaterialValue = itemRecord.ParsedData.material;
             dyeColor = (DyeColors)itemRecord.ParsedData.color;
             weightInKg = (float)itemRecord.ParsedData.weight * 0.25f;
             drawOrder = itemTemplate.drawOrderOrEffect;
-            currentVariant = record - itemTemplate.playerTextureRecord;
+            value1 = (int)itemRecord.ParsedData.value1;
+            value2 = (int)itemRecord.ParsedData.value2;
+            hits1 = itemRecord.ParsedData.hits1;
+            hits2 = itemRecord.ParsedData.hits2;
+            hits3 = itemRecord.ParsedData.hits3;
+            currentVariant = 0;
+            enchantmentPoints = itemRecord.ParsedData.enchantmentPoints;
+            message = itemRecord.ParsedData.message;
+
+            // Assign current variant
+            if (itemTemplate.variants > 0)
+            {
+                if (IsCloak())
+                    currentVariant = playerRecord - (itemTemplate.playerTextureRecord + 1);
+                else
+                    currentVariant = playerRecord - itemTemplate.playerTextureRecord;
+            }
+
+            // Assign legacy magic effects array
+            if (itemRecord.ParsedData.magic != null)
+            {
+                legacyMagic = new int[itemRecord.ParsedData.magic.Length];
+                for (int i = 0; i < itemRecord.ParsedData.magic.Length; i++)
+                {
+                    legacyMagic[i] = itemRecord.ParsedData.magic[i];
+                }
+            }
 
             // Fix leather helms
             ItemBuilder.FixLeatherHelm(this);
@@ -317,18 +375,41 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets player texture record based on variant and other properties.
+        /// Gets inventory texture archive based on certain properties.
         /// </summary>
-        int GetPlayerTextureRecord()
+        /// <returns></returns>
+        int GetInventoryTextureArchive()
         {
-            // Get starting record from template
-            int start = ItemTemplate.playerTextureRecord;
+            // Handle world texture
+            if (UseWorldTexture())
+                return worldTextureArchive;
 
-            // Cloaks have a special interior image, need to increment for first actual cloak image
-            if (IsCloak())
-                start += 1;
+            return playerTextureArchive;
+        }
 
-            return start + currentVariant;
+        /// <summary>
+        /// Gets inventory texture record based on variant and other properties.
+        /// </summary>
+        int GetInventoryTextureRecord()
+        {
+            // Handle world texture
+            if (UseWorldTexture())
+                return worldTextureRecord;
+
+            // Handle items with variants
+            if (ItemTemplate.variants > 0)
+            {
+                // Get starting record from template
+                int start = ItemTemplate.playerTextureRecord;
+
+                // Cloaks have a special interior image, need to increment for first actual cloak image
+                if (IsCloak())
+                    start += 1;
+
+                return start + currentVariant;
+            }
+
+            return playerTextureRecord;
         }
 
         bool IsCloak()
@@ -352,6 +433,31 @@ namespace DaggerfallWorkshop.Game.Items
                     return true;
                 }
             }
+
+            return false;
+        }
+
+        // Determines if world texture should be displayed in place of player texture
+        // Many inventory item types have this setup and more may need to be added
+        bool UseWorldTexture()
+        {
+            // Handle ingredients
+            switch (itemGroup)
+            {
+                case ItemGroups.CreatureIngredients1:
+                case ItemGroups.CreatureIngredients2:
+                case ItemGroups.CreatureIngredients3:
+                case ItemGroups.MetalIngredients:
+                case ItemGroups.MiscellaneousIngredients1:
+                case ItemGroups.MiscellaneousIngredients2:
+                case ItemGroups.PlantIngredients1:
+                case ItemGroups.PlantIngredients2:
+                    return true;
+            }
+
+            // Handle unique items
+            if (IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Spellbook))
+                return true;
 
             return false;
         }
