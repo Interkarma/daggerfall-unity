@@ -310,13 +310,31 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public void NextVariant()
         {
-            // Cycle through variants
-            int variant = CurrentVariant + 1;
-            if (variant >= TotalVariants)
-                variant = 0;
+            // Only certain items support user-initiated variants
+            // This list will expand as more supported items are discovered
+            bool canChangeVariant = false;
+            switch(TemplateIndex)
+            {
+                case (int)MensClothing.Plain_robes:
+                case (int)MensClothing.Formal_cloak:
+                case (int)MensClothing.Casual_cloak:
+                case (int)MensClothing.Reversible_tunic:
+                case (int)WomensClothing.Plain_robes:
+                case (int)WomensClothing.Formal_cloak:
+                case (int)WomensClothing.Casual_cloak:
+                    canChangeVariant = true;
+                    break;
+            }
 
-            // Update image
-            playerTextureRecord = ItemTemplate.playerTextureRecord + variant;
+            // Cycle through variants
+            if (canChangeVariant)
+            {
+                int variant = CurrentVariant + 1;
+                if (variant >= TotalVariants)
+                    variant = 0;
+
+                currentVariant = variant;
+            }
         }
 
         #endregion

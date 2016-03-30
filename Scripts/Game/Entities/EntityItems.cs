@@ -9,11 +9,9 @@
 // Notes:
 //
 
-using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using DaggerfallConnect.Save;
+using System.Collections.Specialized;
 using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.Entity
@@ -29,7 +27,21 @@ namespace DaggerfallWorkshop.Game.Entity
     {
         #region Fields
 
-        Dictionary<ulong, DaggerfallUnityItem> items = new Dictionary<ulong, DaggerfallUnityItem>();
+        OrderedDictionary items = new OrderedDictionary();
+
+        #endregion
+
+        #region Enums
+
+        /// <summary>
+        /// Where to position items added to collection.
+        /// </summary>
+        public enum AddPosition
+        {
+            DontCare,
+            Front,
+            Back,
+        }
 
         #endregion
 
@@ -43,23 +55,16 @@ namespace DaggerfallWorkshop.Game.Entity
             get { return items.Count; }
         }
 
-        /// <summary>
-        /// Gets the live items collection.
-        /// </summary>
-        public Dictionary<ulong, DaggerfallUnityItem> Items
-        {
-            get { return items; }
-        }
-
         #endregion
 
         #region Public Methods
 
         /// <summary>
-        /// Adds a new item to this collection.
+        /// Adds an item to this collection.
         /// </summary>
-        /// <param name="">DaggerfallUnityItem to add.</param>
-        public void AddItem(DaggerfallUnityItem item)
+        /// <param name="item">Item to add.</param>
+        /// <param name="position">Position in list to insert item.</param>
+        public void AddItem(DaggerfallUnityItem item, AddPosition position = AddPosition.Back)
         {
             if (item != null)
             {
@@ -75,64 +80,145 @@ namespace DaggerfallWorkshop.Game.Entity
                 else
                 {
                     // Check duplicate key
-                    if (items.ContainsKey(item.UID))
+                    if (items.Contains(item.UID))
                         throw new Exception("AddItem() encountered a duplicate item UID for " + item.LongName);
 
                     // Add the item
-                    items.Add(item.UID, item);
+                    switch(position)
+                    {
+                        case AddPosition.DontCare:
+                            items.Add(item.UID, item);
+                            break;
+                        case AddPosition.Front:
+                            items.Insert(0, item.UID, item);
+                            break;
+                        case AddPosition.Back:
+                            items.Insert(Count, item.UID, item);
+                            break;
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Removes an item from this collection.
+        /// </summary>
+        /// <param name="item">Item to remove. Must exist inside this collection.</param>
+        public void RemoveItem(DaggerfallUnityItem item)
+        {
+            if (item == null)
+                return;
+
+            if (items.Contains(item.UID))
+            {
+                items.Remove(item.UID);
+            }
+        }
+
+        /// <summary>
+        /// Reorders item in collection.
+        /// </summary>
+        /// <param name="item">Item to reorder. Must exist inside this collection.</param>
+        /// <param name="position">Position to reorder to.</param>
+        public void ReorderItem(DaggerfallUnityItem item, AddPosition position)
+        {
+            if (!items.Contains(item.UID) || position == AddPosition.DontCare)
+                return;
+
+            RemoveItem(item);
+            AddItem(item, position);
+        }
+
+        public DaggerfallUnityItem GetItem(ulong key)
+        {
+            if (items.Contains(key))
+                return (DaggerfallUnityItem)items[key];
+            else
+                return null;
+        }
+
+        public DaggerfallUnityItem GetItem(int index)
+        {
+            if (index < 0 || index >= items.Count)
+                return null;
+            else
+                return (DaggerfallUnityItem)items[index];
         }
 
         /// <summary>
         /// Clears all items from this collection.
         /// Items in this collection will be destroyed.
         /// </summary>
-        public void RemoveAll()
+        public void Clear()
         {
             items.Clear();
         }
 
         /// <summary>
-        /// Replaces all items in this collection with clones of items from another collection.
+        /// Replaces all items in this collection with clones of items from source collection.
         /// Items in this collection will be destroyed. Source items will not be changed.
-        /// New UIDs will be allocated to new items.
+        /// New UIDs will be allocated to cloned items.
         /// </summary>
-        /// <param name="other">Source of items to copy from.</param>
-        public void ReplaceAll(EntityItems other)
+        /// <param name="source">Source collection to copy from.</param>
+        public void ReplaceAll(EntityItems source)
         {
-            RemoveAll();
-            CopyAll(other);
+            if (source == null)
+                return;
+
+            Clear();
+            CopyAll(source);
         }
 
         /// <summary>
-        /// Add to this collection with clones of items from another collection.
+        /// Clones all items from source collection into this collection.
         /// Source items will not be changed.
-        /// New UIDs will be allocated to new items.
+        /// New UIDs will be allocated to cloned items.
         /// </summary>
-        /// <param name="other">Source of items to copy from.</param>
-        public void CopyAll(EntityItems other)
+        /// <param name="source">Source collection to copy from.</param>
+        public void CopyAll(EntityItems source)
         {
-            foreach(var item in other.items)
+            if (source == null)
+                return;
+
+            foreach (DaggerfallUnityItem item in source.items.Values)
             {
-                AddItem(item.Value.Clone());
+                AddItem(item.Clone());
             }
         }
 
         /// <summary>
         /// Transfers all items from another collection.
-        /// Source items will be removed from other collection and placed in this collection.
+        /// Items will be removed from source collection and placed in this collection.
         /// UIDs will be retained.
         /// </summary>
-        /// <param name="other">Source of items to transfer from.</param>
-        public void TransferAll(EntityItems other)
+        /// <param name="source">Source collection to transfer from.</param>
+        public void TransferAll(EntityItems source)
         {
-            foreach (var item in other.items)
+            if (source == null)
+                return;
+
+            foreach (DaggerfallUnityItem item in source.items.Values)
             {
-                AddItem(item.Value);
+                AddItem(item);
             }
 
-            other.RemoveAll();
+            source.Clear();
+        }
+
+        /// <summary>
+        /// Transfers a single item from another collection to this collection.
+        /// Item will be removed from source collection and placed in this collection.
+        /// UID will be retained.
+        /// </summary>
+        /// <param name="item">Item to transfer.</param>
+        /// <param name="source">Source collection to transfer from.</param>
+        public void Transfer(DaggerfallUnityItem item, EntityItems source)
+        {
+            if (item == null || source == null)
+                return;
+
+            source.RemoveItem(item);
+            AddItem(item);
         }
 
         #endregion
@@ -150,10 +236,10 @@ namespace DaggerfallWorkshop.Game.Entity
 
             ItemGroups itemGroup = ingredient.ItemGroup;
             int groupIndex = ingredient.GroupIndex;
-            foreach (var item in items)
+            foreach (DaggerfallUnityItem item in items.Values)
             {
-                if (item.Value.ItemGroup == itemGroup && item.Value.GroupIndex == groupIndex)
-                    return item.Value;
+                if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex)
+                    return item;
             }
 
             return null;
