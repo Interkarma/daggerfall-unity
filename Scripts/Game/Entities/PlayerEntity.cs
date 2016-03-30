@@ -103,11 +103,26 @@ namespace DaggerfallWorkshop.Game.Entity
             // Add interim Daggerfall Unity items
             foreach (var record in filteredRecords)
             {
-                items.AddItem(new DaggerfallUnityItem((ItemRecord)record));
+                // Get container parent
+                ContainerRecord containerRecord = (ContainerRecord)record.Parent;
+
+                // Add to local inventory or wagon
+                DaggerfallUnityItem newItem = new DaggerfallUnityItem((ItemRecord)record);
+                if (containerRecord.IsWagon)
+                    wagonItems.AddItem(newItem);
+                else
+                    items.AddItem(newItem);
+
+                // Equip to player if equipped in save
+                for (int i = 0; i < characterRecord.ParsedData.equippedItems.Length; i++)
+                {
+                    if (characterRecord.ParsedData.equippedItems[i] == (record.RecordRoot.RecordID >> 8))
+                        equipTable.EquipItem(newItem);
+                }
             }
 
             // Set interim legacy equip table
-            items.SetLegacyEquipTable(characterRecord);
+            //items.SetLegacyEquipTable(characterRecord);
         }
 
         /// <summary>

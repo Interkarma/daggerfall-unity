@@ -61,7 +61,7 @@ namespace DaggerfallConnect.Save
             public Byte color;
             public UInt32 weight;
             public UInt16 enchantmentPoints;
-            public UInt16 message;
+            public UInt32 message;
             public UInt16[] magic;
         }
 
@@ -122,10 +122,10 @@ namespace DaggerfallConnect.Save
             parsedData.color = reader.ReadByte();
             parsedData.weight = reader.ReadUInt32();
             parsedData.enchantmentPoints = reader.ReadUInt16();
-            parsedData.message = reader.ReadUInt16();
+            parsedData.message = reader.ReadUInt32();
 
             // Read magic effect array
-            const int effectCount = 12;
+            const int effectCount = 10;
             parsedData.magic = new ushort[effectCount];
             for (int i = 0; i < effectCount; i++)
             {

@@ -53,6 +53,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Vector2 lastMousePosition;
         Vector2 mousePosition;
+        Vector2 lastScaledMousePosition;
         Vector2 scaledMousePosition;
 
         Color backgroundColor = Color.clear;
@@ -72,6 +73,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public delegate void OnMouseLeaveHandler();
         public event OnMouseLeaveHandler OnMouseLeave;
+
+        public delegate void OnMouseMoveHandler(int x, int y);
+        public event OnMouseMoveHandler OnMouseMove;
 
         public delegate void OnMouseDownHandler(BaseScreenComponent sender, Vector2 position);
         public event OnMouseDownHandler OnMouseDown;
@@ -370,7 +374,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             lastUpdateTime = updateTime;
             updateTime = Time.realtimeSinceStartup;
 
-            // Update mouse pos - must invert mouse position Y as Unity 0,0 is bottom-left
+            // Update raw mouse pos - must invert mouse position Y as Unity 0,0 is bottom-left
             lastMousePosition = mousePosition;
             mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
             scaledMousePosition = -Vector2.one;
@@ -409,6 +413,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 scaledMousePosition = mousePosition - new Vector2(myRect.xMin, myRect.yMin);
                 scaledMousePosition.x *= 1f / localScale.x;
                 scaledMousePosition.y *= 1f / localScale.y;
+
+                // Mouse moved
+                if (scaledMousePosition != lastScaledMousePosition)
+                {
+                    lastScaledMousePosition = scaledMousePosition;
+                    if (OnMouseMove != null)
+                        OnMouseMove((int)scaledMousePosition.x, (int)scaledMousePosition.y);
+                }
             }
             else
             {

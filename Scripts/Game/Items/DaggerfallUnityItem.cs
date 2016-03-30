@@ -36,9 +36,10 @@ namespace DaggerfallWorkshop.Game.Items
         public int hits1;
         public int hits2;
         public int hits3;
-        int enchantmentPoints;
-        int message;
-        int[] legacyMagic = null;
+        public int stackCount = 1;
+        public int enchantmentPoints;
+        public int message;
+        public int[] legacyMagic = null;
 
         // Private item fields
         int playerTextureArchive;
@@ -48,6 +49,7 @@ namespace DaggerfallWorkshop.Game.Items
         ItemGroups itemGroup;
         int groupIndex;
         int currentVariant = 0;
+        ulong uid = DaggerfallUnity.NextUID;
 
         // Item template is cached for faster checks
         // Does not need to be serialized
@@ -61,6 +63,14 @@ namespace DaggerfallWorkshop.Game.Items
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets generated unique identifier.
+        /// </summary>
+        public ulong UID
+        {
+            get { return uid; }
+        }
 
         /// <summary>
         /// Gets or sets player texture archive.
@@ -158,6 +168,30 @@ namespace DaggerfallWorkshop.Game.Items
             set { SetCurrentVariant(value); }
         }
 
+        /// <summary>
+        /// Checks if this is an ingredient.
+        /// </summary>
+        public bool IsIngredient
+        {
+            get { return ItemTemplate.isIngredient; }
+        }
+
+        /// <summary>
+        /// Checks if this item is equipped.
+        /// </summary>
+        public bool IsEquipped
+        {
+            get { return !(equipSlot == EquipSlots.None); }
+        }
+
+        /// <summary>
+        /// Checks if this item has magical properties.
+        /// </summary>
+        public bool IsEnchanted
+        {
+            get { return GetIsEnchanted(); }
+        }
+
         #endregion
 
         #region Constructors
@@ -173,6 +207,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Construct from item group and index.
         /// </summary>
         public DaggerfallUnityItem(ItemGroups itemGroup, int groupIndex)
+            : base()
         {
             SetItem(itemGroup, groupIndex);
         }
@@ -181,6 +216,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Construct from another item.
         /// </summary>
         public DaggerfallUnityItem(DaggerfallUnityItem item)
+            : base()
         {
             FromItem(item);
         }
@@ -189,6 +225,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Construct from legacy ItemRecord data.
         /// </summary>
         public DaggerfallUnityItem(ItemRecord record)
+            : base()
         {
             FromItemRecord(record);
         }
@@ -209,6 +246,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Sets item from group and index.
         /// Resets item data from new template.
+        /// Retains existing UID.
         /// </summary>
         /// <param name="itemGroup">Item group.</param>
         /// <param name="groupIndex">Item group index.</param>
@@ -237,17 +275,34 @@ namespace DaggerfallWorkshop.Game.Items
             hits3 = itemTemplate.hitPoints;
             enchantmentPoints = itemTemplate.enchantmentPoints;
             message = 0;
+            stackCount = 1;
 
             // Fix leather helms
             ItemBuilder.FixLeatherHelm(this);
         }
 
+        /// <summary>
+        /// Checks if item is of both group and template index.
+        /// </summary>
+        /// <param name="itemGroup">Item group to check.</param>
+        /// <param name="templateIndex">Template index to check.</param>
+        /// <returns>True if item matches both group and template index.</returns>
         public bool IsOfTemplate(ItemGroups itemGroup, int templateIndex)
         {
             if (ItemGroup == itemGroup && TemplateIndex == templateIndex)
                 return true;
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Checks if item is of template index.
+        /// </summary>
+        /// <param name="templateIndex">Template index to check.</param>
+        /// <returns>True if item matches template index.</returns>
+        public bool IsOfTemplate(int templateIndex)
+        {
+            return (TemplateIndex == templateIndex);
         }
 
         /// <summary>
@@ -293,6 +348,7 @@ namespace DaggerfallWorkshop.Game.Items
             enchantmentPoints = other.enchantmentPoints;
             message = other.message;
             legacyMagic = (int[])legacyMagic.Clone();
+            stackCount = other.stackCount;
         }
 
         /// <summary>
@@ -334,7 +390,8 @@ namespace DaggerfallWorkshop.Game.Items
             hits3 = itemRecord.ParsedData.hits3;
             currentVariant = 0;
             enchantmentPoints = itemRecord.ParsedData.enchantmentPoints;
-            message = itemRecord.ParsedData.message;
+            message = (int)itemRecord.ParsedData.message;
+            stackCount = 1;
 
             // Assign current variant
             if (itemTemplate.variants > 0)
@@ -437,23 +494,37 @@ namespace DaggerfallWorkshop.Game.Items
             return false;
         }
 
+        // Basic check for magic items
+        // Currently uses legacyMagic data for imported items
+        // New items cannot currently have magical properties
+        bool GetIsEnchanted()
+        {
+            // Spellbook considred enchanted
+            if (IsOfTemplate((int)MiscItems.Spellbook))
+                return true;
+
+            if (legacyMagic == null || legacyMagic.Length == 0)
+                return false;
+
+            // Check for legacy magic effects
+            // A value of 0xffff means no enchantment in that slot
+            // http://www.uesp.net/wiki/Daggerfall:MAGIC.DEF_indices
+            for (int i = 0;  i < legacyMagic.Length; i++)
+            {
+                if (legacyMagic[i] != 0xffff)
+                    return true;
+            }
+
+            return false;
+        }
+
         // Determines if world texture should be displayed in place of player texture
         // Many inventory item types have this setup and more may need to be added
         bool UseWorldTexture()
         {
             // Handle ingredients
-            switch (itemGroup)
-            {
-                case ItemGroups.CreatureIngredients1:
-                case ItemGroups.CreatureIngredients2:
-                case ItemGroups.CreatureIngredients3:
-                case ItemGroups.MetalIngredients:
-                case ItemGroups.MiscellaneousIngredients1:
-                case ItemGroups.MiscellaneousIngredients2:
-                case ItemGroups.PlantIngredients1:
-                case ItemGroups.PlantIngredients2:
-                    return true;
-            }
+            if (IsIngredient)
+                return true;
 
             // Handle unique items
             if (IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Spellbook))

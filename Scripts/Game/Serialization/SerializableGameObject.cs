@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class SaveData_v1
     {
         public SaveDataDescription_v1 header;
+        public ulong currentUID;
         public DateAndTime_v1 dateAndTime;
         public PlayerData_v1 playerData;
         public DungeonData_v1 dungeonData;

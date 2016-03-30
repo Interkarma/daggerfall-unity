@@ -392,6 +392,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             SaveData_v1 saveData = new SaveData_v1();
             saveData.header = new SaveDataDescription_v1();
+            saveData.currentUID = DaggerfallUnity.CurrentUID;
             saveData.dateAndTime = GetDateTimeData();
             saveData.playerData = GetPlayerData();
             saveData.dungeonData = GetDungeonData();
@@ -471,6 +472,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         void RestoreSaveData(SaveData_v1 saveData)
         {
+            DaggerfallUnity.CurrentUID = saveData.currentUID;
             RestoreDateTimeData(saveData.dateAndTime);
             RestorePlayerData(saveData.playerData);
             RestoreDungeonData(saveData.dungeonData);

@@ -51,6 +51,8 @@ namespace DaggerfallWorkshop
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITextProvider textProvider = new DefaultTextProvider();
 
+        static ulong currentUID = 0x1000;
+
         #endregion
 
         #region Public Fields
@@ -97,6 +99,26 @@ namespace DaggerfallWorkshop
         #endregion
 
         #region Class Properties
+
+        /// <summary>
+        /// Gets or sets current unique identifier counter.
+        /// This property used for serialization/deserialization.
+        /// Should not be changed any other time.
+        /// UIDs 0-4095 are reserved.
+        /// </summary>
+        public static ulong CurrentUID
+        {
+            get { return currentUID; }
+            set { currentUID = (value < 0x1000) ? 0x1000 : value; }
+        }
+
+        /// <summary>
+        /// Gets a new UID. Counter is incremented on each call.
+        /// </summary>
+        public static ulong NextUID
+        {
+            get { return GetNextUID(); }
+        }
 
         public bool IsReady
         {
@@ -391,6 +413,11 @@ namespace DaggerfallWorkshop
             DFValidator.ValidateArena2Folder(path, out results);
 
             return results.AppearsValid;
+        }
+
+        static ulong GetNextUID()
+        {
+            return currentUID++;
         }
 
         #endregion

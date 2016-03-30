@@ -38,11 +38,19 @@ namespace DaggerfallWorkshop.Game.Items
         #region Properties
 
         /// <summary>
-        /// Gets clone of current equip table.
+        /// Gets length of equip table.
+        /// </summary>
+        public static int EquipTableLength
+        {
+            get { return equipTableLength; }
+        }
+
+        /// <summary>
+        /// Gets current equip table.
         /// </summary>
         public DaggerfallUnityItem[] EquipTable
         {
-            get { return (DaggerfallUnityItem[])equipTable.Clone(); }
+            get { return equipTable; }
         }
 
         #endregion

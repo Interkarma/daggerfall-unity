@@ -45,8 +45,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Fields
 
-        //int imageCounter = 0;
-
         static Color32 maskColor = new Color(255, 0, 200, 0);   // Special mask colour used on helmets, cloaks, etc.
         DFPosition paperDollOrigin = new DFPosition(200, 8);    // Used to translate hard-coded IMG file offsets back to origin
 
@@ -83,6 +81,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             paperDollIndices = new byte[paperDollWidth * paperDollHeight];
 
             // Setup panels
+            Size = new Vector2(paperDollWidth, paperDollHeight);
             characterPanel.Size = new Vector2(paperDollWidth, paperDollHeight);
 
             // Add panels
@@ -154,6 +153,31 @@ namespace DaggerfallWorkshop.Game.UserInterface
             //string path = @"d:\test\blits\selection.png";
             //Texture2D texture = ImageProcessing.MakeTexture2D(ref testColors, paperDollWidth, paperDollHeight, TextureFormat.RGBA32, false);
             //ImageProcessing.SaveTextureAsPng(texture, path);
+        }
+
+        /// <summary>
+        /// Gets equip index at position.
+        /// </summary>
+        /// <param name="x">X position to sample.</param>
+        /// <param name="y">Y position to sample.</param>
+        /// <returns>Equip index or 0xff if point empty.</returns>
+        public byte GetEquipIndex(int x, int y)
+        {
+            // Must have array
+            if (paperDollIndices == null || paperDollIndices.Length == 0)
+                return 0xff;
+
+            // Ensure inside paper doll area
+            if (x < 0 || x >= paperDollWidth)
+                return 0xff;
+            if (y < 0 || y >= paperDollHeight)
+                return 0xff;
+
+            // Get target index - must invert Y
+            int ypos = paperDollHeight - y - 1;
+            byte result = paperDollIndices[ypos * paperDollWidth + x];
+
+            return result;
         }
 
         #endregion
@@ -264,7 +288,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 }
             }
 
-            // Sort equipped items
+            // Sort equipped items by draw order
             List<DaggerfallUnityItem> orderedItems = equippedItems.OrderBy(o => o.drawOrder).ToList();
 
             // Blit item images
