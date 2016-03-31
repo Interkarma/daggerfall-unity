@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -199,6 +200,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallInventoryWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
         #endregion
@@ -1233,6 +1235,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             CloseWindow();
         }
+
+        #endregion
+
+        #region Other Event Handlers
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            // Reset certain elements on a new game
+            if (IsSetup)
+            {
+                SelectTabPage(TabPages.WeaponsAndArmor);
+                localItemsScrollBar.Reset(listDisplayUnits);
+                remoteItemsScrollBar.Reset(listDisplayUnits);
+            }
+        }
+
 
         #endregion
     }

@@ -10,9 +10,9 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -71,6 +71,16 @@ namespace DaggerfallWorkshop.Game.Entity
                 return false;
 
             return items.Contains(item.UID);
+        }
+
+        /// <summary>
+        /// Check if item UID exists in this collection.
+        /// </summary>
+        /// <param name="uid">UID to check.</param>
+        /// <returns>True if item with UID exists in this collection.</returns>
+        public bool Contains(ulong uid)
+        {
+            return items.Contains(uid);
         }
 
         /// <summary>
@@ -243,6 +253,42 @@ namespace DaggerfallWorkshop.Game.Entity
 
             source.RemoveItem(item);
             AddItem(item);
+        }
+
+        /// <summary>
+        /// Serialize items from this collection.
+        /// </summary>
+        /// <returns>ItemData_v1 array.</returns>
+        public ItemData_v1[] SerializeItems()
+        {
+            ItemData_v1[] itemArray = new ItemData_v1[Count];
+
+            int index = 0;
+            foreach(DaggerfallUnityItem item in items.Values)
+            {
+                itemArray[index++] = item.GetSaveData();
+            }
+
+            return itemArray;
+        }
+
+        /// <summary>
+        /// Deserialize items into this collection.
+        /// Existing items will be destroyed.
+        /// </summary>
+        /// <param name="itemArray">ItemData_v1 array.</param>
+        public void DeserializeItems(ItemData_v1[] itemArray)
+        {
+            if (itemArray == null || itemArray.Length == 0)
+                return;
+
+            Clear();
+
+            for(int i = 0; i < itemArray.Length; i++)
+            {
+                DaggerfallUnityItem item = new DaggerfallUnityItem(itemArray[i]);
+                AddItem(item);
+            }
         }
 
         #endregion

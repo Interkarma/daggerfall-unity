@@ -105,6 +105,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.currentHealth = entity.CurrentHealth;
             data.playerEntity.currentFatigue = entity.CurrentFatigue;
             data.playerEntity.currentMagicka = entity.CurrentMagicka;
+            data.playerEntity.equipTable = entity.ItemEquipTable.SerializeEquipTable();
+            data.playerEntity.items = entity.Items.SerializeItems();
+            data.playerEntity.wagonItems = entity.WagonItems.SerializeItems();
+            data.playerEntity.otherItems = entity.OtherItems.SerializeItems();
 
             // Store player position data
             data.playerPosition = new PlayerPositionData_v1();
@@ -149,6 +153,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.CurrentHealth = data.playerEntity.currentHealth;
             entity.CurrentFatigue = data.playerEntity.currentFatigue;
             entity.CurrentMagicka = data.playerEntity.currentMagicka;
+            entity.Items.DeserializeItems(data.playerEntity.items);
+            entity.WagonItems.DeserializeItems(data.playerEntity.wagonItems);
+            entity.OtherItems.DeserializeItems(data.playerEntity.otherItems);
+            entity.ItemEquipTable.DeserializeEquipTable(data.playerEntity.equipTable, entity.Items);
 
             // Flag determines if player position is restored
             bool restorePlayerPosition = true;

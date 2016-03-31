@@ -54,6 +54,18 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Public Methods
 
         /// <summary>
+        /// Resets entity to initial state.
+        /// </summary>
+        public void Reset()
+        {
+            equipTable.Clear();
+            items.Clear();
+            wagonItems.Clear();
+            otherItems.Clear();
+            SetEntityDefaults();
+        }
+
+        /// <summary>
         /// Assigns player entity settings from a character document.
         /// </summary>
         public void AssignCharacter(CharacterDocument character, int level = 1, int maxHealth = 0)
@@ -120,9 +132,6 @@ namespace DaggerfallWorkshop.Game.Entity
                         equipTable.EquipItem(newItem);
                 }
             }
-
-            // Set interim legacy equip table
-            //items.SetLegacyEquipTable(characterRecord);
         }
 
         /// <summary>

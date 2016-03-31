@@ -58,6 +58,16 @@ namespace DaggerfallWorkshop.Game.Items
         #region Public Methods
 
         /// <summary>
+        /// Clears equip table.
+        /// Does not unequip items, just wipes table.
+        /// Used when clearing state for a new game.
+        /// </summary>
+        public void Clear()
+        {
+            equipTable = new DaggerfallUnityItem[equipTableLength];
+        }
+
+        /// <summary>
         /// Gets item equipped to slot.
         /// </summary>
         /// <param name="slot">Slot to check.</param>
@@ -118,7 +128,7 @@ namespace DaggerfallWorkshop.Game.Items
             item.EquipSlot = slot;
             equipTable[(int)slot] = item;
 
-            Debug.Log(string.Format("Equipped {0} to {1}", item.LongName, slot.ToString()));
+            //Debug.Log(string.Format("Equipped {0} to {1}", item.LongName, slot.ToString()));
 
             return true;
         }
@@ -229,6 +239,50 @@ namespace DaggerfallWorkshop.Game.Items
                 return true;
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Serialize equip table into list of equipped UIDs.
+        /// </summary>
+        /// <returns>ulong array.</returns>
+        public ulong[] SerializeEquipTable()
+        {
+            ulong[] data = new ulong[equipTableLength];
+            for(int i = 0; i < equipTableLength; i++)
+            {
+                if (equipTable[i] != null)
+                    data[i] = equipTable[i].UID;
+                else
+                    data[i] = 0;
+            }
+
+            return data;
+        }
+
+        /// <summary>
+        /// Deserialize equip table and attempt to relink equipped items in collection.
+        /// Item UID must exist inside collection provided or entry will not be restored and item not equipped.
+        /// </summary>
+        /// <param name="data">UID array exactly this.equipTableLength in length.</param>
+        /// <param name="items">Item collection.</param>
+        public void DeserializeEquipTable(ulong[] data, EntityItems items)
+        {
+            if (data == null || items == null || data.Length != equipTableLength)
+                return;
+
+            for (int i = 0; i < equipTableLength; i++)
+            {
+                ulong uid = data[i];
+                if (items.Contains(uid))
+                {
+                    DaggerfallUnityItem item = items.GetItem(uid);
+                    if (item != null)
+                    {
+                        equipTable[i] = item;
+                        item.EquipSlot = (EquipSlots)i;
+                    }
+                }
+            }
         }
 
         #endregion

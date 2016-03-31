@@ -9,12 +9,9 @@
 // Notes:
 //
 
-using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -49,7 +46,7 @@ namespace DaggerfallWorkshop.Game.Items
         ItemGroups itemGroup;
         int groupIndex;
         int currentVariant = 0;
-        ulong uid = DaggerfallUnity.NextUID;
+        ulong uid;
 
         // Item template is cached for faster checks
         // Does not need to be serialized
@@ -198,36 +195,51 @@ namespace DaggerfallWorkshop.Game.Items
 
         /// <summary>
         /// Default constructor.
+        /// Generates new UID.
         /// </summary>
         public DaggerfallUnityItem()
         {
+            uid = DaggerfallUnity.NextUID;
         }
 
         /// <summary>
         /// Construct from item group and index.
+        /// Generates new UID.
         /// </summary>
         public DaggerfallUnityItem(ItemGroups itemGroup, int groupIndex)
-            : base()
         {
+            uid = DaggerfallUnity.NextUID;
             SetItem(itemGroup, groupIndex);
         }
 
         /// <summary>
         /// Construct from another item.
+        /// Generates new UID.
         /// </summary>
         public DaggerfallUnityItem(DaggerfallUnityItem item)
-            : base()
         {
+            uid = DaggerfallUnity.NextUID;
             FromItem(item);
         }
 
         /// <summary>
         /// Construct from legacy ItemRecord data.
+        /// Generates new UID.
         /// </summary>
         public DaggerfallUnityItem(ItemRecord record)
-            : base()
         {
+            uid = DaggerfallUnity.NextUID;
             FromItemRecord(record);
+        }
+
+        /// <summary>
+        /// Construct item from serialized data.
+        /// Used serialized UID.
+        /// </summary>
+        /// <param name="itemData">Item data to restore.</param>
+        public DaggerfallUnityItem(ItemData_v1 itemData)
+        {
+            FromItemData(itemData);
         }
 
         #endregion
@@ -337,6 +349,39 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
+        /// <summary>
+        /// Gets item data for serialization.
+        /// </summary>
+        /// <returns>ItemData_v1.</returns>
+        public ItemData_v1 GetSaveData()
+        {
+            ItemData_v1 data = new ItemData_v1();
+            data.uid = uid;
+            data.shortName = shortName;
+            data.nativeMaterialValue = nativeMaterialValue;
+            data.dyeColor = dyeColor;
+            data.weightInKg = weightInKg;
+            data.drawOrder = drawOrder;
+            data.value1 = value1;
+            data.value2 = value2;
+            data.hits1 = hits1;
+            data.hits2 = hits2;
+            data.hits3 = hits3;
+            data.stackCount = stackCount;
+            data.enchantmentPoints = enchantmentPoints;
+            data.message = message;
+            data.legacyMagic = legacyMagic;
+            data.playerTextureArchive = playerTextureArchive;
+            data.playerTextureRecord = playerTextureRecord;
+            data.worldTextureArchive = worldTextureArchive;
+            data.worldTextureRecord = worldTextureRecord;
+            data.itemGroup = itemGroup;
+            data.groupIndex = groupIndex;
+            data.currentVariant = currentVariant;
+
+            return data;
+        }
+
         #endregion
 
         #region Private Methods
@@ -365,8 +410,10 @@ namespace DaggerfallWorkshop.Game.Items
             hits3 = other.hits3;
             enchantmentPoints = other.enchantmentPoints;
             message = other.message;
-            legacyMagic = (int[])legacyMagic.Clone();
             stackCount = other.stackCount;
+
+            if (other.legacyMagic != null)
+                legacyMagic = (int[])other.legacyMagic.Clone();
         }
 
         /// <summary>
@@ -421,17 +468,53 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Assign legacy magic effects array
+            bool foundEnchantment = false;
             if (itemRecord.ParsedData.magic != null)
             {
                 legacyMagic = new int[itemRecord.ParsedData.magic.Length];
                 for (int i = 0; i < itemRecord.ParsedData.magic.Length; i++)
                 {
                     legacyMagic[i] = itemRecord.ParsedData.magic[i];
+                    if (legacyMagic[i] != 0xffff)
+                        foundEnchantment = true;
                 }
             }
 
+            // Discard list if no enchantment found
+            if (!foundEnchantment)
+                legacyMagic = null;
+
             // Fix leather helms
             ItemBuilder.FixLeatherHelm(this);
+        }
+
+        /// <summary>
+        /// Creates from a serialized item.
+        /// </summary>
+        void FromItemData(ItemData_v1 data)
+        {
+            uid = data.uid;
+            shortName = data.shortName;
+            nativeMaterialValue = data.nativeMaterialValue;
+            dyeColor = data.dyeColor;
+            weightInKg = data.weightInKg;
+            drawOrder = data.drawOrder;
+            value1 = data.value1;
+            value2 = data.value2;
+            hits1 = data.hits1;
+            hits2 = data.hits2;
+            hits3 = data.hits3;
+            stackCount = data.stackCount;
+            enchantmentPoints = data.enchantmentPoints;
+            message = data.message;
+            legacyMagic = data.legacyMagic;
+            playerTextureArchive = data.playerTextureArchive;
+            playerTextureRecord = data.playerTextureRecord;
+            worldTextureArchive = data.worldTextureArchive;
+            worldTextureRecord = data.worldTextureRecord;
+            itemGroup = data.itemGroup;
+            groupIndex = data.groupIndex;
+            currentVariant = data.currentVariant;
         }
 
         /// <summary>
@@ -517,7 +600,7 @@ namespace DaggerfallWorkshop.Game.Items
         // New items cannot currently have magical properties
         bool GetIsEnchanted()
         {
-            // Spellbook considred enchanted
+            // Spellbook considered enchanted
             if (IsOfTemplate((int)MiscItems.Spellbook))
                 return true;
 
