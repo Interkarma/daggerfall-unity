@@ -21,6 +21,7 @@ namespace DaggerfallWorkshop.Game.Entity
     /// Items are stored in an ordered dictionary keyed to a unique identifier.
     /// This collection may represent an inventory, a loot pile, harvestable items, etc.
     /// This class is under active development and may change several times before completed.
+    /// TODO: Implement enumerator
     /// </summary>
     [Serializable]
     public class EntityItems
@@ -60,42 +61,55 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Public Methods
 
         /// <summary>
+        /// Check if item exists in this collection.
+        /// </summary>
+        /// <param name="item">Item to check.</param>
+        /// <returns>True if item exists in this collection.</returns>
+        public bool Contains(DaggerfallUnityItem item)
+        {
+            if (item == null)
+                return false;
+
+            return items.Contains(item.UID);
+        }
+
+        /// <summary>
         /// Adds an item to this collection.
         /// </summary>
         /// <param name="item">Item to add.</param>
         /// <param name="position">Position in list to insert item.</param>
         public void AddItem(DaggerfallUnityItem item, AddPosition position = AddPosition.Back)
         {
-            if (item != null)
-            {
-                // Add the item based on stack behaviour
-                // Stacking currently only works for ingredients
-                // TODO: Look at implementing proper stacking with max limits, etc.
-                DaggerfallUnityItem ingredient = FindIngredient(item);
-                if (ingredient != null)
-                {
-                    // Add to stack count
-                    ingredient.stackCount++;
-                }
-                else
-                {
-                    // Check duplicate key
-                    if (items.Contains(item.UID))
-                        throw new Exception("AddItem() encountered a duplicate item UID for " + item.LongName);
+            if (item == null)
+                return;
 
-                    // Add the item
-                    switch(position)
-                    {
-                        case AddPosition.DontCare:
-                            items.Add(item.UID, item);
-                            break;
-                        case AddPosition.Front:
-                            items.Insert(0, item.UID, item);
-                            break;
-                        case AddPosition.Back:
-                            items.Insert(Count, item.UID, item);
-                            break;
-                    }
+            // Add the item based on stack behaviour
+            // Stacking currently only works for ingredients
+            // TODO: Look at implementing proper stacking with max limits, split, merge, etc.
+            DaggerfallUnityItem ingredient = FindIngredient(item);
+            if (ingredient != null)
+            {
+                // Add to stack count
+                ingredient.stackCount++;
+            }
+            else
+            {
+                // Check duplicate key
+                if (items.Contains(item.UID))
+                    throw new Exception("AddItem() encountered a duplicate item UID for " + item.LongName);
+
+                // Add the item
+                switch (position)
+                {
+                    case AddPosition.DontCare:
+                        items.Add(item.UID, item);
+                        break;
+                    case AddPosition.Front:
+                        items.Insert(0, item.UID, item);
+                        break;
+                    case AddPosition.Back:
+                        items.Insert(Count, item.UID, item);
+                        break;
                 }
             }
         }
@@ -129,6 +143,11 @@ namespace DaggerfallWorkshop.Game.Entity
             AddItem(item, position);
         }
 
+        /// <summary>
+        /// Gets item from UID.
+        /// </summary>
+        /// <param name="key">UID of item.</param>
+        /// <returns>DaggerfallUnityItem.</returns>
         public DaggerfallUnityItem GetItem(ulong key)
         {
             if (items.Contains(key))
@@ -137,6 +156,11 @@ namespace DaggerfallWorkshop.Game.Entity
                 return null;
         }
 
+        /// <summary>
+        /// Gets item from index.
+        /// </summary>
+        /// <param name="index">Index of item between 0 and Count.</param>
+        /// <returns>DaggerfallUnityItem.</returns>
         public DaggerfallUnityItem GetItem(int index)
         {
             if (index < 0 || index >= items.Count)

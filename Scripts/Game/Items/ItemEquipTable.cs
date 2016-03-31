@@ -88,6 +88,21 @@ namespace DaggerfallWorkshop.Game.Items
                 UnequipItem(EquipSlots.RightHand);
             }
 
+            // Equipping a shield will always unequip 2H weapon
+            if (item.ItemGroup == ItemGroups.Armor &&
+                (item.TemplateIndex == (int)Armor.Kite_Shield ||
+                item.TemplateIndex == (int)Armor.Round_Shield ||
+                item.TemplateIndex == (int)Armor.Tower_Shield))
+            {
+                // If holding a 2H weapon then unequip
+                DaggerfallUnityItem rightHandItem = equipTable[(int)EquipSlots.RightHand];
+                if (rightHandItem != null)
+                {
+                    if (GetItemHands(rightHandItem) == ItemHands.Both)
+                        UnequipItem(EquipSlots.RightHand);
+                }
+            }
+
             // Get slot for this item
             EquipSlots slot = GetEquipSlot(item);
             if (slot == EquipSlots.None)

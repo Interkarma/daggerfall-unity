@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
@@ -57,6 +58,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         //Rect localTargetIconRect = new Rect(164, 11, 57, 36);
         Rect remoteTargetIconRect = new Rect(262, 11, 57, 36);
+
+        Rect exitButtonRect = new Rect(222, 178, 39, 22);
 
         #endregion
 
@@ -229,6 +232,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupLocalItemsElements();
             SetupRemoteItemsElements();
             SetupAccessoryElements();
+
+            // Exit buttons
+            Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
+            exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
             // Setup local and remote target icon panels
             //localTargetIconPanel = DaggerfallUI.AddPanel(localTargetIconRect, NativePanel);
@@ -1039,6 +1046,68 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Item Action Helpers
+
+        void EquipItem(DaggerfallUnityItem item)
+        {
+            playerEntity.ItemEquipTable.EquipItem(item);
+            Refresh();
+        }
+
+        void UnequipItem(DaggerfallUnityItem item, bool refreshPaperDoll = true)
+        {
+            playerEntity.ItemEquipTable.UnequipItem(item.EquipSlot);
+            playerEntity.Items.ReorderItem(item, EntityItems.AddPosition.Front);
+            Refresh(refreshPaperDoll);
+        }
+
+        void NextVariant(DaggerfallUnityItem item)
+        {
+            item.NextVariant();
+            if (item.IsEquipped)
+                paperDoll.Refresh();
+            else
+                Refresh(false);
+        }
+
+        void TransferItem(DaggerfallUnityItem item, EntityItems from, EntityItems to)
+        {
+            // Block transfer of horse or cart
+            if (item.IsOfTemplate(ItemGroups.Transportation, (int)Transportation.Horse) ||
+                item.IsOfTemplate(ItemGroups.Transportation, (int)Transportation.Small_cart))
+            {
+                return;
+            }
+
+            to.Transfer(item, from);
+            Refresh(false);
+        }
+
+        void ShowInfoPopup(DaggerfallUnityItem item)
+        {
+            const int armorTextId = 1000;
+            const int weaponTextId = 1001;
+            const int miscTextId = 1003;
+
+            TextFile.Token[] tokens = null;
+            if (item.ItemGroup == ItemGroups.Armor)
+                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorTextId);
+            else if (item.ItemGroup == ItemGroups.Weapons)
+                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponTextId);
+            else
+                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(miscTextId);
+
+            if (tokens != null && tokens.Length > 0)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(tokens);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+            }
+        }
+
+        #endregion
+
         #region Item Click Event Handlers
 
         // NOTE: Working through action processes here. Will clean up soon.
@@ -1054,10 +1123,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Equip)
             {
-                // Unequip item
-                playerEntity.ItemEquipTable.UnequipItem(item.EquipSlot);
-                playerEntity.Items.ReorderItem(item, EntityItems.AddPosition.Front);
-                Refresh(false);
+                UnequipItem(item, false);                
+            }
+            else if (selectedActionMode == ActionModes.Info)
+            {
+                ShowInfoPopup(item);
             }
         }
 
@@ -1077,16 +1147,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Equip)
             {
-                // Unequip item
-                playerEntity.ItemEquipTable.UnequipItem(item.EquipSlot);
-                playerEntity.Items.ReorderItem(item, EntityItems.AddPosition.Front);
-                Refresh();
+                UnequipItem(item);
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                // Change variant
-                item.NextVariant();
-                paperDoll.Refresh();
+                NextVariant(item);
+            }
+            else if (selectedActionMode == ActionModes.Info)
+            {
+                ShowInfoPopup(item);
             }
         }
 
@@ -1105,24 +1174,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Equip)
             {
-                // Equip item
-                playerEntity.ItemEquipTable.EquipItem(item);
-                Refresh();
+                EquipItem(item);
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                // Change variant
-                item.NextVariant();
-                Refresh(false);
+                NextVariant(item);
             }
             else if (selectedActionMode == ActionModes.Remove)
             {
                 // Transfer to remote items
                 if (remoteItems != null)
                 {
-                    remoteItems.Transfer(item, localItems);
-                    Refresh(false);
+                    TransferItem(item, localItems, remoteItems);
                 }
+            }
+            else if (selectedActionMode == ActionModes.Info)
+            {
+                ShowInfoPopup(item);
             }
         }
 
@@ -1143,30 +1211,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Transfer to local items
                 if (localItems != null)
-                {
-                    localItems.Transfer(item, remoteItems);
-                    Refresh(false);
-                }
+                    TransferItem(item, remoteItems, localItems);
 
-                // Equip item
-                playerEntity.ItemEquipTable.EquipItem(item);
-                Refresh();
+                EquipItem(item);
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                // Change variant
-                item.NextVariant();
-                Refresh(false);
+                NextVariant(item);
             }
             else if (selectedActionMode == ActionModes.Remove)
             {
-                // Transfer to local items
-                if (localItems != null)
-                {
-                    localItems.Transfer(item, remoteItems);
-                    Refresh(false);
-                }
+                TransferItem(item, remoteItems, localItems);
             }
+            else if (selectedActionMode == ActionModes.Info)
+            {
+                ShowInfoPopup(item);
+            }
+        }
+
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CloseWindow();
         }
 
         #endregion
