@@ -107,15 +107,15 @@ namespace DaggerfallWorkshop.Game
             float xrot = 180f * lerp;
             myLight.transform.rotation = Quaternion.Euler(xrot, Angle, 0);
 
+            // Set light intensity
+            if (lerp < 0.5f)
+                daylightScale = lerp * 2f;
+            else
+                daylightScale = 1f - ((lerp - 0.5f) * 2f);
+
             // Set sun direction and scale
             if (myLight.enabled)
             {
-                // Set light intensity
-                if (lerp < 0.5f)
-                    daylightScale = lerp * 2f;
-                else
-                    daylightScale = 1f - ((lerp - 0.5f) * 2f);
-
                 // Adjust for custom scale factor
                 daylightScale *= ScaleFactor;
 

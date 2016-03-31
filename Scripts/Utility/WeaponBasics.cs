@@ -32,6 +32,18 @@ namespace DaggerfallWorkshop.Utility
         public static int StrikeUpAnimSpeed = 10;
         public static int WereStrikeAnimSpeed = 20;
 
+        // Animations for melee - offset and aligment changes
+        public static WeaponAnimation[] MeleeWeaponAnims = new WeaponAnimation[]
+        {
+            new WeaponAnimation() {Record = 0, NumFrames = 1, FramePerSecond = IdleAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0.15f},
+            new WeaponAnimation() {Record = 1, NumFrames = 5, FramePerSecond = StrikeDownAnimSpeed, Alignment = WeaponAlignment.Center, Offset = 0f},
+            new WeaponAnimation() {Record = 2, NumFrames = 5, FramePerSecond = StrikeDownLeftAnimSpeed, Alignment = WeaponAlignment.Center, Offset = 0f},
+            new WeaponAnimation() {Record = 3, NumFrames = 5, FramePerSecond = StrikeLeftAnimSpeed, Alignment = WeaponAlignment.Center, Offset = 0f},
+            new WeaponAnimation() {Record = 4, NumFrames = 5, FramePerSecond = StrikeRightAnimSpeed, Alignment = WeaponAlignment.Center, Offset = 0f},
+            new WeaponAnimation() {Record = 5, NumFrames = 5, FramePerSecond = StrikeDownRightAnimSpeed, Alignment = WeaponAlignment.Center, Offset = 0f},
+            new WeaponAnimation() {Record = 6, NumFrames = 5, FramePerSecond = StrikeUpAnimSpeed, Alignment = WeaponAlignment.Center, Offset = 0f},
+        };
+
         // General animations for most weapons
         public static WeaponAnimation[] GeneralWeaponAnims = new WeaponAnimation[]
         {
@@ -86,7 +98,9 @@ namespace DaggerfallWorkshop.Utility
 
         public static WeaponAnimation[] GetWeaponAnims(WeaponTypes weaponType)
         {
-            if (weaponType == WeaponTypes.Dagger || weaponType == WeaponTypes.Dagger_Magic)
+            if (weaponType == WeaponTypes.Melee)
+                return MeleeWeaponAnims;
+            else if (weaponType == WeaponTypes.Dagger || weaponType == WeaponTypes.Dagger_Magic)
                 return DaggerWeaponAnims;
             else if (weaponType == WeaponTypes.Staff || weaponType == WeaponTypes.Staff_Magic)
                 return StaffWeaponAnims;

@@ -322,9 +322,6 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign starting gear to player entity
             DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity);
 
-            // Update weapons on start
-            GameManager.Instance.WeaponManager.UpdateWeapons(playerEntity.ItemEquipTable);
-
             // Start game
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();

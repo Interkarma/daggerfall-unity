@@ -452,12 +452,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
-        public override void OnPop()
-        {
-            // Update weapons in hands
-            GameManager.Instance.WeaponManager.UpdateWeapons(playerEntity.ItemEquipTable);
-        }
-
         #endregion
 
         #region Public Methods
@@ -1245,6 +1239,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Reset certain elements on a new game
             if (IsSetup)
             {
+                SelectActionMode(ActionModes.Equip);
                 SelectTabPage(TabPages.WeaponsAndArmor);
                 localItemsScrollBar.Reset(listDisplayUnits);
                 remoteItemsScrollBar.Reset(listDisplayUnits);

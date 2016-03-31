@@ -189,6 +189,14 @@ namespace DaggerfallWorkshop.Game.Items
             get { return GetIsEnchanted(); }
         }
 
+        /// <summary>
+        /// Checks if this item is of any shield type.
+        /// </summary>
+        public bool IsShield
+        {
+            get { return GetIsShield(); }
+        }
+
         #endregion
 
         #region Constructors
@@ -380,6 +388,32 @@ namespace DaggerfallWorkshop.Game.Items
             data.currentVariant = currentVariant;
 
             return data;
+        }
+
+        #endregion
+
+        #region Static Methods
+
+        /// <summary>
+        /// Compares two items for equal UID.
+        /// One or both items can be null.
+        /// </summary>
+        /// <param name="item1">First item.</param>
+        /// <param name="item2">Second item.</param>
+        /// <returns>True if items have same UID.</returns>
+        public static bool CompareItems(DaggerfallUnityItem item1, DaggerfallUnityItem item2)
+        {
+            // Exclude null cases
+            if (item1 == null && item2 == null)
+                return true;
+            else if (item1 == null || item2 == null)
+                return false;
+
+            // Compare UIDs
+            if (item1.UID == item2.UID)
+                return true;
+            else
+                return false;
         }
 
         #endregion
@@ -614,6 +648,22 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 if (legacyMagic[i] != 0xffff)
                     return true;
+            }
+
+            return false;
+        }
+
+        // Check if this is a shield
+        bool GetIsShield()
+        {
+            if (ItemGroup == ItemGroups.Armor)
+            {
+                if (TemplateIndex == (int)Armor.Kite_Shield ||
+                    TemplateIndex == (int)Armor.Round_Shield ||
+                    TemplateIndex == (int)Armor.Tower_Shield)
+                {
+                    return true;
+                }
             }
 
             return false;
