@@ -1251,7 +1251,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-
         #endregion
     }
 }

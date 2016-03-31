@@ -9,16 +9,12 @@
 // Notes:
 //
 
-using UnityEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using DaggerfallConnect;
-using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -48,6 +44,16 @@ namespace DaggerfallWorkshop.Game.Entity
         public PlayerReflexes Reflexes { get { return reflexes; } set { reflexes = value; } }
         public EntityItems WagonItems { get { return wagonItems; } set { wagonItems.ReplaceAll(value); } }
         public EntityItems OtherItems { get { return otherItems; } set { otherItems.ReplaceAll(value); } }
+
+        #endregion
+
+        #region Constructors
+
+        public PlayerEntity()
+            :base()
+        {
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+        }
 
         #endregion
 
@@ -155,6 +161,15 @@ namespace DaggerfallWorkshop.Game.Entity
                 skills.SetDefaults();
                 FillVitalSigns();
             }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            Reset();
         }
 
         #endregion

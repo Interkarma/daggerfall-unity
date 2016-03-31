@@ -213,14 +213,15 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void StartVoid()
         {
+            RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
             NoWorld = true;
-            RaiseOnNewGameEvent();
         }
 
         void StartTitleMenu()
         {
+            RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
 
@@ -228,12 +229,12 @@ namespace DaggerfallWorkshop.Game.Utility
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGame);
             else
                 DaggerfallUI.PostMessage(PostStartMessage);
-
-            RaiseOnNewGameEvent();
         }
 
         void StartTitleMenuFromDeath()
         {
+            RaiseOnNewGameEvent();
+
             // Reset player death camera
             if (GameManager.Instance.PlayerDeath)
                 GameManager.Instance.PlayerDeath.ResetCamera();
@@ -245,26 +246,23 @@ namespace DaggerfallWorkshop.Game.Utility
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGameFromDeath);
             else
                 DaggerfallUI.PostMessage(PostStartMessage);
-
-            RaiseOnNewGameEvent();
         }
 
         void StartFromQuickSave()
         {
-            GameManager.Instance.PlayerEntity.Reset();
+            RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
             if (SaveLoadManager.Instance.HasQuickSave())
                 SaveLoadManager.Instance.QuickLoad();
 
             DaggerfallUI.PostMessage(PostStartMessage);
-
-            RaiseOnNewGameEvent();
         }
 
         // Start new character to location specified in INI
         void StartNewCharacter()
         {
+            RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
 
             // Must have a character document
@@ -273,7 +271,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Assign character sheet
             PlayerEntity playerEntity = FindPlayerEntity();
-            playerEntity.Reset();
             playerEntity.AssignCharacter(characterDocument);
 
             // Set game time
@@ -332,8 +329,6 @@ namespace DaggerfallWorkshop.Game.Utility
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
             DaggerfallUI.PostMessage(PostStartMessage);
-
-            RaiseOnNewGameEvent();
         }
 
         #endregion
@@ -342,6 +337,8 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void StartFromClassicSave()
         {
+            RaiseOnNewGameEvent();
+
             // Save index must be in range
             if (classicSaveIndex < 0 || classicSaveIndex >= 6)
                 throw new IndexOutOfRangeException("classicSaveIndex out of range.");
@@ -394,7 +391,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Assign data to player entity
             PlayerEntity playerEntity = FindPlayerEntity();
-            playerEntity.Reset();
             playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.startingHealth);
 
             // Assign items to player entity
@@ -405,8 +401,6 @@ namespace DaggerfallWorkshop.Game.Utility
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
             DaggerfallUI.PostMessage(PostStartMessage);
-
-            RaiseOnNewGameEvent();
         }
 
         #endregion

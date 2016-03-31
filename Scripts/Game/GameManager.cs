@@ -351,7 +351,7 @@ namespace DaggerfallWorkshop.Game
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickLoad))
             {
-                SaveLoadManager.Instance.QuickLoad();
+                StartGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadDaggerfallUnityQuickSave;
             }
         }
 
