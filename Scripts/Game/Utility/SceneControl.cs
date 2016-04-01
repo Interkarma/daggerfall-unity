@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.Utility
         void Start()
         {
             // Check arena2 path is validated OK, otherwise start game setup
-            if (!DaggerfallUnity.Instance.IsPathValidated)
+            if (!DaggerfallUnity.Instance.IsPathValidated || DaggerfallUnity.Settings.ShowOptionsAtStart)
             {
                 // Enable sky for test models
                 if (defaultSky != null)

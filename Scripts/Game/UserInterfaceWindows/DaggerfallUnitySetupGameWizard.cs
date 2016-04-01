@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel browserPanel = new Panel();
         Panel resolutionPanel = new Panel();
         Panel optionsPanel = new Panel();
-        Panel summaryPanel = new Panel();
+        //Panel summaryPanel = new Panel();
         VerticalScrollBar resolutionScroller = new VerticalScrollBar();
         FolderBrowser browser = new FolderBrowser();
         TextLabel helpLabel = new TextLabel();
@@ -54,12 +54,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button testOrConfirmButton = new Button();
         ListBox resolutionList = new ListBox();
         ListBox qualityList = new ListBox();
-        Checkbox vsync = new Checkbox();
-        Checkbox swapHealthAndFatigue = new Checkbox();
-        Checkbox invertMouseVertical = new Checkbox();
-        Checkbox mouseSmoothing = new Checkbox();
-        //Checkbox leftHandWeapons = new Checkbox();
-        Checkbox playerNudity = new Checkbox();
+
+        Checkbox alwayShowOptions;
+        Checkbox vsync;
+        Checkbox swapHealthAndFatigue;
+        Checkbox invertMouseVertical;
+        Checkbox mouseSmoothing;
+        Checkbox leftHandWeapons;
+        Checkbox playerNudity;
+
+        Checkbox enhancedSky;
+        Checkbox distantTerrain;
+        Checkbox realtimeReflections;
+        Checkbox tallGrass;
+        Checkbox flyingBirds;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
         Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
@@ -116,7 +124,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameFolder,
             Resolution,
             Options,
-            Summary,
+            //Summary,
             LaunchGame,
         }
 
@@ -148,6 +156,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.Label.Text = exitButtonText;
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             NativePanel.Components.Add(exitButton);
+
+            // If actually validated and we just want to see settings then move direct to settings page
+            if (DaggerfallUnity.Instance.IsPathValidated && DaggerfallUnity.Settings.ShowOptionsAtStart)
+            {
+                currentStage = SetupStages.Options - 1;
+            }
 
             moveNextStage = true;
         }
@@ -222,6 +236,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             browserPanel.Components.Add(helpLabel);
         }
 
+        bool backdropCreated = false;
+        void CreateBackdrop()
+        {
+            // Add a block into the scene
+            GameObjectHelper.CreateRMBBlockGameObject("CUSTAA06.RMB");
+            backdropCreated = true;
+
+            // Clear background texture
+            ParentPanel.BackgroundTexture = null;
+            ParentPanel.BackgroundColor = Color.clear;
+        }
+
         void ShowResolutionPanel()
         {
             // Disable previous stage
@@ -231,12 +257,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             initialResolution = Screen.currentResolution;
             availableResolutions = Screen.resolutions;
 
-            // Clear background texture
-            ParentPanel.BackgroundTexture = null;
-            ParentPanel.BackgroundColor = Color.clear;
-
-            // Add a block into the scene
-            GameObjectHelper.CreateRMBBlockGameObject("CUSTAA06.RMB");
+            // Create backdrop
+            if (!backdropCreated)
+                CreateBackdrop();
 
             // Add resolution panel
             resolutionPanel.Outline.Enabled = true;
@@ -346,17 +369,56 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             resolutionPanel.Components.Add(testOrConfirmButton);
         }
 
+        float optionPos = 12f;
+        float optionSpacing = 12f;
+        Checkbox AddOption(float x, string text, string tip, bool isChecked)
+        {
+            Checkbox checkbox = new Checkbox();
+            checkbox.Label.Text = text;
+            checkbox.Label.TextColor = selectedTextColor;
+            checkbox.CheckBoxColor = selectedTextColor;
+            checkbox.ToolTip = defaultToolTip;
+            checkbox.ToolTipText = tip;
+            checkbox.IsChecked = isChecked;
+            checkbox.Position = new Vector2(x, optionPos);
+            optionsPanel.Components.Add(checkbox);
+            optionPos += optionSpacing;
+
+            return checkbox;
+        }
+
+        bool GetLeftHandWeapons()
+        {
+            if (DaggerfallUnity.Settings.Handedness == 1)
+                return true;
+            else
+                return false;
+        }
+
+        int GetHandedness(bool value)
+        {
+            if (value == true)
+                return 1;
+            else
+                return 0;
+        }
+
         void ShowOptionsPanel()
         {
             // Disable previous stage
             resolutionPanel.Enabled = false;
 
+            // Create backdrop
+            if (!backdropCreated)
+                CreateBackdrop();
+
             // Add options panel
             optionsPanel.Outline.Enabled = true;
             optionsPanel.BackgroundColor = backgroundColor;
-            optionsPanel.HorizontalAlignment = HorizontalAlignment.Right;
-            optionsPanel.VerticalAlignment = VerticalAlignment.Middle;
-            optionsPanel.Size = new Vector2(120, 175);
+            optionsPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            //optionsPanel.VerticalAlignment = VerticalAlignment.Middle;
+            optionsPanel.Position = new Vector2(0, 8);
+            optionsPanel.Size = new Vector2(318, 165);
             NativePanel.Components.Add(optionsPanel);
 
             // Add options title text
@@ -366,110 +428,87 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             optionsPanel.Components.Add(titleLabel);
 
+            // Add settings path text
+            TextLabel settingsPathLabel = new TextLabel();
+            settingsPathLabel.Text = DaggerfallUnity.Settings.PersistentDataPath;
+            settingsPathLabel.Position = new Vector2(0, 170);
+            settingsPathLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            settingsPathLabel.ShadowPosition = Vector2.zero;
+            settingsPathLabel.TextColor = Color.gray;
+            settingsPathLabel.BackgroundColor = backgroundColor;
+            optionsPanel.Components.Add(settingsPathLabel);
+
             // Setup options checkboxes
-            vsync.Label.Text = "Vertical Sync";
-            vsync.Label.TextColor = selectedTextColor;
-            vsync.CheckBoxColor = selectedTextColor;
-            vsync.ToolTip = defaultToolTip;
-            vsync.ToolTipText = "Sync FPS with monitor refresh";
-            vsync.IsChecked = DaggerfallUnity.Settings.VSync;
+            float x = 8;
+            optionPos = 20;
+            alwayShowOptions = AddOption(x, "Always show this window", "Always show this window on startup\rOtherwise use settings.ini to configure", DaggerfallUnity.Settings.ShowOptionsAtStart);
+            vsync = AddOption(x, "Vertical Sync", "Sync FPS with monitor refresh", DaggerfallUnity.Settings.VSync);
+            swapHealthAndFatigue = AddOption(x, "Swap Health & Fatigue", "Swap health & fatigue bar colors", DaggerfallUnity.Settings.SwapHealthAndFatigueColors);
+            invertMouseVertical = AddOption(x, "Invert Mouse", "Invert mouse-look vertical", DaggerfallUnity.Settings.InvertMouseVertical);
+            mouseSmoothing = AddOption(x, "Mouse Smoothing", "Smooth mouse-look sampling", DaggerfallUnity.Settings.MouseLookSmoothing);
+            leftHandWeapons = AddOption(x, "Left Hand Weapons", "Draw weapons on left side of screen", GetLeftHandWeapons());
+            playerNudity = AddOption(x, "Player Nudity", "Allow nudity on paper doll", DaggerfallUnity.Settings.PlayerNudity);
 
-            swapHealthAndFatigue.Label.Text = "Swap Health & Fatigue";
-            swapHealthAndFatigue.Label.TextColor = selectedTextColor;
-            swapHealthAndFatigue.CheckBoxColor = selectedTextColor;
-            swapHealthAndFatigue.ToolTip = defaultToolTip;
-            swapHealthAndFatigue.ToolTipText = "Swap health & fatigue bar colors";
-            swapHealthAndFatigue.IsChecked = DaggerfallUnity.Settings.SwapHealthAndFatigueColors;
+            // Setup mods checkboxes
+            x = 165;
+            optionPos = 20;
+            enhancedSky = AddOption(x, "Enhanced Sky (LypyL)", "Enhanced sky with lunar cycles", DaggerfallUnity.Settings.LypyL_EnhancedSky);
+            distantTerrain = AddOption(x, "Distant Terrain (Nystul)", "Enhanced and distant terrain", DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance);
+            realtimeReflections = AddOption(x, "Realtime Reflections (Nystul)", "Realtime reflections on water and select surfaces", DaggerfallUnity.Settings.Nystul_RealtimeReflections);
+            tallGrass = AddOption(x, "Tall Grass (Uncanny_Valley)", "Animated tall grass", DaggerfallUnity.Settings.UncannyValley_RealGrass);
+            flyingBirds = AddOption(x, "Flying Birds (Uncanny Valley)", "Animated flying birds", DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall);
 
-            invertMouseVertical.Label.Text = "Invert Mouse";
-            invertMouseVertical.Label.TextColor = selectedTextColor;
-            invertMouseVertical.CheckBoxColor = selectedTextColor;
-            invertMouseVertical.ToolTip = defaultToolTip;
-            invertMouseVertical.ToolTipText = "Invert mouse-look vertical";
-            invertMouseVertical.IsChecked = DaggerfallUnity.Settings.InvertMouseVertical;
-
-            mouseSmoothing.Label.Text = "Mouse Smoothing";
-            mouseSmoothing.Label.TextColor = selectedTextColor;
-            mouseSmoothing.CheckBoxColor = selectedTextColor;
-            mouseSmoothing.ToolTip = defaultToolTip;
-            mouseSmoothing.ToolTipText = "Smooth mouse-look sampling";
-            mouseSmoothing.IsChecked = DaggerfallUnity.Settings.MouseLookSmoothing;
-
-            //leftHandWeapons.Label.Text = "Left Hand Weapons";
-            //leftHandWeapons.Label.TextColor = selectedTextColor;
-            //leftHandWeapons.CheckBoxColor = selectedTextColor;
-            //leftHandWeapons.ToolTip = defaultToolTip;
-            //leftHandWeapons.ToolTipText = "Draw weapons on left side of screen";
-            //leftHandWeapons.IsChecked = DaggerfallUnity.Settings.LeftHandWeapons;
-
-            playerNudity.Label.Text = "Player Nudity";
-            playerNudity.Label.TextColor = selectedTextColor;
-            playerNudity.CheckBoxColor = selectedTextColor;
-            playerNudity.ToolTip = defaultToolTip;
-            playerNudity.ToolTipText = "Allow nudity on paper doll";
-            playerNudity.IsChecked = DaggerfallUnity.Settings.PlayerNudity;
-
-            // Set positions
-            vsync.Position = new Vector2(2, 12);
-            swapHealthAndFatigue.Position = new Vector2(2, 24);
-            invertMouseVertical.Position = new Vector2(2, 36);
-            mouseSmoothing.Position = new Vector2(2, 48);
-            //leftHandWeapons.Position = new Vector2(2, 60);
-            playerNudity.Position = new Vector2(2, 72);
-
-            // Add options
-            optionsPanel.Components.Add(vsync);
-            optionsPanel.Components.Add(swapHealthAndFatigue);
-            optionsPanel.Components.Add(invertMouseVertical);
-            optionsPanel.Components.Add(mouseSmoothing);
-            //optionsPanel.Components.Add(leftHandWeapons);
-            optionsPanel.Components.Add(playerNudity);
+            // Add mod note
+            string modNote = "Note: Enabling mods can increase performance requirements";
+            TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 115), modNote, optionsPanel);
+            modNoteLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            modNoteLabel.ShadowPosition = Vector2.zero;
 
             // Confirm button
             Button optionsConfirmButton = new Button();
-            optionsConfirmButton.Position = new Vector2(0, 160);
+            optionsConfirmButton.Position = new Vector2(0, optionsPanel.InteriorHeight - 15);
             optionsConfirmButton.Size = new Vector2(40, 12);
             optionsConfirmButton.Outline.Enabled = true;
-            optionsConfirmButton.Label.Text = okText;
+            optionsConfirmButton.Label.Text = "Play";
             optionsConfirmButton.BackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
             optionsConfirmButton.HorizontalAlignment = HorizontalAlignment.Center;
             optionsConfirmButton.OnMouseClick += OptionsConfirmButton_OnMouseClick;
             optionsPanel.Components.Add(optionsConfirmButton);
         }
 
-        void ShowSummaryPanel()
-        {
-            // Disable previous stage
-            optionsPanel.Enabled = false;
+        //void ShowSummaryPanel()
+        //{
+        //    // Disable previous stage
+        //    optionsPanel.Enabled = false;
 
-            // Add summary panel
-            summaryPanel.Outline.Enabled = true;
-            summaryPanel.BackgroundColor = backgroundColor;
-            summaryPanel.HorizontalAlignment = HorizontalAlignment.Center;
-            summaryPanel.VerticalAlignment = VerticalAlignment.Middle;
-            summaryPanel.Size = new Vector2(300, 100);
-            NativePanel.Components.Add(summaryPanel);
+        //    // Add summary panel
+        //    summaryPanel.Outline.Enabled = true;
+        //    summaryPanel.BackgroundColor = backgroundColor;
+        //    summaryPanel.HorizontalAlignment = HorizontalAlignment.Center;
+        //    summaryPanel.VerticalAlignment = VerticalAlignment.Middle;
+        //    summaryPanel.Size = new Vector2(300, 100);
+        //    NativePanel.Components.Add(summaryPanel);
 
-            // Setup screen text
-            MultiFormatTextLabel screen = new MultiFormatTextLabel();
-            screen.HorizontalAlignment = HorizontalAlignment.Center;
-            screen.Position = new Vector2(0, 10);
-            screen.TextAlignment = HorizontalAlignment.Center;
-            screen.SetText(Resources.Load<TextAsset>("Screens/SetupSummary"));
-            summaryPanel.Components.Add(screen);
+        //    // Setup screen text
+        //    MultiFormatTextLabel screen = new MultiFormatTextLabel();
+        //    screen.HorizontalAlignment = HorizontalAlignment.Center;
+        //    screen.Position = new Vector2(0, 10);
+        //    screen.TextAlignment = HorizontalAlignment.Center;
+        //    screen.SetText(Resources.Load<TextAsset>("Screens/SetupSummary"));
+        //    summaryPanel.Components.Add(screen);
 
-            // Confirm button
-            Button summaryConfirmButton = new Button();
-            summaryConfirmButton.Position = new Vector2(0, 80);
-            summaryConfirmButton.Size = new Vector2(40, 12);
-            summaryConfirmButton.Outline.Enabled = true;
-            summaryConfirmButton.Label.Text = okText;
-            summaryConfirmButton.BackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
-            summaryConfirmButton.HorizontalAlignment = HorizontalAlignment.Center;
-            summaryConfirmButton.OnMouseClick += SummaryConfirmButton_OnMouseClick;
-            summaryPanel.Components.Add(summaryConfirmButton);
+        //    // Confirm button
+        //    Button summaryConfirmButton = new Button();
+        //    summaryConfirmButton.Position = new Vector2(0, 80);
+        //    summaryConfirmButton.Size = new Vector2(40, 12);
+        //    summaryConfirmButton.Outline.Enabled = true;
+        //    summaryConfirmButton.Label.Text = okText;
+        //    summaryConfirmButton.BackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+        //    summaryConfirmButton.HorizontalAlignment = HorizontalAlignment.Center;
+        //    summaryConfirmButton.OnMouseClick += SummaryConfirmButton_OnMouseClick;
+        //    summaryPanel.Components.Add(summaryConfirmButton);
 
-        }
+        //}
 
         #endregion
 
@@ -516,9 +555,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case SetupStages.Options:
                     ShowOptionsPanel();
                     break;
-                case SetupStages.Summary:
-                    ShowSummaryPanel();
-                    break;
+                //case SetupStages.Summary:
+                //    ShowSummaryPanel();
+                //    break;
                 case SetupStages.LaunchGame:
                     Application.LoadLevel(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
                     //SceneManager.LoadScene(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
@@ -624,12 +663,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void OptionsConfirmButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUnity.Settings.ShowOptionsAtStart = alwayShowOptions.IsChecked;
             DaggerfallUnity.Settings.VSync = vsync.IsChecked;
             DaggerfallUnity.Settings.SwapHealthAndFatigueColors = swapHealthAndFatigue.IsChecked;
             DaggerfallUnity.Settings.InvertMouseVertical = invertMouseVertical.IsChecked;
             DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothing.IsChecked;
-            //DaggerfallUnity.Settings.LeftHandWeapons = leftHandWeapons.IsChecked;
+            DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
+
+            DaggerfallUnity.Settings.LypyL_EnhancedSky = enhancedSky.IsChecked;
+            DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance = distantTerrain.IsChecked;
+            DaggerfallUnity.Settings.Nystul_RealtimeReflections = realtimeReflections.IsChecked;
+            DaggerfallUnity.Settings.UncannyValley_RealGrass = tallGrass.IsChecked;
+            DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall = flyingBirds.IsChecked;
+
             DaggerfallUnity.Settings.SaveSettings();
             moveNextStage = true;
         }
