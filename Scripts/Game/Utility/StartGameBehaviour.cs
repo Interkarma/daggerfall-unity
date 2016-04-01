@@ -268,6 +268,7 @@ namespace DaggerfallWorkshop.Game.Utility
         // Start new character to location specified in INI
         void StartNewCharacter()
         {
+            DaggerfallUnity.ResetUID();
             RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
 
@@ -340,6 +341,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void StartFromClassicSave()
         {
+            DaggerfallUnity.ResetUID();
             RaiseOnNewGameEvent();
 
             // Save index must be in range

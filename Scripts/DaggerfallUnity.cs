@@ -51,7 +51,8 @@ namespace DaggerfallWorkshop
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITextProvider textProvider = new DefaultTextProvider();
 
-        static ulong currentUID = 0x1000;
+        const ulong startingUID = 0x1000;
+        static ulong currentUID = startingUID;
 
         #endregion
 
@@ -109,7 +110,7 @@ namespace DaggerfallWorkshop
         public static ulong CurrentUID
         {
             get { return currentUID; }
-            set { currentUID = (value < 0x1000) ? 0x1000 : value; }
+            set { currentUID = (value < startingUID) ? startingUID : value; }
         }
 
         /// <summary>
@@ -418,6 +419,15 @@ namespace DaggerfallWorkshop
         static ulong GetNextUID()
         {
             return currentUID++;
+        }
+
+        /// <summary>
+        /// Resets UID back to starting state.
+        /// Should only be used when starting a fresh new game (e.g. classic save import).
+        /// </summary>
+        public static void ResetUID()
+        {
+            currentUID = startingUID;
         }
 
         #endregion
