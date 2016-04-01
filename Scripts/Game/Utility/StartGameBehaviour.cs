@@ -200,6 +200,12 @@ namespace DaggerfallWorkshop.Game.Utility
             weaponManager.VerticalThreshold = DaggerfallUnity.Settings.WeaponSwingThreshold;
             weaponManager.TriggerCount = DaggerfallUnity.Settings.WeaponSwingTriggerCount;
 
+            // Weapon hand settings
+            // Only supporting left-hand rendering for now
+            // More handedness options may be added later
+            if (DaggerfallUnity.Settings.Handedness == 1)
+                weaponManager.RightHandWeapon.LeftHand = true;
+
             // GodMode setting
             playerHealth.GodMode = GodMod;
 

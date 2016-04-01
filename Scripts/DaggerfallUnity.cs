@@ -310,11 +310,11 @@ namespace DaggerfallWorkshop
             string path = TestArena2Exists(Settings.MyDaggerfallPath);
             if (!string.IsNullOrEmpty(path))
             {
-                LogMessage("Trying INI path " + path, true);
+                LogMessage("Trying Daggerfall path " + path, true);
                 if (Directory.Exists(path))
                     found = true;
                 else
-                    LogMessage("INI path not found.", true);
+                    LogMessage("Daggerfall path not found.", true);
             }
 
             // Otherwise, look for arena2 folder in Application.dataPath at runtime

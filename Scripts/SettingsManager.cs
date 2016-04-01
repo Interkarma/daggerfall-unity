@@ -216,14 +216,19 @@ namespace DaggerfallWorkshop
             reader.Close();
 
             // Must have settings.ini in persistent data path
+            string message;
             string userIniPath = Path.Combine(Application.persistentDataPath, settingsIniName);
             if (!File.Exists(userIniPath))
             {
                 // Create file
-                string message = string.Format("Creating new '{0}' at path '{1}'", settingsIniName, userIniPath);
+                message = string.Format("Creating new '{0}' at path '{1}'", settingsIniName, userIniPath);
                 File.WriteAllBytes(userIniPath, asset.bytes);
-                Debug.Log(message);
+                DaggerfallUnity.LogMessage(message);
             }
+
+            // Log ini path in use
+            message = string.Format("Using '{0}' at path '{1}'", settingsIniName, userIniPath);
+            DaggerfallUnity.LogMessage(message);
 
             // Load settings.ini or set as read-only
             userIniData = iniParser.ReadFile(userIniPath);

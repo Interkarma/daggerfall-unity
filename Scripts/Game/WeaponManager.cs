@@ -164,11 +164,11 @@ namespace DaggerfallWorkshop.Game
             {
                 if (rightHandItem != null)
                 {
-                    string message = HardStrings.equippingWeapon;
-                    message = message.Replace("%s", rightHandItem.ItemTemplate.name);
-                    DaggerfallUI.Instance.PopupMessage(message);
+                    //string message = HardStrings.equippingWeapon;
+                    //message = message.Replace("%s", rightHandItem.ItemTemplate.name);
+                    //DaggerfallUI.Instance.PopupMessage(message);
                 }
-                DaggerfallUI.Instance.PopupMessage(HardStrings.rightHandEquipped);
+                //DaggerfallUI.Instance.PopupMessage(HardStrings.rightHandEquipped);
                 currentRightHandWeapon = rightHandItem;
             }
 
@@ -177,11 +177,11 @@ namespace DaggerfallWorkshop.Game
             {
                 if (leftHandItem != null)
                 {
-                    string message = HardStrings.equippingWeapon;
-                    message = message.Replace("%s", leftHandItem.ItemTemplate.name);
-                    DaggerfallUI.Instance.PopupMessage(message);
+                    //string message = HardStrings.equippingWeapon;
+                    //message = message.Replace("%s", leftHandItem.ItemTemplate.name);
+                    //DaggerfallUI.Instance.PopupMessage(message);
                 }
-                DaggerfallUI.Instance.PopupMessage(HardStrings.leftHandEquipped);
+                //DaggerfallUI.Instance.PopupMessage(HardStrings.leftHandEquipped);
                 currentLeftHandWeapon = leftHandItem;
             }
 

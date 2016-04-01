@@ -988,56 +988,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void RemoteItemsUpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             remoteItemsScrollBar.ScrollIndex--;
-            UpdateRemoteItemsDisplay();
         }
 
         private void RemoteItemsDownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             remoteItemsScrollBar.ScrollIndex++;
-            UpdateRemoteItemsDisplay();
         }
 
         private void RemoteItemsListPanel_OnMouseScrollUp()
         {
             remoteItemsScrollBar.ScrollIndex--;
-            UpdateRemoteItemsDisplay();
         }
 
         private void RemoteItemsListPanel_OnMouseScrollDown()
         {
             remoteItemsScrollBar.ScrollIndex++;
-            UpdateRemoteItemsDisplay();
-        }
-
-        private void PaperDoll_OnMouseMove(int x, int y)
-        {
-            byte value = paperDoll.GetEquipIndex(x, y);
-            if (value != 0xff)
-            {
-                // Only update when index changed
-                if (value == lastMouseOverPaperDollEquipIndex)
-                    return;
-                else
-                    lastMouseOverPaperDollEquipIndex = value;
-
-                // Test index is inside range
-                string text = string.Empty;
-                if (value >= 0 && value < ItemEquipTable.EquipTableLength)
-                {
-                    DaggerfallUnityItem item = playerEntity.ItemEquipTable.EquipTable[value];
-                    if (item != null)
-                        text = item.LongName;
-                }
-
-                // Update tooltip text
-                paperDoll.ToolTipText = text;
-            }
-            else
-            {
-                // Clear tooltip text
-                paperDoll.ToolTipText = string.Empty;
-                lastMouseOverPaperDollEquipIndex = value;
-            }
         }
 
         #endregion
@@ -1233,6 +1198,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         #region Other Event Handlers
+
+        private void PaperDoll_OnMouseMove(int x, int y)
+        {
+            byte value = paperDoll.GetEquipIndex(x, y);
+            if (value != 0xff)
+            {
+                // Only update when index changed
+                if (value == lastMouseOverPaperDollEquipIndex)
+                    return;
+                else
+                    lastMouseOverPaperDollEquipIndex = value;
+
+                // Test index is inside range
+                string text = string.Empty;
+                if (value >= 0 && value < ItemEquipTable.EquipTableLength)
+                {
+                    DaggerfallUnityItem item = playerEntity.ItemEquipTable.EquipTable[value];
+                    if (item != null)
+                        text = item.LongName;
+                }
+
+                // Update tooltip text
+                paperDoll.ToolTipText = text;
+            }
+            else
+            {
+                // Clear tooltip text
+                paperDoll.ToolTipText = string.Empty;
+                lastMouseOverPaperDollEquipIndex = value;
+            }
+        }
 
         private void StartGameBehaviour_OnNewGame()
         {

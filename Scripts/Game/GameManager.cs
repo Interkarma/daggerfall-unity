@@ -206,12 +206,11 @@ namespace DaggerfallWorkshop.Game
             set { floatingOrigin = value; }
         }
 
-        public FPSWeapon LeftHandWeapon
-        {
-            get { return (playerWeapons[0]) ? playerWeapons[0] : playerWeapons[0] = GetComponentFromObject<FPSWeapon>(GetGameObjectWithName("Left Hand Weapon") ); }
-            set { playerWeapons[0] = value; }
-
-        }
+        //public FPSWeapon LeftHandWeapon
+        //{
+        //    get { return (playerWeapons[0]) ? playerWeapons[0] : playerWeapons[0] = GetComponentFromObject<FPSWeapon>(GetGameObjectWithName("Left Hand Weapon") ); }
+        //    set { playerWeapons[0] = value; }
+        //}
 
         public FPSWeapon RightHandWeapon
         {
