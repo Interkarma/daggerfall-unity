@@ -47,6 +47,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(GotoLocation.name, GotoLocation.description, GotoLocation.usage, GotoLocation.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GetLocationMapPixel.name, GetLocationMapPixel.description, GetLocationMapPixel.usage, GetLocationMapPixel.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Teleport.name, Teleport.description, Teleport.usage, Teleport.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(Groundme.name, Groundme.description, Groundme.usage, Groundme.Execute);
         }
 
         private static class GodCommand
@@ -424,10 +425,6 @@ namespace Wenzil.Console
         }
 
 
-
-
-
-
         private static class SetGravity
         {
             public static readonly string name = "set_grav";
@@ -482,7 +479,6 @@ namespace Wenzil.Console
                 if (playerMotor == null)
                 {
                     return error;
-
                 }
                 if (args == null || args.Length < 1)
                 {
@@ -490,26 +486,19 @@ namespace Wenzil.Console
                     {
                         Console.Log(string.Format("Current Jump Speed: {0}", playerMotor.jumpSpeed));
                         return HelpCommand.Execute(SetJumpSpeed.name);
-
                     }
                     catch
                     {
                         return HelpCommand.Execute(SetJumpSpeed.name);
                     }
-
-
                 }
                 else if (!int.TryParse(args[0], out speed))
                     return error;
-
                 else
                 {
                     playerMotor.jumpSpeed = speed;
                     return string.Format("Jump speed set to: {0}", playerMotor.jumpSpeed);
                 }
-
-
-
             }
         }
 
@@ -858,15 +847,15 @@ namespace Wenzil.Console
         private static class Teleport
         {
             public static readonly string name = "teleport";
-            public static readonly string description = "teleport player to object they are looking at";
+            public static readonly string description = "teleport player to object they are looking at.  God mode recommended";
             public static readonly string usage = "teleport \noptional paramaters: \n{true/false} always teleport if true, even if looking at empty space (default false) \n{max distance}" +
-                "max distance to teleport (default 500) \n{up/down/left/right} final position adjustment (default up) \n Example: teleport force 500 up";
+                "max distance to teleport (default 500) \n{up/down/left/right} final position adjustment (default up) \n Examples:\nteleport \n teleport up \n teleport 999 left true";
 
             public static string Execute(params string[] args)
             {
 
                 bool forceTeleOnNoHit = false;              //teleport maxDistance even if raycast doesn't hit
-                float maxDistance = 500;                    //distance to use if forceTeleOnNoHit is true and raycast doesn't hit
+                float maxDistance = 500;                    //max distance
                 int step = 0;
                 Vector3 dir = Camera.main.transform.up;
                 Vector3 loc;
@@ -900,34 +889,19 @@ namespace Wenzil.Console
                 RaycastHit hitInfo;
                 Vector3 origin = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0));
                 Ray ray = new Ray(origin + Camera.main.transform.forward * .2f, Camera.main.transform.forward);
-                //Debug.DrawRay(ray.origin, ray.direction, Color.yellow, 15);
-
-                if (!(Physics.Raycast(ray, out hitInfo)))
+                GameManager.Instance.PlayerMotor.ClearFallingDamage();
+                if (!(Physics.Raycast(ray, out hitInfo, maxDistance)))
                 {
                     Console.Log("Didn't hit anything...");
                     if(forceTeleOnNoHit)
                     {
-                        if (!GameManager.Instance.PlayerHealth.GodMode)
-                        {
-                            GameManager.Instance.PlayerHealth.GodMode = true;
-                            Console.Log(string.Format("\n##########################\n\nENABLING GOD MODE - USE CONSOLE COMMAND: tgm \nTO DISABLE\n\n##########################\n"));
-                        }
-
                         GameManager.Instance.PlayerObject.transform.position = ray.GetPoint(maxDistance);
                         Console.Log("...teleporting anyways");
                     }
                 }
                 else
                 {
-                    //enable god mode to prevent death by falling damage, & display message
-                    if (!GameManager.Instance.PlayerHealth.GodMode)
-                    {
-                        GameManager.Instance.PlayerHealth.GodMode = true;
-                        Console.Log(string.Format("\n##########################\n\nENABLING GOD MODE - USE CONSOLE COMMAND: tgm \nTO DISABLE\n\n##########################\n"));
-                    }
-
                     loc = hitInfo.point;
-
                     while (Physics.CheckCapsule(loc, loc + dir, GameManager.Instance.PlayerController.radius + .1f) && step < 50)
                     {
                         loc = dir + loc;
@@ -937,7 +911,36 @@ namespace Wenzil.Console
                 }
                     return "Finished";
             }
+        }
 
+
+        private static class Groundme
+        {
+            public static readonly string name = "groundme";
+            public static readonly string description = "Move back to last known good position";
+            public static readonly string usage = "groundme";
+
+            public static string Execute(params string[] args)
+            {
+                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
+                CharacterController cc = GameManager.Instance.PlayerController;
+                playerMotor.ClearFallingDamage();
+
+                RaycastHit hitInfo;
+                Vector3 origin = playerMotor.ContactPoint;
+                origin.y += cc.height;
+                Ray ray = new Ray(origin, Vector3.down);
+                if (!(Physics.Raycast(ray, out hitInfo, cc.height * 2)))
+                {
+                    return "Failed to reposition - try Teleport or if inside tele2exit";
+                }
+                else
+                {
+                    GameManager.Instance.PlayerObject.transform.position = playerMotor.ContactPoint;
+                    playerMotor.FixStanding(cc.height/2);
+                    return "Finished - moved to last known good location at " + playerMotor.ContactPoint.ToString();
+                }
+            }
         }
 
     }

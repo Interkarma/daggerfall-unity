@@ -16,6 +16,7 @@ UseLegacyDeferred=False
 PlayerNudity=False
 
 [GUI]
+ShowOptionsAtStart=True
 GUIFilterMode=0
 VideoFilterMode=1
 Crosshair=True

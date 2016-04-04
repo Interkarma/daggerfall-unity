@@ -163,6 +163,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
+        #region Public Methods
+
+        /// <summary>
+        /// Resets scroll properties without triggering events.
+        /// </summary>
+        public void Reset(int displayUnits = 0, int totalUnits = 0, int scrollIndex = 0)
+        {
+            this.displayUnits = displayUnits;
+            this.totalUnits = totalUnits;
+            this.scrollIndex = scrollIndex;
+        }
+
+        #endregion
+
         #region Private Methods
 
         void SetScrollIndex(int value)

@@ -27,5 +27,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string gameSaved = "Game saved.";
         public const string thisHouseHasNothingOfValue = "This house has nothing of value.";
         public const string findLocationPrompt = "Enter name of place : ";
+        public const string equippingWeapon = "Equipping %s";
+        public const string rightHandEquipped = "Right hand equipped.";
+        public const string leftHandEquipped = "Left hand equipped.";
+        public const string usingRightHand = "Using weapon in right hand.";
+        public const string usingLeftHand = "Using weapon in left hand.";
     }
 }

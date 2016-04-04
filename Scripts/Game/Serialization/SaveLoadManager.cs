@@ -336,7 +336,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (string.IsNullOrEmpty(result) || !Directory.Exists(result))
             {
                 // Default to dataPath
-                result = Path.Combine(Application.dataPath, savesFolder);
+                result = Path.Combine(Application.persistentDataPath, savesFolder);
                 if (!Directory.Exists(result))
                 {
                     // Attempt to create path
@@ -392,6 +392,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             SaveData_v1 saveData = new SaveData_v1();
             saveData.header = new SaveDataDescription_v1();
+            saveData.currentUID = DaggerfallUnity.CurrentUID;
             saveData.dateAndTime = GetDateTimeData();
             saveData.playerData = GetPlayerData();
             saveData.dungeonData = GetDungeonData();
@@ -471,6 +472,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         void RestoreSaveData(SaveData_v1 saveData)
         {
+            DaggerfallUnity.CurrentUID = saveData.currentUID;
             RestoreDateTimeData(saveData.dateAndTime);
             RestorePlayerData(saveData.playerData);
             RestoreDungeonData(saveData.dungeonData);

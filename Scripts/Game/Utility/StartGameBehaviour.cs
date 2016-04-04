@@ -200,6 +200,12 @@ namespace DaggerfallWorkshop.Game.Utility
             weaponManager.VerticalThreshold = DaggerfallUnity.Settings.WeaponSwingThreshold;
             weaponManager.TriggerCount = DaggerfallUnity.Settings.WeaponSwingTriggerCount;
 
+            // Weapon hand settings
+            // Only supporting left-hand rendering for now
+            // More handedness options may be added later
+            if (DaggerfallUnity.Settings.Handedness == 1)
+                weaponManager.RightHandWeapon.LeftHand = true;
+
             // GodMode setting
             playerHealth.GodMode = GodMod;
 
@@ -213,6 +219,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void StartVoid()
         {
+            RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
             NoWorld = true;
@@ -220,6 +227,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void StartTitleMenu()
         {
+            RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
 
@@ -231,6 +239,8 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void StartTitleMenuFromDeath()
         {
+            RaiseOnNewGameEvent();
+
             // Reset player death camera
             if (GameManager.Instance.PlayerDeath)
                 GameManager.Instance.PlayerDeath.ResetCamera();
@@ -246,6 +256,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void StartFromQuickSave()
         {
+            RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
             if (SaveLoadManager.Instance.HasQuickSave())
@@ -257,6 +268,8 @@ namespace DaggerfallWorkshop.Game.Utility
         // Start new character to location specified in INI
         void StartNewCharacter()
         {
+            DaggerfallUnity.ResetUID();
+            RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
 
             // Must have a character document
@@ -316,9 +329,6 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign starting gear to player entity
             DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity);
 
-            // Update weapons on start
-            GameManager.Instance.WeaponManager.UpdateWeapons(playerEntity.ItemEquipTable);
-
             // Start game
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
@@ -331,6 +341,9 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void StartFromClassicSave()
         {
+            DaggerfallUnity.ResetUID();
+            RaiseOnNewGameEvent();
+
             // Save index must be in range
             if (classicSaveIndex < 0 || classicSaveIndex >= 6)
                 throw new IndexOutOfRangeException("classicSaveIndex out of range.");
@@ -441,6 +454,19 @@ namespace DaggerfallWorkshop.Game.Utility
             PlayerEntity playerEntity = player.GetComponent<DaggerfallEntityBehaviour>().Entity as PlayerEntity;
 
             return playerEntity;
+        }
+
+        #endregion
+
+        #region Events
+
+        // OnNewGame
+        public delegate void OnNewGameEventHandler();
+        public static event OnNewGameEventHandler OnNewGame;
+        protected virtual void RaiseOnNewGameEvent()
+        {
+            if (OnNewGame != null)
+                OnNewGame();
         }
 
         #endregion

@@ -51,6 +51,9 @@ namespace DaggerfallWorkshop
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITextProvider textProvider = new DefaultTextProvider();
 
+        const ulong startingUID = 0x1000;
+        static ulong currentUID = startingUID;
+
         #endregion
 
         #region Public Fields
@@ -97,6 +100,26 @@ namespace DaggerfallWorkshop
         #endregion
 
         #region Class Properties
+
+        /// <summary>
+        /// Gets or sets current unique identifier counter.
+        /// This property used for serialization/deserialization.
+        /// Should not be changed any other time.
+        /// UIDs 0-4095 are reserved.
+        /// </summary>
+        public static ulong CurrentUID
+        {
+            get { return currentUID; }
+            set { currentUID = (value < startingUID) ? startingUID : value; }
+        }
+
+        /// <summary>
+        /// Gets a new UID. Counter is incremented on each call.
+        /// </summary>
+        public static ulong NextUID
+        {
+            get { return GetNextUID(); }
+        }
 
         public bool IsReady
         {
@@ -288,11 +311,11 @@ namespace DaggerfallWorkshop
             string path = TestArena2Exists(Settings.MyDaggerfallPath);
             if (!string.IsNullOrEmpty(path))
             {
-                LogMessage("Trying INI path " + path, true);
+                LogMessage("Trying Daggerfall path " + path, true);
                 if (Directory.Exists(path))
                     found = true;
                 else
-                    LogMessage("INI path not found.", true);
+                    LogMessage("Daggerfall path not found.", true);
             }
 
             // Otherwise, look for arena2 folder in Application.dataPath at runtime
@@ -391,6 +414,20 @@ namespace DaggerfallWorkshop
             DFValidator.ValidateArena2Folder(path, out results);
 
             return results.AppearsValid;
+        }
+
+        static ulong GetNextUID()
+        {
+            return currentUID++;
+        }
+
+        /// <summary>
+        /// Resets UID back to starting state.
+        /// Should only be used when starting a fresh new game (e.g. classic save import).
+        /// </summary>
+        public static void ResetUID()
+        {
+            currentUID = startingUID;
         }
 
         #endregion

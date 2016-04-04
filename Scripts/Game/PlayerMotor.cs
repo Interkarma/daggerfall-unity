@@ -99,6 +99,11 @@ namespace DaggerfallWorkshop.Game
             get { return activePlatform; }
         }
 
+        public Vector3 ContactPoint
+        {
+            get { return contactPoint; }
+        }
+
         void Start()
         {
             controller = GetComponent<CharacterController>();
@@ -356,5 +361,12 @@ namespace DaggerfallWorkshop.Game
         {
             SendMessage("HardFallAlert", fallDistance, SendMessageOptions.DontRequireReceiver);
         }
+
+        public void ClearFallingDamage()
+        {
+            falling = false;
+            fallStartLevel = transform.position.y;
+        }
+
     }
 }

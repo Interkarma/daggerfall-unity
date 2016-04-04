@@ -44,6 +44,11 @@ namespace DaggerfallWorkshop
         IniData defaultIniData = null;
         IniData userIniData = null;
 
+        public string PersistentDataPath
+        {
+            get { return Application.persistentDataPath; }
+        }
+
         public SettingsManager()
         {
             LoadSettings();
@@ -69,6 +74,7 @@ namespace DaggerfallWorkshop
         public bool PlayerNudity { get; set; }
 
         // [GUI]
+        public bool ShowOptionsAtStart { get; set; }
         public int GUIFilterMode { get; set; }
         public int VideoFilterMode { get; set; }
         public bool Crosshair { get; set; }
@@ -126,6 +132,7 @@ namespace DaggerfallWorkshop
             QualityLevel = GetInt(sectionVideo, "QualityLevel", 0, 5);
             UseLegacyDeferred = GetBool(sectionVideo, "UseLegacyDeferred");
             PlayerNudity = GetBool(sectionChildGuard, "PlayerNudity");
+            ShowOptionsAtStart = GetBool(sectionGUI, "ShowOptionsAtStart");
             GUIFilterMode = GetInt(sectionGUI, "GUIFilterMode", 0, 2);
             VideoFilterMode = GetInt(sectionGUI, "VideoFilterMode");
             Crosshair = GetBool(sectionGUI, "Crosshair");
@@ -171,6 +178,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "QualityLevel", QualityLevel);
             SetBool(sectionVideo, "UseLegacyDeferred", UseLegacyDeferred);
             SetBool(sectionChildGuard, "PlayerNudity", PlayerNudity);
+            SetBool(sectionGUI, "ShowOptionsAtStart", ShowOptionsAtStart);
             SetInt(sectionGUI, "GUIFilterMode", GUIFilterMode);
             SetInt(sectionGUI, "VideoFilterMode", VideoFilterMode);
             SetBool(sectionGUI, "Crosshair", Crosshair);
@@ -216,14 +224,19 @@ namespace DaggerfallWorkshop
             reader.Close();
 
             // Must have settings.ini in persistent data path
+            string message;
             string userIniPath = Path.Combine(Application.persistentDataPath, settingsIniName);
             if (!File.Exists(userIniPath))
             {
                 // Create file
-                string message = string.Format("Creating new '{0}' at path '{1}'", settingsIniName, userIniPath);
+                message = string.Format("Creating new '{0}' at path '{1}'", settingsIniName, userIniPath);
                 File.WriteAllBytes(userIniPath, asset.bytes);
-                Debug.Log(message);
+                DaggerfallUnity.LogMessage(message);
             }
+
+            // Log ini path in use
+            message = string.Format("Using '{0}' at path '{1}'", settingsIniName, userIniPath);
+            DaggerfallUnity.LogMessage(message);
 
             // Load settings.ini or set as read-only
             userIniData = iniParser.ReadFile(userIniPath);

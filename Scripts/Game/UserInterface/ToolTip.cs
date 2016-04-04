@@ -143,6 +143,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public override void Draw()
         {
+            if (!Enabled)
+                return;
+
             if (drawToolTip)
             {
                 base.Draw();

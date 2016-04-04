@@ -9,16 +9,12 @@
 // Notes:
 //
 
-using UnityEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using DaggerfallConnect;
-using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -51,7 +47,29 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #endregion
 
+        #region Constructors
+
+        public PlayerEntity()
+            :base()
+        {
+            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+        }
+
+        #endregion
+
         #region Public Methods
+
+        /// <summary>
+        /// Resets entity to initial state.
+        /// </summary>
+        public void Reset()
+        {
+            equipTable.Clear();
+            items.Clear();
+            wagonItems.Clear();
+            otherItems.Clear();
+            SetEntityDefaults();
+        }
 
         /// <summary>
         /// Assigns player entity settings from a character document.
@@ -103,11 +121,23 @@ namespace DaggerfallWorkshop.Game.Entity
             // Add interim Daggerfall Unity items
             foreach (var record in filteredRecords)
             {
-                items.AddItem(new DaggerfallUnityItem((ItemRecord)record));
-            }
+                // Get container parent
+                ContainerRecord containerRecord = (ContainerRecord)record.Parent;
 
-            // Set interim legacy equip table
-            items.SetLegacyEquipTable(characterRecord);
+                // Add to local inventory or wagon
+                DaggerfallUnityItem newItem = new DaggerfallUnityItem((ItemRecord)record);
+                if (containerRecord.IsWagon)
+                    wagonItems.AddItem(newItem);
+                else
+                    items.AddItem(newItem);
+
+                // Equip to player if equipped in save
+                for (int i = 0; i < characterRecord.ParsedData.equippedItems.Length; i++)
+                {
+                    if (characterRecord.ParsedData.equippedItems[i] == (record.RecordRoot.RecordID >> 8))
+                        equipTable.EquipItem(newItem);
+                }
+            }
         }
 
         /// <summary>
@@ -131,6 +161,15 @@ namespace DaggerfallWorkshop.Game.Entity
                 skills.SetDefaults();
                 FillVitalSigns();
             }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            Reset();
         }
 
         #endregion

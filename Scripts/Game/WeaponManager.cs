@@ -10,9 +10,9 @@
 //
 
 using UnityEngine;
-using System.Collections;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -35,10 +35,16 @@ namespace DaggerfallWorkshop.Game
         int actionCount = 0;                        // Number of times in a row action has been registered
         bool alternateAttack;                       // Flag to flip weapons on alternating attacks
 
+        PlayerEntity playerEntity;
         GameObject player;
         GameObject mainCamera;
         bool isAttacking;
         int lastAttackHand = 0;                     // 0-left-hand, 1=right-hand, -1=no weapon
+
+        bool usingRightHand = true;
+        bool holdingShield = false;
+        DaggerfallUnityItem currentRightHandWeapon = null;
+        DaggerfallUnityItem currentLeftHandWeapon = null;
 
         /// <summary>
         /// Mouse directions for attack trigger.
@@ -60,14 +66,24 @@ namespace DaggerfallWorkshop.Game
         {
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
+            SetMelee(RightHandWeapon);
         }
 
         void Update()
         {
+            // Automatically update weapons from inventory when PlayerEntity available
+            if (playerEntity != null)
+                UpdateHands();
+            else
+                playerEntity = GameManager.Instance.PlayerEntity;
+
             // Toggle weapon sheath
-            //if (Input.GetKeyDown(KeyCode.Z))
             if (InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon))
                 ToggleSheath();
+
+            // Toggle weapon hand
+            if (InputManager.Instance.ActionComplete(InputManager.Actions.SwitchHand))
+                ToggleHand();
 
             // Do nothing if weapons sheathed
             if (Sheathed)
@@ -126,32 +142,84 @@ namespace DaggerfallWorkshop.Game
             ShowWeapons(false);
         }
 
-        public void UpdateWeapons(ItemEquipTable equipTable, bool notify = false)
+        #region Weapon Setup Methods
+
+        void UpdateHands()
         {
-            if (equipTable.IsSlotOpen(EquipSlots.RightHand))
-                SetMelee(RightHandWeapon);
-            else
-                SetWeapon(RightHandWeapon, equipTable.GetItem(EquipSlots.RightHand));
+            // Get current items
+            DaggerfallUnityItem rightHandItem = playerEntity.ItemEquipTable.GetItem(EquipSlots.RightHand);
+            DaggerfallUnityItem leftHandItem = playerEntity.ItemEquipTable.GetItem(EquipSlots.LeftHand);
 
-            //if (equipTable.IsSlotOpen(EquipSlots.LeftHand))
-            //    SetMelee(LeftHandWeapon);
-            //else
-            //    SetWeapon(LeftHandWeapon, equipTable.GetItem(EquipSlots.LeftHand));
+            // Handle shields
+            holdingShield = false;
+            if (leftHandItem != null && leftHandItem.IsShield)
+            {
+                usingRightHand = true;
+                holdingShield = true;
+                leftHandItem = null;
+            }
 
-            //bool wasRightEquipped;
-            //if (RightHandWeapon.WeaponType == WeaponTypes.None || RightHandWeapon.WeaponType == WeaponTypes.Melee)
-            //    wasRightEquipped = false;
-            //else
-            //    wasRightEquipped = true;
+            // Right-hand item changed
+            if (!DaggerfallUnityItem.CompareItems(currentRightHandWeapon, rightHandItem))
+            {
+                if (rightHandItem != null)
+                {
+                    //string message = HardStrings.equippingWeapon;
+                    //message = message.Replace("%s", rightHandItem.ItemTemplate.name);
+                    //DaggerfallUI.Instance.PopupMessage(message);
+                }
+                //DaggerfallUI.Instance.PopupMessage(HardStrings.rightHandEquipped);
+                currentRightHandWeapon = rightHandItem;
+            }
 
-            //bool wasLeftEquipped;
-            //if (LeftHandWeapon.WeaponType == WeaponTypes.None || LeftHandWeapon.WeaponType == WeaponTypes.Melee)
-            //    wasLeftEquipped = false;
-            //else
-            //    wasLeftEquipped = true;
+            // Left-hand item changed
+            if (!DaggerfallUnityItem.CompareItems(currentLeftHandWeapon, leftHandItem))
+            {
+                if (leftHandItem != null)
+                {
+                    //string message = HardStrings.equippingWeapon;
+                    //message = message.Replace("%s", leftHandItem.ItemTemplate.name);
+                    //DaggerfallUI.Instance.PopupMessage(message);
+                }
+                //DaggerfallUI.Instance.PopupMessage(HardStrings.leftHandEquipped);
+                currentLeftHandWeapon = leftHandItem;
+            }
+
+            // Apply weapon settings
+            ApplyWeapon();
         }
 
-        #region Weapon Setup Methods
+        void ToggleHand()
+        {
+            if (usingRightHand && holdingShield)
+                return;
+
+            usingRightHand = !usingRightHand;
+            if (usingRightHand)
+                DaggerfallUI.Instance.PopupMessage(HardStrings.usingRightHand);
+            else
+                DaggerfallUI.Instance.PopupMessage(HardStrings.usingLeftHand);
+
+            ApplyWeapon();
+        }
+
+        void ApplyWeapon()
+        {
+            if (usingRightHand)
+            {
+                if (currentRightHandWeapon == null)
+                    SetMelee(RightHandWeapon);
+                else
+                    SetWeapon(RightHandWeapon, currentRightHandWeapon);
+            }
+            else
+            {
+                if (currentLeftHandWeapon == null)
+                    SetMelee(RightHandWeapon);
+                else
+                    SetWeapon(RightHandWeapon, currentLeftHandWeapon);
+            }
+        }
 
         void SetMelee(FPSWeapon target)
         {

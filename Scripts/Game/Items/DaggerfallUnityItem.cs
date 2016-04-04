@@ -9,12 +9,9 @@
 // Notes:
 //
 
-using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -36,9 +33,10 @@ namespace DaggerfallWorkshop.Game.Items
         public int hits1;
         public int hits2;
         public int hits3;
-        int enchantmentPoints;
-        int message;
-        int[] legacyMagic = null;
+        public int stackCount = 1;
+        public int enchantmentPoints;
+        public int message;
+        public int[] legacyMagic = null;
 
         // Private item fields
         int playerTextureArchive;
@@ -48,6 +46,7 @@ namespace DaggerfallWorkshop.Game.Items
         ItemGroups itemGroup;
         int groupIndex;
         int currentVariant = 0;
+        ulong uid;
 
         // Item template is cached for faster checks
         // Does not need to be serialized
@@ -61,6 +60,14 @@ namespace DaggerfallWorkshop.Game.Items
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets generated unique identifier.
+        /// </summary>
+        public ulong UID
+        {
+            get { return uid; }
+        }
 
         /// <summary>
         /// Gets or sets player texture archive.
@@ -158,39 +165,89 @@ namespace DaggerfallWorkshop.Game.Items
             set { SetCurrentVariant(value); }
         }
 
+        /// <summary>
+        /// Checks if this is an ingredient.
+        /// </summary>
+        public bool IsIngredient
+        {
+            get { return ItemTemplate.isIngredient; }
+        }
+
+        /// <summary>
+        /// Checks if this item is equipped.
+        /// </summary>
+        public bool IsEquipped
+        {
+            get { return !(equipSlot == EquipSlots.None); }
+        }
+
+        /// <summary>
+        /// Checks if this item has magical properties.
+        /// </summary>
+        public bool IsEnchanted
+        {
+            get { return GetIsEnchanted(); }
+        }
+
+        /// <summary>
+        /// Checks if this item is of any shield type.
+        /// </summary>
+        public bool IsShield
+        {
+            get { return GetIsShield(); }
+        }
+
         #endregion
 
         #region Constructors
 
         /// <summary>
         /// Default constructor.
+        /// Generates new UID.
         /// </summary>
         public DaggerfallUnityItem()
         {
+            uid = DaggerfallUnity.NextUID;
         }
 
         /// <summary>
         /// Construct from item group and index.
+        /// Generates new UID.
         /// </summary>
         public DaggerfallUnityItem(ItemGroups itemGroup, int groupIndex)
         {
+            uid = DaggerfallUnity.NextUID;
             SetItem(itemGroup, groupIndex);
         }
 
         /// <summary>
         /// Construct from another item.
+        /// Generates new UID.
         /// </summary>
         public DaggerfallUnityItem(DaggerfallUnityItem item)
         {
+            uid = DaggerfallUnity.NextUID;
             FromItem(item);
         }
 
         /// <summary>
         /// Construct from legacy ItemRecord data.
+        /// Generates new UID.
         /// </summary>
         public DaggerfallUnityItem(ItemRecord record)
         {
+            uid = DaggerfallUnity.NextUID;
             FromItemRecord(record);
+        }
+
+        /// <summary>
+        /// Construct item from serialized data.
+        /// Used serialized UID.
+        /// </summary>
+        /// <param name="itemData">Item data to restore.</param>
+        public DaggerfallUnityItem(ItemData_v1 itemData)
+        {
+            FromItemData(itemData);
         }
 
         #endregion
@@ -209,6 +266,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Sets item from group and index.
         /// Resets item data from new template.
+        /// Retains existing UID.
         /// </summary>
         /// <param name="itemGroup">Item group.</param>
         /// <param name="groupIndex">Item group index.</param>
@@ -237,11 +295,18 @@ namespace DaggerfallWorkshop.Game.Items
             hits3 = itemTemplate.hitPoints;
             enchantmentPoints = itemTemplate.enchantmentPoints;
             message = 0;
+            stackCount = 1;
 
             // Fix leather helms
             ItemBuilder.FixLeatherHelm(this);
         }
 
+        /// <summary>
+        /// Checks if item is of both group and template index.
+        /// </summary>
+        /// <param name="itemGroup">Item group to check.</param>
+        /// <param name="templateIndex">Template index to check.</param>
+        /// <returns>True if item matches both group and template index.</returns>
         public bool IsOfTemplate(ItemGroups itemGroup, int templateIndex)
         {
             if (ItemGroup == itemGroup && TemplateIndex == templateIndex)
@@ -251,17 +316,104 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Checks if item is of template index.
+        /// </summary>
+        /// <param name="templateIndex">Template index to check.</param>
+        /// <returns>True if item matches template index.</returns>
+        public bool IsOfTemplate(int templateIndex)
+        {
+            return (TemplateIndex == templateIndex);
+        }
+
+        /// <summary>
         /// Cycles through variants.
         /// </summary>
         public void NextVariant()
         {
-            // Cycle through variants
-            int variant = CurrentVariant + 1;
-            if (variant >= TotalVariants)
-                variant = 0;
+            // Only certain items support user-initiated variants
+            // This list will expand as more supported items are discovered
+            bool canChangeVariant = false;
+            switch(TemplateIndex)
+            {
+                case (int)MensClothing.Plain_robes:
+                case (int)MensClothing.Formal_cloak:
+                case (int)MensClothing.Casual_cloak:
+                case (int)MensClothing.Reversible_tunic:
+                case (int)WomensClothing.Plain_robes:
+                case (int)WomensClothing.Formal_cloak:
+                case (int)WomensClothing.Casual_cloak:
+                    canChangeVariant = true;
+                    break;
+            }
 
-            // Update image
-            playerTextureRecord = ItemTemplate.playerTextureRecord + variant;
+            // Cycle through variants
+            if (canChangeVariant)
+            {
+                int variant = CurrentVariant + 1;
+                if (variant >= TotalVariants)
+                    variant = 0;
+
+                currentVariant = variant;
+            }
+        }
+
+        /// <summary>
+        /// Gets item data for serialization.
+        /// </summary>
+        /// <returns>ItemData_v1.</returns>
+        public ItemData_v1 GetSaveData()
+        {
+            ItemData_v1 data = new ItemData_v1();
+            data.uid = uid;
+            data.shortName = shortName;
+            data.nativeMaterialValue = nativeMaterialValue;
+            data.dyeColor = dyeColor;
+            data.weightInKg = weightInKg;
+            data.drawOrder = drawOrder;
+            data.value1 = value1;
+            data.value2 = value2;
+            data.hits1 = hits1;
+            data.hits2 = hits2;
+            data.hits3 = hits3;
+            data.stackCount = stackCount;
+            data.enchantmentPoints = enchantmentPoints;
+            data.message = message;
+            data.legacyMagic = legacyMagic;
+            data.playerTextureArchive = playerTextureArchive;
+            data.playerTextureRecord = playerTextureRecord;
+            data.worldTextureArchive = worldTextureArchive;
+            data.worldTextureRecord = worldTextureRecord;
+            data.itemGroup = itemGroup;
+            data.groupIndex = groupIndex;
+            data.currentVariant = currentVariant;
+
+            return data;
+        }
+
+        #endregion
+
+        #region Static Methods
+
+        /// <summary>
+        /// Compares two items for equal UID.
+        /// One or both items can be null.
+        /// </summary>
+        /// <param name="item1">First item.</param>
+        /// <param name="item2">Second item.</param>
+        /// <returns>True if items have same UID.</returns>
+        public static bool CompareItems(DaggerfallUnityItem item1, DaggerfallUnityItem item2)
+        {
+            // Exclude null cases
+            if (item1 == null && item2 == null)
+                return true;
+            else if (item1 == null || item2 == null)
+                return false;
+
+            // Compare UIDs
+            if (item1.UID == item2.UID)
+                return true;
+            else
+                return false;
         }
 
         #endregion
@@ -292,7 +444,10 @@ namespace DaggerfallWorkshop.Game.Items
             hits3 = other.hits3;
             enchantmentPoints = other.enchantmentPoints;
             message = other.message;
-            legacyMagic = (int[])legacyMagic.Clone();
+            stackCount = other.stackCount;
+
+            if (other.legacyMagic != null)
+                legacyMagic = (int[])other.legacyMagic.Clone();
         }
 
         /// <summary>
@@ -334,7 +489,8 @@ namespace DaggerfallWorkshop.Game.Items
             hits3 = itemRecord.ParsedData.hits3;
             currentVariant = 0;
             enchantmentPoints = itemRecord.ParsedData.enchantmentPoints;
-            message = itemRecord.ParsedData.message;
+            message = (int)itemRecord.ParsedData.message;
+            stackCount = 1;
 
             // Assign current variant
             if (itemTemplate.variants > 0)
@@ -346,17 +502,53 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             // Assign legacy magic effects array
+            bool foundEnchantment = false;
             if (itemRecord.ParsedData.magic != null)
             {
                 legacyMagic = new int[itemRecord.ParsedData.magic.Length];
                 for (int i = 0; i < itemRecord.ParsedData.magic.Length; i++)
                 {
                     legacyMagic[i] = itemRecord.ParsedData.magic[i];
+                    if (legacyMagic[i] != 0xffff)
+                        foundEnchantment = true;
                 }
             }
 
+            // Discard list if no enchantment found
+            if (!foundEnchantment)
+                legacyMagic = null;
+
             // Fix leather helms
             ItemBuilder.FixLeatherHelm(this);
+        }
+
+        /// <summary>
+        /// Creates from a serialized item.
+        /// </summary>
+        void FromItemData(ItemData_v1 data)
+        {
+            uid = data.uid;
+            shortName = data.shortName;
+            nativeMaterialValue = data.nativeMaterialValue;
+            dyeColor = data.dyeColor;
+            weightInKg = data.weightInKg;
+            drawOrder = data.drawOrder;
+            value1 = data.value1;
+            value2 = data.value2;
+            hits1 = data.hits1;
+            hits2 = data.hits2;
+            hits3 = data.hits3;
+            stackCount = data.stackCount;
+            enchantmentPoints = data.enchantmentPoints;
+            message = data.message;
+            legacyMagic = data.legacyMagic;
+            playerTextureArchive = data.playerTextureArchive;
+            playerTextureRecord = data.playerTextureRecord;
+            worldTextureArchive = data.worldTextureArchive;
+            worldTextureRecord = data.worldTextureRecord;
+            itemGroup = data.itemGroup;
+            groupIndex = data.groupIndex;
+            currentVariant = data.currentVariant;
         }
 
         /// <summary>
@@ -437,23 +629,53 @@ namespace DaggerfallWorkshop.Game.Items
             return false;
         }
 
+        // Basic check for magic items
+        // Currently uses legacyMagic data for imported items
+        // New items cannot currently have magical properties
+        bool GetIsEnchanted()
+        {
+            // Spellbook considered enchanted
+            if (IsOfTemplate((int)MiscItems.Spellbook))
+                return true;
+
+            if (legacyMagic == null || legacyMagic.Length == 0)
+                return false;
+
+            // Check for legacy magic effects
+            // A value of 0xffff means no enchantment in that slot
+            // http://www.uesp.net/wiki/Daggerfall:MAGIC.DEF_indices
+            for (int i = 0;  i < legacyMagic.Length; i++)
+            {
+                if (legacyMagic[i] != 0xffff)
+                    return true;
+            }
+
+            return false;
+        }
+
+        // Check if this is a shield
+        bool GetIsShield()
+        {
+            if (ItemGroup == ItemGroups.Armor)
+            {
+                if (TemplateIndex == (int)Armor.Kite_Shield ||
+                    TemplateIndex == (int)Armor.Round_Shield ||
+                    TemplateIndex == (int)Armor.Tower_Shield)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         // Determines if world texture should be displayed in place of player texture
         // Many inventory item types have this setup and more may need to be added
         bool UseWorldTexture()
         {
             // Handle ingredients
-            switch (itemGroup)
-            {
-                case ItemGroups.CreatureIngredients1:
-                case ItemGroups.CreatureIngredients2:
-                case ItemGroups.CreatureIngredients3:
-                case ItemGroups.MetalIngredients:
-                case ItemGroups.MiscellaneousIngredients1:
-                case ItemGroups.MiscellaneousIngredients2:
-                case ItemGroups.PlantIngredients1:
-                case ItemGroups.PlantIngredients2:
-                    return true;
-            }
+            if (IsIngredient)
+                return true;
 
             // Handle unique items
             if (IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Spellbook))

@@ -38,16 +38,34 @@ namespace DaggerfallWorkshop.Game.Items
         #region Properties
 
         /// <summary>
-        /// Gets clone of current equip table.
+        /// Gets length of equip table.
+        /// </summary>
+        public static int EquipTableLength
+        {
+            get { return equipTableLength; }
+        }
+
+        /// <summary>
+        /// Gets current equip table.
         /// </summary>
         public DaggerfallUnityItem[] EquipTable
         {
-            get { return (DaggerfallUnityItem[])equipTable.Clone(); }
+            get { return equipTable; }
         }
 
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Clears equip table.
+        /// Does not unequip items, just wipes table.
+        /// Used when clearing state for a new game.
+        /// </summary>
+        public void Clear()
+        {
+            equipTable = new DaggerfallUnityItem[equipTableLength];
+        }
 
         /// <summary>
         /// Gets item equipped to slot.
@@ -80,6 +98,21 @@ namespace DaggerfallWorkshop.Game.Items
                 UnequipItem(EquipSlots.RightHand);
             }
 
+            // Equipping a shield will always unequip 2H weapon
+            if (item.ItemGroup == ItemGroups.Armor &&
+                (item.TemplateIndex == (int)Armor.Kite_Shield ||
+                item.TemplateIndex == (int)Armor.Round_Shield ||
+                item.TemplateIndex == (int)Armor.Tower_Shield))
+            {
+                // If holding a 2H weapon then unequip
+                DaggerfallUnityItem rightHandItem = equipTable[(int)EquipSlots.RightHand];
+                if (rightHandItem != null)
+                {
+                    if (GetItemHands(rightHandItem) == ItemHands.Both)
+                        UnequipItem(EquipSlots.RightHand);
+                }
+            }
+
             // Get slot for this item
             EquipSlots slot = GetEquipSlot(item);
             if (slot == EquipSlots.None)
@@ -95,7 +128,7 @@ namespace DaggerfallWorkshop.Game.Items
             item.EquipSlot = slot;
             equipTable[(int)slot] = item;
 
-            Debug.Log(string.Format("Equipped {0} to {1}", item.LongName, slot.ToString()));
+            //Debug.Log(string.Format("Equipped {0} to {1}", item.LongName, slot.ToString()));
 
             return true;
         }
@@ -206,6 +239,50 @@ namespace DaggerfallWorkshop.Game.Items
                 return true;
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Serialize equip table into list of equipped UIDs.
+        /// </summary>
+        /// <returns>ulong array.</returns>
+        public ulong[] SerializeEquipTable()
+        {
+            ulong[] data = new ulong[equipTableLength];
+            for(int i = 0; i < equipTableLength; i++)
+            {
+                if (equipTable[i] != null)
+                    data[i] = equipTable[i].UID;
+                else
+                    data[i] = 0;
+            }
+
+            return data;
+        }
+
+        /// <summary>
+        /// Deserialize equip table and attempt to relink equipped items in collection.
+        /// Item UID must exist inside collection provided or entry will not be restored and item not equipped.
+        /// </summary>
+        /// <param name="data">UID array exactly this.equipTableLength in length.</param>
+        /// <param name="items">Item collection.</param>
+        public void DeserializeEquipTable(ulong[] data, EntityItems items)
+        {
+            if (data == null || items == null || data.Length != equipTableLength)
+                return;
+
+            for (int i = 0; i < equipTableLength; i++)
+            {
+                ulong uid = data[i];
+                if (items.Contains(uid))
+                {
+                    DaggerfallUnityItem item = items.GetItem(uid);
+                    if (item != null)
+                    {
+                        equipTable[i] = item;
+                        item.EquipSlot = (EquipSlots)i;
+                    }
+                }
+            }
         }
 
         #endregion

@@ -10,11 +10,9 @@
 //
 
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Serialization
@@ -63,6 +61,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class SaveData_v1
     {
         public SaveDataDescription_v1 header;
+        public ulong currentUID;
         public DateAndTime_v1 dateAndTime;
         public PlayerData_v1 playerData;
         public DungeonData_v1 dungeonData;
@@ -117,6 +116,10 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int currentHealth;
         public int currentFatigue;
         public int currentMagicka;
+        public ulong[] equipTable;
+        public ItemData_v1[] items;
+        public ItemData_v1[] wagonItems;
+        public ItemData_v1[] otherItems;
     }
 
     [fsObject("v1")]
@@ -133,6 +136,33 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string terrainSamplerName;
         public int terrainSamplerVersion;
         public StaticDoor[] exteriorDoors;
+    }
+
+    [fsObject("v1")]
+    public class ItemData_v1
+    {
+        public ulong uid;
+        public string shortName;
+        public int nativeMaterialValue;
+        public DyeColors dyeColor;
+        public float weightInKg;
+        public int drawOrder;
+        public int value1;
+        public int value2;
+        public int hits1;
+        public int hits2;
+        public int hits3;
+        public int stackCount;
+        public int enchantmentPoints;
+        public int message;
+        public int[] legacyMagic;
+        public int playerTextureArchive;
+        public int playerTextureRecord;
+        public int worldTextureArchive;
+        public int worldTextureRecord;
+        public ItemGroups itemGroup;
+        public int groupIndex;
+        public int currentVariant;
     }
 
     #endregion
