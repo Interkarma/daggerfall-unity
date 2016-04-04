@@ -222,6 +222,7 @@ namespace DaggerfallWorkshop.Game.Utility
             RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
+            ResetWeaponManager();
             NoWorld = true;
         }
 
@@ -230,6 +231,7 @@ namespace DaggerfallWorkshop.Game.Utility
             RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
+            ResetWeaponManager();
 
             if (string.IsNullOrEmpty(PostStartMessage))
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGame);
@@ -247,6 +249,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
+            ResetWeaponManager();
 
             if (string.IsNullOrEmpty(PostStartMessage))
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGameFromDeath);
@@ -259,6 +262,7 @@ namespace DaggerfallWorkshop.Game.Utility
             RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
+            ResetWeaponManager();
             if (SaveLoadManager.Instance.HasQuickSave())
                 SaveLoadManager.Instance.QuickLoad();
 
@@ -271,6 +275,7 @@ namespace DaggerfallWorkshop.Game.Utility
             DaggerfallUnity.ResetUID();
             RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
+            ResetWeaponManager();
 
             // Must have a character document
             if (characterDocument == null)
@@ -343,6 +348,7 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             DaggerfallUnity.ResetUID();
             RaiseOnNewGameEvent();
+            ResetWeaponManager();
 
             // Save index must be in range
             if (classicSaveIndex < 0 || classicSaveIndex >= 6)
@@ -454,6 +460,13 @@ namespace DaggerfallWorkshop.Game.Utility
             PlayerEntity playerEntity = player.GetComponent<DaggerfallEntityBehaviour>().Entity as PlayerEntity;
 
             return playerEntity;
+        }
+
+        void ResetWeaponManager()
+        {
+            // Weapon hand and equip state not serialized currently
+            // Interim measure is to reset weapon manager state on new game
+            GameManager.Instance.WeaponManager.Reset();
         }
 
         #endregion

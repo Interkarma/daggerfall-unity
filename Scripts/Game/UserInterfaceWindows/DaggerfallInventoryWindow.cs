@@ -1011,6 +1011,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void EquipItem(DaggerfallUnityItem item)
         {
+            // Bows not currently supported
+            if (item.IsOfTemplate((int)Weapons.Long_Bow) ||
+                item.IsOfTemplate((int)Weapons.Short_Bow))
+            {
+                DaggerfallUI.MessageBox(HardStrings.bowsNotImplemented);
+                return;
+            }
+
             playerEntity.ItemEquipTable.EquipItem(item);
             Refresh();
         }

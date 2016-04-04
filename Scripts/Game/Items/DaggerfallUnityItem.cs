@@ -678,8 +678,11 @@ namespace DaggerfallWorkshop.Game.Items
                 return true;
 
             // Handle unique items
-            if (IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Spellbook))
+            if (IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Spellbook) ||
+                IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Arrow))
+            {
                 return true;
+            }
 
             return false;
         }

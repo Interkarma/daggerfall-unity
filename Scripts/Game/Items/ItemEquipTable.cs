@@ -91,12 +91,20 @@ namespace DaggerfallWorkshop.Game.Items
             if (item == null)
                 return false;
 
-            // Equipping a 2H weapons will always unequip both hands
-            if (item.ItemGroup == ItemGroups.Weapons && GetItemHands(item) == ItemHands.Both)
+            // Special weapon handling
+            if (item.ItemGroup == ItemGroups.Weapons)
             {
-                UnequipItem(EquipSlots.LeftHand);
-                UnequipItem(EquipSlots.RightHand);
-            }
+                // Cannot equip arrows
+                if (item.TemplateIndex == (int)Weapons.Arrow)
+                    return false;
+
+                // Equipping a 2H weapons will always unequip both hands
+                if (GetItemHands(item) == ItemHands.Both)
+                {
+                    UnequipItem(EquipSlots.LeftHand);
+                    UnequipItem(EquipSlots.RightHand);
+                }
+            }            
 
             // Equipping a shield will always unequip 2H weapon
             if (item.ItemGroup == ItemGroups.Armor &&
@@ -235,7 +243,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public bool IsLowerClothed()
         {
-            if (!IsSlotOpen(EquipSlots.LegsClothes) || !IsSlotOpen(EquipSlots.LegsArmor))
+            if (!IsSlotOpen(EquipSlots.LegsClothes))
                 return true;
             else
                 return false;

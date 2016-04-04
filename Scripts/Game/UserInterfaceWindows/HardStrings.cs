@@ -32,5 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string leftHandEquipped = "Left hand equipped.";
         public const string usingRightHand = "Using weapon in right hand.";
         public const string usingLeftHand = "Using weapon in left hand.";
+
+        public const string bowsNotImplemented = "Bows are not implemented yet, sorry. :(";
     }
 }

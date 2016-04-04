@@ -697,7 +697,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // Position player at hit position plus just over half controller height up
                 Vector3 pos = hit.point;
-                pos.y += controller.height / 2f + 0.15f;
+                pos.y += controller.height / 2f + 0.2f;
                 transform.position = pos;
             }
         }

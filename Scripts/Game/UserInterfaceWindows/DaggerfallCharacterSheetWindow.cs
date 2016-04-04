@@ -108,7 +108,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Inventory button
             Button inventoryButton = DaggerfallUI.AddButton(new Rect(3, 151, 65, 12), NativePanel);
-            inventoryButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            inventoryButton.OnMouseClick += InventoryButton_OnMouseClick;
+            //inventoryButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
 
             // Spellbook button
             Button spellBookButton = DaggerfallUI.AddButton(new Rect(69, 151, 65, 12), NativePanel);
@@ -270,6 +271,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void MiscSkillsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             ShowSkillsDialog(PlayerEntity.GetMiscSkills(), true);
+        }
+
+        private void InventoryButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
         }
 
         private void StatButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

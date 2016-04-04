@@ -142,6 +142,15 @@ namespace DaggerfallWorkshop.Game
             ShowWeapons(false);
         }
 
+        public void Reset()
+        {
+            usingRightHand = true;
+            holdingShield = false;
+            currentRightHandWeapon = null;
+            currentLeftHandWeapon = null;
+            SheathWeapons();
+        }
+
         #region Weapon Setup Methods
 
         void UpdateHands()

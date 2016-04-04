@@ -132,18 +132,18 @@ namespace DaggerfallWorkshop.Game
             dfSongPlayer = GetComponent<DaggerfallSongPlayer>();
 
             dfPauseOptionsWindow = new DaggerfallPauseOptionsWindow(uiManager);
-            dfPauseOptionsWindow.OnClose += PauseOptionsDialog_OnClose;
+            //dfPauseOptionsWindow.OnClose += PauseOptionsDialog_OnClose;
 
             dfCharacterSheetWindow = new DaggerfallCharacterSheetWindow(uiManager);
-            dfCharacterSheetWindow.OnClose += CharacterSheetWindow_OnClose;
+            //dfCharacterSheetWindow.OnClose += CharacterSheetWindow_OnClose;
 
             dfInventoryWindow = new DaggerfallInventoryWindow(uiManager);
-            dfInventoryWindow.OnClose += InventoryWindow_OnClose;
+            //dfInventoryWindow.OnClose += InventoryWindow_OnClose;
 
             dfTravelMapWindow = new DaggerfallTravelMapWindow(uiManager);
 
             dfAutomapWindow = new DaggerfallAutomapWindow(uiManager);
-            dfAutomapWindow.OnClose += AutomapDialog_OnClose;
+            //dfAutomapWindow.OnClose += AutomapDialog_OnClose;
 
             SetupSingleton();
         }
@@ -705,25 +705,25 @@ namespace DaggerfallWorkshop.Game
 
         #region Event Handlers
 
-        private void PauseOptionsDialog_OnClose()
-        {
-            GameManager.Instance.PauseGame(false);
-        }
+        //private void PauseOptionsDialog_OnClose()
+        //{
+        //    GameManager.Instance.PauseGame(false);
+        //}
 
-        private void CharacterSheetWindow_OnClose()
-        {
-            GameManager.Instance.PauseGame(false);
-        }
+        //private void CharacterSheetWindow_OnClose()
+        //{
+        //    GameManager.Instance.PauseGame(false);
+        //}
 
-        private void InventoryWindow_OnClose()
-        {
-            GameManager.Instance.PauseGame(false);
-        }
+        //private void InventoryWindow_OnClose()
+        //{
+        //    GameManager.Instance.PauseGame(false);
+        //}
 
-        private void AutomapDialog_OnClose()
-        {
-            GameManager.Instance.PauseGame(false);
-        }
+        //private void AutomapDialog_OnClose()
+        //{
+        //    GameManager.Instance.PauseGame(false);
+        //}
 
         #endregion
 
