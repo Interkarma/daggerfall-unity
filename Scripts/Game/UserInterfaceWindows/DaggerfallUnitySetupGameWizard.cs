@@ -474,6 +474,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             optionsConfirmButton.HorizontalAlignment = HorizontalAlignment.Center;
             optionsConfirmButton.OnMouseClick += OptionsConfirmButton_OnMouseClick;
             optionsPanel.Components.Add(optionsConfirmButton);
+
+            // Restart button
+            Button restartButton = new Button();
+            restartButton.Size = new Vector2(45, 12);
+            restartButton.Label.Text = "< Restart";
+            restartButton.Label.ShadowPosition = Vector2.zero;
+            restartButton.Label.TextColor = Color.gray;
+            restartButton.ToolTip = defaultToolTip;
+            restartButton.ToolTipText = "Restart setup from beginning";
+            restartButton.VerticalAlignment = VerticalAlignment.Top;
+            restartButton.HorizontalAlignment = HorizontalAlignment.Left;
+            restartButton.OnMouseClick += RestartButton_OnMouseClick;
+            optionsPanel.Components.Add(restartButton);
         }
 
         //void ShowSummaryPanel()
@@ -694,6 +707,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ResolutionList_OnScroll()
         {
             resolutionScroller.ScrollIndex = resolutionList.ScrollIndex;
+        }
+
+        private void RestartButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUnity.Settings.MyDaggerfallPath = string.Empty;
+            Application.LoadLevel(Utility.SceneControl.StartupSceneIndex);
         }
 
         #endregion
