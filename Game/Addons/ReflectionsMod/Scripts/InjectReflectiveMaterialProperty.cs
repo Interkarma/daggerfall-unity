@@ -359,67 +359,70 @@ namespace ReflectionsMod
                             int record = Convert.ToInt32(tmp);
                             int frame = 0;
 
-                            TextureRecord? texRecord = listInjectedTextures.Find(x => (x.archive == archive) && (x.record == record) && (x.frame == frame));
-                            if (texRecord != null)
+                            if (listInjectedTextures.Exists(x => (x.archive == archive) && (x.record == record) && (x.frame == frame)))
                             {
-                                CachedMaterial cmat;
-                                if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
+                                TextureRecord? texRecord = listInjectedTextures.Find(x => (x.archive == archive) && (x.record == record) && (x.frame == frame));
+                                if (texRecord.HasValue)
                                 {
-                                    if (!texRecord.Value.useMetallicGlossMap)
+                                    CachedMaterial cmat;
+                                    if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
                                     {
-                                        Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
-                                        newMat.CopyPropertiesFromMaterial(cmat.material);
-                                        newMat.name = cmat.material.name;
-                                        if (texReflectionGround)
+                                        if (!texRecord.Value.useMetallicGlossMap)
                                         {
-                                            newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
-                                        }
-                                        if (texReflectionLowerLevel)
-                                        {
-                                            newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
-                                        }
-                                        newMat.SetFloat("_Metallic", texRecord.Value.reflectivity);
-                                        newMat.SetFloat("_Smoothness", texRecord.Value.smoothness);
+                                            Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                                            newMat.CopyPropertiesFromMaterial(cmat.material);
+                                            newMat.name = cmat.material.name;
+                                            if (texReflectionGround)
+                                            {
+                                                newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
+                                            }
+                                            if (texReflectionLowerLevel)
+                                            {
+                                                newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
+                                            }
+                                            newMat.SetFloat("_Metallic", texRecord.Value.reflectivity);
+                                            newMat.SetFloat("_Smoothness", texRecord.Value.smoothness);
 
-                                        if (texRecord.Value.albedoMap != null)
-                                        {
-                                            newMat.SetTexture("_MainTex", texRecord.Value.albedoMap);
-                                        }
+                                            if (texRecord.Value.albedoMap != null)
+                                            {
+                                                newMat.SetTexture("_MainTex", texRecord.Value.albedoMap);
+                                            }
 
-                                        if (texRecord.Value.normalMap != null)
-                                        {
-                                            newMat.SetTexture("_BumpMap", texRecord.Value.normalMap);
-                                        }
+                                            if (texRecord.Value.normalMap != null)
+                                            {
+                                                newMat.SetTexture("_BumpMap", texRecord.Value.normalMap);
+                                            }
 
-                                        m = newMat;
-                                    }
-                                    else
-                                    {
-                                        Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
-                                        newMat.CopyPropertiesFromMaterial(cmat.material);
-                                        newMat.name = cmat.material.name;
-                                        if (texReflectionGround)
-                                        {
-                                            newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
+                                            m = newMat;
                                         }
-                                        if (texReflectionLowerLevel)
+                                        else
                                         {
-                                            newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
-                                        }
-                                        newMat.EnableKeyword("USE_METALLICGLOSSMAP");
-                                        newMat.SetTexture("_MetallicGlossMap", texRecord.Value.metallicGlossMap);
+                                            Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                                            newMat.CopyPropertiesFromMaterial(cmat.material);
+                                            newMat.name = cmat.material.name;
+                                            if (texReflectionGround)
+                                            {
+                                                newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
+                                            }
+                                            if (texReflectionLowerLevel)
+                                            {
+                                                newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
+                                            }
+                                            newMat.EnableKeyword("USE_METALLICGLOSSMAP");
+                                            newMat.SetTexture("_MetallicGlossMap", texRecord.Value.metallicGlossMap);
 
-                                        if (texRecord.Value.albedoMap != null)
-                                        {
-                                            newMat.SetTexture("_MainTex", texRecord.Value.albedoMap);
-                                        }
+                                            if (texRecord.Value.albedoMap != null)
+                                            {
+                                                newMat.SetTexture("_MainTex", texRecord.Value.albedoMap);
+                                            }
 
-                                        if (texRecord.Value.normalMap != null)
-                                        {
-                                            newMat.SetTexture("_BumpMap", texRecord.Value.normalMap);
-                                        }
+                                            if (texRecord.Value.normalMap != null)
+                                            {
+                                                newMat.SetTexture("_BumpMap", texRecord.Value.normalMap);
+                                            }
 
-                                        m = newMat;
+                                            m = newMat;
+                                        }
                                     }
                                 }
                             }
