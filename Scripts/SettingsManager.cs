@@ -346,7 +346,7 @@ namespace DaggerfallWorkshop
 
         void SetFloat(string sectionName, string valueName, float value)
         {
-            SetData(sectionName, valueName, value.ToString());
+            SetData(sectionName, valueName, value.ToString(CultureInfo.InvariantCulture));
         }
 
         Color GetColor(string sectionName, string valueName, Color defaultColor)
