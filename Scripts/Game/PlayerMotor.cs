@@ -284,6 +284,16 @@ namespace DaggerfallWorkshop.Game
             activePlatform = null;
         }
 
+        // Call this when floating origin ticks on Y
+        // to ensure player doesn't die by jumping right at threshold
+        public void AdjustFallStart(float y)
+        {
+            if (falling)
+            {
+                fallStartLevel += y;
+            }
+        }
+
         // Snap player to ground
         public bool FixStanding(float extraHeight = 0, float extraDistance = 0)
         {
