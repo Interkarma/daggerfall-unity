@@ -31,6 +31,8 @@ namespace DaggerfallWorkshop.Utility
     {
         #region Fields
 
+        const float verticalThreshold = 800f;
+
         public StreamingWorld StreamingWorld;
         public GameObject Player;
         public static FloatingOrigin instance;
@@ -38,6 +40,7 @@ namespace DaggerfallWorkshop.Utility
         PlayerMotor playerMotor = null;
         DFPosition lastMapPixel;
         DFPosition currentMapPixel;
+        bool forceUpdate = false;
 
         #endregion
 
@@ -87,14 +90,28 @@ namespace DaggerfallWorkshop.Utility
 
             // Do nothing during streaming world init
             if (StreamingWorld.IsInit)
-                return;
-
-            if (CheckPosition())
             {
-                // Get offset
+                // Force floating origin update when world reloaded
+                forceUpdate = true;
+                return;
+            }
+
+            if (CheckPosition() || forceUpdate)
+            {
+                // Get X-Z offset
                 float xChange = (currentMapPixel.X - lastMapPixel.X) * (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale);
                 float zChange = (currentMapPixel.Y - lastMapPixel.Y) * (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale);
-                Vector3 offset = new Vector3(-xChange, 0, zChange);
+
+                // Get Y offset
+                float yChange = 0;
+                if (playerMotor.transform.position.y < -verticalThreshold ||
+                    playerMotor.transform.position.y > verticalThreshold)
+                {
+                    yChange = -playerMotor.transform.position.y;
+                }
+
+                // Create offset
+                Vector3 offset = new Vector3(-xChange, yChange, zChange);
 
                 // Offset player
                 OffsetPlayerController(offset);
@@ -104,6 +121,9 @@ namespace DaggerfallWorkshop.Utility
 
                 // Raise event
                 RaiseOnPositionUpdateEvent(offset);
+
+                // Lower update flags
+                forceUpdate = false;
             }
         }
 
@@ -148,6 +168,7 @@ namespace DaggerfallWorkshop.Utility
         void OffsetPlayerController(Vector3 offset)
         {
             playerMotor.ClearActivePlatform();
+            playerMotor.AdjustFallStart(offset.y);
             playerMotor.transform.position += offset;
             StreamingWorld.OffsetWorldCompensation(offset, true);
         }

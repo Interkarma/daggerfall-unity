@@ -101,6 +101,9 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
 
         GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap
+
+        string nameLoadedDungeon = null; // used to store name of loaded dungeon -> used to identify when player died in dungeon and a new game was started in privateer's hold
+
         int layerAutomap; // layer used for level geometry of automap
 
         GameObject gameObjectCameraAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
@@ -449,6 +452,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeonInterior;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
+            PlayerEnterExit.OnMovePlayerToDungeonStart += onNewGame; // if player died in dungeon and new game was started in privateer's hold this will come into play (TODO: find better event than OnMovePlayerToDungeonStart and get rid of variable nameLoadedDungeon)
             SaveLoadManager.OnLoad += OnLoadEvent;
         }
 
@@ -458,6 +462,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeonInterior;
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
+            PlayerEnterExit.OnMovePlayerToDungeonStart -= onNewGame;
             SaveLoadManager.OnLoad -= OnLoadEvent;
         }
 
@@ -1109,6 +1114,7 @@ namespace DaggerfallWorkshop.Game
         private void createDungeonGeometryForAutomap()
         {
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            nameLoadedDungeon = location.Name;
             String newGeometryName = string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name);
 
 
@@ -1564,6 +1570,26 @@ namespace DaggerfallWorkshop.Game
                     door = exteriorDoors[0];
                 }
                 InitWhenInInteriorOrDungeon(door);
+            }
+        }
+
+        void onNewGame()
+        {
+            // if player died in dungeon and new game was started in privateer's hold this if will evaluate to true
+            if ((nameLoadedDungeon != null) && (nameLoadedDungeon != GameManager.Instance.PlayerGPS.CurrentLocation.Name))
+            {
+                if (gameobjectGeometry != null)
+                {
+                    UnityEngine.Object.Destroy(gameobjectGeometry);
+                    gameobjectGeometry = null;
+                }
+                DestroyBeacons();
+
+                createDungeonGeometryForAutomap();
+                restoreStateAutomapDungeon(true);
+                resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
+                gameobjectGeometry.SetActive(false);
+                gameobjectBeacons.SetActive(false);
             }
         }
 

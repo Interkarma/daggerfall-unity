@@ -413,6 +413,22 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Gets dye color automatically from item data.
+        /// </summary>
+        /// <param name="item">DaggerfallUnityItem.</param>
+        /// <returns>DyeColors.</returns>
+        public DyeColors GetDyeColor(DaggerfallUnityItem item)
+        {
+
+            if (item.ItemGroup == ItemGroups.Weapons)
+                return GetWeaponDyeColor((WeaponMaterialTypes)item.nativeMaterialValue);
+            else if (item.ItemGroup == ItemGroups.Armor)
+                return GetArmorDyeColor((ArmorMaterialTypes)item.nativeMaterialValue);
+            else
+                return item.dyeColor;
+        }
+
+        /// <summary>
         /// Converts weapon material to appropriate dye colour.
         /// </summary>
         /// <param name="material">WeaponMaterialTypes.</param>
