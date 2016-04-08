@@ -18,6 +18,7 @@ namespace Wenzil.Console
         public ConsoleUI ui;
         public KeyCode toggleKey = KeyCode.BackQuote;
         public bool closeOnEscape = false;
+        public string AwakeMessage = "Type Help for list of commands and Help <command> for more details on a specific command";
 
         private ConsoleInputHistory inputHistory = new ConsoleInputHistory(inputHistoryCapacity);
 
@@ -38,6 +39,7 @@ namespace Wenzil.Console
             Console.OnConsoleLog += ui.AddNewOutputLine;
             ui.onSubmitCommand += ExecuteCommand;
             ui.onClearConsole += inputHistory.Clear;
+            ui.AddNewOutputLine(AwakeMessage);
         }
 
         void OnDisable()
