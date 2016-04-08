@@ -92,6 +92,9 @@ namespace Wenzil.Console
                     daggerfallUnity.WorldTime.ShowDebugString = show;
                 if (songPlayer)
                     songPlayer.ShowDebugString = show;
+                if (FPSDisplay.fpsDisplay == null)
+                    GameManager.Instance.gameObject.AddComponent<FPSDisplay>();
+                FPSDisplay.fpsDisplay.ShowDebugString = show;
                 return string.Format("Debug string show: {0}", show);
             }
         }
@@ -272,7 +275,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "set_timescale";
             public static readonly string error = "Failed to set timescale - invalid setting or DaggerfallUnity singleton object";
-            public static readonly string description = "Set Timescale.  Setting it too high can have adverse affects";
+            public static readonly string description = "Set Timescale; Default 10.  Setting it too high can have adverse affects";
             public static readonly string usage = "set_timescale [#]";
 
             public static string Execute(params string[] args)
@@ -766,7 +769,7 @@ namespace Wenzil.Console
                     DaggerfallActionDoor door;
                     RaycastHit hitInfo;
                     Ray ray = Camera.main.ViewportPointToRay (new Vector3(0.5f, 0.5f, 0));
-                    if(!(Physics.Raycast(ray, out hitInfo, 1000)))
+                    if(!(Physics.Raycast(ray, out hitInfo)))
                         return error;
                     else
                     {
