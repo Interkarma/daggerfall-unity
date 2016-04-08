@@ -367,6 +367,10 @@ namespace DaggerfallWorkshop.Game
         {
             int numberOfAutomapFocusObjects = Enum.GetNames(typeof(AutomapFocusObject)).Length;
             focusObject++;
+            if ((gameobjectBeaconEntrancePosition) && (!gameobjectBeaconEntrancePosition.activeSelf) && focusObject == AutomapFocusObject.Entrance)
+            {
+                focusObject++;
+            }
             if ((int)focusObject > numberOfAutomapFocusObjects - 1) // first mode is mode 0 -> so use numberOfAutomapFocusObjects-1 for comparison
                 focusObject = 0;
             GameObject gameobjectInFocus;
@@ -1490,6 +1494,9 @@ namespace DaggerfallWorkshop.Game
                 }
                 meshRenderer.materials = materials;
             }
+
+            // so set the entrance beacon to active (discovered)
+            gameobjectBeaconEntrancePosition.SetActive(true);
         }
 
         /// <summary>
@@ -1504,6 +1511,9 @@ namespace DaggerfallWorkshop.Game
             {
                 meshRenderer.enabled = false;
             }
+
+            // so set the entrance beacon to active=false (undiscovered)
+            gameobjectBeaconEntrancePosition.SetActive(false);
         }
 
         void InitWhenInInteriorOrDungeon(StaticDoor? door = null)
