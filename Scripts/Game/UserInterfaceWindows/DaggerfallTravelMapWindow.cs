@@ -528,8 +528,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int scaledX = (int)((mapPixelX - origin.x) / scale);
             int scaledY = (int)((mapPixelY - origin.y + regionPanelOffset) / scale);
 
-            if (crossHairTexture == null)
-                crossHairTexture = new Texture2D((int)crossHairPanel.Size.x, (int)crossHairPanel.Size.y);
+            if (crossHairTexture != null)
+                UnityEngine.Object.Destroy(crossHairTexture);
+            crossHairTexture = new Texture2D((int)crossHairPanel.Size.x, (int)crossHairPanel.Size.y);
 
             for (int x = 0; x < crossHairTexture.width; x++)
             {
@@ -541,7 +542,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         crossHairTexture.SetPixel(x, crossHairTexture.height - y - 1, Color.clear);
                 }
             }
-            crossHairTexture.Apply();
+            crossHairTexture.Apply(false, true);
             crossHairPanel.BackgroundTexture = crossHairTexture;
             crossHairPanel.Enabled = true;
         }
@@ -876,8 +877,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Assign map to texture
+            if (locationClusterTexture != null)
+                UnityEngine.Object.Destroy(locationClusterTexture);
+            locationClusterTexture = new Texture2D((int)regionTextureOverlayPanelRect.width, (int)regionTextureOverlayPanelRect.height);
+            locationClusterTexture.filterMode = FilterMode.Point;
             locationClusterTexture.SetPixels32(locationClusterColors);
-            locationClusterTexture.Apply(false, false);
+            locationClusterTexture.Apply(false, true);
 
             // Assign texture to panel
             locationClusterPanel.BackgroundTexture = locationClusterTexture;
