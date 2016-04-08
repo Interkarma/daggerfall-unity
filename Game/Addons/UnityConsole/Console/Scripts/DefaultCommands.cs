@@ -28,6 +28,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(TeleportToDungeonDoor.name, TeleportToDungeonDoor.description, TeleportToDungeonDoor.usage, TeleportToDungeonDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenDoor.name, OpenDoor.description, OpenDoor.usage, OpenDoor.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ActivateAction.name, ActivateAction.description, ActivateAction.usage, ActivateAction.Execute);
             ConsoleCommandsDatabase.RegisterCommand(KillAllEnemies.name, KillAllEnemies.description, KillAllEnemies.usage, KillAllEnemies.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TransitionToExterior.name, TransitionToExterior.description, TransitionToExterior.usage, TransitionToExterior.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetHealth.name, SetHealth.description, SetHealth.usage, SetHealth.Execute);
@@ -777,6 +778,34 @@ namespace Wenzil.Console
                     }
                     return string.Format("Finished");
                 }
+
+            }
+        }
+
+        private static class ActivateAction
+        {
+            public static readonly string name = "activate";
+            public static readonly string error = "No action object found";
+            public static readonly string description = "Triggers an action object regardless of whether it is able to be activated normally";
+            public static readonly string usage = "activate";
+
+            public static string Execute(params string[] args)
+            {
+
+                DaggerfallAction action;
+                RaycastHit hitInfo;
+                Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+                if (!(Physics.Raycast(ray, out hitInfo)))
+                    return error;
+                else
+                {
+                    action = hitInfo.transform.GetComponent<DaggerfallAction>();
+                    if (action == null)
+                        return error;
+                    else
+                        action.Play(GameManager.Instance.PlayerObject);
+                }
+                return string.Format("Finished");
 
             }
         }
