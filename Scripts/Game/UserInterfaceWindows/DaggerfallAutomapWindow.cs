@@ -40,8 +40,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float zoomSpeedMouseWheel = 0.06f; // mouse wheel inside main area of the automap window will zoom with this speed
         const float dragSpeedInView3D = 0.002f; // hold left mouse button down and move mouse to move geometry with this speed) - in 3D view mode
         const float dragSpeedInTopView = 0.0002f; // hold left mouse button down and move mouse to move geometry with this speed) - in top view mode (2D view mode)
-        const float dragRotateSpeedInTopView = 5.0f; // hold right mouse button down and move left/right to rotate geometry with this speed - in 3D view mode
-        const float dragRotateSpeedInView3D = 0.5f; // hold right mouse button down and move left/right to rotate geometry with this speed - in top view mode (2D view mode)
+        const float dragRotateSpeedInTopView = 5.0f; // hold right mouse button down and move left/right to rotate geometry with this speed - in top view mode (2D view mode)
+        const float dragRotateSpeedInView3D = 2.5f; // hold right mouse button down and move left/right to rotate geometry with this speed - in 3D view mode
         const float dragRotateCameraTiltSpeedInView3D = 0.15f; // hold right mouse button down and move up/down to change tilt of camera with this speed - in 3D view mode            
 
         const float changeSpeedCameraFieldOfView = 50.0f; // mouse wheel over grid button will change camera field of view in 3D mode with this speed
@@ -1452,10 +1452,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     updateAutomapView();
                     break;
                 case AutomapViewMode.View3D:
-                    Vector3 viewDirectionInXZ = cameraAutomap.transform.forward;
-                    viewDirectionInXZ.y = 0.0f;
-                    newPosition = gameobjectInFocus.transform.position - viewDirectionInXZ * cameraBackwardDistance + Vector3.up * cameraHeightView3D;
-                    //newPosition.y = cameraAutomap.transform.position.y;
+                    float computedCameraBackwardDistance = Vector3.Magnitude(cameraAutomap.transform.position - gameobjectInFocus.transform.position);
+                    newPosition = gameobjectInFocus.transform.position - cameraAutomap.transform.forward * computedCameraBackwardDistance;                    
                     cameraAutomap.transform.position = newPosition;
                     updateAutomapView();
                     break;
