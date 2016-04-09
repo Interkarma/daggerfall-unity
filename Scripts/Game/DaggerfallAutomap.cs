@@ -517,25 +517,29 @@ namespace DaggerfallWorkshop.Game
             {
                 return;
             }
-            // I am not super happy with doing this in the update function, but found no other way to make starting in dungeon correctly initialize the automap geometry
-            if (!gameobjectGeometry)
+
+            if (GameManager.Instance.IsPlayerInside)
             {
-                // test if startup was inside dungeon or interior (and no transition event happened)                
-                InitWhenInInteriorOrDungeon();
-                // do initial geometry discovery
-                if (gameobjectGeometry) // this is necessary since when game starts up it can happen that InitWhenInInteriorOrDungeon() does not create geometry because GameManger.Instance.IsPlayerInsideDungeon and GameManager.Instance.IsPlayerInsidePalace are false
+                // I am not super happy with doing this in the update function, but found no other way to make starting in dungeon correctly initialize the automap geometry
+                if (!gameobjectGeometry)
                 {
-                    gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
-                    CheckForNewlyDiscoveredMeshes();
-                }                
-            }
+                    // test if startup was inside dungeon or interior (and no transition event happened)                
+                    InitWhenInInteriorOrDungeon();
+                    // do initial geometry discovery
+                    if (gameobjectGeometry) // this is necessary since when game starts up it can happen that InitWhenInInteriorOrDungeon() does not create geometry because GameManger.Instance.IsPlayerInsideDungeon and GameManager.Instance.IsPlayerInsidePalace are false
+                    {
+                        gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
+                        CheckForNewlyDiscoveredMeshes();
+                    }
+                }
 
-            if (isOpenAutomap) // only do this stuff if automap is indeed open
-            {
-                updateSlicingPositionY();
+                if (isOpenAutomap) // only do this stuff if automap is indeed open
+                {
+                    updateSlicingPositionY();
 
-                // update position of rotation pivot axis
-                gameobjectBeaconRotationPivotAxis.transform.position = rotationPivotAxisPosition;
+                    // update position of rotation pivot axis
+                    gameobjectBeaconRotationPivotAxis.transform.position = rotationPivotAxisPosition;
+                }
             }
         }
 
