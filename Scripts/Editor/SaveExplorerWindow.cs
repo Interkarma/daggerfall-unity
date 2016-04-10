@@ -147,12 +147,19 @@ namespace DaggerfallWorkshop
             {
                 string positionText = string.Format("X={0}, Y={1}, Z={2}",
                     currentSaveTree.Header.CharacterPosition.Position.WorldX,
-                    currentSaveTree.Header.CharacterPosition.Position.YBase - currentSaveTree.Header.CharacterPosition.Position.YOffset,
-                    currentSaveTree.Header.CharacterPosition.Position.YBase,
+                    currentSaveTree.Header.CharacterPosition.Position.YOffset,
                     currentSaveTree.Header.CharacterPosition.Position.WorldZ);
 
                 EditorGUILayout.LabelField(new GUIContent("Player Position", "Position of player in the world."), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
                 EditorGUILayout.SelectableLabel(positionText, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            });
+            GUILayoutHelper.Horizontal(() =>
+            {
+                DFPosition mapPixel = MapsFile.WorldCoordToMapPixel(currentSaveTree.Header.CharacterPosition.Position.WorldX, currentSaveTree.Header.CharacterPosition.Position.WorldZ);
+                string mapPixelText = string.Format("X={0}, Y={1}", mapPixel.X, mapPixel.Y);
+
+                EditorGUILayout.LabelField(new GUIContent("Player Map Pixel", "Position of player on small map."), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.SelectableLabel(mapPixelText, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             });
             GUILayoutHelper.Horizontal(() =>
             {
