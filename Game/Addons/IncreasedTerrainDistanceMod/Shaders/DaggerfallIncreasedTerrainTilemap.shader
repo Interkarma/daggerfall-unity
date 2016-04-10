@@ -196,7 +196,7 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			int mapPixelY = 499 - IN.uv_MainTex.y*_TilemapDim;
 
 			// fragment discarding inside area spanned by _TerrainDistance
-			if ((abs(mapPixelX+1-_PlayerPosX)<=_TerrainDistance)&&(abs(mapPixelY+1-_PlayerPosY)<=_TerrainDistance))
+			if ((abs(mapPixelX+1-_PlayerPosX)<=_TerrainDistance+2)&&(abs(mapPixelY+1-_PlayerPosY)<=_TerrainDistance+2))
 			{
 				//float4 ret = float4(1.0f,0.0f,0.0f,1.0f); // for debugging fragment discard area use red color (also used to debug world terrain positioning with floating origin script)
 				//o.Albedo = ret.rgb;

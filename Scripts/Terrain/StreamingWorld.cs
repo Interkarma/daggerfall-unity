@@ -142,7 +142,7 @@ namespace DaggerfallWorkshop
 
         #region Structs/Enums
 
-        struct TerrainDesc
+        public struct TerrainDesc
         {
             public bool active;
             public bool updateData;
@@ -866,7 +866,7 @@ namespace DaggerfallWorkshop
         }
 
         // Create new terrain game objects
-        private void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject, out GameObject billboardBatchObject)
+        public void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject, out GameObject billboardBatchObject)
         {
             // Create new terrain object parented to streaming world
             terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(StreamingTarget);
@@ -928,7 +928,7 @@ namespace DaggerfallWorkshop
         }
 
         // Update terrain data
-        private void UpdateTerrainData(TerrainDesc terrainDesc)
+        public void UpdateTerrainData(TerrainDesc terrainDesc)
         {
             // Instantiate Daggerfall terrain
             DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();

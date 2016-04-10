@@ -122,6 +122,12 @@ namespace ProjectIncreasedTerrainDistance
         Texture2D textureAtlasMountainRain = null;
         Texture2D textureAtlasSwampRain = null;
 
+
+        // List of terrain objects for transition terrain ring        
+        StreamingWorld.TerrainDesc[] terrainTransitionRingArray = null;
+        Dictionary<int, int> terrainTransitionRingIndexDict = new Dictionary<int, int>();
+
+
         // stacked near camera (used for near terrain from range 1000-15000) to prevent floating-point rendering precision problems for huge clipping ranges
         Camera stackedNearCamera = null; 
 
@@ -315,7 +321,7 @@ namespace ProjectIncreasedTerrainDistance
         {
             InitImprovedWorldTerrain();
 
-            worldTerrainGameObject = generateWorldTerrain();
+            generateWorldTerrain();
 
             GameObject goExterior = null;
 
@@ -429,6 +435,9 @@ namespace ProjectIncreasedTerrainDistance
 
                 SetupGameObjects(); // it should be possible to eliminated this line without any impact: please verify!
             }
+
+            // reserve terrain objects for transition ring (2 x long sides (with 2 extra terrains for corner terrains) + 2 x normal sides)
+            terrainTransitionRingArray = new StreamingWorld.TerrainDesc[2 * (streamingWorld.TerrainDistance * 2 + 1 + 2) + 2 * (streamingWorld.TerrainDistance * 2 + 1)];
         }
 
         void OnDestroy()
@@ -882,7 +891,7 @@ namespace ProjectIncreasedTerrainDistance
             MapPixelY = playerGPS.CurrentMapPixel.Y;
         }
 
-        private GameObject generateWorldTerrain()
+        private void generateWorldTerrain()
         {
             // Create Unity Terrain game object
             GameObject terrainGameObject = Terrain.CreateTerrainGameObject(null);
@@ -1060,7 +1069,86 @@ namespace ProjectIncreasedTerrainDistance
 
             terrainGameObject.SetActive(true);
 
-            return (terrainGameObject);
+            worldTerrainGameObject = terrainGameObject;
+
+            generateTerrainTransitionRing();
+        }
+
+        private string GetTerrainName(int mapPixelX, int mapPixelY)
+        {
+            return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
+        }
+
+        // Create new terrain game objects
+        public void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject)
+        {
+            // Create new terrain object parented to streaming world
+            terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(GameManager.Instance.ExteriorParent.transform);
+            terrainObject.name = GetTerrainName(mapPixelX, mapPixelY);
+            terrainObject.hideFlags = HideFlags.None;
+        }
+
+        private void PlaceAndUpdateTerrain(int mapPixelX, int mapPixelY)
+        {
+            // Do nothing if out of range
+            if (mapPixelX < MapsFile.MinMapPixelX || mapPixelX >= MapsFile.MaxMapPixelX ||
+                mapPixelY < MapsFile.MinMapPixelY || mapPixelY >= MapsFile.MaxMapPixelY)
+            {
+                return;
+            }
+
+            // Get terrain key
+            int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
+
+            // Need to place a new terrain, find next available terrain
+            // This will either find a fresh terrain or recycle an old one
+            //Debug.Log(String.Format("count: {0}", terrainTransitionRingIndexDict.Count));
+            int nextTerrain = terrainTransitionRingIndexDict.Count;
+
+            // Setup new terrain
+            terrainTransitionRingArray[nextTerrain].active = true;
+            terrainTransitionRingArray[nextTerrain].updateData = true;
+            terrainTransitionRingArray[nextTerrain].updateNature = true;
+            terrainTransitionRingArray[nextTerrain].mapPixelX = mapPixelX;
+            terrainTransitionRingArray[nextTerrain].mapPixelY = mapPixelY;
+            if (!terrainTransitionRingArray[nextTerrain].terrainObject)
+            {
+                // Create game objects for new terrain
+                CreateTerrainGameObjects(
+                    mapPixelX,
+                    mapPixelY,
+                    out terrainTransitionRingArray[nextTerrain].terrainObject);
+            }
+
+            // Apply local transform
+            float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
+            int xdif = mapPixelX - playerGPS.CurrentMapPixel.X;
+            int ydif = mapPixelY - playerGPS.CurrentMapPixel.Y;
+            Vector3 localPosition = new Vector3(xdif * scale, 0, -ydif * scale) + streamingWorld.WorldCompensation;
+            terrainTransitionRingArray[nextTerrain].terrainObject.transform.localPosition = localPosition;
+
+            // Add new terrain index to transition ring dictionary
+            terrainTransitionRingIndexDict.Add(key, nextTerrain);
+
+            streamingWorld.UpdateTerrainData(terrainTransitionRingArray[nextTerrain]);
+        }
+
+        private void generateTerrainTransitionRing()
+        {
+            //DFPosition currentPlayerPos = playerGPS.CurrentMapPixel;
+            int distanceTransitionRingFromCenterX = (streamingWorld.TerrainDistance + 1);
+            int distanceTransitionRingFromCenterY = (streamingWorld.TerrainDistance + 1);
+            for (int y = -distanceTransitionRingFromCenterY; y <= distanceTransitionRingFromCenterY; y++)
+            {
+                for (int x = -distanceTransitionRingFromCenterX; x <= distanceTransitionRingFromCenterX; x++)
+                {
+                    if ((Math.Abs(x) == distanceTransitionRingFromCenterX) || (Math.Abs(y) == distanceTransitionRingFromCenterY))
+                    {
+                        PlaceAndUpdateTerrain(playerGPS.CurrentMapPixel.X + x, playerGPS.CurrentMapPixel.Y + y);                        
+                    }
+                }
+
+            }
         }
 
         #endregion
