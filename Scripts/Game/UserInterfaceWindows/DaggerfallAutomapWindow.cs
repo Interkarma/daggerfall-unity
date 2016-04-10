@@ -36,13 +36,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float moveRotationPivotAxisMarkerForwardBackwardSpeed = 10.0f; // right mouse on button arrow up/down makes rotation pivot axis move with this speed
         const float moveUpDownSpeed = 25.0f; // left mouse on button upstairs/downstairs makes geometry move with this speed
         const float rotateSpeed = 150.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
+        const float rotateCameraSpeed = 50.0f; // right mouse on button rotate left/rotate right makes camera rotate around itself with this speed
+        const float rotateCameraOnCameraYZplaneAroundObjectSpeedInView3D = 50.0f; // rotate camera on camera YZ-plane around object with this speed when keyboard hotkey is pressed
         const float zoomSpeed = 3.0f; // zoom with this speed when keyboard hotkey is pressed
         const float zoomSpeedMouseWheel = 0.06f; // mouse wheel inside main area of the automap window will zoom with this speed
         const float dragSpeedInView3D = 0.002f; // hold left mouse button down and move mouse to move geometry with this speed) - in 3D view mode
         const float dragSpeedInTopView = 0.0002f; // hold left mouse button down and move mouse to move geometry with this speed) - in top view mode (2D view mode)
         const float dragRotateSpeedInTopView = 5.0f; // hold right mouse button down and move left/right to rotate geometry with this speed - in top view mode (2D view mode)
-        const float dragRotateSpeedInView3D = 2.5f; // hold right mouse button down and move left/right to rotate geometry with this speed - in 3D view mode
-        const float dragRotateCameraTiltSpeedInView3D = 0.15f; // hold right mouse button down and move up/down to change tilt of camera with this speed - in 3D view mode            
+        const float dragRotateSpeedInView3D = 4.5f; // hold right mouse button down and move left/right to rotate geometry with this speed - in 3D view mode
+        const float dragRotateCameraOnCameraYZplaneAroundObjectSpeedInView3D = 5.0f; // hold right mouse button down and move up/down to rotate camera on camera YZ-plane around object with this speed - in 3D view mode            
 
         const float changeSpeedCameraFieldOfView = 50.0f; // mouse wheel over grid button will change camera field of view in 3D mode with this speed
 
@@ -136,8 +138,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_RotateRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
         readonly HotkeySequence HotkeySequence_RotateCameraLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftShift| HotkeySequence.KeyModifiers.RightShift);
         readonly HotkeySequence HotkeySequence_RotateCameraRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-        readonly HotkeySequence HotkeySequence_CameraTiltUp = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-        readonly HotkeySequence HotkeySequence_CameraTiltDown = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+        readonly HotkeySequence HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectUp = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+        readonly HotkeySequence HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectDown = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
         readonly HotkeySequence HotkeySequence_Upstairs = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_Downstairs = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_IncreaseSliceLevel = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
@@ -181,7 +183,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool leftMouseDownOnRightButton = false;
         bool rightMouseDownOnRightButton = false;
         bool leftMouseDownOnRotateLeftButton = false;
+        bool rightMouseDownOnRotateLeftButton = false;
         bool leftMouseDownOnRotateRightButton = false;
+        bool rightMouseDownOnRotateRightButton = false;
         bool leftMouseDownOnUpstairsButton = false;
         bool leftMouseDownOnDownstairsButton = false;
         bool rightMouseDownOnUpstairsButton = false;
@@ -326,11 +330,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button rotateLeftButton = DaggerfallUI.AddButton(new Rect(193, 171, 21, 19), NativePanel);
             rotateLeftButton.OnMouseDown += RotateLeftButton_OnMouseDown;
             rotateLeftButton.OnMouseUp += RotateLeftButton_OnMouseUp;
+            rotateLeftButton.OnRightMouseDown += RotateLeftButton_OnRightMouseDown;
+            rotateLeftButton.OnRightMouseUp += RotateLeftButton_OnRightMouseUp;
 
             // rotate right button
             Button rotateRightButton = DaggerfallUI.AddButton(new Rect(214, 171, 21, 19), NativePanel);
             rotateRightButton.OnMouseDown += RotateRightButton_OnMouseDown;
             rotateRightButton.OnMouseUp += RotateRightButton_OnMouseUp;
+            rotateRightButton.OnRightMouseDown += RotateRightButton_OnRightMouseDown;
+            rotateRightButton.OnRightMouseUp += RotateRightButton_OnRightMouseUp;
 
             // upstairs button
             Button upstairsButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
@@ -603,19 +611,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             if (Input.GetKey(HotkeySequence_RotateCameraLeft.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateCameraLeft.modifiers))
             {
-                ActionRotateCamera(-rotateSpeed);
+                ActionRotateCamera(rotateCameraSpeed);
             }
             if (Input.GetKey(HotkeySequence_RotateCameraRight.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateCameraRight.modifiers))
             {
-                ActionRotateCamera(rotateSpeed);
+                ActionRotateCamera(-rotateCameraSpeed);
             }
-            if (Input.GetKey(HotkeySequence_CameraTiltUp.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CameraTiltUp.modifiers))
+            if (Input.GetKey(HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectUp.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectUp.modifiers))
             {
-                ActionRotateCameraTilt(dragRotateCameraTiltSpeedInView3D);
+                ActionrotateCameraOnCameraYZplaneAroundObject(rotateCameraOnCameraYZplaneAroundObjectSpeedInView3D);
             }
-            if (Input.GetKey(HotkeySequence_CameraTiltDown.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_CameraTiltDown.modifiers))
+            if (Input.GetKey(HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectDown.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateCameraOnCameraYZplaneAroundObjectDown.modifiers))
             {
-                ActionRotateCameraTilt(-dragRotateCameraTiltSpeedInView3D);
+                ActionrotateCameraOnCameraYZplaneAroundObject(-rotateCameraOnCameraYZplaneAroundObjectSpeedInView3D);
             }
             if (Input.GetKey(HotkeySequence_Upstairs.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_Upstairs.modifiers))
             {
@@ -686,9 +694,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     default:
                         ActionRotateCamera(+dragRotateSpeedInTopView * bias.x);
                         break;
-                    case AutomapViewMode.View3D:
-                        ActionRotateCamera(+dragRotateSpeedInView3D * bias.x);
-                        ActionRotateCameraTilt(+dragRotateCameraTiltSpeedInView3D * bias.y);
+                    case AutomapViewMode.View3D:                        
+                        ActionRotate(dragRotateSpeedInView3D * bias.x);                        
+                        ActionrotateCameraOnCameraYZplaneAroundObject(-dragRotateCameraOnCameraYZplaneAroundObjectSpeedInView3D * bias.y);
                         break;
                 }
 
@@ -745,6 +753,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (leftMouseDownOnRotateRightButton)
             {
                 ActionRotateRight();
+            }
+
+            if (rightMouseDownOnRotateLeftButton)
+            {
+                ActionRotateCamera(rotateCameraSpeed);
+            }
+
+            if (rightMouseDownOnRotateRightButton)
+            {
+                ActionRotateCamera(-rotateCameraSpeed);
             }
 
             if (leftMouseDownOnUpstairsButton)
@@ -1165,21 +1183,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionRotateLeft()
         {
-            Vector3 rotationPivotAxisPosition;
-            switch (automapViewMode)
-            {
-                case AutomapViewMode.View2D:
-                    rotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
-                    break;
-                case AutomapViewMode.View3D:
-                    rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
-                    break;
-                default:
-                    rotationPivotAxisPosition = Vector3.zero;
-                    break;
-            }
-            cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotateSpeed * Time.unscaledDeltaTime);
-            updateAutomapView();
+            //Vector3 rotationPivotAxisPosition;
+            //switch (automapViewMode)
+            //{
+            //    case AutomapViewMode.View2D:
+            //        rotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
+            //        break;
+            //    case AutomapViewMode.View3D:
+            //        rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
+            //        break;
+            //    default:
+            //        rotationPivotAxisPosition = Vector3.zero;
+            //        break;
+            //}
+            //cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotateSpeed * Time.unscaledDeltaTime);
+            //updateAutomapView();
+            ActionRotate(-rotateSpeed);
         }
 
         /// <summary>
@@ -1187,6 +1206,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionRotateRight()
         {
+            //Vector3 rotationPivotAxisPosition;
+            //switch (automapViewMode)
+            //{
+            //    case AutomapViewMode.View2D:
+            //        rotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
+            //        break;
+            //    case AutomapViewMode.View3D:
+            //        rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
+            //        break;
+            //    default:
+            //        rotationPivotAxisPosition = Vector3.zero;
+            //        break;
+            //}
+            //cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, +rotateSpeed * Time.unscaledDeltaTime);
+            //updateAutomapView();
+            ActionRotate(+rotateSpeed);
+        }
+
+        /// <summary>
+        /// action for rotating camera around rotation axis about a certain rotationAmount
+        /// </summary>
+        private void ActionRotate(float rotationAmount)
+        {
             Vector3 rotationPivotAxisPosition;
             switch (automapViewMode)
             {
@@ -1200,31 +1242,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     rotationPivotAxisPosition = Vector3.zero;
                     break;
             }
-            cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, +rotateSpeed * Time.unscaledDeltaTime);
+            cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
         /// <summary>
-        /// action for changing camera rotation around z axis
+        /// action for rotating camera on camera YZ-plane around object about a certain rotationAmount
+        /// </summary>
+        private void ActionrotateCameraOnCameraYZplaneAroundObject(float rotationAmount)
+        {
+            if (automapViewMode == AutomapViewMode.View3D)
+            {
+                Vector3 rotationPoint = rotationPivotAxisPositionView3D;
+                cameraAutomap.transform.RotateAround(rotationPoint, cameraAutomap.transform.right, -rotationAmount * Time.unscaledDeltaTime);
+                updateAutomapView();
+            }
+
+        }
+
+        /// <summary>
+        /// action for changing camera rotation around y axis
         /// </summary>
         /// <param name="rotationSpeed"> amount used for rotation </param>
         private void ActionRotateCamera(float rotationAmount)
         {
-            cameraAutomap.transform.Rotate(0.0f, rotationAmount * Time.unscaledDeltaTime, 0.0f, Space.World);
+            //cameraAutomap.transform.Rotate(0.0f, rotationAmount * Time.unscaledDeltaTime, 0.0f, Space.World);
+            Vector3 vecRotationCenter = cameraAutomap.transform.position;
+            cameraAutomap.transform.RotateAround(vecRotationCenter, Vector3.up, -rotationAmount * Time.unscaledDeltaTime);    
             updateAutomapView();
-        }
-
-        /// <summary>
-        /// action for changing camera tilt
-        /// </summary>
-        /// <param name="rotationSpeed"> amount used for rotation </param>
-        private void ActionRotateCameraTilt(float rotationAmount)
-        {
-            if (automapViewMode == AutomapViewMode.View3D)
-            {
-                cameraAutomap.transform.Rotate(rotationAmount * Time.unscaledDeltaTime, 0.0f, 0.0f, Space.Self);
-                updateAutomapView();
-            }
         }
 
         /// <summary>
@@ -1683,6 +1728,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             alreadyInMouseDown = false;
         }
 
+        private void RotateLeftButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            if (inDragMode() || alreadyInMouseDown)
+                return;
+
+            rightMouseDownOnRotateLeftButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void RotateLeftButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            rightMouseDownOnRotateLeftButton = false;
+            alreadyInMouseDown = false;
+        }
+
         private void RotateRightButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
             if (inDragMode() || alreadyInMouseDown)
@@ -1698,6 +1758,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             alreadyInMouseDown = false;
         }
 
+        private void RotateRightButton_OnRightMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            if (inDragMode() || alreadyInMouseDown)
+                return;
+
+            rightMouseDownOnRotateRightButton = true;
+            alreadyInMouseDown = true;
+        }
+
+        private void RotateRightButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            rightMouseDownOnRotateRightButton = false;
+            alreadyInMouseDown = false;
+        }
 
         private void UpstairsButton_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
