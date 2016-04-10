@@ -108,10 +108,11 @@ namespace DaggerfallWorkshop
             result.Y = (RMBLayout.RMBTilesPerTerrain - height * RMBLayout.RMBTilesPerBlock) / 2;
 
             // But some 1x1 locations (e.g. Privateer's Hold exterior) are positioned differently
-            // Handle this for known exceptions and research more later
+            // Seems to be 1x1 blocks using CUST prefix, but possibly more research needed
+            const int custPrefixIndex = 40;
             if (width == 1 && height == 1)
             {
-                if (location.RegionIndex == 17 && location.LocationIndex == 179)    // Privateer's Hold
+                if (location.Exterior.ExteriorData.BlockIndex[0] == custPrefixIndex)
                 {
                     result.X = 72;
                     result.Y = 55;
