@@ -689,6 +689,8 @@ namespace ProjectIncreasedTerrainDistance
 
                 updateSeasonalTextures();
 
+                generateTerrainTransitionRing();
+
                 Resources.UnloadUnusedAssets();
 
                 //System.GC.Collect();
@@ -1080,7 +1082,7 @@ namespace ProjectIncreasedTerrainDistance
         }
 
         // Create new terrain game objects
-        public void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject)
+        private void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject)
         {
             // Create new terrain object parented to streaming world
             terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(GameManager.Instance.ExteriorParent.transform);
@@ -1088,7 +1090,55 @@ namespace ProjectIncreasedTerrainDistance
             terrainObject.hideFlags = HideFlags.None;
         }
 
-        private void PlaceAndUpdateTerrain(int mapPixelX, int mapPixelY)
+        //public void UpdateMapPixelData(ref DaggerfallTerrain dfTerrain, int mapPixelX, int mapPixelY, TerrainTexturing terrainTexturing = null)
+        //{
+        //    // Get basic terrain data
+        //    dfTerrain.MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, mapPixelX, mapPixelY);
+        //    dfUnity.TerrainSampler.GenerateSamples(ref dfTerrain.MapData);
+
+        //    // Handle terrain with location
+        //    if (dfTerrain.MapData.hasLocation)
+        //    {
+        //        TerrainHelper.SetLocationTiles(ref dfTerrain.MapData);
+        //        TerrainHelper.BlendLocationTerrain(ref dfTerrain.MapData);
+        //    }
+
+        //    // Set textures
+        //    if (terrainTexturing != null)
+        //    {
+        //        terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref dfTerrain.MapData);
+        //    }
+        //}
+
+        //// Update terrain data
+        //private void UpdateTerrainData(StreamingWorld.TerrainDesc terrainDesc)
+        //{
+        //    // Instantiate Daggerfall terrain
+        //    DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+        //    if (dfTerrain)
+        //    {
+        //        dfTerrain.TerrainScale = streamingWorld.TerrainScale;
+        //        dfTerrain.MapPixelX = terrainDesc.mapPixelX;
+        //        dfTerrain.MapPixelY = terrainDesc.mapPixelY;
+        //        dfTerrain.InstantiateTerrain();
+        //    }
+
+        //    // Update data for terrain
+        //    UpdateMapPixelData(ref dfTerrain, terrainDesc.mapPixelX, terrainDesc.mapPixelY, streamingWorld.TerrainTexturing);
+        //    //dfTerrain.UpdateMapPixelData(streamingWorld.TerrainTexturing);
+
+        //    dfTerrain.UpdateTileMapData();
+
+        //    // Promote data to live terrain
+        //    dfTerrain.UpdateClimateMaterial();
+        //    dfTerrain.PromoteTerrainData();
+
+        //    // Only set active again once complete
+        //    terrainDesc.terrainObject.SetActive(true);
+        //    terrainDesc.terrainObject.name = GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+        //}
+
+        private void PlaceAndUpdateTerrain(int mapPixelX, int mapPixelY, int nextTerrain)
         {
             // Do nothing if out of range
             if (mapPixelX < MapsFile.MinMapPixelX || mapPixelX >= MapsFile.MaxMapPixelX ||
@@ -1103,7 +1153,7 @@ namespace ProjectIncreasedTerrainDistance
             // Need to place a new terrain, find next available terrain
             // This will either find a fresh terrain or recycle an old one
             //Debug.Log(String.Format("count: {0}", terrainTransitionRingIndexDict.Count));
-            int nextTerrain = terrainTransitionRingIndexDict.Count;
+            //int nextTerrain = terrainTransitionRingIndexDict.Count;
 
             // Setup new terrain
             terrainTransitionRingArray[nextTerrain].active = true;
@@ -1121,10 +1171,11 @@ namespace ProjectIncreasedTerrainDistance
             }
 
             // Apply local transform
-            float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
-            int xdif = mapPixelX - playerGPS.CurrentMapPixel.X;
-            int ydif = mapPixelY - playerGPS.CurrentMapPixel.Y;
-            Vector3 localPosition = new Vector3(xdif * scale, 0, -ydif * scale) + streamingWorld.WorldCompensation;
+            float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;            
+            int xdif = mapPixelX - streamingWorld.LocalPlayerGPS.CurrentMapPixel.X;
+            int ydif = mapPixelY - streamingWorld.LocalPlayerGPS.CurrentMapPixel.Y;
+            //Debug.Log(String.Format("world-compensation: x:{0}, y: {1}, z: {2}", streamingWorld.WorldCompensation.x, streamingWorld.WorldCompensation.y, streamingWorld.WorldCompensation.z));
+            Vector3 localPosition = new Vector3(xdif * scale, 0, -ydif * scale); // +streamingWorld.WorldCompensation;
             terrainTransitionRingArray[nextTerrain].terrainObject.transform.localPosition = localPosition;
 
             // Add new terrain index to transition ring dictionary
@@ -1135,19 +1186,27 @@ namespace ProjectIncreasedTerrainDistance
 
         private void generateTerrainTransitionRing()
         {
+            terrainTransitionRingIndexDict.Clear();
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {
+                //UnityEngine.Object.Destroy(terrainTransitionRingArray[i].terrainObject);
+                GameObject.Destroy(terrainTransitionRingArray[i].terrainObject);
+                terrainTransitionRingArray[i].terrainObject = null;
+            }
+
             //DFPosition currentPlayerPos = playerGPS.CurrentMapPixel;
             int distanceTransitionRingFromCenterX = (streamingWorld.TerrainDistance + 1);
             int distanceTransitionRingFromCenterY = (streamingWorld.TerrainDistance + 1);
+            int terrainIndex = 0;
             for (int y = -distanceTransitionRingFromCenterY; y <= distanceTransitionRingFromCenterY; y++)
             {
                 for (int x = -distanceTransitionRingFromCenterX; x <= distanceTransitionRingFromCenterX; x++)
                 {
                     if ((Math.Abs(x) == distanceTransitionRingFromCenterX) || (Math.Abs(y) == distanceTransitionRingFromCenterY))
                     {
-                        PlaceAndUpdateTerrain(playerGPS.CurrentMapPixel.X + x, playerGPS.CurrentMapPixel.Y + y);                        
+                        PlaceAndUpdateTerrain(playerGPS.CurrentMapPixel.X + x, playerGPS.CurrentMapPixel.Y + y, terrainIndex++);                        
                     }
                 }
-
             }
         }
 

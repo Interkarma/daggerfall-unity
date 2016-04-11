@@ -138,6 +138,11 @@ namespace DaggerfallWorkshop
             get { return (streamingTarget != null) ? streamingTarget.transform : this.transform; }
         }
 
+        public TerrainTexturing TerrainTexturing
+        {
+            get { return terrainTexturing; }
+        }
+
         #endregion
 
         #region Structs/Enums
