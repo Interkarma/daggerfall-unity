@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool ContainsWindow(UserInterfaceWindow window);
         void ChangeWindow(UserInterfaceWindow newWindow);
         int MessageCount { get; }
+        int WindowCount { get; }
         void PostMessage(string message);
         string GetMessage();
         string PeekMessage();
@@ -64,6 +65,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public int MessageCount
         {
             get { return messages.Count; }
+        }
+
+        /// <summary>
+        /// Number of windows in stack (not including HUD)
+        /// </summary>
+        public int WindowCount
+        {
+            get { return windows.Count-1; }
         }
 
         /// <summary>

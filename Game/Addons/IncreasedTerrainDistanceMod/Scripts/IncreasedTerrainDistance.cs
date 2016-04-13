@@ -837,7 +837,12 @@ namespace ProjectIncreasedTerrainDistance
                         }
                     }
                 }
-                terrain.terrainData.SetHeights(backupSinkAreaCenterPosX - TerrainDistance + 2, worldMapHeight - 1 - backupSinkAreaCenterPosY - TerrainDistance + 2, heightValues);
+                
+                if ((backupSinkAreaCenterPosX - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosX - TerrainDistance + 2 < worldMapWidth - TerrainDistance) &&
+                    (backupSinkAreaCenterPosY - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosY - TerrainDistance + 2 < worldMapHeight - TerrainDistance))
+                {
+                    terrain.terrainData.SetHeights(backupSinkAreaCenterPosX - TerrainDistance + 2, worldMapHeight - 1 - backupSinkAreaCenterPosY - TerrainDistance + 2, heightValues);
+                }
             }
 
             backupSinkAreaCenterPosX = -2 + playerGPS.CurrentMapPixel.X;
@@ -856,7 +861,12 @@ namespace ProjectIncreasedTerrainDistance
                     }
                 }
             }
-            terrain.terrainData.SetHeights(backupSinkAreaCenterPosX - TerrainDistance + 2, worldMapHeight - 1 - backupSinkAreaCenterPosY - TerrainDistance + 2, heightValues);
+
+            if ((backupSinkAreaCenterPosX - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosX - TerrainDistance + 2 < worldMapWidth - TerrainDistance) &&
+                (backupSinkAreaCenterPosY - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosY - TerrainDistance + 2 < worldMapHeight - TerrainDistance))
+            {
+                terrain.terrainData.SetHeights(backupSinkAreaCenterPosX - TerrainDistance + 2, worldMapHeight - 1 - backupSinkAreaCenterPosY - TerrainDistance + 2, heightValues);
+            }
 
             heightValues = null;
 

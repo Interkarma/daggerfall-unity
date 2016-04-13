@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Utility
         PlayerMotor playerMotor = null;
         DFPosition lastMapPixel;
         DFPosition currentMapPixel;
-        bool forceUpdate = false;
+        //bool forceFloatingOriginUpdate = false;
 
         #endregion
 
@@ -90,13 +90,11 @@ namespace DaggerfallWorkshop.Utility
 
             // Do nothing during streaming world init
             if (StreamingWorld.IsInit)
-            {
-                // Force floating origin update when world reloaded
-                forceUpdate = true;
                 return;
-            }
 
-            if (CheckPosition() || forceUpdate)
+            // Update world position when appropriate
+            //if (CheckPosition() || forceFloatingOriginUpdate)
+            if (CheckPosition())
             {
                 // Get X-Z offset
                 float xChange = (currentMapPixel.X - lastMapPixel.X) * (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale);
@@ -104,11 +102,12 @@ namespace DaggerfallWorkshop.Utility
 
                 // Get Y offset
                 float yChange = 0;
-                if (playerMotor.transform.position.y < -verticalThreshold ||
-                    playerMotor.transform.position.y > verticalThreshold)
-                {
-                    yChange = -playerMotor.transform.position.y;
-                }
+                //if (playerMotor.transform.position.y < -verticalThreshold ||
+                //    playerMotor.transform.position.y > verticalThreshold ||
+                //    forceFloatingOriginUpdate)
+                //{
+                //    yChange = -playerMotor.transform.position.y;
+                //}
 
                 // Create offset
                 Vector3 offset = new Vector3(-xChange, yChange, zChange);
@@ -123,7 +122,7 @@ namespace DaggerfallWorkshop.Utility
                 RaiseOnPositionUpdateEvent(offset);
 
                 // Lower update flags
-                forceUpdate = false;
+                //forceFloatingOriginUpdate = false;
             }
         }
 
@@ -201,6 +200,7 @@ namespace DaggerfallWorkshop.Utility
         private void StreamingWorld_OnInitWorld()
         {
             Initialize();
+            //forceFloatingOriginUpdate = true;
         }
 
         #endregion

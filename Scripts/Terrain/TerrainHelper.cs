@@ -96,17 +96,27 @@ namespace DaggerfallWorkshop
         // logic/formula for locations of certain RMB dimensions (e.g. 1x1).
         // Unknown if there are more exceptions or if a specific formula is needed.
         // This method will be used in the interim pending further research.
-        public static DFPosition GetLocationTerrainTileOrigin(int width, int height)
+        public static DFPosition GetLocationTerrainTileOrigin(DFLocation location)
         {
+            // Get map width and height
+            int width = location.Exterior.ExteriorData.Width;
+            int height = location.Exterior.ExteriorData.Height;
+             
+            // Centring works nearly all the time
             DFPosition result = new DFPosition();
             result.X = (RMBLayout.RMBTilesPerTerrain - width * RMBLayout.RMBTilesPerBlock) / 2;
             result.Y = (RMBLayout.RMBTilesPerTerrain - height * RMBLayout.RMBTilesPerBlock) / 2;
 
-            // 1x1 locations seem to always use 72, 55 as origin rather than 56, 56 as expected
+            // But some 1x1 locations (e.g. Privateer's Hold exterior) are positioned differently
+            // Seems to be 1x1 blocks using CUST prefix, but possibly more research needed
+            const int custPrefixIndex = 40;
             if (width == 1 && height == 1)
             {
-                result.X = 72;
-                result.Y = 55;
+                if (location.Exterior.ExteriorData.BlockIndex[0] == custPrefixIndex)
+                {
+                    result.X = 72;
+                    result.Y = 55;
+                }
             }
 
             return result;
@@ -128,9 +138,9 @@ namespace DaggerfallWorkshop
             //int startY = ((chunkDim * tileDim) - location.Exterior.ExteriorData.Height * tileDim) / 2;
 
             // Position tiles inside terrain area
-            int width = location.Exterior.ExteriorData.Width;
-            int height = location.Exterior.ExteriorData.Height;
-            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(width, height);
+            //int width = location.Exterior.ExteriorData.Width;
+            //int height = location.Exterior.ExteriorData.Height;
+            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(location);
 
             // Full 8x8 locations have "terrain blend space" around walls to smooth down random terrain towards flat area.
             // This is indicated by texture index > 55 (ground texture range is 0-55), larger values indicate blend space.

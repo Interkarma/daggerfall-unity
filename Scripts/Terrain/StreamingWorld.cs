@@ -541,7 +541,7 @@ namespace DaggerfallWorkshop
                     // Position RMB blocks inside terrain area
                     int width = location.Exterior.ExteriorData.Width;
                     int height = location.Exterior.ExteriorData.Height;
-                    DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(width, height);
+                    DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(location);
                     Vector3 origin = new Vector3(tilePos.X * RMBLayout.RMBTileSide, 2.0f * MeshReader.GlobalScale, tilePos.Y * RMBLayout.RMBTileSide);
 
                     // Get location data
@@ -1018,7 +1018,7 @@ namespace DaggerfallWorkshop
                 // Get target position at terrain height + player standing height
                 // This is our minimum height before player falls through world
                 Vector3 targetPosition = new Vector3(position.x, 0, position.z);
-                float height = terrain.SampleHeight(targetPosition + terrain.transform.position) + worldCompensation.y;
+                float height = terrain.SampleHeight(targetPosition + terrain.transform.position);// + worldCompensation.y;
                 targetPosition.y = height + controller.height / 2f + 0.15f;
 
                 // If desired position is higher then minimum position then we can safely use that
@@ -1108,7 +1108,7 @@ namespace DaggerfallWorkshop
             // Get location dimensions for positioning
             int width = currentLocation.Summary.BlockWidth;
             int height = currentLocation.Summary.BlockHeight;
-            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(width, height);
+            DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(currentLocation.Summary.LegacyLocation);
             Vector3 origin = new Vector3(tilePos.X * RMBLayout.RMBTileSide, 2.0f * MeshReader.GlobalScale, tilePos.Y * RMBLayout.RMBTileSide);
 
             // Position player to random side of location

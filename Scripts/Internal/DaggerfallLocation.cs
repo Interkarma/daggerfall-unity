@@ -92,6 +92,7 @@ namespace DaggerfallWorkshop
             public DaggerfallBillboardBatch NatureBillboardBatch;
             public int BlockWidth;
             public int BlockHeight;
+            public DFLocation LegacyLocation;
         }
 
         void Start()
@@ -169,6 +170,7 @@ namespace DaggerfallWorkshop
             summary.SkyBase = location.Climate.SkyBase;
             summary.BlockWidth = location.Exterior.ExteriorData.Width;
             summary.BlockHeight = location.Exterior.ExteriorData.Height;
+            summary.LegacyLocation = location;
 
             // Assign starting climate
             CurrentSeason = ClimateSeason.Summer;

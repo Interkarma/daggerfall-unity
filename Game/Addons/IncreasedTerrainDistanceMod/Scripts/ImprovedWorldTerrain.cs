@@ -153,7 +153,14 @@ namespace ProjectIncreasedTerrainDistance
         {
             if (init)
             {
-                return (mapMultipliers[mapPixelY * WoodsFile.mapWidthValue + mapPixelX]);
+                if ((mapPixelX >= 0) && (mapPixelX < WoodsFile.mapWidthValue) && (mapPixelY >= 0) && (mapPixelY < WoodsFile.mapHeightValue))
+                {
+                    return (mapMultipliers[mapPixelY * WoodsFile.mapWidthValue + mapPixelX]);
+                }
+                else
+                {
+                    return (1.0f);
+                }
             }
             else
             {

@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (a.k.a. Nystul)
-// Contributors:    Lypyl  
+// Contributors:    Lypyl, Interkarma
 // 
 // Notes:
 //
@@ -26,6 +26,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility;
 using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game
@@ -100,9 +101,7 @@ namespace DaggerfallWorkshop.Game
 
         GameObject gameobjectAutomap = null; // used to hold reference to instance of GameObject "Automap" (which has script Game/DaggerfallAutomap.cs attached)
 
-        GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap
-
-        string nameLoadedDungeon = null; // used to store name of loaded dungeon -> used to identify when player died in dungeon and a new game was started in privateer's hold
+        GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap        
 
         int layerAutomap; // layer used for level geometry of automap
 
@@ -367,6 +366,11 @@ namespace DaggerfallWorkshop.Game
         {
             int numberOfAutomapFocusObjects = Enum.GetNames(typeof(AutomapFocusObject)).Length;
             focusObject++;
+            // if entrance is not discovered and focusObject is entrance
+            if ((gameobjectBeaconEntrancePosition) && (!gameobjectBeaconEntrancePosition.activeSelf) && focusObject == AutomapFocusObject.Entrance)
+            {
+                focusObject++; // skip entrance and focus next object
+            }
             if ((int)focusObject > numberOfAutomapFocusObjects - 1) // first mode is mode 0 -> so use numberOfAutomapFocusObjects-1 for comparison
                 focusObject = 0;
             GameObject gameobjectInFocus;
@@ -452,8 +456,8 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeonInterior;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
-            PlayerEnterExit.OnMovePlayerToDungeonStart += onNewGame; // if player died in dungeon and new game was started in privateer's hold this will come into play (TODO: find better event than OnMovePlayerToDungeonStart and get rid of variable nameLoadedDungeon)
-            SaveLoadManager.OnLoad += OnLoadEvent;
+            StartGameBehaviour.OnNewGame += onNewGame;
+            SaveLoadManager.OnLoad += OnLoadEvent;            
         }
 
         void OnDisable()
@@ -462,7 +466,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeonInterior;
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
-            PlayerEnterExit.OnMovePlayerToDungeonStart -= onNewGame;
+            StartGameBehaviour.OnNewGame -= onNewGame;
             SaveLoadManager.OnLoad -= OnLoadEvent;
         }
 
@@ -508,25 +512,34 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // I am not super happy with doing this in the update function, but found no other way to make starting in dungeon correctly initialize the automap geometry
-            if (!gameobjectGeometry)
+            // if we are not in game (e.g. title menu) skip update function (update must not be skipped when in game or in gui window (to propagate all map control changes))
+            if ((GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.Game) && (GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.UI))
             {
-                // test if startup was inside dungeon or interior (and no transition event happened)                
-                InitWhenInInteriorOrDungeon();
-                // do initial geometry discovery
-                if (gameobjectGeometry) // this is necessary since when game starts up it can happen that InitWhenInInteriorOrDungeon() does not create geometry because GameManger.Instance.IsPlayerInsideDungeon and GameManager.Instance.IsPlayerInsidePalace are false
-                {
-                    gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
-                    CheckForNewlyDiscoveredMeshes();
-                }                
+                return;
             }
 
-            if (isOpenAutomap) // only do this stuff if automap is indeed open
+            if (GameManager.Instance.IsPlayerInside)
             {
-                updateSlicingPositionY();
+                // I am not super happy with doing this in the update function, but found no other way to make starting in dungeon correctly initialize the automap geometry
+                if (!gameobjectGeometry)
+                {
+                    // test if startup was inside dungeon or interior (and no transition event happened)                
+                    InitWhenInInteriorOrDungeon();
+                    // do initial geometry discovery
+                    if (gameobjectGeometry) // this is necessary since when game starts up it can happen that InitWhenInInteriorOrDungeon() does not create geometry because GameManger.Instance.IsPlayerInsideDungeon and GameManager.Instance.IsPlayerInsidePalace are false
+                    {
+                        gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
+                        CheckForNewlyDiscoveredMeshes();
+                    }
+                }
 
-                // update position of rotation pivot axis
-                gameobjectBeaconRotationPivotAxis.transform.position = rotationPivotAxisPosition;
+                if (isOpenAutomap) // only do this stuff if automap is indeed open
+                {
+                    updateSlicingPositionY();
+
+                    // update position of rotation pivot axis
+                    gameobjectBeaconRotationPivotAxis.transform.position = rotationPivotAxisPosition;
+                }
             }
         }
 
@@ -1114,7 +1127,6 @@ namespace DaggerfallWorkshop.Game
         private void createDungeonGeometryForAutomap()
         {
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            nameLoadedDungeon = location.Name;
             String newGeometryName = string.Format("DaggerfallDungeon [Region={0}, Name={1}]", location.RegionName, location.Name);
 
 
@@ -1490,6 +1502,9 @@ namespace DaggerfallWorkshop.Game
                 }
                 meshRenderer.materials = materials;
             }
+
+            // so set the entrance beacon to active (discovered)
+            gameobjectBeaconEntrancePosition.SetActive(true);
         }
 
         /// <summary>
@@ -1504,6 +1519,9 @@ namespace DaggerfallWorkshop.Game
             {
                 meshRenderer.enabled = false;
             }
+
+            // so set the entrance beacon to active=false (undiscovered)
+            gameobjectBeaconEntrancePosition.SetActive(false);
         }
 
         void InitWhenInInteriorOrDungeon(StaticDoor? door = null)
@@ -1516,33 +1534,28 @@ namespace DaggerfallWorkshop.Game
                 gameobjectGeometry.SetActive(false);
                 gameobjectBeacons.SetActive(false);
             }
+            else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
+            {
+                createDungeonGeometryForAutomap();
+                restoreStateAutomapDungeon(true);
+                resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
+                gameobjectGeometry.SetActive(false);
+                gameobjectBeacons.SetActive(false);
+            }
             else
-                if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
-                {
-                    createDungeonGeometryForAutomap();
-                    restoreStateAutomapDungeon(true);
-                    resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
-                    gameobjectGeometry.SetActive(false);
-                    gameobjectBeacons.SetActive(false);
-                }
+            {
+                Debug.LogError("Error in function InitWhenInInteriorOrDungeon: reached forbidden control flow point");
+            }
         }
 
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
         {
-            createIndoorGeometryForAutomap(args.StaticDoor);
-            restoreStateAutomapInterior(false);
-            resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
-            gameobjectGeometry.SetActive(false);
-            gameobjectBeacons.SetActive(false);
+            InitWhenInInteriorOrDungeon(args.StaticDoor);
         }
 
         private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
         {
-            createDungeonGeometryForAutomap();
-            restoreStateAutomapDungeon(true);
-            resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
-            gameobjectGeometry.SetActive(false);
-            gameobjectBeacons.SetActive(false);
+            InitWhenInInteriorOrDungeon(null);
         }
 
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
@@ -1575,22 +1588,13 @@ namespace DaggerfallWorkshop.Game
 
         void onNewGame()
         {
-            // if player died in dungeon and new game was started in privateer's hold this if will evaluate to true
-            if ((nameLoadedDungeon != null) && (nameLoadedDungeon != GameManager.Instance.PlayerGPS.CurrentLocation.Name))
+            // destroy automap geometry and beacons so that update function will create new automap geometry on its first iteration when a game has started
+            if (gameobjectGeometry != null)
             {
-                if (gameobjectGeometry != null)
-                {
-                    UnityEngine.Object.Destroy(gameobjectGeometry);
-                    gameobjectGeometry = null;
-                }
-                DestroyBeacons();
-
-                createDungeonGeometryForAutomap();
-                restoreStateAutomapDungeon(true);
-                resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
-                gameobjectGeometry.SetActive(false);
-                gameobjectBeacons.SetActive(false);
+                UnityEngine.Object.Destroy(gameobjectGeometry);
+                gameobjectGeometry = null;
             }
+            DestroyBeacons();
         }
 
         #endregion
