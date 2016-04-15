@@ -123,8 +123,23 @@ namespace ProjectIncreasedTerrainDistance
         Texture2D textureAtlasSwampRain = null;
 
 
-        // List of terrain objects for transition terrain ring        
-        StreamingWorld.TerrainDesc[] terrainTransitionRingArray = null;
+        // List of terrain objects for transition terrain ring
+        private struct TransitionRingBorderDesc
+        {
+            public bool isTopRingBorder;
+            public bool isBottomRingBorder;
+            public bool isLeftRingBorder;
+            public bool isRightRingBorder;
+        }
+
+        private struct TransitionTerrainDesc
+        {
+            public StreamingWorld.TerrainDesc terrainDesc;
+            public TransitionRingBorderDesc transitionRingBorderDesc;
+            public bool heightsUpdatePending; // is it necessary to update the heights of terrainObject inside terrainDesc
+            public bool positionUpdatePending; // is it necessary to update the position of terrainObject inside terrainDesc
+        }
+        TransitionTerrainDesc[] terrainTransitionRingArray = null;
         Dictionary<int, int> terrainTransitionRingIndexDict = new Dictionary<int, int>();
 
 
@@ -437,7 +452,7 @@ namespace ProjectIncreasedTerrainDistance
             }
 
             // reserve terrain objects for transition ring (2 x long sides (with 2 extra terrains for corner terrains) + 2 x normal sides)
-            terrainTransitionRingArray = new StreamingWorld.TerrainDesc[2 * (streamingWorld.TerrainDistance * 2 + 1 + 2) + 2 * (streamingWorld.TerrainDistance * 2 + 1)];
+            terrainTransitionRingArray = new TransitionTerrainDesc[2 * (streamingWorld.TerrainDistance * 2 + 1 + 2) + 2 * (streamingWorld.TerrainDistance * 2 + 1)];
         }
 
         void OnDestroy()
@@ -1138,7 +1153,7 @@ namespace ProjectIncreasedTerrainDistance
         //    terrainDesc.terrainObject.name = GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
         //}
 
-        private void PlaceAndUpdateTerrain(int mapPixelX, int mapPixelY, int nextTerrain)
+        private void CreateTerrain(int mapPixelX, int mapPixelY, int nextTerrain)
         {
             // Do nothing if out of range
             if (mapPixelX < MapsFile.MinMapPixelX || mapPixelX >= MapsFile.MaxMapPixelX ||
@@ -1156,32 +1171,63 @@ namespace ProjectIncreasedTerrainDistance
             //int nextTerrain = terrainTransitionRingIndexDict.Count;
 
             // Setup new terrain
-            terrainTransitionRingArray[nextTerrain].active = true;
-            terrainTransitionRingArray[nextTerrain].updateData = true;
-            terrainTransitionRingArray[nextTerrain].updateNature = true;
-            terrainTransitionRingArray[nextTerrain].mapPixelX = mapPixelX;
-            terrainTransitionRingArray[nextTerrain].mapPixelY = mapPixelY;
-            if (!terrainTransitionRingArray[nextTerrain].terrainObject)
+            terrainTransitionRingArray[nextTerrain].terrainDesc.active = true;
+            terrainTransitionRingArray[nextTerrain].terrainDesc.updateData = true;
+            terrainTransitionRingArray[nextTerrain].terrainDesc.updateNature = true;
+            terrainTransitionRingArray[nextTerrain].terrainDesc.mapPixelX = mapPixelX;
+            terrainTransitionRingArray[nextTerrain].terrainDesc.mapPixelY = mapPixelY;
+            if (!terrainTransitionRingArray[nextTerrain].terrainDesc.terrainObject)
             {
                 // Create game objects for new terrain
                 CreateTerrainGameObjects(
                     mapPixelX,
                     mapPixelY,
-                    out terrainTransitionRingArray[nextTerrain].terrainObject);
+                    out terrainTransitionRingArray[nextTerrain].terrainDesc.terrainObject);
             }
 
+            // Add new terrain index to transition ring dictionary
+            terrainTransitionRingIndexDict.Add(key, nextTerrain);
+        }
+
+        private void UpdateTerrain(int terrainIndex)
+        {
             // Apply local transform
-            float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;            
+            int mapPixelX = terrainTransitionRingArray[terrainIndex].terrainDesc.mapPixelX;
+            int mapPixelY = terrainTransitionRingArray[terrainIndex].terrainDesc.mapPixelY;
+            float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
             int xdif = mapPixelX - streamingWorld.LocalPlayerGPS.CurrentMapPixel.X;
             int ydif = mapPixelY - streamingWorld.LocalPlayerGPS.CurrentMapPixel.Y;
             //Debug.Log(String.Format("world-compensation: x:{0}, y: {1}, z: {2}", streamingWorld.WorldCompensation.x, streamingWorld.WorldCompensation.y, streamingWorld.WorldCompensation.z));
             Vector3 localPosition = new Vector3(xdif * scale, 0, -ydif * scale); // +streamingWorld.WorldCompensation;
-            terrainTransitionRingArray[nextTerrain].terrainObject.transform.localPosition = localPosition;
+            terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.transform.localPosition = localPosition;
 
-            // Add new terrain index to transition ring dictionary
-            terrainTransitionRingIndexDict.Add(key, nextTerrain);
+            streamingWorld.UpdateTerrainData(terrainTransitionRingArray[terrainIndex].terrainDesc);
+        }
 
-            streamingWorld.UpdateTerrainData(terrainTransitionRingArray[nextTerrain]);
+        private TransitionRingBorderDesc getTransitionRingBorderDesc(int x, int y, int distanceTransitionRingFromCenterX, int distanceTransitionRingFromCenterY)
+        {
+            TransitionRingBorderDesc transitionRingBorderDesc;
+            transitionRingBorderDesc.isLeftRingBorder = false;
+            transitionRingBorderDesc.isRightRingBorder = false;
+            transitionRingBorderDesc.isTopRingBorder = false;
+            transitionRingBorderDesc.isBottomRingBorder = false;
+            if (x == -distanceTransitionRingFromCenterX)
+            {
+                transitionRingBorderDesc.isLeftRingBorder = true;
+            }
+            if (x == +distanceTransitionRingFromCenterX)
+            {
+                transitionRingBorderDesc.isRightRingBorder = true;
+            }
+            if (y == -distanceTransitionRingFromCenterY)
+            {
+                transitionRingBorderDesc.isTopRingBorder = true;
+            }
+            if (y == +distanceTransitionRingFromCenterY)
+            {
+                transitionRingBorderDesc.isBottomRingBorder = true;
+            }
+            return transitionRingBorderDesc;
         }
 
         private void generateTerrainTransitionRing()
@@ -1190,8 +1236,8 @@ namespace ProjectIncreasedTerrainDistance
             for (int i = 0; i < terrainTransitionRingArray.Length; i++)
             {
                 //UnityEngine.Object.Destroy(terrainTransitionRingArray[i].terrainObject);
-                GameObject.Destroy(terrainTransitionRingArray[i].terrainObject);
-                terrainTransitionRingArray[i].terrainObject = null;
+                GameObject.Destroy(terrainTransitionRingArray[i].terrainDesc.terrainObject);
+                terrainTransitionRingArray[i].terrainDesc.terrainObject = null;
             }
 
             //DFPosition currentPlayerPos = playerGPS.CurrentMapPixel;
@@ -1204,7 +1250,12 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     if ((Math.Abs(x) == distanceTransitionRingFromCenterX) || (Math.Abs(y) == distanceTransitionRingFromCenterY))
                     {
-                        PlaceAndUpdateTerrain(playerGPS.CurrentMapPixel.X + x, playerGPS.CurrentMapPixel.Y + y, terrainIndex++);                        
+                        CreateTerrain(playerGPS.CurrentMapPixel.X + x, playerGPS.CurrentMapPixel.Y + y, terrainIndex);
+                        terrainTransitionRingArray[terrainIndex].transitionRingBorderDesc = getTransitionRingBorderDesc(x, y, distanceTransitionRingFromCenterX, distanceTransitionRingFromCenterY);
+                        terrainTransitionRingArray[terrainIndex].heightsUpdatePending = true;
+                        terrainTransitionRingArray[terrainIndex].positionUpdatePending = true;
+                        UpdateTerrain(terrainIndex);
+                        terrainIndex++;
                     }
                 }
             }
