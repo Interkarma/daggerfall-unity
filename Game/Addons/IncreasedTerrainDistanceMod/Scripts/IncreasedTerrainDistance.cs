@@ -34,9 +34,7 @@ namespace ProjectIncreasedTerrainDistance
     /// furthermore when using unity terrain one can use unity's level of detail mechanism for geometry (if needed), and other benefits provided by unity’s terrain system.
     /// a consequence is though that low-detailed terrain geometry would be also rendered at the position of the detailed terrain inside the distance from the player defined by TerrainDistance.
     /// the IncreasedTerrainTilemap shader defined in file DaggerfallIncreasedTerrainTilemap.shader discards fragments inside the area containing the detailed terrain from StreamingWorld,
-    /// except the most outer ring of the detailed terrain blocks (TerrainDistance-1) - this is to prevent holes in the world, as a consequence in the most outer ring there can happen
-    /// intersections between detailed terrain and world terrain
-    /// to decrease the chance of intersecting geometry in the most outer ring the world map is translated down on the y-axis a bit
+    /// a terrain transition ring is now matching the heights of the detailed terrain with those of the far terrain in a ring of terrain blocks in between them.
     /// </summary>
     public class IncreasedTerrainDistance : MonoBehaviour
     {
@@ -86,10 +84,6 @@ namespace ProjectIncreasedTerrainDistance
         // used to track changes of playerGPS x- resp. y-position on the world map (-> a change results in an update of the terrain object's translation)
         int MapPixelX = -1;
         int MapPixelY = -1;
-
-        // used to backup old center x- resp. y-position of sink-area to restore old values which are not sunk (sink area is used to decrease the chance of low-detail world height map geometry intersect detailed geometry in near distance defined by TerrainDistance)
-        int backupSinkAreaCenterPosX = -1;
-        int backupSinkAreaCenterPosY = -1;
 
         // unity terrain object which will hold the low-detail world map geometry, set to null initially for lazy creation
         GameObject worldTerrainGameObject = null;
@@ -837,65 +831,6 @@ namespace ProjectIncreasedTerrainDistance
             Vector3 finalTransform = new Vector3(worldMapLevelTransform.x + localTransformX, worldMapLevelTransform.y + localTransformY, worldMapLevelTransform.z + localTransformZ);
             terrainGameObject.gameObject.transform.localPosition = finalTransform;
 
-
-
-            int TerrainDistance = streamingWorld.TerrainDistance;
-
-            // sinkHeight for world terrain height values inside TerrainDistance radius from player position
-            float sinkHeight = (100.0f * streamingWorld.TerrainScale) / DaggerfallUnity.Instance.TerrainSampler.MaxTerrainHeight;
-
-            Terrain terrain = terrainGameObject.GetComponent<Terrain>();
-
-            // restore (previously) decreased terrain height values in sink area
-            float[,] heightValues = new float[TerrainDistance * 2, TerrainDistance * 2]; // only TerrainDistance * 2 height values are affected, not TerrainDistance * 2 + 1 values
-
-            if ((backupSinkAreaCenterPosX != -1) && (backupSinkAreaCenterPosY != -1)) // no values needs to be restored on very first run (since nothing was decreased before...)
-            {
-                for (int y = -(TerrainDistance - 1); y <= TerrainDistance; y++)
-                {
-                    for (int x = -(TerrainDistance - 1); x <= TerrainDistance; x++)
-                    {
-                        int xpos = backupSinkAreaCenterPosX + x + 1;
-                        int ypos = (worldMapHeight - 1 - backupSinkAreaCenterPosY) + y + 1;
-                        if ((xpos >= 0) && (xpos < worldMapWidth) && (ypos >= 0) && (ypos < worldMapHeight))
-                        {
-                            heightValues[y + TerrainDistance - 1, x + TerrainDistance - 1] = worldHeights[ypos, xpos];
-                        }
-                    }
-                }
-                
-                if ((backupSinkAreaCenterPosX - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosX - TerrainDistance + 2 < worldMapWidth - TerrainDistance) &&
-                    (backupSinkAreaCenterPosY - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosY - TerrainDistance + 2 < worldMapHeight - TerrainDistance))
-                {
-                    terrain.terrainData.SetHeights(backupSinkAreaCenterPosX - TerrainDistance + 2, worldMapHeight - 1 - backupSinkAreaCenterPosY - TerrainDistance + 2, heightValues);
-                }
-            }
-
-            backupSinkAreaCenterPosX = -2 + playerGPS.CurrentMapPixel.X;
-            backupSinkAreaCenterPosY = +1 + playerGPS.CurrentMapPixel.Y;
-
-            // decrease terrain height values in sink area
-            for (int y = -(TerrainDistance - 1); y <= TerrainDistance; y++)
-            {
-                for (int x = -(TerrainDistance - 1); x <= TerrainDistance; x++)
-                {
-                    int xpos = backupSinkAreaCenterPosX + x + 1;
-                    int ypos = (worldMapHeight - 1 - backupSinkAreaCenterPosY) + y + 1;
-                    if ((xpos >= 0) && (xpos < worldMapWidth) && (ypos >= 0) && (ypos < worldMapHeight))
-                    {
-                        heightValues[y + TerrainDistance - 1, x + TerrainDistance - 1] = worldHeights[ypos, xpos] - sinkHeight;
-                    }
-                }
-            }
-
-            if ((backupSinkAreaCenterPosX - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosX - TerrainDistance + 2 < worldMapWidth - TerrainDistance) &&
-                (backupSinkAreaCenterPosY - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosY - TerrainDistance + 2 < worldMapHeight - TerrainDistance))
-            {
-                terrain.terrainData.SetHeights(backupSinkAreaCenterPosX - TerrainDistance + 2, worldMapHeight - 1 - backupSinkAreaCenterPosY - TerrainDistance + 2, heightValues);
-            }
-
-            heightValues = null;
-
             if (worldTerrainGameObject != null) // sometimes it can happen that this point is reached before worldTerrainGameObject was created, in such case we just skip
             {
                 // update water height (thanks Lypyl!!!):
@@ -1171,12 +1106,12 @@ namespace ProjectIncreasedTerrainDistance
                     float fractionalAmountX = (float)x / ((float)heightmapWidth - 1);
                     float weightFarTerrainX = weightFarTerrainLeft * (1.0f - fractionalAmountX) + weightFarTerrainRight * (fractionalAmountX);
                     float weightFarTerrainY = weightFarTerrainTop * (1.0f - fractionalAmountY) + weightFarTerrainBottom * (fractionalAmountY);
-                    float weightFarTerrainCombined = weightFarTerrainX * weightFarTerrainY;
+                    float weightFarTerrainCombined = Math.Max(weightFarTerrainX, weightFarTerrainY);
                     float heightFarTerrain = heightFarTerrainTopLeft * (1.0f - fractionalAmountX) * (1.0f - fractionalAmountY) +
                                              heightFarTerrainTopRight * (fractionalAmountX) * (1.0f - fractionalAmountY) +
                                              heightFarTerrainBottomLeft * (1.0f - fractionalAmountX) * (fractionalAmountY) +
                                              heightFarTerrainBottomRight * (fractionalAmountX) * (fractionalAmountY);
-                    dfTerrain.MapData.heightmapSamples[y, x] = heightFarTerrain; // dfTerrain.MapData.heightmapSamples[y, x] * (1.0f - weightFarTerrainCombined) + heightFarTerrain * weightFarTerrainCombined;
+                    dfTerrain.MapData.heightmapSamples[y, x] = dfTerrain.MapData.heightmapSamples[y, x] * (1.0f - weightFarTerrainCombined) + heightFarTerrain * (weightFarTerrainCombined);
                 }
             }
 
@@ -1260,11 +1195,11 @@ namespace ProjectIncreasedTerrainDistance
             }
             if (y == -distanceTransitionRingFromCenterY)
             {
-                transitionRingBorderDesc.isTopRingBorder = true;
+                transitionRingBorderDesc.isBottomRingBorder = true;
             }
             if (y == +distanceTransitionRingFromCenterY)
             {
-                transitionRingBorderDesc.isBottomRingBorder = true;
+                transitionRingBorderDesc.isTopRingBorder = true;
             }
             return transitionRingBorderDesc;
         }
