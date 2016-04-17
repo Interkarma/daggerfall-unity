@@ -123,12 +123,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        public delegate void OnItemPickedEventHandler(int index);
+        public delegate void OnItemPickedEventHandler(int index, string itemString);
         public event OnItemPickedEventHandler OnItemPicked;
         void RaiseOnItemPickedEvent()
         {
             if (OnItemPicked != null)
-                OnItemPicked(listBox.SelectedIndex);
+                OnItemPicked(listBox.SelectedIndex, listBox.SelectedItem);
         }
 
         #endregion
