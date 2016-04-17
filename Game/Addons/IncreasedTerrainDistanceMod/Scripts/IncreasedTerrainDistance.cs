@@ -782,7 +782,7 @@ namespace ProjectIncreasedTerrainDistance
         private void updatePositionWorldTerrain(ref GameObject terrainGameObject, Vector3 offset)
         {
             // reduce chance of geometry intersections of world terrain and the most outer ring of detailed terrain of the StreamingWorld component
-            float extraTranslationY = -10.0f; // -12.5f * streamingWorld.TerrainScale;
+            float extraTranslationY = 0.0f; // -10.0f; // -12.5f * streamingWorld.TerrainScale;
 
             // world scale computed as in StreamingWorld.cs and DaggerfallTerrain.cs scripts
             float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
@@ -1125,33 +1125,71 @@ namespace ProjectIncreasedTerrainDistance
         //    }
         //}
 
-        //// Update terrain data
-        //private void UpdateTerrainData(StreamingWorld.TerrainDesc terrainDesc)
-        //{
-        //    // Instantiate Daggerfall terrain
-        //    DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
-        //    if (dfTerrain)
-        //    {
-        //        dfTerrain.TerrainScale = streamingWorld.TerrainScale;
-        //        dfTerrain.MapPixelX = terrainDesc.mapPixelX;
-        //        dfTerrain.MapPixelY = terrainDesc.mapPixelY;
-        //        dfTerrain.InstantiateTerrain();
-        //    }
+        // Update terrain data
+        private void UpdateTerrainData(TransitionTerrainDesc transitionTerrainDesc)
+        {
+            StreamingWorld.TerrainDesc terrainDesc = transitionTerrainDesc.terrainDesc;
 
-        //    // Update data for terrain
-        //    UpdateMapPixelData(ref dfTerrain, terrainDesc.mapPixelX, terrainDesc.mapPixelY, streamingWorld.TerrainTexturing);
-        //    //dfTerrain.UpdateMapPixelData(streamingWorld.TerrainTexturing);
+            // Instantiate Daggerfall terrain
+            DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+            if (dfTerrain)
+            {
+                dfTerrain.TerrainScale = streamingWorld.TerrainScale;
+                dfTerrain.MapPixelX = terrainDesc.mapPixelX;
+                dfTerrain.MapPixelY = terrainDesc.mapPixelY;
+                dfTerrain.InstantiateTerrain();
+            }
 
-        //    dfTerrain.UpdateTileMapData();
+            // Update data for terrain
+            //UpdateMapPixelData(ref dfTerrain, terrainDesc.mapPixelX, terrainDesc.mapPixelY, streamingWorld.TerrainTexturing);
+            dfTerrain.UpdateMapPixelData(streamingWorld.TerrainTexturing);
 
-        //    // Promote data to live terrain
-        //    dfTerrain.UpdateClimateMaterial();
-        //    dfTerrain.PromoteTerrainData();
+            // Update heights of transition terrain ring
+            float weightFarTerrainLeft = 0.0f;
+            float weightFarTerrainRight = 0.0f;
+            float weightFarTerrainTop = 0.0f;
+            float weightFarTerrainBottom = 0.0f;
+            if (transitionTerrainDesc.transitionRingBorderDesc.isLeftRingBorder) weightFarTerrainLeft = 1.0f;
+            if (transitionTerrainDesc.transitionRingBorderDesc.isRightRingBorder) weightFarTerrainRight = 1.0f;
+            if (transitionTerrainDesc.transitionRingBorderDesc.isTopRingBorder) weightFarTerrainTop = 1.0f;
+            if (transitionTerrainDesc.transitionRingBorderDesc.isBottomRingBorder) weightFarTerrainBottom = 1.0f;
+            float heightFarTerrainTopLeft = worldHeights[worldMapHeight - 1 - terrainDesc.mapPixelY, terrainDesc.mapPixelX - 1]; // TODO: map border handling
+            float heightFarTerrainTopRight = worldHeights[worldMapHeight - 1 - terrainDesc.mapPixelY, terrainDesc.mapPixelX]; // TODO: map border handling
+            float heightFarTerrainBottomLeft = worldHeights[worldMapHeight - 1 - terrainDesc.mapPixelY + 1, terrainDesc.mapPixelX - 1]; // TODO: map border handling
+            float heightFarTerrainBottomRight = worldHeights[worldMapHeight - 1 - terrainDesc.mapPixelY + 1, terrainDesc.mapPixelX]; // TODO: map border handling
 
-        //    // Only set active again once complete
-        //    terrainDesc.terrainObject.SetActive(true);
-        //    terrainDesc.terrainObject.name = GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
-        //}
+            //Debug.Log(String.Format("heightFarTerrainTopLeft: {0}, heightFarTerrainTopRight: {1}, heightFarTerrainBottomLeft: {0}, heightFarTerrainBottomRight: {1}", heightFarTerrainTopLeft, heightFarTerrainTopRight, heightFarTerrainBottomLeft, heightFarTerrainBottomRight));
+
+            //Terrain terrain = terrainDesc.terrainObject.GetComponent<Terrain>();
+            int heightmapHeight = dfTerrain.MapData.heightmapSamples.GetLength(0);
+            int heightmapWidth = dfTerrain.MapData.heightmapSamples.GetLength(1);
+            for (int y = 0; y < heightmapHeight; y++)
+            {
+                float fractionalAmountY = (float)y / ((float)heightmapHeight - 1);
+                for (int x = 0; x < heightmapWidth; x++)
+                {
+                    float fractionalAmountX = (float)x / ((float)heightmapWidth - 1);
+                    float weightFarTerrainX = weightFarTerrainLeft * (1.0f - fractionalAmountX) + weightFarTerrainRight * (fractionalAmountX);
+                    float weightFarTerrainY = weightFarTerrainTop * (1.0f - fractionalAmountY) + weightFarTerrainBottom * (fractionalAmountY);
+                    float weightFarTerrainCombined = weightFarTerrainX * weightFarTerrainY;
+                    float heightFarTerrain = heightFarTerrainTopLeft * (1.0f - fractionalAmountX) * (1.0f - fractionalAmountY) +
+                                             heightFarTerrainTopRight * (fractionalAmountX) * (1.0f - fractionalAmountY) +
+                                             heightFarTerrainBottomLeft * (1.0f - fractionalAmountX) * (fractionalAmountY) +
+                                             heightFarTerrainBottomRight * (fractionalAmountX) * (fractionalAmountY);
+                    dfTerrain.MapData.heightmapSamples[y, x] = heightFarTerrain; // dfTerrain.MapData.heightmapSamples[y, x] * (1.0f - weightFarTerrainCombined) + heightFarTerrain * weightFarTerrainCombined;
+                }
+            }
+
+            dfTerrain.UpdateTileMapData();
+
+            // Promote data to live terrain
+            dfTerrain.UpdateClimateMaterial();
+            dfTerrain.PromoteTerrainData();
+
+            // Only set active again once complete
+            terrainDesc.terrainObject.SetActive(true);
+            terrainDesc.terrainObject.name = GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+        }
 
         private void CreateTerrain(int mapPixelX, int mapPixelY, int nextTerrain)
         {
@@ -1201,7 +1239,8 @@ namespace ProjectIncreasedTerrainDistance
             Vector3 localPosition = new Vector3(xdif * scale, 0, -ydif * scale); // +streamingWorld.WorldCompensation;
             terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.transform.localPosition = localPosition;
 
-            streamingWorld.UpdateTerrainData(terrainTransitionRingArray[terrainIndex].terrainDesc);
+            //streamingWorld.UpdateTerrainData(terrainTransitionRingArray[terrainIndex].terrainDesc);
+            UpdateTerrainData(terrainTransitionRingArray[terrainIndex]);
         }
 
         private TransitionRingBorderDesc getTransitionRingBorderDesc(int x, int y, int distanceTransitionRingFromCenterX, int distanceTransitionRingFromCenterY)
