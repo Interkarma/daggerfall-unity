@@ -23,9 +23,9 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		_TileAtlasTexMountain ("Tileset Atlas (RGB)", 2D) = "white" {}
 		_TileAtlasTexSwamp ("Tileset Atlas (RGB)", 2D) = "white" {}
 	    _SkyTex("Sky Texture", 2D) = "white" {}
-		_TilemapTex("Tilemap (R)", 2D) = "red" {}
-		_TilesetDim("Tileset Dimension (in tiles)", Int) = 16
-		_TilemapDim("Tilemap Dimension (in tiles)", Int) = 1000
+		_FarTerrainTilemapTex("Tilemap (R)", 2D) = "red" {}
+		_FarTerrainTilesetDim("Tileset Dimension (in tiles)", Int) = 16
+		_FarTerrainTilemapDim("Tilemap Dimension (in tiles)", Int) = 1000
 		_MaxIndex("Max Tileset Index", Int) = 255
 		_AtlasSize("Atlas Size (in pixels)", Float) = 2048.0
 		_GutterSize("Gutter Size (in pixels)", Float) = 32.0
@@ -70,9 +70,9 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		sampler2D _TileAtlasTexMountain;
 		sampler2D _TileAtlasTexSwamp;
 		sampler2D _SkyTex;
-		sampler2D _TilemapTex;		
-		int _TilesetDim;
-		int _TilemapDim;
+		sampler2D _FarTerrainTilemapTex;		
+		int _FarTerrainTilesetDim;
+		int _FarTerrainTilemapDim;
 		int _MaxIndex;
 		float _AtlasSize;
 		float _GutterSize;
@@ -156,21 +156,21 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			float dist = max(abs(IN.worldPos.x - _WorldSpaceCameraPos.x), abs(IN.worldPos.z - _WorldSpaceCameraPos.z));
 			dist = floor(dist*distanceAttenuation);
 
-			uint xpos = index % _TilesetDim;
-			uint ypos = index / _TilesetDim;
-			float2 uv = float2(xpos, ypos) / _TilesetDim;
+			uint xpos = index % _FarTerrainTilesetDim;
+			uint ypos = index / _FarTerrainTilesetDim;
+			float2 uv = float2(xpos, ypos) / _FarTerrainTilesetDim;
 
 			// Offset to fragment position inside tile
 			float xoffset;
 			float yoffset;
 			// changed offset computation so that tile texture repeats over tile
-			xoffset = frac(IN.uv_MainTex.x * _TilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness ) / _GutterSize;
-			yoffset = frac(IN.uv_MainTex.y * _TilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness ) / _GutterSize;
+			xoffset = frac(IN.uv_MainTex.x * _FarTerrainTilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness ) / _GutterSize;
+			yoffset = frac(IN.uv_MainTex.y * _FarTerrainTilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness ) / _GutterSize;
 			 
 			uv += float2(xoffset, yoffset) + _GutterSize / _AtlasSize;
 
 			// Sample based on gradient and set output
-			float2 uvr = IN.uv_MainTex * ((float)_TilemapDim / _GutterSize);
+			float2 uvr = IN.uv_MainTex * ((float)_FarTerrainTilemapDim / _GutterSize);
 			half4 c = tex2Dgrad(textureAtlas, uv, ddx(uvr), ddy(uvr));
 			return(c);
 		}
@@ -190,10 +190,10 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			float weightDirt = 0.0f;
 			float weightStone = 0.0f;
 
-			float4 terrainTileInfo = tex2D(_TilemapTex, IN.uv_MainTex).rgba;
+			float4 terrainTileInfo = tex2D(_FarTerrainTilemapTex, IN.uv_MainTex).rgba;
 
-			int mapPixelX = IN.uv_MainTex.x*_TilemapDim;
-			int mapPixelY = 499 - IN.uv_MainTex.y*_TilemapDim;
+			int mapPixelX = IN.uv_MainTex.x*_FarTerrainTilemapDim;
+			int mapPixelY = 499 - IN.uv_MainTex.y*_FarTerrainTilemapDim;
 
 			// fragment discarding inside area spanned by _TerrainDistance
 			if ((abs(mapPixelX+1-_PlayerPosX)<=_TerrainDistance+2)&&(abs(mapPixelY+1-_PlayerPosY)<=_TerrainDistance+2))
@@ -302,8 +302,8 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			float extraY = (2.0f - (float)locationRangeY) * (1.0f/64.0f);
 			float yDividor = (16.0f - (float)locationRangeY);
 
-			float locationXfract = (IN.uv_MainTex.x*(float)_TilemapDim)-0.5f - (float)mapPixelX;
-			float locationYfract = (499 - IN.uv_MainTex.y*(float)_TilemapDim)-0.5f - (float)mapPixelY;
+			float locationXfract = (IN.uv_MainTex.x*(float)_FarTerrainTilemapDim)-0.5f - (float)mapPixelX;
+			float locationYfract = (499 - IN.uv_MainTex.y*(float)_FarTerrainTilemapDim)-0.5f - (float)mapPixelY;
 
 			// for debugging - red location markers
 			//if ((abs(locationXfract - extraX) < (float)locationRangeX/xDividor) && (abs(locationYfract - extraY) < (float)locationRangeY/yDividor)) 

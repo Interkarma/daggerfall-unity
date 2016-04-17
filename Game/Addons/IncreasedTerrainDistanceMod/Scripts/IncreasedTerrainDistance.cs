@@ -411,9 +411,9 @@ namespace ProjectIncreasedTerrainDistance
             textureTerrainInfoTileMap.Apply(false);
 
             terrainMaterial.SetTexture("_MainTex", textureTerrainInfoTileMap);
-            terrainMaterial.SetTexture("_TilemapTex", textureTerrainInfoTileMap);
+            terrainMaterial.SetTexture("_FarTerrainTilemapTex", textureTerrainInfoTileMap);
 
-            terrainMaterial.SetInt("_TilemapDim", terrainInfoTileMapDim);
+            terrainMaterial.SetInt("_FarTerrainTilemapDim", terrainInfoTileMapDim);
 
             terrainMaterial.mainTexture = textureTerrainInfoTileMap;
         }
@@ -993,7 +993,7 @@ namespace ProjectIncreasedTerrainDistance
             terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
             terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
             terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
-            //terrainMaterial.SetTexture("_TilemapTex", textureTerrainInfoTileMap);
+            //terrainMaterial.SetTexture("_FarTerrainTilemapTex", textureTerrainInfoTileMap);
 
             terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
             
@@ -1142,6 +1142,12 @@ namespace ProjectIncreasedTerrainDistance
             // Promote data to live terrain
             dfTerrain.UpdateClimateMaterial();
             dfTerrain.PromoteTerrainData();
+
+            // inject transition ring shader
+            Terrain terrain = transitionTerrainDesc.terrainDesc.terrainObject.GetComponent<Terrain>();
+            Material oldMaterial = terrain.materialTemplate;
+            terrain.materialTemplate = new Material(Shader.Find("Daggerfall/TransitionRingTilemap"));
+            terrain.materialTemplate.CopyPropertiesFromMaterial(oldMaterial);
 
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);
