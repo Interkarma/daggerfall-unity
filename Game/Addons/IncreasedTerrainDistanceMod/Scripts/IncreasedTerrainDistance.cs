@@ -607,7 +607,7 @@ namespace ProjectIncreasedTerrainDistance
             cameraRenderSkyboxToTexture.targetTexture = renderTextureSky;
         }
 
-        void setMaterialFogParameters()
+        void setMaterialFogParameters(Material terrainMaterial)
         {
             if (terrainMaterial != null)
             {
@@ -656,7 +656,7 @@ namespace ProjectIncreasedTerrainDistance
                 Terrain terrain = worldTerrainGameObject.GetComponent<Terrain>();
                 if (terrain)
                 {
-                    setMaterialFogParameters();
+                    setMaterialFogParameters(this.terrainMaterial);
             
                     #if ENHANCED_SKY_CODE_AVAILABLE
                     if (isActiveEnhancedSkyMod)
@@ -677,11 +677,12 @@ namespace ProjectIncreasedTerrainDistance
                     terrain.materialTemplate.SetFloat("_BlendEnd", blendEnd);
                 }
 
-                updateSeasonalTextures(); // this is necessary since climate changes may occur after UpdateWorldTerrain() has been invoked, TODO: an event would be ideal to trigger updateSeasonalTextures() instead
+                updateSeasonalTextures(terrain.materialTemplate); // this is necessary since climate changes may occur after UpdateWorldTerrain() has been invoked, TODO: an event would be ideal to trigger updateSeasonalTextures() instead
             }
             if (gameobjectTerrainTransitionRing != null)
             {
                 updateSeasonalTexturesTerrainTransitionRing();
+                updateMaterialShaderPropertiesTerrainTransitionRing();
             }
         }
 
@@ -702,7 +703,7 @@ namespace ProjectIncreasedTerrainDistance
                 Vector3 offset = new Vector3(0.0f, 0.0f, 0.0f);
                 updatePositionWorldTerrain(ref worldTerrainGameObject, offset);
 
-                updateSeasonalTextures();
+                updateSeasonalTextures(terrain.materialTemplate);
 
                 generateTerrainTransitionRing();
 
@@ -716,7 +717,7 @@ namespace ProjectIncreasedTerrainDistance
 
         #region Private Methods
 
-        private void updateSeasonalTextures()
+        private void updateSeasonalTextures(Material terrainMaterial)
         {
             if (!weatherManager)
                 return;
@@ -794,6 +795,32 @@ namespace ProjectIncreasedTerrainDistance
             }
         }
 
+        private void updateMaterialShaderPropertiesTerrainTransitionRing()
+        {
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {
+                if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
+                {
+                    Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+
+                    updateSeasonalTextures(terrain.materialTemplate);
+
+#if ENHANCED_SKY_CODE_AVAILABLE
+                    if (isActiveEnhancedSkyMod)
+                    {
+                        if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
+                        {
+                            terrain.materialTemplate.SetFloat("_FogFromSkyTex", 1);
+                        }
+                        else
+                        {
+                            terrain.materialTemplate.SetFloat("_FogFromSkyTex", 0);
+                        }
+                    }
+#endif
+                }
+            }
+        }
 
         private void updatePositionWorldTerrain(ref GameObject terrainGameObject, Vector3 offset)
         {
@@ -988,7 +1015,7 @@ namespace ProjectIncreasedTerrainDistance
             terrainMaterial = new Material(Shader.Find("Daggerfall/IncreasedTerrainTilemap"));
             terrainMaterial.name = string.Format("world terrain material");
 
-            // Assign textures and parameters            
+            // Assign textures and parameters     
             terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
             terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
             terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
@@ -996,8 +1023,8 @@ namespace ProjectIncreasedTerrainDistance
             //terrainMaterial.SetTexture("_FarTerrainTilemapTex", textureTerrainInfoTileMap);
 
             terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
-            
-            updateSeasonalTextures(); // change seasonal textures if necessary
+
+            updateSeasonalTextures(terrainMaterial); // change seasonal textures if necessary
 
             terrainMaterial.SetInt("_PlayerPosX", this.playerGPS.CurrentMapPixel.X);
             terrainMaterial.SetInt("_PlayerPosY", this.playerGPS.CurrentMapPixel.Y);
@@ -1010,9 +1037,7 @@ namespace ProjectIncreasedTerrainDistance
 
             terrainMaterial.SetTexture("_SkyTex", renderTextureSky);           
 
-            setMaterialFogParameters();
-
-            terrainMaterial.SetInt("_FogFromSkyTex", 0);
+            setMaterialFogParameters(terrainMaterial);
 
             //terrainMaterial.SetFloat("_BlendFactor", blendFactor);
             terrainMaterial.SetFloat("_BlendStart", blendStart);
@@ -1061,26 +1086,6 @@ namespace ProjectIncreasedTerrainDistance
             terrainObject.name = GetTerrainName(mapPixelX, mapPixelY);
             terrainObject.hideFlags = HideFlags.None;
         }
-
-        //public void UpdateMapPixelData(ref DaggerfallTerrain dfTerrain, int mapPixelX, int mapPixelY, TerrainTexturing terrainTexturing = null)
-        //{
-        //    // Get basic terrain data
-        //    dfTerrain.MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, mapPixelX, mapPixelY);
-        //    dfUnity.TerrainSampler.GenerateSamples(ref dfTerrain.MapData);
-
-        //    // Handle terrain with location
-        //    if (dfTerrain.MapData.hasLocation)
-        //    {
-        //        TerrainHelper.SetLocationTiles(ref dfTerrain.MapData);
-        //        TerrainHelper.BlendLocationTerrain(ref dfTerrain.MapData);
-        //    }
-
-        //    // Set textures
-        //    if (terrainTexturing != null)
-        //    {
-        //        terrainTexturing.AssignTiles(dfUnity.TerrainSampler, ref dfTerrain.MapData);
-        //    }
-        //}
 
         // Update terrain data
         private void UpdateTerrainData(TransitionTerrainDesc transitionTerrainDesc)
@@ -1148,6 +1153,59 @@ namespace ProjectIncreasedTerrainDistance
             Material oldMaterial = terrain.materialTemplate;
             terrain.materialTemplate = new Material(Shader.Find("Daggerfall/TransitionRingTilemap"));
             terrain.materialTemplate.CopyPropertiesFromMaterial(oldMaterial);
+
+            // Assign textures and parameters
+            terrain.materialTemplate.SetTexture("_FarTerrainTilemapTex", textureTerrainInfoTileMap);
+            terrain.materialTemplate.SetInt("_FarTerrainTilemapDim", terrainInfoTileMapDim);
+
+            terrain.materialTemplate.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
+            terrain.materialTemplate.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
+            terrain.materialTemplate.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
+            terrain.materialTemplate.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);            
+
+            terrain.materialTemplate.SetInt("_TextureSetSeasonCode", 0);
+
+            updateSeasonalTextures(terrain.materialTemplate); // change seasonal textures if necessary
+
+            terrain.materialTemplate.SetInt("_MapPixelX", dfTerrain.MapPixelX);
+            terrain.materialTemplate.SetInt("_MapPixelY", dfTerrain.MapPixelY);
+
+            terrain.materialTemplate.SetInt("_PlayerPosX", this.playerGPS.CurrentMapPixel.X);
+            terrain.materialTemplate.SetInt("_PlayerPosY", this.playerGPS.CurrentMapPixel.Y);
+
+            terrain.materialTemplate.SetInt("_TerrainDistance", streamingWorld.TerrainDistance - 1); // -1... allow the outer ring of of detailed terrain to intersect with far terrain (to prevent some holes)
+
+            Vector3 vecWaterHeight = new Vector3(0.0f, (ImprovedTerrainSampler.scaledOceanElevation + 1.0f) * streamingWorld.TerrainScale, 0.0f); // water height level on y-axis (+1.0f some coastlines are incorrect otherwise)
+            Vector3 vecWaterHeightTransformed = worldTerrainGameObject.transform.TransformPoint(vecWaterHeight); // transform to world coordinates
+            terrain.materialTemplate.SetFloat("_WaterHeightTransformed", vecWaterHeightTransformed.y);
+
+            terrain.materialTemplate.SetTexture("_SkyTex", renderTextureSky);
+
+            terrain.materialTemplate.SetInt("_FogFromSkyTex", 0);
+            setMaterialFogParameters(terrain.materialTemplate);            
+
+            //terrainMaterial.SetFloat("_BlendFactor", blendFactor);
+            terrain.materialTemplate.SetFloat("_BlendStart", blendStart);
+            terrain.materialTemplate.SetFloat("_BlendEnd", blendEnd);
+
+#if REFLECTIONSMOD_CODE_AVAILABLE
+            if (isActiveReflectionsMod)
+            {
+                reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
+                if (reflectionSeaTexture != null)
+                {
+                    terrain.materialTemplate.EnableKeyword("ENABLE_WATER_REFLECTIONS");
+                    terrain.materialTemplate.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
+                    terrain.materialTemplate.SetInt("_UseSeaReflectionTex", 1);
+                }
+                else
+                {
+                    terrain.materialTemplate.SetInt("_UseSeaReflectionTex", 0);
+                }
+            }
+#else
+            terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
+#endif
 
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);

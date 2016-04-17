@@ -273,7 +273,7 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 				c_s = getColorByTextureAtlasIndex(IN, _TileAtlasTexMountain, 12);
 				c = c_g * weightGrass + c_d * weightDirt + c_s * weightStone;
 			}
-			else if ((index==231)||(index==232)||(index==233)) // moderate
+			else if ((index==231)||(index==232)||(index==233)) // woodland
 			{
 				c_g = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 8);
 				c_d = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 4);
