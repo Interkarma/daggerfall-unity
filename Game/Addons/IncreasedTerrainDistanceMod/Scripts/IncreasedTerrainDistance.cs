@@ -782,11 +782,14 @@ namespace ProjectIncreasedTerrainDistance
         private void updateSeasonalTexturesTerrainTransitionRing()
         {
             for (int i = 0; i < terrainTransitionRingArray.Length; i++)
-            {                
-                DaggerfallTerrain dfTerrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
-                if (dfTerrain != null)
-                {             
-                    dfTerrain.UpdateClimateMaterial();
+            {
+                if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
+                {
+                    DaggerfallTerrain dfTerrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+                    if (dfTerrain != null)
+                    {
+                        dfTerrain.UpdateClimateMaterial();
+                    }
                 }
             }
         }
@@ -1145,13 +1148,13 @@ namespace ProjectIncreasedTerrainDistance
             terrainDesc.terrainObject.name = GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
         }
 
-        private void CreateTerrain(int mapPixelX, int mapPixelY, int nextTerrain)
+        private bool CreateTerrain(int mapPixelX, int mapPixelY, int indexTerrain)
         {
             // Do nothing if out of range
             if (mapPixelX < MapsFile.MinMapPixelX || mapPixelX >= MapsFile.MaxMapPixelX ||
                 mapPixelY < MapsFile.MinMapPixelY || mapPixelY >= MapsFile.MaxMapPixelY)
             {
-                return;
+                return false;
             }
 
             // Get terrain key
@@ -1163,24 +1166,26 @@ namespace ProjectIncreasedTerrainDistance
             //int nextTerrain = terrainTransitionRingIndexDict.Count;
 
             // Setup new terrain
-            terrainTransitionRingArray[nextTerrain].terrainDesc.active = true;
-            terrainTransitionRingArray[nextTerrain].terrainDesc.updateData = true;
-            terrainTransitionRingArray[nextTerrain].terrainDesc.updateNature = true;
-            terrainTransitionRingArray[nextTerrain].terrainDesc.mapPixelX = mapPixelX;
-            terrainTransitionRingArray[nextTerrain].terrainDesc.mapPixelY = mapPixelY;
-            if (!terrainTransitionRingArray[nextTerrain].terrainDesc.terrainObject)
+            terrainTransitionRingArray[indexTerrain].terrainDesc.active = true;
+            terrainTransitionRingArray[indexTerrain].terrainDesc.updateData = true;
+            terrainTransitionRingArray[indexTerrain].terrainDesc.updateNature = true;
+            terrainTransitionRingArray[indexTerrain].terrainDesc.mapPixelX = mapPixelX;
+            terrainTransitionRingArray[indexTerrain].terrainDesc.mapPixelY = mapPixelY;
+            if (!terrainTransitionRingArray[indexTerrain].terrainDesc.terrainObject)
             {
                 // Create game objects for new terrain
                 CreateTerrainGameObjects(
                     mapPixelX,
                     mapPixelY,
-                    out terrainTransitionRingArray[nextTerrain].terrainDesc.terrainObject);
+                    out terrainTransitionRingArray[indexTerrain].terrainDesc.terrainObject);
             }
 
             // Add new terrain index to transition ring dictionary
-            terrainTransitionRingIndexDict.Add(key, nextTerrain);
+            terrainTransitionRingIndexDict.Add(key, indexTerrain);
 
-            terrainTransitionRingArray[nextTerrain].terrainDesc.terrainObject.transform.SetParent(gameobjectTerrainTransitionRing.transform);
+            terrainTransitionRingArray[indexTerrain].terrainDesc.terrainObject.transform.SetParent(gameobjectTerrainTransitionRing.transform);
+
+            return true;
         }
 
         private void UpdateTerrain(int terrainIndex)
@@ -1250,12 +1255,15 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     if ((Math.Abs(x) == distanceTransitionRingFromCenterX) || (Math.Abs(y) == distanceTransitionRingFromCenterY))
                     {
-                        CreateTerrain(playerGPS.CurrentMapPixel.X + x, playerGPS.CurrentMapPixel.Y + y, terrainIndex);
-                        terrainTransitionRingArray[terrainIndex].transitionRingBorderDesc = getTransitionRingBorderDesc(x, y, distanceTransitionRingFromCenterX, distanceTransitionRingFromCenterY);
-                        terrainTransitionRingArray[terrainIndex].heightsUpdatePending = true;
-                        terrainTransitionRingArray[terrainIndex].positionUpdatePending = true;
-                        UpdateTerrain(terrainIndex);
-                        terrainIndex++;
+                        bool successCreate = CreateTerrain(playerGPS.CurrentMapPixel.X + x, playerGPS.CurrentMapPixel.Y + y, terrainIndex);
+                        if (successCreate)
+                        {
+                            terrainTransitionRingArray[terrainIndex].transitionRingBorderDesc = getTransitionRingBorderDesc(x, y, distanceTransitionRingFromCenterX, distanceTransitionRingFromCenterY);
+                            terrainTransitionRingArray[terrainIndex].heightsUpdatePending = true;
+                            terrainTransitionRingArray[terrainIndex].positionUpdatePending = true;
+                            UpdateTerrain(terrainIndex);
+                            terrainIndex++;
+                        }
                     }
                 }
             }
