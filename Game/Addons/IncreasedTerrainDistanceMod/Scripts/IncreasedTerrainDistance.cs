@@ -136,6 +136,8 @@ namespace ProjectIncreasedTerrainDistance
         TransitionTerrainDesc[] terrainTransitionRingArray = null;
         Dictionary<int, int> terrainTransitionRingIndexDict = new Dictionary<int, int>();
 
+        GameObject gameobjectTerrainTransitionRing = null; // container gameobject for transition ring's terrain blocks
+
 
         // stacked near camera (used for near terrain from range 1000-15000) to prevent floating-point rendering precision problems for huge clipping ranges
         Camera stackedNearCamera = null; 
@@ -256,7 +258,7 @@ namespace ProjectIncreasedTerrainDistance
 
             FloatingOrigin.OnPositionUpdate += WorldTerrainUpdatePosition;
 
-            StreamingWorld.OnReady += UpdateTerrainInfoTilemap; // important to do actions after TerrainHelper.DilateCoastalClimate() was called in StreamingWorld.ReadyCheck()
+            StreamingWorld.OnReady += InitFarTerrain; // important to do actions after TerrainHelper.DilateCoastalClimate() was called in StreamingWorld.ReadyCheck()
 
             StreamingWorld.OnTeleportToCoordinates += UpdateWorldTerrain;
 
@@ -277,7 +279,7 @@ namespace ProjectIncreasedTerrainDistance
 
             FloatingOrigin.OnPositionUpdate -= WorldTerrainUpdatePosition;
 
-            StreamingWorld.OnReady -= UpdateTerrainInfoTilemap;
+            StreamingWorld.OnReady -= InitFarTerrain;
 
             StreamingWorld.OnTeleportToCoordinates -= UpdateWorldTerrain;
 
@@ -326,7 +328,7 @@ namespace ProjectIncreasedTerrainDistance
             }
         }
 
-        void UpdateTerrainInfoTilemap()
+        void InitFarTerrain()
         {
             InitImprovedWorldTerrain();
 
@@ -677,6 +679,10 @@ namespace ProjectIncreasedTerrainDistance
 
                 updateSeasonalTextures(); // this is necessary since climate changes may occur after UpdateWorldTerrain() has been invoked, TODO: an event would be ideal to trigger updateSeasonalTextures() instead
             }
+            if (gameobjectTerrainTransitionRing != null)
+            {
+                updateSeasonalTexturesTerrainTransitionRing();
+            }
         }
 
         void UpdateWorldTerrain()
@@ -772,6 +778,19 @@ namespace ProjectIncreasedTerrainDistance
                 oldSeason = currentSeason;                
             }
         }
+
+        private void updateSeasonalTexturesTerrainTransitionRing()
+        {
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {                
+                DaggerfallTerrain dfTerrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+                if (dfTerrain != null)
+                {             
+                    dfTerrain.UpdateClimateMaterial();
+                }
+            }
+        }
+
 
         private void updatePositionWorldTerrain(ref GameObject terrainGameObject, Vector3 offset)
         {
@@ -1160,6 +1179,8 @@ namespace ProjectIncreasedTerrainDistance
 
             // Add new terrain index to transition ring dictionary
             terrainTransitionRingIndexDict.Add(key, nextTerrain);
+
+            terrainTransitionRingArray[nextTerrain].terrainDesc.terrainObject.transform.SetParent(gameobjectTerrainTransitionRing.transform);
         }
 
         private void UpdateTerrain(int terrainIndex)
@@ -1206,6 +1227,11 @@ namespace ProjectIncreasedTerrainDistance
 
         private void generateTerrainTransitionRing()
         {
+            if (gameobjectTerrainTransitionRing == null)
+            {
+                gameobjectTerrainTransitionRing = new GameObject("TerrainTransitionRing");
+                gameobjectTerrainTransitionRing.transform.SetParent(GameManager.Instance.ExteriorParent.transform);
+            }
             terrainTransitionRingIndexDict.Clear();
             for (int i = 0; i < terrainTransitionRingArray.Length; i++)
             {
