@@ -55,20 +55,20 @@ Shader "Daggerfall/TransitionRingTilemap" {
 		_FogFromSkyTex("specifies if fog color should be derived from sky texture or not", Int) = 0
 	}
 	SubShader {
-		//Tags { "RenderType"="Opaque" "Queue" = "Overlay"} // Overlay is workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
-		Tags { "RenderType"="Opaque"} // Overlay is workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
+		//Tags { "RenderType"="Opaque" "Queue" = "Overlay"} // Overlay is workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"		
+		Tags { "RenderType"="Opaque"} // Overlay is workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"		
 		LOD 200
 
 		// extra pass that renders to depth buffer only (world terrain is semi-transparent) - important for correct blending
-		//Pass {
-		//	ZWrite On
-		//	ColorMask 0		
-		//}
+		Pass {
+			ZWrite On
+			ColorMask 0		
+		}
 		
 		CGPROGRAM
 		#pragma target 3.0
-		//#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd
-		#pragma surface surf Lambert //alpha:fade keepalpha noforwardadd
+		#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd
+		//#pragma surface surf Lambert //alpha:fade keepalpha noforwardadd
 		#pragma glsl
 
 		sampler2D _TileAtlasTex;
@@ -176,21 +176,24 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			float dist = max(abs(IN.worldPos.x - _WorldSpaceCameraPos.x), abs(IN.worldPos.z - _WorldSpaceCameraPos.z));
 			dist = floor(dist*distanceAttenuation);
 
-			uint xpos = index % _FarTerrainTilesetDim;
-			uint ypos = index / _FarTerrainTilesetDim;
-			float2 uv = float2(xpos, ypos) / _FarTerrainTilesetDim;
+			uint xpos = index % _TilesetDim;
+			uint ypos = index / _TilesetDim;
+			float2 uv = float2(xpos, ypos) / _TilesetDim;
 
 			// Offset to fragment position inside tile
 			float xoffset;
 			float yoffset;
 			// changed offset computation so that tile texture repeats over tile		
-			xoffset = frac(uvTex.x * _FarTerrainTilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness ) / _GutterSize;
-			yoffset = frac(uvTex.y * _FarTerrainTilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness ) / _GutterSize;
+			//xoffset = frac(uvTex.x * _FarTerrainTilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness ) / _GutterSize;
+			//yoffset = frac(uvTex.y * _FarTerrainTilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness ) / _GutterSize;
+			xoffset = frac(uvTex.x * _FarTerrainTilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness) / _GutterSize;
+			yoffset = frac(uvTex.y * _FarTerrainTilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness) / _GutterSize;
 			 
 			uv += float2(xoffset, yoffset) + _GutterSize / _AtlasSize;
 
 			// Sample based on gradient and set output
-			float2 uvr = IN.uv_MainTex * ((float)_TilemapDim / _GutterSize);
+			//float2 uvr = IN.uv_MainTex; // * ((float)_FarTerrainTilemapDim / _GutterSize);
+			float2 uvr = uvTex * ((float)_TilemapDim / _GutterSize);
 			half4 c = tex2Dgrad(textureAtlas, uv, ddx(uvr), ddy(uvr));
 			return(c);
 		}
@@ -210,14 +213,12 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			float weightDirt = 0.0f;
 			float weightStone = 0.0f;
 
-			int posX = _MapPixelX;
-			int posY = 499 - _MapPixelY + 1;
+			int mapPixelX = _MapPixelX;
+			int mapPixelY = _MapPixelY;
 
-			//float2 uvTex = float2((float)posX/(float)_FarTerrainTilemapDim + (1.0f/_FarTerrainTilemapDim)*IN.uv_MainTex.x, (float)posY/(float)(_FarTerrainTilemapDim*0.5f) + (1.0f/(_FarTerrainTilemapDim*0.5f))*IN.uv_MainTex.y);
-			//float2 uvTex =	float2(
-			//						(float)posX/(float)_FarTerrainTilemapDim + (1.0f/_FarTerrainTilemapDim)*IN.uv_MainTex.x,
-			//						(float)posY/(float)(_FarTerrainTilemapDim*0.5f) + (1.0f/(_FarTerrainTilemapDim*0.5f)) + (1.0f/(_FarTerrainTilemapDim*0.5f))*IN.uv_MainTex.y
-			//				);
+			int posX = mapPixelX;
+			int posY = 500 - mapPixelY;
+
 
 			float2 uvTex =	float2(
 									(float)posX/(float)_FarTerrainTilemapDim + (1.0f/_FarTerrainTilemapDim)*IN.uv_MainTex.x,
@@ -257,11 +258,11 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			{							
 				c = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 0, uvTex);
 				#if defined(ENABLE_WATER_REFLECTIONS)
-//					if (_UseSeaReflectionTex)
-//					{
-//						float2 screenUV = IN.screenPos.xy / IN.screenPos.w;	
-//						c.rgb = 0.5f * c.rgb + 0.5f * tex2D(_SeaReflectionTex, screenUV).rgb;
-//					}
+					if (_UseSeaReflectionTex)
+					{
+						float2 screenUV = IN.screenPos.xy / IN.screenPos.w;	
+						c.rgb = 0.5f * c.rgb + 0.5f * tex2D(_SeaReflectionTex, screenUV).rgb;
+					}
 				#endif
 				//discard;
 			}
@@ -297,7 +298,7 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			{
 				c=half4(0.0f, 0.0f, 0.0f, 1.0f);
 			}
-			/*
+			
 			float treeCoverage = terrainTileInfo.g;
 
 			uint locationRangeX = terrainTileInfo.b * _MaxIndex;
@@ -335,7 +336,7 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			c.rgb = min(1.0f, 0.3f * c.rgb + 0.7f * ((1.0f - treeCoverage) * c.rgb + treeCoverage * treeColor));		
 			c.rgb = 0.9f * c.rgb;
 			}
-			*/
+			
 			/*
 			// Get offset to tile in atlas
 			index = tex2D(_TilemapTex, IN.uv_MainTex).x * _MaxIndex;
@@ -355,7 +356,7 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			//o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 			*/
 
-			o.Albedo = terrainTileInfo.rgb; //c.rgb; //0.5f * c.rgb + 0.5f * c2.rgb;
+			o.Albedo = c.rgb; //0.5f * c.rgb + 0.5f * c2.rgb;
 			//o.Albedo = tex2D(_FarTerrainTilemapTex, IN.uv_MainTex).rgba;
 			//o.Albedo = tex2D(_FarTerrainTilemapTex, (IN.uv_MainTex)*0.5f).rgba;
 		}

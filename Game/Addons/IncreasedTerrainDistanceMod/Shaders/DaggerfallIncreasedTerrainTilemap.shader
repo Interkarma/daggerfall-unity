@@ -170,7 +170,7 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			uv += float2(xoffset, yoffset) + _GutterSize / _AtlasSize;
 
 			// Sample based on gradient and set output
-			float2 uvr = IN.uv_MainTex * ((float)_FarTerrainTilemapDim / _GutterSize);
+			float2 uvr = IN.uv_MainTex * ((float)_FarTerrainTilemapDim / _GutterSize); // IN.uv_MainTex / _GutterSize;
 			half4 c = tex2Dgrad(textureAtlas, uv, ddx(uvr), ddy(uvr));
 			return(c);
 		}
