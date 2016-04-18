@@ -99,7 +99,7 @@ namespace ProjectIncreasedTerrainDistance
         Texture2D textureTerrainInfoTileMap = null;
 
 
-        ClimateSeason oldSeason = ClimateSeason.Summer;
+        ClimateSeason currentSeason = ClimateSeason.Summer;
 
         Texture2D textureAtlasDesertSummer = null;
         Texture2D textureAtlasWoodlandSummer = null;
@@ -644,6 +644,7 @@ namespace ProjectIncreasedTerrainDistance
             if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
                 return;
 
+            bool doSeasonalTexturesUpdate = shouldUpdateSeasonalTextures();
             if (worldTerrainGameObject != null)
             {
                 // TODO: make sure this block is not executed when in floating origin mode (otherwise position update is done twice)
@@ -679,11 +680,19 @@ namespace ProjectIncreasedTerrainDistance
                     terrain.materialTemplate.SetFloat("_BlendEnd", blendEnd);
                 }
 
-                updateSeasonalTextures(terrain.materialTemplate); // this is necessary since climate changes may occur after UpdateWorldTerrain() has been invoked, TODO: an event would be ideal to trigger updateSeasonalTextures() instead
+                if (doSeasonalTexturesUpdate)
+                {
+                    Material mat = terrain.materialTemplate;
+                    updateMaterialSeasonalTextures(ref mat, currentSeason); // this is necessary since climate changes may occur after UpdateWorldTerrain() has been invoked, TODO: an event would be ideal to trigger updateSeasonalTextures() instead
+                    terrain.materialTemplate = mat;
+                }
             }
             if (gameobjectTerrainTransitionRing != null)
             {
-                updateSeasonalTexturesTerrainTransitionRing();
+                if (doSeasonalTexturesUpdate)
+                {
+                    updateSeasonalTexturesTerrainTransitionRing();
+                }
                 updateMaterialShaderPropertiesTerrainTransitionRing();
             }
         }
@@ -705,12 +714,24 @@ namespace ProjectIncreasedTerrainDistance
                 Vector3 offset = new Vector3(0.0f, 0.0f, 0.0f);
                 updatePositionWorldTerrain(ref worldTerrainGameObject, offset);
 
-                updateSeasonalTextures(terrain.materialTemplate);
+                bool doSeasonalTexturesUpdate = shouldUpdateSeasonalTextures();
+
+                if (doSeasonalTexturesUpdate)
+                {
+                    Material mat = terrain.materialTemplate;
+                    updateMaterialSeasonalTextures(ref mat, currentSeason); // this is necessary since climate changes may occur after UpdateWorldTerrain() has been invoked, TODO: an event would be ideal to trigger updateSeasonalTextures() instead
+                    terrain.materialTemplate = mat;
+                }              
 
                 //if (gameobjectTerrainTransitionRing) // only "change" if already initialized - otherwise wait for function generateWorldTerrain() to invoke this function
                 //{
                     generateTerrainTransitionRing();
                 //}
+
+                if (doSeasonalTexturesUpdate)
+                {
+                    updateSeasonalTexturesTerrainTransitionRing();
+                }
 
                 Resources.UnloadUnusedAssets();
 
@@ -722,66 +743,76 @@ namespace ProjectIncreasedTerrainDistance
 
         #region Private Methods
 
-        private void updateSeasonalTextures(Material terrainMaterial)
+        private void updateMaterialSeasonalTextures(ref Material terrainMaterial, ClimateSeason currentSeason)
+        {
+
+            switch (currentSeason)
+            {
+                case ClimateSeason.Summer:
+                    terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
+                    terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
+                    break;
+                case ClimateSeason.Winter:
+                    terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertWinter);
+                    terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandWinter);
+                    terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainWinter);
+                    terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampWinter);
+                    terrainMaterial.SetInt("_TextureSetSeasonCode", 1);
+                    break;
+                case ClimateSeason.Rain:
+                    terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertRain);
+                    terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandRain);
+                    terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainRain);
+                    terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampRain);
+                    terrainMaterial.SetInt("_TextureSetSeasonCode", 2);
+                    break;
+                default:
+                    terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
+                    terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
+                    break;
+            }
+        }
+
+        private bool shouldUpdateSeasonalTextures()
         {
             if (!weatherManager)
-                return;
+                return false;
 
-            ClimateSeason currentSeason;
+            ClimateSeason newSeason;
 
             // Get season and weather
             if (dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter)
             {
-                currentSeason = ClimateSeason.Winter;
+                newSeason = ClimateSeason.Winter;
             }
             else
             {
-                currentSeason = ClimateSeason.Summer;
+                newSeason = ClimateSeason.Summer;
 
                 if (weatherManager.IsRaining)
                 {
-                    currentSeason = ClimateSeason.Rain;
+                    newSeason = ClimateSeason.Rain;
                 }
                 else if (weatherManager.IsSnowing) // should not happen (snow in summer would be weird...)
                 {
-                    currentSeason = ClimateSeason.Winter;
+                    newSeason = ClimateSeason.Winter;
                 }
             }
-                
-            if (currentSeason != oldSeason)
-               {
-                switch (currentSeason)
-                {
-                    case ClimateSeason.Summer:
-                        terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
-                        terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
-                        break;
-                    case ClimateSeason.Winter:
-                        terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertWinter);
-                        terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandWinter);
-                        terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainWinter);
-                        terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampWinter);
-                        terrainMaterial.SetInt("_TextureSetSeasonCode", 1);
-                        break;
-                    case ClimateSeason.Rain:
-                        terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertRain);
-                        terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandRain);
-                        terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainRain);
-                        terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampRain);
-                        terrainMaterial.SetInt("_TextureSetSeasonCode", 2);
-                        break;
-                    default:
-                        terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
-                        terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
-                        break;
-                }
-                oldSeason = currentSeason;                
+
+            if (newSeason != currentSeason)
+            {
+                currentSeason = newSeason;
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -796,6 +827,11 @@ namespace ProjectIncreasedTerrainDistance
                     {
                         dfTerrain.UpdateClimateMaterial();
                     }
+
+                    Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+                    Material mat = terrain.materialTemplate;
+                    updateMaterialSeasonalTextures(ref mat, currentSeason);
+                    terrain.materialTemplate = mat;
                 }
             }
         }
@@ -807,8 +843,6 @@ namespace ProjectIncreasedTerrainDistance
                 if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
                 {
                     Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
-
-                    updateSeasonalTextures(terrain.materialTemplate);
 
 #if ENHANCED_SKY_CODE_AVAILABLE
                     if (isActiveEnhancedSkyMod)
@@ -1029,7 +1063,7 @@ namespace ProjectIncreasedTerrainDistance
 
             terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
 
-            updateSeasonalTextures(terrainMaterial); // change seasonal textures if necessary
+            updateMaterialSeasonalTextures(ref terrainMaterial, currentSeason); // change seasonal textures if necessary
 
             terrainMaterial.SetInt("_PlayerPosX", this.playerGPS.CurrentMapPixel.X);
             terrainMaterial.SetInt("_PlayerPosY", this.playerGPS.CurrentMapPixel.Y);
@@ -1169,9 +1203,9 @@ namespace ProjectIncreasedTerrainDistance
             newMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
             newMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);            
 
-            newMaterial.SetInt("_TextureSetSeasonCode", 0);
+            //newMaterial.SetInt("_TextureSetSeasonCode", 0);
 
-            updateSeasonalTextures(newMaterial); // change seasonal textures if necessary
+            updateMaterialSeasonalTextures(ref newMaterial, currentSeason); // change seasonal textures if necessary
 
             newMaterial.SetInt("_MapPixelX", dfTerrain.MapPixelX);
             newMaterial.SetInt("_MapPixelY", dfTerrain.MapPixelY);
@@ -1213,7 +1247,8 @@ namespace ProjectIncreasedTerrainDistance
             terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
 #endif
 
-            terrain.materialTemplate = newMaterial;            
+            terrain.materialTemplate = newMaterial;
+            dfTerrain.TerrainMaterial = terrain.materialTemplate; // important so that we can later call DaggerfallTerrain.UpdateClimateMaterial and it will update the correct reference
 
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);

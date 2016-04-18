@@ -337,7 +337,7 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			c.rgb = 0.9f * c.rgb;
 			}
 			
-			/*
+			
 			// Get offset to tile in atlas
 			index = tex2D(_TilemapTex, IN.uv_MainTex).x * _MaxIndex;
 			int xpos = index % _TilesetDim;
@@ -354,11 +354,9 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			half4 c2 = tex2Dgrad(_TileAtlasTex, uv, ddx(uvr), ddy(uvr));
 			//o.Albedo = 0.5f * c2.rgb + 0.5f * half3(1.0f, 0.0f, 0.0f);
 			//o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
-			*/
+			
 
-			o.Albedo = c.rgb; //0.5f * c.rgb + 0.5f * c2.rgb;
-			//o.Albedo = tex2D(_FarTerrainTilemapTex, IN.uv_MainTex).rgba;
-			//o.Albedo = tex2D(_FarTerrainTilemapTex, (IN.uv_MainTex)*0.5f).rgba;
+			o.Albedo = 0.5f * c.rgb + 0.5f * c2.rgb;
 		}
 
 		ENDCG
