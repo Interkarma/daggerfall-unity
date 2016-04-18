@@ -863,8 +863,8 @@ namespace ProjectIncreasedTerrainDistance
 
         private void updatePositionWorldTerrain(ref GameObject terrainGameObject, Vector3 offset)
         {
-            // reduce chance of geometry intersections of world terrain and the most outer ring of detailed terrain of the StreamingWorld component
-            float extraTranslationY = 0.05f; // -10.0f; // -12.5f * streamingWorld.TerrainScale;
+            // reduce chance of geometry intersections of world terrain and the terrain transition ring
+            float extraTranslationY = -0.5f; // -10.0f; // -12.5f * streamingWorld.TerrainScale;
 
             // world scale computed as in StreamingWorld.cs and DaggerfallTerrain.cs scripts
             float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
@@ -1201,7 +1201,12 @@ namespace ProjectIncreasedTerrainDistance
             newMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
             newMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
             newMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
-            newMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);            
+            newMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
+
+            newMaterial.SetFloat("_blendWeightFarTerrainTop", weightFarTerrainTop);
+            newMaterial.SetFloat("_blendWeightFarTerrainBottom", weightFarTerrainBottom);
+            newMaterial.SetFloat("_blendWeightFarTerrainLeft", weightFarTerrainLeft);
+            newMaterial.SetFloat("_blendWeightFarTerrainRight", weightFarTerrainRight);
 
             //newMaterial.SetInt("_TextureSetSeasonCode", 0);
 

@@ -36,6 +36,11 @@ Shader "Daggerfall/TransitionRingTilemap" {
 		_AtlasSize("Atlas Size (in pixels)", Float) = 2048.0
 		_GutterSize("Gutter Size (in pixels)", Float) = 32.0
 
+		_blendWeightFarTerrainTop("blend weight at top side of terrain block", Float) = 0.0
+		_blendWeightFarTerrainBottom("blend weight at bottom side of terrain block", Float) = 0.0
+		_blendWeightFarTerrainLeft("blend weight on left side of terrain block", Float) = 0.0
+		_blendWeightFarTerrainRight("blend weight on right side of terrain block", Float) = 0.0
+
 		_SeaReflectionTex("Reflection Texture Sea Reflection", 2D) = "black" {}
 		_UseSeaReflectionTex("specifies if sea reflection texture is used", Int) = 0
 
@@ -79,6 +84,11 @@ Shader "Daggerfall/TransitionRingTilemap" {
 		int _MaxIndex;
 		float _AtlasSize;
 		float _GutterSize;
+
+		float _blendWeightFarTerrainTop;
+		float _blendWeightFarTerrainBottom;
+		float _blendWeightFarTerrainLeft;
+		float _blendWeightFarTerrainRight;
 
 		#pragma multi_compile __ ENABLE_WATER_REFLECTIONS
 
@@ -352,11 +362,13 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			// Sample based on gradient and set output
 			float2 uvr = IN.uv_MainTex * ((float)_TilemapDim / _GutterSize);
 			half4 c2 = tex2Dgrad(_TileAtlasTex, uv, ddx(uvr), ddy(uvr));
-			//o.Albedo = 0.5f * c2.rgb + 0.5f * half3(1.0f, 0.0f, 0.0f);
 			//o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 			
+			float blendWeightX = lerp(_blendWeightFarTerrainLeft, _blendWeightFarTerrainRight, IN.uv_MainTex.x);
+			float blendWeightY = lerp(_blendWeightFarTerrainTop, _blendWeightFarTerrainBottom, IN.uv_MainTex.y);
+			float blendWeightCombined = 1.0f - max(blendWeightX, blendWeightY);
 
-			o.Albedo = 0.5f * c.rgb + 0.5f * c2.rgb;
+			o.Albedo = lerp(c.rgb, c2.rgb, blendWeightCombined);
 		}
 
 		ENDCG
