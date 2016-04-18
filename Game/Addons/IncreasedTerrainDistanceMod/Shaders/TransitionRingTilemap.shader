@@ -117,7 +117,7 @@ Shader "Daggerfall/TransitionRingTilemap" {
 		struct Input
 		{
 			float2 uv_MainTex;
-			float2 uv_BumpMap;
+			//float2 uv_BumpMap;
 			float3 worldPos; // interpolated vertex positions used for correct coast line texturing
 			float3 worldNormal; // interpolated vertex normals used for texturing terrain based on terrain slope
 			float4 screenPos;
@@ -166,7 +166,7 @@ Shader "Daggerfall/TransitionRingTilemap" {
 		}
 
 		
-		half4 getColorByTextureAtlasIndex(Input IN, uniform sampler2D textureAtlas, uint index)
+		half4 getColorByTextureAtlasIndex(Input IN, uniform sampler2D textureAtlas, uint index, float2 uvTex)
 		{			
 			const float textureCrispness = 3.5f; // defines how crisp textures of extended terrain are (higher values result in more crispness)
 			const float textureCrispnessDiminishingFactor = 0.075f; // defines how fast crispness of textures diminishes with more distance from the player (the camera)
@@ -182,15 +182,14 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			// Offset to fragment position inside tile
 			float xoffset;
 			float yoffset;
-			// changed offset computation so that tile texture repeats over tile
-			float2 uvTex = float2((float)_MapPixelX/(float)_FarTerrainTilemapDim, (float)_MapPixelY/(float)_FarTerrainTilemapDim); //IN.uv_MainTex;
+			// changed offset computation so that tile texture repeats over tile			
 			xoffset = frac(uvTex.x * _FarTerrainTilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness ) / _GutterSize;
 			yoffset = frac(uvTex.y * _FarTerrainTilemapDim * 1/(max(1,dist * textureCrispnessDiminishingFactor)) * textureCrispness ) / _GutterSize;
 			 
 			uv += float2(xoffset, yoffset) + _GutterSize / _AtlasSize;
 
 			// Sample based on gradient and set output
-			float2 uvr = uvTex * ((float)_FarTerrainTilemapDim / _GutterSize);
+			float2 uvr = IN.uv_MainTex * ((float)_TilemapDim / _GutterSize);
 			half4 c = tex2Dgrad(textureAtlas, uv, ddx(uvr), ddy(uvr));
 			return(c);
 		}
@@ -213,7 +212,7 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			int mapPixelX = _MapPixelX;
 			int mapPixelY = 499 - _MapPixelX;
 
-			float2 uvTex = float2((float)_MapPixelX/(float)_FarTerrainTilemapDim, (float)_MapPixelY/(float)_FarTerrainTilemapDim); //IN.uv_MainTex;
+			float2 uvTex = float2((float)_MapPixelX/(float)_FarTerrainTilemapDim + (1.0f/_FarTerrainTilemapDim)*IN.uv_MainTex.x, (float)_MapPixelY/(float)_FarTerrainTilemapDim + (1.0f/_FarTerrainTilemapDim)*IN.uv_MainTex.y);
 
 			float4 terrainTileInfo = tex2D(_FarTerrainTilemapTex, uvTex).rgba;
 
@@ -246,7 +245,7 @@ Shader "Daggerfall/TransitionRingTilemap" {
 
 			if ((index==223)||(IN.worldPos.y < _WaterHeightTransformed)) // water (either by tile index or by tile world position)
 			{							
-				c = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 0);
+				c = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 0, uvTex);
 				#if defined(ENABLE_WATER_REFLECTIONS)
 					if (_UseSeaReflectionTex)
 					{
@@ -258,30 +257,30 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			}
 			else if ((index==224)||(index==225)||(index==229)) // desert
 			{				
-				c_g = getColorByTextureAtlasIndex(IN, _TileAtlasTexDesert, 8);
-				c_d = getColorByTextureAtlasIndex(IN, _TileAtlasTexDesert, 4);
-				c_s = getColorByTextureAtlasIndex(IN, _TileAtlasTexDesert, 12);
+				c_g = getColorByTextureAtlasIndex(IN, _TileAtlasTexDesert, 8, uvTex);
+				c_d = getColorByTextureAtlasIndex(IN, _TileAtlasTexDesert, 4, uvTex);
+				c_s = getColorByTextureAtlasIndex(IN, _TileAtlasTexDesert, 12, uvTex);
 				c = c_g * weightGrass + c_d * weightDirt + c_s * weightStone;
 			}
 			else if ((index==227)||(index==228)) // swamp
 			{
-				c_g = getColorByTextureAtlasIndex(IN, _TileAtlasTexSwamp, 8);
-				c_d = getColorByTextureAtlasIndex(IN, _TileAtlasTexSwamp, 4);
-				c_s = getColorByTextureAtlasIndex(IN, _TileAtlasTexSwamp, 12);
+				c_g = getColorByTextureAtlasIndex(IN, _TileAtlasTexSwamp, 8, uvTex);
+				c_d = getColorByTextureAtlasIndex(IN, _TileAtlasTexSwamp, 4, uvTex);
+				c_s = getColorByTextureAtlasIndex(IN, _TileAtlasTexSwamp, 12, uvTex);
 				c = c_g * weightGrass + c_d * weightDirt + c_s * weightStone;
 			}
 			else if ((index==226)||(index==230)) // mountain
 			{
-				c_g = getColorByTextureAtlasIndex(IN, _TileAtlasTexMountain, 8);
-				c_d = getColorByTextureAtlasIndex(IN, _TileAtlasTexMountain, 4);
-				c_s = getColorByTextureAtlasIndex(IN, _TileAtlasTexMountain, 12);
+				c_g = getColorByTextureAtlasIndex(IN, _TileAtlasTexMountain, 8, uvTex);
+				c_d = getColorByTextureAtlasIndex(IN, _TileAtlasTexMountain, 4, uvTex);
+				c_s = getColorByTextureAtlasIndex(IN, _TileAtlasTexMountain, 12, uvTex);
 				c = c_g * weightGrass + c_d * weightDirt + c_s * weightStone;
 			}
 			else if ((index==231)||(index==232)||(index==233)) // woodland
 			{
-				c_g = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 8);
-				c_d = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 4);
-				c_s = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 12);
+				c_g = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 8, uvTex);
+				c_d = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 4, uvTex);
+				c_s = getColorByTextureAtlasIndex(IN, _TileAtlasTexWoodland, 12, uvTex);
 				c = c_g * weightGrass + c_d * weightDirt + c_s * weightStone;
 			}
 			else
@@ -347,6 +346,7 @@ Shader "Daggerfall/TransitionRingTilemap" {
 
 
 			o.Albedo = c.rgb; //0.5f * c.rgb + 0.5f * c2.rgb;
+			//o.Albedo = tex2D(_FarTerrainTilemapTex, IN.uv_MainTex).rgba;
 		}
 
 		ENDCG

@@ -416,6 +416,8 @@ namespace ProjectIncreasedTerrainDistance
             terrainMaterial.SetInt("_FarTerrainTilemapDim", terrainInfoTileMapDim);
 
             terrainMaterial.mainTexture = textureTerrainInfoTileMap;
+
+            generateTerrainTransitionRing();
         }
 
         void Start()
@@ -705,7 +707,10 @@ namespace ProjectIncreasedTerrainDistance
 
                 updateSeasonalTextures(terrain.materialTemplate);
 
-                generateTerrainTransitionRing();
+                //if (gameobjectTerrainTransitionRing) // only "change" if already initialized - otherwise wait for function generateWorldTerrain() to invoke this function
+                //{
+                    generateTerrainTransitionRing();
+                //}
 
                 Resources.UnloadUnusedAssets();
 
@@ -825,7 +830,7 @@ namespace ProjectIncreasedTerrainDistance
         private void updatePositionWorldTerrain(ref GameObject terrainGameObject, Vector3 offset)
         {
             // reduce chance of geometry intersections of world terrain and the most outer ring of detailed terrain of the StreamingWorld component
-            float extraTranslationY = 0.0f; // -10.0f; // -12.5f * streamingWorld.TerrainScale;
+            float extraTranslationY = 0.05f; // -10.0f; // -12.5f * streamingWorld.TerrainScale;
 
             // world scale computed as in StreamingWorld.cs and DaggerfallTerrain.cs scripts
             float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
@@ -1069,8 +1074,6 @@ namespace ProjectIncreasedTerrainDistance
             terrainGameObject.SetActive(true);
 
             worldTerrainGameObject = terrainGameObject;
-
-            generateTerrainTransitionRing();
         }
 
         private string GetTerrainName(int mapPixelX, int mapPixelY)
@@ -1151,42 +1154,45 @@ namespace ProjectIncreasedTerrainDistance
             // inject transition ring shader
             Terrain terrain = transitionTerrainDesc.terrainDesc.terrainObject.GetComponent<Terrain>();
             Material oldMaterial = terrain.materialTemplate;
-            terrain.materialTemplate = new Material(Shader.Find("Daggerfall/TransitionRingTilemap"));
-            terrain.materialTemplate.CopyPropertiesFromMaterial(oldMaterial);
+            Material newMaterial = new Material(Shader.Find("Daggerfall/TransitionRingTilemap"));
+            newMaterial.CopyPropertiesFromMaterial(oldMaterial);
+            newMaterial.mainTexture = oldMaterial.mainTexture;
+            newMaterial.mainTextureOffset = oldMaterial.mainTextureOffset;
+            newMaterial.mainTextureScale = oldMaterial.mainTextureScale;            
 
             // Assign textures and parameters
-            terrain.materialTemplate.SetTexture("_FarTerrainTilemapTex", textureTerrainInfoTileMap);
-            terrain.materialTemplate.SetInt("_FarTerrainTilemapDim", terrainInfoTileMapDim);
+            newMaterial.SetTexture("_FarTerrainTilemapTex", textureTerrainInfoTileMap);
+            newMaterial.SetInt("_FarTerrainTilemapDim", terrainInfoTileMapDim);
 
-            terrain.materialTemplate.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
-            terrain.materialTemplate.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
-            terrain.materialTemplate.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
-            terrain.materialTemplate.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);            
+            newMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
+            newMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
+            newMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
+            newMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);            
 
-            terrain.materialTemplate.SetInt("_TextureSetSeasonCode", 0);
+            newMaterial.SetInt("_TextureSetSeasonCode", 0);
 
-            updateSeasonalTextures(terrain.materialTemplate); // change seasonal textures if necessary
+            updateSeasonalTextures(newMaterial); // change seasonal textures if necessary
 
-            terrain.materialTemplate.SetInt("_MapPixelX", dfTerrain.MapPixelX);
-            terrain.materialTemplate.SetInt("_MapPixelY", dfTerrain.MapPixelY);
+            newMaterial.SetInt("_MapPixelX", dfTerrain.MapPixelX);
+            newMaterial.SetInt("_MapPixelY", dfTerrain.MapPixelY);
 
-            terrain.materialTemplate.SetInt("_PlayerPosX", this.playerGPS.CurrentMapPixel.X);
-            terrain.materialTemplate.SetInt("_PlayerPosY", this.playerGPS.CurrentMapPixel.Y);
+            newMaterial.SetInt("_PlayerPosX", this.playerGPS.CurrentMapPixel.X);
+            newMaterial.SetInt("_PlayerPosY", this.playerGPS.CurrentMapPixel.Y);
 
-            terrain.materialTemplate.SetInt("_TerrainDistance", streamingWorld.TerrainDistance - 1); // -1... allow the outer ring of of detailed terrain to intersect with far terrain (to prevent some holes)
+            newMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance - 1); // -1... allow the outer ring of of detailed terrain to intersect with far terrain (to prevent some holes)
 
             Vector3 vecWaterHeight = new Vector3(0.0f, (ImprovedTerrainSampler.scaledOceanElevation + 1.0f) * streamingWorld.TerrainScale, 0.0f); // water height level on y-axis (+1.0f some coastlines are incorrect otherwise)
             Vector3 vecWaterHeightTransformed = worldTerrainGameObject.transform.TransformPoint(vecWaterHeight); // transform to world coordinates
-            terrain.materialTemplate.SetFloat("_WaterHeightTransformed", vecWaterHeightTransformed.y);
+            newMaterial.SetFloat("_WaterHeightTransformed", vecWaterHeightTransformed.y);
 
-            terrain.materialTemplate.SetTexture("_SkyTex", renderTextureSky);
+            newMaterial.SetTexture("_SkyTex", renderTextureSky);
 
-            terrain.materialTemplate.SetInt("_FogFromSkyTex", 0);
-            setMaterialFogParameters(terrain.materialTemplate);            
+            newMaterial.SetInt("_FogFromSkyTex", 0);
+            setMaterialFogParameters(newMaterial);            
 
             //terrainMaterial.SetFloat("_BlendFactor", blendFactor);
-            terrain.materialTemplate.SetFloat("_BlendStart", blendStart);
-            terrain.materialTemplate.SetFloat("_BlendEnd", blendEnd);
+            newMaterial.SetFloat("_BlendStart", blendStart);
+            newMaterial.SetFloat("_BlendEnd", blendEnd);
 
 #if REFLECTIONSMOD_CODE_AVAILABLE
             if (isActiveReflectionsMod)
@@ -1194,18 +1200,20 @@ namespace ProjectIncreasedTerrainDistance
                 reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
                 if (reflectionSeaTexture != null)
                 {
-                    terrain.materialTemplate.EnableKeyword("ENABLE_WATER_REFLECTIONS");
-                    terrain.materialTemplate.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
-                    terrain.materialTemplate.SetInt("_UseSeaReflectionTex", 1);
+                    newMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
+                    newMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
+                    newMaterial.SetInt("_UseSeaReflectionTex", 1);
                 }
                 else
                 {
-                    terrain.materialTemplate.SetInt("_UseSeaReflectionTex", 0);
+                    newMaterial.SetInt("_UseSeaReflectionTex", 0);
                 }
             }
 #else
             terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
 #endif
+
+            terrain.materialTemplate = newMaterial;            
 
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);
