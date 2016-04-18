@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             OnItemPicked += DaggerfallClassSelectWindow_OnItemPicked;
         }
 
-        void DaggerfallClassSelectWindow_OnItemPicked(int index)
+        void DaggerfallClassSelectWindow_OnItemPicked(int index, string className)
         {
             selectedClass = classList[index];
 
