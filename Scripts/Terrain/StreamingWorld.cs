@@ -861,8 +861,8 @@ namespace DaggerfallWorkshop
         // Anything greater than TerrainDistance+1 is out of range
         private bool IsInRange(int mapPixelX, int mapPixelY)
         {
-            if (Math.Abs(mapPixelX - this.MapPixelX) > TerrainDistance + 1 ||
-                Math.Abs(mapPixelY - this.MapPixelY) > TerrainDistance + 1)
+            if (Math.Abs(mapPixelX - this.MapPixelX) > TerrainDistance ||
+                Math.Abs(mapPixelY - this.MapPixelY) > TerrainDistance)
             {
                 return false;
             }
