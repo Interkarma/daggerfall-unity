@@ -46,6 +46,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         CreateCharReflexSelect createCharReflexSelectWindow;
         CreateCharSummary createCharSummaryWindow;
 
+        FactionFile factionFile;
+
         WizardStages WizardStage
         {
             get { return wizardStage; }
@@ -74,6 +76,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
+            // Read starting faction data
+            factionFile = new FactionFile(Path.Combine(DaggerfallUnity.Arena2Path, FactionFile.Filename), FileUsage.UseMemory, true);
+
             // Must have a start game object to transmit character sheet
             startGameBehaviour = GameObject.FindObjectOfType<StartGameBehaviour>();
             if (!startGameBehaviour)
