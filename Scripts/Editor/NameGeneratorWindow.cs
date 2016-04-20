@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop
 
         NameHelper.BankTypes bankType = NameHelper.BankTypes.Breton;
         Genders gender = Genders.Male;
+        int seed = -1;
         int count = 20;
         List<string> generatedNames = new List<string>();
         Vector2 scrollPos = Vector2.zero;
@@ -67,9 +68,13 @@ namespace DaggerfallWorkshop
             EditorGUILayout.Space();
             bankType = (NameHelper.BankTypes)EditorGUILayout.EnumPopup(new GUIContent("Type"), bankType);
             gender = (Genders)EditorGUILayout.EnumPopup(new GUIContent("Gender"), gender);
+            seed = EditorGUILayout.IntField(new GUIContent("Seed"), seed);
             count = EditorGUILayout.IntField(new GUIContent("Count"), count);
             if (GUILayout.Button("Generate Names"))
             {
+                if (seed != -1)
+                    DFRandom.srand(seed);
+
                 generatedNames.Clear();
                 for (int i = 0; i < count; i++)
                 {
