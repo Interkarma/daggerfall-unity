@@ -302,23 +302,38 @@ namespace DaggerfallConnect.Arena2
             }
 
             // Second pass parses the text block into FactionData
+            int lastPrecedingTabs = 0;
             FactionData previousFaction = new FactionData();
+            Stack<int> parentStack = new Stack<int>();
             for (int i = 0; i < factionBlocks.Count; i++)
             {
                 // Start a new faction
-                FactionData currentFaction = new FactionData();
+                FactionData faction = new FactionData();
                 string[] block = factionBlocks[i];
 
-                // If this block starts with a '\t' then it's a child faction of previous block
-                if (block[0].StartsWith("\t"))
-                    currentFaction.parent = previousFaction.id;
+                // Parent child relationship determined by preceding tabs
+                int precedingTabs = CountPrecedingTabs(block[0]);
+                if (precedingTabs > lastPrecedingTabs)
+                {
+                    parentStack.Push(previousFaction.id);
+                }
+                else if (precedingTabs < lastPrecedingTabs)
+                {
+                    while(parentStack.Count > precedingTabs)
+                        parentStack.Pop();
+                }
+                lastPrecedingTabs = precedingTabs;
+
+                // Set parent from top of stack
+                if (parentStack.Count > 0)
+                    faction.parent = parentStack.Peek();
 
                 // Parse faction block
-                ParseFactionData(ref block, ref currentFaction);
+                ParseFactionData(ref block, ref faction);
 
                 // Store faction just read
-                factionDict.Add(currentFaction.id, currentFaction);
-                previousFaction = currentFaction;
+                factionDict.Add(faction.id, faction);
+                previousFaction = faction;
             }
         }
 
@@ -454,6 +469,20 @@ namespace DaggerfallConnect.Arena2
                         throw new Exception(string.Format("Unexpected tag '{0}' with value '{1}' encountered on faction #{2}", tag, value, faction.id));
                 }
             }
+        }
+
+        int CountPrecedingTabs(string line)
+        {
+            int count = 0;
+            for (int i = 0; i < line.Length; i++)
+            {
+                if (line[i] == '\t')
+                    count++;
+                else
+                    break;
+            }
+
+            return count;
         }
 
         int ParseFlat(string value)
