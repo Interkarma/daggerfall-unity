@@ -15,6 +15,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.IO;
 using DaggerfallConnect.Utility;
+using DaggerfallConnect.Save;
 #endregion
 
 namespace DaggerfallConnect.Arena2
@@ -42,31 +43,71 @@ namespace DaggerfallConnect.Arena2
 
         #region Enums
 
-        public enum FactionGroups
-        {
-            Commoner = 0,
-            Merchant = 1,
-            Scholar = 2,
-            Nobility = 3,
-            Underworld = 4,
-        }
-
         public enum FactionTypes
         {
+            None = -1,
             Daedra = 0,
             God = 1,
             Group = 2,
             Subgroup = 3,
             Individual = 4,
-            OnePer = 5,
-            Vampire = 6,
+            Official = 5,
+            VampireClan = 6,
             Noble = 7,
-            Witches = 8,
+            WitchesCoven = 8,
             Temple = 9,
-            GenericG = 12,
+            Facton10 = 10,
+            Faction11 = 11,
+            Generic = 12,
             Thieves = 13,
             Courts = 14,
             People = 15,
+        }
+
+        public enum SocialGroups
+        {
+            None = -1,
+            Commoners = 0,
+            Merchants = 1,
+            Scholars = 2,
+            Nobility = 3,
+            Underworld = 4,
+            SGroup5 = 5,
+            SupernaturalBeings = 6,
+            GuildMembers = 7,
+            SGroup8 = 8,
+            SGroup9 = 9,
+            SGroup10 = 10,
+        }
+
+        public enum GuildGroups
+        {
+            None = -1,
+            GGroup0 = 0,
+            GGroup1 = 1,
+            Oblivion = 2,
+            DarkBrotherHood = 3,
+            GeneralPopulace = 4,
+            Bards = 5,
+            TheFey = 6,
+            Prostitutes = 7,
+            GGroup8 = 8,
+            KnightlyOrder = 9,
+            MagesGuild = 10,
+            FightersGuild = 11,
+            GGroup12 = 12,
+            GGroup13 = 13,
+            Necromancers = 14,
+            Region = 15,
+            GGroup16 = 16,
+            HolyOrder = 17,
+            GGroup18 = 18,
+            GGroup19 = 19,
+            GGroup20 = 20,
+            GGroup21 = 21,
+            Witches = 22,
+            Vampires = 23,
+            Orsinium = 24,
         }
 
         #endregion
@@ -85,23 +126,22 @@ namespace DaggerfallConnect.Arena2
             public int power;
             public int flags;
             public int ruler;
-            public int[] allies;
-            public int[] enemies;
+            public int ally1;
+            public int ally2;
+            public int ally3;
+            public int enemy1;
+            public int enemy2;
+            public int enemy3;
             public int face;
             public int race;
-            public FactionFlat[] flats;
+            public int flat1;
+            public int flat2;
             public int sgroup;
             public int ggroup;
             public int minf;
             public int maxf;
             public int vam;
             public int rank;
-        }
-
-        public struct FactionFlat
-        {
-            public int archive;
-            public int record;
         }
 
         #endregion
@@ -155,6 +195,65 @@ namespace DaggerfallConnect.Arena2
             ParseFactions(txt);
         }
 
+        /// <summary>
+        /// Merges faction data from savevars into a new faction dictionary.
+        /// Does not affect factions as read from FACTIONS.TXT.
+        /// This resultant set of factions is the character's live faction setup.
+        /// This is only used when importing a classic save.
+        /// Daggerfall Unity uses a different method of storing faction data with saves.
+        /// </summary>
+        /// <param name="saveVars"></param>
+        public Dictionary<int, FactionData> Merge(SaveVars saveVars)
+        {
+            // Create clone of base faction dictionary
+            Dictionary<int, FactionData> dict = new Dictionary<int, FactionData>();
+            foreach (var kvp in factionDict)
+            {
+                dict.Add(kvp.Key, kvp.Value);
+            }
+
+            // Merge save faction data from savevars
+            FactionData[] factions = saveVars.Factions;
+            foreach(var srcFaction in factions)
+            {
+                if (dict.ContainsKey(srcFaction.id))
+                {
+                    FactionData dstFaction = dict[srcFaction.id];
+
+                    // First a quick sanity check to ensure IDs are the same
+                    if (dstFaction.id != srcFaction.id)
+                        throw new Exception(string.Format("ID mismatch while merging faction data. SrcFaction=#{0}, DstFaction=#{1}", srcFaction.id, dstFaction.id));
+
+                    // Copy live data from SAVEVARS.DAT
+                    dstFaction.type = srcFaction.type;
+                    dstFaction.name = srcFaction.name;
+                    dstFaction.rep = srcFaction.rep;
+                    dstFaction.region = srcFaction.region;
+                    dstFaction.power = srcFaction.power;
+                    dstFaction.flags = srcFaction.flags;
+                    dstFaction.ruler = srcFaction.ruler;
+                    dstFaction.ally1 = srcFaction.ally1;
+                    dstFaction.ally2 = srcFaction.ally2;
+                    dstFaction.ally3 = srcFaction.ally3;
+                    dstFaction.enemy1 = srcFaction.enemy1;
+                    dstFaction.enemy2 = srcFaction.enemy2;
+                    dstFaction.enemy3 = srcFaction.enemy3;
+                    dstFaction.face = srcFaction.face;
+                    dstFaction.race = srcFaction.race;
+                    dstFaction.flat1 = srcFaction.flat1;
+                    dstFaction.flat2 = srcFaction.flat2;
+                    dstFaction.sgroup = srcFaction.sgroup;
+                    dstFaction.ggroup = srcFaction.ggroup;
+                    dstFaction.vam = srcFaction.vam;
+
+                    // Store data back in new dictionary
+                    dict[srcFaction.id] = dstFaction;
+                }
+            }
+
+            return dict;
+        }
+
         #endregion
 
         #region Private Methods
@@ -186,7 +285,7 @@ namespace DaggerfallConnect.Arena2
                     if (line.StartsWith(";") || string.IsNullOrEmpty(line))
                         continue;
 
-                    // All factions blocks start with a # character
+                    // All factions blocks start with a '#' character
                     if (line.Contains("#"))
                     {
                         // Store current block
@@ -210,7 +309,7 @@ namespace DaggerfallConnect.Arena2
                 FactionData currentFaction = new FactionData();
                 string[] block = factionBlocks[i];
 
-                // If this block starts with a \t then it's a child faction of previous block
+                // If this block starts with a '\t' then it's a child faction of previous block
                 if (block[0].StartsWith("\t"))
                     currentFaction.parent = previousFaction.id;
 
@@ -226,9 +325,9 @@ namespace DaggerfallConnect.Arena2
         void ParseFactionData(ref string[] block, ref FactionData faction)
         {
             string[] parts;
-            List<int> allies = new List<int>();
-            List<int> enemies = new List<int>();
-            List<FactionFlat> flats = new List<FactionFlat>();
+            int allyCount = 0;
+            int enemyCount = 0;
+            int flatCount = 0;
             for (int i = 0; i < block.Length; i++)
             {
                 string line = block[i];
@@ -245,7 +344,7 @@ namespace DaggerfallConnect.Arena2
                 if (string.IsNullOrEmpty(line.Trim()))
                     continue;
 
-                // Split string into tag and value using : character
+                // Split string into tag and value using ':' character
                 parts = line.Split(':');
                 if (parts.Length != 2)
                     throw new Exception(string.Format("Invalid tag format for data {0} on faction {1}", line, faction.id));
@@ -306,70 +405,81 @@ namespace DaggerfallConnect.Arena2
                         faction.rank = ParseInt(value);
                         break;
                     case "ally":
-                        allies.Add(ParseInt(value));
+                        int ally = ParseInt(value);
+                        if (allyCount == 0)
+                            faction.ally1 = ally;
+                        else if (allyCount == 1)
+                            faction.ally2 = ally;
+                        else if (allyCount == 2)
+                            faction.ally3 = ally;
+                        else
+                            throw new Exception(string.Format("Too many allies for faction #{0}", faction.id));
+                        allyCount++;
                         break;
                     case "enemy":
-                        enemies.Add(ParseInt(value));
+                        int enemy = ParseInt(value);
+                        if (enemyCount == 0)
+                            faction.enemy1 = enemy;
+                        else if (enemyCount == 1)
+                            faction.enemy2 = enemy;
+                        else if (enemyCount == 2)
+                            faction.enemy3 = enemy;
+                        else
+                            throw new Exception(string.Format("Too many enemies for faction #{0}", faction.id));
+                        enemyCount++;
                         break;
                     case "flat":
-                        FactionFlat flat;
-                        if (ParseFlat(value, out flat))
+                        int flat = ParseFlat(value);
+                        if (flat > 0)
                         {
-                            flats.Add(flat);
+                            if (flatCount == 0)
+                            {
+                                // When a single flat is specified Daggerfall stores for both male and female
+                                faction.flat1 = flat;
+                                faction.flat2 = flat;
+                            }
+                            else if (flatCount == 1)
+                            {
+                                // The second flat found is a female flat
+                                faction.flat2 = flat;
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("Too many flats for faction #{0}", faction.id));
+                            }
+                            flatCount++;
                         }
                         break;
                     default:
                         throw new Exception(string.Format("Unexpected tag '{0}' with value '{1}' encountered on faction #{2}", tag, value, faction.id));
                 }
             }
-
-            // Store array-based values
-            faction.allies = allies.ToArray();
-            faction.enemies = enemies.ToArray();
-            faction.flats = flats.ToArray();
         }
 
-        bool ParseFlat(string value, out FactionFlat flat)
+        int ParseFlat(string value)
         {
-            flat = new FactionFlat();
+            int result = 0;
             string[] parts = value.Split();
             if (parts.Length == 1)
             {
-                return false;
+                return 0;
             }
             else if (parts.Length == 2)
             {
-                flat.archive = ParseInt(parts[0]);
-                flat.record = ParseInt(parts[1]);
+                result = ParseInt(parts[0]) << 7;
+                result += ParseInt(parts[1]);
             }
             else
             {
                 throw new Exception(string.Format("Invalid flat format for value {0}", value));
             }
 
-            return true;
+            return result;
         }
 
         int ParseInt(string value)
         {
             return int.Parse(value);
-        }
-
-        /// <summary>
-        /// Creates hash of tag name.
-        /// </summary>
-        /// <param name="tag">Source tag name.</param>
-        /// <returns>Hashed tag name.</returns>
-        int HashTagName(string tag)
-        {
-            int id = 0;
-            for (int i = 0; i < tag.Length; i++)
-            {
-                id = id << 1;
-                id += tag[i];
-            }
-
-            return id;
         }
 
         #endregion
