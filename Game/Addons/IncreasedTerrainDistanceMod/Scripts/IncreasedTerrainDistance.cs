@@ -130,14 +130,22 @@ namespace ProjectIncreasedTerrainDistance
         {
             public StreamingWorld.TerrainDesc terrainDesc;
             public TransitionRingBorderDesc transitionRingBorderDesc;
+            public bool ready; // was creation process complete?
             public bool heightsUpdatePending; // is it necessary to update the heights of terrainObject inside terrainDesc
             public bool positionUpdatePending; // is it necessary to update the position of terrainObject inside terrainDesc
+            //public bool updateSeasonalTextures;  // is it necessary to update the textures due to seasonal change
+            //public bool updateMaterialProperties;  // is it necessary to update the update material properties
         }
         TransitionTerrainDesc[] terrainTransitionRingArray = null;
+        int numberOfTerrainBlocksInTransitionRingArray;
         Dictionary<int, int> terrainTransitionRingIndexDict = new Dictionary<int, int>();
 
         GameObject gameobjectTerrainTransitionRing = null; // container gameobject for transition ring's terrain blocks
 
+        bool terrainTransitionRingUpdateRunning = false;
+        //bool transitionRingUpdateFinished = false;
+        bool terrainTransitionRingUpdateSeasonalTextures = false;
+        bool terrainTransitionRingUpdateMaterialProperties = false;
 
         // stacked near camera (used for near terrain from range 1000-15000) to prevent floating-point rendering precision problems for huge clipping ranges
         Camera stackedNearCamera = null; 
@@ -450,7 +458,8 @@ namespace ProjectIncreasedTerrainDistance
             }
 
             // reserve terrain objects for transition ring (2 x long sides (with 2 extra terrains for corner terrains) + 2 x normal sides)
-            terrainTransitionRingArray = new TransitionTerrainDesc[2 * (streamingWorld.TerrainDistance * 2 + 1 + 2) + 2 * (streamingWorld.TerrainDistance * 2 + 1)];
+            numberOfTerrainBlocksInTransitionRingArray = 2 * (streamingWorld.TerrainDistance * 2 + 1 + 2) + 2 * (streamingWorld.TerrainDistance * 2 + 1);
+            terrainTransitionRingArray = new TransitionTerrainDesc[numberOfTerrainBlocksInTransitionRingArray];
         }
 
         void OnDestroy()
@@ -691,8 +700,17 @@ namespace ProjectIncreasedTerrainDistance
             {
                 if (doSeasonalTexturesUpdate)
                 {
-                    updateSeasonalTexturesTerrainTransitionRing();
+                    terrainTransitionRingUpdateSeasonalTextures = true;
                 }
+                terrainTransitionRingUpdateMaterialProperties = true;
+            }
+
+            if (terrainTransitionRingUpdateSeasonalTextures)
+            {
+                updateSeasonalTexturesTerrainTransitionRing();
+            }
+            if (terrainTransitionRingUpdateMaterialProperties)
+            {
                 updateMaterialShaderPropertiesTerrainTransitionRing();
             }
         }
@@ -730,7 +748,8 @@ namespace ProjectIncreasedTerrainDistance
 
                 if (doSeasonalTexturesUpdate)
                 {
-                    updateSeasonalTexturesTerrainTransitionRing();
+                    //updateSeasonalTexturesTerrainTransitionRing();
+                    terrainTransitionRingUpdateSeasonalTextures = true;
                 }
 
                 Resources.UnloadUnusedAssets();
@@ -813,51 +832,6 @@ namespace ProjectIncreasedTerrainDistance
             else
             {
                 return false;
-            }
-        }
-
-        private void updateSeasonalTexturesTerrainTransitionRing()
-        {
-            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
-            {
-                if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
-                {
-                    DaggerfallTerrain dfTerrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
-                    if (dfTerrain != null)
-                    {
-                        dfTerrain.UpdateClimateMaterial();
-                    }
-
-                    Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
-                    Material mat = terrain.materialTemplate;
-                    updateMaterialSeasonalTextures(ref mat, currentSeason);
-                    terrain.materialTemplate = mat;
-                }
-            }
-        }
-
-        private void updateMaterialShaderPropertiesTerrainTransitionRing()
-        {
-            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
-            {
-                if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
-                {
-                    Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
-
-#if ENHANCED_SKY_CODE_AVAILABLE
-                    if (isActiveEnhancedSkyMod)
-                    {
-                        if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
-                        {
-                            terrain.materialTemplate.SetFloat("_FogFromSkyTex", 1);
-                        }
-                        else
-                        {
-                            terrain.materialTemplate.SetFloat("_FogFromSkyTex", 0);
-                        }
-                    }
-#endif
-                }
             }
         }
 
@@ -1110,6 +1084,83 @@ namespace ProjectIncreasedTerrainDistance
             worldTerrainGameObject = terrainGameObject;
         }
 
+        private void updateSeasonalTexturesTerrainTransitionRingBlock(int i)
+        {
+            if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
+            {
+                DaggerfallTerrain dfTerrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+                if (dfTerrain != null)
+                {
+                    dfTerrain.UpdateClimateMaterial();
+                }
+
+                Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+                Material mat = terrain.materialTemplate;
+                updateMaterialSeasonalTextures(ref mat, currentSeason);
+                terrain.materialTemplate = mat;
+            }
+        }
+
+        private void updateSeasonalTexturesTerrainTransitionRing()
+        {
+            if (terrainTransitionRingUpdateSeasonalTextures)
+            {
+                for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+                {
+                    if (terrainTransitionRingArray[i].ready) // if i-th block element is ready (if not return from function without setting the boolean flag - so will start over on next Update())
+                    {
+                        updateSeasonalTexturesTerrainTransitionRingBlock(i);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                terrainTransitionRingUpdateSeasonalTextures = false;
+            }
+        }
+
+        private void updateMaterialShaderPropertiesTerrainTransitionRingBlock(int i)
+        {
+            if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
+            {
+                Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+
+#if ENHANCED_SKY_CODE_AVAILABLE
+                if (isActiveEnhancedSkyMod)
+                {
+                    if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
+                    {
+                        terrain.materialTemplate.SetFloat("_FogFromSkyTex", 1);
+                    }
+                    else
+                    {
+                        terrain.materialTemplate.SetFloat("_FogFromSkyTex", 0);
+                    }
+                }
+#endif
+            }
+        }
+
+        private void updateMaterialShaderPropertiesTerrainTransitionRing()
+        {
+            if (terrainTransitionRingUpdateMaterialProperties)
+            {
+                for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+                {
+                    if (terrainTransitionRingArray[i].ready) // if i-th block element is ready (if not return from function without setting the boolean flag - so will start over on next Update())
+                    {
+                        updateMaterialShaderPropertiesTerrainTransitionRingBlock(i);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                terrainTransitionRingUpdateMaterialProperties = false;
+            }
+        }
+
         private string GetTerrainName(int mapPixelX, int mapPixelY)
         {
             return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
@@ -1342,6 +1393,36 @@ namespace ProjectIncreasedTerrainDistance
             return transitionRingBorderDesc;
         }
 
+        private IEnumerator UpdateTerrains()
+        {
+            terrainTransitionRingUpdateRunning = true;
+
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {
+                if (terrainTransitionRingArray[i].terrainDesc.active)
+                {
+                    if (terrainTransitionRingArray[i].terrainDesc.updateData)
+                    {
+                        UpdateTerrain(i);
+                        //UpdateTerrainData(terrainTransitionRingArray[i]);
+                        terrainTransitionRingArray[i].terrainDesc.updateData = false;
+                        //if (!terrainTransitionRingUpdateRunning) //(!transitionRingUpdateFinished)
+                            yield return new WaitForEndOfFrame();
+                    }
+                    //if (terrainTransitionRingArray[i].terrainDesc.updateNature)
+                    //{
+                    //    UpdateTerrainNature(terrainTransitionRingArray[i]);
+                    //    terrainTransitionRingArray[i].terrainDesc.updateNature = false;
+                    //    //if (!terrainTransitionRingUpdateRunning) //(!transitionRingUpdateFinished)
+                    //        yield return new WaitForEndOfFrame();
+                    //}
+                    terrainTransitionRingArray[i].ready = true;
+                }
+            }
+
+            terrainTransitionRingUpdateRunning = false;
+        }
+
         private void generateTerrainTransitionRing()
         {
             if (gameobjectTerrainTransitionRing == null)
@@ -1355,6 +1436,8 @@ namespace ProjectIncreasedTerrainDistance
                 //UnityEngine.Object.Destroy(terrainTransitionRingArray[i].terrainObject);
                 GameObject.Destroy(terrainTransitionRingArray[i].terrainDesc.terrainObject);
                 terrainTransitionRingArray[i].terrainDesc.terrainObject = null;
+                terrainTransitionRingArray[i].terrainDesc.active = false;
+                terrainTransitionRingArray[i].ready = false;
             }
 
             //DFPosition currentPlayerPos = playerGPS.CurrentMapPixel;
@@ -1373,12 +1456,13 @@ namespace ProjectIncreasedTerrainDistance
                             terrainTransitionRingArray[terrainIndex].transitionRingBorderDesc = getTransitionRingBorderDesc(x, y, distanceTransitionRingFromCenterX, distanceTransitionRingFromCenterY);
                             terrainTransitionRingArray[terrainIndex].heightsUpdatePending = true;
                             terrainTransitionRingArray[terrainIndex].positionUpdatePending = true;
-                            UpdateTerrain(terrainIndex);
                             terrainIndex++;
                         }
                     }
                 }
             }
+
+            StartCoroutine(UpdateTerrains());
         }
 
         #endregion
