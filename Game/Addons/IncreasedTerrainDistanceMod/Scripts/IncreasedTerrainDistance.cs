@@ -1105,16 +1105,18 @@ namespace ProjectIncreasedTerrainDistance
         {
             if (terrainTransitionRingUpdateSeasonalTextures)
             {
+                if (terrainTransitionRingUpdateRunning)
+                    return;
                 for (int i = 0; i < terrainTransitionRingArray.Length; i++)
                 {
-                    if (terrainTransitionRingArray[i].ready) // if i-th block element is ready (if not return from function without setting the boolean flag - so will start over on next Update())
-                    {
+                    //if (terrainTransitionRingArray[i].ready) // if i-th block element is ready (if not return from function without setting the boolean flag - so will start over on next Update())
+                    //{
                         updateSeasonalTexturesTerrainTransitionRingBlock(i);
-                    }
-                    else
-                    {
-                        return;
-                    }
+                    //}
+                    //else
+                    //{
+                    //    return;
+                    //}
                 }
                 terrainTransitionRingUpdateSeasonalTextures = false;
             }
@@ -1146,16 +1148,18 @@ namespace ProjectIncreasedTerrainDistance
         {
             if (terrainTransitionRingUpdateMaterialProperties)
             {
+                if (terrainTransitionRingUpdateRunning)
+                    return;
                 for (int i = 0; i < terrainTransitionRingArray.Length; i++)
                 {
-                    if (terrainTransitionRingArray[i].ready) // if i-th block element is ready (if not return from function without setting the boolean flag - so will start over on next Update())
-                    {
+                    //if (terrainTransitionRingArray[i].ready) // if i-th block element is ready (if not return from function without setting the boolean flag - so will start over on next Update())
+                    //{
                         updateMaterialShaderPropertiesTerrainTransitionRingBlock(i);
-                    }
-                    else
-                    {
-                        return;
-                    }
+                    //}
+                    //else
+                    //{
+                    //    return;
+                    //}
                 }
                 terrainTransitionRingUpdateMaterialProperties = false;
             }
