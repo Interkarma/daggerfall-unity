@@ -143,7 +143,7 @@ namespace ProjectIncreasedTerrainDistance
         GameObject gameobjectTerrainTransitionRing = null; // container gameobject for transition ring's terrain blocks
 
         bool terrainTransitionRingUpdateRunning = false;
-        //bool transitionRingUpdateFinished = false;
+        bool transitionRingAllBlocksReady = false;
         bool terrainTransitionRingUpdateSeasonalTextures = false;
         bool terrainTransitionRingUpdateMaterialProperties = false;
 
@@ -1105,7 +1105,7 @@ namespace ProjectIncreasedTerrainDistance
         {
             if (terrainTransitionRingUpdateSeasonalTextures)
             {
-                if (terrainTransitionRingUpdateRunning)
+                if (!transitionRingAllBlocksReady)
                     return;
                 for (int i = 0; i < terrainTransitionRingArray.Length; i++)
                 {
@@ -1148,7 +1148,7 @@ namespace ProjectIncreasedTerrainDistance
         {
             if (terrainTransitionRingUpdateMaterialProperties)
             {
-                if (terrainTransitionRingUpdateRunning)
+                if (!transitionRingAllBlocksReady)
                     return;
                 for (int i = 0; i < terrainTransitionRingArray.Length; i++)
                 {
@@ -1425,6 +1425,7 @@ namespace ProjectIncreasedTerrainDistance
             }
 
             terrainTransitionRingUpdateRunning = false;
+            transitionRingAllBlocksReady = true;
         }
 
         private void generateTerrainTransitionRing()
@@ -1434,6 +1435,7 @@ namespace ProjectIncreasedTerrainDistance
                 gameobjectTerrainTransitionRing = new GameObject("TerrainTransitionRing");
                 gameobjectTerrainTransitionRing.transform.SetParent(GameManager.Instance.ExteriorParent.transform);
             }
+            transitionRingAllBlocksReady = false;
             terrainTransitionRingIndexDict.Clear();
             for (int i = 0; i < terrainTransitionRingArray.Length; i++)
             {
