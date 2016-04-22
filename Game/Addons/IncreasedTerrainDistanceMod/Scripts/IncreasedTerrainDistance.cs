@@ -132,7 +132,8 @@ namespace ProjectIncreasedTerrainDistance
             public TransitionRingBorderDesc transitionRingBorderDesc;
             public bool ready; // was creation process complete?
             public bool heightsUpdatePending; // is it necessary to update the heights of terrainObject inside terrainDesc
-            public bool positionUpdatePending; // is it necessary to update the position of terrainObject inside terrainDesc
+            public bool keepThisBlock; // can this block be kept and reused
+            //public bool positionUpdatePending; // is it necessary to update the position of terrainObject inside terrainDesc
             //public bool updateSeasonalTextures;  // is it necessary to update the textures due to seasonal change
             //public bool updateMaterialProperties;  // is it necessary to update the update material properties
         }
@@ -1368,7 +1369,16 @@ namespace ProjectIncreasedTerrainDistance
             terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.transform.localPosition = localPosition;
 
             //streamingWorld.UpdateTerrainData(terrainTransitionRingArray[terrainIndex].terrainDesc);
-            UpdateTerrainData(terrainTransitionRingArray[terrainIndex]);
+            // if block was not reused - it does not exist - so create unity terrain object - otherwise position update will be enough
+            if (!terrainTransitionRingArray[terrainIndex].keepThisBlock)
+            {
+                UpdateTerrainData(terrainTransitionRingArray[terrainIndex]);
+            }
+            else
+            {
+                // activate unity terrain now since it has been updated
+                terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.SetActive(true);
+            }
         }
 
         private TransitionRingBorderDesc getTransitionRingBorderDesc(int x, int y, int distanceTransitionRingFromCenterX, int distanceTransitionRingFromCenterY)
@@ -1436,19 +1446,71 @@ namespace ProjectIncreasedTerrainDistance
                 gameobjectTerrainTransitionRing.transform.SetParent(GameManager.Instance.ExteriorParent.transform);
             }
             transitionRingAllBlocksReady = false;
-            terrainTransitionRingIndexDict.Clear();
-            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
-            {
-                //UnityEngine.Object.Destroy(terrainTransitionRingArray[i].terrainObject);
-                GameObject.Destroy(terrainTransitionRingArray[i].terrainDesc.terrainObject);
-                terrainTransitionRingArray[i].terrainDesc.terrainObject = null;
-                terrainTransitionRingArray[i].terrainDesc.active = false;
-                terrainTransitionRingArray[i].ready = false;
-            }
 
-            //DFPosition currentPlayerPos = playerGPS.CurrentMapPixel;
             int distanceTransitionRingFromCenterX = (streamingWorld.TerrainDistance + 1);
             int distanceTransitionRingFromCenterY = (streamingWorld.TerrainDistance + 1);
+
+            // initially mark all blocks as potential blocks to remove - terrain blocks in terrain transition ring that can be reused will be updated next
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {
+                terrainTransitionRingArray[i].keepThisBlock = false;
+            }
+
+            // mark blocks that will be reused
+            for (int y = -distanceTransitionRingFromCenterY; y <= distanceTransitionRingFromCenterY; y++)
+            {
+                for (int x = -distanceTransitionRingFromCenterX; x <= distanceTransitionRingFromCenterX; x++)
+                {
+                    if ((Math.Abs(x) == distanceTransitionRingFromCenterX) || (Math.Abs(y) == distanceTransitionRingFromCenterY))
+                    {
+                        int mapPixelX = playerGPS.CurrentMapPixel.X + x;
+                        int mapPixelY = playerGPS.CurrentMapPixel.Y + y;
+                        int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
+                        if (terrainTransitionRingIndexDict.ContainsKey(key)) // if desired terrain block already exists in transition ring
+                        {
+                            int indexFound = terrainTransitionRingIndexDict[key]; // get index of existing terrain block of interest
+                            TransitionRingBorderDesc borderDesc = getTransitionRingBorderDesc(x, y, distanceTransitionRingFromCenterX, distanceTransitionRingFromCenterY);
+                            // if transition ring border description has not changed since last time - the block's heights can be reused - so the block can be reused
+                            if ((borderDesc.isLeftRingBorder == terrainTransitionRingArray[indexFound].transitionRingBorderDesc.isLeftRingBorder) &&
+                                (borderDesc.isRightRingBorder == terrainTransitionRingArray[indexFound].transitionRingBorderDesc.isRightRingBorder) &&
+                                (borderDesc.isTopRingBorder == terrainTransitionRingArray[indexFound].transitionRingBorderDesc.isTopRingBorder) &&
+                                (borderDesc.isBottomRingBorder == terrainTransitionRingArray[indexFound].transitionRingBorderDesc.isBottomRingBorder))
+                            {
+                                terrainTransitionRingArray[indexFound].keepThisBlock = true; // mark block that it will be reused 
+                            }
+                        }
+                    }
+                }
+            }
+
+            // remove unused terrain blocks from terrainTransitionRingArray (and its key from terrainTransitionRingIndexDict)
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {               
+                if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
+                {
+                    // deactivate unity terrain (until it is recreated or until it is updated)
+                    terrainTransitionRingArray[i].terrainDesc.terrainObject.SetActive(false);
+                }
+
+                if (!terrainTransitionRingArray[i].keepThisBlock)
+                {
+                    // get key for terrain block
+                    int key = TerrainHelper.MakeTerrainKey(terrainTransitionRingArray[i].terrainDesc.mapPixelX, terrainTransitionRingArray[i].terrainDesc.mapPixelY);
+                    terrainTransitionRingIndexDict.Remove(key); // remove it
+
+                    // now destroy unity terrain object
+                    GameObject.Destroy(terrainTransitionRingArray[i].terrainDesc.terrainObject);
+                    terrainTransitionRingArray[i].terrainDesc.terrainObject = null;
+                    terrainTransitionRingArray[i].terrainDesc.active = false;
+                    terrainTransitionRingArray[i].ready = false;                    
+                }
+                else
+                {
+                    // mark terrain block for data update (position, ...)
+                    terrainTransitionRingArray[i].terrainDesc.updateData = true;
+                }
+            }
+            
             int terrainIndex = 0;
             for (int y = -distanceTransitionRingFromCenterY; y <= distanceTransitionRingFromCenterY; y++)
             {
@@ -1456,12 +1518,34 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     if ((Math.Abs(x) == distanceTransitionRingFromCenterX) || (Math.Abs(y) == distanceTransitionRingFromCenterY))
                     {
-                        bool successCreate = CreateTerrain(playerGPS.CurrentMapPixel.X + x, playerGPS.CurrentMapPixel.Y + y, terrainIndex);
+                        int mapPixelX = playerGPS.CurrentMapPixel.X + x;
+                        int mapPixelY = playerGPS.CurrentMapPixel.Y + y;
+
+                        // get key for terrain block
+                        int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
+                        // if desired terrain block already exists in transition ring
+                        if (terrainTransitionRingIndexDict.ContainsKey(key))
+                        {
+                            continue; // do nothing
+                        }
+
+                        // if desired terrain block does not exist in transition ring - go on here
+
+                        // go to next free block in terrainTransitionRingArray
+                        while (terrainTransitionRingArray[terrainIndex].keepThisBlock)
+                        {
+                            terrainIndex++;
+                            if (terrainIndex >= terrainTransitionRingArray.Length)
+                            {
+                                throw new Exception("generateTerrainTransitionRing: Could not find free terrain block. This should not happen!");
+                            }
+                        }
+
+                        bool successCreate = CreateTerrain(mapPixelX, mapPixelY, terrainIndex);
                         if (successCreate)
                         {
                             terrainTransitionRingArray[terrainIndex].transitionRingBorderDesc = getTransitionRingBorderDesc(x, y, distanceTransitionRingFromCenterX, distanceTransitionRingFromCenterY);
                             terrainTransitionRingArray[terrainIndex].heightsUpdatePending = true;
-                            terrainTransitionRingArray[terrainIndex].positionUpdatePending = true;
                             terrainIndex++;
                         }
                     }
