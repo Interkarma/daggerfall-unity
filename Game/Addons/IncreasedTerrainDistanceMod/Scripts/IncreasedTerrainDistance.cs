@@ -1183,12 +1183,20 @@ namespace ProjectIncreasedTerrainDistance
         }
 
         // Create new terrain game objects
-        private void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject)
+        private void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject, out GameObject billboardBatchObject)
         {
             // Create new terrain object parented to streaming world
             terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(GameManager.Instance.ExteriorParent.transform);
             terrainObject.name = GetTerrainName(mapPixelX, mapPixelY);
             terrainObject.hideFlags = HideFlags.None;
+
+            // Create new billboard batch object parented to terrain
+            billboardBatchObject = new GameObject();
+            billboardBatchObject.name = string.Format("DaggerfallBillboardBatch [{0},{1}]", mapPixelX, mapPixelY);
+            billboardBatchObject.hideFlags = HideFlags.None;
+            billboardBatchObject.transform.parent = terrainObject.transform;
+            billboardBatchObject.transform.localPosition = Vector3.zero;
+            billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
         }
 
         // Update terrain data
@@ -1356,7 +1364,8 @@ namespace ProjectIncreasedTerrainDistance
                 CreateTerrainGameObjects(
                     mapPixelX,
                     mapPixelY,
-                    out terrainTransitionRingArray[indexTerrain].terrainDesc.terrainObject);
+                    out terrainTransitionRingArray[indexTerrain].terrainDesc.terrainObject,
+                    out terrainTransitionRingArray[indexTerrain].terrainDesc.billboardBatchObject);
             }
 
             // Add new terrain index to transition ring dictionary
@@ -1389,7 +1398,25 @@ namespace ProjectIncreasedTerrainDistance
             {
                 // activate unity terrain now since it has been updated
                 terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.SetActive(true);
+                terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.SetActive(true);
             }
+        }
+
+        private void UpdateTerrainNature(int terrainIndex)
+        {
+            // Setup billboards
+            DaggerfallTerrain dfTerrain = terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+            DaggerfallBillboardBatch dfBillboardBatch = terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.GetComponent<DaggerfallBillboardBatch>();
+            if (dfTerrain && dfBillboardBatch)
+            {
+                // Get current climate and nature archive
+                int natureArchive = ClimateSwaps.GetNatureArchive(streamingWorld.LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
+                dfBillboardBatch.SetMaterial(natureArchive);
+                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, streamingWorld.TerrainScale);
+            }
+
+            // Only set active again once complete
+           terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.SetActive(true);
         }
 
         private TransitionRingBorderDesc getTransitionRingBorderDesc(int x, int y, int distanceTransitionRingFromCenterX, int distanceTransitionRingFromCenterY)
@@ -1432,13 +1459,13 @@ namespace ProjectIncreasedTerrainDistance
                         //if (!terrainTransitionRingUpdateRunning) //(!transitionRingUpdateFinished)
                             yield return new WaitForEndOfFrame();
                     }
-                    //if (terrainTransitionRingArray[i].terrainDesc.updateNature)
-                    //{
-                    //    UpdateTerrainNature(terrainTransitionRingArray[i]);
-                    //    terrainTransitionRingArray[i].terrainDesc.updateNature = false;
-                    //    //if (!terrainTransitionRingUpdateRunning) //(!transitionRingUpdateFinished)
-                    //        yield return new WaitForEndOfFrame();
-                    //}
+                    if (terrainTransitionRingArray[i].terrainDesc.updateNature)
+                    {
+                        UpdateTerrainNature(i);
+                        terrainTransitionRingArray[i].terrainDesc.updateNature = false;
+                        //if (!terrainTransitionRingUpdateRunning) //(!transitionRingUpdateFinished)
+                        yield return new WaitForEndOfFrame();
+                    }
                     terrainTransitionRingArray[i].ready = true;
                 }
             }
@@ -1506,6 +1533,7 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     // deactivate unity terrain (until it is recreated or until it is updated)
                     terrainTransitionRingArray[i].terrainDesc.terrainObject.SetActive(false);
+                    terrainTransitionRingArray[i].terrainDesc.billboardBatchObject.SetActive(false);
                 }
 
                 if (!terrainTransitionRingArray[i].keepThisBlock)
@@ -1524,6 +1552,7 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     // mark terrain block for data update (position, ...)
                     terrainTransitionRingArray[i].terrainDesc.updateData = true;
+                    terrainTransitionRingArray[i].terrainDesc.updateNature = true;
                 }
             }
             
