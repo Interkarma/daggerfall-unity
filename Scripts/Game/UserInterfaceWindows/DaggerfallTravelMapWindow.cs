@@ -342,6 +342,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             UpdateRegionLabel();
 
+            if (Input.GetKeyDown(KeyCode.L))
+                ShowLocationPicker();
+
         }
 
         #endregion
@@ -1139,7 +1142,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             for (int i = 0; i < locations.Count(); i++)
             {
-                if (locations[i].ToLower().StartsWith(name))                        // Valid location found,
+                if (locations[i].ToLower().Contains(name))                        // Valid location found,
                 {
                     if (!currentDFRegion.MapNameLookup.ContainsKey(locations[i]))
                     {
@@ -1160,6 +1163,67 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             return false;
+        }
+
+        //creates a ListPickerWindow with a list of locations from current region
+        //locations displayed will be filtered out depending on the dungeon / town / temple / home button settings
+        private void ShowLocationPicker()
+        {
+
+            if (!RegionSelected || currentDFRegion.LocationCount < 1)
+                return;
+
+            //int filteredCount = 0;
+            //if (townsFilterButtonEnabled)
+            //    filteredCount++;
+            //if (dungeonFilterButtonEnabled)
+            //    filteredCount++;
+            //if (templesFilterButtonEnabled)
+            //    filteredCount++;
+            //if (townsFilterButtonEnabled)
+            //    filteredCount++;
+
+            DaggerfallListPickerWindow locationPicker = new DaggerfallListPickerWindow(uiManager, this);
+            locationPicker.OnItemPicked += HandleLocationPickEvent;
+            locationPicker.ListBox.MaxCharacters = 29;
+
+            string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
+
+            for (int i = 0; i < locations.Length; i++)
+            {
+
+                //if (locationPicker.ListBox.Count > 500)
+                //{
+                //    if (filteredCount > 1)
+                //    {
+                //        DaggerfallMessageBox errorBox = new DaggerfallMessageBox(uiManager, this);
+                //        errorBox.AllowCancel = true;
+                //        errorBox.ClickAnywhereToClose = true;
+                //        errorBox.SetText("Too many location to display. Please use filters");
+                //        uiManager.PushWindow(errorBox);
+                //        locations = null;
+                //        locationPicker = null;
+                //        return;
+                //    }
+                //}
+
+                int index = currentDFRegion.MapNameLookup[locations[i]];
+                if (GetPixelColorIndex(currentDFRegion.MapTable[index].LocationType) == -1)
+                    continue;
+                else
+                    locationPicker.ListBox.AddItem(locations[i]);
+            }
+
+            uiManager.PushWindow(locationPicker);
+        }
+
+        public void HandleLocationPickEvent(int index, string locationName)
+        {
+            if (!RegionSelected || currentDFRegion.LocationCount < 1)
+                return;
+
+            CloseWindow();
+            HandleLocationFindEvent(null, locationName);
         }
 
         // Gets current player position in map pixels
