@@ -142,11 +142,12 @@ namespace ProjectIncreasedTerrainDistance
         Dictionary<int, int> terrainTransitionRingIndexDict = new Dictionary<int, int>();
 
         GameObject gameobjectTerrainTransitionRing = null; // container gameobject for transition ring's terrain blocks
-
+        
         bool terrainTransitionRingUpdateRunning = false;
         bool transitionRingAllBlocksReady = false;
         bool terrainTransitionRingUpdateSeasonalTextures = false;
         bool terrainTransitionRingUpdateMaterialProperties = false;
+        bool updateTerrainTransitionRing = false;
 
         // stacked near camera (used for near terrain from range 1000-15000) to prevent floating-point rendering precision problems for huge clipping ranges
         Camera stackedNearCamera = null; 
@@ -697,6 +698,18 @@ namespace ProjectIncreasedTerrainDistance
                     terrain.materialTemplate = mat;
                 }
             }
+
+            // if terrain transition ring was marked to be updated
+            if (updateTerrainTransitionRing)
+            {
+                if (!terrainTransitionRingUpdateRunning) // if at the moment no terrain transition ring update is still in progress
+                {
+                    // update terrain transition ring in this Update() iteration if no terrain transition ring update is still in progress - otherwise postprone
+                    generateTerrainTransitionRing(); // update
+                    updateTerrainTransitionRing = false; // mark as updated
+                }
+            }
+
             if (gameobjectTerrainTransitionRing != null)
             {
                 if (doSeasonalTexturesUpdate)
@@ -742,10 +755,8 @@ namespace ProjectIncreasedTerrainDistance
                     terrain.materialTemplate = mat;
                 }              
 
-                //if (gameobjectTerrainTransitionRing) // only "change" if already initialized - otherwise wait for function generateWorldTerrain() to invoke this function
-                //{
-                    generateTerrainTransitionRing();
-                //}
+                // make terrain transition ring update on next iteration in Update() as soon as no terrain transition ring update is still in progress
+                updateTerrainTransitionRing = true;
 
                 if (doSeasonalTexturesUpdate)
                 {
@@ -1409,8 +1420,6 @@ namespace ProjectIncreasedTerrainDistance
 
         private IEnumerator UpdateTerrains()
         {
-            terrainTransitionRingUpdateRunning = true;
-
             for (int i = 0; i < terrainTransitionRingArray.Length; i++)
             {
                 if (terrainTransitionRingArray[i].terrainDesc.active)
@@ -1445,7 +1454,14 @@ namespace ProjectIncreasedTerrainDistance
                 gameobjectTerrainTransitionRing = new GameObject("TerrainTransitionRing");
                 gameobjectTerrainTransitionRing.transform.SetParent(GameManager.Instance.ExteriorParent.transform);
             }
+
+            //// this is not perfect I know - but since events can get in asynchronous and may trigger an update and thus an invocation to generateTerrainTransitionRing() it is important that no update is currently performed
+            //while (transitionRingAllBlocksReady == true)
+            //{
+
+            //}
             transitionRingAllBlocksReady = false;
+            terrainTransitionRingUpdateRunning = true;
 
             int distanceTransitionRingFromCenterX = (streamingWorld.TerrainDistance + 1);
             int distanceTransitionRingFromCenterY = (streamingWorld.TerrainDistance + 1);
