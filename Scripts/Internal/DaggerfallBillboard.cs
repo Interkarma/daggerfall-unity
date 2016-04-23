@@ -149,18 +149,23 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void SetResourceData(DFBlock.RdbFlatResource resource)
         {
-            // Fixed mobile types
+            // Add common data
+            summary.Gender = (int)resource.Gender;
+            summary.FactionMobileID = (int)resource.FactionMobileId;
+            summary.FixedEnemyType = MobileTypes.None;
+
+            // If flat has gender and faction this is an NPC
+            if (summary.Gender != 0 && summary.FactionMobileID != 0)
+            {
+                summary.FlatType = FlatTypes.NPC;
+            }
+
+            // Set data of fixed mobile types (e.g. non-random enemy spawn)
             if (resource.TextureArchive == 199 && resource.TextureRecord == 16)
             {
                 summary.IsMobile = true;
-                summary.Gender = (int)resource.Gender;
-                summary.FactionMobileID = (int)resource.FactionMobileId;
                 summary.EditorFlatType = EditorFlatTypes.FixedMobile;
                 summary.FixedEnemyType = (MobileTypes)(summary.FactionMobileID & 0xff);
-            }
-            else
-            {
-                summary.FixedEnemyType = MobileTypes.None;
             }
         }
 

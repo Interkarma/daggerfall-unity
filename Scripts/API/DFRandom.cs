@@ -15,34 +15,78 @@ using System.Collections;
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// Daggerfall appears to use a straight clib rand() for pseudorandom numbers.
-    /// Reimplementing here so certain pseudorandom processes can match Daggerfall
-    /// closely as possible. This also ensures a consistent number progression
-    /// in Unity across all platforms.
+    /// Reimplementing key parts of Daggerfall's random library.
+    /// This ensures critical random number sequences (e.g. building names)
+    /// will match Daggerfall's output across all platforms.
     /// </summary>
     public static class DFRandom
     {
         static ulong next = 1;
+        static ulong savedNext;
 
-        public static int rand()
+        public static uint Seed
         {
-            next = next * 1103515245 + 12345;
-            return ((int)((next >> 16) & 0x7FFF));
+            get { return (uint)next; }
+            set { next = value; }
         }
 
-        public static int random_range(int min, int max)
-        {
-            return rand() % (max - min + 1) + min;
-        }
-
+        /// <summary>
+        /// Seed random generator.
+        /// </summary>
+        /// <param name="seed">Seed int.</param>
         public static void srand(int seed)
         {
             next = (uint)seed;
         }
 
+        /// <summary>
+        /// Seed random generator.
+        /// </summary>
+        /// <param name="seed">Seed uint.</param>
         public static void srand(uint seed)
         {
             next = seed;
+        }
+
+        /// <summary>
+        /// Generate a random number.
+        /// </summary>
+        /// <returns></returns>
+        public static uint rand()
+        {
+            next = next * 1103515245 + 12345;
+            return ((uint)((next >> 16) & 0x7FFF));
+        }
+
+        /// <summary>
+        /// Generates a random number between min and max (exclusive).
+        /// </summary>
+        /// <param name="min">Minimum number.</param>
+        /// <param name="max">Maximum number (exclusive).</param>
+        /// <returns>Random number between min and max - 1.</returns>
+        public static int random_range(int min, int max)
+        {
+            return (int)rand() % (max - min) + min;
+        }
+
+        /// <summary>
+        /// Generates a random number between 0 and max (exclusive).
+        /// </summary>
+        /// <param name="max">Maximum number (exclusive).</param>
+        /// <returns>Random number between 0 and max - 1.</returns>
+        public static int random_range(int max)
+        {
+            return (int)rand() % max;
+        }
+
+        public static void SaveSeed()
+        {
+            savedNext = next;
+        }
+
+        public static void RestoreSeed()
+        {
+            next = savedNext;
         }
     }
 }

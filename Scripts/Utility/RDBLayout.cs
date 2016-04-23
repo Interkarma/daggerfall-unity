@@ -754,7 +754,7 @@ namespace DaggerfallWorkshop.Utility
 
             DFBlock.RdbFlatResource obj = rdbObj.Resources.FlatResource;
             string description = "FLT";
-            int soundID_Index = obj.Sound_index;
+            int soundID_Index = obj.SoundIndex;
             float duration = 0.0f;
             float magnitude = obj.Magnitude;
             int axis = obj.Magnitude;

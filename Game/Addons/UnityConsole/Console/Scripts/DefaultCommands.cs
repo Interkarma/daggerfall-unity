@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Entity;
+using System.IO;
 
 namespace Wenzil.Console
 {
@@ -49,6 +50,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(GetLocationMapPixel.name, GetLocationMapPixel.description, GetLocationMapPixel.usage, GetLocationMapPixel.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Teleport.name, Teleport.description, Teleport.usage, Teleport.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Groundme.name, Groundme.description, Groundme.usage, Groundme.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ExecuteScript.name, ExecuteScript.description, ExecuteScript.usage, ExecuteScript.Execute);
+
         }
 
         private static class GodCommand
@@ -158,7 +161,7 @@ namespace Wenzil.Console
             {
                 WeatherManager weatherManager = GameManager.Instance.WeatherManager;
                 int weatherType = 0;
-                
+
                 if (args == null || args.Length < 1)
                     return HelpCommand.Execute(SetWeather.name);
 
@@ -167,9 +170,9 @@ namespace Wenzil.Console
                     return HelpCommand.Execute(SetWeather.name);
 
                 }
-                else if(int.TryParse(args[0], out weatherType))
+                else if (int.TryParse(args[0], out weatherType))
                 {
-                    if(weatherType >= 0 && weatherType < 4)
+                    if (weatherType >= 0 && weatherType < 4)
                     {
                         weatherManager.ClearAllWeather();
 
@@ -559,7 +562,7 @@ namespace Wenzil.Console
                         return "Invalid coordiantes";
                     else
                         streamingWorld.TeleportToCoordinates(x, y);
-                        return string.Format("Teleporting player to: {0} {1}", x, y);
+                    return string.Format("Teleporting player to: {0} {1}", x, y);
                 }
                 return "Invalid coordiantes";
             }
@@ -768,8 +771,8 @@ namespace Wenzil.Console
                 {
                     DaggerfallActionDoor door;
                     RaycastHit hitInfo;
-                    Ray ray = Camera.main.ViewportPointToRay (new Vector3(0.5f, 0.5f, 0));
-                    if(!(Physics.Raycast(ray, out hitInfo)))
+                    Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+                    if (!(Physics.Raycast(ray, out hitInfo)))
                         return error;
                     else
                     {
@@ -846,7 +849,7 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                if(args == null || args.Count() < 1)
+                if (args == null || args.Count() < 1)
                 {
                     return string.Format("Invalid paramaters; \n {0}", usage);
                 }
@@ -860,7 +863,7 @@ namespace Wenzil.Console
                 }
 
 
-                if(DaggerfallWorkshop.Utility.GameObjectHelper.FindMultiNameLocation(name, out loc ))
+                if (DaggerfallWorkshop.Utility.GameObjectHelper.FindMultiNameLocation(name, out loc))
                 {
                     DaggerfallConnect.Utility.DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)loc.MapTableData.Longitude, (int)loc.MapTableData.Latitude);
                     return string.Format("{0} found; Pixel Coordinates: \nx: {1} y: {2}", name, pos.X, pos.Y);
@@ -892,7 +895,7 @@ namespace Wenzil.Console
                 Vector3 dir = Camera.main.transform.up;
                 Vector3 loc;
 
-                if(args != null)
+                if (args != null)
                 {
                     for (int i = 0; i < args.Length; i++)
                     {
@@ -925,7 +928,7 @@ namespace Wenzil.Console
                 if (!(Physics.Raycast(ray, out hitInfo, maxDistance)))
                 {
                     Console.Log("Didn't hit anything...");
-                    if(forceTeleOnNoHit)
+                    if (forceTeleOnNoHit)
                     {
                         GameManager.Instance.PlayerObject.transform.position = ray.GetPoint(maxDistance);
                         Console.Log("...teleporting anyways");
@@ -941,7 +944,7 @@ namespace Wenzil.Console
                     }
                     GameManager.Instance.PlayerObject.transform.position = loc;
                 }
-                    return "Finished";
+                return "Finished";
             }
         }
 
@@ -969,9 +972,74 @@ namespace Wenzil.Console
                 else
                 {
                     GameManager.Instance.PlayerObject.transform.position = playerMotor.ContactPoint;
-                    playerMotor.FixStanding(cc.height/2);
+                    playerMotor.FixStanding(cc.height / 2);
                     return "Finished - moved to last known good location at " + playerMotor.ContactPoint.ToString();
                 }
+            }
+        }
+
+        private static class ExecuteScript
+        {
+            public static readonly string name = "execute";
+            public static readonly string description = "compiles source files (and instanties objects when possible) from streaming assets path";
+            public static readonly string error = "invalid paramater.";
+
+            public static readonly string usage = "execute Script00.cs Script01.cs Script02.cs....";
+
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null)
+                    return error;
+                else if (args.Length < 1)
+                    return error;
+
+                int count = 0;
+                string[] files = new string[args.Length];
+
+                for (int i = 0; i < args.Length; i++)
+                {
+                    if (string.IsNullOrEmpty(args[i]))
+                        continue;
+
+                    string fullName = Path.Combine(Application.streamingAssetsPath, args[i]);
+
+                    if (!fullName.EndsWith(".cs"))   //limiting to only .cs files isn't really necessary - any text file should work fine
+                        return error;
+
+                    if (!File.Exists(fullName))
+                        return error;
+                    else
+                    {
+                        Console.Log("Found File: " + fullName);
+                        files[i] = fullName;
+                        count++;
+                    }
+                }
+
+                if (count < 1)
+                    return error;
+
+                System.Reflection.Assembly assembly = Compiler.CompileFiles(files.ToArray());
+
+                var assaignable = Compiler.GetLoadableTypes(assembly);
+                foreach (Type t in assaignable)
+                {
+                    bool isAssignable = typeof(Component).IsAssignableFrom(t);
+                    bool hasDefaultConstructor = (t.GetConstructor(Type.EmptyTypes) != null && !t.IsAbstract);
+
+                    if (isAssignable)
+                    {
+                        GameObject newObj = new GameObject(t.Name);
+                        newObj.AddComponent(t);
+                    }
+                    else if (hasDefaultConstructor)
+                    {
+                        object newThing = Activator.CreateInstance(t); //only works if object has a default constructor
+                    }
+                }
+
+                return "Finished";
             }
         }
 

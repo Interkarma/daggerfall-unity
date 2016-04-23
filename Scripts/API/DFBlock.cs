@@ -988,7 +988,7 @@ namespace DaggerfallConnect
             public byte Magnitude;
 
             /// <summary> sound index, also used for spell & text index</summary>
-            public byte Sound_index;
+            public byte SoundIndex;
 
             /// <summary>
             /// FactionID/MobileID bitfield. (ID & 0xFF for mobile ID).
@@ -999,9 +999,9 @@ namespace DaggerfallConnect
 
             /// <summary>Next object in action chain.</summary>
             public Int32 NextObjectOffset;
+
             /// <summary>Action flag.</summary>
             public Byte Action;
-
         }
 
         /// <summary>
