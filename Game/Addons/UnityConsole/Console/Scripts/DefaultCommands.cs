@@ -981,7 +981,7 @@ namespace Wenzil.Console
         private static class ExecuteScript
         {
             public static readonly string name = "execute";
-            public static readonly string description = "compiles source files (and instanties objects when possible) from streaming assets path";
+            public static readonly string description = "compiles source files (and instanties objects when possible) from streaming assets path.";
             public static readonly string error = "invalid paramater.";
 
             public static readonly string usage = "execute Script00.cs Script01.cs Script02.cs....";
@@ -1020,26 +1020,34 @@ namespace Wenzil.Console
                 if (count < 1)
                     return error;
 
-                System.Reflection.Assembly assembly = Compiler.CompileFiles(files.ToArray());
-
-                var assaignable = Compiler.GetLoadableTypes(assembly);
-                foreach (Type t in assaignable)
+                try
                 {
-                    bool isAssignable = typeof(Component).IsAssignableFrom(t);
-                    bool hasDefaultConstructor = (t.GetConstructor(Type.EmptyTypes) != null && !t.IsAbstract);
+                    System.Reflection.Assembly assembly = Compiler.CompileFiles(files.ToArray());
 
-                    if (isAssignable)
+                    var loadableTypes = Compiler.GetLoadableTypes(assembly);
+
+                    foreach (Type t in loadableTypes)
                     {
-                        GameObject newObj = new GameObject(t.Name);
-                        newObj.AddComponent(t);
+                        bool isAssignable = typeof(Component).IsAssignableFrom(t);
+                        bool hasDefaultConstructor = (t.GetConstructor(Type.EmptyTypes) != null && !t.IsAbstract);
+
+                        if (isAssignable)
+                        {
+                            GameObject newObj = new GameObject(t.Name);
+                            newObj.AddComponent(t);
+                        }
+                        else if (hasDefaultConstructor)
+                        {
+                            object newThing = Activator.CreateInstance(t); //only works if has a default constructor
+                        }
                     }
-                    else if (hasDefaultConstructor)
-                    {
-                        object newThing = Activator.CreateInstance(t); //only works if object has a default constructor
-                    }
+
+                    return "Finished";
                 }
-
-                return "Finished";
+                catch(Exception ex)
+                {
+                    return ex.Message;
+                }
             }
         }
 
