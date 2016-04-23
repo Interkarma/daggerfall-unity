@@ -260,6 +260,12 @@ namespace DaggerfallConnect.Arena2
 
         void ParseFactions(string txt)
         {
+            // Some modded faction.txt files contain multiples of same id
+            // This resolver counter is used to give a faction a unique id if needed 
+            // No normal faction has an id above 1000
+            // Correct faction relationship already broken by mod, this is just to help file parse
+            int resolverId = 1000;
+
             // Clear existing dictionary
             factionDict.Clear();
 
@@ -332,7 +338,18 @@ namespace DaggerfallConnect.Arena2
                 ParseFactionData(ref block, ref faction);
 
                 // Store faction just read
-                factionDict.Add(faction.id, faction);
+                if (!factionDict.ContainsKey(faction.id))
+                {
+                    factionDict.Add(faction.id, faction);
+                }
+                else
+                {
+                    // Duplicate id detected
+                    // This only happens with modded faction.txt mods, not with original data
+                    faction.id = resolverId++;
+                    factionDict.Add(faction.id, faction);
+                }
+
                 previousFaction = faction;
             }
         }
@@ -362,7 +379,14 @@ namespace DaggerfallConnect.Arena2
                 // Split string into tag and value using ':' character
                 parts = line.Split(':');
                 if (parts.Length != 2)
-                    throw new Exception(string.Format("Invalid tag format for data {0} on faction {1}", line, faction.id));
+                {
+                    // Attempt to split by space as some modded faction files have omitted colon
+                    // This does not happen with original data
+                    // If it still fails then throw an exception
+                    parts = line.Split(' ');
+                    if (parts.Length != 2)
+                        throw new Exception(string.Format("Invalid tag format for data {0} on faction {1}", line, faction.id));
+                }
 
                 // Get tag and value strings
                 string tag = parts[0].Trim().ToLower();
