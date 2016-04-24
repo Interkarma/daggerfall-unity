@@ -11,10 +11,11 @@
 struct Input
 {
 	float2 uv_MainTex;
-	//float2 uv_BumpMap;
+	float2 uv_BumpMap;
 	float3 worldPos; // interpolated vertex positions used for correct coast line texturing
 	float3 worldNormal; // interpolated vertex normals used for texturing terrain based on terrain slope
 	float4 screenPos;
+	INTERNAL_DATA
 };
 
 #define PI 3.1416f

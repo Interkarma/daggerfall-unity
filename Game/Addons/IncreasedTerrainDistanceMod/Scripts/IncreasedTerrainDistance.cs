@@ -72,6 +72,7 @@ namespace ProjectIncreasedTerrainDistance
         bool isActiveReflectionsMod = false;
         bool isActiveEnhancedSkyMod = false;
 
+
         // is dfUnity ready?
         bool isReady = false;
 
@@ -148,6 +149,8 @@ namespace ProjectIncreasedTerrainDistance
         bool terrainTransitionRingUpdateSeasonalTextures = false;
         bool terrainTransitionRingUpdateMaterialProperties = false;
         bool updateTerrainTransitionRing = false;
+
+        Texture2D tileAtlasReflectiveTexture = null; // used in blending of normal and far terrain to identify pixels in the normal terrain texture that are water
 
         // stacked near camera (used for near terrain from range 1000-15000) to prevent floating-point rendering precision problems for huge clipping ranges
         Camera stackedNearCamera = null; 
@@ -443,6 +446,7 @@ namespace ProjectIncreasedTerrainDistance
                 if (DaggerfallUnity.Settings.Nystul_RealtimeReflections)
                 {
                     isActiveReflectionsMod = true;
+                    tileAtlasReflectiveTexture = Resources.Load("tileatlas_reflective") as Texture2D;
                 }
             }
 
@@ -717,6 +721,18 @@ namespace ProjectIncreasedTerrainDistance
                     terrainTransitionRingUpdateSeasonalTextures = true;
                 }
                 terrainTransitionRingUpdateMaterialProperties = true;
+
+                if (!terrainTransitionRingUpdateRunning) // if at the moment no terrain transition ring update is still in progress
+                {
+                    for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+                    {
+                        Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+                        Material material = terrain.materialTemplate;
+                        material.SetFloat("_BlendStart", blendStart);
+                        material.SetFloat("_BlendEnd", blendEnd);
+                        terrain.materialTemplate = material;
+                    }
+                }
             }
 
             if (terrainTransitionRingUpdateSeasonalTextures)
@@ -911,6 +927,20 @@ namespace ProjectIncreasedTerrainDistance
                 Vector3 vecWaterHeight = new Vector3(0.0f, (DaggerfallUnity.Instance.TerrainSampler.OceanElevation + 1.0f) * streamingWorld.TerrainScale, 0.0f); // water height level on y-axis (+1.0f some coastlines are incorrect otherwise)
                 Vector3 vecWaterHeightTransformed = worldTerrainGameObject.transform.TransformPoint(vecWaterHeight); // transform to world coordinates
                 terrainMaterial.SetFloat("_WaterHeightTransformed", vecWaterHeightTransformed.y);
+            
+                if (gameobjectTerrainTransitionRing != null)
+                {
+                    if (!terrainTransitionRingUpdateRunning) // if at the moment no terrain transition ring update is still in progress
+                    {
+                        for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+                        {
+                            Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+                            Material material = terrain.materialTemplate;
+                            material.SetFloat("_WaterHeightTransformed", vecWaterHeightTransformed.y);
+                            terrain.materialTemplate = material;
+                        }
+                    }
+                }
             }
 
             MapPixelX = playerGPS.CurrentMapPixel.X;
@@ -1316,6 +1346,10 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     newMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
                     newMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
+                    if (tileAtlasReflectiveTexture != null)
+                    {
+                        newMaterial.SetTexture("_TileAtlasReflectiveTex", tileAtlasReflectiveTexture);
+                    }
                     newMaterial.SetInt("_UseSeaReflectionTex", 1);
                 }
                 else

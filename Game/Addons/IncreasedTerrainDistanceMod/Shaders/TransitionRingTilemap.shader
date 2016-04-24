@@ -44,6 +44,8 @@ Shader "Daggerfall/TransitionRingTilemap" {
 		_SeaReflectionTex("Reflection Texture Sea Reflection", 2D) = "black" {}
 		_UseSeaReflectionTex("specifies if sea reflection texture is used", Int) = 0
 
+		_TileAtlasReflectiveTex("Tileset Reflection Atlas (RGB)", 2D) = "black" {}		
+
 		_MapPixelX("MapPixelX on world map", Int) = 0
 		_MapPixelY("MapPixelY on world map", Int) = 0
 		_PlayerPosX("Player Position in X-direction on world map", Int) = 0
@@ -73,6 +75,9 @@ Shader "Daggerfall/TransitionRingTilemap" {
 		CGPROGRAM
 
 		#include "FarTerrainCommon.cginc"
+
+		// only used in transition ring tilemap shader, so not in FarTerrainCommon.cginc
+		sampler2D _TileAtlasReflectiveTex;
 
 		#pragma target 3.0
 		#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd		
@@ -129,12 +134,32 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			float2 uvr = IN.uv_MainTex * ((float)_TilemapDim / _GutterSize);
 			half4 c2 = tex2Dgrad(_TileAtlasTex, uv, ddx(uvr), ddy(uvr));
 			//o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
-			
+
+			float reflAmount = 1.0f;
+
+			#if defined(ENABLE_WATER_REFLECTIONS)
+			if (_UseSeaReflectionTex)
+			{
+				float2 screenUV = IN.screenPos.xy / IN.screenPos.w;
+
+				fixed3 normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
+				float3 worldNormal = normalize(WorldNormalVector(IN, normal));
+
+				reflAmount = tex2D(_TileAtlasReflectiveTex, uv).r; //tex2Dgrad(_TileAtlasReflectiveTex, uv, ddx(uvr), ddy(uvr));
+			}
+			#endif
+
 			float blendWeightX = lerp(_blendWeightFarTerrainLeft, _blendWeightFarTerrainRight, IN.uv_MainTex.x);
 			float blendWeightY = lerp(_blendWeightFarTerrainTop, _blendWeightFarTerrainBottom, IN.uv_MainTex.y);
 			float blendWeightCombined = 1.0f - max(blendWeightX, blendWeightY);
 
-			o.Albedo = lerp(c.rgb, c2.rgb, blendWeightCombined);
+			if (reflAmount > 0.25f)
+			{
+				blendWeightCombined = 1.0f;
+			}
+			c.rgb = lerp(c.rgb, c2.rgb, blendWeightCombined);
+
+			o.Albedo = c.rgb;
 		}
 
 		ENDCG
