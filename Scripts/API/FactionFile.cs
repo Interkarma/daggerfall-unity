@@ -260,10 +260,8 @@ namespace DaggerfallConnect.Arena2
 
         void ParseFactions(string txt)
         {
-            // Some modded faction.txt files contain multiples of same id
-            // This resolver counter is used to give a faction a unique id if needed 
-            // No normal faction has an id above 1000
-            // Correct faction relationship already broken by mod, this is just to help file parse
+            // Unmodded faction.txt contains multiples of same id
+            // This resolver counter is used to give a faction a unique id if needed
             int resolverId = 1000;
 
             // Clear existing dictionary
@@ -345,7 +343,6 @@ namespace DaggerfallConnect.Arena2
                 else
                 {
                     // Duplicate id detected
-                    // This only happens with modded faction.txt mods, not with original data
                     faction.id = resolverId++;
                     factionDict.Add(faction.id, faction);
                 }
@@ -380,9 +377,9 @@ namespace DaggerfallConnect.Arena2
                 parts = line.Split(':');
                 if (parts.Length != 2)
                 {
-                    // Attempt to split by space as some modded faction files have omitted colon
-                    // This does not happen with original data
-                    // If it still fails then throw an exception
+                    // Attempt to split by space
+                    // Original faction.txt has malformed tag missing colon
+                    // If this still fails throw an exception
                     parts = line.Split(' ');
                     if (parts.Length != 2)
                         throw new Exception(string.Format("Invalid tag format for data {0} on faction {1}", line, faction.id));
