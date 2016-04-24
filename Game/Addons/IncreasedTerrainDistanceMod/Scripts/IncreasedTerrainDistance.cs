@@ -1054,7 +1054,7 @@ namespace ProjectIncreasedTerrainDistance
             terrainMaterial.SetInt("_PlayerPosX", this.playerGPS.CurrentMapPixel.X);
             terrainMaterial.SetInt("_PlayerPosY", this.playerGPS.CurrentMapPixel.Y);
 
-            terrainMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance - 1); // -1... allow the outer ring of of detailed terrain to intersect with far terrain (to prevent some holes)
+            terrainMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance);
 
             Vector3 vecWaterHeight = new Vector3(0.0f, (ImprovedTerrainSampler.scaledOceanElevation + 1.0f) * streamingWorld.TerrainScale, 0.0f); // water height level on y-axis (+1.0f some coastlines are incorrect otherwise)
             Vector3 vecWaterHeightTransformed = terrainGameObject.transform.TransformPoint(vecWaterHeight); // transform to world coordinates
@@ -1293,7 +1293,7 @@ namespace ProjectIncreasedTerrainDistance
             newMaterial.SetInt("_PlayerPosX", this.playerGPS.CurrentMapPixel.X);
             newMaterial.SetInt("_PlayerPosY", this.playerGPS.CurrentMapPixel.Y);
 
-            newMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance - 1); // -1... allow the outer ring of of detailed terrain to intersect with far terrain (to prevent some holes)
+            newMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance); // - 1); // -1... allow the outer ring of of detailed terrain to intersect with far terrain (to prevent some holes)
 
             Vector3 vecWaterHeight = new Vector3(0.0f, (ImprovedTerrainSampler.scaledOceanElevation + 1.0f) * streamingWorld.TerrainScale, 0.0f); // water height level on y-axis (+1.0f some coastlines are incorrect otherwise)
             Vector3 vecWaterHeightTransformed = worldTerrainGameObject.transform.TransformPoint(vecWaterHeight); // transform to world coordinates
@@ -1470,6 +1470,8 @@ namespace ProjectIncreasedTerrainDistance
                 }
             }
 
+            terrainMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance); // after of transition ring update - restore far terrain rendering to streamingWorld.TerrainDistance
+
             terrainTransitionRingUpdateRunning = false;
             transitionRingAllBlocksReady = true;
         }
@@ -1489,6 +1491,8 @@ namespace ProjectIncreasedTerrainDistance
             //}
             transitionRingAllBlocksReady = false;
             terrainTransitionRingUpdateRunning = true;
+
+            terrainMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance-2); // for time of transition ring update - change far terrain to be rendered to streamingWorld.TerrainDistance-2
 
             int distanceTransitionRingFromCenterX = (streamingWorld.TerrainDistance + 1);
             int distanceTransitionRingFromCenterY = (streamingWorld.TerrainDistance + 1);
