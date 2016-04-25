@@ -41,7 +41,7 @@ namespace ProjectIncreasedTerrainDistance
         #region Fields
 
         // Streaming World Component
-        public StreamingWorld streamingWorld;
+        public StreamingWorld streamingWorld = null;
 
         // Local player GPS for tracking player virtual position
         public PlayerGPS playerGPS;       
@@ -1479,6 +1479,72 @@ namespace ProjectIncreasedTerrainDistance
             return transitionRingBorderDesc;
         }
 
+        private Terrain GetTerrainTransitionRing(int mapPixelX, int mapPixelY)
+        {
+            int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
+            if (terrainTransitionRingIndexDict.ContainsKey(key))
+            {
+                return terrainTransitionRingArray[terrainTransitionRingIndexDict[key]].terrainDesc.terrainObject.GetComponent<Terrain>();
+            }
+
+            return null;
+        }
+
+        private void UpdateNeighboursTransitionRing()
+        {
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {
+                // Check object exists
+                if (!terrainTransitionRingArray[i].terrainDesc.terrainObject)
+                    continue;
+
+                // Get DaggerfallTerrain
+                DaggerfallTerrain dfTerrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+                if (!dfTerrain)
+                    continue;
+
+                // Set or clear neighbours
+                if (terrainTransitionRingArray[i].terrainDesc.active)
+                {
+                    dfTerrain.LeftNeighbour = GetTerrainTransitionRing(dfTerrain.MapPixelX - 1, dfTerrain.MapPixelY);
+                    dfTerrain.RightNeighbour = GetTerrainTransitionRing(dfTerrain.MapPixelX + 1, dfTerrain.MapPixelY);
+                    dfTerrain.TopNeighbour = GetTerrainTransitionRing(dfTerrain.MapPixelX, dfTerrain.MapPixelY - 1);
+                    dfTerrain.BottomNeighbour = GetTerrainTransitionRing(dfTerrain.MapPixelX, dfTerrain.MapPixelY + 1);
+                    //    if (dfTerrain.LeftNeighbour == null)
+                    //    {
+                    //        dfTerrain.LeftNeighbour = streamingWorld.GetTerrainFromPixel(dfTerrain.MapPixelX - 1, dfTerrain.MapPixelY).GetComponent<Terrain>();
+                    //        if (dfTerrain.LeftNeighbour != null) Debug.Log("worked");
+                    //    }
+                    //    if (dfTerrain.RightNeighbour == null)
+                    //    {
+                    //        dfTerrain.RightNeighbour = streamingWorld.GetTerrainFromPixel(dfTerrain.MapPixelX + 1, dfTerrain.MapPixelY).GetComponent<Terrain>();
+                    //        if (dfTerrain.RightNeighbour != null) Debug.Log("worked");
+                    //    }
+                    //    if (dfTerrain.TopNeighbour == null)
+                    //    {
+                    //        dfTerrain.TopNeighbour = streamingWorld.GetTerrainFromPixel(dfTerrain.MapPixelX, dfTerrain.MapPixelY - 1).GetComponent<Terrain>();
+                    //        if (dfTerrain.TopNeighbour != null) Debug.Log("worked");
+                    //    }
+                    //    if (dfTerrain.BottomNeighbour == null)
+                    //    {
+                    //        dfTerrain.BottomNeighbour = streamingWorld.GetTerrainFromPixel(dfTerrain.MapPixelX, dfTerrain.MapPixelY + 1).GetComponent<Terrain>();
+                    //        if (dfTerrain.BottomNeighbour != null) Debug.Log("worked");
+                    //    }
+                    dfTerrain.UpdateNeighbours();
+                }
+                else
+                {
+                    dfTerrain.LeftNeighbour = null;
+                    dfTerrain.RightNeighbour = null;
+                    dfTerrain.TopNeighbour = null;
+                    dfTerrain.BottomNeighbour = null;
+                }
+
+                // Update Unity Terrain
+                dfTerrain.UpdateNeighbours();
+            }
+        }
+
         private IEnumerator UpdateTerrains()
         {
             for (int i = 0; i < terrainTransitionRingArray.Length; i++)
@@ -1503,6 +1569,8 @@ namespace ProjectIncreasedTerrainDistance
                     terrainTransitionRingArray[i].ready = true;
                 }
             }
+
+            UpdateNeighboursTransitionRing();
 
             terrainMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance); // after of transition ring update - restore far terrain rendering to streamingWorld.TerrainDistance
 
