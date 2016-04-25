@@ -865,8 +865,9 @@ namespace ProjectIncreasedTerrainDistance
 
         private void updatePositionWorldTerrain(ref GameObject terrainGameObject, Vector3 offset)
         {
-            // reduce chance of geometry intersections of world terrain and the terrain transition ring
-            float extraTranslationY = -0.5f; // -10.0f; // -12.5f * streamingWorld.TerrainScale;
+            // reduce chance of holes in geometry between world terrain and the terrain transition ring (this does not happen often, but if it does it is annoying)
+            // I think it is also a floating-point precision issue because the scales of the normal and the far terrain are so different
+            float extraTranslationY = -30.0f;
 
             // world scale computed as in StreamingWorld.cs and DaggerfallTerrain.cs scripts
             float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
