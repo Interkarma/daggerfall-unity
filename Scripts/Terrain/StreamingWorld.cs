@@ -887,7 +887,7 @@ namespace DaggerfallWorkshop
             billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
         }
 
-        private string GetTerrainName(int mapPixelX, int mapPixelY)
+        public string GetTerrainName(int mapPixelX, int mapPixelY)
         {
             return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
         }
@@ -960,7 +960,7 @@ namespace DaggerfallWorkshop
         }
 
         // Update terrain nature
-        private void UpdateTerrainNature(TerrainDesc terrainDesc)
+        public void UpdateTerrainNature(TerrainDesc terrainDesc)
         {
             // Setup billboards
             DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();

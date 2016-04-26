@@ -726,11 +726,14 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     for (int i = 0; i < terrainTransitionRingArray.Length; i++)
                     {
-                        Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
-                        Material material = terrain.materialTemplate;
-                        material.SetFloat("_BlendStart", blendStart);
-                        material.SetFloat("_BlendEnd", blendEnd);
-                        terrain.materialTemplate = material;
+                        if (terrainTransitionRingArray[i].ready)
+                        { 
+                            Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+                            Material material = terrain.materialTemplate;
+                            material.SetFloat("_BlendStart", blendStart);
+                            material.SetFloat("_BlendEnd", blendEnd);
+                            terrain.materialTemplate = material;
+                        }
                     }
                 }
             }
@@ -1208,30 +1211,8 @@ namespace ProjectIncreasedTerrainDistance
             }
         }
 
-        private string GetTerrainName(int mapPixelX, int mapPixelY)
-        {
-            return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
-        }
-
-        // Create new terrain game objects
-        private void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject, out GameObject billboardBatchObject)
-        {
-            // Create new terrain object parented to streaming world
-            terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(GameManager.Instance.ExteriorParent.transform);
-            terrainObject.name = GetTerrainName(mapPixelX, mapPixelY);
-            terrainObject.hideFlags = HideFlags.None;
-
-            // Create new billboard batch object parented to terrain
-            billboardBatchObject = new GameObject();
-            billboardBatchObject.name = string.Format("DaggerfallBillboardBatch [{0},{1}]", mapPixelX, mapPixelY);
-            billboardBatchObject.hideFlags = HideFlags.None;
-            billboardBatchObject.transform.parent = terrainObject.transform;
-            billboardBatchObject.transform.localPosition = Vector3.zero;
-            billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
-        }
-
         // Update terrain data
-        private void UpdateTerrainData(TransitionTerrainDesc transitionTerrainDesc)
+        private void UpdateTerrainDataTransitionRing(TransitionTerrainDesc transitionTerrainDesc)
         {
             StreamingWorld.TerrainDesc terrainDesc = transitionTerrainDesc.terrainDesc;
 
@@ -1367,7 +1348,7 @@ namespace ProjectIncreasedTerrainDistance
 
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);
-            terrainDesc.terrainObject.name = GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+            terrainDesc.terrainObject.name = streamingWorld.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
         }
 
         private bool CreateTerrain(int mapPixelX, int mapPixelY, int indexTerrain)
@@ -1382,11 +1363,6 @@ namespace ProjectIncreasedTerrainDistance
             // Get terrain key
             int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
 
-            // Need to place a new terrain, find next available terrain
-            // This will either find a fresh terrain or recycle an old one
-            //Debug.Log(String.Format("count: {0}", terrainTransitionRingIndexDict.Count));
-            //int nextTerrain = terrainTransitionRingIndexDict.Count;
-
             // Setup new terrain
             terrainTransitionRingArray[indexTerrain].terrainDesc.active = true;
             terrainTransitionRingArray[indexTerrain].terrainDesc.updateData = true;
@@ -1396,7 +1372,7 @@ namespace ProjectIncreasedTerrainDistance
             if (!terrainTransitionRingArray[indexTerrain].terrainDesc.terrainObject)
             {
                 // Create game objects for new terrain
-                CreateTerrainGameObjects(
+                streamingWorld.CreateTerrainGameObjects(
                     mapPixelX,
                     mapPixelY,
                     out terrainTransitionRingArray[indexTerrain].terrainDesc.terrainObject,
@@ -1411,7 +1387,7 @@ namespace ProjectIncreasedTerrainDistance
             return true;
         }
 
-        private void UpdateTerrain(int terrainIndex)
+        private void PlaceTerrainOfTransitionRing(int terrainIndex)
         {
             // Apply local transform
             int mapPixelX = terrainTransitionRingArray[terrainIndex].terrainDesc.mapPixelX;
@@ -1422,12 +1398,11 @@ namespace ProjectIncreasedTerrainDistance
             //Debug.Log(String.Format("world-compensation: x:{0}, y: {1}, z: {2}", streamingWorld.WorldCompensation.x, streamingWorld.WorldCompensation.y, streamingWorld.WorldCompensation.z));
             Vector3 localPosition = new Vector3(xdif * scale, 0, -ydif * scale); // +streamingWorld.WorldCompensation;
             terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.transform.localPosition = localPosition;
-
-            //streamingWorld.UpdateTerrainData(terrainTransitionRingArray[terrainIndex].terrainDesc);
+            
             // if block was not reused - it does not exist - so create unity terrain object - otherwise position update will be enough
             if (!terrainTransitionRingArray[terrainIndex].keepThisBlock)
             {
-                UpdateTerrainData(terrainTransitionRingArray[terrainIndex]);
+                UpdateTerrainDataTransitionRing(terrainTransitionRingArray[terrainIndex]);
             }
             else
             {
@@ -1437,22 +1412,22 @@ namespace ProjectIncreasedTerrainDistance
             }
         }
 
-        private void UpdateTerrainNature(int terrainIndex)
-        {
-            // Setup billboards
-            DaggerfallTerrain dfTerrain = terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
-            DaggerfallBillboardBatch dfBillboardBatch = terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.GetComponent<DaggerfallBillboardBatch>();
-            if (dfTerrain && dfBillboardBatch)
-            {
-                // Get current climate and nature archive
-                int natureArchive = ClimateSwaps.GetNatureArchive(streamingWorld.LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
-                dfBillboardBatch.SetMaterial(natureArchive);
-                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, streamingWorld.TerrainScale);
-            }
+        //private void UpdateTerrainNature(int terrainIndex)
+        //{
+        //    // Setup billboards
+        //    DaggerfallTerrain dfTerrain = terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+        //    DaggerfallBillboardBatch dfBillboardBatch = terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.GetComponent<DaggerfallBillboardBatch>();
+        //    if (dfTerrain && dfBillboardBatch)
+        //    {
+        //        // Get current climate and nature archive
+        //        int natureArchive = ClimateSwaps.GetNatureArchive(streamingWorld.LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
+        //        dfBillboardBatch.SetMaterial(natureArchive);
+        //        TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, streamingWorld.TerrainScale);
+        //    }
 
-            // Only set active again once complete
-           terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.SetActive(true);
-        }
+        //    // Only set active again once complete
+        //   terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.SetActive(true);
+        //}
 
         private TransitionRingBorderDesc getTransitionRingBorderDesc(int x, int y, int distanceTransitionRingFromCenterX, int distanceTransitionRingFromCenterY)
         {
@@ -1546,7 +1521,7 @@ namespace ProjectIncreasedTerrainDistance
             }
         }
 
-        private IEnumerator UpdateTerrains()
+        private IEnumerator UpdateTerrainsTransitionRing()
         {
             for (int i = 0; i < terrainTransitionRingArray.Length; i++)
             {
@@ -1554,15 +1529,15 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     if (terrainTransitionRingArray[i].terrainDesc.updateData)
                     {
-                        UpdateTerrain(i);
+                        PlaceTerrainOfTransitionRing(i);
                         //UpdateTerrainData(terrainTransitionRingArray[i]);
                         terrainTransitionRingArray[i].terrainDesc.updateData = false;
-                        //if (!terrainTransitionRingUpdateRunning) //(!transitionRingUpdateFinished)
+                        
                             yield return new WaitForEndOfFrame();
                     }
                     if (terrainTransitionRingArray[i].terrainDesc.updateNature)
                     {
-                        UpdateTerrainNature(i);
+                        streamingWorld.UpdateTerrainNature(terrainTransitionRingArray[i].terrainDesc);
                         terrainTransitionRingArray[i].terrainDesc.updateNature = false;
                         //if (!terrainTransitionRingUpdateRunning) //(!transitionRingUpdateFinished)
                         yield return new WaitForEndOfFrame();
@@ -1704,7 +1679,7 @@ namespace ProjectIncreasedTerrainDistance
                 }
             }
 
-            StartCoroutine(UpdateTerrains());
+            StartCoroutine(UpdateTerrainsTransitionRing());
         }
 
         #endregion
