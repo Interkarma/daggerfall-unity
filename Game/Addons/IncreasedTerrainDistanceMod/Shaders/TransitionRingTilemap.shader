@@ -135,7 +135,10 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			half4 c2 = tex2Dgrad(_TileAtlasTex, uv, ddx(uvr), ddy(uvr));
 			//o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 
-			float reflAmount = 1.0f;
+
+			float blendWeightX = lerp(_blendWeightFarTerrainLeft, _blendWeightFarTerrainRight, IN.uv_MainTex.x);
+			float blendWeightY = lerp(_blendWeightFarTerrainTop, _blendWeightFarTerrainBottom, IN.uv_MainTex.y);
+			float blendWeightCombined = 1.0f - max(blendWeightX, blendWeightY);
 
 			#if defined(ENABLE_WATER_REFLECTIONS)
 			if (_UseSeaReflectionTex)
@@ -145,18 +148,21 @@ Shader "Daggerfall/TransitionRingTilemap" {
 				fixed3 normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 				float3 worldNormal = normalize(WorldNormalVector(IN, normal));
 
+				float reflAmount;
+
 				reflAmount = tex2D(_TileAtlasReflectiveTex, uv).r; //tex2Dgrad(_TileAtlasReflectiveTex, uv, ddx(uvr), ddy(uvr));
+
+				if (reflAmount > 0.25f)
+				{
+					float3 refl = tex2D(_SeaReflectionTex, screenUV).rgb;
+
+					c2.rgb = c2.rgb * (1.0f - reflAmount) + reflAmount * refl.rgb;
+					//c2.rgb = 0.5f * c2.rgb + 0.5f * refl.rgb;
+					blendWeightCombined = 1.0f;
+				}				
 			}
 			#endif
 
-			float blendWeightX = lerp(_blendWeightFarTerrainLeft, _blendWeightFarTerrainRight, IN.uv_MainTex.x);
-			float blendWeightY = lerp(_blendWeightFarTerrainTop, _blendWeightFarTerrainBottom, IN.uv_MainTex.y);
-			float blendWeightCombined = 1.0f - max(blendWeightX, blendWeightY);
-
-			if (reflAmount > 0.25f)
-			{
-				blendWeightCombined = 1.0f;
-			}
 			c.rgb = lerp(c.rgb, c2.rgb, blendWeightCombined);
 
 			o.Albedo = c.rgb;
