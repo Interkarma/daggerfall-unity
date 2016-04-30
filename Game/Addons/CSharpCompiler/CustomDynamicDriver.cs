@@ -304,7 +304,10 @@ namespace CSharpCompiler
                 return false;
 
 
-            if(!generateInMemory) assembly.Save();
+            if (!generateInMemory)
+                assembly.Builder.Save(assembly.Name + ".dll");
+                //assembly.Save();
+
             outAssembly = assembly.Builder;
 
 
