@@ -1022,9 +1022,9 @@ namespace Wenzil.Console
 
                 try
                 {
-                    System.Reflection.Assembly assembly = Compiler.CompileFiles(files.ToArray());
+                    System.Reflection.Assembly assembly = DaggerfallWorkshop.Game.Utility.Compiler.CompileFiles(files.ToArray());
 
-                    var loadableTypes = Compiler.GetLoadableTypes(assembly);
+                    var loadableTypes = DaggerfallWorkshop.Game.Utility.Compiler.GetLoadableTypes(assembly);
 
                     foreach (Type t in loadableTypes)
                     {
