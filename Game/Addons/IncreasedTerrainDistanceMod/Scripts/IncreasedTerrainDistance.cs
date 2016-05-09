@@ -1346,6 +1346,22 @@ namespace ProjectIncreasedTerrainDistance
             terrain.materialTemplate = newMaterial;
             dfTerrain.TerrainMaterial = terrain.materialTemplate; // important so that we can later call DaggerfallTerrain.UpdateClimateMaterial and it will update the correct reference
 
+            //MeshRenderer meshRenderer = terrainDesc.billboardBatchObject.GetComponent<MeshRenderer>();
+            //Material[] rendererMaterials = meshRenderer.materials;
+            //for (int m = 0; m < rendererMaterials.Length; m++)
+            //{
+            //    Debug.Log(rendererMaterials[m].name);
+            //    Material updatedMaterial = rendererMaterials[m];
+            //    updatedMaterial.SetFloat("_billboardFractionalXposInBlock", 0.5f);
+            //    updatedMaterial.SetFloat("_billboardFractionalYposInBlock", 0.5f);
+            //    updatedMaterial.SetFloat("_blendWeightFarTerrainTop", weightFarTerrainTop);
+            //    updatedMaterial.SetFloat("_blendWeightFarTerrainBottom", weightFarTerrainBottom);
+            //    updatedMaterial.SetFloat("_blendWeightFarTerrainLeft", weightFarTerrainLeft);
+            //    updatedMaterial.SetFloat("_blendWeightFarTerrainRight", weightFarTerrainRight);
+            //    rendererMaterials[m] = updatedMaterial;
+            //}
+            //meshRenderer.materials = rendererMaterials;
+
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);
             terrainDesc.terrainObject.name = streamingWorld.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
@@ -1527,21 +1543,49 @@ namespace ProjectIncreasedTerrainDistance
             {
                 if (terrainTransitionRingArray[i].terrainDesc.active)
                 {
+
                     if (terrainTransitionRingArray[i].terrainDesc.updateData)
                     {
                         PlaceTerrainOfTransitionRing(i);
                         //UpdateTerrainData(terrainTransitionRingArray[i]);
                         terrainTransitionRingArray[i].terrainDesc.updateData = false;
-                        
-                            yield return new WaitForEndOfFrame();
+
+                        yield return new WaitForEndOfFrame();
                     }
+                    
                     if (terrainTransitionRingArray[i].terrainDesc.updateNature)
                     {
                         streamingWorld.UpdateTerrainNature(terrainTransitionRingArray[i].terrainDesc);
                         terrainTransitionRingArray[i].terrainDesc.updateNature = false;
+
+                        MeshRenderer meshRenderer = terrainTransitionRingArray[i].terrainDesc.billboardBatchObject.GetComponent<MeshRenderer>();
+                        Material[] rendererMaterials = meshRenderer.materials;
+                        for (int m = 0; m < rendererMaterials.Length; m++)
+                        {
+                            Material newMaterial = new Material(Shader.Find("Daggerfall/BillboardBatchFaded"));
+                            newMaterial.CopyPropertiesFromMaterial(rendererMaterials[m]);
+                            float weightFarTerrainLeft = 0.0f;
+                            float weightFarTerrainRight = 0.0f;
+                            float weightFarTerrainTop = 0.0f;
+                            float weightFarTerrainBottom = 0.0f;
+                            if (terrainTransitionRingArray[i].transitionRingBorderDesc.isLeftRingBorder) weightFarTerrainLeft = 1.0f;
+                            if (terrainTransitionRingArray[i].transitionRingBorderDesc.isRightRingBorder) weightFarTerrainRight = 1.0f;
+                            if (terrainTransitionRingArray[i].transitionRingBorderDesc.isTopRingBorder) weightFarTerrainTop = 1.0f;
+                            if (terrainTransitionRingArray[i].transitionRingBorderDesc.isBottomRingBorder) weightFarTerrainBottom = 1.0f;
+                            newMaterial.SetFloat("_blendWeightFarTerrainTop", weightFarTerrainTop);
+                            newMaterial.SetFloat("_blendWeightFarTerrainBottom", weightFarTerrainBottom);
+                            newMaterial.SetFloat("_blendWeightFarTerrainLeft", weightFarTerrainLeft);
+                            newMaterial.SetFloat("_blendWeightFarTerrainRight", weightFarTerrainRight);
+                            newMaterial.SetFloat("_billboardFractionalXposInBlock", 0.5f);
+                            newMaterial.SetFloat("_billboardFractionalYposInBlock", 0.5f);
+                            rendererMaterials[m] = newMaterial;
+                        }
+                        meshRenderer.materials = rendererMaterials;
+
                         //if (!terrainTransitionRingUpdateRunning) //(!transitionRingUpdateFinished)
                         yield return new WaitForEndOfFrame();
                     }
+
                     terrainTransitionRingArray[i].ready = true;
                 }
             }
