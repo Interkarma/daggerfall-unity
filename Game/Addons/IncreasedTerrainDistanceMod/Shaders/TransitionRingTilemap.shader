@@ -62,14 +62,14 @@ Shader "Daggerfall/TransitionRingTilemap" {
 		_FogFromSkyTex("specifies if fog color should be derived from sky texture or not", Int) = 0
 	}
 	SubShader {
-		//Tags { "RenderType"="Opaque" "Queue" = "Transparent-499"} // Transparent-499 ... first non-opaque object (otherwise reflections are unlimited in distance), workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
-		Tags { "RenderType"="Opaque"}
+		Tags { "RenderType"="Opaque" "Queue" = "Transparent-499"} // Transparent-499 ... first non-opaque object (otherwise reflections are unlimited in distance), workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
+		//Tags { "RenderType"="Opaque"}
 		LOD 200
 
 		// extra pass that renders to depth buffer only (world terrain is semi-transparent) - important for reflections to work
 		Pass {
-			ZWrite Off
-			Cull Off
+			ZWrite On
+			Cull Back
 			ColorMask 0		
 		}
 		

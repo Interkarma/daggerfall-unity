@@ -51,10 +51,10 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		LOD 200
 
 		// extra pass that renders to depth buffer only (world terrain is semi-transparent) - important for reflections to work
-		Pass {
-			ZWrite Off
-			Cull Off
-			ColorMask 0		
+		Pass {						
+			ZWrite On		
+			Cull Back
+			ColorMask 0
 		}
 
 		CGPROGRAM
