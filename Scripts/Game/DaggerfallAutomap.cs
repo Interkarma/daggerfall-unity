@@ -129,9 +129,7 @@ namespace DaggerfallWorkshop.Game
             Transparent = 2
         };
 
-        AutomapRenderMode currentAutomapRenderMode = AutomapRenderMode.Cutout; // currently selected automap render mode (default value: cutout)
-
-        MeshRenderer copiedMeshRenderer = null; // used for seperate transparent and wireframe shader above slice plane (MeshRenderer is copied and different shader is used)
+        AutomapRenderMode currentAutomapRenderMode = AutomapRenderMode.Cutout; // currently selected automap render mode (default value: cutout)        
 
         // flag that indicates if external script should reset automap settings (set via Property ResetAutomapSettingsSignalForExternalScript checked and erased by DaggerfallAutomapWindow script)
         // this might look weirds - why not just notify the DaggerfallAutomapWindow class you may ask... - I wanted to make DaggerfallAutomap inaware and independent of the actual GUI implementation
@@ -663,10 +661,7 @@ namespace DaggerfallWorkshop.Game
                 if (meshCollider != null)
                 {
                     MeshRenderer hitMeshRenderer = meshCollider.gameObject.GetComponent<MeshRenderer>();
-                    //Debug.Log(String.Format("{0}", hitMeshRenderer.transform.childCount));                    
-                    MeshRenderer hitCopiedMeshRenderer = hitMeshRenderer.transform.GetChild(0).GetComponent<MeshRenderer>();//hitMeshRenderer.transform.GetComponentInChildren<MeshRenderer>();
                     hitMeshRenderer.enabled = true; // mark mesh renderer as discovered (by enabling it)
-                    hitCopiedMeshRenderer.enabled = true;
 
                     Material[] mats = hitMeshRenderer.materials;
                     foreach (Material mat in mats)
@@ -674,13 +669,6 @@ namespace DaggerfallWorkshop.Game
                         mat.DisableKeyword("RENDER_IN_GRAYSCALE"); // mark material as visited in this entrance/dungeon run
                     }
                     hitMeshRenderer.materials = mats;
-
-                    mats = hitCopiedMeshRenderer.materials;
-                    foreach (Material mat in mats)
-                    {
-                        mat.DisableKeyword("RENDER_IN_GRAYSCALE"); // mark material as visited in this entrance/dungeon run
-                    }
-                    hitCopiedMeshRenderer.materials = mats;
                 }
                 return (hitTrueLevelGeometry1); // return hit of true level geometry (which should be nearer in some cases than the automap geometry hit)
             }
@@ -841,71 +829,6 @@ namespace DaggerfallWorkshop.Game
             Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
         }
 
-        ///// <summary>
-        ///// updates materials of mesh renderer
-        ///// (this injects the automap shader and sets the state for materials to be rendered dependent on if they where revealed already in a previous dungeon run)
-        ///// </summary>
-        ///// <param name="meshRenderer"> the MeshRenderer whose materials needs to be updated </param>
-        ///// <param name="visitedInThisEntering"> indicates if the materials of meshRenderer should be marked as "visited in this entering/dungeon run" (rendered in color) or not (rendered in grayscale) </param>
-        //private void updateMaterialsOfMeshRenderer(MeshRenderer meshRenderer, bool visitedInThisEntering = false)
-        //{
-        //    Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
-        //    //meshRenderer.enabled = false;
-        //    Material[] newMaterials = new Material[meshRenderer.materials.Length * 2];
-        //    for (int i = 0; i < meshRenderer.materials.Length; i++)
-        //    {
-        //        Material material = meshRenderer.materials[i];
-        //        Material newMaterial = newMaterials[i];
-
-        //        newMaterial = new Material(Shader.Find("Daggerfall/AutomapBelowSclicePlane"));
-        //        //newMaterial.CopyPropertiesFromMaterial(material);
-        //        newMaterial.name = "AutomapBelowSclicePlane injected for: " + material.name;
-        //        Texture mainTex = material.GetTexture("_MainTex");
-        //        newMaterial.SetTexture("_MainTex", mainTex);
-        //        Texture bumpMapTex = material.GetTexture("_BumpMap");
-        //        newMaterial.SetTexture("_BumpMap", bumpMapTex);
-        //        Texture emissionMapTex = material.GetTexture("_EmissionMap");
-        //        newMaterial.SetTexture("_EmissionMap", emissionMapTex);
-        //        Color emissionColor = material.GetColor("_EmissionColor");
-        //        newMaterial.SetColor("_EmissionColor", emissionColor);
-        //        Vector4 playerPosition = new Vector4(playerAdvancedPos.x, playerAdvancedPos.y + Camera.main.transform.localPosition.y, playerAdvancedPos.z, 0.0f);
-        //        newMaterial.SetVector("_PlayerPosition", playerPosition);
-        //        if (visitedInThisEntering == true)
-        //            newMaterial.DisableKeyword("RENDER_IN_GRAYSCALE");
-        //        else
-        //            newMaterial.EnableKeyword("RENDER_IN_GRAYSCALE");
-        //        newMaterials[i] = newMaterial;
-        //    }
-
-        //    for (int i = meshRenderer.materials.Length; i < meshRenderer.materials.Length * 2; i++)
-        //    {
-        //        Material material = meshRenderer.materials[i - meshRenderer.materials.Length];
-        //        Material newMaterial = newMaterials[i];
-
-        //        newMaterial = new Material(Shader.Find("Daggerfall/AutomapAboveSclicePlane"));
-        //        newMaterial.CopyPropertiesFromMaterial(material);
-        //        newMaterial.name = "AutomapAboveSclicePlane injected for: " + material.name;
-        //        Texture mainTex = material.GetTexture("_MainTex");
-        //        newMaterial.SetTexture("_MainTex", mainTex);
-        //        Texture bumpMapTex = material.GetTexture("_BumpMap");
-        //        newMaterial.SetTexture("_BumpMap", bumpMapTex);
-        //        Texture emissionMapTex = material.GetTexture("_EmissionMap");
-        //        newMaterial.SetTexture("_EmissionMap", emissionMapTex);
-        //        Color emissionColor = material.GetColor("_EmissionColor");
-        //        newMaterial.SetColor("_EmissionColor", emissionColor);
-        //        Vector4 playerPosition = new Vector4(playerAdvancedPos.x, playerAdvancedPos.y + Camera.main.transform.localPosition.y, playerAdvancedPos.z, 0.0f);
-        //        newMaterial.SetVector("_PlayerPosition", playerPosition);
-        //        if (visitedInThisEntering == true)
-        //            newMaterial.DisableKeyword("RENDER_IN_GRAYSCALE");
-        //        else
-        //            newMaterial.EnableKeyword("RENDER_IN_GRAYSCALE");
-        //        newMaterials[i] = newMaterial;
-        //    }
-
-        //    meshRenderer.materials = newMaterials;
-        //    //meshRenderer.enabled = true;
-        //}
-
         private void updateMaterialsOfMeshRenderer(MeshRenderer meshRenderer, bool visitedInThisEntering = false)
         {
             Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
@@ -915,7 +838,7 @@ namespace DaggerfallWorkshop.Game
                 Material material = meshRenderer.materials[i];
                 Material newMaterial = newMaterials[i];
 
-                newMaterial = new Material(Shader.Find("Daggerfall/AutomapBelowSclicePlane"));
+                newMaterial = new Material(Shader.Find("Daggerfall/Automap"));
                 //newMaterial.CopyPropertiesFromMaterial(material);
                 newMaterial.name = "AutomapBelowSclicePlane injected for: " + material.name;
                 Texture mainTex = material.GetTexture("_MainTex");
@@ -935,38 +858,7 @@ namespace DaggerfallWorkshop.Game
                 newMaterials[i] = newMaterial;
             }
             meshRenderer.materials = newMaterials;
-        }
-
-        private void updateMaterialsOfCopiedMeshRenderer(MeshRenderer meshRenderer, bool visitedInThisEntering = false)
-        {
-            Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;            
-            Material[] newMaterials = new Material[meshRenderer.materials.Length];
-            for (int i = 0; i < meshRenderer.materials.Length; i++)
-            {
-                Material material = meshRenderer.materials[i];
-                Material newMaterial = newMaterials[i];
-
-                newMaterial = new Material(Shader.Find("Daggerfall/AutomapAboveSclicePlane"));
-                newMaterial.CopyPropertiesFromMaterial(material);
-                newMaterial.name = "AutomapAboveSclicePlane injected for: " + material.name;
-                Texture mainTex = material.GetTexture("_MainTex");
-                newMaterial.SetTexture("_MainTex", mainTex);
-                Texture bumpMapTex = material.GetTexture("_BumpMap");
-                newMaterial.SetTexture("_BumpMap", bumpMapTex);
-                Texture emissionMapTex = material.GetTexture("_EmissionMap");
-                newMaterial.SetTexture("_EmissionMap", emissionMapTex);
-                Color emissionColor = material.GetColor("_EmissionColor");
-                newMaterial.SetColor("_EmissionColor", emissionColor);
-                Vector4 playerPosition = new Vector4(playerAdvancedPos.x, playerAdvancedPos.y + Camera.main.transform.localPosition.y, playerAdvancedPos.z, 0.0f);
-                newMaterial.SetVector("_PlayerPosition", playerPosition);
-                if (visitedInThisEntering == true)
-                    newMaterial.DisableKeyword("RENDER_IN_GRAYSCALE");
-                else
-                    newMaterial.EnableKeyword("RENDER_IN_GRAYSCALE");
-                newMaterials[i] = newMaterial;
-            }
-            meshRenderer.materials = newMaterials;
-        }
+        }     
 
         /// <summary>
         /// will inject materials and properties to MeshRenderer in the proper hierarchy level of automap level geometry GameObject
@@ -990,33 +882,7 @@ namespace DaggerfallWorkshop.Game
 
                             // update materials and set meshes as visited in this run (so "Interior" geometry always is colored
                             // (since we don't disable the mesh, it is also discovered - which is a precondition for being rendered))
-                            updateMaterialsOfMeshRenderer(meshRenderer, true);
-
-                            //if (copiedMeshRenderer != null)
-                            //{
-                            //    UnityEngine.Object.Destroy(copiedMeshRenderer);
-                            //    copiedMeshRenderer = null;
-                            //}
-                            copiedMeshRenderer = MeshRenderer.Instantiate(meshRenderer);
-                            Destroy(copiedMeshRenderer.GetComponent<DaggerfallMesh>());
-                            Component[] components = copiedMeshRenderer.GetComponents(typeof(Component));
-                            foreach (Component comp in components)
-                            {
-                                if (comp.GetType() != typeof(Transform))
-                                    continue;
-                                if (comp.GetType() != typeof(MeshRenderer))
-                                    continue;
-                                Destroy(comp);
-                            }
-                            Destroy(copiedMeshRenderer.GetComponent<MeshCollider>());
-                            Destroy(copiedMeshRenderer.GetComponent<MeshFilter>());
-                            copiedMeshRenderer.name = "combinedModelsCopyForTransparentShader";
-
-                            //copiedMeshRenderer.transform.SetParent(meshRenderer.transform.parent.transform); // this makes unity infinitely loop - don't know why (maybe gameobject hierarchy is somehow not correctly initialized here - maybe doing this later would work...)
-                            copiedMeshRenderer.transform.SetParent(meshRenderer.transform);
-                            copiedMeshRenderer.transform.localPosition = Vector3.zero;
-
-                            updateMaterialsOfCopiedMeshRenderer(copiedMeshRenderer, true);
+                            updateMaterialsOfMeshRenderer(meshRenderer, true);                            
                         }
                     }
                 }
@@ -1044,38 +910,6 @@ namespace DaggerfallWorkshop.Game
                                 {
                                     // mark meshRenderer as undiscovered
                                     meshRenderer.enabled = false;
-                                }
-
-                                //if (copiedMeshRenderer != null)
-                                //{
-                                //    UnityEngine.Object.Destroy(copiedMeshRenderer);
-                                //    copiedMeshRenderer = null;
-                                //}
-
-                                copiedMeshRenderer = MeshRenderer.Instantiate(meshRenderer);
-                                Destroy(copiedMeshRenderer.GetComponent<DaggerfallMesh>());
-                                Component[] components = copiedMeshRenderer.GetComponents(typeof(Component));
-                                foreach(Component comp in components)
-                                {
-                                    if (comp.GetType() != typeof(Transform))
-                                        continue;
-                                    if (comp.GetType() != typeof(MeshRenderer))
-                                        continue;
-                                    Destroy(comp);
-                                }
-                                Destroy(copiedMeshRenderer.GetComponent<MeshCollider>());
-                                Destroy(copiedMeshRenderer.GetComponent<MeshFilter>());
-                                copiedMeshRenderer.name = "combinedModelsCopyForTransparentShader";
-                                //copiedMeshRenderer.transform.SetParent(meshRenderer.transform.parent.transform); // this makes unity infinitely loop - don't know why (maybe gameobject hierarchy is somehow not correctly initialized here - maybe doing this later would work...)
-                                copiedMeshRenderer.transform.SetParent(meshRenderer.transform);
-                                copiedMeshRenderer.transform.localPosition = Vector3.zero;
-
-                                updateMaterialsOfCopiedMeshRenderer(copiedMeshRenderer);
-
-                                if (resetDiscoveryState) // if forced reset of discovery state
-                                {
-                                    // mark meshRenderer as undiscovered
-                                    copiedMeshRenderer.enabled = false;
                                 }
                             }
                         }
@@ -1575,8 +1409,6 @@ namespace DaggerfallWorkshop.Game
                     if (meshRenderer)
                     {
                         updateMeshRendererInteriorState(ref meshRenderer, automapGeometryInteriorState, indexElement, indexModel, forceNotVisitedInThisRun);
-                        MeshRenderer copiedMeshRenderer = meshRenderer.transform.GetChild(0).GetComponent<MeshRenderer>();
-                        updateMeshRendererInteriorState(ref copiedMeshRenderer, automapGeometryInteriorState, indexElement, indexModel, forceNotVisitedInThisRun);
                     }
                 }
             }
@@ -1649,8 +1481,6 @@ namespace DaggerfallWorkshop.Game
                         if (meshRenderer)
                         {
                             updateMeshRendererDungeonState(ref meshRenderer, automapGeometryDungeonState, indexBlock, indexElement, indexModel, forceNotVisitedInThisRun);
-                            MeshRenderer copiedMeshRenderer = meshRenderer.transform.GetChild(0).GetComponent<MeshRenderer>();
-                            updateMeshRendererDungeonState(ref copiedMeshRenderer, automapGeometryDungeonState, indexBlock, indexElement, indexModel, forceNotVisitedInThisRun);
                         }
                     }
                 }
