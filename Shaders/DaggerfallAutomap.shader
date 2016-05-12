@@ -94,7 +94,7 @@ Shader "Daggerfall/Automap"
     	}
 
 		Pass {
-	        ColorMask 0
+	        ColorMask A
 		}
 		
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
@@ -323,7 +323,7 @@ Shader "Daggerfall/Automap"
 		}
 
 		Pass {
-	        ColorMask 0
+	        ColorMask A
 		}
 		
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
