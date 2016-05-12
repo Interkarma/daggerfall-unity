@@ -93,8 +93,9 @@ Shader "Daggerfall/Automap"
 
     	}
 
-		Pass {
-	        ColorMask A
+		Pass
+		{
+			ColorMask 0
 		}
 		
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
@@ -323,7 +324,7 @@ Shader "Daggerfall/Automap"
 		}
 
 		Pass {
-	        ColorMask A
+	        ColorMask 0
 		}
 		
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
@@ -376,7 +377,7 @@ Shader "Daggerfall/Automap"
 				if (IN.worldPos.y > _SclicingPositionY)
 				{
 					#if defined(AUTOMAP_RENDER_MODE_TRANSPARENT)
-						outColor.a = 0.6;
+						outColor.a = 0.65;
 					#else //#elif defined(AUTOMAP_RENDER_MODE_CUTOUT)
 						clip(-1.0);
 						outColor = half4(1.0, 0.0, 0.0, 1.0);
