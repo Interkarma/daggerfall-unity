@@ -92,6 +92,10 @@ Shader "Daggerfall/Automap"
 			ENDCG
 
     	}
+
+		Pass {
+	        ColorMask 0
+		}
 		
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
@@ -318,8 +322,13 @@ Shader "Daggerfall/Automap"
 
 		}
 
-		Blend OneMinusSrcAlpha SrcAlpha
-		//Blend SrcAlpha One
+		Pass {
+	        ColorMask 0
+		}
+		
+		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Blend SrcAlpha OneMinusSrcAlpha
+		BlendOp Add, Max
 
 		Pass
 		{
