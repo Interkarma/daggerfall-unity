@@ -102,6 +102,7 @@ void fcolor (Input IN, SurfaceOutput o, inout fixed4 color)
 	{
 		color.rgb = blendFacTerrain * color.rgb + (1.0f - blendFacTerrain) * unity_FogColor.rgb;
 	}
+
 	color.a = alphaFadeAmount;
 }
 

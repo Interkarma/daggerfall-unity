@@ -47,25 +47,26 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		_FogFromSkyTex("specifies if fog color should be derived from sky texture or not", Int) = 0
 	}
 	SubShader {
-		Tags { "RenderType"="Opaque" "Queue" = "Transparent-499"} // Transparent-499 ... first non-opaque object (otherwise reflections are unlimited in distance), workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
-		LOD 200
+		//Tags { "RenderType"="Opaque" "Queue" = "Transparent-499"} // Transparent-499 ... first non-opaque object (otherwise reflections are unlimited in distance), workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
+		//Tags { "RenderType"="Transparent" "Queue" = "Transparent-499"} // Transparent-499 ... first non-opaque object (otherwise reflections are unlimited in distance), workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
+		//LOD 200
 
 		// extra pass that renders to depth buffer only (world terrain is semi-transparent) - important for reflections to work
-		Pass {						
-			ZWrite On		
-			Cull Back
-			ColorMask 0
-		}
+	
+		Tags { "RenderType"="Transparent" "Queue" = "Transparent-499"}
+		LOD 200
+
+		ZWrite Off
+		Cull Back
 
 		CGPROGRAM
-
-		#include "FarTerrainCommon.cginc"
 
 		#pragma target 3.0		
 		#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd
 		#pragma glsl
-
 		#pragma multi_compile __ ENABLE_WATER_REFLECTIONS
+
+		#include "FarTerrainCommon.cginc"
 
 		void surf (Input IN, inout SurfaceOutput o)
 		{
@@ -104,6 +105,63 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			o.Albedo = c.rgb;
 		}
 		ENDCG
+
+		Pass {						
+			ZWrite On
+			Cull Back
+			ColorMask 0
+		}
+
+		ZWrite On
+		Cull Back
+
+		CGPROGRAM
+
+		#pragma target 3.0		
+		#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd
+		#pragma glsl
+		#pragma multi_compile __ ENABLE_WATER_REFLECTIONS
+
+		#include "FarTerrainCommon.cginc"
+
+		void surf (Input IN, inout SurfaceOutput o)
+		{
+			half4 c; // output color value
+
+			float4 terrainTileInfo = tex2D(_FarTerrainTilemapTex, IN.uv_MainTex).rgba;
+
+			int mapPixelX = IN.uv_MainTex.x*_FarTerrainTilemapDim;
+			int mapPixelY = 499 - IN.uv_MainTex.y*_FarTerrainTilemapDim;
+
+			// fragment discarding inside area spanned by _TerrainDistance and one extra ring of blocks (these will be rendered by TransitionRingTilemap shader)
+			if ((abs(mapPixelX+1-_PlayerPosX)<=_TerrainDistance+1)&&(abs(mapPixelY+1-_PlayerPosY)<=_TerrainDistance+1))
+			{
+				// for debugging fragment discard area use red color (also used to debug world terrain positioning with floating origin script)
+				//float4 ret = float4(1.0f,0.0f,0.0f,1.0f); o.Albedo = ret.rgb; o.Alpha = ret.a; return;
+				discard;
+			}
+
+			// fragments more distant than _BlendEnd will be discarded as well
+			const float fadeRange = _BlendEnd - _BlendStart + 1.0f;
+			float dist = distance(IN.worldPos.xz, _WorldSpaceCameraPos.xz); //max(abs(IN.worldPos.x - _WorldSpaceCameraPos.x), abs(IN.worldPos.z - _WorldSpaceCameraPos.z));			
+			if (dist>_BlendEnd)
+			{
+				discard;
+			}
+
+			int index = terrainTileInfo.r * _MaxIndex;
+
+			c = getColorFromTerrain(IN, IN.uv_MainTex, _FarTerrainTilemapDim, _FarTerrainTilesetDim, index);
+			
+			float treeCoverage = terrainTileInfo.g;
+			uint locationRangeX = terrainTileInfo.b * _MaxIndex;
+			uint locationRangeY = terrainTileInfo.a * _MaxIndex;
+			c.rgb = updateColorWithInfoForTreeCoverageAndLocations(c.rgb, treeCoverage, locationRangeX, locationRangeY, mapPixelX, mapPixelY, IN.uv_MainTex);
+
+			o.Albedo = c.rgb;
+		}
+		ENDCG
+
 	} 
 
 
