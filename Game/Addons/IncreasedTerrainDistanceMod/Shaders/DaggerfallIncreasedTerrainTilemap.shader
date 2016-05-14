@@ -34,7 +34,7 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		_UseSeaReflectionTex("specifies if sea reflection texture is used", Int) = 0
 
 		_PlayerPosX("Player Position in X-direction on world map", Int) = 0
-		_PlayerPosY("Player Position in X-direction on world map", Int) = 0
+		_PlayerPosY("Player Position in Y-direction on world map", Int) = 0
 		_TerrainDistance("Terrain Distance", Int) = 3
 		_WaterHeightTransformed("water level on y-axis in world coordinates", Float) = 58.9
 		_TextureSetSeasonCode("specifies which seasonal/weather texture set is used (0...Summer, 1...Winter/Snow, 2...Rain)", Int) = 0
@@ -47,26 +47,40 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		_FogFromSkyTex("specifies if fog color should be derived from sky texture or not", Int) = 0
 	}
 	SubShader {
-		//Tags { "RenderType"="Opaque" "Queue" = "Transparent-499"} // Transparent-499 ... first non-opaque object (otherwise reflections are unlimited in distance), workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
-		//Tags { "RenderType"="Transparent" "Queue" = "Transparent-499"} // Transparent-499 ... first non-opaque object (otherwise reflections are unlimited in distance), workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
+		//Tags{ "RenderType" = "Opaque" "DisableBatching" = "True" "Queue" = "Geometry" }
 		//LOD 200
+		//ZWrite On
 
-		// extra pass that renders to depth buffer only (world terrain is semi-transparent) - important for reflections to work
-	
-		Tags { "RenderType"="Transparent" "Queue" = "Transparent-499"}
+		//Tags { "RenderType"="Opaque" "Queue" = "Transparent-499"} // Transparent-499 ... first non-opaque object (otherwise reflections are unlimited in distance), workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
+		Tags { "RenderType"="Transparent" "Queue" = "Transparent-499"} // Transparent-499 ... first non-opaque object (otherwise reflections are unlimited in distance), workaround for otherwise incorrect rendering of WorldTerrain defined geometry in different layers than "WorldTerrain"
 		LOD 200
-
+		
 		ZWrite Off
 		Cull Back
 
 		CGPROGRAM
 
 		#pragma target 3.0		
-		#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd
+		#pragma surface surf Lambert /*vertex:vert*/ alpha:fade keepalpha finalcolor:fcolor noforwardadd
 		#pragma glsl
 		#pragma multi_compile __ ENABLE_WATER_REFLECTIONS
 
 		#include "FarTerrainCommon.cginc"
+
+		//void vert(inout appdata_full v, out Input OUT)
+		//{	
+		//	float4 vertex = v.vertex;
+		//	float3 worldpos = mul(_Object2World, vertex).xyz;
+		//	float dist = distance(worldpos.xz, _WorldSpaceCameraPos.xz);
+		//	float curvature_start = 25000.0f;
+		//	if (dist > curvature_start)
+		//	{
+		//		worldpos.y = worldpos.y * max(0.0f, ((curvature_start + 100000.0f - dist) / (curvature_start + 100000.0f)));
+		//	}
+		//	v.vertex = mul(_World2Object, float4(worldpos.x, worldpos.y, worldpos.z, 1.0f));
+		//	UNITY_INITIALIZE_OUTPUT(Input, OUT);
+		//	OUT.worldPos = worldpos;
+		//}
 
 		void surf (Input IN, inout SurfaceOutput o)
 		{
@@ -106,6 +120,7 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		}
 		ENDCG
 
+		// extra pass that renders to depth buffer only (world terrain is semi-transparent) - important for reflections to work
 		Pass {						
 			ZWrite On
 			Cull Back
@@ -161,7 +176,6 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			o.Albedo = c.rgb;
 		}
 		ENDCG
-
 	} 
 
 

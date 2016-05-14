@@ -23,13 +23,13 @@ namespace ProjectIncreasedTerrainDistance
     {
         // Scale factors for this sampler implementation
         public const float baseHeightScale = 8f;
-        public const float noiseMapScale = 4f;
-        public const float extraNoiseScale = 3f;
+        public const float noiseMapScale = 6f; //4f;
+        public const float extraNoiseScale = 10f; //3f;
         public const float scaledOceanElevation = 3.4f * baseHeightScale;
         public const float scaledBeachElevation = 5.0f * baseHeightScale;
 
         // Max terrain height of this sampler implementation
-        public const float maxTerrainHeight = 26115f;
+        public const float maxTerrainHeight = ImprovedWorldTerrain.maxHeightsExaggerationMultiplier * baseHeightScale * 128 + noiseMapScale * 128 + 128;//1380f; //26115f;
 
         public override int Version
         {

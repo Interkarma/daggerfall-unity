@@ -10,6 +10,7 @@
 
 struct Input
 {
+	float4  pos : SV_POSITION;
 	float2 uv_MainTex;
 	float2 uv_BumpMap;
 	float3 worldPos; // interpolated vertex positions used for correct coast line texturing
