@@ -1578,6 +1578,8 @@ namespace ProjectIncreasedTerrainDistance
                             newMaterial.SetFloat("_blendWeightFarTerrainRight", weightFarTerrainRight);
                             newMaterial.SetFloat("_billboardFractionalXposInBlock", 0.5f);
                             newMaterial.SetFloat("_billboardFractionalYposInBlock", 0.5f);
+                            newMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance);
+                            newMaterial.SetFloat("_TerrainBlockSize", (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale));
                             rendererMaterials[m] = newMaterial;
                         }
                         meshRenderer.materials = rendererMaterials;

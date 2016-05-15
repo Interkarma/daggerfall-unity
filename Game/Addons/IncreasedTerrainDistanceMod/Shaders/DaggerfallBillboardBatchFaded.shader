@@ -26,6 +26,9 @@ Shader "Daggerfall/BillboardBatchFaded" {
 		_blendWeightFarTerrainBottom("blend weight at bottom side of terrain block", Float) = 0.0
 		_blendWeightFarTerrainLeft("blend weight on left side of terrain block", Float) = 0.0
 		_blendWeightFarTerrainRight("blend weight on right side of terrain block", Float) = 0.0
+
+		_TerrainDistance("Terrain Distance", Int) = 3
+		_TerrainBlockSize("size of one terrain block", Float) = 819.2
 	}
 	SubShader {
 		Tags { "Queue" = "Overlay" "RenderType" = "Transparent" }
@@ -50,11 +53,14 @@ Shader "Daggerfall/BillboardBatchFaded" {
 		float _billboardFractionalXposInBlock;
 		float _billboardFractionalYposInBlock;
 
+		int _TerrainDistance;
+		float _TerrainBlockSize;
+
 		struct Input {
 			float2 uv_MainTex;
 			float2 uv_BumpMap;
 			float2 uv_EmissionMap;
-			//float3 worldPos; // interpolated vertex positions used for correct coast line texturing
+			float3 worldPos; // interpolated vertex positions used for correct coast line texturing
 		};
 
 		void vert (inout appdata_full v)
@@ -75,7 +81,7 @@ Shader "Daggerfall/BillboardBatchFaded" {
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			half4 albedo = tex2D(_MainTex, IN.uv_MainTex) * _Color;
 			half3 emission = tex2D(_EmissionMap, IN.uv_EmissionMap).rgb * _EmissionColor;
-			albedo.r = 1.0f;
+			//albedo.r = 1.0f;
 			o.Albedo = albedo.rgb - emission; // Emission cancels out other lights
 			if (albedo.a < 0.5f)
 			{
@@ -83,10 +89,17 @@ Shader "Daggerfall/BillboardBatchFaded" {
 			}
 			else
 			{
-				//float dist = distance(IN.worldPos.xz, _WorldSpaceCameraPos.xz); 
-				float w_x = lerp(_blendWeightFarTerrainLeft, _blendWeightFarTerrainRight, _billboardFractionalXposInBlock);
-				float w_y = lerp(_blendWeightFarTerrainTop, _blendWeightFarTerrainBottom, _billboardFractionalYposInBlock);
-				o.Alpha = w_x * w_y; // albedo.a;
+				//float dist = distance(IN.worldPos.xz, _WorldSpaceCameraPos.xz);
+				float dist = max(abs(IN.worldPos.x - _WorldSpaceCameraPos.x), abs(IN.worldPos.z - _WorldSpaceCameraPos.z));
+
+				//float w_x = lerp(_blendWeightFarTerrainLeft, _blendWeightFarTerrainRight, _billboardFractionalXposInBlock);
+				//float w_y = lerp(_blendWeightFarTerrainTop, _blendWeightFarTerrainBottom, _billboardFractionalYposInBlock);
+				//o.Alpha = w_x * w_y; // albedo.a;
+				float startDist = (float)_TerrainDistance * _TerrainBlockSize; //+_TerrainBlockSize*0.5f;
+				float endDist = (float)(_TerrainDistance + 1) * _TerrainBlockSize; //+_TerrainBlockSize*0.5f;
+				float range = endDist - startDist;
+				//o.Alpha = 1.0f;
+				o.Alpha = 1.0f - max(0.0f, min(1.0f, ((dist - startDist) / range)));
 			}
 			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 			o.Emission = emission;

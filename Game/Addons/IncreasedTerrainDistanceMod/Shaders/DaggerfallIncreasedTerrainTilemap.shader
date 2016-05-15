@@ -61,7 +61,8 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		CGPROGRAM
 
 		#pragma target 3.0		
-		#pragma surface surf Lambert /*vertex:vert*/ alpha:fade keepalpha finalcolor:fcolor noforwardadd
+		//#pragma surface surf Lambert vertex:vert alpha:fade keepalpha finalcolor:fcolor noforwardadd
+		#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd
 		#pragma glsl
 		#pragma multi_compile __ ENABLE_WATER_REFLECTIONS
 
