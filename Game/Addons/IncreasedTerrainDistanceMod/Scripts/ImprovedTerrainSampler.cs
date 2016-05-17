@@ -23,8 +23,8 @@ namespace ProjectIncreasedTerrainDistance
     {
         // Scale factors for this sampler implementation
         public const float baseHeightScale = 8f;
-        public const float noiseMapScale = 6f; //4f;
-        public const float extraNoiseScale = 10f; //3f;
+        public const float noiseMapScale = 4f; //6f; //4f;
+        public const float extraNoiseScale = 3f; //10f; //3f;
         public const float scaledOceanElevation = 3.4f * baseHeightScale;
         public const float scaledBeachElevation = 5.0f * baseHeightScale;
 

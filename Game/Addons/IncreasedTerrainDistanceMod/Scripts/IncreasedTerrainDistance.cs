@@ -732,6 +732,14 @@ namespace ProjectIncreasedTerrainDistance
                             Material material = terrain.materialTemplate;
                             material.SetFloat("_BlendStart", blendStart);
                             material.SetFloat("_BlendEnd", blendEnd);
+
+                            //DFPosition posMaxPixel = MapsFile.MapPixelToWorldCoord(playerGPS.CurrentMapPixel.X, playerGPS.CurrentMapPixel.Y);
+                            //float fractionalPlayerPosInBlockX = (playerGPS.WorldX - posMaxPixel.X) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale) * MeshReader.GlobalScale;
+                            //float fractionalPlayerPosInBlockY = (playerGPS.WorldZ - posMaxPixel.Y) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale) * MeshReader.GlobalScale;                            
+                            //Debug.Log(String.Format("relativePosInBlockX: {0}, relativePosInBlockY: {1}", relativePosInBlockX , relativePosInBlockY);
+                            material.SetFloat("_WorldOffsetX", 0.0f);
+                            material.SetFloat("_WorldOffsetY", 0.0f);
+
                             terrain.materialTemplate = material;
                         }
                     }
@@ -868,8 +876,6 @@ namespace ProjectIncreasedTerrainDistance
 
         private void updatePositionWorldTerrain(ref GameObject terrainGameObject, Vector3 offset)
         {
-            // reduce chance of holes in geometry between world terrain and the terrain transition ring (this does not happen often, but if it does it is annoying)
-            // I think it is also a floating-point precision issue because the scales of the normal and the far terrain are so different
             float extraTranslationY = -0.5f; // -30.0f;
 
             // world scale computed as in StreamingWorld.cs and DaggerfallTerrain.cs scripts
@@ -1564,20 +1570,6 @@ namespace ProjectIncreasedTerrainDistance
                         {
                             Material newMaterial = new Material(Shader.Find("Daggerfall/BillboardBatchFaded"));
                             newMaterial.CopyPropertiesFromMaterial(rendererMaterials[m]);
-                            float weightFarTerrainLeft = 0.0f;
-                            float weightFarTerrainRight = 0.0f;
-                            float weightFarTerrainTop = 0.0f;
-                            float weightFarTerrainBottom = 0.0f;
-                            if (terrainTransitionRingArray[i].transitionRingBorderDesc.isLeftRingBorder) weightFarTerrainLeft = 1.0f;
-                            if (terrainTransitionRingArray[i].transitionRingBorderDesc.isRightRingBorder) weightFarTerrainRight = 1.0f;
-                            if (terrainTransitionRingArray[i].transitionRingBorderDesc.isTopRingBorder) weightFarTerrainTop = 1.0f;
-                            if (terrainTransitionRingArray[i].transitionRingBorderDesc.isBottomRingBorder) weightFarTerrainBottom = 1.0f;
-                            newMaterial.SetFloat("_blendWeightFarTerrainTop", weightFarTerrainTop);
-                            newMaterial.SetFloat("_blendWeightFarTerrainBottom", weightFarTerrainBottom);
-                            newMaterial.SetFloat("_blendWeightFarTerrainLeft", weightFarTerrainLeft);
-                            newMaterial.SetFloat("_blendWeightFarTerrainRight", weightFarTerrainRight);
-                            newMaterial.SetFloat("_billboardFractionalXposInBlock", 0.5f);
-                            newMaterial.SetFloat("_billboardFractionalYposInBlock", 0.5f);
                             newMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance);
                             newMaterial.SetFloat("_TerrainBlockSize", (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale));
                             rendererMaterials[m] = newMaterial;

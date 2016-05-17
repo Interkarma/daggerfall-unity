@@ -19,16 +19,10 @@ Shader "Daggerfall/BillboardBatchFaded" {
 		_EmissionColor("Emission Color", Color) = (0,0,0)
 		_UpVector ("Up Vector (XYZ)", Vector) = (0,1,0,0)
 
-		_billboardFractionalXposInBlock("fractional x pos in block of billboard", Float) = 0.0
-		_billboardFractionalYposInBlock("fractional y pos in block of billboard", Float) = 0.0
-
-		_blendWeightFarTerrainTop("blend weight at top side of terrain block", Float) = 0.0
-		_blendWeightFarTerrainBottom("blend weight at bottom side of terrain block", Float) = 0.0
-		_blendWeightFarTerrainLeft("blend weight on left side of terrain block", Float) = 0.0
-		_blendWeightFarTerrainRight("blend weight on right side of terrain block", Float) = 0.0
-
 		_TerrainDistance("Terrain Distance", Int) = 3
 		_TerrainBlockSize("size of one terrain block", Float) = 819.2
+		_WorldOffsetX("the floating-origin x-offset of the player in world-coordinates", Float) = 0.0
+		_WorldOffsetY("the floating-origin y-offset of the player in world-coordinates", Float) = 0.0
 	}
 	SubShader {
 		Tags { "Queue" = "Overlay" "RenderType" = "Transparent" }
@@ -45,16 +39,10 @@ Shader "Daggerfall/BillboardBatchFaded" {
 		half4 _EmissionColor;
 		float3 _UpVector;
 
-		float _blendWeightFarTerrainTop;
-		float _blendWeightFarTerrainBottom;
-		float _blendWeightFarTerrainLeft;
-		float _blendWeightFarTerrainRight;
-
-		float _billboardFractionalXposInBlock;
-		float _billboardFractionalYposInBlock;
-
 		int _TerrainDistance;
 		float _TerrainBlockSize;
+		float _WorldOffsetX;
+		float _WorldOffsetY;
 
 		struct Input {
 			float2 uv_MainTex;
@@ -88,18 +76,16 @@ Shader "Daggerfall/BillboardBatchFaded" {
 				discard;
 			}
 			else
-			{
-				//float dist = distance(IN.worldPos.xz, _WorldSpaceCameraPos.xz);
-				float dist = max(abs(IN.worldPos.x - _WorldSpaceCameraPos.x), abs(IN.worldPos.z - _WorldSpaceCameraPos.z));
-
-				//float w_x = lerp(_blendWeightFarTerrainLeft, _blendWeightFarTerrainRight, _billboardFractionalXposInBlock);
-				//float w_y = lerp(_blendWeightFarTerrainTop, _blendWeightFarTerrainBottom, _billboardFractionalYposInBlock);
-				//o.Alpha = w_x * w_y; // albedo.a;
-				float startDist = (float)_TerrainDistance * _TerrainBlockSize; //+_TerrainBlockSize*0.5f;
-				float endDist = (float)(_TerrainDistance + 1) * _TerrainBlockSize; //+_TerrainBlockSize*0.5f;
-				float range = endDist - startDist;
-				//o.Alpha = 1.0f;
-				o.Alpha = 1.0f - max(0.0f, min(1.0f, ((dist - startDist) / range)));
+			{				
+				float distX = abs(IN.worldPos.x - (_WorldOffsetX + _TerrainBlockSize * 0.5f));
+				float distY = abs(IN.worldPos.z - (_WorldOffsetY + _TerrainBlockSize * 0.5f));				
+				float startDistX = (float)_TerrainDistance * _TerrainBlockSize + _TerrainBlockSize * 0.5f;
+				float startDistY = (float)_TerrainDistance * _TerrainBlockSize + _TerrainBlockSize * 0.5f;
+				float endDistX = (float)(_TerrainDistance + 1) * _TerrainBlockSize + _TerrainBlockSize * 0.5f;
+				float endDistY = (float)(_TerrainDistance + 1) * _TerrainBlockSize + _TerrainBlockSize * 0.5f;
+				float rangeX = endDistX - startDistX;
+				float rangeY = endDistY - startDistY;
+				o.Alpha = (1.0f - max(0.0f, min(1.0f, ((distX - startDistX) / rangeX)))) * (1.0f - max(0.0f, min(1.0f, ((distY - startDistY) / rangeY))));
 			}
 			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 			o.Emission = emission;
