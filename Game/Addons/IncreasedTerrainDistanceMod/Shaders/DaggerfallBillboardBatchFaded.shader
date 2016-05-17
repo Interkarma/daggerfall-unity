@@ -76,7 +76,7 @@ Shader "Daggerfall/BillboardBatchFaded" {
 				discard;
 			}
 			else
-			{				
+			{
 				float distX = abs(IN.worldPos.x - (_WorldOffsetX + _TerrainBlockSize * 0.5f));
 				float distY = abs(IN.worldPos.z - (_WorldOffsetY + _TerrainBlockSize * 0.5f));				
 				float startDistX = (float)_TerrainDistance * _TerrainBlockSize + _TerrainBlockSize * 0.5f;

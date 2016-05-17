@@ -1352,22 +1352,6 @@ namespace ProjectIncreasedTerrainDistance
             terrain.materialTemplate = newMaterial;
             dfTerrain.TerrainMaterial = terrain.materialTemplate; // important so that we can later call DaggerfallTerrain.UpdateClimateMaterial and it will update the correct reference
 
-            //MeshRenderer meshRenderer = terrainDesc.billboardBatchObject.GetComponent<MeshRenderer>();
-            //Material[] rendererMaterials = meshRenderer.materials;
-            //for (int m = 0; m < rendererMaterials.Length; m++)
-            //{
-            //    Debug.Log(rendererMaterials[m].name);
-            //    Material updatedMaterial = rendererMaterials[m];
-            //    updatedMaterial.SetFloat("_billboardFractionalXposInBlock", 0.5f);
-            //    updatedMaterial.SetFloat("_billboardFractionalYposInBlock", 0.5f);
-            //    updatedMaterial.SetFloat("_blendWeightFarTerrainTop", weightFarTerrainTop);
-            //    updatedMaterial.SetFloat("_blendWeightFarTerrainBottom", weightFarTerrainBottom);
-            //    updatedMaterial.SetFloat("_blendWeightFarTerrainLeft", weightFarTerrainLeft);
-            //    updatedMaterial.SetFloat("_blendWeightFarTerrainRight", weightFarTerrainRight);
-            //    rendererMaterials[m] = updatedMaterial;
-            //}
-            //meshRenderer.materials = rendererMaterials;
-
             // Only set active again once complete
             terrainDesc.terrainObject.SetActive(true);
             terrainDesc.terrainObject.name = streamingWorld.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
@@ -1433,23 +1417,6 @@ namespace ProjectIncreasedTerrainDistance
                 terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.SetActive(true);
             }
         }
-
-        //private void UpdateTerrainNature(int terrainIndex)
-        //{
-        //    // Setup billboards
-        //    DaggerfallTerrain dfTerrain = terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
-        //    DaggerfallBillboardBatch dfBillboardBatch = terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.GetComponent<DaggerfallBillboardBatch>();
-        //    if (dfTerrain && dfBillboardBatch)
-        //    {
-        //        // Get current climate and nature archive
-        //        int natureArchive = ClimateSwaps.GetNatureArchive(streamingWorld.LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
-        //        dfBillboardBatch.SetMaterial(natureArchive);
-        //        TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, streamingWorld.TerrainScale);
-        //    }
-
-        //    // Only set active again once complete
-        //   terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.SetActive(true);
-        //}
 
         private TransitionRingBorderDesc getTransitionRingBorderDesc(int x, int y, int distanceTransitionRingFromCenterX, int distanceTransitionRingFromCenterY)
         {
