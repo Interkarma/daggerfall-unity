@@ -64,6 +64,8 @@ namespace DaggerfallWorkshop
         [SerializeField, HideInInspector]
         Material terrainMaterial;
 
+        public Material TerrainMaterial { get { return terrainMaterial; } set { terrainMaterial = value; } }
+
         DaggerfallUnity dfUnity;
         int currentWorldClimate = -1;
         DaggerfallDateTime.Seasons season = DaggerfallDateTime.Seasons.Summer;
