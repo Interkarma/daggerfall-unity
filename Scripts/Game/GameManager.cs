@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        public bool Verbose = false;
         bool isGamePaused = false;
         float savedTimeScale;
         Texture2D pauseScreenshot;
@@ -477,12 +478,14 @@ namespace DaggerfallWorkshop.Game
             {
                 try
                 {
-                    prop.GetValue(GameManager.instance, null);
-                    //DaggerfallUnity.LogMessage(string.Format("GameManager Startup...property: {0} value: {1}", prop.Name, value), true);
+                    object obj = prop.GetValue(GameManager.instance, null);
+                    if(Verbose)
+                        Debug.Log(string.Format("GameManager Startup...property: {0} value: {1}", prop.Name, obj.ToString()));
                 }
                 catch(Exception ex)
                 {
-                    Debug.Log(string.Format("{0} | GameManager Failed to get value for prop: {1}", ex.Message, prop.Name));
+                    if (Verbose)
+                        Debug.Log(string.Format("{0} | GameManager Failed to get value for prop: {1}", ex.Message, prop.Name));
                 }
             }
 
