@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Game
 
         public StateManager StateManager
         {
-            get { return (stateManager != null) ? stateManager : stateManager = new StateManager(StateManager.StateTypes.Start); }
+            get { return (stateManager != null) ? stateManager : stateManager = new StateManager(StateManager.StateTypes.None); }
             set { stateManager = value; }
         }
 
@@ -419,7 +419,10 @@ namespace DaggerfallWorkshop.Game
         private void SetupSingleton()
         {
             if (instance == null)
+            {
                 instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
             else if (instance != this)
             {
                 if (Application.isPlaying)
@@ -494,7 +497,6 @@ namespace DaggerfallWorkshop.Game
                 IsReady = true;
                 DaggerfallUnity.LogMessage("GameManager ready.");
             }
-                
         }
 
         /// <summary>
@@ -528,7 +530,7 @@ namespace DaggerfallWorkshop.Game
             }
             else if(obj == null && string.IsNullOrEmpty(tag))
             {
-                throw new Exception(string.Format("GameManager could not find component type {0} - both object & string were null.", typeof(T), obj.name));  
+                throw new Exception(string.Format("GameManager could not find component type {0} - both object & string were null.", typeof(T), obj.name));
             }
             
             if(obj != null)
@@ -576,6 +578,19 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Event Handlers
+
+        void OnLevelWasLoaded(int index)
+        {
+            if(index == SceneControl.GameSceneIndex)
+            {
+                StateManager.ChangeState(StateManager.StateTypes.Start);
+            }
+            else if(index == SceneControl.StartupSceneIndex)
+            {
+                StateManager.ChangeState(StateManager.StateTypes.Setup);
+            }
+            GetProperties();
+        }
 
         void PathErrorMessageBox_OnClose()
         {

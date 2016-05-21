@@ -44,8 +44,15 @@ namespace DaggerfallWorkshop.Game
         }
 
 
-        public StateManager(StateTypes startState)
+        public StateManager(StateTypes startState = StateTypes.None)
         {
+            if(currentState == StateTypes.None)
+            {
+                if (SceneControl.StartupSceneLoaded())
+                    startState = StateTypes.Setup;
+                else
+                    startState = StateTypes.Start;
+            }
             currentState = startState;
             DaggerfallUI.UIManager.OnWindowChange   += UIManager_OnWindowChangeHandler;
             StartGameBehaviour.OnStartMenu          += StartGameBehaviour_OnStartMenuHandler;
@@ -57,7 +64,7 @@ namespace DaggerfallWorkshop.Game
         public enum StateTypes
         {
             None,
-            //Setup,
+            Setup,
             Start,
             //Loading,
             Game,
@@ -137,9 +144,9 @@ namespace DaggerfallWorkshop.Game
 
 
         public delegate void StateChange(StateTypes state);
-        public event StateChange OnStateChange;
+        public static event StateChange OnStateChange;
 
-        public void TriggerStateChange(StateTypes state)
+        private void TriggerStateChange(StateTypes state)
         {
             if (OnStateChange != null)
                 OnStateChange(state);
