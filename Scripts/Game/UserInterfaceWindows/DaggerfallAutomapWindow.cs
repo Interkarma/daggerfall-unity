@@ -123,9 +123,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_ResetRotationPivotAxisView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
         readonly HotkeySequence HotkeySequence_SwitchFocusToNextBeaconObject = new HotkeySequence(KeyCode.Tab, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_SwitchToNextAutomapRenderMode = new HotkeySequence(KeyCode.Return, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeCutout = new HotkeySequence(KeyCode.F1, HotkeySequence.KeyModifiers.None);        
-        readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeWireframe = new HotkeySequence(KeyCode.F2, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeTransparent = new HotkeySequence(KeyCode.F3, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeCutout = new HotkeySequence(KeyCode.F2, HotkeySequence.KeyModifiers.None);        
+        readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeWireframe = new HotkeySequence(KeyCode.F3, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToAutomapRenderModeTransparent = new HotkeySequence(KeyCode.F4, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToAutomapBackgroundOriginal = new HotkeySequence(KeyCode.F5, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToAutomapBackgroundAlternative1 = new HotkeySequence(KeyCode.F6, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToAutomapBackgroundAlternative2 = new HotkeySequence(KeyCode.F7, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToAutomapBackgroundAlternative3 = new HotkeySequence(KeyCode.F8, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveForward = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.None);
@@ -196,8 +200,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture; // background image will be stored in this Texture2D
 
-        Color[] pixelsGrid2D; // grid button texture for 2D view image will be stored in this array of type Color
-        Color[] pixelsGrid3D; // grid button texture for 3D view image will be stored in this array of type Color
+        Color[] pixelsGrid2D; // grid button texture for 2D view image will be stored in here
+        Color[] pixelsGrid3D; // grid button texture for 3D view image will be stored in here
+
+        Color[] backgroundOriginal; // texture with orignial background will be stored in here
+        Color[] backgroundAlternative1; // texture with first alternative background will be stored in here
+        Color[] backgroundAlternative2; // texture with second alternative background will be stored in here
+        Color[] backgroundAlternative3; // texture with third alternative background will be stored in here
 
         HUDCompass compass = null;
 
@@ -263,7 +272,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Cut out 2D View Grid graphics from background image
             pixelsGrid2D = nativeTexture.GetPixels(78, nativeTexture.height - 171 - 19, 27, 19);
-            
+
+            // store background graphics from from background image
+            backgroundOriginal = nativeTexture.GetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29);
+
+            backgroundAlternative1 = new Color[backgroundOriginal.Length];
+            for (int i = 0; i < backgroundOriginal.Length; ++i)
+            {
+                backgroundAlternative1[i].r = 0.0f;
+                backgroundAlternative1[i].g = 0.0f;
+                backgroundAlternative1[i].b = 0.0f;
+                backgroundAlternative1[i].a = 1.0f;
+            }
+
+            backgroundAlternative2 = new Color[backgroundOriginal.Length];
+            for (int i = 0; i < backgroundOriginal.Length; ++i)
+            {
+                backgroundAlternative2[i].r = 0.2f;
+                backgroundAlternative2[i].g = 0.1f;
+                backgroundAlternative2[i].b = 0.3f;
+                backgroundAlternative2[i].a = 1.0f;
+            }
+
+            backgroundAlternative3 = new Color[backgroundOriginal.Length];
+            for (int i = 0; i < backgroundOriginal.Length; ++i)
+            {
+                backgroundAlternative3[i].r = 0.3f;
+                backgroundAlternative3[i].g = 0.1f;
+                backgroundAlternative3[i].b = 0.2f;
+                backgroundAlternative3[i].a = 1.0f;
+            }
+
             // Always dim background
             ParentPanel.BackgroundColor = ScreenDimColor;
 
@@ -568,7 +607,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ActionSwitchToAutomapRenderModeCutout();
             }
-            
+
+            if (Input.GetKeyDown(HotkeySequence_SwitchToAutomapBackgroundOriginal.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToAutomapBackgroundOriginal.modifiers))
+            {
+                ActionSwitchToAutomapBackgroundOriginal();
+            }
+            if (Input.GetKeyDown(HotkeySequence_SwitchToAutomapBackgroundAlternative1.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToAutomapBackgroundAlternative1.modifiers))
+            {
+                ActionSwitchToAutomapBackgroundAlternative1();
+            }
+            if (Input.GetKeyDown(HotkeySequence_SwitchToAutomapBackgroundAlternative2.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToAutomapBackgroundAlternative2.modifiers))
+            {
+                ActionSwitchToAutomapBackgroundAlternative2();
+            }
+            if (Input.GetKeyDown(HotkeySequence_SwitchToAutomapBackgroundAlternative3.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToAutomapBackgroundAlternative3.modifiers))
+            {
+                ActionSwitchToAutomapBackgroundAlternative3();
+            }
+
+
             if (Input.GetKey(HotkeySequence_MoveForward.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveForward.modifiers))
             {
                 ActionMoveForward();
@@ -1389,6 +1446,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionSwitchToAutomapRenderModeCutout()
         {
             daggerfallAutomap.switchToAutomapRenderModeCutout();
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for switching to automap background to original background
+        /// </summary>
+        private void ActionSwitchToAutomapBackgroundOriginal()
+        {
+            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundOriginal);
+            nativeTexture.Apply(false);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for switching to automap background to background alternative 1
+        /// </summary>
+        private void ActionSwitchToAutomapBackgroundAlternative1()
+        {
+            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative1);
+            nativeTexture.Apply(false);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for switching to automap background to background alternative 2
+        /// </summary>
+        private void ActionSwitchToAutomapBackgroundAlternative2()
+        {
+            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative2);
+            nativeTexture.Apply(false);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for switching to automap background to background alternative 3
+        /// </summary>
+        private void ActionSwitchToAutomapBackgroundAlternative3()
+        {
+            nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative3);
+            nativeTexture.Apply(false);
             updateAutomapView();
         }
 
