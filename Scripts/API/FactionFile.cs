@@ -260,6 +260,10 @@ namespace DaggerfallConnect.Arena2
 
         void ParseFactions(string txt)
         {
+            // Unmodded faction.txt contains multiples of same id
+            // This resolver counter is used to give a faction a unique id if needed
+            int resolverId = 1000;
+
             // Clear existing dictionary
             factionDict.Clear();
 
@@ -332,7 +336,17 @@ namespace DaggerfallConnect.Arena2
                 ParseFactionData(ref block, ref faction);
 
                 // Store faction just read
-                factionDict.Add(faction.id, faction);
+                if (!factionDict.ContainsKey(faction.id))
+                {
+                    factionDict.Add(faction.id, faction);
+                }
+                else
+                {
+                    // Duplicate id detected
+                    faction.id = resolverId++;
+                    factionDict.Add(faction.id, faction);
+                }
+
                 previousFaction = faction;
             }
         }
@@ -362,7 +376,14 @@ namespace DaggerfallConnect.Arena2
                 // Split string into tag and value using ':' character
                 parts = line.Split(':');
                 if (parts.Length != 2)
-                    throw new Exception(string.Format("Invalid tag format for data {0} on faction {1}", line, faction.id));
+                {
+                    // Attempt to split by space
+                    // Original faction.txt has malformed tag missing colon
+                    // If this still fails throw an exception
+                    parts = line.Split(' ');
+                    if (parts.Length != 2)
+                        throw new Exception(string.Format("Invalid tag format for data {0} on faction {1}", line, faction.id));
+                }
 
                 // Get tag and value strings
                 string tag = parts[0].Trim().ToLower();
