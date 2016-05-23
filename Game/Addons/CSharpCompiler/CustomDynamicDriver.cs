@@ -207,36 +207,36 @@ namespace CSharpCompiler
 
             var output_file = settings.OutputFile;
             string output_file_name;
-           /* if (output_file == null)
-            {
-                var source_file = settings.FirstSourceFile;
+            /* if (output_file == null)
+             {
+                 var source_file = settings.FirstSourceFile;
 
-                if (source_file == null)
-                {
-                    Report.Error(1562, "If no source files are specified you must specify the output file with -out:");
-                    return false;
-                }
+                 if (source_file == null)
+                 {
+                     Report.Error(1562, "If no source files are specified you must specify the output file with -out:");
+                     return false;
+                 }
 
-                output_file_name = source_file.Name;
-                int pos = output_file_name.LastIndexOf('.');
+                 output_file_name = source_file.Name;
+                 int pos = output_file_name.LastIndexOf('.');
 
-                if (pos > 0)
-                    output_file_name = output_file_name.Substring(0, pos);
+                 if (pos > 0)
+                     output_file_name = output_file_name.Substring(0, pos);
 
-                output_file_name += settings.TargetExt;
-                output_file = output_file_name;
-            }
-            else
-            {*/
-                output_file_name = Path.GetFileName(output_file);
+                 output_file_name += settings.TargetExt;
+                 output_file = output_file_name;
+             }
+             else
+             {*/
+            output_file_name = Path.GetFileName(output_file);
 
-              /*  if (string.IsNullOrEmpty(Path.GetFileNameWithoutExtension(output_file_name)) ||
-                    output_file_name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-                {
-                    Report.Error(2021, "Output file name is not valid");
-                    return false;
-                }
-            }*/
+            /*  if (string.IsNullOrEmpty(Path.GetFileNameWithoutExtension(output_file_name)) ||
+                  output_file_name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+              {
+                  Report.Error(2021, "Output file name is not valid");
+                  return false;
+              }
+          }*/
 
 
             var assembly = new AssemblyDefinitionDynamic(module, output_file_name, output_file);
@@ -304,10 +304,7 @@ namespace CSharpCompiler
                 return false;
 
 
-            if (!generateInMemory)
-                assembly.Builder.Save(assembly.Name + ".dll");
-                //assembly.Save();
-
+            if (!generateInMemory) assembly.Save();
             outAssembly = assembly.Builder;
 
 

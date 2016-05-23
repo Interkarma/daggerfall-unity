@@ -89,6 +89,8 @@ namespace CSharpCompiler
         //     compilation.
         private CompilerResults CompileFromDomBatch(CompilerParameters options, CodeCompileUnit[] ea)
         {
+            throw new NotImplementedException("sorry ICodeGenerator is not implemented, feel free to fix it and request merge");
+            /*
             if (options == null)
             {
                 throw new ArgumentNullException("options");
@@ -122,6 +124,7 @@ namespace CSharpCompiler
                 f.Close();
             }
             return CompileAssemblyFromFileBatch(options, fileNames);
+             */ 
         }
 
         // Summary:
@@ -215,8 +218,9 @@ namespace CSharpCompiler
             var settings = ParamsToSettings(options);
 
             int i = 0;
-            foreach (var source in sources)
+            foreach (var _source in sources)
             {
+                var source = _source;
                 Func<Stream> getStream = () => { return new MemoryStream(Encoding.UTF8.GetBytes(source ?? "")); };
                 var fileName = i.ToString();
                 var unit = new SourceFile(fileName, fileName, settings.SourceFiles.Count + 1, getStream);
