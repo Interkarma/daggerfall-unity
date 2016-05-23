@@ -39,24 +39,8 @@ namespace DaggerfallWorkshop.Game.Utility
             }
         }
 
-        /// <summary>
-        /// Helper for compiling single files.  Preferable to Compile everything at once whenever possible.
-        /// Avoid compiling same files repeatedly as it will lead to memory leaks.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static Assembly CompileFiles(string source, bool GenerateInMemory = true)
-        {
-            return CompileFiles(new string[] { source }, GenerateInMemory);
-        }
 
-
-        /// <summary>
-        /// Compiles array of files by file paths
-        /// </summary>
-        /// <param name="sources"></param>
-        /// <returns></returns>
-        public static Assembly CompileFiles(string[] sources, bool GenerateInMemory = true)
+        public static Assembly CompileSource(string[] sources, bool isSource, bool GenerateInMemory = true)
         {
             if (CodeCompiler == null)
                 CodeCompiler = new CSharpCompiler.CodeCompiler();
@@ -80,9 +64,6 @@ namespace DaggerfallWorkshop.Game.Utility
             compilerparams.GenerateExecutable = false;
             compilerparams.GenerateInMemory = GenerateInMemory;
 
-            //if (string.IsNullOrEmpty(assemblyName)) //uses /out?
-            //    compilerparams.CompilerOptions = assemblyName;
-
             AppDomain.CurrentDomain.AssemblyResolve += (sender, e) =>
             {
                 if (DynamicAssemblyResolver.ContainsKey(e.Name))
@@ -95,7 +76,12 @@ namespace DaggerfallWorkshop.Game.Utility
             };
 
             // Compile the source
-            var result = CodeCompiler.CompileAssemblyFromFileBatch(compilerparams, sources);
+            CompilerResults result;
+            if (isSource)
+                result = CodeCompiler.CompileAssemblyFromSourceBatch(compilerparams, sources);
+            else
+                result = CodeCompiler.CompileAssemblyFromFileBatch(compilerparams, sources);
+
 
             if (result.CompiledAssembly != null)
             {
@@ -118,6 +104,5 @@ namespace DaggerfallWorkshop.Game.Utility
             // Return the assembly
             return result.CompiledAssembly;
         }
-
     }
 }

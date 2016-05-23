@@ -1019,11 +1019,15 @@ namespace Wenzil.Console
 
                 if (count < 1)
                     return error;
+                //string[] source = new string[files.Length];
+                //for (int i = 0; i < files.Length; i++)
+                //{
+                //    source[i] = File.ReadAllText(files[i]);
+                //}
 
                 try
                 {
-                    System.Reflection.Assembly assembly = DaggerfallWorkshop.Game.Utility.Compiler.CompileFiles(files.ToArray());
-
+                    System.Reflection.Assembly assembly = DaggerfallWorkshop.Game.Utility.Compiler.CompileSource(files, false);//(files.ToArray(), false);
                     var loadableTypes = DaggerfallWorkshop.Game.Utility.Compiler.GetLoadableTypes(assembly);
 
                     foreach (Type t in loadableTypes)
@@ -1038,13 +1042,13 @@ namespace Wenzil.Console
                         }
                         else if (hasDefaultConstructor)
                         {
-                            object newThing = Activator.CreateInstance(t); //only works if has a default constructor
+                            Activator.CreateInstance(t); //only works if has a default constructor
                         }
                     }
 
                     return "Finished";
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return ex.Message;
                 }
