@@ -518,7 +518,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 for (int i = 0; i < ObjectsToCreate.Count; i++)
                 {
-                    Debug.Log(string.Format("OBJECT: {0}: INDEX: {1} COUNT: {2}", objectsToCreate[i].T.Name, i, objectsToCreate.Count));
+                    //Debug.Log(string.Format("OBJECT: {0}: INDEX: {1} COUNT: {2}", objectsToCreate[i].T.Name, i, objectsToCreate.Count));
 
                     SetupOptions options = ObjectsToCreate[i];
 
