@@ -20,6 +20,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     [Serializable]
     public class Mod
     {
+        public bool Enabled = true;
         public ModInfo ModInfo;                                 //modname.dfmod.json file loaded from inside the bundle
         public AssetBundle AssetBundle;                         //.dfmod file
         public string DirPath;                                  //directory the mod file is in
