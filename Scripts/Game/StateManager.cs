@@ -53,7 +53,8 @@ namespace DaggerfallWorkshop.Game
                 else
                     startState = StateTypes.Start;
             }
-            currentState = startState;
+
+            ChangeState(startState);
             DaggerfallUI.UIManager.OnWindowChange   += UIManager_OnWindowChangeHandler;
             StartGameBehaviour.OnStartMenu          += StartGameBehaviour_OnStartMenuHandler;
             StartGameBehaviour.OnStartGame          += StartGameBehaviour_OnStartGameHandler;
