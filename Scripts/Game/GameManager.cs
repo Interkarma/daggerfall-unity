@@ -308,10 +308,17 @@ namespace DaggerfallWorkshop.Game
 
         #region Unity
 
+        void Awake()
+        {
+            if (!SetupSingleton())
+            {
+                Destroy(this);
+                return;
+            }
+        }
+
         void Start()
         {
-            SetupSingleton();
-
             // Try to set all properties at startup
             GetProperties();
 
@@ -416,7 +423,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        private void SetupSingleton()
+        private bool SetupSingleton()
         {
             if (instance == null)
             {
@@ -431,7 +438,11 @@ namespace DaggerfallWorkshop.Game
                     Destroy(gameObject);
                 }
             }
+
+            return instance == this;
         }
+
+
 
         bool IsHUDTopWindow()
         {
@@ -581,14 +592,14 @@ namespace DaggerfallWorkshop.Game
 
         void OnLevelWasLoaded(int index)
         {
-            if(index == SceneControl.GameSceneIndex)
-            {
-                StateManager.ChangeState(StateManager.StateTypes.Start);
-            }
-            else if(index == SceneControl.StartupSceneIndex)
-            {
-                StateManager.ChangeState(StateManager.StateTypes.Setup);
-            }
+            //if(index == SceneControl.GameSceneIndex)
+            //{
+            //    StateManager.ChangeState(StateManager.StateTypes.Start);
+            //}
+            //else if(index == SceneControl.StartupSceneIndex)
+            //{
+            //    StateManager.ChangeState(StateManager.StateTypes.Setup);
+            //}
             GetProperties();
         }
 

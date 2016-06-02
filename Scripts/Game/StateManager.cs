@@ -43,10 +43,10 @@ namespace DaggerfallWorkshop.Game
             get { return gameInProgress; }
         }
 
-
         public StateManager(StateTypes startState = StateTypes.None)
         {
-            if(currentState == StateTypes.None)
+
+            if(startState == StateTypes.None)
             {
                 if (SceneControl.StartupSceneLoaded())
                     startState = StateTypes.Setup;
