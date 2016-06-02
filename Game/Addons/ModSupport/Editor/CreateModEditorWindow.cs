@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField(new GUIContent("Mod Name:"));
-                        modInfo.ModName = EditorGUILayout.TextField(modInfo.ModName, GUILayout.MinWidth(600));
+                        modInfo.ModName = EditorGUILayout.TextField(modInfo.ModName.ToLower(), GUILayout.MinWidth(600));
                     });
 
                     EditorGUILayout.Space();
