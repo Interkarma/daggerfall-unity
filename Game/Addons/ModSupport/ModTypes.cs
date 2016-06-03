@@ -43,11 +43,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     [System.Serializable]
     public class ModInfo
     {
-        public string ModName;      //name of mod, also used for file name
+        public string ModName;      //Must be lowercase, must match filename
+        public string ModTitle;     //displayed in game
         public string ModVersion;
         public string ModAuthor;
         public string ContactInfo;
-        public string DFTFU_Verion;
+        public string DFUnity_Verion;
         public string ModDescription;
         public List<string> Files;      //list of assets to add to mod (only used during creation)
 
