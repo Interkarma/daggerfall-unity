@@ -98,7 +98,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             GUILayoutHelper.Horizontal(() =>
             {
                 if (GUILayout.Button("Create New Mod File"))
+                {
                     fileOpen = true;
+                    if(modInfo != null)
+                    {
+                        modInfo.DFUnity_Verion = VersionInfo.DaggerfallUnityVersion;
+                    }
+                }
 
                 else if (GUILayout.Button("Open Existing Mod File"))
                 {
@@ -159,6 +165,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                     GUILayoutHelper.Horizontal(() =>
                     {
+                        EditorGUILayout.LabelField(new GUIContent("Mod Title:"));
+                        modInfo.ModTitle = EditorGUILayout.TextField(modInfo.ModTitle, GUILayout.MinWidth(600));
+                    });
+
+                    EditorGUILayout.Space();
+
+
+                    GUILayoutHelper.Horizontal(() =>
+                    {
 
                         EditorGUILayout.LabelField(new GUIContent("Mod Version:"));
                         modInfo.ModVersion = EditorGUILayout.TextField(modInfo.ModVersion, GUILayout.MinWidth(600));
@@ -184,8 +199,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                     GUILayoutHelper.Horizontal(() =>
                     {
-                        EditorGUILayout.LabelField(new GUIContent("DFTFU Version:"));
-                        modInfo.DFTFU_Verion = EditorGUILayout.TextField(modInfo.DFTFU_Verion, GUILayout.MinWidth(600));
+                        EditorGUILayout.LabelField(new GUIContent("DFUnity Version:"));
+                        modInfo.DFUnity_Verion = EditorGUILayout.TextField(modInfo.DFUnity_Verion, GUILayout.MinWidth(600));
                     });
 
                     EditorGUILayout.Space();
