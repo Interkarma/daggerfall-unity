@@ -591,20 +591,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void ShowModList()
-        {
-            optionsPanel.Enabled = false;
 
-            IEnumerable<ModInfo> modInfos = ModManager.Instance.GetAllModInfo();
-            DaggerfallListPickerWindow modListWindow = new DaggerfallListPickerWindow(uiManager, this);
-            //modListWindow.AllowCancel = false;
-            modListWindow.OnClose += modListWindow_modListWindow_OnClosed;
-            foreach (ModInfo mi in modInfos)
-                modListWindow.ListBox.AddItem(string.Format("{0}", mi.ModName));
-
-            modListWindow.OnItemPicked += modListWindow_OnItemPicked;
-            uiManager.PushWindow(modListWindow);
-        }
 
         #endregion
 
@@ -747,22 +734,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ModsButton_OnOnMouseBlick(BaseScreenComponent sender, Vector2 position)
         {
             if (optionsPanel.Enabled)
-                ShowModList();
+            {
+                //ModLoaderInterfaceWindow modLoaderWindow = new ModLoaderInterfaceWindow(DaggerfallUI.UIManager);
+                //DaggerfallUI.UIManager.PushWindow(modLoaderWindow);
+            }
         }
-
-        public void modListWindow_OnItemPicked(int index, string itemString)
-        {
-            uiManager.PopWindow();
-            uiManager.PushWindow(this);
-            optionsPanel.Enabled = true;
-        }
-
-        public void modListWindow_modListWindow_OnClosed()
-        {
-            uiManager.PushWindow(this);
-            optionsPanel.Enabled = true;
-        }
-
         #endregion
     }
 }
