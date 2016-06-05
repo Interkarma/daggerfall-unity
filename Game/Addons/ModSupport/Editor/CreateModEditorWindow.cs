@@ -75,6 +75,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return false;
             else if (string.IsNullOrEmpty(this.modInfo.ModName))
                 return false;
+            else if (string.IsNullOrEmpty(this.modInfo.ModTitle))
+                return false;
             else
                 return true;
         }
