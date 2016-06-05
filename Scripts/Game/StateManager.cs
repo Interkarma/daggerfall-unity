@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game
     public class StateManager
     {
 
-        public System.EventHandler OnStartNewGameHandler;
+        public static System.EventHandler OnStartNewGame;
         private StateTypes currentState;
         private StateTypes lastState;
         private bool gameInProgress;
@@ -43,17 +43,18 @@ namespace DaggerfallWorkshop.Game
             get { return gameInProgress; }
         }
 
-
         public StateManager(StateTypes startState = StateTypes.None)
         {
-            if(currentState == StateTypes.None)
+
+            if(startState == StateTypes.None)
             {
                 if (SceneControl.StartupSceneLoaded())
                     startState = StateTypes.Setup;
                 else
                     startState = StateTypes.Start;
             }
-            currentState = startState;
+
+            ChangeState(startState);
             DaggerfallUI.UIManager.OnWindowChange   += UIManager_OnWindowChangeHandler;
             StartGameBehaviour.OnStartMenu          += StartGameBehaviour_OnStartMenuHandler;
             StartGameBehaviour.OnStartGame          += StartGameBehaviour_OnStartGameHandler;
@@ -106,8 +107,8 @@ namespace DaggerfallWorkshop.Game
         //triggered by StartGameBehaviourwhen a new game starts from , either a new char or loading a classic save
         public void StartGameBehaviour_OnStartGameHandler(object sender, EventArgs e)
         {
-            if (OnStartNewGameHandler != null)
-                OnStartNewGameHandler(this, null);
+            if (OnStartNewGame != null)
+                OnStartNewGame(this, null);
 
             ChangeState(StateTypes.Game);
         }
@@ -115,8 +116,8 @@ namespace DaggerfallWorkshop.Game
         //triggered by SaveLoadManager when a quicksave is loaded
         public void SaveLoadManager_OnLoadHandler(SaveData_v1 saveData)
         {
-            if (OnStartNewGameHandler != null)
-                OnStartNewGameHandler(this, null);
+            if (OnStartNewGame != null)
+                OnStartNewGame(this, null);
 
             ChangeState(StateTypes.Game);
         }
