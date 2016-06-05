@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         };
 
         bool ModInfoReady { get { return ModInfoReadyTowrite(); } }
-        List<string> Assests { get { return modInfo.Files; } set { modInfo.Files = value; } }         //list of assets to be added
+        List<string> Assets { get { return modInfo.Files; } set { modInfo.Files = value; } }         //list of assets to be added
 
         void OnEnable()
         {
@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         string inPut = File.ReadAllText(currentFilePath);
                         modInfo = (ModInfo)JsonUtility.FromJson(inPut, typeof(ModInfo));
 
-                        Debug.Log(string.Format("opened mod file for: {0}", modInfo.ModName));
+                        Debug.Log(string.Format("opened mod file for: {0}", modInfo.ModTitle));
 
                     }
                     catch (Exception ex)
@@ -223,17 +223,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                     else if (GUILayout.Button("Remove Selected Asset(s)"))
                     {
-                        if (Assests == null || Assests.Count < 1)
+                        if (Assets == null || Assets.Count < 1)
                             return;
-                        else if (assetSelection < 0 || assetSelection > Assests.Count)
+                        else if (assetSelection < 0 || assetSelection > Assets.Count)
                             return;
                         else
-                            Assests.RemoveAt(assetSelection);
+                            Assets.RemoveAt(assetSelection);
                     }
                     else if (GUILayout.Button("Clear ALL Asset(s)"))
                     {
-                        if (Assests != null)
-                            Assests = new List<string>();
+                        if (Assets != null)
+                            Assets = new List<string>();
                     }
 
                 });
@@ -291,14 +291,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 File.WriteAllText(path, outPut);
                 AssetDatabase.Refresh();
 
+                while (Assets.FindAll(x => x.EndsWith(ModManager.MODINFOEXTENSION)).Count > 0)
+                {
+                    for (int i = 0; i < Assets.Count; i++ )
+                    {
+                        if (Assets[i].EndsWith(ModManager.MODINFOEXTENSION))
+                            Assets.RemoveAt(i);
+                    }
+                        //Assets.RemoveAt(Assets.LastIndexOf(path));
+                }
+
                 //get Asset path
                 path = GetAssetPathFromFilePath(path);
-                Assests.Add(path);
-
-                while(Assests.FindAll(x => x == path).Count > 1)
-                {
-                    Assests.RemoveAt(Assests.LastIndexOf(path));
-                }
+                Assets.Add(path);
 
                 return true;
             }
@@ -312,7 +317,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         //Add selected assets in editor to File list
         void AddAssetToMod()
         {
-            if (Assests == null || !fileOpen)
+            if (Assets == null || !fileOpen)
             {
                 Debug.LogError("error in mod builder");
                 return;
@@ -336,17 +341,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     for (int j = 0; j < objs.Length; j++)
                     {
                         string subAssetPath = AssetDatabase.GetAssetPath(objs[j]);
-                        if (!Assests.Contains(subAssetPath))
+                        if (!Assets.Contains(subAssetPath))
                         {
-                            Assests.Add(subAssetPath);
+                            Assets.Add(subAssetPath);
                         }
                     }
                 }
                 else
                     Debug.LogWarning("Asset not found for: " + path);
 
-                if (!Assests.Contains(path))
-                    Assests.Add(path);
+                if (!Assets.Contains(path))
+                    Assets.Add(path);
             }
         }
 
@@ -364,7 +369,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 return false;
             }
-            else if (Assests == null || Assests.Count < 0)
+            else if (Assets == null || Assets.Count < 0)
             {
                 return false;
             }
@@ -376,7 +381,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             AssetBundleBuild[] buildMap = new AssetBundleBuild[1];
             buildMap[0].assetBundleName = modInfo.ModName + ".dfmod";
             buildMap[0].assetBundleVariant = "";                                //TODO
-            buildMap[0].assetNames = Assests.ToArray();
+            buildMap[0].assetNames = Assets.ToArray();
 
             for (int i = 0; i < buildMap[0].assetNames.Length; i++ )
             {
@@ -422,7 +427,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             if (!File.Exists(filePath))
                 return null;
-            string name = filePath.Substring(filePath.LastIndexOf("/") + 1) + ".txt";
+            string name = filePath.Substring(filePath.LastIndexOfAny(new char[]{'\\', '/'}) + 1) + ".txt";
 
             Debug.Log("file name: " + name);
 

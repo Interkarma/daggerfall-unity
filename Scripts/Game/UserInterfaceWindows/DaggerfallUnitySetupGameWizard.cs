@@ -735,8 +735,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (optionsPanel.Enabled)
             {
-                //ModLoaderInterfaceWindow modLoaderWindow = new ModLoaderInterfaceWindow(DaggerfallUI.UIManager);
-                //DaggerfallUI.UIManager.PushWindow(modLoaderWindow);
+                ModLoaderInterfaceWindow modLoaderWindow = new ModLoaderInterfaceWindow(DaggerfallUI.UIManager);
+                DaggerfallUI.UIManager.PushWindow(modLoaderWindow);
             }
         }
         #endregion
