@@ -24,7 +24,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         void ShowControllerUIWindow();
     }
 
-
     //loaded asset - used for lookups w/ mods
     public struct LoadedAsset
     {
@@ -56,43 +55,34 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             if(Application.isEditor)
                 Files = new List<string>();
+
+            ModName         = "";
         }
-    }
-
-
-
-    public enum SetupType
-    {
-        None,                       //do not instantiate - default
-        Non_MonoBehaviour,          //not a monobehaviour, don't need to create / find / load a scene object
-        Component_ModManager,       //add as comp. of mod manager, default for mod controllers
-        Component_Player,           //add as comp. of player object
-        Component_Camera,           //add as a comp. of camera object
-        Component_DaggerfallUnity,  //add as a comp. of daggerfallunity object
-        Component_GameManager,      //add as a comp of gameManager object
-        Component_ByName,           //ads as a comp. of an object found by name, using objName as target (must be spelled exactly & in scene!)
-        Component_Prefab,           //ads as a comp. to a clone from prefab retrieved from the mod's asset bundle 
-        Prefab_Load,                //load a prefab from mod asset bundle, can be used by non-monobehaviours as well
-        NewObject,                  //create a new game object for monoBehaviours, can be used by non-monobehaviours as well.
-    }
-
-    public enum SetupState
-    {
-        None,
-        MenuState,                  //will be created when the main menu loads, or any time after that
-        GameState,                  //will be created when the player enters the game state, or any time after that
     }
 
     public struct SetupOptions
     {
-        public bool isMonoBehvaiour;
-        public bool hasDefaultConstructor;
-        public SetupType setupType;
-        public SetupState setupState;
-        public string objName;
-        public string modName;
-        public GameObject targetObj;
+        public string targetName;
+        public Mod mod;
         public Type T;
+    }
+
+    //passed to mod's Init methods called from ModManager
+    public struct InitParams
+    {
+        public string ModTitle;
+        public int ModIndex;
+        public int LoadPriority;
+        public int LoadedModsCount;
+
+        public InitParams(string ModTitle, int ModIndex, int LoadPriority, int LoadedModsCount)
+        {
+            this.ModTitle = ModTitle;
+            this.ModIndex = ModIndex;
+            this.LoadPriority = LoadPriority;
+            this.LoadedModsCount = LoadedModsCount;
+        }
+
     }
 
     public struct Source
@@ -101,24 +91,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public bool isPreCompiled;
     }
 
-    //used to pass basic instructions to runtime compiler
-    public class SetupInstructionsAttribute : System.Attribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
+    public class Load : System.Attribute
     {
-        public SetupType setupType = SetupType.None;
-        public SetupState setupTime = SetupState.None;
-        public string objName;                                  //name of new objects to create in scene, or prefab to load from mod
-        public string modName;                                  //name of mod to locate prefab - only needed if loading assets from mod via SetupInstructionsAttritubute
-
-        public SetupInstructionsAttribute()
+        public string targetName;            //name of static method
+        public Load(string targetName = "Init")
         {
-        }
-
-        public SetupInstructionsAttribute(SetupType setupType = SetupType.None, SetupState setupTime = SetupState.MenuState, string objName = "", string modName = "")
-        {
-            this.setupType = setupType;
-            this.setupTime = setupTime;
-            this.objName = objName;
-            this.modName = modName;
+            this.targetName = targetName;
         }
     }
 
