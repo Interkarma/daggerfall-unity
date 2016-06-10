@@ -17,48 +17,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-
-/* ToDo:
- * 1. In Game UI Menu for Mods 
-*  2. IModController stuff
- * 3. Loading Assemblies from bundles
- * 4. Asych. asset loading
- */
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
-
     public class ModManager : MonoBehaviour
     {
 
         #region fields
 
-        public const string MODEXTENSION = "dfmod";
+        public const string MODEXTENSION        = ".dfmod";
+        public const string MODINFOEXTENSION    = ".dfmod.json";
         static ModManager instance;
-
-        [SerializeField]
-        bool AlreadyAtStartMenuState = false;
-        [SerializeField]
-        bool AlreadyAtGameState      = false;
-        [SerializeField]
-        string modDirectory;                    //path to find mods, if empty, defaults to streaming assets
-        [SerializeField]
+        bool AlreadyAtStartMenuState            = false;
+        static bool AlreadyStartedInit          = false;
+        string modDirectory;
         int loadedModCount = 0;
         [SerializeField]
-        List<SetupOptions> objectsToCreate;
-        [SerializeField]
-        Dictionary<string, Mod> ModLookup;
+        List<Mod> Mods;
+
+        public static string[] textExtentsions = new string[]
+        {
+            ".txt",
+            ".html",
+            ".html",
+            ".xml",
+            ".bytes",
+            ".json",
+            ".csv",
+            ".yaml",
+            ".fnt",
+        };
 
         #endregion
 
         #region properties
 
-        public List<SetupOptions> ObjectsToCreate { get { return objectsToCreate; } private set { objectsToCreate = value; } }
-        private List<Assembly> GetAssemblies { get { return ModLookup.Values.SelectMany(d => d.Assemblies).ToList(); } }
-
         public int LoadedModCount
         {
             get { return loadedModCount; }
-            set { loadedModCount = value; }
+            private set { loadedModCount = value; }
         }
 
         public string ModDirectory
@@ -69,7 +65,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public static ModManager Instance
         {
             get { return instance; }
-            set { instance = value; }
+            private set { instance = value; }
         }
 
         #endregion
@@ -84,132 +80,196 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
 
             SetupSingleton();
-            //ModControllers  = new List<IModController>();
-            ObjectsToCreate = new List<SetupOptions>();
-            ModLookup = new Dictionary<string, Mod>();
+
+            if (instance == this)
+                StateManager.OnStateChange += StateManager_OnStateChange;
         }
 
         // Use this for initialization
         void Start()
         {
-            //load mods
+            Mods = new List<Mod>();
             FindModsFromDirectory();
-            LoadAllSourceCodeFromModBundles();
         }
 
         void Update()
         {
-            LoadedModCount = ModLookup.Values.Count;
+            LoadedModCount = Mods.Count;
+            return;
         }
 
-        public void OnLevelWasLoaded(int index)
+
+
+        #endregion
+
+        #region public methods
+        /// <summary>
+        /// Get index for mod by title
+        /// </summary>
+        /// <param name="modTitle"></param>
+        /// <returns></returns>
+        public int GetModIndex(string modTitle)
         {
-            Debug.Log("level index: " + index);
-            if(index == SceneControl.GameSceneIndex && (!AlreadyAtStartMenuState && !AlreadyAtGameState))
+            if (string.IsNullOrEmpty(modTitle))
+                return -1;
+
+            for(int i = 0; i < Mods.Count; i++)
             {
-                Debug.Log("Game Scene Loaded");
-
-                CompileAllSourceCodeFromModBundles();
-
-                foreach (Assembly assembly in GetAssemblies)
-                    CreateObjectsFromLoadableTypes(assembly);
-
-                AlreadyAtStartMenuState = true;
-                StartCoroutine(InstanitateObjectsFromTypes());
-
-                StateManager.OnStateChange += StateManager_OnStateChange;
+                if (Mods[i].Title == modTitle)
+                    return i;
             }
+            return -1;
+        }
+
+        /// <summary>
+        /// Get mod using index
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="mod"></param>
+        /// <returns></returns>
+        public Mod GetMod(int index, out bool check)
+        {
+            check = false;
+            Mod mod = null;
+            if (index < 0 || index > Mods.Count)
+                return null;
+            else
+            {
+                mod = Mods[index];
+                check = mod != null;
+                return mod;
+            }
+        }
+
+        /// <summary>
+        /// Get mod using Mod Title
+        /// </summary>
+        /// <param name="modTitle"></param>
+        /// <param name="mod"></param>
+        /// <returns></returns>
+        public Mod GetMod(string modTitle)
+        {
+            Mod mod = null;
+            int index = GetModIndex(modTitle);
+
+            if(GetModIndex(modTitle) >= 0)
+            {
+                mod = Mods[index];
+                return mod;
+            }
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Returns all loaded mods in array
+        /// </summary>
+        /// <param name="loadOrder">ordered by load priority if true</param>
+        /// <returns></returns>
+        public Mod[] GetAllMods(bool loadOrder = false)
+        {
+            var selection = from mod in Mods
+                            select mod;
+            if (loadOrder)
+                return selection.OrderBy(x => x.LoadPriority).ToArray();
+            else
+                return selection.ToArray();
+        }
+
+        /// <summary>
+        /// Get modtitle string for each loaded mod
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetAllModTitles()
+        {
+            var selection = from modInfo in GetAllModInfo()
+                            select modInfo.ModTitle;
+            return selection.ToArray();
+        }
+
+        /// <summary>
+        /// Get modname string for each loaded mod
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetAllModNames()
+        {
+            var selection = from modInfo in GetAllModInfo()
+                            select modInfo.ModName;
+            return selection.ToArray();
+
+        }
+
+        /// <summary>
+        /// Get array of ModInfo objects for each loaded mod
+        /// </summary>
+        /// <returns></returns>
+        public ModInfo[] GetAllModInfo()
+        {
+            var selection = from mod in GetAllMods()
+                            where (mod.ModInfo != null)
+                            select mod.ModInfo;
+            return selection.ToArray();
+        }
+
+        /// <summary>
+        /// Get all asset names from mod
+        /// </summary>
+        /// <param name="modTitle"></param>
+        /// <returns></returns>
+        public string[] GetModAssetNames(string modTitle)
+        {
+            int index = GetModIndex(modTitle);
+            if (index < 0)
+                return null;
+            else
+                return Mods[index].AssetNames;
+        }
+
+        /// <summary>
+        /// Get type t asset from mod using name of asset
+        /// </summary>
+        /// <typeparam name="T">Asset Type</typeparam>
+        /// <param name="assetName">asset name</param>
+        /// <param name="modTitle">title of mod</param>
+        /// <param name="clone">return copy of asset</param>
+        ///<param name="check">true if loaded sucessfully</param>
+        /// <returns></returns>
+        public T GetAssestFromMod<T>(string assetName, string modTitle, bool clone, out bool check) where T : UnityEngine.Object
+        {
+            check = false;
+            T asset = null;
+
+            int index = GetModIndex(modTitle);
+
+            if (index < 0)
+                return null;
+
+            asset =  Mods[index].GetAssetFromLoadedBundle<T>(assetName, clone);
+            check = asset != null;
+            return asset;
+        }
+
+        /// <summary>
+        /// convert full relative path to just the asset name for example:
+        /// /Assets/examples/myscript.cs to myscript.cs
+        /// </summary>
+        /// <param name="assetPath"></param>
+        /// <returns></returns>
+        public static string GetAssetName(string assetPath)
+        {
+            if (string.IsNullOrEmpty(assetPath))
+                return null;
+            int startIndex = assetPath.LastIndexOfAny(new char[] { '\\', '/' }) + 1;
+            return assetPath.Substring(startIndex);
         }
 
         #endregion
 
-        public bool GetMod(string modName, out Mod mod)
-        {
-            mod = null;
-
-            if (ModLookup.ContainsKey(modName))
-            {
-                mod = ModLookup[modName];
-                return mod != null;
-            }
-            else
-                return false;
-        }
-
-        public IEnumerable<Mod>GetAllMods()
-        {
-            return ModLookup.Values;
-        }
-
-        public IEnumerable<ModInfo>GetAllModInfo()
-        {
-            var selection = from mod in ModLookup.Values
-                            where (mod != null && mod.ModInfo != null)
-                            select mod.ModInfo;
-
-            return selection;
-        }
-
-        public IEnumerable<IModController> GetAllModControllers()
-        {
-            var selection = from mod in ModLookup.Values
-                            where (mod != null && mod.ModController != null)
-                            select mod.ModController;
-
-            return selection;
-        }
-
-        public bool GetAssestFromMod<T>(string assestName, string modName, out T asset, bool makeCopy = true) where T : UnityEngine.Object
-        {
-            asset = null;
-            Mod mod;
-
-            if (ModLookup.TryGetValue(modName, out mod))
-            {
-                return false;
-            }
-            else
-            {
-                asset = mod.GetAssetFromLoadedBundle<T>(assestName, makeCopy);
-                return asset != null;
-            }
-
-        }
-
-        public void RegisterNewModController<T>(T controller) where T : IModController
-        {
-            if (controller == null)
-            {
-                Debug.LogError("Couldn't register new mod - obj paramater was null");
-                return;
-            }
-            else if (string.IsNullOrEmpty(controller.ModName))
-            {
-                Debug.LogError("Couldn't register new mod - controller has no mod name");
-                return;
-            }
-            Mod mod;
-            if (!GetMod(controller.ModName, out mod))
-            {
-                Debug.LogError("Couldn't register new mod - invalid mod name");
-                return;
-            }
-
-            mod.ModController = controller;
-
-            if (OnNewModControllerRegistered != null)
-            {
-                OnNewModControllerRegistered(controller);
-                Debug.Log("new mod controller registered: " + controller.ModName);
-            }
-        }
-
-        private string GetModNameFromPath(string path)
+        private static string GetModNameFromPath(string path)
         {
             if (string.IsNullOrEmpty(path))
                 return null;
-
-            return path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+            return path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1).Replace(MODEXTENSION, "");
         }
 
         private void SetupSingleton()
@@ -229,12 +289,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
         }
 
-        #region Mod Loading
+        #region Mod Loading & setup
+
+        //look for changes in mod directory before the compiling / loading process has begun
+        public void Refresh()
+        {
+            if (!AlreadyAtStartMenuState)
+                FindModsFromDirectory(true);
+        }
 
         /// <summary>
         /// Locates all the .dfmod files in the mod path
         /// </summary>
-        private void FindModsFromDirectory()
+        private void FindModsFromDirectory(bool refresh = false)
         {
             if(!Directory.Exists(ModDirectory))
             {
@@ -242,34 +309,52 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return;
             }
 
-            var modFiles = Directory.GetFiles(ModDirectory, "*."+MODEXTENSION, SearchOption.AllDirectories);
+            var modFiles = Directory.GetFiles(ModDirectory, "*" + MODEXTENSION, SearchOption.AllDirectories);
+            var modFileNames = new string[modFiles.Length];
+            var loadedModNames = GetAllModNames();
 
-            foreach(string modFilePath in modFiles)
+            for (int i = 0; i < modFiles.Length; i++)
             {
-                Mod mod = new Mod();
-                Debug.Log(modFilePath + " " + Path.DirectorySeparatorChar);
 
-                mod.DirPath = modFilePath.Substring(0, modFilePath.LastIndexOf(Path.DirectorySeparatorChar));
-                string modNameFromPath = GetModNameFromPath(modFilePath);
+                string modFilePath = modFiles[i];
 
-                if(ModLookup.ContainsKey(modNameFromPath))
+                string DirPath = modFilePath.Substring(0, modFilePath.LastIndexOf(Path.DirectorySeparatorChar));
+                modFileNames[i] = GetModNameFromPath(modFilePath);
+
+                if(string.IsNullOrEmpty(modFileNames[i]))
                 {
-
-                    Debug.LogWarning("Duplicate mod name found: " + modNameFromPath);
-                    mod = null;
+                    Debug.Log("failed to get mod name of mod");
                     continue;
                 }
 
-                //Debug.Log(mod.dirPath);
-                //Debug.Log(modNameFromPath);
+                //prevent trying to re-load same asset bundles on refresh
+                if(loadedModNames.Length > 0)
+                {
+                    if (loadedModNames.Contains(modFileNames[i]))
+                        continue;
+                }
 
-                if (!LoadModAssetBundle(modFilePath, ref mod))
+                AssetBundle ab;
+                if (!LoadModAssetBundle(modFilePath, out ab))
                     continue;
-                if (!GetModInfoFromBundle(modNameFromPath, ref mod))
-                    continue;
+                Mod mod = new Mod(modFileNames[i], DirPath, ab);
 
-                if(!ModLookup.ContainsKey(mod.ModInfo.ModName))
-                    ModLookup[mod.ModInfo.ModName] = mod;
+                mod.LoadPriority = i;
+                int index = GetModIndex(mod.Title);
+                if (index < 0)
+                    Mods.Add(mod);
+            }
+
+            if (refresh)
+            {
+                for (int j = 0; j < loadedModNames.Length; j++)
+                {
+                    if (!modFileNames.Contains(loadedModNames[j]))
+                    {
+                        Debug.Log(string.Format("mod {0} no longer loaded", loadedModNames[j]));
+                        UnloadMod(loadedModNames[j], true);
+                    }
+                }
             }
         }
 
@@ -279,14 +364,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <param name="modFilePath"></param>
         /// <param name="mod"></param>
         /// <returns></returns>
-        private bool LoadModAssetBundle(string modFilePath, ref Mod mod)
+        private static bool LoadModAssetBundle(string modFilePath, out AssetBundle ab)
         {
-            if (mod == null)
-            {
-                Debug.LogWarning("mod file was null");
-                return false;
-            }
-
+            ab = null;
             if (!File.Exists(modFilePath))
             {
                 Debug.Log(string.Format("Asset Bundle not found: {0}", modFilePath));
@@ -295,48 +375,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             try
             {
-                mod.AssetBundle = AssetBundle.LoadFromFile(modFilePath);
-                return mod.AssetBundle != null;
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError(ex.Message);
-                return false;
-            }
-
-        }
-
-        //retrieve mod info json file from asset bundle, and set to Mod.ModInfo
-        //returns false if failed, true if successful
-        private bool GetModInfoFromBundle(string modName, ref Mod mod)
-        {
-
-            if (string.IsNullOrEmpty(modName))
-            {
-                Debug.Log("invalid modname - can't retrive modinfo from asset bundle");
-                return false;
-            }
-            else if (mod == null)
-            {
-                Debug.LogWarning("mod object was null for mod: " + modName);
-                return false;
-            }
-
-            //get mod info file from asset bundle.  must be == modname.json, i.e. examplemod.dfmod.json
-            string modInfoAssetName = modName + ".json";
-
-            try
-            {
-                string modInfo = mod.GetAssetFromLoadedBundle<TextAsset>(modInfoAssetName).ToString();
-
-                if (modInfo == null)
-                {
-                    Debug.Log("failed to retrieve mod info asset from asset bundle");
-                    return false;
-                }
-
-                mod.ModInfo = (ModInfo)JsonUtility.FromJson(modInfo, typeof(ModInfo));
-                return mod.ModInfo != null;
+                ab = AssetBundle.LoadFromFile(modFilePath);
+                return ab != null;
             }
             catch (Exception ex)
             {
@@ -346,27 +386,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
-        /// Unload mod and related asset bundle.
-        /// TODO - raise event
+        /// Unload mod and related asset bundle
         /// </summary>
-        /// <param name="modName"></param>
+        /// <param name="modTitle"></param>
         /// <param name="unloadAllAssets"></param>
         /// <returns></returns>
-        public bool UnloadMod(string modName, bool unloadAllAssets)
+        private bool UnloadMod(string modTitle, bool unloadAllAssets)
         {
-            Mod mod;
             try
             {
-                if(!GetMod(modName, out mod))
+                int index = GetModIndex(modTitle);
+                if(index < 0)
                 {
-                    Debug.Log("Failed to unload mod as mod name wasn't found: " + modName);
+                    Debug.Log("Failed to unload mod as mod title wasn't found: " + modTitle);
                     return false;
                 }
-
-                mod = ModLookup[modName];
-                ModLookup.Remove(modName);
-                mod.AssetBundle.Unload(unloadAllAssets);
-                mod = null;
+                Mods[index].AssetBundle.Unload(unloadAllAssets);
+                Mods.RemoveAt(index);
+                OnUnloadMod(modTitle);
                 return true;
             }
             catch(Exception ex)
@@ -377,100 +414,102 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         }
 
+        private void Init()
+        {
+            if (AlreadyStartedInit)
+                return;
+
+            AlreadyStartedInit = true;
+
+            Mod[] mods = GetAllMods();
+
+            Debug.Log("Mod Manager - Init");
+
+            for (int i = 0; i < mods.Length; i++)
+            {
+                Mod mod = mods[i];
+
+                if (mod == null || !mod.Enabled)
+                {
+                    Debug.Log("removing mod at index: " + i);
+                    UnloadMod(mod.Title, true);
+                    continue;
+                }
+                Debug.Log("ModManager - started loading mod: " + mod.Name);
+                mod.CompileSourceToAssemblies();
+            }
+            Debug.Log("ModManager - init finished.  Mod Count: " + LoadedModCount);
+
+            InvokeModLoaders();
+        }
+
+
+        private void InvokeModLoaders()
+        {
+            if (AlreadyAtStartMenuState)
+            {
+                Mod[] mods = GetAllMods(true);
+
+                for (int i = 0; i < mods.Length; i++)
+                {
+                    try
+                    {
+                        List<SetupOptions> setupOptions = mods[i].FindModLoaders();
+
+                        if (setupOptions == null)
+                        {
+                            Debug.Log("No mod loaders found for mod: " + mods[i].Name);
+                            continue;
+                        }
+
+                        for (int j = 0; j < setupOptions.Count; j++)
+                        {
+                            SetupOptions options = setupOptions[j];
+
+                            MethodInfo mi = options.T.GetMethod(options.targetName, BindingFlags.Public | BindingFlags.Static);
+
+                            if (mi != null)
+                            {
+                                ParameterInfo[] pi = mi.GetParameters();
+
+                                if (pi.Length != 1)
+                                    Debug.Log(string.Format("error: invalid init method specified for: {0} ; method name: {1} - too many paramaters", options.T.Name, options.targetName));
+                                else if (pi[0].ParameterType != typeof(InitParams))
+                                    Debug.Log(string.Format("error: invalid init method specified for: {0} ; method name: {1} - incorrect paramater type", options.T.Name, options.targetName));
+                                else
+                                {
+                                    InitParams initParams = new InitParams(options.mod.Title, GetModIndex(options.mod.Title), options.mod.LoadPriority, LoadedModCount);
+                                    mi.Invoke(null, new object[] { initParams });
+                                }
+                            }
+                            else
+                                Debug.Log(string.Format("Failed to invoke static method {0} type {1}", options.targetName, options.T.Name));
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError(ex.Message);
+                    }
+                }
+            }
+
+        }
+
         #endregion
 
         #region Mod Source Loading/Compiling
 
+        //private void LoadAllSourceCodeFromModBundles()
+        //{
+        //    for (int i = 0; i < Mods.Count; i++)
+        //    {
+        //        Debug.Log("Getting source for Mod: " + Mods[i].Name);
+        //        Mods[i].LoadSourceCodeFromModBundle();
+        //    }
+        //}
 
-        /// <summary>
-        /// Compiles all the source code that has been loaded from mod asset bundles
-        /// </summary>
-        private void CompileAllSourceCodeFromModBundles()
-        {
-
-            foreach (Mod mod in ModLookup.Values)
-            {
-                try
-                {
-                    List<string> stringSource = new List<string>(mod.Sources.Length);
-
-                    for (int i = 0; i < mod.Sources.Length; i++)
-                    {
-                        if (mod.Sources[i].isPreCompiled)
-                        {
-                            Assembly assembly = Assembly.Load(mod.Sources[i].sourceTxt.bytes);
-
-                            if (assembly != null)
-                                mod.Assemblies.Add(assembly);
-                        }
-                        else
-                        {
-                            stringSource.Add(mod.Sources[i].sourceTxt.ToString());
-                        }
-                    }
-
-                    if (stringSource.Count > 0)
-                    {
-                        Assembly assembly = CompileFromSourceAssets(stringSource.ToArray());
-
-                        if (assembly != null)
-                            mod.Assemblies.Add(assembly);
-                    }
-                }
-                catch(Exception ex)
-                {
-                    Debug.LogError(string.Format("Failed to compile source for mod: {0} \n {1}", ex.Message));
-                    continue;
-                }
-
-            }
-        }
-
-
-        private void LoadAllSourceCodeFromModBundles()
-        {
-            foreach (Mod mod in ModLookup.Values)
-            {
-                Debug.Log("Getting source for Mod: " + mod.ModInfo.ModName);
-                mod.Sources = LoadSourceCodeFromModBundle(mod).ToArray();
-            }
-        }
-
-
-        List<Source> LoadSourceCodeFromModBundle(Mod mod)
-        {
-
-            AssetBundle bundle = mod.AssetBundle;
-            List<Source> source = new List<Source>();
-
-            string[] assetNames = bundle.GetAllAssetNames();
-
-
-            string name = null;
-            foreach (string assetName in assetNames)
-            {
-                //Debug.Log(string.Format("{0}", assetName));
-
-                name  = assetName.ToLower();
-
-                if (name.EndsWith(".cs.txt") || name.EndsWith(".cs"))// || name.EndsWith(".byte")) //.byte is for .dll - not tested yet
-                {
-                    Source newUncompiledSource;
-                    TextAsset newSource = mod.GetAssetFromLoadedBundle<TextAsset>(assetName);
-
-                    if(newSource != null)
-                    {
-                        newUncompiledSource.sourceTxt = newSource;
-                        newUncompiledSource.isPreCompiled = name.EndsWith(".dll");
-                        source.Add(newUncompiledSource);
-                    }
-                }
-            }
-
-            return source;
-        }
-
-        public Assembly CompileFromSourceAssets(string[] source)
+        public static Assembly CompileFromSourceAssets(string[] source)
         {
             if (source == null || source.Length < 1)
             {
@@ -495,222 +534,42 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         #endregion
 
 
-        #region Compiling & Instantiating
-
-        IEnumerator InstanitateObjectsFromTypes()
-        {
-            while(true)
-            {
-                yield return new WaitForEndOfFrame();
-
-                if (!AlreadyAtGameState || !AlreadyAtStartMenuState)
-                {
-                    if (GameManager.Instance.StateManager.CurrentState == StateManager.StateTypes.Game)
-                    {
-                        AlreadyAtStartMenuState = true;
-                        AlreadyAtGameState = true;
-                    }
-                    else if (GameManager.Instance.StateManager.CurrentState == StateManager.StateTypes.Start)
-                        AlreadyAtStartMenuState = true;
-                    else
-                        continue;
-                }
-
-                for (int i = 0; i < ObjectsToCreate.Count; i++)
-                {
-                    //Debug.Log(string.Format("OBJECT: {0}: INDEX: {1} COUNT: {2}", objectsToCreate[i].T.Name, i, objectsToCreate.Count));
-
-                    SetupOptions options = ObjectsToCreate[i];
-
-                    if (options.setupType == SetupType.None)
-                        ObjectsToCreate.RemoveAt(i);
-                    else if (options.setupState == SetupState.None)
-                        ObjectsToCreate.RemoveAt(i);
-                    if (options.targetObj == null)
-                    {
-                        if (!GetTargetObject(ref options))
-                        {
-                            ObjectsToCreate.RemoveAt(i);
-                            Debug.Log(string.Format("Failed to setup {0} {1} {1}", options.T, options.modName, options.objName));
-                            continue;
-                        }
-                    }
-
-                    if (options.setupState == SetupState.MenuState && (AlreadyAtGameState || AlreadyAtStartMenuState))
-                        CreateNewInstance(ref options);
-
-                    else if (options.setupState == SetupState.GameState && AlreadyAtGameState)
-                        CreateNewInstance(ref options);
-                    else
-                        continue;
-
-                    ObjectsToCreate.RemoveAt(i);
-                }
-            }
-        }
-
-
-        private bool CreateNewInstance(ref SetupOptions options)
-        {
-            if(options.T == null || (options.targetObj == null && options.isMonoBehvaiour))
-            {
-                Debug.LogError(string.Format("Failed to Create new Instance. {0} {1}", options.T, options.targetObj));
-                return false;
-            }
-            try
-            {
-                object obj = null;
-                if (options.isMonoBehvaiour)
-                {
-                    obj = options.targetObj;
-
-                    if (options.setupType != SetupType.Prefab_Load)//target gets instant. already, don't re-instantiate
-                        options.targetObj.AddComponent(options.T);
-
-                    if (options.setupType == SetupType.Component_Prefab || options.setupType == SetupType.Prefab_Load)//target gets instant. already, don't re-instantiate
-                        obj = options.targetObj;
-                }
-                else if (options.hasDefaultConstructor && !options.isMonoBehvaiour)
-                    obj = Activator.CreateInstance(options.T);
-
-
-                if (OnNewObjectCreated != null)
-                    OnNewObjectCreated(obj, options);
-
-                return true;
-
-            }
-            catch(Exception ex)
-            {
-                Debug.LogError(ex.Message);
-                return false;
-            }
-        }
-
-
-        /// <summary>
-        /// Finds / creates object (if any) for object
-        /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
-        private bool GetTargetObject(ref SetupOptions options)
-        {
-            switch (options.setupType)
-            {
-                case SetupType.None:
-                    break;
-                case SetupType.Non_MonoBehaviour:
-                    return true;
-                case SetupType.Component_ModManager:
-                    options.targetObj = this.gameObject;
-                    break;
-                case SetupType.Component_Player:
-                    options.targetObj = GameManager.Instance.PlayerObject;
-                    break;
-                case SetupType.Component_Camera:
-                    options.targetObj = GameManager.Instance.MainCameraObject;
-                    break;
-                case SetupType.Component_DaggerfallUnity:
-                    options.targetObj = DaggerfallUnity.Instance.gameObject;
-                    break;
-                case SetupType.Component_GameManager:
-                    options.targetObj = GameManager.Instance.gameObject;
-                    break;
-                case SetupType.Component_ByName:
-                    options.targetObj = GameObject.Find(options.objName);
-                    break;
-                case SetupType.Component_Prefab:
-                    if(ModLookup.ContainsKey(options.modName))
-                    {
-                        options.targetObj = ModLookup[options.modName].GetAssetFromLoadedBundle<GameObject>(options.objName);
-                    }
-                    break;
-                case SetupType.Prefab_Load:
-                    if(ModLookup.ContainsKey(options.modName))
-                    {
-                        options.targetObj = ModLookup[options.modName].GetAssetFromLoadedBundle<GameObject>(options.objName);
-                    }
-                    break;
-                case SetupType.NewObject:
-                        options.targetObj = new GameObject(options.objName);
-                    break;
-                default:
-                    break;
-            }
-
-            return options.targetObj != null;
-        }
-
-
-        /// <summary>
-        /// Adds loadable types with the SetupInstructionsAttribute to the ObjectsToCreate list
-        /// Called on Game Scene level load
-        /// </summary>
-        /// <param name="assembly"></param>
-        private void CreateObjectsFromLoadableTypes(Assembly assembly)
-        {
-            if (assembly == null)
-                return;
-            try
-            {
-                var loadableTypes = Compiler.GetLoadableTypes(assembly);
-
-                foreach (Type t in loadableTypes)
-                {
-                    SetupOptions options;
-                    GetSetupDirectives(t, out options);
-
-                    //add to list for future creation
-                    if (options.setupType != SetupType.None && options.setupState != SetupState.None)
-                        ObjectsToCreate.Add(options);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError(ex.Message);
-                return;
-            }
-        }
-
-        /// <summary>
-        /// Parses the SetupInstructionsAttribute, and converts it to a SetupOptions Struct
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="options"></param>
-        private void GetSetupDirectives(Type t, out SetupOptions options)
-        {
-            options = new SetupOptions();
-            options.setupType = SetupType.None;
-
-            SetupInstructionsAttribute setupAttribute = (SetupInstructionsAttribute)Attribute.GetCustomAttribute(t, typeof(SetupInstructionsAttribute));
-            if (setupAttribute == null)
-                return;
-
-            options.setupType = setupAttribute.setupType;
-            options.setupState = setupAttribute.setupTime;
-            options.objName = setupAttribute.objName;
-            options.modName = setupAttribute.modName;
-            options.isMonoBehvaiour = typeof(Component).IsAssignableFrom(t);
-            options.hasDefaultConstructor = (t.GetConstructor(Type.EmptyTypes) != null && !t.IsAbstract);
-            options.T = t;
-        }
-
-        #endregion
-
-
         #region events
-        public delegate void NewObjectCreatedHandler(object obj, SetupOptions options);
-        public static event NewObjectCreatedHandler OnNewObjectCreated;
+        //public delegate void NewObjectCreatedHandler(object obj, SetupOptions options);
+        //public static event NewObjectCreatedHandler OnNewObjectCreated;
 
-        public delegate void NewModRegistered(IModController newModController);
-        public static event NewModRegistered OnNewModControllerRegistered;
+        //public delegate void NewModRegistered(IModController newModController);
+        //public static event NewModRegistered OnNewModControllerRegistered;
+
+        public delegate void AssetUpdate(string ModTitle, string AssetName, Type assetType);
+        public static event AssetUpdate OnLoadAssetEvent;
+
+        public delegate void ModUpdate(string ModTitle);
+        public static event ModUpdate OnUnloadModEvent;
+
+        private void OnUnloadMod(string ModTitle)
+        {
+            if (OnUnloadModEvent != null)
+                OnUnloadModEvent(ModTitle);
+        }
+
+        public static void OnLoadAsset(string ModTitle, string assetName, Type assetType)
+        {
+            if (OnLoadAssetEvent != null)
+                OnLoadAssetEvent(ModTitle, assetName, assetType);
+        }
 
         public void StateManager_OnStateChange(StateManager.StateTypes state)
         {
-            if(state == StateManager.StateTypes.Game)
+            Debug.Log("new state: " + state.ToString());
+            if(state != StateManager.StateTypes.Setup && state != StateManager.StateTypes.None)
             {
-                AlreadyAtGameState = true;
-                StateManager.OnStateChange -= StateManager_OnStateChange;
+                if(!AlreadyAtStartMenuState)
+                {
+                    AlreadyAtStartMenuState = true;
+                    StateManager.OnStateChange -= StateManager_OnStateChange;
+                    Init();
+                }
             }
         }
 
