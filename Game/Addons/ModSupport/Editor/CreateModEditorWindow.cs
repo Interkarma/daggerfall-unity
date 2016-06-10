@@ -112,7 +112,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 {
                     try
                     {
-                        currentFilePath = EditorUtility.OpenFilePanelWithFilters("", Application.dataPath, new string[] { "JSON", "json" });
+                        currentFilePath = EditorUtility.OpenFilePanelWithFilters("", Application.dataPath, new string[] { "JSON", "dfmod.json"});
 
                         if (!File.Exists(currentFilePath))
                         {
@@ -287,7 +287,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 string path = GetTempModDirPath();
                 string outPut = JsonUtility.ToJson(modInfo, true);
 
-                path = Path.Combine(path, modInfo.ModName + ".dfmod.json");
+                path = Path.Combine(path, modInfo.ModName + ModManager.MODINFOEXTENSION);
 
                 Debug.Log("writing to: " + path);
                 File.WriteAllText(path, outPut);
