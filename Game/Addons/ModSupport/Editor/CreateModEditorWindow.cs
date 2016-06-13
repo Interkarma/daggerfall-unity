@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             GUILayoutHelper.Horizontal(() =>
             {
-                if (GUILayout.Button("Create New Mod File"))
+                if (GUILayout.Button("Create New Mod"))
                 {
                     fileOpen = true;
                     if(modInfo != null)
@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     }
                 }
 
-                else if (GUILayout.Button("Open Existing Mod File"))
+                else if (GUILayout.Button("Open Existing Mod Settings File"))
                 {
                     try
                     {
@@ -258,7 +258,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             GUILayoutHelper.Horizontal(() =>
             {
 
-                if (GUILayout.Button("Save Mod File"))
+                if (GUILayout.Button("Save Mod Settings to File"))
                 {
                     SaveModFile();
                     Debug.Log("got path: " + currentFilePath);
