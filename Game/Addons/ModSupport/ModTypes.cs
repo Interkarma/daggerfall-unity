@@ -42,8 +42,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     [System.Serializable]
     public class ModInfo
     {
-        public string ModName;      //Must be lowercase, must match filename
-        public string ModTitle;     //displayed in game
+        public string ModFileName;      //Must be lowercase
+        public string ModTitle;         //displayed in game
         public string ModVersion;
         public string ModAuthor;
         public string ContactInfo;
@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if(Application.isEditor)
                 Files = new List<string>();
 
-            ModName         = "";
+            ModFileName         = "";
         }
     }
 

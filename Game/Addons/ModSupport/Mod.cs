@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         #region properties
 
-        public string Name { get { return ModInfo.ModName; } private set { ModInfo.ModName = value; } }
+        public string Name { get { return ModInfo.ModFileName; } private set { ModInfo.ModFileName = value; } }
 
         public string Title { get { return ModInfo.ModTitle; } private set { ModInfo.ModTitle = value; } }
 

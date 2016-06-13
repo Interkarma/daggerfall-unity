@@ -285,7 +285,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             modsett.modInfo = mods[i].ModInfo;
             modsett.enabled = mods[i].Enabled;
             modSettings[i] = modsett;
-            modList.AddItem(modsett.modInfo.ModName);
+            modList.AddItem(modsett.modInfo.ModFileName);
         }
 
         mods = null;
