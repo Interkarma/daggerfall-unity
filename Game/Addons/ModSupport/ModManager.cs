@@ -95,9 +95,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         void Update()
         {
             LoadedModCount = Mods.Count;
-            return;
-        }
 
+        }
 
 
         #endregion
@@ -244,7 +243,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (index < 0)
                 return null;
 
-            asset =  Mods[index].GetAssetFromLoadedBundle<T>(assetName, clone);
+            asset =  Mods[index].GetAsset<T>(assetName, clone);
             check = asset != null;
             return asset;
         }

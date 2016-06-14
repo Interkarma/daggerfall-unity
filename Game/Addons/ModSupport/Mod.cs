@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Collections;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
@@ -173,7 +174,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <param name="assetName">name of asset to load</param>
         /// <param name="clone">create copy of asset if true</param>
         /// <returns>UnityEngine.Object</returns>
-        public T GetAssetFromLoadedBundle<T>(string assetName, bool clone = false) where T : UnityEngine.Object
+        public T GetAsset<T>(string assetName, bool clone = false) where T : UnityEngine.Object
         {
             T asset = LoadAssetFromBundle<T>(assetName);
 
@@ -279,7 +280,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 {
                     if (assetNames[i].EndsWith(ModManager.MODINFOEXTENSION))
                     {
-                        modInfoAsset = GetAssetFromLoadedBundle<TextAsset>(assetNames[i]);
+                        modInfoAsset = GetAsset<TextAsset>(assetNames[i]);
                         break;
                     }
                 }
@@ -316,7 +317,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     if (name.EndsWith(".cs.txt") || name.EndsWith(".cs"))// || name.EndsWith(".byte")) //.byte is for .dll - not tested yet
                     {
                         Source newUncompiledSource;
-                        TextAsset newSource = GetAssetFromLoadedBundle<TextAsset>(assetName);
+                        TextAsset newSource = GetAsset<TextAsset>(assetName);
 
                         if (newSource != null)
                         {
@@ -419,6 +420,40 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
             return modLoaders;
         }
+
+        public bool IsAssetLoaded(string AssetName)
+        {
+            return LoadedAssets.ContainsKey(AssetName);
+        }
+
+
+        private bool AddAsset(string name, UnityEngine.Object asset)
+        {
+            if (asset == null)
+                return false;
+
+            LoadedAsset la = new LoadedAsset(asset.GetType(), asset);
+            return AddAsset(name, la);
+        }
+
+        private bool AddAsset(string assetName, LoadedAsset la)
+        {
+            if (IsAssetLoaded(assetName))
+                return false;
+            else if (la.Obj == null || la.T == null)
+                return false;
+            else
+            {
+                LoadedAssets.Add(assetName, la);
+
+                if (this.modInfo != null && this.Name != null)
+                    ModManager.OnLoadAsset(this.Name, assetName, la.T);
+
+                return true;
+            }
+
+        }
+
         #endregion
     }
 

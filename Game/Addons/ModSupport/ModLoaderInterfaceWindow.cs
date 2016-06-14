@@ -418,7 +418,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             if (!ModManager.textExtentsions.Contains(extenstion))
                 continue;
 
-            TextAsset asset = mod.GetAssetFromLoadedBundle<TextAsset>(assets[i]);
+            TextAsset asset = mod.GetAsset<TextAsset>(assets[i]);
 
             if (asset == null)
                 continue;
