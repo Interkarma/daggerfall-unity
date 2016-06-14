@@ -136,24 +136,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 assetName = ModManager.GetAssetName(assetName);
 
-                if (LoadedAssets.ContainsKey(assetName))
+                if (IsAssetLoaded(assetName))
                 {
                     la = LoadedAssets[assetName];
                     return la.Obj as T;
                 }
                 else if (assetBundle.Contains(assetName))
                 {
-                    la.Obj = assetBundle.LoadAsset(assetName);
-                    la.T = typeof(T);
-                    if(this.modInfo != null && this.Name != null)
-                        ModManager.OnLoadAsset(this.Name, assetName, typeof(T));
-                }
-                else
-                    return null;
+                    la.Obj = assetBundle.LoadAsset<T>(assetName);
 
-                if (la.Obj != null && la.T != null)
-                {
-                    LoadedAssets.Add(assetName, la);
+                    if(la.Obj != null)
+                    {
+                        la.T = la.Obj.GetType();
+                        AddAsset(assetName, la);
+                    }
                     return la.Obj as T;
                 }
                 else
@@ -192,35 +188,68 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return asset as T;
         }
 
-        /// <summary>
-        /// Loads all assets immediately from asset bundle and adds them to LoadedAssets
-        /// </summary>
-        /// <returns></returns>
-        public bool LoadAllAssetsFromLoadedBundle()
+
+        public bool LoadAllAssetsFromBundle()
         {
             if (assetBundle == null || AssetNames == null)
                 return false;
-            LoadedAsset la;
-            for(int i = 0; i < AssetNames.Length; i++)
+            try
             {
-                try
+                for (int i = 0; i < AssetNames.Length; i++)
                 {
                     string assetname = ModManager.GetAssetName(AssetNames[i]);
-                    if (LoadedAssets.ContainsKey(assetname))
+
+                    if (IsAssetLoaded(assetname))
                         continue;
 
-                    la = new LoadedAsset();
+                    LoadedAsset la = new LoadedAsset();
                     la.Obj = assetBundle.LoadAsset(assetname);
+
+                    if(la.Obj == null)
+                    {
+                        Debug.LogWarning(string.Format("failed to load asset: {0} for mod: {1}", AssetNames[i], Name));
+                        continue;
+                    }
+
                     la.T = la.Obj.GetType();
-                    LoadedAssets.Add(assetname, la);
-                }
-                catch(Exception ex)
-                {
-                    Debug.LogError(ex.Message);
-                    return false;
+                    AddAsset(assetname, la);
                 }
             }
+            catch(Exception ex)
+            {
+                Debug.LogError(ex.Message);
+                return false;
+            }
+
             return true;
+        }
+
+
+        public IEnumerator LoadAllAssetsFromBundleAsync()
+        {
+            if (assetBundle == null || AssetNames == null)
+                yield return null;
+
+            for(int i = 0; i < AssetNames.Length; i++)
+            {
+                string assetname = ModManager.GetAssetName(AssetNames[i]);
+
+                if (IsAssetLoaded(assetname))
+                    continue;
+
+                AssetBundleRequest request = assetBundle.LoadAssetAsync(assetname);
+
+                yield return request;
+                if(request.asset == null)
+                {
+                    Debug.LogWarning(string.Format("failed to load asset: {0} for mod: {1}", AssetNames[i], Name));
+                    continue;
+                }
+
+                AddAsset(assetname, request.asset);
+            }
+
+            yield return null;
         }
 
         /// <summary>
