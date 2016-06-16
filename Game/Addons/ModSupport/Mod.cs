@@ -477,10 +477,52 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 if (this.modInfo != null && this.Name != null)
                     ModManager.OnLoadAsset(this.Name, assetName, la.T);
-
+#if DEBUG
+                Debug.Log(string.Format("added asset: {0}", assetName));
+#endif
                 return true;
             }
 
+        }
+
+        public void UnloadAssetBundle(bool unloadAllObjects)
+        {
+            if (assetBundle == null)
+                return;
+
+            assetBundle.Unload(unloadAllObjects);
+#if DEBUG
+            Debug.Log(string.Format("Unloaded asset bundle for mod: {0}", Name));
+#endif
+        }
+
+        public AssetBundle LoadAssetBundle()
+        {
+            string abPath = System.IO.Path.Combine(dirPath, Name + ModManager.MODEXTENSION);
+            if (!System.IO.File.Exists(abPath))
+                return null;
+
+            AssetBundle ab = AssetBundle.LoadFromFile(abPath);
+            if (ab != null)
+                this.assetBundle = ab;
+#if DEBUG
+            Debug.Log(string.Format("Loaded asset bundle for mod: {0}", Name));
+#endif
+            return ab;
+        }
+
+        public IEnumerator LoadAssetBundleAsync()
+        {
+            string abPath = System.IO.Path.Combine(dirPath, Name + ModManager.MODEXTENSION);
+            if (!System.IO.File.Exists(abPath))
+                yield break;
+
+            AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(abPath);
+            yield return request;
+
+            if (request.assetBundle != null)
+                assetBundle = request.assetBundle;
+            yield return request.assetBundle;
         }
 
         #endregion
