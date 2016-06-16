@@ -95,9 +95,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         void Update()
         {
             LoadedModCount = Mods.Count;
-            return;
-        }
 
+        }
 
 
         #endregion
@@ -188,13 +187,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
-        /// Get modname string for each loaded mod
+        /// Get mod file name string for each loaded mod
         /// </summary>
         /// <returns></returns>
         public string[] GetAllModNames()
         {
             var selection = from modInfo in GetAllModInfo()
-                            select modInfo.ModName;
+                            select modInfo.ModFileName;
             return selection.ToArray();
 
         }
@@ -244,7 +243,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (index < 0)
                 return null;
 
-            asset =  Mods[index].GetAssetFromLoadedBundle<T>(assetName, clone);
+            asset =  Mods[index].GetAsset<T>(assetName, clone);
             check = asset != null;
             return asset;
         }

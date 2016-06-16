@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return false;
             else if (this.modInfo == null)
                 return false;
-            else if (string.IsNullOrEmpty(this.modInfo.ModName))
+            else if (string.IsNullOrEmpty(this.modInfo.ModFileName))
                 return false;
             else if (string.IsNullOrEmpty(this.modInfo.ModTitle))
                 return false;
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             GUILayoutHelper.Horizontal(() =>
             {
-                if (GUILayout.Button("Create New Mod File"))
+                if (GUILayout.Button("Create New Mod"))
                 {
                     fileOpen = true;
                     if(modInfo != null)
@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     }
                 }
 
-                else if (GUILayout.Button("Open Existing Mod File"))
+                else if (GUILayout.Button("Open Existing Mod Settings File"))
                 {
                     try
                     {
@@ -159,8 +159,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                     GUILayoutHelper.Horizontal(() =>
                     {
-                        EditorGUILayout.LabelField(new GUIContent("Mod Name:"));
-                        modInfo.ModName = EditorGUILayout.TextField(modInfo.ModName.ToLower(), GUILayout.MinWidth(600));
+                        EditorGUILayout.LabelField(new GUIContent("Mod File Name:"));
+                        modInfo.ModFileName = EditorGUILayout.TextField(modInfo.ModFileName.ToLower(), GUILayout.MinWidth(600));
                     });
 
                     EditorGUILayout.Space();
@@ -258,7 +258,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             GUILayoutHelper.Horizontal(() =>
             {
 
-                if (GUILayout.Button("Save Mod File"))
+                if (GUILayout.Button("Save Mod Settings to File"))
                 {
                     SaveModFile();
                     Debug.Log("got path: " + currentFilePath);
@@ -287,7 +287,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 string path = GetTempModDirPath();
                 string outPut = JsonUtility.ToJson(modInfo, true);
 
-                path = Path.Combine(path, modInfo.ModName + ModManager.MODINFOEXTENSION);
+                path = Path.Combine(path, modInfo.ModFileName + ModManager.MODINFOEXTENSION);
 
                 Debug.Log("writing to: " + path);
                 File.WriteAllText(path, outPut);
@@ -381,7 +381,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             AssetDatabase.Refresh();
 
             AssetBundleBuild[] buildMap = new AssetBundleBuild[1];
-            buildMap[0].assetBundleName = modInfo.ModName + ".dfmod";
+            buildMap[0].assetBundleName = modInfo.ModFileName + ".dfmod";
             buildMap[0].assetBundleVariant = "";                                //TODO
             buildMap[0].assetNames = Assets.ToArray();
 

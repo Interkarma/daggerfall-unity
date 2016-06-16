@@ -59,8 +59,6 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
     protected override void Setup()
     {
         ParentPanel.BackgroundColor = Color.clear;
-        NativePanel.BackgroundColor = backgroundColor;
-        NativePanel.Outline.Enabled = true;
 
         ModListPanel.Outline.Enabled = true;
         ModListPanel.BackgroundColor = backgroundColor;
@@ -86,6 +84,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         modList.SelectedShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         modList.SelectedShadowColor = Color.black;
         modList.OnScroll += ModList_OnScroll;
+        modList.MaxCharacters = 20;
         ModListPanel.Components.Add(modList);
 
         modListScrollBar.Size = new Vector2(5, 115);
@@ -170,19 +169,24 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
         modTitleLabel.Position = new Vector2(0, 5);
         modTitleLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        modTitleLabel.MaxCharacters = 40;
         ModPanel.Components.Add(modTitleLabel);
 
         modVersionLabel.Position = new Vector2(5, 40);
+        modVersionLabel.MaxCharacters = 40;
         ModPanel.Components.Add(modVersionLabel);
 
         modAuthorLabel.Position = new Vector2(5, 50);
+        modAuthorLabel.MaxCharacters = 40;
         ModPanel.Components.Add(modAuthorLabel);
 
         modAuthorContactLabel = new TextLabel();
         modAuthorContactLabel.Position = new Vector2(5, 60);
+        modAuthorContactLabel.MaxCharacters = 40;
         ModPanel.Components.Add(modAuthorContactLabel);
 
         modDFTFUVersionLabel.Position = new Vector2(5, 70);
+        modDFTFUVersionLabel.MaxCharacters = 40;
         ModPanel.Components.Add(modDFTFUVersionLabel);
 
         showModDescriptionButton = new Button();
@@ -281,7 +285,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             modsett.modInfo = mods[i].ModInfo;
             modsett.enabled = mods[i].Enabled;
             modSettings[i] = modsett;
-            modList.AddItem(modsett.modInfo.ModName);
+            modList.AddItem(modsett.modInfo.ModFileName);
         }
 
         mods = null;
@@ -414,7 +418,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             if (!ModManager.textExtentsions.Contains(extenstion))
                 continue;
 
-            TextAsset asset = mod.GetAssetFromLoadedBundle<TextAsset>(assets[i]);
+            TextAsset asset = mod.GetAsset<TextAsset>(assets[i]);
 
             if (asset == null)
                 continue;
@@ -476,8 +480,6 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
     void modEnabledCheckBox_OnToggleState()
     {
         if (modSettings == null || modSettings.Length < 1)
-            return;
-        else if (string.IsNullOrEmpty(modSettings[currentSelection].modInfo.ModDescription))
             return;
 
         ModSettings ms = modSettings[modList.SelectedIndex];
