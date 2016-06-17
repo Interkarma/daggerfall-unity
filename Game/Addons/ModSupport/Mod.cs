@@ -113,25 +113,30 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             this.Name = name;
             this.dirPath = dirPath;
             this.LoadSourceCodeFromModBundle();
+#if DEBUG
+            Debug.Log(string.Format("Finished Mod setup: {0}",this.Name));
+#endif
         }
 
         #endregion
 
         /// <summary>
-        /// If asset not already in LoadedAssets, will load asset from bundle and add to LoadedAssets
+        /// Will retrieve asset either from LoadedAssets or asset bundle and return it. Will load
+        /// asset bundle if necessary.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetName"></param>
+        /// <typeparam name="T">Type of asset</typeparam>
+        /// <param name="assetName">name of asset</param>
+        /// <param name="loadedBundle">had to load asset bundle</param>
         /// <returns></returns>
-        private T LoadAssetFromBundle<T>(string assetName) where T : UnityEngine.Object
+        private T LoadAssetFromBundle<T>(string assetName, out bool loadedBundle) where T : UnityEngine.Object
         {
             LoadedAsset la = new LoadedAsset();
+            loadedBundle = false;
 
-            if (assetBundle == null || string.IsNullOrEmpty(assetName))
+            if (string.IsNullOrEmpty(assetName))
             {
                 return null;
             }
-
             try
             {
                 assetName = ModManager.GetAssetName(assetName);
@@ -278,7 +283,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         #region setup
 
-        public string[] GetAllAssetNames()
+        private string[] GetAllAssetNames()
         {
             try
             {
@@ -406,7 +411,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         }
 
-        public List<SetupOptions> FindModLoaders()
+        public List<SetupOptions> FindModLoaders(StateManager.StateTypes state)
         {
             if (Assemblies == null || Assemblies.Count < 1)
                 return null;
@@ -417,26 +422,36 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 try
                 {
-                    //var loadableTypes = Compiler.GetLoadableTypes(Assemblies[i]);
-                    //if (loadableTypes == null)
-                        //continue;
-                    //foreach (Type t in loadableTypes)
+                    Type[] types = Assemblies[i].GetTypes();
 
-                    foreach(Type t in Assemblies[i].GetTypes())
+                    foreach(Type t in types)
                     {
                         if (!t.IsClass)
                             continue;
 
-                        Load initAttribute = (Load)Attribute.GetCustomAttribute(t, typeof(Load));
-                        if (initAttribute == null)
-                            continue;
-                        else
+                        foreach(MethodInfo mi in t.GetMethods())
                         {
-                            SetupOptions options = new SetupOptions();
-                            options.mod = this;
-                            options.targetName = (string.IsNullOrEmpty(initAttribute.targetName)) ? "Init" : initAttribute.targetName;
-                            options.T = t;
+                            if (!mi.IsPublic || !mi.IsStatic)
+                                continue;
+                            else if (mi.ContainsGenericParameters)
+                                continue;
+
+                            Invoke initAttribute = (Invoke)Attribute.GetCustomAttribute(mi, typeof(Invoke));
+                            if (initAttribute == null)
+                                continue;
+                            else if (initAttribute.startState != state)
+                                continue;
+                            ParameterInfo[] pi = mi.GetParameters();
+                            if (pi.Length != 1)
+                                continue;
+                            else if (pi[0].ParameterType != typeof(InitParams))
+                                continue;
+                            SetupOptions options = new SetupOptions(initAttribute.priority, this, mi);
+#if DEBUG
+                            Debug.Log(string.Format("found new loader: {0} for mod: {1}", options.mi.Name, this.Name));
+#endif
                             modLoaders.Add(options);
+
                         }
                     }
                 }
@@ -445,8 +460,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     Debug.LogError(ex.Message);
                     continue;
                 }
-
             }
+
+            modLoaders.Sort();
             return modLoaders;
         }
 
