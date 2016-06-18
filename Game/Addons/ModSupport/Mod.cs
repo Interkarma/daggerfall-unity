@@ -76,18 +76,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             private set { dirPath = value; }
         }
 
-        public string[] AssetNames { get { return (assetNames != null) ? assetNames : GetAllAssetNames(); } }
+        public string[] AssetNames { get { return (assetNames != null) ? assetNames : assetNames = GetAllAssetNames(); } }
 
 
         #endregion
 
         #region constructors
-        public Mod()
-        {
-            LoadedAssets = new Dictionary<string, LoadedAsset>();
-            Assemblies = new List<System.Reflection.Assembly>(1);
-            Sources = new List<Source>(5);
-        }
 
         public Mod(string name, string dirPath, AssetBundle ab)
         {
@@ -146,7 +140,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     la = LoadedAssets[assetName];
                     return la.Obj as T;
                 }
-                else if (assetBundle.Contains(assetName))
+                if (assetBundle == null)
+                    loadedBundle = LoadAssetBundle();
+
+                if (assetBundle.Contains(assetName))
                 {
                     la.Obj = assetBundle.LoadAsset<T>(assetName);
 
@@ -168,18 +165,27 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         }
 
+
+        public T GetAsset<T>(string assetname, bool clone = false) where T : UnityEngine.Object
+        {
+            bool loadedBundle;
+            return GetAsset<T>(assetname, out loadedBundle, clone);
+        }
+
         /// <summary>
         /// Load asset from bundle and return
         /// </summary>
         /// <typeparam name="T">Type of Asset</typeparam>
         /// <param name="assetName">name of asset to load</param>
+        /// <param name="loadedBundle">true if assetbundle had to be loaded</param>
         /// <param name="clone">create copy of asset if true</param>
-        /// <returns>UnityEngine.Object</returns>
-        public T GetAsset<T>(string assetName, bool clone = false) where T : UnityEngine.Object
+        /// <returns></returns>
+        public T GetAsset<T>(string assetName, out bool loadedBundle, bool clone = false) where T : UnityEngine.Object
         {
-            T asset = LoadAssetFromBundle<T>(assetName);
+            loadedBundle = false;
 
-            //if (!LoadAssetFromBundle<T>(assetName, out la))
+            T asset = LoadAssetFromBundle<T>(assetName, out loadedBundle);
+
             if(asset == null)
             {
                 Debug.LogWarning(string.Format("Failed to load asset: {0}", assetName));
@@ -193,10 +199,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return asset as T;
         }
 
-
-        public bool LoadAllAssetsFromBundle()
+        /// <summary>
+        /// Loads all assets from asset bundle immediatly.
+        /// </summary>
+        /// <param name="UnloadBundle">Unload asset bundle if true</param>
+        /// <returns></returns>
+        public bool LoadAllAssetsFromBundle(bool UnloadBundle = true)
         {
-            if (assetBundle == null || AssetNames == null)
+            if (AssetNames == null)
                 return false;
             try
             {
@@ -206,6 +216,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                     if (IsAssetLoaded(assetname))
                         continue;
+
+                    if (assetBundle == null)
+                    {
+                        if (!LoadAssetBundle())
+                            return false;
+                    }
 
                     LoadedAsset la = new LoadedAsset();
                     la.Obj = assetBundle.LoadAsset(assetname);
@@ -219,6 +235,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     la.T = la.Obj.GetType();
                     AddAsset(assetname, la);
                 }
+
+                if(UnloadBundle)
+                    UnloadAssetBundle(false);
             }
             catch(Exception ex)
             {
@@ -229,10 +248,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return true;
         }
 
-
-        public IEnumerator LoadAllAssetsFromBundleAsync()
+        /// <summary>
+        /// Load all assets from asset bundle asynchronously.
+        /// </summary>
+        /// <param name="unloadBundle">Unload asset bundle if true</param>
+        /// <returns></returns>
+        public IEnumerator LoadAllAssetsFromBundleAsync(bool unloadBundle = true)
         {
-            if (assetBundle == null || AssetNames == null)
+            if (AssetNames == null)
                 yield return null;
 
             for(int i = 0; i < AssetNames.Length; i++)
@@ -242,10 +265,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 if (IsAssetLoaded(assetname))
                     continue;
 
-                AssetBundleRequest request = assetBundle.LoadAssetAsync(assetname);
+                if (assetBundle == null)
+                {
+                    yield return LoadAssetBundleAsync();
+                    if (assetBundle == null)
+                        yield break;
+                }
 
+                AssetBundleRequest request = assetBundle.LoadAssetAsync(assetname);
                 yield return request;
-                if(request.asset == null)
+
+                if (request.asset == null)
                 {
                     Debug.LogWarning(string.Format("failed to load asset: {0} for mod: {1}", AssetNames[i], Name));
                     continue;
@@ -253,6 +283,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 AddAsset(assetname, request.asset);
             }
+            if(unloadBundle)
+                UnloadAssetBundle(false);
 
             yield return null;
         }
@@ -344,8 +376,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 string name = null;
                 foreach (string assetName in assetNames)
                 {
-                    //Debug.Log(string.Format("{0}", assetName));
-
                     name = assetName.ToLower();
 
                     if (name.EndsWith(".cs.txt") || name.EndsWith(".cs"))// || name.EndsWith(".byte")) //.byte is for .dll - not tested yet
@@ -472,13 +502,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
 
-        private bool AddAsset(string name, UnityEngine.Object asset)
+        private bool AddAsset(string assetName, UnityEngine.Object asset)
         {
             if (asset == null)
                 return false;
 
             LoadedAsset la = new LoadedAsset(asset.GetType(), asset);
-            return AddAsset(name, la);
+            return AddAsset(assetName, la);
         }
 
         private bool AddAsset(string assetName, LoadedAsset la)
@@ -538,6 +568,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             if (request.assetBundle != null)
                 assetBundle = request.assetBundle;
+#if DEBUG
+            Debug.Log(string.Format("Loaded asset bundle for mod: {0}", Name));
+#endif
             yield return request.assetBundle;
         }
 

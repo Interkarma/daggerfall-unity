@@ -124,18 +124,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Get mod using index
         /// </summary>
         /// <param name="index"></param>
-        /// <param name="mod"></param>
         /// <returns></returns>
-        public Mod GetMod(int index, out bool check)
+        public Mod GetMod(int index)
         {
-            check = false;
             Mod mod = null;
             if (index < 0 || index > Mods.Count)
                 return null;
             else
             {
                 mod = Mods[index];
-                check = mod != null;
                 return mod;
             }
         }
@@ -144,7 +141,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Get mod using Mod Title
         /// </summary>
         /// <param name="modTitle"></param>
-        /// <param name="mod"></param>
         /// <returns></returns>
         public Mod GetMod(string modTitle)
         {
@@ -300,6 +296,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Locates all the .dfmod files in the mod path
         /// </summary>
+        /// <param name="refresh"></param>
         private void FindModsFromDirectory(bool refresh = false)
         {
             if(!Directory.Exists(ModDirectory))
@@ -361,7 +358,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Loads Asset bundle and adds to ModLookUp dictionary
         /// </summary>
         /// <param name="modFilePath"></param>
-        /// <param name="mod"></param>
+        /// <param name="ab"></param>
         /// <returns></returns>
         private static bool LoadModAssetBundle(string modFilePath, out AssetBundle ab)
         {
