@@ -124,18 +124,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Get mod using index
         /// </summary>
         /// <param name="index"></param>
-        /// <param name="mod"></param>
         /// <returns></returns>
-        public Mod GetMod(int index, out bool check)
+        public Mod GetMod(int index)
         {
-            check = false;
             Mod mod = null;
             if (index < 0 || index > Mods.Count)
                 return null;
             else
             {
                 mod = Mods[index];
-                check = mod != null;
                 return mod;
             }
         }
@@ -144,7 +141,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Get mod using Mod Title
         /// </summary>
         /// <param name="modTitle"></param>
-        /// <param name="mod"></param>
         /// <returns></returns>
         public Mod GetMod(string modTitle)
         {
@@ -259,7 +255,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (string.IsNullOrEmpty(assetPath))
                 return null;
             int startIndex = assetPath.LastIndexOfAny(new char[] { '\\', '/' }) + 1;
-            return assetPath.Substring(startIndex);
+            return assetPath.Substring(startIndex).ToLower();
         }
 
         #endregion
@@ -300,6 +296,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Locates all the .dfmod files in the mod path
         /// </summary>
+        /// <param name="refresh"></param>
         private void FindModsFromDirectory(bool refresh = false)
         {
             if(!Directory.Exists(ModDirectory))
@@ -361,7 +358,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Loads Asset bundle and adds to ModLookUp dictionary
         /// </summary>
         /// <param name="modFilePath"></param>
-        /// <param name="mod"></param>
+        /// <param name="ab"></param>
         /// <returns></returns>
         private static bool LoadModAssetBundle(string modFilePath, out AssetBundle ab)
         {
@@ -422,8 +419,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             Mod[] mods = GetAllMods();
 
-            Debug.Log("Mod Manager - Init");
-
             for (int i = 0; i < mods.Length; i++)
             {
                 Mod mod = mods[i];
@@ -438,13 +433,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 mod.CompileSourceToAssemblies();
             }
             Debug.Log("ModManager - init finished.  Mod Count: " + LoadedModCount);
-
-            InvokeModLoaders();
         }
 
 
-        private void InvokeModLoaders()
+        private void InvokeModLoaders(StateManager.StateTypes state)
         {
+#if DEBUG
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+#endif
             if (AlreadyAtStartMenuState)
             {
                 Mod[] mods = GetAllMods(true);
@@ -453,7 +450,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 {
                     try
                     {
-                        List<SetupOptions> setupOptions = mods[i].FindModLoaders();
+                        List<SetupOptions> setupOptions = mods[i].FindModLoaders(state);
 
                         if (setupOptions == null)
                         {
@@ -464,26 +461,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         for (int j = 0; j < setupOptions.Count; j++)
                         {
                             SetupOptions options = setupOptions[j];
-
-                            MethodInfo mi = options.T.GetMethod(options.targetName, BindingFlags.Public | BindingFlags.Static);
-
-                            if (mi != null)
-                            {
-                                ParameterInfo[] pi = mi.GetParameters();
-
-                                if (pi.Length != 1)
-                                    Debug.Log(string.Format("error: invalid init method specified for: {0} ; method name: {1} - too many paramaters", options.T.Name, options.targetName));
-                                else if (pi[0].ParameterType != typeof(InitParams))
-                                    Debug.Log(string.Format("error: invalid init method specified for: {0} ; method name: {1} - incorrect paramater type", options.T.Name, options.targetName));
-                                else
-                                {
-                                    InitParams initParams = new InitParams(options.mod.Title, GetModIndex(options.mod.Title), options.mod.LoadPriority, LoadedModCount);
-                                    mi.Invoke(null, new object[] { initParams });
-                                }
-                            }
-                            else
-                                Debug.Log(string.Format("Failed to invoke static method {0} type {1}", options.targetName, options.T.Name));
-
+                            MethodInfo mi = options.mi;
+                            if (mi == null)
+                                continue;
+                            InitParams initParams = new InitParams(options.mod, ModManager.Instance.GetModIndex(options.mod.Title), LoadedModCount);
+                            mi.Invoke(null, new object[] { initParams });
                         }
                     }
                     catch (Exception ex)
@@ -491,6 +473,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         Debug.LogError(ex.Message);
                     }
                 }
+#if DEBUG
+                timer.Stop();
+                Debug.Log("InvokeModLoaders() finished...time: " + timer.ElapsedMilliseconds);
+#endif
             }
 
         }
@@ -560,16 +546,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         public void StateManager_OnStateChange(StateManager.StateTypes state)
         {
-            Debug.Log("new state: " + state.ToString());
-            if(state != StateManager.StateTypes.Setup && state != StateManager.StateTypes.None)
+            if(state == StateManager.StateTypes.Start)
             {
-                if(!AlreadyAtStartMenuState)
-                {
-                    AlreadyAtStartMenuState = true;
-                    StateManager.OnStateChange -= StateManager_OnStateChange;
-                    Init();
-                }
+                AlreadyAtStartMenuState = true;
+                Init();
+                InvokeModLoaders(state);
             }
+            else if(state == StateManager.StateTypes.Game)
+            {
+                AlreadyAtStartMenuState = true;
+                InvokeModLoaders(state);
+                StateManager.OnStateChange -= StateManager_OnStateChange;
+            }
+
         }
 
         #endregion

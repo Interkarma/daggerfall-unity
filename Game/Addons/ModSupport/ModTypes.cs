@@ -60,26 +60,45 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
     }
 
-    public struct SetupOptions
+    public struct SetupOptions : IComparable<SetupOptions>
     {
-        public string targetName;
-        public Mod mod;
-        public Type T;
+        public readonly int priority;
+        public readonly Mod mod;
+        public readonly System.Reflection.MethodInfo mi;
+
+        public SetupOptions(int priority, Mod mod, System.Reflection.MethodInfo mi)
+        {
+            this.priority = priority;
+            this.mod = mod;
+            this.mi = mi;
+        }
+
+
+        public int CompareTo(SetupOptions other)
+        {
+            if (other.priority == priority)
+                return 0;
+            else if (this.priority < other.priority)
+                return -1;
+            return 1;
+        }
     }
 
     //passed to mod's Init methods called from ModManager
     public struct InitParams
     {
-        public string ModTitle;
-        public int ModIndex;
-        public int LoadPriority;
-        public int LoadedModsCount;
+        public readonly string ModTitle;
+        public readonly int ModIndex;
+        public readonly int LoadPriority;
+        public readonly int LoadedModsCount;
+        public readonly Mod Mod;
 
-        public InitParams(string ModTitle, int ModIndex, int LoadPriority, int LoadedModsCount)
+        public InitParams(Mod Mod, int ModIndex, int LoadedModsCount)
         {
-            this.ModTitle = ModTitle;
+            this.Mod = Mod;
+            this.ModTitle = Mod.Title;
+            this.LoadPriority = Mod.LoadPriority;
             this.ModIndex = ModIndex;
-            this.LoadPriority = LoadPriority;
             this.LoadedModsCount = LoadedModsCount;
         }
 
@@ -91,13 +110,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public bool isPreCompiled;
     }
 
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-    public class Load : System.Attribute
+    //Used to specify functions to be called automaticlly by modmanager during mod setup.
+    //To work, must be on a non-generic, public, static, class method that only takes 
+    //an InitParams struct for a parameter
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple=false)]
+    public class Invoke : System.Attribute
     {
-        public string targetName;            //name of static method
-        public Load(string targetName = "Init")
+        public readonly int priority;
+        public readonly StateManager.StateTypes startState;
+        public Invoke(StateManager.StateTypes startState = StateManager.StateTypes.Start, int priority = 99)
         {
-            this.targetName = targetName;
+            this.priority = priority;
+            this.startState = startState;
         }
     }
 
