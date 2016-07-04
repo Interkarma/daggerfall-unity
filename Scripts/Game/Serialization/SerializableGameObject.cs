@@ -226,4 +226,20 @@ namespace DaggerfallWorkshop.Game.Serialization
     }
 
     #endregion
+
+    #region Loot Data
+
+    [fsObject("v1")]
+    public class LootContainerData_v1
+    {
+        public long loadID;
+        public LootContainerTypes containerType;
+        public Vector3 currentPosition;
+        public int textureArchive;
+        public int textureRecord;
+        public string lootTableKey;
+        public DaggerfallUnityItem[] itemList;
+    }
+
+    #endregion
 }

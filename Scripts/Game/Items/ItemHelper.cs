@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         List<ItemTemplate> itemTemplates = new List<ItemTemplate>();
         Dictionary<int, ImageData> itemImages = new Dictionary<int, ImageData>();
-        Dictionary<ContainerTypes, ImageData> containerImages = new Dictionary<ContainerTypes, ImageData>();
+        Dictionary<LootContainerImages, ImageData> containerImages = new Dictionary<LootContainerImages, ImageData>();
 
         #endregion
 
@@ -213,7 +213,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="type">Container type.</param>
         /// <returns>ImageData.</returns>
-        public ImageData GetContainerImage(ContainerTypes type)
+        public ImageData GetContainerImage(LootContainerImages type)
         {
             // Get existing icon if in cache
             if (containerImages.ContainsKey(type))

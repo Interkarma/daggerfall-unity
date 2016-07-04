@@ -535,7 +535,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Handle small cart - the template image for this is not correct
                 // Correct image actually in CIF files
-                return DaggerfallUnity.ItemHelper.GetContainerImage(ContainerTypes.Wagon);
+                return DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Wagon);
             }
             else
             {
@@ -628,7 +628,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (target == ItemTargets.Wagon)
             {
                 // Show wagon icon
-                ImageData containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(ContainerTypes.Wagon);
+                ImageData containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Wagon);
                 remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
 
                 // Highlight wagon button

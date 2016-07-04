@@ -39,6 +39,15 @@ namespace DaggerfallWorkshop.Utility
         const float torchMaxDistance = 5f;
         const float torchVolume = 0.7f;
 
+        // Default icon range for random treasure piles
+        // Random treasure is generated only when clicked on and icon has no bearing
+        // Only a subset of loot icons from TEXTURE.216 are used
+        // May be expanded later
+        static int[] randomTreasureIconIndices = new int[]
+        {
+            0, 1, 2, 20, 22, 23, 24, 25, 26, 27, 28, 30, 37, 46, 47
+        };
+
         #region Structs & Enums
 
         /// <summary>
@@ -364,6 +373,27 @@ namespace DaggerfallWorkshop.Utility
             editorObjectsOut = editorObjects.ToArray();
             startMarkersOut = startMarkers.ToArray();
             enterMarkersOut = enterMarkers.ToArray();
+        }
+
+        public static void AddTreasure(
+            GameObject go,
+            DFBlock.RdbObject[] editorObjects,
+            ref DFBlock blockData,
+            bool serialize = true)
+        {
+            const int randomTreasureFlatIndex = 19;
+
+            // Add parent node
+            GameObject randomTreasureNode = new GameObject("Random Treasure");
+            randomTreasureNode.transform.parent = go.transform;
+
+            // Iterate editor flats for random treasure
+            for (int i = 0; i < editorObjects.Length; i++)
+            {
+                // Add treasure flat
+                if (editorObjects[i].Resources.FlatResource.TextureRecord == randomTreasureFlatIndex)
+                    AddRandomTreasure(editorObjects[i], randomTreasureNode.transform, ref blockData, serialize);
+            }
         }
 
         /// <summary>
@@ -695,8 +725,6 @@ namespace DaggerfallWorkshop.Utility
             }
             action.ActionTranslation = vector * MeshReader.GlobalScale;
         }
-
-
 
         private static void AddActionModelHelper(
             GameObject go,
@@ -1030,10 +1058,15 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
-        private static GameObject AddFlat(DFBlock.RdbObject obj, Transform parent)
+        private static GameObject AddFlat(DFBlock.RdbObject obj, Transform parent, int archive = -1, int record = -1)
         {
-            int archive = obj.Resources.FlatResource.TextureArchive;
-            int record = obj.Resources.FlatResource.TextureRecord;
+            // Use default archive index if not specified
+            if (archive == -1)
+                archive = obj.Resources.FlatResource.TextureArchive;
+
+            // Use default record index if not specified
+            if (record == -1)
+                record = obj.Resources.FlatResource.TextureRecord;
 
             // Spawn billboard gameobject
             GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent, true);
@@ -1183,6 +1216,33 @@ namespace DaggerfallWorkshop.Utility
             {
                 enemy.LoadID = loadID;
             }
+        }
+
+        private static void AddRandomTreasure(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, bool serialize)
+        {
+            const int randomTreasureArchive = 216;
+
+            // Create unique LoadID for save sytem
+            long loadID = 0;
+            if (serialize)
+                loadID = (blockData.Index << 24) + obj.This;
+
+            // Select icon record
+            int iconIndex = UnityEngine.Random.Range(0, randomTreasureIconIndices.Length);
+            int iconRecord = randomTreasureIconIndices[iconIndex];
+
+            // Spawn billboard gameobject
+            GameObject go = AddFlat(obj, parent, randomTreasureArchive, iconRecord);
+            DaggerfallBillboard billboard = go.GetComponent<DaggerfallBillboard>();
+
+            // Find bottom of marker in world space
+            // Marker is aligned to surface and has a constant size (40x40)
+            Vector3 pos = go.transform.position;
+            pos.y += (-20 * MeshReader.GlobalScale);
+
+            // Now move up loot icon by half own size so bottom is aligned with surface
+            pos.y += (billboard.Summary.Size.y / 2f);
+            go.transform.position = pos;
         }
 
         #endregion

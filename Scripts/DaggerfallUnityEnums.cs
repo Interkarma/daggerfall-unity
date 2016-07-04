@@ -495,11 +495,11 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
-    /// Various containers for inventory management.
+    /// Various container images for inventory management.
     /// Not sure if all of these are used.
     /// May change at a later date.
     /// </summary>
-    public enum ContainerTypes
+    public enum LootContainerImages
     {
         Corpse1,
         Corpse2,
@@ -512,6 +512,17 @@ namespace DaggerfallWorkshop
         Magic,
         Backpack,
         Corpse3,
+    }
+
+    /// <summary>
+    /// Supported loot containers in world.
+    /// </summary>
+    public enum LootContainerTypes
+    {
+        Nothing,
+        RandomTreasure,
+        CorpseMarker,
+        DroppedLoot,
     }
 
     /// <summary>
