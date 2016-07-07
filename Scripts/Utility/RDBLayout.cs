@@ -366,6 +366,35 @@ namespace DaggerfallWorkshop.Utility
             enterMarkersOut = enterMarkers.ToArray();
         }
 
+        public static void AddTreasure(
+            GameObject go,
+            DFBlock.RdbObject[] editorObjects,
+            ref DFBlock blockData,
+            bool serialize = true)
+        {
+            const int randomTreasureFlatIndex = 19;
+
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Must have import enabled and prefab set
+            if (!dfUnity.Option_ImportRandomTreasure || dfUnity.Option_RandomTreasurePrefab == null)
+                return;
+
+            // Add parent node
+            GameObject randomTreasureNode = new GameObject("Random Treasure");
+            randomTreasureNode.transform.parent = go.transform;
+
+            // Iterate editor flats for random treasure
+            for (int i = 0; i < editorObjects.Length; i++)
+            {
+                // Add treasure flat
+                if (editorObjects[i].Resources.FlatResource.TextureRecord == randomTreasureFlatIndex)
+                    AddRandomTreasure(editorObjects[i], randomTreasureNode.transform, ref blockData, serialize);
+            }
+        }
+
         /// <summary>
         /// Add fixed enemies.
         /// </summary>
@@ -695,8 +724,6 @@ namespace DaggerfallWorkshop.Utility
             }
             action.ActionTranslation = vector * MeshReader.GlobalScale;
         }
-
-
 
         private static void AddActionModelHelper(
             GameObject go,
@@ -1030,10 +1057,15 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
-        private static GameObject AddFlat(DFBlock.RdbObject obj, Transform parent)
+        private static GameObject AddFlat(DFBlock.RdbObject obj, Transform parent, int archive = -1, int record = -1)
         {
-            int archive = obj.Resources.FlatResource.TextureArchive;
-            int record = obj.Resources.FlatResource.TextureRecord;
+            // Use default archive index if not specified
+            if (archive == -1)
+                archive = obj.Resources.FlatResource.TextureArchive;
+
+            // Use default record index if not specified
+            if (record == -1)
+                record = obj.Resources.FlatResource.TextureRecord;
 
             // Spawn billboard gameobject
             GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent, true);
@@ -1182,6 +1214,44 @@ namespace DaggerfallWorkshop.Utility
             if (enemy)
             {
                 enemy.LoadID = loadID;
+            }
+        }
+
+        private static void AddRandomTreasure(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, bool serialize)
+        {
+            // Create unique LoadID for save sytem
+            long loadID = 0;
+            if (serialize)
+                loadID = (blockData.Index << 24) + obj.This;
+
+            // Setup initial treasure prefab
+            string name = "DaggerfallRandomTreasure";
+            Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+            GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_RandomTreasurePrefab.gameObject, name, parent, position);
+
+            // Add billboard component
+            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLoot.randomTreasureIconIndices.Length);
+            int iconRecord = DaggerfallLoot.randomTreasureIconIndices[iconIndex];
+            DaggerfallBillboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
+            dfBillboard.SetMaterial(DaggerfallLoot.randomTreasureArchive, iconRecord, 0, true);
+
+            // Find bottom of marker in world space
+            // Marker is aligned to surface and has a constant size (40x40)
+            Vector3 pos = go.transform.position;
+            pos.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
+
+            // Now move up loot icon by half own size so bottom is aligned with surface
+            pos.y += (dfBillboard.Summary.Size.y / 2f);
+            go.transform.position = pos;
+
+            // Setup DaggerfallLoot component to make lootable
+            DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
+            if (loot)
+            {
+                loot.LoadID = loadID;
+                loot.ContainerType = LootContainerTypes.RandomTreasure;
+                loot.TextureArchive = DaggerfallLoot.randomTreasureArchive;
+                loot.TextureRecord = iconRecord;
             }
         }
 

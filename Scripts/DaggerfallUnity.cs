@@ -89,6 +89,8 @@ namespace DaggerfallWorkshop
         public DaggerfallRDBBlock Option_DungeonBlockPrefab = null;
         public bool Option_ImportEnemyPrefabs = true;
         public DaggerfallEnemy Option_EnemyPrefab = null;
+        public bool Option_ImportRandomTreasure = true;
+        public DaggerfallLoot Option_RandomTreasurePrefab = null;
 
         // Time and space options
         public bool Option_AutomateTextureSwaps = true;

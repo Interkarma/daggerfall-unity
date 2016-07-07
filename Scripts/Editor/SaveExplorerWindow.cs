@@ -165,10 +165,11 @@ namespace DaggerfallWorkshop
             });
             GUILayoutHelper.Horizontal(() =>
             {
-                string positionText = string.Format("X={0}, Y={1}, Z={2}",
+                string positionText = string.Format("X={0}, Y={1}, Z={2}, Base={3}",
                     currentSaveTree.Header.CharacterPosition.Position.WorldX,
                     currentSaveTree.Header.CharacterPosition.Position.YOffset,
-                    currentSaveTree.Header.CharacterPosition.Position.WorldZ);
+                    currentSaveTree.Header.CharacterPosition.Position.WorldZ,
+                    currentSaveTree.Header.CharacterPosition.Position.YBase);
 
                 EditorGUILayout.LabelField(new GUIContent("Player Position", "Position of player in the world."), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
                 EditorGUILayout.SelectableLabel(positionText, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));

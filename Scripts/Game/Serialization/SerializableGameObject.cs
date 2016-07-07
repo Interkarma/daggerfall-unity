@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public PlayerData_v1 playerData;
         public DungeonData_v1 dungeonData;
         public EnemyData_v1[] enemyData;
+        public LootContainerData_v1[] lootContainers;
     }
 
     #endregion
@@ -223,6 +224,22 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string careerName;
         public int careerIndex;
         public bool isHostile;
+    }
+
+    #endregion
+
+    #region Loot Data
+
+    [fsObject("v1")]
+    public class LootContainerData_v1
+    {
+        public long loadID;
+        public LootContainerTypes containerType;
+        public Vector3 currentPosition;
+        public int textureArchive;
+        public int textureRecord;
+        public string lootTableKey;
+        public DaggerfallUnityItem[] itemList;
     }
 
     #endregion

@@ -138,11 +138,16 @@ namespace DaggerfallWorkshop
             get { return (streamingTarget != null) ? streamingTarget.transform : this.transform; }
         }
 
+        public TerrainTexturing TerrainTexturing
+        {
+            get { return terrainTexturing; }
+        }
+
         #endregion
 
         #region Structs/Enums
 
-        struct TerrainDesc
+        public struct TerrainDesc
         {
             public bool active;
             public bool updateData;
@@ -856,8 +861,8 @@ namespace DaggerfallWorkshop
         // Anything greater than TerrainDistance+1 is out of range
         private bool IsInRange(int mapPixelX, int mapPixelY)
         {
-            if (Math.Abs(mapPixelX - this.MapPixelX) > TerrainDistance + 1 ||
-                Math.Abs(mapPixelY - this.MapPixelY) > TerrainDistance + 1)
+            if (Math.Abs(mapPixelX - this.MapPixelX) > TerrainDistance ||
+                Math.Abs(mapPixelY - this.MapPixelY) > TerrainDistance)
             {
                 return false;
             }
@@ -866,7 +871,7 @@ namespace DaggerfallWorkshop
         }
 
         // Create new terrain game objects
-        private void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject, out GameObject billboardBatchObject)
+        public void CreateTerrainGameObjects(int mapPixelX, int mapPixelY, out GameObject terrainObject, out GameObject billboardBatchObject)
         {
             // Create new terrain object parented to streaming world
             terrainObject = GameObjectHelper.CreateDaggerfallTerrainGameObject(StreamingTarget);
@@ -882,7 +887,7 @@ namespace DaggerfallWorkshop
             billboardBatchObject.AddComponent<DaggerfallBillboardBatch>();
         }
 
-        private string GetTerrainName(int mapPixelX, int mapPixelY)
+        public string GetTerrainName(int mapPixelX, int mapPixelY)
         {
             return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
         }
@@ -928,7 +933,7 @@ namespace DaggerfallWorkshop
         }
 
         // Update terrain data
-        private void UpdateTerrainData(TerrainDesc terrainDesc)
+        public void UpdateTerrainData(TerrainDesc terrainDesc)
         {
             // Instantiate Daggerfall terrain
             DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
@@ -955,7 +960,7 @@ namespace DaggerfallWorkshop
         }
 
         // Update terrain nature
-        private void UpdateTerrainNature(TerrainDesc terrainDesc)
+        public void UpdateTerrainNature(TerrainDesc terrainDesc)
         {
             // Setup billboards
             DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();

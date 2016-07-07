@@ -34,16 +34,14 @@ namespace ProjectIncreasedTerrainDistance
     /// furthermore when using unity terrain one can use unity's level of detail mechanism for geometry (if needed), and other benefits provided by unity’s terrain system.
     /// a consequence is though that low-detailed terrain geometry would be also rendered at the position of the detailed terrain inside the distance from the player defined by TerrainDistance.
     /// the IncreasedTerrainTilemap shader defined in file DaggerfallIncreasedTerrainTilemap.shader discards fragments inside the area containing the detailed terrain from StreamingWorld,
-    /// except the most outer ring of the detailed terrain blocks (TerrainDistance-1) - this is to prevent holes in the world, as a consequence in the most outer ring there can happen
-    /// intersections between detailed terrain and world terrain
-    /// to decrease the chance of intersecting geometry in the most outer ring the world map is translated down on the y-axis a bit
+    /// a terrain transition ring is now matching the heights of the detailed terrain with those of the far terrain in a ring of terrain blocks in between them.
     /// </summary>
     public class IncreasedTerrainDistance : MonoBehaviour
     {
         #region Fields
 
         // Streaming World Component
-        public StreamingWorld streamingWorld;
+        public StreamingWorld streamingWorld = null;
 
         // Local player GPS for tracking player virtual position
         public PlayerGPS playerGPS;       
@@ -74,6 +72,7 @@ namespace ProjectIncreasedTerrainDistance
         bool isActiveReflectionsMod = false;
         bool isActiveEnhancedSkyMod = false;
 
+
         // is dfUnity ready?
         bool isReady = false;
 
@@ -86,10 +85,6 @@ namespace ProjectIncreasedTerrainDistance
         // used to track changes of playerGPS x- resp. y-position on the world map (-> a change results in an update of the terrain object's translation)
         int MapPixelX = -1;
         int MapPixelY = -1;
-
-        // used to backup old center x- resp. y-position of sink-area to restore old values which are not sunk (sink area is used to decrease the chance of low-detail world height map geometry intersect detailed geometry in near distance defined by TerrainDistance)
-        int backupSinkAreaCenterPosX = -1;
-        int backupSinkAreaCenterPosY = -1;
 
         // unity terrain object which will hold the low-detail world map geometry, set to null initially for lazy creation
         GameObject worldTerrainGameObject = null;
@@ -105,7 +100,7 @@ namespace ProjectIncreasedTerrainDistance
         Texture2D textureTerrainInfoTileMap = null;
 
 
-        ClimateSeason oldSeason = ClimateSeason.Summer;
+        ClimateSeason currentSeason = ClimateSeason.Summer;
 
         Texture2D textureAtlasDesertSummer = null;
         Texture2D textureAtlasWoodlandSummer = null;
@@ -121,6 +116,41 @@ namespace ProjectIncreasedTerrainDistance
         Texture2D textureAtlasWoodlandRain = null;
         Texture2D textureAtlasMountainRain = null;
         Texture2D textureAtlasSwampRain = null;
+
+
+        // List of terrain objects for transition terrain ring
+        private struct TransitionRingBorderDesc
+        {
+            public bool isTopRingBorder;
+            public bool isBottomRingBorder;
+            public bool isLeftRingBorder;
+            public bool isRightRingBorder;
+        }
+
+        private struct TransitionTerrainDesc
+        {
+            public StreamingWorld.TerrainDesc terrainDesc;
+            public TransitionRingBorderDesc transitionRingBorderDesc;
+            public bool ready; // was creation process complete?
+            public bool heightsUpdatePending; // is it necessary to update the heights of terrainObject inside terrainDesc
+            public bool keepThisBlock; // can this block be kept and reused
+            //public bool positionUpdatePending; // is it necessary to update the position of terrainObject inside terrainDesc
+            //public bool updateSeasonalTextures;  // is it necessary to update the textures due to seasonal change
+            //public bool updateMaterialProperties;  // is it necessary to update the update material properties
+        }
+        TransitionTerrainDesc[] terrainTransitionRingArray = null;
+        int numberOfTerrainBlocksInTransitionRingArray;
+        Dictionary<int, int> terrainTransitionRingIndexDict = new Dictionary<int, int>();
+
+        GameObject gameobjectTerrainTransitionRing = null; // container gameobject for transition ring's terrain blocks
+        
+        bool terrainTransitionRingUpdateRunning = false;
+        bool transitionRingAllBlocksReady = false;
+        bool terrainTransitionRingUpdateSeasonalTextures = false;
+        bool terrainTransitionRingUpdateMaterialProperties = false;
+        bool updateTerrainTransitionRing = false;
+
+        Texture2D tileAtlasReflectiveTexture = null; // used in blending of normal and far terrain to identify pixels in the normal terrain texture that are water
 
         // stacked near camera (used for near terrain from range 1000-15000) to prevent floating-point rendering precision problems for huge clipping ranges
         Camera stackedNearCamera = null; 
@@ -241,7 +271,7 @@ namespace ProjectIncreasedTerrainDistance
 
             FloatingOrigin.OnPositionUpdate += WorldTerrainUpdatePosition;
 
-            StreamingWorld.OnReady += UpdateTerrainInfoTilemap; // important to do actions after TerrainHelper.DilateCoastalClimate() was called in StreamingWorld.ReadyCheck()
+            StreamingWorld.OnReady += InitFarTerrain; // important to do actions after TerrainHelper.DilateCoastalClimate() was called in StreamingWorld.ReadyCheck()
 
             StreamingWorld.OnTeleportToCoordinates += UpdateWorldTerrain;
 
@@ -262,7 +292,7 @@ namespace ProjectIncreasedTerrainDistance
 
             FloatingOrigin.OnPositionUpdate -= WorldTerrainUpdatePosition;
 
-            StreamingWorld.OnReady -= UpdateTerrainInfoTilemap;
+            StreamingWorld.OnReady -= InitFarTerrain;
 
             StreamingWorld.OnTeleportToCoordinates -= UpdateWorldTerrain;
 
@@ -311,11 +341,11 @@ namespace ProjectIncreasedTerrainDistance
             }
         }
 
-        void UpdateTerrainInfoTilemap()
+        void InitFarTerrain()
         {
             InitImprovedWorldTerrain();
 
-            worldTerrainGameObject = generateWorldTerrain();
+            generateWorldTerrain();
 
             GameObject goExterior = null;
 
@@ -394,11 +424,13 @@ namespace ProjectIncreasedTerrainDistance
             textureTerrainInfoTileMap.Apply(false);
 
             terrainMaterial.SetTexture("_MainTex", textureTerrainInfoTileMap);
-            terrainMaterial.SetTexture("_TilemapTex", textureTerrainInfoTileMap);
+            terrainMaterial.SetTexture("_FarTerrainTilemapTex", textureTerrainInfoTileMap);
 
-            terrainMaterial.SetInt("_TilemapDim", terrainInfoTileMapDim);
+            terrainMaterial.SetInt("_FarTerrainTilemapDim", terrainInfoTileMapDim);
 
             terrainMaterial.mainTexture = textureTerrainInfoTileMap;
+
+            generateTerrainTransitionRing();
         }
 
         void Start()
@@ -414,6 +446,7 @@ namespace ProjectIncreasedTerrainDistance
                 if (DaggerfallUnity.Settings.Nystul_RealtimeReflections)
                 {
                     isActiveReflectionsMod = true;
+                    tileAtlasReflectiveTexture = Resources.Load("tileatlas_reflective") as Texture2D;
                 }
             }
 
@@ -429,6 +462,10 @@ namespace ProjectIncreasedTerrainDistance
 
                 SetupGameObjects(); // it should be possible to eliminated this line without any impact: please verify!
             }
+
+            // reserve terrain objects for transition ring (2 x long sides (with 2 extra terrains for corner terrains) + 2 x normal sides)
+            numberOfTerrainBlocksInTransitionRingArray = 2 * (streamingWorld.TerrainDistance * 2 + 1 + 2) + 2 * (streamingWorld.TerrainDistance * 2 + 1);
+            terrainTransitionRingArray = new TransitionTerrainDesc[numberOfTerrainBlocksInTransitionRingArray];
         }
 
         void OnDestroy()
@@ -587,7 +624,7 @@ namespace ProjectIncreasedTerrainDistance
             cameraRenderSkyboxToTexture.targetTexture = renderTextureSky;
         }
 
-        void setMaterialFogParameters()
+        void setMaterialFogParameters(Material terrainMaterial)
         {
             if (terrainMaterial != null)
             {
@@ -622,6 +659,7 @@ namespace ProjectIncreasedTerrainDistance
             if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
                 return;
 
+            bool doSeasonalTexturesUpdate = shouldUpdateSeasonalTextures();
             if (worldTerrainGameObject != null)
             {
                 // TODO: make sure this block is not executed when in floating origin mode (otherwise position update is done twice)
@@ -636,7 +674,7 @@ namespace ProjectIncreasedTerrainDistance
                 Terrain terrain = worldTerrainGameObject.GetComponent<Terrain>();
                 if (terrain)
                 {
-                    setMaterialFogParameters();
+                    setMaterialFogParameters(this.terrainMaterial);
             
                     #if ENHANCED_SKY_CODE_AVAILABLE
                     if (isActiveEnhancedSkyMod)
@@ -657,7 +695,64 @@ namespace ProjectIncreasedTerrainDistance
                     terrain.materialTemplate.SetFloat("_BlendEnd", blendEnd);
                 }
 
-                updateSeasonalTextures(); // this is necessary since climate changes may occur after UpdateWorldTerrain() has been invoked, TODO: an event would be ideal to trigger updateSeasonalTextures() instead
+                if (doSeasonalTexturesUpdate)
+                {
+                    Material mat = terrain.materialTemplate;
+                    updateMaterialSeasonalTextures(ref mat, currentSeason); // this is necessary since climate changes may occur after UpdateWorldTerrain() has been invoked, TODO: an event would be ideal to trigger updateSeasonalTextures() instead
+                    terrain.materialTemplate = mat;
+                }
+            }
+
+            // if terrain transition ring was marked to be updated
+            if (updateTerrainTransitionRing)
+            {
+                if (!terrainTransitionRingUpdateRunning) // if at the moment no terrain transition ring update is still in progress
+                {
+                    // update terrain transition ring in this Update() iteration if no terrain transition ring update is still in progress - otherwise postprone
+                    generateTerrainTransitionRing(); // update
+                    updateTerrainTransitionRing = false; // mark as updated
+                }
+            }
+
+            if (gameobjectTerrainTransitionRing != null)
+            {
+                if (doSeasonalTexturesUpdate)
+                {
+                    terrainTransitionRingUpdateSeasonalTextures = true;
+                }
+                terrainTransitionRingUpdateMaterialProperties = true;
+
+                if (!terrainTransitionRingUpdateRunning) // if at the moment no terrain transition ring update is still in progress
+                {
+                    for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+                    {
+                        if (terrainTransitionRingArray[i].ready)
+                        { 
+                            Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+                            Material material = terrain.materialTemplate;
+                            material.SetFloat("_BlendStart", blendStart);
+                            material.SetFloat("_BlendEnd", blendEnd);
+
+                            //DFPosition posMaxPixel = MapsFile.MapPixelToWorldCoord(playerGPS.CurrentMapPixel.X, playerGPS.CurrentMapPixel.Y);
+                            //float fractionalPlayerPosInBlockX = (playerGPS.WorldX - posMaxPixel.X) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale) * MeshReader.GlobalScale;
+                            //float fractionalPlayerPosInBlockY = (playerGPS.WorldZ - posMaxPixel.Y) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale) * MeshReader.GlobalScale;                            
+                            //Debug.Log(String.Format("relativePosInBlockX: {0}, relativePosInBlockY: {1}", relativePosInBlockX , relativePosInBlockY);
+                            material.SetFloat("_WorldOffsetX", 0.0f);
+                            material.SetFloat("_WorldOffsetY", 0.0f);
+
+                            terrain.materialTemplate = material;
+                        }
+                    }
+                }
+            }
+
+            if (terrainTransitionRingUpdateSeasonalTextures)
+            {
+                updateSeasonalTexturesTerrainTransitionRing();
+            }
+            if (terrainTransitionRingUpdateMaterialProperties)
+            {
+                updateMaterialShaderPropertiesTerrainTransitionRing();
             }
         }
 
@@ -678,7 +773,23 @@ namespace ProjectIncreasedTerrainDistance
                 Vector3 offset = new Vector3(0.0f, 0.0f, 0.0f);
                 updatePositionWorldTerrain(ref worldTerrainGameObject, offset);
 
-                updateSeasonalTextures();
+                bool doSeasonalTexturesUpdate = shouldUpdateSeasonalTextures();
+
+                if (doSeasonalTexturesUpdate)
+                {
+                    Material mat = terrain.materialTemplate;
+                    updateMaterialSeasonalTextures(ref mat, currentSeason); // this is necessary since climate changes may occur after UpdateWorldTerrain() has been invoked, TODO: an event would be ideal to trigger updateSeasonalTextures() instead
+                    terrain.materialTemplate = mat;
+                }              
+
+                // make terrain transition ring update on next iteration in Update() as soon as no terrain transition ring update is still in progress
+                updateTerrainTransitionRing = true;
+
+                if (doSeasonalTexturesUpdate)
+                {
+                    //updateSeasonalTexturesTerrainTransitionRing();
+                    terrainTransitionRingUpdateSeasonalTextures = true;
+                }
 
                 Resources.UnloadUnusedAssets();
 
@@ -690,73 +801,82 @@ namespace ProjectIncreasedTerrainDistance
 
         #region Private Methods
 
-        private void updateSeasonalTextures()
+        private void updateMaterialSeasonalTextures(ref Material terrainMaterial, ClimateSeason currentSeason)
+        {
+
+            switch (currentSeason)
+            {
+                case ClimateSeason.Summer:
+                    terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
+                    terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
+                    break;
+                case ClimateSeason.Winter:
+                    terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertWinter);
+                    terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandWinter);
+                    terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainWinter);
+                    terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampWinter);
+                    terrainMaterial.SetInt("_TextureSetSeasonCode", 1);
+                    break;
+                case ClimateSeason.Rain:
+                    terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertRain);
+                    terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandRain);
+                    terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainRain);
+                    terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampRain);
+                    terrainMaterial.SetInt("_TextureSetSeasonCode", 2);
+                    break;
+                default:
+                    terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
+                    terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
+                    terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
+                    break;
+            }
+        }
+
+        private bool shouldUpdateSeasonalTextures()
         {
             if (!weatherManager)
-                return;
+                return false;
 
-            ClimateSeason currentSeason;
+            ClimateSeason newSeason;
 
             // Get season and weather
             if (dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter)
             {
-                currentSeason = ClimateSeason.Winter;
+                newSeason = ClimateSeason.Winter;
             }
             else
             {
-                currentSeason = ClimateSeason.Summer;
+                newSeason = ClimateSeason.Summer;
 
                 if (weatherManager.IsRaining)
                 {
-                    currentSeason = ClimateSeason.Rain;
+                    newSeason = ClimateSeason.Rain;
                 }
                 else if (weatherManager.IsSnowing) // should not happen (snow in summer would be weird...)
                 {
-                    currentSeason = ClimateSeason.Winter;
+                    newSeason = ClimateSeason.Winter;
                 }
             }
-                
-            if (currentSeason != oldSeason)
-               {
-                switch (currentSeason)
-                {
-                    case ClimateSeason.Summer:
-                        terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
-                        terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
-                        break;
-                    case ClimateSeason.Winter:
-                        terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertWinter);
-                        terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandWinter);
-                        terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainWinter);
-                        terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampWinter);
-                        terrainMaterial.SetInt("_TextureSetSeasonCode", 1);
-                        break;
-                    case ClimateSeason.Rain:
-                        terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertRain);
-                        terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandRain);
-                        terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainRain);
-                        terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampRain);
-                        terrainMaterial.SetInt("_TextureSetSeasonCode", 2);
-                        break;
-                    default:
-                        terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
-                        terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
-                        terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
-                        break;
-                }
-                oldSeason = currentSeason;                
+
+            if (newSeason != currentSeason)
+            {
+                currentSeason = newSeason;
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
         private void updatePositionWorldTerrain(ref GameObject terrainGameObject, Vector3 offset)
         {
-            // reduce chance of geometry intersections of world terrain and the most outer ring of detailed terrain of the StreamingWorld component
-            float extraTranslationY = -10.0f; // -12.5f * streamingWorld.TerrainScale;
+            float extraTranslationY = -0.5f; // -30.0f;
 
             // world scale computed as in StreamingWorld.cs and DaggerfallTerrain.cs scripts
             float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
@@ -811,78 +931,33 @@ namespace ProjectIncreasedTerrainDistance
             Vector3 finalTransform = new Vector3(worldMapLevelTransform.x + localTransformX, worldMapLevelTransform.y + localTransformY, worldMapLevelTransform.z + localTransformZ);
             terrainGameObject.gameObject.transform.localPosition = finalTransform;
 
-
-
-            int TerrainDistance = streamingWorld.TerrainDistance;
-
-            // sinkHeight for world terrain height values inside TerrainDistance radius from player position
-            float sinkHeight = (100.0f * streamingWorld.TerrainScale) / DaggerfallUnity.Instance.TerrainSampler.MaxTerrainHeight;
-
-            Terrain terrain = terrainGameObject.GetComponent<Terrain>();
-
-            // restore (previously) decreased terrain height values in sink area
-            float[,] heightValues = new float[TerrainDistance * 2, TerrainDistance * 2]; // only TerrainDistance * 2 height values are affected, not TerrainDistance * 2 + 1 values
-
-            if ((backupSinkAreaCenterPosX != -1) && (backupSinkAreaCenterPosY != -1)) // no values needs to be restored on very first run (since nothing was decreased before...)
-            {
-                for (int y = -(TerrainDistance - 1); y <= TerrainDistance; y++)
-                {
-                    for (int x = -(TerrainDistance - 1); x <= TerrainDistance; x++)
-                    {
-                        int xpos = backupSinkAreaCenterPosX + x + 1;
-                        int ypos = (worldMapHeight - 1 - backupSinkAreaCenterPosY) + y + 1;
-                        if ((xpos >= 0) && (xpos < worldMapWidth) && (ypos >= 0) && (ypos < worldMapHeight))
-                        {
-                            heightValues[y + TerrainDistance - 1, x + TerrainDistance - 1] = worldHeights[ypos, xpos];
-                        }
-                    }
-                }
-                
-                if ((backupSinkAreaCenterPosX - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosX - TerrainDistance + 2 < worldMapWidth - TerrainDistance) &&
-                    (backupSinkAreaCenterPosY - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosY - TerrainDistance + 2 < worldMapHeight - TerrainDistance))
-                {
-                    terrain.terrainData.SetHeights(backupSinkAreaCenterPosX - TerrainDistance + 2, worldMapHeight - 1 - backupSinkAreaCenterPosY - TerrainDistance + 2, heightValues);
-                }
-            }
-
-            backupSinkAreaCenterPosX = -2 + playerGPS.CurrentMapPixel.X;
-            backupSinkAreaCenterPosY = +1 + playerGPS.CurrentMapPixel.Y;
-
-            // decrease terrain height values in sink area
-            for (int y = -(TerrainDistance - 1); y <= TerrainDistance; y++)
-            {
-                for (int x = -(TerrainDistance - 1); x <= TerrainDistance; x++)
-                {
-                    int xpos = backupSinkAreaCenterPosX + x + 1;
-                    int ypos = (worldMapHeight - 1 - backupSinkAreaCenterPosY) + y + 1;
-                    if ((xpos >= 0) && (xpos < worldMapWidth) && (ypos >= 0) && (ypos < worldMapHeight))
-                    {
-                        heightValues[y + TerrainDistance - 1, x + TerrainDistance - 1] = worldHeights[ypos, xpos] - sinkHeight;
-                    }
-                }
-            }
-
-            if ((backupSinkAreaCenterPosX - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosX - TerrainDistance + 2 < worldMapWidth - TerrainDistance) &&
-                (backupSinkAreaCenterPosY - TerrainDistance + 2 >= 0) && (backupSinkAreaCenterPosY - TerrainDistance + 2 < worldMapHeight - TerrainDistance))
-            {
-                terrain.terrainData.SetHeights(backupSinkAreaCenterPosX - TerrainDistance + 2, worldMapHeight - 1 - backupSinkAreaCenterPosY - TerrainDistance + 2, heightValues);
-            }
-
-            heightValues = null;
-
             if (worldTerrainGameObject != null) // sometimes it can happen that this point is reached before worldTerrainGameObject was created, in such case we just skip
             {
                 // update water height (thanks Lypyl!!!):
                 Vector3 vecWaterHeight = new Vector3(0.0f, (DaggerfallUnity.Instance.TerrainSampler.OceanElevation + 1.0f) * streamingWorld.TerrainScale, 0.0f); // water height level on y-axis (+1.0f some coastlines are incorrect otherwise)
                 Vector3 vecWaterHeightTransformed = worldTerrainGameObject.transform.TransformPoint(vecWaterHeight); // transform to world coordinates
                 terrainMaterial.SetFloat("_WaterHeightTransformed", vecWaterHeightTransformed.y);
+            
+                if (gameobjectTerrainTransitionRing != null)
+                {
+                    if (!terrainTransitionRingUpdateRunning) // if at the moment no terrain transition ring update is still in progress
+                    {
+                        for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+                        {
+                            Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+                            Material material = terrain.materialTemplate;
+                            material.SetFloat("_WaterHeightTransformed", vecWaterHeightTransformed.y);
+                            terrain.materialTemplate = material;
+                        }
+                    }
+                }
             }
 
             MapPixelX = playerGPS.CurrentMapPixel.X;
             MapPixelY = playerGPS.CurrentMapPixel.Y;
         }
 
-        private GameObject generateWorldTerrain()
+        private void generateWorldTerrain()
         {
             // Create Unity Terrain game object
             GameObject terrainGameObject = Terrain.CreateTerrainGameObject(null);
@@ -1005,21 +1080,21 @@ namespace ProjectIncreasedTerrainDistance
             terrainMaterial = new Material(Shader.Find("Daggerfall/IncreasedTerrainTilemap"));
             terrainMaterial.name = string.Format("world terrain material");
 
-            // Assign textures and parameters            
+            // Assign textures and parameters     
             terrainMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
             terrainMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
             terrainMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
             terrainMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
-            //terrainMaterial.SetTexture("_TilemapTex", textureTerrainInfoTileMap);
+            //terrainMaterial.SetTexture("_FarTerrainTilemapTex", textureTerrainInfoTileMap);
 
             terrainMaterial.SetInt("_TextureSetSeasonCode", 0);
-            
-            updateSeasonalTextures(); // change seasonal textures if necessary
+
+            updateMaterialSeasonalTextures(ref terrainMaterial, currentSeason); // change seasonal textures if necessary
 
             terrainMaterial.SetInt("_PlayerPosX", this.playerGPS.CurrentMapPixel.X);
             terrainMaterial.SetInt("_PlayerPosY", this.playerGPS.CurrentMapPixel.Y);
 
-            terrainMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance - 1); // -1... allow the outer ring of of detailed terrain to intersect with far terrain (to prevent some holes)
+            terrainMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance);
 
             Vector3 vecWaterHeight = new Vector3(0.0f, (ImprovedTerrainSampler.scaledOceanElevation + 1.0f) * streamingWorld.TerrainScale, 0.0f); // water height level on y-axis (+1.0f some coastlines are incorrect otherwise)
             Vector3 vecWaterHeightTransformed = terrainGameObject.transform.TransformPoint(vecWaterHeight); // transform to world coordinates
@@ -1027,9 +1102,7 @@ namespace ProjectIncreasedTerrainDistance
 
             terrainMaterial.SetTexture("_SkyTex", renderTextureSky);           
 
-            setMaterialFogParameters();
-
-            terrainMaterial.SetInt("_FogFromSkyTex", 0);
+            setMaterialFogParameters(terrainMaterial);
 
             //terrainMaterial.SetFloat("_BlendFactor", blendFactor);
             terrainMaterial.SetFloat("_BlendStart", blendStart);
@@ -1060,7 +1133,558 @@ namespace ProjectIncreasedTerrainDistance
 
             terrainGameObject.SetActive(true);
 
-            return (terrainGameObject);
+            worldTerrainGameObject = terrainGameObject;
+        }
+
+        private void updateSeasonalTexturesTerrainTransitionRingBlock(int i)
+        {
+            if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
+            {
+                DaggerfallTerrain dfTerrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+                if (dfTerrain != null)
+                {
+                    dfTerrain.UpdateClimateMaterial();
+                }
+
+                Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+                Material mat = terrain.materialTemplate;
+                updateMaterialSeasonalTextures(ref mat, currentSeason);
+                terrain.materialTemplate = mat;
+            }
+        }
+
+        private void updateSeasonalTexturesTerrainTransitionRing()
+        {
+            if (terrainTransitionRingUpdateSeasonalTextures)
+            {
+                if (!transitionRingAllBlocksReady)
+                    return;
+                for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+                {
+                    //if (terrainTransitionRingArray[i].ready) // if i-th block element is ready (if not return from function without setting the boolean flag - so will start over on next Update())
+                    //{
+                        updateSeasonalTexturesTerrainTransitionRingBlock(i);
+                    //}
+                    //else
+                    //{
+                    //    return;
+                    //}
+                }
+                terrainTransitionRingUpdateSeasonalTextures = false;
+            }
+        }
+
+        private void updateMaterialShaderPropertiesTerrainTransitionRingBlock(int i)
+        {
+            if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
+            {
+                Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+
+#if ENHANCED_SKY_CODE_AVAILABLE
+                if (isActiveEnhancedSkyMod)
+                {
+                    if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
+                    {
+                        terrain.materialTemplate.SetFloat("_FogFromSkyTex", 1);
+                    }
+                    else
+                    {
+                        terrain.materialTemplate.SetFloat("_FogFromSkyTex", 0);
+                    }
+                }
+#endif
+            }
+        }
+
+        private void updateMaterialShaderPropertiesTerrainTransitionRing()
+        {
+            if (terrainTransitionRingUpdateMaterialProperties)
+            {
+                if (!transitionRingAllBlocksReady)
+                    return;
+                for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+                {
+                    //if (terrainTransitionRingArray[i].ready) // if i-th block element is ready (if not return from function without setting the boolean flag - so will start over on next Update())
+                    //{
+                        updateMaterialShaderPropertiesTerrainTransitionRingBlock(i);
+                    //}
+                    //else
+                    //{
+                    //    return;
+                    //}
+                }
+                terrainTransitionRingUpdateMaterialProperties = false;
+            }
+        }
+
+        // Update terrain data
+        private void UpdateTerrainDataTransitionRing(TransitionTerrainDesc transitionTerrainDesc)
+        {
+            StreamingWorld.TerrainDesc terrainDesc = transitionTerrainDesc.terrainDesc;
+
+            // Instantiate Daggerfall terrain
+            DaggerfallTerrain dfTerrain = terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+            if (dfTerrain)
+            {
+                dfTerrain.TerrainScale = streamingWorld.TerrainScale;
+                dfTerrain.MapPixelX = terrainDesc.mapPixelX;
+                dfTerrain.MapPixelY = terrainDesc.mapPixelY;
+                dfTerrain.InstantiateTerrain();
+            }
+
+            // Update data for terrain
+            //UpdateMapPixelData(ref dfTerrain, terrainDesc.mapPixelX, terrainDesc.mapPixelY, streamingWorld.TerrainTexturing);
+            dfTerrain.UpdateMapPixelData(streamingWorld.TerrainTexturing);
+
+            // Update heights of transition terrain ring
+            float weightFarTerrainLeft = 0.0f;
+            float weightFarTerrainRight = 0.0f;
+            float weightFarTerrainTop = 0.0f;
+            float weightFarTerrainBottom = 0.0f;
+            if (transitionTerrainDesc.transitionRingBorderDesc.isLeftRingBorder) weightFarTerrainLeft = 1.0f;
+            if (transitionTerrainDesc.transitionRingBorderDesc.isRightRingBorder) weightFarTerrainRight = 1.0f;
+            if (transitionTerrainDesc.transitionRingBorderDesc.isTopRingBorder) weightFarTerrainTop = 1.0f;
+            if (transitionTerrainDesc.transitionRingBorderDesc.isBottomRingBorder) weightFarTerrainBottom = 1.0f;
+            float heightFarTerrainTopLeft = worldHeights[worldMapHeight - 1 - terrainDesc.mapPixelY, terrainDesc.mapPixelX - 1]; // TODO: map border handling
+            float heightFarTerrainTopRight = worldHeights[worldMapHeight - 1 - terrainDesc.mapPixelY, terrainDesc.mapPixelX]; // TODO: map border handling
+            float heightFarTerrainBottomLeft = worldHeights[worldMapHeight - 1 - terrainDesc.mapPixelY + 1, terrainDesc.mapPixelX - 1]; // TODO: map border handling
+            float heightFarTerrainBottomRight = worldHeights[worldMapHeight - 1 - terrainDesc.mapPixelY + 1, terrainDesc.mapPixelX]; // TODO: map border handling
+
+            //Debug.Log(String.Format("heightFarTerrainTopLeft: {0}, heightFarTerrainTopRight: {1}, heightFarTerrainBottomLeft: {0}, heightFarTerrainBottomRight: {1}", heightFarTerrainTopLeft, heightFarTerrainTopRight, heightFarTerrainBottomLeft, heightFarTerrainBottomRight));
+
+            //Terrain terrain = terrainDesc.terrainObject.GetComponent<Terrain>();
+            int heightmapHeight = dfTerrain.MapData.heightmapSamples.GetLength(0);
+            int heightmapWidth = dfTerrain.MapData.heightmapSamples.GetLength(1);
+            for (int y = 0; y < heightmapHeight; y++)
+            {
+                float fractionalAmountY = (float)y / ((float)heightmapHeight - 1);
+                for (int x = 0; x < heightmapWidth; x++)
+                {
+                    float fractionalAmountX = (float)x / ((float)heightmapWidth - 1);
+                    float weightFarTerrainX = weightFarTerrainLeft * (1.0f - fractionalAmountX) + weightFarTerrainRight * (fractionalAmountX);
+                    float weightFarTerrainY = weightFarTerrainTop * (1.0f - fractionalAmountY) + weightFarTerrainBottom * (fractionalAmountY);
+                    float weightFarTerrainCombined = Math.Max(weightFarTerrainX, weightFarTerrainY);
+                    float heightFarTerrain = heightFarTerrainTopLeft * (1.0f - fractionalAmountX) * (1.0f - fractionalAmountY) +
+                                             heightFarTerrainTopRight * (fractionalAmountX) * (1.0f - fractionalAmountY) +
+                                             heightFarTerrainBottomLeft * (1.0f - fractionalAmountX) * (fractionalAmountY) +
+                                             heightFarTerrainBottomRight * (fractionalAmountX) * (fractionalAmountY);
+                    dfTerrain.MapData.heightmapSamples[y, x] = dfTerrain.MapData.heightmapSamples[y, x] * (1.0f - weightFarTerrainCombined) + heightFarTerrain * (weightFarTerrainCombined);
+                }
+            }
+
+            dfTerrain.UpdateTileMapData();
+
+            // Promote data to live terrain
+            dfTerrain.UpdateClimateMaterial();
+            dfTerrain.PromoteTerrainData();
+
+            // inject transition ring shader
+            Terrain terrain = transitionTerrainDesc.terrainDesc.terrainObject.GetComponent<Terrain>();
+            Material oldMaterial = terrain.materialTemplate;
+            Material newMaterial = new Material(Shader.Find("Daggerfall/TransitionRingTilemap"));
+            newMaterial.CopyPropertiesFromMaterial(oldMaterial);
+            newMaterial.mainTexture = oldMaterial.mainTexture;
+            newMaterial.mainTextureOffset = oldMaterial.mainTextureOffset;
+            newMaterial.mainTextureScale = oldMaterial.mainTextureScale;            
+
+            // Assign textures and parameters
+            newMaterial.SetTexture("_FarTerrainTilemapTex", textureTerrainInfoTileMap);
+            newMaterial.SetInt("_FarTerrainTilemapDim", terrainInfoTileMapDim);
+
+            newMaterial.SetTexture("_TileAtlasTexDesert", textureAtlasDesertSummer);
+            newMaterial.SetTexture("_TileAtlasTexWoodland", textureAtlasWoodlandSummer);
+            newMaterial.SetTexture("_TileAtlasTexMountain", textureAtlasMountainSummer);
+            newMaterial.SetTexture("_TileAtlasTexSwamp", textureAtlasSwampSummer);
+
+            newMaterial.SetFloat("_blendWeightFarTerrainTop", weightFarTerrainTop);
+            newMaterial.SetFloat("_blendWeightFarTerrainBottom", weightFarTerrainBottom);
+            newMaterial.SetFloat("_blendWeightFarTerrainLeft", weightFarTerrainLeft);
+            newMaterial.SetFloat("_blendWeightFarTerrainRight", weightFarTerrainRight);
+
+            //newMaterial.SetInt("_TextureSetSeasonCode", 0);
+
+            updateMaterialSeasonalTextures(ref newMaterial, currentSeason); // change seasonal textures if necessary
+
+            newMaterial.SetInt("_MapPixelX", dfTerrain.MapPixelX);
+            newMaterial.SetInt("_MapPixelY", dfTerrain.MapPixelY);
+
+            newMaterial.SetInt("_PlayerPosX", this.playerGPS.CurrentMapPixel.X);
+            newMaterial.SetInt("_PlayerPosY", this.playerGPS.CurrentMapPixel.Y);
+
+            newMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance); // - 1); // -1... allow the outer ring of of detailed terrain to intersect with far terrain (to prevent some holes)
+
+            Vector3 vecWaterHeight = new Vector3(0.0f, (ImprovedTerrainSampler.scaledOceanElevation + 1.0f) * streamingWorld.TerrainScale, 0.0f); // water height level on y-axis (+1.0f some coastlines are incorrect otherwise)
+            Vector3 vecWaterHeightTransformed = worldTerrainGameObject.transform.TransformPoint(vecWaterHeight); // transform to world coordinates
+            newMaterial.SetFloat("_WaterHeightTransformed", vecWaterHeightTransformed.y);
+
+            newMaterial.SetTexture("_SkyTex", renderTextureSky);
+
+            newMaterial.SetInt("_FogFromSkyTex", 0);
+            setMaterialFogParameters(newMaterial);            
+
+            //terrainMaterial.SetFloat("_BlendFactor", blendFactor);
+            newMaterial.SetFloat("_BlendStart", blendStart);
+            newMaterial.SetFloat("_BlendEnd", blendEnd);
+
+#if REFLECTIONSMOD_CODE_AVAILABLE
+            if (isActiveReflectionsMod)
+            {
+                reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
+                if (reflectionSeaTexture != null)
+                {
+                    newMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
+                    newMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
+                    if (tileAtlasReflectiveTexture != null)
+                    {
+                        newMaterial.SetTexture("_TileAtlasReflectiveTex", tileAtlasReflectiveTexture);
+                    }
+                    newMaterial.SetInt("_UseSeaReflectionTex", 1);
+                }
+                else
+                {
+                    newMaterial.SetInt("_UseSeaReflectionTex", 0);
+                }
+            }
+#else
+            terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
+#endif
+
+            terrain.materialTemplate = newMaterial;
+            dfTerrain.TerrainMaterial = terrain.materialTemplate; // important so that we can later call DaggerfallTerrain.UpdateClimateMaterial and it will update the correct reference
+
+            // Only set active again once complete
+            terrainDesc.terrainObject.SetActive(true);
+            terrainDesc.terrainObject.name = streamingWorld.GetTerrainName(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+        }
+
+        private bool CreateTerrain(int mapPixelX, int mapPixelY, int indexTerrain)
+        {
+            // Do nothing if out of range
+            if (mapPixelX < MapsFile.MinMapPixelX || mapPixelX >= MapsFile.MaxMapPixelX ||
+                mapPixelY < MapsFile.MinMapPixelY || mapPixelY >= MapsFile.MaxMapPixelY)
+            {
+                return false;
+            }
+
+            // Get terrain key
+            int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
+
+            // Setup new terrain
+            terrainTransitionRingArray[indexTerrain].terrainDesc.active = true;
+            terrainTransitionRingArray[indexTerrain].terrainDesc.updateData = true;
+            terrainTransitionRingArray[indexTerrain].terrainDesc.updateNature = true;
+            terrainTransitionRingArray[indexTerrain].terrainDesc.mapPixelX = mapPixelX;
+            terrainTransitionRingArray[indexTerrain].terrainDesc.mapPixelY = mapPixelY;
+            if (!terrainTransitionRingArray[indexTerrain].terrainDesc.terrainObject)
+            {
+                // Create game objects for new terrain
+                streamingWorld.CreateTerrainGameObjects(
+                    mapPixelX,
+                    mapPixelY,
+                    out terrainTransitionRingArray[indexTerrain].terrainDesc.terrainObject,
+                    out terrainTransitionRingArray[indexTerrain].terrainDesc.billboardBatchObject);
+            }
+
+            // Add new terrain index to transition ring dictionary
+            terrainTransitionRingIndexDict.Add(key, indexTerrain);
+
+            terrainTransitionRingArray[indexTerrain].terrainDesc.terrainObject.transform.SetParent(gameobjectTerrainTransitionRing.transform);
+
+            return true;
+        }
+
+        private void PlaceTerrainOfTransitionRing(int terrainIndex)
+        {
+            // Apply local transform
+            int mapPixelX = terrainTransitionRingArray[terrainIndex].terrainDesc.mapPixelX;
+            int mapPixelY = terrainTransitionRingArray[terrainIndex].terrainDesc.mapPixelY;
+            float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
+            int xdif = mapPixelX - streamingWorld.LocalPlayerGPS.CurrentMapPixel.X;
+            int ydif = mapPixelY - streamingWorld.LocalPlayerGPS.CurrentMapPixel.Y;
+            //Debug.Log(String.Format("world-compensation: x:{0}, y: {1}, z: {2}", streamingWorld.WorldCompensation.x, streamingWorld.WorldCompensation.y, streamingWorld.WorldCompensation.z));
+            Vector3 localPosition = new Vector3(xdif * scale, 0, -ydif * scale); // +streamingWorld.WorldCompensation;
+            terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.transform.localPosition = localPosition;
+            
+            // if block was not reused - it does not exist - so create unity terrain object - otherwise position update will be enough
+            if (!terrainTransitionRingArray[terrainIndex].keepThisBlock)
+            {
+                UpdateTerrainDataTransitionRing(terrainTransitionRingArray[terrainIndex]);
+            }
+            else
+            {
+                // activate unity terrain now since it has been updated
+                terrainTransitionRingArray[terrainIndex].terrainDesc.terrainObject.SetActive(true);
+                terrainTransitionRingArray[terrainIndex].terrainDesc.billboardBatchObject.SetActive(true);
+            }
+        }
+
+        private TransitionRingBorderDesc getTransitionRingBorderDesc(int x, int y, int distanceTransitionRingFromCenterX, int distanceTransitionRingFromCenterY)
+        {
+            TransitionRingBorderDesc transitionRingBorderDesc;
+            transitionRingBorderDesc.isLeftRingBorder = false;
+            transitionRingBorderDesc.isRightRingBorder = false;
+            transitionRingBorderDesc.isTopRingBorder = false;
+            transitionRingBorderDesc.isBottomRingBorder = false;
+            if (x == -distanceTransitionRingFromCenterX)
+            {
+                transitionRingBorderDesc.isLeftRingBorder = true;
+            }
+            if (x == +distanceTransitionRingFromCenterX)
+            {
+                transitionRingBorderDesc.isRightRingBorder = true;
+            }
+            if (y == -distanceTransitionRingFromCenterY)
+            {
+                transitionRingBorderDesc.isBottomRingBorder = true;
+            }
+            if (y == +distanceTransitionRingFromCenterY)
+            {
+                transitionRingBorderDesc.isTopRingBorder = true;
+            }
+            return transitionRingBorderDesc;
+        }
+
+        private Terrain GetTerrainTransitionRing(int mapPixelX, int mapPixelY)
+        {
+            int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
+            if (terrainTransitionRingIndexDict.ContainsKey(key))
+            {
+                return terrainTransitionRingArray[terrainTransitionRingIndexDict[key]].terrainDesc.terrainObject.GetComponent<Terrain>();
+            }
+
+            return null;
+        }
+
+        private void UpdateNeighboursTransitionRing()
+        {
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {
+                // Check object exists
+                if (!terrainTransitionRingArray[i].terrainDesc.terrainObject)
+                    continue;
+
+                // Get DaggerfallTerrain
+                DaggerfallTerrain dfTerrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<DaggerfallTerrain>();
+                if (!dfTerrain)
+                    continue;
+
+                // Set or clear neighbours
+                if (terrainTransitionRingArray[i].terrainDesc.active)
+                {
+                    dfTerrain.LeftNeighbour = GetTerrainTransitionRing(dfTerrain.MapPixelX - 1, dfTerrain.MapPixelY);
+                    dfTerrain.RightNeighbour = GetTerrainTransitionRing(dfTerrain.MapPixelX + 1, dfTerrain.MapPixelY);
+                    dfTerrain.TopNeighbour = GetTerrainTransitionRing(dfTerrain.MapPixelX, dfTerrain.MapPixelY - 1);
+                    dfTerrain.BottomNeighbour = GetTerrainTransitionRing(dfTerrain.MapPixelX, dfTerrain.MapPixelY + 1);
+                    //    if (dfTerrain.LeftNeighbour == null)
+                    //    {
+                    //        dfTerrain.LeftNeighbour = streamingWorld.GetTerrainFromPixel(dfTerrain.MapPixelX - 1, dfTerrain.MapPixelY).GetComponent<Terrain>();
+                    //        if (dfTerrain.LeftNeighbour != null) Debug.Log("worked");
+                    //    }
+                    //    if (dfTerrain.RightNeighbour == null)
+                    //    {
+                    //        dfTerrain.RightNeighbour = streamingWorld.GetTerrainFromPixel(dfTerrain.MapPixelX + 1, dfTerrain.MapPixelY).GetComponent<Terrain>();
+                    //        if (dfTerrain.RightNeighbour != null) Debug.Log("worked");
+                    //    }
+                    //    if (dfTerrain.TopNeighbour == null)
+                    //    {
+                    //        dfTerrain.TopNeighbour = streamingWorld.GetTerrainFromPixel(dfTerrain.MapPixelX, dfTerrain.MapPixelY - 1).GetComponent<Terrain>();
+                    //        if (dfTerrain.TopNeighbour != null) Debug.Log("worked");
+                    //    }
+                    //    if (dfTerrain.BottomNeighbour == null)
+                    //    {
+                    //        dfTerrain.BottomNeighbour = streamingWorld.GetTerrainFromPixel(dfTerrain.MapPixelX, dfTerrain.MapPixelY + 1).GetComponent<Terrain>();
+                    //        if (dfTerrain.BottomNeighbour != null) Debug.Log("worked");
+                    //    }
+                    dfTerrain.UpdateNeighbours();
+                }
+                else
+                {
+                    dfTerrain.LeftNeighbour = null;
+                    dfTerrain.RightNeighbour = null;
+                    dfTerrain.TopNeighbour = null;
+                    dfTerrain.BottomNeighbour = null;
+                }
+
+                // Update Unity Terrain
+                dfTerrain.UpdateNeighbours();
+            }
+        }
+
+        private IEnumerator UpdateTerrainsTransitionRing()
+        {
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {
+                if (terrainTransitionRingArray[i].terrainDesc.active)
+                {
+
+                    if (terrainTransitionRingArray[i].terrainDesc.updateData)
+                    {
+                        PlaceTerrainOfTransitionRing(i);
+                        //UpdateTerrainData(terrainTransitionRingArray[i]);
+                        terrainTransitionRingArray[i].terrainDesc.updateData = false;
+
+                        yield return new WaitForEndOfFrame();
+                    }
+                    
+                    if (terrainTransitionRingArray[i].terrainDesc.updateNature)
+                    {
+                        streamingWorld.UpdateTerrainNature(terrainTransitionRingArray[i].terrainDesc);
+                        terrainTransitionRingArray[i].terrainDesc.updateNature = false;
+
+                        MeshRenderer meshRenderer = terrainTransitionRingArray[i].terrainDesc.billboardBatchObject.GetComponent<MeshRenderer>();
+                        Material[] rendererMaterials = meshRenderer.materials;
+                        for (int m = 0; m < rendererMaterials.Length; m++)
+                        {
+                            Material newMaterial = new Material(Shader.Find("Daggerfall/BillboardBatchFaded"));
+                            newMaterial.CopyPropertiesFromMaterial(rendererMaterials[m]);
+                            newMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance);
+                            newMaterial.SetFloat("_TerrainBlockSize", (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale));
+                            rendererMaterials[m] = newMaterial;
+                        }
+                        meshRenderer.materials = rendererMaterials;
+
+                        //if (!terrainTransitionRingUpdateRunning) //(!transitionRingUpdateFinished)
+                        yield return new WaitForEndOfFrame();
+                    }
+
+                    terrainTransitionRingArray[i].ready = true;
+                }
+            }
+
+            UpdateNeighboursTransitionRing();
+
+            terrainMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance); // after of transition ring update - restore far terrain rendering to streamingWorld.TerrainDistance
+
+            terrainTransitionRingUpdateRunning = false;
+            transitionRingAllBlocksReady = true;
+        }
+
+        private void generateTerrainTransitionRing()
+        {
+            if (gameobjectTerrainTransitionRing == null)
+            {
+                gameobjectTerrainTransitionRing = new GameObject("TerrainTransitionRing");
+                gameobjectTerrainTransitionRing.transform.SetParent(GameManager.Instance.ExteriorParent.transform);
+            }
+
+            //// this is not perfect I know - but since events can get in asynchronous and may trigger an update and thus an invocation to generateTerrainTransitionRing() it is important that no update is currently performed
+            //while (transitionRingAllBlocksReady == true)
+            //{
+
+            //}
+            transitionRingAllBlocksReady = false;
+            terrainTransitionRingUpdateRunning = true;
+
+            terrainMaterial.SetInt("_TerrainDistance", streamingWorld.TerrainDistance-2); // for time of transition ring update - change far terrain to be rendered to streamingWorld.TerrainDistance-2
+
+            int distanceTransitionRingFromCenterX = (streamingWorld.TerrainDistance + 1);
+            int distanceTransitionRingFromCenterY = (streamingWorld.TerrainDistance + 1);
+
+            // initially mark all blocks as potential blocks to remove - terrain blocks in terrain transition ring that can be reused will be updated next
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {
+                terrainTransitionRingArray[i].keepThisBlock = false;
+            }
+
+            // mark blocks that will be reused
+            for (int y = -distanceTransitionRingFromCenterY; y <= distanceTransitionRingFromCenterY; y++)
+            {
+                for (int x = -distanceTransitionRingFromCenterX; x <= distanceTransitionRingFromCenterX; x++)
+                {
+                    if ((Math.Abs(x) == distanceTransitionRingFromCenterX) || (Math.Abs(y) == distanceTransitionRingFromCenterY))
+                    {
+                        int mapPixelX = playerGPS.CurrentMapPixel.X + x;
+                        int mapPixelY = playerGPS.CurrentMapPixel.Y + y;
+                        int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
+                        if (terrainTransitionRingIndexDict.ContainsKey(key)) // if desired terrain block already exists in transition ring
+                        {
+                            int indexFound = terrainTransitionRingIndexDict[key]; // get index of existing terrain block of interest
+                            TransitionRingBorderDesc borderDesc = getTransitionRingBorderDesc(x, y, distanceTransitionRingFromCenterX, distanceTransitionRingFromCenterY);
+                            // if transition ring border description has not changed since last time - the block's heights can be reused - so the block can be reused
+                            if ((borderDesc.isLeftRingBorder == terrainTransitionRingArray[indexFound].transitionRingBorderDesc.isLeftRingBorder) &&
+                                (borderDesc.isRightRingBorder == terrainTransitionRingArray[indexFound].transitionRingBorderDesc.isRightRingBorder) &&
+                                (borderDesc.isTopRingBorder == terrainTransitionRingArray[indexFound].transitionRingBorderDesc.isTopRingBorder) &&
+                                (borderDesc.isBottomRingBorder == terrainTransitionRingArray[indexFound].transitionRingBorderDesc.isBottomRingBorder))
+                            {
+                                terrainTransitionRingArray[indexFound].keepThisBlock = true; // mark block that it will be reused 
+                            }
+                        }
+                    }
+                }
+            }
+
+            // remove unused terrain blocks from terrainTransitionRingArray (and its key from terrainTransitionRingIndexDict)
+            for (int i = 0; i < terrainTransitionRingArray.Length; i++)
+            {               
+                if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
+                {
+                    // deactivate unity terrain (until it is recreated or until it is updated)
+                    terrainTransitionRingArray[i].terrainDesc.terrainObject.SetActive(false);
+                    terrainTransitionRingArray[i].terrainDesc.billboardBatchObject.SetActive(false);
+                }
+
+                if (!terrainTransitionRingArray[i].keepThisBlock)
+                {
+                    // get key for terrain block
+                    int key = TerrainHelper.MakeTerrainKey(terrainTransitionRingArray[i].terrainDesc.mapPixelX, terrainTransitionRingArray[i].terrainDesc.mapPixelY);
+                    terrainTransitionRingIndexDict.Remove(key); // remove it
+
+                    // now destroy unity terrain object
+                    GameObject.Destroy(terrainTransitionRingArray[i].terrainDesc.terrainObject);
+                    terrainTransitionRingArray[i].terrainDesc.terrainObject = null;
+                    terrainTransitionRingArray[i].terrainDesc.active = false;
+                    terrainTransitionRingArray[i].ready = false;                    
+                }
+                else
+                {
+                    // mark terrain block for data update (position, ...)
+                    terrainTransitionRingArray[i].terrainDesc.updateData = true;
+                    terrainTransitionRingArray[i].terrainDesc.updateNature = true;
+                }
+            }
+            
+            int terrainIndex = 0;
+            for (int y = -distanceTransitionRingFromCenterY; y <= distanceTransitionRingFromCenterY; y++)
+            {
+                for (int x = -distanceTransitionRingFromCenterX; x <= distanceTransitionRingFromCenterX; x++)
+                {
+                    if ((Math.Abs(x) == distanceTransitionRingFromCenterX) || (Math.Abs(y) == distanceTransitionRingFromCenterY))
+                    {
+                        int mapPixelX = playerGPS.CurrentMapPixel.X + x;
+                        int mapPixelY = playerGPS.CurrentMapPixel.Y + y;
+
+                        // get key for terrain block
+                        int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
+                        // if desired terrain block already exists in transition ring
+                        if (terrainTransitionRingIndexDict.ContainsKey(key))
+                        {
+                            continue; // do nothing
+                        }
+
+                        // if desired terrain block does not exist in transition ring - go on here
+
+                        // go to next free block in terrainTransitionRingArray
+                        while (terrainTransitionRingArray[terrainIndex].keepThisBlock)
+                        {
+                            terrainIndex++;
+                            if (terrainIndex >= terrainTransitionRingArray.Length)
+                            {
+                                throw new Exception("generateTerrainTransitionRing: Could not find free terrain block. This should not happen!");
+                            }
+                        }
+
+                        bool successCreate = CreateTerrain(mapPixelX, mapPixelY, terrainIndex);
+                        if (successCreate)
+                        {
+                            terrainTransitionRingArray[terrainIndex].transitionRingBorderDesc = getTransitionRingBorderDesc(x, y, distanceTransitionRingFromCenterX, distanceTransitionRingFromCenterY);
+                            terrainTransitionRingArray[terrainIndex].heightsUpdatePending = true;
+                            terrainIndex++;
+                        }
+                    }
+                }
+            }
+
+            StartCoroutine(UpdateTerrainsTransitionRing());
         }
 
         #endregion

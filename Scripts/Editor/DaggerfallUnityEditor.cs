@@ -180,64 +180,77 @@ namespace DaggerfallWorkshop
                 EditorGUILayout.LabelField("Prefabs");
                 GUILayoutHelper.Indent(() =>
                 {
-                    // Lights
-                    var propImportLightPrefabs = Prop("Option_ImportLightPrefabs");
-                    var propCityLightPrefab = Prop("Option_CityLightPrefab");
-                    var propDungeonLightPrefab = Prop("Option_DungeonLightPrefab");
-                    var propInteriorLightPrefab = Prop("Option_InteriorLightPrefab");
-                    propImportLightPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Light Prefabs", "Import light prefabs into scene."), propImportLightPrefabs.boolValue);
-                    GUILayoutHelper.EnableGroup(propImportLightPrefabs.boolValue, () =>
-                    {
-                        GUILayoutHelper.Indent(() =>
-                        {
-                            propCityLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("City Lights", "Prefab for city lights."), propCityLightPrefab.objectReferenceValue, typeof(Light), false);
-                            propDungeonLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Lights", "Prefab for dungeon lights."), propDungeonLightPrefab.objectReferenceValue, typeof(Light), false);
-                            propInteriorLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Interior Lights", "Prefab for building interior lights."), propInteriorLightPrefab.objectReferenceValue, typeof(Light), false);
-                        });
-                    });
-
-                    // Doors
-                    var propImportDoorPrefabs = Prop("Option_ImportDoorPrefabs");
-                    var propDungeonDoorPrefab = Prop("Option_DungeonDoorPrefab");
-                    var propInteriorDoorPrefab = Prop("Option_InteriorDoorPrefab");
-                    EditorGUILayout.Space();
-                    propImportDoorPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Door Prefabs", "Import door prefabs into scene."), propImportDoorPrefabs.boolValue);
-                    GUILayoutHelper.EnableGroup(propImportDoorPrefabs.boolValue, () =>
-                    {
-                        GUILayoutHelper.Indent(() =>
-                        {
-                            propDungeonDoorPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Doors", "Prefab for dungeon doors."), propDungeonDoorPrefab.objectReferenceValue, typeof(DaggerfallActionDoor), false);
-                            propInteriorDoorPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Interior Doors", "Prefab for building interior doors."), propInteriorDoorPrefab.objectReferenceValue, typeof(DaggerfallActionDoor), false);
-                        });
-                    });
-
-                    // Enemies
-                    var propImportEnemyPrefabs = Prop("Option_ImportEnemyPrefabs");
-                    var propEnemyPrefab = Prop("Option_EnemyPrefab");
-                    EditorGUILayout.Space();
-                    propImportEnemyPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Enemy Prefabs", "Import enemy prefabs into scene."), propImportEnemyPrefabs.boolValue);
-                    GUILayoutHelper.EnableGroup(propImportEnemyPrefabs.boolValue, () =>
-                    {
-                        GUILayoutHelper.Indent(() =>
-                        {
-                            propEnemyPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Enemies", "Prefab for enemies."), propEnemyPrefab.objectReferenceValue, typeof(DaggerfallEnemy), false);
-                        });
-                    });
-
-                    // Optional
-                    var propCityBlockPrefab = Prop("Option_CityBlockPrefab");
-                    var propDungeonBlockPrefab = Prop("Option_DungeonBlockPrefab");
-                    EditorGUILayout.Space();
-                    EditorGUILayout.LabelField("Optional");
+                // Lights
+                var propImportLightPrefabs = Prop("Option_ImportLightPrefabs");
+                var propCityLightPrefab = Prop("Option_CityLightPrefab");
+                var propDungeonLightPrefab = Prop("Option_DungeonLightPrefab");
+                var propInteriorLightPrefab = Prop("Option_InteriorLightPrefab");
+                propImportLightPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Light Prefabs", "Import light prefabs into scene."), propImportLightPrefabs.boolValue);
+                GUILayoutHelper.EnableGroup(propImportLightPrefabs.boolValue, () =>
+                {
                     GUILayoutHelper.Indent(() =>
                     {
-                        propCityBlockPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("City Blocks", "Prefab for city blocks."), propCityBlockPrefab.objectReferenceValue, typeof(DaggerfallRMBBlock), false);
-                        propDungeonBlockPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Blocks", "Prefab for dungeon blocks."), propDungeonBlockPrefab.objectReferenceValue, typeof(DaggerfallRDBBlock), false);
+                        propCityLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("City Lights", "Prefab for city lights."), propCityLightPrefab.objectReferenceValue, typeof(Light), false);
+                        propDungeonLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Lights", "Prefab for dungeon lights."), propDungeonLightPrefab.objectReferenceValue, typeof(Light), false);
+                        propInteriorLightPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Interior Lights", "Prefab for building interior lights."), propInteriorLightPrefab.objectReferenceValue, typeof(Light), false);
                     });
                 });
 
-                // Time & Space options
-                var propAutomateTextureSwaps = Prop("Option_AutomateTextureSwaps");
+                // Doors
+                var propImportDoorPrefabs = Prop("Option_ImportDoorPrefabs");
+                var propDungeonDoorPrefab = Prop("Option_DungeonDoorPrefab");
+                var propInteriorDoorPrefab = Prop("Option_InteriorDoorPrefab");
+                EditorGUILayout.Space();
+                propImportDoorPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Door Prefabs", "Import door prefabs into scene."), propImportDoorPrefabs.boolValue);
+                GUILayoutHelper.EnableGroup(propImportDoorPrefabs.boolValue, () =>
+                {
+                    GUILayoutHelper.Indent(() =>
+                    {
+                        propDungeonDoorPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Doors", "Prefab for dungeon doors."), propDungeonDoorPrefab.objectReferenceValue, typeof(DaggerfallActionDoor), false);
+                        propInteriorDoorPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Interior Doors", "Prefab for building interior doors."), propInteriorDoorPrefab.objectReferenceValue, typeof(DaggerfallActionDoor), false);
+                    });
+                });
+
+                // Enemies
+                var propImportEnemyPrefabs = Prop("Option_ImportEnemyPrefabs");
+                var propEnemyPrefab = Prop("Option_EnemyPrefab");
+                EditorGUILayout.Space();
+                propImportEnemyPrefabs.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Enemy Prefabs", "Import enemy prefabs into scene."), propImportEnemyPrefabs.boolValue);
+                GUILayoutHelper.EnableGroup(propImportEnemyPrefabs.boolValue, () =>
+                {
+                    GUILayoutHelper.Indent(() =>
+                    {
+                        propEnemyPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Enemies", "Prefab for enemies."), propEnemyPrefab.objectReferenceValue, typeof(DaggerfallEnemy), false);
+                    });
+                });
+
+                // Random treasure
+                var propImportRandomTreasure = Prop("Option_ImportRandomTreasure");
+                var propRandomTreasurePrefab = Prop("Option_RandomTreasurePrefab");
+                EditorGUILayout.Space();
+                propImportRandomTreasure.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Random Treasure", "Import random treasure piles into scene."), propImportRandomTreasure.boolValue);
+                GUILayoutHelper.EnableGroup(propImportRandomTreasure.boolValue, () =>
+                {
+                    GUILayoutHelper.Indent(() =>
+                    {
+                        propRandomTreasurePrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Random Treasure", "Prefab for random treasure."), propRandomTreasurePrefab.objectReferenceValue, typeof(DaggerfallLoot), false);
+                    });
+                });
+
+                // Optional
+                var propCityBlockPrefab = Prop("Option_CityBlockPrefab");
+                var propDungeonBlockPrefab = Prop("Option_DungeonBlockPrefab");
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Optional");
+                GUILayoutHelper.Indent(() =>
+                {
+                    propCityBlockPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("City Blocks", "Prefab for city blocks."), propCityBlockPrefab.objectReferenceValue, typeof(DaggerfallRMBBlock), false);
+                    propDungeonBlockPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Blocks", "Prefab for dungeon blocks."), propDungeonBlockPrefab.objectReferenceValue, typeof(DaggerfallRDBBlock), false);
+                });
+            });
+
+            // Time & Space options
+            var propAutomateTextureSwaps = Prop("Option_AutomateTextureSwaps");
                 var propAutomateSky = Prop("Option_AutomateSky");
                 var propAutomateCityLights = Prop("Option_AutomateCityLights");
                 //var propAutomateCityGates = Prop("Option_AutomateCityGates");
