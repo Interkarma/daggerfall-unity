@@ -29,7 +29,7 @@ namespace CSharpCompiler
             else
             {
                 ++ErrorsCount;
-            }            
+            }
             compilerResults.Errors.Add(new CompilerError()
             {
                 IsWarning = msg.IsWarning,
@@ -41,7 +41,7 @@ namespace CSharpCompiler
                 // msg.RelatedSymbols // extra info
             });
         }
-        
+
     }
 
 }

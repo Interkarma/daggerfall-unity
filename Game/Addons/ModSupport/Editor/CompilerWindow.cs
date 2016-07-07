@@ -25,19 +25,16 @@ namespace DaggerfallWorkshop.Game.Utility
         const string menuPath = "Daggerfall Tools/Source Compiler";
         [SerializeField]
         private List<string> filesToCompile;
+        [SerializeField]
         Vector2 scrollPos = Vector2.zero;
+        [SerializeField]
         bool showFilesFoldout = true;
 
         private void OnEnable()
         {
             if (filesToCompile == null)
                 filesToCompile = new List<string>();
-
-            ScriptableObject target = this;
-            SerializedObject so = new SerializedObject(target);
-
         }
-
 
         private void RemoveFileFromList(int i)
         {
@@ -58,10 +55,6 @@ namespace DaggerfallWorkshop.Game.Utility
         void OnGUI()
         {
             GUILayout.Label("Select source files to compile");
-
-            ScriptableObject target = this;
-            SerializedObject so = new SerializedObject(target);
-            SerializedProperty sp = so.FindProperty("filesToCompile");
 
             string path = "";
 
@@ -89,7 +82,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 {
                     try
                     {
-                        System.Reflection.Assembly assembly = Compiler.CompileFiles(filesToCompile.ToArray(), false);
+                        System.Reflection.Assembly assembly = Compiler.CompileSource(filesToCompile.ToArray(), false, false);
                         Debug.Log(string.Format("Assembly {0} created", assembly.GetName().Name));
                     }
                     catch(Exception ex)
@@ -134,9 +127,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
                 });
             });
-
-
-            so.ApplyModifiedProperties();
 
         }
 
