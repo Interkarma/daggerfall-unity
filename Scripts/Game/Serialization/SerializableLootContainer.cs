@@ -26,6 +26,13 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Unity
 
+        void Awake()
+        {
+            loot = GetComponent<DaggerfallLoot>();
+            if (!loot)
+                throw new Exception("DaggerfallLoot not found.");
+        }
+
         void Start()
         {
             if (LoadID != 0)
@@ -47,11 +54,53 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public object GetSaveData()
         {
-            return loot;
+            if (!loot)
+                return null;
+
+            // Create save data
+            LootContainerData_v1 data = new LootContainerData_v1();
+            data.loadID = LoadID;
+            data.containerType = loot.ContainerType;
+            data.currentPosition = loot.transform.position;
+            data.textureArchive = loot.TextureArchive;
+            data.textureRecord = loot.TextureRecord;
+            data.lootTableKey = loot.LootTableKey;
+            data.itemList = loot.Items.ToArray();
+
+            return data;
         }
 
         public void RestoreSaveData(object dataIn)
         {
+            if (!loot)
+                return;
+
+            LootContainerData_v1 data = (LootContainerData_v1)dataIn;
+            if (data.loadID != LoadID)
+                return;
+
+            DaggerfallBillboard billboard = loot.GetComponent<DaggerfallBillboard>();
+
+            // Restore position
+            loot.transform.position = data.currentPosition;
+
+            // Restore billboard appearance if present
+            if (billboard)
+            {
+                billboard.SetMaterial(data.textureArchive, data.textureRecord, 0, true);
+            }
+
+            // Restore items
+            loot.Items.Clear();
+            loot.Items.AddRange(data.itemList);
+
+            // Restore other data
+            loot.ContainerType = data.containerType;
+            loot.LootTableKey = data.lootTableKey;
+            loot.TextureArchive = data.textureArchive;
+            loot.TextureRecord = data.textureRecord;
+
+            // TODO: Remove loot container if empty
         }
 
         #endregion
@@ -60,7 +109,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         bool HasChanged()
         {
-            return false;
+            // Always save loot containers
+            return true;
         }
 
         long GetLoadID()

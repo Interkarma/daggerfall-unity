@@ -21,27 +21,34 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaggerfallLoot : MonoBehaviour
     {
+        // Default texture archive for random treasure pile
+        public const int randomTreasureArchive = 216;
+
+        // Dimension of random treasure marker in Daggerfall Units
+        // Used to align random icon to surface marker is placed on
+        public const int randomTreasureMarkerDim = 40;
+
+        // Default icon range for random treasure piles
+        // Random treasure is generated only when clicked on and icon has no bearing
+        // Only a subset of loot icons from TEXTURE.216 are used
+        // May be expanded later
+        public static int[] randomTreasureIconIndices = new int[]
+        {
+            0, 1, 2, 20, 22, 23, 24, 25, 26, 27, 28, 30, 37, 46, 47
+        };
+
+        public LootContainerTypes ContainerType = LootContainerTypes.Nothing;
+        public string LootTableKey = string.Empty;
+        public int TextureArchive = 0;
+        public int TextureRecord = 0;
+
         long loadID = 0;
-        LootContainerTypes containerType = LootContainerTypes.Nothing;
-        public string lootTableKey = string.Empty;
         List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
 
         public long LoadID
         {
             get { return loadID; }
             set { loadID = value; }
-        }
-
-        public LootContainerTypes ContainerType
-        {
-            get { return containerType; }
-            set { containerType = value; }
-        }
-
-        public string LootTableKey
-        {
-            get { return lootTableKey; }
-            set { lootTableKey = value; }
         }
 
         public List<DaggerfallUnityItem> Items

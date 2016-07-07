@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public PlayerData_v1 playerData;
         public DungeonData_v1 dungeonData;
         public EnemyData_v1[] enemyData;
+        public LootContainerData_v1[] lootContainers;
     }
 
     #endregion

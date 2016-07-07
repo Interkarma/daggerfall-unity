@@ -39,15 +39,6 @@ namespace DaggerfallWorkshop.Utility
         const float torchMaxDistance = 5f;
         const float torchVolume = 0.7f;
 
-        // Default icon range for random treasure piles
-        // Random treasure is generated only when clicked on and icon has no bearing
-        // Only a subset of loot icons from TEXTURE.216 are used
-        // May be expanded later
-        static int[] randomTreasureIconIndices = new int[]
-        {
-            0, 1, 2, 20, 22, 23, 24, 25, 26, 27, 28, 30, 37, 46, 47
-        };
-
         #region Structs & Enums
 
         /// <summary>
@@ -382,6 +373,14 @@ namespace DaggerfallWorkshop.Utility
             bool serialize = true)
         {
             const int randomTreasureFlatIndex = 19;
+
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Must have import enabled and prefab set
+            if (!dfUnity.Option_ImportRandomTreasure || dfUnity.Option_RandomTreasurePrefab == null)
+                return;
 
             // Add parent node
             GameObject randomTreasureNode = new GameObject("Random Treasure");
@@ -1220,29 +1219,40 @@ namespace DaggerfallWorkshop.Utility
 
         private static void AddRandomTreasure(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, bool serialize)
         {
-            const int randomTreasureArchive = 216;
-
             // Create unique LoadID for save sytem
             long loadID = 0;
             if (serialize)
                 loadID = (blockData.Index << 24) + obj.This;
 
-            // Select icon record
-            int iconIndex = UnityEngine.Random.Range(0, randomTreasureIconIndices.Length);
-            int iconRecord = randomTreasureIconIndices[iconIndex];
+            // Setup initial treasure prefab
+            string name = "DaggerfallRandomTreasure";
+            Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+            GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_RandomTreasurePrefab.gameObject, name, parent, position);
 
-            // Spawn billboard gameobject
-            GameObject go = AddFlat(obj, parent, randomTreasureArchive, iconRecord);
-            DaggerfallBillboard billboard = go.GetComponent<DaggerfallBillboard>();
+            // Add billboard component
+            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLoot.randomTreasureIconIndices.Length);
+            int iconRecord = DaggerfallLoot.randomTreasureIconIndices[iconIndex];
+            DaggerfallBillboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
+            dfBillboard.SetMaterial(DaggerfallLoot.randomTreasureArchive, iconRecord, 0, true);
 
             // Find bottom of marker in world space
             // Marker is aligned to surface and has a constant size (40x40)
             Vector3 pos = go.transform.position;
-            pos.y += (-20 * MeshReader.GlobalScale);
+            pos.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
 
             // Now move up loot icon by half own size so bottom is aligned with surface
-            pos.y += (billboard.Summary.Size.y / 2f);
+            pos.y += (dfBillboard.Summary.Size.y / 2f);
             go.transform.position = pos;
+
+            // Setup DaggerfallLoot component to make lootable
+            DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
+            if (loot)
+            {
+                loot.LoadID = loadID;
+                loot.ContainerType = LootContainerTypes.RandomTreasure;
+                loot.TextureArchive = DaggerfallLoot.randomTreasureArchive;
+                loot.TextureRecord = iconRecord;
+            }
         }
 
         #endregion
