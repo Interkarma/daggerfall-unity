@@ -61,11 +61,12 @@ namespace DaggerfallWorkshop.Game.Serialization
             LootContainerData_v1 data = new LootContainerData_v1();
             data.loadID = LoadID;
             data.containerType = loot.ContainerType;
+            data.containerImage = loot.ContainerImage;
             data.currentPosition = loot.transform.position;
             data.textureArchive = loot.TextureArchive;
             data.textureRecord = loot.TextureRecord;
             data.lootTableKey = loot.LootTableKey;
-            data.itemList = loot.Items.ToArray();
+            data.items = loot.Items.SerializeItems();
 
             return data;
         }
@@ -91,11 +92,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             // Restore items
-            loot.Items.Clear();
-            loot.Items.AddRange(data.itemList);
+            loot.Items.DeserializeItems(data.items);
 
             // Restore other data
             loot.ContainerType = data.containerType;
+            loot.ContainerImage = data.containerImage;
             loot.LootTableKey = data.lootTableKey;
             loot.TextureArchive = data.textureArchive;
             loot.TextureRecord = data.textureRecord;

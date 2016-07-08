@@ -159,6 +159,13 @@ namespace DaggerfallWorkshop.Game.Items
                 }
             }
 
+            // Gold pieces use world texture indices
+            if (item.ItemGroup == ItemGroups.Currency && item.TemplateIndex == (int)Currency.Gold_pieces)
+            {
+                archive = item.ItemTemplate.worldTextureArchive;
+                record = item.ItemTemplate.worldTextureRecord;
+            }
+
             // Get unique key
             int key = MakeImageKey(color, archive, record, removeMask);
 
@@ -603,7 +610,7 @@ namespace DaggerfallWorkshop.Game.Items
         public void AssignStartingGear(PlayerEntity playerEntity)
         {
             // Get references
-            EntityItems items = playerEntity.Items;
+            ItemCollection items = playerEntity.Items;
             ItemEquipTable equipTable = playerEntity.ItemEquipTable;
 
             // Starting clothes are gender-specific

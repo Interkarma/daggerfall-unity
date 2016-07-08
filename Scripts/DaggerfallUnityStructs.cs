@@ -325,4 +325,27 @@ namespace DaggerfallWorkshop
         public bool location;                       // True if location tile present
         public int nature;                          // Index of nature flat at this point (0 is nothing)
     }
+
+    /// <summary>
+    /// Used to create matrix of chances by loot table key.
+    /// </summary>
+    public struct LootChanceMatrix
+    {
+        public string key;
+        public int MinGold;
+        public int MaxGold;
+        public int P1;      // PlantIngredients1
+        public int P2;      // PlantIngredients2
+        public int C1;      // CreatureIngredients1
+        public int C2;      // CreatureIngredients2
+        public int C3;      // CreatureIngredients3
+        public int M1;      // MiscellaneousIngredients1
+        public int AM;      // Armor
+        public int WP;      // Weapons
+        public int MI;      // Magic item
+        public int CL;      // Clothing
+        public int BK;      // Book
+        public int M2;      // MiscellaneousIngredients2
+        public int RL;      // ReligiousItems
+    }
 }

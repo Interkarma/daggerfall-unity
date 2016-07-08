@@ -1244,14 +1244,22 @@ namespace DaggerfallWorkshop.Utility
             pos.y += (dfBillboard.Summary.Size.y / 2f);
             go.transform.position = pos;
 
+            // Add basic sphere collider for hit tests
+            // Might revisit this later for something tighter-fitting to billboard
+            SphereCollider collider = go.AddComponent<SphereCollider>();
+            collider.radius = 0.6f;
+            collider.isTrigger = true;
+
             // Setup DaggerfallLoot component to make lootable
             DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
             if (loot)
             {
                 loot.LoadID = loadID;
                 loot.ContainerType = LootContainerTypes.RandomTreasure;
+                loot.ContainerImage = LootContainerImages.Chest;
                 loot.TextureArchive = DaggerfallLoot.randomTreasureArchive;
                 loot.TextureRecord = iconRecord;
+                loot.GenerateItems();
             }
         }
 

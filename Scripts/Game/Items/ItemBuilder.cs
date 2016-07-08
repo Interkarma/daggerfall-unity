@@ -268,6 +268,19 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Generates gold pieces.
+        /// </summary>
+        /// <param name="amount">Total number of gold pieces in stack.</param>
+        /// <returns></returns>
+        public static DaggerfallUnityItem CreateGoldPieces(int amount)
+        {
+            DaggerfallUnityItem newItem = CreateItem(ItemGroups.Currency, (int)Currency.Gold_pieces);
+            newItem.stackCount = amount;
+
+            return newItem;
+        }
+
+        /// <summary>
         /// Sets a random variant of item.
         /// </summary>
         /// <param name="item">Item to randomize variant.</param>

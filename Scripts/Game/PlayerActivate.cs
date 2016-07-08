@@ -102,6 +102,15 @@ namespace DaggerfallWorkshop.Game
                         {
                             action.Receive(this.gameObject, DaggerfallAction.TriggerTypes.Direct);
                         }
+
+                        // Check for lootable object hit
+                        DaggerfallLoot loot;
+                        if (LootCheck(hits[i], out loot))
+                        {
+                            // Open inventory window with loot as remote target
+                            DaggerfallUI.Instance.InventoryWindow.LootTarget = loot;
+                            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+                        }
                     }
                 }
             }
@@ -152,6 +161,16 @@ namespace DaggerfallWorkshop.Game
             // Look for action
             action = hitInfo.transform.GetComponent<DaggerfallAction>();
             if (action == null)
+                return false;
+            else
+                return true;
+        }
+
+        // Check if raycast hit a lootable object
+        private bool LootCheck(RaycastHit hitInfo, out DaggerfallLoot loot)
+        {
+            loot = hitInfo.transform.GetComponent<DaggerfallLoot>();
+            if (loot == null)
                 return false;
             else
                 return true;
