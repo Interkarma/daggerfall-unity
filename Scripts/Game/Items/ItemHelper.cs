@@ -603,7 +603,7 @@ namespace DaggerfallWorkshop.Game.Items
         public void AssignStartingGear(PlayerEntity playerEntity)
         {
             // Get references
-            EntityItems items = playerEntity.Items;
+            ItemCollection items = playerEntity.Items;
             ItemEquipTable equipTable = playerEntity.ItemEquipTable;
 
             // Starting clothes are gender-specific

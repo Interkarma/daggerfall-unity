@@ -235,11 +235,12 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         public long loadID;
         public LootContainerTypes containerType;
+        public LootContainerImages containerImage;
         public Vector3 currentPosition;
         public int textureArchive;
         public int textureRecord;
         public string lootTableKey;
-        public DaggerfallUnityItem[] itemList;
+        public ItemData_v1[] items;
     }
 
     #endregion

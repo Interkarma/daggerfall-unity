@@ -166,6 +166,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
             StartCoroutine(LoadGame(saveData));
+
+            // Notify
+            DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
         }
 
         #endregion

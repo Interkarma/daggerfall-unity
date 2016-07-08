@@ -118,6 +118,11 @@ namespace DaggerfallWorkshop.Game
             get { return dfHUD; }
         }
 
+        public DaggerfallInventoryWindow InventoryWindow
+        {
+            get { return dfInventoryWindow; }
+        }
+
         public enum PopupStyle
         {
             Parchment,

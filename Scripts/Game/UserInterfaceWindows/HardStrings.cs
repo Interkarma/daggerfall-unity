@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string loadGame = "Load Game";
         public const string thingJustDied = "%s just died.";
         public const string gameSaved = "Game saved.";
+        public const string gameLoaded = "Game loaded.";
         public const string thisHouseHasNothingOfValue = "This house has nothing of value.";
         public const string findLocationPrompt = "Enter name of place : ";
         public const string equippingWeapon = "Equipping %s";

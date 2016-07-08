@@ -12,6 +12,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop
@@ -38,12 +39,13 @@ namespace DaggerfallWorkshop
         };
 
         public LootContainerTypes ContainerType = LootContainerTypes.Nothing;
+        public LootContainerImages ContainerImage = LootContainerImages.Chest;
         public string LootTableKey = string.Empty;
         public int TextureArchive = 0;
         public int TextureRecord = 0;
 
         long loadID = 0;
-        List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
+        ItemCollection items = new ItemCollection();
 
         public long LoadID
         {
@@ -51,9 +53,22 @@ namespace DaggerfallWorkshop
             set { loadID = value; }
         }
 
-        public List<DaggerfallUnityItem> Items
+        public ItemCollection Items
         {
             get { return items; }
+        }
+
+        /// <summary>
+        /// Regenerates items in this container based on loot table key.
+        /// Existing items will be destroyed.
+        /// </summary>
+        public void GenerateItems()
+        {
+            int playerLevel = GameManager.Instance.PlayerEntity.Level;
+            LootChanceMatrix matrix = LootTables.GetMatrix(LootTableKey);
+            DaggerfallUnityItem[] newitems = LootTables.GenerateRandomLoot(matrix, playerLevel);
+
+            items.Import(newitems);
         }
     }
 }

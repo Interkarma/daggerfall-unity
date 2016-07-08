@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected DaggerfallUnity DaggerfallUnity
         {
-            get { return dfUnity; }
+            get { return (dfUnity != null) ? dfUnity : dfUnity = DaggerfallUnity.Instance; }
         }
 
         protected bool IsSetup

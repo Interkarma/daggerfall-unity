@@ -273,7 +273,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="data">UID array exactly this.equipTableLength in length.</param>
         /// <param name="items">Item collection.</param>
-        public void DeserializeEquipTable(ulong[] data, EntityItems items)
+        public void DeserializeEquipTable(ulong[] data, ItemCollection items)
         {
             if (data == null || items == null || data.Length != equipTableLength)
                 return;
