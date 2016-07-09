@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game
             EnemyBasics.ReverseCorpseTexture(corpseTexture, out archive, out record);
 
             // Spawn corpse marker
-            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, transform.parent, true);
+            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, transform.parent);
             go.transform.position = transform.position;
 
             // Align to ground. Be generous with distance as flying enemies might have a way to drop.

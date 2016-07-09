@@ -248,13 +248,13 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
-        public static GameObject CreateDaggerfallBillboardGameObject(int archive, int record, Transform parent, bool dungeon = false)
+        public static GameObject CreateDaggerfallBillboardGameObject(int archive, int record, Transform parent)
         {
             GameObject go = new GameObject(string.Format("DaggerfallBillboard [TEXTURE.{0:000}, Index={1}]", archive, record));
             if (parent) go.transform.parent = parent;
 
             DaggerfallBillboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
-            dfBillboard.SetMaterial(archive, record, 0, dungeon);
+            dfBillboard.SetMaterial(archive, record);
 
             return go;
         }
@@ -464,9 +464,35 @@ namespace DaggerfallWorkshop.Utility
 
         #region Treasure Helpers
 
-        public static GameObject CreateLootContainer()
+        public static GameObject CreateLootContainer(
+            LootContainerTypes containerType,
+            InventoryContainerImages containerImage,
+            Vector3 position,
+            string name,
+            Transform parent,
+            int textureArchive,
+            int textureRecord,
+            ulong loadID = 0)
         {
-            throw new System.NotImplementedException();
+            // Setup initial loot container prefab
+            GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_LootContainerPrefab.gameObject, name, parent, position);
+
+            // Setup billboard component
+            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            dfBillboard.SetMaterial(textureArchive, textureRecord);
+
+            // Setup DaggerfallLoot component to make lootable
+            DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
+            if (loot)
+            {
+                loot.LoadID = loadID;
+                loot.ContainerType = containerType;
+                loot.ContainerImage = containerImage;
+                loot.TextureArchive = textureArchive;
+                loot.TextureRecord = textureRecord;
+            }
+
+            return go;
         }
 
         #endregion

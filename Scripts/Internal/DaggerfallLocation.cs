@@ -240,12 +240,12 @@ namespace DaggerfallWorkshop
                 if (db.Summary.FlatType == FlatTypes.Nature)
                 {
                     // Apply recalculated nature archive
-                    db.SetMaterial(natureArchive, db.Summary.Record, 0, db.Summary.InDungeon);
+                    db.SetMaterial(natureArchive, db.Summary.Record);
                 }
                 else
                 {
                     // All other flats are just reapplied to handle any other changes
-                    db.SetMaterial(db.Summary.Archive, db.Summary.Record, 0, db.Summary.InDungeon);
+                    db.SetMaterial(db.Summary.Archive, db.Summary.Record);
                 }
             }
 

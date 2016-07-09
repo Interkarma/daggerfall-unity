@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore billboard appearance if present
             if (billboard)
             {
-                billboard.SetMaterial(data.textureArchive, data.textureRecord, 0, true);
+                billboard.SetMaterial(data.textureArchive, data.textureRecord);
             }
 
             // Restore items

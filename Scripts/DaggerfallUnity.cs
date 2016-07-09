@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop
         public bool Option_ImportEnemyPrefabs = true;
         public DaggerfallEnemy Option_EnemyPrefab = null;
         public bool Option_ImportRandomTreasure = true;
-        public DaggerfallLoot Option_RandomTreasurePrefab = null;
+        public DaggerfallLoot Option_LootContainerPrefab = null;
 
         // Time and space options
         public bool Option_AutomateTextureSwaps = true;

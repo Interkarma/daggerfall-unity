@@ -579,7 +579,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Handle small cart - the template image for this is not correct
                 // Correct image actually in CIF files
-                return DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Wagon);
+                return DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
             }
             else
             {
@@ -659,10 +659,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 default:
                 case RemoteTargetTypes.Dropped:
-                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Ground);
+                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Ground);
                     break;
                 case RemoteTargetTypes.Wagon:
-                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Wagon);
+                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
                     break;
                 case RemoteTargetTypes.Loot:
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(lootTarget.ContainerImage);

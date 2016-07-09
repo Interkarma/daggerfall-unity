@@ -499,7 +499,7 @@ namespace DaggerfallWorkshop
     /// Not sure if all of these are used.
     /// May change at a later date.
     /// </summary>
-    public enum LootContainerImages
+    public enum InventoryContainerImages
     {
         Corpse1,
         Corpse2,

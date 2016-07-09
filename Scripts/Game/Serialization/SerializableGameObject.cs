@@ -235,7 +235,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         public ulong loadID;
         public LootContainerTypes containerType;
-        public LootContainerImages containerImage;
+        public InventoryContainerImages containerImage;
         public Vector3 currentPosition;
         public int textureArchive;
         public int textureRecord;

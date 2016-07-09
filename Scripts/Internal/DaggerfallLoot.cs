@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop
         };
 
         public LootContainerTypes ContainerType = LootContainerTypes.Nothing;
-        public LootContainerImages ContainerImage = LootContainerImages.Chest;
+        public InventoryContainerImages ContainerImage = InventoryContainerImages.Chest;
         public string LootTableKey = string.Empty;
         public int TextureArchive = 0;
         public int TextureRecord = 0;

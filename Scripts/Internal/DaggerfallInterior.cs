@@ -271,7 +271,11 @@ namespace DaggerfallWorkshop
             {
                 // Spawn billboard gameobject
                 GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
+
+                // Set position
+                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
                 go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+                go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
                 // Add to enter marker list, which is TEXTURE.199, index 8.
                 // Sometimes marker 199.4 is used where the 199.8 enter marker should be
@@ -295,7 +299,11 @@ namespace DaggerfallWorkshop
             {
                 // Spawn billboard gameobject
                 GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
+
+                // Set position
+                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
                 go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+                go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
             }
         }
 
