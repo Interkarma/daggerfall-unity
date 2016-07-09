@@ -230,9 +230,9 @@ namespace DaggerfallWorkshop.Utility
                     if (obj.Type == DFBlock.RdbResourceTypes.Model)
                     {
                         // Create unique LoadID for save sytem
-                        long loadID = 0;
+                        ulong loadID = 0;
                         if (serialize)
-                            loadID = (blockData.Index << 24) + obj.This;
+                            loadID = (ulong)(blockData.Position + obj.This);
 
                         // Look for action doors
                         int modelReference = obj.Resources.ModelResource.ModelIndex;
@@ -764,9 +764,9 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Create unique LoadID for save sytem
-            long loadID = 0;
+            ulong loadID = 0;
             if (serialize)
-                loadID = (blockData.Index << 24) + rdbObj.This;
+                loadID = (ulong)((blockData.Index << 24) + rdbObj.This);
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
@@ -807,9 +807,9 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Create unique LoadID for save sytem
-            long loadID = 0;
+            ulong loadID = 0;
             if (serialize)
-                loadID = (blockData.Index << 24) + rdbObj.This;
+                loadID = (ulong)((blockData.Index << 24) + rdbObj.This);
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
@@ -824,7 +824,7 @@ namespace DaggerfallWorkshop.Utility
             int axis_raw,
             DFBlock.RdbTriggerFlags triggerFlag,
             DFBlock.RdbActionFlags actionFlag,
-            long loadID = 0
+            ulong loadID = 0
             )
         {
             DaggerfallAction action = go.AddComponent<DaggerfallAction>();
@@ -993,7 +993,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Adds action door to scene.
         /// </summary>
-        private static GameObject AddActionDoor(DaggerfallUnity dfUnity, uint modelId, DFBlock.RdbObject obj, Transform parent, long loadID = 0)
+        private static GameObject AddActionDoor(DaggerfallUnity dfUnity, uint modelId, DFBlock.RdbObject obj, Transform parent, ulong loadID = 0)
         {
             if (dfUnity.Option_DungeonDoorPrefab == null)
                 return null;
@@ -1152,9 +1152,9 @@ namespace DaggerfallWorkshop.Utility
                 MobileTypes type = table.Enemies[UnityEngine.Random.Range(minMonsterIndex, maxMonsterIndex)];
 
                 // Create unique LoadID for save sytem
-                long loadID = 0;
+                ulong loadID = 0;
                 if (serialize)
-                    loadID = (blockData.Index << 24) + obj.This;
+                    loadID = (ulong)(blockData.Position + obj.This);
 
                 // Add enemy
                 AddEnemy(obj, type, parent, loadID);
@@ -1173,9 +1173,9 @@ namespace DaggerfallWorkshop.Utility
                 return;
 
             // Create unique LoadID for save sytem
-            long loadID = 0;
+            ulong loadID = 0;
             if (serialize)
-                loadID = (blockData.Index << 24) + obj.This;
+                loadID = (ulong)(blockData.Position + obj.This);
 
             // Cast to enum
             MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionMobileId & 0xff);
@@ -1187,7 +1187,7 @@ namespace DaggerfallWorkshop.Utility
             DFBlock.RdbObject obj,
             MobileTypes type,
             Transform parent = null,
-            long loadID = 0)
+            ulong loadID = 0)
         {
             // Get default reaction
             MobileReactions reaction = MobileReactions.Hostile;
@@ -1220,9 +1220,9 @@ namespace DaggerfallWorkshop.Utility
         private static void AddRandomTreasure(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, bool serialize)
         {
             // Create unique LoadID for save sytem
-            long loadID = 0;
+            ulong loadID = 0;
             if (serialize)
-                loadID = (blockData.Index << 24) + obj.This;
+                loadID = (ulong)(blockData.Position + obj.This);
 
             // Setup initial treasure prefab
             string name = "DaggerfallRandomTreasure";

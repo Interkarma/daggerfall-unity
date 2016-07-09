@@ -44,10 +44,10 @@ namespace DaggerfallWorkshop
         public int TextureArchive = 0;
         public int TextureRecord = 0;
 
-        long loadID = 0;
+        ulong loadID = 0;
         ItemCollection items = new ItemCollection();
 
-        public long LoadID
+        public ulong LoadID
         {
             get { return loadID; }
             set { loadID = value; }

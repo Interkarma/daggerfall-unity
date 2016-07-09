@@ -19,9 +19,9 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaggerfallEnemy : MonoBehaviour
     {
-        long loadID = 0;
+        ulong loadID = 0;
 
-        public long LoadID
+        public ulong LoadID
         {
             get { return loadID; }
             set { loadID = value; }

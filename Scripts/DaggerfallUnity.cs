@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITextProvider textProvider = new DefaultTextProvider();
 
-        const ulong startingUID = 0x8000;
+        const ulong startingUID = 0x2000000;
         static ulong currentUID = startingUID;
 
         #endregion

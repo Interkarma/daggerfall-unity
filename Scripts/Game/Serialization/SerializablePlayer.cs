@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region ISerializableGameObject
 
-        public long LoadID { get { return 1; } }            // Only saves local player
+        public ulong LoadID { get { return 1; } }            // Only saves local player
         public bool ShouldSave { get { return true; } }     // Always save player
 
         public object GetSaveData()

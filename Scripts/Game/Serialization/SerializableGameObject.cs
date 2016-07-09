@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// Serialization class may not have enough information by itself to generate LoadID.
         /// e.g. It may be necessary for scene builder to create a unique LoadID during procedural layout.
         /// </summary>
-        long LoadID { get; }
+        ulong LoadID { get; }
 
         /// <summary>
         /// Return true if object should be saved.
@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class ActionDoorData_v1
     {
-        public long loadID;
+        public ulong loadID;
         public int currentLockValue;
         public Quaternion currentRotation;
         public ActionState currentState;
@@ -198,7 +198,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class ActionObjectData_v1
     {
-        public long loadID;
+        public ulong loadID;
         public Vector3 currentPosition;
         public Quaternion currentRotation;
         public ActionState currentState;
@@ -212,7 +212,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class EnemyData_v1
     {
-        public long loadID;
+        public ulong loadID;
         public Vector3 currentPosition;
         public Quaternion currentRotation;
         public bool isDead;
@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class LootContainerData_v1
     {
-        public long loadID;
+        public ulong loadID;
         public LootContainerTypes containerType;
         public LootContainerImages containerImage;
         public Vector3 currentPosition;

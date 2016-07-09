@@ -314,7 +314,8 @@ namespace DaggerfallConnect.Arena2
             // Set record type
             blocks[block].DFBlock.Type = GetBlockType(block);
 
-            // Set self index
+            // Set record position and index
+            blocks[block].DFBlock.Position = bsaFile.GetRecordPosition(block);
             blocks[block].DFBlock.Index = block;
 
             // Read record

@@ -462,6 +462,15 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
+        #region Treasure Helpers
+
+        public static GameObject CreateLootContainer()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #endregion
+
         /// <summary>
         /// Create a billboard batch.
         /// </summary>

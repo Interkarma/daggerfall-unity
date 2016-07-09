@@ -310,7 +310,7 @@ namespace DaggerfallWorkshop
             foreach (DFBlock.RmbBlockDoorRecord obj in recordData.Interior.BlockDoorRecords)
             {
                 // Create unique LoadID for save sytem
-                long loadID = (blockData.Index << 24) + obj.This;
+                ulong loadID = (ulong)(blockData.Position + obj.This);
 
                 // Get model transform
                 Vector3 modelRotation = new Vector3(0, -obj.YRotation / BlocksFile.RotationDivisor, 0);

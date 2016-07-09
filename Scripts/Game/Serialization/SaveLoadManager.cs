@@ -35,10 +35,10 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         // Serializable objects in scene
         SerializablePlayer serializablePlayer;
-        Dictionary<long, SerializableActionDoor> serializableActionDoors = new Dictionary<long, SerializableActionDoor>();
-        Dictionary<long, SerializableActionObject> serializableActionObjects = new Dictionary<long, SerializableActionObject>();
-        Dictionary<long, SerializableEnemy> serializableEnemies = new Dictionary<long, SerializableEnemy>();
-        Dictionary<long, SerializableLootContainer> serializableLootContainers = new Dictionary<long, SerializableLootContainer>();
+        Dictionary<ulong, SerializableActionDoor> serializableActionDoors = new Dictionary<ulong, SerializableActionDoor>();
+        Dictionary<ulong, SerializableActionObject> serializableActionObjects = new Dictionary<ulong, SerializableActionObject>();
+        Dictionary<ulong, SerializableEnemy> serializableEnemies = new Dictionary<ulong, SerializableEnemy>();
+        Dictionary<ulong, SerializableLootContainer> serializableLootContainers = new Dictionary<ulong, SerializableLootContainer>();
 
         string unitySavePath = string.Empty;
         string daggerfallSavePath = string.Empty;
@@ -548,7 +548,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             for(int i = 0; i < actionDoors.Length; i++)
             {
-                long key = actionDoors[i].loadID;
+                ulong key = actionDoors[i].loadID;
                 if (serializableActionDoors.ContainsKey(key))
                 {
                     serializableActionDoors[key].RestoreSaveData(actionDoors[i]);
@@ -563,7 +563,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             for (int i = 0; i < actionObjects.Length; i++)
             {
-                long key = actionObjects[i].loadID;
+                ulong key = actionObjects[i].loadID;
                 if (serializableActionObjects.ContainsKey(key))
                 {
                     serializableActionObjects[key].RestoreSaveData(actionObjects[i]);
@@ -578,7 +578,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             for (int i = 0; i < enemies.Length; i++)
             {
-                long key = enemies[i].loadID;
+                ulong key = enemies[i].loadID;
                 if (serializableEnemies.ContainsKey(key))
                 {
                     serializableEnemies[key].RestoreSaveData(enemies[i]);
@@ -593,7 +593,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             for (int i = 0; i < lootContainers.Length; i++)
             {
-                long key = lootContainers[i].loadID;
+                ulong key = lootContainers[i].loadID;
                 if (serializableLootContainers.ContainsKey(key))
                 {
                     serializableLootContainers[key].RestoreSaveData(lootContainers[i]);
