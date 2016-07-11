@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region ISerializableGameObject
 
-        public long LoadID { get { return GetLoadID(); } }
+        public ulong LoadID { get { return GetLoadID(); } }
         public bool ShouldSave { get { return HasChanged(); } }
 
         public object GetSaveData()
@@ -154,7 +154,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             return save;
         }
 
-        long GetLoadID()
+        ulong GetLoadID()
         {
             if (!enemy)
                 return 0;

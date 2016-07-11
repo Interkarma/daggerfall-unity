@@ -230,9 +230,9 @@ namespace DaggerfallWorkshop.Utility
                     if (obj.Type == DFBlock.RdbResourceTypes.Model)
                     {
                         // Create unique LoadID for save sytem
-                        long loadID = 0;
+                        ulong loadID = 0;
                         if (serialize)
-                            loadID = (blockData.Index << 24) + obj.This;
+                            loadID = (ulong)(blockData.Position + obj.This);
 
                         // Look for action doors
                         int modelReference = obj.Resources.ModelResource.ModelIndex;
@@ -364,6 +364,35 @@ namespace DaggerfallWorkshop.Utility
             editorObjectsOut = editorObjects.ToArray();
             startMarkersOut = startMarkers.ToArray();
             enterMarkersOut = enterMarkers.ToArray();
+        }
+
+        public static void AddTreasure(
+            GameObject go,
+            DFBlock.RdbObject[] editorObjects,
+            ref DFBlock blockData,
+            bool serialize = true)
+        {
+            const int randomTreasureFlatIndex = 19;
+
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Must have import enabled and prefab set
+            if (!dfUnity.Option_ImportRandomTreasure || dfUnity.Option_LootContainerPrefab == null)
+                return;
+
+            // Add parent node
+            GameObject randomTreasureNode = new GameObject("Random Treasure");
+            randomTreasureNode.transform.parent = go.transform;
+
+            // Iterate editor flats for random treasure
+            for (int i = 0; i < editorObjects.Length; i++)
+            {
+                // Add treasure flat
+                if (editorObjects[i].Resources.FlatResource.TextureRecord == randomTreasureFlatIndex)
+                    AddRandomTreasure(editorObjects[i], randomTreasureNode.transform, ref blockData, serialize);
+            }
         }
 
         /// <summary>
@@ -696,8 +725,6 @@ namespace DaggerfallWorkshop.Utility
             action.ActionTranslation = vector * MeshReader.GlobalScale;
         }
 
-
-
         private static void AddActionModelHelper(
             GameObject go,
             Dictionary<int, ActionLink> actionLinkDict,
@@ -737,9 +764,9 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Create unique LoadID for save sytem
-            long loadID = 0;
+            ulong loadID = 0;
             if (serialize)
-                loadID = (blockData.Index << 24) + rdbObj.This;
+                loadID = (ulong)((blockData.Index << 24) + rdbObj.This);
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
@@ -780,9 +807,9 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Create unique LoadID for save sytem
-            long loadID = 0;
+            ulong loadID = 0;
             if (serialize)
-                loadID = (blockData.Index << 24) + rdbObj.This;
+                loadID = (ulong)((blockData.Index << 24) + rdbObj.This);
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
@@ -797,7 +824,7 @@ namespace DaggerfallWorkshop.Utility
             int axis_raw,
             DFBlock.RdbTriggerFlags triggerFlag,
             DFBlock.RdbActionFlags actionFlag,
-            long loadID = 0
+            ulong loadID = 0
             )
         {
             DaggerfallAction action = go.AddComponent<DaggerfallAction>();
@@ -966,7 +993,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Adds action door to scene.
         /// </summary>
-        private static GameObject AddActionDoor(DaggerfallUnity dfUnity, uint modelId, DFBlock.RdbObject obj, Transform parent, long loadID = 0)
+        private static GameObject AddActionDoor(DaggerfallUnity dfUnity, uint modelId, DFBlock.RdbObject obj, Transform parent, ulong loadID = 0)
         {
             if (dfUnity.Option_DungeonDoorPrefab == null)
                 return null;
@@ -1030,13 +1057,18 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
-        private static GameObject AddFlat(DFBlock.RdbObject obj, Transform parent)
+        private static GameObject AddFlat(DFBlock.RdbObject obj, Transform parent, int archive = -1, int record = -1)
         {
-            int archive = obj.Resources.FlatResource.TextureArchive;
-            int record = obj.Resources.FlatResource.TextureRecord;
+            // Use default archive index if not specified
+            if (archive == -1)
+                archive = obj.Resources.FlatResource.TextureArchive;
+
+            // Use default record index if not specified
+            if (record == -1)
+                record = obj.Resources.FlatResource.TextureRecord;
 
             // Spawn billboard gameobject
-            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent, true);
+            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent);
             Vector3 billboardPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
 
             // Add RDB data to billboard
@@ -1120,9 +1152,9 @@ namespace DaggerfallWorkshop.Utility
                 MobileTypes type = table.Enemies[UnityEngine.Random.Range(minMonsterIndex, maxMonsterIndex)];
 
                 // Create unique LoadID for save sytem
-                long loadID = 0;
+                ulong loadID = 0;
                 if (serialize)
-                    loadID = (blockData.Index << 24) + obj.This;
+                    loadID = (ulong)(blockData.Position + obj.This);
 
                 // Add enemy
                 AddEnemy(obj, type, parent, loadID);
@@ -1141,9 +1173,9 @@ namespace DaggerfallWorkshop.Utility
                 return;
 
             // Create unique LoadID for save sytem
-            long loadID = 0;
+            ulong loadID = 0;
             if (serialize)
-                loadID = (blockData.Index << 24) + obj.This;
+                loadID = (ulong)(blockData.Position + obj.This);
 
             // Cast to enum
             MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionMobileId & 0xff);
@@ -1155,7 +1187,7 @@ namespace DaggerfallWorkshop.Utility
             DFBlock.RdbObject obj,
             MobileTypes type,
             Transform parent = null,
-            long loadID = 0)
+            ulong loadID = 0)
         {
             // Get default reaction
             MobileReactions reaction = MobileReactions.Hostile;
@@ -1183,6 +1215,44 @@ namespace DaggerfallWorkshop.Utility
             {
                 enemy.LoadID = loadID;
             }
+        }
+
+        private static void AddRandomTreasure(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, bool serialize)
+        {
+            // Create unique LoadID for save sytem
+            ulong loadID = 0;
+            if (serialize)
+                loadID = (ulong)(blockData.Position + obj.This);
+
+            // Randomise container texture
+            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLoot.randomTreasureIconIndices.Length);
+            int iconRecord = DaggerfallLoot.randomTreasureIconIndices[iconIndex];
+
+            // Create random loot container
+            string name = "RandomTreasure";
+            Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+            GameObject go = GameObjectHelper.CreateLootContainer(
+                LootContainerTypes.RandomTreasure,
+                InventoryContainerImages.Chest,
+                position,
+                name,
+                parent,
+                DaggerfallLoot.randomTreasureArchive, iconRecord, loadID);
+
+            // Generate items
+            DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
+            loot.LootTableKey = "O";
+            loot.GenerateItems();
+
+            // Find bottom of marker in world space
+            // Marker is aligned to surface and has a constant size (40x40)
+            Vector3 pos = go.transform.position;
+            pos.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
+
+            // Now move up loot icon by half own size so bottom is aligned with surface
+            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            pos.y += (dfBillboard.Summary.Size.y / 2f);
+            go.transform.position = pos;
         }
 
         #endregion

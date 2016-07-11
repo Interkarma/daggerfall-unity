@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// Serialization class may not have enough information by itself to generate LoadID.
         /// e.g. It may be necessary for scene builder to create a unique LoadID during procedural layout.
         /// </summary>
-        long LoadID { get; }
+        ulong LoadID { get; }
 
         /// <summary>
         /// Return true if object should be saved.
@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public PlayerData_v1 playerData;
         public DungeonData_v1 dungeonData;
         public EnemyData_v1[] enemyData;
+        public LootContainerData_v1[] lootContainers;
     }
 
     #endregion
@@ -183,7 +184,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class ActionDoorData_v1
     {
-        public long loadID;
+        public ulong loadID;
         public int currentLockValue;
         public Quaternion currentRotation;
         public ActionState currentState;
@@ -197,7 +198,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class ActionObjectData_v1
     {
-        public long loadID;
+        public ulong loadID;
         public Vector3 currentPosition;
         public Quaternion currentRotation;
         public ActionState currentState;
@@ -211,7 +212,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class EnemyData_v1
     {
-        public long loadID;
+        public ulong loadID;
         public Vector3 currentPosition;
         public Quaternion currentRotation;
         public bool isDead;
@@ -223,6 +224,23 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string careerName;
         public int careerIndex;
         public bool isHostile;
+    }
+
+    #endregion
+
+    #region Loot Data
+
+    [fsObject("v1")]
+    public class LootContainerData_v1
+    {
+        public ulong loadID;
+        public LootContainerTypes containerType;
+        public InventoryContainerImages containerImage;
+        public Vector3 currentPosition;
+        public int textureArchive;
+        public int textureRecord;
+        public string lootTableKey;
+        public ItemData_v1[] items;
     }
 
     #endregion

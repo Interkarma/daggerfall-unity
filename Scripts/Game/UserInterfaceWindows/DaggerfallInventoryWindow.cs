@@ -148,12 +148,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         TabPages selectedTabPage = TabPages.WeaponsAndArmor;
         ActionModes selectedActionMode = ActionModes.Equip;
-        //ItemTargets remoteTarget = ItemTargets.None;
+        RemoteTargetTypes remoteTargetType = RemoteTargetTypes.Dropped;
 
-        EntityItems localItems = null;
-        EntityItems remoteItems = null;
+        ItemCollection localItems = null;
+        ItemCollection remoteItems = null;
+        ItemCollection droppedItems = new ItemCollection();
         List<DaggerfallUnityItem> localItemsFiltered = new List<DaggerfallUnityItem>();
         List<DaggerfallUnityItem> remoteItemsFiltered = new List<DaggerfallUnityItem>();
+
+        DaggerfallLoot lootTarget = null;
 
         int lastMouseOverPaperDollEquipIndex = -1;
 
@@ -169,11 +172,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Ingredients,
         }
 
-        enum ItemTargets
+        enum RemoteTargetTypes
         {
-            None,
-            Player,
+            Dropped,
             Wagon,
+            Loot,
         }
 
         enum ActionModes
@@ -191,6 +194,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public PlayerEntity PlayerEntity
         {
             get { return (playerEntity != null) ? playerEntity : playerEntity = GameManager.Instance.PlayerEntity; }
+        }
+
+        /// <summary>
+        /// Gets or sets specific loot to view on next open.
+        /// Otherwise will default to ground for dropping items.
+        /// </summary>
+        public DaggerfallLoot LootTarget
+        {
+            get { return lootTarget; }
+            set { lootTarget = value; }
         }
 
         #endregion
@@ -243,18 +256,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //localTargetIconPanel = DaggerfallUI.AddPanel(localTargetIconRect, NativePanel);
             remoteTargetIconPanel = DaggerfallUI.AddPanel(remoteTargetIconRect, NativePanel);
 
-            // Set initial state
+            // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
             SelectActionMode(ActionModes.Equip);
-            SetLocalTarget(ItemTargets.Player);
-            SetRemoteTarget(ItemTargets.Wagon);
 
-            // Update item lists
+            // Setup initial display
             FilterLocalItems();
             FilterRemoteItems();
             UpdateLocalItemsDisplay();
             UpdateRemoteItemsDisplay();
             UpdateAccessoryItemsDisplay();
+            UpdateRemoteTargetIcon();
         }
 
         void SetupTabPageButtons()
@@ -449,7 +461,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
+            // Local items always points to player inventory
+            localItems = PlayerEntity.Items;
+
+            // Start a new dropped items target
+            droppedItems.Clear();
+            remoteItems = droppedItems;
+            remoteTargetType = RemoteTargetTypes.Dropped;
+
+            // Use custom loot target if specified
+            if (lootTarget != null)
+            {
+                remoteItems = lootTarget.Items;
+                remoteTargetType = RemoteTargetTypes.Loot;
+            }
+
+            // Refresh window
             Refresh();
+        }
+
+        public override void OnPop()
+        {
+            // Clear any loot target on exit
+            lootTarget = null;
+            
+            // TODO: Generate serializable loot pile in world for dropped items
+            if (droppedItems.Count > 0)
+            {
+            }
         }
 
         #endregion
@@ -462,17 +501,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public void Refresh(bool refreshPaperDoll = true)
         {
-            playerEntity = GameManager.Instance.PlayerEntity;
-            if (IsSetup)
-            {
-                FilterLocalItems();
-                FilterRemoteItems();
-                UpdateLocalItemsDisplay();
-                UpdateRemoteItemsDisplay();
-                UpdateAccessoryItemsDisplay();
-                if (refreshPaperDoll)
-                    paperDoll.Refresh();
-            }
+            if (!IsSetup)
+                return;
+
+            // Refresh items display
+            FilterLocalItems();
+            FilterRemoteItems();
+            UpdateLocalItemsDisplay();
+            UpdateRemoteItemsDisplay();
+            UpdateAccessoryItemsDisplay();
+
+            // Refresh remote target icon
+            UpdateRemoteTargetIcon();
+
+            // Refresh paper doll
+            if (refreshPaperDoll)
+                paperDoll.Refresh();
         }
 
         #endregion
@@ -535,7 +579,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Handle small cart - the template image for this is not correct
                 // Correct image actually in CIF files
-                return DaggerfallUnity.ItemHelper.GetContainerImage(ContainerTypes.Wagon);
+                return DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
             }
             else
             {
@@ -608,36 +652,83 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetLocalTarget(ItemTargets target)
+        void UpdateRemoteTargetIcon()
         {
-            // Only player supported for now
-            if (target == ItemTargets.Player)
+            ImageData containerImage;
+            switch (remoteTargetType)
             {
-                localItems = playerEntity.Items;
+                default:
+                case RemoteTargetTypes.Dropped:
+                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Ground);
+                    break;
+                case RemoteTargetTypes.Wagon:
+                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
+                    break;
+                case RemoteTargetTypes.Loot:
+                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(lootTarget.ContainerImage);
+                    break;
             }
+
+            remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
         }
 
-        void SetRemoteTarget(ItemTargets target)
-        {
-            //remoteTarget = target;
+        //void SetLocalTarget(ItemTargets target)
+        //{
+        //    // Only player supported for now
+        //    if (target == ItemTargets.Player)
+        //    {
+        //        localItems = PlayerEntity.Items;
+        //    }
+        //}
 
-            // Clear selections
-            wagonButton.BackgroundTexture = wagonNotSelected;
+        //void SetRemoteTarget(ItemTargets target)
+        //{
+        //    //remoteTarget = target;
 
-            // Only wagon supported for now
-            if (target == ItemTargets.Wagon)
-            {
-                // Show wagon icon
-                ImageData containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(ContainerTypes.Wagon);
-                remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
+        //    // Clear selections
+        //    wagonButton.BackgroundTexture = wagonNotSelected;
 
-                // Highlight wagon button
-                wagonButton.BackgroundTexture = wagonSelected;
+        //    // Only wagon and ground supported for now
+        //    if (target == ItemTargets.Wagon)
+        //    {
+        //        // Show wagon icon
+        //        ImageData containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Wagon);
+        //        remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
 
-                // Set remote items
-                remoteItems = playerEntity.WagonItems;
-            }
-        }
+        //        // Highlight wagon button
+        //        wagonButton.BackgroundTexture = wagonSelected;
+
+        //        // Set remote items
+        //        remoteItems = playerEntity.WagonItems;
+        //    }
+        //    else if (target == ItemTargets.Ground)
+        //    {
+        //        // Show ground icon
+        //        ImageData containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Ground);
+        //        remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
+
+        //        // TODO: Need to create new loot pile on drop containing items
+        //        // For now just using an empty, volatile container for bootstrapping
+        //        //remoteItems = new ItemCollection();
+        //    }
+        //}
+
+        //void SetRemoteTarget(ItemCollection items, LootContainerImages containerIcon)
+        //{
+        //    // Must be setup
+        //    if (!IsSetup)
+        //        Setup();
+
+        //    // Clear selections
+        //    wagonButton.BackgroundTexture = wagonNotSelected;
+
+        //    // Show icon
+        //    ImageData containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(containerIcon);
+        //    remoteTargetIconPanel.BackgroundTexture = containerImage.texture;
+
+        //    // Set remote items
+        //    remoteItems = items;
+        //}
 
         /// <summary>
         /// Creates filtered list of local items based on view state.
@@ -1026,7 +1117,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void UnequipItem(DaggerfallUnityItem item, bool refreshPaperDoll = true)
         {
             playerEntity.ItemEquipTable.UnequipItem(item.EquipSlot);
-            playerEntity.Items.ReorderItem(item, EntityItems.AddPosition.Front);
+            playerEntity.Items.ReorderItem(item, ItemCollection.AddPosition.Front);
             Refresh(refreshPaperDoll);
         }
 
@@ -1039,7 +1130,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Refresh(false);
         }
 
-        void TransferItem(DaggerfallUnityItem item, EntityItems from, EntityItems to)
+        void TransferItem(DaggerfallUnityItem item, ItemCollection from, ItemCollection to)
         {
             // Block transfer of horse or cart
             if (item.IsOfTemplate(ItemGroups.Transportation, (int)Transportation.Horse) ||

@@ -290,6 +290,23 @@ namespace DaggerfallConnect.Arena2
             writer.Write(buffer);
         }
 
+        /// <summary>
+        /// Get position (offset) of record in BSA file.
+        /// </summary>
+        /// <param name="record">Index of record</param>
+        public long GetRecordPosition(int record)
+        {
+            switch (header.DirectoryType)
+            {
+                case DirectoryTypes.NameRecord:
+                    return nameRecordDirectory[record].RecordPosition;
+                case DirectoryTypes.NumberRecord:
+                    return numberRecordDirectory[record].RecordPosition;
+                default:
+                    return -1;
+            }
+        }
+
         #endregion
 
         #region Internal Methods
@@ -310,27 +327,6 @@ namespace DaggerfallConnect.Arena2
             byte[] buffer = reader.ReadBytes(GetRecordLength(record));
 
             return new FileProxy(buffer, GetRecordName(record));
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Get position (offset) of record in BSA file.
-        /// </summary>
-        /// <param name="record">Index of record</param>
-        private long GetRecordPosition(int record)
-        {
-            switch (header.DirectoryType)
-            {
-                case DirectoryTypes.NameRecord:
-                    return nameRecordDirectory[record].RecordPosition;
-                case DirectoryTypes.NumberRecord:
-                    return numberRecordDirectory[record].RecordPosition;
-                default:
-                    return -1;
-            }
         }
 
         #endregion

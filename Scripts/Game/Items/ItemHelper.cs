@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.Items
 
         List<ItemTemplate> itemTemplates = new List<ItemTemplate>();
         Dictionary<int, ImageData> itemImages = new Dictionary<int, ImageData>();
-        Dictionary<ContainerTypes, ImageData> containerImages = new Dictionary<ContainerTypes, ImageData>();
+        Dictionary<InventoryContainerImages, ImageData> containerImages = new Dictionary<InventoryContainerImages, ImageData>();
 
         #endregion
 
@@ -159,6 +159,13 @@ namespace DaggerfallWorkshop.Game.Items
                 }
             }
 
+            // Gold pieces use world texture indices
+            if (item.ItemGroup == ItemGroups.Currency && item.TemplateIndex == (int)Currency.Gold_pieces)
+            {
+                archive = item.ItemTemplate.worldTextureArchive;
+                record = item.ItemTemplate.worldTextureRecord;
+            }
+
             // Get unique key
             int key = MakeImageKey(color, archive, record, removeMask);
 
@@ -213,7 +220,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="type">Container type.</param>
         /// <returns>ImageData.</returns>
-        public ImageData GetContainerImage(ContainerTypes type)
+        public ImageData GetContainerImage(InventoryContainerImages type)
         {
             // Get existing icon if in cache
             if (containerImages.ContainsKey(type))
@@ -603,7 +610,7 @@ namespace DaggerfallWorkshop.Game.Items
         public void AssignStartingGear(PlayerEntity playerEntity)
         {
             // Get references
-            EntityItems items = playerEntity.Items;
+            ItemCollection items = playerEntity.Items;
             ItemEquipTable equipTable = playerEntity.ItemEquipTable;
 
             // Starting clothes are gender-specific

@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop
             public int CurrentFrame;                            // Current animation frame
             public FlatTypes FlatType;                          // Type of flat
             public EditorFlatTypes EditorFlatType;              // Sub-type of flat when editor/marker
-            public bool InDungeon;                              // Billboard is inside a dungeon
+            //public bool InDungeon;                              // Billboard is inside a dungeon
             public bool IsMobile;                               // Billboard is a mobile enemy
             public int Archive;                                 // Texture archive index
             public int Record;                                  // Texture record index
@@ -177,9 +177,8 @@ namespace DaggerfallWorkshop
         /// <param name="archive">Texture archive index.</param>
         /// <param name="record">Texture record index.</param>
         /// <param name="frame">Frame index.</param>
-        /// <param name="dungeon">This is a dungeon billboard.</param>
         /// <returns>Material.</returns>
-        public Material SetMaterial(int archive, int record, int frame, bool dungeon)
+        public Material SetMaterial(int archive, int record, int frame = 0)
         {
             // Get DaggerfallUnity
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -209,8 +208,7 @@ namespace DaggerfallWorkshop
                     summary.AtlasRects[summary.AtlasIndices[record].startIndex],
                     archive,
                     record,
-                    out size,
-                    dungeon);
+                    out size);
                 summary.AtlasedMaterial = true;
                 if (summary.AtlasIndices[record].frameCount > 1)
                     summary.AnimatedMaterial = true;
@@ -231,8 +229,7 @@ namespace DaggerfallWorkshop
                     summary.Rect,
                     archive,
                     record,
-                    out size,
-                    dungeon);
+                    out size);
                 summary.AtlasedMaterial = false;
                 summary.AnimatedMaterial = false;
             }
@@ -241,7 +238,7 @@ namespace DaggerfallWorkshop
             MaterialReader.SetBlendMode(material, MaterialReader.CustomBlendMode.Cutout);
 
             // Set summary
-            summary.InDungeon = dungeon;
+            //summary.InDungeon = dungeon;
             summary.FlatType = MaterialReader.GetFlatType(archive);
             summary.Archive = archive;
             summary.Record = record;

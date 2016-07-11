@@ -35,9 +35,10 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         // Serializable objects in scene
         SerializablePlayer serializablePlayer;
-        Dictionary<long, SerializableActionDoor> serializableActionDoors = new Dictionary<long, SerializableActionDoor>();
-        Dictionary<long, SerializableActionObject> serializableActionObjects = new Dictionary<long, SerializableActionObject>();
-        Dictionary<long, SerializableEnemy> serializableEnemies = new Dictionary<long, SerializableEnemy>();
+        Dictionary<ulong, SerializableActionDoor> serializableActionDoors = new Dictionary<ulong, SerializableActionDoor>();
+        Dictionary<ulong, SerializableActionObject> serializableActionObjects = new Dictionary<ulong, SerializableActionObject>();
+        Dictionary<ulong, SerializableEnemy> serializableEnemies = new Dictionary<ulong, SerializableEnemy>();
+        Dictionary<ulong, SerializableLootContainer> serializableLootContainers = new Dictionary<ulong, SerializableLootContainer>();
 
         string unitySavePath = string.Empty;
         string daggerfallSavePath = string.Empty;
@@ -165,6 +166,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
             StartCoroutine(LoadGame(saveData));
+
+            // Notify
+            DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
         }
 
         #endregion
@@ -199,6 +203,8 @@ namespace DaggerfallWorkshop.Game.Serialization
                 AddSerializableActionObject(serializableObject as SerializableActionObject);
             else if (serializableObject is SerializableEnemy)
                 AddSerializableEnemy(serializableObject as SerializableEnemy);
+            else if (serializableObject is SerializableLootContainer)
+                AddSerializableLootContainer(serializableObject as SerializableLootContainer);
         }
 
         /// <summary>
@@ -218,6 +224,8 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Instance.serializableActionObjects.Remove(serializableObject.LoadID);
             else if (serializableObject is SerializableEnemy)
                 Instance.serializableEnemies.Remove(serializableObject.LoadID);
+            else if (serializableObject is SerializableEnemy)
+                Instance.serializableLootContainers.Remove(serializableObject.LoadID);
         }
 
         /// <summary>
@@ -236,6 +244,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             Instance.serializableActionDoors.Clear();
             Instance.serializableActionObjects.Clear();
             Instance.serializableEnemies.Clear();
+            Instance.serializableLootContainers.Clear();
         }
 
         #endregion
@@ -276,6 +285,18 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             Instance.serializableEnemies.Add(serializableObject.LoadID, serializableObject);
+        }
+
+        private static void AddSerializableLootContainer(SerializableLootContainer serializableObject)
+        {
+            if (Instance.serializableLootContainers.ContainsKey(serializableObject.LoadID))
+            {
+                string message = string.Format(duplicateLoadIDErrorText, "AddSerializableLootContainer()", serializableObject.LoadID);
+                DaggerfallUnity.LogMessage(message);
+                return;
+            }
+
+            Instance.serializableLootContainers.Add(serializableObject.LoadID, serializableObject);
         }
 
         #endregion
@@ -397,6 +418,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.playerData = GetPlayerData();
             saveData.dungeonData = GetDungeonData();
             saveData.enemyData = GetEnemyData();
+            saveData.lootContainers = GetLootContainerData();
 
             return saveData;
         }
@@ -466,6 +488,19 @@ namespace DaggerfallWorkshop.Game.Serialization
             return enemies.ToArray();
         }
 
+        LootContainerData_v1[] GetLootContainerData()
+        {
+            List<LootContainerData_v1> containers = new List<LootContainerData_v1>();
+
+            foreach (var value in serializableLootContainers.Values)
+            {
+                if (value.ShouldSave)
+                    containers.Add((LootContainerData_v1)value.GetSaveData());
+            }
+
+            return containers.ToArray();
+        }
+
         #endregion
 
         #region Loading
@@ -477,6 +512,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             RestorePlayerData(saveData.playerData);
             RestoreDungeonData(saveData.dungeonData);
             RestoreEnemyData(saveData.enemyData);
+            RestoreLootContainerData(saveData.lootContainers);
         }
 
         void RestoreDateTimeData(DateAndTime_v1 dateTimeData)
@@ -512,7 +548,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             for(int i = 0; i < actionDoors.Length; i++)
             {
-                long key = actionDoors[i].loadID;
+                ulong key = actionDoors[i].loadID;
                 if (serializableActionDoors.ContainsKey(key))
                 {
                     serializableActionDoors[key].RestoreSaveData(actionDoors[i]);
@@ -527,7 +563,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             for (int i = 0; i < actionObjects.Length; i++)
             {
-                long key = actionObjects[i].loadID;
+                ulong key = actionObjects[i].loadID;
                 if (serializableActionObjects.ContainsKey(key))
                 {
                     serializableActionObjects[key].RestoreSaveData(actionObjects[i]);
@@ -540,12 +576,27 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (enemies == null || enemies.Length == 0)
                 return;
 
-            for (int i = 0; i <enemies.Length; i++)
+            for (int i = 0; i < enemies.Length; i++)
             {
-                long key = enemies[i].loadID;
+                ulong key = enemies[i].loadID;
                 if (serializableEnemies.ContainsKey(key))
                 {
                     serializableEnemies[key].RestoreSaveData(enemies[i]);
+                }
+            }
+        }
+
+        void RestoreLootContainerData(LootContainerData_v1[] lootContainers)
+        {
+            if (lootContainers == null || lootContainers.Length == 0)
+                return;
+
+            for (int i = 0; i < lootContainers.Length; i++)
+            {
+                ulong key = lootContainers[i].loadID;
+                if (serializableLootContainers.ContainsKey(key))
+                {
+                    serializableLootContainers[key].RestoreSaveData(lootContainers[i]);
                 }
             }
         }

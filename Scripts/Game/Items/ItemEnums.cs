@@ -427,7 +427,7 @@ namespace DaggerfallWorkshop.Game.Items
         Spider_venom = 41,
         Troll_blood = 42,
         Snake_venom = 43,
-        Grogon_snake = 44,
+        Gorgon_snake = 44,
         Lich_dust = 45,
         Giant_blood = 50,
         Basilisk_eye = 51,
