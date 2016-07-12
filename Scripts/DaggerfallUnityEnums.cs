@@ -535,4 +535,14 @@ namespace DaggerfallWorkshop
         DrawByHand,     // Draws based on hand equipped
         DuelWield,      // Draws based on hand plus dual-wield
     }
+
+    /// <summary>
+    /// Basic context of world object, such as dropped loot.
+    /// </summary>
+    public enum WorldContext
+    {
+        Exterior,
+        Interior,
+        Dungeon,
+    }
 }

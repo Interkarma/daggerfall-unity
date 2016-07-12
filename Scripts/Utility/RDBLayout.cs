@@ -1228,31 +1228,25 @@ namespace DaggerfallWorkshop.Utility
             int iconIndex = UnityEngine.Random.Range(0, DaggerfallLoot.randomTreasureIconIndices.Length);
             int iconRecord = DaggerfallLoot.randomTreasureIconIndices[iconIndex];
 
-            // Create random loot container
-            string name = "RandomTreasure";
+            // Find bottom of marker in world space
+            // Marker is aligned to surface and has a constant size (40x40)
             Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-            GameObject go = GameObjectHelper.CreateLootContainer(
+            position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
+
+            // Create random loot container
+            DaggerfallLoot loot = GameObjectHelper.CreateLootContainer(
                 LootContainerTypes.RandomTreasure,
                 InventoryContainerImages.Chest,
                 position,
-                name,
+                "RandomTreasure",
                 parent,
-                DaggerfallLoot.randomTreasureArchive, iconRecord, loadID);
+                DaggerfallLoot.randomTreasureArchive,
+                iconRecord,
+                loadID);
 
             // Generate items
-            DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();
             loot.LootTableKey = "O";
             loot.GenerateItems();
-
-            // Find bottom of marker in world space
-            // Marker is aligned to surface and has a constant size (40x40)
-            Vector3 pos = go.transform.position;
-            pos.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
-
-            // Now move up loot icon by half own size so bottom is aligned with surface
-            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-            pos.y += (dfBillboard.Summary.Size.y / 2f);
-            go.transform.position = pos;
         }
 
         #endregion

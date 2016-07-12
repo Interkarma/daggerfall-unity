@@ -420,6 +420,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign items to player entity
             playerEntity.AssignItems(saveTree);
 
+            // Assign gold pieces
+            playerEntity.GoldPieces = (int)characterRecord.ParsedData.physicalGold;
+
             // Start game
             DaggerfallUI.Instance.PopToHUD();
             GameManager.Instance.PauseGame(false);

@@ -12,10 +12,14 @@
 #define KEEP_PREFAB_LINKS
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -464,7 +468,19 @@ namespace DaggerfallWorkshop.Utility
 
         #region Treasure Helpers
 
-        public static GameObject CreateLootContainer(
+        /// <summary>
+        /// Creates a generic loot container.
+        /// </summary>
+        /// <param name="containerType">Type of container.</param>
+        /// <param name="containerImage">Icon to display in loot UI.</param>
+        /// <param name="position">Position to spawn container.</param>
+        /// <param name="name">Name of container.</param>
+        /// <param name="parent">Parent GameObject.</param>
+        /// <param name="textureArchive">Texture archive for billboard containers.</param>
+        /// <param name="textureRecord">Texture record for billboard containers.</param>
+        /// <param name="loadID">Unique LoadID for save system.</param>
+        /// <returns>DaggerfallLoot.</returns>
+        public static DaggerfallLoot CreateLootContainer(
             LootContainerTypes containerType,
             InventoryContainerImages containerImage,
             Vector3 position,
@@ -492,7 +508,70 @@ namespace DaggerfallWorkshop.Utility
                 loot.TextureRecord = textureRecord;
             }
 
-            return go;
+            // Now move up loot icon by half own size so bottom is aligned with position
+            position.y += (dfBillboard.Summary.Size.y / 2f);
+            loot.transform.position = position;
+
+            return loot;
+        }
+
+        /// <summary>
+        /// Creates a loot container for items dropped by the player.
+        /// </summary>
+        /// <param name="player">Player object, must have PlayerEnterExit and PlayerMotor attached.</param>
+        /// <param name="items">Item collection for dropped loot.</param>
+        /// <param name="loadID">Unique LoadID for save system.</param>
+        /// <returns>DaggerfallLoot.</returns>
+        public static DaggerfallLoot CreateDroppedLootContainer(GameObject player, ItemCollection items, ulong loadID = 0)
+        {
+            // Player must have a PlayerEnterExit component
+            PlayerEnterExit playerEnterExit = player.GetComponent<PlayerEnterExit>();
+            if (!playerEnterExit)
+                throw new Exception("CreateDroppedLootContainer() player game object must have PlayerEnterExit component.");
+
+            // Player must have a PlayerMotor component
+            PlayerMotor playerMotor = player.GetComponent<PlayerMotor>();
+            if (!playerMotor)
+                throw new Exception("CreateDroppedLootContainer() player game object must have PlayerMotor component.");
+
+            // Get parent by context
+            Transform parent = null;
+            if (GameManager.Instance.IsPlayerInside)
+            {
+                if (GameManager.Instance.IsPlayerInsideDungeon)
+                    parent = playerEnterExit.Dungeon.transform;
+                else
+                    parent = playerEnterExit.Interior.transform;
+            }
+            else
+            {
+                throw new Exception("TODO: Exterior dropped loot");
+            }
+
+            // Randomise container texture
+            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLoot.randomTreasureIconIndices.Length);
+            int iconRecord = DaggerfallLoot.randomTreasureIconIndices[iconIndex];
+
+            // Find ground position below player
+            Vector3 position = playerMotor.FindGroundPosition();
+
+            // Create loot container
+            DaggerfallLoot loot = CreateLootContainer(
+                LootContainerTypes.DroppedLoot,
+                InventoryContainerImages.Chest,
+                position,
+                "DroppedLoot",
+                parent,
+                DaggerfallLoot.randomTreasureArchive,
+                iconRecord,
+                loadID);
+
+            // Set properties
+            loot.LoadID = loadID;
+            loot.LootTableKey = string.Empty;
+            loot.Items.TransferAll(items);
+
+            return loot;
         }
 
         #endregion

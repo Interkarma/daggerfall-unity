@@ -294,6 +294,21 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// Attempts to find the ground position below player, even if player is jumping/falling
+        /// </summary>
+        /// <param name="distance">Distance to fire ray.</param>
+        /// <returns>Hit point on surface below player, or player position if hit not found in distance.</returns>
+        public Vector3 FindGroundPosition(float distance = 10)
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position, Vector3.down);
+            if (Physics.Raycast(ray, out hit, distance))
+                return hit.point;
+
+            return transform.position;
+        }
+
         // Snap player to ground
         public bool FixStanding(float extraHeight = 0, float extraDistance = 0)
         {
