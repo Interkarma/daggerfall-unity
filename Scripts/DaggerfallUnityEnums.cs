@@ -541,6 +541,7 @@ namespace DaggerfallWorkshop
     /// </summary>
     public enum WorldContext
     {
+        Nothing,
         Exterior,
         Interior,
         Dungeon,

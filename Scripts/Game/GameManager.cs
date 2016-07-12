@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game
 
         bool isGamePaused = false;
         float savedTimeScale;
-        Texture2D pauseScreenshot;
+        //Texture2D pauseScreenshot;
 
         GameObject playerObject = null;
         Camera mainCamera = null;
@@ -320,7 +320,6 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-
             if (!IsPlayingGame())
                 return;
 
@@ -328,7 +327,7 @@ namespace DaggerfallWorkshop.Game
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
-                StartCoroutine(TakeScreenshot());
+                //StartCoroutine(TakeScreenshot());
             }
 
             // Handle in-game windows
@@ -457,15 +456,15 @@ namespace DaggerfallWorkshop.Game
             return true;
         }
 
-        // Takes a screenshot at end of current frame
-        IEnumerator TakeScreenshot()
-        {
-            yield return new WaitForEndOfFrame();
+        //// Takes a screenshot at end of current frame
+        //IEnumerator TakeScreenshot()
+        //{
+        //    yield return new WaitForEndOfFrame();
 
-            pauseScreenshot = new Texture2D(Screen.width, Screen.height);
-            pauseScreenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-            pauseScreenshot.Apply();
-        }
+        //    pauseScreenshot = new Texture2D(Screen.width, Screen.height);
+        //    pauseScreenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        //    pauseScreenshot.Apply();
+        //}
 
         /// <summary>
         /// Checks all of the GameManager's properties at start up.

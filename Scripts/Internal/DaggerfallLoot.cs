@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop
         public string LootTableKey = string.Empty;
         public int TextureArchive = 0;
         public int TextureRecord = 0;
+        public bool playerOwned = false;
 
         ulong loadID = 0;
         ItemCollection items = new ItemCollection();

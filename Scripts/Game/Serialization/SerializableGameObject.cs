@@ -244,6 +244,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int textureArchive;
         public int textureRecord;
         public string lootTableKey;
+        public bool playerOwned;
         public ItemData_v1[] items;
     }
 
