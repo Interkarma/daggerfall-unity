@@ -38,8 +38,7 @@ namespace DaggerfallWorkshop.Game.Utility
             }
             else
             {
-                Application.LoadLevel(GameSceneIndex);
-                //SceneManager.LoadScene(GameSceneIndex);
+                SceneManager.LoadScene(GameSceneIndex);
             }
         }
 

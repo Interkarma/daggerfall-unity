@@ -10,7 +10,7 @@
 //
 
 using UnityEngine;
-//using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement;
 using System;
 using System.IO;
 using System.Collections;
@@ -585,8 +585,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 //    ShowSummaryPanel();
                 //    break;
                 case SetupStages.LaunchGame:
-                    Application.LoadLevel(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
-                    //SceneManager.LoadScene(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
+                    SceneManager.LoadScene(DaggerfallWorkshop.Game.Utility.SceneControl.GameSceneIndex);
                     break;
             }
         }
@@ -727,7 +726,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void RestartButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUnity.Settings.MyDaggerfallPath = string.Empty;
-            Application.LoadLevel(Utility.SceneControl.StartupSceneIndex);
+            SceneManager.LoadScene(Utility.SceneControl.StartupSceneIndex);
         }
 
         //just a quick way to list all the mods loaded during setup
