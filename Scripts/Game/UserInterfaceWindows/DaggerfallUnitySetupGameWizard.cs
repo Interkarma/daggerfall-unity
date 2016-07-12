@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -487,6 +488,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             restartButton.HorizontalAlignment = HorizontalAlignment.Left;
             restartButton.OnMouseClick += RestartButton_OnMouseClick;
             optionsPanel.Components.Add(restartButton);
+
+            Button ShowModsButton = new Button();
+            ShowModsButton.Label.Text = "Mods";
+            ShowModsButton.Position = new Vector2(0, optionsConfirmButton.Position.y);
+            ShowModsButton.HorizontalAlignment = HorizontalAlignment.Left;
+            ShowModsButton.Size = optionsConfirmButton.Size;
+            ShowModsButton.BackgroundColor = optionsConfirmButton.BackgroundColor;
+            ShowModsButton.Label.TextColor = optionsConfirmButton.Label.TextColor;
+            ShowModsButton.Outline.Enabled = true;
+            optionsPanel.Components.Add(ShowModsButton);
+            ShowModsButton.OnMouseClick += ModsButton_OnOnMouseBlick;
+
         }
 
         //void ShowSummaryPanel()
@@ -577,6 +590,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
             }
         }
+
+
 
         #endregion
 
@@ -715,6 +730,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Application.LoadLevel(Utility.SceneControl.StartupSceneIndex);
         }
 
+        //just a quick way to list all the mods loaded during setup
+        private void ModsButton_OnOnMouseBlick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (optionsPanel.Enabled)
+            {
+                ModLoaderInterfaceWindow modLoaderWindow = new ModLoaderInterfaceWindow(DaggerfallUI.UIManager);
+                DaggerfallUI.UIManager.PushWindow(modLoaderWindow);
+            }
+        }
         #endregion
     }
 }
