@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// Serialization class may not have enough information by itself to generate LoadID.
         /// e.g. It may be necessary for scene builder to create a unique LoadID during procedural layout.
         /// </summary>
-        long LoadID { get; }
+        ulong LoadID { get; }
 
         /// <summary>
         /// Return true if object should be saved.
@@ -121,6 +121,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ItemData_v1[] items;
         public ItemData_v1[] wagonItems;
         public ItemData_v1[] otherItems;
+        public int goldPieces;
     }
 
     [fsObject("v1")]
@@ -184,7 +185,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class ActionDoorData_v1
     {
-        public long loadID;
+        public ulong loadID;
         public int currentLockValue;
         public Quaternion currentRotation;
         public ActionState currentState;
@@ -198,7 +199,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class ActionObjectData_v1
     {
-        public long loadID;
+        public ulong loadID;
         public Vector3 currentPosition;
         public Quaternion currentRotation;
         public ActionState currentState;
@@ -212,7 +213,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class EnemyData_v1
     {
-        public long loadID;
+        public ulong loadID;
         public Vector3 currentPosition;
         public Quaternion currentRotation;
         public bool isDead;
@@ -233,13 +234,17 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class LootContainerData_v1
     {
-        public long loadID;
+        public ulong loadID;
+        public int worldKey;
+        public WorldContext worldContext;
         public LootContainerTypes containerType;
-        public LootContainerImages containerImage;
+        public InventoryContainerImages containerImage;
         public Vector3 currentPosition;
+        public Vector3 localPosition;
         public int textureArchive;
         public int textureRecord;
         public string lootTableKey;
+        public bool playerOwned;
         public ItemData_v1[] items;
     }
 

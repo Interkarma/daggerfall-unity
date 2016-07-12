@@ -302,7 +302,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             useButton.OnMouseClick += UseButton_OnMouseClick;
 
             goldButton = DaggerfallUI.AddButton(goldButtonRect, NativePanel);
-            goldButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+            goldButton.OnMouseClick += GoldButton_OnMouseClick;
+            //goldButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
         }
 
         void SetupScrollBars()
@@ -488,6 +489,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // TODO: Generate serializable loot pile in world for dropped items
             if (droppedItems.Count > 0)
             {
+                GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, droppedItems, DaggerfallUnity.NextUID);
             }
         }
 
@@ -579,7 +581,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Handle small cart - the template image for this is not correct
                 // Correct image actually in CIF files
-                return DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Wagon);
+                return DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
             }
             else
             {
@@ -659,10 +661,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 default:
                 case RemoteTargetTypes.Dropped:
-                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Ground);
+                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Ground);
                     break;
                 case RemoteTargetTypes.Wagon:
-                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(LootContainerImages.Wagon);
+                    containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
                     break;
                 case RemoteTargetTypes.Loot:
                     containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(lootTarget.ContainerImage);
@@ -1036,6 +1038,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void UseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectActionMode(ActionModes.Use);
+        }
+
+        private void GoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // TODO: Drop gold popup UI
         }
 
         #endregion

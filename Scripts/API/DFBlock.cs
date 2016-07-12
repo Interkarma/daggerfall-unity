@@ -25,6 +25,11 @@ namespace DaggerfallConnect
         #region Structure Variables
 
         /// <summary>
+        /// Starting offset of the block in BLOCKS.BSA.
+        /// </summary>
+        public long Position;
+
+        /// <summary>
         /// Index of the block in BLOCKS.BSA.
         /// </summary>
         public int Index;

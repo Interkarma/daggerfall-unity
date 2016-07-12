@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop
 
         ActionState currentState;
         int startingLockValue = 0;                      // if > 0, is locked.
-        long loadID = 0;
+        ulong loadID = 0;
 
         Quaternion startingRotation;
         AudioSource audioSource;
@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop
             set { startingLockValue = CurrentLockValue = value; }
         }
 
-        public long LoadID
+        public ulong LoadID
         {
             get { return loadID; }
             set { loadID = value; }

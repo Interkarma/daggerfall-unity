@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop
         public GameObject NextObject;                                               // Next object in action chain
         public GameObject PreviousObject;                                           // Previous object in action chain
 
-        long loadID = 0;
+        ulong loadID = 0;
         Vector3 startingPosition;
         Quaternion startingRotation;
 
@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop
 
 
 
-        public long LoadID
+        public ulong LoadID
         {
             get { return loadID; }
             set { loadID = value; }

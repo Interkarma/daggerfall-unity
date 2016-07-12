@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITextProvider textProvider = new DefaultTextProvider();
 
-        const ulong startingUID = 0x1000;
+        const ulong startingUID = 0x2000000;
         static ulong currentUID = startingUID;
 
         #endregion
@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop
         public bool Option_ImportEnemyPrefabs = true;
         public DaggerfallEnemy Option_EnemyPrefab = null;
         public bool Option_ImportRandomTreasure = true;
-        public DaggerfallLoot Option_RandomTreasurePrefab = null;
+        public DaggerfallLoot Option_LootContainerPrefab = null;
 
         // Time and space options
         public bool Option_AutomateTextureSwaps = true;

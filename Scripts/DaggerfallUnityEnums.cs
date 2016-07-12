@@ -499,7 +499,7 @@ namespace DaggerfallWorkshop
     /// Not sure if all of these are used.
     /// May change at a later date.
     /// </summary>
-    public enum LootContainerImages
+    public enum InventoryContainerImages
     {
         Corpse1,
         Corpse2,
@@ -534,5 +534,16 @@ namespace DaggerfallWorkshop
         DrawLeft,       // Same as classic, but drawn in left hand
         DrawByHand,     // Draws based on hand equipped
         DuelWield,      // Draws based on hand plus dual-wield
+    }
+
+    /// <summary>
+    /// Basic context of world object, such as dropped loot.
+    /// </summary>
+    public enum WorldContext
+    {
+        Nothing,
+        Exterior,
+        Interior,
+        Dungeon,
     }
 }

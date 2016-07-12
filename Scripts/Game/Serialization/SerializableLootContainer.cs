@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region ISerializableGameObject
 
-        public long LoadID { get { return GetLoadID(); } }
+        public ulong LoadID { get { return GetLoadID(); } }
         public bool ShouldSave { get { return HasChanged(); } }
 
         public object GetSaveData()
@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.textureArchive = loot.TextureArchive;
             data.textureRecord = loot.TextureRecord;
             data.lootTableKey = loot.LootTableKey;
+            data.playerOwned = loot.playerOwned;
             data.items = loot.Items.SerializeItems();
 
             return data;
@@ -88,7 +89,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore billboard appearance if present
             if (billboard)
             {
-                billboard.SetMaterial(data.textureArchive, data.textureRecord, 0, true);
+                billboard.SetMaterial(data.textureArchive, data.textureRecord);
             }
 
             // Restore items
@@ -114,7 +115,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             return true;
         }
 
-        long GetLoadID()
+        ulong GetLoadID()
         {
             return loot.LoadID;
         }

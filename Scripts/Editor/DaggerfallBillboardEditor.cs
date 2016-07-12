@@ -68,17 +68,17 @@ namespace DaggerfallWorkshop
                         EditorGUILayout.LabelField("Index", GUILayout.Width(EditorGUIUtility.labelWidth - 4));
                         EditorGUILayout.SelectableLabel(dfBillboard.Summary.Record.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
-                    GUILayoutHelper.Horizontal(() =>
-                    {
-                        EditorGUILayout.LabelField("In Dungeon", GUILayout.Width(EditorGUIUtility.labelWidth - 4));
-                        EditorGUILayout.SelectableLabel(dfBillboard.Summary.InDungeon.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                    });
+                    //GUILayoutHelper.Horizontal(() =>
+                    //{
+                    //    EditorGUILayout.LabelField("In Dungeon", GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                    //    EditorGUILayout.SelectableLabel(dfBillboard.Summary.InDungeon.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                    //});
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField("Is Mobile", GUILayout.Width(EditorGUIUtility.labelWidth - 4));
                         EditorGUILayout.SelectableLabel(dfBillboard.Summary.IsMobile.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
-                    if (dfBillboard.Summary.InDungeon && dfBillboard.Summary.IsMobile)
+                    if (dfBillboard.Summary.IsMobile)
                     {
                         GUILayoutHelper.Horizontal(() =>
                         {

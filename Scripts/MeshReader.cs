@@ -295,9 +295,8 @@ namespace DaggerfallWorkshop
         /// <param name="archive">Texture archive index. Only used to calculate size.</param>
         /// <param name="record">Texture record index. Only used to calculate size.</param>
         /// <param name="sizeOut">Size of billboard in world units.</param>
-        /// <param name="dungeon">Set true for proper scaling of dungeon nature flats.</param>
         /// <returns>Mesh object or null.</returns>
-        public Mesh GetBillboardMesh(Rect rect, int archive, int record, out Vector2 sizeOut, bool dungeon = false)
+        public Mesh GetBillboardMesh(Rect rect, int archive, int record, out Vector2 sizeOut)
         {
             sizeOut = Vector2.zero;
 
@@ -334,23 +333,23 @@ namespace DaggerfallWorkshop
             // Store sizeOut
             sizeOut = finalSize * MeshReader.GlobalScale;
 
-            // Nature (TEXTURE.500 and up) do not use scaling in dungeons. Revert scaling.
-            if (dungeon && archive > 499)
-                finalSize = size;
+            //// Nature (TEXTURE.500 and up) do not use scaling in dungeons. Revert scaling.
+            //if (dungeon && archive > 499)
+            //    finalSize = size;
 
             // Calcuate offset for correct positioning in scene
-            Vector3 offset = Vector3.zero;
-            if (!dungeon)
-                offset.y = (finalSize.y / 2) * GlobalScale;
+            //Vector3 offset = Vector3.zero;
+            //if (!dungeon)
+            //    offset.y = (finalSize.y / 2) * GlobalScale;
 
             // Vertices
             float hx = (finalSize.x / 2) * GlobalScale;
             float hy = (finalSize.y / 2) * GlobalScale;
             Vector3[] vertices = new Vector3[4];
-            vertices[0] = new Vector3(hx, hy, 0) + offset;
-            vertices[1] = new Vector3(-hx, hy, 0) + offset;
-            vertices[2] = new Vector3(hx, -hy, 0) + offset;
-            vertices[3] = new Vector3(-hx, -hy, 0) + offset;
+            vertices[0] = new Vector3(hx, hy, 0);// + offset;
+            vertices[1] = new Vector3(-hx, hy, 0);// + offset;
+            vertices[2] = new Vector3(hx, -hy, 0);// + offset;
+            vertices[3] = new Vector3(-hx, -hy, 0);// + offset;
 
             // Indices
             int[] indices = new int[6]

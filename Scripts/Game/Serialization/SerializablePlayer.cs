@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region ISerializableGameObject
 
-        public long LoadID { get { return 1; } }            // Only saves local player
+        public ulong LoadID { get { return 1; } }            // Only saves local player
         public bool ShouldSave { get { return true; } }     // Always save player
 
         public object GetSaveData()
@@ -109,6 +109,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.items = entity.Items.SerializeItems();
             data.playerEntity.wagonItems = entity.WagonItems.SerializeItems();
             data.playerEntity.otherItems = entity.OtherItems.SerializeItems();
+            data.playerEntity.goldPieces = entity.GoldPieces;
 
             // Store player position data
             data.playerPosition = new PlayerPositionData_v1();
@@ -157,6 +158,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.WagonItems.DeserializeItems(data.playerEntity.wagonItems);
             entity.OtherItems.DeserializeItems(data.playerEntity.otherItems);
             entity.ItemEquipTable.DeserializeEquipTable(data.playerEntity.equipTable, entity.Items);
+            entity.GoldPieces = data.playerEntity.goldPieces;
 
             // Flag determines if player position is restored
             bool restorePlayerPosition = true;

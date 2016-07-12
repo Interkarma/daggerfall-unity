@@ -226,14 +226,14 @@ namespace DaggerfallWorkshop
 
                 // Random treasure
                 var propImportRandomTreasure = Prop("Option_ImportRandomTreasure");
-                var propRandomTreasurePrefab = Prop("Option_RandomTreasurePrefab");
+                var propLootContainerPrefab = Prop("Option_LootContainerPrefab");
                 EditorGUILayout.Space();
                 propImportRandomTreasure.boolValue = EditorGUILayout.Toggle(new GUIContent("Import Random Treasure", "Import random treasure piles into scene."), propImportRandomTreasure.boolValue);
                 GUILayoutHelper.EnableGroup(propImportRandomTreasure.boolValue, () =>
                 {
                     GUILayoutHelper.Indent(() =>
                     {
-                        propRandomTreasurePrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Random Treasure", "Prefab for random treasure."), propRandomTreasurePrefab.objectReferenceValue, typeof(DaggerfallLoot), false);
+                        propLootContainerPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Loot Container", "Prefab for random treasure loot containers."), propLootContainerPrefab.objectReferenceValue, typeof(DaggerfallLoot), false);
                     });
                 });
 
