@@ -546,4 +546,21 @@ namespace DaggerfallWorkshop
         Interior,
         Dungeon,
     }
+
+    /// Tags set by button on DaggerfallUnity Inspector - not guarenteed to equal their enum value
+    /// </summary>
+    public enum Tags
+    {
+        //ExampleTag00,
+    }
+
+    /// <summary>
+    /// Layers set by button on DaggerfallUnity Inspector- should always equal their enum value
+    /// </summary>
+    public enum Layers
+    {
+        //ExampleLayer08  = 8,
+        Automap = 31
+    }
+
 }
