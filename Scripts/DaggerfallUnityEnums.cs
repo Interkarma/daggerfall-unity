@@ -560,7 +560,9 @@ namespace DaggerfallWorkshop
     public enum Layers
     {
         //ExampleLayer08  = 8,
-        Automap = 31
+        SkyLayer = 8,
+        WorldTerrain = 9,
+        Automap = 10,
     }
 
 }
