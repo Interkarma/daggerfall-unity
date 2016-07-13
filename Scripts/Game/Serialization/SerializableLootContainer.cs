@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.textureArchive = loot.TextureArchive;
             data.textureRecord = loot.TextureRecord;
             data.lootTableKey = loot.LootTableKey;
+            data.playerOwned = loot.playerOwned;
             data.items = loot.Items.SerializeItems();
 
             return data;

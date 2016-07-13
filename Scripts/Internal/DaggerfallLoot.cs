@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop
         // May be expanded later
         public static int[] randomTreasureIconIndices = new int[]
         {
-            0, 1, 2, 20, 22, 23, 24, 25, 26, 27, 28, 30, 37, 46, 47
+            0, 1, 20, 22, 23, 24, 25, 26, 27, 28, 30, 37, 46, 47
         };
 
         public LootContainerTypes ContainerType = LootContainerTypes.Nothing;
@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop
         public string LootTableKey = string.Empty;
         public int TextureArchive = 0;
         public int TextureRecord = 0;
+        public bool playerOwned = false;
 
         ulong loadID = 0;
         ItemCollection items = new ItemCollection();

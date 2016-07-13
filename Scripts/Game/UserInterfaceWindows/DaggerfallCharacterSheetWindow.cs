@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel raceLabel = new TextLabel();
         TextLabel classLabel = new TextLabel();
         TextLabel levelLabel = new TextLabel();
-        //TextLabel goldLabel = new TextLabel();
+        TextLabel goldLabel = new TextLabel();
         TextLabel fatigueLabel = new TextLabel();
         TextLabel healthLabel = new TextLabel();
         //TextLabel encumbranceLabel = new TextLabel();
@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             raceLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(41, 14), NativePanel);
             classLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(46, 24), NativePanel);
             levelLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(45, 34), NativePanel);
-            //goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(39, 44), NativePanel);
+            goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(39, 44), NativePanel);
             fatigueLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(57, 54), NativePanel);
             healthLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(52, 64), NativePanel);
             //encumbranceLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(90, 74), NativePanel);
@@ -239,6 +239,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             raceLabel.Text = PlayerEntity.RaceTemplate.Name;
             classLabel.Text = PlayerEntity.Career.Name;
             levelLabel.Text = PlayerEntity.Level.ToString();
+            goldLabel.Text = PlayerEntity.GoldPieces.ToString();
             fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue, PlayerEntity.MaxFatigue);
             healthLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentHealth, PlayerEntity.MaxHealth);
 

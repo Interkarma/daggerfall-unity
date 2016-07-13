@@ -32,9 +32,10 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        public bool Verbose = false;
         bool isGamePaused = false;
         float savedTimeScale;
-        Texture2D pauseScreenshot;
+        //Texture2D pauseScreenshot;
 
         GameObject playerObject = null;
         Camera mainCamera = null;
@@ -77,7 +78,7 @@ namespace DaggerfallWorkshop.Game
 
         public StateManager StateManager
         {
-            get { return (stateManager != null) ? stateManager : stateManager = new StateManager(StateManager.StateTypes.Start); }
+            get { return (stateManager != null) ? stateManager : stateManager = new StateManager(StateManager.StateTypes.None); }
             set { stateManager = value; }
         }
 
@@ -307,10 +308,17 @@ namespace DaggerfallWorkshop.Game
 
         #region Unity
 
+        void Awake()
+        {
+            if (!SetupSingleton())
+            {
+                Destroy(this);
+                return;
+            }
+        }
+
         void Start()
         {
-            SetupSingleton();
-
             // Try to set all properties at startup
             GetProperties();
 
@@ -320,7 +328,6 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-
             if (!IsPlayingGame())
                 return;
 
@@ -328,7 +335,7 @@ namespace DaggerfallWorkshop.Game
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
-                StartCoroutine(TakeScreenshot());
+                //StartCoroutine(TakeScreenshot());
             }
 
             // Handle in-game windows
@@ -415,10 +422,13 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        private void SetupSingleton()
+        private bool SetupSingleton()
         {
             if (instance == null)
+            {
                 instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
             else if (instance != this)
             {
                 if (Application.isPlaying)
@@ -427,7 +437,11 @@ namespace DaggerfallWorkshop.Game
                     Destroy(gameObject);
                 }
             }
+
+            return instance == this;
         }
+
+
 
         bool IsHUDTopWindow()
         {
@@ -457,15 +471,15 @@ namespace DaggerfallWorkshop.Game
             return true;
         }
 
-        // Takes a screenshot at end of current frame
-        IEnumerator TakeScreenshot()
-        {
-            yield return new WaitForEndOfFrame();
+        //// Takes a screenshot at end of current frame
+        //IEnumerator TakeScreenshot()
+        //{
+        //    yield return new WaitForEndOfFrame();
 
-            pauseScreenshot = new Texture2D(Screen.width, Screen.height);
-            pauseScreenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-            pauseScreenshot.Apply();
-        }
+        //    pauseScreenshot = new Texture2D(Screen.width, Screen.height);
+        //    pauseScreenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        //    pauseScreenshot.Apply();
+        //}
 
         /// <summary>
         /// Checks all of the GameManager's properties at start up.
@@ -477,12 +491,14 @@ namespace DaggerfallWorkshop.Game
             {
                 try
                 {
-                    prop.GetValue(GameManager.instance, null);
-                    //DaggerfallUnity.LogMessage(string.Format("GameManager Startup...property: {0} value: {1}", prop.Name, value), true);
+                    object obj = prop.GetValue(GameManager.instance, null);
+                    if(Verbose)
+                        Debug.Log(string.Format("GameManager Startup...property: {0} value: {1}", prop.Name, obj.ToString()));
                 }
                 catch(Exception ex)
                 {
-                    Debug.Log(string.Format("{0} | GameManager Failed to get value for prop: {1}", ex.Message, prop.Name));
+                    if (Verbose)
+                        Debug.Log(string.Format("{0} | GameManager Failed to get value for prop: {1}", ex.Message, prop.Name));
                 }
             }
 
@@ -491,7 +507,6 @@ namespace DaggerfallWorkshop.Game
                 IsReady = true;
                 DaggerfallUnity.LogMessage("GameManager ready.");
             }
-                
         }
 
         /// <summary>
@@ -525,7 +540,7 @@ namespace DaggerfallWorkshop.Game
             }
             else if(obj == null && string.IsNullOrEmpty(tag))
             {
-                throw new Exception(string.Format("GameManager could not find component type {0} - both object & string were null.", typeof(T), obj.name));  
+                throw new Exception(string.Format("GameManager could not find component type {0} - both object & string were null.", typeof(T), obj.name));
             }
             
             if(obj != null)
@@ -573,6 +588,19 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Event Handlers
+
+        void OnLevelWasLoaded(int index)
+        {
+            //if(index == SceneControl.GameSceneIndex)
+            //{
+            //    StateManager.ChangeState(StateManager.StateTypes.Start);
+            //}
+            //else if(index == SceneControl.StartupSceneIndex)
+            //{
+            //    StateManager.ChangeState(StateManager.StateTypes.Setup);
+            //}
+            GetProperties();
+        }
 
         void PathErrorMessageBox_OnClose()
         {

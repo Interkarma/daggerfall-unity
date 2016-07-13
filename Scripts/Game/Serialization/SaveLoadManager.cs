@@ -21,14 +21,19 @@ namespace DaggerfallWorkshop.Game.Serialization
 {
     /// <summary>
     /// Implements save/load logic.
+    /// Games are saved in PersistentDataPath\Saves\CharacterName\SaveName.
+    /// Each save game will have a screenshot and multiple files.
     /// </summary>
     public class SaveLoadManager : MonoBehaviour
     {
         #region Fields
 
-        const string savesFolder = "Saves";
-        const string quickSaveFilename = "QuickSave.txt";
-        const string autoSaveFilename = "AutoSave.txt";
+        const string rootSaveFolder = "Saves";
+        const string quickSaveFolderName = "QuickSave";
+        const string autoSaveFolderName = "AutoSave";
+        const string saveDataFilename = "SaveData.txt";
+        const string containerDataFilename = "ContainerData.txt";
+        const string screenshotFilename = "Screenshot.jpg";
         const string notReadyExceptionText = "SaveLoad not ready.";
         const string invalidLoadIDExceptionText = "serializableObject does not have a valid LoadID";
         const string duplicateLoadIDErrorText = "{0} detected duplicate LoadID {1}. This object will not be serialized.";
@@ -121,15 +126,28 @@ namespace DaggerfallWorkshop.Game.Serialization
             return true;
         }
 
+        public string GetDestinationSavePath(string characterName, string saveName)
+        {
+            string path = Path.Combine(UnitySavePath, characterName);
+            path = Path.Combine(path, saveName);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            
+            return path;
+        }
+
         public bool HasQuickSave()
         {
             // Must be ready
             if (!IsReady())
                 throw new Exception(notReadyExceptionText);
 
-            string path = Path.Combine(UnitySavePath, quickSaveFilename);
-            if (File.Exists(path))
-                return true;
+            //string path = Path.Combine(UnitySavePath, quickSaveFilename);
+            //if (File.Exists(path))
+            //    return true;
 
             return false;
         }
@@ -140,14 +158,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!IsReady())
                 throw new Exception(notReadyExceptionText);
 
-            // Build save data
-            SaveData_v1 saveData = BuildSaveData();
-
-            // Write save data
-            SaveGame(saveData, Path.Combine(UnitySavePath, quickSaveFilename));
-
-            // Notify
-            DaggerfallUI.Instance.PopupMessage(HardStrings.gameSaved);
+            // Save game
+            StartCoroutine(SaveGame(quickSaveFolderName));
         }
 
         public void QuickLoad()
@@ -156,19 +168,19 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!IsReady())
                 throw new Exception(notReadyExceptionText);
 
-            // Read save data from file
-            string json = ReadSaveFile(Path.Combine(UnitySavePath, quickSaveFilename));
+            //// Read save data from file
+            //string json = ReadSaveFile(Path.Combine(UnitySavePath, quickSaveFilename));
 
-            // Deserialize JSON string to save data
-            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), json) as SaveData_v1;
+            //// Deserialize JSON string to save data
+            //SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), json) as SaveData_v1;
 
-            // Restore save data
-            GameManager.Instance.PauseGame(false);
-            DaggerfallUI.Instance.FadeHUDFromBlack();
-            StartCoroutine(LoadGame(saveData));
+            //// Restore save data
+            //GameManager.Instance.PauseGame(false);
+            //DaggerfallUI.Instance.FadeHUDFromBlack();
+            //StartCoroutine(LoadGame(saveData));
 
-            // Notify
-            DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
+            //// Notify
+            //DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
         }
 
         #endregion
@@ -357,7 +369,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (string.IsNullOrEmpty(result) || !Directory.Exists(result))
             {
                 // Default to dataPath
-                result = Path.Combine(Application.persistentDataPath, savesFolder);
+                result = Path.Combine(Application.persistentDataPath, rootSaveFolder);
                 if (!Directory.Exists(result))
                 {
                     // Attempt to create path
@@ -605,16 +617,36 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Utility
 
-        void SaveGame(SaveData_v1 saveData, string path)
+        IEnumerator SaveGame(string saveName)
         {
-            // Serialize save data to JSON string
-            string json = Serialize(saveData.GetType(), saveData);
+            // Build save data
+            SaveData_v1 saveData = BuildSaveData();
+
+            // Serialize save data to JSON strings
+            string saveDataJson = Serialize(saveData.GetType(), saveData);
+            //string persistentLootDataJson = 
+
+            // Create screenshot for save
+            yield return new WaitForEndOfFrame();
+            Texture2D screenshot = new Texture2D(Screen.width, Screen.height);
+            screenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+            screenshot.Apply();
+
+            // Get destination save path
+            string dstPath = GetDestinationSavePath(saveData.playerData.playerEntity.name, saveName);
 
             // Save data to file
-            WriteSaveFile(path, json);
+            WriteSaveFile(Path.Combine(dstPath, saveDataFilename), saveDataJson);
+
+            // Save screenshot
+            byte[] bytes = screenshot.EncodeToJPG();
+            File.WriteAllBytes(Path.Combine(dstPath, screenshotFilename), bytes);
 
             // Raise OnSaveEvent
             RaiseOnSaveEvent(saveData);
+
+            // Notify
+            DaggerfallUI.Instance.PopupMessage(HardStrings.gameSaved);
         }
 
         IEnumerator LoadGame(SaveData_v1 saveData)

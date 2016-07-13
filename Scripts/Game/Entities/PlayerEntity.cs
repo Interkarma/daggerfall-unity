@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected PlayerReflexes reflexes;
         protected ItemCollection wagonItems = new ItemCollection();
         protected ItemCollection otherItems = new ItemCollection();
+        protected int goldPieces = 0;
 
         #endregion
 
@@ -44,6 +45,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public PlayerReflexes Reflexes { get { return reflexes; } set { reflexes = value; } }
         public ItemCollection WagonItems { get { return wagonItems; } set { wagonItems.ReplaceAll(value); } }
         public ItemCollection OtherItems { get { return otherItems; } set { otherItems.ReplaceAll(value); } }
+        public int GoldPieces { get { return goldPieces; } set { goldPieces = value; } }
 
         #endregion
 
@@ -69,6 +71,7 @@ namespace DaggerfallWorkshop.Game.Entity
             wagonItems.Clear();
             otherItems.Clear();
             SetEntityDefaults();
+            goldPieces = 0;
         }
 
         /// <summary>

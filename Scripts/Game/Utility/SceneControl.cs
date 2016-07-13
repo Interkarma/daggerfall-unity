@@ -10,7 +10,7 @@
 //
 
 using UnityEngine;
-//using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 namespace DaggerfallWorkshop.Game.Utility
@@ -38,9 +38,28 @@ namespace DaggerfallWorkshop.Game.Utility
             }
             else
             {
-                Application.LoadLevel(GameSceneIndex);
-                //SceneManager.LoadScene(GameSceneIndex);
+                SceneManager.LoadScene(GameSceneIndex);
             }
         }
+
+        //if scenes not in build menu, not guarenteed to be correct!
+        public static int GetCurrentSceneIndex()
+        {
+            int index = SceneManager.GetActiveScene().buildIndex;
+            Debug.LogWarning("scene index = " + index);
+            return index;
+        }
+
+        public static bool StartupSceneLoaded()
+        {
+            return GetCurrentSceneIndex() == StartupSceneIndex;
+        }
+
+        public static bool GameSceneLoaded()
+        {
+            return GetCurrentSceneIndex() == GameSceneIndex;
+        }
+
+
     }
 }

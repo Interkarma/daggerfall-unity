@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game
     public class StateManager
     {
 
-        public System.EventHandler OnStartNewGameHandler;
+        public static System.EventHandler OnStartNewGame;
         private StateTypes currentState;
         private StateTypes lastState;
         private bool gameInProgress;
@@ -43,10 +43,18 @@ namespace DaggerfallWorkshop.Game
             get { return gameInProgress; }
         }
 
-
-        public StateManager(StateTypes startState)
+        public StateManager(StateTypes startState = StateTypes.None)
         {
-            currentState = startState;
+
+            if(startState == StateTypes.None)
+            {
+                if (SceneControl.StartupSceneLoaded())
+                    startState = StateTypes.Setup;
+                else
+                    startState = StateTypes.Start;
+            }
+
+            ChangeState(startState);
             DaggerfallUI.UIManager.OnWindowChange   += UIManager_OnWindowChangeHandler;
             StartGameBehaviour.OnStartMenu          += StartGameBehaviour_OnStartMenuHandler;
             StartGameBehaviour.OnStartGame          += StartGameBehaviour_OnStartGameHandler;
@@ -57,7 +65,7 @@ namespace DaggerfallWorkshop.Game
         public enum StateTypes
         {
             None,
-            //Setup,
+            Setup,
             Start,
             //Loading,
             Game,
@@ -99,8 +107,8 @@ namespace DaggerfallWorkshop.Game
         //triggered by StartGameBehaviourwhen a new game starts from , either a new char or loading a classic save
         public void StartGameBehaviour_OnStartGameHandler(object sender, EventArgs e)
         {
-            if (OnStartNewGameHandler != null)
-                OnStartNewGameHandler(this, null);
+            if (OnStartNewGame != null)
+                OnStartNewGame(this, null);
 
             ChangeState(StateTypes.Game);
         }
@@ -108,8 +116,8 @@ namespace DaggerfallWorkshop.Game
         //triggered by SaveLoadManager when a quicksave is loaded
         public void SaveLoadManager_OnLoadHandler(SaveData_v1 saveData)
         {
-            if (OnStartNewGameHandler != null)
-                OnStartNewGameHandler(this, null);
+            if (OnStartNewGame != null)
+                OnStartNewGame(this, null);
 
             ChangeState(StateTypes.Game);
         }
@@ -137,9 +145,9 @@ namespace DaggerfallWorkshop.Game
 
 
         public delegate void StateChange(StateTypes state);
-        public event StateChange OnStateChange;
+        public static event StateChange OnStateChange;
 
-        public void TriggerStateChange(StateTypes state)
+        private void TriggerStateChange(StateTypes state)
         {
             if (OnStateChange != null)
                 OnStateChange(state);
