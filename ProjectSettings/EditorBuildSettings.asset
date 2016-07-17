@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/daggerfall-unity/Game/Scenes/DaggerfallUnityStartup.unity
+    path: Assets/Scenes/DaggerfallUnityStartup.unity
   - enabled: 1
-    path: Assets/daggerfall-unity/Game/Scenes/DaggerfallUnityGame.unity
+    path: Assets/Scenes/DaggerfallUnityGame.unity
