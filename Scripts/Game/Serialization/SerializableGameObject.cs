@@ -249,4 +249,16 @@ namespace DaggerfallWorkshop.Game.Serialization
     }
 
     #endregion
+
+    #region Save Info
+
+    [fsObject("v1")]
+    public class SaveInfo_v1
+    {
+        public string saveName;
+        public string characterName;
+        public DateAndTime_v1 dateAndTime;
+    }
+
+    #endregion
 }

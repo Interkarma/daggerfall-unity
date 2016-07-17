@@ -29,8 +29,10 @@ namespace DaggerfallWorkshop.Game.Serialization
         #region Fields
 
         const string rootSaveFolder = "Saves";
-        const string quickSaveFolderName = "QuickSave";
-        const string autoSaveFolderName = "AutoSave";
+        const string savePrefix = "SAVE";
+        const string quickSaveName = "QuickSave";
+        const string autoSaveName = "AutoSave";
+        const string saveInfoFilename = "SaveInfo.txt";
         const string saveDataFilename = "SaveData.txt";
         const string containerDataFilename = "ContainerData.txt";
         const string screenshotFilename = "Screenshot.jpg";
@@ -126,30 +128,106 @@ namespace DaggerfallWorkshop.Game.Serialization
             return true;
         }
 
-        public string GetDestinationSavePath(string characterName, string saveName)
+        public Dictionary<int, string> EnumerateSaveFolders()
         {
-            string path = Path.Combine(UnitySavePath, characterName);
-            path = Path.Combine(path, saveName);
+            // Get directories in save path matching prefix
+            string[] directories = Directory.GetDirectories(UnitySavePath, savePrefix + "*", SearchOption.TopDirectoryOnly);
 
-            if (!Directory.Exists(path))
+            // Build dictionary keyed by save index
+            Dictionary<int, string> saveFolders = new Dictionary<int, string>();
+            foreach (string directory in directories)
+            {
+                // Get everything right of prefix in folder name (should be a number)
+                int key;
+                string indexStr = Path.GetFileName(directory).Substring(savePrefix.Length);
+                if (int.TryParse(indexStr, out key))
+                    saveFolders.Add(key, directory);
+            }
+
+            return saveFolders;
+        }
+
+        public Dictionary<int, SaveInfo_v1> EnumerateSaveInfo(Dictionary<int, string> saveFolders)
+        {
+            Dictionary<int, SaveInfo_v1> saveInfoDict = new Dictionary<int, SaveInfo_v1>();
+            foreach (var kvp in saveFolders)
+            {
+                try
+                {
+                    SaveInfo_v1 saveInfo = ReadSaveInfo(kvp.Value);
+                    saveInfoDict.Add(kvp.Key, saveInfo);
+                }
+                catch(Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(string.Format("Failed to read {0} in save folder {1}. Exception.Message={2}", saveInfoFilename, kvp.Value, ex.Message));
+                }
+            }
+
+            return saveInfoDict;
+        }
+
+        public SaveInfo_v1 ReadSaveInfo(string saveFolder)
+        {
+            string saveInfoJson = ReadSaveFile(Path.Combine(saveFolder, saveInfoFilename));
+            SaveInfo_v1 saveInfo = Deserialize(typeof(SaveInfo_v1), saveInfoJson) as SaveInfo_v1;
+
+            return saveInfo;
+        }
+
+        /// <summary>
+        /// Gets a specific save path.
+        /// </summary>
+        /// <param name="folderName">Folder name of save.</param>
+        /// <param name="create">Creates folder if it does not exist.</param>
+        /// <returns>Save path.</returns>
+        public string GetSavePath(string folderName, bool create)
+        {
+            // Compose folder path
+            string path = Path.Combine(UnitySavePath, folderName);
+
+            // Create directory if it does not exist
+            if (create && !Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
-            
+
             return path;
         }
 
+        /// <summary>
+        /// Creates a new indexed save path.
+        /// </summary>
+        /// <param name="saveFolders">Save folder enumeration.</param>
+        /// <returns>Save path.</returns>
+        public string CreateNewSavePath(Dictionary<int, string> saveFolders)
+        {
+            // Find first available save index in dictionary
+            int key = 0;
+            while (saveFolders.ContainsKey(key))
+            {
+                key++;
+            }
+
+            return GetSavePath(savePrefix + key.ToString(), true);
+        }
+
+        /// <summary>
+        /// Checks if save folder exists.
+        /// </summary>
+        /// <param name="folderName">Folder name of save.</param>
+        /// <returns>True if folder exists.</returns>
+        public bool HasSaveFolder(string folderName)
+        {
+            return Directory.Exists(Path.Combine(UnitySavePath, folderName));
+        }
+
+        /// <summary>
+        /// Checks if quick save folder exists.
+        /// </summary>
+        /// <returns>True if quick save exists.</returns>
         public bool HasQuickSave()
         {
-            // Must be ready
-            if (!IsReady())
-                throw new Exception(notReadyExceptionText);
-
-            //string path = Path.Combine(UnitySavePath, quickSaveFilename);
-            //if (File.Exists(path))
-            //    return true;
-
-            return false;
+            return HasSaveFolder(quickSaveName);
         }
 
         public void QuickSave()
@@ -159,7 +237,8 @@ namespace DaggerfallWorkshop.Game.Serialization
                 throw new Exception(notReadyExceptionText);
 
             // Save game
-            StartCoroutine(SaveGame(quickSaveFolderName));
+            string path = GetSavePath(quickSaveName, true);
+            StartCoroutine(SaveGame(quickSaveName, path));
         }
 
         public void QuickLoad()
@@ -168,19 +247,20 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!IsReady())
                 throw new Exception(notReadyExceptionText);
 
-            //// Read save data from file
-            //string json = ReadSaveFile(Path.Combine(UnitySavePath, quickSaveFilename));
+            // Read save data from file
+            string path = GetSavePath(quickSaveName, false);
+            string json = ReadSaveFile(Path.Combine(path, saveDataFilename));
 
-            //// Deserialize JSON string to save data
-            //SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), json) as SaveData_v1;
+            // Deserialize JSON string to save data
+            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), json) as SaveData_v1;
 
-            //// Restore save data
-            //GameManager.Instance.PauseGame(false);
-            //DaggerfallUI.Instance.FadeHUDFromBlack();
-            //StartCoroutine(LoadGame(saveData));
+            // Restore save data
+            GameManager.Instance.PauseGame(false);
+            DaggerfallUI.Instance.FadeHUDFromBlack();
+            StartCoroutine(LoadGame(saveData));
 
-            //// Notify
-            //DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
+            // Notify
+            DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
         }
 
         #endregion
@@ -617,14 +697,20 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Utility
 
-        IEnumerator SaveGame(string saveName)
+        IEnumerator SaveGame(string saveName, string path)
         {
             // Build save data
             SaveData_v1 saveData = BuildSaveData();
 
+            // Build save info
+            SaveInfo_v1 saveInfo = new SaveInfo_v1();
+            saveInfo.saveName = saveName;
+            saveInfo.characterName = saveData.playerData.playerEntity.name;
+            saveInfo.dateAndTime = saveData.dateAndTime;
+
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
-            //string persistentLootDataJson = 
+            string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
 
             // Create screenshot for save
             yield return new WaitForEndOfFrame();
@@ -632,15 +718,13 @@ namespace DaggerfallWorkshop.Game.Serialization
             screenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
             screenshot.Apply();
 
-            // Get destination save path
-            string dstPath = GetDestinationSavePath(saveData.playerData.playerEntity.name, saveName);
-
-            // Save data to file
-            WriteSaveFile(Path.Combine(dstPath, saveDataFilename), saveDataJson);
+            // Save data to files
+            WriteSaveFile(Path.Combine(path, saveDataFilename), saveDataJson);
+            WriteSaveFile(Path.Combine(path, saveInfoFilename), saveInfoJson);
 
             // Save screenshot
             byte[] bytes = screenshot.EncodeToJPG();
-            File.WriteAllBytes(Path.Combine(dstPath, screenshotFilename), bytes);
+            File.WriteAllBytes(Path.Combine(path, screenshotFilename), bytes);
 
             // Raise OnSaveEvent
             RaiseOnSaveEvent(saveData);
