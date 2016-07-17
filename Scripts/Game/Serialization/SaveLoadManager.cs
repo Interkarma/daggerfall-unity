@@ -713,6 +713,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
 
             // Create screenshot for save
+            // TODO: Hide UI for screenshot or use a different method
             yield return new WaitForEndOfFrame();
             Texture2D screenshot = new Texture2D(Screen.width, Screen.height);
             screenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);

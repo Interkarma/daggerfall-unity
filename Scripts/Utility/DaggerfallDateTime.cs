@@ -325,6 +325,17 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Gets a mid time string.
+        /// </summary>
+        public string MidDateTimeString()
+        {
+            string final = string.Format("{0:00}:{1:00}:{2:00} {3:00} {4:00} 3E{5}",
+                Hour, Minute, Second, Day + 1, MonthName, Year);
+
+            return final;
+        }
+
+        /// <summary>
         /// Gets a long date time string.
         /// </summary>
         public string LongDateTimeString()

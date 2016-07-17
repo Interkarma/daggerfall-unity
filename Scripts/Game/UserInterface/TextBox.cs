@@ -27,6 +27,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         DaggerfallFont font;
         TextCursor textCursor = new TextCursor();
         string text = string.Empty;
+        string defaultText = string.Empty;
+        Color defaultTextColor = new Color(0.7f, 0.7f, 0.7f, 0.8f);
         int lastStringLength = 0;
         Vector2 maxSize = Vector2.zero;
 
@@ -46,6 +48,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return text; }
             set { text = value; SetCursorPosition(text.Length); }
+        }
+
+        public string DefaultText
+        {
+            get { return defaultText; }
+            set { defaultText = value; }
+        }
+
+        public Color DefaultTextColor
+        {
+            get { return defaultTextColor; }
+            set { defaultTextColor = value; }
         }
 
         public Vector2 MaxSize
@@ -71,18 +85,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             base.Update();
 
             // Moving cursor left and right
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            if (DaggerfallUI.Instance.LastKeyCode == KeyCode.LeftArrow)
                 MoveCursorLeft();
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.RightArrow)
                 MoveCursorRight();
 
             // Delete and Backspace
-            if (Input.GetKeyDown(KeyCode.Delete))
+            if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Delete)
             {
                 if (cursorPosition != text.Length)
                     text = text.Remove(cursorPosition, 1);
             }
-            else if (Input.GetKeyDown(KeyCode.Backspace))
+            else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Backspace)
             {
                 if (cursorPosition != 0)
                 {
@@ -92,13 +106,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Home and End
-            if (Input.GetKeyDown(KeyCode.Home))
+            if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Home)
                 SetCursorPosition(0);
-            else if (Input.GetKeyDown(KeyCode.End))
+            else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.End)
                 SetCursorPosition(text.Length);
 
             // Return
-            if (Input.GetKeyDown(KeyCode.Return))
+            if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Return)
             {
                 // TODO: Accept text input event
                 return;
@@ -127,6 +141,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Rect rect = Rectangle;
                 font.DrawText(text, new Vector2(rect.x, rect.y), LocalScale, DaggerfallUI.DaggerfallDefaultInputTextColor);
+            }
+            else
+            {
+                // Draw default text while nothing else entered
+                if (defaultText.Length > 0)
+                {
+                    Rect rect = Rectangle;
+                    font.DrawText(defaultText, new Vector2(rect.x, rect.y), LocalScale, defaultTextColor);
+                }
             }
         }
 
