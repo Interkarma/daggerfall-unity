@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 {
     /// <summary>
     /// Implements save/load logic.
-    /// Games are saved in PersistentDataPath\Saves\CharacterName\SaveName.
+    /// Games are saved in PersistentDataPath\Saves.
     /// Each save game will have a screenshot and multiple files.
     /// </summary>
     public class SaveLoadManager : MonoBehaviour
@@ -46,6 +46,11 @@ namespace DaggerfallWorkshop.Game.Serialization
         Dictionary<ulong, SerializableActionObject> serializableActionObjects = new Dictionary<ulong, SerializableActionObject>();
         Dictionary<ulong, SerializableEnemy> serializableEnemies = new Dictionary<ulong, SerializableEnemy>();
         Dictionary<ulong, SerializableLootContainer> serializableLootContainers = new Dictionary<ulong, SerializableLootContainer>();
+
+        // Enumerated save info
+        Dictionary<int, string> enumeratedSaveFolders = new Dictionary<int, string>();
+        Dictionary<int, SaveInfo_v1> enumeratedSaveInfo = new Dictionary<int, SaveInfo_v1>();
+        Dictionary<string, List<int>> enumeratedCharacterSaves = new Dictionary<string, List<int>>();
 
         string unitySavePath = string.Empty;
         string daggerfallSavePath = string.Empty;
@@ -120,6 +125,10 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Public Methods
 
+        /// <summary>
+        /// Checks if save/load system is ready.
+        /// </summary>
+        /// <returns>True if ready.</returns>
         public bool IsReady()
         {
             if (!DaggerfallUnity.Instance.IsReady || !DaggerfallUnity.Instance.IsPathValidated)
@@ -128,97 +137,97 @@ namespace DaggerfallWorkshop.Game.Serialization
             return true;
         }
 
-        public Dictionary<int, string> EnumerateSaveFolders()
+        /// <summary>
+        /// Updates save game enumerations.
+        /// Must call this before working with existing saves.
+        /// For example, this is called in save UI every time window pushed to stack.
+        /// </summary>
+        public void EnumerateSaves()
         {
-            // Get directories in save path matching prefix
-            string[] directories = Directory.GetDirectories(UnitySavePath, savePrefix + "*", SearchOption.TopDirectoryOnly);
-
-            // Build dictionary keyed by save index
-            Dictionary<int, string> saveFolders = new Dictionary<int, string>();
-            foreach (string directory in directories)
-            {
-                // Get everything right of prefix in folder name (should be a number)
-                int key;
-                string indexStr = Path.GetFileName(directory).Substring(savePrefix.Length);
-                if (int.TryParse(indexStr, out key))
-                    saveFolders.Add(key, directory);
-            }
-
-            return saveFolders;
+            enumeratedSaveFolders = EnumerateSaveFolders();
+            enumeratedSaveInfo = EnumerateSaveInfo(enumeratedSaveFolders);
+            enumeratedCharacterSaves = EnumerateCharacterSaves(enumeratedSaveInfo);
         }
 
-        public Dictionary<int, SaveInfo_v1> EnumerateSaveInfo(Dictionary<int, string> saveFolders)
+        /// <summary>
+        /// Gets array of save keys for the specified character.
+        /// </summary>
+        /// <param name="characterName">Name of character.</param>
+        /// <returns>Array of save keys, excluding </returns>
+        public int[] GetCharacterSaveKeys(string characterName)
         {
-            Dictionary<int, SaveInfo_v1> saveInfoDict = new Dictionary<int, SaveInfo_v1>();
-            foreach (var kvp in saveFolders)
+            if (!enumeratedCharacterSaves.ContainsKey(characterName))
+                return new int[0];
+
+            return enumeratedCharacterSaves[characterName].ToArray();
+        }
+
+        /// <summary>
+        /// Gets folder containing save by key.
+        /// </summary>
+        /// <param name="key">Save key.</param>
+        /// <returns>Path to save folder or empty string if key not found.</returns>
+        public string GetSaveFolder(int key)
+        {
+            if (!enumeratedSaveFolders.ContainsKey(key))
+                return string.Empty;
+
+            return enumeratedSaveFolders[key];
+        }
+
+        /// <summary>
+        /// Gets save information by key.
+        /// </summary>
+        /// <param name="key">Save key.</param>
+        /// <returns>SaveInfo populated with save details, or empty struct if save not found.</returns>
+        public SaveInfo_v1 GetSaveInfo(int key)
+        {
+            if (!enumeratedSaveInfo.ContainsKey(key))
+                return new SaveInfo_v1();
+
+            return enumeratedSaveInfo[key];
+        }
+
+        /// <summary>
+        /// Finds existing save folder.
+        /// </summary>
+        /// <param name="characterName">Name of character to match.</param>
+        /// <param name="saveName">Name of save to match.</param>
+        /// <returns>Save key or -1 if save not found.</returns>
+        public int FindSaveFolderByNames(string characterName, string saveName)
+        {
+            int[] saves = GetCharacterSaveKeys(characterName);
+            foreach (int key in saves)
             {
-                try
+                SaveInfo_v1 compareInfo = GetSaveInfo(key);
+                if (compareInfo.characterName == characterName &&
+                    compareInfo.saveName == saveName)
                 {
-                    SaveInfo_v1 saveInfo = ReadSaveInfo(kvp.Value);
-                    saveInfoDict.Add(kvp.Key, saveInfo);
-                }
-                catch(Exception ex)
-                {
-                    DaggerfallUnity.LogMessage(string.Format("Failed to read {0} in save folder {1}. Exception.Message={2}", saveInfoFilename, kvp.Value, ex.Message));
+                    return key;
                 }
             }
 
-            return saveInfoDict;
+            return -1;
         }
 
-        public SaveInfo_v1 ReadSaveInfo(string saveFolder)
+        public void Save(string characterName, string saveName)
         {
-            string saveInfoJson = ReadSaveFile(Path.Combine(saveFolder, saveInfoFilename));
-            SaveInfo_v1 saveInfo = Deserialize(typeof(SaveInfo_v1), saveInfoJson) as SaveInfo_v1;
+            // Must be ready
+            if (!IsReady())
+                throw new Exception(notReadyExceptionText);
 
-            return saveInfo;
-        }
+            // Look for existing save with this character and name
+            int key = FindSaveFolderByNames(characterName, saveName);
 
-        /// <summary>
-        /// Gets a specific save path.
-        /// </summary>
-        /// <param name="folderName">Folder name of save.</param>
-        /// <param name="create">Creates folder if it does not exist.</param>
-        /// <returns>Save path.</returns>
-        public string GetSavePath(string folderName, bool create)
-        {
-            // Compose folder path
-            string path = Path.Combine(UnitySavePath, folderName);
+            // Get or create folder
+            string path;
+            if (key == -1)
+                path = CreateNewSavePath(enumeratedSaveFolders);
+            else
+                path = GetSaveFolder(key);
 
-            // Create directory if it does not exist
-            if (create && !Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            return path;
-        }
-
-        /// <summary>
-        /// Creates a new indexed save path.
-        /// </summary>
-        /// <param name="saveFolders">Save folder enumeration.</param>
-        /// <returns>Save path.</returns>
-        public string CreateNewSavePath(Dictionary<int, string> saveFolders)
-        {
-            // Find first available save index in dictionary
-            int key = 0;
-            while (saveFolders.ContainsKey(key))
-            {
-                key++;
-            }
-
-            return GetSavePath(savePrefix + key.ToString(), true);
-        }
-
-        /// <summary>
-        /// Checks if save folder exists.
-        /// </summary>
-        /// <param name="folderName">Folder name of save.</param>
-        /// <returns>True if folder exists.</returns>
-        public bool HasSaveFolder(string folderName)
-        {
-            return Directory.Exists(Path.Combine(UnitySavePath, folderName));
+            // Save game
+            StartCoroutine(SaveGame(saveName, path));
         }
 
         /// <summary>
@@ -497,6 +506,80 @@ namespace DaggerfallWorkshop.Game.Serialization
             return File.ReadAllText(path);
         }
 
+        Dictionary<int, string> EnumerateSaveFolders()
+        {
+            // Get directories in save path matching prefix
+            string[] directories = Directory.GetDirectories(UnitySavePath, savePrefix + "*", SearchOption.TopDirectoryOnly);
+
+            // Build dictionary keyed by save index
+            Dictionary<int, string> saveFolders = new Dictionary<int, string>();
+            foreach (string directory in directories)
+            {
+                // Get everything right of prefix in folder name (should be a number)
+                int key;
+                string indexStr = Path.GetFileName(directory).Substring(savePrefix.Length);
+                if (int.TryParse(indexStr, out key))
+                    saveFolders.Add(key, directory);
+            }
+
+            return saveFolders;
+        }
+
+        Dictionary<int, SaveInfo_v1> EnumerateSaveInfo(Dictionary<int, string> saveFolders)
+        {
+            Dictionary<int, SaveInfo_v1> saveInfoDict = new Dictionary<int, SaveInfo_v1>();
+            foreach (var kvp in saveFolders)
+            {
+                try
+                {
+                    SaveInfo_v1 saveInfo = ReadSaveInfo(kvp.Value);
+                    saveInfoDict.Add(kvp.Key, saveInfo);
+                }
+                catch (Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(string.Format("Failed to read {0} in save folder {1}. Exception.Message={2}", saveInfoFilename, kvp.Value, ex.Message));
+                }
+            }
+
+            return saveInfoDict;
+        }
+
+        Dictionary<string, List<int>> EnumerateCharacterSaves(Dictionary<int, SaveInfo_v1> saveInfo)
+        {
+            Dictionary<string, List<int>> characterSaves = new Dictionary<string, List<int>>();
+            foreach (var kvp in saveInfo)
+            {
+                // Add character to name dictionary
+                if (!characterSaves.ContainsKey(kvp.Value.characterName))
+                {
+                    characterSaves.Add(kvp.Value.characterName, new List<int>());
+                }
+
+                // Add save key to character save list
+                characterSaves[kvp.Value.characterName].Add(kvp.Key);
+            }
+
+            return characterSaves;
+        }
+
+        SaveInfo_v1 ReadSaveInfo(string saveFolder)
+        {
+            string saveInfoJson = ReadSaveFile(Path.Combine(saveFolder, saveInfoFilename));
+            SaveInfo_v1 saveInfo = Deserialize(typeof(SaveInfo_v1), saveInfoJson) as SaveInfo_v1;
+
+            return saveInfo;
+        }
+
+        /// <summary>
+        /// Checks if save folder exists.
+        /// </summary>
+        /// <param name="folderName">Folder name of save.</param>
+        /// <returns>True if folder exists.</returns>
+        bool HasSaveFolder(string folderName)
+        {
+            return Directory.Exists(Path.Combine(UnitySavePath, folderName));
+        }
+
         #endregion
 
         #region Saving
@@ -591,6 +674,43 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             return containers.ToArray();
+        }
+
+        /// <summary>
+        /// Gets a specific save path.
+        /// </summary>
+        /// <param name="folderName">Folder name of save.</param>
+        /// <param name="create">Creates folder if it does not exist.</param>
+        /// <returns>Save path.</returns>
+        string GetSavePath(string folderName, bool create)
+        {
+            // Compose folder path
+            string path = Path.Combine(UnitySavePath, folderName);
+
+            // Create directory if it does not exist
+            if (create && !Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            return path;
+        }
+
+        /// <summary>
+        /// Creates a new indexed save path.
+        /// </summary>
+        /// <param name="saveFolders">Save folder enumeration.</param>
+        /// <returns>Save path.</returns>
+        string CreateNewSavePath(Dictionary<int, string> saveFolders)
+        {
+            // Find first available save index in dictionary
+            int key = 0;
+            while (saveFolders.ContainsKey(key))
+            {
+                key++;
+            }
+
+            return GetSavePath(savePrefix + key.ToString(), true);
         }
 
         #endregion

@@ -237,6 +237,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             listItems.Clear();
             scrollIndex = 0;
+            SelectNone();
         }
 
         public void AddItem(string text, int position = -1)
@@ -322,6 +323,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             RaiseOnSelectItemEvent();
         }
 
+        public void SelectNone()
+        {
+            selectedIndex = -1;
+        }
+
         public void ScrollToSelected()
         {
             scrollIndex = selectedIndex;
@@ -356,6 +362,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             rowsDisplayed = (int)(Size.y / font.GlyphHeight) - 1;
+        }
+
+        public int FindIndex(string text)
+        {
+            for (int i = 0; i < listItems.Count; i++)
+            {
+                if (string.Compare(listItems[i].Text, text, StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         #endregion

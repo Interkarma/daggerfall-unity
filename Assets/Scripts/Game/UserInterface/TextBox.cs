@@ -56,6 +56,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { defaultText = value; }
         }
 
+        public string ResultText
+        {
+            get { return GetResultText(); }
+        }
+
         public Color DefaultTextColor
         {
             get { return defaultTextColor; }
@@ -94,7 +99,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Delete)
             {
                 if (cursorPosition != text.Length)
+                {
                     text = text.Remove(cursorPosition, 1);
+                    RaiseOnTypeHandler();
+                }
             }
             else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Backspace)
             {
@@ -102,6 +110,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     text = text.Remove(cursorPosition - 1, 1);
                     MoveCursorLeft();
+                    RaiseOnTypeHandler();
                 }
             }
 
@@ -124,6 +133,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 text = text.Insert(cursorPosition, character.ToString());
                 MoveCursorRight();
+                RaiseOnTypeHandler();
             }
 
             if (lastStringLength != text.Length)
@@ -230,6 +240,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return new Vector2(width, font.GlyphHeight);
         }
 
+        string GetResultText()
+        {
+            if (Text.Length == 0 && DefaultText.Length > 0)
+                return DefaultText;
+            else
+                return Text;
+        }
+
+        #endregion
+
+        #region Events
+
+        // OnChange
+        public delegate void OnTypeHandler();
+        public event OnTypeHandler OnType;
+        protected virtual void RaiseOnTypeHandler()
+        {
+            if (OnType != null)
+                OnType();
+        }
 
         #endregion
     }
