@@ -6,11 +6,11 @@
 
 + Cross-platform (Windows/Linux/Mac)
 + Retro graphics are boosted by modern engine and lighting
++ High resolution with classic style
 + Smooth first-person controls
-+ High resolution
 + Huge draw distances
 + Quality of life enhancements
-+ Mods
++ Mod support
 
 ![Classic Daggerfall Plus](http://www.dfworkshop.net/wp-content/uploads/2016/07/git-comparison.jpg)
 
@@ -35,7 +35,6 @@
 + Build updated regularly
 + Start creating mods
 + Contribute to development
-+ Regular progress updates at dfworkshop.net and @gav_clayton on Twitter
 
 ## Links
 
