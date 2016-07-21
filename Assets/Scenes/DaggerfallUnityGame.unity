@@ -417,6 +417,7 @@ MonoBehaviour:
   MinWaitTime: 4
   MaxWaitTime: 35
   Presets: 0
+  doNotPlayInPalace: 1
   PlayLightningEffect: 0
   LightForEffects: {fileID: 0}
 --- !u!114 &102824933
@@ -1121,6 +1122,7 @@ MonoBehaviour:
   MinWaitTime: 4
   MaxWaitTime: 28
   Presets: 1
+  doNotPlayInPalace: 1
   PlayLightningEffect: 0
   LightForEffects: {fileID: 0}
 --- !u!114 &948908900
