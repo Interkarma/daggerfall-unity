@@ -255,6 +255,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class SaveInfo_v1
     {
+        public int saveVersion;
         public string saveName;
         public string characterName;
         public DateAndTime_v1 dateAndTime;

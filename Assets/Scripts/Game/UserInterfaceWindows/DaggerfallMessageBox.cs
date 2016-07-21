@@ -166,14 +166,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return button;
         }
 
-        public void SetText(string text)
-        {
-            string[] rows = new string[1];
-            rows[0] = text;
-            SetText(rows);
-        }
-
-        public void SetText(string[] rows)
+        public void SetText(params string[] rows)
         {
             // Tokenize rows
             List<TextFile.Token> tokenList = new List<TextFile.Token>();

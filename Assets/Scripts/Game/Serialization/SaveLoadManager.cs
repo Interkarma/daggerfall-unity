@@ -28,6 +28,8 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         #region Fields
 
+        const int latestSaveVersion = 1;
+
         const string rootSaveFolder = "Saves";
         const string savePrefix = "SAVE";
         const string quickSaveName = "QuickSave";
@@ -58,6 +60,11 @@ namespace DaggerfallWorkshop.Game.Serialization
         #endregion
 
         #region Properties
+
+        public int LatestSaveVersion
+        {
+            get { return latestSaveVersion; }
+        }
 
         public string UnitySavePath
         {
@@ -188,6 +195,21 @@ namespace DaggerfallWorkshop.Game.Serialization
             return enumeratedSaveInfo[key];
         }
 
+        public Texture2D GetSaveScreenshot(int key)
+        {
+            if (!enumeratedSaveFolders.ContainsKey(key))
+                return null;
+
+            string path = Path.Combine(GetSaveFolder(key), screenshotFilename);
+            byte[] data = File.ReadAllBytes(path);
+
+            Texture2D screenshot = new Texture2D(0, 0);
+            if (screenshot.LoadImage(data))
+                return screenshot;
+
+            return null;
+        }
+
         /// <summary>
         /// Finds existing save folder.
         /// </summary>
@@ -208,6 +230,40 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             return -1;
+        }
+
+        /// <summary>
+        /// Deletes save folder.
+        /// </summary>
+        /// <param name="key">Save key.</param>
+        public void DeleteSaveFolder(int key)
+        {
+            if (!enumeratedSaveFolders.ContainsKey(key))
+                return;
+
+            // For safety only delete known save files - do not perform a recursive delete
+            // This way we don't blow up folder if user has placed something custom inside
+            string path = GetSaveFolder(key);
+            File.Delete(Path.Combine(path, saveDataFilename));
+            File.Delete(Path.Combine(path, saveInfoFilename));
+            File.Delete(Path.Combine(path, screenshotFilename));
+            File.Delete(Path.Combine(path, containerDataFilename));
+
+            // Attempt to delete path itself
+            // Even if delete fails path should be invalid with save info removed
+            // Folder index will be excluded from enumeration and recycled later
+            try
+            {
+                Directory.Delete(path);
+            }
+            catch(Exception ex)
+            {
+                string message = string.Format("Could not delete save folder '{0}'. Exception message: {1}", path, ex.Message);
+                DaggerfallUnity.LogMessage(message);
+            }
+
+            // Update saves
+            EnumerateSaves();
         }
 
         public void Save(string characterName, string saveName)
@@ -519,7 +575,11 @@ namespace DaggerfallWorkshop.Game.Serialization
                 int key;
                 string indexStr = Path.GetFileName(directory).Substring(savePrefix.Length);
                 if (int.TryParse(indexStr, out key))
-                    saveFolders.Add(key, directory);
+                {
+                    // Must contain a save info file to be a valid save folder
+                    if (File.Exists(Path.Combine(directory, saveInfoFilename)))
+                        saveFolders.Add(key, directory);
+                }
             }
 
             return saveFolders;
@@ -824,6 +884,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Build save info
             SaveInfo_v1 saveInfo = new SaveInfo_v1();
+            saveInfo.saveVersion = LatestSaveVersion;
             saveInfo.saveName = saveName;
             saveInfo.characterName = saveData.playerData.playerEntity.name;
             saveInfo.dateAndTime = saveData.dateAndTime;

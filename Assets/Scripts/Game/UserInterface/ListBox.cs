@@ -300,6 +300,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             RaiseOnSelectPreviousEvent();
+            RaiseOnSelectItemEvent();
         }
 
         public void SelectNext()
@@ -312,6 +313,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             RaiseOnSelectNextEvent();
+            RaiseOnSelectItemEvent();
         }
 
         public void SelectIndex(int index)

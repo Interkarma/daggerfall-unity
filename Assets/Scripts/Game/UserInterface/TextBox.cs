@@ -120,10 +120,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.End)
                 SetCursorPosition(text.Length);
 
-            // Return
-            if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Return)
+            // Return/enter
+            if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Return ||
+                DaggerfallUI.Instance.LastKeyCode == KeyCode.KeypadEnter)
             {
-                // TODO: Accept text input event
                 return;
             }
 
