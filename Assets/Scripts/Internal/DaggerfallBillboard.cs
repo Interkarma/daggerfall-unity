@@ -155,7 +155,9 @@ namespace DaggerfallWorkshop
             summary.FixedEnemyType = MobileTypes.None;
 
             // If flat has gender and faction this is an NPC
-            if (summary.Gender != 0 && summary.FactionMobileID != 0)
+            // Exlude editor flats, currently unknown why some start markers have gender or faction
+            if (summary.Archive != Utility.TextureReader.EditorFlatsTextureArchive &&
+                summary.Gender != 0 && summary.FactionMobileID != 0)
             {
                 summary.FlatType = FlatTypes.NPC;
             }

@@ -189,20 +189,24 @@ namespace DaggerfallWorkshop.Game
             {
                 uiManager.TopWindow.Update();
             }
+
+            // Clear key state every frame
+            lastCharacterTyped = (char)0;
+            lastKeyCode = KeyCode.None;
         }
 
         void OnGUI()
         {
             // Store key downs for alternate input (e.g. text box input)
+            // Possible to get multiple keydown events per frame, one with character, one with keycode
+            // Only accept character or keycode if valid
             if (Event.current.type == EventType.KeyDown)
             {
-                lastCharacterTyped = Event.current.character;
-                lastKeyCode = Event.current.keyCode;
-            }
-            else
-            {
-                lastCharacterTyped = (char)0;
-                lastKeyCode = KeyCode.None;
+                if (Event.current.character != (char)0)
+                    lastCharacterTyped = Event.current.character;
+
+                if (Event.current.keyCode != KeyCode.None)
+                    lastKeyCode = Event.current.keyCode;
             }
 
             // Set depth of GUI to appear on top of other elements
@@ -252,12 +256,16 @@ namespace DaggerfallWorkshop.Game
                     }
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
+#if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;
+#else
                     Application.Quit();
+#endif
                     break;
             }
         }
 
-        #region Helpers
+#region Helpers
 
         public static void AddHUDText(string message)
         {
@@ -411,9 +419,9 @@ namespace DaggerfallWorkshop.Game
             dfHUD.ParentPanel.BackgroundColor = Color.clear;
         }
 
-        #endregion
+#endregion
 
-        #region Static Helpers
+#region Static Helpers
 
         public static Button AddButton(Vector2 position, Vector2 size, Panel panel = null)
         {
@@ -650,9 +658,9 @@ namespace DaggerfallWorkshop.Game
             return messageBox;
         }
 
-        #endregion
+#endregion
 
-        #region Singleton
+#region Singleton
 
         static DaggerfallUI instance = null;
         public static DaggerfallUI Instance
@@ -706,9 +714,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        #endregion
+#endregion
 
-        #region Event Handlers
+#region Event Handlers
 
         //private void PauseOptionsDialog_OnClose()
         //{
@@ -730,9 +738,9 @@ namespace DaggerfallWorkshop.Game
         //    GameManager.Instance.PauseGame(false);
         //}
 
-        #endregion
+#endregion
 
-        #region Private Methods
+#region Private Methods
 
         // Fades HUD background in from black to briefly hide world while loading
         IEnumerator FadePanelBackground(Panel target, Color startColor, Color targetColor, float fadeDuration = 0.4f, bool popWindowOnCompletion = false)
@@ -775,6 +783,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        #endregion
+#endregion
     }
 }

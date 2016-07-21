@@ -216,6 +216,10 @@ namespace DaggerfallWorkshop.Game
             // Wait for end of frame so existing world data can be removed
             yield return new WaitForEndOfFrame();
 
+            // Reset dungeon block on new spawn
+            lastPlayerDungeonBlockIndex = -1;
+            playerDungeonBlockData = new DFLocation.DungeonBlock();
+
             // Set player GPS coordinates
             playerGPS.WorldX = worldX;
             playerGPS.WorldZ = worldZ;
@@ -432,6 +436,10 @@ namespace DaggerfallWorkshop.Game
             // Ensure we have component references
             if (!ReferenceComponents())
                 return;
+
+            // Reset dungeon block on entering dungeon
+            lastPlayerDungeonBlockIndex = -1;
+            playerDungeonBlockData = new DFLocation.DungeonBlock();
 
             // Override location if specified
             if (OverrideLocation != null)
