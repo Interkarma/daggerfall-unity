@@ -170,6 +170,18 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8202900, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
+      propertyPath: panLevelCustomCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8202900, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
+      propertyPath: spreadCustomCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8202900, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
+      propertyPath: reverbZoneMixCustomCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
   m_IsPrefabParent: 0
@@ -415,7 +427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MinWaitTime: 4
-  MaxWaitTime: 35
+  MaxWaitTime: 25
   Presets: 0
   doNotPlayInPalace: 1
   PlayLightningEffect: 0
@@ -487,7 +499,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -498,7 +510,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -509,7 +521,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
 --- !u!1001 &215693441
 Prefab:
   m_ObjectHideFlags: 0
@@ -2473,7 +2485,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value

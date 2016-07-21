@@ -138,6 +138,14 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// True during the day.
+        /// </summary>
+        public bool IsDay
+        {
+            get { return (Hour >= DawnHour && Hour < DuskHour) ? true : false; }
+        }
+
+        /// <summary>
         /// True when full night has fallen.
         /// </summary>
         public bool IsNight

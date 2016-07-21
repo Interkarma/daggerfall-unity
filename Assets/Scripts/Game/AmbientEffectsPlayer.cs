@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         SoundClips[] ambientSounds;
         AudioClip rainLoop;
+        AudioClip cricketsLoop;
         float waitTime;
         float waitCounter;
         AmbientSoundPresets lastPresets;
@@ -44,6 +45,8 @@ namespace DaggerfallWorkshop.Game
             Dungeon,                // Dungeon ambience
             Rain,                   // Just raining
             Storm,                  // Storm ambience
+            SunnyDay,               // Sunny day birds
+            ClearNight,             // Clear night crickets
         }
 
         void Start()
@@ -58,11 +61,13 @@ namespace DaggerfallWorkshop.Game
         void OnDisable()
         {
             rainLoop = null;
+            cricketsLoop = null;
         }
 
         void OnEnable()
         {
             rainLoop = null;
+            cricketsLoop = null;
         }
 
         void Update()
@@ -70,8 +75,19 @@ namespace DaggerfallWorkshop.Game
             // Change sound presets
             if (Presets != lastPresets)
             {
+                // Clear settings
                 lastPresets = Presets;
                 rainLoop = null;
+                cricketsLoop = null;
+
+                // Stop playing any loops
+                if (dfAudioSource.AudioSource.isPlaying)
+                {
+                    dfAudioSource.AudioSource.Stop();
+                    dfAudioSource.AudioSource.clip = null;
+                    dfAudioSource.AudioSource.loop = false;
+                }
+
                 ApplyPresets();
                 StartWaiting();
             }
@@ -81,6 +97,16 @@ namespace DaggerfallWorkshop.Game
             {
                 rainLoop = dfAudioSource.GetAudioClip((int)SoundClips.AmbientRaining);
                 dfAudioSource.AudioSource.clip = rainLoop;
+                dfAudioSource.AudioSource.loop = true;
+                dfAudioSource.AudioSource.spatialBlend = 0;
+                dfAudioSource.AudioSource.Play();
+            }
+
+            // Start crickets loop if not running
+            if ((Presets == AmbientSoundPresets.ClearNight) && cricketsLoop == null)
+            {
+                cricketsLoop = dfAudioSource.GetAudioClip((int)SoundClips.AmbientCrickets);
+                dfAudioSource.AudioSource.clip = cricketsLoop;
                 dfAudioSource.AudioSource.loop = true;
                 dfAudioSource.AudioSource.spatialBlend = 0;
                 dfAudioSource.AudioSource.Play();
@@ -247,6 +273,14 @@ namespace DaggerfallWorkshop.Game
                     SoundClips.StormLightningShort,
                     SoundClips.StormLightningThunder,
                     SoundClips.StormThunderRoll,
+                };
+            }
+            else if (Presets == AmbientSoundPresets.SunnyDay)
+            {
+                ambientSounds = new SoundClips[]
+                {
+                    SoundClips.BirdCall1,
+                    SoundClips.BirdCall2,
                 };
             }
             else

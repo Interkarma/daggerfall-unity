@@ -54,6 +54,8 @@ namespace DaggerfallWorkshop.Game
         PlayerMusicEnvironment lastPlayerMusicEnvironment;
         PlayerMusicWeather currentPlayerMusicWeather;
         PlayerMusicWeather lastPlayerMusicWeather;
+        PlayerMusicTime currentPlayerMusicTime;
+        PlayerMusicTime lastPlayerMusicTime;
 
         SongFiles[] currentPlaylist;
         SongFiles currentSong;
@@ -83,6 +85,12 @@ namespace DaggerfallWorkshop.Game
             Normal,
             Rain,
             Snow,
+        }
+
+        enum PlayerMusicTime
+        {
+            Day,
+            Night,
         }
 
         #endregion
@@ -138,11 +146,13 @@ namespace DaggerfallWorkshop.Game
             // Update context
             UpdatePlayerMusicEnvironment();
             UpdatePlayerMusicWeather();
+            UpdatePlayerMusicTime();
 
             // Switch playlists if context changes or if not playing then select a new song
             bool overrideSong = false;
             if (currentPlayerMusicEnvironment != lastPlayerMusicEnvironment || 
                 currentPlayerMusicWeather != lastPlayerMusicWeather ||
+                currentPlayerMusicTime != lastPlayerMusicTime ||
                 (!songPlayer.IsPlaying && playSong))
             {
                 // Keep song if playing the same weather, but not when entering dungeons
@@ -156,6 +166,7 @@ namespace DaggerfallWorkshop.Game
                 // Change song
                 lastPlayerMusicEnvironment = currentPlayerMusicEnvironment;
                 lastPlayerMusicWeather = currentPlayerMusicWeather;
+                lastPlayerMusicTime = currentPlayerMusicTime;
                 AssignPlaylist();
                 SelectCurrentSong();
                 overrideSong = true;
@@ -371,6 +382,14 @@ namespace DaggerfallWorkshop.Game
                     currentPlayerMusicWeather = PlayerMusicWeather.Normal;
                     break;
             }
+        }
+
+        void UpdatePlayerMusicTime()
+        {
+            if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.IsDay)
+                currentPlayerMusicTime = PlayerMusicTime.Day;
+            else
+                currentPlayerMusicTime = PlayerMusicTime.Night;
         }
 
         void AssignPlaylist()

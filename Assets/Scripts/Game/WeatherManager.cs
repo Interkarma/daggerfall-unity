@@ -61,6 +61,11 @@ namespace DaggerfallWorkshop.Game
             SetSunlightScale();
         }
 
+        void Update()
+        {
+            SetAmbientEffects();
+        }
+
         public void ClearOvercast()
         {
             if (DaggerfallSky)
@@ -107,7 +112,7 @@ namespace DaggerfallWorkshop.Game
                 PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.Rain_Normal;
 
             SetSunlightScale();
-            SetAmbientEffects();
+            //SetAmbientEffects();
             RaiseOnStartRainingEvent();
         }
 
@@ -115,7 +120,7 @@ namespace DaggerfallWorkshop.Game
         {
             StartRaining();
             isStorming = true;
-            SetAmbientEffects();
+            //SetAmbientEffects();
             RaiseOnStartStormingEvent();
         }
 
@@ -128,7 +133,7 @@ namespace DaggerfallWorkshop.Game
                 PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.None;
 
             SetSunlightScale();
-            SetAmbientEffects();
+            //SetAmbientEffects();
             RaiseOnStopRainingEvent();
         }
 
@@ -176,7 +181,7 @@ namespace DaggerfallWorkshop.Game
                 PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.None;
 
             SetSunlightScale();
-            SetAmbientEffects();
+            //SetAmbientEffects();
             RaiseOnStopSnowingEvent();
         }
 
@@ -213,11 +218,29 @@ namespace DaggerfallWorkshop.Game
 
             // Set presets based on weather type
             if (isRaining && !isStorming)
+            {
                 WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.Rain;
+                return;
+            }
             else if (isRaining && isStorming)
+            {
                 WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.Storm;
-            else
-                WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.None;
+                return;
+            }
+
+            // Set presets based on time of day
+            if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.IsDay)
+            {
+                WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.SunnyDay;
+                return;
+            }
+            else if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.IsNight)
+            {
+                WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.ClearNight;
+                return;
+            }
+
+            WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.None;
         }
 
         #endregion
