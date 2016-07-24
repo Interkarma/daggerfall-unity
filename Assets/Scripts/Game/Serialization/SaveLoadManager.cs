@@ -76,6 +76,16 @@ namespace DaggerfallWorkshop.Game.Serialization
             get { return GetDaggerfallSavePath(); }
         }
 
+        public int CharacterCount
+        {
+            get { return enumeratedCharacterSaves.Count; }
+        }
+
+        public string[] CharacterNames
+        {
+            get { return GetCharacterNames(); }
+        }
+
         #endregion
         
         #region Singleton
@@ -167,6 +177,17 @@ namespace DaggerfallWorkshop.Game.Serialization
                 return new int[0];
 
             return enumeratedCharacterSaves[characterName].ToArray();
+        }
+
+        public string[] GetCharacterNames()
+        {
+            List<string> names = new List<string>();
+            foreach(var kvp in enumeratedCharacterSaves)
+            {
+                names.Add(kvp.Key);
+            }
+
+            return names.ToArray();
         }
 
         /// <summary>

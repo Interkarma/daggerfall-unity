@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Color defaultTextColor = new Color(0.7f, 0.7f, 0.7f, 0.8f);
         int lastStringLength = 0;
         Vector2 maxSize = Vector2.zero;
+        bool readOnly = false;
 
         public int MaxCharacters
         {
@@ -73,6 +74,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { maxSize = value; }
         }
 
+        public bool ReadOnly
+        {
+            get { return readOnly; }
+            set { readOnly = value; }
+        }
+
         public TextBox(DaggerfallFont font = null)
         {
             if (font == null)
@@ -88,6 +95,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             base.Update();
+
+            // Do nothing if read only
+            if (readOnly)
+                return;
 
             // Moving cursor left and right
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.LeftArrow)
@@ -146,6 +157,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Draw()
         {
             base.Draw();
+
+            // Do not draw cursor if readonly
+            if (readOnly)
+                textCursor.Enabled = false;
+            else
+                textCursor.Enabled = true;
 
             if (text.Length > 0)
             {

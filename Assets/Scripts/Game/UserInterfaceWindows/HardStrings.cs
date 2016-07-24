@@ -36,8 +36,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string bowsNotImplemented = "Bows are not implemented yet, sorry. :(";
         public const string enterSaveName = "Enter save name";
+        public const string selectSaveName = "Select a save";
         public const string confirmDeleteSave = "Are you sure you want to delete save?";
         public const string confirmOverwriteSave = "Overwrite this save?";
         public const string youMustEnterASaveName = "You must enter a save name.";
+        public const string youMustSelectASaveName = "You must select a save name.";
     }
 }
