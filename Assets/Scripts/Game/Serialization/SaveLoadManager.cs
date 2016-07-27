@@ -307,6 +307,31 @@ namespace DaggerfallWorkshop.Game.Serialization
             StartCoroutine(SaveGame(saveName, path));
         }
 
+        public void Load(string characterName, string saveName)
+        {
+            // Must be ready
+            if (!IsReady())
+                throw new Exception(notReadyExceptionText);
+
+            // Look for existing save with this character and name
+            int key = FindSaveFolderByNames(characterName, saveName);
+
+            // Read save data from file
+            string path = GetSaveFolder(key);
+            string json = ReadSaveFile(Path.Combine(path, saveDataFilename));
+
+            // Deserialize JSON string to save data
+            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), json) as SaveData_v1;
+
+            // Restore save data
+            GameManager.Instance.PauseGame(false);
+            DaggerfallUI.Instance.FadeHUDFromBlack();
+            StartCoroutine(LoadGame(saveData));
+
+            // Notify
+            DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
+        }
+
         /// <summary>
         /// Checks if quick save folder exists.
         /// </summary>

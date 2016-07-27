@@ -235,12 +235,12 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class LootContainerData_v1
     {
         public ulong loadID;
-        public int worldKey;
-        public WorldContext worldContext;
+        //public int worldKey;
+        //public WorldContext worldContext;
         public LootContainerTypes containerType;
         public InventoryContainerImages containerImage;
         public Vector3 currentPosition;
-        public Vector3 localPosition;
+        //public Vector3 localPosition;
         public int textureArchive;
         public int textureRecord;
         public string lootTableKey;

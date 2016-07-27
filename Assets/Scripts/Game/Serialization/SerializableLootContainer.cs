@@ -101,6 +101,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             loot.LootTableKey = data.lootTableKey;
             loot.TextureArchive = data.textureArchive;
             loot.TextureRecord = data.textureRecord;
+            loot.playerOwned = data.playerOwned;
 
             // TODO: Remove loot container if empty
         }

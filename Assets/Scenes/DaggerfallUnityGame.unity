@@ -1025,7 +1025,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
       propertyPath: Arena2Path
-      value: 
+      value: D:\Program Files (x86)\Bethesda Softworks\Daggerfall\arena2
       objectReference: {fileID: 0}
     - target: {fileID: 11400008, guid: 0811f78212229814d8c469c916304789, type: 2}
       propertyPath: GenerateNormals
@@ -1082,6 +1082,11 @@ Prefab:
       propertyPath: NormalTextureStrength
       value: .200000003
       objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: Option_LootContainerPrefab
+      value: 
+      objectReference: {fileID: 11486862, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0811f78212229814d8c469c916304789, type: 2}
   m_IsPrefabParent: 0
@@ -1553,7 +1558,7 @@ MonoBehaviour:
   WeatherEffects: {fileID: 102824932}
   RainSunlightScale: 0.45
   StormSunlightScale: 0.25
-  SnowSunlightScale: 0.45
+  SnowSunlightScale: 0.35
   WinterSunlightScale: 0.6
 --- !u!1 &1463923235
 GameObject:
@@ -2246,7 +2251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08cdc78d3cb770b41a8c9c17d2ccc0c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ExteriorNoonAmbientLight: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+  ExteriorNoonAmbientLight: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
   ExteriorNightAmbientLight: {r: 0.3137255, g: 0.3137255, b: 0.3137255, a: 1}
   InteriorAmbientLight: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 1}
   DungeonAmbientLight: {r: 0.27450982, g: 0.27450982, b: 0.27450982, a: 1}
@@ -2485,7 +2490,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value

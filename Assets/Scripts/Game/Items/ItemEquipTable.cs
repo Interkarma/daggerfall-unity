@@ -278,6 +278,8 @@ namespace DaggerfallWorkshop.Game.Items
             if (data == null || items == null || data.Length != equipTableLength)
                 return;
 
+            Clear();
+
             for (int i = 0; i < equipTableLength; i++)
             {
                 ulong uid = data[i];

@@ -1244,7 +1244,7 @@ namespace DaggerfallWorkshop.Utility
                 iconRecord,
                 loadID);
 
-            // Generate items
+            // Set random treasure key
             loot.LootTableKey = "O";
             loot.GenerateItems();
         }

@@ -155,7 +155,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             savesScroller.OnScroll += SavesScroller_OnScroll;
             savesPanel.Components.Add(savesScroller);
 
-            // Save button
+            // Save/Load button
             goButton.Position = new Vector2(108, 150);
             goButton.Size = new Vector2(40, 16);
             goButton.Label.ShadowColor = Color.black;
@@ -338,6 +338,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PopToHUD();
         }
 
+        void LoadGame()
+        {
+            GameManager.Instance.SaveLoadManager.Load(currentPlayerName, saveNameTextBox.Text);
+            DaggerfallUI.Instance.PopToHUD();
+        }
+
         void SetMode(Modes mode)
         {
             string promptText = string.Empty;
@@ -401,6 +407,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     DaggerfallUI.MessageBox(HardStrings.youMustSelectASaveName);
                     return;
                 }
+
+                LoadGame();
             }
         }
 
