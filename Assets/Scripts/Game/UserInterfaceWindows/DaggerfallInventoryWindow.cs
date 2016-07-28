@@ -1146,6 +1146,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
+            // When transferring gold to player simply add to player's gold count
+            if (item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces) && PlayerEntity.Items == to)
+            {
+                playerEntity.GoldPieces += item.stackCount;
+                from.RemoveItem(item);
+                Refresh(false);
+                return;
+            }
+
             to.Transfer(item, from);
             Refresh(false);
         }
