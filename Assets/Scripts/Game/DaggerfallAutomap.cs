@@ -91,6 +91,28 @@ namespace DaggerfallWorkshop.Game
         // interior state is of type AutomapGeometryBlockState which has its models in 3rd hierarchy level
         AutomapGeometryBlockState automapGeometryInteriorState = null;
 
+        /// <summary>
+        /// this dictionary is used to store the discovery state of dungeons in the game world
+        /// the AutomapGeometryDungeonState is stored for each dungeon in this dictionary identified by its identifier string
+        /// </summary>
+        public Dictionary<string, AutomapGeometryDungeonState> dictAutomapDungeonsDiscoveryState = new Dictionary<string, AutomapGeometryDungeonState>();
+
+        /// <summary>
+        /// GetState() method for save system integration
+        /// </summary>
+        public Dictionary<string, AutomapGeometryDungeonState> GetState()
+        {
+            return dictAutomapDungeonsDiscoveryState;
+        }
+        
+        /// <summary>
+        /// SetState() method for save system integration
+        /// </summary>
+        public void SetState(Dictionary<string, AutomapGeometryDungeonState> savedDictAutomapDungeonsDiscoveryState)
+        {
+            dictAutomapDungeonsDiscoveryState = savedDictAutomapDungeonsDiscoveryState;
+        }
+
         #region Fields
 
         const float raycastDistanceDown = 3.0f; // 3 meters should be enough (note: flying too high will result in geometry not being revealed by this raycast
@@ -1346,6 +1368,17 @@ namespace DaggerfallWorkshop.Game
                 }
                 automapGeometryBlockState.blockElements = blockElements;
                 automapGeometryDungeonState.blocks.Add(automapGeometryBlockState);
+                
+                DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;                
+                string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
+                if (dictAutomapDungeonsDiscoveryState.ContainsKey(locationStringIdentifier))
+                {
+                    dictAutomapDungeonsDiscoveryState[locationStringIdentifier] = automapGeometryDungeonState;
+                }
+                else
+                {
+                    dictAutomapDungeonsDiscoveryState.Add(locationStringIdentifier, automapGeometryDungeonState);
+                }
             }
         }
 
@@ -1455,6 +1488,13 @@ namespace DaggerfallWorkshop.Game
         private void restoreStateAutomapDungeon(bool forceNotVisitedInThisRun = false)
         {
             Transform location = gameobjectGeometry.transform.GetChild(0);
+
+            DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
+            string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
+            if (dictAutomapDungeonsDiscoveryState.ContainsKey(locationStringIdentifier))
+            {
+                automapGeometryDungeonState = dictAutomapDungeonsDiscoveryState[locationStringIdentifier];
+            }
 
             if (automapGeometryDungeonState == null)
                 return;
