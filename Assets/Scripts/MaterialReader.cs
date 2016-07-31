@@ -167,7 +167,7 @@ namespace DaggerfallWorkshop
             CustomBlendMode blendMode = CustomBlendMode.Opaque,
             CustomSmoothnessMapChannel smoothnessChannel = CustomSmoothnessMapChannel.AlbedoAlpha,
             float metallic = 0,
-            float glossiness = 0)
+            float glossiness = 1)
         {
             // Create material
             Shader shader = Shader.Find(_StandardShaderName);
@@ -180,27 +180,14 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Creates a simple cutout material for mobile billboards.
-        /// </summary>
-        /// <returns></returns>
-        public static Material CreateBillboardMaterial()
-        {
-            // Create material
-            Shader shader = Shader.Find(_DaggerfallBillboardShaderName);
-            Material material = new Material(shader);
-
-            return material;
-        }
-
-        /// <summary>
         /// Change the blend mode of a Standard material at runtime.
         /// </summary>
         public static void SetBlendMode(
             Material material,
             CustomBlendMode blendMode,
             CustomSmoothnessMapChannel smoothnessChannel,
-            float metallic = 0,
-            float glossiness = 0)
+            float metallic,
+            float glossiness)
         {
             // Set properties
             material.SetFloat("_Mode", (int)blendMode);
@@ -332,7 +319,7 @@ namespace DaggerfallWorkshop
             // Create material
             Material material;
             if (isBillboard)
-                material = CreateBillboardMaterial();
+                material = CreateStandardMaterial(CustomBlendMode.Cutout);
             else
                 material = CreateStandardMaterial();
 
@@ -452,7 +439,7 @@ namespace DaggerfallWorkshop
             // Create material
             Material material;
             if (isBillboard)
-                material = CreateBillboardMaterial();
+                material = CreateStandardMaterial(CustomBlendMode.Cutout);
             else
                 material = CreateStandardMaterial();
 

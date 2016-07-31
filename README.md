@@ -43,10 +43,10 @@
 + [Reddit](https://www.reddit.com/r/daggerfallunity) - *Daggerfall Unity subreddit*
 + [Twitter](https://twitter.com/gav_clayton) - *Follow lead developer on Twitter for more news*
 
-## Version
+## Versions
 + *Daggerfall Unity* - v0.3.2
 + *Daggerfall Tools for Unity* - v1.6.0
-+ *Unity3D* - 5.4.0f3
++ *Minimum Unity3D version* - 5.4.0f3
 
 ## License
 
