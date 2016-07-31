@@ -220,7 +220,7 @@ half4 getColorFromTerrain(Input IN, float2 uvTex, int texDim, int tilesetDim, in
 	return c;
 }
 
-half3 updateColorWithInfoForTreeCoverageAndLocations(half3 colorIn, float treeCoverage, uint locationRangeX, uint locationRangeY, int mapPixelX, int mapPixelY, float2 uvTex)
+half3 updateColorWithInfoForTreeCoverageAndLocations(half3 colorIn, float treeCoverage, int locationRangeX, int locationRangeY, int mapPixelX, int mapPixelY, float2 uvTex)
 {
 	half3 c = colorIn;
 	half3 treeColor;
