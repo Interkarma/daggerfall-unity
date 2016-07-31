@@ -258,7 +258,7 @@ namespace DaggerfallWorkshop.Game
             if (currentPlaylist == null)
                 return;
 
-            UnityEngine.Random.seed = System.DateTime.Now.Millisecond;
+            UnityEngine.Random.InitState(DateTime.Now.Millisecond);
             int index = UnityEngine.Random.Range(0, currentPlaylist.Length);
             currentSong = currentPlaylist[index];
             currentSongIndex = index;

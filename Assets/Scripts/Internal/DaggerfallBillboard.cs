@@ -205,7 +205,8 @@ namespace DaggerfallWorkshop
                     4,
                     true,
                     0,
-                    false);
+                    false,
+                    true);
                 mesh = dfUnity.MeshReader.GetBillboardMesh(
                     summary.AtlasRects[summary.AtlasIndices[record].startIndex],
                     archive,
@@ -226,6 +227,7 @@ namespace DaggerfallWorkshop
                     0,
                     out summary.Rect,
                     4,
+                    true,
                     true);
                 mesh = dfUnity.MeshReader.GetBillboardMesh(
                     summary.Rect,
@@ -236,11 +238,7 @@ namespace DaggerfallWorkshop
                 summary.AnimatedMaterial = false;
             }
 
-            // Update material properties
-            MaterialReader.SetBlendMode(material, MaterialReader.CustomBlendMode.Cutout);
-
             // Set summary
-            //summary.InDungeon = dungeon;
             summary.FlatType = MaterialReader.GetFlatType(archive);
             summary.Archive = archive;
             summary.Record = record;

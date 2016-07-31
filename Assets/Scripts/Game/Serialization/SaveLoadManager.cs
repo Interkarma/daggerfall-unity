@@ -911,6 +911,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             for (int i = 0; i < lootContainers.Length; i++)
             {
+                if (lootContainers[i] == null)
+                    continue;
+
                 ulong key = lootContainers[i].loadID;
                 if (serializableLootContainers.ContainsKey(key))
                 {

@@ -140,7 +140,7 @@ namespace DaggerfallWorkshop
                 if (!IsMagicallyHeld)
                 {
                     // Roll for chance to open
-                    UnityEngine.Random.seed = Time.frameCount;
+                    UnityEngine.Random.InitState(Time.frameCount);
                     float roll = UnityEngine.Random.Range(0f, 1f);
                     if (roll >= (1f - ChanceToBash))
                     {

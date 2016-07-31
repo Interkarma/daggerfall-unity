@@ -382,7 +382,7 @@ namespace DaggerfallWorkshop
             dfBillboardBatch.Clear();
 
             // Seed random with terrain key
-            UnityEngine.Random.seed = MakeTerrainKey(dfTerrain.MapPixelX, dfTerrain.MapPixelY);
+            Random.InitState(MakeTerrainKey(dfTerrain.MapPixelX, dfTerrain.MapPixelY));
 
             // Just layout some random flats spread evenly across entire map pixel area
             // Flats are aligned with tiles, max 16129 billboards per batch

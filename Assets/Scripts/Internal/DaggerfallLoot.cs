@@ -71,5 +71,21 @@ namespace DaggerfallWorkshop
 
             items.Import(newitems);
         }
+
+        /// <summary>
+        /// Called when this loot collection is opened by inventory window
+        /// </summary>
+        public void OnInventoryOpen()
+        {
+            Debug.Log("Loot container opened.");
+        }
+
+        /// <summary>
+        /// Called when this loot collection is closed by inventory window
+        /// </summary>
+        public void OnInventoryClose()
+        {
+            Debug.Log("Loot container closed.");
+        }
     }
 }

@@ -475,6 +475,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 remoteItems = lootTarget.Items;
                 remoteTargetType = RemoteTargetTypes.Loot;
+                lootTarget.OnInventoryOpen();
             }
 
             // Refresh window
@@ -484,7 +485,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             // Clear any loot target on exit
-            lootTarget = null;
+            if (lootTarget != null)
+            {
+                lootTarget.OnInventoryClose();
+                lootTarget = null;
+            }
             
             // TODO: Generate serializable loot pile in world for dropped items
             if (droppedItems.Count > 0)

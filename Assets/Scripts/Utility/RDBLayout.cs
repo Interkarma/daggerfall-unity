@@ -473,7 +473,7 @@ namespace DaggerfallWorkshop.Utility
             randomEnemiesNode.transform.parent = go.transform;
 
             // Seed random generator
-            UnityEngine.Random.seed = seed;
+            UnityEngine.Random.InitState(seed);
 
             // Iterate editor flats for enemies
             for (int i = 0; i < editorObjects.Length; i++)

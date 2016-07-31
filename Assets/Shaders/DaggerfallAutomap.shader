@@ -1,4 +1,6 @@
-﻿// Project:         Daggerfall Tools For Unity
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Web Site:        http://www.dfworkshop.net
@@ -60,7 +62,7 @@ Shader "Daggerfall/Automap"
 			{
     			OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
     			OUT.uv = v.texcoord;
-				OUT.worldPos = mul(_Object2World, v.vertex).xyz;
+				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 			}
 
 
@@ -145,7 +147,7 @@ Shader "Daggerfall/Automap"
 			{
 				OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				OUT.uv = v.texcoord;
-				OUT.worldPos = mul(_Object2World, v.vertex).xyz;
+				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 			}
 
 			struct g2f
@@ -290,7 +292,7 @@ Shader "Daggerfall/Automap"
 			{
 				OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				OUT.uv = v.texcoord;
-				OUT.worldPos = mul(_Object2World, v.vertex).xyz;
+				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 			}
 
 
@@ -363,7 +365,7 @@ Shader "Daggerfall/Automap"
 			{
 				OUT.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				OUT.uv = v.texcoord;
-				OUT.worldPos = mul(_Object2World, v.vertex).xyz;
+				OUT.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 			}
 
 

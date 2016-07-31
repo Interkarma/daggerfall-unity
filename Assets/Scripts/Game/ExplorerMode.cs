@@ -239,7 +239,7 @@ namespace DaggerfallWorkshop.Game
         // Randomise player month, time of day, and weather
         void RandomiseEnvironment()
         {
-            Random.seed = UnityEngine.Time.renderedFrameCount;
+            Random.InitState(Time.renderedFrameCount);
 
             // Want a 40% chance of winter
             if (Random.value < 0.4f)
@@ -306,7 +306,7 @@ namespace DaggerfallWorkshop.Game
                 yield break;
 
             // Find a random location
-            UnityEngine.Random.seed = UnityEngine.Time.renderedFrameCount;
+            Random.InitState(Time.renderedFrameCount);
             DFPosition mapPos = new DFPosition();
             bool found = false;
             while (!found)
