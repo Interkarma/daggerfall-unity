@@ -113,8 +113,8 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			c = getColorFromTerrain(IN, IN.uv_MainTex, _FarTerrainTilemapDim, _FarTerrainTilesetDim, index);
 			
 			float treeCoverage = terrainTileInfo.g;
-			int locationRangeX = terrainTileInfo.b * _MaxIndex;
-			int locationRangeY = terrainTileInfo.a * _MaxIndex;
+			uint locationRangeX = terrainTileInfo.b * _MaxIndex;
+			uint locationRangeY = terrainTileInfo.a * _MaxIndex;
 			c.rgb = updateColorWithInfoForTreeCoverageAndLocations(c.rgb, treeCoverage, locationRangeX, locationRangeY, mapPixelX, mapPixelY, IN.uv_MainTex);
 
 			o.Albedo = c.rgb;
@@ -170,8 +170,8 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 			c = getColorFromTerrain(IN, IN.uv_MainTex, _FarTerrainTilemapDim, _FarTerrainTilesetDim, index);
 			
 			float treeCoverage = terrainTileInfo.g;
-			int locationRangeX = terrainTileInfo.b * _MaxIndex;
-			int locationRangeY = terrainTileInfo.a * _MaxIndex;
+			uint locationRangeX = terrainTileInfo.b * _MaxIndex;
+			uint locationRangeY = terrainTileInfo.a * _MaxIndex;
 			c.rgb = updateColorWithInfoForTreeCoverageAndLocations(c.rgb, treeCoverage, locationRangeX, locationRangeY, mapPixelX, mapPixelY, IN.uv_MainTex);
 
 			o.Albedo = c.rgb;

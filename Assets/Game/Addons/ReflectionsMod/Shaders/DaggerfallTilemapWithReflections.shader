@@ -66,9 +66,9 @@ Shader "Daggerfall/TilemapWithReflections" {
 		void surf (Input IN, inout SurfaceOutputStandard o)
 		{
 			// Get offset to tile in atlas
-			int index = tex2D(_TilemapTex, IN.uv_MainTex).x * _MaxIndex;
-			int xpos = index % _TilesetDim;
-			int ypos = index / _TilesetDim;
+			uint index = tex2D(_TilemapTex, IN.uv_MainTex).x * _MaxIndex;
+			uint xpos = index % _TilesetDim;
+			uint ypos = index / _TilesetDim;
 			float2 uv = float2(xpos, ypos) / _TilesetDim;
 
 			// Offset to fragment position inside tile
