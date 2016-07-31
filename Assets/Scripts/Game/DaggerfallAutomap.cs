@@ -82,7 +82,8 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public class AutomapGeometryDungeonState
         {
-            public String locationName;
+            public String locationName; /// name of the dungeon location
+            public ulong timeInSecondsLastVisited; /// time in seconds (from DaggerfallDateTime) when player last visited the dungeon (used to store only the n last dungeons in save games)
             public List<AutomapGeometryBlockState> blocks;
         }
 
@@ -90,6 +91,40 @@ namespace DaggerfallWorkshop.Game
         AutomapGeometryDungeonState automapGeometryDungeonState = null;
         // interior state is of type AutomapGeometryBlockState which has its models in 3rd hierarchy level
         AutomapGeometryBlockState automapGeometryInteriorState = null;
+
+        /// <summary>
+        /// this dictionary is used to store the discovery state of dungeons in the game world
+        /// the AutomapGeometryDungeonState is stored for each dungeon in this dictionary identified by its identifier string
+        /// </summary>
+        public Dictionary<string, AutomapGeometryDungeonState> dictAutomapDungeonsDiscoveryState = new Dictionary<string, AutomapGeometryDungeonState>();
+
+
+        int numberOfDungeonMemorized = 1; /// 0... vanilla daggerfall behavior, 1... remember last visited dungeon, n... remember n visited dungeons
+
+        /// <summary>
+        /// sets the number of dungeons that are memorized
+        /// </summary>
+        public void setNumberOfDungeonMemorized(int n)
+        {
+            numberOfDungeonMemorized = n;
+        }
+
+        /// <summary>
+        /// GetState() method for save system integration
+        /// </summary>
+        public Dictionary<string, AutomapGeometryDungeonState> GetState()
+        {
+            return dictAutomapDungeonsDiscoveryState;
+        }
+        
+        /// <summary>
+        /// SetState() method for save system integration
+        /// </summary>
+        public void SetState(Dictionary<string, AutomapGeometryDungeonState> savedDictAutomapDungeonsDiscoveryState)
+        {
+            saveStateAutomapDungeon();
+            dictAutomapDungeonsDiscoveryState = savedDictAutomapDungeonsDiscoveryState;
+        }
 
         #region Fields
 
@@ -1307,9 +1342,13 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         private void saveStateAutomapDungeon()
         {
+            if (numberOfDungeonMemorized == 0) // if discovery state of no dungeon has to be remembered just skip this function
+                return;
+            
             Transform gameObjectGeometryDungeon = gameobjectGeometry.transform.GetChild(0);
             automapGeometryDungeonState = new AutomapGeometryDungeonState();
             automapGeometryDungeonState.locationName = gameObjectGeometryDungeon.name;
+            automapGeometryDungeonState.timeInSecondsLastVisited = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
             automapGeometryDungeonState.blocks = new List<AutomapGeometryBlockState>();
 
             foreach (Transform currentBlock in gameObjectGeometryDungeon.transform)
@@ -1347,6 +1386,43 @@ namespace DaggerfallWorkshop.Game
                 automapGeometryBlockState.blockElements = blockElements;
                 automapGeometryDungeonState.blocks.Add(automapGeometryBlockState);
             }
+
+            // replace or add discovery state for current dungeon
+            DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
+            string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
+            if (dictAutomapDungeonsDiscoveryState.ContainsKey(locationStringIdentifier))
+            {
+                dictAutomapDungeonsDiscoveryState[locationStringIdentifier] = automapGeometryDungeonState;
+            }
+            else
+            {
+                dictAutomapDungeonsDiscoveryState.Add(locationStringIdentifier, automapGeometryDungeonState);
+            }
+
+            // make list out of dictionary and sort by last time visited - then get rid of dungeons in dictionary that weren't visited lately
+            List<KeyValuePair<string, AutomapGeometryDungeonState>> sortedList = new List<KeyValuePair<string, AutomapGeometryDungeonState>>(dictAutomapDungeonsDiscoveryState);
+            sortedList.Sort(
+                delegate (KeyValuePair<string, AutomapGeometryDungeonState> firstPair,
+                KeyValuePair<string, AutomapGeometryDungeonState> nextPair)
+                {
+                    return nextPair.Value.timeInSecondsLastVisited.CompareTo(firstPair.Value.timeInSecondsLastVisited);
+                }
+            );
+
+            //if there are more dungeons remembered than allowed - get rid of dungeons in dictionary that weren't visited lately
+            if (sortedList.Count > numberOfDungeonMemorized)
+            {
+                ulong timeInSecondsLimit = sortedList[numberOfDungeonMemorized - 1].Value.timeInSecondsLastVisited;
+
+                foreach (KeyValuePair<string, AutomapGeometryDungeonState> entry in sortedList) // use sorted list and iterate over it - remove elements of dictionary
+                {
+                    if (entry.Value.timeInSecondsLastVisited < timeInSecondsLimit)
+                    {
+                        dictAutomapDungeonsDiscoveryState.Remove(entry.Key); // remove this dungeon's entry from dictionary
+                    }
+                }
+            }
+
         }
 
         void updateMeshRendererInteriorState(ref MeshRenderer meshRenderer, AutomapGeometryBlockState automapGeometryInteriorState, int indexElement, int indexModel, bool forceNotVisitedInThisRun)
@@ -1455,6 +1531,13 @@ namespace DaggerfallWorkshop.Game
         private void restoreStateAutomapDungeon(bool forceNotVisitedInThisRun = false)
         {
             Transform location = gameobjectGeometry.transform.GetChild(0);
+
+            DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
+            string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
+            if (dictAutomapDungeonsDiscoveryState.ContainsKey(locationStringIdentifier))
+            {
+                automapGeometryDungeonState = dictAutomapDungeonsDiscoveryState[locationStringIdentifier];
+            }
 
             if (automapGeometryDungeonState == null)
                 return;
