@@ -1767,7 +1767,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400016, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
       propertyPath: RunStepInterval
-      value: 1.89999998
+      value: 1.9
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
       propertyPath: far clip plane
@@ -1831,7 +1831,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400016, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
       propertyPath: GroundDistance
-      value: 1.79999995
+      value: 1.8
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
       propertyPath: m_Depth
@@ -2508,7 +2508,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value
