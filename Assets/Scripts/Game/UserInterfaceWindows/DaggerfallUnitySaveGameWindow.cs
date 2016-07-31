@@ -346,7 +346,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetMode(Modes mode)
         {
-            string promptText = string.Empty;
             if (mode == Modes.SaveGame)
             {
                 saveNameTextBox.DefaultText = HardStrings.enterSaveName;

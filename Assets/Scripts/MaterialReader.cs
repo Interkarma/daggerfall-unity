@@ -71,6 +71,7 @@ namespace DaggerfallWorkshop
         // Shader names
         public const string _StandardShaderName = "Standard";
         public const string _DaggerfallTilemapShaderName = "Daggerfall/Tilemap";
+        public const string _DaggerfallBillboardShaderName = "Daggerfall/Billboard";
         public const string _DaggerfallBillboardBatchShaderName = "Daggerfall/BillboardBatch";
 
         DaggerfallUnity dfUnity;
@@ -92,6 +93,16 @@ namespace DaggerfallWorkshop
             Cutout = 1,
             Fade = 2,
             Transparent = 3,
+        }
+
+        /// <summary>
+        /// Standard shader smoothness map channel setting.
+        /// Using a custom enum as Unity does not expose outside of editor GUI.
+        /// </summary>
+        public enum CustomSmoothnessMapChannel
+        {
+            SpecularMetallicAlpha = 0,
+            AlbedoAlpha = 1,
         }
 
         #endregion
@@ -152,16 +163,31 @@ namespace DaggerfallWorkshop
         /// Creates new Standard material with default properties suitable for most Daggerfall textures.
         /// </summary>
         /// <returns></returns>
-        public static Material CreateStandardMaterial(CustomBlendMode blendMode = CustomBlendMode.Opaque, float metallic = 0, float glossiness = 0)
+        public static Material CreateStandardMaterial(
+            CustomBlendMode blendMode = CustomBlendMode.Opaque,
+            CustomSmoothnessMapChannel smoothnessChannel = CustomSmoothnessMapChannel.AlbedoAlpha,
+            float metallic = 0,
+            float glossiness = 0)
         {
             // Create material
             Shader shader = Shader.Find(_StandardShaderName);
             Material material = new Material(shader);
 
-            // Set properties
-            material.SetFloat("_Metallic", metallic);
-            material.SetFloat("_Glossiness", glossiness);
-            SetBlendMode(material, blendMode);
+            // Set blend mode
+            SetBlendMode(material, blendMode, smoothnessChannel, metallic, glossiness);
+
+            return material;
+        }
+
+        /// <summary>
+        /// Creates a simple cutout material for mobile billboards.
+        /// </summary>
+        /// <returns></returns>
+        public static Material CreateBillboardMaterial()
+        {
+            // Create material
+            Shader shader = Shader.Find(_DaggerfallBillboardShaderName);
+            Material material = new Material(shader);
 
             return material;
         }
@@ -169,12 +195,23 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Change the blend mode of a Standard material at runtime.
         /// </summary>
-        public static void SetBlendMode(Material material, CustomBlendMode blendMode)
+        public static void SetBlendMode(
+            Material material,
+            CustomBlendMode blendMode,
+            CustomSmoothnessMapChannel smoothnessChannel,
+            float metallic = 0,
+            float glossiness = 0)
         {
+            // Set properties
             material.SetFloat("_Mode", (int)blendMode);
+            material.SetFloat("_SmoothnessTextureChannel", (int)smoothnessChannel);
+            material.SetFloat("_Metallic", metallic);
+            material.SetFloat("_Glossiness", glossiness);
+
             switch (blendMode)
             {
                 case CustomBlendMode.Opaque:
+                    material.SetOverrideTag("RenderType", "");
                     material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                     material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
                     material.SetInt("_ZWrite", 1);
@@ -184,31 +221,34 @@ namespace DaggerfallWorkshop
                     material.renderQueue = -1;
                     break;
                 case CustomBlendMode.Cutout:
+                    material.SetOverrideTag("RenderType", "TransparentCutout");
                     material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                     material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
                     material.SetInt("_ZWrite", 1);
                     material.EnableKeyword("_ALPHATEST_ON");
                     material.DisableKeyword("_ALPHABLEND_ON");
                     material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                    material.renderQueue = 2450;
+                    material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
                     break;
                 case CustomBlendMode.Fade:
+                    material.SetOverrideTag("RenderType", "Transparent");
                     material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
                     material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                     material.SetInt("_ZWrite", 0);
                     material.DisableKeyword("_ALPHATEST_ON");
                     material.EnableKeyword("_ALPHABLEND_ON");
                     material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                    material.renderQueue = 3000;
+                    material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
                     break;
                 case CustomBlendMode.Transparent:
+                    material.SetOverrideTag("RenderType", "Transparent");
                     material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                     material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                     material.SetInt("_ZWrite", 0);
                     material.DisableKeyword("_ALPHATEST_ON");
                     material.DisableKeyword("_ALPHABLEND_ON");
                     material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                    material.renderQueue = 3000;
+                    material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
                     break;
             }
         }
@@ -240,6 +280,7 @@ namespace DaggerfallWorkshop
         /// <param name="rectOut">Receives UV rect for texture inside border.</param>
         /// <param name="borderSize">Number of pixels internal border around each texture.</param>
         /// <param name="dilate">Blend texture into surrounding empty pixels.</param>
+        /// <param name="isBillboard">Set true when creating atlas material for simple billboards.</param>
         /// <returns>Material or null.</returns>
         public Material GetMaterial(
             int archive,
@@ -248,7 +289,8 @@ namespace DaggerfallWorkshop
             int alphaIndex,
             out Rect rectOut,
             int borderSize = 0,
-            bool dilate = false)
+            bool dilate = false,
+            bool isBillboard = false)
         {
             // Ready check
             if (!IsReady)
@@ -287,8 +329,14 @@ namespace DaggerfallWorkshop
             GetTextureResults results = textureReader.GetTexture2D(settings, AlphaTextureFormat, NonAlphaTextureFormat);
             rectOut = results.singleRect;
 
+            // Create material
+            Material material;
+            if (isBillboard)
+                material = CreateBillboardMaterial();
+            else
+                material = CreateStandardMaterial();
+
             // Setup material
-            Material material = CreateStandardMaterial();
             material.name = FormatName(archive, record);
             material.mainTexture = results.albedoMap;
             material.mainTexture.filterMode = MainFilterMode;
@@ -360,6 +408,7 @@ namespace DaggerfallWorkshop
         /// <param name="shrinkUVs">Number of pixels to shrink UV rect.</param>
         /// <param name="copyToOppositeBorder">Copy texture edges to opposite border. Requires border, will overwrite dilate.</param>
         /// <param name="shader">Shader for material. If null, DefaultShaderName will be applied.</param>
+        /// <param name="isBillboard">Set true when creating atlas material for simple billboards.</param>
         /// <returns>Material or null.</returns>
         public Material GetMaterialAtlas(
             int archive,
@@ -371,7 +420,8 @@ namespace DaggerfallWorkshop
             int border = 0,
             bool dilate = false,
             int shrinkUVs = 0,
-            bool copyToOppositeBorder = false)
+            bool copyToOppositeBorder = false,
+            bool isBillboard = false)
         {
             // Ready check
             if (!IsReady)
@@ -400,7 +450,11 @@ namespace DaggerfallWorkshop
             }
 
             // Create material
-            Material material = CreateStandardMaterial();
+            Material material;
+            if (isBillboard)
+                material = CreateBillboardMaterial();
+            else
+                material = CreateStandardMaterial();
 
             // Create settings
             GetTextureSettings settings = TextureReader.CreateTextureSettings(archive, 0, 0, alphaIndex, border, dilate);

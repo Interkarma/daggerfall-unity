@@ -589,18 +589,18 @@ namespace DaggerfallWorkshop.Game
 
         #region Event Handlers
 
-        void OnLevelWasLoaded(int index)
-        {
-            //if(index == SceneControl.GameSceneIndex)
-            //{
-            //    StateManager.ChangeState(StateManager.StateTypes.Start);
-            //}
-            //else if(index == SceneControl.StartupSceneIndex)
-            //{
-            //    StateManager.ChangeState(StateManager.StateTypes.Setup);
-            //}
-            GetProperties();
-        }
+        //void OnLevelWasLoaded(int index)
+        //{
+        //    //if(index == SceneControl.GameSceneIndex)
+        //    //{
+        //    //    StateManager.ChangeState(StateManager.StateTypes.Start);
+        //    //}
+        //    //else if(index == SceneControl.StartupSceneIndex)
+        //    //{
+        //    //    StateManager.ChangeState(StateManager.StateTypes.Setup);
+        //    //}
+        //    GetProperties();
+        //}
 
         void PathErrorMessageBox_OnClose()
         {

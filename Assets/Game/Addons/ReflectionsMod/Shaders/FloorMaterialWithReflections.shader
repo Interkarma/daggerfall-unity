@@ -1,4 +1,6 @@
-﻿//ReflectionsMod for Daggerfall Tools For Unity
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+//ReflectionsMod for Daggerfall Tools For Unity
 //http://www.reddit.com/r/dftfu
 //http://www.dfworkshop.net/
 //Author: Michael Rauter (a.k.a. Nystul)
@@ -62,7 +64,7 @@ Shader "Daggerfall/FloorMaterialWithReflections" {
 		{
 			UNITY_INITIALIZE_OUTPUT(Input, o);
 				
-			float4 posWorldSpace = mul(_Object2World, v.vertex);
+			float4 posWorldSpace = mul(unity_ObjectToWorld, v.vertex);
 			if ((abs(posWorldSpace.y - _GroundLevelHeight) < 0.01f) || (abs(posWorldSpace.y - _LowerLevelHeight) < 0.01f))
 			{
 				o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace));

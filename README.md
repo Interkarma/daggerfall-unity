@@ -44,9 +44,9 @@
 + [Twitter](https://twitter.com/gav_clayton) - *Follow lead developer on Twitter for more news*
 
 ## Version
-+ *Daggerfall Unity* - v0.3.1
-+ *Daggerfall Tools for Unity* - v1.5.6
-+ *Unity3D* - 5.3.5f1
++ *Daggerfall Unity* - v0.3.2
++ *Daggerfall Tools for Unity* - v1.6.0
++ *Unity3D* - 5.4.0f3
 
 ## License
 

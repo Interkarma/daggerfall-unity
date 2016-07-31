@@ -108,7 +108,7 @@ void fcolor (Input IN, SurfaceOutput o, inout fixed4 color)
 }
 
 
-half4 getColorByTextureAtlasIndex(Input IN, uniform sampler2D textureAtlas, uint index, float2 uvTex, int texDim, int tilesetDim)
+half4 getColorByTextureAtlasIndex(Input IN, uniform sampler2D textureAtlas, int index, float2 uvTex, int texDim, int tilesetDim)
 {			
 	const float textureCrispness = 3.5f; // defines how crisp textures of extended terrain are (higher values result in more crispness)
 	const float textureCrispnessDiminishingFactor = 0.075f; // defines how fast crispness of textures diminishes with more distance from the player (the camera)
@@ -117,8 +117,8 @@ half4 getColorByTextureAtlasIndex(Input IN, uniform sampler2D textureAtlas, uint
 	float dist = max(abs(IN.worldPos.x - _WorldSpaceCameraPos.x), abs(IN.worldPos.z - _WorldSpaceCameraPos.z));
 	dist = floor(dist*distanceAttenuation);
 
-	uint xpos = index % tilesetDim;
-	uint ypos = index / tilesetDim;
+	int xpos = index % tilesetDim;
+	int ypos = index / tilesetDim;
 	float2 uv = float2(xpos, ypos) / tilesetDim;
 
 	// Offset to fragment position inside tile

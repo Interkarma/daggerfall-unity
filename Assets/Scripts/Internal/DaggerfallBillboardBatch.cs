@@ -191,7 +191,8 @@ namespace DaggerfallWorkshop
                     4,
                     true,
                     0,
-                    false);
+                    false,
+                    true);
 
             // Serialize cached material information
             dfUnity.MaterialReader.GetCachedMaterialAtlas(archive, out cachedMaterial);

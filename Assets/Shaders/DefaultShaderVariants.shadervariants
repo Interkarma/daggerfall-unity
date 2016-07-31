@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!200 &20000000
+ShaderVariantCollection:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: DefaultShaderVariants
+  m_Shaders:
+    data:
+      first: {fileID: 19, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants:
+        - keywords: 
+          passType: 0
+    data:
+      first: {fileID: 66, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants: []
+    data:
+      first: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants:
+        - keywords: SHADOWS_DEPTH
+          passType: 8
+        - keywords: SHADOWS_DEPTH _ALPHATEST_ON
+          passType: 8
+        - keywords: DYNAMICLIGHTMAP_OFF LIGHTMAP_OFF
+          passType: 10
+        - keywords: DYNAMICLIGHTMAP_OFF LIGHTMAP_OFF _ALPHATEST_ON
+          passType: 10
+        - keywords: DYNAMICLIGHTMAP_OFF LIGHTMAP_OFF _ALPHATEST_ON _EMISSION
+          passType: 10
+    data:
+      first: {fileID: 74, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants:
+        - keywords: 
+          passType: 0
+    data:
+      first: {fileID: 69, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants:
+        - keywords: 
+          passType: 0
+        - keywords: DIRECTIONAL
+          passType: 0
+        - keywords: POINT
+          passType: 0
+    data:
+      first: {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants: []
+    data:
+      first: {fileID: 9000, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants:
+        - keywords: 
+          passType: 0
+    data:
+      first: {fileID: 9001, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants:
+        - keywords: 
+          passType: 0
+    data:
+      first: {fileID: 9003, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants:
+        - keywords: 
+          passType: 0
+    data:
+      first: {fileID: 10623, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants: []
+    data:
+      first: {fileID: 10770, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants:
+        - keywords: 
+          passType: 0
+        - keywords: UNITY_UI_ALPHACLIP
+          passType: 0
+    data:
+      first: {fileID: 10782, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants: []
+    data:
+      first: {fileID: 15104, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants: []
+    data:
+      first: {fileID: 15105, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants: []
+    data:
+      first: {fileID: 15106, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: 70d8568987ac0499f952b54c7c13e265, type: 3}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: 6e33654e7c7c2a248ae1a18b7f4053b6, type: 3}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: 6fcdb68e5c0026a4687f88caa539e703, type: 3}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: 8cc87b30bef729249b31f1844ee57f6d, type: 3}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: 8d06399a000651e47ad80dcd43cfcf53, type: 3}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: 9e17799a9c6ba5d41bf2993505b5ba6a, type: 3}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: c3b8c2f21d1ea43498ec1f71a3055a89, type: 3}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: b425ac98afc5e6f4cba2002c4b5b3b7a, type: 3}
+      second:
+        variants: []

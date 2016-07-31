@@ -50,7 +50,7 @@ namespace DaggerfallWorkshop
                 419, 420, 422, 423, 424, 468,
             };
 
-            Random.seed = seed;
+            Random.InitState(seed);
             int[] textureTable = new int[TableLength];
             for (int i = 0; i < TableLength; i++)
             {
