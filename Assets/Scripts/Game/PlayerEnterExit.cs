@@ -220,6 +220,11 @@ namespace DaggerfallWorkshop.Game
             lastPlayerDungeonBlockIndex = -1;
             playerDungeonBlockData = new DFLocation.DungeonBlock();
 
+            // Reset inside state
+            isPlayerInside = false;
+            isPlayerInsideDungeon = false;
+            isPlayerInsideDungeonPalace = false;
+
             // Set player GPS coordinates
             playerGPS.WorldX = worldX;
             playerGPS.WorldZ = worldZ;
