@@ -519,10 +519,9 @@ namespace DaggerfallWorkshop.Utility
         /// Creates a loot container for items dropped by the player.
         /// </summary>
         /// <param name="player">Player object, must have PlayerEnterExit and PlayerMotor attached.</param>
-        /// <param name="items">Item collection for dropped loot.</param>
         /// <param name="loadID">Unique LoadID for save system.</param>
         /// <returns>DaggerfallLoot.</returns>
-        public static DaggerfallLoot CreateDroppedLootContainer(GameObject player, ItemCollection items, ulong loadID = 0)
+        public static DaggerfallLoot CreateDroppedLootContainer(GameObject player, ulong loadID)
         {
             // Player must have a PlayerEnterExit component
             PlayerEnterExit playerEnterExit = player.GetComponent<PlayerEnterExit>();
@@ -569,7 +568,8 @@ namespace DaggerfallWorkshop.Utility
             // Set properties
             loot.LoadID = loadID;
             loot.LootTableKey = string.Empty;
-            loot.Items.TransferAll(items);
+            loot.playerOwned = true;
+            loot.customDrop = true;
 
             return loot;
         }

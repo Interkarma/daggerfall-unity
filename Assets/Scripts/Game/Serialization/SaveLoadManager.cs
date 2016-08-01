@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FullSerializer;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -427,7 +428,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Instance.serializableActionObjects.Remove(serializableObject.LoadID);
             else if (serializableObject is SerializableEnemy)
                 Instance.serializableEnemies.Remove(serializableObject.LoadID);
-            else if (serializableObject is SerializableEnemy)
+            else if (serializableObject is SerializableLootContainer)
                 Instance.serializableLootContainers.Remove(serializableObject.LoadID);
         }
 
@@ -911,13 +912,29 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             for (int i = 0; i < lootContainers.Length; i++)
             {
+                // Skip null containers
                 if (lootContainers[i] == null)
                     continue;
 
+                // Restore loot containers
                 ulong key = lootContainers[i].loadID;
                 if (serializableLootContainers.ContainsKey(key))
                 {
+                    // Apply to known loot container that is part of scene build
                     serializableLootContainers[key].RestoreSaveData(lootContainers[i]);
+                }
+                else
+                {
+                    // Add custom drop containers back to scene (e.g. dropped loot, slain foes)
+                    if (lootContainers[i].customDrop)
+                    {
+                        DaggerfallLoot customLootContainer = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, key);
+                        SerializableLootContainer serializableLootContainer = customLootContainer.GetComponent<SerializableLootContainer>();
+                        if (serializableLootContainer)
+                        {
+                            serializableLootContainer.RestoreSaveData(lootContainers[i]);
+                        }
+                    }
                 }
             }
         }

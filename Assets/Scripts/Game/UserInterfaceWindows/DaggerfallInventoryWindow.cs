@@ -491,10 +491,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 lootTarget = null;
             }
             
-            // TODO: Generate serializable loot pile in world for dropped items
+            // Generate serializable loot pile in world for dropped items
             if (droppedItems.Count > 0)
             {
-                GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, droppedItems, DaggerfallUnity.NextUID);
+                DaggerfallLoot droppedLootContainer = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID);
+                droppedLootContainer.Items.TransferAll(droppedItems);
             }
         }
 
