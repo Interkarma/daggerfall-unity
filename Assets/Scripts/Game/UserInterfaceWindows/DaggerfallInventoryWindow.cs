@@ -487,6 +487,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear any loot target on exit
             if (lootTarget != null)
             {
+                // Remove loot container if empty
+                if (lootTarget.Items.Count == 0)
+                    GameObjectHelper.RemoveLootContainer(lootTarget);
+
                 lootTarget.OnInventoryClose();
                 lootTarget = null;
             }

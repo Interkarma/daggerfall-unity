@@ -316,11 +316,14 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="itemArray">ItemData_v1 array.</param>
         public void DeserializeItems(ItemData_v1[] itemArray)
         {
+            // Clear existing items
+            Clear();
+
+            // Nothing more to do if no items in source array
             if (itemArray == null || itemArray.Length == 0)
                 return;
 
-            Clear();
-
+            // Add items to this collection
             for(int i = 0; i < itemArray.Length; i++)
             {
                 DaggerfallUnityItem item = new DaggerfallUnityItem(itemArray[i]);

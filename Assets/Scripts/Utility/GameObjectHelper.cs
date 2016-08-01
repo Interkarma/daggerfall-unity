@@ -574,6 +574,20 @@ namespace DaggerfallWorkshop.Utility
             return loot;
         }
 
+        /// <summary>
+        /// Destroys/Disables a loot container.
+        /// Custom drop containers will be destroyed from world.
+        /// Fixed containers will be disabled so their empty state continues to be serialized.
+        /// </summary>
+        /// <param name="loot">DaggerfallLoot.</param>
+        public static void RemoveLootContainer(DaggerfallLoot loot)
+        {
+            if (loot.customDrop)
+                GameObject.Destroy(loot.gameObject);
+            else
+                loot.gameObject.SetActive(false);
+        }
+
         #endregion
 
         /// <summary>

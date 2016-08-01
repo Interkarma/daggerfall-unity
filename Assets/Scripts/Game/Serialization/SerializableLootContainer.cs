@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -105,7 +106,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             loot.playerOwned = data.playerOwned;
             loot.customDrop = data.customDrop;
 
-            // TODO: Remove loot container if empty
+            // Remove loot container if empty
+            if (loot.Items.Count == 0)
+                GameObjectHelper.RemoveLootContainer(loot);
         }
 
         #endregion
