@@ -1342,9 +1342,15 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         private void saveStateAutomapDungeon()
         {
-            if (numberOfDungeonMemorized == 0) // if discovery state of no dungeon has to be remembered just skip this function
+            if ((numberOfDungeonMemorized == 0)&&(!GameManager.Instance.IsPlayerInside)) // if discovery state of no dungeon has to be remembered just skip this function
                 return;
-            
+
+            int updatedNumberOfDungeonMemorized = numberOfDungeonMemorized;
+            if ((numberOfDungeonMemorized == 0) && (GameManager.Instance.IsPlayerInside))
+            {
+                updatedNumberOfDungeonMemorized = 1;
+            }
+
             Transform gameObjectGeometryDungeon = gameobjectGeometry.transform.GetChild(0);
             automapGeometryDungeonState = new AutomapGeometryDungeonState();
             automapGeometryDungeonState.locationName = gameObjectGeometryDungeon.name;
@@ -1410,9 +1416,9 @@ namespace DaggerfallWorkshop.Game
             );
 
             //if there are more dungeons remembered than allowed - get rid of dungeons in dictionary that weren't visited lately
-            if (sortedList.Count > numberOfDungeonMemorized)
+            if (sortedList.Count > updatedNumberOfDungeonMemorized)
             {
-                ulong timeInSecondsLimit = sortedList[numberOfDungeonMemorized - 1].Value.timeInSecondsLastVisited;
+                ulong timeInSecondsLimit = sortedList[updatedNumberOfDungeonMemorized - 1].Value.timeInSecondsLastVisited;
 
                 foreach (KeyValuePair<string, AutomapGeometryDungeonState> entry in sortedList) // use sorted list and iterate over it - remove elements of dictionary
                 {
