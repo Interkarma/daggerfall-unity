@@ -206,13 +206,23 @@ namespace DaggerfallWorkshop
                 return;
             }
 
+            //// Tween rotation
+            //Hashtable rotateParams = __ExternalAssets.iTween.Hash(
+            //    "rotation", startingRotation.eulerAngles + new Vector3(0, OpenAngle, 0),
+            //    "time", duration,
+            //    "easetype", __ExternalAssets.iTween.EaseType.linear,
+            //    "oncomplete", "OnCompleteOpen");
+            //__ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
+            //currentState = ActionState.PlayingForward;
+
             // Tween rotation
             Hashtable rotateParams = __ExternalAssets.iTween.Hash(
-                "rotation", startingRotation.eulerAngles + new Vector3(0, OpenAngle, 0),
+                "amount", new Vector3(0f, OpenAngle / 360f, 0f),
+                "space", Space.Self,
                 "time", duration,
                 "easetype", __ExternalAssets.iTween.EaseType.linear,
                 "oncomplete", "OnCompleteOpen");
-            __ExternalAssets.iTween.RotateTo(gameObject, rotateParams);
+            __ExternalAssets.iTween.RotateBy(gameObject, rotateParams);
             currentState = ActionState.PlayingForward;
 
             // Set collider to trigger only

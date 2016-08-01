@@ -67,6 +67,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.textureRecord = loot.TextureRecord;
             data.lootTableKey = loot.LootTableKey;
             data.playerOwned = loot.playerOwned;
+            data.customDrop = loot.customDrop;
             data.items = loot.Items.SerializeItems();
 
             return data;
@@ -102,6 +103,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             loot.TextureArchive = data.textureArchive;
             loot.TextureRecord = data.textureRecord;
             loot.playerOwned = data.playerOwned;
+            loot.customDrop = data.customDrop;
 
             // TODO: Remove loot container if empty
         }

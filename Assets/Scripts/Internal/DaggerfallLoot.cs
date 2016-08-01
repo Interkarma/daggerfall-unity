@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop
         public int TextureArchive = 0;
         public int TextureRecord = 0;
         public bool playerOwned = false;
+        public bool customDrop = false;         // Custom drop loot is not part of base scene and must be respawned on deserialization
 
         ulong loadID = 0;
         ItemCollection items = new ItemCollection();

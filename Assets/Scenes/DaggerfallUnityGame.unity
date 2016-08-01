@@ -527,6 +527,12 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &188505318 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd,
+    type: 2}
+  m_PrefabInternal: {fileID: 1385149307}
+  m_Script: {fileID: 11500000, guid: 8ad42a6ae133d274c9d4b094186582db, type: 3}
 --- !u!1001 &215693441
 Prefab:
   m_ObjectHideFlags: 0
@@ -863,6 +869,10 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: f0a81702cca1eaa4388e167564519165, type: 2}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800000, guid: f0a81702cca1eaa4388e167564519165, type: 2}
+      propertyPath: prewarm
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1560,12 +1570,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerWeather: {fileID: 1891957996}
   DaggerfallSky: {fileID: 1918867144}
-  SunlightManager: {fileID: 0}
+  SunlightManager: {fileID: 188505318}
   WeatherEffects: {fileID: 102824932}
-  RainSunlightScale: 0.45
-  StormSunlightScale: 0.25
-  SnowSunlightScale: 0.45
-  WinterSunlightScale: 0.6
+  RainSunlightScale: 0.5
+  StormSunlightScale: 0.35
+  SnowSunlightScale: 0.5
+  WinterSunlightScale: 0.9
+  PollWeatherInSeconds: 4
+  ChanceToRainOvercast: 0.03
+  ChanceToStartRaining: 0.04
+  ChanceToStartStorming: 0.1
+  ChanceToSnowOvercast: 0.03
+  ChanceToStartSnowing: 0.1
 --- !u!1 &1463923235
 GameObject:
   m_ObjectHideFlags: 0
@@ -2492,7 +2508,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Pivot.x
-      value: .5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Pivot.y
