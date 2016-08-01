@@ -34,15 +34,35 @@ namespace DaggerfallWorkshop.Game
         [Range(0, 1)]
         public float WinterSunlightScale = 0.65f;
 
+        public float PollWeatherInSeconds = 4;
+
+        [Range(0, 1)]
+        public float ChanceToRainOvercast = 0.03f;
+        [Range(0, 1)]
+        public float ChanceToStartRaining = 0.04f;
+        [Range(0, 1)]
+        public float ChanceToStartStorming = 0.1f;
+
+        [Range(0, 1)]
+        public float ChanceToSnowOvercast = 0.03f;
+        [Range(0, 1)]
+        public float ChanceToStartSnowing = 0.1f;
+
         DaggerfallUnity dfUnity;
         bool isRaining = false;
         bool isStorming = false;
         bool isSnowing = false;
         bool isOvercast = false;
+        float pollTimer = 0;
 
         public bool IsRaining
         {
             get { return isRaining; }
+        }
+
+        public bool IsStorming
+        {
+            get { return isStorming; }
         }
 
         public bool IsSnowing
@@ -54,16 +74,23 @@ namespace DaggerfallWorkshop.Game
         {
             get { return isOvercast; }
         }
-        
+
+        void Awake()
+        {
+            Serialization.SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
+            StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
+        }
+
         void Start()
         {
             dfUnity = DaggerfallUnity.Instance;
-            SetSunlightScale();
         }
 
         void Update()
         {
             SetAmbientEffects();
+            PollWeatherChanges();
+            SetSunlightScale();
         }
 
         public void ClearOvercast()
@@ -98,7 +125,6 @@ namespace DaggerfallWorkshop.Game
             }
 
             isOvercast = true;
-            SetSunlightScale();
             RaiseOnSetRainOvercastEvent();
         }
 
@@ -111,8 +137,6 @@ namespace DaggerfallWorkshop.Game
             if (PlayerWeather)
                 PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.Rain_Normal;
 
-            SetSunlightScale();
-            //SetAmbientEffects();
             RaiseOnStartRainingEvent();
         }
 
@@ -120,7 +144,6 @@ namespace DaggerfallWorkshop.Game
         {
             StartRaining();
             isStorming = true;
-            //SetAmbientEffects();
             RaiseOnStartStormingEvent();
         }
 
@@ -132,8 +155,6 @@ namespace DaggerfallWorkshop.Game
             if (PlayerWeather)
                 PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.None;
 
-            SetSunlightScale();
-            //SetAmbientEffects();
             RaiseOnStopRainingEvent();
         }
 
@@ -156,7 +177,6 @@ namespace DaggerfallWorkshop.Game
             }
 
             isOvercast = true;
-            SetSunlightScale();
             RaiseOnSetSnowOvercastEvent();
         }
 
@@ -165,7 +185,6 @@ namespace DaggerfallWorkshop.Game
             StopRaining();
             SetSnowOvercast(true);
             isSnowing = true;
-            SetSunlightScale();
 
             if (PlayerWeather)
                 PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.Snow_Normal;
@@ -180,8 +199,6 @@ namespace DaggerfallWorkshop.Game
             if (PlayerWeather)
                 PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.None;
 
-            SetSunlightScale();
-            //SetAmbientEffects();
             RaiseOnStopSnowingEvent();
         }
 
@@ -243,9 +260,87 @@ namespace DaggerfallWorkshop.Game
             WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.None;
         }
 
+        void PollWeatherChanges()
+        {
+            // Increment poll timer
+            pollTimer += Time.deltaTime;
+            if (pollTimer < PollWeatherInSeconds)
+                return;
+
+            // Reset timer
+            pollTimer = 0;
+
+            // Very simple weather ramp based on season - will improve later
+            if (dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Spring ||
+                dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Summer)
+            {
+                // Start overcast
+                if (!IsOvercast && !IsRaining && !IsStorming)
+                {
+                    if (Random.value < ChanceToRainOvercast)
+                    {
+                        SetRainOvercast(true);
+                        return;
+                    }
+                }
+
+                // Progress to rain
+                if (IsOvercast && !IsRaining && !IsStorming)
+                {
+                    if (Random.value < ChanceToStartRaining)
+                    {
+                        StartRaining();
+                        return;
+                    }
+                }
+
+                // Progress to storm
+                if (IsRaining)
+                {
+                    if (Random.value < ChanceToStartStorming)
+                    {
+                        StartStorming();
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                // Start overcast
+                if (!IsOvercast && !IsSnowing)
+                {
+                    if (Random.value < ChanceToSnowOvercast)
+                        SetSnowOvercast(true);
+                }
+
+                // Progress to snow
+                if (IsOvercast && !IsSnowing)
+                {
+                    if (Random.value < ChanceToStartSnowing)
+                        StartSnowing();
+                }
+            }
+        }
+
         #endregion
 
-        #region Event Handlers
+        #region Events Handlers
+
+        private void SaveLoadManager_OnLoad(Serialization.SaveData_v1 saveData)
+        {
+            // TODO: Save/load weather state
+            ClearAllWeather();
+        }
+
+        private void StreamingWorld_OnInitWorld()
+        {
+            // Clear weather when starting up world
+            ClearAllWeather();
+        }
+
+        #endregion
+
+        #region Events
 
         // OnSetRainOvercast
         public delegate void OnSetRainOvercastEventHandler();
