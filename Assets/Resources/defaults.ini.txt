@@ -27,6 +27,7 @@ EnableToolTips=True
 ToolTipDelayInSeconds=0.0
 ToolTipBackgroundColor=404040D2
 ToolTipTextColor=E6E6C8FF
+AutomapNumberOfDungeons=0
 
 [Controls]
 InvertMouseVertical=False
@@ -44,6 +45,7 @@ StartInDungeon=True
 
 [Enhancements]
 LypyL_GameConsole=True
+LypyL_ModSystem=True
 LypyL_EnhancedSky=False
 Nystul_IncreasedTerrainDistance=False
 Nystul_RealtimeReflections=False

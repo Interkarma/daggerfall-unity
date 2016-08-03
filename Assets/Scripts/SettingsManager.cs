@@ -85,6 +85,7 @@ namespace DaggerfallWorkshop
         public float ToolTipDelayInSeconds { get; set; }
         public Color32 ToolTipBackgroundColor { get; set; }
         public Color32 ToolTipTextColor { get; set; }
+        public int AutomapNumberOfDungeons { get; set; }
 
         // [Controls]
         public bool InvertMouseVertical { get; set; }
@@ -102,6 +103,7 @@ namespace DaggerfallWorkshop
 
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
+        public bool LypyL_ModSystem { get; set; }
         public bool LypyL_EnhancedSky { get; set; }
         public bool Nystul_IncreasedTerrainDistance { get; set; }
         public bool Nystul_RealtimeReflections { get; set; }
@@ -143,6 +145,7 @@ namespace DaggerfallWorkshop
             ToolTipDelayInSeconds = GetFloat(sectionGUI, "ToolTipDelayInSeconds", 0, 10);
             ToolTipBackgroundColor = GetColor(sectionGUI, "ToolTipBackgroundColor", DaggerfallUI.DaggerfallUnityDefaultToolTipBackgroundColor);
             ToolTipTextColor = GetColor(sectionGUI, "ToolTipTextColor", DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor);
+            AutomapNumberOfDungeons = GetInt(sectionGUI, "AutomapNumberOfDungeons", 0, 100);
             InvertMouseVertical = GetBool(sectionControls, "InvertMouseVertical");
             MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f);
@@ -154,6 +157,7 @@ namespace DaggerfallWorkshop
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
             StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
+            LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
             LypyL_EnhancedSky = GetBool(sectionEnhancements, "LypyL_EnhancedSky");
             Nystul_IncreasedTerrainDistance = GetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance");
             Nystul_RealtimeReflections = GetBool(sectionEnhancements, "Nystul_RealtimeReflections");
@@ -189,6 +193,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionGUI, "ToolTipDelayInSeconds", ToolTipDelayInSeconds);
             SetColor(sectionGUI, "ToolTipBackgroundColor", ToolTipBackgroundColor);
             SetColor(sectionGUI, "ToolTipTextColor", ToolTipTextColor);
+            SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetBool(sectionControls, "InvertMouseVertical", InvertMouseVertical);
             SetBool(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);
@@ -200,6 +205,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionStartup, "StartCellY", StartCellY);
             SetBool(sectionStartup, "StartInDungeon", StartInDungeon);
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
+            SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
             SetBool(sectionEnhancements, "LypyL_EnhancedSky", LypyL_EnhancedSky);
             SetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance", Nystul_IncreasedTerrainDistance);
             SetBool(sectionEnhancements, "Nystul_RealtimeReflections", Nystul_RealtimeReflections);
