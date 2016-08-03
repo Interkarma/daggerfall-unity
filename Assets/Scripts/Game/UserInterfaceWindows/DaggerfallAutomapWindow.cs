@@ -336,6 +336,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gridButton.OnRightMouseClick += GridButton_OnRightMouseClick;
             gridButton.OnMouseScrollUp += GridButton_OnMouseScrollUp;
             gridButton.OnMouseScrollDown += GridButton_OnMouseScrollDown;
+            gridButton.ToolTip = defaultToolTip;
+            gridButton.ToolTipText = "left click: switch between 2D top view and 3D view (hotkey: space key)\rright click: reset rotation center to player position (hotkey: control+backspace)\rmouse wheel up while over this button: increase perspective (only 3D mode)\rmouse wheel down while over this button: decrease perspective (only 3D mode)";
+            gridButton.ToolTip.ToolTipDelay = 1;
 
             // forward button
             Button forwardButton = DaggerfallUI.AddButton(new Rect(105, 171, 21, 19), NativePanel);
@@ -343,6 +346,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             forwardButton.OnMouseUp += ForwardButton_OnMouseUp;
             forwardButton.OnRightMouseDown += ForwardButton_OnRightMouseDown;
             forwardButton.OnRightMouseUp += ForwardButton_OnRightMouseUp;
+            forwardButton.ToolTip = defaultToolTip;
+            forwardButton.ToolTipText = "left click: move dungeon model forward (hotkey: up arrow)\rright click: move rotation center axis forward (hotkey: control+up arrow)";
+            forwardButton.ToolTip.ToolTipDelay = 1;
 
             // backward button
             Button backwardButton = DaggerfallUI.AddButton(new Rect(126, 171, 21, 19), NativePanel);
@@ -350,6 +356,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             backwardButton.OnMouseUp += BackwardButton_OnMouseUp;
             backwardButton.OnRightMouseDown += BackwardButton_OnRightMouseDown;
             backwardButton.OnRightMouseUp += BackwardButton_OnRightMouseUp;
+            backwardButton.ToolTip = defaultToolTip;
+            backwardButton.ToolTipText = "left click: move dungeon model backwards (hotkey: down arrow)\rright click: move rotation center axis backwards (hotkey: control+down arrow)";
+            backwardButton.ToolTip.ToolTipDelay = 1;
 
             // left button
             Button leftButton = DaggerfallUI.AddButton(new Rect(149, 171, 21, 19), NativePanel);
@@ -357,13 +366,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnMouseUp += LeftButton_OnMouseUp;
             leftButton.OnRightMouseDown += LeftButton_OnRightMouseDown;
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
-            
+            leftButton.ToolTip = defaultToolTip;
+            leftButton.ToolTipText = "left click: move dungeon model to the left (hotkey: left arrow)\rright click: move rotation center axis to the left (hotkey: control+left arrow)";
+            leftButton.ToolTip.ToolTipDelay = 1;
+
             // right button
             Button rightButton = DaggerfallUI.AddButton(new Rect(170, 171, 21, 19), NativePanel);
             rightButton.OnMouseDown += RightButton_OnMouseDown;
             rightButton.OnMouseUp += RightButton_OnMouseUp;
             rightButton.OnRightMouseDown += RightButton_OnRightMouseDown;
             rightButton.OnRightMouseUp += RightButton_OnRightMouseUp;
+            rightButton.ToolTip = defaultToolTip;
+            rightButton.ToolTipText = "left click: move dungeon model to the right (hotkey: right arrow)\rright click: move rotation center axis to the right (hotkey: control+right arrow)";
+            rightButton.ToolTip.ToolTipDelay = 1;
 
             // rotate left button
             Button rotateLeftButton = DaggerfallUI.AddButton(new Rect(193, 171, 21, 19), NativePanel);
@@ -371,6 +386,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateLeftButton.OnMouseUp += RotateLeftButton_OnMouseUp;
             rotateLeftButton.OnRightMouseDown += RotateLeftButton_OnRightMouseDown;
             rotateLeftButton.OnRightMouseUp += RotateLeftButton_OnRightMouseUp;
+            rotateLeftButton.ToolTip = defaultToolTip;
+            rotateLeftButton.ToolTipText = "left click: rotate dungeon model to the left (hotkey: alt+right arrow)\rright click: rotate camera view to the left (hotkey: shift+right arrow)";
+            rotateLeftButton.ToolTip.ToolTipDelay = 1;
 
             // rotate right button
             Button rotateRightButton = DaggerfallUI.AddButton(new Rect(214, 171, 21, 19), NativePanel);
@@ -378,6 +396,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.OnMouseUp += RotateRightButton_OnMouseUp;
             rotateRightButton.OnRightMouseDown += RotateRightButton_OnRightMouseDown;
             rotateRightButton.OnRightMouseUp += RotateRightButton_OnRightMouseUp;
+            rotateRightButton.ToolTip = defaultToolTip;
+            rotateRightButton.ToolTipText = "left click: rotate dungeon model to the right (hotkey: alt+right arrow)\rright click: rotate camera view to the right (hotkey: shift+right arrow)";
+            rotateRightButton.ToolTip.ToolTipDelay = 1;
 
             // upstairs button
             Button upstairsButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
@@ -385,6 +406,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             upstairsButton.OnMouseUp += UpstairsButton_OnMouseUp;
             upstairsButton.OnRightMouseDown += UpstairsButton_OnRightMouseDown;
             upstairsButton.OnRightMouseUp += UpstairsButton_OnRightMouseUp;
+            upstairsButton.ToolTip = defaultToolTip;
+            upstairsButton.ToolTipText = "left click: increase viewpoint (hotkey: page up)\rright click: increase slice level (hotkey: control+page up)\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key";
+            upstairsButton.ToolTip.ToolTipDelay = 1;
 
             // downstairs button
             Button downstairsButton = DaggerfallUI.AddButton(new Rect(258, 171, 21, 19), NativePanel);
@@ -392,6 +416,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downstairsButton.OnMouseUp += DownstairsButton_OnMouseUp;
             downstairsButton.OnRightMouseDown += DownstairsButton_OnRightMouseDown;
             downstairsButton.OnRightMouseUp += DownstairsButton_OnRightMouseUp;
+            downstairsButton.ToolTip = defaultToolTip;
+            downstairsButton.ToolTipText = "left click: decrease viewpoint (hotkey: page down)\rright click: decrease slice level (hotkey: control+page down)\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key";
+            downstairsButton.ToolTip.ToolTipDelay = 1;
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
@@ -404,6 +431,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dummyPanelCompass = DaggerfallUI.AddPanel(rectDummyPanelCompass, NativePanel);
             dummyPanelCompass.OnMouseClick += Compass_OnMouseClick;
             dummyPanelCompass.OnRightMouseClick += Compass_OnRightMouseClick;
+            dummyPanelCompass.ToolTip = defaultToolTip;
+            dummyPanelCompass.ToolTipText = "left click: toggle focus (hotkey: tab)\rred beacon: player, green beacon: entrance, blue beacon: rotation center\r\rright click: reset view (hotkey: backspace)";
+            dummyPanelCompass.ToolTip.ToolTipDelay = 1;
 
             // compass            
             compass = new HUDCompass();
@@ -1255,7 +1285,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //}
             //cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotateSpeed * Time.unscaledDeltaTime);
             //updateAutomapView();
-            ActionRotate(-rotateSpeed);
+            ActionRotate(+rotateSpeed);
         }
 
         /// <summary>
@@ -1278,7 +1308,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //}
             //cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, +rotateSpeed * Time.unscaledDeltaTime);
             //updateAutomapView();
-            ActionRotate(+rotateSpeed);
+            ActionRotate(-rotateSpeed);
         }
 
         /// <summary>
