@@ -93,13 +93,12 @@ namespace DaggerfallWorkshop.Game.Items
                 return;
 
             // Add the item based on stack behaviour
-            // Stacking currently only works for ingredients
             // TODO: Look at implementing proper stacking with max limits, split, merge, etc.
-            DaggerfallUnityItem ingredient = FindIngredient(item);
-            if (ingredient != null)
+            DaggerfallUnityItem stack = FindExistingStack(item);
+            if (stack != null)
             {
                 // Add to stack count
-                ingredient.stackCount++;
+                stack.stackCount++;
             }
             else
             {
@@ -336,20 +335,37 @@ namespace DaggerfallWorkshop.Game.Items
         #region Private Methods
 
         /// <summary>
-        /// Finds a specific ingredient in list of existing items.
-        /// Used to stack ingredients when added.
+        /// Determines if item is stackable.
+        /// Currently very simple - only ingredients and gold pieces are stackable.
         /// </summary>
-        DaggerfallUnityItem FindIngredient(DaggerfallUnityItem ingredient)
+        /// <param name="item">Item to check if stackable.</param>
+        /// <returns>True if item stackable.</returns>
+        bool IsStackable(DaggerfallUnityItem item)
         {
-            if (!ingredient.IsIngredient)
+            if (item.IsIngredient)
+                return true;
+            else if (item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Finds existing stack of item.
+        /// </summary>
+        /// <param name="item">Item to find existing stack for.</param>
+        /// <returns>Existing item stack, or null if no stack or not stackable.</returns>
+        DaggerfallUnityItem FindExistingStack(DaggerfallUnityItem item)
+        {
+            if (!IsStackable(item))
                 return null;
 
-            ItemGroups itemGroup = ingredient.ItemGroup;
-            int groupIndex = ingredient.GroupIndex;
-            foreach (DaggerfallUnityItem item in items.Values)
+            ItemGroups itemGroup = item.ItemGroup;
+            int groupIndex = item.GroupIndex;
+            foreach (DaggerfallUnityItem checkItem in items.Values)
             {
-                if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex)
-                    return item;
+                if (checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex)
+                    return checkItem;
             }
 
             return null;
