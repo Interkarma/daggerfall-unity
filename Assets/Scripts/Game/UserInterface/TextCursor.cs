@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int minThickness = 1;
         const int maxThickness = 4;
 
-        float cursorBlinkSpeed = 0.5f;
+        float cursorBlinkSpeed = 0.3f;
         int cursorThickness = 1;
         int cursorHeight = 6;
         Color cursorColor = DaggerfallUI.DaggerfallDefaultTextCursorColor;
@@ -68,10 +68,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             Size = new Vector2(cursorThickness, cursorHeight);
 
-            if (Time.fixedTime > blinkTimer + cursorBlinkSpeed)
+            if (Time.realtimeSinceStartup > blinkTimer + cursorBlinkSpeed)
             {
                 blinkOn = !blinkOn;
-                blinkTimer = Time.fixedTime;
+                blinkTimer = Time.realtimeSinceStartup;
             }
         }
 
@@ -94,7 +94,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public void BlinkOn()
         {
             blinkOn = true;
-            blinkTimer = Time.fixedTime;
+            blinkTimer = Time.realtimeSinceStartup;
         }
 
         #region Private Methods

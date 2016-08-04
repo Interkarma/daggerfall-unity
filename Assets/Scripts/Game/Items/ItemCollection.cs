@@ -98,7 +98,7 @@ namespace DaggerfallWorkshop.Game.Items
             if (stack != null)
             {
                 // Add to stack count
-                stack.stackCount++;
+                stack.stackCount += item.stackCount;
             }
             else
             {

@@ -25,6 +25,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallInventoryWindow : DaggerfallPopupWindow
     {
+        #region Classic Text IDs
+
+        const int goldToDropID = 25;
+
+        #endregion
+
         #region UI Rects
 
         Rect weaponsAndArmorRect = new Rect(0, 0, 92, 10);
@@ -1052,7 +1058,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void GoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TODO: Drop gold popup UI
+            // Get text tokens
+            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(goldToDropID);
+
+            // Hack to set gold pieces in text token for now
+            textTokens[0].text = textTokens[0].text.Replace("%gii", GameManager.Instance.PlayerEntity.GoldPieces.ToString());
+
+            // Show message box
+            DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
+            mb.SetTextTokens(textTokens);
+            mb.TextPanelDistance = 0;
+            mb.TextBox.Numeric = true;
+            mb.OnGotUserInput += DropGoldPopup_OnGotUserInput;
+            mb.Show();
+        }
+
+        private void DropGoldPopup_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        {
+            // Get player gold count
+            int playerGold = GameManager.Instance.PlayerEntity.GoldPieces;
+
+            // Determine how many gold pieces to drop
+            int goldToDrop = 0;
+            bool result = int.TryParse(input, out goldToDrop);
+            if (!result || goldToDrop < 1 || goldToDrop > playerGold)
+                return;
+
+            // Create new item for gold pieces and add to other container
+            DaggerfallUnityItem goldPieces = ItemBuilder.CreateGoldPieces(goldToDrop);
+            remoteItems.AddItem(goldPieces);
+
+            // Remove gold count from player
+            GameManager.Instance.PlayerEntity.GoldPieces -= goldToDrop;
+
+            Refresh(false);
         }
 
         #endregion

@@ -56,6 +56,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { inputDistance = value; }
         }
 
+        public TextBox TextBox
+        {
+            get { return textBox; }
+        }
+
         //public int MinWidth
         //{
         //    get { return minWidth; }

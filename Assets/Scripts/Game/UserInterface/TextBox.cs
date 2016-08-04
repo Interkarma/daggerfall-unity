@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int lastStringLength = 0;
         Vector2 maxSize = Vector2.zero;
         bool readOnly = false;
+        bool numeric = false;
 
         public int MaxCharacters
         {
@@ -78,6 +79,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return readOnly; }
             set { readOnly = value; }
+        }
+
+        public TextCursor Cursor
+        {
+            get { return textCursor; }
+        }
+
+        public bool Numeric
+        {
+            get { return numeric; }
+            set { numeric = value; }
         }
 
         public TextBox(DaggerfallFont font = null)
@@ -142,6 +154,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             char character = DaggerfallUI.Instance.LastCharacterTyped;
             if (character != 0 && text.Length < maxCharacters)
             {
+                // For numeric only accept characters 0-9
+                if (numeric)
+                {
+                    int value = (int)character;
+                    if (value < 0x30 || value > 0x39)
+                        return;
+                }
+
+                // Accept typed text
                 text = text.Insert(cursorPosition, character.ToString());
                 MoveCursorRight();
                 RaiseOnTypeHandler();
