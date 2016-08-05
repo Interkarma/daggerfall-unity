@@ -170,7 +170,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         int lastMouseOverPaperDollEquipIndex = -1;
 
-        ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.Front;
+        ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
 
         #endregion
 
@@ -488,6 +488,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItems = lootTarget.Items;
                 remoteTargetType = RemoteTargetTypes.Loot;
                 lootTarget.OnInventoryOpen();
+            }
+
+            // Clear wagon button state on open
+            if (wagonButton != null)
+            {
+                usingWagon = false;
+                wagonButton.BackgroundTexture = wagonNotSelected;
             }
 
             // Refresh window
