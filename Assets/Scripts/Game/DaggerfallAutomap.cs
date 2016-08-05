@@ -114,6 +114,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public Dictionary<string, AutomapGeometryDungeonState> GetState()
         {
+            saveStateAutomapDungeon();
             return dictAutomapDungeonsDiscoveryState;
         }
         
@@ -122,8 +123,8 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void SetState(Dictionary<string, AutomapGeometryDungeonState> savedDictAutomapDungeonsDiscoveryState)
         {
-            saveStateAutomapDungeon();
             dictAutomapDungeonsDiscoveryState = savedDictAutomapDungeonsDiscoveryState;
+            restoreStateAutomapDungeon();
         }
 
         #region Fields
@@ -1345,8 +1346,12 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         private void saveStateAutomapDungeon()
         {
-            if ((numberOfDungeonMemorized == 0)&&(!GameManager.Instance.IsPlayerInside)) // if discovery state of no dungeon has to be remembered just skip this function
+            if ((numberOfDungeonMemorized == 0)&&(!GameManager.Instance.IsPlayerInside)) // if discovery state of no dungeon has to be remembered, clear dictionary and skip the rest of this function
+            {
+                dictAutomapDungeonsDiscoveryState.Clear();
+                //automapGeometryDungeonState = null;
                 return;
+            }
 
             int updatedNumberOfDungeonMemorized = numberOfDungeonMemorized;
             if ((numberOfDungeonMemorized == 0) && (GameManager.Instance.IsPlayerInside))
@@ -1547,6 +1552,10 @@ namespace DaggerfallWorkshop.Game
             {
                 automapGeometryDungeonState = dictAutomapDungeonsDiscoveryState[locationStringIdentifier];
             }
+            else
+            {
+                automapGeometryDungeonState = null;
+            }
 
             if (automapGeometryDungeonState == null)
                 return;
@@ -1619,7 +1628,7 @@ namespace DaggerfallWorkshop.Game
             gameobjectBeaconEntrancePosition.SetActive(false);
         }
 
-        void InitWhenInInteriorOrDungeon(StaticDoor? door = null)
+        void InitWhenInInteriorOrDungeon(StaticDoor? door = null, bool initFromLoadingSave = false)
         {
             if ((GameManager.Instance.IsPlayerInsideBuilding) && (door.HasValue))
             {
@@ -1632,7 +1641,7 @@ namespace DaggerfallWorkshop.Game
             else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
             {
                 createDungeonGeometryForAutomap();
-                restoreStateAutomapDungeon(true);
+                restoreStateAutomapDungeon(!initFromLoadingSave); // if a save game was loaded, do not reset the revisited state (don't set parameter forceNotVisitedInThisRun to true)
                 resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
                 gameobjectGeometry.SetActive(false);
                 gameobjectBeacons.SetActive(false);
@@ -1650,7 +1659,7 @@ namespace DaggerfallWorkshop.Game
 
         private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
         {
-            InitWhenInInteriorOrDungeon(null);
+            InitWhenInInteriorOrDungeon(null, false);
         }
 
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
@@ -1677,7 +1686,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     door = exteriorDoors[0];
                 }
-                InitWhenInInteriorOrDungeon(door);
+                InitWhenInInteriorOrDungeon(door, true);
             }
         }
 
