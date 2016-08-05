@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string saveInfoFilename = "SaveInfo.txt";
         const string saveDataFilename = "SaveData.txt";
         const string containerDataFilename = "ContainerData.txt";
+        const string automapDataFilename = "AutomapData.txt";
         const string screenshotFilename = "Screenshot.jpg";
         const string notReadyExceptionText = "SaveLoad not ready.";
         const string invalidLoadIDExceptionText = "serializableObject does not have a valid LoadID";
@@ -317,17 +318,17 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Look for existing save with this character and name
             int key = FindSaveFolderByNames(characterName, saveName);
 
-            // Read save data from file
-            string path = GetSaveFolder(key);
-            string json = ReadSaveFile(Path.Combine(path, saveDataFilename));
+            // Get folder
+            string path;
+            if (key == -1)
+                return;
+            else
+                path = GetSaveFolder(key);
 
-            // Deserialize JSON string to save data
-            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), json) as SaveData_v1;
-
-            // Restore save data
+            // Load game
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
-            StartCoroutine(LoadGame(saveData));
+            StartCoroutine(LoadGame(saveName, path));
 
             // Notify
             DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
@@ -359,17 +360,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!IsReady())
                 throw new Exception(notReadyExceptionText);
 
-            // Read save data from file
+            // Load game
             string path = GetSavePath(quickSaveName, false);
-            string json = ReadSaveFile(Path.Combine(path, saveDataFilename));
-
-            // Deserialize JSON string to save data
-            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), json) as SaveData_v1;
-
-            // Restore save data
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
-            StartCoroutine(LoadGame(saveData));
+            StartCoroutine(LoadGame(quickSaveName, path));
 
             // Notify
             DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
@@ -955,9 +950,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveInfo.characterName = saveData.playerData.playerEntity.name;
             saveInfo.dateAndTime = saveData.dateAndTime;
 
+            // Get automap state
+            Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = new Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>();
+            automapState = GameManager.Instance.Automap.GetState();
+
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
             string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
+            string automapDataJson = Serialize(automapState.GetType(), automapState);
 
             // Create screenshot for save
             // TODO: Hide UI for screenshot or use a different method
@@ -969,6 +969,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Save data to files
             WriteSaveFile(Path.Combine(path, saveDataFilename), saveDataJson);
             WriteSaveFile(Path.Combine(path, saveInfoFilename), saveInfoJson);
+            WriteSaveFile(Path.Combine(path, automapDataFilename), automapDataJson);
 
             // Save screenshot
             byte[] bytes = screenshot.EncodeToJPG();
@@ -981,8 +982,16 @@ namespace DaggerfallWorkshop.Game.Serialization
             DaggerfallUI.Instance.PopupMessage(HardStrings.gameSaved);
         }
 
-        IEnumerator LoadGame(SaveData_v1 saveData)
+        IEnumerator LoadGame(string saveName, string path)
         {
+            // Read save data from files
+            string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
+            string automapDataJson = ReadSaveFile(Path.Combine(path, automapDataFilename));
+
+            // Deserialize JSON strings
+            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
+            Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = Deserialize(typeof(Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>), automapDataJson) as Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>;
+
             // Must have a serializable player
             if (!serializablePlayer)
                 yield break;
@@ -1063,6 +1072,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore save data to objects in newly spawned world
             RestoreSaveData(saveData);
+
+            // Restore automap data
+            //GameManager.Instance.Automap.SetState(automapState);
 
             // Raise OnLoad event
             RaiseOnLoadEvent(saveData);

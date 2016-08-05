@@ -27,7 +27,7 @@ EnableToolTips=True
 ToolTipDelayInSeconds=0.0
 ToolTipBackgroundColor=404040D2
 ToolTipTextColor=E6E6C8FF
-AutomapNumberOfDungeons=0
+AutomapNumberOfDungeons=5
 
 [Controls]
 InvertMouseVertical=False

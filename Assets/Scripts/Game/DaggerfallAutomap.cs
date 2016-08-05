@@ -507,6 +507,9 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
+            // Set number of dungeons memorized
+            setNumberOfDungeonMemorized(DaggerfallUnity.Settings.AutomapNumberOfDungeons);
+
             gameobjectAutomap = GameObject.Find("Automap");
             if (gameobjectAutomap == null)
             {

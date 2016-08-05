@@ -724,7 +724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d4b5bc6bb87e4948b2d181e1f85fb20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartMethod: 2
+  StartMethod: 4
   OverrideSaveIndex: -1
   PostStartMessage: 
   EnableVideos: 1
@@ -2524,7 +2524,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value

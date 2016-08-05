@@ -65,6 +65,7 @@ namespace DaggerfallWorkshop.Game
         SunlightManager sunlightManager = null;
         ItemHelper itemHelper = null;
         StateManager stateManager = null;
+        DaggerfallAutomap automap = null;
         #endregion
 
         #region Properties
@@ -247,6 +248,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (itemHelper != null) ? itemHelper : itemHelper = new ItemHelper(); }
             set { itemHelper = value; }
+        }
+
+        public DaggerfallAutomap Automap
+        {
+            get { return (automap != null) ? automap : automap = GetComponentFromObject<DaggerfallAutomap>(GetGameObjectWithName("Automap")); }
+            set { automap = value; }
         }
 
         public bool IsPlayerOnHUD
