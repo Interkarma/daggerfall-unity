@@ -1346,8 +1346,12 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         private void saveStateAutomapDungeon()
         {
-            if ((numberOfDungeonMemorized == 0)&&(!GameManager.Instance.IsPlayerInside)) // if discovery state of no dungeon has to be remembered just skip this function
+            if ((numberOfDungeonMemorized == 0)&&(!GameManager.Instance.IsPlayerInside)) // if discovery state of no dungeon has to be remembered, clear dictionary and skip the rest of this function
+            {
+                dictAutomapDungeonsDiscoveryState.Clear();
+                //automapGeometryDungeonState = null;
                 return;
+            }
 
             int updatedNumberOfDungeonMemorized = numberOfDungeonMemorized;
             if ((numberOfDungeonMemorized == 0) && (GameManager.Instance.IsPlayerInside))
@@ -1547,6 +1551,10 @@ namespace DaggerfallWorkshop.Game
             if (dictAutomapDungeonsDiscoveryState.ContainsKey(locationStringIdentifier))
             {
                 automapGeometryDungeonState = dictAutomapDungeonsDiscoveryState[locationStringIdentifier];
+            }
+            else
+            {
+                automapGeometryDungeonState = null;
             }
 
             if (automapGeometryDungeonState == null)
