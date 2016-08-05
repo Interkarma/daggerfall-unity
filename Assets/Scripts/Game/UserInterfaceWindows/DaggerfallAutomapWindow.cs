@@ -30,6 +30,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallAutomapWindow : DaggerfallPopupWindow
     {
+        const int toolTipDelay = 1; // delay in seconds before button tooltips are shown
+
         const float scrollLeftRightSpeed = 50.0f; // left mouse on button arrow left/right makes geometry move with this speed
         const float scrollForwardBackwardSpeed = 50.0f; // left mouse on button arrow up/down makes geometry move with this speed
         const float moveRotationPivotAxisMarkerLeftRightSpeed = 10.0f; // right mouse on button arrow left/right makes rotation pivot axis move with this speed
@@ -198,6 +200,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool alreadyInRightMouseDown = false;
         bool inDragMode() { return leftMouseDownOnPanelAutomap || rightMouseDownOnPanelAutomap; }
 
+        ToolTip savedToolTip; // used to implement mechanism that prevents tooltips to show when mouse button is held down over a button
+
         Texture2D nativeTexture; // background image will be stored in this Texture2D
 
         Color[] pixelsGrid2D; // grid button texture for 2D view image will be stored in here
@@ -232,6 +236,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+            savedToolTip = defaultToolTip;
         }
 
         /// <summary>
@@ -338,7 +343,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gridButton.OnMouseScrollDown += GridButton_OnMouseScrollDown;
             gridButton.ToolTip = defaultToolTip;
             gridButton.ToolTipText = "left click: switch between 2D top view and 3D view (hotkey: space key)\rright click: reset rotation center to player position (hotkey: control+backspace)\rmouse wheel up while over this button: increase perspective (only 3D mode)\rmouse wheel down while over this button: decrease perspective (only 3D mode)";
-            gridButton.ToolTip.ToolTipDelay = 1;
+            gridButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // forward button
             Button forwardButton = DaggerfallUI.AddButton(new Rect(105, 171, 21, 19), NativePanel);
@@ -348,7 +353,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             forwardButton.OnRightMouseUp += ForwardButton_OnRightMouseUp;
             forwardButton.ToolTip = defaultToolTip;
             forwardButton.ToolTipText = "left click: move dungeon model forward (hotkey: up arrow)\rright click: move rotation center axis forward (hotkey: control+up arrow)";
-            forwardButton.ToolTip.ToolTipDelay = 1;
+            forwardButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // backward button
             Button backwardButton = DaggerfallUI.AddButton(new Rect(126, 171, 21, 19), NativePanel);
@@ -358,7 +363,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             backwardButton.OnRightMouseUp += BackwardButton_OnRightMouseUp;
             backwardButton.ToolTip = defaultToolTip;
             backwardButton.ToolTipText = "left click: move dungeon model backwards (hotkey: down arrow)\rright click: move rotation center axis backwards (hotkey: control+down arrow)";
-            backwardButton.ToolTip.ToolTipDelay = 1;
+            backwardButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // left button
             Button leftButton = DaggerfallUI.AddButton(new Rect(149, 171, 21, 19), NativePanel);
@@ -368,7 +373,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
             leftButton.ToolTip = defaultToolTip;
             leftButton.ToolTipText = "left click: move dungeon model to the left (hotkey: left arrow)\rright click: move rotation center axis to the left (hotkey: control+left arrow)";
-            leftButton.ToolTip.ToolTipDelay = 1;
+            leftButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // right button
             Button rightButton = DaggerfallUI.AddButton(new Rect(170, 171, 21, 19), NativePanel);
@@ -378,7 +383,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rightButton.OnRightMouseUp += RightButton_OnRightMouseUp;
             rightButton.ToolTip = defaultToolTip;
             rightButton.ToolTipText = "left click: move dungeon model to the right (hotkey: right arrow)\rright click: move rotation center axis to the right (hotkey: control+right arrow)";
-            rightButton.ToolTip.ToolTipDelay = 1;
+            rightButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // rotate left button
             Button rotateLeftButton = DaggerfallUI.AddButton(new Rect(193, 171, 21, 19), NativePanel);
@@ -388,7 +393,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateLeftButton.OnRightMouseUp += RotateLeftButton_OnRightMouseUp;
             rotateLeftButton.ToolTip = defaultToolTip;
             rotateLeftButton.ToolTipText = "left click: rotate dungeon model to the left (hotkey: alt+right arrow)\rright click: rotate camera view to the left (hotkey: shift+right arrow)";
-            rotateLeftButton.ToolTip.ToolTipDelay = 1;
+            rotateLeftButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // rotate right button
             Button rotateRightButton = DaggerfallUI.AddButton(new Rect(214, 171, 21, 19), NativePanel);
@@ -398,7 +403,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.OnRightMouseUp += RotateRightButton_OnRightMouseUp;
             rotateRightButton.ToolTip = defaultToolTip;
             rotateRightButton.ToolTipText = "left click: rotate dungeon model to the right (hotkey: alt+right arrow)\rright click: rotate camera view to the right (hotkey: shift+right arrow)";
-            rotateRightButton.ToolTip.ToolTipDelay = 1;
+            rotateRightButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // upstairs button
             Button upstairsButton = DaggerfallUI.AddButton(new Rect(237, 171, 21, 19), NativePanel);
@@ -408,7 +413,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             upstairsButton.OnRightMouseUp += UpstairsButton_OnRightMouseUp;
             upstairsButton.ToolTip = defaultToolTip;
             upstairsButton.ToolTipText = "left click: increase viewpoint (hotkey: page up)\rright click: increase slice level (hotkey: control+page up)\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key";
-            upstairsButton.ToolTip.ToolTipDelay = 1;
+            upstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // downstairs button
             Button downstairsButton = DaggerfallUI.AddButton(new Rect(258, 171, 21, 19), NativePanel);
@@ -418,7 +423,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downstairsButton.OnRightMouseUp += DownstairsButton_OnRightMouseUp;
             downstairsButton.ToolTip = defaultToolTip;
             downstairsButton.ToolTipText = "left click: decrease viewpoint (hotkey: page down)\rright click: decrease slice level (hotkey: control+page down)\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key";
-            downstairsButton.ToolTip.ToolTipDelay = 1;
+            downstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // Exit button
             Button exitButton = DaggerfallUI.AddButton(new Rect(281, 171, 28, 19), NativePanel);
@@ -433,7 +438,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dummyPanelCompass.OnRightMouseClick += Compass_OnRightMouseClick;
             dummyPanelCompass.ToolTip = defaultToolTip;
             dummyPanelCompass.ToolTipText = "left click: toggle focus (hotkey: tab)\rred beacon: player, green beacon: entrance, blue beacon: rotation center\r\rright click: reset view (hotkey: backspace)";
-            dummyPanelCompass.ToolTip.ToolTipDelay = 1;
+            dummyPanelCompass.ToolTip.ToolTipDelay = toolTipDelay;
 
             // compass            
             compass = new HUDCompass();
@@ -1725,12 +1730,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             leftMouseDownOnForwardButton = true;
             alreadyInMouseDown = true;
         }
 
         private void ForwardButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             leftMouseDownOnForwardButton = false;
             alreadyInMouseDown = false;
         }
@@ -1740,12 +1749,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             rightMouseDownOnForwardButton = true;
             alreadyInRightMouseDown = true;
         }
 
         private void ForwardButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             rightMouseDownOnForwardButton = false;
             alreadyInRightMouseDown = false;
         }
@@ -1755,12 +1768,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             leftMouseDownOnBackwardButton = true;
             alreadyInMouseDown = true;
         }
 
         private void BackwardButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             leftMouseDownOnBackwardButton = false;
             alreadyInMouseDown = false;
         }
@@ -1770,12 +1787,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             rightMouseDownOnBackwardButton = true;
             alreadyInRightMouseDown = true;
         }
 
         private void BackwardButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             rightMouseDownOnBackwardButton = false;
             alreadyInRightMouseDown = false;
         }
@@ -1785,12 +1806,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             leftMouseDownOnLeftButton = true;
             alreadyInMouseDown = true;
         }
 
         private void LeftButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             leftMouseDownOnLeftButton = false;
             alreadyInMouseDown = false;
         }
@@ -1800,12 +1825,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             rightMouseDownOnLeftButton = true;
             alreadyInRightMouseDown = true;
         }
 
         private void LeftButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             rightMouseDownOnLeftButton = false;
             alreadyInRightMouseDown = false;
         }
@@ -1815,12 +1844,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             leftMouseDownOnRightButton = true;
             alreadyInMouseDown = true;
         }
 
         private void RightButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             leftMouseDownOnRightButton = false;
             alreadyInMouseDown = false;
         }
@@ -1830,12 +1863,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             rightMouseDownOnRightButton = true;
             alreadyInRightMouseDown = true;
         }
 
         private void RightButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             rightMouseDownOnRightButton = false;
             alreadyInRightMouseDown = false;
         }
@@ -1845,12 +1882,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             leftMouseDownOnRotateLeftButton = true;
             alreadyInMouseDown = true;
         }
 
         private void RotateLeftButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             leftMouseDownOnRotateLeftButton = false;
             alreadyInMouseDown = false;
         }
@@ -1860,12 +1901,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             rightMouseDownOnRotateLeftButton = true;
             alreadyInMouseDown = true;
         }
 
         private void RotateLeftButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             rightMouseDownOnRotateLeftButton = false;
             alreadyInMouseDown = false;
         }
@@ -1875,12 +1920,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             leftMouseDownOnRotateRightButton = true;
             alreadyInMouseDown = true;
         }
 
         private void RotateRightButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             leftMouseDownOnRotateRightButton = false;
             alreadyInMouseDown = false;
         }
@@ -1890,12 +1939,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             rightMouseDownOnRotateRightButton = true;
             alreadyInMouseDown = true;
         }
 
         private void RotateRightButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             rightMouseDownOnRotateRightButton = false;
             alreadyInMouseDown = false;
         }
@@ -1905,12 +1958,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             leftMouseDownOnUpstairsButton = true;
             alreadyInMouseDown = true;
         }
 
         private void UpstairsButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             leftMouseDownOnUpstairsButton = false;
             alreadyInMouseDown = false;
         }
@@ -1921,12 +1978,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             leftMouseDownOnDownstairsButton = true;
             alreadyInMouseDown = true;
         }
 
         private void DownstairsButton_OnMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             leftMouseDownOnDownstairsButton = false;
             alreadyInMouseDown = false;
         }
@@ -1936,12 +1997,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             rightMouseDownOnUpstairsButton = true;
             alreadyInRightMouseDown = true;
         }
 
         private void UpstairsButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             rightMouseDownOnUpstairsButton = false;
             alreadyInRightMouseDown = false;
         }
@@ -1952,12 +2017,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (inDragMode() || alreadyInRightMouseDown)
                 return;
 
+            defaultToolTip = null;
+
             rightMouseDownOnDownstairsButton = true;
             alreadyInRightMouseDown = true;
         }
 
         private void DownstairsButton_OnRightMouseUp(BaseScreenComponent sender, Vector2 position)
         {
+            defaultToolTip = savedToolTip;
+
             rightMouseDownOnDownstairsButton = false;
             alreadyInRightMouseDown = false;
         }
