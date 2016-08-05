@@ -163,8 +163,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<DaggerfallUnityItem> remoteItemsFiltered = new List<DaggerfallUnityItem>();
 
         DaggerfallLoot lootTarget = null;
+        bool usingWagon = false;
+
+        ItemCollection lastRemoteItems = null;
+        RemoteTargetTypes lastRemoteTargetType;
 
         int lastMouseOverPaperDollEquipIndex = -1;
+
+        ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.Front;
 
         #endregion
 
@@ -549,9 +555,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 localItemsStackLabels[i].Text = string.Empty;
                 localItemsButtons[i].ToolTipText = string.Empty;
                 localItemsIconPanels[i].BackgroundTexture = null;
-                localItemsUpButton.BackgroundTexture = redUpArrow;
-                localItemsDownButton.BackgroundTexture = redDownArrow;
             }
+            localItemsUpButton.BackgroundTexture = redUpArrow;
+            localItemsDownButton.BackgroundTexture = redDownArrow;
         }
 
         // Clears all remote list display elements
@@ -562,9 +568,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItemsStackLabels[i].Text = string.Empty;
                 remoteItemsButtons[i].ToolTipText = string.Empty;
                 remoteItemsIconPanels[i].BackgroundTexture = null;
-                remoteItemsUpButton.BackgroundTexture = redUpArrow;
-                remoteItemsDownButton.BackgroundTexture = redDownArrow;
             }
+            remoteItemsUpButton.BackgroundTexture = redUpArrow;
+            remoteItemsDownButton.BackgroundTexture = redDownArrow;
         }
 
         // Updates red/green state of scroller buttons
@@ -585,8 +591,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // No items above or below
             if (count <= listDisplayUnits)
             {
-                localItemsUpButton.BackgroundTexture = redUpArrow;
-                localItemsDownButton.BackgroundTexture = redDownArrow;
+                upButton.BackgroundTexture = redUpArrow;
+                downButton.BackgroundTexture = redDownArrow;
             }
         }
 
@@ -827,7 +833,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Clear list elements
             ClearLocalItemsElements();
-            if (localItemsFiltered == null || localItemsFiltered.Count == 0)
+            if (localItemsFiltered == null)
                 return;
 
             // Update scroller
@@ -869,7 +875,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Clear list elements
             ClearRemoteItemsElements();
-            if (remoteItems == null || remoteItems.Count == 0)
+            if (remoteItems == null)
                 return;
 
             // Update scroller
@@ -1001,6 +1007,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return scrollIndex;
         }
 
+        void ShowWagon(bool show)
+        {
+            if (show)
+            {
+                // Save current target and switch to wagon
+                wagonButton.BackgroundTexture = wagonSelected;
+                lastRemoteItems = remoteItems;
+                lastRemoteTargetType = remoteTargetType;
+                remoteItems = PlayerEntity.WagonItems;
+                remoteTargetType = RemoteTargetTypes.Wagon;
+            }
+            else
+            {
+                // Restore previous target or default to dropped items
+                wagonButton.BackgroundTexture = wagonNotSelected;
+                if (lastRemoteItems != null)
+                {
+                    remoteItems = lastRemoteItems;
+                    remoteTargetType = lastRemoteTargetType;
+                    lastRemoteItems = null;
+                }
+                else
+                {
+                    remoteItems = droppedItems;
+                    remoteTargetType = RemoteTargetTypes.Dropped;
+                    lastRemoteItems = null;
+                }
+            }
+
+            usingWagon = show;
+            Refresh(false);
+        }
+
         #endregion
 
         #region Tab Page Event Handlers
@@ -1031,9 +1070,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TODO:
-            // Wagon currently locked open as ground loot piles not implemented
-            // Later need to implement variable remote targets for item exchange (wagon, shop, loot, etc.)
+            ShowWagon(!usingWagon);
         }
 
         private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -1086,7 +1123,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Create new item for gold pieces and add to other container
             DaggerfallUnityItem goldPieces = ItemBuilder.CreateGoldPieces(goldToDrop);
-            remoteItems.AddItem(goldPieces);
+            remoteItems.AddItem(goldPieces, preferredOrder);
 
             // Remove gold count from player
             GameManager.Instance.PlayerEntity.GoldPieces -= goldToDrop;
@@ -1173,7 +1210,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void UnequipItem(DaggerfallUnityItem item, bool refreshPaperDoll = true)
         {
             playerEntity.ItemEquipTable.UnequipItem(item.EquipSlot);
-            playerEntity.Items.ReorderItem(item, ItemCollection.AddPosition.Front);
+            playerEntity.Items.ReorderItem(item, preferredOrder);
             Refresh(refreshPaperDoll);
         }
 
@@ -1204,7 +1241,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            to.Transfer(item, from);
+            to.Transfer(item, from, preferredOrder);
             Refresh(false);
         }
 

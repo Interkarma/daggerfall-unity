@@ -244,13 +244,14 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="item">Item to transfer.</param>
         /// <param name="source">Source collection to transfer from.</param>
-        public void Transfer(DaggerfallUnityItem item, ItemCollection source)
+        /// <param name="position">Position in list to transfer item.</param>
+        public void Transfer(DaggerfallUnityItem item, ItemCollection source, AddPosition position = AddPosition.DontCare)
         {
             if (item == null || source == null)
                 return;
 
             source.RemoveItem(item);
-            AddItem(item);
+            AddItem(item, position);
         }
 
         /// <summary>
