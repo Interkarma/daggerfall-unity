@@ -601,7 +601,15 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         string ReadSaveFile(string path)
         {
-            return File.ReadAllText(path);
+            try
+            {
+                return File.ReadAllText(path);
+            }
+            catch(Exception ex)
+            {
+                DaggerfallUnity.LogMessage(ex.Message);
+                return string.Empty;
+            }
         }
 
         Dictionary<int, string> EnumerateSaveFolders()
@@ -952,7 +960,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Get automap state
             Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = new Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>();
-            automapState = GameManager.Instance.Automap.GetState();
+            //automapState = GameManager.Instance.Automap.GetState();
 
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
@@ -990,7 +998,10 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Deserialize JSON strings
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
-            Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = Deserialize(typeof(Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>), automapDataJson) as Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>;
+
+            Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = null;
+            if (!string.IsNullOrEmpty(automapDataJson))
+                automapState = Deserialize(typeof(Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>), automapDataJson) as Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>;
 
             // Must have a serializable player
             if (!serializablePlayer)
@@ -1074,7 +1085,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             RestoreSaveData(saveData);
 
             // Restore automap data
-            //GameManager.Instance.Automap.SetState(automapState);
+            //if (automapState != null)
+            //    GameManager.Instance.Automap.SetState(automapState);
 
             // Raise OnLoad event
             RaiseOnLoadEvent(saveData);
