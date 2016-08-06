@@ -124,6 +124,12 @@ namespace DaggerfallWorkshop.Game
         public void SetState(Dictionary<string, AutomapGeometryDungeonState> savedDictAutomapDungeonsDiscoveryState)
         {
             dictAutomapDungeonsDiscoveryState = savedDictAutomapDungeonsDiscoveryState;
+
+            if ((GameManager.Instance.IsPlayerInsidePalace)||(GameManager.Instance.IsPlayerInsideDungeon))
+            {                
+                InitWhenInInteriorOrDungeon(null, true);
+            }
+
             restoreStateAutomapDungeon();
         }
 
