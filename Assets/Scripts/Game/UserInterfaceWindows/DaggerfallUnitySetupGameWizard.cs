@@ -489,16 +489,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             restartButton.OnMouseClick += RestartButton_OnMouseClick;
             optionsPanel.Components.Add(restartButton);
 
-            Button ShowModsButton = new Button();
-            ShowModsButton.Label.Text = "Mods";
-            ShowModsButton.Position = new Vector2(0, optionsConfirmButton.Position.y);
-            ShowModsButton.HorizontalAlignment = HorizontalAlignment.Left;
-            ShowModsButton.Size = optionsConfirmButton.Size;
-            ShowModsButton.BackgroundColor = optionsConfirmButton.BackgroundColor;
-            ShowModsButton.Label.TextColor = optionsConfirmButton.Label.TextColor;
-            ShowModsButton.Outline.Enabled = true;
-            optionsPanel.Components.Add(ShowModsButton);
-            ShowModsButton.OnMouseClick += ModsButton_OnOnMouseBlick;
+            if (DaggerfallUnity.Settings.LypyL_ModSystem)
+            {
+                Button ShowModsButton = new Button();
+                ShowModsButton.Label.Text = "Mods";
+                ShowModsButton.Position = new Vector2(0, optionsConfirmButton.Position.y);
+                ShowModsButton.HorizontalAlignment = HorizontalAlignment.Left;
+                ShowModsButton.Size = optionsConfirmButton.Size;
+                ShowModsButton.BackgroundColor = optionsConfirmButton.BackgroundColor;
+                ShowModsButton.Label.TextColor = optionsConfirmButton.Label.TextColor;
+                ShowModsButton.Outline.Enabled = true;
+                optionsPanel.Components.Add(ShowModsButton);
+                ShowModsButton.OnMouseClick += ModsButton_OnOnMouseBlick;
+            }
 
         }
 

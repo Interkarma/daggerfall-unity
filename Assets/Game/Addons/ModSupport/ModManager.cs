@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         int loadedModCount = 0;
         [SerializeField]
         List<Mod> Mods;
+        public static FullSerializer.fsSerializer _serializer = new FullSerializer.fsSerializer();
 
         public static string[] textExtentsions = new string[]
         {
@@ -88,6 +89,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         // Use this for initialization
         void Start()
         {
+            if (!DaggerfallUnity.Settings.LypyL_ModSystem)
+            {
+                Debug.Log("Mod System disabled");
+                StateManager.OnStateChange -= StateManager_OnStateChange;
+                Destroy(this);
+            }
             Mods = new List<Mod>();
             FindModsFromDirectory();
         }
