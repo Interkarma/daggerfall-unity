@@ -971,7 +971,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void SetSuppressToolTip(bool suppress)
         {
             // Scrub hover time on resume
-            if (suppress)
+            if (!suppress)
                 hoverTime = 0;
 
             suppressToolTip = suppress;
