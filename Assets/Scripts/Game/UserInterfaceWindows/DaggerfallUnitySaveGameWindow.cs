@@ -53,6 +53,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button deleteSaveButton = new Button();
         Button goButton = new Button();
         Button switchCharButton = new Button();
+        Button switchClassicButton = new Button();
 
         Color mainPanelBackgroundColor = new Color(0.0f, 0f, 0.0f, 1.0f);
         Color namePanelBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 1.0f);
@@ -163,6 +164,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             goButton.Outline.Enabled = true;
             goButton.OnMouseClick += SaveLoadEventHandler;
             mainPanel.Components.Add(goButton);
+
+            // Switch to classic save window button
+            switchClassicButton.Position = new Vector2(172, 150);
+            switchClassicButton.Size = new Vector2(40, 16);
+            switchClassicButton.Label.Text = "Classic";
+            //switchClassicButton.Label.TextColor = new Color(0.6f, 0.3f, 0.6f);
+            switchClassicButton.Label.ShadowColor = Color.black;
+            switchClassicButton.BackgroundColor = new Color(0.2f, 0.2f, 0);
+            switchClassicButton.Outline.Enabled = true;
+            switchClassicButton.OnMouseClick += SwitchClassicButton_OnMouseClick;
+            mainPanel.Components.Add(switchClassicButton);
 
             // Cancel button
             Button cancelButton = new Button();
@@ -350,6 +362,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 saveNameTextBox.DefaultText = HardStrings.enterSaveName;
                 switchCharButton.Enabled = false;
+                switchClassicButton.Enabled = false;
                 saveNameTextBox.ReadOnly = false;
                 goButton.Label.Text = saveButtonText;
             }
@@ -364,6 +377,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     switchCharButton.Enabled = true;
                 else
                     switchCharButton.Enabled = false;
+
+                switchClassicButton.Enabled = true;
             }
         }
 
@@ -514,6 +529,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Show window
             uiManager.PushWindow(picker);
+        }
+
+        private void SwitchClassicButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            uiManager.PushWindow(new DaggerfallLoadClassicGameWindow(uiManager));
         }
 
         private void Picker_OnItemPicked(int index, string itemString)

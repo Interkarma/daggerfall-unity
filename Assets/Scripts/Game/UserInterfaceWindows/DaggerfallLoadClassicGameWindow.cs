@@ -24,9 +24,9 @@ using DaggerfallWorkshop.Game.Serialization;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// Implements the Daggerfall Load Saved Game interface.
+    /// Implements the classic Daggerfall Load Saved Game interface.
     /// </summary>
-    public class DaggerfallLoadSavedGameWindow : DaggerfallPopupWindow
+    public class DaggerfallLoadClassicGameWindow : DaggerfallPopupWindow
     {
         const string nativeImgName = "LOAD00I0.IMG";
         const string gameid = "gameid";
@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return selectedSaveGame; }
         }
 
-        public DaggerfallLoadSavedGameWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
+        public DaggerfallLoadClassicGameWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             : base(uiManager, previousWindow)
         {
         }
@@ -161,19 +161,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup exit button
             DaggerfallUI.AddButton(new Vector2(133, 150), new Vector2(56, 19), WindowMessages.wmCloseWindow, NativePanel);
 
-            // TEMP: Look for quick save and add temp button
-            if (SaveLoadManager.Instance.HasQuickSave())
-            {
-                Button quickLoadButton = new Button();
-                quickLoadButton.HorizontalAlignment = HorizontalAlignment.Center;
-                quickLoadButton.VerticalAlignment = VerticalAlignment.Middle;
-                quickLoadButton.BackgroundColor = Color.gray;
-                quickLoadButton.Label.Text = "Quick Load";
-                quickLoadButton.Label.BackgroundColor = Color.gray;
-                quickLoadButton.OnMouseClick += QuickLoadButton_OnMouseClick;
-                quickLoadButton.Size = new Vector2(52, 10);
-                NativePanel.Components.Add(quickLoadButton);
-            }
+            //// TEMP: Look for quick save and add temp button
+            //if (SaveLoadManager.Instance.HasQuickSave())
+            //{
+            //    Button quickLoadButton = new Button();
+            //    quickLoadButton.HorizontalAlignment = HorizontalAlignment.Center;
+            //    quickLoadButton.VerticalAlignment = VerticalAlignment.Middle;
+            //    quickLoadButton.BackgroundColor = Color.gray;
+            //    quickLoadButton.Label.Text = "Quick Load";
+            //    quickLoadButton.Label.BackgroundColor = Color.gray;
+            //    quickLoadButton.OnMouseClick += QuickLoadButton_OnMouseClick;
+            //    quickLoadButton.Size = new Vector2(52, 10);
+            //    NativePanel.Components.Add(quickLoadButton);
+            //}
         }
 
         void SelectSaveGame(int index)
@@ -233,13 +233,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             OpenSelectedSaveGame();
         }
 
-        private void QuickLoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+        //private void QuickLoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        //{
+        //    Cursor.lockState = CursorLockMode.Locked;
+        //    Cursor.visible = false;
 
-            QuickLoad();
-        }
+        //    QuickLoad();
+        //}
 
         #endregion
     }
