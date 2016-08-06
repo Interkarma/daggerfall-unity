@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         ToolTip toolTip = null;
         string toolTipText = string.Empty;
+        bool suppressToolTip = false;
 
         Vector2 scale = Vector2.one;
         Vector2 localScale = Vector2.one;
@@ -302,12 +303,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Gets or set tooltip text for this component.
+        /// Gets or sets tooltip text for this component.
         /// </summary>
         public string ToolTipText
         {
             get { return toolTipText; }
             set { toolTipText = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets tooltip suppression, preventing tooltip from drawing.
+        /// Tooltip hover time will be scrubbed on resume.
+        /// </summary>
+        public bool SuppressTooltip
+        {
+            get { return suppressToolTip; }
+            set { SetSuppressToolTip(value); }
         }
 
         /// <summary>
@@ -541,7 +552,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Draw tooltip on mouse hover
             if (toolTip != null && mouseOverComponent && hoverTime >= toolTip.ToolTipDelay)
             {
-                toolTip.Draw(toolTipText);
+                if (!suppressToolTip)
+                    toolTip.Draw(toolTipText);
             }
         }
 
@@ -950,6 +962,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 backgroundColorTexture.Apply(false, true);
                 backgroundColorTexture.filterMode = FilterMode.Point;
             }
+        }
+
+        /// <summary>
+        /// Suppress tooltip.
+        /// </summary>
+        /// <param name="suppress">True to suppress tooltip, false to resume.</param>
+        private void SetSuppressToolTip(bool suppress)
+        {
+            // Scrub hover time on resume
+            if (suppress)
+                hoverTime = 0;
+
+            suppressToolTip = suppress;
         }
 
         #endregion
