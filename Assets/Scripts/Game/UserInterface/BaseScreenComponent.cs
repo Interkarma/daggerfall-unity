@@ -315,7 +315,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// Gets or sets tooltip suppression, preventing tooltip from drawing.
         /// Tooltip hover time will be scrubbed on resume.
         /// </summary>
-        public bool SuppressTooltip
+        public bool SuppressToolTip
         {
             get { return suppressToolTip; }
             set { SetSuppressToolTip(value); }
