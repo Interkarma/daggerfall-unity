@@ -464,15 +464,26 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         string GetTempModDirPath()
         {
-            string path = Path.Combine(Application.dataPath, TempDirectory);
-            if (Directory.Exists(path))
-                return path;
-            else
+            List<string> dirNames = new List<string>() { "Assets", "Untracked", "ModBuilder", modInfo.ModTitle };
+
+            string rootPath = Application.dataPath;
+            rootPath = rootPath.Substring(0, rootPath.IndexOf("Assets"));
+            string assetPath = dirNames[0];
+            string fullPath = Path.Combine(rootPath, assetPath);
+
+            for (int i = 1; i < dirNames.Count; i++)
             {
-                path = AssetDatabase.CreateFolder("Assets", TempDirectory);
-                path = AssetDatabase.GUIDToAssetPath(path);
-                return path;
+                fullPath = Path.Combine(rootPath, assetPath + Path.DirectorySeparatorChar +  dirNames[i]);
+
+                if(!Directory.Exists(fullPath))
+                    AssetDatabase.CreateFolder(assetPath, dirNames[i]);
+
+                assetPath += Path.DirectorySeparatorChar + dirNames[i];
             }
+            if (!Directory.Exists(fullPath))
+                return null;
+            else
+                return fullPath;
         }
 
 
