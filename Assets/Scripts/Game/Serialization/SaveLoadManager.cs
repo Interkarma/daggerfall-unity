@@ -958,14 +958,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveInfo.characterName = saveData.playerData.playerEntity.name;
             saveInfo.dateAndTime = saveData.dateAndTime;
 
-            // Get automap state
-            Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = new Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>();
-            automapState = GameManager.Instance.Automap.GetState();
-
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
             string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
-            string automapDataJson = Serialize(automapState.GetType(), automapState);
 
             // Create screenshot for save
             // TODO: Hide UI for screenshot or use a different method
@@ -977,7 +972,19 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Save data to files
             WriteSaveFile(Path.Combine(path, saveDataFilename), saveDataJson);
             WriteSaveFile(Path.Combine(path, saveInfoFilename), saveInfoJson);
-            WriteSaveFile(Path.Combine(path, automapDataFilename), automapDataJson);
+
+            // Save automap state
+            try
+            {
+                Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = GameManager.Instance.Automap.GetState();
+                string automapDataJson = Serialize(automapState.GetType(), automapState);
+                WriteSaveFile(Path.Combine(path, automapDataFilename), automapDataJson);
+            }
+            catch(Exception ex)
+            {
+                string message = string.Format("Failed to save automap state. Message: {0}", ex.Message);
+                Debug.Log(message);
+            }
 
             // Save screenshot
             byte[] bytes = screenshot.EncodeToJPG();
@@ -994,14 +1001,9 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             // Read save data from files
             string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
-            string automapDataJson = ReadSaveFile(Path.Combine(path, automapDataFilename));
 
             // Deserialize JSON strings
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
-
-            Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = null;
-            if (!string.IsNullOrEmpty(automapDataJson))
-                automapState = Deserialize(typeof(Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>), automapDataJson) as Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>;
 
             // Must have a serializable player
             if (!serializablePlayer)
@@ -1084,9 +1086,23 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore save data to objects in newly spawned world
             RestoreSaveData(saveData);
 
-            // Restore automap data
-            if (automapState != null)
-                GameManager.Instance.Automap.SetState(automapState);
+            // Load automap state
+            try
+            {
+                string automapDataJson = ReadSaveFile(Path.Combine(path, automapDataFilename));
+                Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = null;
+
+                if (!string.IsNullOrEmpty(automapDataJson))
+                    automapState = Deserialize(typeof(Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>), automapDataJson) as Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>;
+
+                if (automapState != null)
+                    GameManager.Instance.Automap.SetState(automapState);
+            }
+            catch (Exception ex)
+            {
+                string message = string.Format("Failed to load automap state. Message: {0}", ex.Message);
+                Debug.Log(message);
+            }
 
             // Raise OnLoad event
             RaiseOnLoadEvent(saveData);
