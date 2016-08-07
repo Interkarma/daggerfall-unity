@@ -128,9 +128,8 @@ namespace DaggerfallWorkshop.Game
             if ((GameManager.Instance.IsPlayerInsidePalace)||(GameManager.Instance.IsPlayerInsideDungeon))
             {                
                 InitWhenInInteriorOrDungeon(null, true);
-            }
-
-            restoreStateAutomapDungeon();
+                restoreStateAutomapDungeon();
+            }           
         }
 
         #region Fields
@@ -1348,14 +1347,18 @@ namespace DaggerfallWorkshop.Game
         /// this class is mapping the hierarchy inside the GameObject gameObjectGeometry in such way
         /// that the MeshRenderer enabled state for objects in the 4th hierarchy level (which are the actual models)
         /// is matching value of field "discovered" in AutomapGeometryDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState
-        /// hopefully this is a useful starting point for storing discovery state of dungeons in savegames later
+        /// dictionary of dungeon states of visited dungeons is then updated (which is used for save game mechanism)
         /// </summary>
         private void saveStateAutomapDungeon()
         {
             if ((numberOfDungeonMemorized == 0)&&(!GameManager.Instance.IsPlayerInside)) // if discovery state of no dungeon has to be remembered, clear dictionary and skip the rest of this function
             {
                 dictAutomapDungeonsDiscoveryState.Clear();
-                //automapGeometryDungeonState = null;
+                return;
+            }
+
+            if (!GameManager.Instance.IsPlayerInside) // if player is outside just skip this function
+            {
                 return;
             }
 
@@ -1542,7 +1545,8 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// restores discovery state from automapGeometryInteriorState onto gameobjectGeometry
+        /// restores discovery state from automapGeometryDungeonState onto gameobjectGeometry
+        /// automapGeometryDungeonState is loaded from dictionary of dungeon states of visited dungeons
         /// this class is mapping the value of field "discovered" (AutomapGeometryDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState)
         /// inside object automapGeometryDungeonState to the objects inside the 4th hierarchy level of GameObject gameObjectGeometry (which are the actual models)
         /// in such way that the MeshRenderer enabled state for these objects match the value of field "discovered"
