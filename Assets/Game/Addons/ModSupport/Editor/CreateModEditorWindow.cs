@@ -411,7 +411,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     Directory.CreateDirectory(fullPath);
                 }
 
-                BuildPipeline.BuildAssetBundles(fullPath, buildMap, BuildAssetBundleOptions.CompleteAssets, buildTargets[i]);
+                BuildPipeline.BuildAssetBundles(fullPath, buildMap, BuildAssetBundleOptions.None, buildTargets[i]);
             }
 
             return true;
