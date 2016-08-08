@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game
         public float sensitivityScale = 1.0f;
         public bool enableMouseLook = true;
         public bool enableSmoothing = true;
+        public bool simpleCursorLock = false;
 
         // Assign this if there's a parent object controlling motion, such as a Character Controller.
         // Yaw rotation will affect this object instead of the camera if set.
@@ -71,20 +72,33 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            // Ensure the cursor is always locked when set
-			if (lockCursor && enableMouseLook)
-			{
-				Cursor.lockState = CursorLockMode.Locked;
-				Cursor.visible = false;
-			}
-			else
-			{
-				Cursor.lockState = CursorLockMode.None;
-				Cursor.visible = true;
-			}
+            // Ensure the cursor always locked when set
+            if (lockCursor && enableMouseLook)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
 
-            // Enable mouse cursor when game paused
-            enableMouseLook = !GameManager.IsGamePaused;
+            // Handle mouse look enable/disable
+            if (simpleCursorLock)
+            {
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    enableMouseLook = !enableMouseLook;
+                if (!enableMouseLook && Input.GetMouseButtonDown(0) || !enableMouseLook && Input.GetMouseButtonDown(1))
+                    enableMouseLook = true;
+            }
+            else
+            {
+                // Enable mouse cursor when game paused
+                enableMouseLook = !GameManager.IsGamePaused;
+            }
+
+            // Exit when mouse look disabled
             if (!enableMouseLook)
                 return;
 
