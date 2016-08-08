@@ -357,14 +357,14 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Adds a loose object to the world.
-        /// Object will be automatically destroyed when outside of range.
+        /// Track an exterior object in streaming world.
+        /// Tracked object will be automatically destroyed when outside of range.
         /// </summary>
         /// <param name="gameObject">Game object to track.</param>
         /// <param name="mapPixelX">Map pixel X to store gameobject. -1 for player location.</param>
         /// <param name="mapPixelY">Map pixel Y to store gameobject. -1 for player location.</param>
         /// <param name="setParent">True to set parent as StreamingTarget.</param>
-        public void AddLooseObject(GameObject gameObject, int mapPixelX = -1, int mapPixelY = -1, bool setParent = true)
+        public void TrackLooseObject(GameObject gameObject, int mapPixelX = -1, int mapPixelY = -1, bool setParent = false)
         {
             // Create loose object description
             LooseObjectDesc desc = new LooseObjectDesc();

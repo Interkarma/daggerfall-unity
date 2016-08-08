@@ -544,7 +544,7 @@ namespace DaggerfallWorkshop.Utility
             }
             else
             {
-                throw new Exception("TODO: Exterior dropped loot");
+                parent = GameManager.Instance.StreamingTarget.transform;
             }
 
             // Randomise container texture
@@ -570,6 +570,12 @@ namespace DaggerfallWorkshop.Utility
             loot.LootTableKey = string.Empty;
             loot.playerOwned = true;
             loot.customDrop = true;
+
+            // If dropped outside ask StreamingWorld to track loose object
+            if (!GameManager.Instance.IsPlayerInside)
+            {
+                GameManager.Instance.StreamingWorld.TrackLooseObject(loot.gameObject);
+            }
 
             return loot;
         }
