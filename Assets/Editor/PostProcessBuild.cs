@@ -10,6 +10,8 @@ public class PostProcessBuild
     {
         const string defaultModsFolderName = "StreamingAssets";
         const string manualFileName = "Daggerfall Unity Manual.pdf";
+        const string readMeFilename = "readme.txt";
+        const string modReadMeText = "Place your .dfmod files in this folder for the mod system.";
 
         if (target == BuildTarget.StandaloneWindows || target == BuildTarget.StandaloneWindows64 ||
             target == BuildTarget.StandaloneLinux || target == BuildTarget.StandaloneLinux64 || target == BuildTarget.StandaloneLinuxUniversal ||
@@ -26,7 +28,13 @@ public class PostProcessBuild
             }
 
             // Create default mods folder
-            Directory.CreateDirectory(Path.Combine(pureBuildPath, defaultModsFolderName));
+            string modsPath = Path.Combine(pureBuildPath, defaultModsFolderName);
+            Directory.CreateDirectory(modsPath);
+
+            // Write readme text
+            StreamWriter stream = File.CreateText(Path.Combine(modsPath, readMeFilename));
+            stream.WriteLine(modReadMeText);
+            stream.Close();
 
             // Copy manual
             FileUtil.CopyFileOrDirectory(Path.Combine("Assets/Docs", manualFileName), Path.Combine(pureBuildPath, manualFileName));
