@@ -359,7 +359,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             forwardButton.OnRightMouseDown += ForwardButton_OnRightMouseDown;
             forwardButton.OnRightMouseUp += ForwardButton_OnRightMouseUp;
             forwardButton.ToolTip = defaultToolTip;
-            forwardButton.ToolTipText = "left click: move dungeon model forward (hotkey: up arrow)\rright click: move rotation center axis forward (hotkey: control+up arrow)";
+            forwardButton.ToolTipText = "left click: move viewpoint forward (hotkey: up arrow)\rright click: move rotation center axis forward (hotkey: control+up arrow)";
             forwardButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // backward button
@@ -369,7 +369,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             backwardButton.OnRightMouseDown += BackwardButton_OnRightMouseDown;
             backwardButton.OnRightMouseUp += BackwardButton_OnRightMouseUp;
             backwardButton.ToolTip = defaultToolTip;
-            backwardButton.ToolTipText = "left click: move dungeon model backwards (hotkey: down arrow)\rright click: move rotation center axis backwards (hotkey: control+down arrow)";
+            backwardButton.ToolTipText = "left click: move viewpoint backwards (hotkey: down arrow)\rright click: move rotation center axis backwards (hotkey: control+down arrow)";
             backwardButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // left button
@@ -379,7 +379,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnRightMouseDown += LeftButton_OnRightMouseDown;
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
             leftButton.ToolTip = defaultToolTip;
-            leftButton.ToolTipText = "left click: move dungeon model to the left (hotkey: left arrow)\rright click: move rotation center axis to the left (hotkey: control+left arrow)";
+            leftButton.ToolTipText = "left click: move viewpoint to the left (hotkey: left arrow)\rright click: move rotation center axis to the left (hotkey: control+left arrow)";
             leftButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // right button
@@ -389,7 +389,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rightButton.OnRightMouseDown += RightButton_OnRightMouseDown;
             rightButton.OnRightMouseUp += RightButton_OnRightMouseUp;
             rightButton.ToolTip = defaultToolTip;
-            rightButton.ToolTipText = "left click: move dungeon model to the right (hotkey: right arrow)\rright click: move rotation center axis to the right (hotkey: control+right arrow)";
+            rightButton.ToolTipText = "left click: move viewpoint to the right (hotkey: right arrow)\rright click: move rotation center axis to the right (hotkey: control+right arrow)";
             rightButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // rotate left button
