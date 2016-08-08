@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop
     /// Terrain tiles are spread outwards from a centre tile up to TerrainDistance around player.
     /// Terrains will be marked inactive once they pass beyond TerrainDistance.
     /// Inactive terrains greater than TerrainDistance+1 from player will be recycled.
-    /// Locations greater than TerrainDistance+1 from player will be destroyed.
+    /// Locations and other loose objects greater than TerrainDistance+1 from player will be destroyed.
     /// </summary>
     public class StreamingWorld : MonoBehaviour
     {
@@ -78,9 +78,9 @@ namespace DaggerfallWorkshop
         TerrainDesc[] terrainArray = new TerrainDesc[maxTerrainArray];
         Dictionary<int, int> terrainIndexDict = new Dictionary<int, int>();
 
-        // List of location objects
-        // Locations are unique and will be created/destroyed as needed
-        List<LocationDesc> locationList = new List<LocationDesc>();
+        // List of loose objects, such as locations or loot containers
+        // These objects are not recycled and will created/destroyed as needed
+        List<LooseObjectDesc> looseObjectsList = new List<LooseObjectDesc>();
 
         // Compensation for floating origin
         Vector3 worldCompensation = Vector3.zero;
@@ -160,9 +160,9 @@ namespace DaggerfallWorkshop
             public int mapPixelY;
         }
 
-        struct LocationDesc
+        struct LooseObjectDesc
         {
-            public GameObject locationObject;
+            public GameObject gameObject;
             public int mapPixelX;
             public int mapPixelY;
         }
@@ -356,6 +356,30 @@ namespace DaggerfallWorkshop
             autoRepositionMethod = method;
         }
 
+        /// <summary>
+        /// Adds a loose object to the world.
+        /// Object will be automatically destroyed when outside of range.
+        /// </summary>
+        /// <param name="gameObject">Game object to track.</param>
+        /// <param name="mapPixelX">Map pixel X to store gameobject. -1 for player location.</param>
+        /// <param name="mapPixelY">Map pixel Y to store gameobject. -1 for player location.</param>
+        /// <param name="setParent">True to set parent as StreamingTarget.</param>
+        public void AddLooseObject(GameObject gameObject, int mapPixelX = -1, int mapPixelY = -1, bool setParent = true)
+        {
+            // Create loose object description
+            LooseObjectDesc desc = new LooseObjectDesc();
+            desc.gameObject = gameObject;
+            if (mapPixelX == -1)
+                desc.mapPixelX = MapPixelX;
+            if (mapPixelY == -1)
+                desc.mapPixelY = MapPixelY;
+            looseObjectsList.Add(desc);
+
+            // Change object parent
+            if (setParent)
+                gameObject.transform.parent = StreamingTarget.transform;
+        }
+
         #endregion
 
         #region World Setup Methods
@@ -419,7 +443,7 @@ namespace DaggerfallWorkshop
             long startTime = stopwatch.ElapsedMilliseconds;
 #endif
 
-            CollectLocations(true);
+            CollectLooseObjects(true);
             int playerTerrainIndex = terrainIndexDict[TerrainHelper.MakeTerrainKey(MapPixelX, MapPixelY)];
 
             UpdateTerrainData(terrainArray[playerTerrainIndex]);
@@ -489,7 +513,7 @@ namespace DaggerfallWorkshop
 
         private void UpdateLocations()
         {
-            CollectLocations();
+            CollectLooseObjects();
 
             for (int i = 0; i < terrainArray.Length; i++)
             {
@@ -514,12 +538,12 @@ namespace DaggerfallWorkshop
                 GameObject locationObject = CreateLocationGameObject(index, out location);
                 if (locationObject)
                 {
-                    // Add location object to list
-                    LocationDesc locationDesc = new LocationDesc();
-                    locationDesc.locationObject = locationObject;
-                    locationDesc.mapPixelX = terrainArray[index].mapPixelX;
-                    locationDesc.mapPixelY = terrainArray[index].mapPixelY;
-                    locationList.Add(locationDesc);
+                    // Add location to loose object list
+                    LooseObjectDesc looseObject = new LooseObjectDesc();
+                    looseObject.gameObject = locationObject;
+                    looseObject.mapPixelX = terrainArray[index].mapPixelX;
+                    looseObject.mapPixelY = terrainArray[index].mapPixelY;
+                    looseObjectsList.Add(looseObject);
 
                     // Create billboard batch game objects for this location
                     // Streaming world always batches for performance, regardless of options
@@ -734,7 +758,7 @@ namespace DaggerfallWorkshop
         {
             // Collect everything
             CollectTerrains(true);
-            CollectLocations(true);
+            CollectLooseObjects(true);
 
             // Clear lists
             terrainIndexDict.Clear();
@@ -776,27 +800,27 @@ namespace DaggerfallWorkshop
             }
         }
 
-        // Destroy any locations outside of range
-        private void CollectLocations(bool collectAll = false)
+        // Destroy any loose objects outside of range
+        private void CollectLooseObjects(bool collectAll = false)
         {
-            for (int i = 0; i < locationList.Count; i++)
+            for (int i = 0; i < looseObjectsList.Count; i++)
             {
-                if (!IsInRange(locationList[i].mapPixelX, locationList[i].mapPixelY) || collectAll)
+                if (!IsInRange(looseObjectsList[i].mapPixelX, looseObjectsList[i].mapPixelY) || collectAll)
                 {
-                    locationList[i].locationObject.SetActive(false);
-                    StartCoroutine(DestroyLocationIterative(locationList[i].locationObject));
-                    locationList.RemoveAt(i);
+                    looseObjectsList[i].gameObject.SetActive(false);
+                    StartCoroutine(DestroyGameObjectIterative(looseObjectsList[i].gameObject));
+                    looseObjectsList.RemoveAt(i);
                 }
             }
         }
 
-        // Iteratively destroys location as unity seems bad at doing this when just destroying parent
-        private IEnumerator DestroyLocationIterative(GameObject gameObject)
+        // Iteratively destroys game object as unity seems bad at doing this when just destroying parent
+        private IEnumerator DestroyGameObjectIterative(GameObject gameObject)
         {
             // Destroy all children iteratively
             foreach (Transform t in gameObject.transform)
             {
-                DestroyLocationIterative(t.gameObject);
+                DestroyGameObjectIterative(t.gameObject);
                 yield return new WaitForEndOfFrame();
             }
 
@@ -1129,12 +1153,16 @@ namespace DaggerfallWorkshop
 
         DaggerfallLocation GetPlayerLocation()
         {
-            // Look for location at current map pixel coords
-            for (int i = 0; i < locationList.Count; i++)
+            // Look for location at current map pixel coords inside loose object list
+            for (int i = 0; i < looseObjectsList.Count; i++)
             {
-                LocationDesc desc = locationList[i];
-                if (desc.mapPixelX == MapPixelX && desc.mapPixelY == MapPixelY)
-                    return desc.locationObject.GetComponent<DaggerfallLocation>();
+                LooseObjectDesc desc = looseObjectsList[i];
+                if (desc.gameObject && desc.mapPixelX == MapPixelX && desc.mapPixelY == MapPixelY)
+                {
+                    DaggerfallLocation location = desc.gameObject.GetComponent<DaggerfallLocation>();
+                    if (location)
+                        return location;
+                }
             }
 
             return null;
