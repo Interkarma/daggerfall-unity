@@ -920,6 +920,13 @@ namespace DaggerfallWorkshop.Game
                     {
                         foreach (Transform inner2Elem in innerElem.gameObject.transform)
                         {
+                            // get rid of animated materials (will not break automap rendering but is not necessary)
+                            AnimatedMaterial[] animatedMaterials = inner2Elem.gameObject.GetComponents<AnimatedMaterial>();                            
+                            foreach (AnimatedMaterial animatedMaterial in animatedMaterials)
+                            {
+                                UnityEngine.Object.Destroy(animatedMaterial);
+                            }
+
                             MeshRenderer meshRenderer = inner2Elem.gameObject.GetComponent<MeshRenderer>();
                             if (meshRenderer == null)
                                 break;
@@ -942,6 +949,13 @@ namespace DaggerfallWorkshop.Game
                         {
                             foreach (Transform inner3Elem in inner2Elem.gameObject.transform)
                             {
+                                // get rid of animated materials (will not break automap rendering but is not necessary)
+                                AnimatedMaterial[] animatedMaterials = inner3Elem.gameObject.GetComponents<AnimatedMaterial>();
+                                foreach (AnimatedMaterial animatedMaterial in animatedMaterials)
+                                {
+                                    UnityEngine.Object.Destroy(animatedMaterial);
+                                }
+
                                 MeshRenderer meshRenderer = inner3Elem.gameObject.GetComponent<MeshRenderer>();
                                 if (meshRenderer == null)
                                     break;

@@ -70,8 +70,8 @@ Shader "Daggerfall/Automap"
 			{
 				float4 outColor;
 				half4 albedo = tex2D(_MainTex, IN.uv) * _Color;
-				half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
-				outColor.rgb = albedo.rgb - emission; // Emission cancels out other lights
+				//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
+				outColor.rgb = albedo.rgb; // - emission; // Emission cancels out other lights
 				outColor.a = albedo.a;
 				if (IN.worldPos.y > _SclicingPositionY)
 				{				
@@ -203,8 +203,8 @@ Shader "Daggerfall/Automap"
 			{
 				float4 outColor;
 				half4 albedo = tex2D(_MainTex, IN.uv) * _Color;
-				half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
-				outColor.rgb = albedo.rgb - emission; // Emission cancels out other lights
+				//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
+				outColor.rgb = albedo.rgb; // - emission; // Emission cancels out other lights
 				outColor.a = albedo.a;
 				if (IN.worldPos.y > _SclicingPositionY)
 				{
@@ -300,8 +300,8 @@ Shader "Daggerfall/Automap"
 			{
 				float4 outColor;
 			half4 albedo = tex2D(_MainTex, IN.uv) * _Color;
-			half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
-			outColor.rgb = albedo.rgb - emission; // Emission cancels out other lights
+			//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
+			outColor.rgb = albedo.rgb; // - emission; // Emission cancels out other lights
 			outColor.a = albedo.a;
 			if (IN.worldPos.y > _SclicingPositionY)
 			{
@@ -373,8 +373,8 @@ Shader "Daggerfall/Automap"
 			{
 				float4 outColor;
 				half4 albedo = tex2D(_MainTex, IN.uv) * _Color;
-				half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
-				outColor.rgb = albedo.rgb - emission; // Emission cancels out other lights
+				//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
+				outColor.rgb = albedo.rgb; // - emission; // Emission cancels out other lights
 				outColor.a = albedo.a;
 				if (IN.worldPos.y > _SclicingPositionY)
 				{
