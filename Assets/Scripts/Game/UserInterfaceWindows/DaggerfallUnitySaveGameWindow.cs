@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Modes mode = Modes.SaveGame;
         string currentPlayerName;
+        bool displayMostRecentChar;
 
         #endregion
 
@@ -81,10 +82,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Constructors
 
-        public DaggerfallUnitySaveGameWindow(IUserInterfaceManager uiManager, Modes mode, DaggerfallBaseWindow previous = null)
+        public DaggerfallUnitySaveGameWindow(IUserInterfaceManager uiManager, Modes mode, DaggerfallBaseWindow previous = null, bool displayMostRecentChar = false)
             : base(uiManager, previous)
         {
             this.mode = mode;
+            this.displayMostRecentChar = displayMostRecentChar;
         }
 
         #endregion
@@ -277,6 +279,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void UpdateSavesList()
         {
+            // Clear saves list
+            savesList.ClearItems();
+
+            // Get most recent save
+            int mostRecentSave = GameManager.Instance.SaveLoadManager.FindMostRecentSave();
+            if (mode == Modes.LoadGame && mostRecentSave == -1)
+            {
+                // No saves found, prompt to load a classic save
+                promptLabel.Text = HardStrings.noSavesFound;
+                return;
+            }
+            else
+            {
+                // If set to display most recent character use that instead
+                if (displayMostRecentChar)
+                {
+                    SaveInfo_v1 latestSaveInfo = GameManager.Instance.SaveLoadManager.GetSaveInfo(mostRecentSave);
+                    currentPlayerName = latestSaveInfo.characterName;
+                }
+            }
+
             // Build list of saves
             List<SaveInfo_v1> saves = new List<SaveInfo_v1>();
             int[] saveKeys = GameManager.Instance.SaveLoadManager.GetCharacterSaveKeys(currentPlayerName);
@@ -290,7 +313,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             List<SaveInfo_v1> orderedSaves = saves.OrderByDescending(o => o.dateAndTime.realTime).ToList();
 
             // Updates saves list
-            savesList.ClearItems();
             foreach (SaveInfo_v1 saveInfo in orderedSaves)
             {
                 savesList.AddItem(saveInfo.saveName);
@@ -371,14 +393,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 saveNameTextBox.DefaultText = HardStrings.selectSaveName;
                 saveNameTextBox.ReadOnly = true;
                 goButton.Label.Text = loadButtonText;
+                switchClassicButton.Enabled = true;
 
-                // Enable switch if more than one char
-                if (GameManager.Instance.SaveLoadManager.CharacterCount > 1)
+                // Enable switch if at least one character
+                if (GameManager.Instance.SaveLoadManager.CharacterCount >= 1)
                     switchCharButton.Enabled = true;
                 else
                     switchCharButton.Enabled = false;
-
-                switchClassicButton.Enabled = true;
             }
         }
 
@@ -538,6 +559,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void Picker_OnItemPicked(int index, string itemString)
         {
+            displayMostRecentChar = false;
+
             currentPlayerName = itemString;
             UpdateSavesList();
 

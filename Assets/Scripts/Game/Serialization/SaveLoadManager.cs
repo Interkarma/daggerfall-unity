@@ -256,6 +256,26 @@ namespace DaggerfallWorkshop.Game.Serialization
         }
 
         /// <summary>
+        /// Finds most recent save.
+        /// </summary>
+        /// <returns>Save key of most recent save, or -1 if no saves found.</returns>
+        public int FindMostRecentSave()
+        {
+            long mostRecentTime = -1;
+            int mostRecentKey = -1;
+            foreach (var kvp in enumeratedSaveInfo)
+            {
+                if (kvp.Value.dateAndTime.realTime > mostRecentTime)
+                {
+                    mostRecentTime = kvp.Value.dateAndTime.realTime;
+                    mostRecentKey = kvp.Key;
+                }
+            }
+
+            return mostRecentKey;
+        }
+
+        /// <summary>
         /// Deletes save folder.
         /// </summary>
         /// <param name="key">Save key.</param>
@@ -271,6 +291,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             File.Delete(Path.Combine(path, saveInfoFilename));
             File.Delete(Path.Combine(path, screenshotFilename));
             File.Delete(Path.Combine(path, containerDataFilename));
+            File.Delete(Path.Combine(path, automapDataFilename));
 
             // Attempt to delete path itself
             // Even if delete fails path should be invalid with save info removed

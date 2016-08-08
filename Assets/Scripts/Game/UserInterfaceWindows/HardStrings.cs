@@ -41,5 +41,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string confirmOverwriteSave = "Overwrite this save?";
         public const string youMustEnterASaveName = "You must enter a save name.";
         public const string youMustSelectASaveName = "You must select a save name.";
+        public const string noSavesFound = "No saves found. Load a Classic save?";
     }
 }

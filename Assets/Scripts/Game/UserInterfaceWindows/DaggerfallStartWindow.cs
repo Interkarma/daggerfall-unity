@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (uiManager.GetMessage())
             {
                 case DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow:
-                    uiManager.PushWindow(new DaggerfallUnitySaveGameWindow(uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame));
+                    uiManager.PushWindow(new DaggerfallUnitySaveGameWindow(uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, null, true));
                     break;
                 case DaggerfallUIMessages.dfuiStartNewGame:
                     uiManager.PushWindow(new StartNewGameWizard(uiManager));
