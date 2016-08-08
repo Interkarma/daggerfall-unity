@@ -9,6 +9,7 @@ public class PostProcessBuild
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
     {
         const string defaultModsFolderName = "StreamingAssets";
+        const string manualFileName = "Daggerfall Unity Manual.pdf";
 
         if (target == BuildTarget.StandaloneWindows || target == BuildTarget.StandaloneWindows64 ||
             target == BuildTarget.StandaloneLinux || target == BuildTarget.StandaloneLinux64 || target == BuildTarget.StandaloneLinuxUniversal ||
@@ -26,6 +27,9 @@ public class PostProcessBuild
 
             // Create default mods folder
             Directory.CreateDirectory(Path.Combine(pureBuildPath, defaultModsFolderName));
+
+            // Copy manual
+            FileUtil.CopyFileOrDirectory(Path.Combine("Assets/Docs", manualFileName), Path.Combine(pureBuildPath, manualFileName));
         }
     }
 }
