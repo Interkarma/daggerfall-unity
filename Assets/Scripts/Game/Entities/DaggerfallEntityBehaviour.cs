@@ -56,11 +56,15 @@ namespace DaggerfallWorkshop.Game.Entity
 
         void Update()
         {
+            // Change entity type
             if (EntityType != lastEntityType)
             {
                 SetEntityType(EntityType);
                 lastEntityType = EntityType;
             }
+
+            // Update entity
+            Entity.Update(this);
         }
 
         #endregion

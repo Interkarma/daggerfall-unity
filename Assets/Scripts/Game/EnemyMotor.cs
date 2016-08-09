@@ -19,7 +19,6 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     [RequireComponent(typeof(EnemySenses))]
     [RequireComponent(typeof(EnemyAttack))]
-    [RequireComponent(typeof(EnemyDeath))]
     [RequireComponent(typeof(EnemyBlood))]
     [RequireComponent(typeof(EnemySounds))]
     [RequireComponent(typeof(CharacterController))]
@@ -74,6 +73,21 @@ namespace DaggerfallWorkshop.Game
                 senses.LastKnownPlayerPos = player.transform.position;
             }
             isHostile = true;
+        }
+
+        /// <summary>
+        /// Attempts to find the ground position below enemy, even if player is flying/falling
+        /// </summary>
+        /// <param name="distance">Distance to fire ray.</param>
+        /// <returns>Hit point on surface below enemy, or enemy position if hit not found in distance.</returns>
+        public Vector3 FindGroundPosition(float distance = 16)
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position, Vector3.down);
+            if (Physics.Raycast(ray, out hit, distance))
+                return hit.point;
+
+            return transform.position;
         }
 
         #region Private Methods

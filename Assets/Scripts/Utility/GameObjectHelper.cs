@@ -581,6 +581,73 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Creates a loot container for enemies slain by the player.
+        /// </summary>
+        /// <param name="player">Player object, must have PlayerEnterExit attached.</param>
+        /// <param name="enemy">Enemy object, must have EnemyMotor attached.</param>
+        /// <param name="corpseTexture">Packed corpse texture index from entity summary.</param>
+        /// <param name="loadID">Unique LoadID for save system.</param>
+        /// <returns>DaggerfallLoot.</returns>
+        public static DaggerfallLoot CreateLootableCorpseMarker(GameObject player, GameObject enemy, int corpseTexture, ulong loadID)
+        {
+            // Player must have a PlayerEnterExit component
+            PlayerEnterExit playerEnterExit = player.GetComponent<PlayerEnterExit>();
+            if (!playerEnterExit)
+                throw new Exception("CreateLootableCorpseMarker() player game object must have PlayerEnterExit component.");
+
+            // Enemy must have an EnemyMotor component
+            EnemyMotor enemyMotor = enemy.GetComponent<EnemyMotor>();
+            if (!enemyMotor)
+                throw new Exception("CreateLootableCorpseMarker() enemy game object must have EnemyMotor component.");
+
+            // Get parent by context
+            Transform parent = null;
+            if (GameManager.Instance.IsPlayerInside)
+            {
+                if (GameManager.Instance.IsPlayerInsideDungeon)
+                    parent = playerEnterExit.Dungeon.transform;
+                else
+                    parent = playerEnterExit.Interior.transform;
+            }
+            else
+            {
+                parent = GameManager.Instance.StreamingTarget.transform;
+            }
+
+            // Get corpse marker texture indices
+            int archive, record;
+            EnemyBasics.ReverseCorpseTexture(corpseTexture, out archive, out record);
+
+            // Find ground position below player
+            Vector3 position = enemyMotor.FindGroundPosition();
+
+            // Create loot container
+            DaggerfallLoot loot = CreateLootContainer(
+                LootContainerTypes.CorpseMarker,
+                InventoryContainerImages.Corpse2,
+                position,
+                "CorpseMarker",
+                parent,
+                archive,
+                record,
+                loadID);
+
+            // Set properties
+            loot.LoadID = loadID;
+            loot.LootTableKey = string.Empty;
+            loot.playerOwned = false;
+            loot.customDrop = true;
+
+            // If dropped outside ask StreamingWorld to track loose object
+            if (!GameManager.Instance.IsPlayerInside)
+            {
+                GameManager.Instance.StreamingWorld.TrackLooseObject(loot.gameObject);
+            }
+
+            return loot;
+        }
+
+        /// <summary>
         /// Destroys/Disables a loot container.
         /// Custom drop containers will be destroyed from world.
         /// Fixed containers will be disabled so their empty state continues to be serialized.
@@ -588,6 +655,11 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="loot">DaggerfallLoot.</param>
         public static void RemoveLootContainer(DaggerfallLoot loot)
         {
+            // Corpse markers are not removed from world even if empty
+            if (loot.ContainerType == LootContainerTypes.CorpseMarker)
+                return;
+
+            // Destroy or disable based on custom flag
             if (loot.customDrop)
                 GameObject.Destroy(loot.gameObject);
             else

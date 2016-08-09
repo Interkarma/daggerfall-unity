@@ -19,62 +19,69 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// Handle enemy death.
+    /// Handles enemy death.
     /// </summary>
     public class EnemyDeath : MonoBehaviour
     {
+        #region Fields
+
+        public static System.EventHandler OnEnemyDeath;
+
         DaggerfallMobileUnit mobile;
+        DaggerfallEntityBehaviour entityBehaviour;
+        EnemyEntity enemyEntity;
+
+        #endregion
+
+        #region Unity
 
         void Awake()
         {
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
+            entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            entityBehaviour.OnSetEntity += EntityBehaviour_OnSetEntity;
         }
 
-        public void Die()
-        {
-            Die(true);
-        }
+        #endregion
 
-        public void Die(bool showDeathMessage)
+        #region Event Handlers
+
+        private void EntityBehaviour_OnSetEntity(DaggerfallEntity oldEntity, DaggerfallEntity newEntity)
         {
-            if (mobile)
+            if (oldEntity != null)
             {
-                if (showDeathMessage)
-                    ShowDeathMessage();
+                oldEntity.OnDeath -= EnemyEntity_OnDeath;
+            }
 
-                PlaceCorpseMarker(mobile.Summary.Enemy.CorpseTexture);
-                DisableEnemy();
+            if (newEntity != null)
+            {
+                enemyEntity = newEntity as EnemyEntity;
+                enemyEntity.OnDeath += EnemyEntity_OnDeath; ;
             }
         }
-
-        public void PlaceCorpseMarker(int corpseTexture)
-        {
-            // Get corpse marker texture indices
-            int archive, record;
-            EnemyBasics.ReverseCorpseTexture(corpseTexture, out archive, out record);
-
-            // Spawn corpse marker
-            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, transform.parent);
-            go.transform.position = transform.position;
-
-            // Align to ground. Be generous with distance as flying enemies might have a way to drop.
-            // This could also be handled by adding a Rigidbody and collider then let gravity do the work.
-            // TODO: Ensure corpse markers never land on top of other monsters
-            GameObjectHelper.AlignBillboardToGround(go, go.GetComponent<DaggerfallBillboard>().Summary.Size, 16f);
-        }
-
-        public void DisableEnemy()
+        private void EnemyEntity_OnDeath(DaggerfallEntity entity)
         {
             // Disable enemy gameobject
             // Do not destroy as we must still save enemy state when dead
             gameObject.SetActive(false);
-        }
 
-        void ShowDeathMessage()
-        {
+            // Show death message
             string deathMessage = HardStrings.thingJustDied;
             deathMessage = deathMessage.Replace("%s", mobile.Summary.Enemy.Name);
             DaggerfallUI.Instance.PopupMessage(deathMessage);
+
+            // Generate lootable corpse marker
+            DaggerfallLoot loot = GameObjectHelper.CreateLootableCorpseMarker(
+                GameManager.Instance.PlayerObject,
+                entityBehaviour.gameObject,
+                mobile.Summary.Enemy.CorpseTexture,
+                DaggerfallUnity.NextUID);
+
+            // Raise static event
+            if (OnEnemyDeath != null)
+                OnEnemyDeath(this, null);
         }
+
+        #endregion
     }
 }

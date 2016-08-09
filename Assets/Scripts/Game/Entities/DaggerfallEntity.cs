@@ -44,9 +44,24 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentFatigue;
         protected int currentMagicka;
 
+        bool quiesce = false;
+
         #endregion
 
-        #region Properties
+        #region Class Properties
+
+        /// <summary>
+        /// Set true to suppress events during state restore.
+        /// </summary>
+        public bool Quiesce
+        {
+            get { return quiesce; }
+            set { quiesce = value; }
+        }
+
+        #endregion
+
+        #region Entity Properties
 
         public Genders Gender { get { return gender; } set { gender = value; } }
         public DFCareer Career { get { return career; } set { career = value; } } 
@@ -93,13 +108,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int SetHealth(int amount)
         {
-            if (amount <= 0)
-            {
-                amount = 0;
+            currentHealth = Mathf.Clamp(amount, 0, MaxHealth);
+            if (currentHealth <= 0)
                 RaiseOnDeathEvent();
-            }
-            if (amount > MaxHealth) amount = MaxHealth;
-            currentHealth = amount;
 
             return currentHealth;
         }
@@ -116,13 +127,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int SetFatigue(int amount)
         {
-            if (amount <= 0)
-            {
-                amount = 0;
+            currentFatigue = Mathf.Clamp(amount, 0, MaxFatigue);
+            if (currentFatigue <= 0)
                 RaiseOnExhaustedEvent();
-            }
-            if (amount > MaxFatigue) amount = MaxFatigue;
-            currentFatigue = amount;
 
             return currentFatigue;
         }
@@ -139,13 +146,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int SetMagicka(int amount)
         {
-            if (amount <= 0)
-            {
-                amount = 0;
+            currentMagicka = Mathf.Clamp(amount, 0, MaxMagicka);
+            if (currentMagicka <= 0)
                 RaiseOnMagickaDepletedEvent();
-            }
-            if (amount > MaxMagicka) amount = MaxMagicka;
-            currentMagicka = amount;
 
             return currentMagicka;
         }
@@ -228,6 +231,18 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #endregion
 
+        #region Helpers
+
+        /// <summary>
+        /// Called by DaggerfallEntityBehaviour each frame.
+        /// </summary>
+        /// <param name="sender">DaggerfallEntityBehaviour making call.</param>
+        public virtual void Update(DaggerfallEntityBehaviour sender)
+        {
+        }
+
+        #endregion
+
         #region Temporary Events
 
         // These tie in with temporary effects and will be moved later
@@ -236,7 +251,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public event OnDeathHandler OnDeath;
         void RaiseOnDeathEvent()
         {
-            if (OnDeath != null)
+            if (OnDeath != null && !quiesce)
                 OnDeath(this);
         }
 
@@ -244,7 +259,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public event OnExhaustedHandler OnExhausted;
         void RaiseOnExhaustedEvent()
         {
-            if (OnExhausted != null)
+            if (OnExhausted != null && !quiesce)
                 OnExhausted(this);
         }
 
@@ -252,7 +267,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public event OnMagickaDepletedHandler OnMagickaDepleted;
         void RaiseOnMagickaDepletedEvent()
         {
-            if (OnMagickaDepleted != null)
+            if (OnMagickaDepleted != null && !quiesce)
                 OnMagickaDepleted(this);
         }
 

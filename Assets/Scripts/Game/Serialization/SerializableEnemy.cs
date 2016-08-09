@@ -98,6 +98,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             EnemyMotor motor = enemy.GetComponent<EnemyMotor>();
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
 
+            // Quiesce entity during state restore
+            entity.Quiesce = true;
+
             // Restore enemy career or class if different
             if (entity.EntityType != data.entityType || entity.CareerIndex != data.careerIndex)
             {
@@ -116,15 +119,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             motor.IsHostile = data.isHostile;
             senses.HasEncounteredPlayer = true;
 
-            // Set monster as dead
+            // Disable dead enemies
             if (data.isDead)
             {
-                EnemyDeath enemyDeath = enemy.GetComponent<EnemyDeath>();
-                if (enemyDeath)
-                {
-                    enemyDeath.Die(false);
-                }
+                entityBehaviour.gameObject.SetActive(false);
             }
+
+            // Resume entity
+            entity.Quiesce = false;
         }
 
         #endregion

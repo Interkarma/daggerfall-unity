@@ -412,7 +412,7 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
             if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach - SphereCastRadius))
             {
-                //check if hit has an DaggerfallAction component
+                // Check if hit has an DaggerfallAction component
                 DaggerfallAction action = hit.transform.gameObject.GetComponent<DaggerfallAction>();
                 if (action)
                 {
@@ -431,27 +431,27 @@ namespace DaggerfallWorkshop.Game
                 // Just using fudge values during development
                 int damage = Random.Range(1, 25);
 
-                // Check if hit has an EnemyHealth
-                // This is part of the old Demo code and will eventually be removed
-                // For now enemies should either use EnemyHealth (deprecated) or EnemyEntity (current) to track enemy health
-                // Never use both components on same enemy
-                EnemyHealth enemyHealth = hit.transform.gameObject.GetComponent<EnemyHealth>();
-                if (enemyHealth)
-                {
-                    // Example: Play sound based on fake parry mechanics
-                    if (Random.value < ChanceToBeParried)
-                    {
-                        // Parried
-                        weapon.PlayParrySound();
-                        return;
-                    }
-                    else
-                    {
-                        // Connected
-                        weapon.PlayHitSound();
-                        enemyHealth.RemoveHealth(player, damage, hit.point);
-                    }
-                }
+                //// Check if hit has an EnemyHealth
+                //// This is part of the old Demo code and will eventually be removed
+                //// For now enemies should either use EnemyHealth (deprecated) or EnemyEntity (current) to track enemy health
+                //// Never use both components on same enemy
+                //EnemyHealth enemyHealth = hit.transform.gameObject.GetComponent<EnemyHealth>();
+                //if (enemyHealth)
+                //{
+                //    // Example: Play sound based on fake parry mechanics
+                //    if (Random.value < ChanceToBeParried)
+                //    {
+                //        // Parried
+                //        weapon.PlayParrySound();
+                //        return;
+                //    }
+                //    else
+                //    {
+                //        // Connected
+                //        weapon.PlayHitSound();
+                //        enemyHealth.RemoveHealth(player, damage, hit.point);
+                //    }
+                //}
 
                 // Check if hit an entity and remove health
                 DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
@@ -461,20 +461,16 @@ namespace DaggerfallWorkshop.Game
                     {
                         EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
 
-                        // Trigger blood splash at hit point
+                        // Play hit sound and trigger blood splash at hit point
+                        weapon.PlayHitSound();
                         EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
                         if (blood)
                         {
                             blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);
                         }
 
-                        // Remove health and handle death
+                        // Remove health
                         enemyEntity.DecreaseHealth(damage);
-                        if (enemyEntity.CurrentHealth <= 0)
-                        {
-                            // Using SendMessage for now, will replace later
-                            hit.transform.SendMessage("Die");
-                        }
                     }
                 }
             }

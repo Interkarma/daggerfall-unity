@@ -16,6 +16,7 @@ namespace DaggerfallWorkshop.Game
 {
     /// <summary>
     /// Example enemy health.
+    /// Note: Deprecated. For standalone DFTFU scenes only.
     /// </summary>
     [RequireComponent(typeof(EnemyBlood))]
     public class EnemyHealth : MonoBehaviour

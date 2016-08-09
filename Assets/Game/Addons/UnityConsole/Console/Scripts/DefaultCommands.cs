@@ -832,7 +832,7 @@ namespace Wenzil.Console
                     DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
                     if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
                     {
-                        entityBehaviour.transform.SendMessage("Die");
+                        entityBehaviour.Entity.SetHealth(0);
                         count++;
                     }
                 }
