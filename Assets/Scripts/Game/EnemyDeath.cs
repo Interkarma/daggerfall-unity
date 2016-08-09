@@ -77,6 +77,9 @@ namespace DaggerfallWorkshop.Game
                 mobile.Summary.Enemy.CorpseTexture,
                 DaggerfallUnity.NextUID);
 
+            // Generate items
+            loot.GenerateItems();
+
             // Raise static event
             if (OnEnemyDeath != null)
                 OnEnemyDeath(this, null);

@@ -1238,7 +1238,6 @@ namespace DaggerfallWorkshop.Utility
                 LootContainerTypes.RandomTreasure,
                 InventoryContainerImages.Chest,
                 position,
-                "RandomTreasure",
                 parent,
                 DaggerfallLoot.randomTreasureArchive,
                 iconRecord,

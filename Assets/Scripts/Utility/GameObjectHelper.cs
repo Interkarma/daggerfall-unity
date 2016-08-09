@@ -474,7 +474,6 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="containerType">Type of container.</param>
         /// <param name="containerImage">Icon to display in loot UI.</param>
         /// <param name="position">Position to spawn container.</param>
-        /// <param name="name">Name of container.</param>
         /// <param name="parent">Parent GameObject.</param>
         /// <param name="textureArchive">Texture archive for billboard containers.</param>
         /// <param name="textureRecord">Texture record for billboard containers.</param>
@@ -484,14 +483,13 @@ namespace DaggerfallWorkshop.Utility
             LootContainerTypes containerType,
             InventoryContainerImages containerImage,
             Vector3 position,
-            string name,
             Transform parent,
             int textureArchive,
             int textureRecord,
             ulong loadID = 0)
         {
             // Setup initial loot container prefab
-            GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_LootContainerPrefab.gameObject, name, parent, position);
+            GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_LootContainerPrefab.gameObject, containerType.ToString(), parent, position);
 
             // Setup billboard component
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
@@ -559,7 +557,6 @@ namespace DaggerfallWorkshop.Utility
                 LootContainerTypes.DroppedLoot,
                 InventoryContainerImages.Chest,
                 position,
-                "DroppedLoot",
                 parent,
                 DaggerfallLoot.randomTreasureArchive,
                 iconRecord,
@@ -626,7 +623,6 @@ namespace DaggerfallWorkshop.Utility
                 LootContainerTypes.CorpseMarker,
                 InventoryContainerImages.Corpse2,
                 position,
-                "CorpseMarker",
                 parent,
                 archive,
                 record,

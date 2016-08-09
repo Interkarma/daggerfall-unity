@@ -105,6 +105,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             loot.TextureRecord = data.textureRecord;
             loot.playerOwned = data.playerOwned;
             loot.customDrop = data.customDrop;
+            loot.name = loot.ContainerType.ToString();
 
             // Remove loot container if empty
             if (loot.Items.Count == 0)
