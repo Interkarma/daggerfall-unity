@@ -607,7 +607,7 @@ namespace ProjectIncreasedTerrainDistance
                 {
                     GameObject go = currentSkyManager.gameObject;
                     string objectPathInHierarchy = GetGameObjectPath(go);
-                    if (objectPathInHierarchy == "/Exterior/EnhancedSkyController")
+                    if (objectPathInHierarchy == "/EnhancedSkyController")
                     {
                         skyMan = currentSkyManager;
                         break;
@@ -624,7 +624,7 @@ namespace ProjectIncreasedTerrainDistance
             cameraRenderSkyboxToTexture.targetTexture = renderTextureSky;
         }
 
-        void setMaterialFogParameters(Material terrainMaterial)
+        void setMaterialFogParameters(ref Material terrainMaterial)
         {
             if (terrainMaterial != null)
             {
@@ -674,7 +674,7 @@ namespace ProjectIncreasedTerrainDistance
                 Terrain terrain = worldTerrainGameObject.GetComponent<Terrain>();
                 if (terrain)
                 {
-                    setMaterialFogParameters(this.terrainMaterial);
+                    setMaterialFogParameters(ref this.terrainMaterial);
             
                     #if ENHANCED_SKY_CODE_AVAILABLE
                     if (isActiveEnhancedSkyMod)
@@ -719,30 +719,11 @@ namespace ProjectIncreasedTerrainDistance
                 if (doSeasonalTexturesUpdate)
                 {
                     terrainTransitionRingUpdateSeasonalTextures = true;
-                }
-                terrainTransitionRingUpdateMaterialProperties = true;
+                }                
 
                 if (!terrainTransitionRingUpdateRunning) // if at the moment no terrain transition ring update is still in progress
                 {
-                    for (int i = 0; i < terrainTransitionRingArray.Length; i++)
-                    {
-                        if (terrainTransitionRingArray[i].ready)
-                        { 
-                            Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
-                            Material material = terrain.materialTemplate;
-                            material.SetFloat("_BlendStart", blendStart);
-                            material.SetFloat("_BlendEnd", blendEnd);
-
-                            //DFPosition posMaxPixel = MapsFile.MapPixelToWorldCoord(playerGPS.CurrentMapPixel.X, playerGPS.CurrentMapPixel.Y);
-                            //float fractionalPlayerPosInBlockX = (playerGPS.WorldX - posMaxPixel.X) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale) * MeshReader.GlobalScale;
-                            //float fractionalPlayerPosInBlockY = (playerGPS.WorldZ - posMaxPixel.Y) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale) * MeshReader.GlobalScale;                            
-                            //Debug.Log(String.Format("relativePosInBlockX: {0}, relativePosInBlockY: {1}", relativePosInBlockX , relativePosInBlockY);
-                            material.SetFloat("_WorldOffsetX", 0.0f);
-                            material.SetFloat("_WorldOffsetY", 0.0f);
-
-                            terrain.materialTemplate = material;
-                        }
-                    }
+                    terrainTransitionRingUpdateMaterialProperties = true;                    
                 }
             }
 
@@ -1102,7 +1083,7 @@ namespace ProjectIncreasedTerrainDistance
 
             terrainMaterial.SetTexture("_SkyTex", renderTextureSky);           
 
-            setMaterialFogParameters(terrainMaterial);
+            setMaterialFogParameters(ref terrainMaterial);
 
             //terrainMaterial.SetFloat("_BlendFactor", blendFactor);
             terrainMaterial.SetFloat("_BlendStart", blendStart);
@@ -1128,8 +1109,8 @@ namespace ProjectIncreasedTerrainDistance
             #endif
 
             // Promote material
-            terrain.materialTemplate = terrainMaterial;
             terrain.materialType = Terrain.MaterialType.Custom;
+            terrain.materialTemplate = terrainMaterial;            
 
             terrainGameObject.SetActive(true);
 
@@ -1161,14 +1142,7 @@ namespace ProjectIncreasedTerrainDistance
                     return;
                 for (int i = 0; i < terrainTransitionRingArray.Length; i++)
                 {
-                    //if (terrainTransitionRingArray[i].ready) // if i-th block element is ready (if not return from function without setting the boolean flag - so will start over on next Update())
-                    //{
-                        updateSeasonalTexturesTerrainTransitionRingBlock(i);
-                    //}
-                    //else
-                    //{
-                    //    return;
-                    //}
+                    updateSeasonalTexturesTerrainTransitionRingBlock(i);
                 }
                 terrainTransitionRingUpdateSeasonalTextures = false;
             }
@@ -1179,20 +1153,37 @@ namespace ProjectIncreasedTerrainDistance
             if (terrainTransitionRingArray[i].terrainDesc.terrainObject)
             {
                 Terrain terrain = terrainTransitionRingArray[i].terrainDesc.terrainObject.GetComponent<Terrain>();
+                Material oldMaterial = terrain.materialTemplate;
+                Material mat = new Material(Shader.Find("Daggerfall/TransitionRingTilemap"));
+                mat.CopyPropertiesFromMaterial(oldMaterial);
+
+                mat.SetFloat("_BlendStart", blendStart);
+                mat.SetFloat("_BlendEnd", blendEnd);
+
+                //DFPosition posMaxPixel = MapsFile.MapPixelToWorldCoord(playerGPS.CurrentMapPixel.X, playerGPS.CurrentMapPixel.Y);
+                //float fractionalPlayerPosInBlockX = (playerGPS.WorldX - posMaxPixel.X) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale) * MeshReader.GlobalScale;
+                //float fractionalPlayerPosInBlockY = (playerGPS.WorldZ - posMaxPixel.Y) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale) * MeshReader.GlobalScale;                            
+                //Debug.Log(String.Format("relativePosInBlockX: {0}, relativePosInBlockY: {1}", relativePosInBlockX , relativePosInBlockY);
+                mat.SetFloat("_WorldOffsetX", 0.0f);
+                mat.SetFloat("_WorldOffsetY", 0.0f);
 
 #if ENHANCED_SKY_CODE_AVAILABLE
                 if (isActiveEnhancedSkyMod)
                 {
                     if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
                     {
-                        terrain.materialTemplate.SetFloat("_FogFromSkyTex", 1);
+                        mat.SetFloat("_FogFromSkyTex", 1);
                     }
                     else
                     {
-                        terrain.materialTemplate.SetFloat("_FogFromSkyTex", 0);
+                        mat.SetFloat("_FogFromSkyTex", 0);
                     }
                 }
 #endif
+
+                setMaterialFogParameters(ref mat);
+
+                terrain.materialTemplate = mat;
             }
         }
 
@@ -1204,14 +1195,7 @@ namespace ProjectIncreasedTerrainDistance
                     return;
                 for (int i = 0; i < terrainTransitionRingArray.Length; i++)
                 {
-                    //if (terrainTransitionRingArray[i].ready) // if i-th block element is ready (if not return from function without setting the boolean flag - so will start over on next Update())
-                    //{
-                        updateMaterialShaderPropertiesTerrainTransitionRingBlock(i);
-                    //}
-                    //else
-                    //{
-                    //    return;
-                    //}
+                   updateMaterialShaderPropertiesTerrainTransitionRingBlock(i);
                 }
                 terrainTransitionRingUpdateMaterialProperties = false;
             }
@@ -1320,7 +1304,21 @@ namespace ProjectIncreasedTerrainDistance
             newMaterial.SetTexture("_SkyTex", renderTextureSky);
 
             newMaterial.SetInt("_FogFromSkyTex", 0);
-            setMaterialFogParameters(newMaterial);            
+            #if ENHANCED_SKY_CODE_AVAILABLE
+                if (isActiveEnhancedSkyMod)
+                {
+                    if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
+                    {
+                        newMaterial.SetFloat("_FogFromSkyTex", 1);
+                    }
+                    else
+                    {
+                        newMaterial.SetFloat("_FogFromSkyTex", 0);
+                    }
+                }
+            #endif
+
+            setMaterialFogParameters(ref newMaterial);            
 
             //terrainMaterial.SetFloat("_BlendFactor", blendFactor);
             newMaterial.SetFloat("_BlendStart", blendStart);
@@ -1349,7 +1347,8 @@ namespace ProjectIncreasedTerrainDistance
             terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
 #endif
 
-            terrain.materialTemplate = newMaterial;
+            terrain.materialType = Terrain.MaterialType.Custom;
+            terrain.materialTemplate = newMaterial;            
             dfTerrain.TerrainMaterial = terrain.materialTemplate; // important so that we can later call DaggerfallTerrain.UpdateClimateMaterial and it will update the correct reference
 
             // Only set active again once complete
