@@ -595,6 +595,9 @@ namespace ProjectIncreasedTerrainDistance
             stackedNearCamera.depth = stackedNearCameraDepth;
             //Camera.main.depth = 3; // renders over stacked camera
 
+            UnityStandardAssets.ImageEffects.GlobalFog globalFogScript = Camera.main.GetComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
+            globalFogScript.excludeFarPixels = false; // this is important so that global fog works correctly with camera stack
+
             cameraRenderSkyboxToTexture.depth = cameraRenderSkyboxToTextureDepth; // make sure to render first
             cameraRenderSkyboxToTexture.renderingPath = stackedCamera.renderingPath;
 
@@ -857,7 +860,7 @@ namespace ProjectIncreasedTerrainDistance
 
         private void updatePositionWorldTerrain(ref GameObject terrainGameObject, Vector3 offset)
         {
-            float extraTranslationY = -0.5f; // -30.0f;
+            float extraTranslationY = -10.0f;
 
             // world scale computed as in StreamingWorld.cs and DaggerfallTerrain.cs scripts
             float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
