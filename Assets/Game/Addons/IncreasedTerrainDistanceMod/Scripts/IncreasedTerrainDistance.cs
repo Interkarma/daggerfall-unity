@@ -1160,6 +1160,12 @@ namespace ProjectIncreasedTerrainDistance
                 Material mat = new Material(Shader.Find("Daggerfall/TransitionRingTilemap"));
                 mat.CopyPropertiesFromMaterial(oldMaterial);
 
+                Vector3 vecWaterHeight = new Vector3(0.0f, (ImprovedTerrainSampler.scaledOceanElevation + 1.0f) * streamingWorld.TerrainScale, 0.0f); // water height level on y-axis (+1.0f some coastlines are incorrect otherwise)
+                Vector3 vecWaterHeightTransformed = worldTerrainGameObject.transform.TransformPoint(vecWaterHeight); // transform to world coordinates
+                mat.SetFloat("_WaterHeightTransformed", vecWaterHeightTransformed.y);
+
+                mat.SetTexture("_SkyTex", renderTextureSky);
+
                 mat.SetFloat("_BlendStart", blendStart);
                 mat.SetFloat("_BlendEnd", blendEnd);
 
