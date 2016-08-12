@@ -212,7 +212,14 @@ namespace ReflectionsMod
                 if ((reflectionCamera.renderingPath == RenderingPath.DeferredShading) || ((reflectionCamera.renderingPath == RenderingPath.UsePlayerSettings) && (UnityEditor.PlayerSettings.renderingPath == RenderingPath.DeferredShading)))
                 {
                     UnityStandardAssets.ImageEffects.GlobalFog scriptGlobalFog = go.AddComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
-                    scriptGlobalFog.excludeFarPixels = false;
+                    UnityStandardAssets.ImageEffects.GlobalFog globalFogMainCamera = Camera.main.gameObject.GetComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
+                    scriptGlobalFog.distanceFog = globalFogMainCamera.distanceFog;
+                    scriptGlobalFog.excludeFarPixels = globalFogMainCamera.excludeFarPixels; // false
+                    scriptGlobalFog.useRadialDistance = globalFogMainCamera.useRadialDistance;
+                    scriptGlobalFog.heightFog = globalFogMainCamera.heightFog;
+                    scriptGlobalFog.height = globalFogMainCamera.height;
+                    scriptGlobalFog.heightDensity = globalFogMainCamera.heightDensity;
+                    scriptGlobalFog.startDistance = globalFogMainCamera.startDistance;
                 }
 
                 go.transform.SetParent(GameObject.Find("ReflectionsMod").transform);
