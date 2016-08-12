@@ -11,6 +11,7 @@
 
 //using System;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Entity;
 using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.Items
@@ -75,15 +76,32 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="matrix">Loot chance matrix.</param>
         /// <param name="playerLevel">Level of player.</param>
         /// <returns>DaggerfallUnityItem array.</returns>
-        public static DaggerfallUnityItem[] GenerateRandomLoot(LootChanceMatrix matrix, int playerLevel)
+        public static DaggerfallUnityItem[] GenerateRandomLoot(LootChanceMatrix matrix, PlayerEntity playerEntity)
         {
+            float chance;
             List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
 
             // Random gold
-            int goldCount = Random.Range(matrix.MinGold, matrix.MaxGold) * playerLevel;
+            int goldCount = Random.Range(matrix.MinGold, matrix.MaxGold) * playerEntity.Level;
             if (goldCount > 0)
             {
                 items.Add(ItemBuilder.CreateGoldPieces(goldCount));
+            }
+
+            // Random weapon
+            chance = matrix.WP * playerEntity.Level;
+            while (Random.Range(1, 100) < chance)
+            {
+                items.Add(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+                chance *= 0.5f;
+            }
+
+            // Random armor
+            chance = matrix.AM * playerEntity.Level;
+            while (Random.Range(1, 100) < chance)
+            {
+                items.Add(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+                chance *= 0.5f;
             }
 
             return items.ToArray();

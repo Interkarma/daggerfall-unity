@@ -158,6 +158,12 @@ namespace DaggerfallWorkshop.Game.Items
                         record += 1;
                 }
             }
+            else
+            {
+                // Katanas need +1 for inventory image as they use right-hand image instead of left
+                if (item.IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Katana))
+                    record += 1;
+            }
 
             // Gold pieces use world texture indices
             if (item.ItemGroup == ItemGroups.Currency && item.TemplateIndex == (int)Currency.Gold_pieces)

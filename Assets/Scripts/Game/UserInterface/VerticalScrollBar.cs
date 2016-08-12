@@ -190,6 +190,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Update current thumb rect in local space
             Rect totalRect = Rectangle;
             float thumbHeight = totalRect.height * ((float)displayUnits / (float)totalUnits);
+            if (thumbHeight < 10) thumbHeight = 10;
             float thumbY = scrollIndex * (totalRect.height - thumbHeight) / (totalUnits - displayUnits);
             thumbRect = ScreenToLocal(new Rect(totalRect.x, totalRect.y + thumbY, totalRect.width, thumbHeight));
 
