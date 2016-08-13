@@ -104,7 +104,57 @@ namespace DaggerfallWorkshop.Game.Items
                 chance *= 0.5f;
             }
 
+            // Random ingredients
+            RandomIngredient(matrix.C1 * playerEntity.Level, ItemGroups.CreatureIngredients1, items);
+            RandomIngredient(matrix.C2 * playerEntity.Level, ItemGroups.CreatureIngredients2, items);
+            RandomIngredient(matrix.C3 * playerEntity.Level, ItemGroups.CreatureIngredients3, items);
+            RandomIngredient(matrix.P1 * playerEntity.Level, ItemGroups.PlantIngredients1, items);
+            RandomIngredient(matrix.P2 * playerEntity.Level, ItemGroups.PlantIngredients2, items);
+            RandomIngredient(matrix.M1 * playerEntity.Level, ItemGroups.MiscellaneousIngredients1, items);
+            RandomIngredient(matrix.M2 * playerEntity.Level, ItemGroups.MiscellaneousIngredients2, items);
+
+            // TEMP: Magic item chance is just another shot at armor or weapon for now
+            chance = matrix.MI * playerEntity.Level;
+            while (Random.Range(1, 100) < chance)
+            {
+                if (Random.value < 0.5f)
+                    items.Add(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+                else
+                    items.Add(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+
+                chance *= 0.5f;
+            }
+
+            // Random clothes
+            chance = matrix.CL * playerEntity.Level;
+            while (Random.Range(1, 100) < chance)
+            {
+                items.Add(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
+                chance *= 0.5f;
+            }
+
+            // Random religious item
+            chance = matrix.RL * playerEntity.Level;
+            while (Random.Range(1, 100) < chance)
+            {
+                items.Add(ItemBuilder.CreateRandomReligiousItem());
+                chance *= 0.5f;
+            }
+
             return items.ToArray();
         }
+
+        #region Private Methods
+
+        static void RandomIngredient(float chance, ItemGroups ingredientGroup, List<DaggerfallUnityItem> targetItems)
+        {
+            while (Random.Range(1, 100) < chance)
+            {
+                targetItems.Add(ItemBuilder.CreateRandomIngredient(ingredientGroup));
+                chance *= 0.5f;
+            }
+        }
+
+        #endregion
     }
 }

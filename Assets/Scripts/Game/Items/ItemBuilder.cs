@@ -214,6 +214,50 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Creates a new item of random clothing.
+        /// </summary>
+        /// <param name="gender">Gender of player</param>
+        /// <returns>DaggerfallUnityItem.</returns>
+        public static DaggerfallUnityItem CreateRandomClothing(Genders gender)
+        {
+            // Create random clothing by gender
+            DaggerfallUnityItem newItem;
+            if (gender == Genders.Male)
+            {
+                Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.MensClothing);
+                int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
+                newItem = new DaggerfallUnityItem(ItemGroups.MensClothing, groupIndex);
+            }
+            else
+            {
+                Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.WomensClothing);
+                int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
+                newItem = new DaggerfallUnityItem(ItemGroups.WomensClothing, groupIndex);
+            }
+
+            // Random dye colour
+            newItem.dyeColor = RandomClothingDye();
+
+            // Random variant
+            SetVariant(newItem, UnityEngine.Random.Range(0, newItem.TotalVariants));
+
+            return newItem;
+        }
+
+        /// <summary>
+        /// Creates a new random religious item.
+        /// </summary>
+        /// <returns>DaggerfallUnityItem.</returns>
+        public static DaggerfallUnityItem CreateRandomReligiousItem()
+        {
+            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.ReligiousItems);
+            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
+            DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.ReligiousItems, groupIndex);
+
+            return newItem;
+        }
+
+        /// <summary>
         /// Generates a weapon.
         /// </summary>
         /// <param name="weapon"></param>
@@ -311,6 +355,39 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Random variant
             SetVariant(newItem, UnityEngine.Random.Range(0, newItem.TotalVariants));
+
+            return newItem;
+        }
+
+        /// <summary>
+        /// Creates a random ingredient from any of the ingredient groups.
+        /// Passing a non-ingredient group will return null.
+        /// </summary>
+        /// <param name="group">Ingedient group.</param>
+        /// <returns>DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreateRandomIngredient(ItemGroups ingredientGroup)
+        {
+            int groupIndex;
+            Array enumArray;
+            switch (ingredientGroup)
+            {
+                case ItemGroups.CreatureIngredients1:
+                case ItemGroups.CreatureIngredients2:
+                case ItemGroups.CreatureIngredients3:
+                case ItemGroups.MetalIngredients:
+                case ItemGroups.MiscellaneousIngredients1:
+                case ItemGroups.MiscellaneousIngredients2:
+                case ItemGroups.PlantIngredients1:
+                case ItemGroups.PlantIngredients2:
+                    enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ingredientGroup);
+                    groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
+                    break;
+                default:
+                    return null;
+            }
+
+            // Create item
+            DaggerfallUnityItem newItem = new DaggerfallUnityItem(ingredientGroup, groupIndex);
 
             return newItem;
         }

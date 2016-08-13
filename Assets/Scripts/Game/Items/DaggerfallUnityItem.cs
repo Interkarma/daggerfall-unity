@@ -688,6 +688,10 @@ namespace DaggerfallWorkshop.Game.Items
                 return true;
             }
 
+            // Handle religious items
+            if (itemGroup == ItemGroups.ReligiousItems)
+                return true;
+
             return false;
         }
 
