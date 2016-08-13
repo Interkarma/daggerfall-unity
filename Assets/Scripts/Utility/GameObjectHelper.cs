@@ -585,7 +585,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="corpseTexture">Packed corpse texture index from entity summary.</param>
         /// <param name="loadID">Unique LoadID for save system.</param>
         /// <returns>DaggerfallLoot.</returns>
-        public static DaggerfallLoot CreateLootableCorpseMarker(GameObject player, GameObject enemy, int corpseTexture, ulong loadID)
+        public static DaggerfallLoot CreateLootableCorpseMarker(GameObject player, GameObject enemy, EnemyEntity enemyEntity, int corpseTexture, ulong loadID)
         {
             // Player must have a PlayerEnterExit component
             PlayerEnterExit playerEnterExit = player.GetComponent<PlayerEnterExit>();
@@ -630,7 +630,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Set properties
             loot.LoadID = loadID;
-            loot.LootTableKey = string.Empty;
+            loot.LootTableKey = enemyEntity.MobileEnemy.LootTableKey;
             loot.playerOwned = false;
             loot.customDrop = true;
 

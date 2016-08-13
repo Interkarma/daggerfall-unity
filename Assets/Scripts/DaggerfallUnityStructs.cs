@@ -189,6 +189,7 @@ namespace DaggerfallWorkshop
         public int MaxDamage;                       // Maximum damage per hit
         public int MinHealth;                       // Minimum health
         public int MaxHealth;                       // Maximum health
+        public string LootTableKey;                 // Key to use when generating loot
     }
 
     /// <summary>

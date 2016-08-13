@@ -164,6 +164,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 11,
                 MaxHealth = 18,
+                LootTableKey = "D",
             },
 
             // Spriggan
@@ -187,6 +188,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 10,
                 MinHealth = 12,
                 MaxHealth = 26,
+                LootTableKey = "B",
             },
 
             // Giant Bat
@@ -303,6 +305,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 6,
                 MinHealth = 13,
                 MaxHealth = 34,
+                LootTableKey = "A",
             },
 
             // Centaur
@@ -327,6 +330,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 14,
                 MaxHealth = 46,
+                LootTableKey = "C",
             },
 
             // Werewolf
@@ -375,6 +379,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 5,
                 MinHealth = 15,
                 MaxHealth = 50,
+                LootTableKey = "C",
             },
 
             // Slaughterfish
@@ -422,6 +427,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 15,
                 MaxHealth = 50,
+                LootTableKey = "A",
             },
 
             // Harpy
@@ -445,6 +451,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 16,
                 MaxHealth = 85,
+                LootTableKey = "D",
             },
 
             // Wereboar
@@ -494,6 +501,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 17,
                 MaxHealth = 66,
+                LootTableKey = "H",
             },
 
             // Giant
@@ -518,6 +526,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 30,
                 MinHealth = 18,
                 MaxHealth = 74,
+                LootTableKey = "F",
             },
 
             // Zombie
@@ -541,6 +550,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 52,
                 MaxHealth = 66,
+                LootTableKey = "E",     // TODO: Not in Chronicles, check
             },
 
             // Ghost
@@ -565,6 +575,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 35,
                 MinHealth = 17,
                 MaxHealth = 66,
+                LootTableKey = "I",
             },
 
             // Mummy
@@ -589,6 +600,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 17,
                 MaxHealth = 66,
+                LootTableKey = "E",
             },
 
             // Giant Scorpian
@@ -636,6 +648,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 20,
                 MinHealth = 18,
                 MaxHealth = 74,
+                LootTableKey = "U",
             },
 
             // Gargoyle
@@ -685,6 +698,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 45,
                 MinHealth = 30,
                 MaxHealth = 90,
+                LootTableKey = "I",
             },
 
             // Orc Warlord
@@ -709,6 +723,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 20,
                 MaxHealth = 90,
+                LootTableKey = "T",
             },
 
             // Frost Daedra
@@ -733,6 +748,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 100,
                 MinHealth = 25,
                 MaxHealth = 130,
+                LootTableKey = "J",
             },
 
             // Fire Daedra
@@ -757,6 +773,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 26,
                 MaxHealth = 138,
+                LootTableKey = "J",
             },
 
             // Daedroth
@@ -780,6 +797,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 27,
                 MaxHealth = 146,
+                LootTableKey = "E",
             },
 
             // Vampire
@@ -804,6 +822,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 28,
                 MaxHealth = 154,
+                LootTableKey = "Q",
             },
 
             // Daedra Seducer
@@ -828,6 +847,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 27,
                 MaxHealth = 146,
+                LootTableKey = "Q",
             },
 
             // Vampire Ancient
@@ -852,6 +872,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 60,
                 MinHealth = 30,
                 MaxHealth = 170,
+                LootTableKey = "Q",
             },
 
             // Daedra Lord
@@ -876,6 +897,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 35,
                 MaxHealth = 210,
+                LootTableKey = "T",
             },
 
             // Lich
@@ -901,6 +923,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 100,
                 MinHealth = 30,
                 MaxHealth = 170,
+                LootTableKey = "T",
             },
 
             // Ancient Lich
@@ -926,6 +949,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 100,
                 MinHealth = 30,
                 MaxHealth = 170,
+                LootTableKey = "T",
             },
 
             // Dragonling
@@ -1087,6 +1111,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 13,
                 MaxHealth = 34,
+                LootTableKey = "S",
             },
 
             // Lamia
@@ -1110,6 +1135,7 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 16,
                 MaxHealth = 58,
+                LootTableKey = "S",
             },
 
             // Mage
@@ -1129,6 +1155,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Spellsword
@@ -1148,6 +1175,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Battlemage
@@ -1167,6 +1195,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Sorcerer
@@ -1186,6 +1215,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Healer
@@ -1205,6 +1235,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Nightblade
@@ -1224,6 +1255,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Bard
@@ -1243,6 +1275,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Burglar
@@ -1262,6 +1295,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Rogue
@@ -1281,6 +1315,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Acrobat
@@ -1300,6 +1335,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Thief
@@ -1319,6 +1355,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Assassin
@@ -1338,6 +1375,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Monk
@@ -1357,6 +1395,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Archer
@@ -1377,6 +1416,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Ranger
@@ -1396,6 +1436,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Barbarian
@@ -1415,6 +1456,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Warrior
@@ -1434,6 +1476,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // Knight
@@ -1453,6 +1496,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.EnemyHumanMove,
                 BarkSound = (int)SoundClips.EnemyHumanBark,
                 AttackSound = (int)SoundClips.EnemyHumanAttack,
+                LootTableKey = "HM",
             },
 
             // City Watch - The Haltmeister
@@ -1472,6 +1516,7 @@ namespace DaggerfallWorkshop.Utility
                 MoveSound = (int)SoundClips.None,
                 BarkSound = (int)SoundClips.Halt,
                 AttackSound = (int)SoundClips.None,
+                LootTableKey = "HM",
             },
         };
 

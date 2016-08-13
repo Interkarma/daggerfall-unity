@@ -74,6 +74,7 @@ namespace DaggerfallWorkshop.Game
             DaggerfallLoot loot = GameObjectHelper.CreateLootableCorpseMarker(
                 GameManager.Instance.PlayerObject,
                 entityBehaviour.gameObject,
+                enemyEntity,
                 mobile.Summary.Enemy.CorpseTexture,
                 DaggerfallUnity.NextUID);
 

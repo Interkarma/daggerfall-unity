@@ -51,6 +51,12 @@ namespace DaggerfallWorkshop.Game.Items
             new LootChanceMatrix() {key = "Q", MinGold = 5, MaxGold = 20, P1 = 5, P2 = 5, C1 = 5, C2 = 5, C3 = 5, M1 = 5, AM = 5, WP = 10, MI = 3, CL = 0, BK = 10, M2 = 5, RL = 0 },
             new LootChanceMatrix() {key = "R", MinGold = 20, MaxGold = 80, P1 = 2, P2 = 2, C1 = 8, C2 = 8, C3 = 8, M1 = 2, AM = 10, WP = 25, MI = 10, CL = 35, BK = 5, M2 = 3, RL = 0 },
             new LootChanceMatrix() {key = "S", MinGold = 5, MaxGold = 20, P1 = 0, P2 = 0, C1 = 3, C2 = 3, C3 = 3, M1 = 5, AM = 5, WP = 15, MI = 5, CL = 0, BK = 0, M2 = 0, RL = 0 },
+
+            // Special humanoid loot table - not 100% sure how Daggerfall handles random loot for humanoids but appears different to monsters
+            // Seems to always deliver 1-3 weapons and 2-5 armor pieces regardless of level
+            // Other items are random as usual
+            // Creating special handling for this loot table in GenerateRandomLoot()
+            new LootChanceMatrix() {key = "HM", MinGold = 5, MaxGold = 50, P1 = 3, P2 = 3, C1 = 3, C2 = 3, C3 = 3, M1 = 3, AM = 0, WP = 0, MI = 5, CL = 5, BK = 5, M2 = 3, RL = 3 },
         };
 
         /// <summary>
@@ -73,10 +79,11 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Generates an array of items based on loot chance matrix.
         /// </summary>
+        /// <param name="key">Starting loot table key. Used for special handling.</param>
         /// <param name="matrix">Loot chance matrix.</param>
         /// <param name="playerLevel">Level of player.</param>
         /// <returns>DaggerfallUnityItem array.</returns>
-        public static DaggerfallUnityItem[] GenerateRandomLoot(LootChanceMatrix matrix, PlayerEntity playerEntity)
+        public static DaggerfallUnityItem[] GenerateRandomLoot(string key, LootChanceMatrix matrix, PlayerEntity playerEntity)
         {
             float chance;
             List<DaggerfallUnityItem> items = new List<DaggerfallUnityItem>();
@@ -139,6 +146,27 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 items.Add(ItemBuilder.CreateRandomReligiousItem());
                 chance *= 0.5f;
+            }
+
+            // Special humanoid handling
+            // Daggerfall seems to always drop between 1-3 weapons and 2-5 armor pieces regardless of player level
+            // This is probably totally off track, but for now generating closer results than loot table alone
+            // TODO: Revisit humanoid loot tables later
+            if (key == "HM")
+            {
+                // Create 1-3 weapons
+                int count = Random.Range(1, 3);
+                for (int i = 0; i < count; i++)
+                {
+                    items.Add(ItemBuilder.CreateRandomWeapon(playerEntity.Level));
+                }
+
+                // Create 2-5 armor pieces
+                count = Random.Range(2, 5);
+                for (int i = 0; i < count; i++)
+                {
+                    items.Add(ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race));
+                }
             }
 
             return items.ToArray();

@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop
         public void GenerateItems()
         {
             LootChanceMatrix matrix = LootTables.GetMatrix(LootTableKey);
-            DaggerfallUnityItem[] newitems = LootTables.GenerateRandomLoot(matrix, GameManager.Instance.PlayerEntity);
+            DaggerfallUnityItem[] newitems = LootTables.GenerateRandomLoot(LootTableKey, matrix, GameManager.Instance.PlayerEntity);
 
             items.Import(newitems);
         }
@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void OnInventoryOpen()
         {
-            Debug.Log("Loot container opened.");
+            //Debug.Log("Loot container opened.");
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void OnInventoryClose()
         {
-            Debug.Log("Loot container closed.");
+            //Debug.Log("Loot container closed.");
         }
     }
 }

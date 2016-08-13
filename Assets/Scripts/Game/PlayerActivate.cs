@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -107,6 +108,13 @@ namespace DaggerfallWorkshop.Game
                         DaggerfallLoot loot;
                         if (LootCheck(hits[i], out loot))
                         {
+                            // For bodies, check has treasure first
+                            if (loot.ContainerType == LootContainerTypes.CorpseMarker && loot.Items.Count == 0)
+                            {
+                                DaggerfallUI.AddHUDText(HardStrings.theBodyHasNoTreasure);
+                                return;
+                            }
+
                             // Open inventory window with loot as remote target
                             DaggerfallUI.Instance.InventoryWindow.LootTarget = loot;
                             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
