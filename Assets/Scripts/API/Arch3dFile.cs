@@ -665,6 +665,10 @@ namespace DaggerfallConnect.Arena2
                         v = (Int16)(0x4000 + v);
                     }
 
+                    // Fix some remaining special-case textures
+                    if (u == 7168) u = 1024;
+                    if (u == -7168) u = -1024;
+
                     // Store UV coordinates
                     records[record].PureMesh.Planes[plane].Points[point].u = u;
                     records[record].PureMesh.Planes[plane].Points[point].v = v;
