@@ -213,9 +213,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public event OnScrollHandler OnScroll;
         void RaiseOnScrollEvent()
         {
-            if (scrollIndex < 0 || scrollIndex > (totalUnits - displayUnits))
-                return;
-
             if (OnScroll != null)
                 OnScroll();
         }

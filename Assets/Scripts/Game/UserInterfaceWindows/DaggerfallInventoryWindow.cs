@@ -270,7 +270,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
-            SelectActionMode(ActionModes.Equip);
+            SelectActionMode(ActionModes.Remove);
 
             // Setup initial display
             FilterLocalItems();
@@ -496,6 +496,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 usingWagon = false;
                 wagonButton.BackgroundTexture = wagonNotSelected;
             }
+
+            // Always use remove action by default on open
+            // This means player will transfer items rather than putting them on
+            if (removeButton != null)
+            {
+                SelectActionMode(ActionModes.Remove);
+            }
+
+            // Reset scrollbars
+            if (localItemsScrollBar != null)
+                localItemsScrollBar.ScrollIndex = 0;
+            if (remoteItemsScrollBar != null)
+                remoteItemsScrollBar.ScrollIndex = 0;
 
             // Refresh window
             Refresh();
@@ -1003,7 +1016,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         int GetSafeScrollIndex(VerticalScrollBar scroller)
         {
+            // Get current scroller index
             int scrollIndex = scroller.ScrollIndex;
+            if (scrollIndex < 0)
+                scrollIndex = 0;
+
+            // Ensure scroll index within current range
             if (scrollIndex + scroller.DisplayUnits > scroller.TotalUnits)
             {
                 scrollIndex = scroller.TotalUnits - scroller.DisplayUnits;
@@ -1443,7 +1461,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Reset certain elements on a new game
             if (IsSetup)
             {
-                SelectActionMode(ActionModes.Equip);
+                SelectActionMode(ActionModes.Remove);
                 SelectTabPage(TabPages.WeaponsAndArmor);
                 localItemsScrollBar.Reset(listDisplayUnits);
                 remoteItemsScrollBar.Reset(listDisplayUnits);
