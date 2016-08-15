@@ -270,7 +270,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
-            SelectActionMode(ActionModes.Remove);
+            SelectActionMode(ActionModes.Equip);
 
             // Setup initial display
             FilterLocalItems();
@@ -497,11 +497,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 wagonButton.BackgroundTexture = wagonNotSelected;
             }
 
-            // Always use remove action by default on open
-            // This means player will transfer items rather than putting them on
-            if (removeButton != null)
+            // Set default button by context
+            if (removeButton != null && lootTarget != null)
             {
+                // When looting, make "remove" default action so player does not accidentially equip when picking up
                 SelectActionMode(ActionModes.Remove);
+            }
+            else if (equipButton != null && lootTarget == null)
+            {
+                // When managing inventory only, make "equip" default action so player can manage gear
+                SelectActionMode(ActionModes.Equip);
             }
 
             // Reset scrollbars
@@ -1461,7 +1466,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Reset certain elements on a new game
             if (IsSetup)
             {
-                SelectActionMode(ActionModes.Remove);
+                SelectActionMode(ActionModes.Equip);
                 SelectTabPage(TabPages.WeaponsAndArmor);
                 localItemsScrollBar.Reset(listDisplayUnits);
                 remoteItemsScrollBar.Reset(listDisplayUnits);
