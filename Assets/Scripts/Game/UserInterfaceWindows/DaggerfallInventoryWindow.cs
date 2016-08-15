@@ -270,7 +270,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
-            SelectActionMode(ActionModes.Equip);
+            if (lootTarget != null)
+                SelectActionMode(ActionModes.Remove);
+            else
+                SelectActionMode(ActionModes.Equip);
 
             // Setup initial display
             FilterLocalItems();
