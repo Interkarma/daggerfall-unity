@@ -208,6 +208,20 @@ namespace ReflectionsMod
 			    //go.hideFlags = HideFlags.HideAndDontSave;
 			    m_ReflectionCameras[currentCamera] = reflectionCamera;
 
+                // attach global fog to camera - this is important to get the same reflections like on normal terrain when deferred rendering is used
+                if ((reflectionCamera.renderingPath == RenderingPath.DeferredShading) || (reflectionCamera.renderingPath == RenderingPath.UsePlayerSettings))
+                {
+                    UnityStandardAssets.ImageEffects.GlobalFog scriptGlobalFog = go.AddComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
+                    UnityStandardAssets.ImageEffects.GlobalFog globalFogMainCamera = Camera.main.gameObject.GetComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
+                    scriptGlobalFog.distanceFog = globalFogMainCamera.distanceFog;
+                    scriptGlobalFog.excludeFarPixels = globalFogMainCamera.excludeFarPixels; // false
+                    scriptGlobalFog.useRadialDistance = globalFogMainCamera.useRadialDistance;
+                    scriptGlobalFog.heightFog = globalFogMainCamera.heightFog;
+                    scriptGlobalFog.height = globalFogMainCamera.height;
+                    scriptGlobalFog.heightDensity = globalFogMainCamera.heightDensity;
+                    scriptGlobalFog.startDistance = globalFogMainCamera.startDistance;
+                }
+
                 go.transform.SetParent(GameObject.Find("ReflectionsMod").transform);
 		    }
 	    }
