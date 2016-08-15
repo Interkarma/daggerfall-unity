@@ -82,7 +82,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -93,7 +93,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -104,7 +104,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
 --- !u!114 &11412750
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -145,7 +145,7 @@ MonoBehaviour:
   ShopSongs: 7400000080000000
   TavernSongs: 60000000610000006200000083000000
   WeatherRainSongs: 1400000067000000790000007a0000007c000000
-  WeatherSnowSongs: 0d000000760000007f0000007b000000
+  WeatherSnowSongs: 0d000000760000007f000000
   WildernessSongs: 12000000160000001e000000220000006800000073000000
 --- !u!1001 &100100000
 Prefab:

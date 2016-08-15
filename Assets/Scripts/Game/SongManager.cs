@@ -587,7 +587,6 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_08,
             SongFiles.song_gsnow__b,
             SongFiles.song_snowing,
-            SongFiles.song_oversnow,
         };
 
         // Wilderness
