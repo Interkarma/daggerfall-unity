@@ -84,6 +84,7 @@ namespace DaggerfallWorkshop.Game
         {
             public String locationName; /// name of the dungeon location
             public ulong timeInSecondsLastVisited; /// time in seconds (from DaggerfallDateTime) when player last visited the dungeon (used to store only the n last dungeons in save games)
+            public bool entranceDiscovered; /// indicates if the dungeon entrance has already been discovered
             public List<AutomapGeometryBlockState> blocks;
         }
 
@@ -1385,6 +1386,7 @@ namespace DaggerfallWorkshop.Game
             Transform gameObjectGeometryDungeon = gameobjectGeometry.transform.GetChild(0);
             automapGeometryDungeonState = new AutomapGeometryDungeonState();
             automapGeometryDungeonState.locationName = gameObjectGeometryDungeon.name;
+            automapGeometryDungeonState.entranceDiscovered = ((gameobjectBeaconEntrancePosition) && (gameobjectBeaconEntrancePosition.activeSelf)); // get entrance marker discovery state
             automapGeometryDungeonState.timeInSecondsLastVisited = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
             automapGeometryDungeonState.blocks = new List<AutomapGeometryBlockState>();
 
@@ -1570,6 +1572,8 @@ namespace DaggerfallWorkshop.Game
         {
             Transform location = gameobjectGeometry.transform.GetChild(0);
 
+            HideAll(); // clear discovery state of geometry as initial starting point
+
             DFLocation dfLocation = GameManager.Instance.PlayerGPS.CurrentLocation;
             string locationStringIdentifier = string.Format("{0}/{1}", dfLocation.RegionName, dfLocation.Name);
             if (dictAutomapDungeonsDiscoveryState.ContainsKey(locationStringIdentifier))
@@ -1578,11 +1582,13 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                automapGeometryDungeonState = null;
+                automapGeometryDungeonState = null;                
             }
 
             if (automapGeometryDungeonState == null)
                 return;
+
+            gameobjectBeaconEntrancePosition.SetActive(automapGeometryDungeonState.entranceDiscovered); // set entrance marker discovery state         
 
             if (location.name != automapGeometryDungeonState.locationName)
                 return;
