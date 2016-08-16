@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public Dictionary<string, AutomapGeometryDungeonState> GetState()
         {
-            saveStateAutomapDungeon();
+            saveStateAutomapDungeon(false);
             return dictAutomapDungeonsDiscoveryState;
         }
         
@@ -1364,7 +1364,7 @@ namespace DaggerfallWorkshop.Game
         /// is matching value of field "discovered" in AutomapGeometryDungeonState.AutomapGeometryBlockState.AutomapGeometryBlockElementState.AutomapGeometryModelState
         /// dictionary of dungeon states of visited dungeons is then updated (which is used for save game mechanism)
         /// </summary>
-        private void saveStateAutomapDungeon()
+        private void saveStateAutomapDungeon(bool forceSaveOfDungeonDiscoveryState)
         {
             if ((numberOfDungeonMemorized == 0)&&(!GameManager.Instance.IsPlayerInside)) // if discovery state of no dungeon has to be remembered, clear dictionary and skip the rest of this function
             {
@@ -1372,7 +1372,7 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            if (!GameManager.Instance.IsPlayerInside) // if player is outside just skip this function
+            if ((!GameManager.Instance.IsPlayerInside)&&(!forceSaveOfDungeonDiscoveryState)) // if player is outside just skip this function
             {
                 return;
             }
@@ -1700,7 +1700,7 @@ namespace DaggerfallWorkshop.Game
 
         private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
         {
-            saveStateAutomapDungeon();
+            saveStateAutomapDungeon(true);
             DestroyBeacons();
         }
 
