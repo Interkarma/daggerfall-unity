@@ -255,6 +255,9 @@ namespace DaggerfallWorkshop.Game
                         uiManager.PushWindow(dfAutomapWindow);
                     }
                     break;
+                case DaggerfallUIMessages.dfuiOpenRestWindow:
+                    uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
+                    break;
                 case DaggerfallUIMessages.dfuiExitGame:
 #if UNITY_EDITOR
                     UnityEditor.EditorApplication.isPlaying = false;
@@ -653,6 +656,15 @@ namespace DaggerfallWorkshop.Game
         {
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
             messageBox.SetText(message);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.Show();
+            return messageBox;
+        }
+
+        public static DaggerfallMessageBox MessageBox(int id)
+        {
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(Instance.uiManager, Instance.uiManager.TopWindow);
+            messageBox.SetTextTokens(id);
             messageBox.ClickAnywhereToClose = true;
             messageBox.Show();
             return messageBox;
