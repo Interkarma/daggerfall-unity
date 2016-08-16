@@ -38,6 +38,9 @@ namespace ReflectionsMod
         private GameObject gameObjectReflectionPlaneSeaLevel = null;
         private GameObject gameObjectReflectionPlaneLowerLevel = null;
 
+        private bool isIncreasedTerrainDistanceMod = false;
+        private float extraTranslationY = 0.0f;
+
         private GameObject gameObjectStreamingTarget = null;
 
         private DaggerfallUnity dfUnity;
@@ -121,6 +124,15 @@ namespace ReflectionsMod
                     Debug.Break();
                 else
                     Application.Quit();
+            }
+
+            if (GameObject.Find("IncreasedTerrainDistanceMod") != null)
+            {
+                if (DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
+                {
+                    isIncreasedTerrainDistanceMod = true;
+                    extraTranslationY = GameObject.Find("IncreasedTerrainDistanceMod").GetComponent<ProjectIncreasedTerrainDistance.IncreasedTerrainDistance>().ExtraTranslationY;
+                }
             }
 
             gameObjectReflectionPlaneGroundLevel = GameObject.Find("ReflectionPlaneBottom");
@@ -223,8 +235,8 @@ namespace ReflectionsMod
                         {
                             if (terrain.materialTemplate.shader.name == "Daggerfall/TilemapWithReflections")
                             {
-                                terrain.materialTemplate.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y);
-                                terrain.materialTemplate.SetFloat("_SeaLevelHeight", gameObjectReflectionPlaneSeaLevel.transform.position.y);
+                                terrain.materialTemplate.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y - extraTranslationY);
+                                terrain.materialTemplate.SetFloat("_SeaLevelHeight", gameObjectReflectionPlaneSeaLevel.transform.position.y - extraTranslationY);
                             }
                         }
                     }
@@ -254,8 +266,8 @@ namespace ReflectionsMod
                         {
                             if (m.shader.name == "Daggerfall/FloorMaterialWithReflections")
                             {
-                                m.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y);
-                                m.SetFloat("_LowerLevelHeight", gameObjectReflectionPlaneLowerLevel.transform.position.y);
+                                m.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y - extraTranslationY);
+                                m.SetFloat("_LowerLevelHeight", gameObjectReflectionPlaneLowerLevel.transform.position.y - extraTranslationY);
                             }
                         }
                         r.sharedMaterials = mats;
