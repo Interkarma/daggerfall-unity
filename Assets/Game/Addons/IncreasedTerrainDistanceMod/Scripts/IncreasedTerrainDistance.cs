@@ -69,6 +69,20 @@ namespace ProjectIncreasedTerrainDistance
 
         public RenderTexture reflectionSeaTexture = null;
 
+        private float extraTranslationY = -10.0f;
+
+        /// <summary>
+        /// extra translation property is the amount of y-bias of the FarTerrain geometry (needed to prevent precision rendering issues at the transition from terrain transition ring and far terrain geometry))
+        /// </summary>
+        public float ExtraTranslationY
+        {
+            get
+            {
+                return extraTranslationY;
+            }
+        }
+
+
         bool isActiveReflectionsMod = false;
         bool isActiveEnhancedSkyMod = false;
 
@@ -860,8 +874,6 @@ namespace ProjectIncreasedTerrainDistance
 
         private void updatePositionWorldTerrain(ref GameObject terrainGameObject, Vector3 offset)
         {
-            float extraTranslationY = -10.0f;
-
             // world scale computed as in StreamingWorld.cs and DaggerfallTerrain.cs scripts
             float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
             
