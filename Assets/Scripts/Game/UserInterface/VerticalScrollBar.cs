@@ -181,7 +181,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void SetScrollIndex(int value)
         {
-            scrollIndex = Mathf.Clamp(value, 0, totalUnits - displayUnits);
+            int maxScroll = totalUnits - displayUnits;
+            if (maxScroll < 0)
+                maxScroll = 0;
+
+            scrollIndex = value;
+
+            if (scrollIndex < 0)
+                scrollIndex = 0;
+            if (scrollIndex > maxScroll)
+                scrollIndex = maxScroll;
+
             RaiseOnScrollEvent();
         }
 

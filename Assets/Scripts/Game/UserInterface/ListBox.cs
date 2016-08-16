@@ -151,11 +151,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (MouseOverComponent)
             {
-                if (Input.GetKeyDown(KeyCode.UpArrow))
+                if (DaggerfallUI.Instance.LastKeyCode == KeyCode.UpArrow)
                     SelectPrevious();
-                else if (Input.GetKeyDown(KeyCode.DownArrow))
+                else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.DownArrow)
                     SelectNext();
-                else if (Input.GetKeyDown(KeyCode.Return))
+                else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Return)
                     UseSelectedItem();
             }
         }
@@ -301,6 +301,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             RaiseOnSelectPreviousEvent();
             RaiseOnSelectItemEvent();
+            RaiseOnScrollEvent();
         }
 
         public void SelectNext()
@@ -314,6 +315,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             RaiseOnSelectNextEvent();
             RaiseOnSelectItemEvent();
+            RaiseOnScrollEvent();
         }
 
         public void SelectIndex(int index)
