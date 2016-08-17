@@ -170,6 +170,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        /// <summary>
+        /// Copies key setting from another tooltip.
+        /// </summary>
+        /// <param name="from"></param>
+        public void CloneSettings(ToolTip from)
+        {
+            Font = from.Font;
+            ToolTipDelay = from.ToolTipDelay;
+            MouseOffset = from.MouseOffset;
+            TextColor = from.TextColor;
+            BackgroundColor = from.BackgroundColor;
+            Parent = from.Parent;
+        }
+
         #endregion
 
         #region Private Methods
