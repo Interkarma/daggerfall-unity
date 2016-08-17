@@ -70,6 +70,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallTravelMapWindow dfTravelMapWindow;
         DaggerfallAutomapWindow dfAutomapWindow;
 
+        DaggerfallFontPlus fontPetrock32;
+
         public DaggerfallFont Font1 { get { return GetFont(1); } }
         public DaggerfallFont Font2 { get { return GetFont(2); } }
         public DaggerfallFont Font3 { get { return GetFont(3); } }
@@ -126,6 +128,11 @@ namespace DaggerfallWorkshop.Game
         public enum PopupStyle
         {
             Parchment,
+        }
+
+        public enum HQPixelFonts
+        {
+            Petrock_32,
         }
 
         void Awake()
@@ -334,6 +341,19 @@ namespace DaggerfallWorkshop.Game
                     daggerfallFonts[4].FilterMode = globalFilterMode;
                     return daggerfallFonts[4];
             }
+        }
+
+        public DaggerfallFontPlus GetHQPixelFont(HQPixelFonts pixelFont)
+        {
+            switch (pixelFont)
+            {
+                case HQPixelFonts.Petrock_32:
+                    if (fontPetrock32 == null)
+                        fontPetrock32 = new DaggerfallFontPlus(Resources.Load<Texture2D>("Kingthings-Petrock-Light-PixelFont"), 16, 16, 32);
+                    return fontPetrock32;
+            }
+
+            return null;
         }
 
         public void SetDaggerfallPopupStyle(PopupStyle style, Panel panel)

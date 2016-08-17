@@ -30,15 +30,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
-        const int asciiStart = 33;
+        const int defaultAsciiStart = 33;
 
         string arena2Path;
         FontName font;
         FntFile fntFile = new FntFile();
         Color backgroundColor = Color.clear;
         Color textColor = Color.white;
-        Texture2D atlasTexture;
-        Rect[] atlasRects;
+        protected Texture2D atlasTexture;
+        protected Rect[] atlasRects;
+
+        protected int asciiStart = defaultAsciiStart;
 
         #endregion
 
