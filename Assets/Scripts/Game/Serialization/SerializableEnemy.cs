@@ -47,7 +47,14 @@ namespace DaggerfallWorkshop.Game.Serialization
                 SaveLoadManager.DeregisterSerializableGameObject(this);
         }
 
-        #endregion
+#if UNITY_EDITOR
+        void OnDrawGizmosSelected()
+        {
+            UnityEditor.Handles.Label(transform.position + Vector3.up, "LoadID=" + LoadID);
+        }
+#endif
+
+#endregion
 
         #region ISerializableGameObject
 
