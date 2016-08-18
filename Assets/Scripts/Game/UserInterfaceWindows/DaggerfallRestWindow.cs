@@ -27,12 +27,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Rects
 
-        Rect whileButtonRect = new Rect(87, 63, 48, 24);
-        Rect healedButtonRect = new Rect(136, 63, 48, 24);
-        Rect loiterButtonRect = new Rect(185, 63, 48, 24);
+        Rect whileButtonRect = new Rect(4, 13, 48, 24);
+        Rect healedButtonRect = new Rect(53, 13, 48, 24);
+        Rect loiterButtonRect = new Rect(102, 13, 48, 24);
         Rect counterPanelRect = new Rect(0, 50, 105, 41);
-
-        Vector2 counterTextPos = new Vector2(10, 12);
+        Rect counterTextPanelRect = new Rect(4, 10, 16, 8);
 
         #endregion
 
@@ -66,12 +65,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const float restWaitTimePerHour = 0.75f;
         const float loiterWaitTimePerHour = 1.25f;
+        const float recoveryRate = 0.125f;                          // Rate at which recovery runs (12.5% for alpha purposes)
 
         RestModes currentRestMode = RestModes.Selection;
         int hoursRemaining = 0;
         int hoursPast = 0;
         int totalHours = 0;
         float waitTimer = 0;
+
+        PlayerEntity playerEntity;
 
         #endregion
 
@@ -114,11 +116,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(mainPanel);
 
             // Create buttons
-            whileButton = DaggerfallUI.AddButton(whileButtonRect, NativePanel);
+            whileButton = DaggerfallUI.AddButton(whileButtonRect, mainPanel);
             whileButton.OnMouseClick += WhileButton_OnMouseClick;
-            healedButton = DaggerfallUI.AddButton(healedButtonRect, NativePanel);
+            healedButton = DaggerfallUI.AddButton(healedButtonRect, mainPanel);
             healedButton.OnMouseClick += HealedButton_OnMouseClick;
-            loiterButton = DaggerfallUI.AddButton(loiterButtonRect, NativePanel);
+            loiterButton = DaggerfallUI.AddButton(loiterButtonRect, mainPanel);
             loiterButton.OnMouseClick += LoiterButton_OnMouseClick;
 
             // Create vitals
@@ -133,9 +135,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(counterPanel);
 
             // Setup counter text
-            counterLabel.Position = counterTextPos;
-            counterLabel.Text = "3";
-            counterPanel.Components.Add(counterLabel);
+            Panel counterTextPanel = DaggerfallUI.AddPanel(counterTextPanelRect, counterPanel);
+            counterLabel.Position = new Vector2(0, 1);
+            counterLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            counterTextPanel.Components.Add(counterLabel);
         }
 
         #endregion
@@ -165,6 +168,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hoursPast = 0;
             totalHours = 0;
             waitTimer = 0;
+
+            // Get player entity
+            playerEntity = GameManager.Instance.PlayerEntity;
         }
 
         public override void OnPop()
@@ -193,7 +199,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             vitals.Scale = NativePanel.LocalScale;
 
             // Adjust vitals based on current player state
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             if (playerEntity != null)
             {
                 vitals.Health = (float)playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
@@ -204,10 +209,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void ShowStatus()
         {
+            // Display status based on current rest state
             if (currentRestMode == RestModes.Selection)
             {
                 mainPanel.Enabled = true;
                 counterPanel.Enabled = false;
+            }
+            else if (currentRestMode == RestModes.TimedRest)
+            {
+                mainPanel.Enabled = false;
+                counterPanel.Enabled = true;
+                counterPanel.BackgroundTexture = hoursRemainingTexture;
+                counterLabel.Text = hoursRemaining.ToString();
             }
             else if (currentRestMode == RestModes.Loiter)
             {
@@ -220,15 +233,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool TickRest()
         {
+            // Loitering runs at a slower rate to rest
+            float waitTime = (currentRestMode == RestModes.Loiter) ? loiterWaitTimePerHour : restWaitTimePerHour;
+
+            // Tick timer by rate and count based on rest type
             bool finished = false;
-            if (Time.realtimeSinceStartup > waitTimer + loiterWaitTimePerHour)
+            if (Time.realtimeSinceStartup > waitTimer + waitTime)
             {
                 totalHours++;
                 waitTimer = Time.realtimeSinceStartup;
                 if (currentRestMode == RestModes.TimedRest)
                 {
-                    hoursPast++;
-                    if (hoursPast > totalHours)
+                    TickVitals();
+                    hoursRemaining--;
+                    if (hoursRemaining < 1)
                         finished = true;
                 }
                 else if (currentRestMode == RestModes.Loiter)
@@ -245,13 +263,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void EndRest()
         {
             const int finishedLoitering = 349;
+            const int youWakeUp = 353;
 
-            if (currentRestMode == RestModes.Loiter)
+            if (currentRestMode == RestModes.TimedRest)
+            {
+                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youWakeUp);
+                mb.OnClose += RestFinishedPopup_OnClose;
+                currentRestMode = RestModes.Selection;
+            }
+            else if (currentRestMode == RestModes.Loiter)
             {
                 DaggerfallMessageBox mb = DaggerfallUI.MessageBox(finishedLoitering);
                 mb.OnClose += RestFinishedPopup_OnClose;
                 currentRestMode = RestModes.Selection;
             }
+        }
+
+        void TickVitals()
+        {
+            // For alpha purposes, all vitals are recovered in a uniform manner
+            // There's a lot to account for later based on player health/magicka regeneration
+            // Also need to decouple this back to formula provider when properly implemented
+            playerEntity.CurrentHealth += (int)(playerEntity.MaxHealth * recoveryRate);
+            playerEntity.CurrentFatigue += (int)(playerEntity.MaxFatigue * recoveryRate);
+            playerEntity.CurrentMagicka += (int)(playerEntity.MaxMagicka * recoveryRate);
         }
 
         #endregion
@@ -260,7 +295,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void WhileButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Debug.Log("Clicked while button");
+            DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
+            mb.SetTextBoxLabel(HardStrings.restHowManyHours);
+            mb.TextPanelDistance = 0;
+            mb.TextBox.Text = "0";
+            mb.TextBox.Numeric = true;
+            mb.OnGotUserInput += TimedRestPrompt_OnGotUserInput;
+            mb.Show();
         }
 
         private void HealedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -286,7 +327,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region Loiter Events
+        #region Rest Events
+
+        private void TimedRestPrompt_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        {
+            const int cannotRestMoreThan99Hours = 26;
+
+            // Validate input
+            int time = 0;
+            bool result = int.TryParse(input, out time);
+            if (!result)
+                return;
+
+            // Validate range
+            if (time < 0)
+            {
+                time = 0;
+            }
+            else if (time > 99)
+            {
+                DaggerfallUI.MessageBox(cannotRestMoreThan99Hours);
+                return;
+            }
+
+            hoursRemaining = time;
+            waitTimer = Time.realtimeSinceStartup;
+            currentRestMode = RestModes.TimedRest;
+        }
 
         private void LoiterPrompt_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {

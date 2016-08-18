@@ -46,5 +46,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string theBodyHasNoTreasure = "The body has no treasure.";
 
         public const string loiterHowManyHours = "Loiter how many hours : ";
+        public const string restHowManyHours = "Rest how many hours : ";
     }
 }

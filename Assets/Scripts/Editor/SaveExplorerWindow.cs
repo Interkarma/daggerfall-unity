@@ -232,6 +232,12 @@ namespace DaggerfallWorkshop
                 EditorGUILayout.LabelField(new GUIContent("Gender"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
                 EditorGUILayout.SelectableLabel(((int)characterRecord.ParsedData.gender).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             });
+            GUILayoutHelper.Horizontal(() =>
+            {
+                string health = string.Format("{0} / {1}", characterRecord.ParsedData.currentHealth, characterRecord.ParsedData.startingHealth);
+                EditorGUILayout.LabelField(new GUIContent("Health"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.SelectableLabel(health, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            });
         }
 
         void DisplayFactionsFoldout()
