@@ -413,6 +413,34 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// Determines if player is able to rest or not
+        /// </summary>
+        /// <returns></returns>
+        public bool CanPlayerRest(float minMonsterDistance = 20f)
+        {
+            const int enemiesNearby = 354;
+
+            if (!PlayerController.isGrounded)
+                return false;
+
+            DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
+            for (int i = 0; i < entityBehaviours.Length; i++)
+            {
+                DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
+                if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
+                {
+                    if (Vector3.Distance(entityBehaviour.transform.position, PlayerController.transform.position) < minMonsterDistance)
+                    {
+                        DaggerfallUI.MessageBox(enemiesNearby);
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region Public Static Methods

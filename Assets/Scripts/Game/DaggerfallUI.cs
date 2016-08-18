@@ -263,7 +263,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenRestWindow:
-                    if (GameManager.Instance.PlayerController.isGrounded)
+                    if (GameManager.Instance.CanPlayerRest())
                     {
                         uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
                     }
