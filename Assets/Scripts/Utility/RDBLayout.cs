@@ -766,6 +766,7 @@ namespace DaggerfallWorkshop.Utility
             // Create unique LoadID for save sytem
             ulong loadID = 0;
             if (serialize)
+                loadID = (ulong)(blockData.Position + rdbObj.This);
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
@@ -808,6 +809,7 @@ namespace DaggerfallWorkshop.Utility
             // Create unique LoadID for save sytem
             ulong loadID = 0;
             if (serialize)
+                loadID = (ulong)(blockData.Position + rdbObj.This);
 
             AddAction(go, description, soundID_Index, duration, magnitude, axis, triggerFlag, actionFlag, loadID);
         }
