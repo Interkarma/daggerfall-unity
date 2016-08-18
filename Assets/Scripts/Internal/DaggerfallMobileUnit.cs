@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop
         {
             // Initial enemy settings
             summary.Enemy = enemy;
-            summary.EnemyState = MobileStates.Idle;
+            summary.EnemyState = MobileStates.Move;
             summary.Enemy.Reactions = reaction;
 
             // Load enemy content
