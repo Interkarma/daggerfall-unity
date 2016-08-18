@@ -23,6 +23,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class DaggerfallRestWindow : DaggerfallPopupWindow
     {
         #region Classic Text IDs
+
+        const int cannotRestMoreThan99Hours = 26;
+        const int cannotLoiterMoreThan3Hours = 27;
+        const int finishedLoitering = 349;
+        const int youAreHealed = 350;
+        const int youWakeUp = 353;
+
         #endregion
 
         #region UI Rects
@@ -32,6 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect loiterButtonRect = new Rect(102, 13, 48, 24);
         Rect counterPanelRect = new Rect(0, 50, 105, 41);
         Rect counterTextPanelRect = new Rect(4, 10, 16, 8);
+        Rect stopButtonRect = new Rect(33, 26, 40, 10);
 
         #endregion
 
@@ -40,8 +48,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button whileButton;
         Button healedButton;
         Button loiterButton;
+        Button stopButton;
 
-        HUDVitals vitals = new HUDVitals();
         Panel mainPanel = new Panel();
         Panel counterPanel = new Panel();
 
@@ -69,11 +77,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         RestModes currentRestMode = RestModes.Selection;
         int hoursRemaining = 0;
-        int hoursPast = 0;
         int totalHours = 0;
         float waitTimer = 0;
 
         PlayerEntity playerEntity;
+        DaggerfallHUD hud;
 
         #endregion
 
@@ -123,10 +131,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             loiterButton = DaggerfallUI.AddButton(loiterButtonRect, mainPanel);
             loiterButton.OnMouseClick += LoiterButton_OnMouseClick;
 
-            // Create vitals
-            ParentPanel.Components.Add(vitals);
-            UpdateVitals();
-
             // Setup counter panel
             counterPanel.Position = new Vector2(counterPanelRect.x, counterPanelRect.y);
             counterPanel.Size = new Vector2(counterPanelRect.width, counterPanelRect.height);
@@ -139,6 +143,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             counterLabel.Position = new Vector2(0, 1);
             counterLabel.HorizontalAlignment = HorizontalAlignment.Center;
             counterTextPanel.Components.Add(counterLabel);
+
+            // Stop button
+            stopButton = DaggerfallUI.AddButton(stopButtonRect, counterPanel);
+            stopButton.OnMouseClick += StopButton_OnMouseClick;
         }
 
         #endregion
@@ -149,7 +157,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            UpdateVitals();
+            if (hud != null)
+            {
+                hud.Update();
+            }
 
             ShowStatus();
             if (currentRestMode != RestModes.Selection)
@@ -159,18 +170,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        public override void Draw()
+        {
+            base.Draw();
+
+            if (hud != null)
+            {
+                hud.Draw();
+            }
+        }
+
         public override void OnPush()
         {
             base.OnPush();
 
             // Reset counters
             hoursRemaining = 0;
-            hoursPast = 0;
             totalHours = 0;
             waitTimer = 0;
 
-            // Get player entity
+            // Get references
             playerEntity = GameManager.Instance.PlayerEntity;
+            hud = DaggerfallUI.Instance.DaggerfallHUD;
         }
 
         public override void OnPop()
@@ -193,20 +214,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hoursRemainingTexture = ImageReader.GetTexture(hoursRemainingTextureName);
         }
 
-        void UpdateVitals()
-        {
-            // Scale vitals elements
-            vitals.Scale = NativePanel.LocalScale;
-
-            // Adjust vitals based on current player state
-            if (playerEntity != null)
-            {
-                vitals.Health = (float)playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
-                vitals.Fatigue = (float)playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
-                vitals.Magicka = (float)playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
-            }
-        }
-
         void ShowStatus()
         {
             // Display status based on current rest state
@@ -214,6 +221,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 mainPanel.Enabled = true;
                 counterPanel.Enabled = false;
+            }
+            else if (currentRestMode == RestModes.FullRest)
+            {
+                mainPanel.Enabled = false;
+                counterPanel.Enabled = true;
+                counterPanel.BackgroundTexture = hoursPastTexture;
+                counterLabel.Text = totalHours.ToString();
             }
             else if (currentRestMode == RestModes.TimedRest)
             {
@@ -249,6 +263,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (hoursRemaining < 1)
                         finished = true;
                 }
+                else if (currentRestMode == RestModes.FullRest)
+                {
+                    if (TickVitals())
+                        finished = true;
+                }
                 else if (currentRestMode == RestModes.Loiter)
                 {
                     hoursRemaining--;
@@ -262,12 +281,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void EndRest()
         {
-            const int finishedLoitering = 349;
-            const int youWakeUp = 353;
-
             if (currentRestMode == RestModes.TimedRest)
             {
                 DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youWakeUp);
+                mb.OnClose += RestFinishedPopup_OnClose;
+                currentRestMode = RestModes.Selection;
+            }
+            else if (currentRestMode == RestModes.FullRest)
+            {
+                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youAreHealed);
                 mb.OnClose += RestFinishedPopup_OnClose;
                 currentRestMode = RestModes.Selection;
             }
@@ -279,7 +301,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void TickVitals()
+        bool TickVitals()
         {
             // For alpha purposes, all vitals are recovered in a uniform manner
             // There's a lot to account for later based on player health/magicka regeneration
@@ -287,6 +309,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             playerEntity.CurrentHealth += (int)(playerEntity.MaxHealth * recoveryRate);
             playerEntity.CurrentFatigue += (int)(playerEntity.MaxFatigue * recoveryRate);
             playerEntity.CurrentMagicka += (int)(playerEntity.MaxMagicka * recoveryRate);
+
+            // Check if player fully healed
+            // Will eventually need to tailor check for character
+            // For example, sorcerers cannot recover magicka from resting
+            if (playerEntity.CurrentHealth == playerEntity.MaxHealth &&
+                playerEntity.CurrentFatigue == playerEntity.MaxFatigue &&
+                playerEntity.CurrentMagicka == playerEntity.MaxMagicka)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         #endregion
@@ -306,7 +340,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void HealedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            Debug.Log("Clicked healed button");
+            waitTimer = Time.realtimeSinceStartup;
+            currentRestMode = RestModes.FullRest;
         }
 
         private void LoiterButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -320,6 +355,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mb.Show();
         }
 
+        private void StopButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUI.Instance.PopToHUD();
+        }
+
         private void RestFinishedPopup_OnClose()
         {
             DaggerfallUI.Instance.PopToHUD();
@@ -331,8 +371,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void TimedRestPrompt_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {
-            const int cannotRestMoreThan99Hours = 26;
-
             // Validate input
             int time = 0;
             bool result = int.TryParse(input, out time);
@@ -357,8 +395,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void LoiterPrompt_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {
-            const int cannotLoiterMoreThan3Hours = 27;
-
             // Validate input
             int time = 0;
             bool result = int.TryParse(input, out time);

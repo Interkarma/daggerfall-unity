@@ -263,7 +263,10 @@ namespace DaggerfallWorkshop.Game
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenRestWindow:
-                    uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
+                    if (GameManager.Instance.PlayerController.isGrounded)
+                    {
+                        uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
+                    }
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
 #if UNITY_EDITOR
