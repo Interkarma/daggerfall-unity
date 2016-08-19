@@ -159,7 +159,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (hud != null)
             {
-                hud.Update();
+                hud.HUDVitals.Update();
             }
 
             ShowStatus();
@@ -176,7 +176,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (hud != null)
             {
-                hud.Draw();
+                hud.HUDVitals.Draw();
             }
         }
 

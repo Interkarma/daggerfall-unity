@@ -51,6 +51,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { crosshairScale = value; }
         }
 
+        public HUDVitals HUDVitals
+        {
+            get { return vitals; }
+        }
+
         public DaggerfallHUD(IUserInterfaceManager uiManager)
             :base(uiManager)
         {
