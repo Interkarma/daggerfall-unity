@@ -35,6 +35,10 @@ namespace DaggerfallWorkshop.Game
         int actionCount = 0;                        // Number of times in a row action has been registered
         bool alternateAttack;                       // Flag to flip weapons on alternating attacks
 
+        Vector2 ms;                                 // Mouse swing based on input
+        float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
+        bool showDebugStrings = false;              // Draw debug data
+
         PlayerEntity playerEntity;
         GameObject player;
         GameObject mainCamera;
@@ -64,6 +68,8 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
+            weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
+            showDebugStrings = DaggerfallUnity.Settings.DebugWeaponSwings;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
             SetMelee(RightHandWeapon);
@@ -134,6 +140,23 @@ namespace DaggerfallWorkshop.Game
 
             // Time for attacks
             ExecuteAttacks();
+        }
+
+        void OnGUI()
+        {
+            if (Event.current.type.Equals(EventType.Repaint) && showDebugStrings && !Sheathed)
+            {
+                GUIStyle style = new GUIStyle();
+                style.normal.textColor = Color.black;
+                string text = GetDebugString();
+                GUI.Label(new Rect(4, 4, 800, 24), text, style);
+                GUI.Label(new Rect(2, 2, 800, 24), text);
+            }
+        }
+
+        string GetDebugString()
+        {
+            return string.Format("WeaponX: {0:0.00} | WeaponY: {1:0.00} | TriggerCount: {2}", ms.x, ms.y, actionCount);
         }
 
         public void SheathWeapons()
@@ -262,8 +285,7 @@ namespace DaggerfallWorkshop.Game
         private void TrackMouseAttack()
         {
             // Track action for idle plus all eight mouse directions
-            //var ms = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
-            var ms = new Vector2(InputManager.Instance.MouseX, InputManager.Instance.MouseY);
+            ms = new Vector2(InputManager.Instance.MouseX, InputManager.Instance.MouseY) * weaponSensitivity;
             if (IsPassive(ms.x, HorizontalThreshold) && IsPassive(ms.y, VerticalThreshold))
                 TrackAction(MouseDirections.None);
             else if (IsNegative(ms.x, HorizontalThreshold) && IsPositive(ms.y, VerticalThreshold))

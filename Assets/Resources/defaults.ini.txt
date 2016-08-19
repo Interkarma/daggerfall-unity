@@ -37,6 +37,7 @@ HeadBobbing=False
 Handedness=0
 WeaponSwingThreshold=0.8
 WeaponSwingTriggerCount=3
+WeaponSensitivity=1.0
 
 [Startup]
 StartCellX=109
@@ -46,6 +47,7 @@ StartInDungeon=True
 [Experimental]
 HQTooltips=False
 TerrainDistance=3
+DebugWeaponSwings=False
 
 [Enhancements]
 LypyL_GameConsole=True
