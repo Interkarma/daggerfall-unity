@@ -414,31 +414,52 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Determines if player is able to rest or not
+        /// Determines if player is able to rest or not.
+        /// Based on minimum distance to nearest monster, and if monster can actually sense player.
         /// </summary>
-        /// <returns></returns>
-        public bool CanPlayerRest(float minMonsterDistance = 20f)
+        /// <param name="minMonsterDistance">Monsters must be at least this far away.</param>
+        /// <returns>True if player can rest.</returns>
+        public bool CanPlayerRest(float minMonsterDistance = 10f)
         {
             const int enemiesNearby = 354;
 
             if (!PlayerController.isGrounded)
                 return false;
 
+            bool canRest = true;
             DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
             for (int i = 0; i < entityBehaviours.Length; i++)
             {
                 DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
                 if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
                 {
+                    // Is a monster inside min distance?
                     if (Vector3.Distance(entityBehaviour.transform.position, PlayerController.transform.position) < minMonsterDistance)
                     {
-                        DaggerfallUI.MessageBox(enemiesNearby);
-                        return false;
+                        canRest = false;
+                        break;
+                    }
+
+                    // Is monster already aware of player?
+                    EnemySenses enemySenses = entityBehaviour.GetComponent<EnemySenses>();
+                    if (enemySenses)
+                    {
+                        if (enemySenses.PlayerInSight || enemySenses.PlayerInEarshot)
+                        {
+                            canRest = false;
+                            break;
+                        }
                     }
                 }
             }
 
-            return true;
+            // Alert player if monsters neaby
+            if (!canRest)
+            {
+                DaggerfallUI.MessageBox(enemiesNearby);
+            }
+
+            return canRest;
         }
 
         #endregion

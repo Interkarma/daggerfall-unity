@@ -140,7 +140,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup counter text
             Panel counterTextPanel = DaggerfallUI.AddPanel(counterTextPanelRect, counterPanel);
-            counterLabel.Position = new Vector2(0, 1);
+            counterLabel.Position = new Vector2(0, 2);
             counterLabel.HorizontalAlignment = HorizontalAlignment.Center;
             counterTextPanel.Components.Add(counterLabel);
 
