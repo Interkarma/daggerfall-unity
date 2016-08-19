@@ -1020,6 +1020,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         IEnumerator LoadGame(string saveName, string path)
         {
+            GameManager.Instance.PlayerMotor.CancelMovement = true;
+            InputManager.Instance.ClearAllActions();
+
             // Read save data from files
             string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
 

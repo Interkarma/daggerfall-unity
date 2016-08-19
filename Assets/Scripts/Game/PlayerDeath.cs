@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallEntityBehaviour entityBehaviour;
         PlayerEntity playerEntity;
         CharacterController playerController;
+        PlayerMotor playerMotor;
         Camera mainCamera;
         bool deathInProgress;
         float startCameraHeight;
@@ -55,6 +56,7 @@ namespace DaggerfallWorkshop.Game
         void Awake()
         {
             playerController = GetComponent<CharacterController>();
+            playerMotor = GetComponent<PlayerMotor>();
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             entityBehaviour.OnSetEntity += EntityBehaviour_OnSetEntity;
             mainCamera = GameManager.Instance.MainCamera;
@@ -71,6 +73,8 @@ namespace DaggerfallWorkshop.Game
         {
             if (deathInProgress && mainCamera)
             {
+                playerMotor.CancelMovement = true;
+
                 if (currentCameraHeight > targetCameraHeight)
                 {
                     currentCameraHeight -= fallSpeed * Time.deltaTime;

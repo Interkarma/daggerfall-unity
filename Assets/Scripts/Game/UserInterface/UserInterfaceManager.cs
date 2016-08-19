@@ -84,6 +84,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Add window
             AddWindow(window);
 
+            // Clear all user input from world
+            InputManager.Instance.ClearAllActions();
+
             // Raise event
             if (OnWindowChange != null)
                 OnWindowChange(this, null);

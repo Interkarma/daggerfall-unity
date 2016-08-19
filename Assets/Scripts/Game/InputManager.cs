@@ -324,6 +324,21 @@ namespace DaggerfallWorkshop.Game
         #region Public Methods
 
         /// <summary>
+        /// Clears all queued actions and action state.
+        /// </summary>
+        public void ClearAllActions()
+        {
+            previousActions.Clear();
+            currentActions.Clear();
+            horizontal = 0;
+            vertical = 0;
+            mouseX = 0;
+            mouseY = 0;
+            lookX = 0;
+            lookY = 0;
+        }
+
+        /// <summary>
         /// Returns true when specified action is in progress for current frame.
         /// </summary>
         public bool HasAction(Actions action)

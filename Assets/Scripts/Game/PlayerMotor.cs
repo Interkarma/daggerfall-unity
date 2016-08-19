@@ -78,6 +78,8 @@ namespace DaggerfallWorkshop.Game
         private bool playerControl = false;
         private int jumpTimer;
 
+        private bool cancelMovement = false;
+
         public bool IsGrounded
         {
             get { return grounded; }
@@ -104,6 +106,17 @@ namespace DaggerfallWorkshop.Game
             get { return contactPoint; }
         }
 
+        /// <summary>
+        /// Cancels all movement impulses next frame.
+        /// Used to scrub movement impulse when player dies, opens inventory, or loads game.
+        /// Flag will be lowered again after movement cleared.
+        /// </summary>
+        public bool CancelMovement
+        {
+            get { return cancelMovement; }
+            set { cancelMovement = value; }
+        }
+
         void Start()
         {
             controller = GetComponent<CharacterController>();
@@ -116,6 +129,16 @@ namespace DaggerfallWorkshop.Game
 
         void FixedUpdate()
         {
+            // Clear movement
+            if (cancelMovement)
+            {
+                moveDirection = Vector3.zero;
+                cancelMovement = false;
+                ClearActivePlatform();
+                ClearFallingDamage();
+                return;
+            }
+
             //float inputX = Input.GetAxis("Horizontal");
             //float inputY = Input.GetAxis("Vertical");
             float inputX = InputManager.Instance.Horizontal;
