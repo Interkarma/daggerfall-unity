@@ -86,6 +86,7 @@ namespace ProjectIncreasedTerrainDistance
         bool isActiveReflectionsMod = false;
         bool isActiveEnhancedSkyMod = false;
 
+        bool justToggledEnhancedSky = false;
 
         // is dfUnity ready?
         bool isReady = false;
@@ -176,8 +177,7 @@ namespace ProjectIncreasedTerrainDistance
         public Camera getStackedNearCamera() { return stackedNearCamera; }
 
         #if ENHANCED_SKY_CODE_AVAILABLE
-        EnhancedSky.SkyManager skyMan = null;
-        bool sampleFogColorFromSky = false;
+        EnhancedSky.SkyManager skyManager = null;
         #endif
 
         GameObject goRenderSkyboxToTexture = null;
@@ -291,11 +291,9 @@ namespace ProjectIncreasedTerrainDistance
 
             PlayerEnterExit.OnTransitionExterior += TransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += TransitionToExterior;
+
             #if ENHANCED_SKY_CODE_AVAILABLE
-            if (isActiveEnhancedSkyMod)
-            {
                 EnhancedSky.SkyManager.toggleSkyObjectsEvent += EnhancedSkyToggle;
-            }
             #endif
         }
 
@@ -314,24 +312,23 @@ namespace ProjectIncreasedTerrainDistance
             PlayerEnterExit.OnTransitionDungeonExterior -= TransitionToExterior;
 
             #if ENHANCED_SKY_CODE_AVAILABLE
-            if (isActiveEnhancedSkyMod)
-            {
                 EnhancedSky.SkyManager.toggleSkyObjectsEvent -= EnhancedSkyToggle;
-            }
             #endif
         }
 
         void EnhancedSkyToggle(bool toggle)
         {
             #if ENHANCED_SKY_CODE_AVAILABLE
-            if (toggle)
+           //  if (toggle) // no longer works for a reason - toggle is always false - so check property instead...
+            if ((skyManager != null) && (skyManager.EnhancedSkyCurrentToggle == true))
             {
-                sampleFogColorFromSky = true;
+                isActiveReflectionsMod = true;
             }
             else
             {
-                sampleFogColorFromSky = false;
+                isActiveReflectionsMod = false;
             }
+            justToggledEnhancedSky = true;
             #endif
         }
 
@@ -452,8 +449,25 @@ namespace ProjectIncreasedTerrainDistance
             if (!DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
                 return;
 
-            if (GameObject.Find("EnhancedSkyController") != null)
-                isActiveEnhancedSkyMod = true;
+            #if ENHANCED_SKY_CODE_AVAILABLE
+                //skyManager = GameObject.Find("EnhancedSkyController").GetComponent<EnhancedSky.SkyManager>();
+                EnhancedSky.SkyManager[] skyManagers = Resources.FindObjectsOfTypeAll<EnhancedSky.SkyManager>();
+                foreach (EnhancedSky.SkyManager currentSkyManager in skyManagers)
+                {
+                    GameObject go = currentSkyManager.gameObject;
+                    string objectPathInHierarchy = GetGameObjectPath(go);
+                    if (objectPathInHierarchy == "/EnhancedSkyController")
+                    {
+                        skyManager = currentSkyManager;
+                        break;
+                    }
+                }
+
+                if ((skyManager) && (DaggerfallUnity.Settings.LypyL_EnhancedSky))
+                {
+                    isActiveEnhancedSkyMod = true;
+                }
+            #endif
 
             if (GameObject.Find("ReflectionsMod") != null)
             {
@@ -532,6 +546,10 @@ namespace ProjectIncreasedTerrainDistance
                     Application.Quit();
             }
 
+            // prevent NullReferenceException on application close when coming from EnhancedSkyToggle event (no idea why it is raised on application close)
+            if (Camera.main == null)
+                return;
+
             // Set main camera settings
             Camera.main.farClipPlane = mainCameraFarClipPlane;
 
@@ -600,6 +618,10 @@ namespace ProjectIncreasedTerrainDistance
             // Ensure these are setup first or SetUpCameras() will barf
             SetupGameObjects();
 
+            // prevent NullReferenceException on application close when coming from EnhancedSkyToggle event (no idea why it is raised on application close)
+            if (Camera.main == null)
+                return;
+
             // set up camera stack - AFTER layer "WorldTerrain" has been assigned to worldTerrainGameObject (is done in function generateWorldTerrain())
 
             Camera.main.clearFlags = CameraClearFlags.Depth;
@@ -614,30 +636,6 @@ namespace ProjectIncreasedTerrainDistance
 
             cameraRenderSkyboxToTexture.depth = cameraRenderSkyboxToTextureDepth; // make sure to render first
             cameraRenderSkyboxToTexture.renderingPath = stackedCamera.renderingPath;
-
-            #if ENHANCED_SKY_CODE_AVAILABLE
-            if (isActiveEnhancedSkyMod)
-            {
-                //skyMan = GameObject.Find("EnhancedSkyController").GetComponent<EnhancedSky.SkyManager>();
-                EnhancedSky.SkyManager[] skyManagers = Resources.FindObjectsOfTypeAll<EnhancedSky.SkyManager>();
-                foreach (EnhancedSky.SkyManager currentSkyManager in skyManagers)
-                {
-                    GameObject go = currentSkyManager.gameObject;
-                    string objectPathInHierarchy = GetGameObjectPath(go);
-                    if (objectPathInHierarchy == "/EnhancedSkyController")
-                    {
-                        skyMan = currentSkyManager;
-                        break;
-                    }
-                }
-
-                if ((skyMan) && (skyMan.gameObject.activeInHierarchy))
-                {
-                    sampleFogColorFromSky = true;
-                }
-            }
-            #endif
-    
             cameraRenderSkyboxToTexture.targetTexture = renderTextureSky;
         }
 
@@ -694,16 +692,13 @@ namespace ProjectIncreasedTerrainDistance
                     setMaterialFogParameters(ref this.terrainMaterial);
             
                     #if ENHANCED_SKY_CODE_AVAILABLE
-                    if (isActiveEnhancedSkyMod)
+                    if ((isActiveEnhancedSkyMod) && (!skyManager.IsOvercast))
                     {
-                        if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
-                        {
-                            terrain.materialTemplate.SetFloat("_FogFromSkyTex", 1);
-                        }
-                        else
-                        {
-                            terrain.materialTemplate.SetFloat("_FogFromSkyTex", 0);
-                        }
+                        terrain.materialTemplate.SetInt("_FogFromSkyTex", 1);
+                    }
+                    else
+                    {
+                        terrain.materialTemplate.SetInt("_FogFromSkyTex", 0);
                     }
                     #endif
 
@@ -751,6 +746,12 @@ namespace ProjectIncreasedTerrainDistance
             if (terrainTransitionRingUpdateMaterialProperties)
             {
                 updateMaterialShaderPropertiesTerrainTransitionRing();
+            }
+
+            if (justToggledEnhancedSky)
+            {
+                SetUpCameras();
+                justToggledEnhancedSky = false;
             }
         }
 
@@ -1188,19 +1189,16 @@ namespace ProjectIncreasedTerrainDistance
                 mat.SetFloat("_WorldOffsetX", 0.0f);
                 mat.SetFloat("_WorldOffsetY", 0.0f);
 
-#if ENHANCED_SKY_CODE_AVAILABLE
-                if (isActiveEnhancedSkyMod)
+                #if ENHANCED_SKY_CODE_AVAILABLE
+                if ((isActiveEnhancedSkyMod) && (!skyManager.IsOvercast))
                 {
-                    if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
-                    {
-                        mat.SetFloat("_FogFromSkyTex", 1);
-                    }
-                    else
-                    {
-                        mat.SetFloat("_FogFromSkyTex", 0);
-                    }
+                    mat.SetInt("_FogFromSkyTex", 1);
                 }
-#endif
+                else
+                {
+                    mat.SetInt("_FogFromSkyTex", 0);
+                }
+                #endif
 
                 setMaterialFogParameters(ref mat);
 
@@ -1326,17 +1324,14 @@ namespace ProjectIncreasedTerrainDistance
 
             newMaterial.SetInt("_FogFromSkyTex", 0);
             #if ENHANCED_SKY_CODE_AVAILABLE
-                if (isActiveEnhancedSkyMod)
-                {
-                    if ((sampleFogColorFromSky == true) && (!skyMan.IsOvercast))
-                    {
-                        newMaterial.SetFloat("_FogFromSkyTex", 1);
-                    }
-                    else
-                    {
-                        newMaterial.SetFloat("_FogFromSkyTex", 0);
-                    }
-                }
+            if ((isActiveEnhancedSkyMod) && (!skyManager.IsOvercast))
+            {
+                newMaterial.SetInt("_FogFromSkyTex", 1);
+            }
+            else
+            {
+                newMaterial.SetInt("_FogFromSkyTex", 0);
+            }
             #endif
 
             setMaterialFogParameters(ref newMaterial);            

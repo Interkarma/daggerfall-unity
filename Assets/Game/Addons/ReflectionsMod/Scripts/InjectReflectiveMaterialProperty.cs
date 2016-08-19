@@ -38,7 +38,6 @@ namespace ReflectionsMod
         private GameObject gameObjectReflectionPlaneSeaLevel = null;
         private GameObject gameObjectReflectionPlaneLowerLevel = null;
 
-        private bool isIncreasedTerrainDistanceMod = false;
         private float extraTranslationY = 0.0f;
 
         private GameObject gameObjectStreamingTarget = null;
@@ -130,7 +129,6 @@ namespace ReflectionsMod
             {
                 if (DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
                 {
-                    isIncreasedTerrainDistanceMod = true;
                     extraTranslationY = GameObject.Find("IncreasedTerrainDistanceMod").GetComponent<ProjectIncreasedTerrainDistance.IncreasedTerrainDistance>().ExtraTranslationY;
                 }
             }
