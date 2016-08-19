@@ -419,7 +419,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         /// <param name="minMonsterDistance">Monsters must be at least this far away.</param>
         /// <returns>True if player can rest.</returns>
-        public bool CanPlayerRest(float minMonsterDistance = 10f)
+        public bool CanPlayerRest(float minMonsterDistance = 12f)
         {
             const int enemiesNearby = 354;
 

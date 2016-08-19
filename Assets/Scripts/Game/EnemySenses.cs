@@ -21,9 +21,9 @@ namespace DaggerfallWorkshop.Game
     {
         public static Vector3 ResetPlayerPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
-        public float SightRadius = 16f;         // Range of enemy sight
-        public float HearingRadius = 8f;        // Range of enemy hearing
-        public float FieldOfView = 120f;        // Enemy field of view
+        public float SightRadius = 18f;         // Range of enemy sight
+        public float HearingRadius = 10f;       // Range of enemy hearing
+        public float FieldOfView = 140f;        // Enemy field of view
 
         GameObject player;
         DaggerfallMobileUnit mobile;
