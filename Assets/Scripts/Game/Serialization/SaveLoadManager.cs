@@ -348,7 +348,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Load game
             GameManager.Instance.PauseGame(false);
-            DaggerfallUI.Instance.FadeHUDFromBlack();
             StartCoroutine(LoadGame(saveName, path));
 
             // Notify
@@ -384,7 +383,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Load game
             string path = GetSavePath(quickSaveName, false);
             GameManager.Instance.PauseGame(false);
-            DaggerfallUI.Instance.FadeHUDFromBlack();
             StartCoroutine(LoadGame(quickSaveName, path));
 
             // Notify
@@ -1020,6 +1018,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         IEnumerator LoadGame(string saveName, string path)
         {
+            GameManager.Instance.PlayerDeath.ClearDeathAnimation();
             GameManager.Instance.PlayerMotor.CancelMovement = true;
             InputManager.Instance.ClearAllActions();
 
@@ -1098,6 +1097,9 @@ namespace DaggerfallWorkshop.Game.Serialization
                     repositionPlayer);
             }
 
+            // Smash to black while respawning
+            DaggerfallUI.Instance.SmashHUDToBlack();
+
             // Keep yielding frames until world is ready again
             while (playerEnterExit.IsRespawning)
             {
@@ -1127,6 +1129,9 @@ namespace DaggerfallWorkshop.Game.Serialization
                 string message = string.Format("Failed to load automap state. Message: {0}", ex.Message);
                 Debug.Log(message);
             }
+
+            // Fade out from black
+            DaggerfallUI.Instance.FadeHUDFromBlack(1.5f);
 
             // Raise OnLoad event
             RaiseOnLoadEvent(saveData);

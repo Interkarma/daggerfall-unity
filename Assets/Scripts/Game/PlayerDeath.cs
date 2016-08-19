@@ -60,6 +60,8 @@ namespace DaggerfallWorkshop.Game
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             entityBehaviour.OnSetEntity += EntityBehaviour_OnSetEntity;
             mainCamera = GameManager.Instance.MainCamera;
+
+            startCameraHeight = mainCamera.transform.localPosition.y;
         }
 
         void Start()
@@ -107,6 +109,20 @@ namespace DaggerfallWorkshop.Game
                 Vector3 pos = mainCamera.transform.localPosition;
                 pos.y = startCameraHeight;
                 mainCamera.transform.localPosition = pos;
+            }
+        }
+
+        /// <summary>
+        /// Clears death animation state and fade
+        /// </summary>
+        public void ClearDeathAnimation()
+        {
+            if (deathInProgress)
+            {
+                DaggerfallUI.Instance.ClearFade();
+                deathInProgress = false;
+                InputManager.Instance.IsPaused = false;
+                ResetCamera();
             }
         }
 

@@ -62,6 +62,14 @@ namespace DaggerfallWorkshop.Game
         char lastCharacterTyped;
         KeyCode lastKeyCode;
 
+        bool fadeInProgress;
+        Panel fadeTargetPanel;
+        float fadeTimer;
+        float fadeTotalTime;
+        float fadeDuration;
+        Color fadeStartColor;
+        Color fadeEndColor;
+
         bool hudSetup = false;
         DaggerfallHUD dfHUD;
         DaggerfallPauseOptionsWindow dfPauseOptionsWindow;
@@ -168,6 +176,10 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            // Progress fade
+            if (fadeInProgress)
+                TickFade();
+
             // HUD is always first window on stack when ready
             if (dfUnity.IsPathValidated && !hudSetup)
             {
@@ -252,7 +264,7 @@ namespace DaggerfallWorkshop.Game
                     uiManager.PushWindow(dfInventoryWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
-                    if(!GameManager.Instance.IsPlayerInside)        //TODO: pop-up when try to travel near enemies
+                    if (!GameManager.Instance.IsPlayerInside)        //TODO: pop-up when try to travel near enemies
                         uiManager.PushWindow(dfTravelMapWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenAutomap:
@@ -278,7 +290,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-#region Helpers
+        #region Helpers
 
         public static void AddHUDText(string message)
         {
@@ -419,22 +431,35 @@ namespace DaggerfallWorkshop.Game
                 dfAudioSource.PlayOneShot(clip, 0);
         }
 
-        public void FadeHUDToBlack(float fadeDuration = 0.4f)
+        public void SmashHUDToBlack()
         {
-            if (dfHUD == null)
-                return;
-
-            dfHUD.ParentPanel.BackgroundColor = Color.clear;
-            StartCoroutine(FadePanelBackground(dfHUD.ParentPanel, dfHUD.ParentPanel.BackgroundColor, Color.black, fadeDuration));
+            dfHUD.ParentPanel.BackgroundColor = Color.black;
         }
 
-        public void FadeHUDFromBlack(float fadeDuration = 0.4f)
+        public void FadeHUDToBlack(float fadeDuration = 0.5f)
         {
             if (dfHUD == null)
                 return;
 
-            dfHUD.ParentPanel.BackgroundColor = Color.clear;
-            StartCoroutine(FadePanelBackground(dfHUD.ParentPanel, Color.black, dfHUD.ParentPanel.BackgroundColor, fadeDuration));
+            fadeTargetPanel = dfHUD.ParentPanel;
+            fadeStartColor = Color.clear;
+            fadeEndColor = Color.black;
+            this.fadeDuration = fadeDuration;
+            fadeTargetPanel.BackgroundColor = Color.clear;
+            fadeInProgress = true;
+        }
+
+        public void FadeHUDFromBlack(float fadeDuration = 0.5f)
+        {
+            if (dfHUD == null)
+                return;
+
+            fadeTargetPanel = dfHUD.ParentPanel;
+            fadeStartColor = Color.black;
+            fadeEndColor = Color.clear;
+            this.fadeDuration = fadeDuration;
+            fadeTargetPanel.BackgroundColor = Color.black;
+            fadeInProgress = true;
         }
 
         public void ClearFade()
@@ -443,11 +468,14 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             dfHUD.ParentPanel.BackgroundColor = Color.clear;
+            fadeTimer = 0;
+            fadeTotalTime = 0;
+            fadeInProgress = false;
         }
 
-#endregion
+        #endregion
 
-#region Static Helpers
+        #region Static Helpers
 
         public static Button AddButton(Vector2 position, Vector2 size, Panel panel = null)
         {
@@ -693,9 +721,9 @@ namespace DaggerfallWorkshop.Game
             return messageBox;
         }
 
-#endregion
+        #endregion
 
-#region Singleton
+        #region Singleton
 
         static DaggerfallUI instance = null;
         public static DaggerfallUI Instance
@@ -749,62 +777,36 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-#endregion
+        #endregion
 
-#region Event Handlers
+        #region Private Methods
 
-        //private void PauseOptionsDialog_OnClose()
-        //{
-        //    GameManager.Instance.PauseGame(false);
-        //}
-
-        //private void CharacterSheetWindow_OnClose()
-        //{
-        //    GameManager.Instance.PauseGame(false);
-        //}
-
-        //private void InventoryWindow_OnClose()
-        //{
-        //    GameManager.Instance.PauseGame(false);
-        //}
-
-        //private void AutomapDialog_OnClose()
-        //{
-        //    GameManager.Instance.PauseGame(false);
-        //}
-
-#endregion
-
-#region Private Methods
-
-        // Fades HUD background in from black to briefly hide world while loading
-        IEnumerator FadePanelBackground(Panel target, Color startColor, Color targetColor, float fadeDuration = 0.4f, bool popWindowOnCompletion = false)
+        void TickFade()
         {
             const float fadeStep = 0.02f;
 
             // Must have a HUD to fade
-            if (dfHUD == null)
-                yield break;
+            if (dfHUD == null || !fadeInProgress)
+                return;
 
-            // Setup fade
-            target.BackgroundColor = startColor;
-
-            // Progress fade
-            float progress = 0;
-            float increment = fadeStep / fadeDuration;
-            while (progress < 1)
+            // Change fade setting
+            fadeTimer += Time.deltaTime;
+            if (fadeTimer > fadeStep)
             {
-                target.BackgroundColor = Color.Lerp(startColor, targetColor, progress);
-                progress += increment;
-                yield return new WaitForSeconds(fadeStep);
+                fadeTotalTime += fadeStep;
+                float progress = fadeTotalTime / fadeDuration;
+                fadeTargetPanel.BackgroundColor = Color.Lerp(fadeStartColor, fadeEndColor, progress);
+                fadeTimer = 0;
             }
 
-            // Ensure starting colour is restored
-            target.BackgroundColor = targetColor;
-
-            // Pop window if specified
-            if (popWindowOnCompletion)
-                uiManager.PopWindow();
+            // Handle fade completion
+            if (fadeTotalTime > fadeDuration)
+            {
+                fadeTargetPanel.BackgroundColor = fadeEndColor;
+                fadeTimer = 0;
+                fadeTotalTime = 0;
+                fadeInProgress = false;
+            }
         }
 
         // Re-init game with specified video
@@ -818,6 +820,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-#endregion
+        #endregion
     }
 }
