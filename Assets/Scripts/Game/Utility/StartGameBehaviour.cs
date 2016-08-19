@@ -215,6 +215,15 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Enable/disable videos
             DaggerfallUI.Instance.enableVideos = EnableVideos;
+
+            // Streaming world terrain distance
+            int terrainDistance = DaggerfallUnity.Settings.TerrainDistance;
+            if (DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
+            {
+                // Reduce terrain distance by 1 if far terrain enabled
+                terrainDistance = Mathf.Clamp(terrainDistance - 1, 1, 4);
+            }
+            GameManager.Instance.StreamingWorld.TerrainDistance = terrainDistance;
         }
 
         #endregion

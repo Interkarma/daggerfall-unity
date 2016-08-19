@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop
         const string sectionGUI = "GUI";
         const string sectionControls = "Controls";
         const string sectionStartup = "Startup";
+        const string sectionExperimental = "Experimental";
         const string sectionEnhancements = "Enhancements";
 
         FileIniDataParser iniParser = new FileIniDataParser();
@@ -101,6 +102,10 @@ namespace DaggerfallWorkshop
         public int StartCellY { get; set; }
         public bool StartInDungeon { get; set; }
 
+        // [Experimental]
+        public bool HQTooltips { get; set; }
+        public int TerrainDistance { get; set; }
+
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
         public bool LypyL_ModSystem { get; set; }
@@ -156,6 +161,8 @@ namespace DaggerfallWorkshop
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
             StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
+            HQTooltips = GetBool(sectionExperimental, "HQTooltips");
+            TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
             LypyL_EnhancedSky = GetBool(sectionEnhancements, "LypyL_EnhancedSky");
@@ -204,6 +211,8 @@ namespace DaggerfallWorkshop
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);
             SetBool(sectionStartup, "StartInDungeon", StartInDungeon);
+            SetBool(sectionExperimental, "HQTooltips", HQTooltips);
+            SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
             SetBool(sectionEnhancements, "LypyL_EnhancedSky", LypyL_EnhancedSky);

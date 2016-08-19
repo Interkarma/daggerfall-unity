@@ -43,6 +43,10 @@ StartCellX=109
 StartCellY=158
 StartInDungeon=True
 
+[Experimental]
+HQTooltips=False
+TerrainDistance=3
+
 [Enhancements]
 LypyL_GameConsole=True
 LypyL_ModSystem=True

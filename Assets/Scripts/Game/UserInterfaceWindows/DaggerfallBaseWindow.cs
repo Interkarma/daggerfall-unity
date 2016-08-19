@@ -62,6 +62,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 defaultToolTip.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
                 defaultToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;
                 defaultToolTip.Parent = nativePanel;
+
+                // Experimental HQ tooltip
+                if (DaggerfallUnity.Settings.HQTooltips)
+                {
+                    defaultToolTip.Font = DaggerfallUI.Instance.GetHQPixelFont(DaggerfallUI.HQPixelFonts.Petrock_32);
+                    defaultToolTip.Parent = parentPanel;
+                }
             }
         }
 
