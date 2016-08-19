@@ -373,8 +373,8 @@ namespace ReflectionsMod
                 //Debug.Log(string.Format("distance to lower level: {0}", distanceLevelBelow));
                 reflectionPlaneSeaLevel.transform.position = goPlayerAdvanced.transform.position - new Vector3(0.0f, distanceLevelBelow, 0.0f);                
             }
-
-            if (!GameManager.Instance.IsPlayerInside)
+            else
+            //if (!GameManager.Instance.IsPlayerInside)
             {
                 Terrain terrainInstancePlayerTerrain = null;
 

@@ -264,8 +264,8 @@ namespace ReflectionsMod
                         {
                             if (m.shader.name == "Daggerfall/FloorMaterialWithReflections")
                             {
-                                m.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y - extraTranslationY);
-                                m.SetFloat("_LowerLevelHeight", gameObjectReflectionPlaneLowerLevel.transform.position.y - extraTranslationY);
+                                m.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y);
+                                m.SetFloat("_LowerLevelHeight", gameObjectReflectionPlaneLowerLevel.transform.position.y);
                             }
                         }
                         r.sharedMaterials = mats;
