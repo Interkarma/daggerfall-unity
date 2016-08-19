@@ -64,8 +64,16 @@ float _FogDensity;
 float _FogStartDistance;
 float _FogEndDistance;
 
-void fcolor (Input IN, SurfaceOutput o, inout fixed4 color)
-{			
+void fcolor (Input IN, SurfaceOutputStandard o, inout fixed4 color) //inout half4 outDiffuse : SV_Target0, inout half4 outSpecSmoothness : SV_Target1, inout half4 outNormal : SV_Target2, inout half4 outEmission : SV_Target3)
+{
+		//inout fixed4 color,
+		//inout half4 outDiffuse : SV_Target0,            // RT0: diffuse color (rgb), occlusion (a)
+        //inout half4 outSpecSmoothness : SV_Target1,    // RT1: spec color (rgb), smoothness (a)
+        //inout half4 outNormal : SV_Target2,            // RT2: normal (rgb), --unused, very low precision-- (a)
+        //inout half4 outEmission : SV_Target3            // RT3: emission (rgb), --unused-- (a))
+
+	//half4 color = outDiffuse;
+
 	float dist = distance(IN.worldPos.xz, _WorldSpaceCameraPos.xz); //max(abs(IN.worldPos.x - _WorldSpaceCameraPos.x), abs(IN.worldPos.z - _WorldSpaceCameraPos.z));
 	
 	float blendFacTerrain = 1.0f;
@@ -105,6 +113,9 @@ void fcolor (Input IN, SurfaceOutput o, inout fixed4 color)
 	}
 
 	color.a = alphaFadeAmount;
+
+	//outDiffuse = half4(1.0f, 0.0f, 0.0f,0.5f); //color;
+	o.Albedo = half3(1.0f, 0.0f, 0.0f);
 }
 
 

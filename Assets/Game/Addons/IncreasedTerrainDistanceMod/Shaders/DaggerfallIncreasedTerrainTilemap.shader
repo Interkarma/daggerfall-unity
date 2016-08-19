@@ -62,7 +62,7 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 
 		#pragma target 3.0		
 		//#pragma surface surf Lambert vertex:vert alpha:fade keepalpha finalcolor:fcolor noforwardadd
-		#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd
+		#pragma surface surf Standard noforwardadd finalcolor:fcolor alpha:fade keepalpha
 		#pragma glsl
 		#pragma multi_compile __ ENABLE_WATER_REFLECTIONS
 
@@ -83,8 +83,8 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		//	OUT.worldPos = worldpos;
 		//}
 
-		void surf (Input IN, inout SurfaceOutput o)
-		{
+		void surf (Input IN, inout SurfaceOutputStandard o)
+		{		
 			half4 c; // output color value
 
 			float4 terrainTileInfo = tex2D(_FarTerrainTilemapTex, IN.uv_MainTex).rgba;
@@ -134,13 +134,13 @@ Shader "Daggerfall/IncreasedTerrainTilemap" {
 		CGPROGRAM
 
 		#pragma target 3.0		
-		#pragma surface surf Lambert alpha:fade keepalpha finalcolor:fcolor noforwardadd
+		#pragma surface surf Standard noforwardadd finalcolor:fcolor alpha:fade keepalpha
 		#pragma glsl
 		#pragma multi_compile __ ENABLE_WATER_REFLECTIONS
 
 		#include "FarTerrainCommon.cginc"
 
-		void surf (Input IN, inout SurfaceOutput o)
+		void surf (Input IN, inout SurfaceOutputStandard o)
 		{
 			half4 c; // output color value
 
