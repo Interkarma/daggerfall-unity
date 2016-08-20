@@ -816,7 +816,7 @@ namespace DaggerfallWorkshop.Game
             {
                 uiManager.PushWindow(new DaggerfallStartWindow(uiManager));
                 if (!string.IsNullOrEmpty(video) && enableVideos)
-                    uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, splashVideo));
+                    uiManager.PushWindow(new DaggerfallVidPlayerWindow(uiManager, video));
             }
         }
 

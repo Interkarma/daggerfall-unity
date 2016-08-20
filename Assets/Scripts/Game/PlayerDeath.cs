@@ -113,7 +113,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Clears death animation state and fade
+        /// Clears death animation state and fade.
         /// </summary>
         public void ClearDeathAnimation()
         {

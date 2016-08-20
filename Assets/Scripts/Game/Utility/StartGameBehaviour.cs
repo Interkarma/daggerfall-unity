@@ -263,6 +263,9 @@ namespace DaggerfallWorkshop.Game.Utility
             if (GameManager.Instance.PlayerDeath)
                 GameManager.Instance.PlayerDeath.ResetCamera();
 
+            // Set behaviour back to title menu
+            StartMethod = StartMethods.TitleMenu;
+
             DaggerfallUI.Instance.PopToHUD();
             playerEnterExit.DisableAllParents();
             ResetWeaponManager();
