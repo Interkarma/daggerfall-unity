@@ -99,6 +99,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         public PlayerPositionData_v1 playerPosition;
         public PlayerEntityData_v1 playerEntity;
+        public bool weaponDrawn;
     }
 
     [fsObject("v1")]

@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         PlayerMouseLook playerMouseLook;
         PlayerMotor playerMotor;
         DaggerfallEntityBehaviour playerEntityBehaviour;
+        WeaponManager weaponManager;
 
         #endregion
 
@@ -66,6 +67,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerEntityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             if (!playerEntityBehaviour)
                 throw new Exception("PlayerEntityBehaviour not found.");
+
+            weaponManager = GetComponent<WeaponManager>();
+            if (!weaponManager)
+                throw new Exception("WeaponManager not found.");
 
             SaveLoadManager.RegisterSerializableGameObject(this);
         }
@@ -123,6 +128,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerPosition.insideBuilding = playerEnterExit.IsPlayerInsideBuilding;
             data.playerPosition.terrainSamplerName = DaggerfallUnity.Instance.TerrainSampler.ToString();
             data.playerPosition.terrainSamplerVersion = DaggerfallUnity.Instance.TerrainSampler.Version;
+
+            // Store weapon state
+            data.weaponDrawn = !weaponManager.Sheathed;
 
             // Store building exterior door data
             if ((playerEnterExit.IsPlayerInsideBuilding))
@@ -191,6 +199,9 @@ namespace DaggerfallWorkshop.Game.Serialization
                 playerMouseLook.Pitch = data.playerPosition.pitch;
                 playerMotor.IsCrouching = data.playerPosition.isCrouching;
             }
+
+            // Restore sheath state
+            weaponManager.Sheathed = !data.weaponDrawn;
         }
 
         #endregion
