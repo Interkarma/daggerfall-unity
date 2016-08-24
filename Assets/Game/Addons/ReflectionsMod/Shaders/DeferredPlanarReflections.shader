@@ -15,18 +15,27 @@ Shader "Daggerfall/DeferredPlanarReflections" {
     sampler2D _CameraGBufferTexture3;
     sampler2D _CameraReflectionsTexture;
     sampler2D _MainTex;
-       
+
+	sampler2D _ReflectionGroundTex;
+	sampler2D _ReflectionLowerLevelTex;
+
+	float _GroundLevelHeight;
+	float _LowerLevelHeight;     
 
     struct v2f
     {
             float4 pos : SV_POSITION;
             float2 uv : TEXCOORD0;
             float2 uv2 : TEXCOORD1;
+			float3 worldPos : TEXCOORD2;
+			float4 screenPos : TEXCOORD3;
+			float4 parallaxCorrectedScreenPos : TEXCOORD4;
     };
 
     v2f vert( appdata_img v )
     {
             v2f o;
+			UNITY_INITIALIZE_OUTPUT(v2f, o);
 
             o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
             o.uv = v.texcoord.xy;
@@ -36,14 +45,56 @@ Shader "Daggerfall/DeferredPlanarReflections" {
             //        if (_MainTex_TexelSize.y < 0)
             //                o.uv2.y = 1-o.uv2.y;
             //#endif
+
+			float4 posWorldSpace = mul(unity_ObjectToWorld, v.vertex);
+			if ((abs(posWorldSpace.y - _GroundLevelHeight) < 0.01f) || (abs(posWorldSpace.y - _LowerLevelHeight) < 0.01f))
+			{
+				o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace));
+			}
+			else
+			{
+				// parallax-correct reflection position
+				if (posWorldSpace.y > _GroundLevelHeight+0.01f)
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight + 0.25f, 0.0f, 0.0f)));
+				else if (posWorldSpace.y < _GroundLevelHeight-0.01f)
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight - 0.14f, 0.0f, 0.0f)));				
+				else
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight, 0.0f, 0.0f)));
+			}
 						
             return o;
     }
 
+	float3 getReflectionColor(sampler2D tex, float2 screenUV, float smoothness)
+	{		
+		half mipmapLevel1 = floor(smoothness);
+		half mipmapLevel2 = ceil(smoothness);
+		float w = smoothness - mipmapLevel1;
+		return((1.0f-w) * tex2Dlod(tex, float4(screenUV, 0.0f, mipmapLevel1)).rgb + w * tex2Dlod(tex, float4(screenUV, 0.0f, mipmapLevel2)).rgb);
+	}
 				
-    float4 fragReflection(v2f i) : SV_Target
+    float4 fragReflection(v2f IN) : SV_Target
     {
-            float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);					
+			//float2 screenUV = IN.screenPos.xy / IN.screenPos.w;
+			float2 screenUV = IN.parallaxCorrectedScreenPos.xy / IN.parallaxCorrectedScreenPos.w;
+
+			half3 refl = half3(0.0f, 0.0f, 0.0f);
+			half smoothness = 1.0f;
+
+			if (abs(IN.worldPos.y - _LowerLevelHeight) < 0.01f)
+			{
+				refl = getReflectionColor(_ReflectionLowerLevelTex, screenUV, smoothness); //refl = tex2Dlod(_ReflectionLowerLevelTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
+			}
+			else if	(	//(abs(IN.worldPos.y - _GroundLevelHeight) < 0.01f)|| // fragment belong to object on current ground level plane
+						(IN.worldPos.y < _GroundLevelHeight)|| // fragment is below (use parallax-corrected reflection)
+						(IN.worldPos.y - _GroundLevelHeight < 0.32f) // fragment is slightly above (use parallax-corrected reflection) - also valid for current ground level plane
+					)
+			{
+				refl = getReflectionColor(_ReflectionGroundTex, screenUV, smoothness); //refl = tex2Dlod(_ReflectionGroundTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
+			}
+
+            //float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
+			float4 result = float4(refl.r, refl.g, refl.b, 0.1f);
             return result;
     }
 

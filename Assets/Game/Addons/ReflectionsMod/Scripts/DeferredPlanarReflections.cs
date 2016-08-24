@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
-
 using UnityEngine.Rendering;
+
+using ReflectionsMod;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -118,6 +119,12 @@ namespace ReflectionsMod
         private static int kFinalReflectionTexture;
         private static int kTempTexture;
 
+
+        private UpdateReflectionTextures instanceUpdateReflectionTextures = null;
+
+        public RenderTexture reflectionGroundTexture;
+        public RenderTexture reflectionLowerLevelTexture;
+
         // Shader pass indices used by the effect
         private enum PassIndex
         {
@@ -137,6 +144,8 @@ namespace ReflectionsMod
 
             //kFinalReflectionTexture = Shader.PropertyToID("_FinalReflectionTexture");
             //kTempTexture = Shader.PropertyToID("_TempTexture");
+
+            instanceUpdateReflectionTextures = GameObject.Find("ReflectionsMod").GetComponent<UpdateReflectionTextures>();
         }
 
         void OnDisable()
@@ -192,6 +201,14 @@ namespace ReflectionsMod
             RenderTextureFormat intermediateFormat = camera_.hdr ? RenderTextureFormat.ARGBHalf : RenderTextureFormat.ARGB32;
 
 			//material.SetMatrix("_CameraToWorldMatrix", camera_.worldToCameraMatrix.inverse);
+
+            reflectionGroundTexture = instanceUpdateReflectionTextures.getGroundReflectionRenderTexture();
+            reflectionLowerLevelTexture = instanceUpdateReflectionTextures.getSeaReflectionRenderTexture();
+            material.SetTexture("_ReflectionGroundTex", reflectionGroundTexture);
+            material.SetTexture("_ReflectionLowerLevelTex", reflectionLowerLevelTexture);
+
+            material.SetFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
+            material.SetFloat("_SeaLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
 
             if (m_CommandBuffer == null)
             {

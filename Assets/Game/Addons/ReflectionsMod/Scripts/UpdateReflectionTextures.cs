@@ -37,6 +37,28 @@ namespace ReflectionsMod
             return mirrorRefl.m_ReflectionTexture;
         }
 
+        public float ReflectionPlaneGroundLevelY
+        {
+            get
+            {
+                if (reflectionPlaneBottom)
+                    return reflectionPlaneBottom.transform.position.y;
+                else
+                    return 0.0f;
+            }
+        }
+
+        public float ReflectionPlaneLowerLevelY
+        {
+            get
+            {
+                if (reflectionPlaneSeaLevel)
+                    return reflectionPlaneSeaLevel.transform.position.y;
+                else
+                    return 0.0f;
+            }
+        }
+
         bool computeStepDownRaycast(Vector3 raycastStartPoint, Vector3 directionVec, float maxDiffMagnitude, out RaycastHit hit)
         {
             if (Physics.Raycast(raycastStartPoint, directionVec, out hit, 1000.0F))
