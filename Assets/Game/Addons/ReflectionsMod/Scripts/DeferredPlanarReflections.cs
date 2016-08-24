@@ -198,9 +198,23 @@ namespace ReflectionsMod
             var rtW = camera_.pixelWidth / downsampleAmount;
             var rtH = camera_.pixelHeight / downsampleAmount;
 
+            float sWidth = camera_.pixelWidth;
+            float sHeight = camera_.pixelHeight;
+
+            Matrix4x4 P = GetComponent<Camera>().projectionMatrix;
+            Vector4 projInfo = new Vector4
+                    ((-2.0f / (sWidth * P[0])),
+                    (-2.0f / (sHeight * P[5])),
+                    ((1.0f - P[2]) / P[0]),
+                    ((1.0f + P[6]) / P[5]));
+
             RenderTextureFormat intermediateFormat = camera_.hdr ? RenderTextureFormat.ARGBHalf : RenderTextureFormat.ARGB32;
 
 			//material.SetMatrix("_CameraToWorldMatrix", camera_.worldToCameraMatrix.inverse);
+            
+            Matrix4x4 cameraToWorldMatrix = GetComponent<Camera>().worldToCameraMatrix.inverse;
+            material.SetVector("_ProjInfo", projInfo); // used for unprojection
+            material.SetMatrix("_CameraToWorldMatrix", cameraToWorldMatrix);
 
             reflectionGroundTexture = instanceUpdateReflectionTextures.getGroundReflectionRenderTexture();
             reflectionLowerLevelTexture = instanceUpdateReflectionTextures.getSeaReflectionRenderTexture();
@@ -209,6 +223,7 @@ namespace ReflectionsMod
 
             material.SetFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
             material.SetFloat("_SeaLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
+            Debug.Log(String.Format("{0}, {1}", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY, instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY)); 
 
             if (m_CommandBuffer == null)
             {
