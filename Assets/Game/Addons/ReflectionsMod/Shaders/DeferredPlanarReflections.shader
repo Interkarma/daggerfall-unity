@@ -1,20 +1,91 @@
 
+Shader "Daggerfall/DeferredPlanarReflections" {
+    Properties
+    {
+            _MainTex ("Base (RGB)", 2D) = "white" {}
+    }
+		
+	CGINCLUDE
+
+	#include "UnityCG.cginc"
+
+    sampler2D _CameraGBufferTexture0;
+    sampler2D _CameraGBufferTexture1;
+    sampler2D _CameraGBufferTexture2;
+    sampler2D _CameraGBufferTexture3;
+    sampler2D _CameraReflectionsTexture;
+    sampler2D _MainTex;
+       
+
+    struct v2f
+    {
+            float4 pos : SV_POSITION;
+            float2 uv : TEXCOORD0;
+            float2 uv2 : TEXCOORD1;
+    };
+
+    v2f vert( appdata_img v )
+    {
+            v2f o;
+
+            o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+            o.uv = v.texcoord.xy;
+            o.uv2 = v.texcoord.xy;
+						
+            //#if UNITY_UV_STARTS_AT_TOP
+            //        if (_MainTex_TexelSize.y < 0)
+            //                o.uv2.y = 1-o.uv2.y;
+            //#endif
+						
+            return o;
+    }
+
+				
+    float4 fragReflection(v2f i) : SV_Target
+    {
+            float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);					
+            return result;
+    }
+
+	ENDCG
+
+	SubShader
+	{
+		ZTest Always Cull Off ZWrite Off
+
+		Pass
+		{
+			CGPROGRAM
+			#pragma exclude_renderers gles xbox360 ps3
+			#pragma vertex vert
+			#pragma fragment fragReflection
+			#pragma target 3.0
+			ENDCG
+		}
+	}	
+
+    Fallback "Diffuse"
+}
+
+
+/*
+
 Shader "Daggerfall/DeferredPlanarReflections"
 {
         Properties
         {
                 _MainTex ("Base (RGB)", 2D) = "white" {}
         }
-
+		
 
         CGINCLUDE
-			/*
-                #include "UnityCG.cginc"
-                #include "UnityPBSLighting.cginc"
-                #include "UnityStandardBRDF.cginc"
-                #include "UnityStandardUtils.cginc"
-                #include "ScreenSpaceRaytrace.cginc"
-				*/
+			
+                //#include "UnityCG.cginc"
+                //#include "UnityPBSLighting.cginc"
+                //#include "UnityStandardBRDF.cginc"
+                //#include "UnityStandardUtils.cginc"
+                //#include "ScreenSpaceRaytrace.cginc"
+				
                 sampler2D _CameraGBufferTexture0;
                 sampler2D _CameraGBufferTexture1;
                 sampler2D _CameraGBufferTexture2;
@@ -43,13 +114,12 @@ Shader "Daggerfall/DeferredPlanarReflections"
                         o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
                         o.uv = v.texcoord.xy;
                         o.uv2 = v.texcoord.xy;
-
-						/*
-                        #if UNITY_UV_STARTS_AT_TOP
-                                if (_MainTex_TexelSize.y < 0)
-                                        o.uv2.y = 1-o.uv2.y;
-                        #endif
-						*/
+						
+                        //#if UNITY_UV_STARTS_AT_TOP
+                        //        if (_MainTex_TexelSize.y < 0)
+                        //                o.uv2.y = 1-o.uv2.y;
+                        //#endif
+						
                         return o;
                 }
 
@@ -62,19 +132,19 @@ Shader "Daggerfall/DeferredPlanarReflections"
                        // float roughness = 1.0-tex2D(_CameraGBufferTexture1, tsP).a;
 
                         float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
-						/*
-						result.r = 1.0;
-						result.g = 1.0;
-						result.b = 0.0;
-						result.a = 0.5;
-						*/
+						
+						//result.r = 1.0;
+						//result.g = 1.0;
+						//result.b = 0.0;
+						//result.a = 0.5;
+						
                         return result;
                 }
 
 
                 float4 fragComposite(v2f i) : SV_Target
                 {
-					/*
+					
                         // Pixel being shaded
                         float2 tsP = i.uv2.xy;
 
@@ -144,7 +214,7 @@ Shader "Daggerfall/DeferredPlanarReflections"
 
                         // Additively blend the glossy GI result with the output buffer
                         return gbuffer3 + float4(finalGlossyTerm, 0);
-						*/
+						
 
 						float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
 						/*
@@ -190,4 +260,6 @@ Shader "Daggerfall/DeferredPlanarReflections"
         }
 
         Fallback "Diffuse"
+		
 }
+*/
