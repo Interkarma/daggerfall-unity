@@ -116,7 +116,9 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 			float3 C = GetPosition(screenUV);
 			float3 worldPos = mul(_CameraToWorldMatrix, float4(C, 1)).xyz;
 
-			if (abs(worldPos.y - _LowerLevelHeight) < 227.01f)
+			float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenUV.xy);
+			//if (abs(worldPos.y - _LowerLevelHeight) < 227.01f)
+			if (depth == 0.0f)
 			{
 				refl = getReflectionColor(_ReflectionLowerLevelTex, screenUV, smoothness); //refl = tex2Dlod(_ReflectionLowerLevelTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
 			}/*
@@ -137,7 +139,7 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 
 	SubShader
 	{
-		ZTest Always Cull Off ZWrite Off
+		ZTest Always Cull Off ZWrite On
 
 		Pass
 		{

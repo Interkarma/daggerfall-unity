@@ -125,6 +125,9 @@ namespace ReflectionsMod
         public RenderTexture reflectionGroundTexture;
         public RenderTexture reflectionLowerLevelTexture;
 
+        CreateLookupIndicesTexture instanceCreateLookupIndicesTexture = null;
+        GameObject goCreateLookupIndicesTexture = null;
+
         // Shader pass indices used by the effect
         private enum PassIndex
         {
@@ -145,11 +148,26 @@ namespace ReflectionsMod
             //kFinalReflectionTexture = Shader.PropertyToID("_FinalReflectionTexture");
             //kTempTexture = Shader.PropertyToID("_TempTexture");
 
-            instanceUpdateReflectionTextures = GameObject.Find("ReflectionsMod").GetComponent<UpdateReflectionTextures>();
+            GameObject goReflectionsMod = GameObject.Find("ReflectionsMod");
+
+            instanceUpdateReflectionTextures = goReflectionsMod.GetComponent<UpdateReflectionTextures>();
+
+            goCreateLookupIndicesTexture = new GameObject("CreateLookupIndicesTexture");
+            goCreateLookupIndicesTexture.transform.SetParent(goReflectionsMod.transform);
+            instanceCreateLookupIndicesTexture = goCreateLookupIndicesTexture.AddComponent<CreateLookupIndicesTexture>();          
         }
 
         void OnDisable()
         {
+            if (instanceCreateLookupIndicesTexture != null)
+            {
+                Destroy(instanceCreateLookupIndicesTexture);
+            }
+            if (goCreateLookupIndicesTexture != null)
+            {
+                Destroy(goCreateLookupIndicesTexture);
+            }
+
             if (m_Material)
                 DestroyImmediate(m_Material);
 
@@ -159,11 +177,11 @@ namespace ReflectionsMod
             {
                 if (m_CommandBuffer != null)
                 {
-                    camera_.RemoveCommandBuffer(CameraEvent.AfterFinalPass, m_CommandBuffer);
+                    camera_.RemoveCommandBuffer(CameraEvent.AfterReflections, m_CommandBuffer);
                 }
 
                 m_CommandBuffer = null;
-            }
+            }            
         }
 
 #if UNITY_EDITOR
@@ -173,7 +191,7 @@ namespace ReflectionsMod
             {
                 if (m_CommandBuffer != null)
                 {
-                    camera_.RemoveCommandBuffer(CameraEvent.AfterFinalPass, m_CommandBuffer);
+                    camera_.RemoveCommandBuffer(CameraEvent.AfterReflections, m_CommandBuffer);
                 }
 
                 m_CommandBuffer = null;
@@ -184,6 +202,8 @@ namespace ReflectionsMod
         // [ImageEffectOpaque]
         public void OnPreRender()
         {
+            instanceCreateLookupIndicesTexture.createLookupIndicesTexture();
+
             if (material == null)
             {
                 return;
@@ -223,7 +243,7 @@ namespace ReflectionsMod
 
             material.SetFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
             material.SetFloat("_SeaLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
-            Debug.Log(String.Format("{0}, {1}", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY, instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY)); 
+            //Debug.Log(String.Format("{0}, {1}", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY, instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY)); 
 
             if (m_CommandBuffer == null)
             {
