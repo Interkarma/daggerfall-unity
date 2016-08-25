@@ -21,7 +21,7 @@ Shader "Daggerfall/CreateLookupIndices" {
             float2 uv2 : TEXCOORD1;
 			//float3 worldPos : TEXCOORD2;
 			//float4 screenPos : TEXCOORD3;
-			//float4 parallaxCorrectedScreenPos : TEXCOORD4;
+			float4 parallaxCorrectedScreenPos : TEXCOORD4;
     };
 
     v2f vert( appdata_img v )
@@ -39,13 +39,31 @@ Shader "Daggerfall/CreateLookupIndices" {
 
 			//o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 			//o.screenPos = float4(v.texcoord.x, v.texcoord.y, 0.0f, 1.0f);					
+					
+			float4 posWorldSpace = mul(unity_ObjectToWorld, v.vertex);
+			if ((abs(posWorldSpace.y - _GroundLevelHeight) < 0.01f) || (abs(posWorldSpace.y - _LowerLevelHeight) < 0.01f))
+			{
+				o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace));
+			}
+			else
+			{
+				// parallax-correct reflection position
+				if (posWorldSpace.y > _GroundLevelHeight+0.01f)
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight + 0.25f, 0.0f, 0.0f)));
+				else if (posWorldSpace.y < _GroundLevelHeight-0.01f)
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight - 0.14f, 0.0f, 0.0f)));				
+				else
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight, 0.0f, 0.0f)));
+			}
 						
             return o;
     }
 				
-    float4 frag(v2f IN) : SV_Target
+    float2 frag(v2f IN) : SV_Target
     {
-			float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
+			//float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
+			
+			float2 result = IN.parallaxCorrectedScreenPos.xy; 
             return result;
     }
 
@@ -53,6 +71,8 @@ Shader "Daggerfall/CreateLookupIndices" {
 
 	SubShader
 	{
+		ZTest LEqual Cull Back ZWrite On
+
 		Pass
 		{
 			CGPROGRAM
@@ -66,83 +86,3 @@ Shader "Daggerfall/CreateLookupIndices" {
 
     Fallback "Diffuse"
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-Shader "Daggerfall/CreateLookupIndices" {
-    Properties
-    {
-            _MainTex ("Base (RGB)", 2D) = "white" {}
-    }
-
-	SubShader {
-		Tags { "RenderType"="Opaque" }
-		LOD 200
-
-		CGPROGRAM
-	
-		#pragma target 3.0
-		#pragma surface surf Lambert vertex:customvert finalcolor:fcolor
-		#pragma glsl
-
-
-		sampler2D _MainTex;
-
-		struct Input
-		{
-				float4 pos : SV_POSITION;
-				float2 uv : TEXCOORD0;
-				float2 uv2 : TEXCOORD1;
-				//float3 worldPos : TEXCOORD2;
-				//float4 screenPos : TEXCOORD3;
-				//float4 parallaxCorrectedScreenPos : TEXCOORD4;
-		};
-
-		void customvert( inout appdata_full v, out Input o)
-		{
-				//Input o;
-				//UNITY_INITIALIZE_OUTPUT(Input, o);
-				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.uv = v.texcoord.xy;
-				o.uv2 = v.texcoord.xy;	
-				//return o;
-		}
-
-		void fcolor (Input IN, SurfaceOutput o, inout fixed4 color)
-		{
-			color = float4(1.0f, 0.0f, 0.0f, 0.5f);
-		}
-
-		void surf (Input IN, inout SurfaceOutput o)
-		{
-			o.Albedo = float3(1.0f, 0.0f, 0.0f);
-		}
-	
-		ENDCG
-		
-	}	
-
-    FallBack "Diffuse"
-}
-*/

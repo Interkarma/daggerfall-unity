@@ -25,6 +25,9 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 	sampler2D _ReflectionGroundTex;
 	sampler2D _ReflectionLowerLevelTex;
 
+	sampler2D _LookupIndicesTex;
+	sampler2D _IndexReflectionsTextureTex;
+
 	float4 _MainTex_TexelSize;
     float4   _ProjInfo;
     float4x4 _CameraToWorldMatrix;
@@ -37,27 +40,7 @@ Shader "Daggerfall/DeferredPlanarReflections" {
             float4 pos : SV_POSITION;
             float2 uv : TEXCOORD0;
             float2 uv2 : TEXCOORD1;
-			//float3 worldPos : TEXCOORD2;
-			//float4 screenPos : TEXCOORD3;
-			//float4 parallaxCorrectedScreenPos : TEXCOORD4;
     };
-
-    float3 ReconstructCSPosition(float2 S, float z)
-    {
-        float linEyeZ = -LinearEyeDepth(z);
-        return float3(( (( S.xy * _MainTex_TexelSize.zw) ) * _ProjInfo.xy + _ProjInfo.zw) * linEyeZ, linEyeZ);
-    }
-
-    /** Read the camera-space position of the point at screen-space pixel ssP */
-    float3 GetPosition(float2 ssP) {
-        float3 P;
-
-        P.z = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, ssP.xy);
-
-        // Offset to pixel center
-        P = ReconstructCSPosition(float2(ssP) /*+ float2(0.5, 0.5)*/, P.z);
-        return P;
-    }
 
     v2f vert( appdata_img v )
     {
@@ -67,31 +50,11 @@ Shader "Daggerfall/DeferredPlanarReflections" {
             o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
             o.uv = v.texcoord.xy;
             o.uv2 = v.texcoord.xy;
-			//o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-			//o.screenPos = float4(v.texcoord.x, v.texcoord.y, 0.0f, 1.0f);
 						
             #if UNITY_UV_STARTS_AT_TOP
                 if (_MainTex_TexelSize.y < 0)
                         o.uv2.y = 1-o.uv2.y;
             #endif
-
-			/*
-			float4 posWorldSpace = mul(unity_ObjectToWorld, v.vertex);
-			if ((abs(posWorldSpace.y - _GroundLevelHeight) < 0.01f) || (abs(posWorldSpace.y - _LowerLevelHeight) < 0.01f))
-			{
-				o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace));
-			}
-			else
-			{
-				// parallax-correct reflection position
-				if (posWorldSpace.y > _GroundLevelHeight+0.01f)
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight + 0.25f, 0.0f, 0.0f)));
-				else if (posWorldSpace.y < _GroundLevelHeight-0.01f)
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight - 0.14f, 0.0f, 0.0f)));				
-				else
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight, 0.0f, 0.0f)));
-			}
-			*/
 						
             return o;
     }
@@ -113,25 +76,18 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 			half3 refl = half3(0.0f, 0.0f, 0.0f);
 			half smoothness = 1.5f;
 
-			float3 C = GetPosition(screenUV);
-			float3 worldPos = mul(_CameraToWorldMatrix, float4(C, 1)).xyz;
-
-			float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenUV.xy);
-			//if (abs(worldPos.y - _LowerLevelHeight) < 227.01f)
-			if (depth == 0.0f)
+			float indexReflectionsTextureTex = tex2D(_IndexReflectionsTextureTex, screenUV).r;
+			if (indexReflectionsTextureTex == 2.0f)
 			{
 				refl = getReflectionColor(_ReflectionLowerLevelTex, screenUV, smoothness); //refl = tex2Dlod(_ReflectionLowerLevelTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
-			}/*
-			else if	(	(abs(worldPos.y - _GroundLevelHeight) < 0.01f)|| // fragment belong to object on current ground level plane
-						(worldPos.y < _GroundLevelHeight)|| // fragment is below (use parallax-corrected reflection)
-						(worldPos.y - _GroundLevelHeight < 0.32f) // fragment is slightly above (use parallax-corrected reflection) - also valid for current ground level plane
-					)
+			}
+			else if	(indexReflectionsTextureTex == 1.0f)
 			{
 				refl = getReflectionColor(_ReflectionGroundTex, screenUV, smoothness); //refl = tex2Dlod(_ReflectionGroundTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
-			}*/
+			}
 
             //float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
-			float4 result = float4(refl.r, refl.g, refl.b, 0.1f);
+			float4 result = float4(refl.r, refl.g, refl.b, 0.7f);
             return result;
     }
 
