@@ -235,6 +235,8 @@ namespace ReflectionsMod
             Matrix4x4 cameraToWorldMatrix = GetComponent<Camera>().worldToCameraMatrix.inverse;
             material.SetVector("_ProjInfo", projInfo); // used for unprojection
             material.SetMatrix("_CameraToWorldMatrix", cameraToWorldMatrix);
+            material.SetMatrix("_InverseViewProject", (GetComponent<Camera>().projectionMatrix * GetComponent<Camera>().worldToCameraMatrix).inverse);
+
 
             reflectionGroundTexture = instanceUpdateReflectionTextures.getGroundReflectionRenderTexture();
             reflectionLowerLevelTexture = instanceUpdateReflectionTextures.getSeaReflectionRenderTexture();

@@ -74,7 +74,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_RenderTextureLookupIndices == null)
-                    m_RenderTextureLookupIndices = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 0, RenderTextureFormat.RGHalf); // 2-channel 16-bit floating-point per channel texture
+                    m_RenderTextureLookupIndices = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.RGHalf); // 2-channel 16-bit floating-point per channel texture
 
                 return m_RenderTextureLookupIndices;
             }
@@ -86,7 +86,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_RenderTextureIndexReflectionsTexture == null)
-                    m_RenderTextureIndexReflectionsTexture = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 0, RenderTextureFormat.R8); // 1-channel 8-bit fixed point texture
+                    m_RenderTextureIndexReflectionsTexture = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.R8); // 1-channel 8-bit fixed point texture
 
                 return m_RenderTextureIndexReflectionsTexture;
             }
@@ -162,13 +162,32 @@ namespace ReflectionsMod
             }
             */
 
+            if (GameManager.Instance.IsPlayerInside)
+            {
+                if (GameManager.Instance.IsPlayerInsideBuilding)
+                {
+                    Transform transform = GameManager.Instance.InteriorParent.transform.GetChild(2).transform.Find("People Flats");
+                    transform.gameObject.SetActive(false);
+                         // Interior Flats
+                }
+            }
+
             Shader.SetGlobalFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
             Shader.SetGlobalFloat("_LowerLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
             m_Camera.targetTexture = renderTextureLookupIndices;
             m_Camera.RenderWithShader(shaderCreateLookupIndices, ""); // apply custom fragment shader and write into renderTextureLookupIndices
-
             m_Camera.targetTexture = renderTextureIndexReflectionsTexture;
             m_Camera.RenderWithShader(shaderCreateLookupIndexReflectionTexture, ""); // apply custom fragment shader and write into renderTextureIndexReflectionsTexture
+
+            if (GameManager.Instance.IsPlayerInside)
+            {
+                if (GameManager.Instance.IsPlayerInsideBuilding)
+                {
+                    Transform transform = GameManager.Instance.InteriorParent.transform.GetChild(2).transform.Find("People Flats");
+                    transform.gameObject.SetActive(true);
+                    // Interior Flats
+                }
+            }
         }
     }
 }

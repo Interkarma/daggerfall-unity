@@ -31,6 +31,7 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 	float4 _MainTex_TexelSize;
     float4   _ProjInfo;
     float4x4 _CameraToWorldMatrix;
+	float4x4 _InverseViewProject;
 
 	float _GroundLevelHeight;
 	float _LowerLevelHeight;     
@@ -87,7 +88,7 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 			}
 
             //float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
-			float4 result = float4(refl.r, refl.g, refl.b, 0.7f);
+			float4 result = float4(refl.r, refl.g, refl.b, 1.0f); //*0.3f;
             return result;
     }
 

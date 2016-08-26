@@ -84,5 +84,5 @@ Shader "Daggerfall/CreateLookupIndices" {
 		}
 	}	
 
-    Fallback "Diffuse"
+    Fallback "None"
 }
