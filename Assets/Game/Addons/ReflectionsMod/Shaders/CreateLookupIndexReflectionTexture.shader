@@ -48,14 +48,11 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
     }
 				
     float frag(v2f IN) : SV_Target
-    {
-			//float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
+    {		            
+			half4 col = tex2D(_MainTex, IN.uv);			
+			if (col.a < 0.5f)
+				discard;
 
-			//if (IN.color.a < 0.5f)
-			//{
-			//	discard;
-			//}
-			
 			float result = 0.0f;
 			float3 vecUp = float3(0.0f,1.0f,0.0f);
 			if ( (abs(IN.worldPos.y - _LowerLevelHeight) < 0.001f) && (normalize(dot(IN.worldNormal, vecUp)) > 0.0f) )

@@ -379,9 +379,10 @@ namespace ReflectionsMod
                                     {
                                         if (!texRecord.Value.useMetallicGlossMap)
                                         {
-                                            Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
-                                            newMat.CopyPropertiesFromMaterial(cmat.material);
-                                            newMat.name = cmat.material.name;
+                                            Material newMat = cmat.material;
+                                            //Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                                            //newMat.CopyPropertiesFromMaterial(cmat.material);
+                                            //newMat.name = cmat.material.name;
                                             if (texReflectionGround)
                                             {
                                                 newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
@@ -407,9 +408,10 @@ namespace ReflectionsMod
                                         }
                                         else
                                         {
-                                            Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
-                                            newMat.CopyPropertiesFromMaterial(cmat.material);
-                                            newMat.name = cmat.material.name;
+                                            Material newMat = cmat.material;
+                                            //Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                                            //newMat.CopyPropertiesFromMaterial(cmat.material);
+                                            //newMat.name = cmat.material.name;
                                             if (texReflectionGround)
                                             {
                                                 newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
@@ -518,9 +520,10 @@ namespace ReflectionsMod
             CachedMaterial cmat;
             if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
             {
-                Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
-                newMat.CopyPropertiesFromMaterial(cmat.material);
-                newMat.name = cmat.material.name;
+                Material newMat = cmat.material;
+                //Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                //newMat.CopyPropertiesFromMaterial(cmat.material);
+                //newMat.name = cmat.material.name;
                 if (texReflectionGround)
                 {
                     newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
@@ -552,9 +555,10 @@ namespace ReflectionsMod
             CachedMaterial cmat;
             if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
             {
-                Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
-                newMat.CopyPropertiesFromMaterial(cmat.material);
-                newMat.name = cmat.material.name;
+                Material newMat = cmat.material;
+                //Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                //newMat.CopyPropertiesFromMaterial(cmat.material);
+                //newMat.name = cmat.material.name;
                 if (texReflectionGround)
                 {
                     newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);

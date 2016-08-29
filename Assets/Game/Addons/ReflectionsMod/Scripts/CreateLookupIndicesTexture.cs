@@ -162,6 +162,7 @@ namespace ReflectionsMod
             }
             */
 
+            /*
             if (GameManager.Instance.IsPlayerInside)
             {
                 if (GameManager.Instance.IsPlayerInsideBuilding)
@@ -171,6 +172,7 @@ namespace ReflectionsMod
                          // Interior Flats
                 }
             }
+            */
 
             Shader.SetGlobalFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
             Shader.SetGlobalFloat("_LowerLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
