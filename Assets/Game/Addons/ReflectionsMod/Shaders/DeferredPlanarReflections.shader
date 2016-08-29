@@ -193,7 +193,7 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 						
 						finalGlossyTerm = reflResult;
 
-                        //finalGlossyTerm *= occlusion;
+                        finalGlossyTerm *= occlusion;
 
             //float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
 			

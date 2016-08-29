@@ -180,7 +180,7 @@ namespace ReflectionsMod
             m_Camera.RenderWithShader(shaderCreateLookupIndices, ""); // apply custom fragment shader and write into renderTextureLookupIndices
             m_Camera.targetTexture = renderTextureIndexReflectionsTexture;
             m_Camera.RenderWithShader(shaderCreateLookupIndexReflectionTexture, ""); // apply custom fragment shader and write into renderTextureIndexReflectionsTexture
-
+            /*
             if (GameManager.Instance.IsPlayerInside)
             {
                 if (GameManager.Instance.IsPlayerInsideBuilding)
@@ -190,6 +190,7 @@ namespace ReflectionsMod
                     // Interior Flats
                 }
             }
+            */
         }
     }
 }

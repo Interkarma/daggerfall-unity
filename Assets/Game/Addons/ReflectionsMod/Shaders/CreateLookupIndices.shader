@@ -50,9 +50,9 @@ Shader "Daggerfall/CreateLookupIndices" {
 			{
 				// parallax-correct reflection position
 				if (posWorldSpace.y > _GroundLevelHeight+0.01f)
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.6f, 0.0f, 0.0f)));
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.4f, 0.0f, 0.0f)));
 				else if (posWorldSpace.y < _GroundLevelHeight-0.01f)
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.6f, 0.0f, 0.0f)));				
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.4f, 0.0f, 0.0f)));				
 				else
 					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight, 0.0f, 0.0f)));
 					
