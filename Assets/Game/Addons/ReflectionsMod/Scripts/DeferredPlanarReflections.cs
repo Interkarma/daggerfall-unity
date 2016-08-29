@@ -247,7 +247,7 @@ namespace ReflectionsMod
             material.SetTexture("_IndexReflectionsTextureTex", instanceCreateLookupIndicesTexture.renderTextureIndexReflectionsTexture);      
 
             material.SetFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
-            material.SetFloat("_SeaLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
+            material.SetFloat("_LowerLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
             //Debug.Log(String.Format("{0}, {1}", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY, instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY)); 
 
             if (m_CommandBuffer == null)

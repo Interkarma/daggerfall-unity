@@ -18,16 +18,17 @@ Shader "Daggerfall/CreateLookupIndices" {
     {
             float4 pos : SV_POSITION;
             float2 uv : TEXCOORD0;
-            float2 uv2 : TEXCOORD1;
-			//float3 worldPos : TEXCOORD2;
-			//float4 screenPos : TEXCOORD3;
-			float4 parallaxCorrectedScreenPos : TEXCOORD4;
+			float4 parallaxCorrectedScreenPos : TEXCOORD1;
+            float2 uv2 : TEXCOORD2;
+			//float3 worldPos : TEXCOORD3;
+			//float4 screenPos : TEXCOORD4;
+			
     };
 
-    v2f vert( appdata_img v )
+    v2f vert( appdata_full v )
     {
             v2f o;
-			//UNITY_INITIALIZE_OUTPUT(v2f, o);
+			UNITY_INITIALIZE_OUTPUT(v2f, o);
 
             o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
             o.uv = v.texcoord.xy;
@@ -49,12 +50,13 @@ Shader "Daggerfall/CreateLookupIndices" {
 			{
 				// parallax-correct reflection position
 				if (posWorldSpace.y > _GroundLevelHeight+0.01f)
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight + 0.25f, 0.0f, 0.0f)));
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.6f, 0.0f, 0.0f)));
 				else if (posWorldSpace.y < _GroundLevelHeight-0.01f)
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight - 0.14f, 0.0f, 0.0f)));				
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.6f, 0.0f, 0.0f)));				
 				else
 					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight, 0.0f, 0.0f)));
-			}
+					
+			}			
 						
             return o;
     }
@@ -63,8 +65,8 @@ Shader "Daggerfall/CreateLookupIndices" {
     {
 			//float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
 			
-			float2 result = IN.parallaxCorrectedScreenPos.xy; 
-            return result;
+			float2 parallaxCorrectedScreenPos = IN.parallaxCorrectedScreenPos.xy / IN.parallaxCorrectedScreenPos.w; 
+            return parallaxCorrectedScreenPos;
     }
 
 	ENDCG

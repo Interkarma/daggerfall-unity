@@ -7,6 +7,7 @@ Shader "Daggerfall/DeferredPlanarReflections" {
     Properties
     {
             _MainTex ("Base (RGB)", 2D) = "white" {}
+			_Metallic ("Metallic", Range(0,1)) = 0
     }
 		
 	CGINCLUDE
@@ -33,12 +34,14 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 	sampler2D _IndexReflectionsTextureTex;
 
 	float4 _MainTex_TexelSize;
-    float4   _ProjInfo;
+    float4 _ProjInfo;
     float4x4 _CameraToWorldMatrix;
 	float4x4 _InverseViewProject;
 
 	float _GroundLevelHeight;
 	float _LowerLevelHeight;     
+
+	float _Metallic;
 
     struct v2f
     {
@@ -95,6 +98,7 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 			//float2 screenUV = IN.screenPos.xy / IN.screenPos.w;
 			//float2 screenUV = IN.parallaxCorrectedScreenPos.xy / IN.parallaxCorrectedScreenPos.w;
 			float2 screenUV = IN.uv2.xy;
+			float2 parallaxCorrectedScreenUV = tex2D(_LookupIndicesTex, screenUV).xy;
 
 			half3 refl = half3(0.0f, 0.0f, 0.0f);
 			//half roughness = 1.5f;
@@ -104,16 +108,27 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 			//roughness = pow(roughness, 4.0/3.0);
 
 			float indexReflectionsTextureTex = tex2D(_IndexReflectionsTextureTex, screenUV).r;
-			if (indexReflectionsTextureTex == 2.0f)
+			if (indexReflectionsTextureTex == 1.0f)
 			{
-				refl = getReflectionColor(_ReflectionLowerLevelTex, screenUV, roughness * 4); //refl = tex2Dlod(_ReflectionLowerLevelTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
+				refl = getReflectionColor(_ReflectionLowerLevelTex, screenUV, roughness * 8); //refl = tex2Dlod(_ReflectionLowerLevelTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
 			}
-			else if	(indexReflectionsTextureTex == 1.0f)
+			else if	(abs(indexReflectionsTextureTex - 0.5f) < 0.01f)
 			{
-				refl = getReflectionColor(_ReflectionGroundTex, screenUV, roughness * 4); //refl = tex2Dlod(_ReflectionGroundTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
+				refl = getReflectionColor(_ReflectionGroundTex, parallaxCorrectedScreenUV.xy, roughness * 8); //refl = tex2Dlod(_ReflectionGroundTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
+			}
+			else if	(abs(indexReflectionsTextureTex - 0.75f) < 0.01f)
+			{
+				const half fadeWidth = 0.3f;
+				half fadeOutFactX = min(1.0f, max(0.0f, abs(0.5f - parallaxCorrectedScreenUV.x) - (0.5f-fadeWidth)) / fadeWidth);
+				half fadeOutFactY = min(1.0f, max(0.0f, abs(0.5f - parallaxCorrectedScreenUV.y) - (0.5f-fadeWidth)) / fadeWidth);
+
+				half fadeOutFact = 0.0f;
+				fadeOutFact = max(fadeOutFactX, fadeOutFactY);
+
+				refl = (1.0f-fadeOutFact) * getReflectionColor(_ReflectionGroundTex, parallaxCorrectedScreenUV.xy, roughness * 8); //refl = tex2Dlod(_ReflectionGroundTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
 			}
 
-			refl *= tex2D(_CameraGBufferTexture1, screenUV).rgb;
+			//refl *= _Metallic; //tex2D(_CameraGBufferTexture1, screenUV).r; // float3(0.0,0.0,0.0);
 
 
 
@@ -176,14 +191,15 @@ Shader "Daggerfall/DeferredPlanarReflections" {
                                 finalGlossyTerm = reflResult*saturate(confidence);
                         }
 						
-						//finalGlossyTerm = reflResult;
+						finalGlossyTerm = reflResult;
 
-                        finalGlossyTerm *= occlusion;
+                        //finalGlossyTerm *= occlusion;
 
             //float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
 			
 			//float4 result = float4(refl.r, refl.g, refl.b, 1.0f); //*0.3f;
 			//float4 result = float4(tex2D(_CameraGBufferTexture1, screenUV).rgb, 1.0f);
+			//float4 result = float4(_Metallic, 0.0f, 0.0f, 1.0f);			
 			float4 result = float4(finalGlossyTerm, 0);
             return result;
     }

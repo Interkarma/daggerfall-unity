@@ -55,19 +55,23 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 
 			float result = 0.0f;
 			float3 vecUp = float3(0.0f,1.0f,0.0f);
-			if ( (abs(IN.worldPos.y - _LowerLevelHeight) < 0.001f) && (normalize(dot(IN.worldNormal, vecUp)) > 0.0f) )
+			if ( (abs(IN.worldPos.y - _LowerLevelHeight) < 0.001f) && (acos(dot(normalize(IN.worldNormal), vecUp)) < 0.01f) )
 			{
-				result = 1.0f; //255.0f / 18.0f;
+				result = 1.0f;
 			}
-			else if	(	//(abs(IN.worldPos.y - _GroundLevelHeight) < 0.1f)|| // fragment belong to object on current ground level plane
-						(normalize(dot(IN.worldNormal, vecUp)) > 0.0f)&&
+			else if	((abs(IN.worldPos.y - _GroundLevelHeight) < 0.1f)) // fragment belong to object on current ground level plane
+			{
+				result = 0.5f;
+			}
+			else if	(
+						(acos(dot(normalize(IN.worldNormal), vecUp)) < 0.01f) &&
 						(
-						(IN.worldPos.y < _GroundLevelHeight)|| // fragment is below (use parallax-corrected reflection)
+						(IN.worldPos.y < _GroundLevelHeight) || // fragment is below (use parallax-corrected reflection)
 						(IN.worldPos.y - _GroundLevelHeight < 0.32f) // fragment is slightly above (use parallax-corrected reflection) - also valid for current ground level plane
 						)
 					)
 			{
-				result = 2.0f;
+				result = 0.75f;
 			}
             return result;
     }

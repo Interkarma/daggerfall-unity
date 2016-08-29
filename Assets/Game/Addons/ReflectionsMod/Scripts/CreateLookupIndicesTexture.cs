@@ -74,7 +74,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_RenderTextureLookupIndices == null)
-                    m_RenderTextureLookupIndices = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.RGHalf); // 2-channel 16-bit floating-point per channel texture
+                    m_RenderTextureLookupIndices = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.RGFloat); // 2-channel 16-bit floating-point per channel texture
 
                 return m_RenderTextureLookupIndices;
             }
