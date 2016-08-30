@@ -49,7 +49,7 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 				
     float frag(v2f IN) : SV_Target
     {		            
-			half4 col = tex2D(_MainTex, IN.uv);			
+			half4 col = tex2D(_MainTex, IN.uv);
 			if (col.a < 0.5f)
 				discard;
 
@@ -66,7 +66,7 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 			else if	(
 						(acos(dot(normalize(IN.worldNormal), vecUp)) < 0.01f) &&
 						(
-						(IN.worldPos.y -_GroundLevelHeight > -1.92f) && // fragment is below (use parallax-corrected reflection)
+						(IN.worldPos.y -_GroundLevelHeight > -0.92f) && // fragment is below (use parallax-corrected reflection)
 						(IN.worldPos.y - _GroundLevelHeight < 0.32f) // fragment is slightly above (use parallax-corrected reflection) - also valid for current ground level plane
 						)
 					)

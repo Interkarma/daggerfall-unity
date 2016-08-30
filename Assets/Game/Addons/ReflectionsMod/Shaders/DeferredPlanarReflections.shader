@@ -188,10 +188,10 @@ Shader "Daggerfall/DeferredPlanarReflections" {
                         }
 						*/
                         {
-                                finalGlossyTerm = reflResult*saturate(confidence);
+							finalGlossyTerm = reflResult*saturate(confidence);
                         }
 						
-						finalGlossyTerm = reflResult;
+						//finalGlossyTerm = reflResult;
 
                         finalGlossyTerm *= occlusion;
 
@@ -200,7 +200,14 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 			//float4 result = float4(refl.r, refl.g, refl.b, 1.0f); //*0.3f;
 			//float4 result = float4(tex2D(_CameraGBufferTexture1, screenUV).rgb, 1.0f);
 			//float4 result = float4(_Metallic, 0.0f, 0.0f, 1.0f);			
-			float4 result = float4(finalGlossyTerm, 0);
+			
+			//float4 result = float4(finalGlossyTerm, 0);
+			
+			
+			float4 result = float4(tex2D(_CameraReflectionsTexture, tsP).rgb, 0);
+			if ((refl.r > 0.0f) || (refl.g > 0.0f) || (refl.b > 0.0f))
+				result = float4(finalGlossyTerm, 0);
+			
             return result;
     }
 
