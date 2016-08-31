@@ -6,8 +6,7 @@
 Shader "Daggerfall/DeferredPlanarReflections" {
     Properties
     {
-            _MainTex ("Base (RGB)", 2D) = "white" {}
-			_Metallic ("Metallic", Range(0,1)) = 0
+		_MainTex ("Base (RGB)", 2D) = "white" {}
     }
 		
 	CGINCLUDE
@@ -39,9 +38,7 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 	float4x4 _InverseViewProject;
 
 	float _GroundLevelHeight;
-	float _LowerLevelHeight;     
-
-	float _Metallic;
+	float _LowerLevelHeight;
 
     struct v2f
     {
@@ -100,11 +97,14 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 			float2 screenUV = IN.uv2.xy;
 			float2 parallaxCorrectedScreenUV = tex2D(_LookupIndicesTex, screenUV).xy;
 
-			half3 refl = half3(0.0f, 0.0f, 0.0f);
-			//half roughness = 1.5f;
+			half3 refl = half3(0.0f, 0.0f, 0.0f);			
+
 			//float roughness = tex2D(_CameraGBufferTexture1, screenUV).a;
 
-			float roughness = 1.0-tex2D(_CameraGBufferTexture1, screenUV).a;
+			//float roughness = 1.0-tex2D(_CameraGBufferTexture1, screenUV).a;
+
+			float roughness = 1.0f - tex2D(_IndexReflectionsTextureTex, screenUV).b;
+
 			//roughness = pow(roughness, 4.0/3.0);
 
 			float indexReflectionsTextureTex = tex2D(_IndexReflectionsTextureTex, screenUV).r;
@@ -127,9 +127,12 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 
 				refl = (1.0f-fadeOutFact) * getReflectionColor(_ReflectionGroundTex, parallaxCorrectedScreenUV.xy, roughness * 8); //refl = tex2Dlod(_ReflectionGroundTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
 			}
-
-			//refl *= _Metallic; //tex2D(_CameraGBufferTexture1, screenUV).r; // float3(0.0,0.0,0.0);
-
+		
+				//if (tex2D(_CameraGBufferTexture1, screenUV).r < 0.4f)
+				//if (_Metallic == 0.6f) //
+				//if (abs(_Metallic-0.5f) < 0.05f)
+				refl *= 8.0f * tex2D(_IndexReflectionsTextureTex, screenUV).g;
+				//refl *= 2.0f; //_Metallic; //tex2D(_CameraGBufferTexture1, screenUV).r; // float3(0.0,0.0,0.0);
 
 
                         float2 tsP = IN.uv2.xy;
@@ -224,12 +227,19 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 			#pragma vertex vert
 			#pragma fragment fragReflection
 			#pragma target 3.0
+			//#pragma multicompile __ _METALLICGLOSSMAP
+			#pragma shader_feature _METALLICGLOSSMAP 
+			// USE_METALLICGLOSSMAP 			
 			ENDCG
 		}
 	}	
 
     Fallback "None"
 }
+
+
+
+
 
 
 /*

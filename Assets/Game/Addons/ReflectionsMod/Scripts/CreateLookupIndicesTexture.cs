@@ -86,7 +86,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_RenderTextureIndexReflectionsTexture == null)
-                    m_RenderTextureIndexReflectionsTexture = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.R8); // 1-channel 8-bit fixed point texture
+                    m_RenderTextureIndexReflectionsTexture = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.ARGB32); // 4-channel 8-bit fixed point texture (1st channel: index of reflection texture to sample from, 2nd channel: metallic amount, 3rd channel: smoothness amount)
 
                 return m_RenderTextureIndexReflectionsTexture;
             }
@@ -132,65 +132,12 @@ namespace ReflectionsMod
             m_Camera.transform.position = Camera.main.transform.position;
             m_Camera.transform.rotation = Camera.main.transform.rotation;
 
-            /*
-            Renderer[] renderers = null;            
-
-            if (GameManager.Instance.IsPlayerInside != null)
-            {
-                if (GameManager.Instance.IsPlayerInsideBuilding)
-                {
-                    renderers = GameManager.Instance.InteriorParent.GetComponentsInChildren<Renderer>();
-                }
-                else
-                {
-                    renderers = GameManager.Instance.DungeonParent.GetComponentsInChildren<Renderer>();
-                }
-            }
-
-            if (renderers != null)
-            {
-                foreach (Renderer r in renderers)
-                {
-                    Material[] mats = r.sharedMaterials;
-                    foreach (Material m in mats)
-                    {
-                        m.SetFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
-                        m.SetFloat("_LowerLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
-                    }
-                    r.sharedMaterials = mats;
-                }
-            }
-            */
-
-            /*
-            if (GameManager.Instance.IsPlayerInside)
-            {
-                if (GameManager.Instance.IsPlayerInsideBuilding)
-                {
-                    Transform transform = GameManager.Instance.InteriorParent.transform.GetChild(2).transform.Find("People Flats");
-                    transform.gameObject.SetActive(false);
-                         // Interior Flats
-                }
-            }
-            */
-
             Shader.SetGlobalFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
             Shader.SetGlobalFloat("_LowerLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
             m_Camera.targetTexture = renderTextureLookupIndices;
             m_Camera.RenderWithShader(shaderCreateLookupIndices, ""); // apply custom fragment shader and write into renderTextureLookupIndices
             m_Camera.targetTexture = renderTextureIndexReflectionsTexture;
             m_Camera.RenderWithShader(shaderCreateLookupIndexReflectionTexture, ""); // apply custom fragment shader and write into renderTextureIndexReflectionsTexture
-            /*
-            if (GameManager.Instance.IsPlayerInside)
-            {
-                if (GameManager.Instance.IsPlayerInsideBuilding)
-                {
-                    Transform transform = GameManager.Instance.InteriorParent.transform.GetChild(2).transform.Find("People Flats");
-                    transform.gameObject.SetActive(true);
-                    // Interior Flats
-                }
-            }
-            */
         }
     }
 }

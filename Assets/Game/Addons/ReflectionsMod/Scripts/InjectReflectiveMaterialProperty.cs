@@ -520,6 +520,13 @@ namespace ReflectionsMod
             CachedMaterial cmat;
             if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
             {
+                /*
+                if ((archive == 337) && (record == 3))
+                {
+                    Debug.Log(String.Format("Here metallic, refl: {0}", reflectivity));
+                }
+                */
+
                 Material newMat = cmat.material;
                 //Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
                 //newMat.CopyPropertiesFromMaterial(cmat.material);
@@ -533,7 +540,7 @@ namespace ReflectionsMod
                     newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
                 }
                 newMat.SetFloat("_Metallic", reflectivity);
-                newMat.SetFloat("_Smoothness", smoothness);
+                newMat.SetFloat("_Glossiness", smoothness);
 
                 if (albedoMap != null)
                 {
@@ -555,6 +562,13 @@ namespace ReflectionsMod
             CachedMaterial cmat;
             if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
             {
+                /*
+                if ((archive==337)&&(record==3))
+                {
+                    Debug.Log("Here metallicglossmap");
+                }
+                */
+
                 Material newMat = cmat.material;
                 //Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
                 //newMat.CopyPropertiesFromMaterial(cmat.material);
@@ -567,7 +581,8 @@ namespace ReflectionsMod
                 {
                     newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
                 }
-                newMat.EnableKeyword("USE_METALLICGLOSSMAP");
+                //newMat.EnableKeyword("USE_METALLICGLOSSMAP");
+                newMat.EnableKeyword("_METALLICGLOSSMAP");
                 newMat.SetTexture("_MetallicGlossMap", metallicGlossMap);
 
                 if (albedoMap != null)

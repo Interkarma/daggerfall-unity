@@ -1,7 +1,10 @@
 Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
     Properties
     {
-            _MainTex ("Base (RGB)", 2D) = "white" {}
+		_MainTex ("Base (RGB)", 2D) = "white" {}
+		_MetallicGlossMap("Metallic Gloss Map", 2D) = "black" {}	
+		_Metallic("metallic amount", Range(0.0, 1.0)) = 0
+		_Glossiness("Smoothness", Range(0.0, 1.0)) = 0.5
     }
 		
 	CGINCLUDE
@@ -10,6 +13,13 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 
     sampler2D _MainTex;
 	float4 _MainTex_TexelSize;
+
+	#ifdef _METALLICGLOSSMAP
+		sampler2D _MetallicGlossMap;
+	#else	
+		half _Metallic;
+		half _Glossiness;		
+	#endif
 
 	float _GroundLevelHeight;
 	float _LowerLevelHeight;     
@@ -47,21 +57,21 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
             return o;
     }
 				
-    float frag(v2f IN) : SV_Target
+    float3 frag(v2f IN) : SV_Target
     {		            
 			half4 col = tex2D(_MainTex, IN.uv);
 			if (col.a < 0.5f)
 				discard;
 
-			float result = 0.0f;
+			float3 result = float3(0.0f, 0.0f, 0.0f);
 			float3 vecUp = float3(0.0f,1.0f,0.0f);
 			if ( (abs(IN.worldPos.y - _LowerLevelHeight) < 0.001f) && (acos(dot(normalize(IN.worldNormal), vecUp)) < 0.01f) )
 			{
-				result = 1.0f;
+				result.r = 1.0f;
 			}
 			else if	( (abs(IN.worldPos.y - _GroundLevelHeight) < 0.1f) && (acos(dot(normalize(IN.worldNormal), vecUp)) < 0.01f) ) // fragment belong to object on current ground level plane
 			{
-				result = 0.5f;
+				result.r = 0.5f;
 			}
 			else if	(
 						(acos(dot(normalize(IN.worldNormal), vecUp)) < 0.01f) &&
@@ -71,8 +81,18 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 						)
 					)
 			{
-				result = 0.75f;
+				result.r = 0.75f;
 			}
+
+			#ifdef _METALLICGLOSSMAP
+				half4 metallicGloss =  tex2D(_MetallicGlossMap, IN.uv);
+				half metallic = metallicGloss.r;
+				result.g = metallic;
+				//result.b = 0.8f; //1.0f - metallicGloss.a;
+			#else
+				result.g = _Metallic;
+				result.b = _Glossiness;
+			#endif
             return result;
     }
 
@@ -89,6 +109,7 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma target 3.0
+			#pragma shader_feature _METALLICGLOSSMAP
 			ENDCG
 		}
 	}	
