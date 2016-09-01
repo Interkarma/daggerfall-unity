@@ -80,8 +80,7 @@ namespace DaggerfallWorkshop.Game.Utility
             TitleMenu,                              // Open title menu
             TitleMenuFromDeath,                     // Open title menu after death
             NewCharacter,                           // Spawn character to start location in INI
-            LoadDaggerfallUnityQuickSave,           // Loads the current quicksave slot (if present)
-            //LoadDaggerfallUnitySave,              // TODO: This will replace quicksave option
+            //LoadDaggerfallUnitySave,              // TODO: Make this work with new save/load system
             LoadClassicSave,                        // Loads a classic save using start save index
         }
 
@@ -132,9 +131,6 @@ namespace DaggerfallWorkshop.Game.Utility
                     break;
                 case StartMethods.NewCharacter:
                     StartNewCharacter();
-                    break;
-                case StartMethods.LoadDaggerfallUnityQuickSave:
-                    StartFromQuickSave();
                     break;
                 case StartMethods.LoadClassicSave:
                     if (OverrideSaveIndex != -1) classicSaveIndex = OverrideSaveIndex;
@@ -277,18 +273,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
             if (OnStartMenu != null)
                 OnStartMenu(this, null);
-        }
-
-        void StartFromQuickSave()
-        {
-            RaiseOnNewGameEvent();
-            DaggerfallUI.Instance.PopToHUD();
-            playerEnterExit.DisableAllParents();
-            ResetWeaponManager();
-            if (SaveLoadManager.Instance.HasQuickSave())
-                SaveLoadManager.Instance.QuickLoad();
-
-            DaggerfallUI.PostMessage(PostStartMessage);
         }
 
         // Start new character to location specified in INI

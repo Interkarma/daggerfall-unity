@@ -267,9 +267,21 @@ namespace DaggerfallWorkshop.Game
             posVerticalImpulse = false;
             negVerticalImpulse = false;
 
-            // Do nothing if paused or death animation in progress
-            // prevents player from opening char. windows etc. while dying
-            if (isPaused)// || GameManager.Instance.PlayerDeath.DeathInProgress)
+            // Lock down input during death state
+            if (GameManager.Instance.PlayerDeath.DeathInProgress)
+            {
+                // Allow quickload during death
+                KeyCode quickLoadBinding = GetBinding(Actions.QuickLoad);
+                if (Input.GetKey(quickLoadBinding))
+                {
+                    currentActions.Add(Actions.QuickLoad);
+                }
+
+                return;
+            }
+
+            // Do nothing if paused
+            if (isPaused)
             {
                 frameSkipCount = 0;
                 wasPaused = true;

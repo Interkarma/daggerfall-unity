@@ -196,13 +196,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
         }
 
-        void QuickLoad()
-        {
-            // Setup start behaviour
-            StartGameBehaviour startGameBehaviour = FindStartGameBehaviour();
-            startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadDaggerfallUnityQuickSave;
-        }
-
         StartGameBehaviour FindStartGameBehaviour()
         {
             // Get StartGameBehaviour
