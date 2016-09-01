@@ -267,34 +267,21 @@ namespace DaggerfallWorkshop.Game
             posVerticalImpulse = false;
             negVerticalImpulse = false;
 
-            // Lock down input during death state
-            if (GameManager.Instance.PlayerDeath.DeathInProgress)
-            {
-                // Allow quickload during death
-                KeyCode quickLoadBinding = GetBinding(Actions.QuickLoad);
-                if (Input.GetKey(quickLoadBinding))
-                {
-                    currentActions.Add(Actions.QuickLoad);
-                }
-
-                return;
-            }
-
             // Do nothing if paused
             if (isPaused)
             {
                 frameSkipCount = 0;
                 wasPaused = true;
 
-                // InputManager can run when player or GameManager not available (e.g. during setup scene)
-                // Need another solution here :)
-
-                ////temp fix for player cont. moving forward after dying
-                //if (GameManager.Instance.PlayerDeath.DeathInProgress)
-                //{
-                //    horizontal = 0;
-                //    vertical = 0;
-                //}
+                // Allow quickload during death
+                if (GameManager.Instance.PlayerDeath.DeathInProgress)
+                {
+                    KeyCode quickLoadBinding = GetBinding(Actions.QuickLoad);
+                    if (Input.GetKey(quickLoadBinding))
+                    {
+                        currentActions.Add(Actions.QuickLoad);
+                    }
+                }
 
                 return;
             }
