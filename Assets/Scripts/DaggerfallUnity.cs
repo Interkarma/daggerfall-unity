@@ -28,9 +28,6 @@ namespace DaggerfallWorkshop
     /// <summary>
     /// DaggerfallUnity main class.
     /// </summary>
-#if UNITY_EDITOR
-    [ExecuteInEditMode]
-#endif
     [RequireComponent(typeof(WorldTime))]
     [RequireComponent(typeof(MaterialReader))]
     [RequireComponent(typeof(MeshReader))]
@@ -232,11 +229,6 @@ namespace DaggerfallWorkshop
 
         void Update()
         {
-#if UNITY_EDITOR
-            // Check ready every update in editor as code changes can de-instantiate local objects
-            if (!isReady) SetupArena2Path();
-            if (reader == null) SetupContentReaders();
-#endif
         }
 
         #endregion
@@ -244,6 +236,23 @@ namespace DaggerfallWorkshop
         #region Editor-Only Methods
 
 #if UNITY_EDITOR
+        public void EditorUpdate()
+        {
+            // Try to get ready
+            if (!isReady)
+            {
+                SetupSingleton();
+                SetupArena2Path();
+                SetupContentReaders();
+            }
+
+            // Check content ready every update in editor as code changes can de-instantiate local objects
+            if (reader == null)
+            {
+                SetupContentReaders();
+            }
+        }
+
         /// <summary>
         /// Setup path and content readers again.
         /// Used by editor when setting new Arena2Path.
