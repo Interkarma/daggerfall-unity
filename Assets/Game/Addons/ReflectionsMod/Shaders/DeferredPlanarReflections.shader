@@ -131,7 +131,7 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 				//if (tex2D(_CameraGBufferTexture1, screenUV).r < 0.4f)
 				//if (_Metallic == 0.6f) //
 				//if (abs(_Metallic-0.5f) < 0.05f)
-				refl *= 8.0f * tex2D(_IndexReflectionsTextureTex, screenUV).g;
+				refl *= 4.0f * tex2D(_IndexReflectionsTextureTex, screenUV).g;
 				//refl *= 2.0f; //_Metallic; //tex2D(_CameraGBufferTexture1, screenUV).r; // float3(0.0,0.0,0.0);
 
 

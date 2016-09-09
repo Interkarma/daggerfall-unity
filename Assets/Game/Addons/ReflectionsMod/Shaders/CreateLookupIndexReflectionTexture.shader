@@ -9,7 +9,8 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 		
 	CGINCLUDE
 
-	#include "UnityCG.cginc"               
+	#include "UnityCG.cginc"
+	//#include "UnityStandardInput.cginc"
 
     sampler2D _MainTex;
 	float4 _MainTex_TexelSize;
@@ -20,6 +21,7 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 		half _Metallic;
 		half _Glossiness;		
 	#endif
+	half _GlossMapScale;
 
 	float _GroundLevelHeight;
 	float _LowerLevelHeight;     
@@ -56,6 +58,29 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 						
             return o;
     }
+
+	half2 MetallicGloss(float2 uv)
+	{
+		half2 mg;
+	
+	#ifdef _METALLICGLOSSMAP
+		#ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			mg.r = tex2D(_MetallicGlossMap, uv).r;
+			mg.g = tex2D(_MainTex, uv).a;
+		#else
+			mg = tex2D(_MetallicGlossMap, uv).ra;
+		#endif
+		mg.g *= _GlossMapScale;
+	#else
+		mg.r = _Metallic;
+		#ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			mg.g = tex2D(_MainTex, uv).a * _GlossMapScale;
+		#else
+			mg.g = _Glossiness;
+		#endif
+	#endif
+		return mg;
+	}
 				
     float3 frag(v2f IN) : SV_Target
     {		            
@@ -84,6 +109,13 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 				result.r = 0.75f;
 			}
 
+			
+			half2 mg = MetallicGloss(IN.uv);
+			result.g = mg.r;
+			result.b = mg.g;
+			
+
+			/*
 			#ifdef _METALLICGLOSSMAP
 				half4 metallicGloss =  tex2D(_MetallicGlossMap, IN.uv);
 				half metallic = metallicGloss.r;
@@ -93,6 +125,8 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 				result.g = _Metallic;
 				result.b = _Glossiness;
 			#endif
+			*/
+
             return result;
     }
 
@@ -110,6 +144,8 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 			#pragma fragment frag
 			#pragma target 3.0
 			#pragma shader_feature _METALLICGLOSSMAP
+			#pragma shader_feature _ _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			//#pragma shader_feature __ _METALLICGLOSSMAP _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A			
 			ENDCG
 		}
 	}	

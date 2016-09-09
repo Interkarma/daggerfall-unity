@@ -583,6 +583,7 @@ namespace ReflectionsMod
                 }
                 //newMat.EnableKeyword("USE_METALLICGLOSSMAP");
                 newMat.EnableKeyword("_METALLICGLOSSMAP");
+                newMat.DisableKeyword("_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A");
                 newMat.SetTexture("_MetallicGlossMap", metallicGlossMap);
 
                 if (albedoMap != null)
