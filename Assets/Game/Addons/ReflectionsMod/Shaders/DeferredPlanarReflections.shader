@@ -131,7 +131,7 @@ Shader "Daggerfall/DeferredPlanarReflections" {
 				//if (tex2D(_CameraGBufferTexture1, screenUV).r < 0.4f)
 				//if (_Metallic == 0.6f) //
 				//if (abs(_Metallic-0.5f) < 0.05f)
-				refl *= 4.0f * tex2D(_IndexReflectionsTextureTex, screenUV).g;
+				refl *= 16.0f * tex2D(_IndexReflectionsTextureTex, screenUV).g; // multiplier is just an empiric finding - in conjunction with confidence attenuation from below
 				//refl *= 2.0f; //_Metallic; //tex2D(_CameraGBufferTexture1, screenUV).r; // float3(0.0,0.0,0.0);
 
 
@@ -191,12 +191,12 @@ Shader "Daggerfall/DeferredPlanarReflections" {
                         }
 						*/
                         {
-							finalGlossyTerm = reflResult*saturate(confidence);
+							finalGlossyTerm = reflResult * saturate(confidence/8);  // confidence attenuation is just an empiric finding - in conjunction with metallic multiplier from above
                         }
 						
 						//finalGlossyTerm = reflResult;
 
-                        finalGlossyTerm *= occlusion;
+                       finalGlossyTerm *= occlusion;
 
             //float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
 			
