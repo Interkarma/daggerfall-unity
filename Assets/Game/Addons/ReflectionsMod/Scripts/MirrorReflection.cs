@@ -30,6 +30,17 @@ namespace ReflectionsMod
 
         private Camera cameraToUse = null;
 
+        public enum BackgroundSettings {SkyboxAndGlobalFog, SolidColorBlack};
+        private BackgroundSettings currentBackgroundSettings = BackgroundSettings.SolidColorBlack;
+        public BackgroundSettings CurrentBackgroundSettings
+        {
+            get
+            {
+                return currentBackgroundSettings;
+            }
+            set { currentBackgroundSettings = value; }
+        }
+
         void Start()
         {
             GameObject stackedCameraGameObject = GameObject.Find("stackedCamera");
@@ -138,11 +149,21 @@ namespace ReflectionsMod
 	    {
 		    if( dest == null )
 			    return;
-		    // set camera to clear the same way as current camera
+            // set camera to clear the same way as current camera            
             CameraClearFlags clearFlags = CameraClearFlags.Skybox;
-		    dest.clearFlags = clearFlags;
-		    dest.backgroundColor = src.backgroundColor;        
-		    if( clearFlags == CameraClearFlags.Skybox )
+            if (currentBackgroundSettings == BackgroundSettings.SolidColorBlack)
+            {
+                clearFlags = CameraClearFlags.Color;
+                dest.backgroundColor = Color.black;
+                dest.clearFlags = clearFlags;
+            }
+            else if (currentBackgroundSettings == BackgroundSettings.SkyboxAndGlobalFog)
+            {
+                clearFlags = CameraClearFlags.Skybox;
+                dest.backgroundColor = src.backgroundColor;
+                dest.clearFlags = clearFlags;
+            }
+            if ( clearFlags == CameraClearFlags.Skybox )
 		    {
                 Skybox sky = src.GetComponent(typeof(Skybox)) as Skybox;
 			    Skybox mysky = dest.GetComponent(typeof(Skybox)) as Skybox;
@@ -208,18 +229,21 @@ namespace ReflectionsMod
 			    //go.hideFlags = HideFlags.HideAndDontSave;
 			    m_ReflectionCameras[currentCamera] = reflectionCamera;
 
-                // attach global fog to camera - this is important to get the same reflections like on normal terrain when deferred rendering is used
-                if ((reflectionCamera.renderingPath == RenderingPath.DeferredShading) || (reflectionCamera.renderingPath == RenderingPath.UsePlayerSettings))
+                if (currentBackgroundSettings == BackgroundSettings.SkyboxAndGlobalFog)
                 {
-                    UnityStandardAssets.ImageEffects.GlobalFog scriptGlobalFog = go.AddComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
-                    UnityStandardAssets.ImageEffects.GlobalFog globalFogMainCamera = Camera.main.gameObject.GetComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
-                    scriptGlobalFog.distanceFog = globalFogMainCamera.distanceFog;
-                    scriptGlobalFog.excludeFarPixels = globalFogMainCamera.excludeFarPixels; // false
-                    scriptGlobalFog.useRadialDistance = globalFogMainCamera.useRadialDistance;
-                    scriptGlobalFog.heightFog = globalFogMainCamera.heightFog;
-                    scriptGlobalFog.height = globalFogMainCamera.height;
-                    scriptGlobalFog.heightDensity = globalFogMainCamera.heightDensity;
-                    scriptGlobalFog.startDistance = globalFogMainCamera.startDistance;
+                    // attach global fog to camera - this is important to get the same reflections like on normal terrain when deferred rendering is used
+                    if ((reflectionCamera.renderingPath == RenderingPath.DeferredShading) || (reflectionCamera.renderingPath == RenderingPath.UsePlayerSettings))
+                    {
+                        UnityStandardAssets.ImageEffects.GlobalFog scriptGlobalFog = go.AddComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
+                        UnityStandardAssets.ImageEffects.GlobalFog globalFogMainCamera = Camera.main.gameObject.GetComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
+                        scriptGlobalFog.distanceFog = globalFogMainCamera.distanceFog;
+                        scriptGlobalFog.excludeFarPixels = globalFogMainCamera.excludeFarPixels; // false
+                        scriptGlobalFog.useRadialDistance = globalFogMainCamera.useRadialDistance;
+                        scriptGlobalFog.heightFog = globalFogMainCamera.heightFog;
+                        scriptGlobalFog.height = globalFogMainCamera.height;
+                        scriptGlobalFog.heightDensity = globalFogMainCamera.heightDensity;
+                        scriptGlobalFog.startDistance = globalFogMainCamera.startDistance;
+                    }
                 }
 
                 go.transform.SetParent(GameObject.Find("ReflectionsMod").transform);

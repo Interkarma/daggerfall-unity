@@ -27,6 +27,8 @@ namespace ReflectionsMod
         private MirrorReflection mirrorRefl = null; 
         private MirrorReflection mirrorReflSeaLevel = null;
 
+        private bool playerInside = false;
+
         public RenderTexture getSeaReflectionRenderTexture()
         {
             return mirrorReflSeaLevel.m_ReflectionTexture;
@@ -332,6 +334,8 @@ namespace ReflectionsMod
                 mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
             }
 
+            playerInside = GameManager.Instance.IsPlayerInside;
+
             PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToInterior;
@@ -352,6 +356,9 @@ namespace ReflectionsMod
         {
             mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
             mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
+
+            mirrorRefl.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SolidColorBlack;
+            mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SolidColorBlack;
         }
 
         void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
@@ -367,10 +374,13 @@ namespace ReflectionsMod
                 mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
                 mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
             }
+
+            mirrorRefl.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SkyboxAndGlobalFog;
+            mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SkyboxAndGlobalFog;
         }
 
         void Update()
-        {
+        { 
             if (!DaggerfallUnity.Settings.Nystul_RealtimeReflections)
                 return;
 
@@ -485,6 +495,19 @@ namespace ReflectionsMod
                 //Debug.Log(string.Format("x,y,z: {0}, {1}, {2}", vecWaterHeight.x, vecWaterHeight.y, vecWaterHeight.z));
                 //Debug.Log(string.Format("transformed x,y,z: {0}, {1}, {2}", vecWaterHeightTransformed.x, vecWaterHeightTransformed.y, vecWaterHeightTransformed.z));
                 reflectionPlaneSeaLevel.transform.position = new Vector3(goPlayerAdvanced.transform.position.x, vecWaterHeightTransformed.y, goPlayerAdvanced.transform.position.z);
+            }
+
+            if (GameManager.Instance.IsPlayerInside && !playerInside)
+            {
+                playerInside = true; // player now inside
+
+                mirrorRefl.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SolidColorBlack;
+                mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SolidColorBlack;
+            }
+            else if (!GameManager.Instance.IsPlayerInside && playerInside)
+            {
+                mirrorRefl.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SkyboxAndGlobalFog;
+                mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SkyboxAndGlobalFog;
             }
         }
 	}
