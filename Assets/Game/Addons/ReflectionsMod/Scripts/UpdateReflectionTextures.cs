@@ -27,6 +27,8 @@ namespace ReflectionsMod
         private MirrorReflection mirrorRefl = null; 
         private MirrorReflection mirrorReflSeaLevel = null;
 
+        private DeferredPlanarReflections componentDefferedPlanarReflections = null;
+
         private bool playerInside = false;
 
         public RenderTexture getSeaReflectionRenderTexture()
@@ -334,6 +336,8 @@ namespace ReflectionsMod
                 mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
             }
 
+            componentDefferedPlanarReflections = GameManager.Instance.MainCameraObject.AddComponent<ReflectionsMod.DeferredPlanarReflections>();
+
             playerInside = GameManager.Instance.IsPlayerInside;
 
             PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior;
@@ -503,11 +507,17 @@ namespace ReflectionsMod
 
                 mirrorRefl.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SolidColorBlack;
                 mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SolidColorBlack;
+
+                componentDefferedPlanarReflections.enabled = true;
             }
             else if (!GameManager.Instance.IsPlayerInside && playerInside)
             {
+                playerInside = false; // player now outside
+
                 mirrorRefl.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SkyboxAndGlobalFog;
                 mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SkyboxAndGlobalFog;
+                
+                componentDefferedPlanarReflections.enabled = false;
             }
         }
 	}
