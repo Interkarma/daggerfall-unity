@@ -283,7 +283,30 @@ namespace DaggerfallWorkshop
                 // Will add more of these cases if I find them
                 if (obj.TextureArchive == TextureReader.EditorFlatsTextureArchive && (obj.TextureRecord == 8 || obj.TextureRecord == 4))
                     markers.Add(go);
+
+                // Add point lights
+                if (obj.TextureArchive == TextureReader.LightsTextureArchive)
+                {
+                    AddLight(obj, go.transform);
+                }
             }
+        }
+
+        /// <summary>
+        /// Adds interior point light.
+        /// </summary>
+        private static void AddLight(DFBlock.RmbBlockFlatObjectRecord obj, Transform parent = null)
+        {
+            if (DaggerfallUnity.Instance.Option_InteriorLightPrefab == null)
+                return;
+
+            Vector2 size = DaggerfallUnity.Instance.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord);
+            Vector3 position = new Vector3(
+                obj.XPos,
+                -obj.YPos,
+                obj.ZPos) * MeshReader.GlobalScale;
+
+            GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_InteriorLightPrefab.gameObject, string.Empty, parent, position);
         }
 
         /// <summary>

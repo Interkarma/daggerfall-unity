@@ -786,48 +786,6 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 2126535444}
   m_Script: {fileID: 11500000, guid: ab61802efb5887c4395c406f282ed9bc, type: 3}
---- !u!1001 &421791572
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1551452251}
-    m_Modifications:
-    - target: {fileID: 400006, guid: 6efa2dff7a611ed49aa14f7372cd3ed6, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400006, guid: 6efa2dff7a611ed49aa14f7372cd3ed6, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 400006, guid: 6efa2dff7a611ed49aa14f7372cd3ed6, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400006, guid: 6efa2dff7a611ed49aa14f7372cd3ed6, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400006, guid: 6efa2dff7a611ed49aa14f7372cd3ed6, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400006, guid: 6efa2dff7a611ed49aa14f7372cd3ed6, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400006, guid: 6efa2dff7a611ed49aa14f7372cd3ed6, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400006, guid: 6efa2dff7a611ed49aa14f7372cd3ed6, type: 2}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 6efa2dff7a611ed49aa14f7372cd3ed6, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1001 &476548251
 Prefab:
   m_ObjectHideFlags: 0
@@ -1105,10 +1063,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0811f78212229814d8c469c916304789, type: 2}
   m_IsPrefabParent: 0
---- !u!4 &831911624 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400006, guid: 6efa2dff7a611ed49aa14f7372cd3ed6, type: 2}
-  m_PrefabInternal: {fileID: 421791572}
 --- !u!1 &948908897
 GameObject:
   m_ObjectHideFlags: 0
@@ -1702,7 +1656,6 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 592283744}
-  - {fileID: 831911624}
   m_Father: {fileID: 0}
   m_RootOrder: 9
 --- !u!1 &1596395035 stripped
@@ -2279,7 +2232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ExteriorNoonAmbientLight: {r: 0.627451, g: 0.627451, b: 0.627451, a: 1}
   ExteriorNightAmbientLight: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  InteriorAmbientLight: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 1}
+  InteriorAmbientLight: {r: 0.47058824, g: 0.47058824, b: 0.47058824, a: 1}
   DungeonAmbientLight: {r: 0.27450982, g: 0.27450982, b: 0.27450982, a: 1}
   PalaceAmbientLight: {r: 0.64705884, g: 0.64705884, b: 0.64705884, a: 1}
   FadeDuration: 3
