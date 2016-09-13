@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.IO;
+using System.Text;
 using System.Collections;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -13,5 +15,17 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class QuestMachine : MonoBehaviour
     {
+        public string TestQuest = "_BRISIEN";       // TEMP: Test quest to parse at startup
+
+        void Start()
+        {
+            // Load test quest is specified
+            if (!string.IsNullOrEmpty(TestQuest))
+            {
+                // Attempt to parse quest source
+                TextAsset source = Resources.Load<TextAsset>(Path.Combine("Quests", TestQuest));
+                Parser.Parse(source.text.Split('\n'));
+            }
+        }
     }
 }
