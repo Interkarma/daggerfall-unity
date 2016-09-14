@@ -1886,6 +1886,10 @@ Prefab:
       propertyPath: m_RenderingPath
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 10800000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
+      propertyPath: m_Shadows.m_Type
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400006, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
@@ -2233,7 +2237,7 @@ MonoBehaviour:
   ExteriorNoonAmbientLight: {r: 0.627451, g: 0.627451, b: 0.627451, a: 1}
   ExteriorNightAmbientLight: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   InteriorAmbientLight: {r: 0.47058824, g: 0.47058824, b: 0.47058824, a: 1}
-  DungeonAmbientLight: {r: 0.27450982, g: 0.27450982, b: 0.27450982, a: 1}
+  DungeonAmbientLight: {r: 0.23529412, g: 0.23529412, b: 0.23529412, a: 1}
   PalaceAmbientLight: {r: 0.64705884, g: 0.64705884, b: 0.64705884, a: 1}
   FadeDuration: 3
   FadeStep: 0.1
@@ -2481,7 +2485,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value
