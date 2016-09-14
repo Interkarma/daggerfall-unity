@@ -11,6 +11,7 @@ FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
 UseLegacyDeferred=False
+DungeonLightShadows=False
 
 [ChildGuard]
 PlayerNudity=False

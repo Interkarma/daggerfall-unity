@@ -5,7 +5,7 @@ ShaderVariantCollection:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: DefaultShaderVariants
+  m_Name: RequiredShaderVariants
   m_Shaders:
     data:
       first: {fileID: 19, guid: 0000000000000000f000000000000000, type: 0}
@@ -16,7 +16,9 @@ ShaderVariantCollection:
     data:
       first: {fileID: 66, guid: 0000000000000000f000000000000000, type: 0}
       second:
-        variants: []
+        variants:
+        - keywords: 
+          passType: 0
     data:
       first: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
       second:
@@ -49,6 +51,10 @@ ShaderVariantCollection:
           passType: 0
     data:
       first: {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
+      second:
+        variants: []
+    data:
+      first: {fileID: 30, guid: 0000000000000000f000000000000000, type: 0}
       second:
         variants: []
     data:
@@ -100,6 +106,16 @@ ShaderVariantCollection:
     data:
       first: {fileID: 4800000, guid: 70d8568987ac0499f952b54c7c13e265, type: 3}
       second:
+        variants:
+        - keywords: 
+          passType: 0
+    data:
+      first: {fileID: 4800000, guid: 0b9013ecc31c29e40b0a1ed979658875, type: 3}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: 169caeb966f1b43469dd5f39414931a1, type: 3}
+      second:
         variants: []
     data:
       first: {fileID: 4800000, guid: 6e33654e7c7c2a248ae1a18b7f4053b6, type: 3}
@@ -123,9 +139,5 @@ ShaderVariantCollection:
         variants: []
     data:
       first: {fileID: 4800000, guid: c3b8c2f21d1ea43498ec1f71a3055a89, type: 3}
-      second:
-        variants: []
-    data:
-      first: {fileID: 4800000, guid: b425ac98afc5e6f4cba2002c4b5b3b7a, type: 3}
       second:
         variants: []

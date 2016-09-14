@@ -70,7 +70,7 @@ namespace DaggerfallWorkshop
         public override void OnInspectorGUI()
         {
             // Update
-            serializedObject.Update();
+            dfUnity.EditorUpdate();
 
 #if UNITY_EDITOR_LINUX
             string message = string.Empty;

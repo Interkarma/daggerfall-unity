@@ -116,8 +116,8 @@ Shader "Daggerfall/TransitionRingTilemap" {
 			c = getColorFromTerrain(IN, uvTex, _TilemapDim, _TilesetDim, index);
 			
 			float treeCoverage = terrainTileInfo.g;
-			uint locationRangeX = terrainTileInfo.b * _MaxIndex;
-			uint locationRangeY = terrainTileInfo.a * _MaxIndex;
+			int locationRangeX = terrainTileInfo.b * _MaxIndex;
+			int locationRangeY = terrainTileInfo.a * _MaxIndex;
 			c.rgb = updateColorWithInfoForTreeCoverageAndLocations(c.rgb, treeCoverage, locationRangeX, locationRangeY, mapPixelX, mapPixelY, uvTex);			
 			
 			// Get offset to tile in atlas

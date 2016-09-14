@@ -342,7 +342,6 @@ namespace DaggerfallWorkshop.Game
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
-                //StartCoroutine(TakeScreenshot());
             }
 
             // Handle in-game windows
@@ -375,7 +374,10 @@ namespace DaggerfallWorkshop.Game
             }
             else if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickLoad))
             {
-                StartGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadDaggerfallUnityQuickSave;
+                if (SaveLoadManager.Instance.HasQuickSave(GameManager.Instance.PlayerEntity.Name))
+                {
+                    SaveLoadManager.Instance.QuickLoad();
+                }
             }
         }
 

@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         string unitySavePath = string.Empty;
         string daggerfallSavePath = string.Empty;
+        bool loadInProgress = false;
 
         #endregion
 
@@ -330,11 +331,20 @@ namespace DaggerfallWorkshop.Game.Serialization
             StartCoroutine(SaveGame(saveName, path));
         }
 
+        public void QuickSave()
+        {
+            Save(GameManager.Instance.PlayerEntity.Name, quickSaveName);
+        }
+
         public void Load(string characterName, string saveName)
         {
             // Must be ready
             if (!IsReady())
                 throw new Exception(notReadyExceptionText);
+
+            // Load must not be in progress
+            if (loadInProgress)
+                return;
 
             // Look for existing save with this character and name
             int key = FindSaveFolderByNames(characterName, saveName);
@@ -347,6 +357,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 path = GetSaveFolder(key);
 
             // Load game
+            loadInProgress = true;
             GameManager.Instance.PauseGame(false);
             StartCoroutine(LoadGame(saveName, path));
 
@@ -354,39 +365,25 @@ namespace DaggerfallWorkshop.Game.Serialization
             DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
         }
 
+        public void QuickLoad()
+        {
+            Load(GameManager.Instance.PlayerEntity.Name, quickSaveName);
+        }
+
         /// <summary>
         /// Checks if quick save folder exists.
         /// </summary>
         /// <returns>True if quick save exists.</returns>
-        public bool HasQuickSave()
+        public bool HasQuickSave(string characterName)
         {
-            return HasSaveFolder(quickSaveName);
-        }
+            // Look for existing save with this character and name
+            int key = FindSaveFolderByNames(characterName, quickSaveName);
 
-        public void QuickSave()
-        {
-            // Must be ready
-            if (!IsReady())
-                throw new Exception(notReadyExceptionText);
+            // Get folder
+            if (key == -1)
+                return false;
 
-            // Save game
-            string path = GetSavePath(quickSaveName, true);
-            StartCoroutine(SaveGame(quickSaveName, path));
-        }
-
-        public void QuickLoad()
-        {
-            // Must be ready
-            if (!IsReady())
-                throw new Exception(notReadyExceptionText);
-
-            // Load game
-            string path = GetSavePath(quickSaveName, false);
-            GameManager.Instance.PauseGame(false);
-            StartCoroutine(LoadGame(quickSaveName, path));
-
-            // Notify
-            DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
+            return true;
         }
 
         #endregion
@@ -1129,6 +1126,9 @@ namespace DaggerfallWorkshop.Game.Serialization
                 string message = string.Format("Failed to load automap state. Message: {0}", ex.Message);
                 Debug.Log(message);
             }
+
+            // Lower load in progress flag
+            loadInProgress = false;
 
             // Fade out from black
             DaggerfallUI.Instance.FadeHUDFromBlack(1.5f);
