@@ -361,8 +361,8 @@ namespace ReflectionsMod
             mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
             mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
 
-            mirrorRefl.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SolidColorBlack;
-            mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SolidColorBlack;
+            mirrorRefl.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.IndoorSetting;
+            mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.IndoorSetting;
         }
 
         void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
@@ -379,8 +379,8 @@ namespace ReflectionsMod
                 mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
             }
 
-            mirrorRefl.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SkyboxAndGlobalFog;
-            mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SkyboxAndGlobalFog;
+            mirrorRefl.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.OutdoorSetting;
+            mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.OutdoorSetting;
         }
 
         void Update()
@@ -505,8 +505,8 @@ namespace ReflectionsMod
             {
                 playerInside = true; // player now inside
 
-                mirrorRefl.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SolidColorBlack;
-                mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SolidColorBlack;
+                mirrorRefl.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.IndoorSetting;
+                mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.IndoorSetting;
 
                 componentDefferedPlanarReflections.enabled = true;
             }
@@ -514,8 +514,8 @@ namespace ReflectionsMod
             {
                 playerInside = false; // player now outside
 
-                mirrorRefl.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SkyboxAndGlobalFog;
-                mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.BackgroundSettings.SkyboxAndGlobalFog;
+                mirrorRefl.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.OutdoorSetting;
+                mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.OutdoorSetting;
                 
                 componentDefferedPlanarReflections.enabled = false;
             }

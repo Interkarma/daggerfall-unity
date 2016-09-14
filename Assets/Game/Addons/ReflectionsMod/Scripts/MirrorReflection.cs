@@ -30,9 +30,9 @@ namespace ReflectionsMod
 
         private Camera cameraToUse = null;
 
-        public enum BackgroundSettings {SkyboxAndGlobalFog, SolidColorBlack};
-        private BackgroundSettings currentBackgroundSettings = BackgroundSettings.SolidColorBlack;
-        public BackgroundSettings CurrentBackgroundSettings
+        public enum EnvironmentSetting {IndoorSetting, OutdoorSetting};
+        private EnvironmentSetting currentBackgroundSettings = EnvironmentSetting.IndoorSetting;
+        public EnvironmentSetting CurrentBackgroundSettings
         {
             get
             {
@@ -112,6 +112,8 @@ namespace ReflectionsMod
             reflectionCamera.cullingMask = ~(1 << 4) & m_ReflectLayers.value; // never render water layer
 		    reflectionCamera.targetTexture = m_ReflectionTexture;
 
+            UnityEngine.Rendering.ShadowCastingMode oldShadowCastingMode = rend.shadowCastingMode;
+            bool oldReceiverShadows = rend.receiveShadows;
             // next 2 lines are important for making shadows work correctly - otherwise shadows will be broken
             rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             rend.receiveShadows = false;
@@ -129,6 +131,10 @@ namespace ReflectionsMod
 			    QualitySettings.pixelLightCount = oldPixelLightCount;
  
 		    s_InsideRendering = false;
+
+            rend.shadowCastingMode = oldShadowCastingMode;
+            rend.receiveShadows = oldReceiverShadows;
+            
 	    }
  
  
@@ -151,13 +157,13 @@ namespace ReflectionsMod
 			    return;
             // set camera to clear the same way as current camera            
             CameraClearFlags clearFlags = CameraClearFlags.Skybox;
-            if (currentBackgroundSettings == BackgroundSettings.SolidColorBlack)
+            if (currentBackgroundSettings == EnvironmentSetting.IndoorSetting)
             {
                 clearFlags = CameraClearFlags.Color;
                 dest.backgroundColor = Color.black;
                 dest.clearFlags = clearFlags;
             }
-            else if (currentBackgroundSettings == BackgroundSettings.SkyboxAndGlobalFog)
+            else if (currentBackgroundSettings == EnvironmentSetting.OutdoorSetting)
             {
                 clearFlags = CameraClearFlags.Skybox;
                 dest.backgroundColor = src.backgroundColor;
@@ -185,6 +191,11 @@ namespace ReflectionsMod
             dest.renderingPath = src.renderingPath;
 
             dest.farClipPlane = src.farClipPlane;
+
+            if (currentBackgroundSettings == EnvironmentSetting.IndoorSetting)
+            {
+                dest.farClipPlane = 1000.0f;
+            }
 
             dest.nearClipPlane = 0.03f; //src.nearClipPlane;
 		    dest.orthographic = src.orthographic;
@@ -229,7 +240,7 @@ namespace ReflectionsMod
 			    //go.hideFlags = HideFlags.HideAndDontSave;
 			    m_ReflectionCameras[currentCamera] = reflectionCamera;
 
-                if (currentBackgroundSettings == BackgroundSettings.SkyboxAndGlobalFog)
+                if (currentBackgroundSettings == EnvironmentSetting.OutdoorSetting)
                 {
                     // attach global fog to camera - this is important to get the same reflections like on normal terrain when deferred rendering is used
                     if ((reflectionCamera.renderingPath == RenderingPath.DeferredShading) || (reflectionCamera.renderingPath == RenderingPath.UsePlayerSettings))
