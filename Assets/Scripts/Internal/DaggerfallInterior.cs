@@ -300,7 +300,6 @@ namespace DaggerfallWorkshop
             if (DaggerfallUnity.Instance.Option_InteriorLightPrefab == null)
                 return;
 
-            Vector2 size = DaggerfallUnity.Instance.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord);
             Vector3 position = new Vector3(
                 obj.XPos,
                 -obj.YPos,
