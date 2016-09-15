@@ -1,0 +1,159 @@
+-- Quest: C:\QUESTS\WORKING\S0000007.Qbn.
+-- Main story quest.
+-- QuestId: 7
+Messages: 19
+Quest: S0000007
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 Hey, if I told you I could give you a
+<ce>                  bit of information, let's say, about
+<ce>                  that letter of milady, would you be
+<ce>                   innerested there, %pcf? I thought
+<ce>                   so. Now, mind you, I ain't givin'
+<ce>                  it away. Before I scratch yer back,
+ you gotta scratch mine. Deal?
+
+RefuseQuest:  [1001]
+<ce>                  Of course not. You only do work for
+<ce>                   the likes of kings, don't ya? Poor
+<ce>                  Cyndassa has to work for herself, is
+<ce>                     that it? Well, %oth, it suits
+<ce>                        me just fine, so there.
+
+AcceptQuest:  [1002]
+<ce>            Me name is Cyndassa. Daggerfall. I'll tell you
+<ce>             everything I know, but I don't need to remind
+<ce>            you that there ain't no such thing as free info,
+<ce>                     do I, %pcn? I'm just a maid to
+<ce>            her highness, nothing but a fleck to the world,
+<ce>         and my needs ain't big. I need this werewolf done in.
+<ce>              I know just where it is -- some %god forsook
+<ce>                    hole called ___mondung_. I can't
+<ce>            tell you why, but it's important to me that that
+<ce>           werewolf gets put outta its misery. I'll wait here
+<ce>             for =2mondung_ days for you -- that oughta be
+<ce>                            plenty of time.
+
+QuestFail:  [1003]
+<ce>                     You think I'm an idiot, %pct?
+<ce>                  You think I don't know that loop is
+<ce>                              still alive?
+
+QuestComplete:  [1004]
+<ce>           It's dead then, is it? Poor thing. He used to be
+<ce>              my brother. If you ask me, he died long ago,
+<ce>            when he first got bit. He hated himself when he
+<ce>             became that beast. I wish there'd been another
+<ce>                            way to help him.
+<ce>                                    
+<ce>             I promised I'd tell you about that letter yer
+<ce>            lookin for, didn't I now? Of course, I remember
+<ce>                   that letter, %pcf. It's not every
+<ce>              day that you gets a letter from the Emperor
+<ce>              himself, especially seein' as the King ain't
+<ce>             too fond of him. 'Fact, that's the only letter
+<ce>            I ever seen from him. I give it to her majesty,
+<ce>             and she's all excited and she rip it open and
+<ce>             says "this isn't for me, this is addressed to
+<ce>             Mynisera." Then... boom! Her jaw fall open and
+<ce>              her eyes get real wide. She say she'll make
+<ce>             sure the Queen Mother gets it and that I don't
+<ce>                  have to worry myself none about it.
+
+RumorsDuringQuest:  [1005]
+The werewolf of ___mondung_ has been terrifying %reg for weeks.
+<--->
+No one much cares about the werewolf of ___mondung_ except its neighbors.
+
+RumorsPostfailure:  [1006]
+That werewolf moved on, out of ___mondung_. Migratory beasts they are.
+<--->
+Didn't expect that loop to live in ___mondung_ for as long as it did.
+
+RumorsPostsuccess:  [1007]
+Some %ra adventurer came out of nowhere and slew the werewolf of ___mondung_.
+<--->
+The peasants who live around ___mondung_ are happy the loop is gone.
+
+Message:  1018
+%qdt:
+ Cyndassa, the serving maid of Queen Aubk-i
+ of Daggerfall has sent me to slay a werewolf
+ holed up in ___mondung_,
+ for some reason. She can only pay me in
+ information, and has promised to reveal
+ what she knows of the Emperor's letter.
+ I have =2mondung_ days to do this deed.
+
+QuestLogEntry:  [1010]
+<ce>                    The body of the werewolf begins
+<ce>                     to transform before your very
+<ce>                    eyes. In just a few minutes, it
+<ce>                    has become a young man who seems
+<ce>                    to bear a strong resemblence to
+<ce>                               Cyndassa.
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 1 time.
+--              %oth occurs 1 time.
+--              %pcf occurs 2 times.
+--              %pcn occurs 1 time.
+--              %pct occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--        =2mondung_ occurs 3 times.
+--       ___mondung_ occurs 9 times.
+
+QBN:
+
+Person _cyndassa_ faction Cyndassa female
+Person courtier face 89 faction Court_of_Daggerfall
+
+Place _mondung_ remote dungeon
+
+Clock _2mondung_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Werewolf
+
+--	Quest start-up:
+	start timer _2mondung_ 
+	prompt QuestorOffer yes yes no _no_ 
+
+_S.00_ task:
+	when _S.02_ and _mondead_ 
+	give pc nothing 
+	start quest 12 12 
+	change repute with _cyndassa_ by +15 
+	change repute with courtier by +10 
+	drop _cyndassa_ as questor 
+	end quest 
+
+_S.01_ task:
+	drop _cyndassa_ as questor 
+	end quest 
+
+_S.02_ task:
+	clicked npc _cyndassa_ 
+
+_mondead_ task:
+	killed 1 _F.00_ saying 1010 
+
+yes task:
+	reveal _mondung_ 
+	log 1018 step 0 
+	say AcceptQuest 
+	add _cyndassa_ as questor 
+	place foe _F.00_ at _mondung_ 
+
+_no_ task:
+	say RefuseQuest 
+	end quest 
+
+_clearclick_ task:
+	when _S.02_ and not _mondead_ 
+	clear _S.02_ _clearclick_ 

@@ -1,0 +1,250 @@
+-- Quest: C:\QUESTS\WORKING\S0000502.Qbn.
+-- Main story quest.
+-- QuestId: 502
+Messages: 71
+Quest: S0000502
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+
+
+RefuseQuest:  [1001]
+
+
+AcceptQuest:  [1002]
+
+
+QuestFail:  [1003]
+
+
+QuestComplete:  [1004]
+<ce>            Here's a little something I've been working on.
+<ce>                     See how you like it.  I'm off!
+
+Message:  1020
+%qdt:
+ _rebel_, the rebel mage
+ who was once my quarry, has
+ asked me to meet %g3 messenger
+ in _tavern_ in __tavern_.
+
+Message:  1021
+%qdt:
+ An atronach sent by _rebel_
+ informed me that %g would like me
+ to help %g2 explore Direnni Tower
+ on the Isle of Balfiera.
+ _rebel_ will meet me there,
+ somewhere.
+
+Message:  1030
+%pcn:  Greetings!
+ 
+ I hope this note finds you well.
+ Are you interested in a little
+ adventure?  If so, meet my messenger
+ at _tavern_ in __tavern_.
+ 
+<ce>                  Your partner in Unsanctioned Magery,
+<ce>                                    
+<ce>                                _rebel_
+
+Message:  1031
+<ce>                 A faint scent of brimstone greets you
+<ce>                     as you walk through the door.
+<ce>                    Is that an atronach over there?
+<ce>                       With a note pinned to its
+<ce>                         back saying, "HIT ME"?
+
+Message:  1032
+<ce>                     The atronach intones stonily:
+<ce>                                    
+<ce>                     "Hello %pcn.  I am =atronach_,
+<ce>                       humble servant of _rebel_.
+<ce>                  %g asks if you would like to explore
+<ce>                 Direnni Tower on the Isle of Balfiera
+<ce>                   with %g2.  A magical place full of
+<ce>                  wonders beyond imagining.  My master
+<ce>               will meet you there in =towertime_ days."
+<ce>                                    
+<ce>                    With that, =atronach_ disappears
+<ce>                          in a puff of smoke.
+
+Message:  1040
+<ce>                     %pcf, good to see you again!
+<ce>                   You seem to have started with out
+<ce>                    me -- that chest you're carrying
+<ce>                   is exactly the thing I was looking
+<ce>                    for.  You don't mind if I borrow
+<ce>                      it, do you?  Thanks so much!
+
+Message:  1041
+<ce>                   %pcf, I'm glad you could join my
+<ce>                   little party.  Listen, I'm looking
+<ce>                    for one specific thing, a _item_
+<ce>                  which I believe is somewhere within
+<ce>                 Direnni Tower.  You can keep anything
+<ce>                 else we find, all I want is that box.
+<ce>               Well then, let's be on our way, shall we?
+
+Message:  1042
+<ce>               Ah, this is the _item_ I was looking for.
+<ce>               Hmm, I was expecting there to be some kind
+<ce>                        of guardian... uh oh...
+
+Message:  1043
+<ce>                       Well then, it's been fun.
+<ce>                         Perhaps we can do this
+<ce>                        again sometime.  Ta ta!
+
+Message:  1050
+<ce>                       Take that! and that! you
+<ce>                            moldy old thing!
+
+Message:  1051
+<ce>                        That's the spirit!  How
+<ce>                      about a little of this, too!
+
+Message:  1052
+<ce>                      Bloody hell, let's get out
+<ce>                        of here!  If I can just
+<ce>                       get this spell to work...
+
+Message:  1070
+<ce>                A raven circles overhead, then alights
+<ce>                 on your shoulder.  Most unusually, it
+<ce>               is carrying an engraved card in its beak.
+<ce>               It fixes you with one beady eye, tucks the
+<ce>                 card into your shirt, and flaps away.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 2 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 1 time.
+--              %pcf occurs 2 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 2 times.
+--        =atronach_ occurs 2 times.
+--       =towertime_ occurs 2 times.
+--         __tavern_ occurs 5 times.
+--            _item_ occurs 2 times.
+--           _rebel_ occurs 5 times.
+--          _tavern_ occurs 4 times.
+
+QBN:
+Item _letter_ letter used 1030
+Item _item_ item class 1 subclass 10
+Item _reward_ item class 4 subclass 3
+
+Person _rebel_ face 1 named Baltham_Greyman
+
+Place _tavern_ remote tavern
+Place _L.01_ permanent DirenniTower2
+Place _L.02_ permanent DirenniTower3
+Place aide remote dungeon
+
+Clock _S.00_ 31.06:00 93.18:00
+Clock _S.03_ 00:00 0 flag 1 range 0 2
+Clock _towertime_ 31.06:00 0 flag 1 range 0 1
+Clock _S.18_ 00:01 0 flag 1 range 0 1
+
+Foe _atronach_ is Iron_atronach
+Foe _guardian_ is Fire_daedra
+Foe _monster1_ is Mummy
+Foe _monster2_ is Zombie
+
+--	Quest start-up:
+	start timer _S.00_ 
+
+_S.00_ task:
+	pc at _tavern_ set _S.05_ 
+	_letter_ used do _readletter_ 
+	place item _item_ at _L.02_ 
+	start timer _S.03_ 
+	give pc _letter_ notify 1070 
+	place npc _rebel_ at _L.01_ 
+
+_S.01_ task:
+	injured _atronach_ 
+	start quest 503 503 
+	start timer _towertime_ 
+	log 1021 step 1 
+	reveal _L.01_ in province 9 at 204718 
+	say 1032 
+	place foe _atronach_ at aide 
+
+_readletter_ task:
+	log 1020 step 0 
+
+variable _S.03_
+_S.04_ task:
+	clicked npc _rebel_ 
+	have _item_ set _S.17_ 
+
+_S.05_ task:
+	say 1031 
+	restrain foe _atronach_ 
+	place foe _atronach_ at _tavern_ 
+
+_S.06_ task:
+	clicked item _item_ 
+	place foe _guardian_ at _L.02_ 
+
+_S.07_ task:
+	pc at _L.01_ set _S.10_ 
+	when _S.04_ and not _S.06_ 
+	hide npc _rebel_ 
+	say 1041 
+	add _rebel_ face 
+	unset _S.04_ 
+
+_S.08_ task:
+	when _S.04_ and _S.17_ 
+	give pc _reward_ 
+	say 1040 
+	end quest 
+
+_S.09_ task:
+	when _S.06_ and _S.07_ 
+	place item _item_ at aide 
+	start timer _S.18_ 
+	say 1042 
+
+variable _S.10_
+_S.11_ task:
+	when _S.10_ and _S.07_ 
+	create foe _monster2_ every 7 minutes 10 times with 20% success 
+	create foe _monster1_ every 5 minutes 10 times with 20% success 
+
+_S.12_ task:
+	injured _monster1_ 
+	say 1050 
+	cast Gods'_Fire spell on _monster1_ 
+
+_S.13_ task:
+	injured _monster2_ 
+	say 1051 
+	cast Lightning spell on _monster2_ 
+
+_S.14_ task:
+	when _S.03_ and not _S.01_ 
+	end quest 
+
+_S.15_ task:
+	when not _S.10_ and _S.07_ 
+	when _towertime_ and _S.07_ 
+	say 1043 
+	end quest 
+
+_towertime_ task:
+	end quest 
+
+variable _S.17_
+_S.18_ task:
+	say 1052 
+	cast Banish_Daedra spell on _guardian_ 
+
+variable _nononono_
