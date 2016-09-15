@@ -145,8 +145,8 @@ namespace ReflectionsMod
 
             camera_.depthTextureMode |= DepthTextureMode.Depth;
 
-            //kFinalReflectionTexture = Shader.PropertyToID("_FinalReflectionTexture");
-            //kTempTexture = Shader.PropertyToID("_TempTexture");
+            kFinalReflectionTexture = Shader.PropertyToID("_FinalReflectionTexture");
+            kTempTexture = Shader.PropertyToID("_TempTexture");
 
             GameObject goReflectionsMod = GameObject.Find("ReflectionsMod");
 
@@ -154,7 +154,7 @@ namespace ReflectionsMod
 
             goCreateLookupIndicesTexture = new GameObject("CreateLookupIndicesTexture");
             goCreateLookupIndicesTexture.transform.SetParent(goReflectionsMod.transform);
-            instanceCreateLookupIndicesTexture = goCreateLookupIndicesTexture.AddComponent<CreateLookupIndicesTexture>();          
+            instanceCreateLookupIndicesTexture = goCreateLookupIndicesTexture.AddComponent<CreateLookupIndicesTexture>();     
         }
 
         void OnDisable()
@@ -267,11 +267,13 @@ namespace ReflectionsMod
                 //m_CommandBuffer.Blit(kTempTexture, BuiltinRenderTextureType.CameraTarget);
 
                 m_CommandBuffer.GetTemporaryRT(kTempTexture, camera_.pixelWidth, camera_.pixelHeight, 0, FilterMode.Bilinear, intermediateFormat);
-                m_CommandBuffer.Blit(BuiltinRenderTextureType.Reflections, kTempTexture, material, (int)PassIndex.ReflectionStep);
-                m_CommandBuffer.Blit(kTempTexture, BuiltinRenderTextureType.Reflections);
+                m_CommandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, kFinalReflectionTexture, material, (int)PassIndex.ReflectionStep);
+
+                m_CommandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, kTempTexture, material, (int)PassIndex.CompositeFinal);
+                m_CommandBuffer.Blit(kTempTexture, BuiltinRenderTextureType.CameraTarget);                
 
                 m_CommandBuffer.ReleaseTemporaryRT(kTempTexture);
-                camera_.AddCommandBuffer(CameraEvent.AfterReflections, m_CommandBuffer);
+                camera_.AddCommandBuffer(CameraEvent.AfterFinalPass, m_CommandBuffer);
             }
         }
     }
