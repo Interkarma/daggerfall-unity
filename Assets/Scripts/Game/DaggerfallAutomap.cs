@@ -149,8 +149,7 @@ namespace DaggerfallWorkshop.Game
 
         GameObject gameObjectCameraAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
         Camera cameraAutomap = null; // camera for automap camera
-
-        GameObject gameObjectInteriorLightRig = null; // reference to instance of GameObject called "InteriorLightRig" - this will be used to deactivate lights of interior geometry inside GameObject "Interior"
+        
         GameObject gameobjectAutomapKeyLight = null; // instead this script will use its own key light to lighten the level geometry used for automap
         GameObject gameobjectAutomapFillLight = null; // and fill light
         GameObject gameobjectAutomapBackLight = null; // and back light
@@ -284,13 +283,6 @@ namespace DaggerfallWorkshop.Game
             gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
-            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding))
-            {
-                // disable interior lights - disabling instead of setting lights' culling mask - since only a small number of lights can be ignored by layer (got a warning when I tried)
-                gameObjectInteriorLightRig = GameObject.Find("InteriorLightRig");
-                gameObjectInteriorLightRig.SetActive(false);
-            }
-
             // create camera (if not present) that will render automap level geometry
             createAutomapCamera();
 
@@ -317,11 +309,6 @@ namespace DaggerfallWorkshop.Game
 
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
             {
-                // enable interior lights
-                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding)
-                {
-                    gameObjectInteriorLightRig.SetActive(true);
-                }
                 // and get rid of lights used to light the automap level geometry
                 UnityEngine.Object.Destroy(gameobjectAutomapKeyLight);
                 UnityEngine.Object.Destroy(gameobjectAutomapFillLight);
