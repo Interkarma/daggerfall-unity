@@ -19,7 +19,7 @@
 ;		textureFrame = 0
 ;		useMetallicGlossMap = false
 ;		reflectivity = 0.6
-;		smoothness = 0.9
+;		smoothness = 0.65
 ;
 ;
 ; example for reflectivity and smoothness from metallic gloss map:
@@ -45,7 +45,7 @@ textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.6
-smoothness = 0.9
+smoothness = 0.65
 
 [037_3 {Mages Guild Ground Texture (Desert)}]
 textureArchive = 037
