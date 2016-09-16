@@ -300,13 +300,6 @@ namespace DaggerfallWorkshop
             if (DaggerfallUnity.Instance.Option_InteriorLightPrefab == null)
                 return;
 
-            // Get size and position
-            Vector2 size = DaggerfallUnity.Instance.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord) * MeshReader.GlobalScale;
-            Vector3 position = new Vector3(
-                obj.XPos,
-                -obj.YPos,
-                obj.ZPos) * MeshReader.GlobalScale;
-
             // Create gameobject
             GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_InteriorLightPrefab.gameObject, string.Empty, parent, Vector3.zero);
 
@@ -314,6 +307,7 @@ namespace DaggerfallWorkshop
             go.transform.localPosition = Vector3.zero;
 
             // Adjust position of light for standing lights as their source comes more from top than middle
+            Vector2 size = DaggerfallUnity.Instance.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord) * MeshReader.GlobalScale;
             switch (obj.TextureRecord)
             {
                 case 6:         // Skull torch
