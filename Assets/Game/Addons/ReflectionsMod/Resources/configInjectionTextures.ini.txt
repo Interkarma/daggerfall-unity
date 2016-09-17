@@ -76,24 +76,24 @@ textureArchive = 363
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.4
-smoothness = 0.96
+reflectivity = 0.5
+smoothness = 0.75
 
 [063_3 {Temple Ground Texture (Desert)}]
 textureArchive = 063
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.4
-smoothness = 0.96
+reflectivity = 0.5
+smoothness = 0.75
 
 [463_3 {Temple Ground Texture (Swamp)}]
 textureArchive = 463
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.4
-smoothness = 0.96
+reflectivity = 0.5
+smoothness = 0.75
 
 [360_3 {Knights Order, Taverns Ground Texture (Woodland))}] 
 textureArchive = 360
@@ -221,7 +221,7 @@ textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.1
-smoothness = 0.7
+smoothness = 0.6
 
 [171_3 {House Ground Texture (Woodland)}]
 textureArchive = 171
