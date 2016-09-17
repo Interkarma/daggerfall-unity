@@ -1053,13 +1053,17 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400008, guid: 0811f78212229814d8c469c916304789, type: 2}
       propertyPath: NormalTextureStrength
-      value: .200000003
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 0811f78212229814d8c469c916304789, type: 2}
       propertyPath: Option_LootContainerPrefab
       value: 
       objectReference: {fileID: 11486862, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559,
         type: 2}
+    - target: {fileID: 11400004, guid: 0811f78212229814d8c469c916304789, type: 2}
+      propertyPath: TimeScale
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0811f78212229814d8c469c916304789, type: 2}
   m_IsPrefabParent: 0
