@@ -52,8 +52,8 @@ textureArchive = 037
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.25
-smoothness = 0.85
+reflectivity = 0.4
+smoothness = 0.65
 
 [137_3 {Mages Guild Ground Texture (Mountain)}]
 textureArchive = 137
@@ -61,7 +61,7 @@ textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.5
-smoothness = 0.9
+smoothness = 0.75
 
 [437_3 {Mages Guild Ground Texture (Swamp)}]
 textureArchive = 437
