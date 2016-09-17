@@ -19,10 +19,7 @@ Shader "Daggerfall/CreateLookupIndices" {
             float4 pos : SV_POSITION;
             float2 uv : TEXCOORD0;
 			float4 parallaxCorrectedScreenPos : TEXCOORD1;
-            float2 uv2 : TEXCOORD2;
-			//float3 worldPos : TEXCOORD3;
-			//float4 screenPos : TEXCOORD4;
-			
+            float2 uv2 : TEXCOORD2;		
     };
 
     v2f vert( appdata_full v )
@@ -36,10 +33,7 @@ Shader "Daggerfall/CreateLookupIndices" {
             #if UNITY_UV_STARTS_AT_TOP
                 if (_MainTex_TexelSize.y < 0)
                         o.uv2.y = 1-o.uv2.y;
-            #endif
-
-			//o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-			//o.screenPos = float4(v.texcoord.x, v.texcoord.y, 0.0f, 1.0f);					
+            #endif				
 					
 			float4 posWorldSpace = mul(unity_ObjectToWorld, v.vertex);
 			if ((abs(posWorldSpace.y - _GroundLevelHeight) < 0.01f) || (abs(posWorldSpace.y - _LowerLevelHeight) < 0.01f))
@@ -49,15 +43,17 @@ Shader "Daggerfall/CreateLookupIndices" {
 			else
 			{
 				// parallax-correct reflection position
-				
+				/*
 				if (posWorldSpace.y > _GroundLevelHeight+0.01f)
 					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.7f, 0.0f, 0.0f)));
 				else if (posWorldSpace.y < _GroundLevelHeight-0.01f)
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.7f, 0.0f, 0.0f)));				
+					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.7f, 0.0f, 0.0f)));		
 				else
 					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight, 0.0f, 0.0f)));
-					
+					*/
 				//o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace));
+
+				o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace - float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.7f, 0.0f, 0.0f)));
 			}			
 						
             return o;
@@ -68,8 +64,6 @@ Shader "Daggerfall/CreateLookupIndices" {
 			half4 col = tex2D(_MainTex, IN.uv);
 			if (col.a < 0.5f)
 				discard;
-
-			//float4 result = float4(1.0f, 0.0f, 0.0f, 0.5f);
 			
 			float2 parallaxCorrectedScreenPos = IN.parallaxCorrectedScreenPos.xy / IN.parallaxCorrectedScreenPos.w; 
             return parallaxCorrectedScreenPos;

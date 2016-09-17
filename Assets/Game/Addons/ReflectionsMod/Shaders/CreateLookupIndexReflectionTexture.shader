@@ -29,7 +29,6 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
     struct v2f
     {
             float4 pos : SV_POSITION;
-			//fixed4 color : COLOR;
             float2 uv : TEXCOORD0;
             float2 uv2 : TEXCOORD1;
 			float3 worldPos : TEXCOORD2;
@@ -49,8 +48,6 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
                 if (_MainTex_TexelSize.y < 0)
                         o.uv2.y = 1-o.uv2.y;
             #endif
-
-			//o.color = v.color;
 
 			o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 			o.worldNormal = normalize( mul(float4(v.normal, 0.0), unity_ObjectToWorld).xyz);
