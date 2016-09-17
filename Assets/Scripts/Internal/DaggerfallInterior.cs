@@ -322,6 +322,11 @@ namespace DaggerfallWorkshop
                 case 6:         // Skull torch
                     go.transform.localPosition += new Vector3(0, 0.6f, 0);
                     break;
+                //case 8:         // Turkis lamp
+                //    break;
+                case 9:        // metallic Chandelier
+                    go.transform.localPosition += new Vector3(0, 0.4f, 0);
+                    break;
                 case 11:        // Candle in lamp
                     go.transform.localPosition += new Vector3(0, -0.4f, 0);
                     break;
@@ -331,6 +336,9 @@ namespace DaggerfallWorkshop
                 case 14:        // Standing lantern
                 case 15:        // Standing lantern round
                     go.transform.localPosition += new Vector3(0, size.y / 2, 0);
+                    break;
+                case 17:        // Mounted torch 1
+                    go.transform.localPosition += new Vector3(0, 0.2f, 0);
                     break;
                 case 20:        // Brazier torch
                     go.transform.localPosition += new Vector3(0, 0.6f, 0);
@@ -380,6 +388,14 @@ namespace DaggerfallWorkshop
                     light.intensity = 0.75f;
                     light.color = new Color(1.0f, 0.93f, 0.62f);
                     break;
+                case 8:         // Turkis lamp
+                    light.color = new Color(0.68f, 1.0f, 0.94f);
+                    break;
+                case 9:        // metallic Chandelier
+                    light.range = 15.0f;
+                    light.intensity = 0.65f;
+                    light.color = new Color(1.0f, 0.92f, 0.6f);
+                    break;
                 case 11:        // Candle in lamp
                     light.range = 5.0f;
                     light.intensity = 0.5f;
@@ -388,6 +404,10 @@ namespace DaggerfallWorkshop
                     light.range *= 1.2f;
                     light.intensity = 1.1f;
                     light.color = new Color(0.93f, 0.84f, 0.49f);
+                    break;
+                case 17:        // Mounted torch 1
+                    light.intensity = 0.8f;
+                    light.color = new Color(1.0f, 0.97f, 0.87f);
                     break;
                 case 20:        // Brazier torch
                     light.range = 12.0f;
