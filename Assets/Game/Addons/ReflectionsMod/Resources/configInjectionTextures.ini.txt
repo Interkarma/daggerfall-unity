@@ -19,7 +19,7 @@
 ;		textureFrame = 0
 ;		useMetallicGlossMap = false
 ;		reflectivity = 0.6
-;		smoothness = 0.9
+;		smoothness = 0.65
 ;
 ;
 ; example for reflectivity and smoothness from metallic gloss map:
@@ -45,15 +45,15 @@ textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.6
-smoothness = 0.9
+smoothness = 0.65
 
 [037_3 {Mages Guild Ground Texture (Desert)}]
 textureArchive = 037
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.4
-smoothness = 0.8
+reflectivity = 0.25
+smoothness = 0.85
 
 [137_3 {Mages Guild Ground Texture (Mountain)}]
 textureArchive = 137
@@ -69,7 +69,7 @@ textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.6
-smoothness = 0.9
+smoothness = 0.65
 
 [363_3 {Temple Ground Texture (Woodland)}] 
 textureArchive = 363
@@ -95,15 +95,15 @@ useMetallicGlossMap = false
 reflectivity = 0.4
 smoothness = 0.96
 
-[360_3 {Kights Order Ground Texture (Woodland)}] 
+[360_3 {Knights Order, Taverns Ground Texture (Woodland))}] 
 textureArchive = 360
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.1
-smoothness = 0.75
+smoothness = 0.4
 
-[060_3 {Kights Order Ground Texture (Desert)}]
+[060_3 {Knights Order Ground Texture (Desert)}]
 textureArchive = 060
 textureRecord = 3
 textureFrame = 0
@@ -111,7 +111,7 @@ useMetallicGlossMap = false
 reflectivity = 0.1
 smoothness = 0.75
 
-[460_3 {Kights Order Ground Texture (Swamp)}]
+[460_3 {Knights Order Ground Texture (Swamp)}]
 textureArchive = 460
 textureRecord = 3
 textureFrame = 0
@@ -124,7 +124,7 @@ textureArchive = 350
 textureRecord = 1
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.6
+reflectivity = 0.35
 smoothness = 0.875
 
 [352_1 {Castle Wayrest Ground Texture}]
@@ -173,7 +173,7 @@ textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.2
-smoothness = 0.95
+smoothness = 0.75
 
 [040_3 {House Ground Texture (Desert)}]
 textureArchive = 040
@@ -189,7 +189,7 @@ textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.3
-smoothness = 0.95
+smoothness = 0.7
 
 [116_3 {House Ground Texture (Mountain)}]
 textureArchive = 116
@@ -199,13 +199,21 @@ useMetallicGlossMap = false
 reflectivity = 0.04
 smoothness = 0.67
 
+[128_3 {House Ground Texture (Mountain)}]
+textureArchive = 128
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.5
+smoothness = 0.4
+
 [140_3 {House Ground Texture (Mountain)}]
 textureArchive = 140
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.075
-smoothness = 0.71
+reflectivity = 0.3
+smoothness = 0.3
 
 [328_3 {House Ground Texture (Mountain)}]
 textureArchive = 328
@@ -215,13 +223,21 @@ useMetallicGlossMap = false
 reflectivity = 0.1
 smoothness = 0.7
 
-[366_3 {House Ground Texture (Mountain)}]
+[171_3 {House Ground Texture (Woodland)}]
+textureArchive = 171
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.25
+smoothness = 0.4
+
+[366_3 {House Ground Texture (Woodland, Mountain)}]
 textureArchive = 366
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.1
-smoothness = 0.7
+reflectivity = 0.2
+smoothness = 0.4
 
 [019_2 {Crypt Ground Texture (Desert)}]
 textureArchive = 019
