@@ -1,0 +1,73 @@
+-- There are a total of 64 global variables
+-- Current state of globals is saved in SAVEVARS.DAT
+-- Known globals have strings matching output from Template 1.11
+
+0	LiftedCurse
+1	GothrydGotTotem
+2	KingOfWormsGotTotem
+3	GortwogGotTotem
+4	AkorithiGotTotem
+5	Unknown1
+6	UnderkingGotTotem
+7	EadwyreGotTotem
+8	BrisiennaGotTotem
+9	MedoraGotHorn
+10	Unknown2
+11	GothrydEnding
+12	KingOfWormsEnding
+13	GortwogEnding
+14	AkorithiEnding
+15	Unknown3
+16	UnderkingEnding
+17	EadwyreEnding
+18	BrisiennaEnding
+19	Unknown4
+20	Unknown5
+21	UnknownElysanna
+22	Unknown6
+23	MorgiahSatisfied
+24	Unknown7
+25	ElysannaSatisfied
+26	Unknown8
+27	Unknown9
+28	BarenziahSatisfied
+29	MyniseraSatisfied
+30	Unknown10
+31	MetLadyBrisienna
+32	Unknown11
+33	KingOfWormsSatisfied
+34	Unknown12
+35	Unknown13
+36	FinishedMantellanCrux
+37	Unknown14
+38	Unknown15
+39	Unknown16
+40	Unknown17
+41	Unknown18
+42	UnknownHelseth
+43	LysandusSatisfied
+44	Unknown19
+45	Unknown20
+46	Unknown21
+47	Unknown22
+48	Unknown23
+49	Unknown24
+50	Unknown25
+51	Unknown26
+52	Unknown27
+53	Unknown28
+54	Unknown29
+55	Unknown30
+56	Unknown31
+57	Unknown32
+58	Unknown33
+59	Unknown34
+60	Unknown35
+61	Unknown36
+62	Unknown37
+63	Unknown38
+
+-- Reused by Werefall
+
+5	TookTheCure
+10	OpenedShapeshifters

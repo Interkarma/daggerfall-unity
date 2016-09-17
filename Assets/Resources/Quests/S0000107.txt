@@ -1,0 +1,52 @@
+-- Quest: C:\QUESTS\WORKING\S0000107.Qbn.
+-- Main story quest.
+-- QuestId: 107
+Messages: 10
+Quest: S0000107
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+
+
+RefuseQuest:  [1001]
+
+
+AcceptQuest:  [1002]
+
+
+QuestFail:  [1003]
+
+
+QuestComplete:  [1004]
+
+
+RumorsDuringQuest:  [1005]
+
+
+RumorsPostfailure:  [1006]
+
+
+RumorsPostsuccess:  [1007]
+
+
+QuestorPostsuccess:  [1008]
+
+
+QuestorPostfailure:  [1009]
+
+
+
+-- Symbols used in the QRC file:
+--    ***  None  ***
+
+QBN:
+
+Person _aubki_ named Queen_Aubk-i atHome
+
+
+
+
+--	Quest start-up:
+	change repute with _aubki_ by +8 
+	end quest 

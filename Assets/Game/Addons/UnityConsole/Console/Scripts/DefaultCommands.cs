@@ -278,7 +278,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "set_timescale";
             public static readonly string error = "Failed to set timescale - invalid setting or DaggerfallUnity singleton object";
-            public static readonly string description = "Set Timescale; Default 10.  Setting it too high can have adverse affects";
+            public static readonly string description = "Set Timescale; Default 12.  Setting it too high can have adverse affects";
             public static readonly string usage = "set_timescale [#]";
 
             public static string Execute(params string[] args)

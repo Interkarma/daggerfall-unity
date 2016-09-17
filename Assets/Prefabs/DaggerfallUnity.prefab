@@ -74,7 +74,7 @@ MonoBehaviour:
   Option_DungeonBlockPrefab: {fileID: 11498520, guid: 27a51a887fcbfdf48bf6d8c3e30c8c76,
     type: 2}
   Option_ImportEnemyPrefabs: 1
-  Option_EnemyPrefab: {fileID: 11495432, guid: c4ffeec35c7aaa24d8a9defc2edb7ac5, type: 2}
+  Option_EnemyPrefab: {fileID: 11495432, guid: bb371757861765d4e8cd34d3dde6f640, type: 2}
   Option_ImportRandomTreasure: 1
   Option_LootContainerPrefab: {fileID: 11448000, guid: e44e9b9711fff7a4a8f1331e5f18f151,
     type: 2}
@@ -112,7 +112,7 @@ MonoBehaviour:
     Hour: 12
     Minute: 0
     Second: 0
-  TimeScale: 10
+  TimeScale: 12
   ShowDebugString: 0
 --- !u!114 &11400008
 MonoBehaviour:

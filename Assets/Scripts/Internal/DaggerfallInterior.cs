@@ -300,13 +300,38 @@ namespace DaggerfallWorkshop
             if (DaggerfallUnity.Instance.Option_InteriorLightPrefab == null)
                 return;
 
-            Vector2 size = DaggerfallUnity.Instance.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord);
-            Vector3 position = new Vector3(
-                obj.XPos,
-                -obj.YPos,
-                obj.ZPos) * MeshReader.GlobalScale;
+            // Create gameobject
+            GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_InteriorLightPrefab.gameObject, string.Empty, parent, Vector3.zero);
 
-            GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_InteriorLightPrefab.gameObject, string.Empty, parent, position);
+            // Set local position to billboard origin, otherwise light transform is at base of billboard
+            go.transform.localPosition = Vector3.zero;
+
+            // Adjust position of light for standing lights as their source comes more from top than middle
+            Vector2 size = DaggerfallUnity.Instance.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord) * MeshReader.GlobalScale;
+            switch (obj.TextureRecord)
+            {
+                case 6:         // Skull torch
+                case 14:        // Standing lantern
+                case 15:        // Standing lantern round
+                case 20:        // Brazier torch
+                case 21:        // Standing candle
+                    go.transform.localPosition += new Vector3(0, size.y / 2, 0);
+                    break;
+            }
+
+            // Shrink light radius of candles
+            Light light = go.GetComponent<Light>();
+            switch (obj.TextureRecord)
+            {
+                case 2:         // Skull candle
+                case 3:         // Candle
+                case 4:         // Candle with base
+                case 21:        // Standing candle
+                    light.range /= 3f;
+                    break;
+            }
+
+            // TODO: Could also adjust light colour and intensity, or change prefab entirely above for any obj.TextureRecord
         }
 
         /// <summary>
