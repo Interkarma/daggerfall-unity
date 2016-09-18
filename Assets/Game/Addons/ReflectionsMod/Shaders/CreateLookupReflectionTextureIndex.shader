@@ -5,7 +5,7 @@
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 
 // used as replacement shader to create reflection texture sampling index (which reflection texture to sample from) for every fragment (in r channel of texture),
-Shader "Daggerfall/ReflectionsMod/CreateLookupIndexReflectionTexture" {
+Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
     Properties
     {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
