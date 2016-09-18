@@ -6,7 +6,7 @@
 
 // 1st pass: computes the reflection color for every pixel (stored in output texture)
 // 2nd pass: composite step to merge reflection color into output buffer
-Shader "ReflectionsMod/DeferredPlanarReflections" {
+Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
     Properties
     {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
@@ -100,8 +100,6 @@ Shader "ReflectionsMod/DeferredPlanarReflections" {
 
 			half3 refl = half3(0.0f, 0.0f, 0.0f);			
 
-			//float roughness = 1.0f - tex2D(_IndexReflectionsTextureTex, screenUV).b;			
-
 			float roughness = 1.0 - tex2D(_CameraGBufferTexture1, screenUV).a;
 
 			float indexReflectionsTextureTex = tex2D(_IndexReflectionsTextureTex, screenUV).r;
@@ -124,16 +122,11 @@ Shader "ReflectionsMod/DeferredPlanarReflections" {
 
 				refl = (1.0f-fadeOutFact) * getReflectionColor(_ReflectionGroundTex, parallaxCorrectedScreenUV.xy, roughness * 8); //refl = tex2Dlod(_ReflectionGroundTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
 			}
-		
-			//refl *= 1.0f * tex2D(_IndexReflectionsTextureTex, screenUV).g; // multiplier is just an empiric finding - in conjunction with confidence attenuation from below
+					
 			float3 specColor = tex2D(_CameraGBufferTexture1, screenUV).rgb;
 			refl *= specColor;
 			
-			float4 result = float4(0.0f, 0.0f, 0.0f, 1.0f); //float4(tex2D(_CameraReflectionsTexture, tsP).rgb, 0);
-			//if ((refl.r > 0.0f) || (refl.g > 0.0f) || (refl.b > 0.0f))
-				result = float4(refl, 1.0f);
-			
-            return result;
+			return float4(refl, 1.0f);
     }
 
 
@@ -201,6 +194,7 @@ Shader "ReflectionsMod/DeferredPlanarReflections" {
                     finalGlossyTerm = lerp(specEmission.rgb, ssrResult, saturate(confidence));
             }            
 			*/
+
             {
                     finalGlossyTerm = ssrResult*saturate(confidence);
             }
@@ -227,7 +221,7 @@ Shader "ReflectionsMod/DeferredPlanarReflections" {
 				#pragma fragment fragReflection
 				#pragma target 3.0
 				//#pragma multicompile __ _METALLICGLOSSMAP
-				#pragma shader_feature _METALLICGLOSSMAP 
+				#pragma shader_feature _METALLICGLOSSMAP
 				#pragma shader_feature _SPECGLOSSMAP
 				// USE_METALLICGLOSSMAP		
 			ENDCG

@@ -84,7 +84,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_Shader == null)
-                    m_Shader = Shader.Find("ReflectionsMod/DeferredPlanarReflections");
+                    m_Shader = Shader.Find("Daggerfall/ReflectionsMod/DeferredPlanarReflections");
 
                 return m_Shader;
             }

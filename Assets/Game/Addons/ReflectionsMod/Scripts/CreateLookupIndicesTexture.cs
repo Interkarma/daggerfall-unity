@@ -17,7 +17,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_ShaderCreateLookupIndices == null)
-                    m_ShaderCreateLookupIndices = Shader.Find("ReflectionsMod/CreateLookupIndices");
+                    m_ShaderCreateLookupIndices = Shader.Find("Daggerfall/ReflectionsMod/CreateLookupIndices");
 
                 return m_ShaderCreateLookupIndices;
             }
@@ -41,7 +41,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_ShaderCreateLookupIndexReflectionTexture == null)
-                    m_ShaderCreateLookupIndexReflectionTexture = Shader.Find("ReflectionsMod/CreateLookupIndexReflectionTexture");
+                    m_ShaderCreateLookupIndexReflectionTexture = Shader.Find("Daggerfall/ReflectionsMod/CreateLookupIndexReflectionTexture");
 
                 return m_ShaderCreateLookupIndexReflectionTexture;
             }

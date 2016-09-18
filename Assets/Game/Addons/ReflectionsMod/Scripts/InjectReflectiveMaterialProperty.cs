@@ -23,6 +23,9 @@ namespace ReflectionsMod
     {
         public string iniPathConfigInjectionTextures = ""; // if not specified will use fallback ini-file
         const string iniPathFallbackConfigInjectionTextures = "configInjectionTextures.ini";
+
+        private bool useDeferredReflections = true;
+
         // Streaming World Component
         public StreamingWorld streamingWorld;
 
@@ -113,6 +116,8 @@ namespace ReflectionsMod
         void Start()
         {
             dfUnity = DaggerfallUnity.Instance;
+
+            useDeferredReflections = (GameManager.Instance.MainCamera.renderingPath == RenderingPath.DeferredShading);
 
             if (!streamingWorld)
                 streamingWorld = GameObject.Find("StreamingWorld").GetComponent<StreamingWorld>();
@@ -231,7 +236,7 @@ namespace ReflectionsMod
                     {
                         if (terrain.materialTemplate)
                         {
-                            if (terrain.materialTemplate.shader.name == "ReflectionsMod/TilemapWithReflections")
+                            if (terrain.materialTemplate.shader.name == "Daggerfall/ReflectionsMod/TilemapWithReflections")
                             {
                                 terrain.materialTemplate.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y - extraTranslationY);
                                 terrain.materialTemplate.SetFloat("_SeaLevelHeight", gameObjectReflectionPlaneSeaLevel.transform.position.y - extraTranslationY);
@@ -262,7 +267,7 @@ namespace ReflectionsMod
                         Material[] mats = r.sharedMaterials;
                         foreach (Material m in mats)
                         {
-                            //if (m.shader.name == "ReflectionsMod/FloorMaterialWithReflections")
+                            //if (m.shader.name == "Daggerfall/ReflectionsMod/FloorMaterialWithReflections")
                             {
                                 m.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y);
                                 m.SetFloat("_LowerLevelHeight", gameObjectReflectionPlaneLowerLevel.transform.position.y);
@@ -379,61 +384,73 @@ namespace ReflectionsMod
                                     {
                                         if (!texRecord.Value.useMetallicGlossMap)
                                         {
-                                            Material newMat = cmat.material;
-                                            //Material newMat = new Material(Shader.Find("ReflectionsMod/FloorMaterialWithReflections"));
-                                            //newMat.CopyPropertiesFromMaterial(cmat.material);
-                                            //newMat.name = cmat.material.name;
-                                            if (texReflectionGround)
+                                            if (useDeferredReflections)
                                             {
-                                                newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
+                                                updateMaterial(archive, record, frame, texRecord.Value.albedoMap, texRecord.Value.normalMap, texRecord.Value.reflectivity, texRecord.Value.smoothness);
                                             }
-                                            if (texReflectionLowerLevel)
+                                            else
                                             {
-                                                newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
-                                            }
-                                            newMat.SetFloat("_Metallic", texRecord.Value.reflectivity);
-                                            newMat.SetFloat("_Smoothness", texRecord.Value.smoothness);
+                                                Material newMat = new Material(Shader.Find("Daggerfall/ReflectionsMod/FloorMaterialWithReflections"));
+                                                newMat.CopyPropertiesFromMaterial(cmat.material);
+                                                newMat.name = cmat.material.name;
+                                                if (texReflectionGround)
+                                                {
+                                                    newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
+                                                }
+                                                if (texReflectionLowerLevel)
+                                                {
+                                                    newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
+                                                }
+                                                newMat.SetFloat("_Metallic", texRecord.Value.reflectivity);
+                                                newMat.SetFloat("_Smoothness", texRecord.Value.smoothness);
 
-                                            if (texRecord.Value.albedoMap != null)
-                                            {
-                                                newMat.SetTexture("_MainTex", texRecord.Value.albedoMap);
-                                            }
+                                                if (texRecord.Value.albedoMap != null)
+                                                {
+                                                    newMat.SetTexture("_MainTex", texRecord.Value.albedoMap);
+                                                }
 
-                                            if (texRecord.Value.normalMap != null)
-                                            {
-                                                newMat.SetTexture("_BumpMap", texRecord.Value.normalMap);
-                                            }
+                                                if (texRecord.Value.normalMap != null)
+                                                {
+                                                    newMat.SetTexture("_BumpMap", texRecord.Value.normalMap);
+                                                }
 
-                                            m = newMat;
+                                                m = newMat;
+                                            }                                            
                                         }
                                         else
                                         {
-                                            Material newMat = cmat.material;
-                                            //Material newMat = new Material(Shader.Find("ReflectionsMod/FloorMaterialWithReflections"));
-                                            //newMat.CopyPropertiesFromMaterial(cmat.material);
-                                            //newMat.name = cmat.material.name;
-                                            if (texReflectionGround)
+                                            if (useDeferredReflections)
                                             {
-                                                newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
+                                                updateMaterial(archive, record, frame, texRecord.Value.albedoMap, texRecord.Value.normalMap, texRecord.Value.metallicGlossMap);
                                             }
-                                            if (texReflectionLowerLevel)
+                                            else
                                             {
-                                                newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
-                                            }
-                                            newMat.EnableKeyword("USE_METALLICGLOSSMAP");
-                                            newMat.SetTexture("_MetallicGlossMap", texRecord.Value.metallicGlossMap);
+                                                Material newMat = new Material(Shader.Find("Daggerfall/ReflectionsMod/FloorMaterialWithReflections"));
+                                                newMat.CopyPropertiesFromMaterial(cmat.material);
+                                                newMat.name = cmat.material.name;
+                                                if (texReflectionGround)
+                                                {
+                                                    newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
+                                                }
+                                                if (texReflectionLowerLevel)
+                                                {
+                                                    newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
+                                                }
+                                                newMat.EnableKeyword("USE_METALLICGLOSSMAP");
+                                                newMat.SetTexture("_MetallicGlossMap", texRecord.Value.metallicGlossMap);
 
-                                            if (texRecord.Value.albedoMap != null)
-                                            {
-                                                newMat.SetTexture("_MainTex", texRecord.Value.albedoMap);
-                                            }
+                                                if (texRecord.Value.albedoMap != null)
+                                                {
+                                                    newMat.SetTexture("_MainTex", texRecord.Value.albedoMap);
+                                                }
 
-                                            if (texRecord.Value.normalMap != null)
-                                            {
-                                                newMat.SetTexture("_BumpMap", texRecord.Value.normalMap);
-                                            }
+                                                if (texRecord.Value.normalMap != null)
+                                                {
+                                                    newMat.SetTexture("_BumpMap", texRecord.Value.normalMap);
+                                                }
 
-                                            m = newMat;
+                                                m = newMat;
+                                            }
                                         }
                                     }
                                 }
@@ -478,12 +495,12 @@ namespace ReflectionsMod
                         Texture tileSetTexture = terrain.materialTemplate.GetTexture("_TileAtlasTex");
 
                         //Texture2D tileAtlas = dfUnity.MaterialReader.TextureReader.GetTerrainTilesetTexture(402).albedoMap;
-                        //System.IO.File.WriteAllBytes("./Assets/ReflectionsMod/Resources/tileatlas_402.png", tileAtlas.EncodeToPNG());
+                        //System.IO.File.WriteAllBytes("./Assets/Daggerfall/ReflectionsMod/Resources/tileatlas_402.png", tileAtlas.EncodeToPNG());
 
                         Texture tileMapTexture = terrain.materialTemplate.GetTexture("_TilemapTex");
                         int tileMapDim = terrain.materialTemplate.GetInt("_TilemapDim");
 
-                        Material newMat = new Material(Shader.Find("ReflectionsMod/TilemapWithReflections"));
+                        Material newMat = new Material(Shader.Find("Daggerfall/ReflectionsMod/TilemapWithReflections"));
 
                         newMat.SetTexture("_TileAtlasTex", tileSetTexture);
                         newMat.SetTexture("_TilemapTex", tileMapTexture);
@@ -520,19 +537,20 @@ namespace ReflectionsMod
             CachedMaterial cmat;
             if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
             {
-                /*
-                if ((archive == 337) && (record == 3))
+                Material newMat;
+                if (useDeferredReflections)
                 {
-                    Debug.Log(String.Format("Here metallic, refl: {0}", reflectivity));
+                    newMat = cmat.material;
+                    //newMat = new Material(Shader.Find("Standard (Specular setup)"));
+                    //newMat.CopyPropertiesFromMaterial(cmat.material);
                 }
-                */
+                else
+                {
+                    newMat = new Material(Shader.Find("Daggerfall/ReflectionsMod/FloorMaterialWithReflections"));
+                    newMat.CopyPropertiesFromMaterial(cmat.material);
+                    newMat.name = cmat.material.name;
+                }
 
-                Material newMat = cmat.material;
-                //Material newMat = new Material(Shader.Find("Standard (Specular setup)"));
-                //newMat.CopyPropertiesFromMaterial(cmat.material);
-                //Material newMat = new Material(Shader.Find("ReflectionsMod/FloorMaterialWithReflections"));
-                //newMat.CopyPropertiesFromMaterial(cmat.material);
-                //newMat.name = cmat.material.name;
                 if (texReflectionGround)
                 {
                     newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
@@ -565,19 +583,20 @@ namespace ReflectionsMod
             CachedMaterial cmat;
             if (dfUnity.MaterialReader.GetCachedMaterial(archive, record, frame, out cmat))
             {
-                /*
-                if ((archive==337)&&(record==3))
+                Material newMat;
+                if (useDeferredReflections)
                 {
-                    Debug.Log("Here metallicglossmap");
+                    newMat = cmat.material;
+                    //newMat = new Material(Shader.Find("Standard (Specular setup)"));
+                    //newMat.CopyPropertiesFromMaterial(cmat.material);
                 }
-                */
+                else
+                {
+                    newMat = new Material(Shader.Find("Daggerfall/ReflectionsMod/FloorMaterialWithReflections"));
+                    newMat.CopyPropertiesFromMaterial(cmat.material);
+                    newMat.name = cmat.material.name;
+                }
 
-                Material newMat = cmat.material;
-                //Material newMat = new Material(Shader.Find("Standard (Specular setup)"));
-                //newMat.CopyPropertiesFromMaterial(cmat.material);
-                //Material newMat = new Material(Shader.Find("ReflectionsMod/FloorMaterialWithReflections"));
-                //newMat.CopyPropertiesFromMaterial(cmat.material);
-                //newMat.name = cmat.material.name;
                 if (texReflectionGround)
                 {
                     newMat.SetTexture("_ReflectionGroundTex", texReflectionGround);
@@ -586,7 +605,7 @@ namespace ReflectionsMod
                 {
                     newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
                 }
-                //newMat.EnableKeyword("USE_METALLICGLOSSMAP");
+                
                 newMat.EnableKeyword("_METALLICGLOSSMAP");
                 //newMat.EnableKeyword("_SPECGLOSSMAP");
                 newMat.DisableKeyword("_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A");

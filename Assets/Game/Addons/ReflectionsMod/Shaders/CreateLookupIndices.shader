@@ -5,7 +5,7 @@
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 
 // used as replacement shader to create texture uv sampling positions for every fragment
-Shader "ReflectionsMod/CreateLookupIndices" {
+Shader "Daggerfall/ReflectionsMod/CreateLookupIndices" {
     Properties
     {
             _MainTex ("Base (RGB)", 2D) = "white" {}

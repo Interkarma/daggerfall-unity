@@ -27,6 +27,7 @@ namespace ReflectionsMod
         private MirrorReflection mirrorRefl = null; 
         private MirrorReflection mirrorReflSeaLevel = null;
 
+        private bool useDeferredReflections = false;
         private DeferredPlanarReflections componentDefferedPlanarReflections = null;
 
         private bool playerInside = false;
@@ -336,7 +337,12 @@ namespace ReflectionsMod
                 mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
             }
 
-            componentDefferedPlanarReflections = GameManager.Instance.MainCameraObject.AddComponent<ReflectionsMod.DeferredPlanarReflections>();
+            useDeferredReflections = (GameManager.Instance.MainCamera.renderingPath == RenderingPath.DeferredShading);
+
+            if (useDeferredReflections)
+            {
+                componentDefferedPlanarReflections = GameManager.Instance.MainCameraObject.AddComponent<ReflectionsMod.DeferredPlanarReflections>();
+            }
 
             playerInside = GameManager.Instance.IsPlayerInside;
 
@@ -508,7 +514,10 @@ namespace ReflectionsMod
                 mirrorRefl.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.IndoorSetting;
                 mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.IndoorSetting;
 
-                componentDefferedPlanarReflections.enabled = true;
+                if (useDeferredReflections)
+                {
+                    componentDefferedPlanarReflections.enabled = true;
+                }
             }
             else if (!GameManager.Instance.IsPlayerInside && playerInside)
             {
@@ -516,8 +525,11 @@ namespace ReflectionsMod
 
                 mirrorRefl.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.OutdoorSetting;
                 mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.OutdoorSetting;
-                
-                componentDefferedPlanarReflections.enabled = false;
+
+                if (useDeferredReflections)
+                {
+                    componentDefferedPlanarReflections.enabled = false;
+                }
             }
         }
 	}
