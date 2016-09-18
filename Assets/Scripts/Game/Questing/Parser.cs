@@ -25,6 +25,13 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public static class Parser
     {
+        #region Fields
+
+        const string idCol = "id";
+        const string nameCol = "name";
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -41,6 +48,13 @@ namespace DaggerfallWorkshop.Game.Questing
             List<string> qrcLines = new List<string>();
             List<string> qbnLines = new List<string>();
 
+            // Create empty quest
+            Quest quest = new Quest();
+
+            // Start diagnostic timer
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            long startTime = stopwatch.ElapsedMilliseconds;
+
             // First pass gathers basic information and structure
             // Basic structure is:
             //   <Header>
@@ -52,7 +66,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 string text = line.Trim();
 
                 // Skip comment lines
-                if (text.StartsWith("--", comparison))
+                if (text.StartsWith("-", comparison))
                     continue;
 
                 // Handle basic structure
@@ -106,9 +120,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Parse QRC
             ParseQRC(qrcLines);
+            //Debug.Log(string.Format("ParseQRC() found {0} messages.", messagesFound));
 
             // Parse QBN
             ParseQBN(qbnLines);
+
+            // End timer
+            long totalTime = stopwatch.ElapsedMilliseconds - startTime;
+            Debug.Log(string.Format("Time to parse quest {0} was {1}ms.", questName, totalTime));
         }
 
         #endregion
@@ -117,7 +136,55 @@ namespace DaggerfallWorkshop.Game.Questing
 
         static void ParseQRC(List<string> lines)
         {
+            const string parseIdError = "Could not parse text '{0}' to an int. Expected message ID value.";
 
+            for (int i = 0; i < lines.Count; i++)
+            {
+                // Skip empty lines while scanning for start of message block
+                if (string.IsNullOrEmpty(lines[i].Trim()))
+                    continue;
+
+                // Check for start of message block
+                // Only present in QRC section
+                // Begins with field Message: (or fixed message type)
+                List<Message> messages = new List<Message>();
+                string[] parts = SplitField(lines[i]);
+                if (QuestMachine.Instance.MessageTypes.HasValue(parts[0]))
+                {
+                    // Read ID of message
+                    int messageID = 0;
+                    if (parts[1].StartsWith("[") && parts[1].EndsWith("]"))
+                    {
+                        // Fixed message types use ID from table
+                        messageID = QuestMachine.Instance.MessageTypes.GetInt(idCol, parts[0]);
+                        if (messageID == -1)
+                            throw new Exception(string.Format(parseIdError, QuestMachine.Instance.MessageTypes.GetInt(idCol, parts[0])));
+                    }
+                    else
+                    {
+                        // Other messages use ID from message block header
+                        if (!int.TryParse(parts[1], out messageID))
+                            throw new Exception(string.Format(parseIdError, parts[1]));
+                    }
+
+                    // Keep reading message lines until empty line is found, indicating end of block
+                    List<string> messageLines = new List<string>();
+                    while (true)
+                    {
+                        string text = lines[++i].TrimEnd('\r');
+                        if (string.IsNullOrEmpty(text))
+                            break;
+                        else
+                            messageLines.Add(text);
+                    }
+
+                    // Instantiate message
+                    Message message = new Message(messageID, messageLines.ToArray());
+
+                    // Add message to list
+                    messages.Add(message);
+                }
+            }
         }
 
         static void ParseQBN(List<string> lines)
@@ -129,15 +196,32 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #region Helpers
 
+        static string[] SplitLine(string text, bool trim = true)
+        {
+            string[] parts = text.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+
+            if (trim)
+            {
+                TrimLines(ref parts);
+            }
+
+            return parts;
+        }
+
         // Splits a field with format 'FieldName: Value" using : as separator
         // Be default expects two string values as result
-        static string[] SplitField(string text, int expectedCount = 2)
+        static string[] SplitField(string text, int expectedCount = 2, bool trim = true)
         {
             const string error = "SplitField() encountered invalid number of results.";
 
             string[] parts = text.Split(':');
-            if (parts.Length != expectedCount)
+            if (parts.Length != expectedCount && expectedCount != -1)
                 throw new Exception(error);
+
+            if (trim)
+            {
+                TrimLines(ref parts);
+            }
 
             return parts;
         }
@@ -160,6 +244,15 @@ namespace DaggerfallWorkshop.Game.Questing
         static int ParseInt(string text)
         {
             return int.Parse(text);
+        }
+
+        // Trims all lines in string array
+        static void TrimLines(ref string[] lines)
+        {
+            for (int i = 0; i < lines.Length; i++)
+            {
+                lines[i] = lines[i].Trim();
+            }
         }
 
         #endregion
