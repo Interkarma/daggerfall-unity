@@ -125,8 +125,8 @@ namespace ReflectionsMod
         public RenderTexture reflectionGroundTexture;
         public RenderTexture reflectionLowerLevelTexture;
 
-        CreateLookupIndicesTexture instanceCreateLookupIndicesTexture = null;
-        GameObject goCreateLookupIndicesTexture = null;
+        CreateReflectionLookupTextures componentCreateReflectionLookupTextures = null;
+        GameObject goCreateReflectionLookupTextures = null;
 
         // Shader pass indices used by the effect
         private enum PassIndex
@@ -152,20 +152,20 @@ namespace ReflectionsMod
 
             instanceUpdateReflectionTextures = goReflectionsMod.GetComponent<UpdateReflectionTextures>();
 
-            goCreateLookupIndicesTexture = new GameObject("CreateLookupIndicesTexture");
-            goCreateLookupIndicesTexture.transform.SetParent(goReflectionsMod.transform);
-            instanceCreateLookupIndicesTexture = goCreateLookupIndicesTexture.AddComponent<CreateLookupIndicesTexture>();     
+            goCreateReflectionLookupTextures = new GameObject("CreateLookupIndicesTexture");
+            goCreateReflectionLookupTextures.transform.SetParent(goReflectionsMod.transform);
+            componentCreateReflectionLookupTextures = goCreateReflectionLookupTextures.AddComponent<CreateReflectionLookupTextures>();     
         }
 
         void OnDisable()
         {
-            if (instanceCreateLookupIndicesTexture != null)
+            if (componentCreateReflectionLookupTextures != null)
             {
-                Destroy(instanceCreateLookupIndicesTexture);
+                Destroy(componentCreateReflectionLookupTextures);
             }
-            if (goCreateLookupIndicesTexture != null)
+            if (goCreateReflectionLookupTextures != null)
             {
-                Destroy(goCreateLookupIndicesTexture);
+                Destroy(goCreateReflectionLookupTextures);
             }
 
             if (m_Material)
@@ -199,10 +199,9 @@ namespace ReflectionsMod
         }
 #endif
 
-        // [ImageEffectOpaque]
         public void OnPreRender()
         {
-            instanceCreateLookupIndicesTexture.createLookupIndicesTexture();
+            componentCreateReflectionLookupTextures.createLookupIndicesTexture();
 
             if (material == null)
             {
@@ -229,9 +228,7 @@ namespace ReflectionsMod
                     ((1.0f + P[6]) / P[5]));
 
             RenderTextureFormat intermediateFormat = camera_.hdr ? RenderTextureFormat.ARGBHalf : RenderTextureFormat.ARGB32;
-
-			//material.SetMatrix("_CameraToWorldMatrix", camera_.worldToCameraMatrix.inverse);
-            
+     
             Matrix4x4 cameraToWorldMatrix = GetComponent<Camera>().worldToCameraMatrix.inverse;
             material.SetVector("_ProjInfo", projInfo); // used for unprojection
             material.SetMatrix("_CameraToWorldMatrix", cameraToWorldMatrix);
@@ -243,12 +240,11 @@ namespace ReflectionsMod
             material.SetTexture("_ReflectionGroundTex", reflectionGroundTexture);
             material.SetTexture("_ReflectionLowerLevelTex", reflectionLowerLevelTexture);
 
-            material.SetTexture("_LookupIndicesTex", instanceCreateLookupIndicesTexture.renderTextureLookupIndices);
-            material.SetTexture("_IndexReflectionsTextureTex", instanceCreateLookupIndicesTexture.renderTextureIndexReflectionsTexture);      
+            material.SetTexture("_LookupIndicesTex", componentCreateReflectionLookupTextures.renderTextureLookupIndices);
+            material.SetTexture("_IndexReflectionsTextureTex", componentCreateReflectionLookupTextures.renderTextureIndexReflectionsTexture);      
 
             material.SetFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
-            material.SetFloat("_LowerLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
-            //Debug.Log(String.Format("{0}, {1}", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY, instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY)); 
+            material.SetFloat("_LowerLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);            
 
             if (m_CommandBuffer == null)
             {
@@ -257,14 +253,6 @@ namespace ReflectionsMod
 
 
                 m_CommandBuffer.GetTemporaryRT(kFinalReflectionTexture, rtW, rtH, 0, FilterMode.Point, intermediateFormat);
-
-
-                //m_CommandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, kFinalReflectionTexture, material, (int)PassIndex.ReflectionStep);
-
-                //m_CommandBuffer.GetTemporaryRT(kTempTexture, camera_.pixelWidth, camera_.pixelHeight, 0, FilterMode.Bilinear, intermediateFormat);
-
-                //m_CommandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, kTempTexture, material, (int)PassIndex.CompositeFinal);
-                //m_CommandBuffer.Blit(kTempTexture, BuiltinRenderTextureType.CameraTarget);
 
                 m_CommandBuffer.GetTemporaryRT(kTempTexture, camera_.pixelWidth, camera_.pixelHeight, 0, FilterMode.Bilinear, intermediateFormat);
                 m_CommandBuffer.Blit(BuiltinRenderTextureType.CameraTarget, kFinalReflectionTexture, material, (int)PassIndex.ReflectionStep);

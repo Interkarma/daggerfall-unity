@@ -8,7 +8,7 @@ using DaggerfallWorkshop.Game;
 
 namespace ReflectionsMod
 {
-    public class CreateLookupIndicesTexture : MonoBehaviour
+    public class CreateReflectionLookupTextures : MonoBehaviour
     {
         [SerializeField]
         private Shader m_ShaderCreateLookupIndices;
