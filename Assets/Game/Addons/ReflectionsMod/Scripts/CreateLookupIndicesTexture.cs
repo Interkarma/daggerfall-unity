@@ -17,7 +17,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_ShaderCreateLookupIndices == null)
-                    m_ShaderCreateLookupIndices = Shader.Find("Daggerfall/CreateLookupIndices");
+                    m_ShaderCreateLookupIndices = Shader.Find("ReflectionsMod/CreateLookupIndices");
 
                 return m_ShaderCreateLookupIndices;
             }
@@ -41,7 +41,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_ShaderCreateLookupIndexReflectionTexture == null)
-                    m_ShaderCreateLookupIndexReflectionTexture = Shader.Find("Daggerfall/CreateLookupIndexReflectionTexture");
+                    m_ShaderCreateLookupIndexReflectionTexture = Shader.Find("ReflectionsMod/CreateLookupIndexReflectionTexture");
 
                 return m_ShaderCreateLookupIndexReflectionTexture;
             }
@@ -86,7 +86,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_RenderTextureIndexReflectionsTexture == null)
-                    m_RenderTextureIndexReflectionsTexture = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.ARGB32); // 4-channel 8-bit fixed point texture (1st channel: index of reflection texture to sample from, 2nd channel: metallic amount, 3rd channel: smoothness amount)
+                    m_RenderTextureIndexReflectionsTexture = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.R8); // 4-channel 8-bit fixed point texture (1st channel: index of reflection texture to sample from)
 
                 return m_RenderTextureIndexReflectionsTexture;
             }

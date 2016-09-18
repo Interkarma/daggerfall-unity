@@ -1,4 +1,11 @@
-Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
+//ReflectionsMod for Daggerfall Tools For Unity
+//http://www.reddit.com/r/dftfu
+//http://www.dfworkshop.net/
+//Author: Michael Rauter (a.k.a. Nystul)
+//License: MIT License (http://www.opensource.org/licenses/mit-license.php)
+
+// used as replacement shader to create reflection texture sampling index (which reflection texture to sample from) for every fragment (in r channel of texture),
+Shader "ReflectionsMod/CreateLookupIndexReflectionTexture" {
     Properties
     {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
@@ -10,18 +17,9 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 	CGINCLUDE
 
 	#include "UnityCG.cginc"
-	//#include "UnityStandardInput.cginc"
 
     sampler2D _MainTex;
 	float4 _MainTex_TexelSize;
-
-	#ifdef _METALLICGLOSSMAP
-		sampler2D _MetallicGlossMap;
-	#else	
-		half _Metallic;
-		half _Glossiness;		
-	#endif
-	half _GlossMapScale;
 
 	float _GroundLevelHeight;
 	float _LowerLevelHeight;     
@@ -55,29 +53,6 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 						
             return o;
     }
-
-	half2 MetallicGloss(float2 uv)
-	{
-		half2 mg;
-	
-	#ifdef _METALLICGLOSSMAP
-		#ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-			mg.r = tex2D(_MetallicGlossMap, uv).r;
-			mg.g = tex2D(_MainTex, uv).a;
-		#else
-			mg = tex2D(_MetallicGlossMap, uv).ra;
-		#endif
-		mg.g *= _GlossMapScale;
-	#else
-		mg.r = _Metallic;
-		#ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-			mg.g = tex2D(_MainTex, uv).a * _GlossMapScale;
-		#else
-			mg.g = _Glossiness;
-		#endif
-	#endif
-		return mg;
-	}
 				
     float3 frag(v2f IN) : SV_Target
     {		            
@@ -105,24 +80,6 @@ Shader "Daggerfall/CreateLookupIndexReflectionTexture" {
 			{
 				result.r = 0.75f;
 			}
-
-			
-			half2 mg = MetallicGloss(IN.uv);
-			result.g = mg.r;
-			result.b = mg.g;
-			
-
-			/*
-			#ifdef _METALLICGLOSSMAP
-				half4 metallicGloss =  tex2D(_MetallicGlossMap, IN.uv);
-				half metallic = metallicGloss.r;
-				result.g = metallic;
-				//result.b = 0.8f; //1.0f - metallicGloss.a;
-			#else
-				result.g = _Metallic;
-				result.b = _Glossiness;
-			#endif
-			*/
 
             return result;
     }

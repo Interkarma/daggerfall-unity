@@ -1,12 +1,10 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-//ReflectionsMod for Daggerfall Tools For Unity
+﻿//ReflectionsMod for Daggerfall Tools For Unity
 //http://www.reddit.com/r/dftfu
 //http://www.dfworkshop.net/
 //Author: Michael Rauter (a.k.a. Nystul)
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 
-Shader "Daggerfall/FloorMaterialWithReflections" {
+Shader "ReflectionsMod/FloorMaterialWithReflections" {
 	Properties {
 		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("Albedo Map", 2D) = "white" {}

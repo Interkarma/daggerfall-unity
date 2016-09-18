@@ -231,7 +231,7 @@ namespace ReflectionsMod
                     {
                         if (terrain.materialTemplate)
                         {
-                            if (terrain.materialTemplate.shader.name == "Daggerfall/TilemapWithReflections")
+                            if (terrain.materialTemplate.shader.name == "ReflectionsMod/TilemapWithReflections")
                             {
                                 terrain.materialTemplate.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y - extraTranslationY);
                                 terrain.materialTemplate.SetFloat("_SeaLevelHeight", gameObjectReflectionPlaneSeaLevel.transform.position.y - extraTranslationY);
@@ -262,7 +262,7 @@ namespace ReflectionsMod
                         Material[] mats = r.sharedMaterials;
                         foreach (Material m in mats)
                         {
-                            if (m.shader.name == "Daggerfall/FloorMaterialWithReflections")
+                            //if (m.shader.name == "ReflectionsMod/FloorMaterialWithReflections")
                             {
                                 m.SetFloat("_GroundLevelHeight", gameObjectReflectionPlaneGroundLevel.transform.position.y);
                                 m.SetFloat("_LowerLevelHeight", gameObjectReflectionPlaneLowerLevel.transform.position.y);
@@ -380,7 +380,7 @@ namespace ReflectionsMod
                                         if (!texRecord.Value.useMetallicGlossMap)
                                         {
                                             Material newMat = cmat.material;
-                                            //Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                                            //Material newMat = new Material(Shader.Find("ReflectionsMod/FloorMaterialWithReflections"));
                                             //newMat.CopyPropertiesFromMaterial(cmat.material);
                                             //newMat.name = cmat.material.name;
                                             if (texReflectionGround)
@@ -409,7 +409,7 @@ namespace ReflectionsMod
                                         else
                                         {
                                             Material newMat = cmat.material;
-                                            //Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                                            //Material newMat = new Material(Shader.Find("ReflectionsMod/FloorMaterialWithReflections"));
                                             //newMat.CopyPropertiesFromMaterial(cmat.material);
                                             //newMat.name = cmat.material.name;
                                             if (texReflectionGround)
@@ -483,7 +483,7 @@ namespace ReflectionsMod
                         Texture tileMapTexture = terrain.materialTemplate.GetTexture("_TilemapTex");
                         int tileMapDim = terrain.materialTemplate.GetInt("_TilemapDim");
 
-                        Material newMat = new Material(Shader.Find("Daggerfall/TilemapWithReflections"));
+                        Material newMat = new Material(Shader.Find("ReflectionsMod/TilemapWithReflections"));
 
                         newMat.SetTexture("_TileAtlasTex", tileSetTexture);
                         newMat.SetTexture("_TilemapTex", tileMapTexture);
@@ -528,7 +528,9 @@ namespace ReflectionsMod
                 */
 
                 Material newMat = cmat.material;
-                //Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                //Material newMat = new Material(Shader.Find("Standard (Specular setup)"));
+                //newMat.CopyPropertiesFromMaterial(cmat.material);
+                //Material newMat = new Material(Shader.Find("ReflectionsMod/FloorMaterialWithReflections"));
                 //newMat.CopyPropertiesFromMaterial(cmat.material);
                 //newMat.name = cmat.material.name;
                 if (texReflectionGround)
@@ -540,6 +542,7 @@ namespace ReflectionsMod
                     newMat.SetTexture("_ReflectionLowerLevelTex", texReflectionLowerLevel);
                 }
                 newMat.SetFloat("_Metallic", reflectivity);
+                //newMat.SetColor("_SpecColor", new Color(reflectivity, reflectivity, reflectivity));
                 newMat.SetFloat("_Glossiness", smoothness);
 
                 if (albedoMap != null)
@@ -570,7 +573,9 @@ namespace ReflectionsMod
                 */
 
                 Material newMat = cmat.material;
-                //Material newMat = new Material(Shader.Find("Daggerfall/FloorMaterialWithReflections"));
+                //Material newMat = new Material(Shader.Find("Standard (Specular setup)"));
+                //newMat.CopyPropertiesFromMaterial(cmat.material);
+                //Material newMat = new Material(Shader.Find("ReflectionsMod/FloorMaterialWithReflections"));
                 //newMat.CopyPropertiesFromMaterial(cmat.material);
                 //newMat.name = cmat.material.name;
                 if (texReflectionGround)
@@ -583,6 +588,7 @@ namespace ReflectionsMod
                 }
                 //newMat.EnableKeyword("USE_METALLICGLOSSMAP");
                 newMat.EnableKeyword("_METALLICGLOSSMAP");
+                //newMat.EnableKeyword("_SPECGLOSSMAP");
                 newMat.DisableKeyword("_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A");
                 newMat.SetTexture("_MetallicGlossMap", metallicGlossMap);
 

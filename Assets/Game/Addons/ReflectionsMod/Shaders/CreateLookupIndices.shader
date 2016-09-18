@@ -1,4 +1,11 @@
-Shader "Daggerfall/CreateLookupIndices" {
+//ReflectionsMod for Daggerfall Tools For Unity
+//http://www.reddit.com/r/dftfu
+//http://www.dfworkshop.net/
+//Author: Michael Rauter (a.k.a. Nystul)
+//License: MIT License (http://www.opensource.org/licenses/mit-license.php)
+
+// used as replacement shader to create texture uv sampling positions for every fragment
+Shader "ReflectionsMod/CreateLookupIndices" {
     Properties
     {
             _MainTex ("Base (RGB)", 2D) = "white" {}
@@ -43,16 +50,6 @@ Shader "Daggerfall/CreateLookupIndices" {
 			else
 			{
 				// parallax-correct reflection position
-				/*
-				if (posWorldSpace.y > _GroundLevelHeight+0.01f)
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.7f, 0.0f, 0.0f)));
-				else if (posWorldSpace.y < _GroundLevelHeight-0.01f)
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.7f, 0.0f, 0.0f)));		
-				else
-					o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace-float4(0.0f, posWorldSpace.y - _GroundLevelHeight, 0.0f, 0.0f)));
-					*/
-				//o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace));
-
 				o.parallaxCorrectedScreenPos = ComputeScreenPos(mul(UNITY_MATRIX_VP, posWorldSpace - float4(0.0f, (posWorldSpace.y - _GroundLevelHeight) * 1.7f, 0.0f, 0.0f)));
 			}			
 						
