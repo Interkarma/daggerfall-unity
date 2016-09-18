@@ -356,7 +356,7 @@ namespace DaggerfallWorkshop
                     // todo
                     break;
                 case 27:        // Lantern with no chain
-                    // todo
+                    go.transform.localPosition += new Vector3(0, -0.02f, 0);
                     break;
             }
 
@@ -424,6 +424,14 @@ namespace DaggerfallWorkshop
                     light.color = new Color(1.0f, 0.98f, 0.64f);
                     break;
                 case 25:        // Lantern with medium chain
+                    light.intensity = 1.4f;
+                    light.color = new Color(1.0f, 0.98f, 0.64f);
+                    break;
+                case 26:        // Lantern with short chain
+                    light.intensity = 1.4f;
+                    light.color = new Color(1.0f, 0.98f, 0.64f);
+                    break;
+                case 27:        // Lantern with no chain
                     light.intensity = 1.4f;
                     light.color = new Color(1.0f, 0.98f, 0.64f);
                     break;
