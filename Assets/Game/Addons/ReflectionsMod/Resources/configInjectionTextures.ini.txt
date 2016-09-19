@@ -68,7 +68,7 @@ textureArchive = 437
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.6
+reflectivity = 0.4
 smoothness = 0.65
 
 [363_3 {Temple Ground Texture (Woodland)}] 
@@ -108,8 +108,8 @@ textureArchive = 060
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.1
-smoothness = 0.75
+reflectivity = 0.0
+smoothness = 0.4
 
 [460_3 {Knights Order Ground Texture (Swamp)}]
 textureArchive = 460
@@ -173,15 +173,15 @@ textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.2
-smoothness = 0.75
+smoothness = 0.65
 
 [040_3 {House Ground Texture (Desert)}]
 textureArchive = 040
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.18
-smoothness = 0.85
+reflectivity = 0.16
+smoothness = 0.72
 
 [044_3 {House and Palace Ground Texture (Desert)}]
 textureArchive = 044
@@ -190,6 +190,14 @@ textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.3
 smoothness = 0.7
+
+[114_3 {House Ground Texture (Mountain)}]
+textureArchive = 114
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.0
+smoothness = 0.58
 
 [116_3 {House Ground Texture (Mountain)}]
 textureArchive = 116
@@ -204,8 +212,8 @@ textureArchive = 128
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.5
-smoothness = 0.4
+reflectivity = 0.2
+smoothness = 0.5
 
 [140_3 {House Ground Texture (Mountain)}]
 textureArchive = 140
@@ -238,6 +246,14 @@ textureFrame = 0
 useMetallicGlossMap = false
 reflectivity = 0.2
 smoothness = 0.4
+
+[428_3 {House Ground Texture (Swamp)}]
+textureArchive = 428
+textureRecord = 3
+textureFrame = 0
+useMetallicGlossMap = false
+reflectivity = 0.15
+smoothness = 0.55
 
 [019_2 {Crypt Ground Texture (Desert)}]
 textureArchive = 019
