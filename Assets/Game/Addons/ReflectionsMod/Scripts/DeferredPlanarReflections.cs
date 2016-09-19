@@ -120,7 +120,7 @@ namespace ReflectionsMod
         private static int kTempTexture;
 
 
-        private UpdateReflectionTextures instanceUpdateReflectionTextures = null;
+        private UpdateReflectionTextures componentUpdateReflectionTextures = null;
 
         public RenderTexture reflectionGroundTexture;
         public RenderTexture reflectionLowerLevelTexture;
@@ -150,9 +150,9 @@ namespace ReflectionsMod
 
             GameObject goReflectionsMod = GameObject.Find("ReflectionsMod");
 
-            instanceUpdateReflectionTextures = goReflectionsMod.GetComponent<UpdateReflectionTextures>();
+            componentUpdateReflectionTextures = goReflectionsMod.GetComponent<UpdateReflectionTextures>();
 
-            goCreateReflectionLookupTextures = new GameObject("CreateLookupIndicesTexture");
+            goCreateReflectionLookupTextures = new GameObject("CreateReflectionLookupTextures");
             goCreateReflectionLookupTextures.transform.SetParent(goReflectionsMod.transform);
             componentCreateReflectionLookupTextures = goCreateReflectionLookupTextures.AddComponent<CreateReflectionLookupTextures>();     
         }
@@ -201,7 +201,7 @@ namespace ReflectionsMod
 
         public void OnPreRender()
         {
-            componentCreateReflectionLookupTextures.createLookupIndicesTexture();
+            componentCreateReflectionLookupTextures.createReflectionTextureCoordinatesAndIndexTextures();
 
             if (material == null)
             {
@@ -234,17 +234,16 @@ namespace ReflectionsMod
             material.SetMatrix("_CameraToWorldMatrix", cameraToWorldMatrix);
             material.SetMatrix("_InverseViewProject", (GetComponent<Camera>().projectionMatrix * GetComponent<Camera>().worldToCameraMatrix).inverse);
 
-
-            reflectionGroundTexture = instanceUpdateReflectionTextures.getGroundReflectionRenderTexture();
-            reflectionLowerLevelTexture = instanceUpdateReflectionTextures.getSeaReflectionRenderTexture();
+            reflectionGroundTexture = componentUpdateReflectionTextures.getGroundReflectionRenderTexture();
+            reflectionLowerLevelTexture = componentUpdateReflectionTextures.getSeaReflectionRenderTexture();
             material.SetTexture("_ReflectionGroundTex", reflectionGroundTexture);
             material.SetTexture("_ReflectionLowerLevelTex", reflectionLowerLevelTexture);
 
-            material.SetTexture("_LookupIndicesTex", componentCreateReflectionLookupTextures.renderTextureLookupIndices);
-            material.SetTexture("_IndexReflectionsTextureTex", componentCreateReflectionLookupTextures.renderTextureIndexReflectionsTexture);      
+            material.SetTexture("_ReflectionsTextureIndexTex", componentCreateReflectionLookupTextures.renderTextureReflectionTextureIndex);
+            material.SetTexture("_ReflectionsTextureCoordinatesTex", componentCreateReflectionLookupTextures.renderTextureReflectionTextureCoordinates);
 
-            material.SetFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
-            material.SetFloat("_LowerLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);            
+            material.SetFloat("_GroundLevelHeight", componentUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
+            material.SetFloat("_LowerLevelHeight", componentUpdateReflectionTextures.ReflectionPlaneLowerLevelY);            
 
             if (m_CommandBuffer == null)
             {

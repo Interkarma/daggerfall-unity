@@ -9,9 +9,16 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
     Properties
     {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_MetallicGlossMap("Metallic Gloss Map", 2D) = "black" {}	
-		_Metallic("metallic amount", Range(0.0, 1.0)) = 0
+				
+		[Gamma] _Metallic("Metallic", Range(0.0, 1.0)) = 0.0
+		_MetallicGlossMap("Metallic", 2D) = "white" {}
+
 		_Glossiness("Smoothness", Range(0.0, 1.0)) = 0.5
+		_GlossMapScale("Smoothness Factor", Range(0.0, 1.0)) = 1.0
+		[Enum(Specular Alpha,0,Albedo Alpha,1)] _SmoothnessTextureChannel ("Smoothness texture channel", Float) = 0
+
+		_SpecColor("Specular", Color) = (0.2,0.2,0.2)
+		_SpecGlossMap("Specular", 2D) = "white" {}
     }
 		
 	CGINCLUDE
@@ -21,8 +28,39 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
     sampler2D _MainTex;
 	float4 _MainTex_TexelSize;
 
+	#ifdef _METALLICGLOSSMAP
+		sampler2D _MetallicGlossMap;
+	#else	
+		half _Metallic;
+		half _Glossiness;		
+	#endif
+	half _GlossMapScale;
+
 	float _GroundLevelHeight;
-	float _LowerLevelHeight;     
+	float _LowerLevelHeight;
+
+	half2 MetallicGloss(float2 uv)
+	{
+		half2 mg;
+	
+	#ifdef _METALLICGLOSSMAP
+		#ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			mg.r = tex2D(_MetallicGlossMap, uv).r;
+			mg.g = tex2D(_MainTex, uv).a;
+		#else
+			mg = tex2D(_MetallicGlossMap, uv).ra;
+		#endif
+		mg.g *= _GlossMapScale;
+	#else
+		mg.r = _Metallic;
+		#ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			mg.g = tex2D(_MainTex, uv).a * _GlossMapScale;
+		#else
+			mg.g = _Glossiness;
+		#endif
+	#endif
+		return mg;
+	}
 
     struct v2f
     {
@@ -54,13 +92,13 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
             return o;
     }
 				
-    float3 frag(v2f IN) : SV_Target
+    half3 frag(v2f IN) : SV_Target
     {		            
 			half4 col = tex2D(_MainTex, IN.uv);
 			if (col.a < 0.5f)
 				discard;
 
-			float3 result = float3(0.0f, 0.0f, 0.0f);
+			half3 result = float3(0.0f, 0.0f, 0.0f);
 			float3 vecUp = float3(0.0f,1.0f,0.0f);
 			if ( (abs(IN.worldPos.y - _LowerLevelHeight) < 0.001f) && (acos(dot(normalize(IN.worldNormal), vecUp)) < 0.01f) )
 			{
@@ -81,6 +119,9 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
 				result.r = 0.75f;
 			}
 
+			half2 mg = MetallicGloss(IN.uv);
+			result.gb = mg;
+
             return result;
     }
 
@@ -99,7 +140,7 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
 			#pragma target 3.0
 			#pragma shader_feature _METALLICGLOSSMAP
 			#pragma shader_feature _ _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-			//#pragma shader_feature __ _METALLICGLOSSMAP _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A			
+			//#pragma shader_feature __ _METALLICGLOSSMAP _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
 			ENDCG
 		}
 	}	

@@ -44,7 +44,7 @@ textureArchive = 337
 textureRecord = 3
 textureFrame = 0
 useMetallicGlossMap = false
-reflectivity = 0.6
+reflectivity = 0.4
 smoothness = 0.65
 
 [037_3 {Mages Guild Ground Texture (Desert)}]

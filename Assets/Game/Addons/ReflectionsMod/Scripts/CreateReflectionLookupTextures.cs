@@ -11,51 +11,51 @@ namespace ReflectionsMod
     public class CreateReflectionLookupTextures : MonoBehaviour
     {
         [SerializeField]
-        private Shader m_ShaderCreateLookupIndices;
-        public Shader shaderCreateLookupIndices
+        private Shader m_ShaderCreateReflectionTextureCoordinates;
+        public Shader shaderCreateReflectionTextureCoordinates
         {
             get
             {
-                if (m_ShaderCreateLookupIndices == null)
-                    m_ShaderCreateLookupIndices = Shader.Find("Daggerfall/ReflectionsMod/CreateLookupReflectionTextureCoordinates");
+                if (m_ShaderCreateReflectionTextureCoordinates == null)
+                    m_ShaderCreateReflectionTextureCoordinates = Shader.Find("Daggerfall/ReflectionsMod/CreateLookupReflectionTextureCoordinates");
 
-                return m_ShaderCreateLookupIndices;
+                return m_ShaderCreateReflectionTextureCoordinates;
             }
         }
 
-        private Material m_MaterialCreateLookupIndices;
-        public Material materialCreateLookupIndices
+        private Material m_MaterialCreateReflectionTextureCoordinates;
+        public Material materialCreateReflectionTextureCoordinates
         {
             get
             {
-                if (m_MaterialCreateLookupIndices == null)
-                    m_MaterialCreateLookupIndices = new Material(shaderCreateLookupIndices);
+                if (m_MaterialCreateReflectionTextureCoordinates == null)
+                    m_MaterialCreateReflectionTextureCoordinates = new Material(shaderCreateReflectionTextureCoordinates);
 
-                return m_MaterialCreateLookupIndices;
+                return m_MaterialCreateReflectionTextureCoordinates;
             }
         }
 
-        private Shader m_ShaderCreateLookupIndexReflectionTexture;
-        public Shader shaderCreateLookupIndexReflectionTexture
+        private Shader m_ShaderCreateReflectionTextureIndex;
+        public Shader shaderCreateReflectionTextureIndex
         {
             get
             {
-                if (m_ShaderCreateLookupIndexReflectionTexture == null)
-                    m_ShaderCreateLookupIndexReflectionTexture = Shader.Find("Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex");
+                if (m_ShaderCreateReflectionTextureIndex == null)
+                    m_ShaderCreateReflectionTextureIndex = Shader.Find("Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex");
 
-                return m_ShaderCreateLookupIndexReflectionTexture;
+                return m_ShaderCreateReflectionTextureIndex;
             }
         }
 
-        private Material m_MaterialCreateLookupIndexReflectionTexture;
-        public Material materialCreateLookupIndexReflectionTexture
+        private Material m_MaterialCreateReflectionTextureIndex;
+        public Material materialCreateReflectionTextureIndex
         {
             get
             {
-                if (m_MaterialCreateLookupIndexReflectionTexture == null)
-                    m_MaterialCreateLookupIndexReflectionTexture = new Material(shaderCreateLookupIndexReflectionTexture);
+                if (m_MaterialCreateReflectionTextureIndex == null)
+                    m_MaterialCreateReflectionTextureIndex = new Material(shaderCreateReflectionTextureIndex);
 
-                return m_MaterialCreateLookupIndexReflectionTexture;
+                return m_MaterialCreateReflectionTextureIndex;
             }
         }
 
@@ -68,27 +68,27 @@ namespace ReflectionsMod
             }
         }
 
-        public RenderTexture m_RenderTextureLookupIndices;
-        public RenderTexture renderTextureLookupIndices
+        public RenderTexture m_RenderTextureReflectionTextureCoordinates;
+        public RenderTexture renderTextureReflectionTextureCoordinates
         {
             get
             {
-                if (m_RenderTextureLookupIndices == null)
-                    m_RenderTextureLookupIndices = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.RGFloat); // 2-channel 16-bit floating-point per channel texture
+                if (m_RenderTextureReflectionTextureCoordinates == null)
+                    m_RenderTextureReflectionTextureCoordinates = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.RGFloat); // 2-channel 16-bit floating-point per channel texture
 
-                return m_RenderTextureLookupIndices;
+                return m_RenderTextureReflectionTextureCoordinates;
             }
         }
 
-        public RenderTexture m_RenderTextureIndexReflectionsTexture;
-        public RenderTexture renderTextureIndexReflectionsTexture
+        public RenderTexture m_RenderTextureReflectionTextureIndex;
+        public RenderTexture renderTextureReflectionTextureIndex
         {
             get
             {
-                if (m_RenderTextureIndexReflectionsTexture == null)
-                    m_RenderTextureIndexReflectionsTexture = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.R8); // 4-channel 8-bit fixed point texture (1st channel: index of reflection texture to sample from)
+                if (m_RenderTextureReflectionTextureIndex == null)
+                    m_RenderTextureReflectionTextureIndex = new RenderTexture(camera_.pixelWidth, camera_.pixelHeight, 16, RenderTextureFormat.ARGB32); // 4-channel 8-bit fixed point texture (1st channel: index of reflection texture to sample from, 2nd channel: metallic amount, 3rd channel: smoothness amount)
 
-                return m_RenderTextureIndexReflectionsTexture;
+                return m_RenderTextureReflectionTextureIndex;
             }
         }
 
@@ -116,28 +116,28 @@ namespace ReflectionsMod
 
         void OnDisable()
         {
-            if (m_MaterialCreateLookupIndices)
-                DestroyImmediate(m_MaterialCreateLookupIndices);
+            if (m_MaterialCreateReflectionTextureCoordinates)
+                DestroyImmediate(m_MaterialCreateReflectionTextureCoordinates);
 
-            m_MaterialCreateLookupIndices = null;
+            m_MaterialCreateReflectionTextureCoordinates = null;
 
-            if (m_MaterialCreateLookupIndexReflectionTexture)
-                DestroyImmediate(m_MaterialCreateLookupIndexReflectionTexture);
+            if (m_MaterialCreateReflectionTextureIndex)
+                DestroyImmediate(m_MaterialCreateReflectionTextureIndex);
 
-            m_MaterialCreateLookupIndexReflectionTexture = null;
+            m_MaterialCreateReflectionTextureIndex = null;
         }
 
-        public void createLookupIndicesTexture()
+        public void createReflectionTextureCoordinatesAndIndexTextures()
         {
             m_Camera.transform.position = Camera.main.transform.position;
             m_Camera.transform.rotation = Camera.main.transform.rotation;
 
             Shader.SetGlobalFloat("_GroundLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneGroundLevelY);
             Shader.SetGlobalFloat("_LowerLevelHeight", instanceUpdateReflectionTextures.ReflectionPlaneLowerLevelY);
-            m_Camera.targetTexture = renderTextureLookupIndices;
-            m_Camera.RenderWithShader(shaderCreateLookupIndices, ""); // apply custom fragment shader and write into renderTextureLookupIndices
-            m_Camera.targetTexture = renderTextureIndexReflectionsTexture;
-            m_Camera.RenderWithShader(shaderCreateLookupIndexReflectionTexture, ""); // apply custom fragment shader and write into renderTextureIndexReflectionsTexture
+            m_Camera.targetTexture = renderTextureReflectionTextureCoordinates;
+            m_Camera.RenderWithShader(shaderCreateReflectionTextureCoordinates, ""); // apply custom fragment shader and write into renderTextureReflectionTextureCoordinates
+            m_Camera.targetTexture = renderTextureReflectionTextureIndex;
+            m_Camera.RenderWithShader(shaderCreateReflectionTextureIndex, ""); // apply custom fragment shader and write into renderTextureReflectionTextureIndex
         }
     }
 }

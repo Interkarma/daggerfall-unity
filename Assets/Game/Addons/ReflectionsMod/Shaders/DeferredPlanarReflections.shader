@@ -32,8 +32,8 @@ Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
 	sampler2D _ReflectionGroundTex;
 	sampler2D _ReflectionLowerLevelTex;
 
-	sampler2D _LookupIndicesTex;
-	sampler2D _IndexReflectionsTextureTex;
+	sampler2D _ReflectionsTextureIndexTex;
+	sampler2D _ReflectionsTextureCoordinatesTex;
 
 	float4 _MainTex_TexelSize;
     float4 _ProjInfo;
@@ -93,16 +93,16 @@ Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
 		return((1.0f-w) * tex2Dlod(tex, float4(screenUV, 0.0f, mipmapLevel1)).rgb + w * tex2Dlod(tex, float4(screenUV, 0.0f, mipmapLevel2)).rgb);
 	}
 				
-    float4 fragReflection(v2f IN) : SV_Target
+    half4 fragReflection(v2f IN) : SV_Target
     {
 			float2 screenUV = IN.uv2.xy;
-			float2 parallaxCorrectedScreenUV = tex2D(_LookupIndicesTex, screenUV).xy;
+			float2 parallaxCorrectedScreenUV = tex2D(_ReflectionsTextureCoordinatesTex, screenUV).xy;
 
 			half3 refl = half3(0.0f, 0.0f, 0.0f);			
 
 			float roughness = 1.0 - tex2D(_CameraGBufferTexture1, screenUV).a;
 
-			float indexReflectionsTextureTex = tex2D(_IndexReflectionsTextureTex, screenUV).r;
+			float indexReflectionsTextureTex = tex2D(_ReflectionsTextureIndexTex, screenUV).r;
 			if (indexReflectionsTextureTex == 1.0f)
 			{
 				refl = getReflectionColor(_ReflectionLowerLevelTex, screenUV, roughness * 8 * 0.5f);
@@ -120,15 +120,20 @@ Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
 				half fadeOutFact = 0.0f;
 				fadeOutFact = max(fadeOutFactX, fadeOutFactY);
 
-				refl = (1.0f-fadeOutFact) * getReflectionColor(_ReflectionGroundTex, parallaxCorrectedScreenUV.xy, roughness * 8); //refl = tex2Dlod(_ReflectionGroundTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
+				refl = (1.0f-fadeOutFact) * getReflectionColor(_ReflectionGroundTex, parallaxCorrectedScreenUV.xy, roughness * 8 *0.5f); //refl = tex2Dlod(_ReflectionGroundTex, float4(screenUV, 0.0f, _Smoothness)).rgb;
 			}
-					
-			float3 specColor = tex2D(_CameraGBufferTexture1, screenUV).rgb;
-			refl *= specColor;
-			
-			return float4(refl, 1.0f);
-    }
+				
+			half metallic = tex2D(_ReflectionsTextureIndexTex, screenUV).g;
+			refl *= metallic;
+				
+			//float3 specColor = tex2D(_CameraGBufferTexture1, screenUV).rgb;
+			//refl *= specColor.r;
+			//refl *= 0.8f;
+			//refl -= 0.2f;
+			//refl = clamp(refl, 0.0f, 1.0f);
 
+			return half4(refl, 1.0f);
+    }
 
     float4 fragComposite(v2f i) : SV_Target
     {
@@ -147,7 +152,7 @@ Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
 
             float roughness = 1.0-tex2D(_CameraGBufferTexture1, tsP).a;
 
-            float4 reflectionTexel = tex2D(_FinalReflectionTexture, tsP);
+            float4 reflectionTexel = tex2D(_FinalReflectionTexture, tsP);			
 
             float4 gbuffer0 = tex2D(_CameraGBufferTexture0, tsP);
             // Let core Unity functions do the dirty work of applying the BRDF
@@ -178,7 +183,7 @@ Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
             ind.diffuse = 0;
             ind.specular = incomingRadiance;
 
-            float3 ssrResult = UNITY_BRDF_PBS (0, specColor, oneMinusReflectivity, 1-roughness, wsNormal, -eyeVec, light, ind).rgb;
+            float3 reflResult = UNITY_BRDF_PBS (0, specColor, oneMinusReflectivity, 1-roughness, wsNormal, -eyeVec, light, ind).rgb;
             float confidence = reflectionTexel.a;
 
             specEmission.rgb = tex2D(_CameraReflectionsTexture, tsP).rgb;
@@ -191,12 +196,12 @@ Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
                     // We may have blown out our dynamic range by adding then subtracting the reflection probes.
                     // As a half-measure to fix this, simply clamp to zero
                     gbuffer3 = max(gbuffer3, 0);
-                    finalGlossyTerm = lerp(specEmission.rgb, ssrResult, saturate(confidence));
+                    finalGlossyTerm = lerp(specEmission.rgb, reflResult, saturate(confidence));
             }            
 			*/
 
             {
-                    finalGlossyTerm = ssrResult*saturate(confidence);
+                    finalGlossyTerm = reflResult*saturate(confidence);
             }
 
             finalGlossyTerm *= occlusion;
@@ -219,11 +224,7 @@ Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
 				#pragma exclude_renderers gles xbox360 ps3
 				#pragma vertex vert
 				#pragma fragment fragReflection
-				#pragma target 3.0
-				//#pragma multicompile __ _METALLICGLOSSMAP
-				#pragma shader_feature _METALLICGLOSSMAP
-				#pragma shader_feature _SPECGLOSSMAP
-				// USE_METALLICGLOSSMAP		
+				#pragma target 3.0	
 			ENDCG
 		}
 		
@@ -234,7 +235,7 @@ Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
                 #pragma exclude_renderers gles xbox360 ps3
                 #pragma vertex vert
                 #pragma fragment fragComposite
-                #pragma target 3.0
+                #pragma target 3.0	
             ENDCG
         }	
 	}	
