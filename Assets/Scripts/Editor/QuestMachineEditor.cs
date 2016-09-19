@@ -11,16 +11,16 @@
 
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
-using DaggerfallWorkshop.Game;
-using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop
 {
-    [CustomEditor(typeof(SetupDemoEnemy))]
-    public class SetupDemoEnemyEditor : Editor
+    [CustomEditor(typeof(QuestMachine))]
+    public class QuestMachineEditor : Editor
     {
-        private SetupDemoEnemy setupDemoEnemy { get { return target as SetupDemoEnemy; } }
+        string testQuest = "_BRISIEN";
+
+        QuestMachine questMachine { get { return target as QuestMachine; } }
 
         SerializedProperty Prop(string name)
         {
@@ -33,25 +33,27 @@ namespace DaggerfallWorkshop
             serializedObject.Update();
 
             DrawDefaultInspector();
-            if (GUILayout.Button("Apply Enemy Type"))
-            {
-                setupDemoEnemy.ApplyEnemySettings();
-                EditorUtility.SetDirty(setupDemoEnemy);
-                EditorUtility.SetDirty(setupDemoEnemy.GetMobileBillboardChild());
-            }
-            if (GUILayout.Button("Align To Ground"))
-            {
-                CharacterController controller = setupDemoEnemy.GetComponent<CharacterController>();
-                if (controller != null)
-                {
-                    GameObjectHelper.AlignControllerToGround(controller);
-                }
-            }
+            DisplayGUI();
 
             // Save modified properties
             serializedObject.ApplyModifiedProperties();
             if (GUI.changed)
                 EditorUtility.SetDirty(target);
+        }
+
+        private void DisplayGUI()
+        {
+            // Parse a test quest from editor
+            EditorGUILayout.Space();
+            GUILayoutHelper.Horizontal(() =>
+            {
+                EditorGUILayout.LabelField(new GUIContent("Test Quest", "Parse a quest directly from editor for testing."), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.SelectableLabel(testQuest, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                if (GUILayout.Button("Parse"))
+                {
+                    questMachine.EditorParseQuest(testQuest);
+                }
+            });
         }
     }
 }

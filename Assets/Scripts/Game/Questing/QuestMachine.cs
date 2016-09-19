@@ -13,6 +13,7 @@ using UnityEngine;
 using System.IO;
 using System.Text;
 using System.Collections;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -26,31 +27,10 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class QuestMachine : MonoBehaviour
     {
-        #region Editor Properties
-
-        public string TestQuest = "_BRISIEN";       // TEMP: Test quest to parse at startup
-
-        #endregion
-
         #region Fields
-
-        Table globalVars;
-        Table messageTypes;
-
         #endregion
 
         #region Properties
-
-        public Table GlobalVars
-        {
-            get { return globalVars; }
-        }
-
-        public Table MessageTypes
-        {
-            get { return messageTypes; }
-        }
-
         #endregion
 
         #region Unity
@@ -62,70 +42,56 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void Start()
         {
-            // Setup required data tables
-            InitDataTables();
-
-            // Load test quest is specified
-            if (!string.IsNullOrEmpty(TestQuest))
-            {
-                // Attempt to parse quest source
-                Parser.Parse(GetQuestSourceText(TestQuest));
-            }
         }
 
         #endregion
 
         #region Public Methods
+        #endregion
 
-        /// <summary>
-        /// Quests source hard-coded into Resources for now.
-        /// </summary>
-        public string GetQuestSourceAssetFolder()
-        {
-            return "Quests";
-        }
-
-        /// <summary>
-        /// Quest source tables hard-coded into Resources for now.
-        /// </summary>
-        public string GetQuestTablesAssetFolder()
-        {
-            return "Quests/Tables";
-        }
+        #region Static Methods
 
         /// <summary>
         /// Gets quest source text.
+        /// TEMP: Quest source and data to be moved from Resources eventually.
         /// </summary>
         /// <param name="sourceName">Source name of quest. e.g. _BRISIEN</param>
         /// <returns>Array of lines from text file.</returns>
-        public string[] GetQuestSourceText(string sourceName)
+        public static string[] GetQuestSourceText(string sourceName)
         {
-            TextAsset source = Resources.Load<TextAsset>(Path.Combine(GetQuestSourceAssetFolder(), sourceName));
+            TextAsset source = Resources.Load<TextAsset>(Path.Combine("Quests", sourceName));
             return source.text.Split('\n');
         }
 
         /// <summary>
         /// Gets quest table source text.
+        /// TEMP: Quest source and data to be moved from Resources eventually.
         /// </summary>
         /// <param name="dataName">Name of quest table file. e.g. Globals</param>
         /// <returns>Array of lines from text file.</returns>
-        public string[] GetQuestTableText(string tableName)
+        public static string[] GetQuestTableText(string tableName)
         {
-            TextAsset source = Resources.Load<TextAsset>(Path.Combine(GetQuestTablesAssetFolder(), tableName));
+            TextAsset source = Resources.Load<TextAsset>(Path.Combine("Quests/Tables", tableName));
             return source.text.Split('\n');
         }
 
         #endregion
 
         #region Private Methods
+        #endregion
 
-        void InitDataTables()
+        #region Editor Methods
+
+#if UNITY_EDITOR
+
+        public void EditorParseQuest(string questName)
         {
-            globalVars = new Table(GetQuestTableText("Globals"));
-            messageTypes = new Table(GetQuestTableText("Messages"));
+            Quest quest = new Quest(GetQuestSourceText(questName));
         }
 
-        #endregion
+#endif
+
+#endregion
 
         #region Singleton
 

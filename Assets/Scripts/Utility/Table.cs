@@ -14,7 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace DaggerfallWorkshop.Game.Questing
+namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
     /// A very basic data table storing columns and rows of string information controlled by a simple schema.

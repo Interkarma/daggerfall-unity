@@ -15,6 +15,7 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -23,12 +24,28 @@ namespace DaggerfallWorkshop.Game.Questing
     /// Final step of parsing may be handed off to components as text at construction time.
     /// This allows parser to handle high-level structure while components take care of their own specific needs.
     /// </summary>
-    public static class Parser
+    public class Parser
     {
         #region Fields
 
         const string idCol = "id";
         const string nameCol = "name";
+
+        Table globalVars;
+        Table messageTypes; 
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public Parser()
+        {
+            globalVars = new Table(QuestMachine.GetQuestTableText("Globals"));
+            messageTypes = new Table(QuestMachine.GetQuestTableText("Messages"));
+        }
 
         #endregion
 
@@ -38,7 +55,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Attempts to parse a text source file.
         /// </summary>
         /// <param name="source">Array of text lines from quest source.</param>
-        public static void Parse(string[] source)
+        public void Parse(string[] source)
         {
             const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
 
@@ -47,9 +64,6 @@ namespace DaggerfallWorkshop.Game.Questing
             bool inQBN = false;
             List<string> qrcLines = new List<string>();
             List<string> qbnLines = new List<string>();
-
-            // Create empty quest
-            Quest quest = new Quest();
 
             // Start diagnostic timer
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -83,7 +97,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (text.StartsWith("qbn:", comparison))
                 {
                     inQRC = false;
-                    inQBN = false;
+                    inQBN = true;
                     continue;
                 }
 
@@ -113,7 +127,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Validate QBN
-            if (qrcLines.Count == 0)
+            if (qbnLines.Count == 0)
             {
                 throw new Exception("Parse() error: Quest has no QBN section.");
             }
@@ -134,7 +148,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #region Private Methods
 
-        static void ParseQRC(List<string> lines)
+        void ParseQRC(List<string> lines)
         {
             const string parseIdError = "Could not parse text '{0}' to an int. Expected message ID value.";
 
@@ -149,16 +163,16 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Begins with field Message: (or fixed message type)
                 List<Message> messages = new List<Message>();
                 string[] parts = SplitField(lines[i]);
-                if (QuestMachine.Instance.MessageTypes.HasValue(parts[0]))
+                if (messageTypes.HasValue(parts[0]))
                 {
                     // Read ID of message
                     int messageID = 0;
                     if (parts[1].StartsWith("[") && parts[1].EndsWith("]"))
                     {
                         // Fixed message types use ID from table
-                        messageID = QuestMachine.Instance.MessageTypes.GetInt(idCol, parts[0]);
+                        messageID = messageTypes.GetInt(idCol, parts[0]);
                         if (messageID == -1)
-                            throw new Exception(string.Format(parseIdError, QuestMachine.Instance.MessageTypes.GetInt(idCol, parts[0])));
+                            throw new Exception(string.Format(parseIdError, messageTypes.GetInt(idCol, parts[0])));
                     }
                     else
                     {
@@ -187,7 +201,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
-        static void ParseQBN(List<string> lines)
+        void ParseQBN(List<string> lines)
         {
 
         }
@@ -196,7 +210,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #region Helpers
 
-        static string[] SplitLine(string text, bool trim = true)
+        string[] SplitLine(string text, bool trim = true)
         {
             string[] parts = text.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
 
@@ -210,7 +224,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         // Splits a field with format 'FieldName: Value" using : as separator
         // Be default expects two string values as result
-        static string[] SplitField(string text, int expectedCount = 2, bool trim = true)
+        string[] SplitField(string text, int expectedCount = 2, bool trim = true)
         {
             const string error = "SplitField() encountered invalid number of results.";
 
@@ -227,27 +241,27 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         // Gets string value from text field with format 'FieldName: String'
-        static string GetFieldStringValue(string text)
+        string GetFieldStringValue(string text)
         {
             string[] parts = SplitField(text);
             return parts[1].Trim();
         }
 
         // Gets int value from text field with format 'FieldName: Int'
-        static int GetFieldIntValue(string text)
+        int GetFieldIntValue(string text)
         {
             string[] parts = SplitField(text);
             return ParseInt(parts[1].Trim());
         }
 
         // Just a wrapper for int.Parse
-        static int ParseInt(string text)
+        int ParseInt(string text)
         {
             return int.Parse(text);
         }
 
         // Trims all lines in string array
-        static void TrimLines(ref string[] lines)
+        void TrimLines(ref string[] lines)
         {
             for (int i = 0; i < lines.Length; i++)
             {
