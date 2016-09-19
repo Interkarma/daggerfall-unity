@@ -125,12 +125,6 @@ Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
 				
 			half metallic = tex2D(_ReflectionsTextureIndexTex, screenUV).g;
 			refl *= metallic;
-				
-			//float3 specColor = tex2D(_CameraGBufferTexture1, screenUV).rgb;
-			//refl *= specColor.r;
-			//refl *= 0.8f;
-			//refl -= 0.2f;
-			//refl = clamp(refl, 0.0f, 1.0f);
 
 			return half4(refl, 1.0f);
     }

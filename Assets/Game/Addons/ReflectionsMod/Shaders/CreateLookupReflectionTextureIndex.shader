@@ -5,6 +5,7 @@
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 
 // used as replacement shader to create reflection texture sampling index (which reflection texture to sample from) for every fragment (in r channel of texture),
+// metallic amount is stored in g channel of the texture, glossiness amount is stored in b channel of the texture (for possible use in DeferredPlanarReflections shader)
 Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
     Properties
     {
@@ -21,7 +22,7 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
 	CGINCLUDE
 
 	#include "UnityCG.cginc"
-	//#include "UnityStandardInput.cginc"
+	//#include "UnityStandardInput.cginc" // function MetallicGloss defined there, but also lots of other stuff not needed
 
     sampler2D _MainTex;
 	float4 _MainTex_TexelSize;
@@ -33,8 +34,6 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
 		half _Glossiness;		
 	#endif
 	half _GlossMapScale;
-	
-	//fixed4 _SpecColor;
 
 	float _GroundLevelHeight;
 	float _LowerLevelHeight;
@@ -139,8 +138,7 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
 			#pragma fragment frag
 			#pragma target 3.0
 			#pragma shader_feature _METALLICGLOSSMAP
-			#pragma shader_feature _ _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-			//#pragma shader_feature __ _METALLICGLOSSMAP _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			#pragma shader_feature _ _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A			
 			ENDCG
 		}
 	}	
