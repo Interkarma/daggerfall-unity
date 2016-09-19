@@ -320,7 +320,7 @@ namespace DaggerfallWorkshop
                     go.transform.localPosition += new Vector3(0, 0.1f, 0);
                     break;
                 case 3:         // Candle
-                    // todo
+                    go.transform.localPosition += new Vector3(0, 0.1f, 0);
                     break;
                 case 4:         // Candle in bowl
                     // todo
@@ -377,7 +377,7 @@ namespace DaggerfallWorkshop
                     go.transform.localPosition += new Vector3(0, size.y / 2.4f, 0);
                     break;
                 case 22:         // Round lantern with medium chain
-                    // todo
+                    go.transform.localPosition += new Vector3(0, -0.5f, 0);
                     break;
                 case 23:         // Wooden chandelier with burning candles
                     // todo
@@ -491,7 +491,8 @@ namespace DaggerfallWorkshop
                     light.color = new Color(1.0f, 0.95f, 0.67f);
                     break;
                 case 22:         // Round lantern with medium chain
-                    // todo
+                    light.intensity = 1.5f;
+                    light.color = new Color(1.0f, 0.95f, 0.78f);
                     break;
                 case 23:         // Wooden chandelier with burning candles
                     // todo
