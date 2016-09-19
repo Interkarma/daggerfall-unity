@@ -15,11 +15,59 @@ using System.Collections;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// A message displayed to user as popup text.
-    /// Some messages have multiple variations to be selected at random.
-    /// Daggerfall will display a message only once.
+    /// A message stores text for popups, journal, letters, rumours, etc.
     /// </summary>
     public class Message
     {
+        #region Fields
+
+        int id;
+
+        #endregion
+
+        #region Properties
+
+        public int ID
+        {
+            get { return id; }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public Message()
+        {
+        }
+
+        /// <summary>
+        /// Load message constructor.
+        /// </summary>
+        public Message(int id, string[] source)
+        {
+            LoadMessage(id, source);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Load 
+        /// </summary>
+        /// <param name="id">ID of message.</param>
+        /// <param name="source">Array of source lines in message.</param>
+        public void LoadMessage(int id, string[] source)
+        {
+            this.id = id;
+        }
+
+        #endregion
+
+        #region Private Methods
+        #endregion
     }
 }
