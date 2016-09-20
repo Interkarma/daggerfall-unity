@@ -1283,7 +1283,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3c4f94f182742e48947399a2012f0a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TestQuest: _BRISIEN
 --- !u!4 &1362656639
 Transform:
   m_ObjectHideFlags: 0

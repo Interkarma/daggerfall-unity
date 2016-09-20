@@ -141,3 +141,15 @@ ShaderVariantCollection:
       first: {fileID: 4800000, guid: c3b8c2f21d1ea43498ec1f71a3055a89, type: 3}
       second:
         variants: []
+    data:
+      first: {fileID: 4800000, guid: 5af44ac1e5e9c52409512872907a3405, type: 3}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: 6353645384790c04a9077defd94c3274, type: 3}
+      second:
+        variants: []
+    data:
+      first: {fileID: 4800000, guid: e85ea894cfcb1f243b1473f8d9d08678, type: 3}
+      second:
+        variants: []
