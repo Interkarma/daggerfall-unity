@@ -30,6 +30,17 @@ namespace ReflectionsMod
 
         private Camera cameraToUse = null;
 
+        public enum EnvironmentSetting {IndoorSetting, OutdoorSetting};
+        private EnvironmentSetting currentBackgroundSettings = EnvironmentSetting.IndoorSetting;
+        public EnvironmentSetting CurrentBackgroundSettings
+        {
+            get
+            {
+                return currentBackgroundSettings;
+            }
+            set { currentBackgroundSettings = value; }
+        }
+
         void Start()
         {
             GameObject stackedCameraGameObject = GameObject.Find("stackedCamera");
@@ -101,6 +112,8 @@ namespace ReflectionsMod
             reflectionCamera.cullingMask = ~(1 << 4) & m_ReflectLayers.value; // never render water layer
 		    reflectionCamera.targetTexture = m_ReflectionTexture;
 
+            UnityEngine.Rendering.ShadowCastingMode oldShadowCastingMode = rend.shadowCastingMode;
+            bool oldReceiverShadows = rend.receiveShadows;
             // next 2 lines are important for making shadows work correctly - otherwise shadows will be broken
             rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             rend.receiveShadows = false;
@@ -118,6 +131,10 @@ namespace ReflectionsMod
 			    QualitySettings.pixelLightCount = oldPixelLightCount;
  
 		    s_InsideRendering = false;
+
+            rend.shadowCastingMode = oldShadowCastingMode;
+            rend.receiveShadows = oldReceiverShadows;
+            
 	    }
  
  
@@ -138,11 +155,21 @@ namespace ReflectionsMod
 	    {
 		    if( dest == null )
 			    return;
-		    // set camera to clear the same way as current camera
+            // set camera to clear the same way as current camera            
             CameraClearFlags clearFlags = CameraClearFlags.Skybox;
-		    dest.clearFlags = clearFlags;
-		    dest.backgroundColor = src.backgroundColor;        
-		    if( clearFlags == CameraClearFlags.Skybox )
+            if (currentBackgroundSettings == EnvironmentSetting.IndoorSetting)
+            {
+                clearFlags = CameraClearFlags.Color;
+                dest.backgroundColor = Color.black;
+                dest.clearFlags = clearFlags;
+            }
+            else if (currentBackgroundSettings == EnvironmentSetting.OutdoorSetting)
+            {
+                clearFlags = CameraClearFlags.Skybox;
+                dest.backgroundColor = src.backgroundColor;
+                dest.clearFlags = clearFlags;
+            }
+            if ( clearFlags == CameraClearFlags.Skybox )
 		    {
                 Skybox sky = src.GetComponent(typeof(Skybox)) as Skybox;
 			    Skybox mysky = dest.GetComponent(typeof(Skybox)) as Skybox;
@@ -164,6 +191,11 @@ namespace ReflectionsMod
             dest.renderingPath = src.renderingPath;
 
             dest.farClipPlane = src.farClipPlane;
+
+            if (currentBackgroundSettings == EnvironmentSetting.IndoorSetting)
+            {
+                dest.farClipPlane = 1000.0f;
+            }
 
             dest.nearClipPlane = 0.03f; //src.nearClipPlane;
 		    dest.orthographic = src.orthographic;
@@ -208,18 +240,21 @@ namespace ReflectionsMod
 			    //go.hideFlags = HideFlags.HideAndDontSave;
 			    m_ReflectionCameras[currentCamera] = reflectionCamera;
 
-                // attach global fog to camera - this is important to get the same reflections like on normal terrain when deferred rendering is used
-                if ((reflectionCamera.renderingPath == RenderingPath.DeferredShading) || (reflectionCamera.renderingPath == RenderingPath.UsePlayerSettings))
+                if (currentBackgroundSettings == EnvironmentSetting.OutdoorSetting)
                 {
-                    UnityStandardAssets.ImageEffects.GlobalFog scriptGlobalFog = go.AddComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
-                    UnityStandardAssets.ImageEffects.GlobalFog globalFogMainCamera = Camera.main.gameObject.GetComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
-                    scriptGlobalFog.distanceFog = globalFogMainCamera.distanceFog;
-                    scriptGlobalFog.excludeFarPixels = globalFogMainCamera.excludeFarPixels; // false
-                    scriptGlobalFog.useRadialDistance = globalFogMainCamera.useRadialDistance;
-                    scriptGlobalFog.heightFog = globalFogMainCamera.heightFog;
-                    scriptGlobalFog.height = globalFogMainCamera.height;
-                    scriptGlobalFog.heightDensity = globalFogMainCamera.heightDensity;
-                    scriptGlobalFog.startDistance = globalFogMainCamera.startDistance;
+                    // attach global fog to camera - this is important to get the same reflections like on normal terrain when deferred rendering is used
+                    if ((reflectionCamera.renderingPath == RenderingPath.DeferredShading) || (reflectionCamera.renderingPath == RenderingPath.UsePlayerSettings))
+                    {
+                        UnityStandardAssets.ImageEffects.GlobalFog scriptGlobalFog = go.AddComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
+                        UnityStandardAssets.ImageEffects.GlobalFog globalFogMainCamera = Camera.main.gameObject.GetComponent<UnityStandardAssets.ImageEffects.GlobalFog>();
+                        scriptGlobalFog.distanceFog = globalFogMainCamera.distanceFog;
+                        scriptGlobalFog.excludeFarPixels = globalFogMainCamera.excludeFarPixels; // false
+                        scriptGlobalFog.useRadialDistance = globalFogMainCamera.useRadialDistance;
+                        scriptGlobalFog.heightFog = globalFogMainCamera.heightFog;
+                        scriptGlobalFog.height = globalFogMainCamera.height;
+                        scriptGlobalFog.heightDensity = globalFogMainCamera.heightDensity;
+                        scriptGlobalFog.startDistance = globalFogMainCamera.startDistance;
+                    }
                 }
 
                 go.transform.SetParent(GameObject.Find("ReflectionsMod").transform);

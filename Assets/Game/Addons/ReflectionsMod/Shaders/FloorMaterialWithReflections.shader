@@ -1,12 +1,10 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-//ReflectionsMod for Daggerfall Tools For Unity
+﻿//ReflectionsMod for Daggerfall Tools For Unity
 //http://www.reddit.com/r/dftfu
 //http://www.dfworkshop.net/
 //Author: Michael Rauter (a.k.a. Nystul)
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 
-Shader "Daggerfall/FloorMaterialWithReflections" {
+Shader "Daggerfall/ReflectionsMod/FloorMaterialWithReflections" {
 	Properties {
 		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("Albedo Map", 2D) = "white" {}
@@ -30,7 +28,7 @@ Shader "Daggerfall/FloorMaterialWithReflections" {
 		#pragma surface surf Standard vertex:customvert
 		#pragma glsl
 
-		#pragma multi_compile __ USE_METALLICGLOSSMAP
+		#pragma shader_feature _METALLICGLOSSMAP
 
 		half4 _Color;
 		sampler2D _MainTex;
@@ -43,7 +41,7 @@ Shader "Daggerfall/FloorMaterialWithReflections" {
 		float _GroundLevelHeight;
 		float _LowerLevelHeight;
 
-		#if defined (USE_METALLICGLOSSMAP)
+		#if defined (_METALLICGLOSSMAP)
 			sampler2D _MetallicGlossMap;
 		#else	
 			half _Metallic;
@@ -107,7 +105,7 @@ Shader "Daggerfall/FloorMaterialWithReflections" {
 			if ((abs(IN.worldPos.y - _GroundLevelHeight) > 0.01f) && (abs(IN.worldPos.y - _LowerLevelHeight) > 0.01f))
 				fadeOutFact = max(fadeOutFactX, fadeOutFactY);
 
-			#if defined (USE_METALLICGLOSSMAP)
+			#if defined (_METALLICGLOSSMAP)
 				half4 metallicGloss =  tex2D(_MetallicGlossMap, IN.uv_MainTex);
 				half metallic = metallicGloss.r * (1.0f-fadeOutFact);
 				half smoothness = (1.0f - metallicGloss.a) * 8.0f;

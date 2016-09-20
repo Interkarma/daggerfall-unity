@@ -27,6 +27,11 @@ namespace ReflectionsMod
         private MirrorReflection mirrorRefl = null; 
         private MirrorReflection mirrorReflSeaLevel = null;
 
+        private bool useDeferredReflections = false;
+        private DeferredPlanarReflections componentDefferedPlanarReflections = null;
+
+        private bool playerInside = false;
+
         public RenderTexture getSeaReflectionRenderTexture()
         {
             return mirrorReflSeaLevel.m_ReflectionTexture;
@@ -35,6 +40,28 @@ namespace ReflectionsMod
         public RenderTexture getGroundReflectionRenderTexture()
         {
             return mirrorRefl.m_ReflectionTexture;
+        }
+
+        public float ReflectionPlaneGroundLevelY
+        {
+            get
+            {
+                if (reflectionPlaneBottom)
+                    return reflectionPlaneBottom.transform.position.y;
+                else
+                    return 0.0f;
+            }
+        }
+
+        public float ReflectionPlaneLowerLevelY
+        {
+            get
+            {
+                if (reflectionPlaneSeaLevel)
+                    return reflectionPlaneSeaLevel.transform.position.y;
+                else
+                    return 0.0f;
+            }
         }
 
         bool computeStepDownRaycast(Vector3 raycastStartPoint, Vector3 directionVec, float maxDiffMagnitude, out RaycastHit hit)
@@ -310,6 +337,15 @@ namespace ReflectionsMod
                 mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
             }
 
+            useDeferredReflections = (GameManager.Instance.MainCamera.renderingPath == RenderingPath.DeferredShading);
+
+            if (useDeferredReflections)
+            {
+                componentDefferedPlanarReflections = GameManager.Instance.MainCameraObject.AddComponent<ReflectionsMod.DeferredPlanarReflections>();
+            }
+
+            playerInside = GameManager.Instance.IsPlayerInside;
+
             PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToInterior;
@@ -330,6 +366,9 @@ namespace ReflectionsMod
         {
             mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
             mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
+
+            mirrorRefl.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.IndoorSetting;
+            mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.IndoorSetting;
         }
 
         void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
@@ -345,10 +384,13 @@ namespace ReflectionsMod
                 mirrorRefl.m_ReflectLayers.value = 1 << LayerMask.NameToLayer("Default");
                 mirrorReflSeaLevel.m_ReflectLayers = 1 << LayerMask.NameToLayer("Default");
             }
+
+            mirrorRefl.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.OutdoorSetting;
+            mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.OutdoorSetting;
         }
 
         void Update()
-        {
+        { 
             if (!DaggerfallUnity.Settings.Nystul_RealtimeReflections)
                 return;
 
@@ -463,6 +505,31 @@ namespace ReflectionsMod
                 //Debug.Log(string.Format("x,y,z: {0}, {1}, {2}", vecWaterHeight.x, vecWaterHeight.y, vecWaterHeight.z));
                 //Debug.Log(string.Format("transformed x,y,z: {0}, {1}, {2}", vecWaterHeightTransformed.x, vecWaterHeightTransformed.y, vecWaterHeightTransformed.z));
                 reflectionPlaneSeaLevel.transform.position = new Vector3(goPlayerAdvanced.transform.position.x, vecWaterHeightTransformed.y, goPlayerAdvanced.transform.position.z);
+            }
+
+            if (GameManager.Instance.IsPlayerInside && !playerInside)
+            {
+                playerInside = true; // player now inside
+
+                mirrorRefl.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.IndoorSetting;
+                mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.IndoorSetting;
+
+                if (useDeferredReflections)
+                {
+                    componentDefferedPlanarReflections.enabled = true;
+                }
+            }
+            else if (!GameManager.Instance.IsPlayerInside && playerInside)
+            {
+                playerInside = false; // player now outside
+
+                mirrorRefl.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.OutdoorSetting;
+                mirrorReflSeaLevel.CurrentBackgroundSettings = MirrorReflection.EnvironmentSetting.OutdoorSetting;
+
+                if (useDeferredReflections)
+                {
+                    componentDefferedPlanarReflections.enabled = false;
+                }
             }
         }
 	}

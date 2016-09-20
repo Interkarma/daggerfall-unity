@@ -310,24 +310,214 @@ namespace DaggerfallWorkshop
             Vector2 size = DaggerfallUnity.Instance.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord) * MeshReader.GlobalScale;
             switch (obj.TextureRecord)
             {
+                case 0:         // Bowl with fire
+                    go.transform.localPosition += new Vector3(0, -0.1f, 0);
+                    break;
+                case 1:         // Campfire
+                    // todo
+                    break;
+                case 2:         // Skull candle
+                    go.transform.localPosition += new Vector3(0, 0.1f, 0);
+                    break;
+                case 3:         // Candle
+                    go.transform.localPosition += new Vector3(0, 0.1f, 0);
+                    break;
+                case 4:         // Candle in bowl
+                    // todo
+                    break;
+                case 5:         // Candleholder with 3 candles
+                    go.transform.localPosition += new Vector3(0, 0.15f, 0);
+                    break;
                 case 6:         // Skull torch
+                    go.transform.localPosition += new Vector3(0, 0.6f, 0);
+                    break;
+                case 7:         // Wooden chandelier with extinguished candles
+                    // todo
+                    break;
+                case 8:         // Turkis lamp
+                    // do nothing
+                    break;
+                case 9:        // Metallic chandelier with burning candles
+                    go.transform.localPosition += new Vector3(0, 0.4f, 0);
+                    break;
+                case 10:         // Metallic chandelier with extinguished candles
+                    // todo
+                    break;
+                case 11:        // Candle in lamp
+                    go.transform.localPosition += new Vector3(0, -0.4f, 0);
+                    break;
+                case 12:         // Extinguished lamp
+                    // todo
+                    break;
+                case 13:        // Round lamp (e.g. main lamp in mages guild)
+                    go.transform.localPosition += new Vector3(0, -0.35f, 0);
+                    break;
                 case 14:        // Standing lantern
-                case 15:        // Standing lantern round
-                case 20:        // Brazier torch
-                case 21:        // Standing candle
                     go.transform.localPosition += new Vector3(0, size.y / 2, 0);
+                    break;
+                case 15:        // Standing lantern round
+                    go.transform.localPosition += new Vector3(0, size.y / 2, 0);
+                    break;
+                case 16:         // Mounted Torch with thin holder
+                    // todo
+                    break;
+                case 17:        // Mounted torch 1
+                    go.transform.localPosition += new Vector3(0, 0.2f, 0);
+                    break;
+                case 18:         // Mounted Torch 2
+                    // todo
+                    break;
+                case 19:         // Pillar with firebowl
+                    // todo
+                    break;
+                case 20:        // Brazier torch
+                    go.transform.localPosition += new Vector3(0, 0.6f, 0);
+                    break;
+                case 21:        // Standing candle
+                    go.transform.localPosition += new Vector3(0, size.y / 2.4f, 0);
+                    break;
+                case 22:         // Round lantern with medium chain
+                    go.transform.localPosition += new Vector3(0, -0.5f, 0);
+                    break;
+                case 23:         // Wooden chandelier with burning candles
+                    // todo
+                    break;
+                case 24:        // Lantern with long chain
+                    go.transform.localPosition += new Vector3(0, -1.85f, 0);
+                    break;
+                case 25:        // Lantern with medium chain
+                    go.transform.localPosition += new Vector3(0, -1.0f, 0);
+                    break;
+                case 26:        // Lantern with short chain
+                    // todo
+                    break;
+                case 27:        // Lantern with no chain
+                    go.transform.localPosition += new Vector3(0, -0.02f, 0);
+                    break;
+                case 28:        // Street Lantern 1
+                    // todo
+                    break;
+                case 29:        // Street Lantern 2
+                    // todo
                     break;
             }
 
-            // Shrink light radius of candles
+            // adjust properties of light sources (e.g. Shrink light radius of candles)
             Light light = go.GetComponent<Light>();
             switch (obj.TextureRecord)
             {
+                case 0:         // Bowl with fire
+                    light.range = 20.0f;
+                    light.intensity = 1.1f;
+                    light.color = new Color(0.95f, 0.91f, 0.63f);
+                    break;
+                case 1:         // Campfire
+                    // todo
+                    break;
                 case 2:         // Skull candle
+                    light.range /= 3f;
+                    light.intensity = 0.6f;
+                    light.color = new Color(1.0f, 0.99f, 0.82f);
+                    break;
                 case 3:         // Candle
+                    light.range /= 3f;
+                    break;
                 case 4:         // Candle with base
+                    light.range /= 3f;
+                    break;
+                case 5:         // Candleholder with 3 candles
+                    light.range = 7.5f;
+                    light.intensity = 0.33f;
+                    light.color = new Color(1.0f, 0.89f, 0.61f);
+                    break;
+                case 6:         // Skull torch
+                    light.range = 15.0f;
+                    light.intensity = 0.75f;
+                    light.color = new Color(1.0f, 0.93f, 0.62f);
+                    break;
+                case 7:         // Wooden chandelier with extinguished candles
+                    // todo
+                    break;
+                case 8:         // Turkis lamp
+                    light.color = new Color(0.68f, 1.0f, 0.94f);
+                    break;
+                case 9:        // metallic chandelier with burning candles
+                    light.range = 15.0f;
+                    light.intensity = 0.65f;
+                    light.color = new Color(1.0f, 0.92f, 0.6f);
+                    break;
+                case 10:         // Metallic chandelier with extinguished candles
+                    // todo
+                    break;
+                case 11:        // Candle in lamp
+                    light.range = 5.0f;
+                    light.intensity = 0.5f;
+                    break;
+                case 12:         // Extinguished lamp
+                    // todo
+                    break;
+                case 13:        // Round lamp (e.g. main lamp in mages guild)
+                    light.range *= 1.2f;
+                    light.intensity = 1.1f;
+                    light.color = new Color(0.93f, 0.84f, 0.49f);
+                    break;
+                case 14:        // Standing lantern
+                    // todo
+                    break;
+                case 15:        // Standing lantern round
+                    // todo
+                    break;
+                case 16:         // Mounted Torch with thin holder
+                    // todo
+                    break;
+                case 17:        // Mounted torch 1
+                    light.intensity = 0.8f;
+                    light.color = new Color(1.0f, 0.97f, 0.87f);
+                    break;
+                case 18:         // Mounted Torch 2
+                    // todo
+                    break;
+                case 19:         // Pillar with firebowl
+                    // todo
+                    break;
+                case 20:        // Brazier torch
+                    light.range = 12.0f;
+                    light.intensity = 0.75f;
+                    light.color = new Color(1.0f, 0.92f, 0.72f);
+                    break;
                 case 21:        // Standing candle
                     light.range /= 3f;
+                    light.intensity = 0.5f;
+                    light.color = new Color(1.0f, 0.95f, 0.67f);
+                    break;
+                case 22:         // Round lantern with medium chain
+                    light.intensity = 1.5f;
+                    light.color = new Color(1.0f, 0.95f, 0.78f);
+                    break;
+                case 23:         // Wooden chandelier with burning candles
+                    // todo
+                    break;
+                case 24:        // Lantern with long chain
+                    light.intensity = 1.4f;
+                    light.color = new Color(1.0f, 0.98f, 0.64f);
+                    break;
+                case 25:        // Lantern with medium chain
+                    light.intensity = 1.4f;
+                    light.color = new Color(1.0f, 0.98f, 0.64f);
+                    break;
+                case 26:        // Lantern with short chain
+                    light.intensity = 1.4f;
+                    light.color = new Color(1.0f, 0.98f, 0.64f);
+                    break;
+                case 27:        // Lantern with no chain
+                    light.intensity = 1.4f;
+                    light.color = new Color(1.0f, 0.98f, 0.64f);
+                    break;
+                case 28:        // Street Lantern 1
+                    // todo
+                    break;
+                case 29:        // Street Lantern 2
+                    // todo
                     break;
             }
 
