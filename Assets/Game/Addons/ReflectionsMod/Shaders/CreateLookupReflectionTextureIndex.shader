@@ -91,13 +91,13 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
             return o;
     }
 				
-    half3 frag(v2f IN) : SV_Target
+    half4 frag(v2f IN) : SV_Target
     {		            
 			half4 col = tex2D(_MainTex, IN.uv);
 			if (col.a < 0.5f)
 				discard;
 
-			half3 result = float3(0.0f, 0.0f, 0.0f);
+			half4 result = half4(0.0f, 0.0f, 0.0f, 0.0f);
 			float3 vecUp = float3(0.0f,1.0f,0.0f);
 			if ( (abs(IN.worldPos.y - _LowerLevelHeight) < 0.001f) && (acos(dot(normalize(IN.worldNormal), vecUp)) < 0.01f) )
 			{
@@ -139,7 +139,6 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
 			#pragma target 3.0
 			#pragma shader_feature _METALLICGLOSSMAP
 			#pragma shader_feature _ _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A			
-			#pragma only_renderers d3d11
 			ENDCG
 		}
 	}	

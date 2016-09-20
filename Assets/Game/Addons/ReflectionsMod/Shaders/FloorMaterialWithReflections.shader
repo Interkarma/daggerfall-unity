@@ -142,7 +142,7 @@ Shader "Daggerfall/ReflectionsMod/FloorMaterialWithReflections" {
 			o.Alpha = albedo.a;
 			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 			o.Emission = emission;		
-			o.Metallic = 0.0f; //_Metallic;
+			o.Metallic = metallic;
 		}
 		ENDCG
 	} 
