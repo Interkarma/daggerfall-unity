@@ -139,6 +139,7 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
 			#pragma target 3.0
 			#pragma shader_feature _METALLICGLOSSMAP
 			#pragma shader_feature _ _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A			
+			#pragma only_renderers d3d11
 			ENDCG
 		}
 	}	

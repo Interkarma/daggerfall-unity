@@ -79,6 +79,7 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureCoordinates" {
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma target 3.0
+			#pragma only_renderers d3d11
 			ENDCG
 		}
 	}	
