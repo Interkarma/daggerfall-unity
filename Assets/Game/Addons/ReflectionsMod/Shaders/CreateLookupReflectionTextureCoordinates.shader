@@ -56,14 +56,14 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureCoordinates" {
             return o;
     }
 				
-    float2 frag(v2f IN) : SV_Target
+    float4 frag(v2f IN) : SV_Target
     {
 			half4 col = tex2D(_MainTex, IN.uv);
 			if (col.a < 0.5f)
 				discard;
 			
-			float2 parallaxCorrectedScreenPos = IN.parallaxCorrectedScreenPos.xy / IN.parallaxCorrectedScreenPos.w; 
-            return parallaxCorrectedScreenPos;
+			float2 parallaxCorrectedScreenPos = IN.parallaxCorrectedScreenPos.xy / IN.parallaxCorrectedScreenPos.w;			
+            return float4(parallaxCorrectedScreenPos.x, parallaxCorrectedScreenPos.y, 0.0f, 0.0f);
     }
 
 	ENDCG
@@ -79,7 +79,6 @@ Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureCoordinates" {
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma target 3.0
-			#pragma only_renderers d3d11
 			ENDCG
 		}
 	}	
