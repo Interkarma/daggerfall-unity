@@ -27,8 +27,8 @@ Shader "Daggerfall/ReflectionsMod/FloorMaterialWithReflections" {
 		#pragma target 3.0 		
 		#pragma surface surf Standard vertex:customvert
 		#pragma glsl
-
-		#pragma shader_feature _METALLICGLOSSMAP
+		
+		#pragma multi_compile __ _METALLICGLOSSMAP
 
 		half4 _Color;
 		sampler2D _MainTex;
