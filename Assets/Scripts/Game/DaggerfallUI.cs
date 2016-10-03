@@ -77,6 +77,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallInventoryWindow dfInventoryWindow;
         DaggerfallTravelMapWindow dfTravelMapWindow;
         DaggerfallAutomapWindow dfAutomapWindow;
+        DaggerfallExteriorAutomapWindow dfExteriorAutomapWindow;
 
         DaggerfallFontPlus fontPetrock32;
 
@@ -164,6 +165,8 @@ namespace DaggerfallWorkshop.Game
 
             dfAutomapWindow = new DaggerfallAutomapWindow(uiManager);
             //dfAutomapWindow.OnClose += AutomapDialog_OnClose;
+
+            dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
 
             SetupSingleton();
         }
@@ -272,6 +275,11 @@ namespace DaggerfallWorkshop.Game
                     {
                         GameManager.Instance.PauseGame(true);
                         uiManager.PushWindow(dfAutomapWindow);
+                    }
+                    else
+                    {
+                        GameManager.Instance.PauseGame(true);
+                        uiManager.PushWindow(dfExteriorAutomapWindow);
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenRestWindow:
