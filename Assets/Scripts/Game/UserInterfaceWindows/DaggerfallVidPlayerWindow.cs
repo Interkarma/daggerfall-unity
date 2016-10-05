@@ -53,6 +53,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
+            const int nativeScreenWidth = 320;
+            const int nativeScreenHeight = 200;
+
             // Add video player control
             video = new DaggerfallVideo();
             video.HorizontalAlignment = HorizontalAlignment.Center;

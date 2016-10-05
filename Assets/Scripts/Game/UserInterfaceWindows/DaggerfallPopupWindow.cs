@@ -53,8 +53,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { previousWindow = value; }
         }
 
-        public DaggerfallPopupWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
-            : base(uiManager)
+        public DaggerfallPopupWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null, int screenWidth = 320, int screenHeight = 200)
+            : base(uiManager, screenWidth, screenHeight)
         {
             this.previousWindow = previousWindow;
         }
