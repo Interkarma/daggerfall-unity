@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (a.k.a. Nystul)
-// Contributors:    
+// Contributors:    Interkarma
 // 
 // Notes:
 //
@@ -90,6 +90,29 @@ namespace DaggerfallWorkshop.Game
         // from DaggerfallExteriorAutomapWindow via flags - this is why this flag and its Property ResetAutomapSettingsSignalForExternalScript exist
         bool resetAutomapSettingsFromExternalScript = false;
 
+        private struct Rectangle
+        {
+            public int xpos;
+            public int ypos;
+            public int width;
+            public int height;
+        }
+
+        /// <summary>
+        /// Block layout of location.
+        /// </summary>
+        private struct BlockLayout
+        {
+            public int x;
+            public int y;
+            public Rectangle rect;
+            public string name;
+            public DFBlock.BlockTypes blocktype;
+            public DFBlock.RdbTypes rdbType;
+        }
+
+        private BlockLayout[] exteriorLayout;
+
         #endregion
 
         #region Properties
@@ -140,6 +163,160 @@ namespace DaggerfallWorkshop.Game
             {
                 gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
             }
+
+            ContentReader.MapSummary mapSummary;
+            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+            if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+            {
+                // no location found, something went wrong
+            }
+            
+            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
+            if (!location.Loaded)
+            {
+                // Location not loaded, something went wrong
+            }
+
+            // Get location dimensions
+            int width = location.Exterior.ExteriorData.Width;
+            int height = location.Exterior.ExteriorData.Height;
+
+            int blockSizeWidth = 64;
+            int blockSizeHeight = 64;
+
+            int xpos = 0;
+            int ypos = height * blockSizeHeight - blockSizeHeight;
+            exteriorLayout = new BlockLayout[width * height];
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    // Get the block name
+                    string blockName = DaggerfallUnity.Instance.ContentReader.BlockFileReader.CheckName(DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
+
+                    // Get the block data
+                    DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockName);
+
+                    // Now we can get the automap image data for this block and lay it out
+                    //block.RmbBlock.SubRecords.
+
+                    int index = y * width + x;
+                    exteriorLayout[index].x = x;
+                    exteriorLayout[index].y = y;
+                    exteriorLayout[index].rect = new Rectangle();
+                    exteriorLayout[index].rect.xpos = xpos;
+                    exteriorLayout[index].rect.ypos = ypos;
+                    exteriorLayout[index].rect.width = blockSizeWidth;
+                    exteriorLayout[index].rect.height = blockSizeHeight;
+                    exteriorLayout[index].name = blockName;
+                    exteriorLayout[index].blocktype = DFBlock.BlockTypes.Rmb;
+                    exteriorLayout[index].rdbType = DFBlock.RdbTypes.Unknown;
+                    xpos += blockSizeWidth;
+                }
+                ypos -= blockSizeHeight;
+                xpos = 0;
+            }
+
+            // Create layout image
+            int layoutWidth = width * blockSizeWidth;
+            int layoutHeight = height * blockSizeHeight;
+            Texture2D exteriorLayoutBitmap;
+            exteriorLayoutBitmap = new Texture2D(layoutWidth, layoutHeight, TextureFormat.ARGB32, false);
+
+            // Render map layout
+            foreach (var layout in exteriorLayout)
+            {
+                DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(layout.name);
+                DaggerfallUnity.Instance.ContentReader.BlockFileReader.LoadBlock(block.Index);
+                // Get block automap image
+                DFBitmap dfBitmap = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlockAutoMap(layout.name, true);
+
+                int size = blockSizeWidth * blockSizeHeight;
+                Color32[] colors = new Color32[size];
+                for (int i = 0; i < size; i++)
+                {
+                    switch (dfBitmap.Data[i])
+                    {
+                        case 10:
+                            colors[i].r = 255;
+                            colors[i].g = 100;
+                            colors[i].b = 255;
+                            colors[i].a = 255;
+                            break;
+                        case 12:
+                            colors[i].r = 100;
+                            colors[i].g = 100;
+                            colors[i].b = 255;
+                            colors[i].a = 255;
+                            break;
+                        case 16:
+                            colors[i].r = 255;
+                            colors[i].g = 200;
+                            colors[i].b = 100;
+                            colors[i].a = 255;
+                            break;
+                        case 17:
+                            colors[i].r = 255;
+                            colors[i].g = 200;
+                            colors[i].b = 100;
+                            colors[i].a = 255;
+                            break;
+                        case 19:
+                            colors[i].r = 100;
+                            colors[i].g = 255;
+                            colors[i].b = 100;
+                            colors[i].a = 255;
+                            break;
+                        case 21:
+                            colors[i].r = 100;
+                            colors[i].g = 255;
+                            colors[i].b = 255;
+                            colors[i].a = 255;
+                            break;
+                        case 23:
+                            colors[i].r = 100;
+                            colors[i].g = 100;
+                            colors[i].b = 100;
+                            colors[i].a = 255;
+                            break;
+                        case 24:
+                            colors[i].r = 100;
+                            colors[i].g = 100;
+                            colors[i].b = 100;
+                            colors[i].a = 255;
+                            break;
+                        case 250:
+                            colors[i].r = 255;
+                            colors[i].g = 255;
+                            colors[i].b = 100;
+                            colors[i].a = 255;
+                            break;
+                        case 0:
+                            colors[i].r = 0;
+                            colors[i].g = 0;
+                            colors[i].b = 0;
+                            colors[i].a = 0;
+                            break;
+                        default:
+                            colors[i].r = 255;
+                            colors[i].g = 0;
+                            colors[i].b = 0;
+                            colors[i].a = 255;
+                            break;
+                    }
+                }
+
+                exteriorLayoutBitmap.SetPixels32(layout.rect.xpos, layout.rect.ypos, layout.rect.width, layout.rect.height, colors);
+                exteriorLayoutBitmap.Apply();
+
+                DaggerfallUnity.Instance.ContentReader.BlockFileReader.DiscardBlock(block.Index);
+            }
+
+            byte[] png = exteriorLayoutBitmap.EncodeToPNG();
+            Debug.Log(String.Format("writing to folder {0}", Application.dataPath));
+            File.WriteAllBytes(Application.dataPath + "/test.png", png);
+            
 
             // create camera (if not present) that will render automap level geometry
             createAutomapCamera();
@@ -282,6 +459,69 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+
+        /// <summary>
+        /// Gets managed bitmap from specified indexed image buffer.
+        ///  The currently loaded palette will be used for index to RGB matching.
+        /// </summary>
+        /// <param name="DFBitmap">Object containing source indexed bitmap data.</param>
+        /// <param name="IndexedColour">True to maintain idexed colour, false to return RGB bitmap.</param>
+        /// <param name="MakeTransparent">True to make image transparent, otherwise false.</param>
+        /// <returns>Bitmap object.</returns>
+        ///
+        /*
+        internal Bitmap GetManagedBitmap(ref DFBitmap DFBitmap, bool IndexedColour, bool MakeTransparent)
+        {
+            // Validate
+            if (DFBitmap.Data == null || DFBitmap.Palette.Format != DFBitmap.Formats.Indexed)
+                throw new Exception("Invalid bitmap data or format.");
+
+            // Specify a special colour unused in Daggerfall's palette for transparency check
+            Color TransparentRGB = Color.FromArgb(255, 1, 2);
+
+            // Create bitmap
+            Size sz = new Size(DFBitmap.Width, DFBitmap.Height);
+            Bitmap bitmap = new Bitmap(sz.Width, sz.Height, PixelFormat.Format8bppIndexed);
+
+            // Lock bitmap
+            Rectangle rect = new Rectangle(0, 0, sz.Width, sz.Height);
+            BitmapData bmd = bitmap.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+
+            // Copy row data accounting for stride
+            UInt32 dst = (UInt32)bmd.Scan0;
+            for (int y = 0; y < sz.Height; y++)
+            {
+                System.Runtime.InteropServices.Marshal.Copy(DFBitmap.Data, y * sz.Width, (IntPtr)(dst + y * bmd.Stride), sz.Width);
+            }
+
+            // Unlock bitmap
+            bitmap.UnlockBits(bmd);
+
+            // If making transparent set index zero to special colour
+            Color OldIndex0 = MyPalette.Get(0);
+            if (MakeTransparent && !IndexedColour)
+                MyPalette.Set(0, TransparentRGB.R, TransparentRGB.G, TransparentRGB.B);
+
+            // Set bitmap palette
+            bitmap.Palette = MyPalette.GetManagedColorPalette();
+
+            // Indexed bitmap completed
+            if (IndexedColour)
+                return bitmap;
+
+            // Clone image into final pixel format
+            Bitmap finalBitmap = bitmap.Clone(new Rectangle(0, 0, bitmap.Width, bitmap.Height), PixelFormat.Format32bppArgb);
+
+            // Make transparent
+            if (MakeTransparent)
+                finalBitmap.MakeTransparent(TransparentRGB);
+
+            // Set back index 0
+            MyPalette.Set(0, OldIndex0.R, OldIndex0.G, OldIndex0.B);
+
+            return finalBitmap;
+        }
+        */
 
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
         {

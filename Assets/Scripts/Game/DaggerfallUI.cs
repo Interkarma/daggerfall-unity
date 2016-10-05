@@ -278,8 +278,14 @@ namespace DaggerfallWorkshop.Game
                     }
                     else
                     {
-                        GameManager.Instance.PauseGame(true);
-                        uiManager.PushWindow(dfExteriorAutomapWindow);
+                        ContentReader.MapSummary mapSummary;
+                        DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+                        if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+                        {
+                            // There's a location at this map pixel
+                            GameManager.Instance.PauseGame(true);
+                            uiManager.PushWindow(dfExteriorAutomapWindow);
+                        }
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenRestWindow:
