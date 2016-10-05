@@ -49,49 +49,8 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Public Methods
         #endregion
 
-        #region Static Methods
-
-        /// <summary>
-        /// Gets quest source text.
-        /// TEMP: Quest source and data to be moved from Resources eventually.
-        /// </summary>
-        /// <param name="sourceName">Source name of quest. e.g. _BRISIEN</param>
-        /// <returns>Array of lines from text file.</returns>
-        public static string[] GetQuestSourceText(string sourceName)
-        {
-            TextAsset source = Resources.Load<TextAsset>(Path.Combine("Quests", sourceName));
-            return source.text.Split('\n');
-        }
-
-        /// <summary>
-        /// Gets quest table source text.
-        /// TEMP: Quest source and data to be moved from Resources eventually.
-        /// </summary>
-        /// <param name="dataName">Name of quest table file. e.g. Globals</param>
-        /// <returns>Array of lines from text file.</returns>
-        public static string[] GetQuestTableText(string tableName)
-        {
-            TextAsset source = Resources.Load<TextAsset>(Path.Combine("Quests/Tables", tableName));
-            return source.text.Split('\n');
-        }
-
-        #endregion
-
         #region Private Methods
         #endregion
-
-        #region Editor Methods
-
-#if UNITY_EDITOR
-
-        public void EditorParseQuest(string questName)
-        {
-            Quest quest = new Quest(GetQuestSourceText(questName));
-        }
-
-#endif
-
-#endregion
 
         #region Singleton
 
