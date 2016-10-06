@@ -185,7 +185,7 @@ namespace DaggerfallWorkshop.Game
             int blockSizeHeight = 64;
 
             int xpos = 0;
-            int ypos = height * blockSizeHeight - blockSizeHeight;
+            int ypos = 0; //height * blockSizeHeight - blockSizeHeight;
             exteriorLayout = new BlockLayout[width * height];
 
             for (int y = 0; y < height; y++)
@@ -214,7 +214,7 @@ namespace DaggerfallWorkshop.Game
                     exteriorLayout[index].rdbType = DFBlock.RdbTypes.Unknown;
                     xpos += blockSizeWidth;
                 }
-                ypos -= blockSizeHeight;
+                ypos += blockSizeHeight;
                 xpos = 0;
             }
 
@@ -234,76 +234,83 @@ namespace DaggerfallWorkshop.Game
 
                 int size = blockSizeWidth * blockSizeHeight;
                 Color32[] colors = new Color32[size];
-                for (int i = 0; i < size; i++)
+               // for (int i = 0; i < size; i++)
+               // {
+                for (int y=0; y < blockSizeHeight; y++)
                 {
-                    switch (dfBitmap.Data[i])
+                    for (int x=0; x < blockSizeWidth; x++)
                     {
-                        case 10:
-                            colors[i].r = 255;
-                            colors[i].g = 100;
-                            colors[i].b = 255;
-                            colors[i].a = 255;
-                            break;
-                        case 12:
-                            colors[i].r = 100;
-                            colors[i].g = 100;
-                            colors[i].b = 255;
-                            colors[i].a = 255;
-                            break;
-                        case 16:
-                            colors[i].r = 255;
-                            colors[i].g = 200;
-                            colors[i].b = 100;
-                            colors[i].a = 255;
-                            break;
-                        case 17:
-                            colors[i].r = 255;
-                            colors[i].g = 200;
-                            colors[i].b = 100;
-                            colors[i].a = 255;
-                            break;
-                        case 19:
-                            colors[i].r = 100;
-                            colors[i].g = 255;
-                            colors[i].b = 100;
-                            colors[i].a = 255;
-                            break;
-                        case 21:
-                            colors[i].r = 100;
-                            colors[i].g = 255;
-                            colors[i].b = 255;
-                            colors[i].a = 255;
-                            break;
-                        case 23:
-                            colors[i].r = 100;
-                            colors[i].g = 100;
-                            colors[i].b = 100;
-                            colors[i].a = 255;
-                            break;
-                        case 24:
-                            colors[i].r = 100;
-                            colors[i].g = 100;
-                            colors[i].b = 100;
-                            colors[i].a = 255;
-                            break;
-                        case 250:
-                            colors[i].r = 255;
-                            colors[i].g = 255;
-                            colors[i].b = 100;
-                            colors[i].a = 255;
-                            break;
-                        case 0:
-                            colors[i].r = 0;
-                            colors[i].g = 0;
-                            colors[i].b = 0;
-                            colors[i].a = 0;
-                            break;
-                        default:
-                            colors[i].r = 255;
-                            colors[i].g = 0;
-                            colors[i].b = 0;
-                            colors[i].a = 255;
-                            break;
+                        int i = y * blockSizeWidth + x;
+                        int o = (blockSizeHeight - 1 - y) * blockSizeWidth + x;
+                        switch (dfBitmap.Data[i])
+                        {
+                            // guilds
+                            case 12: // guildhall
+                            case 15: // temple
+                                colors[o].r = 69;
+                                colors[o].g = 125;
+                                colors[o].b = 195;
+                                colors[o].a = 255;
+                                break;
+                            // shops
+                            case 1: // alchemist
+                            case 3: // armorer
+                            case 4: // bank
+                            case 6: // bookseller
+                            case 7: // clothing store
+                            case 9: // gem store
+                            case 10: // general store
+                            case 11: // library
+                            case 13: // pawn shop
+                            case 14: // weapon smith
+                                colors[o].r = 190;
+                                colors[o].g = 85;
+                                colors[o].b = 24;
+                                colors[o].a = 255;
+                                break;
+                            case 16: // tavern
+                                colors[o].r = 85;
+                                colors[o].g = 117;
+                                colors[o].b = 48;
+                                colors[o].a = 255;
+                                break;
+                            // common
+                            case 2: // house for sale
+                            case 5: // town4
+                            case 8: // furniture store
+                            case 17: // palace
+                            case 18: // house 1
+                            case 19: // house 2
+                            case 20: // house 3
+                            case 21: // house 4
+                            case 22: // house 5 (hedge)
+                            case 23: // house 6
+                            case 24: // town23
+                                colors[o].r = 69;
+                                colors[o].g = 60;
+                                colors[o].b = 40;
+                                colors[o].a = 255;
+                                break;
+                            case 25: // ship
+                            case 117: // special 1
+                            case 224: // special 2
+                            case 250: // special 3
+                            case 251: // special 4
+                                // do not display on automap
+                                break;
+                            case 0:
+                                colors[o].r = 0;
+                                colors[o].g = 0;
+                                colors[o].b = 0;
+                                colors[o].a = 0;
+                                break;
+                            default: // unknown
+                                colors[o].r = 255;
+                                colors[o].g = 0;
+                                colors[o].b = dfBitmap.Data[i];
+                                colors[o].a = 255;
+                                break;
+                        }
                     }
                 }
 
