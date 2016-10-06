@@ -48,37 +48,16 @@ namespace DaggerfallWorkshop.Game
         }
         #endregion
 
-        /// <summary>
-        /// class to store state of discovery of a dungeon block or interior, this state can be used to restore state of GameObject gameobjectGeometry
-        /// this class basically maps the two fields/states (MeshRenderer active state and Material shader keyword "RENDER_IN_GRAYSCALE") that are
-        /// used for discovery state of the models inside GameObject gameobjectGeometry when an interior is loaded into this GameObject
-        /// it is also used as type inside the blocks list in AutomapGeometryDungeonState
-        /// </summary>
-        public class AutomapGeometryBlockState
-        {
-            public class AutomapGeometryBlockElementState
-            {
-                public class AutomapGeometryModelState
-                {
-                    public bool discovered; /// discovered before (render model)
-                    public bool visitedInThisRun; /// visited in this dungeon run (if true render in color, otherwise grayscale)
-                }
-                public List<AutomapGeometryModelState> models;
-            }
-            public List<AutomapGeometryBlockElementState> blockElements;
-            public String blockName;
-        }
-
         #region Fields
 
         GameObject gameobjectExteriorAutomap = null; // used to hold reference to instance of GameObject "ExteriorAutomap" (which has script Game/DaggerfallExteriorAutomap.cs attached)
 
-        GameObject gameobjectGeometry = null; // used to hold reference to instance of GameObject with level geometry used for automap        
+        GameObject gameobjectCustomCanvas = null; // used to hold reference to instance of GameObject with the custom canvas used for drawing the exterior automap        
 
         int layerAutomap; // layer used for level geometry of automap
 
         GameObject gameObjectCameraAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
-        Camera cameraAutomap = null; // camera for automap camera
+        Camera cameraExteriorAutomap = null; // camera for exterior automap camera
 
         GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
@@ -113,6 +92,8 @@ namespace DaggerfallWorkshop.Game
 
         private BlockLayout[] exteriorLayout;
 
+        Texture2D exteriorLayoutBitmap = null;
+
         #endregion
 
         #region Properties
@@ -128,9 +109,9 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to get automap camera
         /// </summary>
-        public Camera CameraAutomap
+        public Camera CameraExteriorAutomap
         {
-            get { return (cameraAutomap); }
+            get { return (cameraExteriorAutomap); }
         }
 
         /// <summary>
@@ -159,11 +140,6 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void updateAutomapStateOnWindowPush()
         {
-            if (gameobjectGeometry != null)
-            {
-                gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
-            }
-
             ContentReader.MapSummary mapSummary;
             DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
             if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
@@ -221,7 +197,7 @@ namespace DaggerfallWorkshop.Game
             // Create layout image
             int layoutWidth = width * blockSizeWidth;
             int layoutHeight = height * blockSizeHeight;
-            Texture2D exteriorLayoutBitmap;
+
             exteriorLayoutBitmap = new Texture2D(layoutWidth, layoutHeight, TextureFormat.ARGB32, false);
 
             // Render map layout
@@ -323,10 +299,12 @@ namespace DaggerfallWorkshop.Game
             byte[] png = exteriorLayoutBitmap.EncodeToPNG();
             Debug.Log(String.Format("writing to folder {0}", Application.dataPath));
             File.WriteAllBytes(Application.dataPath + "/test.png", png);
-            
+
+
+            createCustomCanvasForExteriorAutomap();
 
             // create camera (if not present) that will render automap level geometry
-            createAutomapCamera();
+            createExteriorAutomapCamera();
         }
 
         /// <summary>
@@ -334,15 +312,6 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void updateAutomapStateOnWindowPop()
         {
-            if (gameobjectGeometry != null)
-            {
-                // about gameobjectGeometry.SetActive(false):
-                // this will not be enough if we will eventually allow gui windows to be opened while exploring the world
-                // then it will be necessary to either only disable the colliders on the automap level geometry or
-                // make player collision ignore colliders of objects in automap layer - I would clearly prefer this option
-                gameobjectGeometry.SetActive(false); // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry          
-            }
-
             // destroy the camera so it does not use system resources
             if (gameObjectCameraAutomap != null)
             {
@@ -449,86 +418,73 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// creates the automap camera if not present and sets camera default settings, registers camera to compass
+        /// creates the exterior automap camera if not present and sets camera default settings, registers camera to compass
         /// </summary>
-        private void createAutomapCamera()
+        private void createExteriorAutomapCamera()
         {
-            if (!cameraAutomap)
+            if (!cameraExteriorAutomap)
             {
-                gameObjectCameraAutomap = new GameObject("CameraÉxteriorAutomap");
-                cameraAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
-                cameraAutomap.clearFlags = CameraClearFlags.SolidColor;
-                cameraAutomap.cullingMask = 1 << layerAutomap;
-                cameraAutomap.renderingPath = Camera.main.renderingPath;
-                cameraAutomap.nearClipPlane = 0.7f;
-                cameraAutomap.farClipPlane = 5000.0f;
+                gameObjectCameraAutomap = new GameObject("CameraExteriorAutomap");
+                cameraExteriorAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
+                cameraExteriorAutomap.clearFlags = CameraClearFlags.SolidColor;
+                cameraExteriorAutomap.cullingMask = 1 << layerAutomap;
+                cameraExteriorAutomap.renderingPath = Camera.main.renderingPath;
+                cameraExteriorAutomap.nearClipPlane = 0.7f;
+                cameraExteriorAutomap.farClipPlane = 5000.0f;                
                 gameObjectCameraAutomap.transform.SetParent(gameobjectExteriorAutomap.transform);
             }
         }
 
+        private Mesh CreateMesh(float width, float height)
+        {
+            Mesh m = new Mesh();
+            m.name = "ScriptedMesh";
+            m.vertices = new Vector3[] {
+                new Vector3(-width, 0.01f, -height),
+                new Vector3(width, 0.01f, -height),
+                new Vector3(width, 0.01f, height),
+                new Vector3(-width, 0.01f, height)
+            };
+            m.uv = new Vector2[] {
+                new Vector2 (0, 0),
+                new Vector2 (0, 1),
+                new Vector2(1, 1),
+                new Vector2 (1, 0)
+            };
+            m.triangles = new int[] { 0, 2, 1, 0, 3, 2};
+            m.RecalculateNormals();
+
+            return m;
+        }
 
         /// <summary>
-        /// Gets managed bitmap from specified indexed image buffer.
-        ///  The currently loaded palette will be used for index to RGB matching.
-        /// </summary>
-        /// <param name="DFBitmap">Object containing source indexed bitmap data.</param>
-        /// <param name="IndexedColour">True to maintain idexed colour, false to return RGB bitmap.</param>
-        /// <param name="MakeTransparent">True to make image transparent, otherwise false.</param>
-        /// <returns>Bitmap object.</returns>
-        ///
-        /*
-        internal Bitmap GetManagedBitmap(ref DFBitmap DFBitmap, bool IndexedColour, bool MakeTransparent)
+        /// creates the quad that is used for exterior automap drawing
+        /// </summary>        
+        private void createCustomCanvasForExteriorAutomap()
         {
-            // Validate
-            if (DFBitmap.Data == null || DFBitmap.Palette.Format != DFBitmap.Formats.Indexed)
-                throw new Exception("Invalid bitmap data or format.");
-
-            // Specify a special colour unused in Daggerfall's palette for transparency check
-            Color TransparentRGB = Color.FromArgb(255, 1, 2);
-
-            // Create bitmap
-            Size sz = new Size(DFBitmap.Width, DFBitmap.Height);
-            Bitmap bitmap = new Bitmap(sz.Width, sz.Height, PixelFormat.Format8bppIndexed);
-
-            // Lock bitmap
-            Rectangle rect = new Rectangle(0, 0, sz.Width, sz.Height);
-            BitmapData bmd = bitmap.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-            // Copy row data accounting for stride
-            UInt32 dst = (UInt32)bmd.Scan0;
-            for (int y = 0; y < sz.Height; y++)
+            if (gameobjectCustomCanvas != null)
             {
-                System.Runtime.InteropServices.Marshal.Copy(DFBitmap.Data, y * sz.Width, (IntPtr)(dst + y * bmd.Stride), sz.Width);
+                UnityEngine.Object.Destroy(gameobjectCustomCanvas);
+                gameobjectCustomCanvas = null;
             }
 
-            // Unlock bitmap
-            bitmap.UnlockBits(bmd);
+            gameobjectCustomCanvas = new GameObject("CustomCanvasExteriorAutomap");
 
-            // If making transparent set index zero to special colour
-            Color OldIndex0 = MyPalette.Get(0);
-            if (MakeTransparent && !IndexedColour)
-                MyPalette.Set(0, TransparentRGB.R, TransparentRGB.G, TransparentRGB.B);
+            MeshFilter meshFilter = (MeshFilter)gameobjectCustomCanvas.AddComponent(typeof(MeshFilter));
+            meshFilter.mesh = CreateMesh(100.0f, 100.0f); // create quad with normal facing into positive y-direction
+            MeshRenderer renderer = gameobjectCustomCanvas.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
 
-            // Set bitmap palette
-            bitmap.Palette = MyPalette.GetManagedColorPalette();
+            renderer.material.shader = Shader.Find("Unlit/Transparent");
+            //Texture2D tex = new Texture2D(1, 1);
+            //tex.SetPixel(0, 0, Color.magenta);
+            //tex.Apply();
+            renderer.material.mainTexture = exteriorLayoutBitmap;
+            //renderer.material.color = Color.green;
+            renderer.enabled = true;
 
-            // Indexed bitmap completed
-            if (IndexedColour)
-                return bitmap;
-
-            // Clone image into final pixel format
-            Bitmap finalBitmap = bitmap.Clone(new Rectangle(0, 0, bitmap.Width, bitmap.Height), PixelFormat.Format32bppArgb);
-
-            // Make transparent
-            if (MakeTransparent)
-                finalBitmap.MakeTransparent(TransparentRGB);
-
-            // Set back index 0
-            MyPalette.Set(0, OldIndex0.R, OldIndex0.G, OldIndex0.B);
-
-            return finalBitmap;
+            SetLayerRecursively(gameobjectCustomCanvas, layerAutomap);
+            gameobjectCustomCanvas.transform.SetParent(gameobjectExteriorAutomap.transform);
         }
-        */
 
         private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
         {
@@ -553,10 +509,10 @@ namespace DaggerfallWorkshop.Game
         void onNewGame()
         {
             // destroy automap geometry and beacons so that update function will create new automap geometry on its first iteration when a game has started
-            if (gameobjectGeometry != null)
+            if (gameobjectCustomCanvas != null)
             {
-                UnityEngine.Object.Destroy(gameobjectGeometry);
-                gameobjectGeometry = null;
+                UnityEngine.Object.Destroy(gameobjectCustomCanvas);
+                gameobjectCustomCanvas = null;
             }
         }
 

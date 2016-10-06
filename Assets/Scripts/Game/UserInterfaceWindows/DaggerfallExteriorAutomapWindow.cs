@@ -408,11 +408,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             daggerfallExteriorAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallExteriorAutomap script that automap window was closed and that it should update its state (updates player marker arrow)
 
             // get automap camera
-            cameraExteriorAutomap = daggerfallExteriorAutomap.CameraAutomap;
+            cameraExteriorAutomap = daggerfallExteriorAutomap.CameraExteriorAutomap;
 
             // create automap render texture and Texture2D used in conjuction with automap camera to render automap level geometry and display it in panel
             Rect positionPanelRenderAutomap = dummyPanelAutomap.Rectangle;
-            createAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
+            createExteriorAutomapTextures((int)positionPanelRenderAutomap.width, (int)positionPanelRenderAutomap.height);
 
             if (compass != null)
             {
@@ -428,6 +428,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
+                resetCameraPosition();
             }
 
             // and update the automap view
@@ -657,7 +658,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 //Debug.Log(String.Format("dummy panel size: {0}, {1}; {2}, {3}; {4}, {5}; {6}, {7}\n", NativePanel.InteriorWidth, NativePanel.InteriorHeight, ParentPanel.InteriorWidth, ParentPanel.InteriorHeight, dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight, parentPanel.InteriorWidth, parentPanel.InteriorHeight));
                 //Debug.Log(String.Format("dummy panel pos: {0}, {1}; {2}, {3}; {4}, {5}; {6}, {7}\n", NativePanel.Rectangle.xMin, NativePanel.Rectangle.yMin, ParentPanel.Rectangle.xMin, ParentPanel.Rectangle.yMin, dummyPanelAutomap.Rectangle.xMin, dummyPanelAutomap.Rectangle.yMin, parentPanel.Rectangle.xMin, parentPanel.Rectangle.yMin));
                 Vector2 positionPanelRenderAutomap = new Vector2(dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight);
-                createAutomapTextures((int)positionPanelRenderAutomap.x, (int)positionPanelRenderAutomap.y);
+                createExteriorAutomapTextures((int)positionPanelRenderAutomap.x, (int)positionPanelRenderAutomap.y);
                 updateAutomapView();
 
                 // get compass position from dummyPanelCompass rectangle
@@ -674,7 +675,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         /// <param name="width"> the expected width of the RenderTexture and Texture2D </param>
         /// <param name="height"> the expected height of the RenderTexture and Texture2D </param>
-        private void createAutomapTextures(int width, int height)
+        private void createExteriorAutomapTextures(int width, int height)
         {
             if ((!cameraExteriorAutomap) || (!renderTextureExteriorAutomap) || (oldRenderTextureExteriorAutomapWidth != width) || (oldRenderTextureExteriorAutomapHeight != height))
             {
@@ -708,8 +709,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void resetCameraTransform()
         {
-            cameraExteriorAutomap.transform.position = Camera.main.transform.position + Vector3.up * cameraHeight;
-            cameraExteriorAutomap.transform.LookAt(Camera.main.transform.position);            
+            cameraExteriorAutomap.transform.position = Vector3.zero + Vector3.up * cameraHeight;
+            cameraExteriorAutomap.transform.rotation = Quaternion.Euler(90.0f, -90.0f, 0.0f);
+            //cameraExteriorAutomap.transform.LookAt(Vector3.zero);            
         }
 
 
@@ -744,7 +746,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionMoveForward()
         {
             Vector3 translation;
-            translation = cameraExteriorAutomap.transform.forward * scrollForwardBackwardSpeed * Time.unscaledDeltaTime;
+            translation = cameraExteriorAutomap.transform.up * scrollForwardBackwardSpeed * Time.unscaledDeltaTime;
             translation.y = 0.0f; // comment this out for movement along camera optical axis
             cameraExteriorAutomap.transform.position += translation;
             updateAutomapView();
@@ -756,7 +758,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionMoveBackward()
         {
             Vector3 translation;
-            translation = -cameraExteriorAutomap.transform.forward * scrollForwardBackwardSpeed * Time.unscaledDeltaTime;
+            translation = -cameraExteriorAutomap.transform.up * scrollForwardBackwardSpeed * Time.unscaledDeltaTime;
             translation.y = 0.0f; // comment this out for movement along camera optical axis
             cameraExteriorAutomap.transform.position += translation;
             updateAutomapView();
