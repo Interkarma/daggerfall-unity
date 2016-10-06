@@ -296,10 +296,9 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUnity.Instance.ContentReader.BlockFileReader.DiscardBlock(block.Index);
             }
 
-            byte[] png = exteriorLayoutBitmap.EncodeToPNG();
-            Debug.Log(String.Format("writing to folder {0}", Application.dataPath));
-            File.WriteAllBytes(Application.dataPath + "/test.png", png);
-
+            //byte[] png = exteriorLayoutBitmap.EncodeToPNG();
+            //Debug.Log(String.Format("writing to folder {0}", Application.dataPath));
+            //File.WriteAllBytes(Application.dataPath + "/test.png", png);
 
             createCustomCanvasForExteriorAutomap();
 
@@ -440,18 +439,18 @@ namespace DaggerfallWorkshop.Game
             Mesh m = new Mesh();
             m.name = "ScriptedMesh";
             m.vertices = new Vector3[] {
-                new Vector3(-width, 0.01f, -height),
-                new Vector3(width, 0.01f, -height),
+                new Vector3(-width, 0.01f, height),
                 new Vector3(width, 0.01f, height),
-                new Vector3(-width, 0.01f, height)
+                new Vector3(width, 0.01f, -height),
+                new Vector3(-width, 0.01f, -height)
             };
             m.uv = new Vector2[] {
-                new Vector2 (0, 0),
-                new Vector2 (0, 1),
-                new Vector2(1, 1),
-                new Vector2 (1, 0)
+                new Vector2 (1, 1),
+                new Vector2 (1, 0),
+                new Vector2(0, 0),
+                new Vector2 (0, 1)
             };
-            m.triangles = new int[] { 0, 2, 1, 0, 3, 2};
+            m.triangles = new int[] { 0, 1, 2, 0, 2, 3};
             m.RecalculateNormals();
 
             return m;

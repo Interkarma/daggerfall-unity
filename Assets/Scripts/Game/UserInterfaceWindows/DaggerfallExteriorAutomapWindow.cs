@@ -33,11 +33,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int toolTipDelay = 1; // delay in seconds before button tooltips are shown
 
         const float scrollLeftRightSpeed = 50.0f; // left mouse on button arrow left/right makes geometry move with this speed
-        const float scrollForwardBackwardSpeed = 50.0f; // left mouse on button arrow up/down makes geometry move with this speed
-        const float moveUpDownSpeed = 25.0f; // left mouse on button upstairs/downstairs makes geometry move with this speed
+        const float scrollUpDownSpeed = 50.0f; // left mouse on button arrow up/down makes geometry move with this speed
+        const float moveUpstairsDownstairsSpeed = 25.0f; // left mouse on button upstairs/downstairs makes geometry move with this speed
         const float rotateSpeed = 150.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
-        const float zoomSpeed = 3.0f; // zoom with this speed when keyboard hotkey is pressed
-        const float zoomSpeedMouseWheel = 0.06f; // mouse wheel inside main area of the automap window will zoom with this speed
+        const float zoomSpeed = 0.6f; // zoom with this speed when keyboard hotkey is pressed
+        const float zoomSpeedMouseWheel = 0.0025f; // mouse wheel inside main area of the automap window will zoom with this speed
         const float dragSpeed = 0.0002f; // hold left mouse button down and move mouse to move geometry with this speed)
         const float dragRotateSpeed = 5.0f; // hold right mouse button down and move left/right to rotate geometry with this speed        
 
@@ -746,7 +746,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionMoveForward()
         {
             Vector3 translation;
-            translation = cameraExteriorAutomap.transform.up * scrollForwardBackwardSpeed * Time.unscaledDeltaTime;
+            translation = cameraExteriorAutomap.transform.up * scrollUpDownSpeed * Time.unscaledDeltaTime;
             translation.y = 0.0f; // comment this out for movement along camera optical axis
             cameraExteriorAutomap.transform.position += translation;
             updateAutomapView();
@@ -758,7 +758,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionMoveBackward()
         {
             Vector3 translation;
-            translation = -cameraExteriorAutomap.transform.up * scrollForwardBackwardSpeed * Time.unscaledDeltaTime;
+            translation = -cameraExteriorAutomap.transform.up * scrollUpDownSpeed * Time.unscaledDeltaTime;
             translation.y = 0.0f; // comment this out for movement along camera optical axis
             cameraExteriorAutomap.transform.position += translation;
             updateAutomapView();
@@ -807,7 +807,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveUpstairs()
         {
-            cameraExteriorAutomap.transform.position += Vector3.up * moveUpDownSpeed * Time.unscaledDeltaTime;
+            cameraExteriorAutomap.transform.position += Vector3.up * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime;
             updateAutomapView();
         }
 
@@ -816,7 +816,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveDownstairs()
         {
-            cameraExteriorAutomap.transform.position += Vector3.down * moveUpDownSpeed * Time.unscaledDeltaTime;
+            cameraExteriorAutomap.transform.position += Vector3.down * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime;
             updateAutomapView();
         }
 
