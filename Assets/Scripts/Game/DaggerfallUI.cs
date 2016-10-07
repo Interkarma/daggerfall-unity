@@ -78,6 +78,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallTravelMapWindow dfTravelMapWindow;
         DaggerfallAutomapWindow dfAutomapWindow;
         DaggerfallExteriorAutomapWindow dfExteriorAutomapWindow;
+        QuestMachineInspectorWindow dfQuestInspector;
 
         DaggerfallFontPlus fontPetrock32;
 
@@ -153,20 +154,14 @@ namespace DaggerfallWorkshop.Game
             dfSongPlayer = GetComponent<DaggerfallSongPlayer>();
 
             dfPauseOptionsWindow = new DaggerfallPauseOptionsWindow(uiManager);
-            //dfPauseOptionsWindow.OnClose += PauseOptionsDialog_OnClose;
-
             dfCharacterSheetWindow = new DaggerfallCharacterSheetWindow(uiManager);
-            //dfCharacterSheetWindow.OnClose += CharacterSheetWindow_OnClose;
-
             dfInventoryWindow = new DaggerfallInventoryWindow(uiManager);
-            //dfInventoryWindow.OnClose += InventoryWindow_OnClose;
-
             dfTravelMapWindow = new DaggerfallTravelMapWindow(uiManager);
-
             dfAutomapWindow = new DaggerfallAutomapWindow(uiManager);
-            //dfAutomapWindow.OnClose += AutomapDialog_OnClose;
 
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
+
+            dfQuestInspector = new QuestMachineInspectorWindow(uiManager);
 
             SetupSingleton();
         }
@@ -293,6 +288,9 @@ namespace DaggerfallWorkshop.Game
                     {
                         uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
                     }
+                    break;
+                case DaggerfallUIMessages.dfuiOpenQuestInspector:
+                    uiManager.PushWindow(dfQuestInspector);
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
 #if UNITY_EDITOR

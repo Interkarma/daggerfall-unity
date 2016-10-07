@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.Questing
         const string nameCol = "name";
 
         Table globalVars;
-        Table messageTypes; 
+        Table messageTypes;
 
         #endregion
 
@@ -43,8 +43,8 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public Parser()
         {
-            globalVars = new Table(QuestMachine.GetQuestTableText("Globals"));
-            messageTypes = new Table(QuestMachine.GetQuestTableText("Messages"));
+            //globalVars = new Table(QuestMachine.GetQuestTableText("Globals"));
+            //messageTypes = new Table(QuestMachine.GetQuestTableText("Messages"));
         }
 
         #endregion

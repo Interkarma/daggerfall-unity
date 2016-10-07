@@ -1,4 +1,4 @@
---	Message types found in the QRC section of quests
+-- Static message types found in the QRC section of quests
 
 schema: id,*name
 

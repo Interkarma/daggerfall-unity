@@ -25,17 +25,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public abstract class DaggerfallBaseWindow : UserInterfaceWindow
     {
-        public const float nativeScreenWidth = 320;
-        public const float nativeScreenHeight = 200;
         public const KeyCode exitKey = KeyCode.Escape;
 
         bool isSetup;
         DaggerfallUnity dfUnity;
-        Panel nativePanel = new Panel();      // Native panel is 320x200 child panel scaled to fit parent
+        Panel nativePanel = new Panel();
 
         protected ToolTip defaultToolTip = null;
 
-        public DaggerfallBaseWindow(IUserInterfaceManager uiManager)
+        public DaggerfallBaseWindow(IUserInterfaceManager uiManager, int screenWidth = 320, int screenHeight = 200)
             : base(uiManager)
         {
             // Parent panel
@@ -46,7 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             nativePanel.HorizontalAlignment = HorizontalAlignment.Center;
             nativePanel.VerticalAlignment = VerticalAlignment.Middle;
             nativePanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
-            nativePanel.Size = new Vector2(nativeScreenWidth, nativeScreenHeight);
+            nativePanel.Size = new Vector2(screenWidth, screenHeight);
 
             // Set native panel scaling mode
             if (DaggerfallUnity.Settings.FreeScaling)
