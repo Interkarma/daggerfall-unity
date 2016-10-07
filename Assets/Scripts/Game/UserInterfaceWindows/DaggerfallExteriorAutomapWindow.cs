@@ -32,16 +32,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const int toolTipDelay = 1; // delay in seconds before button tooltips are shown
 
-        const float scrollLeftRightSpeed = 50.0f; // left mouse on button arrow left/right makes geometry move with this speed
-        const float scrollUpDownSpeed = 50.0f; // left mouse on button arrow up/down makes geometry move with this speed
-        const float moveUpstairsDownstairsSpeed = 25.0f; // left mouse on button upstairs/downstairs makes geometry move with this speed
+        const float scrollLeftRightSpeed = 25.0f; // left mouse on button arrow left/right makes geometry move with this speed
+        const float scrollUpDownSpeed = 25.0f; // left mouse on button arrow up/down makes geometry move with this speed
+        const float moveUpstairsDownstairsSpeed = 500.0f; // left mouse on button upstairs/downstairs makes geometry move with this speed
         const float rotateSpeed = 150.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
-        const float zoomSpeed = 0.6f; // zoom with this speed when keyboard hotkey is pressed
-        const float zoomSpeedMouseWheel = 0.0025f; // mouse wheel inside main area of the automap window will zoom with this speed
-        const float dragSpeed = 0.0002f; // hold left mouse button down and move mouse to move geometry with this speed)
+        const float zoomSpeed = 12.0f; // zoom with this speed when keyboard hotkey is pressed
+        const float zoomSpeedMouseWheel = 0.025f; // mouse wheel inside main area of the automap window will zoom with this speed
+        const float dragSpeed = 0.002f; // hold left mouse button down and move mouse to move geometry with this speed)
         const float dragRotateSpeed = 5.0f; // hold right mouse button down and move left/right to rotate geometry with this speed        
 
         const float cameraHeight = 90.0f; // initial camera height
+
+        const float maxZoom = 5.0f; // the minimum external automap camera height
+        const float minZoom = 100.0f; // the maximum external automap camera height
 
         // this is a helper class to implement behaviour and easier use of hotkeys and key modifiers (left-shift, right-shift, ...) in conjunction
         // note: currently a combination of key modifiers like shift+alt is not supported. all specified modifiers are comined with an or-relation
@@ -199,6 +202,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             initGlobalResources(); // initialize gameobjectAutomap, daggerfallExteriorAutomap and layerAutomap
 
+            // set transform of gameobjectExteriorAutomap to zero so that all camera dependent actions in its future camera child work correctly
+            gameobjectExteriorAutomap.transform.position = Vector3.zero;
+            gameobjectExteriorAutomap.transform.rotation = Quaternion.Euler(Vector3.zero);
+
             // Load native texture
             imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, nativeImgName), FileUsage.UseMemory, false);
             imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
@@ -285,7 +292,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gridButton.OnMouseScrollUp += GridButton_OnMouseScrollUp;
             gridButton.OnMouseScrollDown += GridButton_OnMouseScrollDown;
             gridButton.ToolTip = defaultToolTip;
-            gridButton.ToolTipText = "left click: switch between 2D top view and 3D view (hotkey: space key)\rright click: reset rotation center to player position (hotkey: control+backspace)\rmouse wheel up while over this button: increase perspective (only 3D mode)\rmouse wheel down while over this button: decrease perspective (only 3D mode)";
+            gridButton.ToolTipText = "currently no action assigned";
             gridButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // forward button
@@ -295,7 +302,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             forwardButton.OnRightMouseDown += ForwardButton_OnRightMouseDown;
             forwardButton.OnRightMouseUp += ForwardButton_OnRightMouseUp;
             forwardButton.ToolTip = defaultToolTip;
-            forwardButton.ToolTipText = "left click: move viewpoint forward (hotkey: up arrow)\rright click: move rotation center axis forward (hotkey: control+up arrow)";
+            forwardButton.ToolTipText = "left click: move up (hotkey: up arrow)";
             forwardButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // backward button
@@ -305,7 +312,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             backwardButton.OnRightMouseDown += BackwardButton_OnRightMouseDown;
             backwardButton.OnRightMouseUp += BackwardButton_OnRightMouseUp;
             backwardButton.ToolTip = defaultToolTip;
-            backwardButton.ToolTipText = "left click: move viewpoint backwards (hotkey: down arrow)\rright click: move rotation center axis backwards (hotkey: control+down arrow)";
+            backwardButton.ToolTipText = "left click: move down (hotkey: down arrow)";
             backwardButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // left button
@@ -315,7 +322,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnRightMouseDown += LeftButton_OnRightMouseDown;
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
             leftButton.ToolTip = defaultToolTip;
-            leftButton.ToolTipText = "left click: move viewpoint to the left (hotkey: left arrow)\rright click: move rotation center axis to the left (hotkey: control+left arrow)";
+            leftButton.ToolTipText = "left click: move to the left (hotkey: left arrow)";
             leftButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // right button
@@ -325,7 +332,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rightButton.OnRightMouseDown += RightButton_OnRightMouseDown;
             rightButton.OnRightMouseUp += RightButton_OnRightMouseUp;
             rightButton.ToolTip = defaultToolTip;
-            rightButton.ToolTipText = "left click: move viewpoint to the right (hotkey: right arrow)\rright click: move rotation center axis to the right (hotkey: control+right arrow)";
+            rightButton.ToolTipText = "left click: move to the right (hotkey: right arrow)";
             rightButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // rotate left button
@@ -335,7 +342,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateLeftButton.OnRightMouseDown += RotateLeftButton_OnRightMouseDown;
             rotateLeftButton.OnRightMouseUp += RotateLeftButton_OnRightMouseUp;
             rotateLeftButton.ToolTip = defaultToolTip;
-            rotateLeftButton.ToolTipText = "left click: rotate dungeon model to the left (hotkey: alt+right arrow)\rright click: rotate camera view to the left (hotkey: shift+right arrow)";
+            rotateLeftButton.ToolTipText = "currently no action assigned";
             rotateLeftButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // rotate right button
@@ -345,7 +352,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.OnRightMouseDown += RotateRightButton_OnRightMouseDown;
             rotateRightButton.OnRightMouseUp += RotateRightButton_OnRightMouseUp;
             rotateRightButton.ToolTip = defaultToolTip;
-            rotateRightButton.ToolTipText = "left click: rotate dungeon model to the right (hotkey: alt+right arrow)\rright click: rotate camera view to the right (hotkey: shift+right arrow)";
+            rotateRightButton.ToolTipText = "currently no action assigned";
             rotateRightButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // upstairs button
@@ -355,7 +362,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             upstairsButton.OnRightMouseDown += UpstairsButton_OnRightMouseDown;
             upstairsButton.OnRightMouseUp += UpstairsButton_OnRightMouseUp;
             upstairsButton.ToolTip = defaultToolTip;
-            upstairsButton.ToolTipText = "left click: increase viewpoint (hotkey: page up)\rright click: increase slice level (hotkey: control+page up)\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key";
+            upstairsButton.ToolTipText = "left click: zoom out (hotkey: page up)";
             upstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // downstairs button
@@ -365,7 +372,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downstairsButton.OnRightMouseDown += DownstairsButton_OnRightMouseDown;
             downstairsButton.OnRightMouseUp += DownstairsButton_OnRightMouseUp;
             downstairsButton.ToolTip = defaultToolTip;
-            downstairsButton.ToolTipText = "left click: decrease viewpoint (hotkey: page down)\rright click: decrease slice level (hotkey: control+page down)\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key";
+            downstairsButton.ToolTipText = "left click: zoom in (hotkey: page down)";
             downstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // Exit button
@@ -380,7 +387,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dummyPanelCompass.OnMouseClick += Compass_OnMouseClick;
             dummyPanelCompass.OnRightMouseClick += Compass_OnRightMouseClick;
             dummyPanelCompass.ToolTip = defaultToolTip;
-            dummyPanelCompass.ToolTipText = "left click: toggle focus (hotkey: tab)\rred beacon: player, green beacon: entrance, blue beacon: rotation center\r\rright click: reset view (hotkey: backspace)";
+            dummyPanelCompass.ToolTipText = "right click: reset view (hotkey: backspace)";
             dummyPanelCompass.ToolTip.ToolTipDelay = toolTipDelay;
 
             // compass            
@@ -528,7 +535,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
 
                 float dragSpeedCompensated;
-                dragSpeedCompensated = dragSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraExteriorAutomap.transform.position);
+                dragSpeedCompensated = dragSpeed * cameraExteriorAutomap.transform.position.y;
                 Vector2 bias = mousePosition - oldMousePosition;
                 Vector3 translation = -cameraExteriorAutomap.transform.right * dragSpeedCompensated * bias.x + cameraExteriorAutomap.transform.up * dragSpeedCompensated * bias.y;
                 cameraExteriorAutomap.transform.position += translation;
@@ -807,7 +814,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveUpstairs()
         {
-            cameraExteriorAutomap.transform.position += Vector3.up * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime;
+            //cameraExteriorAutomap.transform.position += Vector3.up * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime;
+            ActionZoomOut(0.001f * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
@@ -816,7 +824,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveDownstairs()
         {
-            cameraExteriorAutomap.transform.position += Vector3.down * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime;
+            //cameraExteriorAutomap.transform.position += Vector3.down * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime;
+            ActionZoomIn(0.001f * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
@@ -825,9 +834,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionZoomIn(float zoomSpeed)
         {
-            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraExteriorAutomap.transform.position);
+            float zoomSpeedCompensated = zoomSpeed * cameraExteriorAutomap.transform.position.y;
             Vector3 translation = cameraExteriorAutomap.transform.forward * zoomSpeedCompensated;
             cameraExteriorAutomap.transform.position += translation;
+            cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, Math.Max(maxZoom, cameraExteriorAutomap.transform.position.y), cameraExteriorAutomap.transform.position.z);
             updateAutomapView();
         }
 
@@ -836,9 +846,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionZoomOut(float zoomSpeed)
         {
-            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraExteriorAutomap.transform.position);
+            float zoomSpeedCompensated = zoomSpeed * cameraExteriorAutomap.transform.position.y;
             Vector3 translation = -cameraExteriorAutomap.transform.forward * zoomSpeedCompensated;
             cameraExteriorAutomap.transform.position += translation;
+            cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, Math.Min(minZoom, cameraExteriorAutomap.transform.position.y), cameraExteriorAutomap.transform.position.z);
             updateAutomapView();
         }
 
