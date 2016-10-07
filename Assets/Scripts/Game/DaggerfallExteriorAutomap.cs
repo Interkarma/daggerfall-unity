@@ -90,9 +90,20 @@ namespace DaggerfallWorkshop.Game
             public DFBlock.RdbTypes rdbType;
         }
 
+        // location dimensions
+        int locationWidth;
+        int locationHeight;
+
+        const int blockSizeWidth = 64;
+        const int blockSizeHeight = 64;
+
+        // layout image dimensions
+        int layoutWidth;
+        int layoutHeight;
+
         private BlockLayout[] exteriorLayout;
 
-        Texture2D exteriorLayoutBitmap = null;
+        Texture2D exteriorLayoutTexture = null;
 
         #endregion
 
@@ -154,19 +165,16 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Get location dimensions
-            int width = location.Exterior.ExteriorData.Width;
-            int height = location.Exterior.ExteriorData.Height;
-
-            int blockSizeWidth = 64;
-            int blockSizeHeight = 64;
+            locationWidth = location.Exterior.ExteriorData.Width;
+            locationHeight = location.Exterior.ExteriorData.Height;
 
             int xpos = 0;
-            int ypos = 0; //height * blockSizeHeight - blockSizeHeight;
-            exteriorLayout = new BlockLayout[width * height];
+            int ypos = 0; //locationHeight * blockSizeHeight - blockSizeHeight;
+            exteriorLayout = new BlockLayout[locationWidth * locationHeight];
 
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < locationHeight; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < locationWidth; x++)
                 {
                     // Get the block name
                     string blockName = DaggerfallUnity.Instance.ContentReader.BlockFileReader.CheckName(DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
@@ -177,7 +185,7 @@ namespace DaggerfallWorkshop.Game
                     // Now we can get the automap image data for this block and lay it out
                     //block.RmbBlock.SubRecords.
 
-                    int index = y * width + x;
+                    int index = y * locationWidth + x;
                     exteriorLayout[index].x = x;
                     exteriorLayout[index].y = y;
                     exteriorLayout[index].rect = new Rectangle();
@@ -193,12 +201,14 @@ namespace DaggerfallWorkshop.Game
                 ypos += blockSizeHeight;
                 xpos = 0;
             }
+            
+            // Get layout image dimensions
+            layoutWidth = locationWidth * blockSizeWidth;
+            layoutHeight = locationHeight * blockSizeHeight;
 
-            // Create layout image
-            int layoutWidth = width * blockSizeWidth;
-            int layoutHeight = height * blockSizeHeight;
-
-            exteriorLayoutBitmap = new Texture2D(layoutWidth, layoutHeight, TextureFormat.ARGB32, false);
+            // Create layout image (texture)
+            exteriorLayoutTexture = new Texture2D(layoutWidth, layoutHeight, TextureFormat.ARGB32, false);
+            exteriorLayoutTexture.filterMode = FilterMode.Point;
 
             // Render map layout
             foreach (var layout in exteriorLayout)
@@ -290,13 +300,13 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
 
-                exteriorLayoutBitmap.SetPixels32(layout.rect.xpos, layout.rect.ypos, layout.rect.width, layout.rect.height, colors);
-                exteriorLayoutBitmap.Apply();
+                exteriorLayoutTexture.SetPixels32(layout.rect.xpos, layout.rect.ypos, layout.rect.width, layout.rect.height, colors);
+                exteriorLayoutTexture.Apply();
 
                 DaggerfallUnity.Instance.ContentReader.BlockFileReader.DiscardBlock(block.Index);
             }
 
-            //byte[] png = exteriorLayoutBitmap.EncodeToPNG();
+            //byte[] png = exteriorLayoutTexture.EncodeToPNG();
             //Debug.Log(String.Format("writing to folder {0}", Application.dataPath));
             //File.WriteAllBytes(Application.dataPath + "/test.png", png);
 
@@ -315,6 +325,18 @@ namespace DaggerfallWorkshop.Game
             if (gameObjectCameraAutomap != null)
             {
                 UnityEngine.Object.Destroy(gameObjectCameraAutomap);
+            }
+
+            if (gameobjectCustomCanvas != null)
+            {
+                UnityEngine.Object.Destroy(gameobjectCustomCanvas);
+                gameobjectCustomCanvas = null;
+            }
+
+            if (exteriorLayoutTexture != null)
+            {
+                UnityEngine.Object.Destroy(exteriorLayoutTexture);
+                exteriorLayoutTexture = null;
             }
         }
 
@@ -359,20 +381,10 @@ namespace DaggerfallWorkshop.Game
 
         void OnEnable()
         {
-            PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior;
-            PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeonInterior;
-            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
-            PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
-            StartGameBehaviour.OnNewGame += onNewGame;       
         }
 
         void OnDisable()
         {
-            PlayerEnterExit.OnTransitionInterior -= OnTransitionToInterior;
-            PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeonInterior;
-            PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
-            PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
-            StartGameBehaviour.OnNewGame -= onNewGame;
         }
 
         void Start()
@@ -445,10 +457,10 @@ namespace DaggerfallWorkshop.Game
                 new Vector3(-width, 0.01f, -height)
             };
             m.uv = new Vector2[] {
-                new Vector2 (1, 1),
-                new Vector2 (1, 0),
-                new Vector2(0, 0),
-                new Vector2 (0, 1)
+                new Vector2 (0, 1),
+                new Vector2 (1, 1),                
+                new Vector2(1, 0),
+                new Vector2 (0, 0)
             };
             m.triangles = new int[] { 0, 1, 2, 0, 2, 3};
             m.RecalculateNormals();
@@ -468,51 +480,21 @@ namespace DaggerfallWorkshop.Game
             }
 
             gameobjectCustomCanvas = new GameObject("CustomCanvasExteriorAutomap");
-
+            //gameobjectCustomCanvas.transform.rotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
             MeshFilter meshFilter = (MeshFilter)gameobjectCustomCanvas.AddComponent(typeof(MeshFilter));
-            meshFilter.mesh = CreateMesh(100.0f, 100.0f); // create quad with normal facing into positive y-direction
+            meshFilter.mesh = CreateMesh(layoutWidth/10, layoutHeight/10); // create quad with normal facing into positive y-direction
             MeshRenderer renderer = gameobjectCustomCanvas.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
 
             renderer.material.shader = Shader.Find("Unlit/Transparent");
             //Texture2D tex = new Texture2D(1, 1);
             //tex.SetPixel(0, 0, Color.magenta);
             //tex.Apply();
-            renderer.material.mainTexture = exteriorLayoutBitmap;
+            renderer.material.mainTexture = exteriorLayoutTexture;
             //renderer.material.color = Color.green;
             renderer.enabled = true;
 
             SetLayerRecursively(gameobjectCustomCanvas, layerAutomap);
             gameobjectCustomCanvas.transform.SetParent(gameobjectExteriorAutomap.transform);
-        }
-
-        private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
-        {
-            
-        }
-
-        private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
-        {
-            
-        }
-
-        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
-        {
-            
-        }
-
-        private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
-        {
-            
-        }
-
-        void onNewGame()
-        {
-            // destroy automap geometry and beacons so that update function will create new automap geometry on its first iteration when a game has started
-            if (gameobjectCustomCanvas != null)
-            {
-                UnityEngine.Object.Destroy(gameobjectCustomCanvas);
-                gameobjectCustomCanvas = null;
-            }
         }
 
         #endregion

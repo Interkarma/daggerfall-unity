@@ -710,7 +710,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void resetCameraTransform()
         {
             cameraExteriorAutomap.transform.position = Vector3.zero + Vector3.up * cameraHeight;
-            cameraExteriorAutomap.transform.rotation = Quaternion.Euler(90.0f, -90.0f, 0.0f);
+            cameraExteriorAutomap.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             //cameraExteriorAutomap.transform.LookAt(Vector3.zero);            
         }
 
