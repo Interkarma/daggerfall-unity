@@ -475,6 +475,7 @@ namespace DaggerfallWorkshop.Game
                 cameraExteriorAutomap.clearFlags = CameraClearFlags.SolidColor;
                 cameraExteriorAutomap.cullingMask = 1 << layerAutomap;
                 cameraExteriorAutomap.renderingPath = Camera.main.renderingPath;
+                cameraExteriorAutomap.orthographic = true;                
                 cameraExteriorAutomap.nearClipPlane = 0.7f;
                 cameraExteriorAutomap.farClipPlane = 5000.0f;                
                 gameObjectCameraAutomap.transform.SetParent(gameobjectExteriorAutomap.transform);

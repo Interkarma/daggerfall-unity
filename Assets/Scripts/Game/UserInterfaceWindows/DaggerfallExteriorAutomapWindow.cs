@@ -38,13 +38,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float rotateSpeed = 150.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
         const float zoomSpeed = 12.0f; // zoom with this speed when keyboard hotkey is pressed
         const float zoomSpeedMouseWheel = 0.025f; // mouse wheel inside main area of the automap window will zoom with this speed
-        const float dragSpeed = 0.002f; // hold left mouse button down and move mouse to move geometry with this speed)
+        const float dragSpeed = 0.00345f; //= 0.002f; // hold left mouse button down and move mouse to move geometry with this speed)
         const float dragRotateSpeed = 5.0f; // hold right mouse button down and move left/right to rotate geometry with this speed        
 
         const float cameraHeight = 90.0f; // initial camera height
 
         const float maxZoom = 5.0f; // the minimum external automap camera height
-        const float minZoom = 100.0f; // the maximum external automap camera height
+        const float minZoom = 50.0f; // the maximum external automap camera height
 
         // this is a helper class to implement behaviour and easier use of hotkeys and key modifiers (left-shift, right-shift, ...) in conjunction
         // note: currently a combination of key modifiers like shift+alt is not supported. all specified modifiers are comined with an or-relation
@@ -535,7 +535,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
 
                 float dragSpeedCompensated;
-                dragSpeedCompensated = dragSpeed * cameraExteriorAutomap.transform.position.y;
+                dragSpeedCompensated = dragSpeed * cameraExteriorAutomap.orthographicSize; // * cameraExteriorAutomap.transform.position.y;
                 Vector2 bias = mousePosition - oldMousePosition;
                 Vector3 translation = -cameraExteriorAutomap.transform.right * dragSpeedCompensated * bias.x + cameraExteriorAutomap.transform.up * dragSpeedCompensated * bias.y;
                 cameraExteriorAutomap.transform.position += translation;
@@ -835,9 +835,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionZoomIn(float zoomSpeed)
         {
             float zoomSpeedCompensated = zoomSpeed * cameraExteriorAutomap.transform.position.y;
-            Vector3 translation = cameraExteriorAutomap.transform.forward * zoomSpeedCompensated;
-            cameraExteriorAutomap.transform.position += translation;
-            cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, Math.Max(maxZoom, cameraExteriorAutomap.transform.position.y), cameraExteriorAutomap.transform.position.z);
+            //Vector3 translation = cameraExteriorAutomap.transform.forward * zoomSpeedCompensated;
+            //cameraExteriorAutomap.transform.position += translation;
+            //cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, Math.Max(maxZoom, cameraExteriorAutomap.transform.position.y), cameraExteriorAutomap.transform.position.z);
+            cameraExteriorAutomap.orthographicSize--;
+            cameraExteriorAutomap.orthographicSize = Math.Max(maxZoom, cameraExteriorAutomap.orthographicSize);
             updateAutomapView();
         }
 
@@ -847,9 +849,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionZoomOut(float zoomSpeed)
         {
             float zoomSpeedCompensated = zoomSpeed * cameraExteriorAutomap.transform.position.y;
-            Vector3 translation = -cameraExteriorAutomap.transform.forward * zoomSpeedCompensated;
-            cameraExteriorAutomap.transform.position += translation;
-            cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, Math.Min(minZoom, cameraExteriorAutomap.transform.position.y), cameraExteriorAutomap.transform.position.z);
+            //Vector3 translation = -cameraExteriorAutomap.transform.forward * zoomSpeedCompensated;
+            //cameraExteriorAutomap.transform.position += translation;
+            //cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, Math.Min(minZoom, cameraExteriorAutomap.transform.position.y), cameraExteriorAutomap.transform.position.z);
+            cameraExteriorAutomap.orthographicSize++;
+            cameraExteriorAutomap.orthographicSize = Math.Min(minZoom, cameraExteriorAutomap.orthographicSize);
             updateAutomapView();
         }
 
