@@ -209,7 +209,18 @@ namespace DaggerfallWorkshop.Game
             layoutHeight = locationHeight * blockSizeHeight;
 
             // Create map layout
-            createExteriorLayoutTexture(location);
+            switch (currentExteriorAutomapViewMode)
+            {
+                case ExteriorAutomapViewMode.Original:
+                    createExteriorLayoutTexture(location, false, true);
+                    break;
+                case ExteriorAutomapViewMode.Extra:
+                    createExteriorLayoutTexture(location, true, true);
+                    break;
+                case ExteriorAutomapViewMode.All:
+                    createExteriorLayoutTexture(location, true, false);
+                    break;
+            }
 
             // create player marker
             if (!gameobjectPlayerMarkerArrow)

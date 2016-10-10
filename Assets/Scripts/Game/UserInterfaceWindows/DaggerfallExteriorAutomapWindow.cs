@@ -302,10 +302,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
             gridButton.OnMouseClick += GridButton_OnMouseClick;
             gridButton.OnRightMouseClick += GridButton_OnRightMouseClick;
-            gridButton.OnMouseScrollUp += GridButton_OnMouseScrollUp;
-            gridButton.OnMouseScrollDown += GridButton_OnMouseScrollDown;
             gridButton.ToolTip = defaultToolTip;
-            gridButton.ToolTipText = "currently no action assigned";
+            gridButton.ToolTipText = "left click: switch to next view mode (hotkey: enter key)\ravailable view modes are:\r- original\r- extra (extra buildings)\r- all (extra buildings, ground flats)\r";
             gridButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // forward button
@@ -1107,21 +1105,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (inDragMode())
                 return;
+
+            ActionSwitchToNextExteriorAutomapViewMode();
         }
 
         private void GridButton_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            if (inDragMode())
-                return;
-        }
-
-        private void GridButton_OnMouseScrollUp()
-        {
-            if (inDragMode())
-                return;
-        }
-
-        private void GridButton_OnMouseScrollDown()
         {
             if (inDragMode())
                 return;
