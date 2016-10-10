@@ -63,6 +63,16 @@ namespace DaggerfallWorkshop.Game
 
         bool isOpenAutomap = false; // flag that indicates if automap window is open (set via Property IsOpenAutomap triggered by DaggerfallExteriorAutomapWindow script)
 
+        // exterior automap view mode (controls settings for extra buildings and ground flats)
+        public enum ExteriorAutomapViewMode
+        {
+            Original = 0,
+            Extra = 1,
+            All = 2
+        };
+
+        ExteriorAutomapViewMode currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Original; // currently selected exterior automap view mode     
+
         // flag that indicates if external script should reset automap settings (set via Property ResetAutomapSettingsSignalForExternalScript checked and erased by DaggerfallExteriorAutomapWindow script)
         // this might look weirds - why not just notify the DaggerfallExteriorAutomapWindow class you may ask... - I wanted to make DaggerfallExteriorAutomap inaware and independent of the actual GUI implementation
         // so communication will always be only from DaggerfallExteriorAutomapWindow to DaggerfallExteriorAutomap class - so into other direction it works in that way that DaggerfallExteriorAutomap will pull
@@ -91,6 +101,8 @@ namespace DaggerfallWorkshop.Game
             public DFBlock.BlockTypes blocktype;
             public DFBlock.RdbTypes rdbType;
         }
+
+        DFLocation location;
 
         // location dimensions
         int locationWidth;
@@ -182,7 +194,7 @@ namespace DaggerfallWorkshop.Game
                 // no location found, something went wrong
             }
             
-            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
+            location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
             if (!location.Loaded)
             {
                 // Location not loaded, something went wrong
@@ -196,139 +208,8 @@ namespace DaggerfallWorkshop.Game
             layoutWidth = locationWidth * blockSizeWidth;
             layoutHeight = locationHeight * blockSizeHeight;
 
-            int xpos = 0;
-            int ypos = 0; //locationHeight * blockSizeHeight - blockSizeHeight;
-            exteriorLayout = new BlockLayout[locationWidth * locationHeight];
-
-            for (int y = 0; y < locationHeight; y++)
-            {
-                for (int x = 0; x < locationWidth; x++)
-                {
-                    // Get the block name
-                    string blockName = DaggerfallUnity.Instance.ContentReader.BlockFileReader.CheckName(DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
-
-                    // Get the block data
-                    DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockName);
-
-                    // Now we can get the automap image data for this block and lay it out
-                    //block.RmbBlock.SubRecords.
-
-                    int index = y * locationWidth + x;
-                    exteriorLayout[index].x = x;
-                    exteriorLayout[index].y = y;
-                    exteriorLayout[index].rect = new Rectangle();
-                    exteriorLayout[index].rect.xpos = xpos;
-                    exteriorLayout[index].rect.ypos = ypos;
-                    exteriorLayout[index].rect.width = blockSizeWidth;
-                    exteriorLayout[index].rect.height = blockSizeHeight;
-                    exteriorLayout[index].name = blockName;
-                    exteriorLayout[index].blocktype = DFBlock.BlockTypes.Rmb;
-                    exteriorLayout[index].rdbType = DFBlock.RdbTypes.Unknown;
-                    xpos += blockSizeWidth;
-                }
-                ypos += blockSizeHeight;
-                xpos = 0;
-            }
-            
-            // Create layout image (texture)
-            exteriorLayoutTexture = new Texture2D(layoutWidth, layoutHeight, TextureFormat.ARGB32, false);
-            exteriorLayoutTexture.filterMode = FilterMode.Point;
-
-            // Render map layout
-            foreach (var layout in exteriorLayout)
-            {
-                DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(layout.name);
-                DaggerfallUnity.Instance.ContentReader.BlockFileReader.LoadBlock(block.Index);
-                // Get block automap image
-                DFBitmap dfBitmap = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlockAutoMap(layout.name, true);
-
-                int size = blockSizeWidth * blockSizeHeight;
-                Color32[] colors = new Color32[size];
-               // for (int i = 0; i < size; i++)
-               // {
-                for (int y=0; y < blockSizeHeight; y++)
-                {
-                    for (int x=0; x < blockSizeWidth; x++)
-                    {
-                        int i = y * blockSizeWidth + x;
-                        int o = (blockSizeHeight - 1 - y) * blockSizeWidth + x;
-                        switch (dfBitmap.Data[i])
-                        {
-                            // guilds
-                            case 12: // guildhall
-                            case 15: // temple
-                                colors[o].r = 69;
-                                colors[o].g = 125;
-                                colors[o].b = 195;
-                                colors[o].a = 255;
-                                break;
-                            // shops
-                            case 1: // alchemist
-                            case 3: // armorer
-                            case 4: // bank
-                            case 6: // bookseller
-                            case 7: // clothing store
-                            case 9: // gem store
-                            case 10: // general store
-                            case 11: // library
-                            case 13: // pawn shop
-                            case 14: // weapon smith
-                                colors[o].r = 190;
-                                colors[o].g = 85;
-                                colors[o].b = 24;
-                                colors[o].a = 255;
-                                break;
-                            case 16: // tavern
-                                colors[o].r = 85;
-                                colors[o].g = 117;
-                                colors[o].b = 48;
-                                colors[o].a = 255;
-                                break;
-                            // common
-                            case 2: // house for sale
-                            case 5: // town4
-                            case 8: // furniture store
-                            case 17: // palace
-                            case 18: // house 1
-                            case 19: // house 2
-                            case 20: // house 3
-                            case 21: // house 4
-                            case 22: // house 5 (hedge)
-                            case 23: // house 6
-                            case 24: // town23
-                                colors[o].r = 69;
-                                colors[o].g = 60;
-                                colors[o].b = 40;
-                                colors[o].a = 255;
-                                break;
-                            case 25: // ship
-                            case 117: // special 1
-                            case 224: // special 2
-                            case 250: // special 3
-                            case 251: // special 4
-                                // do not display on automap
-                                break;
-                            case 0:
-                                colors[o].r = 0;
-                                colors[o].g = 0;
-                                colors[o].b = 0;
-                                colors[o].a = 0;
-                                break;
-                            default: // unknown
-                                colors[o].r = 255;
-                                colors[o].g = 0;
-                                colors[o].b = dfBitmap.Data[i];
-                                colors[o].a = 255;
-                                break;
-                        }
-                    }
-                }
-
-                exteriorLayoutTexture.SetPixels32(layout.rect.xpos, layout.rect.ypos, layout.rect.width, layout.rect.height, colors);
-                exteriorLayoutTexture.Apply();
-
-                DaggerfallUnity.Instance.ContentReader.BlockFileReader.DiscardBlock(block.Index);
-            }
+            // Create map layout
+            createExteriorLayoutTexture(location);
 
             // create player marker
             if (!gameobjectPlayerMarkerArrow)
@@ -395,6 +276,48 @@ namespace DaggerfallWorkshop.Game
                 UnityEngine.Object.Destroy(exteriorLayoutTexture);
                 exteriorLayoutTexture = null;
             }
+        }
+
+        public void switchToNextExteriorAutomapViewMode()
+        {
+            int numberOfExteriorAutomapViewModes = Enum.GetNames(typeof(ExteriorAutomapViewMode)).Length;
+            currentExteriorAutomapViewMode++;
+            if ((int)currentExteriorAutomapViewMode > numberOfExteriorAutomapViewModes - 1) // first mode is mode 0 -> so use numberOfExteriorAutomapViewModes-1 for comparison
+                currentExteriorAutomapViewMode = 0;
+            switch (currentExteriorAutomapViewMode)
+            {
+                default:
+                case ExteriorAutomapViewMode.Original:
+                    switchToExteriorAutomapViewModeOriginal();
+                    break;
+                case ExteriorAutomapViewMode.Extra:
+                    switchToExteriorAutomapViewModeExtra();
+                    break;
+                case ExteriorAutomapViewMode.All:
+                    switchToExteriorAutomapViewModeAll();
+                    break;
+            }
+        }
+
+        public void switchToExteriorAutomapViewModeOriginal()
+        {
+            currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Original;
+            createExteriorLayoutTexture(location, false, true);
+            assignExteriorLayoutTextureToCustomCanvas();
+        }
+
+        public void switchToExteriorAutomapViewModeExtra()
+        {
+            currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Extra;
+            createExteriorLayoutTexture(location, true, true);
+            assignExteriorLayoutTextureToCustomCanvas();
+        }
+
+        public void switchToExteriorAutomapViewModeAll()
+        {
+            currentExteriorAutomapViewMode = ExteriorAutomapViewMode.All;
+            createExteriorLayoutTexture(location, true, false);
+            assignExteriorLayoutTextureToCustomCanvas();
         }
 
         /// <summary>
@@ -554,6 +477,167 @@ namespace DaggerfallWorkshop.Game
             SetLayerRecursively(gameobjectCustomCanvas, layerAutomap);
             gameobjectCustomCanvas.transform.SetParent(gameobjectExteriorAutomap.transform);
         }
+
+        private void assignExteriorLayoutTextureToCustomCanvas()
+        {
+            if (gameobjectCustomCanvas != null)
+            {
+                MeshRenderer renderer = gameobjectCustomCanvas.GetComponent<MeshRenderer>();
+                renderer.material.mainTexture = exteriorLayoutTexture;
+            }
+        }
+
+        /// <summary>
+        /// creates the map layout in the exterior layout texture
+        /// </summary>  
+        private void createExteriorLayoutTexture(DFLocation location, bool showAll = false, bool removeGroundFlats = true)
+        {
+            if (exteriorLayoutTexture != null)
+            {
+                UnityEngine.Object.Destroy(exteriorLayoutTexture);
+                exteriorLayoutTexture = null;
+            }
+
+            int xpos = 0;
+            int ypos = 0; //locationHeight * blockSizeHeight - blockSizeHeight;
+            exteriorLayout = new BlockLayout[locationWidth * locationHeight];
+
+            for (int y = 0; y < locationHeight; y++)
+            {
+                for (int x = 0; x < locationWidth; x++)
+                {
+                    // Get the block name
+                    string blockName = DaggerfallUnity.Instance.ContentReader.BlockFileReader.CheckName(DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
+
+                    // Get the block data
+                    DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockName);
+
+                    // Now we can get the automap image data for this block and lay it out
+                    //block.RmbBlock.SubRecords.
+
+                    int index = y * locationWidth + x;
+                    exteriorLayout[index].x = x;
+                    exteriorLayout[index].y = y;
+                    exteriorLayout[index].rect = new Rectangle();
+                    exteriorLayout[index].rect.xpos = xpos;
+                    exteriorLayout[index].rect.ypos = ypos;
+                    exteriorLayout[index].rect.width = blockSizeWidth;
+                    exteriorLayout[index].rect.height = blockSizeHeight;
+                    exteriorLayout[index].name = blockName;
+                    exteriorLayout[index].blocktype = DFBlock.BlockTypes.Rmb;
+                    exteriorLayout[index].rdbType = DFBlock.RdbTypes.Unknown;
+                    xpos += blockSizeWidth;
+                }
+                ypos += blockSizeHeight;
+                xpos = 0;
+            }
+
+            // Create layout image (texture)
+            exteriorLayoutTexture = new Texture2D(layoutWidth, layoutHeight, TextureFormat.ARGB32, false);
+            exteriorLayoutTexture.filterMode = FilterMode.Point;
+
+            // Render map layout
+            foreach (var layout in exteriorLayout)
+            {
+                DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(layout.name);
+                DaggerfallUnity.Instance.ContentReader.BlockFileReader.LoadBlock(block.Index);
+                // Get block automap image
+                DFBitmap dfBitmap = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlockAutoMap(layout.name, removeGroundFlats);
+
+                int size = blockSizeWidth * blockSizeHeight;
+                Color32[] colors = new Color32[size];
+                // for (int i = 0; i < size; i++)
+                // {
+                for (int y = 0; y < blockSizeHeight; y++)
+                {
+                    for (int x = 0; x < blockSizeWidth; x++)
+                    {
+                        int i = y * blockSizeWidth + x;
+                        int o = (blockSizeHeight - 1 - y) * blockSizeWidth + x;
+                        switch (dfBitmap.Data[i])
+                        {
+                            // guilds
+                            case 12: // guildhall
+                            case 15: // temple
+                                colors[o].r = 69;
+                                colors[o].g = 125;
+                                colors[o].b = 195;
+                                colors[o].a = 255;
+                                break;
+                            // shops
+                            case 1: // alchemist
+                            case 3: // armorer
+                            case 4: // bank
+                            case 6: // bookseller
+                            case 7: // clothing store
+                            case 9: // gem store
+                            case 10: // general store
+                            case 11: // library
+                            case 13: // pawn shop
+                            case 14: // weapon smith
+                                colors[o].r = 190;
+                                colors[o].g = 85;
+                                colors[o].b = 24;
+                                colors[o].a = 255;
+                                break;
+                            case 16: // tavern
+                                colors[o].r = 85;
+                                colors[o].g = 117;
+                                colors[o].b = 48;
+                                colors[o].a = 255;
+                                break;
+                            // common
+                            case 2: // house for sale
+                            case 5: // town4
+                            case 8: // furniture store
+                            case 17: // palace
+                            case 18: // house 1
+                            case 19: // house 2
+                            case 20: // house 3
+                            case 21: // house 4
+                            case 22: // house 5 (hedge)
+                            case 23: // house 6
+                            case 24: // town23
+                                colors[o].r = 69;
+                                colors[o].g = 60;
+                                colors[o].b = 40;
+                                colors[o].a = 255;
+                                break;
+                            case 25: // ship
+                            case 117: // special 1
+                            case 224: // special 2
+                            case 250: // special 3
+                            case 251: // special 4
+                                if (showAll)
+                                {
+                                    colors[o].r = 69;
+                                    colors[o].g = 60;
+                                    colors[o].b = 40;
+                                    colors[o].a = 255;
+                                }                                                                
+                                break;
+                            case 0:
+                                colors[o].r = 0;
+                                colors[o].g = 0;
+                                colors[o].b = 0;
+                                colors[o].a = 0;
+                                break;
+                            default: // unknown
+                                colors[o].r = 255;
+                                colors[o].g = 0;
+                                colors[o].b = dfBitmap.Data[i];
+                                colors[o].a = 255;
+                                break;
+                        }
+                    }
+                }
+
+                exteriorLayoutTexture.SetPixels32(layout.rect.xpos, layout.rect.ypos, layout.rect.width, layout.rect.height, colors);
+                exteriorLayoutTexture.Apply();
+
+                DaggerfallUnity.Instance.ContentReader.BlockFileReader.DiscardBlock(block.Index);
+            }
+        }     
 
         #endregion
     }

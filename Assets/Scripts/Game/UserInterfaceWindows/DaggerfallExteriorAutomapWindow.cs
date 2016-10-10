@@ -117,6 +117,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // definitions of hotkey sequences
         readonly HotkeySequence HotkeySequence_CloseMap = new HotkeySequence(KeyCode.M, HotkeySequence.KeyModifiers.None);        
         readonly HotkeySequence HotkeySequence_ResetView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToNextExteriorAutomapViewMode = new HotkeySequence(KeyCode.Return, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeOriginal = new HotkeySequence(KeyCode.F2, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeExtra = new HotkeySequence(KeyCode.F3, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeAll = new HotkeySequence(KeyCode.F4, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundOriginal = new HotkeySequence(KeyCode.F5, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative1 = new HotkeySequence(KeyCode.F6, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative2 = new HotkeySequence(KeyCode.F7, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative3 = new HotkeySequence(KeyCode.F8, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveForward = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.None);
@@ -254,9 +262,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             backgroundAlternative3 = new Color[backgroundOriginal.Length];
             for (int i = 0; i < backgroundOriginal.Length; ++i)
             {
-                backgroundAlternative3[i].r = 0.3f;
-                backgroundAlternative3[i].g = 0.1f;
-                backgroundAlternative3[i].b = 0.2f;
+                backgroundAlternative3[i].r = 0.7f;
+                backgroundAlternative3[i].g = 0.52f;
+                backgroundAlternative3[i].b = 0.18f;
                 backgroundAlternative3[i].a = 1.0f;
             }
 
@@ -490,6 +498,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 ActionResetView();
             }
 
+            if (Input.GetKeyDown(HotkeySequence_SwitchToNextExteriorAutomapViewMode.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToNextExteriorAutomapViewMode.modifiers))
+            {
+                ActionSwitchToNextExteriorAutomapViewMode();
+            }
+            if (Input.GetKeyDown(HotkeySequence_SwitchToExteriorAutomapViewModeOriginal.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToExteriorAutomapViewModeOriginal.modifiers))
+            {
+                ActionSwitchToExteriorAutomapViewModeOriginal();
+            }
+            if (Input.GetKeyDown(HotkeySequence_SwitchToExteriorAutomapViewModeExtra.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToExteriorAutomapViewModeExtra.modifiers))
+            {
+                ActionSwitchToExteriorAutomapViewModeExtra();
+            }
+            if (Input.GetKeyDown(HotkeySequence_SwitchToExteriorAutomapViewModeAll.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToExteriorAutomapViewModeAll.modifiers))
+            {
+                ActionSwitchToExteriorAutomapViewModeAll();
+            }
+
+            if (Input.GetKeyDown(HotkeySequence_SwitchToExteriorAutomapBackgroundOriginal.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToExteriorAutomapBackgroundOriginal.modifiers))
+            {
+                ActionSwitchToExteriorAutomapBackgroundOriginal();
+            }
+            if (Input.GetKeyDown(HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative1.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative1.modifiers))
+            {
+                ActionSwitchToExteriorAutomapBackgroundAlternative1();
+            }
+            if (Input.GetKeyDown(HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative2.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative2.modifiers))
+            {
+                ActionSwitchToExteriorAutomapBackgroundAlternative2();
+            }
+            if (Input.GetKeyDown(HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative3.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative3.modifiers))
+            {
+                ActionSwitchToExteriorAutomapBackgroundAlternative3();
+            }
+
             if (Input.GetKey(HotkeySequence_MoveForward.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveForward.modifiers))
             {
                 ActionMoveForward();
@@ -719,6 +761,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void resetCameraTransform()
         {
             cameraExteriorAutomap.orthographicSize = locationSizeBasedStartZoomMultiplier * Math.Max(daggerfallExteriorAutomap.LocationWidth, daggerfallExteriorAutomap.LocationHeight) * daggerfallExteriorAutomap.LayoutMultiplier;
+            cameraExteriorAutomap.orthographicSize = Math.Min(minZoom, Math.Max(maxZoom * daggerfallExteriorAutomap.LayoutMultiplier, cameraExteriorAutomap.orthographicSize));
             cameraExteriorAutomap.transform.position = daggerfallExteriorAutomap.GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f); //Vector3.zero + Vector3.up * cameraHeight;
             cameraExteriorAutomap.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             //cameraExteriorAutomap.transform.LookAt(Vector3.zero);            
@@ -861,9 +904,45 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
+        /// action for switching to next exterior automap view mode
+        /// </summary>
+        private void ActionSwitchToNextExteriorAutomapViewMode()
+        {
+            daggerfallExteriorAutomap.switchToNextExteriorAutomapViewMode();
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for switching to exterior automap view mode "original"
+        /// </summary>
+        private void ActionSwitchToExteriorAutomapViewModeOriginal()
+        {
+            daggerfallExteriorAutomap.switchToExteriorAutomapViewModeOriginal();
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for switching to exterior automap view mode "extra"
+        /// </summary>
+        private void ActionSwitchToExteriorAutomapViewModeExtra()
+        {
+            daggerfallExteriorAutomap.switchToExteriorAutomapViewModeExtra();
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for switching to exterior automap view mode "all"
+        /// </summary>
+        private void ActionSwitchToExteriorAutomapViewModeAll()
+        {
+            daggerfallExteriorAutomap.switchToExteriorAutomapViewModeAll();
+            updateAutomapView();
+        }
+
+        /// <summary>
         /// action for switching to automap background to original background
         /// </summary>
-        private void ActionSwitchToAutomapBackgroundOriginal()
+        private void ActionSwitchToExteriorAutomapBackgroundOriginal()
         {
             nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundOriginal);
             nativeTexture.Apply(false);
@@ -873,7 +952,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// action for switching to automap background to background alternative 1
         /// </summary>
-        private void ActionSwitchToAutomapBackgroundAlternative1()
+        private void ActionSwitchToExteriorAutomapBackgroundAlternative1()
         {
             nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative1);
             nativeTexture.Apply(false);
@@ -883,7 +962,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// action for switching to automap background to background alternative 2
         /// </summary>
-        private void ActionSwitchToAutomapBackgroundAlternative2()
+        private void ActionSwitchToExteriorAutomapBackgroundAlternative2()
         {
             nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative2);
             nativeTexture.Apply(false);
@@ -893,7 +972,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// action for switching to automap background to background alternative 3
         /// </summary>
-        private void ActionSwitchToAutomapBackgroundAlternative3()
+        private void ActionSwitchToExteriorAutomapBackgroundAlternative3()
         {
             nativeTexture.SetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29, backgroundAlternative3);
             nativeTexture.Apply(false);
