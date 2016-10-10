@@ -115,8 +115,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button downstairsButton;
 
         // definitions of hotkey sequences
-        readonly HotkeySequence HotkeySequence_CloseMap = new HotkeySequence(KeyCode.M, HotkeySequence.KeyModifiers.None);        
-        readonly HotkeySequence HotkeySequence_ResetView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_CloseMap = new HotkeySequence(KeyCode.M, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_FocusPlayerPosition = new HotkeySequence(KeyCode.Tab, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_ResetView = new HotkeySequence(KeyCode.Backspace, HotkeySequence.KeyModifiers.None);      
         readonly HotkeySequence HotkeySequence_SwitchToNextExteriorAutomapViewMode = new HotkeySequence(KeyCode.Return, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeOriginal = new HotkeySequence(KeyCode.F2, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_SwitchToExteriorAutomapViewModeExtra = new HotkeySequence(KeyCode.F3, HotkeySequence.KeyModifiers.None);
@@ -131,6 +132,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_MoveBackward = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_RotateLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
         readonly HotkeySequence HotkeySequence_RotateRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
+        readonly HotkeySequence HotkeySequence_RotateAroundPlayerPosLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+        readonly HotkeySequence HotkeySequence_RotateAroundPlayerPosRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
         readonly HotkeySequence HotkeySequence_Upstairs = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_Downstairs = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ZoomIn = new HotkeySequence(KeyCode.KeypadPlus, HotkeySequence.KeyModifiers.None);
@@ -352,7 +355,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateLeftButton.OnRightMouseDown += RotateLeftButton_OnRightMouseDown;
             rotateLeftButton.OnRightMouseUp += RotateLeftButton_OnRightMouseUp;
             rotateLeftButton.ToolTip = defaultToolTip;
-            rotateLeftButton.ToolTipText = "currently no action assigned";
+            rotateLeftButton.ToolTipText = "left click: rotate map to the left (hotkey: alt+right arrow)\rright click: rotate map around the player position\rto the left  (hotkey: shift+right arrow)";
             rotateLeftButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // rotate right button
@@ -362,7 +365,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.OnRightMouseDown += RotateRightButton_OnRightMouseDown;
             rotateRightButton.OnRightMouseUp += RotateRightButton_OnRightMouseUp;
             rotateRightButton.ToolTip = defaultToolTip;
-            rotateRightButton.ToolTipText = "currently no action assigned";
+            rotateRightButton.ToolTipText = "left click: rotate map to the right (hotkey: alt+right arrow)\rright click: rotate map around the player position\rto the right (hotkey: shift+right arrow)";
             rotateRightButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // upstairs button
@@ -397,7 +400,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dummyPanelCompass.OnMouseClick += Compass_OnMouseClick;
             dummyPanelCompass.OnRightMouseClick += Compass_OnRightMouseClick;
             dummyPanelCompass.ToolTip = defaultToolTip;
-            dummyPanelCompass.ToolTipText = "right click: reset view (hotkey: backspace)";
+            dummyPanelCompass.ToolTipText = "left click: focus player position (hotkey: tab)\rright click: reset view (hotkey: backspace)";
             dummyPanelCompass.ToolTip.ToolTipDelay = toolTipDelay;
 
             // compass            
@@ -493,6 +496,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 CloseWindow();
                 Input.ResetInputAxes(); // prevents automap window to reopen immediately after closing
             }
+            if (Input.GetKeyDown(HotkeySequence_FocusPlayerPosition.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_FocusPlayerPosition.modifiers))
+            {
+                ActionFocusPlayerPosition();
+            }
             if (Input.GetKeyDown(HotkeySequence_ResetView.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_ResetView.modifiers))
             {
                 ActionResetView();
@@ -555,6 +562,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (Input.GetKey(HotkeySequence_RotateRight.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateRight.modifiers))
             {
                 ActionRotateRight();
+            }
+            if (Input.GetKey(HotkeySequence_RotateAroundPlayerPosLeft.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateAroundPlayerPosLeft.modifiers))
+            {
+                ActionRotateAroundPlayerPosLeft();
+            }
+            if (Input.GetKey(HotkeySequence_RotateAroundPlayerPosRight.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateAroundPlayerPosRight.modifiers))
+            {
+                ActionRotateAroundPlayerPosRight();
             }
             if (Input.GetKey(HotkeySequence_Upstairs.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_Upstairs.modifiers))
             {
@@ -646,6 +661,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (leftMouseDownOnRotateRightButton)
             {
                 ActionRotateRight();
+            }
+
+            if (rightMouseDownOnRotateLeftButton)
+            {
+                ActionRotateAroundPlayerPosLeft();
+            }
+
+            if (rightMouseDownOnRotateRightButton)
+            {
+                ActionRotateAroundPlayerPosRight();
             }
 
             if (leftMouseDownOnUpstairsButton)
@@ -840,19 +865,47 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// action for rotating model left
+        /// action for rotating map to the left
         /// </summary>
         private void ActionRotateLeft()
         {
-            
+            ActionRotate(+rotateSpeed);
         }
 
         /// <summary>
-        /// action for rotating model right
+        /// action for rotating map to the right
         /// </summary>
         private void ActionRotateRight()
         {
-            
+            ActionRotate(-rotateSpeed);
+        }
+
+        private void ActionRotate(float rotationAmount)
+        {
+            cameraExteriorAutomap.transform.RotateAround(Vector3.zero , -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for rotating around player pos to the left
+        /// </summary>
+        private void ActionRotateAroundPlayerPosLeft()
+        {
+            ActionRotateAroundPlayerPos(+rotateSpeed);
+        }
+
+        /// <summary>
+        /// action for rotating around player pos to the right
+        /// </summary>
+        private void ActionRotateAroundPlayerPosRight()
+        {
+            ActionRotateAroundPlayerPos(-rotateSpeed);
+        }
+
+        private void ActionRotateAroundPlayerPos(float rotationAmount)
+        {
+            cameraExteriorAutomap.transform.RotateAround(daggerfallExteriorAutomap.GameobjectPlayerMarkerArrow.transform.position, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            updateAutomapView();
         }
 
         /// <summary>
@@ -979,6 +1032,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             updateAutomapView();
         }
 
+        /// <summary>
+        /// action for focusing player position
+        /// </summary>
+        private void ActionFocusPlayerPosition()
+        {
+            // focus player position (set camera to player position)
+            cameraExteriorAutomap.transform.position = daggerfallExteriorAutomap.GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f);
+            updateAutomapView();
+        }
 
         /// <summary>
         /// action for reset view
@@ -987,7 +1049,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // reset values to default
             resetCameraPosition();
-   
             updateAutomapView();
         }
 
@@ -1384,6 +1445,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (inDragMode())
                 return;
+
+            ActionFocusPlayerPosition();
         }
 
         private void Compass_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
