@@ -46,6 +46,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float maxZoom = 25.0f; // the minimum external automap camera height
         const float minZoom = 250.0f; // the maximum external automap camera height
 
+        const float locationSizeBasedStartZoomMultiplier = 10.0f; // the zoom multiplier based on location size used as starting zoom
+
         // this is a helper class to implement behaviour and easier use of hotkeys and key modifiers (left-shift, right-shift, ...) in conjunction
         // note: currently a combination of key modifiers like shift+alt is not supported. all specified modifiers are comined with an or-relation
         class HotkeySequence
@@ -716,8 +718,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void resetCameraTransform()
         {
-            cameraExteriorAutomap.orthographicSize = 25.0f * daggerfallExteriorAutomap.LayoutMultiplier;
-            cameraExteriorAutomap.transform.position = Vector3.zero + Vector3.up * cameraHeight;
+            cameraExteriorAutomap.orthographicSize = locationSizeBasedStartZoomMultiplier * Math.Max(daggerfallExteriorAutomap.LocationWidth, daggerfallExteriorAutomap.LocationHeight) * daggerfallExteriorAutomap.LayoutMultiplier;
+            cameraExteriorAutomap.transform.position = daggerfallExteriorAutomap.GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f); //Vector3.zero + Vector3.up * cameraHeight;
             cameraExteriorAutomap.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             //cameraExteriorAutomap.transform.LookAt(Vector3.zero);            
         }

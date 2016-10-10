@@ -134,6 +134,21 @@ namespace DaggerfallWorkshop.Game
             get { return (layoutMultiplier); }
         }
 
+        public int LocationWidth
+        {
+            get { return (locationWidth); }
+        }
+
+        public int LocationHeight
+        {
+            get { return (locationHeight); }
+        }
+
+        public GameObject GameobjectPlayerMarkerArrow
+        {
+            get { return (gameobjectPlayerMarkerArrow); }
+        }
+
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to check if it should reset automap settings (and if it does it will erase flag)
         /// </summary>
