@@ -103,6 +103,8 @@ namespace DaggerfallWorkshop.Game
         int layoutWidth;
         int layoutHeight;
 
+        private const float layoutMultiplier = 1.0f;
+
         private BlockLayout[] exteriorLayout;
 
         Texture2D exteriorLayoutTexture = null;
@@ -125,6 +127,11 @@ namespace DaggerfallWorkshop.Game
         public Camera CameraExteriorAutomap
         {
             get { return (cameraExteriorAutomap); }
+        }
+
+        public float LayoutMultiplier
+        {
+            get { return (layoutMultiplier); }
         }
 
         /// <summary>
@@ -319,14 +326,14 @@ namespace DaggerfallWorkshop.Game
                 newMat.shader = Shader.Find("Unlit/Texture");
                 //newMat.CopyPropertiesFromMaterial(oldMat);
                 gameobjectPlayerMarkerArrow.GetComponent<MeshRenderer>().material = newMat;
-                gameobjectPlayerMarkerArrow.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                gameobjectPlayerMarkerArrow.transform.localScale = new Vector3(2.5f, 2.5f, 2.5f) * layoutMultiplier;
             }
 
             // place player marker
             Vector3 playerPos = (GameManager.Instance.PlayerGPS.transform.position - GameManager.Instance.StreamingWorld.WorldCompensation) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale);
-            Debug.Log(String.Format("player xpos: {0}, player ypos: {1}", playerPos.x, playerPos.z));
-            int refWidth = blockSizeWidth * 8 / 5; // layoutWidth / 5
-            int refHeight = blockSizeHeight * 8 / 5; // layoutHeight / 5
+            //Debug.Log(String.Format("player xpos: {0}, player ypos: {1}", playerPos.x, playerPos.z));
+            int refWidth = (int)(blockSizeWidth * 8 * layoutMultiplier); // layoutWidth / 5
+            int refHeight = (int)(blockSizeHeight * 8 * layoutMultiplier); // layoutHeight / 5
             playerPos.x *= refWidth;
             playerPos.y = 0.1f;
             playerPos.z *= refHeight;
@@ -487,10 +494,10 @@ namespace DaggerfallWorkshop.Game
             Mesh m = new Mesh();
             m.name = "ScriptedMesh";
             m.vertices = new Vector3[] {
-                new Vector3(-width/2, 0.01f, height/2),
-                new Vector3(width/2, 0.01f, height/2),
-                new Vector3(width/2, 0.01f, -height/2),
-                new Vector3(-width/2, 0.01f, -height/2)
+                new Vector3(-width/2.0f, 0.01f, height/2.0f),
+                new Vector3(width/2.0f, 0.01f, height/2.0f),
+                new Vector3(width/2.0f, 0.01f, -height/2.0f),
+                new Vector3(-width/2.0f, 0.01f, -height/2.0f)
             };
             m.uv = new Vector2[] {
                 new Vector2 (0, 1),
@@ -518,7 +525,7 @@ namespace DaggerfallWorkshop.Game
             gameobjectCustomCanvas = new GameObject("CustomCanvasExteriorAutomap");
             //gameobjectCustomCanvas.transform.rotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
             MeshFilter meshFilter = (MeshFilter)gameobjectCustomCanvas.AddComponent(typeof(MeshFilter));
-            meshFilter.mesh = CreateMesh(layoutWidth/5, layoutHeight/5); // create quad with normal facing into positive y-direction
+            meshFilter.mesh = CreateMesh(layoutWidth * layoutMultiplier, layoutHeight * layoutMultiplier); // create quad with normal facing into positive y-direction
             MeshRenderer renderer = gameobjectCustomCanvas.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
 
             renderer.material.shader = Shader.Find("Unlit/Transparent");

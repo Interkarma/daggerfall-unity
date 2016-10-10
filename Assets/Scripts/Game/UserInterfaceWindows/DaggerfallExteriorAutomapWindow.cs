@@ -32,8 +32,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const int toolTipDelay = 1; // delay in seconds before button tooltips are shown
 
-        const float scrollLeftRightSpeed = 25.0f; // left mouse on button arrow left/right makes geometry move with this speed
-        const float scrollUpDownSpeed = 25.0f; // left mouse on button arrow up/down makes geometry move with this speed
+        const float scrollLeftRightSpeed = 100.0f; // left mouse on button arrow left/right makes geometry move with this speed
+        const float scrollUpDownSpeed = 100.0f; // left mouse on button arrow up/down makes geometry move with this speed
         const float moveUpstairsDownstairsSpeed = 500.0f; // left mouse on button upstairs/downstairs makes geometry move with this speed
         const float rotateSpeed = 150.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
         const float zoomSpeed = 12.0f; // zoom with this speed when keyboard hotkey is pressed
@@ -43,8 +43,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const float cameraHeight = 90.0f; // initial camera height
 
-        const float maxZoom = 5.0f; // the minimum external automap camera height
-        const float minZoom = 50.0f; // the maximum external automap camera height
+        const float maxZoom = 25.0f; // the minimum external automap camera height
+        const float minZoom = 250.0f; // the maximum external automap camera height
 
         // this is a helper class to implement behaviour and easier use of hotkeys and key modifiers (left-shift, right-shift, ...) in conjunction
         // note: currently a combination of key modifiers like shift+alt is not supported. all specified modifiers are comined with an or-relation
@@ -716,6 +716,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void resetCameraTransform()
         {
+            cameraExteriorAutomap.orthographicSize = 25.0f * daggerfallExteriorAutomap.LayoutMultiplier;
             cameraExteriorAutomap.transform.position = Vector3.zero + Vector3.up * cameraHeight;
             cameraExteriorAutomap.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             //cameraExteriorAutomap.transform.LookAt(Vector3.zero);            
@@ -753,7 +754,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionMoveForward()
         {
             Vector3 translation;
-            translation = cameraExteriorAutomap.transform.up * scrollUpDownSpeed * Time.unscaledDeltaTime;
+            translation = cameraExteriorAutomap.transform.up * scrollUpDownSpeed * Time.unscaledDeltaTime * daggerfallExteriorAutomap.LayoutMultiplier;
             translation.y = 0.0f; // comment this out for movement along camera optical axis
             cameraExteriorAutomap.transform.position += translation;
             updateAutomapView();
@@ -765,7 +766,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionMoveBackward()
         {
             Vector3 translation;
-            translation = -cameraExteriorAutomap.transform.up * scrollUpDownSpeed * Time.unscaledDeltaTime;
+            translation = -cameraExteriorAutomap.transform.up * scrollUpDownSpeed * Time.unscaledDeltaTime * daggerfallExteriorAutomap.LayoutMultiplier;
             translation.y = 0.0f; // comment this out for movement along camera optical axis
             cameraExteriorAutomap.transform.position += translation;
             updateAutomapView();
@@ -776,7 +777,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveLeft()
         {
-            Vector3 translation = -cameraExteriorAutomap.transform.right * scrollLeftRightSpeed * Time.unscaledDeltaTime;
+            Vector3 translation = -cameraExteriorAutomap.transform.right * scrollLeftRightSpeed * Time.unscaledDeltaTime * daggerfallExteriorAutomap.LayoutMultiplier;
             translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
             cameraExteriorAutomap.transform.position += translation;
             updateAutomapView();
@@ -787,7 +788,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionMoveRight()
         {
-            Vector3 translation = cameraExteriorAutomap.transform.right * scrollLeftRightSpeed * Time.unscaledDeltaTime;
+            Vector3 translation = cameraExteriorAutomap.transform.right * scrollLeftRightSpeed * Time.unscaledDeltaTime * daggerfallExteriorAutomap.LayoutMultiplier;
             translation.y = 0.0f; // comment this out for movement perpendicular to camera optical axis and up vector
             cameraExteriorAutomap.transform.position += translation;
             updateAutomapView();
@@ -834,12 +835,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionZoomIn(float zoomSpeed)
         {
-            float zoomSpeedCompensated = zoomSpeed * cameraExteriorAutomap.transform.position.y;
+            float zoomSpeedCompensated = zoomSpeed * cameraExteriorAutomap.transform.position.y * daggerfallExteriorAutomap.LayoutMultiplier;
             //Vector3 translation = cameraExteriorAutomap.transform.forward * zoomSpeedCompensated;
             //cameraExteriorAutomap.transform.position += translation;
             //cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, Math.Max(maxZoom, cameraExteriorAutomap.transform.position.y), cameraExteriorAutomap.transform.position.z);
             cameraExteriorAutomap.orthographicSize--;
-            cameraExteriorAutomap.orthographicSize = Math.Max(maxZoom, cameraExteriorAutomap.orthographicSize);
+            cameraExteriorAutomap.orthographicSize = Math.Max(maxZoom * daggerfallExteriorAutomap.LayoutMultiplier, cameraExteriorAutomap.orthographicSize);
             updateAutomapView();
         }
 
@@ -848,12 +849,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionZoomOut(float zoomSpeed)
         {
-            float zoomSpeedCompensated = zoomSpeed * cameraExteriorAutomap.transform.position.y;
+            float zoomSpeedCompensated = zoomSpeed * cameraExteriorAutomap.transform.position.y * daggerfallExteriorAutomap.LayoutMultiplier;
             //Vector3 translation = -cameraExteriorAutomap.transform.forward * zoomSpeedCompensated;
             //cameraExteriorAutomap.transform.position += translation;
             //cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, Math.Min(minZoom, cameraExteriorAutomap.transform.position.y), cameraExteriorAutomap.transform.position.z);
             cameraExteriorAutomap.orthographicSize++;
-            cameraExteriorAutomap.orthographicSize = Math.Min(minZoom, cameraExteriorAutomap.orthographicSize);
+            cameraExteriorAutomap.orthographicSize = Math.Min(minZoom * daggerfallExteriorAutomap.LayoutMultiplier, cameraExteriorAutomap.orthographicSize);
             updateAutomapView();
         }
 
