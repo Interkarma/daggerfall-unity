@@ -331,7 +331,6 @@ namespace DaggerfallWorkshop.Game.Items
         public void NextVariant()
         {
             // Only certain items support user-initiated variants
-            // This list will expand as more supported items are discovered
             bool canChangeVariant = false;
             switch(TemplateIndex)
             {        
@@ -347,9 +346,18 @@ namespace DaggerfallWorkshop.Game.Items
                 case (int)MensClothing.Short_shirt_closed_top2:
                 case (int)MensClothing.Long_shirt_closed_top:
                 case (int)MensClothing.Long_shirt_closed_top2:
-                case (int)WomensClothing.Plain_robes:
-                case (int)WomensClothing.Formal_cloak:
                 case (int)WomensClothing.Casual_cloak:
+                case (int)WomensClothing.Formal_cloak:
+                case (int)WomensClothing.Strapless_dress:
+                case (int)WomensClothing.Plain_robes:
+                case (int)WomensClothing.Short_shirt:
+                case (int)WomensClothing.Short_shirt_belt:
+                case (int)WomensClothing.Long_shirt:
+                case (int)WomensClothing.Long_shirt_belt:
+                case (int)WomensClothing.Short_shirt_closed:
+                case (int)WomensClothing.Short_shirt_closed_belt:
+                case (int)WomensClothing.Long_shirt_closed:
+                case (int)WomensClothing.Long_shirt_closed_belt:               
                     canChangeVariant = true;
                     break;
             }
