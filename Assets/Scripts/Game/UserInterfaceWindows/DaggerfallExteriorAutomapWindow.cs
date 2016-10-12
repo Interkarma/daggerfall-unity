@@ -751,10 +751,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!gameobjectExteriorAutomap)
             {
-                gameobjectExteriorAutomap = GameObject.Find("ExteriorAutomap");
+                gameobjectExteriorAutomap = GameObject.Find("Automap/ExteriorAutomap");
                 if (gameobjectExteriorAutomap == null)
                 {
-                    DaggerfallUnity.LogMessage("GameObject \"ExteriorAutomap\" missing! Create a GameObject called \"ExteriorAutomap\" in root of hierarchy and add script Game/DaggerfallExteriorAutomap!\"", true);
+                    DaggerfallUnity.LogMessage("GameObject \"Automap/ExteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"ExteriorAutomap\" to it, to this add script Game/DaggerfallExteriorAutomap!\"", true);                
                 }
             }
 
