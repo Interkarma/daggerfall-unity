@@ -894,10 +894,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!gameobjectAutomap)
             {
-                gameobjectAutomap = GameObject.Find("Automap");
+                gameobjectAutomap = GameObject.Find("Automap/InteriorAutomap");
                 if (gameobjectAutomap == null)
                 {
-                    DaggerfallUnity.LogMessage("GameObject \"Automap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add script Game/DaggerfallAutomap!\"", true);
+                    DaggerfallUnity.LogMessage("GameObject \"Automap/InteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"InternalAutomap\" to it, to this add script Game/DaggerfallAutomap!\"", true);
                 }
             }
 

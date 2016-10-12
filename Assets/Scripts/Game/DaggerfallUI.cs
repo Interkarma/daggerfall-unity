@@ -77,6 +77,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallInventoryWindow dfInventoryWindow;
         DaggerfallTravelMapWindow dfTravelMapWindow;
         DaggerfallAutomapWindow dfAutomapWindow;
+        DaggerfallExteriorAutomapWindow dfExteriorAutomapWindow;
         QuestMachineInspectorWindow dfQuestInspector;
 
         DaggerfallFontPlus fontPetrock32;
@@ -157,6 +158,9 @@ namespace DaggerfallWorkshop.Game
             dfInventoryWindow = new DaggerfallInventoryWindow(uiManager);
             dfTravelMapWindow = new DaggerfallTravelMapWindow(uiManager);
             dfAutomapWindow = new DaggerfallAutomapWindow(uiManager);
+
+            dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
+
             dfQuestInspector = new QuestMachineInspectorWindow(uiManager);
 
             SetupSingleton();
@@ -266,6 +270,17 @@ namespace DaggerfallWorkshop.Game
                     {
                         GameManager.Instance.PauseGame(true);
                         uiManager.PushWindow(dfAutomapWindow);
+                    }
+                    else
+                    {
+                        ContentReader.MapSummary mapSummary;
+                        DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+                        if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+                        {
+                            // There's a location at this map pixel
+                            GameManager.Instance.PauseGame(true);
+                            uiManager.PushWindow(dfExteriorAutomapWindow);
+                        }
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenRestWindow:
