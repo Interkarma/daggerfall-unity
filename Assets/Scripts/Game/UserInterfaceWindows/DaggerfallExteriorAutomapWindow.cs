@@ -131,6 +131,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_MoveRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveForward = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveBackward = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_MoveToWestLocationBorder = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+        readonly HotkeySequence HotkeySequence_MoveToEastLocationBorder = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+        readonly HotkeySequence HotkeySequence_MoveToNorthLocationBorder = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+        readonly HotkeySequence HotkeySequence_MoveToSouthLocationBorder = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
         readonly HotkeySequence HotkeySequence_RotateLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
         readonly HotkeySequence HotkeySequence_RotateRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
         readonly HotkeySequence HotkeySequence_RotateAroundPlayerPosLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
@@ -318,7 +322,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             forwardButton.OnRightMouseDown += ForwardButton_OnRightMouseDown;
             forwardButton.OnRightMouseUp += ForwardButton_OnRightMouseUp;
             forwardButton.ToolTip = defaultToolTip;
-            forwardButton.ToolTipText = "left click: move up (hotkey: up arrow)";
+            forwardButton.ToolTipText = "left click: move up (hotkey: up arrow)\rright click: move to north location border (hotkey: shift+up arrow)";
             forwardButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // backward button
@@ -328,7 +332,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             backwardButton.OnRightMouseDown += BackwardButton_OnRightMouseDown;
             backwardButton.OnRightMouseUp += BackwardButton_OnRightMouseUp;
             backwardButton.ToolTip = defaultToolTip;
-            backwardButton.ToolTipText = "left click: move down (hotkey: down arrow)";
+            backwardButton.ToolTipText = "left click: move down (hotkey: down arrow)\rright click: move to south location border (hotkey: shift+down arrow)";
             backwardButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // left button
@@ -338,7 +342,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             leftButton.OnRightMouseDown += LeftButton_OnRightMouseDown;
             leftButton.OnRightMouseUp += LeftButton_OnRightMouseUp;
             leftButton.ToolTip = defaultToolTip;
-            leftButton.ToolTipText = "left click: move to the left (hotkey: left arrow)";
+            leftButton.ToolTipText = "left click: move to the left (hotkey: left arrow)\rright click: move to west location border (hotkey: shift+left arrow)";
             leftButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // right button
@@ -348,7 +352,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rightButton.OnRightMouseDown += RightButton_OnRightMouseDown;
             rightButton.OnRightMouseUp += RightButton_OnRightMouseUp;
             rightButton.ToolTip = defaultToolTip;
-            rightButton.ToolTipText = "left click: move to the right (hotkey: right arrow)";
+            rightButton.ToolTipText = "left click: move to the right (hotkey: right arrow)\rright click: move to east location border (hotkey: shift+right arrow)";
             rightButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // rotate left button
@@ -559,6 +563,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 ActionMoveRight();
             }
 
+            if (Input.GetKey(HotkeySequence_MoveToNorthLocationBorder.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveToNorthLocationBorder.modifiers))
+            {
+                ActionMoveToNorthLocationBorder();
+            }
+            if (Input.GetKey(HotkeySequence_MoveToSouthLocationBorder.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveToSouthLocationBorder.modifiers))
+            {
+                ActionMoveToSouthLocationBorder();
+            }
+            if (Input.GetKey(HotkeySequence_MoveToWestLocationBorder.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveToWestLocationBorder.modifiers))
+            {
+                ActionMoveToWestLocationBorder();
+            }
+            if (Input.GetKey(HotkeySequence_MoveToEastLocationBorder.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MoveToEastLocationBorder.modifiers))
+            {
+                ActionMoveToEastLocationBorder();
+            }        
+
             if (Input.GetKey(HotkeySequence_RotateLeft.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateLeft.modifiers))
             {
                 ActionRotateLeft();
@@ -646,7 +667,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (rightMouseDownOnForwardButton)
             {
-
+                ActionMoveToNorthLocationBorder();
             }
 
             if (leftMouseDownOnBackwardButton)
@@ -656,7 +677,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (rightMouseDownOnBackwardButton)
             {
-
+                ActionMoveToSouthLocationBorder();
             }
 
             if (leftMouseDownOnLeftButton)
@@ -666,7 +687,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (rightMouseDownOnLeftButton)
             {
-
+                ActionMoveToWestLocationBorder();
             }
 
             if (leftMouseDownOnRightButton)
@@ -676,7 +697,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (rightMouseDownOnRightButton)
             {
-
+                ActionMoveToEastLocationBorder();
             }
 
 
@@ -984,6 +1005,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void ActionApplyMaxZoom()
         {
             cameraExteriorAutomap.orthographicSize = maxZoom;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for moving camera to the left border of the current location
+        /// </summary>
+        private void ActionMoveToWestLocationBorder()
+        {
+            Vector3 pos = daggerfallExteriorAutomap.getLocationBorderPos(DaggerfallExteriorAutomap.LocationBorder.Left);
+            cameraExteriorAutomap.transform.position = new Vector3(pos.x, cameraExteriorAutomap.transform.position.y, cameraExteriorAutomap.transform.position.z);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for moving camera to the right border of the current location
+        /// </summary>
+        private void ActionMoveToEastLocationBorder()
+        {
+            Vector3 pos = daggerfallExteriorAutomap.getLocationBorderPos(DaggerfallExteriorAutomap.LocationBorder.Right);
+            cameraExteriorAutomap.transform.position = new Vector3(pos.x, cameraExteriorAutomap.transform.position.y, cameraExteriorAutomap.transform.position.z);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for moving camera to the top border of the current location
+        /// </summary>
+        private void ActionMoveToNorthLocationBorder()
+        {
+            Vector3 pos = daggerfallExteriorAutomap.getLocationBorderPos(DaggerfallExteriorAutomap.LocationBorder.Top);
+            cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, cameraExteriorAutomap.transform.position.y, pos.z);
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for moving camera to the bottom border of the current location
+        /// </summary>
+        private void ActionMoveToSouthLocationBorder()
+        {
+            Vector3 pos = daggerfallExteriorAutomap.getLocationBorderPos(DaggerfallExteriorAutomap.LocationBorder.Bottom);
+            cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, cameraExteriorAutomap.transform.position.y, pos.z);
             updateAutomapView();
         }
 

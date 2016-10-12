@@ -81,6 +81,7 @@ namespace DaggerfallWorkshop.Game
 
         GameObject gameobjectPlayerMarkerArrow = null; // GameObject which will hold player marker arrow
         GameObject gameobjectPlayerMarkerArrowStamp = null; // GameObject which will hold player marker arrow stamp
+        GameObject gameobjectPlayerMarkerCircle = null; // GameObject which will hold player marker circle (actually a cylinder)
 
         private struct Rectangle
         {
@@ -251,13 +252,35 @@ namespace DaggerfallWorkshop.Game
                 gameobjectPlayerMarkerArrowStamp.GetComponent<MeshRenderer>().material = newMat;
                 gameobjectPlayerMarkerArrowStamp.transform.localScale = new Vector3(4.0f, 4.0f, 4.0f) * layoutMultiplier;
             }
+
+            // create player circle
+            if (!gameobjectPlayerMarkerCircle)
+            {
+                gameobjectPlayerMarkerCircle = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                CapsuleCollider capsuleCollider = gameobjectPlayerMarkerCircle.GetComponent<CapsuleCollider>();
+                if (capsuleCollider)
+                {
+                    // get rid of capsule collider
+                    UnityEngine.Object.Destroy(capsuleCollider);
+                }
+                gameobjectPlayerMarkerCircle.name = "PlayerMarkerCircle";
+                gameobjectPlayerMarkerCircle.layer = layerAutomap;
+                gameobjectPlayerMarkerCircle.transform.SetParent(gameobjectExteriorAutomap.transform);
+                Material oldMat = gameobjectPlayerMarkerCircle.GetComponent<MeshRenderer>().material;
+                Material newMat = new Material(oldMat);
+                newMat.shader = Shader.Find("Unlit/Color");
+                newMat.color = new Color(0.75f, 0.71f, 0.71f);
+                //newMat.CopyPropertiesFromMaterial(oldMat);
+                gameobjectPlayerMarkerCircle.GetComponent<MeshRenderer>().material = newMat;
+                gameobjectPlayerMarkerCircle.transform.localScale = new Vector3(12.0f, 1.0f, 12.0f) * layoutMultiplier;
+            }            
             
 
             // place player marker
             Vector3 playerPos = (GameManager.Instance.PlayerGPS.transform.position - GameManager.Instance.StreamingWorld.WorldCompensation) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale);
             //Debug.Log(String.Format("player xpos: {0}, player ypos: {1}", playerPos.x, playerPos.z));
-            int refWidth = (int)(blockSizeWidth * 8 * layoutMultiplier); // layoutWidth / 5
-            int refHeight = (int)(blockSizeHeight * 8 * layoutMultiplier); // layoutHeight / 5
+            int refWidth = (int)(blockSizeWidth * 8 * layoutMultiplier); // layoutWidth / layoutMultiplier
+            int refHeight = (int)(blockSizeHeight * 8 * layoutMultiplier); // layoutHeight / layoutMultiplier
             playerPos.x *= refWidth;
             playerPos.y = 0.1f;
             playerPos.z *= refHeight;
@@ -272,6 +295,10 @@ namespace DaggerfallWorkshop.Game
             Vector3 biasVec = -Vector3.Normalize(gameObjectPlayerAdvanced.transform.forward);
             gameobjectPlayerMarkerArrowStamp.transform.position = newPos + biasVec * 0.8f;
             gameobjectPlayerMarkerArrowStamp.transform.rotation = gameobjectPlayerMarkerArrow.transform.rotation;
+
+            newPos.y = -20.0f;
+            gameobjectPlayerMarkerCircle.transform.position = newPos;
+            gameobjectPlayerMarkerCircle.transform.rotation = gameobjectPlayerMarkerArrow.transform.rotation;
 
             //byte[] png = exteriorLayoutTexture.EncodeToPNG();
             //Debug.Log(String.Format("writing to folder {0}", Application.dataPath));
@@ -310,7 +337,13 @@ namespace DaggerfallWorkshop.Game
             {
                 UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrowStamp);
                 gameobjectPlayerMarkerArrowStamp = null;
-            }            
+            }
+
+            if (gameobjectPlayerMarkerCircle)
+            {
+                UnityEngine.Object.Destroy(gameobjectPlayerMarkerCircle);
+                gameobjectPlayerMarkerCircle = null;
+            }
 
             if (exteriorLayoutTexture != null)
             {
@@ -359,6 +392,37 @@ namespace DaggerfallWorkshop.Game
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.All;
             createExteriorLayoutTexture(location, true, false);
             assignExteriorLayoutTextureToCustomCanvas();
+        }
+
+        public enum LocationBorder
+        {
+            Top = 0,
+            Bottom = 1,
+            Left = 2,
+            Right = 3
+        };
+
+        public Vector3 getLocationBorderPos(LocationBorder locationBorder)
+        {
+            int locationWidth = (int)(layoutWidth * layoutMultiplier);
+            int locationHeight = (int)(layoutHeight * layoutMultiplier);
+            Vector3 pos = Vector3.zero;                        
+            switch (locationBorder)
+            {
+                case LocationBorder.Top:
+                    pos.z = +locationHeight * 0.5f;
+                    break;
+                case LocationBorder.Bottom:
+                    pos.z = -locationHeight * 0.5f;
+                    break;
+                case LocationBorder.Left:
+                    pos.x = -locationWidth * 0.5f;
+                    break;
+                case LocationBorder.Right:
+                    pos.x = +locationWidth * 0.5f;
+                    break;
+            }
+            return (pos);
         }
 
         /// <summary>
