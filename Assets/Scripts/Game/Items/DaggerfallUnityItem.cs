@@ -334,11 +334,19 @@ namespace DaggerfallWorkshop.Game.Items
             // This list will expand as more supported items are discovered
             bool canChangeVariant = false;
             switch(TemplateIndex)
-            {
-                case (int)MensClothing.Plain_robes:
-                case (int)MensClothing.Formal_cloak:
+            {        
                 case (int)MensClothing.Casual_cloak:
+                case (int)MensClothing.Formal_cloak:
                 case (int)MensClothing.Reversible_tunic:
+                case (int)MensClothing.Plain_robes:
+                case (int)MensClothing.Short_shirt:
+                case (int)MensClothing.Short_shirt_with_belt:
+                case (int)MensClothing.Long_shirt:
+                case (int)MensClothing.Long_shirt_with_belt:
+                case (int)MensClothing.Short_shirt_closed_top:
+                case (int)MensClothing.Short_shirt_closed_top2:
+                case (int)MensClothing.Long_shirt_closed_top:
+                case (int)MensClothing.Long_shirt_closed_top2:
                 case (int)WomensClothing.Plain_robes:
                 case (int)WomensClothing.Formal_cloak:
                 case (int)WomensClothing.Casual_cloak:
