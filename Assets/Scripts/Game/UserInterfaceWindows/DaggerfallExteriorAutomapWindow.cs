@@ -36,10 +36,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float scrollUpDownSpeed = 100.0f; // left mouse on button arrow up/down makes geometry move with this speed
         const float moveUpstairsDownstairsSpeed = 500.0f; // left mouse on button upstairs/downstairs makes geometry move with this speed
         const float rotateSpeed = 150.0f; // left mouse on button rotate left/rotate right makes geometry rotate around the rotation pivot axis with this speed
-        const float zoomSpeed = 12.0f; // zoom with this speed when keyboard hotkey is pressed
-        const float zoomSpeedMouseWheel = 0.025f; // mouse wheel inside main area of the automap window will zoom with this speed
-        const float dragSpeed = 0.00345f; //= 0.002f; // hold left mouse button down and move mouse to move geometry with this speed)
+        const float zoomSpeed = 50.0f; // zoom with this speed when keyboard hotkey is pressed        
+        const float zoomSpeedMouseWheel = 2.0f; // mouse wheel inside main area of the automap window will zoom with this speed
+        const float dragSpeed = 0.00345f; //= 0.002f; // hold left mouse button down and move mouse to move geometry with this speed
         const float dragRotateSpeed = 5.0f; // hold right mouse button down and move left/right to rotate geometry with this speed        
+        //const float dragZoomSpeed = 0.007f; // hold right mouse button down and move up/down to zoom in/out
 
         const float cameraHeight = 90.0f; // initial camera height
 
@@ -130,14 +131,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_MoveRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveForward = new HotkeySequence(KeyCode.UpArrow, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_MoveBackward = new HotkeySequence(KeyCode.DownArrow, HotkeySequence.KeyModifiers.None);
-        readonly HotkeySequence HotkeySequence_RotateLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
-        readonly HotkeySequence HotkeySequence_RotateRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
-        readonly HotkeySequence HotkeySequence_RotateAroundPlayerPosLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
-        readonly HotkeySequence HotkeySequence_RotateAroundPlayerPosRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftShift | HotkeySequence.KeyModifiers.RightShift);
+        readonly HotkeySequence HotkeySequence_RotateLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_RotateRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_RotateAroundPlayerPosLeft = new HotkeySequence(KeyCode.LeftArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
+        readonly HotkeySequence HotkeySequence_RotateAroundPlayerPosRight = new HotkeySequence(KeyCode.RightArrow, HotkeySequence.KeyModifiers.LeftAlt | HotkeySequence.KeyModifiers.RightAlt);
         readonly HotkeySequence HotkeySequence_Upstairs = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_Downstairs = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ZoomIn = new HotkeySequence(KeyCode.KeypadPlus, HotkeySequence.KeyModifiers.None);
         readonly HotkeySequence HotkeySequence_ZoomOut = new HotkeySequence(KeyCode.KeypadMinus, HotkeySequence.KeyModifiers.None);
+        readonly HotkeySequence HotkeySequence_MaxZoom1 = new HotkeySequence(KeyCode.PageUp, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_MinZoom1 = new HotkeySequence(KeyCode.PageDown, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_MinZoom2 = new HotkeySequence(KeyCode.KeypadPlus, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
+        readonly HotkeySequence HotkeySequence_MaxZoom2 = new HotkeySequence(KeyCode.KeypadMinus, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
 
         const string nativeImgName = "AMAP00I0.IMG";
         const string nativeImgNameGrid3D = "AMAP01I0.IMG";
@@ -303,7 +308,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gridButton.OnMouseClick += GridButton_OnMouseClick;
             gridButton.OnRightMouseClick += GridButton_OnRightMouseClick;
             gridButton.ToolTip = defaultToolTip;
-            gridButton.ToolTipText = "left click: switch to next view mode (hotkey: enter key)\ravailable view modes are:\r- original\r- extra (extra buildings)\r- all (extra buildings, ground flats)\r";
+            gridButton.ToolTipText = "left click: switch to next view mode (hotkey: enter key)\ravailable view modes are:\r- original (hotkey F2)\r- extra: includes extra buildings (hotkey F3)\r- all: includes extra buildings, ground flats (hotkey F4)\rswitch background texture with F5-F8";
             gridButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // forward button
@@ -353,7 +358,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateLeftButton.OnRightMouseDown += RotateLeftButton_OnRightMouseDown;
             rotateLeftButton.OnRightMouseUp += RotateLeftButton_OnRightMouseUp;
             rotateLeftButton.ToolTip = defaultToolTip;
-            rotateLeftButton.ToolTipText = "left click: rotate map to the left (hotkey: alt+right arrow)\rright click: rotate map around the player position\rto the left  (hotkey: shift+right arrow)";
+            rotateLeftButton.ToolTipText = "left click: rotate map to the left (hotkey: control+right arrow)\rright click: rotate map around the player position\rto the left  (hotkey: alt+right arrow)";
             rotateLeftButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // rotate right button
@@ -363,7 +368,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rotateRightButton.OnRightMouseDown += RotateRightButton_OnRightMouseDown;
             rotateRightButton.OnRightMouseUp += RotateRightButton_OnRightMouseUp;
             rotateRightButton.ToolTip = defaultToolTip;
-            rotateRightButton.ToolTipText = "left click: rotate map to the right (hotkey: alt+right arrow)\rright click: rotate map around the player position\rto the right (hotkey: shift+right arrow)";
+            rotateRightButton.ToolTipText = "left click: rotate map to the right (hotkey: control+right arrow)\rright click: rotate map around the player position\rto the right (hotkey: alt+right arrow)";
             rotateRightButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // upstairs button
@@ -373,7 +378,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             upstairsButton.OnRightMouseDown += UpstairsButton_OnRightMouseDown;
             upstairsButton.OnRightMouseUp += UpstairsButton_OnRightMouseUp;
             upstairsButton.ToolTip = defaultToolTip;
-            upstairsButton.ToolTipText = "left click: zoom out (hotkey: page up)";
+            upstairsButton.ToolTipText = "left click: zoom in (hotkey: page up)\rright click: apply maximum zoom";
             upstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // downstairs button
@@ -383,7 +388,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downstairsButton.OnRightMouseDown += DownstairsButton_OnRightMouseDown;
             downstairsButton.OnRightMouseUp += DownstairsButton_OnRightMouseUp;
             downstairsButton.ToolTip = defaultToolTip;
-            downstairsButton.ToolTipText = "left click: zoom in (hotkey: page down)";
+            downstairsButton.ToolTipText = "left click: zoom out (hotkey: page down\rright click: apply minimum zoom)";
             downstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // Exit button
@@ -553,6 +558,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ActionMoveRight();
             }
+
             if (Input.GetKey(HotkeySequence_RotateLeft.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_RotateLeft.modifiers))
             {
                 ActionRotateLeft();
@@ -569,6 +575,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ActionRotateAroundPlayerPosRight();
             }
+
             if (Input.GetKey(HotkeySequence_Upstairs.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_Upstairs.modifiers))
             {
                 ActionMoveUpstairs();
@@ -578,13 +585,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 ActionMoveDownstairs();
             }
             if (Input.GetKey(HotkeySequence_ZoomIn.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_ZoomIn.modifiers))
-            {
-                ActionZoomIn(zoomSpeed * Time.unscaledDeltaTime);
+            {             
+                ActionZoom(-zoomSpeed * Time.unscaledDeltaTime);
             }
             if (Input.GetKey(HotkeySequence_ZoomOut.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_ZoomOut.modifiers))
-            {
-                ActionZoomOut(zoomSpeed * Time.unscaledDeltaTime);
+            {                
+                ActionZoom(zoomSpeed * Time.unscaledDeltaTime);
             }
+
+            if (Input.GetKey(HotkeySequence_MaxZoom1.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MaxZoom1.modifiers))
+            {
+                ActionApplyMaxZoom();
+            }
+            if (Input.GetKey(HotkeySequence_MinZoom1.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MinZoom1.modifiers))
+            {
+                ActionApplyMinZoom();
+            }
+            if (Input.GetKey(HotkeySequence_MinZoom2.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MinZoom2.modifiers))
+            {
+                ActionApplyMinZoom();
+            }
+            if (Input.GetKey(HotkeySequence_MaxZoom2.keyCode) && HotkeySequence.checkSetModifiers(keyModifiers, HotkeySequence_MaxZoom2.modifiers))
+            {
+                ActionApplyMaxZoom();
+            }            
 
             // check mouse input and assign actions
             if (leftMouseDownOnPanelAutomap)
@@ -605,6 +629,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
 
                 Vector2 bias = mousePosition - oldMousePosition;
+
+                ActionRotate(dragRotateSpeed * bias.x);
+                
+                //float zoomSpeedCompensated = dragZoomSpeed * daggerfallExteriorAutomap.LayoutMultiplier;
+                //ActionZoomOut(zoomSpeedCompensated * bias.y);
 
                 updateAutomapView();
                 oldMousePosition = mousePosition;
@@ -683,12 +712,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (rightMouseDownOnUpstairsButton)
             {
-
+                ActionApplyMaxZoom();
             }
 
             if (rightMouseDownOnDownstairsButton)
             {
-
+                ActionApplyMinZoom();
             }
         }        
 
@@ -880,7 +909,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ActionRotate(float rotationAmount)
         {
-            cameraExteriorAutomap.transform.RotateAround(Vector3.zero , -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            cameraExteriorAutomap.transform.RotateAround(cameraExteriorAutomap.transform.position, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
@@ -912,7 +941,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionMoveUpstairs()
         {
             //cameraExteriorAutomap.transform.position += Vector3.up * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime;
-            ActionZoomOut(0.001f * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime);
+            ActionZoom(-zoomSpeed * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
@@ -922,35 +951,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionMoveDownstairs()
         {
             //cameraExteriorAutomap.transform.position += Vector3.down * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime;
-            ActionZoomIn(0.001f * moveUpstairsDownstairsSpeed * Time.unscaledDeltaTime);
+            ActionZoom(zoomSpeed * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
         /// <summary>
-        /// action for zooming in
+        /// action for zooming in/out
         /// </summary>
-        private void ActionZoomIn(float zoomSpeed)
+        private void ActionZoom(float speed)
         {
-            float zoomSpeedCompensated = zoomSpeed * cameraExteriorAutomap.transform.position.y * daggerfallExteriorAutomap.LayoutMultiplier;
+            float zoomSpeedCompensated = speed * daggerfallExteriorAutomap.LayoutMultiplier; // * cameraExteriorAutomap.transform.position.y * daggerfallExteriorAutomap.LayoutMultiplier;
             //Vector3 translation = cameraExteriorAutomap.transform.forward * zoomSpeedCompensated;
             //cameraExteriorAutomap.transform.position += translation;
             //cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, Math.Max(maxZoom, cameraExteriorAutomap.transform.position.y), cameraExteriorAutomap.transform.position.z);
-            cameraExteriorAutomap.orthographicSize--;
-            cameraExteriorAutomap.orthographicSize = Math.Max(maxZoom * daggerfallExteriorAutomap.LayoutMultiplier, cameraExteriorAutomap.orthographicSize);
+            cameraExteriorAutomap.orthographicSize += zoomSpeedCompensated;
+            cameraExteriorAutomap.orthographicSize = Math.Min(minZoom * daggerfallExteriorAutomap.LayoutMultiplier, (Math.Max(maxZoom * daggerfallExteriorAutomap.LayoutMultiplier, cameraExteriorAutomap.orthographicSize)));
             updateAutomapView();
         }
 
         /// <summary>
-        /// action for zooming out
+        /// action for applying minimum zoom
         /// </summary>
-        private void ActionZoomOut(float zoomSpeed)
+        private void ActionApplyMinZoom()
         {
-            float zoomSpeedCompensated = zoomSpeed * cameraExteriorAutomap.transform.position.y * daggerfallExteriorAutomap.LayoutMultiplier;
-            //Vector3 translation = -cameraExteriorAutomap.transform.forward * zoomSpeedCompensated;
-            //cameraExteriorAutomap.transform.position += translation;
-            //cameraExteriorAutomap.transform.position = new Vector3(cameraExteriorAutomap.transform.position.x, Math.Min(minZoom, cameraExteriorAutomap.transform.position.y), cameraExteriorAutomap.transform.position.z);
-            cameraExteriorAutomap.orthographicSize++;
-            cameraExteriorAutomap.orthographicSize = Math.Min(minZoom * daggerfallExteriorAutomap.LayoutMultiplier, cameraExteriorAutomap.orthographicSize);
+            cameraExteriorAutomap.orthographicSize = minZoom;
+            updateAutomapView();
+        }
+
+        /// <summary>
+        /// action for applying maximum zoom
+        /// </summary>
+        public void ActionApplyMaxZoom()
+        {
+            cameraExteriorAutomap.orthographicSize = maxZoom;
             updateAutomapView();
         }
 
@@ -1056,12 +1089,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void PanelAutomap_OnMouseScrollUp()
         {
-            ActionZoomIn(zoomSpeedMouseWheel);
+            ActionZoom(-zoomSpeedMouseWheel);
         }
 
         private void PanelAutomap_OnMouseScrollDown()
         {
-            ActionZoomOut(zoomSpeedMouseWheel);
+            ActionZoom(zoomSpeedMouseWheel);
         }
 
         private void PanelAutomap_OnMouseDown(BaseScreenComponent sender, Vector2 position)

@@ -80,6 +80,7 @@ namespace DaggerfallWorkshop.Game
         bool resetAutomapSettingsFromExternalScript = false;
 
         GameObject gameobjectPlayerMarkerArrow = null; // GameObject which will hold player marker arrow
+        GameObject gameobjectPlayerMarkerArrowStamp = null; // GameObject which will hold player marker arrow stamp
 
         private struct Rectangle
         {
@@ -236,6 +237,22 @@ namespace DaggerfallWorkshop.Game
                 gameobjectPlayerMarkerArrow.transform.localScale = new Vector3(2.5f, 2.5f, 2.5f) * layoutMultiplier;
             }
 
+            // create player marker stamp (a darkened larger version in the background)
+            if (!gameobjectPlayerMarkerArrowStamp)
+            {
+                gameobjectPlayerMarkerArrowStamp = GameObjectHelper.CreateDaggerfallMeshGameObject(99900, gameobjectExteriorAutomap.transform, false, null, true);
+                gameobjectPlayerMarkerArrowStamp.name = "PlayerMarkerArrowStamp";
+                gameobjectPlayerMarkerArrowStamp.layer = layerAutomap;
+                Material oldMat = gameobjectPlayerMarkerArrowStamp.GetComponent<MeshRenderer>().material;
+                Material newMat = new Material(oldMat);
+                newMat.shader = Shader.Find("Unlit/Color");
+                newMat.color = new Color(0.353f, 0.086f, 0.086f);
+                //newMat.CopyPropertiesFromMaterial(oldMat);
+                gameobjectPlayerMarkerArrowStamp.GetComponent<MeshRenderer>().material = newMat;
+                gameobjectPlayerMarkerArrowStamp.transform.localScale = new Vector3(4.0f, 4.0f, 4.0f) * layoutMultiplier;
+            }
+            
+
             // place player marker
             Vector3 playerPos = (GameManager.Instance.PlayerGPS.transform.position - GameManager.Instance.StreamingWorld.WorldCompensation) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale);
             //Debug.Log(String.Format("player xpos: {0}, player ypos: {1}", playerPos.x, playerPos.z));
@@ -248,6 +265,13 @@ namespace DaggerfallWorkshop.Game
             playerPos.z -= refHeight * 0.5f;
             gameobjectPlayerMarkerArrow.transform.position = playerPos;
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
+
+            // place player marker stamp
+            Vector3 newPos = gameobjectPlayerMarkerArrow.transform.position;
+            newPos.y = -10.0f;
+            Vector3 biasVec = -Vector3.Normalize(gameObjectPlayerAdvanced.transform.forward);
+            gameobjectPlayerMarkerArrowStamp.transform.position = newPos + biasVec * 0.8f;
+            gameobjectPlayerMarkerArrowStamp.transform.rotation = gameobjectPlayerMarkerArrow.transform.rotation;
 
             //byte[] png = exteriorLayoutTexture.EncodeToPNG();
             //Debug.Log(String.Format("writing to folder {0}", Application.dataPath));
@@ -281,6 +305,12 @@ namespace DaggerfallWorkshop.Game
                 UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrow);
                 gameobjectPlayerMarkerArrow = null;
             }
+
+            if (gameobjectPlayerMarkerArrowStamp)
+            {
+                UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrowStamp);
+                gameobjectPlayerMarkerArrowStamp = null;
+            }            
 
             if (exteriorLayoutTexture != null)
             {
