@@ -400,9 +400,14 @@ namespace DaggerfallWorkshop
 
         DiceRoll2 = 376,
 
-        Equip1 = 377,
-        Equip2 = 378,
-        Equip3 = 379,
+        EquipShortBlade = 377,
+        EquipLongBlade = 378,
+        EquipTwoHandedBlade = 379,
+        EquipStaff = 380,
+        EquipClothing = 381,
+
+        EquipJewelry = 383,
+        OpenBook = 384,
 
         BlowingWindIntro = 388,
         AmbientRaining = 389,
@@ -410,12 +415,13 @@ namespace DaggerfallWorkshop
         // 390-412 are more pain sounds.
         // Needs more research.
 
-        // These seem to be equip sounds
-        Equip4 = 413,
-        Equip5 = 414,
-        Equip6 = 415,
-
-        Equip7 = 419,
+        EquipBluntWeapon = 413,
+        EquipFlail = 414,
+        EquipAxe = 415,
+        EquipBow = 416,
+        EquipLeather = 417,
+        EquipChain = 418,
+        EquipPlate = 419,
 
         Burning = 420,
 
