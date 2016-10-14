@@ -138,7 +138,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 for (int i = 0; i < characterRecord.ParsedData.equippedItems.Length; i++)
                 {
                     if (characterRecord.ParsedData.equippedItems[i] == (record.RecordRoot.RecordID >> 8))
-                        equipTable.EquipItem(newItem);
+                        equipTable.EquipItem(newItem, true, false);
                 }
             }
         }

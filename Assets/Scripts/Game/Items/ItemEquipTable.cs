@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="item">Item to equip.</param>
         /// <param name="alwaysEquip">Always equip item, replacing another in the same slot if needed.</param>
         /// <returns>True when item equipped, otherwise false.</returns>
-        public bool EquipItem(DaggerfallUnityItem item, bool alwaysEquip = true)
+        public bool EquipItem(DaggerfallUnityItem item, bool alwaysEquip = true, bool playEquipSounds = true)
         {
             if (item == null)
                 return false;
@@ -135,6 +135,10 @@ namespace DaggerfallWorkshop.Game.Items
             // Equip item to slot
             item.EquipSlot = slot;
             equipTable[(int)slot] = item;
+
+            // Play equip sound
+            if (playEquipSounds)
+                DaggerfallUI.Instance.PlayOneShot(item.GetEquipSound());
 
             //Debug.Log(string.Format("Equipped {0} to {1}", item.LongName, slot.ToString()));
 

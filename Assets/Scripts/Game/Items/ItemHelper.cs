@@ -649,8 +649,8 @@ namespace DaggerfallWorkshop.Game.Items
             // Add and equip clothing
             items.AddItem(shortShirt);
             items.AddItem(casualPants);
-            equipTable.EquipItem(shortShirt);
-            equipTable.EquipItem(casualPants);
+            equipTable.EquipItem(shortShirt, true, false);
+            equipTable.EquipItem(casualPants, true, false);
 
             // Always add ebony dagger until biography implemented
             items.AddItem(ItemBuilder.CreateWeapon(Weapons.Dagger, WeaponMaterialTypes.Ebony));
