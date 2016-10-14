@@ -406,6 +406,64 @@ namespace DaggerfallWorkshop.Game.Items
             return data;
         }
 
+        public SoundClips GetEquipSound()
+        {
+            switch (itemGroup)
+            {
+                case ItemGroups.MensClothing:
+                case ItemGroups.WomensClothing:
+                    return SoundClips.EquipClothing;
+                case ItemGroups.Jewellery:
+                case ItemGroups.Gems:
+                    return SoundClips.EquipJewellery;
+                case ItemGroups.Armor:
+                    if (GetIsShield() || TemplateIndex == (int)Armor.Helm)
+                        return SoundClips.EquipPlate;
+                    else if (nativeMaterialValue == (int)ArmorMaterialTypes.Leather)
+                        return SoundClips.EquipLeather;
+                    else if (nativeMaterialValue == (int)ArmorMaterialTypes.Chain)
+                        return SoundClips.EquipChain;
+                    else
+                        return SoundClips.EquipPlate;
+                case ItemGroups.Weapons:
+                    switch (TemplateIndex)
+                    {
+                        case (int)Weapons.Battle_Axe:
+                        case (int)Weapons.War_Axe:
+                            return SoundClips.EquipAxe;
+                        case (int)Weapons.Broadsword:
+                        case (int)Weapons.Longsword:
+                        case (int)Weapons.Saber:
+                        case (int)Weapons.Katana:
+                            return SoundClips.EquipLongBlade;
+                        case (int)Weapons.Claymore:
+                        case (int)Weapons.Dai_Katana:
+                            return SoundClips.EquipTwoHandedBlade;
+                        case (int)Weapons.Dagger:
+                        case (int)Weapons.Tanto:
+                        case (int)Weapons.Wakazashi:
+                        case (int)Weapons.Shortsword:
+                            return SoundClips.EquipShortBlade;
+                        case (int)Weapons.Flail:
+                            return SoundClips.EquipFlail;
+                        case (int)Weapons.Mace:
+                        case (int)Weapons.Warhammer:
+                            return SoundClips.EquipMaceOrHammer;
+                        case (int)Weapons.Staff:
+                            return SoundClips.EquipStaff;
+                        case (int)Weapons.Short_Bow:
+                        case (int)Weapons.Long_Bow:
+                            return SoundClips.EquipBow;
+
+                        default:
+                            return SoundClips.None;
+                    }
+
+                default:
+                    return SoundClips.None;
+            }
+        }
+
         #endregion
 
         #region Static Methods
@@ -680,7 +738,8 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 if (TemplateIndex == (int)Armor.Kite_Shield ||
                     TemplateIndex == (int)Armor.Round_Shield ||
-                    TemplateIndex == (int)Armor.Tower_Shield)
+                    TemplateIndex == (int)Armor.Tower_Shield ||
+                    TemplateIndex == (int)Armor.Buckler)
                 {
                     return true;
                 }

@@ -406,7 +406,7 @@ namespace DaggerfallWorkshop
         EquipStaff = 380,
         EquipClothing = 381,
 
-        EquipJewelry = 383,
+        EquipJewellery = 383,
         OpenBook = 384,
 
         BlowingWindIntro = 388,
@@ -415,7 +415,7 @@ namespace DaggerfallWorkshop
         // 390-412 are more pain sounds.
         // Needs more research.
 
-        EquipBluntWeapon = 413,
+        EquipMaceOrHammer = 413,
         EquipFlail = 414,
         EquipAxe = 415,
         EquipBow = 416,

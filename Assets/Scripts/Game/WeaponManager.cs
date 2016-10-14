@@ -272,7 +272,7 @@ namespace DaggerfallWorkshop.Game
             // Setup target
             target.WeaponType = DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(weapon);
             target.MetalType = DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(weapon);
-            target.DrawWeaponSound = SoundClips.DrawWeapon;
+            target.DrawWeaponSound = weapon.GetEquipSound();
             target.SwingWeaponSound = SoundClips.PlayerSwing;
 
             // TODO: Adjust FPSWeapon attack speed scale for swing pitch variance
