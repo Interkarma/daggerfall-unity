@@ -179,7 +179,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             windows.Push(window);
             window.OnPush();
-            //OnWindowChange += window.WindowChanged;
             if(window.PauseWhileOpen && GameManager.HasInstance)
                 GameManager.Instance.PauseGame(true);
         }
@@ -192,9 +191,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UserInterfaceWindow oldWindow = TopWindow;
             if (oldWindow != null)
             {
-                //OnWindowChange -= oldWindow.WindowChanged;
                 oldWindow.OnPop();
                 windows.Pop();
+                if (TopWindow != null)
+                    TopWindow.OnReturn();
             }
             if (windows.Count <= 1 && GameManager.HasInstance)
                 GameManager.Instance.PauseGame(false);

@@ -143,11 +143,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPush()
         {
-            if (IsSetup)
-            {
-                UpdatePlayerValues();
-                characterPortrait.Refresh();
-            }
+            Refresh();
+        }
+
+        public override void OnReturn()
+        {
+            Refresh();
         }
 
         #region Private Methods
@@ -247,6 +248,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
                 statLabels[i].Text = PlayerEntity.Stats.GetStatValue(i).ToString();
+            }
+        }
+
+        void Refresh()
+        {
+            if (IsSetup)
+            {
+                UpdatePlayerValues();
+                characterPortrait.Refresh();
             }
         }
 

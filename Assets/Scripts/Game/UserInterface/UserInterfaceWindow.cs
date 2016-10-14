@@ -96,11 +96,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        /// <summary>
+        /// Called when this window is pushed to stack.
+        /// </summary>
         public virtual void OnPush()
         {
         }
 
+        /// <summary>
+        /// Called when this window pops off from stack.
+        /// </summary>
         public virtual void OnPop()
+        {
+        }
+
+        /// <summary>
+        /// Called when returning to this window after popping back from another window.
+        /// </summary>
+        public virtual void OnReturn()
         {
         }
 
