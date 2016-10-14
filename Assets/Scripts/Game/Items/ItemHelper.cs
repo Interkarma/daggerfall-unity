@@ -185,6 +185,13 @@ namespace DaggerfallWorkshop.Game.Items
             if (data.type == ImageTypes.None)
                 throw new Exception("GetItemImage() could not load image data.");
 
+            // Fix items with known incorrect paper doll offsets
+            if (archive == 237 && (record == 52 || record == 54))
+            {
+                // "Short shirt" template index 202 variants 2 and 5 for human female
+                data.offset = new DaggerfallConnect.Utility.DFPosition(237, 43);
+            }
+
             // Remove mask if requested
             if (removeMask)
                 data.dfBitmap = ImageProcessing.ChangeMask(data.dfBitmap);
