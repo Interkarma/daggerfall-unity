@@ -119,8 +119,8 @@ namespace DaggerfallWorkshop
         AnimalCow = 103,
         HorseAndCart = 104,
 
-        EnemySwing1 = 105,
-        EnemySwing2 = 106,
+        SwingLowPitch = 105,
+        SwingHighPitch = 106,
 
         Bells = 107,
 
@@ -363,14 +363,13 @@ namespace DaggerfallWorkshop
         StopThief = 345,
         SplashSmall = 346,
 
-        // Player swing pitch is changed based on weapon speed.
-        PlayerSwing = 347,
+        SwingMediumPitch = 347,
 
         StormLightningShort = 348,
         StormLightningThunder = 349,
         StormThunderRoll = 350,
 
-        PlayerSwing2 = 353,
+        SwingMediumPitch2 = 353,
 
         StrangledHowl = 357,
         LongMoanHigh = 358,

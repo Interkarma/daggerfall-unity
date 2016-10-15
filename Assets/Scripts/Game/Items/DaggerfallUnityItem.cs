@@ -464,6 +464,34 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
+        public SoundClips GetSwingSound()
+        {
+            switch (TemplateIndex)
+            {
+                case (int)Weapons.Warhammer:
+                case (int)Weapons.Battle_Axe:
+                case (int)Weapons.Katana:
+                case (int)Weapons.Claymore:
+                case (int)Weapons.Dai_Katana:
+                case (int)Weapons.Flail:
+                    return SoundClips.SwingLowPitch;
+                case (int)Weapons.Broadsword:
+                case (int)Weapons.Longsword:
+                case (int)Weapons.Saber:
+                case (int)Weapons.Wakazashi:
+                case (int)Weapons.War_Axe:
+                case (int)Weapons.Staff:
+                    return SoundClips.SwingMediumPitch;
+                case (int)Weapons.Dagger:
+                case (int)Weapons.Tanto:                
+                case (int)Weapons.Shortsword:
+                    return SoundClips.SwingHighPitch;
+
+                default:
+                    return SoundClips.None;
+            }
+        }
+
         #endregion
 
         #region Static Methods
