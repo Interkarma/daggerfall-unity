@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game
         public float Reach = 2.5f;
         public float AttackSpeedScale = 1.0f;
         public SoundClips DrawWeaponSound = SoundClips.DrawWeapon;
-        public SoundClips SwingWeaponSound = SoundClips.PlayerSwing;
+        public SoundClips SwingWeaponSound = SoundClips.SwingMediumPitch;
 
         WeaponTypes currentWeaponType;
         MetalTypes currentMetalType;
