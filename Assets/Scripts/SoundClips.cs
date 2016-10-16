@@ -27,8 +27,8 @@ namespace DaggerfallWorkshop
         SpookyMid = 1,
         SpookyLow = 2,
 
-        ArrowHit1 = 3,
-        ArrowHit2 = 4,
+        ArrowShoot = 3,
+        ArrowHit = 4,
 
         // No valid sound data
         Invalid = 5,
@@ -36,6 +36,8 @@ namespace DaggerfallWorkshop
         AmbientCrickets = 6,
 
         PlayerDoorBash = 7,
+
+        ArenaFireDaemon = 11,
 
         AmbientCreepyBirdLaughs = 13,
         AmbientCreepyBirdCall = 14,
@@ -45,8 +47,8 @@ namespace DaggerfallWorkshop
         ActivateGears = 19,
         ActivateDoorClose = 20,
 
-        Heartbeat1 = 22,
-        Heartbeat2 = 23,
+        ArenaFootstep1 = 22,
+        ArenaFootstep2 = 23,
 
         DungeonDoorClose = 24,
         DungeonDoorOpen = 25,
@@ -56,8 +58,8 @@ namespace DaggerfallWorkshop
         AmbientDrums = 28,
         AmbientWindMoan2 = 29,
 
-        FanfarePart1 = 32,
-        FanfarePart2 = 33,
+        ArenaFanfareLevelUp = 32,
+        ArenaFanfareStaffOfChaos = 33,
 
         AmbientDistantMoan = 38,
         AmbientCloseMoan = 39,
@@ -329,6 +331,8 @@ namespace DaggerfallWorkshop
 
         DiceRoll = 300,
 
+        ArenaMinotaur = 301,
+
         HaltWeak = 302,
 
         // Player footstep and movement sounds
@@ -341,10 +345,17 @@ namespace DaggerfallWorkshop
         PlayerSwimming = 312,
         PlayerFootstepWood = 313,
 
+        ArenaGoblin = 314,
+
         ActivateLockUnlock = 316,
 
+        ArenaSkeleton = 318,
+        ArenaLizardMan = 320,
+        ArenaGhoul = 321,
+
         ActivateOpenGate = 325,
-        ActivateCreak = 326,
+
+        ArenaOpenDoor = 326,
 
         ActivateRatchet = 328,
 
@@ -360,7 +371,9 @@ namespace DaggerfallWorkshop
 
         SplashLarge = 342,
 
-        StopThief = 345,
+        ArenaStoneGolem = 344,
+        ArenaStopThief = 345,
+
         SplashSmall = 346,
 
         SwingMediumPitch = 347,
@@ -371,13 +384,14 @@ namespace DaggerfallWorkshop
 
         SwingMediumPitch2 = 353,
 
-        StrangledHowl = 357,
+        ArenaWolf = 357,
+
         LongMoanHigh = 358,
         LongMoanLow = 359,
 
         ButtonClick = 360,
 
-        AmbientMetalJangleHigh = 361,
+        GoldPieces = 361,
 
         PageTurn = 362,
         ParchmentScratching = 363,
@@ -427,6 +441,8 @@ namespace DaggerfallWorkshop
         // The below beep is ID 0 in sound file.
         // It was probably used to strongly alert content designer a sound was missing.
         LongBeep = 421,
+        
+        ArenaIronGolem = 422,
 
         SpookyHigh2 = 423,
 
