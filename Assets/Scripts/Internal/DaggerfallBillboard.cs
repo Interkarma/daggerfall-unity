@@ -259,7 +259,11 @@ namespace DaggerfallWorkshop
             if (oldMesh)
             {
                 // The old mesh is no longer required
+#if UNITY_EDITOR
+                DestroyImmediate(oldMesh);
+#else
                 Destroy(oldMesh);
+#endif
             }
 
             // Standalone billboards never cast shadows

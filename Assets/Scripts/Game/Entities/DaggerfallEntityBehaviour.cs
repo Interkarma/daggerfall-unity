@@ -63,6 +63,10 @@ namespace DaggerfallWorkshop.Game.Entity
                 lastEntityType = EntityType;
             }
 
+            // Exit when no entity set
+            if (Entity == null)
+                return;
+
             // Update entity
             Entity.Update(this);
         }
