@@ -95,6 +95,8 @@ namespace DaggerfallWorkshop.Game
 
         List<BuildingNamePlate> buildingNamePlates = null;
 
+        GameObject gameObjectBuildingNamePlates = null; // parent gameobject for all building name plates 
+
         private struct Rectangle
         {
             public int xpos;
@@ -327,6 +329,8 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void updateAutomapStateOnWindowPop()
         {
+            deleteBuildingNamePlates();
+
             // destroy the camera so it does not use system resources
             if (gameObjectCameraAutomap != null)
             {
@@ -615,7 +619,7 @@ namespace DaggerfallWorkshop.Game
 
             buildingNamePlates = new List<BuildingNamePlate>();
 
-            GameObject gameObjectBuildingNamePlates = new GameObject("building name plates");
+            gameObjectBuildingNamePlates = new GameObject("building name plates");
             gameObjectBuildingNamePlates.transform.SetParent(gameobjectExteriorAutomap.transform);
 
             foreach (var layout in exteriorLayout)
@@ -632,39 +636,85 @@ namespace DaggerfallWorkshop.Game
                     //if (buildingSummary.BuildingType == DFLocation.BuildingTypes.WeaponSmith)
                     {
                         BuildingNamePlate newBuildingNamePlate;
-                        newBuildingNamePlate.name = ".";
+                        newBuildingNamePlate.name = "";
                         switch (buildingSummary.BuildingType)
                         {
-                            case DFLocation.BuildingTypes.WeaponSmith:
-                                newBuildingNamePlate.name = "Weapon Smith";
+                            case DFLocation.BuildingTypes.Alchemist:
+                                newBuildingNamePlate.name = "Alchemist";
                                 break;
                             case DFLocation.BuildingTypes.Armorer:
                                 newBuildingNamePlate.name = "Armorer";
                                 break;
+                            case DFLocation.BuildingTypes.Bank:
+                                newBuildingNamePlate.name = "Bank";
+                                break;
+                            case DFLocation.BuildingTypes.Bookseller:
+                                newBuildingNamePlate.name = "Bookseller";
+                                break;
+                            case DFLocation.BuildingTypes.ClothingStore:
+                                newBuildingNamePlate.name = "Clothing Store";
+                                break;
+                            case DFLocation.BuildingTypes.FurnitureStore:
+                                newBuildingNamePlate.name = "Furniture Store";
+                                break;
+                            case DFLocation.BuildingTypes.GemStore:
+                                newBuildingNamePlate.name = "Gem Store";
+                                break;
+                            case DFLocation.BuildingTypes.GeneralStore:
+                                newBuildingNamePlate.name = "General Store";
+                                break;
+                            case DFLocation.BuildingTypes.GuildHall:
+                                newBuildingNamePlate.name = "Guild Hall";
+                                break;
+                            case DFLocation.BuildingTypes.HouseForSale:
+                                newBuildingNamePlate.name = "House for Sale";
+                                break;
+                            case DFLocation.BuildingTypes.Library:
+                                newBuildingNamePlate.name = "Library";
+                                break;
+                            case DFLocation.BuildingTypes.Palace:
+                                newBuildingNamePlate.name = "Palace";
+                                break;
+                            case DFLocation.BuildingTypes.PawnShop:
+                                newBuildingNamePlate.name = "Pawn Shop";
+                                break;
+                            case DFLocation.BuildingTypes.Tavern:
+                                newBuildingNamePlate.name = "Tavern";
+                                break;
+                            case DFLocation.BuildingTypes.Temple:
+                                newBuildingNamePlate.name = "Temple";
+                                break;
+                            case DFLocation.BuildingTypes.WeaponSmith:
+                                newBuildingNamePlate.name = "Weapon Smith";
+                                break;
                         }
-                        newBuildingNamePlate.posX = xPosBuilding;
-                        newBuildingNamePlate.posY = yPosBuilding;
-                        newBuildingNamePlate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNamePlate.name);
-                        newBuildingNamePlate.textLabel.TextColor = Color.yellow;
-                        newBuildingNamePlate.gameObject = new GameObject(String.Format("building name plate for [{0}]", newBuildingNamePlate.name));
-                        MeshFilter meshFilter = (MeshFilter)newBuildingNamePlate.gameObject.AddComponent(typeof(MeshFilter));
-                        int width = newBuildingNamePlate.textLabel.Texture.width;
-                        int height = newBuildingNamePlate.textLabel.Texture.height;
-                        meshFilter.mesh = CreateMesh(width, height); // create quad with normal facing into positive y-direction
-                        MeshRenderer renderer = newBuildingNamePlate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
 
-                        renderer.material.shader = Shader.Find("Unlit/Transparent");
-                        renderer.material.mainTexture = newBuildingNamePlate.textLabel.Texture;
-                        renderer.enabled = true;
+                        if (newBuildingNamePlate.name != "")
+                        {
+                            newBuildingNamePlate.posX = xPosBuilding;
+                            newBuildingNamePlate.posY = yPosBuilding;
+                            newBuildingNamePlate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNamePlate.name);
+                            newBuildingNamePlate.textLabel.TextColor = Color.yellow;
+                            newBuildingNamePlate.gameObject = new GameObject(String.Format("building name plate for [{0}]", newBuildingNamePlate.name));
+                            MeshFilter meshFilter = (MeshFilter)newBuildingNamePlate.gameObject.AddComponent(typeof(MeshFilter));
+                            int width = newBuildingNamePlate.textLabel.Texture.width;
+                            int height = newBuildingNamePlate.textLabel.Texture.height;
+                            meshFilter.mesh = CreateMesh(width, height); // create quad with normal facing into positive y-direction
+                            MeshRenderer renderer = newBuildingNamePlate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
 
-                        SetLayerRecursively(newBuildingNamePlate.gameObject, layerAutomap);
-                        newBuildingNamePlate.gameObject.transform.SetParent(gameObjectBuildingNamePlates.transform);
+                            renderer.material.shader = Shader.Find("Unlit/Transparent");
+                            renderer.material.mainTexture = newBuildingNamePlate.textLabel.Texture;
+                            renderer.enabled = true;
 
-                        float posX = newBuildingNamePlate.posX - locationWidth * blockSizeWidth * 0.5f;
-                        float posY = newBuildingNamePlate.posY - locationHeight * blockSizeHeight * 0.5f;
-                        newBuildingNamePlate.gameObject.transform.position = new Vector3(posX, 4.0f, posY);
-                        newBuildingNamePlate.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                        buildingNamePlates.Add(newBuildingNamePlate);
+                            SetLayerRecursively(newBuildingNamePlate.gameObject, layerAutomap);
+                            newBuildingNamePlate.gameObject.transform.SetParent(gameObjectBuildingNamePlates.transform);
+
+                            float posX = newBuildingNamePlate.posX - locationWidth * blockSizeWidth * 0.5f;
+                            float posY = newBuildingNamePlate.posY - locationHeight * blockSizeHeight * 0.5f;
+                            newBuildingNamePlate.gameObject.transform.position = new Vector3(posX, 4.0f, posY);
+                            newBuildingNamePlate.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                            buildingNamePlates.Add(newBuildingNamePlate);
+                        }
                     }
                 }
             }            
@@ -691,6 +741,12 @@ namespace DaggerfallWorkshop.Game
                 }
                 buildingNamePlates.Clear();
                 buildingNamePlates = null;
+            }
+
+            if (gameObjectBuildingNamePlates != null)
+            {
+                UnityEngine.Object.Destroy(gameObjectBuildingNamePlates);
+                gameObjectBuildingNamePlates = null;
             }
         }
 
