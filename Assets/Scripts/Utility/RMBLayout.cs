@@ -87,15 +87,24 @@ namespace DaggerfallWorkshop.Utility
 
             // Create gameobject
             GameObject go;
+            DaggerfallRMBBlock rmbBlock = null;
             string name = string.Format("DaggerfallBlock [{0}]", blockData.Name);
             if (cloneFrom != null)
             {
                 go = GameObjectHelper.InstantiatePrefab(cloneFrom.gameObject, name, null, Vector3.zero);
+                rmbBlock = go.GetComponent<DaggerfallRMBBlock>();
             }
             else
             {
                 go = new GameObject(name);
-                go.AddComponent<DaggerfallRMBBlock>();
+                rmbBlock = go.AddComponent<DaggerfallRMBBlock>();
+            }
+
+            // Attempt to set block data
+            // If using a prefab it must have DaggerfallRMBBlock component
+            if (rmbBlock)
+            {
+                rmbBlock.SetBlockData(blockData);
             }
 
             // Setup combiner
@@ -326,6 +335,70 @@ namespace DaggerfallWorkshop.Utility
                 go.isStatic = true;
 
             return go;
+        }
+
+        #endregion
+
+        #region Building Methods
+
+        /// <summary>
+        /// Information about buildings in this block.
+        /// This is a trimmed-down version of DFLocation.BuildingData with some extra information for scene builders.
+        /// Notes:
+        /// -Daggerfall keeps a base building template in block data specifying generic information like building type.
+        /// -This building template is then merged with building data from location data to create unique buildings for each location.
+        /// -Which prevents any individual block (reused many hundreds of times across world) from always having same building names.
+        /// -The way Daggerfall links location building data with block building data is not 100% known.
+        /// -Noted is that special buildings (taverns, shops, temples, etc.) seem to be laid out in same sequential order in blocks and locations.
+        /// -So linking could simply be done by sequence, which may explain why Daggerfall can exhibit linking errors (e.g. taverns become residences).
+        /// -At this time, building data from location is not merged with with block building data.
+        /// -Current implementation is primarily to support exterior automap progress. May be moved to a different setup later.
+        /// </summary>
+        [Serializable]
+        public struct BuildingSummary
+        {
+            public int NameSeed;                                // Name seed of building - not set at block level
+            public int FactionId;                               // Faction ID of building
+            public int LocationId;                              // Unique location ID - not set at block level
+            public DFLocation.BuildingTypes BuildingType;       // Type of building
+            public int Quality;                                 // Quality of building
+            public Vector3 Position;                            // Position of building
+            public Vector3 Rotation;                            // Rotation of building
+            public Matrix4x4 Matrix;                            // Transform matrix of building
+            public float Radius;                                // Radius of building
+        }
+
+        /// <summary>
+        /// Gets BuildingSummary array generated from DFBlock data.
+        /// </summary>
+        /// <param name="blockData"></param>
+        /// <returns></returns>
+        public static BuildingSummary[] GetBuildingData(DFBlock blockData)
+        {
+            // Store building information
+            int buildingCount = blockData.RmbBlock.SubRecords.Length;
+            BuildingSummary[] buildings = new BuildingSummary[buildingCount];
+            for (int i = 0; i < buildingCount; i++)
+            {
+                // Create building summary
+                buildings[i] = new BuildingSummary();
+
+                // Set building data
+                DFLocation.BuildingData buildingData = blockData.RmbBlock.FldHeader.BuildingDataList[i];
+                buildings[i].NameSeed = buildingData.NameSeed;
+                buildings[i].FactionId = buildingData.FactionId;
+                buildings[i].LocationId = buildingData.LocationId;
+                buildings[i].BuildingType = buildingData.BuildingType;
+                buildings[i].Quality = buildingData.Quality;
+
+                // Set building transform info
+                DFBlock.RmbSubRecord subRecord = blockData.RmbBlock.SubRecords[i];
+                buildings[i].Position = new Vector3(subRecord.XPos, 0, BlocksFile.RMBDimension - subRecord.ZPos) * MeshReader.GlobalScale;
+                buildings[i].Rotation = new Vector3(0, -subRecord.YRotation / BlocksFile.RotationDivisor, 0);
+                buildings[i].Matrix = Matrix4x4.TRS(buildings[i].Position, Quaternion.Euler(buildings[i].Rotation), Vector3.one);
+            }
+
+            return buildings;
         }
 
         #endregion
