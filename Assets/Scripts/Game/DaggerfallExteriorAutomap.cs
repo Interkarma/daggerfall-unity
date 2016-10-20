@@ -738,6 +738,16 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 exteriorLayoutTexture.SetPixels32(layout.rect.xpos, layout.rect.ypos, layout.rect.width, layout.rect.height, colors);
+
+                RMBLayout.BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(block);
+                foreach (RMBLayout.BuildingSummary buildingSummary in buildingsInBlock)
+                {
+                    //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
+                    int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                    int yPosBuilding  = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                    //exteriorLayoutTexture.SetPixel(xPosBuilding, yPosBuilding, Color.yellow);
+                }
+
                 exteriorLayoutTexture.Apply();
 
                 DaggerfallUnity.Instance.ContentReader.BlockFileReader.DiscardBlock(block.Index);

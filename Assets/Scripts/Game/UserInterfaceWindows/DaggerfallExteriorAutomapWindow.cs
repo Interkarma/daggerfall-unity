@@ -42,8 +42,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float dragRotateSpeed = 5.0f; // hold right mouse button down and move left/right to rotate geometry with this speed        
         //const float dragZoomSpeed = 0.007f; // hold right mouse button down and move up/down to zoom in/out
 
-        const float cameraHeight = 90.0f; // initial camera height
-
         const float maxZoom = 25.0f; // the minimum external automap camera height
         const float minZoom = 250.0f; // the maximum external automap camera height
 
@@ -834,7 +832,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void resetCameraTransform()
         {
             cameraExteriorAutomap.orthographicSize = locationSizeBasedStartZoomMultiplier * Math.Max(daggerfallExteriorAutomap.LocationWidth, daggerfallExteriorAutomap.LocationHeight) * daggerfallExteriorAutomap.LayoutMultiplier;
-            cameraExteriorAutomap.orthographicSize = Math.Min(minZoom, Math.Max(maxZoom * daggerfallExteriorAutomap.LayoutMultiplier, cameraExteriorAutomap.orthographicSize));
+            cameraExteriorAutomap.orthographicSize = Math.Min(minZoom * daggerfallExteriorAutomap.LayoutMultiplier, Math.Max(maxZoom * daggerfallExteriorAutomap.LayoutMultiplier, cameraExteriorAutomap.orthographicSize));
             cameraExteriorAutomap.transform.position = daggerfallExteriorAutomap.GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f); //Vector3.zero + Vector3.up * cameraHeight;
             cameraExteriorAutomap.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             //cameraExteriorAutomap.transform.LookAt(Vector3.zero);            
@@ -995,7 +993,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionApplyMinZoom()
         {
-            cameraExteriorAutomap.orthographicSize = minZoom;
+            cameraExteriorAutomap.orthographicSize = minZoom * daggerfallExteriorAutomap.LayoutMultiplier;
             updateAutomapView();
         }
 
@@ -1004,7 +1002,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public void ActionApplyMaxZoom()
         {
-            cameraExteriorAutomap.orthographicSize = maxZoom;
+            cameraExteriorAutomap.orthographicSize = maxZoom * daggerfallExteriorAutomap.LayoutMultiplier;
             updateAutomapView();
         }
 
