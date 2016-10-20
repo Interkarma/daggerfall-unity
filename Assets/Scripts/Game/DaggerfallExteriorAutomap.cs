@@ -83,6 +83,18 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectPlayerMarkerArrowStamp = null; // GameObject which will hold player marker arrow stamp
         GameObject gameobjectPlayerMarkerCircle = null; // GameObject which will hold player marker circle (actually a cylinder)
 
+
+        private struct BuildingNamePlate
+        {
+            public int posX;
+            public int posY;
+            public string name;
+            public TextLabel textLabel;
+            public GameObject gameObject;
+        }
+
+        List<BuildingNamePlate> buildingNamePlates = null;
+
         private struct Rectangle
         {
             public int xpos;
@@ -119,7 +131,7 @@ namespace DaggerfallWorkshop.Game
 
         private const float layoutMultiplier = 1.0f;
 
-        private BlockLayout[] exteriorLayout;
+        private BlockLayout[] exteriorLayout = null;
 
         Texture2D exteriorLayoutTexture = null;
 
@@ -425,6 +437,11 @@ namespace DaggerfallWorkshop.Game
             return (pos);
         }
 
+        public void forceRotateBuildingNamePlates(float angle)
+        {
+            rotateBuildingNamePlates(angle);
+        }
+
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to signal this script to update when anything changed that requires DaggerfallExteriorAutomap to update - TODO: check if this can done with an event (if events work with gui windows)
         /// </summary>
@@ -592,6 +609,91 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        private void createBuildingNamePlates(DFLocation location)
+        {
+            deleteBuildingNamePlates();
+
+            buildingNamePlates = new List<BuildingNamePlate>();
+
+            GameObject gameObjectBuildingNamePlates = new GameObject("building name plates");
+            gameObjectBuildingNamePlates.transform.SetParent(gameobjectExteriorAutomap.transform);
+
+            foreach (var layout in exteriorLayout)
+            {
+                DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(layout.name);
+
+                RMBLayout.BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(block);
+                foreach (RMBLayout.BuildingSummary buildingSummary in buildingsInBlock)
+                {
+                    //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
+                    int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                    int yPosBuilding = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+
+                    //if (buildingSummary.BuildingType == DFLocation.BuildingTypes.WeaponSmith)
+                    {
+                        BuildingNamePlate newBuildingNamePlate;
+                        newBuildingNamePlate.name = ".";
+                        switch (buildingSummary.BuildingType)
+                        {
+                            case DFLocation.BuildingTypes.WeaponSmith:
+                                newBuildingNamePlate.name = "Weapon Smith";
+                                break;
+                            case DFLocation.BuildingTypes.Armorer:
+                                newBuildingNamePlate.name = "Armorer";
+                                break;
+                        }
+                        newBuildingNamePlate.posX = xPosBuilding;
+                        newBuildingNamePlate.posY = yPosBuilding;
+                        newBuildingNamePlate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNamePlate.name);
+                        newBuildingNamePlate.textLabel.TextColor = Color.yellow;
+                        newBuildingNamePlate.gameObject = new GameObject(String.Format("building name plate for [{0}]", newBuildingNamePlate.name));
+                        MeshFilter meshFilter = (MeshFilter)newBuildingNamePlate.gameObject.AddComponent(typeof(MeshFilter));
+                        int width = newBuildingNamePlate.textLabel.Texture.width;
+                        int height = newBuildingNamePlate.textLabel.Texture.height;
+                        meshFilter.mesh = CreateMesh(width, height); // create quad with normal facing into positive y-direction
+                        MeshRenderer renderer = newBuildingNamePlate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+
+                        renderer.material.shader = Shader.Find("Unlit/Transparent");
+                        renderer.material.mainTexture = newBuildingNamePlate.textLabel.Texture;
+                        renderer.enabled = true;
+
+                        SetLayerRecursively(newBuildingNamePlate.gameObject, layerAutomap);
+                        newBuildingNamePlate.gameObject.transform.SetParent(gameObjectBuildingNamePlates.transform);
+
+                        float posX = newBuildingNamePlate.posX - locationWidth * blockSizeWidth * 0.5f;
+                        float posY = newBuildingNamePlate.posY - locationHeight * blockSizeHeight * 0.5f;
+                        newBuildingNamePlate.gameObject.transform.position = new Vector3(posX, 4.0f, posY);
+                        newBuildingNamePlate.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                        buildingNamePlates.Add(newBuildingNamePlate);
+                    }
+                }
+            }            
+        }
+
+        private void rotateBuildingNamePlates(float angle)
+        {
+            foreach (var buildingNamePlate in buildingNamePlates)
+            {
+                buildingNamePlate.gameObject.transform.Rotate(new Vector3(0.0f, angle, 0.0f));
+            }
+        }
+
+        private void deleteBuildingNamePlates()
+        {
+            if (buildingNamePlates != null)
+            {
+                foreach (BuildingNamePlate n in buildingNamePlates)
+                {
+                    if (n.gameObject != null)
+                    {
+                        UnityEngine.Object.Destroy(n.gameObject);
+                    }
+                }
+                buildingNamePlates.Clear();
+                buildingNamePlates = null;
+            }
+        }
+
         /// <summary>
         /// creates the map layout in the exterior layout texture
         /// </summary>  
@@ -739,19 +841,21 @@ namespace DaggerfallWorkshop.Game
 
                 exteriorLayoutTexture.SetPixels32(layout.rect.xpos, layout.rect.ypos, layout.rect.width, layout.rect.height, colors);
 
-                RMBLayout.BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(block);
-                foreach (RMBLayout.BuildingSummary buildingSummary in buildingsInBlock)
-                {
-                    //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
-                    int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
-                    int yPosBuilding  = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
-                    //exteriorLayoutTexture.SetPixel(xPosBuilding, yPosBuilding, Color.yellow);
-                }
+                //RMBLayout.BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(block);
+                //foreach (RMBLayout.BuildingSummary buildingSummary in buildingsInBlock)
+                //{
+                //    //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
+                //    int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                //    int yPosBuilding  = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                //    //exteriorLayoutTexture.SetPixel(xPosBuilding, yPosBuilding, Color.yellow);
+                //}
 
-                exteriorLayoutTexture.Apply();
+                exteriorLayoutTexture.Apply();                
 
                 DaggerfallUnity.Instance.ContentReader.BlockFileReader.DiscardBlock(block.Index);
             }
+
+            createBuildingNamePlates(location);
         }     
 
         #endregion

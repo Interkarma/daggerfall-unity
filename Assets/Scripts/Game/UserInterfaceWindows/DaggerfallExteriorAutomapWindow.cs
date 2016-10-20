@@ -929,6 +929,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionRotate(float rotationAmount)
         {
             cameraExteriorAutomap.transform.RotateAround(cameraExteriorAutomap.transform.position, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            daggerfallExteriorAutomap.forceRotateBuildingNamePlates(rotationAmount * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
@@ -951,6 +952,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionRotateAroundPlayerPos(float rotationAmount)
         {
             cameraExteriorAutomap.transform.RotateAround(daggerfallExteriorAutomap.GameobjectPlayerMarkerArrow.transform.position, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            daggerfallExteriorAutomap.forceRotateBuildingNamePlates(rotationAmount * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
