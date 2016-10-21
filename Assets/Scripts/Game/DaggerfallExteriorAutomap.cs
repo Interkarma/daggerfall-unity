@@ -441,9 +441,20 @@ namespace DaggerfallWorkshop.Game
             return (pos);
         }
 
-        public void forceRotateBuildingNamePlates(float angle)
+        public void rotateBuildingNamePlates(float angle)
         {
-            rotateBuildingNamePlates(angle);
+            foreach (var buildingNamePlate in buildingNamePlates)
+            {
+                buildingNamePlate.gameObject.transform.Rotate(new Vector3(0.0f, angle, 0.0f));
+            }
+        }
+
+        public void resetRotationBuildingNamePlates()
+        {
+            foreach (var buildingNamePlate in buildingNamePlates)
+            {
+                buildingNamePlate.gameObject.transform.rotation = Quaternion.Euler(Vector3.zero);
+            }
         }
 
         /// <summary>
@@ -718,14 +729,6 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }            
-        }
-
-        private void rotateBuildingNamePlates(float angle)
-        {
-            foreach (var buildingNamePlate in buildingNamePlates)
-            {
-                buildingNamePlate.gameObject.transform.Rotate(new Vector3(0.0f, angle, 0.0f));
-            }
         }
 
         private void deleteBuildingNamePlates()
