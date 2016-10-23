@@ -379,7 +379,7 @@ namespace DaggerfallConnect.Arena2
                     break;
                 case Formatting.PositionPrefix:
                     peek = PeekByte(ref buffer, position);
-                    if (peek != null && IsFormattingToken(peek.Value))
+                    if (peek != null)
                     {
                         x = peek.Value;
                         position++;
