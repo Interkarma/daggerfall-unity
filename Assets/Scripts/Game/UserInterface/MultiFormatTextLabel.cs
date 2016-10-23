@@ -228,7 +228,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         if (token.x != 0)
                         {
                             // Tab by specific number of pixels
-                            cursorX += token.x;
+                            cursorX = token.x;
                         }
                         else
                         {
