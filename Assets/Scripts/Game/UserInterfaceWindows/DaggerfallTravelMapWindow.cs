@@ -676,7 +676,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 StopRegionIdentify();
                 DaggerfallInputMessageBox findPopUp = new DaggerfallInputMessageBox(uiManager, null, 31, HardStrings.findLocationPrompt, true, this);
-                findPopUp.TextPanelDistance = 5;
+                findPopUp.TextPanelDistanceY = 5;
+                findPopUp.TextBox.WidthOverride = 308;
+                findPopUp.TextBox.MaxCharacters = 32;
                 findPopUp.OnGotUserInput += HandleLocationFindEvent;
                 findPopUp.Show();
             }
