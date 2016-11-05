@@ -240,6 +240,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     case TextFile.Formatting.Text:
                         AddTextLabel(token.text, font);
                         break;
+                    case TextFile.Formatting.InputCursorPositioner:
+                        break;
                     default:
                         Debug.Log("MultilineTextLabel: Unknown formatting token: " + (int)token.formatting);
                         break;

@@ -18,6 +18,7 @@
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
 using UnityEngine;
+using System;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -34,7 +35,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private Color parentPanelColor = Color.clear;
 
         private int textPanelDistance = 12;             //distance between the text prompt / input & the multiline label
-        private int inputDistance = 4;                  //distance between the input label & input box
+        private int inputDistance = 0;                  //distance between the input label & input box
         private bool useParchmentStyle = true;          //if true, box will use PopupStyle Parchment background
         private bool clickAnywhereToClose = false;
 
@@ -181,7 +182,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpdatePanelSizes()
         {
-            float height = (messagePanel.TopMargin + multiLineLabel.Size.y + textPanelDistance + Mathf.Max(textBox.MaxSize.y, textBoxLabel.Size.y) + messagePanel.BottomMargin);
+            int minimum = 44;
+            float height = (messagePanel.TopMargin + multiLineLabel.Size.y + textPanelDistance + textBoxLabel.Size.y + messagePanel.BottomMargin);
+            if (height > minimum)
+                height = (float)Math.Ceiling(height / 22) * 22;
+            else
+                height = minimum;
+
             float width = (Mathf.Max(multiLineLabel.Size.x, (textBoxLabel.Size.x + inputDistance + textBox.MaxSize.x)));
             messagePanel.Size = new Vector2(width, height);
             textBoxLabel.Position = new Vector2(messagePanel.RightMargin, multiLineLabel.Position.y + multiLineLabel.Size.y + textPanelDistance);

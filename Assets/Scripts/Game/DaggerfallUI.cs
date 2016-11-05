@@ -408,7 +408,7 @@ namespace DaggerfallWorkshop.Game
                     globalFilterMode);
             }
 
-            panel.SetMargins(Margins.All, 12);
+            panel.SetMargins(Margins.All, 10);
         }
 
         void LoadDaggerfallParchmentTextures()
