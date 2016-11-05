@@ -53,6 +53,7 @@ namespace DaggerfallWorkshop
             var propGenerateNormals = Prop("GenerateNormals");
             var propNormalTextureStrength = Prop("NormalTextureStrength");
             var propMipMaps = Prop("MipMaps");
+            var propReadableTextures = Prop("ReadableTextures");
             var propSharpen = Prop("Sharpen");
             var propDayWindowColor = Prop("DayWindowColor");
             var propNightWindowColor = Prop("NightWindowColor");
@@ -66,8 +67,17 @@ namespace DaggerfallWorkshop
             var propNonAlphaTextureFormat = Prop("NonAlphaTextureFormat");
 
             EditorGUILayout.Space();
+            if (!propAtlasTextures.boolValue ||
+                !propMipMaps.boolValue ||
+                propReadableTextures.boolValue ||
+                propSharpen.boolValue ||
+                propGenerateNormals.boolValue)
+            {
+                EditorGUILayout.HelpBox("Below settings will impact runtime performance. Only change when necessary.", MessageType.Warning);
+            }
             propAtlasTextures.boolValue = EditorGUILayout.Toggle(new GUIContent("Atlas Textures", "Combine billboards and ground textures into an atlas."), propAtlasTextures.boolValue);
             propMipMaps.boolValue = EditorGUILayout.Toggle(new GUIContent("MipMaps", "Enable mipmaps for textures. Sky and weapon textures never use mipmaps as they are always drawn 1:1."), propMipMaps.boolValue);
+            propReadableTextures.boolValue = EditorGUILayout.Toggle(new GUIContent("Readable Textures", "Enable readable textures for exporting models from scene."), propReadableTextures.boolValue);
             propSharpen.boolValue = EditorGUILayout.Toggle(new GUIContent("Sharpen", "Sharpen image on import. Increases time to import textures."), propSharpen.boolValue);
             propGenerateNormals.boolValue = EditorGUILayout.Toggle(new GUIContent("Normal Textures", "Generate normal textures. Increases time to import textures."), propGenerateNormals.boolValue);
             if (propGenerateNormals.boolValue)

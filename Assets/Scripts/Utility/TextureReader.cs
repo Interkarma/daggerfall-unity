@@ -77,6 +77,12 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public static Texture2D CreateFromAPIImage(BaseImageFile image, int record = 0, int frame = 0, int alphaIndex = -1, bool createMipMaps = false, bool makeNoLongerReadable = true)
         {
+            // Override readable flag when user has set preference in material reader
+            if (DaggerfallUnity.Instance.MaterialReader.ReadableTextures)
+            {
+                makeNoLongerReadable = false;
+            }
+
             DFSize sz;
             Color32[] colors = image.GetColor32(record, frame, alphaIndex, 0, out sz);
             Texture2D texture = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, createMipMaps);
@@ -91,6 +97,12 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public static Texture2D CreateFromSolidColor(int width, int height, Color color, bool createMipMaps = false, bool makeNoLongerReadable = true)
         {
+            // Override readable flag when user has set preference in material reader
+            if (DaggerfallUnity.Instance.MaterialReader.ReadableTextures)
+            {
+                makeNoLongerReadable = false;
+            }
+
             Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, createMipMaps);
             Color32[] colors = new Color32[width * height];
             for (int i = 0; i < colors.Length; i++)
@@ -154,6 +166,12 @@ namespace DaggerfallWorkshop.Utility
             // Check if window or auto-emissive
             bool isWindow = ClimateSwaps.IsExteriorWindow(settings.archive, settings.record);
             bool isEmissive = (settings.autoEmission) ? IsEmissive(settings.archive, settings.record) : false;
+
+            // Override readable flag when user has set preference in material reader
+            if (DaggerfallUnity.Instance.MaterialReader.ReadableTextures)
+            {
+                settings.stayReadable = true;
+            }
 
             // Assign texture file
             TextureFile textureFile;
