@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(messagePanel);
 
             label.HorizontalAlignment = HorizontalAlignment.Center;
-            label.VerticalAlignment = VerticalAlignment.Top;
+            label.VerticalAlignment = VerticalAlignment.Middle;
             messagePanel.Components.Add(label);
 
             buttonPanel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -234,9 +234,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             buttonPanel.Size = finalSize;
-            messagePanel.Size = new Vector2(
-                label.Size.x + messagePanel.LeftMargin + messagePanel.RightMargin,
-                label.Size.y + buttonPanel.Size.y + buttonTextDistance + messagePanel.TopMargin + messagePanel.BottomMargin);
+
+            int minimum = 44;
+            float width = label.Size.x + messagePanel.LeftMargin + messagePanel.RightMargin;
+            float height = label.Size.y + buttonPanel.Size.y + buttonTextDistance + messagePanel.TopMargin + messagePanel.BottomMargin;
+
+            if (width > minimum)
+                width = (float)Math.Ceiling(width / 22) * 22;
+            else
+                width = minimum;
+
+            if (height > minimum)
+                height = (float)Math.Ceiling(height / 22) * 22;
+            else
+                height = minimum;
+
+            messagePanel.Size = new Vector2(width, height);
         }
 
         void SetupBox(int textId, CommonMessageBoxButtons buttons)
