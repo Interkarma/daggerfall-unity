@@ -33,6 +33,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallTravelMapWindow : DaggerfallPopupWindow
     {
+        #region Classic Text IDs
+
+        const int doYouWishToTravelTo = 31;
+
+        #endregion
+
         #region Fields
 
         const string nativeImgName                          = "TRAV0I00.IMG";
@@ -1282,12 +1288,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!locationSelected)
                 return;
 
-            TextFile.Token[] textTokens = new TextFile.Token[2];
-            //int index = currentRegion.MapIdLookup[locationSummary.MapIndex];
-            textTokens[0].text = string.Format("Travel to  {0} : {1} ?", currentDFRegion.Name, currentDFRegion.MapNames[locationSummary.MapIndex]);
-            textTokens[0].formatting = TextFile.Formatting.Text;
-            textTokens[1].text = null;
-            textTokens[1].formatting = TextFile.Formatting.NewLine;
+            // Get text tokens
+            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouWishToTravelTo);
+
+            // Hack to set location name in text token for now
+            textTokens[2].text = textTokens[2].text.Replace("%tcn", currentDFRegion.MapNames[locationSummary.MapIndex]);
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
             messageBox.SetTextTokens(textTokens);
