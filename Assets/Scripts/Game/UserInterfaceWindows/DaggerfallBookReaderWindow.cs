@@ -49,9 +49,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ChangeFont(4);
 
             // Add buttons
-            DaggerfallUI.AddButton(new Vector2(181, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderPreviousPage, NativePanel);
-            DaggerfallUI.AddButton(new Vector2(208, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderNextPage, NativePanel);
-            //CreateButton(new Vector2(277, 187), new Vector2(32, 10), WindowMessages.wmCloseWindow);
+            Button nextPageButton = DaggerfallUI.AddButton(new Rect(208, 188, 14, 8), NativePanel);
+            nextPageButton.OnMouseClick += NextPageButton_OnMouseClick;
+
+            Button previousPageButton = DaggerfallUI.AddButton(new Rect(181, 188, 14, 48), NativePanel);
+            previousPageButton.OnMouseClick += PreviousPageButton_OnMouseClick;
+
+            Button exitButton = DaggerfallUI.AddButton(new Rect(277, 187, 32, 10), NativePanel);
+            exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
             // Test book
             dfUnity.TextProvider.OpenBook("BOK00043.TXT");      // The Real Barenziah
@@ -60,26 +65,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             LayoutPage();
         }
 
-        //protected override void ProcessMessageQueue()
-        //{
-        //    string message = uiManager.PeekMessage();
-        //    switch (message)
-        //    {
-        //        case DaggerfallUIMessages.dfuiBookReaderPreviousPage:
-        //            if (dfUnity.TextProvider.MovePreviousPage())
-        //                LayoutPage();
-        //            break;
-        //        case DaggerfallUIMessages.dfuiBookReaderNextPage:
-        //            if (dfUnity.TextProvider.MoveNextPage())
-        //                LayoutPage();
-        //            break;
-        //        default:
-        //            return;
-        //    }
+        private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (dfUnity.TextProvider.MoveNextPage())
+                LayoutPage();
+        }
 
-        //    // Message was handled, pop from stack
-        //    uiManager.PopMessage();
-        //}
+        private void PreviousPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (dfUnity.TextProvider.MovePreviousPage())
+                LayoutPage();
+        }
+
+
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CloseWindow();
+        }
 
         void LayoutPage()
         {

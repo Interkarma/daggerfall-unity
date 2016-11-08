@@ -31,8 +31,6 @@ namespace DaggerfallWorkshop.Game
 
         // "Book Reader" window messages
         public const string dfuiOpenBookReaderWindow = "dfuiOpenBookReaderWindow";
-        public const string dfuiBookReaderPreviousPage = "dfuiBookReaderPreviousPage";
-        public const string dfuiBookReaderNextPage = "dfuiBookReaderNextPage";
 
         // "VID Player" window messages
         public const string dfuiOpenVIDPlayerWindow = "dfuiOpenVIDPlayerWindow";

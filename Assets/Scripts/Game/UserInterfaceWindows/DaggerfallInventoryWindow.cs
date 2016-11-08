@@ -1373,7 +1373,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                NextVariant(item);
+                if (item.ItemGroup == ItemGroups.Books) {
+                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
+                } else { 
+                    NextVariant(item);
+                }
             }
             else if (selectedActionMode == ActionModes.Remove)
             {
