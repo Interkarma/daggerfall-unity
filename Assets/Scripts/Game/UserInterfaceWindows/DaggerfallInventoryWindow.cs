@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:
+// Contributors: InconsolableCellist
 //
 // Notes:
 //
@@ -1380,11 +1380,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
                     } else if (item.TemplateIndex == (int)Books.Parchment)
                     {
-                        // TODO: implement note viewer -IC112016
+                        // TODO: implement note viewer? Or is parchment just blank paper? -IC112016
                     } else if (item.TemplateIndex == (int)Books.Potion_recipe)
                     {
-                        // TODO: implement note viewer -IC112016
+                        // TODO: implement potion viewer -IC112016
                     }
+                } else if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe) {
+                    // TODO: implement potion viewer -IC112016
                 } else {
                     NextVariant(item);
                 }
