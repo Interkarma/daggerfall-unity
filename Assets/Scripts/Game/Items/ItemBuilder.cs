@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors: InconsolableCellist
+//
 // Notes:
 //
 
@@ -243,6 +243,18 @@ namespace DaggerfallWorkshop.Game.Items
 
             return newItem;
         }
+
+        /// <summary>
+        /// Creates a new random book
+        /// </summary>
+        /// <returns>DaggerfallUnityItem.</returns>
+        public static DaggerfallUnityItem CreateRandomBook()
+        {
+            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Books);
+            return new DaggerfallUnityItem(ItemGroups.Books, Array.IndexOf(enumArray, Books.Book));
+        }
+
+
 
         /// <summary>
         /// Creates a new random religious item.
