@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -534,7 +534,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 lootTarget.OnInventoryClose();
                 lootTarget = null;
             }
-            
+
             // Generate serializable loot pile in world for dropped items
             if (droppedItems.Count > 0)
             {
@@ -798,7 +798,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             for (int i = 0; i < localItems.Count; i++)
             {
                 DaggerfallUnityItem item = localItems.GetItem(i);
-                
+
                 // Reject if equipped
                 if (item.IsEquipped)
                     continue;
@@ -880,7 +880,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Get item and image
                 DaggerfallUnityItem item = localItemsFiltered[scrollIndex + i];
-                ImageData image = GetInventoryImage(item);                
+                ImageData image = GetInventoryImage(item);
 
                 // Set image to button icon
                 localItemsIconPanels[i].BackgroundTexture = image.texture;
@@ -1318,7 +1318,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Equip)
             {
-                UnequipItem(item, false);                
+                UnequipItem(item, false);
             }
             else if (selectedActionMode == ActionModes.Info)
             {
@@ -1373,9 +1373,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                if (item.ItemGroup == ItemGroups.Books) {
-                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
-                } else { 
+                if (item.ItemGroup == ItemGroups.Books)
+                {
+                    if (item.TemplateIndex == (int)Books.Book)
+                    {
+                        DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
+                    } else if (item.TemplateIndex == (int)Books.Parchment)
+                    {
+                        // TODO: implement note viewer -IC112016
+                    } else if (item.TemplateIndex == (int)Books.Potion_recipe)
+                    {
+                        // TODO: implement note viewer -IC112016
+                    }
+                } else {
                     NextVariant(item);
                 }
             }
