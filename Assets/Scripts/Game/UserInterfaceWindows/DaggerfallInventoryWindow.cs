@@ -1375,8 +1375,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (item.ItemGroup == ItemGroups.Books)
                 {
-                    if (item.TemplateIndex == (int)Books.Book)
+                    // Unreadable parchment (the one with a note graphic) is actually in UselessItems2
+                    if (item.TemplateIndex == (int)Books.Book || item.TemplateIndex == (int)Books.Parchment)
                     {
+                        DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
                         DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
                     } else if (item.TemplateIndex == (int)Books.Parchment)
                     {

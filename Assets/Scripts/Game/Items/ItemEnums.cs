@@ -279,7 +279,7 @@ namespace DaggerfallWorkshop.Game.Items
     {
         UNKNOWN_BOOK_TYPE = 276,
         Potion_recipe = 277,
-        Parchment = 278,
+        Parchment = 279,
         Book = 279,
     }
 
