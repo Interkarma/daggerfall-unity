@@ -891,7 +891,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     localItemsStackLabels[i].Text = item.stackCount.ToString();
 
                 // Tooltip text
-                string text = item.LongName;
+                string text;
+                if (item.ItemGroup == ItemGroups.Books)
+                {
+                    text = DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName);
+                } else {
+                    text = item.LongName;
+                }
                 localItemsButtons[i].ToolTipText = text;
             }
         }
@@ -933,7 +939,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     remoteItemsStackLabels[i].Text = item.stackCount.ToString();
 
                 // Tooltip text
-                string text = item.LongName;
+                string text;
+                if (item.ItemGroup == ItemGroups.Books)
+                {
+                    text = DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName);
+                } else {
+                    text = item.LongName;
+                }
                 remoteItemsButtons[i].ToolTipText = text;
             }
         }

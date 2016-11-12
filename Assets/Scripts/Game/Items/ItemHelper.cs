@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -30,10 +30,12 @@ namespace DaggerfallWorkshop.Game.Items
 
         const string itemTemplatesFilename = "ItemTemplates";
         const string containerIconsFilename = "INVE16I0.CIF";
+        const string bookMappingFilename = "books";
 
         List<ItemTemplate> itemTemplates = new List<ItemTemplate>();
         Dictionary<int, ImageData> itemImages = new Dictionary<int, ImageData>();
         Dictionary<InventoryContainerImages, ImageData> containerImages = new Dictionary<InventoryContainerImages, ImageData>();
+        Dictionary<int, String> bookIDNameMapping = new Dictionary<int, String>();
 
         #endregion
 
@@ -42,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Items
         public ItemHelper()
         {
             LoadItemTemplates();
+            LoadBookIDNameMapping();
         }
 
         #endregion
@@ -226,6 +229,41 @@ namespace DaggerfallWorkshop.Game.Items
             ImageReader.UpdateTexture(ref result, maskColor);
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the Daggerfall name of a book based on its id.
+        /// </summary>
+        /// <param name="id">The book's ID</param>
+        /// <param name="defaultBookName">The name the book should default to if the lookup fails. (Usually the Item's LongName..."Book" or "Parchment")</param>
+        /// <returns>A string representing the name of the book. defaultBookName if no name was found </returns>
+        public String getBookNameByID(int id, string defaultBookName)
+        {
+            string title = "";
+            return bookIDNameMapping.TryGetValue(id, out title) ? title : defaultBookName;
+        }
+
+        /// <summary>
+        /// Gets the Daggerfall name of a book based on its "message" field. The ID is derived from this message using Daggerfall's
+        /// bitmasking (message & 0xFF)
+        /// </summary>
+        /// <param name="message">The message field for the book Item, from which the ID is derived</param>
+        /// <param name="defaultBookName">The name the book should default to if the lookup fails. (Usually the Item's LongName..."Book" or "Parchment")</param>
+        /// <returns>A string representing the name of the book. defaultBookName if no name was found </returns>
+        public String getBookNameByMessage(int message, string defaultBookName)
+        {
+            return getBookNameByID(message & 0xFF, defaultBookName);
+        }
+
+        /// <summary>
+        /// Obtaining a random book ID is useful for generating books in loot drops, store inventories, etc.
+        /// </summary>
+        /// <returns>A random book ID</returns>
+        public int getRandomBookID()
+        {
+            List<int> keys = new List<int>(bookIDNameMapping.Keys);
+            int size = bookIDNameMapping.Count;
+            return keys[UnityEngine.Random.Range(0, size-1)];
         }
 
         /// <summary>
@@ -674,6 +712,7 @@ namespace DaggerfallWorkshop.Game.Items
             for (int i = 0; i < 10; i++)
             {
                 items.AddItem(ItemBuilder.CreateRandomIngredient());
+                items.AddItem(ItemBuilder.CreateRandomBook());
             }
         }
 
@@ -695,6 +734,28 @@ namespace DaggerfallWorkshop.Game.Items
             catch
             {
                 Debug.Log("Could not load ItemTemplates database from Resources. Check file exists and is in correct format.");
+            }
+        }
+
+        /// <summary>
+        /// Loads book ID-name mappings from JSON file. This is used whenever you need to look up a title by book ID (message & 0xFF)
+        /// It should be called once to initilaize the internal data structures used for book-related helper functions.
+        /// This data was obtained by the filenames in ARENA2/BOOKS and the title field.
+        /// </summary>
+        void LoadBookIDNameMapping()
+        {
+            try
+            {
+                TextAsset bookNames = Resources.Load<TextAsset>(bookMappingFilename) as TextAsset;
+                List<BookMappingTemplate> mappings = SaveLoadManager.Deserialize(typeof(List<BookMappingTemplate>), bookNames.text) as List<BookMappingTemplate>;
+                foreach (BookMappingTemplate entry in mappings)
+                {
+                    bookIDNameMapping.Add(entry.id, entry.title);
+                }
+            }
+            catch
+            {
+                Debug.Log("Could not load the BookIDName mapping from Resources. Check file exists and is in correct format.");
             }
         }
 

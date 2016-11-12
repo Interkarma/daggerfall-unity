@@ -1,0 +1,366 @@
+[
+    {
+        "id": 0,
+        "title": "The First Scroll of Baan Dar"
+    },
+    {
+        "id": 1,
+        "title": "A Tale of Kieran"
+    },
+    {
+        "id": 2,
+        "title": "Fragment: On Artaeum"
+    },
+    {
+        "id": 3,
+        "title": "The Wild Elves"
+    },
+    {
+        "id": 4,
+        "title": "Redguards, History and Heroes"
+    },
+    {
+        "id": 5,
+        "title": "Ark'ay The God"
+    },
+    {
+        "id": 6,
+        "title": "The Faerie"
+    },
+    {
+        "id": 7,
+        "title": "Oelander's Hammer"
+    },
+    {
+        "id": 8,
+        "title": "The Pig Children"
+    },
+    {
+        "id": 9,
+        "title": "The Old Ways"
+    },
+    {
+        "id": 20,
+        "title": "Ghraewaj"
+    },
+    {
+        "id": 21,
+        "title": "A Scholar's Guide to Nymphs"
+    },
+    {
+        "id": 22,
+        "title": "The MemoryStone"
+    },
+    {
+        "id": 25,
+        "title": "Legal Basics"
+    },
+    {
+        "id": 26,
+        "title": "The Brothers of Darkness"
+    },
+    {
+        "id": 27,
+        "title": "Special Flora of Tamriel"
+    },
+    {
+        "id": 28,
+        "title": "Brief History of the Empire, Part I"
+    },
+    {
+        "id": 29,
+        "title": "Brief History of the Empire, Part II"
+    },
+    {
+        "id": 30,
+        "title": "Brief History of the Empire, Part III"
+    },
+    {
+        "id": 31,
+        "title": "Brief History of the Empire, Part IV"
+    },
+    {
+        "id": 32,
+        "title": "The Epic of the Grey Falcon"
+    },
+    {
+        "id": 33,
+        "title": "Holidays of the Iliac Bay"
+    },
+    {
+        "id": 34,
+        "title": "Broken Diamonds"
+    },
+    {
+        "id": 35,
+        "title": "The Legend of Lovers Lament"
+    },
+    {
+        "id": 36,
+        "title": "On Lycanthropy"
+    },
+    {
+        "id": 37,
+        "title": "The Story of Lyrisius"
+    },
+    {
+        "id": 38,
+        "title": "Origin of the Mages Guild"
+    },
+    {
+        "id": 39,
+        "title": "The Asylum Ball"
+    },
+    {
+        "id": 40,
+        "title": "Mysticism"
+    },
+    {
+        "id": 41,
+        "title": "The Fall of the Usurper"
+    },
+    {
+        "id": 42,
+        "title": "The Madness of Pelagius"
+    },
+    {
+        "id": 43,
+        "title": "The Real Barenziah"
+    },
+    {
+        "id": 44,
+        "title": "The Real Barenziah, Part II"
+    },
+    {
+        "id": 45,
+        "title": "The Real Barenziah, Part III"
+    },
+    {
+        "id": 46,
+        "title": "The Real Barenziah, Part IV"
+    },
+    {
+        "id": 47,
+        "title": "The Real Barenziah, Part V"
+    },
+    {
+        "id": 48,
+        "title": "The Real Barenziah, Part VI"
+    },
+    {
+        "id": 49,
+        "title": "The Real Barenziah, Part VII"
+    },
+    {
+        "id": 50,
+        "title": "The True Barenziah, Part VIII"
+    },
+    {
+        "id": 51,
+        "title": "The Real Barenziah, Part IX"
+    },
+    {
+        "id": 52,
+        "title": "The Real Barenziah, Part X"
+    },
+    {
+        "id": 53,
+        "title": "On Oblivion"
+    },
+    {
+        "id": 54,
+        "title": "The Sage"
+    },
+    {
+        "id": 55,
+        "title": "The Light and The Dark"
+    },
+    {
+        "id": 56,
+        "title": "Confessions of a Thief"
+    },
+    {
+        "id": 57,
+        "title": "Vampires of the Iliac Bay, Part I"
+    },
+    {
+        "id": 58,
+        "title": "Vampires of the Iliac Bay, Part II"
+    },
+    {
+        "id": 59,
+        "title": "Biography of Queen Barenziah, Vol. I"
+    },
+    {
+        "id": 60,
+        "title": "Biography of Queen Barenziah, Vol. II"
+    },
+    {
+        "id": 61,
+        "title": "A History of Daggerfall"
+    },
+    {
+        "id": 62,
+        "title": "A Dubious Tale of the Crystal Tower"
+    },
+    {
+        "id": 63,
+        "title": "An Overview of Gods and Worship"
+    },
+    {
+        "id": 64,
+        "title": "Wayrest, Jewel of the Bay"
+    },
+    {
+        "id": 65,
+        "title": "Wabbajack"
+    },
+    {
+        "id": 66,
+        "title": "Galerion the Mystic"
+    },
+    {
+        "id": 67,
+        "title": "The Ebon Arm"
+    },
+    {
+        "id": 68,
+        "title": "Rude Song"
+    },
+    {
+        "id": 69,
+        "title": "Mara's Tear"
+    },
+    {
+        "id": 70,
+        "title": "Jokes"
+    },
+    {
+        "id": 71,
+        "title": "Ius, Animal God"
+    },
+    {
+        "id": 72,
+        "title": "The Healer's Tale"
+    },
+    {
+        "id": 73,
+        "title": "Of Jephre"
+    },
+    {
+        "id": 74,
+        "title": "Fools' Ebony, Part the Oneth"
+    },
+    {
+        "id": 75,
+        "title": "Fools' Ebony, Part the Twoth"
+    },
+    {
+        "id": 76,
+        "title": "Fools' Ebony, Part the Threeth"
+    },
+    {
+        "id": 77,
+        "title": "Fools' Ebony, Part the Fourth"
+    },
+    {
+        "id": 78,
+        "title": "Fools' Ebony, Part the Fiveth"
+    },
+    {
+        "id": 79,
+        "title": "Etiquette With Rulers"
+    },
+    {
+        "id": 80,
+        "title": "Invocation of Azura"
+    },
+    {
+        "id": 81,
+        "title": "The Arrowshot Woman"
+    },
+    {
+        "id": 82,
+        "title": "Banker's Bet"
+    },
+    {
+        "id": 83,
+        "title": "The War of Betony"
+    },
+    {
+        "id": 84,
+        "title": "The War of Betony"
+    },
+    {
+        "id": 85,
+        "title": "The Alik'r"
+    },
+    {
+        "id": 86,
+        "title": "Divad the Singer"
+    },
+    {
+        "id": 87,
+        "title": "Notes For Redguard History"
+    },
+    {
+        "id": 88,
+        "title": "Fools' Ebony, Part the Sixth"
+    },
+    {
+        "id": 89,
+        "title": "Biography of Queen Barenziah, Vol. III"
+    },
+    {
+        "id": 100,
+        "title": "King Edward, Part I"
+    },
+    {
+        "id": 101,
+        "title": "King Edward, Part 2"
+    },
+    {
+        "id": 102,
+        "title": "King Edward, Part III"
+    },
+    {
+        "id": 103,
+        "title": "King Edward, Part IV"
+    },
+    {
+        "id": 104,
+        "title": "King Edward, Part V"
+    },
+    {
+        "id": 105,
+        "title": "King Edward, Part VI"
+    },
+    {
+        "id": 106,
+        "title": "King Edward, Part VII"
+    },
+    {
+        "id": 107,
+        "title": "King Edward, Part VIII"
+    },
+    {
+        "id": 108,
+        "title": "King Edward, Part IX"
+    },
+    {
+        "id": 109,
+        "title": "King Edward, Part X"
+    },
+    {
+        "id": 110,
+        "title": "King Edward, Part XI"
+    },
+    {
+        "id": 111,
+        "title": "King Edward, Part XII"
+    },
+    {
+        "id": 10000,
+        "title": "Ark`ay The God"
+    }
+]
