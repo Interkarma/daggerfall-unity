@@ -251,7 +251,13 @@ namespace DaggerfallWorkshop.Game.Items
         public static DaggerfallUnityItem CreateRandomBook()
         {
             Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Books);
-            return new DaggerfallUnityItem(ItemGroups.Books, Array.IndexOf(enumArray, Books.Book));
+            DaggerfallUnityItem book = new DaggerfallUnityItem(ItemGroups.Books, Array.IndexOf(enumArray, Books.Book));
+
+            // TODO: FIXME: I don't know what the higher order bits are for the message field. I just know that message & 0xFF encodes
+            // the ID of the book. Thus the books that are randomly generated are missing information that the actual game provides.
+            // -IC112016
+            book.message = DaggerfallUnity.Instance.ItemHelper.getRandomBookID();
+            return book;
         }
 
 

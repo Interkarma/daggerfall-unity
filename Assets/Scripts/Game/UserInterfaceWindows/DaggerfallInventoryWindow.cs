@@ -891,7 +891,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     localItemsStackLabels[i].Text = item.stackCount.ToString();
 
                 // Tooltip text
-                string text = item.LongName;
+                string text;
+                if (item.ItemGroup == ItemGroups.Books)
+                {
+                    text = DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName);
+                } else {
+                    text = item.LongName;
+                }
                 localItemsButtons[i].ToolTipText = text;
             }
         }
@@ -933,7 +939,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     remoteItemsStackLabels[i].Text = item.stackCount.ToString();
 
                 // Tooltip text
-                string text = item.LongName;
+                string text;
+                if (item.ItemGroup == ItemGroups.Books)
+                {
+                    text = DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName);
+                } else {
+                    text = item.LongName;
+                }
                 remoteItemsButtons[i].ToolTipText = text;
             }
         }
@@ -1375,8 +1387,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (item.ItemGroup == ItemGroups.Books)
                 {
-                    if (item.TemplateIndex == (int)Books.Book)
+                    // Unreadable parchment (the one with a note graphic) is actually in UselessItems2
+                    if (item.TemplateIndex == (int)Books.Book || item.TemplateIndex == (int)Books.Parchment)
                     {
+                        DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
                         DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
                     } else if (item.TemplateIndex == (int)Books.Parchment)
                     {

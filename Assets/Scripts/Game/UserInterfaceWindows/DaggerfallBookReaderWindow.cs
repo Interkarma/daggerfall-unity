@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -27,10 +28,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeTexture;
         DaggerfallFont currentFont;
         List<TextLabel> pageLabels = new List<TextLabel>();
+        DaggerfallUnityItem bookTarget;
 
         public DaggerfallBookReaderWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+        }
+
+        public DaggerfallUnityItem BookTarget
+        {
+            get { return bookTarget; }
+            set
+            {
+                bookTarget = value;
+                DaggerfallUnity.Instance.TextProvider.OpenBook(bookTarget.message);
+            }
         }
 
         protected override void Setup()
@@ -58,10 +70,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(new Rect(277, 187, 32, 10), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
-            // Test book
-            dfUnity.TextProvider.OpenBook("BOK00043.TXT");      // The Real Barenziah
-            //dfUnity.TextProvider.OpenBook("BOK00101.TXT");      // Kind Edward, Part 2
-            //dfUnity.TextProvider.OpenBook("BOK00008.TXT");      // The Pig Children
             LayoutPage();
         }
 
@@ -81,6 +89,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
+        }
+
+        public override void OnPush()
+        {
+            if (IsSetup)
+                LayoutPage();
         }
 
         void LayoutPage()

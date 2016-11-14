@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -65,6 +65,12 @@ namespace DaggerfallConnect.FallExe
         public int worldTextureRecord;              // World texture record index
         public int playerTextureArchive;            // Player inventory texture archive index
         public int playerTextureRecord;             // Player inventory texture record index
+    }
+
+    public struct BookMappingTemplate
+    {
+        public int id;
+        public string title;
     }
 
     /// <summary>
@@ -250,7 +256,7 @@ namespace DaggerfallConnect.FallExe
                 desc.playerTextureArchive = item.playerTextureBitfield >> 7;
                 desc.playerTextureRecord = item.playerTextureBitfield & 0x7f;
             }
-            
+
             return desc;
         }
 
