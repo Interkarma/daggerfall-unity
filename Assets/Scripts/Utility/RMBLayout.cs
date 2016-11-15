@@ -185,6 +185,7 @@ namespace DaggerfallWorkshop.Utility
                         int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
                         GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(natureArchive, scenery.TextureRecord, flatsParent);
                         go.transform.position = billboardPosition;
+                        AlignBillboardToBase(go);
                     }
                 }
             }
@@ -228,6 +229,7 @@ namespace DaggerfallWorkshop.Utility
                     {
                         GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
                         go.transform.position = billboardPosition;
+                        AlignBillboardToBase(go);
                     }
 
                     // Import light prefab
@@ -285,7 +287,22 @@ namespace DaggerfallWorkshop.Utility
                     // Add standalone billboard gameobject
                     GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
                     go.transform.position = billboardPosition;
+                    AlignBillboardToBase(go);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Aligns billboard GameObject to centre of base.
+        /// This is required for exterior billboard.
+        /// </summary>
+        /// <param name="go">GameObject with DaggerfallBillboard component.</param>
+        public static void AlignBillboardToBase(GameObject go)
+        {
+            DaggerfallBillboard c = go.GetComponent<DaggerfallBillboard>();
+            if (c)
+            {
+                c.AlignToBase();
             }
         }
 
