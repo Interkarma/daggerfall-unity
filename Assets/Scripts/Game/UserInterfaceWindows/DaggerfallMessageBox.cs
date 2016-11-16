@@ -233,11 +233,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     finalSize.x += buttonSpacing;
             }
 
+            if (finalSize.y - buttonPanel.Size.y > 0)
+                label.ResizeY(label.Size.y + finalSize.y + buttonTextDistance);
+
             buttonPanel.Size = finalSize;
 
             int minimum = 44;
             float width = label.Size.x + messagePanel.LeftMargin + messagePanel.RightMargin;
-            float height = label.Size.y + buttonPanel.Size.y + buttonTextDistance + messagePanel.TopMargin + messagePanel.BottomMargin;
+            float height = label.Size.y + messagePanel.TopMargin + messagePanel.BottomMargin;
 
             if (width > minimum)
                 width = (float)Math.Ceiling(width / 22) * 22;

@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// </summary>
     public class MultiFormatTextLabel : BaseScreenComponent
     {
-        const int tabWidth = 45;
+        const int tabWidth = 35;
 
         PixelFont font;
         int rowLeading = 0;
@@ -79,6 +79,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return textAlignment; }
             set { textAlignment = value; }
+        }
+
+        public void ResizeY(float newSize)
+        {
+            Size = new Vector2(totalWidth, newSize);
         }
 
         public override void Draw()
@@ -164,7 +169,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             cursorX = 0;
             cursorY += LineHeight;
-            totalHeight += LineHeight;
             tabStop = 0;
         }
 
@@ -218,6 +222,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         break;
                     case TextFile.Formatting.JustifyLeft:
                         NewLine();
+                        totalHeight += LineHeight; // Justify left adds to height regardless of there being anything afterwards
                         break;
                     case TextFile.Formatting.JustifyCenter:
                         if (lastLabel != null)
@@ -252,6 +257,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     int rowWidth = (int)lastLabel.Position.x + lastLabel.TextWidth;
                     if (rowWidth > totalWidth)
                         totalWidth = rowWidth;
+                    int rowHeight = (int)lastLabel.Position.y + lastLabel.TextHeight;
+                    if (rowHeight > totalHeight)
+                        totalHeight = rowHeight;
                 }
             }
 

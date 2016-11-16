@@ -333,9 +333,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
             mb.SetTextBoxLabel(HardStrings.restHowManyHours);
-            mb.TextPanelDistance = 8;
+            mb.TextPanelDistanceX = 9;
+            mb.TextPanelDistanceY = 8;
             mb.TextBox.Text = "0";
             mb.TextBox.Numeric = true;
+            mb.TextBox.MaxCharacters = 8;
+            mb.TextBox.WidthOverride = 286;
             mb.OnGotUserInput += TimedRestPrompt_OnGotUserInput;
             mb.Show();
         }
@@ -350,9 +353,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
             mb.SetTextBoxLabel(HardStrings.loiterHowManyHours);
-            mb.TextPanelDistance = 8;
+            mb.TextPanelDistanceX = 5;
+            mb.TextPanelDistanceY = 8;
             mb.TextBox.Text = "0";
             mb.TextBox.Numeric = true;
+            mb.TextBox.MaxCharacters = 8;
+            mb.TextBox.WidthOverride = 286;
             mb.OnGotUserInput += LoiterPrompt_OnGotUserInput;
             mb.Show();
         }

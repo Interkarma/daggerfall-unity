@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         int maxCharacters = 31;
         int cursorPosition = 0;
+        int widthOverride = 0;
         DaggerfallFont font;
         TextCursor textCursor = new TextCursor();
         string text = string.Empty;
@@ -38,6 +39,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return maxCharacters; }
             set { maxCharacters = value; MaxSize = CalculateMaximumSize(); }
+        }
+
+        public int WidthOverride
+        {
+              get { return widthOverride; }
+              set { widthOverride = value; }
         }
 
         public DaggerfallFont Font
