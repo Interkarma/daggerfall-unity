@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.InternalTypes;
 using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -31,6 +32,13 @@ namespace DaggerfallWorkshop
         {
             get { return EditorPrefs.GetBool(showAboutBillboardFoldout, true); }
             set { EditorPrefs.SetBool(showAboutBillboardFoldout, value); }
+        }
+
+        private const string showCustomBillboardFoldout = "DaggerfallUnity_ShowCustomBillboardFoldout";
+        private static bool ShowCustomBillboardFoldout
+        {
+            get { return EditorPrefs.GetBool(showCustomBillboardFoldout, true); }
+            set { EditorPrefs.SetBool(showCustomBillboardFoldout, value); }
         }
 
         SerializedProperty Prop(string name)
@@ -53,6 +61,33 @@ namespace DaggerfallWorkshop
 
         private void DisplayAboutGUI()
         {
+            EditorGUILayout.Space();
+            ShowCustomBillboardFoldout = GUILayoutHelper.Foldout(ShowCustomBillboardFoldout, new GUIContent("Custom"), () =>
+            {
+                var propCustomArchive = Prop("customArchive");
+                var propCustomRecord = Prop("customRecord");
+                GUILayoutHelper.Indent(() =>
+                {
+                    propCustomArchive.intValue = EditorGUILayout.IntField(new GUIContent("Archive", "Set texture archive index (e.g. TEXTURE.210 is 210)"), propCustomArchive.intValue);
+                    propCustomRecord.intValue = EditorGUILayout.IntField(new GUIContent("Record", "Set texture record index (between 0-n)"), propCustomRecord.intValue);
+                    if (GUILayout.Button("Set Billboard Texture"))
+                    {
+                        try
+                        {
+                            dfBillboard.SetMaterial(propCustomArchive.intValue, propCustomRecord.intValue);
+                        }
+                        catch(Exception ex)
+                        {
+                            Debug.Log("Failed to set custom billboard texture. Exception: " + ex.Message);
+                        }
+                    }
+                    if (GUILayout.Button("Align To Surface"))
+                    {
+                        GameObjectHelper.AlignBillboardToGround(dfBillboard.gameObject, dfBillboard.Summary.Size, 4);
+                    }
+                });
+            });
+
             EditorGUILayout.Space();
             ShowAboutBillboardFoldout = GUILayoutHelper.Foldout(ShowAboutBillboardFoldout, new GUIContent("About"), () =>
             {

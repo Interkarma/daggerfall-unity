@@ -36,6 +36,9 @@ namespace DaggerfallWorkshop
         [SerializeField]
         BillboardSummary summary = new BillboardSummary();
 
+        public int customArchive = 210;
+        public int customRecord = 0;
+
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
         bool restartAnims = true;
