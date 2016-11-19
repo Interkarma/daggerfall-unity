@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors: InconsolableCellist
+//
 // Notes:
 //
 
@@ -66,6 +66,17 @@ namespace DaggerfallConnect.Arena2
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Converts the internal Daggerfall "message" field to a filename that can be found in ARENA2/BOOKS
+        /// </summary>
+        /// <param name="message">The int32 message field that encodes the book's ID</param>
+        /// <returns>A string that represents a file that should exist in the ARENA2/BOOKS directory (but this isn't verified on the filesystem)</returns>
+        public static string messageToBookFilename(int message)
+        {
+            int decodedValue = message & 0xFF;
+            return "BOK" + decodedValue.ToString("D5") + ".TXT";
+        }
 
         /// <summary>
         /// Opens the specified book file.

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Entity;
 using System.IO;
+using DaggerfallWorkshop.Game.Items;
 
 namespace Wenzil.Console
 {
@@ -51,6 +52,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(Teleport.name, Teleport.description, Teleport.usage, Teleport.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Groundme.name, Groundme.description, Groundme.usage, Groundme.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ExecuteScript.name, ExecuteScript.description, ExecuteScript.usage, ExecuteScript.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(AddInventoryItem.name, AddInventoryItem.description, AddInventoryItem.usage, AddInventoryItem.Execute);
 
         }
 
@@ -945,6 +947,65 @@ namespace Wenzil.Console
                     GameManager.Instance.PlayerObject.transform.position = loc;
                 }
                 return "Finished";
+            }
+        }
+
+        private static class AddInventoryItem
+        {
+            public static readonly string name = "add";
+            public static readonly string description = "Adds n inventory items to the character, based on the given keyword. n = 1 by default";
+            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig) [n]";
+
+            public static string Execute(params string[] args)
+            {
+                if (args.Length < 1) return "see usage";
+
+                GameObject player = GameObject.FindGameObjectWithTag("Player");
+                PlayerEntity playerEntity = player.GetComponent<DaggerfallEntityBehaviour>().Entity as PlayerEntity;
+                ItemCollection items = playerEntity.Items;
+                DaggerfallUnityItem newItem = null;
+
+                int n = 1;
+                if (args.Length >= 2)
+                {
+                    Int32.TryParse(args[1], out n);
+                }
+
+                while (n >= 1)
+                {
+                    n--;
+                    switch (args[0])
+                    {
+                        case "book":
+                            newItem = ItemBuilder.CreateRandomBook();
+                            break;
+                        case "weapon":
+                            newItem = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
+                            break;
+                        case "armor":
+                            newItem = ItemBuilder.CreateRandomArmor(playerEntity.Level, RandomEnumValue<Genders>(), RandomEnumValue<Races>());
+                            break;
+                        case "cloth":
+                            newItem = ItemBuilder.CreateRandomClothing(RandomEnumValue<Genders>());
+                            break;
+                        case "ingr":
+                            newItem = ItemBuilder.CreateRandomIngredient();
+                            break;
+                        case "relig":
+                            newItem = ItemBuilder.CreateRandomReligiousItem();
+                            break;
+                        default:
+                            return "unrecognized keyword. see usage";
+                    }
+                    items.AddItem(newItem);
+                }
+                return "success";
+
+            }
+            private static T RandomEnumValue<T> ()
+            {
+                var v = Enum.GetValues(typeof(T));
+                return (T) v.GetValue(UnityEngine.Random.Range(0,v.Length-1));
             }
         }
 

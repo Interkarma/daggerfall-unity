@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: LypyL (lypyl@dfworkshop.net)
 // Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
-// 
+//
 // Notes:
 //
 
@@ -275,11 +275,12 @@ namespace DaggerfallWorkshop.Game.Items
         Champion_straps = 181,
     }
 
-    public enum Books  //checked
+    public enum Books  // modified to conform with real Daggerfall save game - IC112016
     {
-        Book = 277,
-        Potion_recipe = 278,
+        UNKNOWN_BOOK_TYPE = 276,
+        Potion_recipe = 277,
         Parchment = 279,
+        Book = 279,
     }
 
     public enum ERROR                               // ?
@@ -294,7 +295,7 @@ namespace DaggerfallWorkshop.Game.Items
         Bandage = 249,
         Oil = 252,
         Candle = 253,
-        Parchment = 279,
+        Parchment = 278,
     }
 
     public enum ReligiousItems  //checked
@@ -533,7 +534,8 @@ namespace DaggerfallWorkshop.Game.Items
         Soul_trap = 274,
         Letter_of_credit = 275,
         //Ruby = 0,
-        Potion_recipe = 278,
+        UNKNOWN_MISC_ITEM, // modified order to ensure Potion_recipe is index 4 -IC112016
+        Potion_recipe = 277,
         Dead_Body = 281,
         House_Deed = 285,
         Ship_Deed = 286,

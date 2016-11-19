@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -77,7 +77,14 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="stat">Stat.</param>
         /// <returns>Text resource ID.</returns>
         int GetStatDescriptionTextID(DFCareer.Stats stat);
-        
+
+        /// <summary>
+        /// Opens a new book based on the internal Daggerfall "message" field, rather than the direct filename
+        /// </summary>
+        /// <param name="message">The int32 message field that encodes the book's ID</param>
+        /// <returns>True if book opened successfully.</returns>
+        bool OpenBook(int message);
+
         /// <summary>
         /// Opens a new book.
         /// </summary>
@@ -152,6 +159,11 @@ namespace DaggerfallWorkshop.Utility
         public virtual TextFile.Token[] PageTokens
         {
             get { return GetPageTokens(currentPage); }
+        }
+
+        public virtual bool OpenBook(int message)
+        {
+            return OpenBook(BookFile.messageToBookFilename(message));
         }
 
         public virtual bool OpenBook(string name)

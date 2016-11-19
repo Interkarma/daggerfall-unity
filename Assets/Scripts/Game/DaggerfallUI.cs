@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -78,6 +78,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallTravelMapWindow dfTravelMapWindow;
         DaggerfallAutomapWindow dfAutomapWindow;
         DaggerfallExteriorAutomapWindow dfExteriorAutomapWindow;
+        DaggerfallBookReaderWindow dfBookReaderWindow;
         QuestMachineInspectorWindow dfQuestInspector;
 
         DaggerfallFontPlus fontPetrock32;
@@ -135,6 +136,11 @@ namespace DaggerfallWorkshop.Game
             get { return dfInventoryWindow; }
         }
 
+        public DaggerfallBookReaderWindow BookReaderWindow
+        {
+            get { return dfBookReaderWindow; }
+        }
+
         public enum PopupStyle
         {
             Parchment,
@@ -158,6 +164,7 @@ namespace DaggerfallWorkshop.Game
             dfInventoryWindow = new DaggerfallInventoryWindow(uiManager);
             dfTravelMapWindow = new DaggerfallTravelMapWindow(uiManager);
             dfAutomapWindow = new DaggerfallAutomapWindow(uiManager);
+            dfBookReaderWindow = new DaggerfallBookReaderWindow(uiManager);
 
             dfExteriorAutomapWindow = new DaggerfallExteriorAutomapWindow(uiManager);
 
@@ -291,6 +298,9 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case DaggerfallUIMessages.dfuiOpenQuestInspector:
                     uiManager.PushWindow(dfQuestInspector);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenBookReaderWindow:
+                    uiManager.PushWindow(dfBookReaderWindow);
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
 #if UNITY_EDITOR

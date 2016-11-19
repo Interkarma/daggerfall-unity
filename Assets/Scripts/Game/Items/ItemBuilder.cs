@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors: InconsolableCellist
+//
 // Notes:
 //
 
@@ -243,6 +243,24 @@ namespace DaggerfallWorkshop.Game.Items
 
             return newItem;
         }
+
+        /// <summary>
+        /// Creates a new random book
+        /// </summary>
+        /// <returns>DaggerfallUnityItem.</returns>
+        public static DaggerfallUnityItem CreateRandomBook()
+        {
+            Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(ItemGroups.Books);
+            DaggerfallUnityItem book = new DaggerfallUnityItem(ItemGroups.Books, Array.IndexOf(enumArray, Books.Book));
+
+            // TODO: FIXME: I don't know what the higher order bits are for the message field. I just know that message & 0xFF encodes
+            // the ID of the book. Thus the books that are randomly generated are missing information that the actual game provides.
+            // -IC112016
+            book.message = DaggerfallUnity.Instance.ItemHelper.getRandomBookID();
+            return book;
+        }
+
+
 
         /// <summary>
         /// Creates a new random religious item.

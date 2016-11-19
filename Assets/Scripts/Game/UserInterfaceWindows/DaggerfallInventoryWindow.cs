@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors: InconsolableCellist
+//
 // Notes:
 //
 
@@ -534,7 +534,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 lootTarget.OnInventoryClose();
                 lootTarget = null;
             }
-            
+
             // Generate serializable loot pile in world for dropped items
             if (droppedItems.Count > 0)
             {
@@ -798,7 +798,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             for (int i = 0; i < localItems.Count; i++)
             {
                 DaggerfallUnityItem item = localItems.GetItem(i);
-                
+
                 // Reject if equipped
                 if (item.IsEquipped)
                     continue;
@@ -880,7 +880,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Get item and image
                 DaggerfallUnityItem item = localItemsFiltered[scrollIndex + i];
-                ImageData image = GetInventoryImage(item);                
+                ImageData image = GetInventoryImage(item);
 
                 // Set image to button icon
                 localItemsIconPanels[i].BackgroundTexture = image.texture;
@@ -891,7 +891,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     localItemsStackLabels[i].Text = item.stackCount.ToString();
 
                 // Tooltip text
-                string text = item.LongName;
+                string text;
+                if (item.ItemGroup == ItemGroups.Books)
+                {
+                    text = DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName);
+                } else {
+                    text = item.LongName;
+                }
                 localItemsButtons[i].ToolTipText = text;
             }
         }
@@ -933,7 +939,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     remoteItemsStackLabels[i].Text = item.stackCount.ToString();
 
                 // Tooltip text
-                string text = item.LongName;
+                string text;
+                if (item.ItemGroup == ItemGroups.Books)
+                {
+                    text = DaggerfallUnity.Instance.ItemHelper.getBookNameByMessage(item.message, item.LongName);
+                } else {
+                    text = item.LongName;
+                }
                 remoteItemsButtons[i].ToolTipText = text;
             }
         }
@@ -1318,7 +1330,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle click based on action
             if (selectedActionMode == ActionModes.Equip)
             {
-                UnequipItem(item, false);                
+                UnequipItem(item, false);
             }
             else if (selectedActionMode == ActionModes.Info)
             {
@@ -1373,7 +1385,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                NextVariant(item);
+                if (item.ItemGroup == ItemGroups.Books)
+                {
+                    // Unreadable parchment (the one with a note graphic) is actually in UselessItems2
+                    if (item.TemplateIndex == (int)Books.Book || item.TemplateIndex == (int)Books.Parchment)
+                    {
+                        DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
+                        DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
+                    } else if (item.TemplateIndex == (int)Books.Parchment)
+                    {
+                        // TODO: implement note viewer? Or is parchment just blank paper? -IC112016
+                    } else if (item.TemplateIndex == (int)Books.Potion_recipe)
+                    {
+                        // TODO: implement potion viewer -IC112016
+                    }
+                } else if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe) {
+                    // TODO: implement potion viewer -IC112016
+                } else {
+                    NextVariant(item);
+                }
             }
             else if (selectedActionMode == ActionModes.Remove)
             {
