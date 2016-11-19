@@ -42,6 +42,8 @@ namespace DaggerfallWorkshop
         AmbientCreepyBirdLaughs = 13,
         AmbientCreepyBirdCall = 14,
 
+        BodyFall = 15,
+
         Ignite = 16,
 
         ActivateGears = 19,
@@ -61,10 +63,14 @@ namespace DaggerfallWorkshop
         ArenaFanfareLevelUp = 32,
         ArenaFanfareStaffOfChaos = 33,
 
-        AmbientDistantMoan = 38,
-        AmbientCloseMoan = 39,
+        ArenaFireDaemon2 = 36,
+
+        ArenaGhost = 38,
+        ArenaGhoul = 39,
 
         ActivateGrind = 40,
+        
+        ArenaHellHound = 41,
 
         // 42-62 Grunts and groans. Perhaps player pain sounds by race and gender?
         // Needs more research.
@@ -335,9 +341,12 @@ namespace DaggerfallWorkshop
 
         HaltWeak = 302,
 
+        ArenaHomonculus = 305,
+
+        ArenaIceGolem = 307,
+
         // Player footstep and movement sounds
         // These are played with variable pitch
-        PlayerFootstepPuddle = 307,
         PlayerFootstepMetal = 308,
         PlayerFootstepNormal = 309,
         PlayerFootstepSnow = 310,
@@ -350,24 +359,28 @@ namespace DaggerfallWorkshop
         ActivateLockUnlock = 316,
 
         ArenaSkeleton = 318,
+        ArenaLich = 319,
         ArenaLizardMan = 320,
-        ArenaGhoul = 321,
+        ArenaGhoul2 = 321,
 
         ActivateOpenGate = 325,
 
         ArenaOpenDoor = 326,
+        ArenaOrc = 327,
 
         ActivateRatchet = 328,
 
-        AmbientSqueaks = 329,
+        ArenaRat = 329,
 
         SplashSmallLow = 334,
 
         HighPitchWail = 335,
         HighPitchScream = 336,
 
-        // 340-341 sounds like more player movement sounds
-        // Needs more research.
+        ArenaSpider = 337,
+
+        ArenaFootstep3 = 340,
+        // 341 sounds similar to 340.
 
         SplashLarge = 342,
 
@@ -382,12 +395,15 @@ namespace DaggerfallWorkshop
         StormLightningThunder = 349,
         StormThunderRoll = 350,
 
+        ArenaTroll = 351,
+
         SwingMediumPitch2 = 353,
 
-        ArenaWolf = 357,
+        ArenaVampire = 354,
 
-        LongMoanHigh = 358,
-        LongMoanLow = 359,
+        ArenaWolf = 357,
+        ArenaWraith = 358,
+        ArenaZombie = 359,
 
         ButtonClick = 360,
 
@@ -427,6 +443,8 @@ namespace DaggerfallWorkshop
 
         // 390-412 are more pain sounds.
         // Needs more research.
+
+        PlayerDeath = 405,
 
         EquipMaceOrHammer = 413,
         EquipFlail = 414,
