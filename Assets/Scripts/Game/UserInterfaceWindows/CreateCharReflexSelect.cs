@@ -69,7 +69,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             infoText.SetText(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(strPlayerReflexesDetermine));
             infoText.HorizontalAlignment = HorizontalAlignment.Center;
             infoText.VerticalAlignment = VerticalAlignment.Middle;
-            infoPanel.Size = infoText.Size;
+
+            // Setup panel size
+            int minimum = 44;
+            float width = (infoText.Size.x + infoPanel.LeftMargin + infoPanel.RightMargin);
+            float height = (infoText.Size.y + infoPanel.TopMargin + infoPanel.BottomMargin);
+
+            if (width > minimum)
+                width = (float)Math.Ceiling(width / 22) * 22;
+            else
+                width = minimum;
+
+            if (height > minimum)
+                height = (float)Math.Ceiling(height / 22) * 22;
+            else
+                height = minimum;
+
+            infoPanel.Size = new Vector2(width, height);
 
             // Setup button picker
             reflexPicker = new ReflexPicker();

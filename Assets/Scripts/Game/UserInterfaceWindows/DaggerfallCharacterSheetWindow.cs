@@ -180,10 +180,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             skillPrimaryStatToken.text = DaggerfallUnity.Instance.TextProvider.GetAbbreviatedStatName(primaryStat);
             skillPrimaryStatToken.formatting = TextFile.Formatting.Text;
 
-            TextFile.Token spacesToken = new TextFile.Token();
-            spacesToken.formatting = TextFile.Formatting.Text;
-            spacesToken.text = "  ";
-
             TextFile.Token tabToken = new TextFile.Token();
             tabToken.formatting = TextFile.Formatting.PositionPrefix;
 
@@ -191,8 +187,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             tokens.Add(skillNameToken);
             tokens.Add(tabToken);
             tokens.Add(tabToken);
+            tokens.Add(tabToken);
             tokens.Add(skillValueToken);
-            tokens.Add(spacesToken);
+            tokens.Add(tabToken);
             tokens.Add(skillPrimaryStatToken);
 
             return tokens.ToArray();

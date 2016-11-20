@@ -116,11 +116,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(messagePanel);
 
             label.HorizontalAlignment = HorizontalAlignment.Center;
-            label.VerticalAlignment = VerticalAlignment.Top;
+            label.VerticalAlignment = VerticalAlignment.Middle;
             messagePanel.Components.Add(label);
 
             buttonPanel.HorizontalAlignment = HorizontalAlignment.Center;
-            buttonPanel.VerticalAlignment = VerticalAlignment.Bottom;
+            buttonPanel.VerticalAlignment = VerticalAlignment.None;
             messagePanel.Components.Add(buttonPanel);
 
             IsSetup = true;
@@ -233,10 +233,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     finalSize.x += buttonSpacing;
             }
 
+            // If buttons have been added, resize label text by adding in the height of the finalized button panel.
+            if (finalSize.y - buttonPanel.Size.y > 0)
+                label.ResizeY(label.Size.y + (finalSize.y - buttonPanel.Size.y) + buttonTextDistance);
+
             buttonPanel.Size = finalSize;
-            messagePanel.Size = new Vector2(
-                label.Size.x + messagePanel.LeftMargin + messagePanel.RightMargin,
-                label.Size.y + buttonPanel.Size.y + buttonTextDistance + messagePanel.TopMargin + messagePanel.BottomMargin);
+
+            // Position buttons to be buttonTextDistance pixels below the repositioned text
+            if (buttons.Count > 0)
+            {
+                float buttonY = messagePanel.Size.y - ((messagePanel.Size.y - label.Size.y) / 2) - buttonPanel.Size.y - messagePanel.BottomMargin;
+                buttonPanel.Position = new Vector2(buttonPanel.Position.x, buttonY);
+            }
+
+            // Resize the message panel to get a clean border of 22x22 pixel textures
+            int minimum = 44;
+            float width = label.Size.x + messagePanel.LeftMargin + messagePanel.RightMargin;
+            float height = label.Size.y + messagePanel.TopMargin + messagePanel.BottomMargin;
+
+            if (width > minimum)
+                width = (float)Math.Ceiling(width / 22) * 22;
+            else
+                width = minimum;
+
+            if (height > minimum)
+                height = (float)Math.Ceiling(height / 22) * 22;
+            else
+                height = minimum;
+
+            messagePanel.Size = new Vector2(width, height);
         }
 
         void SetupBox(int textId, CommonMessageBoxButtons buttons)

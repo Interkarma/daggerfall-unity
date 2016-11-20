@@ -99,6 +99,7 @@ namespace DaggerfallConnect.Arena2
 
             NewLine = 0x00,
             EndOfPage = 0xf6,
+            InputCursorPositioner = 0xf8,
             SubrecordSeparator = 0xff,
             EndOfRecord = 0xfe,
 
