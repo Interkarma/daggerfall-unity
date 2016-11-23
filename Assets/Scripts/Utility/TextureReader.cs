@@ -659,7 +659,7 @@ namespace DaggerfallWorkshop.Utility
         }
 
 #if UNITY_EDITOR && !UNITY_WEBPLAYER
-        public void SaveTextureToPNG(Texture2D source, string path)
+        public static void SaveTextureToPNG(Texture2D source, string path)
         {
             byte[] bytes = source.EncodeToPNG();
             File.WriteAllBytes(path, bytes);
