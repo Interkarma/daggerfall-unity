@@ -148,6 +148,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(this);
         }
 
+        public override void Update()
+        {
+            base.Update();
+        
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+              CloseWindow();
+        }
+
         public Button AddButton(MessageBoxButtons messageBoxButton)
         {
             if (!IsSetup)
