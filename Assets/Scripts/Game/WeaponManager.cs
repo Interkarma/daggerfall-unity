@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game
         GameObject mainCamera;
         bool isAttacking;
         int lastAttackHand = 0;                     // 0-left-hand, 1=right-hand, -1=no weapon
+        float cooldownTime = 0.0f;                  // Wait for weapon cooldown
 
         bool usingRightHand = true;
         bool holdingShield = false;
@@ -82,6 +83,10 @@ namespace DaggerfallWorkshop.Game
                 UpdateHands();
             else
                 playerEntity = GameManager.Instance.PlayerEntity;
+
+            // Do nothing while weapon cooldown
+            if (Time.time < cooldownTime)
+                return;
 
             // Toggle weapon sheath
             if (InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon))
@@ -122,20 +127,33 @@ namespace DaggerfallWorkshop.Game
             {
                 // Complete attack
                 isAttacking = false;
-                
-                // Transfer melee damage
+
+                // Get attack hand weapon
+                FPSWeapon weapon = null; 
                 if (lastAttackHand == 0)
-                    MeleeDamage(LeftHandWeapon);
+                    weapon = LeftHandWeapon;
                 else if (lastAttackHand == 1)
-                    MeleeDamage(RightHandWeapon);
+                    weapon = RightHandWeapon;
+
+                // Transfer melee damage
+                MeleeDamage(weapon);
+
+                // Weapon cooldown
+                if (weapon.Cooldown > 0.0f)
+                {
+                    cooldownTime = Time.time + weapon.Cooldown;
+                    ShowWeapons(false);
+                }
+
+                return;
             }
 
             // Restore weapon visibility
             ShowWeapons(true);
 
-            // Track mouse attack and exit if no action registered
+            // Track mouse swing attacks and exit if no action registered
             TrackMouseAttack();
-            if (lastAction == MouseDirections.None || actionCount < TriggerCount)
+            if (lastAction != MouseDirections.None && actionCount < TriggerCount)
                 return;
 
             // Time for attacks
@@ -274,6 +292,18 @@ namespace DaggerfallWorkshop.Game
             target.MetalType = DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(weapon);
             target.DrawWeaponSound = weapon.GetEquipSound();
             target.SwingWeaponSound = weapon.GetSwingSound();
+
+            // Adjust attributes by weapon type
+            if (target.WeaponType == WeaponTypes.Bow)
+            {
+                target.Reach = 50f;
+                target.Cooldown = 1.0f;
+            }
+            else
+            {
+                target.Reach = 2.5f;
+                target.Cooldown = 0.0f;
+            }
 
             // TODO: Adjust FPSWeapon attack speed scale for swing pitch variance
         }

@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Utility
         public static int StrikeDownRightAnimSpeed = 10;
         public static int StrikeUpAnimSpeed = 10;
         public static int WereStrikeAnimSpeed = 20;
+        public static int BowAnimSpeed = 10;
 
         // Animations for melee - offset and aligment changes
         public static WeaponAnimation[] MeleeWeaponAnims = new WeaponAnimation[]
@@ -80,6 +81,18 @@ namespace DaggerfallWorkshop.Utility
             new WeaponAnimation() {Record = 6, NumFrames = 5, FramePerSecond = StrikeUpAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
         };
 
+        // Animations for bow
+        public static WeaponAnimation[] BowWeaponAnims = new WeaponAnimation[]
+        {
+            new WeaponAnimation() {Record = 0, NumFrames = 1, FramePerSecond = IdleAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+            new WeaponAnimation() {Record = 0, NumFrames = 7, FramePerSecond = BowAnimSpeed, Alignment = WeaponAlignment.Right, Offset = 0f},
+        };
+
         // Animations for werecreature - alignment changes
         public static WeaponAnimation[] WerecreatureWeaponAnims = new WeaponAnimation[]
         {
@@ -104,6 +117,8 @@ namespace DaggerfallWorkshop.Utility
                 return DaggerWeaponAnims;
             else if (weaponType == WeaponTypes.Staff || weaponType == WeaponTypes.Staff_Magic)
                 return StaffWeaponAnims;
+            else if (weaponType == WeaponTypes.Bow)
+                return BowWeaponAnims;
             else if (weaponType == WeaponTypes.Werecreature)
                 return WerecreatureWeaponAnims;
             else
