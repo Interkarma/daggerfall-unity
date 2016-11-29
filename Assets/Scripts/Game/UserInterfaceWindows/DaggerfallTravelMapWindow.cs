@@ -13,6 +13,7 @@
 using UnityEngine;
 using System;
 using System.Linq;
+using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
@@ -51,6 +52,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string rightArrowImgName                      = "TRAVCI05.IMG";
         const string leftArrowImgName                       = "TRAVDI05.IMG";
         const string regionBorderImgName                    = "MBRD00I0.IMG";
+        const string colorPaletteColName                    = "FMAP_PAL.COL";
         const int regionPanelOffset                         = 12;
         const int identifyFlashCount                        = 4;
         const float identifyFlashInterval                   = 0.5f;
@@ -117,7 +119,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int mapIndex = 0;
 
         Color32[] locationClusterColors;
-        Color identifyFlashColor = new Color32(162, 36, 12, 255);
+        Color32[] locationPixelColors;
+        Color identifyFlashColor;
 
         float identifyLastChangeTime = 0;
         float identifyChanges       = 0;
@@ -136,24 +139,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         float scale = 1.0f;
 
         Vector2 lastMousePos = Vector2.zero;
-
-        Color32[] locationPixelColors = new Color32[]
-        {
-            new Color32(215,117,36, 255),           //dunglab
-            new Color32(190, 85, 24, 255),          //dungkeep
-            new Color32(170, 48, 12,255),           //dungruin
-            new Color32(146, 12, 4, 255),           //Graveyards
-            new Color32(166, 101, 69, 255),         //farms
-            new Color32(195, 134, 101, 255),        //wealthy
-            new Color32(142, 85, 52, 255),          //poor
-            new Color32(178, 207, 255, 255),        //temple
-            new Color32(69, 125, 195, 255),         //cult
-            new Color32(12, 12, 12, 255),           //coven
-            new Color32(125, 81, 89, 255),          //tavern
-            new Color32(223, 178, 178, 255),        //city
-            new Color32(190, 138, 138, 255),        //hamlet
-            new Color32(154, 105, 105, 255),        //village
-        };
 
         #endregion
 
@@ -216,6 +201,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
+
+            // Set location pixel colors and identify flash color from palette file
+            DFPalette colors = new DFPalette();
+            if (!colors.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, colorPaletteColName)))
+                throw new Exception("DaggerfallTravelMap: Could not load color palette.");
+
+            locationPixelColors = new Color32[]
+            {
+                new Color32(colors.GetRed(237), colors.GetGreen(237), colors.GetBlue(237), 255),  //dunglab (R215, G119, B39)
+                new Color32(colors.GetRed(240), colors.GetGreen(240), colors.GetBlue(240), 255),  //dungkeep (R191, G87, B27)
+                new Color32(colors.GetRed(243), colors.GetGreen(243), colors.GetBlue(243), 255),  //dungruin (R171, G51, B15)
+                new Color32(colors.GetRed(246), colors.GetGreen(246), colors.GetBlue(246), 255),  //graveyards (R147, G15, B7)
+                new Color32(colors.GetRed(37), colors.GetGreen(37), colors.GetBlue(37), 255),     //farms (R165, G100, B70)
+                new Color32(colors.GetRed(35), colors.GetGreen(35), colors.GetBlue(35), 255),     //wealthy (R193, G133, B100)
+                new Color32(colors.GetRed(39), colors.GetGreen(39), colors.GetBlue(39), 255),     //poor (R140, G86, B55)
+                new Color32(colors.GetRed(96), colors.GetGreen(96), colors.GetBlue(96), 255),     //temple (R176, G205, B255)
+                new Color32(colors.GetRed(101), colors.GetGreen(101), colors.GetBlue(101), 255),  //cult (R68, G124, B192)
+                new Color32(colors.GetRed(0), colors.GetGreen(0), colors.GetBlue(0), 255),        //coven (R15, G15, B15)
+                new Color32(colors.GetRed(55), colors.GetGreen(55), colors.GetBlue(55), 255),     //tavern (R126, G81, B89)
+                new Color32(colors.GetRed(49), colors.GetGreen(49), colors.GetBlue(49), 255),     //city (R220, G177, B177)
+                new Color32(colors.GetRed(51), colors.GetGreen(51), colors.GetBlue(51), 255),     //hamlet (R188, G138, B138)
+                new Color32(colors.GetRed(53), colors.GetGreen(53), colors.GetBlue(53), 255),     //village (R155, G105, B106)
+            };
+
+            identifyFlashColor = new Color32(colors.GetRed(244), colors.GetGreen(244), colors.GetBlue(244), 255); // (R163, G39, B15)
 
             // Populate the offset dict
             PopulateRegionOffsetDict();
