@@ -392,21 +392,21 @@ namespace DaggerfallWorkshop.Game
         public void switchToExteriorAutomapViewModeOriginal()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Original;
-            createExteriorLayoutTexture(location, false, true);
+            createExteriorLayoutTexture(location, false, true, false);
             assignExteriorLayoutTextureToCustomCanvas();
         }
 
         public void switchToExteriorAutomapViewModeExtra()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Extra;
-            createExteriorLayoutTexture(location, true, true);
+            createExteriorLayoutTexture(location, true, true, false);
             assignExteriorLayoutTextureToCustomCanvas();
         }
 
         public void switchToExteriorAutomapViewModeAll()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.All;
-            createExteriorLayoutTexture(location, true, false);
+            createExteriorLayoutTexture(location, true, false, false);
             assignExteriorLayoutTextureToCustomCanvas();
         }
 
@@ -756,7 +756,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// creates the map layout in the exterior layout texture
         /// </summary>  
-        private void createExteriorLayoutTexture(DFLocation location, bool showAll = false, bool removeGroundFlats = true)
+        private void createExteriorLayoutTexture(DFLocation location, bool showAll = false, bool removeGroundFlats = true, bool createNamePlates = true)
         {
             if (exteriorLayoutTexture != null)
             {
@@ -914,7 +914,10 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUnity.Instance.ContentReader.BlockFileReader.DiscardBlock(block.Index);
             }
 
-            createBuildingNamePlates(location);
+            if (createNamePlates)
+            {
+                createBuildingNamePlates(location);
+            }
         }     
 
         #endregion
