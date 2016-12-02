@@ -36,6 +36,9 @@ namespace DaggerfallWorkshop
         [SerializeField]
         BillboardSummary summary = new BillboardSummary();
 
+        public int customArchive = 210;
+        public int customRecord = 0;
+
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
         bool restartAnims = true;
@@ -270,6 +273,18 @@ namespace DaggerfallWorkshop
             meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
 
             return material;
+        }
+
+        /// <summary>
+        /// Aligns billboard to centre of base, rather than exact centre.
+        /// Must have already set material using SetMaterial() for billboard dimensions to be known.
+        /// </summary>
+        public void AlignToBase()
+        {
+            // Calcuate offset for correct positioning in scene
+            Vector3 offset = Vector3.zero;
+            offset.y = (summary.Size.y / 2);
+            transform.position += offset;
         }
 
 #if UNITY_EDITOR

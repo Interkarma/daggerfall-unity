@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors: InconsolableCellist
+//
 // Notes:
 //
 
@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -27,10 +28,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeTexture;
         DaggerfallFont currentFont;
         List<TextLabel> pageLabels = new List<TextLabel>();
+        DaggerfallUnityItem bookTarget;
 
         public DaggerfallBookReaderWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+        }
+
+        public DaggerfallUnityItem BookTarget
+        {
+            get { return bookTarget; }
+            set
+            {
+                bookTarget = value;
+                DaggerfallUnity.Instance.TextProvider.OpenBook(bookTarget.message);
+            }
         }
 
         protected override void Setup()
@@ -49,37 +61,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ChangeFont(4);
 
             // Add buttons
-            DaggerfallUI.AddButton(new Vector2(181, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderPreviousPage, NativePanel);
-            DaggerfallUI.AddButton(new Vector2(208, 188), new Vector2(14, 8), DaggerfallUIMessages.dfuiBookReaderNextPage, NativePanel);
-            //CreateButton(new Vector2(277, 187), new Vector2(32, 10), WindowMessages.wmCloseWindow);
+            Button nextPageButton = DaggerfallUI.AddButton(new Rect(208, 188, 14, 8), NativePanel);
+            nextPageButton.OnMouseClick += NextPageButton_OnMouseClick;
 
-            // Test book
-            dfUnity.TextProvider.OpenBook("BOK00043.TXT");      // The Real Barenziah
-            //dfUnity.TextProvider.OpenBook("BOK00101.TXT");      // Kind Edward, Part 2
-            //dfUnity.TextProvider.OpenBook("BOK00008.TXT");      // The Pig Children
+            Button previousPageButton = DaggerfallUI.AddButton(new Rect(181, 188, 14, 48), NativePanel);
+            previousPageButton.OnMouseClick += PreviousPageButton_OnMouseClick;
+
+            Button exitButton = DaggerfallUI.AddButton(new Rect(277, 187, 32, 10), NativePanel);
+            exitButton.OnMouseClick += ExitButton_OnMouseClick;
+
             LayoutPage();
         }
 
-        //protected override void ProcessMessageQueue()
-        //{
-        //    string message = uiManager.PeekMessage();
-        //    switch (message)
-        //    {
-        //        case DaggerfallUIMessages.dfuiBookReaderPreviousPage:
-        //            if (dfUnity.TextProvider.MovePreviousPage())
-        //                LayoutPage();
-        //            break;
-        //        case DaggerfallUIMessages.dfuiBookReaderNextPage:
-        //            if (dfUnity.TextProvider.MoveNextPage())
-        //                LayoutPage();
-        //            break;
-        //        default:
-        //            return;
-        //    }
+        private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (dfUnity.TextProvider.MoveNextPage())
+                LayoutPage();
+        }
 
-        //    // Message was handled, pop from stack
-        //    uiManager.PopMessage();
-        //}
+        private void PreviousPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (dfUnity.TextProvider.MovePreviousPage())
+                LayoutPage();
+        }
+
+
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CloseWindow();
+        }
+
+        public override void OnPush()
+        {
+            if (IsSetup)
+                LayoutPage();
+        }
 
         void LayoutPage()
         {

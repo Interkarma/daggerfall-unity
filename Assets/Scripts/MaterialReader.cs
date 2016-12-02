@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop
         public FilterMode MainFilterMode = FilterMode.Point;
         public FilterMode SkyFilterMode = FilterMode.Point;
         public bool MipMaps = true;
+        public bool ReadableTextures = false;
         public SupportedAlphaTextureFormats AlphaTextureFormat = SupportedAlphaTextureFormats.RGBA32;
         public SupportedNonAlphaTextureFormats NonAlphaTextureFormat = SupportedNonAlphaTextureFormats.RGB24;
 

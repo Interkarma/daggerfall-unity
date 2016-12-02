@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -137,6 +137,14 @@ namespace DaggerfallWorkshop.Game.Items
             while (Random.Range(1, 100) < chance)
             {
                 items.Add(ItemBuilder.CreateRandomClothing(playerEntity.Gender));
+                chance *= 0.5f;
+            }
+
+            // Random books
+            chance = matrix.BK * playerEntity.Level;
+            while (Random.Range(1, 100) < chance)
+            {
+                items.Add(ItemBuilder.CreateRandomBook());
                 chance *= 0.5f;
             }
 

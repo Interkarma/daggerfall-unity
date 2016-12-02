@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop
 
         void LateUpdate()
         {
-            if (audioSource.playOnAwake && !midiSequencer.IsPlaying && !awakeComplete)
+            if (audioSource.playOnAwake && (midiSequencer != null && !midiSequencer.IsPlaying) && !awakeComplete)
             {
                 Play();
                 awakeComplete = true;
@@ -134,7 +134,7 @@ namespace DaggerfallWorkshop
                 midiSequencer.Play();
                 currentMidiName = filename;
                 playEnabled = true;
-            }       
+            }
         }
 
         /// <summary>

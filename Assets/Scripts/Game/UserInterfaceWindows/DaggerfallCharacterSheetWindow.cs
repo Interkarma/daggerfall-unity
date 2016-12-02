@@ -163,7 +163,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Creates formatting tokens for skill popups
-        TextFile.Token[] CreateSkillTokens(DFCareer.Skills skill)
+        TextFile.Token[] CreateSkillTokens(DFCareer.Skills skill, bool twoColumn = false, int startPosition = 0)
         {
             List<TextFile.Token> tokens = new List<TextFile.Token>();
 
@@ -180,20 +180,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             skillPrimaryStatToken.text = DaggerfallUnity.Instance.TextProvider.GetAbbreviatedStatName(primaryStat);
             skillPrimaryStatToken.formatting = TextFile.Formatting.Text;
 
-            TextFile.Token spacesToken = new TextFile.Token();
-            spacesToken.formatting = TextFile.Formatting.Text;
-            spacesToken.text = "  ";
+            TextFile.Token positioningToken = new TextFile.Token();
+            positioningToken.formatting = TextFile.Formatting.PositionPrefix;
 
             TextFile.Token tabToken = new TextFile.Token();
             tabToken.formatting = TextFile.Formatting.PositionPrefix;
 
             // Add tokens in order
-            tokens.Add(skillNameToken);
-            tokens.Add(tabToken);
-            tokens.Add(tabToken);
-            tokens.Add(skillValueToken);
-            tokens.Add(spacesToken);
-            tokens.Add(skillPrimaryStatToken);
+            if (!twoColumn)
+            {
+                tokens.Add(skillNameToken);
+                tokens.Add(tabToken);
+                tokens.Add(tabToken);
+                tokens.Add(tabToken);
+                tokens.Add(skillValueToken);
+                tokens.Add(tabToken);
+                tokens.Add(skillPrimaryStatToken);
+            }
+            else // miscellaneous skills
+            {
+                if (startPosition != 0) // if this is the second column
+                {
+                    positioningToken.x = startPosition;
+                    tokens.Add(positioningToken);
+                }
+                tokens.Add(skillNameToken);
+                positioningToken.x = startPosition + 85;
+                tokens.Add(positioningToken);
+                tokens.Add(skillValueToken);
+                positioningToken.x = startPosition + 112;
+                tokens.Add(positioningToken);
+                tokens.Add(skillPrimaryStatToken);
+            }
 
             return tokens.ToArray();
         }
@@ -212,14 +230,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else
                 {
-                    tokens.AddRange(CreateSkillTokens(skills[i]));
                     if (!secondColumn)
                     {
+                        tokens.AddRange(CreateSkillTokens(skills[i], true));
                         secondColumn = !secondColumn;
-                        tokens.Add(TextFile.TabToken);
                     }
                     else
                     {
+                        tokens.AddRange(CreateSkillTokens(skills[i], true, 136));
                         secondColumn = !secondColumn;
                         if (i < skills.Count - 1)
                             tokens.Add(TextFile.NewLineToken);

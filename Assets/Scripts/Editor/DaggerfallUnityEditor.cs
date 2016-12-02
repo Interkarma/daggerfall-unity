@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop
                     !propCombineRDB.boolValue ||
                     !propBatchBillboards.boolValue)
                 {
-                    EditorGUILayout.HelpBox("Performance options should only be disabled for testing.", MessageType.Warning);
+                    EditorGUILayout.HelpBox("Below settings will impact runtime performance. Only change when necessary.", MessageType.Warning);
                 }
                 GUILayoutHelper.Indent(() =>
                 {
