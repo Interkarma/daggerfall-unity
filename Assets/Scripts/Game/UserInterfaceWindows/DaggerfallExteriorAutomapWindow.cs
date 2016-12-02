@@ -423,14 +423,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public override void OnPush()
         {
-            initGlobalResources(); // initialize gameobjectAutomap, daggerfallExteriorAutomap and layerAutomap
+            initGlobalResources(); // initialize gameobjectExteriorAutomap, daggerfallExteriorAutomap and layerAutomap
 
             if (!isSetup) // if Setup() has not run, run it now
                 Setup();
 
-            daggerfallExteriorAutomap.IsOpenAutomap = true; // signal DaggerfallExteriorAutomap script that automap is open and it should do its stuff in its Update() function            
+            daggerfallExteriorAutomap.IsOpenExteriorAutomap = true; // signal DaggerfallExteriorAutomap script that exterior automap is open and it should do its stuff in its Update() function            
 
-            daggerfallExteriorAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallExteriorAutomap script that automap window was closed and that it should update its state (updates player marker arrow)
+            daggerfallExteriorAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallExteriorAutomap script that exterior automap window was closed and that it should update its state (updates player marker arrow)
 
             // get automap camera
             cameraExteriorAutomap = daggerfallExteriorAutomap.CameraExteriorAutomap;
@@ -465,7 +465,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public override void OnPop()
         {
-            daggerfallExteriorAutomap.IsOpenAutomap = false; // signal DaggerfallExteriorAutomap script that automap was closed
+            daggerfallExteriorAutomap.IsOpenExteriorAutomap = false; // signal DaggerfallExteriorAutomap script that exterior automap was closed
 
             // destroy the other gameobjects as well so they don't use system resources
 
@@ -481,7 +481,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 UnityEngine.Object.Destroy(textureExteriorAutomap);
             }
 
-            daggerfallExteriorAutomap.updateAutomapStateOnWindowPop(); // signal DaggerfallExteriorAutomap script that automap window was closed
+            daggerfallExteriorAutomap.updateAutomapStateOnWindowPop(); // signal DaggerfallExteriorAutomap script that exterior automap window was closed
         }
 
         /// <summary>
@@ -799,7 +799,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <param name="height"> the expected height of the RenderTexture and Texture2D </param>
         private void createExteriorAutomapTextures(int width, int height)
         {
-            if ((!cameraExteriorAutomap) || (!renderTextureExteriorAutomap) || (oldRenderTextureExteriorAutomapWidth != width) || (oldRenderTextureExteriorAutomapHeight != height))
+            if ((cameraExteriorAutomap) || (!renderTextureExteriorAutomap) || (oldRenderTextureExteriorAutomapWidth != width) || (oldRenderTextureExteriorAutomapHeight != height))
             {
                 cameraExteriorAutomap.targetTexture = null;
                 if (renderTextureExteriorAutomap)
