@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Utility
         public const int EditorFlatsTextureArchive = 199;
         public const int AnimalsTextureArchive = 201;
         public const int LightsTextureArchive = 210;
-        public int[] MiscFlatsTextureArchives = new int[] { 97, 205, 211, 212, 213 };
+        public int[] MiscFlatsTextureArchives = new int[] { 97, 205, 211, 212, 213, 301 };
 
         /// <summary>
         /// Gets or sets Arena2 path.
@@ -659,7 +659,7 @@ namespace DaggerfallWorkshop.Utility
         }
 
 #if UNITY_EDITOR && !UNITY_WEBPLAYER
-        public void SaveTextureToPNG(Texture2D source, string path)
+        public static void SaveTextureToPNG(Texture2D source, string path)
         {
             byte[] bytes = source.EncodeToPNG();
             File.WriteAllBytes(path, bytes);

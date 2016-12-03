@@ -1149,8 +1149,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Show message box
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
             mb.SetTextTokens(textTokens);
-            mb.TextPanelDistance = 0;
+            mb.TextPanelDistanceY = 0;
+            mb.InputDistanceX = 15;
+            mb.InputDistanceY = -6;
             mb.TextBox.Numeric = true;
+            mb.TextBox.MaxCharacters = 8;
             mb.OnGotUserInput += DropGoldPopup_OnGotUserInput;
             mb.Show();
         }

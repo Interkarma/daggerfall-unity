@@ -28,6 +28,9 @@ namespace DaggerfallWorkshop
     /// <summary>
     /// DaggerfallUnity main class.
     /// </summary>
+#if UNITY_EDITOR
+    [ExecuteInEditMode]
+#endif
     [RequireComponent(typeof(WorldTime))]
     [RequireComponent(typeof(MaterialReader))]
     [RequireComponent(typeof(MeshReader))]
@@ -229,6 +232,11 @@ namespace DaggerfallWorkshop
 
         void Update()
         {
+#if UNITY_EDITOR
+            // Check ready every update in editor as code changes can de-instantiate local objects
+            if (!isReady) SetupArena2Path();
+            if (reader == null) SetupContentReaders();
+#endif
         }
 
         #endregion

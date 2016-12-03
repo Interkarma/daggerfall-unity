@@ -669,12 +669,12 @@ namespace DaggerfallWorkshop.Game.Items
             DaggerfallUnityItem casualPants = null;
             if (playerEntity.Gender == Genders.Female)
             {
-                shortShirt = ItemBuilder.CreateWomensClothing(WomensClothing.Short_shirt_closed, playerEntity.Race, 1);
+                shortShirt = ItemBuilder.CreateWomensClothing(WomensClothing.Short_shirt_closed, playerEntity.Race, 0);
                 casualPants = ItemBuilder.CreateWomensClothing(WomensClothing.Casual_pants, playerEntity.Race);
             }
             else
             {
-                shortShirt = ItemBuilder.CreateMensClothing(MensClothing.Short_shirt_closed_top, playerEntity.Race, 1);
+                shortShirt = ItemBuilder.CreateMensClothing(MensClothing.Short_shirt, playerEntity.Race, 0);
                 casualPants = ItemBuilder.CreateMensClothing(MensClothing.Casual_pants, playerEntity.Race);
             }
 
