@@ -160,8 +160,12 @@ namespace DaggerfallWorkshop.Game
         {
             if (dfAudioSource)
             {
+                int sound;
                 dfAudioSource.AudioSource.pitch = 1f;
-                int sound = (int)SoundClips.Hit1 + UnityEngine.Random.Range(0, 5);
+                if (WeaponType == WeaponTypes.Melee || WeaponType == WeaponTypes.Werecreature) 
+                    sound = (int)SoundClips.Hit1 + UnityEngine.Random.Range(2, 4);
+                else
+                    sound = (int)SoundClips.Hit1 + UnityEngine.Random.Range(0, 5);
                 dfAudioSource.PlayOneShot(sound, 0);
             }
         }
