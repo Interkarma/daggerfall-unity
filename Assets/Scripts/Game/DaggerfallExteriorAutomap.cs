@@ -619,9 +619,13 @@ namespace DaggerfallWorkshop.Game
 
         private void updatePlayerMarker()
         {
-            // place player marker
-            Vector3 playerPos = (GameManager.Instance.PlayerGPS.transform.position - GameManager.Instance.StreamingWorld.WorldCompensation) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale);
-            //Debug.Log(String.Format("player xpos: {0}, player ypos: {1}", playerPos.x, playerPos.z));
+            // place player marker            
+            Vector3 playerPos;
+            float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
+            playerPos.x = ((GameManager.Instance.PlayerGPS.transform.position.x) % scale) / scale;
+            playerPos.z = ((GameManager.Instance.PlayerGPS.transform.position.z) % scale) / scale;
+            playerPos.y = 0.0f;
+                        
             int refWidth = (int)(blockSizeWidth * 8 * layoutMultiplier); // layoutWidth / layoutMultiplier
             int refHeight = (int)(blockSizeHeight * 8 * layoutMultiplier); // layoutHeight / layoutMultiplier
             playerPos.x *= refWidth;
