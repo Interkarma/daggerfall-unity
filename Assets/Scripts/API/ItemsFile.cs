@@ -73,6 +73,23 @@ namespace DaggerfallConnect.FallExe
         public string title;
     }
 
+    public struct RecipeMapping
+    {
+        public string name;
+        public Recipe[] recipes;
+    }
+
+    public struct Recipe
+    {
+       public Ingredient[] ingredients;
+    }
+
+    public struct Ingredient
+    {
+        public string name;
+        public int id;
+    }
+
     /// <summary>
     /// Reads item template data from FALL.EXE and structures for use.
     /// There is no "items file" as such for this data, just keeping

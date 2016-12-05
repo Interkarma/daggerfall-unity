@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             : base(uiManager, screenWidth, screenHeight)
         {
             this.previousWindow = previousWindow;
+            this.screenDimColor.a = DaggerfallUnity.Settings.DimAlphaStrength;
         }
 
         protected override void Setup()
@@ -92,11 +93,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Color GetScreenDimColor()
         {
-            float alpha = DaggerfallUnity.Settings.DimAlphaStrength;
-            Color dimColor = screenDimColor;
-            dimColor.a = alpha;
-
-            return dimColor;
+            return screenDimColor;
         }
 
         #region Events
