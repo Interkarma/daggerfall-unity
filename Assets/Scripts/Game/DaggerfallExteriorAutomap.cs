@@ -56,8 +56,10 @@ namespace DaggerfallWorkshop.Game
 
         int layerAutomap; // layer used for level geometry of automap
 
-        GameObject gameObjectCameraAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
-        Camera cameraExteriorAutomap = null; // camera for exterior automap camera
+        GameObject gameObjectCameraExteriorAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
+        Camera cameraExteriorAutomap = null; // camera for exterior automap camera        
+        Quaternion cameraTransformRotationSaved; // camera rotation is saved so that after closing and reopening exterior automap the camera transform settings can be restored
+        float cameraOrthographicSizeSaved; // camera's orthographic size is saved so that after closing and reopening exterior automap the camera settings can be restored
 
         GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
@@ -82,9 +84,6 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectPlayerMarkerArrow = null; // GameObject which will hold player marker arrow
         GameObject gameobjectPlayerMarkerArrowStamp = null; // GameObject which will hold player marker arrow stamp
         GameObject gameobjectPlayerMarkerCircle = null; // GameObject which will hold player marker circle (actually a cylinder)
-
-        bool locationLoaded = false;
-        private DFLocation currentLoadedLocation;
 
         private struct BuildingNamePlate
         {
@@ -207,6 +206,13 @@ namespace DaggerfallWorkshop.Game
         {
             // create camera (if not present) that will render automap level geometry
             createExteriorAutomapCamera();
+            
+            // restore camera rotation and zoom
+            gameObjectCameraExteriorAutomap.transform.rotation = cameraTransformRotationSaved;
+            cameraExteriorAutomap.orthographicSize = cameraOrthographicSizeSaved;
+
+            // focus player position
+            cameraExteriorAutomap.transform.position = GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f);
 
             // update player marker position and rotation
             updatePlayerMarker();
@@ -216,11 +222,14 @@ namespace DaggerfallWorkshop.Game
         /// DaggerfallExteriorAutomapWindow script will use this to signal this script to update when automap window was popped - TODO: check if this can done with an event (if events work with gui windows)
         /// </summary>
         public void updateAutomapStateOnWindowPop()
-        {
+        {            
+            cameraTransformRotationSaved = gameObjectCameraExteriorAutomap.transform.rotation;
+            cameraOrthographicSizeSaved = cameraExteriorAutomap.orthographicSize;
+
             // destroy the camera so it does not use system resources
-            if (gameObjectCameraAutomap != null)
+            if (gameObjectCameraExteriorAutomap != null)
             {
-                UnityEngine.Object.Destroy(gameObjectCameraAutomap);
+                UnityEngine.Object.Destroy(gameObjectCameraExteriorAutomap);
             }
         }
 
@@ -337,6 +346,16 @@ namespace DaggerfallWorkshop.Game
                     Application.Quit();
             }
 
+            gameobjectExteriorAutomap = GameObject.Find("Automap/ExteriorAutomap");
+            if (gameobjectExteriorAutomap == null)
+            {
+                DaggerfallUnity.LogMessage("GameObject \"Automap/ExteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"ExteriorAutomap\" to it, to this add script Game/DaggerfallExteriorAutomap!\"", true);
+                if (Application.isEditor)
+                    Debug.Break();
+                else
+                    Application.Quit();
+            }
+
             layerAutomap = LayerMask.NameToLayer("ExteriorAutomap");
             if (layerAutomap == -1)
             {
@@ -345,6 +364,9 @@ namespace DaggerfallWorkshop.Game
             }
 
             Camera.main.cullingMask = Camera.main.cullingMask & ~((1 << layerAutomap)); // don't render automap layer with main camera
+            
+            cameraTransformRotationSaved = Quaternion.identity;
+            cameraOrthographicSizeSaved = 10.0f; // dummy value > 0.0f -> will be overwritten once camera zoom is applied
         }
 
         void OnDestroy()
@@ -370,24 +392,16 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            gameobjectExteriorAutomap = GameObject.Find("Automap/ExteriorAutomap");
-            if (gameobjectExteriorAutomap == null)
-            {
-                DaggerfallUnity.LogMessage("GameObject \"Automap/ExteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"ExteriorAutomap\" to it, to this add script Game/DaggerfallExteriorAutomap!\"", true);                
-                if (Application.isEditor)
-                    Debug.Break();
-                else
-                    Application.Quit();
-            }
+
         }
 
         void Update()
         {
-            // if we are not in game (e.g. title menu) skip update function (update must not be skipped when in game or in gui window (to propagate all map control changes))
-            if ((GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.Game) && (GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.UI))
-            {
-                return;
-            }
+            //// if we are not in game (e.g. title menu) skip update function (update must not be skipped when in game or in gui window (to propagate all map control changes))
+            //if ((GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.Game) && (GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.UI))
+            //{
+            //    return;
+            //}
         }
 
         #endregion
@@ -416,15 +430,15 @@ namespace DaggerfallWorkshop.Game
         {
             if (!cameraExteriorAutomap)
             {
-                gameObjectCameraAutomap = new GameObject("CameraExteriorAutomap");
-                cameraExteriorAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
+                gameObjectCameraExteriorAutomap = new GameObject("CameraExteriorAutomap");
+                cameraExteriorAutomap = gameObjectCameraExteriorAutomap.AddComponent<Camera>();
                 cameraExteriorAutomap.clearFlags = CameraClearFlags.SolidColor;
                 cameraExteriorAutomap.cullingMask = 1 << layerAutomap;
                 cameraExteriorAutomap.renderingPath = Camera.main.renderingPath;
                 cameraExteriorAutomap.orthographic = true;                
                 cameraExteriorAutomap.nearClipPlane = 0.7f;
                 cameraExteriorAutomap.farClipPlane = 5000.0f;                
-                gameObjectCameraAutomap.transform.SetParent(gameobjectExteriorAutomap.transform);
+                gameObjectCameraExteriorAutomap.transform.SetParent(gameobjectExteriorAutomap.transform);
             }
         }
 
@@ -927,6 +941,8 @@ namespace DaggerfallWorkshop.Game
             //File.WriteAllBytes(Application.dataPath + "/test.png", png);
 
             createCustomCanvasForExteriorAutomap();
+
+            ResetAutomapSettingsSignalForExternalScript = true; // force automap settings reset in next OnPush() function of DaggerfallExteriorAutomapWindow (for reset of camera settings)
 
             location.Loaded = true;
         }

@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         GameObject gameobjectExteriorAutomap = null; // used to hold reference to instance of GameObject "ExteriorAutomap" (which has script Game/DaggerfallExteriorAutomap.cs attached)
 
-        Camera cameraExteriorAutomap = null; // camera for automap camera
+        Camera cameraExteriorAutomap = null; // camera for exterior automap camera        
 
         Panel dummyPanelAutomap = null; // used to determine correct render panel position
         Panel panelRenderAutomap = null; // level geometry is rendered into this panel
@@ -444,16 +444,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 compass.CompassCamera = cameraExteriorAutomap;
             }
 
+
             if (daggerfallExteriorAutomap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
             {
                 // reset values to default whenever player enters building or dungeon
                 resetCameraPosition();
 
                 daggerfallExteriorAutomap.ResetAutomapSettingsSignalForExternalScript = false; // indicate the settings were reset
-            }
-            else
-            {
-                resetCameraPosition();
             }
 
             // and update the automap view
