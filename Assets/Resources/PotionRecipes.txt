@@ -1,5 +1,4 @@
-﻿{
-    "potion_recipes": [
+﻿[
         {
             "name": "Stamina",
             "recipes": [
@@ -864,5 +863,4 @@
                 }
             ]
         }
-    ]
-}
+]

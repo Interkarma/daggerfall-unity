@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -47,5 +47,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string loiterHowManyHours = "Loiter how many hours : ";
         public const string restHowManyHours = "Rest how many hours : ";
+
+        public const string potionRecipeFor = "Recipe for %po";
+        public const string cannotUseThis = "You cannot use this.";
+
     }
 }
