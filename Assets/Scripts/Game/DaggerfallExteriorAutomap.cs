@@ -56,12 +56,14 @@ namespace DaggerfallWorkshop.Game
 
         int layerAutomap; // layer used for level geometry of automap
 
-        GameObject gameObjectCameraAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
-        Camera cameraExteriorAutomap = null; // camera for exterior automap camera
+        GameObject gameObjectCameraExteriorAutomap = null; // used to hold reference to GameObject to which camera class for automap camera is attached to
+        Camera cameraExteriorAutomap = null; // camera for exterior automap camera        
+        Quaternion cameraTransformRotationSaved; // camera rotation is saved so that after closing and reopening exterior automap the camera transform settings can be restored
+        float cameraOrthographicSizeSaved; // camera's orthographic size is saved so that after closing and reopening exterior automap the camera settings can be restored
 
         GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
-        bool isOpenAutomap = false; // flag that indicates if automap window is open (set via Property IsOpenAutomap triggered by DaggerfallExteriorAutomapWindow script)
+        bool isOpenExteriorAutomap = false; // flag that indicates if automap window is open (set via Property IsOpenAutomap triggered by DaggerfallExteriorAutomapWindow script)
 
         // exterior automap view mode (controls settings for extra buildings and ground flats)
         public enum ExteriorAutomapViewMode
@@ -82,6 +84,19 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectPlayerMarkerArrow = null; // GameObject which will hold player marker arrow
         GameObject gameobjectPlayerMarkerArrowStamp = null; // GameObject which will hold player marker arrow stamp
         GameObject gameobjectPlayerMarkerCircle = null; // GameObject which will hold player marker circle (actually a cylinder)
+
+        private struct BuildingNamePlate
+        {
+            public int posX;
+            public int posY;
+            public string name;
+            public TextLabel textLabel;
+            public GameObject gameObject;
+        }
+
+        List<BuildingNamePlate> buildingNamePlates = null;
+
+        GameObject gameObjectBuildingNamePlates = null; // parent gameobject for all building name plates 
 
         private struct Rectangle
         {
@@ -119,7 +134,7 @@ namespace DaggerfallWorkshop.Game
 
         private const float layoutMultiplier = 1.0f;
 
-        private BlockLayout[] exteriorLayout;
+        private BlockLayout[] exteriorLayout = null;
 
         Texture2D exteriorLayoutTexture = null;
 
@@ -175,9 +190,9 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to propagate if the automap window is open or not
         /// </summary>
-        public bool IsOpenAutomap
+        public bool IsOpenExteriorAutomap
         {
-            set { isOpenAutomap = value; }
+            set { isOpenExteriorAutomap = value; }
         }
 
         #endregion
@@ -189,166 +204,32 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void updateAutomapStateOnWindowPush()
         {
-            ContentReader.MapSummary mapSummary;
-            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
-            if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
-            {
-                // no location found, something went wrong
-            }
-            
-            location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
-            if (!location.Loaded)
-            {
-                // Location not loaded, something went wrong
-            }
-
-            // Get location dimensions
-            locationWidth = location.Exterior.ExteriorData.Width;
-            locationHeight = location.Exterior.ExteriorData.Height;
-
-            // Get layout image dimensions
-            layoutWidth = locationWidth * blockSizeWidth;
-            layoutHeight = locationHeight * blockSizeHeight;
-
-            // Create map layout
-            switch (currentExteriorAutomapViewMode)
-            {
-                case ExteriorAutomapViewMode.Original:
-                    createExteriorLayoutTexture(location, false, true);
-                    break;
-                case ExteriorAutomapViewMode.Extra:
-                    createExteriorLayoutTexture(location, true, true);
-                    break;
-                case ExteriorAutomapViewMode.All:
-                    createExteriorLayoutTexture(location, true, false);
-                    break;
-            }
-
-            // create player marker
-            if (!gameobjectPlayerMarkerArrow)
-            {
-                gameobjectPlayerMarkerArrow = GameObjectHelper.CreateDaggerfallMeshGameObject(99900, gameobjectExteriorAutomap.transform, false, null, true);
-                gameobjectPlayerMarkerArrow.name = "PlayerMarkerArrow";
-                gameobjectPlayerMarkerArrow.layer = layerAutomap;
-                Material oldMat = gameobjectPlayerMarkerArrow.GetComponent<MeshRenderer>().material;
-                Material newMat = new Material(oldMat);
-                newMat.shader = Shader.Find("Unlit/Texture");
-                //newMat.CopyPropertiesFromMaterial(oldMat);
-                gameobjectPlayerMarkerArrow.GetComponent<MeshRenderer>().material = newMat;
-                gameobjectPlayerMarkerArrow.transform.localScale = new Vector3(2.5f, 2.5f, 2.5f) * layoutMultiplier;
-            }
-
-            // create player marker stamp (a darkened larger version in the background)
-            if (!gameobjectPlayerMarkerArrowStamp)
-            {
-                gameobjectPlayerMarkerArrowStamp = GameObjectHelper.CreateDaggerfallMeshGameObject(99900, gameobjectExteriorAutomap.transform, false, null, true);
-                gameobjectPlayerMarkerArrowStamp.name = "PlayerMarkerArrowStamp";
-                gameobjectPlayerMarkerArrowStamp.layer = layerAutomap;
-                Material oldMat = gameobjectPlayerMarkerArrowStamp.GetComponent<MeshRenderer>().material;
-                Material newMat = new Material(oldMat);
-                newMat.shader = Shader.Find("Unlit/Color");
-                newMat.color = new Color(0.353f, 0.086f, 0.086f);
-                //newMat.CopyPropertiesFromMaterial(oldMat);
-                gameobjectPlayerMarkerArrowStamp.GetComponent<MeshRenderer>().material = newMat;
-                gameobjectPlayerMarkerArrowStamp.transform.localScale = new Vector3(4.0f, 4.0f, 4.0f) * layoutMultiplier;
-            }
-
-            // create player circle
-            if (!gameobjectPlayerMarkerCircle)
-            {
-                gameobjectPlayerMarkerCircle = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                CapsuleCollider capsuleCollider = gameobjectPlayerMarkerCircle.GetComponent<CapsuleCollider>();
-                if (capsuleCollider)
-                {
-                    // get rid of capsule collider
-                    UnityEngine.Object.Destroy(capsuleCollider);
-                }
-                gameobjectPlayerMarkerCircle.name = "PlayerMarkerCircle";
-                gameobjectPlayerMarkerCircle.layer = layerAutomap;
-                gameobjectPlayerMarkerCircle.transform.SetParent(gameobjectExteriorAutomap.transform);
-                Material oldMat = gameobjectPlayerMarkerCircle.GetComponent<MeshRenderer>().material;
-                Material newMat = new Material(oldMat);
-                newMat.shader = Shader.Find("Unlit/Color");
-                newMat.color = new Color(0.75f, 0.71f, 0.71f);
-                //newMat.CopyPropertiesFromMaterial(oldMat);
-                gameobjectPlayerMarkerCircle.GetComponent<MeshRenderer>().material = newMat;
-                gameobjectPlayerMarkerCircle.transform.localScale = new Vector3(12.0f, 1.0f, 12.0f) * layoutMultiplier;
-            }            
-            
-
-            // place player marker
-            Vector3 playerPos = (GameManager.Instance.PlayerGPS.transform.position - GameManager.Instance.StreamingWorld.WorldCompensation) / (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale);
-            //Debug.Log(String.Format("player xpos: {0}, player ypos: {1}", playerPos.x, playerPos.z));
-            int refWidth = (int)(blockSizeWidth * 8 * layoutMultiplier); // layoutWidth / layoutMultiplier
-            int refHeight = (int)(blockSizeHeight * 8 * layoutMultiplier); // layoutHeight / layoutMultiplier
-            playerPos.x *= refWidth;
-            playerPos.y = 0.1f;
-            playerPos.z *= refHeight;
-            playerPos.x -= refWidth * 0.5f;
-            playerPos.z -= refHeight * 0.5f;
-            gameobjectPlayerMarkerArrow.transform.position = playerPos;
-            gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
-
-            // place player marker stamp
-            Vector3 newPos = gameobjectPlayerMarkerArrow.transform.position;
-            newPos.y = -10.0f;
-            Vector3 biasVec = -Vector3.Normalize(gameObjectPlayerAdvanced.transform.forward);
-            gameobjectPlayerMarkerArrowStamp.transform.position = newPos + biasVec * 0.8f;
-            gameobjectPlayerMarkerArrowStamp.transform.rotation = gameobjectPlayerMarkerArrow.transform.rotation;
-
-            newPos.y = -20.0f;
-            gameobjectPlayerMarkerCircle.transform.position = newPos;
-            gameobjectPlayerMarkerCircle.transform.rotation = gameobjectPlayerMarkerArrow.transform.rotation;
-
-            //byte[] png = exteriorLayoutTexture.EncodeToPNG();
-            //Debug.Log(String.Format("writing to folder {0}", Application.dataPath));
-            //File.WriteAllBytes(Application.dataPath + "/test.png", png);
-
-            createCustomCanvasForExteriorAutomap();
-
             // create camera (if not present) that will render automap level geometry
             createExteriorAutomapCamera();
+            
+            // restore camera rotation and zoom
+            gameObjectCameraExteriorAutomap.transform.rotation = cameraTransformRotationSaved;
+            cameraExteriorAutomap.orthographicSize = cameraOrthographicSizeSaved;
+
+            // focus player position
+            cameraExteriorAutomap.transform.position = GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f);
+
+            // update player marker position and rotation
+            updatePlayerMarker();
         }
 
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to signal this script to update when automap window was popped - TODO: check if this can done with an event (if events work with gui windows)
         /// </summary>
         public void updateAutomapStateOnWindowPop()
-        {
+        {            
+            cameraTransformRotationSaved = gameObjectCameraExteriorAutomap.transform.rotation;
+            cameraOrthographicSizeSaved = cameraExteriorAutomap.orthographicSize;
+
             // destroy the camera so it does not use system resources
-            if (gameObjectCameraAutomap != null)
+            if (gameObjectCameraExteriorAutomap != null)
             {
-                UnityEngine.Object.Destroy(gameObjectCameraAutomap);
-            }
-
-            if (gameobjectCustomCanvas != null)
-            {
-                UnityEngine.Object.Destroy(gameobjectCustomCanvas);
-                gameobjectCustomCanvas = null;
-            }
-
-            if (gameobjectPlayerMarkerArrow)
-            {
-                UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrow);
-                gameobjectPlayerMarkerArrow = null;
-            }
-
-            if (gameobjectPlayerMarkerArrowStamp)
-            {
-                UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrowStamp);
-                gameobjectPlayerMarkerArrowStamp = null;
-            }
-
-            if (gameobjectPlayerMarkerCircle)
-            {
-                UnityEngine.Object.Destroy(gameobjectPlayerMarkerCircle);
-                gameobjectPlayerMarkerCircle = null;
-            }
-
-            if (exteriorLayoutTexture != null)
-            {
-                UnityEngine.Object.Destroy(exteriorLayoutTexture);
-                exteriorLayoutTexture = null;
+                UnityEngine.Object.Destroy(gameObjectCameraExteriorAutomap);
             }
         }
 
@@ -376,21 +257,21 @@ namespace DaggerfallWorkshop.Game
         public void switchToExteriorAutomapViewModeOriginal()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Original;
-            createExteriorLayoutTexture(location, false, true);
+            createExteriorLayoutTexture(location, false, true, false);
             assignExteriorLayoutTextureToCustomCanvas();
         }
 
         public void switchToExteriorAutomapViewModeExtra()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.Extra;
-            createExteriorLayoutTexture(location, true, true);
+            createExteriorLayoutTexture(location, true, true, false);
             assignExteriorLayoutTextureToCustomCanvas();
         }
 
         public void switchToExteriorAutomapViewModeAll()
         {
             currentExteriorAutomapViewMode = ExteriorAutomapViewMode.All;
-            createExteriorLayoutTexture(location, true, false);
+            createExteriorLayoutTexture(location, true, false, false);
             assignExteriorLayoutTextureToCustomCanvas();
         }
 
@@ -425,6 +306,22 @@ namespace DaggerfallWorkshop.Game
             return (pos);
         }
 
+        public void rotateBuildingNamePlates(float angle)
+        {
+            foreach (var buildingNamePlate in buildingNamePlates)
+            {
+                buildingNamePlate.gameObject.transform.Rotate(new Vector3(0.0f, angle, 0.0f));
+            }
+        }
+
+        public void resetRotationBuildingNamePlates()
+        {
+            foreach (var buildingNamePlate in buildingNamePlates)
+            {
+                buildingNamePlate.gameObject.transform.rotation = Quaternion.Euler(Vector3.zero);
+            }
+        }
+
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to signal this script to update when anything changed that requires DaggerfallExteriorAutomap to update - TODO: check if this can done with an event (if events work with gui windows)
         /// </summary>
@@ -449,6 +346,16 @@ namespace DaggerfallWorkshop.Game
                     Application.Quit();
             }
 
+            gameobjectExteriorAutomap = GameObject.Find("Automap/ExteriorAutomap");
+            if (gameobjectExteriorAutomap == null)
+            {
+                DaggerfallUnity.LogMessage("GameObject \"Automap/ExteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"ExteriorAutomap\" to it, to this add script Game/DaggerfallExteriorAutomap!\"", true);
+                if (Application.isEditor)
+                    Debug.Break();
+                else
+                    Application.Quit();
+            }
+
             layerAutomap = LayerMask.NameToLayer("ExteriorAutomap");
             if (layerAutomap == -1)
             {
@@ -457,6 +364,9 @@ namespace DaggerfallWorkshop.Game
             }
 
             Camera.main.cullingMask = Camera.main.cullingMask & ~((1 << layerAutomap)); // don't render automap layer with main camera
+            
+            cameraTransformRotationSaved = Quaternion.identity;
+            cameraOrthographicSizeSaved = 10.0f; // dummy value > 0.0f -> will be overwritten once camera zoom is applied
         }
 
         void OnDestroy()
@@ -466,32 +376,32 @@ namespace DaggerfallWorkshop.Game
 
         void OnEnable()
         {
+            PlayerGPS.OnMapPixelChanged += OnMapPixelChanged;
+            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
+            SaveLoadManager.OnLoad += OnLoadEvent;
         }
 
         void OnDisable()
         {
+            PlayerGPS.OnMapPixelChanged -= OnMapPixelChanged;
+            PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
+            SaveLoadManager.OnLoad -= OnLoadEvent;
         }
 
         void Start()
         {
-            gameobjectExteriorAutomap = GameObject.Find("Automap/ExteriorAutomap");
-            if (gameobjectExteriorAutomap == null)
-            {
-                DaggerfallUnity.LogMessage("GameObject \"Automap/ExteriorAutomap\" missing! Create a GameObject called \"Automap\" in root of hierarchy and add a GameObject \"ExteriorAutomap\" to it, to this add script Game/DaggerfallExteriorAutomap!\"", true);                
-                if (Application.isEditor)
-                    Debug.Break();
-                else
-                    Application.Quit();
-            }
+
         }
 
         void Update()
         {
-            // if we are not in game (e.g. title menu) skip update function (update must not be skipped when in game or in gui window (to propagate all map control changes))
-            if ((GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.Game) && (GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.UI))
-            {
-                return;
-            }
+            //// if we are not in game (e.g. title menu) skip update function (update must not be skipped when in game or in gui window (to propagate all map control changes))
+            //if ((GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.Game) && (GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.UI))
+            //{
+            //    return;
+            //}
         }
 
         #endregion
@@ -520,15 +430,15 @@ namespace DaggerfallWorkshop.Game
         {
             if (!cameraExteriorAutomap)
             {
-                gameObjectCameraAutomap = new GameObject("CameraExteriorAutomap");
-                cameraExteriorAutomap = gameObjectCameraAutomap.AddComponent<Camera>();
+                gameObjectCameraExteriorAutomap = new GameObject("CameraExteriorAutomap");
+                cameraExteriorAutomap = gameObjectCameraExteriorAutomap.AddComponent<Camera>();
                 cameraExteriorAutomap.clearFlags = CameraClearFlags.SolidColor;
                 cameraExteriorAutomap.cullingMask = 1 << layerAutomap;
                 cameraExteriorAutomap.renderingPath = Camera.main.renderingPath;
                 cameraExteriorAutomap.orthographic = true;                
                 cameraExteriorAutomap.nearClipPlane = 0.7f;
                 cameraExteriorAutomap.farClipPlane = 5000.0f;                
-                gameObjectCameraAutomap.transform.SetParent(gameobjectExteriorAutomap.transform);
+                gameObjectCameraExteriorAutomap.transform.SetParent(gameobjectExteriorAutomap.transform);
             }
         }
 
@@ -592,10 +502,170 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        private void createBuildingNamePlates(DFLocation location)
+        {
+            deleteBuildingNamePlates();
+
+            buildingNamePlates = new List<BuildingNamePlate>();
+
+            gameObjectBuildingNamePlates = new GameObject("building name plates");
+            gameObjectBuildingNamePlates.transform.SetParent(gameobjectExteriorAutomap.transform);
+
+            foreach (var layout in exteriorLayout)
+            {
+                DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(layout.name);
+
+                RMBLayout.BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(block);
+                foreach (RMBLayout.BuildingSummary buildingSummary in buildingsInBlock)
+                {
+                    //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
+                    int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                    int yPosBuilding = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+
+                    //if (buildingSummary.BuildingType == DFLocation.BuildingTypes.WeaponSmith)
+                    {
+                        BuildingNamePlate newBuildingNamePlate;
+                        newBuildingNamePlate.name = "";
+                        switch (buildingSummary.BuildingType)
+                        {
+                            case DFLocation.BuildingTypes.Alchemist:
+                                newBuildingNamePlate.name = "Alchemist";
+                                break;
+                            case DFLocation.BuildingTypes.Armorer:
+                                newBuildingNamePlate.name = "Armorer";
+                                break;
+                            case DFLocation.BuildingTypes.Bank:
+                                newBuildingNamePlate.name = "Bank";
+                                break;
+                            case DFLocation.BuildingTypes.Bookseller:
+                                newBuildingNamePlate.name = "Bookseller";
+                                break;
+                            case DFLocation.BuildingTypes.ClothingStore:
+                                newBuildingNamePlate.name = "Clothing Store";
+                                break;
+                            case DFLocation.BuildingTypes.FurnitureStore:
+                                newBuildingNamePlate.name = "Furniture Store";
+                                break;
+                            case DFLocation.BuildingTypes.GemStore:
+                                newBuildingNamePlate.name = "Gem Store";
+                                break;
+                            case DFLocation.BuildingTypes.GeneralStore:
+                                newBuildingNamePlate.name = "General Store";
+                                break;
+                            case DFLocation.BuildingTypes.GuildHall:
+                                newBuildingNamePlate.name = "Guild Hall";
+                                break;
+                            case DFLocation.BuildingTypes.HouseForSale:
+                                newBuildingNamePlate.name = "House for Sale";
+                                break;
+                            case DFLocation.BuildingTypes.Library:
+                                newBuildingNamePlate.name = "Library";
+                                break;
+                            case DFLocation.BuildingTypes.Palace:
+                                newBuildingNamePlate.name = "Palace";
+                                break;
+                            case DFLocation.BuildingTypes.PawnShop:
+                                newBuildingNamePlate.name = "Pawn Shop";
+                                break;
+                            case DFLocation.BuildingTypes.Tavern:
+                                newBuildingNamePlate.name = "Tavern";
+                                break;
+                            case DFLocation.BuildingTypes.Temple:
+                                newBuildingNamePlate.name = "Temple";
+                                break;
+                            case DFLocation.BuildingTypes.WeaponSmith:
+                                newBuildingNamePlate.name = "Weapon Smith";
+                                break;
+                        }
+
+                        if (newBuildingNamePlate.name != "")
+                        {
+                            newBuildingNamePlate.posX = xPosBuilding;
+                            newBuildingNamePlate.posY = yPosBuilding;
+                            newBuildingNamePlate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNamePlate.name);
+                            newBuildingNamePlate.textLabel.TextColor = Color.yellow;
+                            newBuildingNamePlate.gameObject = new GameObject(String.Format("building name plate for [{0}]", newBuildingNamePlate.name));
+                            MeshFilter meshFilter = (MeshFilter)newBuildingNamePlate.gameObject.AddComponent(typeof(MeshFilter));
+                            int width = newBuildingNamePlate.textLabel.Texture.width;
+                            int height = newBuildingNamePlate.textLabel.Texture.height;
+                            meshFilter.mesh = CreateMesh(width, height); // create quad with normal facing into positive y-direction
+                            MeshRenderer renderer = newBuildingNamePlate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+
+                            renderer.material.shader = Shader.Find("Unlit/Transparent");
+                            renderer.material.mainTexture = newBuildingNamePlate.textLabel.Texture;
+                            renderer.enabled = true;
+
+                            SetLayerRecursively(newBuildingNamePlate.gameObject, layerAutomap);
+                            newBuildingNamePlate.gameObject.transform.SetParent(gameObjectBuildingNamePlates.transform);
+
+                            float posX = newBuildingNamePlate.posX - locationWidth * blockSizeWidth * 0.5f;
+                            float posY = newBuildingNamePlate.posY - locationHeight * blockSizeHeight * 0.5f;
+                            newBuildingNamePlate.gameObject.transform.position = new Vector3(posX, 4.0f, posY);
+                            newBuildingNamePlate.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                            buildingNamePlates.Add(newBuildingNamePlate);
+                        }
+                    }
+                }
+            }            
+        }
+
+        private void deleteBuildingNamePlates()
+        {
+            if (buildingNamePlates != null)
+            {
+                foreach (BuildingNamePlate n in buildingNamePlates)
+                {
+                    if (n.gameObject != null)
+                    {
+                        UnityEngine.Object.Destroy(n.gameObject);
+                    }
+                }
+                buildingNamePlates.Clear();
+                buildingNamePlates = null;
+            }
+
+            if (gameObjectBuildingNamePlates != null)
+            {
+                UnityEngine.Object.Destroy(gameObjectBuildingNamePlates);
+                gameObjectBuildingNamePlates = null;
+            }
+        }
+
+        private void updatePlayerMarker()
+        {
+            // place player marker            
+            Vector3 playerPos;
+            float scale = MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale;
+            playerPos.x = ((GameManager.Instance.PlayerGPS.transform.position.x) % scale) / scale;
+            playerPos.z = ((GameManager.Instance.PlayerGPS.transform.position.z) % scale) / scale;
+            playerPos.y = 0.0f;
+                        
+            int refWidth = (int)(blockSizeWidth * 8 * layoutMultiplier); // layoutWidth / layoutMultiplier
+            int refHeight = (int)(blockSizeHeight * 8 * layoutMultiplier); // layoutHeight / layoutMultiplier
+            playerPos.x *= refWidth;
+            playerPos.y = 0.1f;
+            playerPos.z *= refHeight;
+            playerPos.x -= refWidth * 0.5f;
+            playerPos.z -= refHeight * 0.5f;
+            gameobjectPlayerMarkerArrow.transform.position = playerPos;
+            gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
+
+            // place player marker stamp
+            Vector3 newPos = gameobjectPlayerMarkerArrow.transform.position;
+            newPos.y = -10.0f;
+            Vector3 biasVec = -Vector3.Normalize(gameObjectPlayerAdvanced.transform.forward);
+            gameobjectPlayerMarkerArrowStamp.transform.position = newPos + biasVec * 0.8f;
+            gameobjectPlayerMarkerArrowStamp.transform.rotation = gameobjectPlayerMarkerArrow.transform.rotation;
+
+            newPos.y = -20.0f;
+            gameobjectPlayerMarkerCircle.transform.position = newPos;
+            gameobjectPlayerMarkerCircle.transform.rotation = gameobjectPlayerMarkerArrow.transform.rotation;
+        }
+
         /// <summary>
         /// creates the map layout in the exterior layout texture
         /// </summary>  
-        private void createExteriorLayoutTexture(DFLocation location, bool showAll = false, bool removeGroundFlats = true)
+        private void createExteriorLayoutTexture(DFLocation location, bool showAll = false, bool removeGroundFlats = true, bool createNamePlates = true)
         {
             if (exteriorLayoutTexture != null)
             {
@@ -738,11 +808,223 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 exteriorLayoutTexture.SetPixels32(layout.rect.xpos, layout.rect.ypos, layout.rect.width, layout.rect.height, colors);
-                exteriorLayoutTexture.Apply();
+
+                //RMBLayout.BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(block);
+                //foreach (RMBLayout.BuildingSummary buildingSummary in buildingsInBlock)
+                //{
+                //    //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
+                //    int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                //    int yPosBuilding  = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                //    //exteriorLayoutTexture.SetPixel(xPosBuilding, yPosBuilding, Color.yellow);
+                //}
+
+                exteriorLayoutTexture.Apply();                
 
                 DaggerfallUnity.Instance.ContentReader.BlockFileReader.DiscardBlock(block.Index);
             }
-        }     
+
+            if (createNamePlates)
+            {
+                createBuildingNamePlates(location);
+            }
+        }
+
+        private void loadAndCreateLocationExteriorAutomap()
+        {
+            ContentReader.MapSummary mapSummary;
+            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+            if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+            {
+                // no location found
+                return; // do nothing
+            }
+
+            DFLocation currentPlayerLocation = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
+            if (!currentPlayerLocation.Loaded)
+            {
+                // Location not loaded, something went wrong
+                DaggerfallUnity.LogMessage("error when loading location for exterior automap layouting", true);
+                if (Application.isEditor)
+                    Debug.Break();
+                else
+                    Application.Quit();
+            }
+
+            if ((location.Loaded) && (currentPlayerLocation.Name == location.Name)) // if already loaded
+            {
+                return; // do nothing
+            }            
+
+            unloadLocationExteriorAutomap(); // first make sure to unload location exterior automap and destroy resources
+
+            location = currentPlayerLocation; // set current location as new location
+
+            // and now layout it
+
+            // Get location dimensions
+            locationWidth = location.Exterior.ExteriorData.Width;
+            locationHeight = location.Exterior.ExteriorData.Height;
+
+            // Get layout image dimensions
+            layoutWidth = locationWidth * blockSizeWidth;
+            layoutHeight = locationHeight * blockSizeHeight;
+
+            // Create map layout
+            switch (currentExteriorAutomapViewMode)
+            {
+                case ExteriorAutomapViewMode.Original:
+                    createExteriorLayoutTexture(location, false, true);
+                    break;
+                case ExteriorAutomapViewMode.Extra:
+                    createExteriorLayoutTexture(location, true, true);
+                    break;
+                case ExteriorAutomapViewMode.All:
+                    createExteriorLayoutTexture(location, true, false);
+                    break;
+            }
+
+            // create player marker
+            if (!gameobjectPlayerMarkerArrow)
+            {
+                gameobjectPlayerMarkerArrow = GameObjectHelper.CreateDaggerfallMeshGameObject(99900, gameobjectExteriorAutomap.transform, false, null, true);
+                gameobjectPlayerMarkerArrow.name = "PlayerMarkerArrow";
+                gameobjectPlayerMarkerArrow.layer = layerAutomap;
+                Material oldMat = gameobjectPlayerMarkerArrow.GetComponent<MeshRenderer>().material;
+                Material newMat = new Material(oldMat);
+                newMat.shader = Shader.Find("Unlit/Texture");
+                //newMat.CopyPropertiesFromMaterial(oldMat);
+                gameobjectPlayerMarkerArrow.GetComponent<MeshRenderer>().material = newMat;
+                gameobjectPlayerMarkerArrow.transform.localScale = new Vector3(2.5f, 2.5f, 2.5f) * layoutMultiplier;
+            }
+
+            // create player marker stamp (a darkened larger version in the background)
+            if (!gameobjectPlayerMarkerArrowStamp)
+            {
+                gameobjectPlayerMarkerArrowStamp = GameObjectHelper.CreateDaggerfallMeshGameObject(99900, gameobjectExteriorAutomap.transform, false, null, true);
+                gameobjectPlayerMarkerArrowStamp.name = "PlayerMarkerArrowStamp";
+                gameobjectPlayerMarkerArrowStamp.layer = layerAutomap;
+                Material oldMat = gameobjectPlayerMarkerArrowStamp.GetComponent<MeshRenderer>().material;
+                Material newMat = new Material(oldMat);
+                newMat.shader = Shader.Find("Unlit/Color");
+                newMat.color = new Color(0.353f, 0.086f, 0.086f);
+                //newMat.CopyPropertiesFromMaterial(oldMat);
+                gameobjectPlayerMarkerArrowStamp.GetComponent<MeshRenderer>().material = newMat;
+                gameobjectPlayerMarkerArrowStamp.transform.localScale = new Vector3(4.0f, 4.0f, 4.0f) * layoutMultiplier;
+            }
+
+            // create player circle
+            if (!gameobjectPlayerMarkerCircle)
+            {
+                gameobjectPlayerMarkerCircle = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                CapsuleCollider capsuleCollider = gameobjectPlayerMarkerCircle.GetComponent<CapsuleCollider>();
+                if (capsuleCollider)
+                {
+                    // get rid of capsule collider
+                    UnityEngine.Object.Destroy(capsuleCollider);
+                }
+                gameobjectPlayerMarkerCircle.name = "PlayerMarkerCircle";
+                gameobjectPlayerMarkerCircle.layer = layerAutomap;
+                gameobjectPlayerMarkerCircle.transform.SetParent(gameobjectExteriorAutomap.transform);
+                Material oldMat = gameobjectPlayerMarkerCircle.GetComponent<MeshRenderer>().material;
+                Material newMat = new Material(oldMat);
+                newMat.shader = Shader.Find("Unlit/Color");
+                newMat.color = new Color(0.75f, 0.71f, 0.71f);
+                //newMat.CopyPropertiesFromMaterial(oldMat);
+                gameobjectPlayerMarkerCircle.GetComponent<MeshRenderer>().material = newMat;
+                gameobjectPlayerMarkerCircle.transform.localScale = new Vector3(12.0f, 1.0f, 12.0f) * layoutMultiplier;
+            }
+
+            updatePlayerMarker();
+
+            //byte[] png = exteriorLayoutTexture.EncodeToPNG();
+            //Debug.Log(String.Format("writing to folder {0}", Application.dataPath));
+            //File.WriteAllBytes(Application.dataPath + "/test.png", png);
+
+            createCustomCanvasForExteriorAutomap();
+
+            ResetAutomapSettingsSignalForExternalScript = true; // force automap settings reset in next OnPush() function of DaggerfallExteriorAutomapWindow (for reset of camera settings)
+
+            location.Loaded = true;
+        }
+
+        private void unloadLocationExteriorAutomap()
+        {
+            deleteBuildingNamePlates();
+
+            if (gameobjectCustomCanvas != null)
+            {
+                UnityEngine.Object.Destroy(gameobjectCustomCanvas);
+                gameobjectCustomCanvas = null;
+            }
+
+            if (gameobjectPlayerMarkerArrow)
+            {
+                UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrow);
+                gameobjectPlayerMarkerArrow = null;
+            }
+
+            if (gameobjectPlayerMarkerArrowStamp)
+            {
+                UnityEngine.Object.Destroy(gameobjectPlayerMarkerArrowStamp);
+                gameobjectPlayerMarkerArrowStamp = null;
+            }
+
+            if (gameobjectPlayerMarkerCircle)
+            {
+                UnityEngine.Object.Destroy(gameobjectPlayerMarkerCircle);
+                gameobjectPlayerMarkerCircle = null;
+            }
+
+            if (exteriorLayoutTexture != null)
+            {
+                UnityEngine.Object.Destroy(exteriorLayoutTexture);
+                exteriorLayoutTexture = null;
+            }
+
+            location.Loaded = false;
+        }
+
+        private void OnMapPixelChanged(DFPosition mapPixel)
+        {
+            ContentReader.MapSummary mapSummary;
+            if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+            {
+                loadAndCreateLocationExteriorAutomap();
+            }
+        }
+
+        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+            ContentReader.MapSummary mapSummary;
+            if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+            {
+                loadAndCreateLocationExteriorAutomap();
+            }
+        }
+
+        private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+            ContentReader.MapSummary mapSummary;
+            if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+            {
+                loadAndCreateLocationExteriorAutomap();
+            }
+        }
+
+        void OnLoadEvent(SaveData_v1 saveData)
+        {
+            if (!GameManager.Instance.IsPlayerInside)
+            {
+                DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+                ContentReader.MapSummary mapSummary;
+                if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+                {
+                    loadAndCreateLocationExteriorAutomap();
+                }
+            }
+        }
 
         #endregion
     }
