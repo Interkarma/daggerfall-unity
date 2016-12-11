@@ -11,7 +11,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -50,6 +49,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
             Cursor.visible = true;
+
+            // Shortcuts for options
+            if (Input.GetKeyDown(KeyCode.L))
+                LoadGame();
+            else if (Input.GetKeyDown(KeyCode.S))
+                StartNewGame();
+            else if (Input.GetKeyDown(KeyCode.E))
+                ExitGame();
+        }
+
+        void LoadGame()
+        {
+            uiManager.PushWindow(new DaggerfallUnitySaveGameWindow(uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, null, true));
+        }
+
+        void StartNewGame()
+        {
+            uiManager.PushWindow(new StartNewGameWizard(uiManager));
+        }
+
+        void ExitGame()
+        {
+            Application.Quit();
         }
 
         public override void ProcessMessages()
@@ -59,13 +81,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (uiManager.GetMessage())
             {
                 case DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow:
-                    uiManager.PushWindow(new DaggerfallUnitySaveGameWindow(uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, null, true));
+                    LoadGame();
                     break;
                 case DaggerfallUIMessages.dfuiStartNewGame:
-                    uiManager.PushWindow(new StartNewGameWizard(uiManager));
+                    StartNewGame();
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
-                    Application.Quit();
+                    ExitGame();
                     break;
             }
         }
