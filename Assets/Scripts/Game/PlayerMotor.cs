@@ -391,6 +391,12 @@ namespace DaggerfallWorkshop.Game
         {
             contactPoint = hit.point;
 
+            // Don't consider enemies as moving platforms
+            // Otherwise, if we're positioned just right on top of one, the player camera gets unstable
+            // This still allows standing on enemies
+            if (hit.collider.gameObject.GetComponent<DaggerfallEnemy>() != null)
+                return;
+
             // Get active platform
             if (hit.moveDirection.y < -0.9 && hit.normal.y > 0.5)
                 activePlatform = hit.collider.transform;
