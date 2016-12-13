@@ -1,9 +1,12 @@
 Name: Real Grass 
 Made  by: Uncanny_Valley
 For:  DaggerFall Tools For Unity (1.3.31)
-Version: 1.03
+Version: 1.04
 
 This mod adds animated billboard grass in DaggerFall
+
+1.04
+*Fixes error messages when traveling during winter in grassy climates
 
 1.03
 *Fixes a few misplaced grass placements
