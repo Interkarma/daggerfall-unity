@@ -72,6 +72,8 @@ namespace DaggerfallWorkshop.Game
                     // However they will appear sunken into ground as a result
                     //if (controller.height > 1.9f)
                     //    controller.height = 1.9f;
+
+                    controller.gameObject.layer = LayerMask.NameToLayer("Enemies");
                 }
 
                 // Setup sounds
