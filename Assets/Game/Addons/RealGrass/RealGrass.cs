@@ -240,9 +240,8 @@ namespace DaggerfallWorkshop.Game
 
                     }
                 }
+                terrainData.SetDetailLayer(0, 0, 0, details);
             }
-
-            terrainData.SetDetailLayer(0, 0, 0, details);
 
             //			stopwatch.Stop();
             //			// Write result
