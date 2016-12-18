@@ -163,7 +163,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel dummyPanelCompass = null; // used to determine correct compass position
 
         // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
+#pragma warning disable 414
         bool leftMouseClickedOnPanelAutomap = false; // used for debug teleport mode clicks
+#pragma warning restore 414
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
         bool leftMouseDownOnForwardButton = false;
@@ -428,8 +430,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!isSetup) // if Setup() has not run, run it now
                 Setup();
 
-            daggerfallExteriorAutomap.IsOpenExteriorAutomap = true; // signal DaggerfallExteriorAutomap script that exterior automap is open and it should do its stuff in its Update() function            
-
             daggerfallExteriorAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallExteriorAutomap script that exterior automap window was closed and that it should update its state (updates player marker arrow)
 
             // get automap camera
@@ -462,8 +462,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public override void OnPop()
         {
-            daggerfallExteriorAutomap.IsOpenExteriorAutomap = false; // signal DaggerfallExteriorAutomap script that exterior automap was closed
-
             // destroy the other gameobjects as well so they don't use system resources
 
             cameraExteriorAutomap.targetTexture = null;
