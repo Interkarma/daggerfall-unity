@@ -1003,7 +1003,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void OnLoadEvent(SaveData_v1 saveData)
+        void OnLoadEvent(SaveData_v2 saveData)
         {
             if (!GameManager.Instance.IsPlayerInside)
             {
