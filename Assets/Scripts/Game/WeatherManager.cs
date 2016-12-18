@@ -10,8 +10,8 @@
 //
 
 using UnityEngine;
-using System.Collections;
 using DaggerfallWorkshop.Utility;
+using Random = UnityEngine.Random;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -49,11 +49,11 @@ namespace DaggerfallWorkshop.Game
         public float ChanceToStartSnowing = 0.1f;
 
         DaggerfallUnity dfUnity;
-        bool isRaining = false;
-        bool isStorming = false;
-        bool isSnowing = false;
-        bool isOvercast = false;
-        float pollTimer = 0;
+        bool isRaining;
+        bool isStorming;
+        bool isSnowing;
+        bool isOvercast;
+        float pollTimer;
 
         public bool IsRaining
         {
@@ -326,13 +326,20 @@ namespace DaggerfallWorkshop.Game
 
         #region Events Handlers
 
-        private void SaveLoadManager_OnLoad(Serialization.SaveData_v1 saveData)
+        void SaveLoadManager_OnLoad(Serialization.SaveData_v2 saveData)
         {
-            // TODO: Save/load weather state
-            ClearAllWeather();
+            switch (saveData.playerData.playerPosition.weather)
+            {
+                case PlayerWeather.WeatherTypes.Rain_Normal:
+                    StartRaining();
+                    break;
+                case PlayerWeather.WeatherTypes.Snow_Normal:
+                    StartSnowing();
+                    break;
+            }
         }
 
-        private void StreamingWorld_OnInitWorld()
+        void StreamingWorld_OnInitWorld()
         {
             // Clear weather when starting up world
             ClearAllWeather();

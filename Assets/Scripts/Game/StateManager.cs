@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         //triggered by SaveLoadManager when a quicksave is loaded
-        public void SaveLoadManager_OnLoadHandler(SaveData_v1 saveData)
+        public void SaveLoadManager_OnLoadHandler(SaveData_v2 saveData)
         {
             if (OnStartNewGame != null)
                 OnStartNewGame(this, null);

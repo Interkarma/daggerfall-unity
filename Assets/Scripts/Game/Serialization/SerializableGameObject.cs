@@ -69,6 +69,34 @@ namespace DaggerfallWorkshop.Game.Serialization
         public LootContainerData_v1[] lootContainers;
     }
 
+    /// TODO I tried to use inheritande with name hiding for the updated fields, but FullSerializer serializes those
+    /// as null! Work around is to replicate the entire structure, but this seems inefficient and unscalable. Figure
+    /// out what's going on. It might be that FS has a bug.
+    [fsObject("v2", typeof(SaveData_v1))]
+    public class SaveData_v2
+    {
+        public SaveDataDescription_v1 header;
+        public ulong currentUID;
+        public DateAndTime_v1 dateAndTime;
+        public PlayerData_v2 playerData;
+        public DungeonData_v1 dungeonData;
+        public EnemyData_v1[] enemyData;
+        public LootContainerData_v1[] lootContainers;
+
+        public SaveData_v2() {}
+
+        public SaveData_v2(SaveData_v1 old)
+        {
+            header = old.header;
+            currentUID = old.currentUID;
+            dateAndTime = old.dateAndTime;
+            playerData = new PlayerData_v2(old.playerData);
+            dungeonData = old.dungeonData;
+            enemyData = old.enemyData;
+            lootContainers = old.lootContainers;
+        }
+    }
+
     #endregion
 
     #region Header Data
@@ -100,6 +128,23 @@ namespace DaggerfallWorkshop.Game.Serialization
         public PlayerPositionData_v1 playerPosition;
         public PlayerEntityData_v1 playerEntity;
         public bool weaponDrawn;
+    }
+
+    [fsObject("v2", typeof(PlayerData_v1))]
+    public class PlayerData_v2
+    {
+        public PlayerPositionData_v2 playerPosition;
+        public PlayerEntityData_v1 playerEntity;
+        public bool weaponDrawn;
+
+        public PlayerData_v2() {}
+
+        public PlayerData_v2(PlayerData_v1 old)
+        {
+            playerPosition = new PlayerPositionData_v2(old.playerPosition);
+            playerEntity = old.playerEntity;
+            weaponDrawn = old.weaponDrawn;
+        }
     }
 
     [fsObject("v1")]
@@ -139,6 +184,42 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string terrainSamplerName;
         public int terrainSamplerVersion;
         public StaticDoor[] exteriorDoors;
+    }
+
+    [fsObject("v2", typeof(PlayerPositionData_v1))]
+    public class PlayerPositionData_v2
+    {
+        public Vector3 position;
+        public float yaw;
+        public float pitch;
+        public bool isCrouching;
+        public int worldPosX;
+        public int worldPosZ;
+        public bool insideDungeon;
+        public bool insideBuilding;
+        public string terrainSamplerName;
+        public int terrainSamplerVersion;
+        public StaticDoor[] exteriorDoors;
+        public PlayerWeather.WeatherTypes weather;
+
+        public PlayerPositionData_v2() {}
+
+        public PlayerPositionData_v2(PlayerPositionData_v1 old)
+        {
+            position = old.position;
+            yaw = old.yaw;
+            pitch = old.pitch;
+            isCrouching = old.isCrouching;
+            worldPosX = old.worldPosX;
+            worldPosZ = old.worldPosZ;
+            insideDungeon = old.insideDungeon;
+            insideBuilding = old.insideBuilding;
+            terrainSamplerName = old.terrainSamplerName;
+            terrainSamplerVersion = old.terrainSamplerVersion;
+            exteriorDoors = old.exteriorDoors;
+            // v1 didnt have weather data, default to sunny
+            weather = PlayerWeather.WeatherTypes.None;
+        }
     }
 
     [fsObject("v1")]

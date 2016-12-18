@@ -11,9 +11,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Serialization
@@ -92,7 +89,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!playerEnterExit || !StreamingWorld)
                 return null;
 
-            PlayerData_v1 data = new PlayerData_v1();
+            PlayerData_v2 data = new PlayerData_v2();
 
             // Store player entity data
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
@@ -117,7 +114,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.goldPieces = entity.GoldPieces;
 
             // Store player position data
-            data.playerPosition = new PlayerPositionData_v1();
+            data.playerPosition = new PlayerPositionData_v2();
             data.playerPosition.position = transform.position;
             data.playerPosition.yaw = playerMouseLook.Yaw;
             data.playerPosition.pitch = playerMouseLook.Pitch;
@@ -128,12 +125,13 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerPosition.insideBuilding = playerEnterExit.IsPlayerInsideBuilding;
             data.playerPosition.terrainSamplerName = DaggerfallUnity.Instance.TerrainSampler.ToString();
             data.playerPosition.terrainSamplerVersion = DaggerfallUnity.Instance.TerrainSampler.Version;
+            data.playerPosition.weather = GameManager.Instance.WeatherManager.PlayerWeather.WeatherType;
 
             // Store weapon state
             data.weaponDrawn = !weaponManager.Sheathed;
 
             // Store building exterior door data
-            if ((playerEnterExit.IsPlayerInsideBuilding))
+            if (playerEnterExit.IsPlayerInsideBuilding)
             {
                 data.playerPosition.exteriorDoors = playerEnterExit.ExteriorDoors;
             }
@@ -147,7 +145,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 return;
 
             // Restore player entity data
-            PlayerData_v1 data = (PlayerData_v1)dataIn;
+            PlayerData_v2 data = (PlayerData_v2)dataIn;
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
             entity.Gender = data.playerEntity.gender;
             entity.RaceTemplate = data.playerEntity.raceTemplate;
@@ -210,7 +208,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         StreamingWorld FindStreamingWorld()
         {
-            streamingWorld = GameObject.FindObjectOfType<StreamingWorld>();
+            streamingWorld = FindObjectOfType<StreamingWorld>();
             if (!streamingWorld)
                 throw new Exception("StreamingWorld not found.");
 

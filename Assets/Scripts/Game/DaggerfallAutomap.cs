@@ -1691,7 +1691,7 @@ namespace DaggerfallWorkshop.Game
             DestroyBeacons();
         }
 
-        void OnLoadEvent(SaveData_v1 saveData)
+        void OnLoadEvent(SaveData_v2 saveData)
         {
             DestroyBeacons();
 
