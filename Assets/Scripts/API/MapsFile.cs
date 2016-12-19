@@ -11,7 +11,6 @@
 
 #region Using Statements
 using System;
-using System.Text;
 using System.IO;
 using DaggerfallConnect.Utility;
 #endregion
@@ -159,7 +158,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Gets default MAPS.BSA filename.
         /// </summary>
-        static public string Filename
+        public static string Filename
         {
             get { return "MAPS.BSA"; }
         }
@@ -247,10 +246,24 @@ namespace DaggerfallConnect.Arena2
 
         #region Static Properties
 
+        public enum Climates
+        {
+            Ocean = 223,
+            Desert = 224,
+            Desert2 = 225, // seen in dak'fron
+            Mountain = 226,
+            Rainforest = 227,
+            Swamp = 228,
+            Subtropical = 229,
+            MountainWoods = 230,
+            Woodlands = 231,
+            HauntedWoodlands = 232 // not sure where this is?
+        }
+
         /// <summary>
         /// Gets default climate index.
         /// </summary>
-        static public int DefaultClimate
+        public static int DefaultClimate
         {
             get { return 231; }
         }
@@ -258,7 +271,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Gets default climate settings.
         /// </summary>
-        static public DFLocation.ClimateSettings DefaultClimateSettings
+        public static DFLocation.ClimateSettings DefaultClimateSettings
         {
             get { return GetWorldClimateSettings(DefaultClimate); }
         }
@@ -384,7 +397,7 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         /// <param name="worldClimate">Climate value from CLIMATE.PAK. Valid range is 223-232.</param>
         /// <returns>Climate settings for specified world climate value.</returns>
-        static public DFLocation.ClimateSettings GetWorldClimateSettings(int worldClimate)
+        public static DFLocation.ClimateSettings GetWorldClimateSettings(int worldClimate)
         {
             // Create settings struct
             DFLocation.ClimateSettings settings = new DFLocation.ClimateSettings();
@@ -393,70 +406,70 @@ namespace DaggerfallConnect.Arena2
             // Set based on world climate
             switch (worldClimate)
             {
-                case 223:   // Ocean
+                case (int) Climates.Ocean:   // Ocean
                     settings.ClimateType = DFLocation.ClimateBaseType.Swamp;
                     settings.GroundArchive = 402;
-                    settings.NatureArchive = 504;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 24;
                     break;
-                case 224:
+                case (int) Climates.Desert:
                     settings.ClimateType = DFLocation.ClimateBaseType.Desert;
                     settings.GroundArchive = 2;
-                    settings.NatureArchive = 503;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Desert;
                     settings.SkyBase = 8;
                     break;
-                case 225:
+                case (int) Climates.Desert2:
                     settings.ClimateType = DFLocation.ClimateBaseType.Desert;
                     settings.GroundArchive = 2;
-                    settings.NatureArchive = 503;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Desert;
                     settings.SkyBase = 8;
                     break;
-                case 226:
+                case (int) Climates.Mountain:
                     settings.ClimateType = DFLocation.ClimateBaseType.Mountain;
                     settings.GroundArchive = 102;
-                    settings.NatureArchive = 510;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Mountains;
                     settings.SkyBase = 0;
                     break;
-                case 227:
+                case (int) Climates.Rainforest:
                     settings.ClimateType = DFLocation.ClimateBaseType.Swamp;
                     settings.GroundArchive = 402;
-                    settings.NatureArchive = 500;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_RainForest;
                     settings.SkyBase = 24;
                     break;
-                case 228:
+                case (int) Climates.Swamp:
                     settings.ClimateType = DFLocation.ClimateBaseType.Swamp;
                     settings.GroundArchive = 402;
-                    settings.NatureArchive = 502;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Swamp;
                     settings.SkyBase = 24;
                     break;
-                case 229:
+                case (int) Climates.Subtropical:
                     settings.ClimateType = DFLocation.ClimateBaseType.Desert;
                     settings.GroundArchive = 2;
-                    settings.NatureArchive = 501;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_SubTropical;
                     settings.SkyBase = 24;
                     break;
-                case 230:
+                case (int) Climates.MountainWoods:
                     settings.ClimateType = DFLocation.ClimateBaseType.Mountain;
                     settings.GroundArchive = 102;
-                    settings.NatureArchive = 504;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
                     break;
-                case 231:
+                case (int) Climates.Woodlands:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
                     settings.GroundArchive = 302;
-                    settings.NatureArchive = 504;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
                     break;
-                case 232:
+                case (int) Climates.HauntedWoodlands:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
                     settings.GroundArchive = 302;
-                    settings.NatureArchive = 508;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_HauntedWoodlands;
                     settings.SkyBase = 16;
                     break;
                 default:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
                     settings.GroundArchive = 302;
-                    settings.NatureArchive = 504;
+                    settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
                     break;
             }

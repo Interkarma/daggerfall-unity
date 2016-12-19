@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using DaggerfallWorkshop.Game.Weather;
 using Wenzil.Console;
 
 //auto update moon phase
@@ -235,7 +236,7 @@ namespace EnhancedSky
                }
                else
                {
-                   SkyManager.instance.WeatherManagerSkyEventsHandler();
+                   SkyManager.instance.WeatherManagerSkyEventsHandler(WeatherType.Sunny);
                    return string.Format("Finished updating cloud.");
                }
            }

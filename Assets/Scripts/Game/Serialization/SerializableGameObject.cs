@@ -13,6 +13,7 @@ using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Weather;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Serialization
@@ -139,7 +140,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string terrainSamplerName;
         public int terrainSamplerVersion;
         public StaticDoor[] exteriorDoors;
-        public PlayerWeather.WeatherTypes weather;
+        public WeatherType weather;
     }
 
     [fsObject("v1")]

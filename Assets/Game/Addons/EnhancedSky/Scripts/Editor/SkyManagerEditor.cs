@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System.Collections;
+﻿using UnityEditor;
+using UnityEngine;
+
 namespace EnhancedSky
 {
 
@@ -33,7 +33,7 @@ namespace EnhancedSky
 
                 if (GUILayout.Button("Apply normal cloud texture"))
                 {
-                    Cloud cloud = GameObject.FindObjectOfType<Cloud>();
+                    Cloud cloud = FindObjectOfType<Cloud>();
                     if(cloud != null)
                     {
                         cloud.GetNewTexture(false);
@@ -43,7 +43,7 @@ namespace EnhancedSky
 
                 if (GUILayout.Button("Apply overcast cloud texture"))
                 {
-                    Cloud cloud = GameObject.FindObjectOfType<Cloud>();
+                    Cloud cloud = FindObjectOfType<Cloud>();
                     if (cloud != null)
                     {
                         cloud.GetNewTexture(true);
@@ -55,7 +55,7 @@ namespace EnhancedSky
                     if (skyMan.IsOvercast)
                         skyMan.weatherMan.ClearAllWeather();
                     else
-                        skyMan.weatherMan.SetRainOvercast(true);
+                        skyMan.weatherMan.SetRainOvercast();
 
 
                     Debug.Log("Is Overcast: " + skyMan.weatherMan.IsOvercast);
