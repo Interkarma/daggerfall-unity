@@ -326,7 +326,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Events Handlers
 
-        void SaveLoadManager_OnLoad(Serialization.SaveData_v2 saveData)
+        void SaveLoadManager_OnLoad(Serialization.SaveData_v1 saveData)
         {
             switch (saveData.playerData.playerPosition.weather)
             {

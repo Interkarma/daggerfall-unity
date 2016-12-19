@@ -486,7 +486,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
             StartGameBehaviour.OnNewGame += onNewGame;
-            SaveLoadManager.OnLoad += OnLoadEvent;            
+            SaveLoadManager.OnLoad += OnLoadEvent;
         }
 
         void OnDisable()
@@ -1691,7 +1691,7 @@ namespace DaggerfallWorkshop.Game
             DestroyBeacons();
         }
 
-        void OnLoadEvent(SaveData_v2 saveData)
+        void OnLoadEvent(SaveData_v1 saveData)
         {
             DestroyBeacons();
 

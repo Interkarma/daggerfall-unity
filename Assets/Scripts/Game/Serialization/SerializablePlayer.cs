@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!playerEnterExit || !StreamingWorld)
                 return null;
 
-            PlayerData_v2 data = new PlayerData_v2();
+            PlayerData_v1 data = new PlayerData_v1();
 
             // Store player entity data
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.goldPieces = entity.GoldPieces;
 
             // Store player position data
-            data.playerPosition = new PlayerPositionData_v2();
+            data.playerPosition = new PlayerPositionData_v1();
             data.playerPosition.position = transform.position;
             data.playerPosition.yaw = playerMouseLook.Yaw;
             data.playerPosition.pitch = playerMouseLook.Pitch;
@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 return;
 
             // Restore player entity data
-            PlayerData_v2 data = (PlayerData_v2)dataIn;
+            PlayerData_v1 data = (PlayerData_v1)dataIn;
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
             entity.Gender = data.playerEntity.gender;
             entity.RaceTemplate = data.playerEntity.raceTemplate;

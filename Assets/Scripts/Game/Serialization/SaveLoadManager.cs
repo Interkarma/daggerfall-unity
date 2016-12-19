@@ -704,9 +704,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Saving
 
-        SaveData_v2 BuildSaveData()
+        SaveData_v1 BuildSaveData()
         {
-            SaveData_v2 saveData = new SaveData_v2();
+            SaveData_v1 saveData = new SaveData_v1();
             saveData.header = new SaveDataDescription_v1();
             saveData.currentUID = DaggerfallUnity.CurrentUID;
             saveData.dateAndTime = GetDateTimeData();
@@ -718,12 +718,12 @@ namespace DaggerfallWorkshop.Game.Serialization
             return saveData;
         }
 
-        PlayerData_v2 GetPlayerData()
+        PlayerData_v1 GetPlayerData()
         {
             if (!serializablePlayer)
                 return null;
 
-            return (PlayerData_v2)serializablePlayer.GetSaveData();
+            return (PlayerData_v1)serializablePlayer.GetSaveData();
         }
 
         DateAndTime_v1 GetDateTimeData()
@@ -837,7 +837,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         #region Loading
 
-        void RestoreSaveData(SaveData_v2 saveData)
+        void RestoreSaveData(SaveData_v1 saveData)
         {
             DaggerfallUnity.CurrentUID = saveData.currentUID;
             RestoreDateTimeData(saveData.dateAndTime);
@@ -855,7 +855,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.FromSeconds(dateTimeData.gameTime);
         }
 
-        void RestorePlayerData(PlayerData_v2 playerData)
+        void RestorePlayerData(PlayerData_v1 playerData)
         {
             if (playerData == null)
                 return;
@@ -959,7 +959,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         IEnumerator SaveGame(string saveName, string path)
         {
             // Build save data
-            SaveData_v2 saveData = BuildSaveData();
+            SaveData_v1 saveData = BuildSaveData();
 
             // Build save info
             SaveInfo_v1 saveInfo = new SaveInfo_v1();
@@ -1017,7 +1017,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
 
             // Deserialize JSON strings
-            SaveData_v2 saveData = Deserialize(typeof(SaveData_v2), saveDataJson) as SaveData_v2;
+            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
 
             // Must have a serializable player
             if (!serializablePlayer)
@@ -1136,18 +1136,18 @@ namespace DaggerfallWorkshop.Game.Serialization
         #region Events
 
         // OnSave
-        public delegate void OnSaveEventHandler(SaveData_v2 saveData);
+        public delegate void OnSaveEventHandler(SaveData_v1 saveData);
         public static event OnSaveEventHandler OnSave;
-        protected virtual void RaiseOnSaveEvent(SaveData_v2 saveData)
+        protected virtual void RaiseOnSaveEvent(SaveData_v1 saveData)
         {
             if (OnSave != null)
                 OnSave(saveData);
         }
 
         // OnLoad
-        public delegate void OnLoadEventHandler(SaveData_v2 saveData);
+        public delegate void OnLoadEventHandler(SaveData_v1 saveData);
         public static event OnLoadEventHandler OnLoad;
-        protected virtual void RaiseOnLoadEvent(SaveData_v2 saveData)
+        protected virtual void RaiseOnLoadEvent(SaveData_v1 saveData)
         {
             if (OnLoad != null)
                 OnLoad(saveData);
