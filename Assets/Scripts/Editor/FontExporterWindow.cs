@@ -215,7 +215,7 @@ namespace DaggerfallWorkshop
             importer.maxTextureSize = 256;
             importer.mipmapEnabled = false;
             importer.isReadable = false;
-            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.textureFormat = TextureImporterFormat.ARGB32;
             importer.filterMode = this.TextureFilterMode;
 
             // Reimport asset with new importer settings
