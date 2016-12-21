@@ -63,8 +63,6 @@ namespace DaggerfallWorkshop.Game
 
         GameObject gameObjectPlayerAdvanced = null; // used to hold reference to instance of GameObject "PlayerAdvanced"
 
-        bool isOpenExteriorAutomap = false; // flag that indicates if automap window is open (set via Property IsOpenAutomap triggered by DaggerfallExteriorAutomapWindow script)
-
         // exterior automap view mode (controls settings for extra buildings and ground flats)
         public enum ExteriorAutomapViewMode
         {
@@ -185,14 +183,6 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (resetAutomapSettingsFromExternalScript); }
             set { resetAutomapSettingsFromExternalScript = value; }
-        }
-
-        /// <summary>
-        /// DaggerfallExteriorAutomapWindow script will use this to propagate if the automap window is open or not
-        /// </summary>
-        public bool IsOpenExteriorAutomap
-        {
-            set { isOpenExteriorAutomap = value; }
         }
 
         #endregion
@@ -685,7 +675,7 @@ namespace DaggerfallWorkshop.Game
                     string blockName = DaggerfallUnity.Instance.ContentReader.BlockFileReader.CheckName(DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
 
                     // Get the block data
-                    DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockName);
+//                    DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockName);
 
                     // Now we can get the automap image data for this block and lay it out
                     //block.RmbBlock.SubRecords.

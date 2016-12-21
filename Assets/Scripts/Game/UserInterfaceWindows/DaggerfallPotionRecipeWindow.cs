@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     recipes = mapping.Value;
                     doLayout();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Debug.Log("An error occurred while trying to get a potion recipe!");
                 }

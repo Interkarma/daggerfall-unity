@@ -113,7 +113,7 @@ namespace DaggerfallWorkshop.Game
                 particleSystem = birdSpawn[spawnID].GetComponent<ParticleSystem>();
                 particleSystem.Clear();
                 birdSpawn[spawnID].transform.position += transform.up * 50; //We move the birdspawner up a bit to make sure that the birds that spawn in the bottom of the emitter doesn't fly into mountain tops
-                particleSystem.startRotation = (Mathf.PI / 180) * birdSpawn[spawnID].transform.eulerAngles.y; //Rotate the bird "sprites" so that they are facing the direction that the fly, sprite rotation uses radians so some math is required
+                particleSystem.startRotation = Mathf.PI / 180 * birdSpawn[spawnID].transform.eulerAngles.y; //Rotate the bird "sprites" so that they are facing the direction that the fly, sprite rotation uses radians so some math is required
                 particleSystem.startSpeed = Random.Range(20, 40); //Random speed
                 particleSystem.Emit(Random.Range(1, 10)); //Random amount of birds that spawn
                 spawnID++;
