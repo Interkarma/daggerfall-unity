@@ -69,6 +69,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox realtimeReflections;
         Checkbox tallGrass;
         Checkbox flyingBirds;
+        Checkbox meshAndTextureReplacement;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
         Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
@@ -458,6 +459,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             realtimeReflections = AddOption(x, "Realtime Reflections (Nystul)", "Realtime reflections on water and select surfaces", DaggerfallUnity.Settings.Nystul_RealtimeReflections);
             tallGrass = AddOption(x, "Tall Grass (Uncanny_Valley)", "Animated tall grass", DaggerfallUnity.Settings.UncannyValley_RealGrass);
             flyingBirds = AddOption(x, "Flying Birds (Uncanny Valley)", "Animated flying birds", DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall);
+            meshAndTextureReplacement = AddOption(x, "Support for texture packs", "Enable replacement of textures", DaggerfallUnity.Settings.MeshAndTextureReplacement);
 
             // Add mod note
             string modNote = "Note: Enabling mods can increase performance requirements";
@@ -706,6 +708,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Nystul_RealtimeReflections = realtimeReflections.IsChecked;
             DaggerfallUnity.Settings.UncannyValley_RealGrass = tallGrass.IsChecked;
             DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall = flyingBirds.IsChecked;
+            DaggerfallUnity.Settings.MeshAndTextureReplacement = meshAndTextureReplacement.IsChecked;
 
             DaggerfallUnity.Settings.SaveSettings();
             moveNextStage = true;
