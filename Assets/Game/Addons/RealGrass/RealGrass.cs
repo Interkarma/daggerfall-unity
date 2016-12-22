@@ -23,6 +23,9 @@ namespace DaggerfallWorkshop.Game
         // Description of the grass billboards to render
         DetailPrototype[] _detailPrototype;
 
+        // Intentionally empty grass map to clear grass tiles when we move from a grassy area to a barren one
+        int[,] _noGrassMap;
+
         // Ranges for number of grass billboards per terrain tile
         const int MinGrassThick = 3;
         const int MaxGrassThick = 20;
@@ -86,6 +89,8 @@ namespace DaggerfallWorkshop.Game
                     renderMode = DetailRenderMode.GrassBillboard
                 }
             };
+
+            _noGrassMap = new int[256, 256];
         }
 
         /// <summary>
@@ -318,10 +323,18 @@ namespace DaggerfallWorkshop.Game
             //Get the current season
             var currentSeason = DaggerfallUnity.Instance.WorldTime.Now.SeasonValue;
 
-            //Proceed if it's NOT winter, and if the worldClimate contains grass, which is everything above 225, with the exception of 229
-            if (currentSeason == DaggerfallDateTime.Seasons.Winter || daggerTerrain.MapData.worldClimate <= 225 ||
-                daggerTerrain.MapData.worldClimate == 229)
+            terrainData.detailPrototypes = _detailPrototype;
+            terrainData.wavingGrassTint = Color.gray;
+            terrainData.SetDetailResolution(256, 8);
+
+            // If it's winter or a climate with no grass, then pass an empty density map so the grass gets cleared
+            if (currentSeason == DaggerfallDateTime.Seasons.Winter
+                || daggerTerrain.MapData.worldClimate <= 225
+                || daggerTerrain.MapData.worldClimate == 229)
+            {
+                terrainData.SetDetailLayer(0, 0, 0, _noGrassMap);
                 return;
+            }
 
             //Switch the grass texture based on the climate
             if (daggerTerrain.MapData.worldClimate == 226 || daggerTerrain.MapData.worldClimate == 227 ||
@@ -344,9 +357,6 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            terrainData.detailPrototypes = _detailPrototype;
-            terrainData.wavingGrassTint = Color.gray;
-            terrainData.SetDetailResolution(256, 8);
             terrainData.SetDetailLayer(0, 0, 0, grassMap);
 
 //            stopwatch.Stop();

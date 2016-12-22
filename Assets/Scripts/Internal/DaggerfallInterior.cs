@@ -221,7 +221,7 @@ namespace DaggerfallWorkshop
                     doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
 
                 // Combine or add
-                if (dfUnity.Option_CombineRMB)
+                if (dfUnity.Option_CombineRMB && !DFMeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
                 {
                     combiner.Add(ref modelData, modelMatrix);
                 }
@@ -269,6 +269,12 @@ namespace DaggerfallWorkshop
             markers.Clear();
             foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
             {
+                // use 3d model instead of flat
+                if (DFMeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))
+                    DFMeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, node.transform);
+                // use billboard
+                else
+                {
                 // Spawn billboard gameobject
                 GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
 
@@ -288,6 +294,7 @@ namespace DaggerfallWorkshop
                 if (obj.TextureArchive == TextureReader.LightsTextureArchive)
                 {
                     AddLight(obj, go.transform);
+                }
                 }
             }
         }
@@ -523,7 +530,6 @@ namespace DaggerfallWorkshop
 
             // TODO: Could also adjust light colour and intensity, or change prefab entirely above for any obj.TextureRecord
         }
-
         /// <summary>
         /// Add interior people flats.
         /// </summary>

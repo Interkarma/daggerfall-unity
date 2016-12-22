@@ -117,6 +117,7 @@ namespace DaggerfallWorkshop
         public bool Nystul_RealtimeReflections { get; set; }
         public bool UncannyValley_RealGrass { get; set; }
         public bool UncannyValley_BirdsInDaggerfall { get; set; }
+        public bool MeshAndTextureReplacement { get; set; }
 
         #endregion
 
@@ -176,6 +177,7 @@ namespace DaggerfallWorkshop
             Nystul_RealtimeReflections = GetBool(sectionEnhancements, "Nystul_RealtimeReflections");
             UncannyValley_RealGrass = GetBool(sectionEnhancements, "UncannyValley_RealGrass");
             UncannyValley_BirdsInDaggerfall = GetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall");
+            MeshAndTextureReplacement = GetBool(sectionEnhancements, "MeshAndTextureReplacement");
         }
 
         /// <summary>
@@ -229,6 +231,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "Nystul_RealtimeReflections", Nystul_RealtimeReflections);
             SetBool(sectionEnhancements, "UncannyValley_RealGrass", UncannyValley_RealGrass);
             SetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall", UncannyValley_BirdsInDaggerfall);
+            SetBool(sectionEnhancements, "MeshAndTextureReplacement", MeshAndTextureReplacement);
 
             // Write settings to persistent file
             WriteSettingsFile();
