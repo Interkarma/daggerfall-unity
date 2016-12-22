@@ -642,11 +642,19 @@ namespace DaggerfallWorkshop.Game
             if (!dfUnity.IsReady)
                 return null;
 
-            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
-            imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
-            Texture2D texture = GetTextureFromImg(imgFile, format);
-            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);            
+            Texture2D texture = null;
 
+            // Texture packs support
+            if (DFTextureReplacement.CustomImageExist(name))
+                texture = DFTextureReplacement.LoadCustomImage(name);
+            else
+            {
+                imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
+                texture = GetTextureFromImg(imgFile, format);
+            }
+                
+            texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             offset = imgFile.ImageOffset;
 
             return texture;

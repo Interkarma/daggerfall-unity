@@ -120,7 +120,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.BackgroundTexture = baseTexture;
             mainPanel.Position = new Vector2(0, 50);
-            mainPanel.Size = new Vector2(baseTexture.width, baseTexture.height);
+            mainPanel.Size = new Vector2(ImageReader.GetImageData("REST00I0.IMG", 0, 0, false, false).width, ImageReader.GetImageData("REST00I0.IMG", 0, 0, false, false).height);
+
             NativePanel.Components.Add(mainPanel);
 
             // Create buttons

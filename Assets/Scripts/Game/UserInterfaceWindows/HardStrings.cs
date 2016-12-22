@@ -34,7 +34,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string usingRightHand = "Using weapon in right hand.";
         public const string usingLeftHand = "Using weapon in left hand.";
 
-        public const string bowsNotImplemented = "Bows are not implemented yet, sorry. :(";
         public const string enterSaveName = "Enter save name";
         public const string selectSaveName = "Select a save";
         public const string confirmDeleteSave = "Are you sure you want to delete save?";

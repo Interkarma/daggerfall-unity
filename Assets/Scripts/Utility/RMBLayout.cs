@@ -457,7 +457,7 @@ namespace DaggerfallWorkshop.Utility
                         doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix));
 
                     // Add or combine
-                    if (combiner == null || IsCityGate(obj.ModelIdNum))
+                    if (combiner == null || IsCityGate(obj.ModelIdNum) || DFMeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
                         AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                     else
                         combiner.Add(ref modelData, modelMatrix);
@@ -494,7 +494,7 @@ namespace DaggerfallWorkshop.Utility
                     doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
 
                 // Add or combine
-                if (combiner == null)
+                if (combiner == null || DFMeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
                     AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                 else
                     combiner.Add(ref modelData, modelMatrix);
