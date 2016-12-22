@@ -5,6 +5,9 @@ Version: 1.05
 
 This mod adds animated billboard grass in DaggerFall
 
+1.06
+*Properly clear grass when moving into an season/climate without grass.
+
 1.05
 *Adds more variety to grass patches
 *Tweaks density of grass so patches near non-grass terrain look more natural (no "grass walls")
