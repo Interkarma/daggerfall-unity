@@ -139,6 +139,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string terrainSamplerName;
         public int terrainSamplerVersion;
         public StaticDoor[] exteriorDoors;
+        public PlayerWeather.WeatherTypes weather;
     }
 
     [fsObject("v1")]

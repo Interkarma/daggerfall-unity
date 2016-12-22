@@ -11,9 +11,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Serialization
@@ -128,12 +125,13 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerPosition.insideBuilding = playerEnterExit.IsPlayerInsideBuilding;
             data.playerPosition.terrainSamplerName = DaggerfallUnity.Instance.TerrainSampler.ToString();
             data.playerPosition.terrainSamplerVersion = DaggerfallUnity.Instance.TerrainSampler.Version;
+            data.playerPosition.weather = GameManager.Instance.WeatherManager.PlayerWeather.WeatherType;
 
             // Store weapon state
             data.weaponDrawn = !weaponManager.Sheathed;
 
             // Store building exterior door data
-            if ((playerEnterExit.IsPlayerInsideBuilding))
+            if (playerEnterExit.IsPlayerInsideBuilding)
             {
                 data.playerPosition.exteriorDoors = playerEnterExit.ExteriorDoors;
             }
@@ -210,7 +208,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         StreamingWorld FindStreamingWorld()
         {
-            streamingWorld = GameObject.FindObjectOfType<StreamingWorld>();
+            streamingWorld = FindObjectOfType<StreamingWorld>();
             if (!streamingWorld)
                 throw new Exception("StreamingWorld not found.");
 

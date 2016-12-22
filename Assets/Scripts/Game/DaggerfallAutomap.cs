@@ -486,7 +486,7 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
             StartGameBehaviour.OnNewGame += onNewGame;
-            SaveLoadManager.OnLoad += OnLoadEvent;            
+            SaveLoadManager.OnLoad += OnLoadEvent;
         }
 
         void OnDisable()

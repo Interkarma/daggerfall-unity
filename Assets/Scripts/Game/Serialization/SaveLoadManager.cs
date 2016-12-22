@@ -380,10 +380,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             int key = FindSaveFolderByNames(characterName, quickSaveName);
 
             // Get folder
-            if (key == -1)
-                return false;
-
-            return true;
+            return key != -1;
         }
 
         #endregion
@@ -392,11 +389,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public static bool FindSingleton(out SaveLoadManager singletonOut)
         {
-            singletonOut = GameObject.FindObjectOfType(typeof(SaveLoadManager)) as SaveLoadManager;
-            if (singletonOut == null)
-                return false;
-
-            return true;
+            singletonOut = FindObjectOfType(typeof(SaveLoadManager)) as SaveLoadManager;
+            return singletonOut != null;
         }
 
         /// <summary>
@@ -836,7 +830,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 key++;
             }
 
-            return GetSavePath(savePrefix + key.ToString(), true);
+            return GetSavePath(savePrefix + key, true);
         }
 
         #endregion
