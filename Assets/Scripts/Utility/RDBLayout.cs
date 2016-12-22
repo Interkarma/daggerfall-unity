@@ -559,7 +559,7 @@ namespace DaggerfallWorkshop.Utility
                         // Add or combine
                         GameObject standaloneObject = null;
                         Transform parent = (hasAction) ? actionModelsParent : modelsParent;
-                        if (combiner == null || hasAction)
+                        if (combiner == null || hasAction || DFMeshReplacement.ReplacmentModelExist(modelId)) 
                         {
                             standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
                             standaloneObject.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
