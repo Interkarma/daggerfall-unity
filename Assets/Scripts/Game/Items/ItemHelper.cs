@@ -742,6 +742,7 @@ namespace DaggerfallWorkshop.Game.Items
             items.AddItem(ItemBuilder.CreateWeapon(Weapons.Longsword, WeaponMaterialTypes.Steel));
             items.AddItem(ItemBuilder.CreateWeapon(Weapons.Katana, WeaponMaterialTypes.Iron));
             items.AddItem(ItemBuilder.CreateWeapon(Weapons.Staff, WeaponMaterialTypes.Silver));
+            items.AddItem(ItemBuilder.CreateWeapon(Weapons.Long_Bow, WeaponMaterialTypes.Silver));
 
             // Add some ingredients
             for (int i = 0; i < 10; i++)

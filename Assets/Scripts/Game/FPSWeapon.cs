@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game
         public MetalTypes MetalType = MetalTypes.None;
         public float Reach = 2.5f;
         public float AttackSpeedScale = 1.0f;
+        public float Cooldown = 0.0f;
         public SoundClips DrawWeaponSound = SoundClips.DrawWeapon;
         public SoundClips SwingWeaponSound = SoundClips.SwingMediumPitch;
 
@@ -94,7 +95,11 @@ namespace DaggerfallWorkshop.Game
         {
             // Get state based on attack direction
             WeaponStates state;
-            switch (direction)
+
+            // Bows has only one type of attack
+            if (WeaponType == WeaponTypes.Bow)
+                state = WeaponStates.StrikeDown;
+            else switch (direction)
             {
                 case WeaponManager.MouseDirections.Down:
                     state = WeaponStates.StrikeDown;
@@ -207,22 +212,27 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Store rect and anim
+            int weaponAnimRecordIndex;
+            if (WeaponType == WeaponTypes.Bow)
+                weaponAnimRecordIndex = 0; // Bow has only 1 animation
+            else
+                weaponAnimRecordIndex = (int)weaponState;
             if (LeftHand &&
                 (weaponState == WeaponStates.Idle || weaponState == WeaponStates.StrikeDown || weaponState == WeaponStates.StrikeUp))
             {
                 // Mirror weapon rect
-                Rect rect = weaponRects[weaponIndices[(int)weaponState].startIndex + currentFrame];
+                Rect rect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
                 curAnimRect = new Rect(rect.xMax, rect.yMin, -rect.width, rect.height);
             }
             else
             {
-                curAnimRect = weaponRects[weaponIndices[(int)weaponState].startIndex + currentFrame];
+                curAnimRect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
             }
             WeaponAnimation anim = weaponAnims[(int)weaponState];
 
             // Get weapon dimensions
-            int width = weaponIndices[(int)weaponState].width;
-            int height = weaponIndices[(int)weaponState].height;
+            int width = weaponIndices[weaponAnimRecordIndex].width;
+            int height = weaponIndices[weaponAnimRecordIndex].height;
 
             // Get weapon scale
             weaponScaleX = (float)Screen.width / (float)nativeScreenWidth;
