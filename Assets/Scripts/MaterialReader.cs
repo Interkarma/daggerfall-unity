@@ -316,14 +316,20 @@ namespace DaggerfallWorkshop
             // Get texture
             GetTextureResults results = textureReader.GetTexture2D(settings, AlphaTextureFormat, NonAlphaTextureFormat);
 
-            /// import custom textures
-            // TODO: normal maps 
+            // Import custom texture 
             if (DFTextureReplacement.CustomTextureExist(archive, record, frame))
             {
-                // main texture
+                // Main texture
                 results.albedoMap = DFTextureReplacement.LoadCustomTexture(archive, record, frame);
 
-                // emission map
+                // Normal map
+                if (DFTextureReplacement.CustomNormalExist(archive, record, frame))
+                {
+                    results.normalMap = DFTextureReplacement.LoadCustomNormal(archive, record, frame);
+                    GenerateNormals = true;
+                }
+
+                // Emission map
                 // windowed walls use a custom emission map or stick with vanilla
                 // non-window use the main texture as emission, unless a custom map is provided
                 if (results.isEmissive)
@@ -332,8 +338,8 @@ namespace DaggerfallWorkshop
                         results.emissionMap = DFTextureReplacement.LoadCustomEmission(archive, record, frame);
                     else if (!results.isWindow) //reuse albedo map for basic colour emission
                         results.emissionMap = results.albedoMap;
-                } 
-            } 
+                }
+            }
 
             rectOut = results.singleRect;
 
