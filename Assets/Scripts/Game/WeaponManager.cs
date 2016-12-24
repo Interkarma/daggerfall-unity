@@ -9,10 +9,14 @@
 // Notes:
 //
 
-using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -22,34 +26,122 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class WeaponManager : MonoBehaviour
     {
+        // Max time-length of a trail of mouse positions for attack gestures
+        private const float MaxGestureSeconds = 1.0f;
+
         public FPSWeapon LeftHandWeapon;            // Weapon in left hand
         public FPSWeapon RightHandWeapon;           // Weapon in right hand
         public bool Sheathed;                       // Weapon (or weapons) are sheathed
         public float SphereCastRadius = 0.4f;       // Radius of SphereCast used to target attacks
-        public float HorizontalThreshold = 0.8f;    // Horizontal mouse delta threshold for action to register
-        public float VerticalThreshold = 0.8f;      // Vertical mouse delta threshold for action to register
-        public int TriggerCount = 3;                // Minimum number of times action must register before triggering attack
+        [Range(0, 1)]
+        public float SwingThreshold = 0.15f;        // Minimum mouse gesture travel distance for an attack. % of screen
         public float ChanceToBeParried = 0.1f;      // Example: Chance for player hit to be parried
 
-        MouseDirections lastAction;                 // Last registered action
-        int actionCount = 0;                        // Number of times in a row action has been registered
         bool alternateAttack;                       // Flag to flip weapons on alternating attacks
 
-        Vector2 ms;                                 // Mouse swing based on input
         float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
-        bool showDebugStrings = false;              // Draw debug data
+        private Gesture _gesture;
+        private int _longestDim;                     // Longest screen dimension, used to compare gestures for attack
 
         PlayerEntity playerEntity;
         GameObject player;
         GameObject mainCamera;
         bool isAttacking;
-        int lastAttackHand = 0;                     // 0-left-hand, 1=right-hand, -1=no weapon
+        Hand lastAttackHand = Hand.None;
         float cooldownTime = 0.0f;                  // Wait for weapon cooldown
 
         bool usingRightHand = true;
         bool holdingShield = false;
         DaggerfallUnityItem currentRightHandWeapon = null;
         DaggerfallUnityItem currentLeftHandWeapon = null;
+
+        /// <summary>
+        /// Tracks mouse gestures. Auto trims the list of mouse x/ys based on time.
+        /// </summary>
+        private class Gesture
+        {
+            // The cursor is auto-centered every frame so the x/y becomes delta x/y
+            private readonly List<TimestampedMotion> _points;
+            // The result of the sum of all points in the gesture trail
+            private Vector2 _sum;
+            // The total travel distance of the gesture trail
+            // This isn't equal to the magnitude of the sum because the trail may bend
+            public float TravelDist { get; private set; }
+
+            public Gesture()
+            {
+                _points = new List<TimestampedMotion>();
+                _sum = new Vector2();
+                TravelDist = 0f;
+            }
+
+            // Trims old gesture points & keeps the sum and travel variables up to date
+            private void TrimOld()
+            {
+                var old = 0;
+                foreach (var point in _points)
+                {
+                    if (Time.time - point.Time <= MaxGestureSeconds)
+                        continue;
+                    old++;
+                    _sum -= point.Delta;
+                    TravelDist -= point.Delta.magnitude;
+                }
+                _points.RemoveRange(0, old);
+            }
+
+            /// <summary>
+            /// Adds the given delta mouse x/ys top the gesture trail
+            /// </summary>
+            /// <param name="dx">Mouse delta x</param>
+            /// <param name="dy">Mouse delta y</param>
+            /// <returns>The summed vector of the gesture (not the trail itself)</returns>
+            public Vector2 Add(float dx, float dy)
+            {
+                TrimOld();
+
+                _points.Add(new TimestampedMotion
+                {
+                    Time = Time.time,
+                    Delta = new Vector2 {x = dx, y = dy}
+                });
+                _sum += _points.Last().Delta;
+                TravelDist += _points.Last().Delta.magnitude;
+
+                return new Vector2 {x = _sum.x, y = _sum.y};
+            }
+
+            /// <summary>
+            /// Clears the gesture
+            /// </summary>
+            public void Clear()
+            {
+                _points.Clear();
+                _sum *= 0;
+                TravelDist = 0f;
+            }
+        }
+
+        /// <summary>
+        /// A timestamped motion point
+        /// </summary>
+        private struct TimestampedMotion
+        {
+            public float Time;
+            public Vector2 Delta;
+
+            public override string ToString()
+            {
+                return string.Format("t={0}s, dx={1}, dy={2}", Time, Delta.x, Delta.y);
+            }
+        }
+
+        private enum Hand
+        {
+            None,
+            Left,
+            Right
+        }
 
         /// <summary>
         /// Mouse directions for attack trigger.
@@ -64,15 +156,16 @@ namespace DaggerfallWorkshop.Game
             Right,
             DownLeft,
             Down,
-            DownRight,
+            DownRight
         }
 
         void Start()
         {
             weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
-            showDebugStrings = DaggerfallUnity.Settings.DebugWeaponSwings;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
+            _gesture = new Gesture();
+            _longestDim = Math.Max(Screen.width, Screen.height);
             SetMelee(RightHandWeapon);
         }
 
@@ -107,9 +200,8 @@ namespace DaggerfallWorkshop.Game
             //if (!Input.GetButton("Fire2") && !isAttacking)
             if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !isAttacking)
             {
-                lastAction = MouseDirections.None;
-                actionCount = 0;
                 isAttacking = false;
+                _gesture.Clear();
                 ShowWeapons(true);
                 return;
             }
@@ -129,11 +221,18 @@ namespace DaggerfallWorkshop.Game
                 isAttacking = false;
 
                 // Get attack hand weapon
-                FPSWeapon weapon = null; 
-                if (lastAttackHand == 0)
-                    weapon = LeftHandWeapon;
-                else if (lastAttackHand == 1)
-                    weapon = RightHandWeapon;
+                FPSWeapon weapon;
+                switch (lastAttackHand)
+                {
+                    case Hand.Left:
+                        weapon = LeftHandWeapon;
+                        break;
+                    case Hand.Right:
+                        weapon = RightHandWeapon;
+                        break;
+                    default:
+                        return;
+                }
 
                 // Transfer melee damage
                 MeleeDamage(weapon);
@@ -151,30 +250,10 @@ namespace DaggerfallWorkshop.Game
             // Restore weapon visibility
             ShowWeapons(true);
 
-            // Track mouse swing attacks and exit if no action registered
-            TrackMouseAttack();
-            if (lastAction != MouseDirections.None && actionCount < TriggerCount)
-                return;
-
-            // Time for attacks
-            ExecuteAttacks();
-        }
-
-        void OnGUI()
-        {
-            if (Event.current.type.Equals(EventType.Repaint) && showDebugStrings && !Sheathed)
-            {
-                GUIStyle style = new GUIStyle();
-                style.normal.textColor = Color.black;
-                string text = GetDebugString();
-                GUI.Label(new Rect(4, 4, 800, 24), text, style);
-                GUI.Label(new Rect(2, 2, 800, 24), text);
-            }
-        }
-
-        string GetDebugString()
-        {
-            return string.Format("WeaponX: {0:0.00} | WeaponY: {1:0.00} | TriggerCount: {2}", ms.x, ms.y, actionCount);
+            // Track mouse attack and exit if no action registered
+            var direction = TrackMouseAttack();
+            if (direction != MouseDirections.None)
+                ExecuteAttacks(direction);
         }
 
         public void SheathWeapons()
@@ -312,48 +391,91 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        private void TrackMouseAttack()
+        MouseDirections TrackMouseAttack()
         {
             // Track action for idle plus all eight mouse directions
-            ms = new Vector2(InputManager.Instance.MouseX, InputManager.Instance.MouseY) * weaponSensitivity;
-            if (IsPassive(ms.x, HorizontalThreshold) && IsPassive(ms.y, VerticalThreshold))
-                TrackAction(MouseDirections.None);
-            else if (IsNegative(ms.x, HorizontalThreshold) && IsPositive(ms.y, VerticalThreshold))
-                TrackAction(MouseDirections.UpLeft);
-            else if (IsPassive(ms.x, HorizontalThreshold) && IsPositive(ms.y, VerticalThreshold))
-                TrackAction(MouseDirections.Up);
-            else if (IsPositive(ms.x, HorizontalThreshold) && IsPositive(ms.y, VerticalThreshold))
-                TrackAction(MouseDirections.UpRight);
-            else if (IsNegative(ms.x, HorizontalThreshold) && IsPassive(ms.y, VerticalThreshold))
-                TrackAction(MouseDirections.Left);
-            else if (IsPositive(ms.x, HorizontalThreshold) && IsPassive(ms.y, VerticalThreshold))
-                TrackAction(MouseDirections.Right);
-            else if (IsNegative(ms.x, HorizontalThreshold) && IsNegative(ms.y, VerticalThreshold))
-                TrackAction(MouseDirections.DownLeft);
-            else if (IsPassive(ms.x, HorizontalThreshold) && IsNegative(ms.y, VerticalThreshold))
-                TrackAction(MouseDirections.Down);
-            else if (IsPositive(ms.x, HorizontalThreshold) && IsNegative(ms.y, VerticalThreshold))
-                TrackAction(MouseDirections.DownRight);
+            var sum = _gesture.Add(InputManager.Instance.MouseX, InputManager.Instance.MouseY) * weaponSensitivity;
+
+            // Short mouse gestures are ignored
+            if (_gesture.TravelDist/_longestDim < SwingThreshold)
+                return MouseDirections.None;
+
+            // Treat mouse movement as a vector from the origin
+            // The angle of the vector will be used to determine the angle of attack/swing
+            var angle = Mathf.Atan2(sum.y, sum.x) * Mathf.Rad2Deg;
+            // Put angle into 0 - 360 deg range
+            if (angle < 0f) angle += 360f;
+            // The swing gestures are divded into radial segments
+            // Up-down and left-right attacks are in a 30 deg cone about the x/y axes
+            // Up-right and up-left aren't valid so the up range is expanded to fill the range
+            // The remaining 60 deg quadrants trigger the diagonal attacks
+            var radialSection = Mathf.CeilToInt(angle / 15f);
+            MouseDirections direction;
+            switch (radialSection)
+            {
+                case 0: // 0 - 15 deg
+                case 1:
+                case 24: // 345 - 365 deg
+                    direction = MouseDirections.Right;
+                    break;
+                case 2: // 15 - 75 deg
+                case 3:
+                case 4:
+                case 5:
+                case 6: // 75 - 105 deg
+                case 7:
+                case 8: // 105 - 165 deg
+                case 9:
+                case 10:
+                case 11:
+                    direction = MouseDirections.Up;
+                    break;
+                case 12: // 165 - 195 deg
+                case 13:
+                    direction = MouseDirections.Left;
+                    break;
+                case 14: // 195 - 255 deg
+                case 15:
+                case 16:
+                case 17:
+                    direction = MouseDirections.DownLeft;
+                    break;
+                case 18: // 255 - 285 deg
+                case 19:
+                    direction = MouseDirections.Down;
+                    break;
+                case 20: // 285 - 345 deg
+                case 21:
+                case 22:
+                case 23:
+                    direction = MouseDirections.DownRight;
+                    break;
+                default: // Won't happen
+                    direction = MouseDirections.None;
+                    break;
+            }
+            _gesture.Clear();
+            return direction;
         }
 
-        private void ExecuteAttacks()
+        void ExecuteAttacks(MouseDirections direction)
         {
             // Perform dual-wield attacks
             if (LeftHandWeapon && RightHandWeapon)
             {
                 // Hand-specific attacks
-                if (lastAction == MouseDirections.Right || lastAction == MouseDirections.DownRight)
+                if (direction == MouseDirections.Right || direction == MouseDirections.DownRight)
                 {
                     RightHandWeapon.ShowWeapon = false;
-                    LeftHandWeapon.OnAttackDirection(lastAction);
-                    lastAttackHand = 0;
+                    LeftHandWeapon.OnAttackDirection(direction);
+                    lastAttackHand = Hand.Left;
                     return;
                 }
-                else if (lastAction == MouseDirections.Left || lastAction == MouseDirections.DownLeft)
+                else if (direction == MouseDirections.Left || direction == MouseDirections.DownLeft)
                 {
                     LeftHandWeapon.ShowWeapon = false;
-                    RightHandWeapon.OnAttackDirection(lastAction);
-                    lastAttackHand = 1;
+                    RightHandWeapon.OnAttackDirection(direction);
+                    lastAttackHand = Hand.Right;
                     return;
                 }
                 else
@@ -365,87 +487,42 @@ namespace DaggerfallWorkshop.Game
                 // Fire alternating attack
                 if (alternateAttack)
                 {
-                    LeftHandWeapon.OnAttackDirection(lastAction);
-                    lastAttackHand = 0;
+                    LeftHandWeapon.OnAttackDirection(direction);
+                    lastAttackHand = Hand.Left;
                 }
                 else
                 {
-                    RightHandWeapon.OnAttackDirection(lastAction);
-                    lastAttackHand = 1;
+                    RightHandWeapon.OnAttackDirection(direction);
+                    lastAttackHand = Hand.Right;
                 }
             }
             else if (LeftHandWeapon && !RightHandWeapon)
             {
                 // Just fire left hand
-                LeftHandWeapon.OnAttackDirection(lastAction);
-                lastAttackHand = 0;
+                LeftHandWeapon.OnAttackDirection(direction);
+                lastAttackHand = Hand.Left;
             }
             else if (!LeftHandWeapon && RightHandWeapon)
             {
                 // Just fire right hand
-                RightHandWeapon.OnAttackDirection(lastAction);
-                lastAttackHand = 1;
+                RightHandWeapon.OnAttackDirection(direction);
+                lastAttackHand = Hand.Right;
             }
             else
             {
                 // No weapons set, no attacks possible
-                lastAttackHand = -1;
-                return;
-            }
-        }
-
-        private bool IsPassive(float value, float threshold)
-        {
-            if (value > -threshold && value < threshold)
-                return true;
-            else
-                return false;
-        }
-
-        private bool IsNegative(float value, float threshold)
-        {
-            if (value < -threshold)
-                return true;
-            else
-                return false;
-        }
-
-        private bool IsPositive(float value, float threshold)
-        {
-            if (value > threshold)
-                return true;
-            else
-                return false;
-        }
-
-        private void TrackAction(MouseDirections action)
-        {
-            if (action == lastAction)
-            {
-                actionCount++;
-                return;
-            }
-            else
-            {
-                lastAction = action;
-                actionCount = 0;
+                lastAttackHand = Hand.None;
             }
         }
 
         private bool IsLeftHandAttacking()
         {
-            if (!LeftHandWeapon)
-                return false;
-            else
-                return LeftHandWeapon.IsAttacking();
+            return LeftHandWeapon && LeftHandWeapon.IsAttacking();
         }
 
         private bool IsRightHandAttacking()
         {
-            if (!RightHandWeapon)
-                return false;
-            else
-                return RightHandWeapon.IsAttacking();
+            return RightHandWeapon && RightHandWeapon.IsAttacking();
         }
 
         private void ShowWeapons(bool show)

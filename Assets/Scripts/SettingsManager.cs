@@ -96,7 +96,6 @@ namespace DaggerfallWorkshop
         public bool HeadBobbing { get; set; }
         public int Handedness { get; set; }
         public float WeaponSwingThreshold { get; set; }
-        public int WeaponSwingTriggerCount { get; set; }
         public float WeaponSensitivity { get; set; }
 
         // [Startup]
@@ -107,7 +106,6 @@ namespace DaggerfallWorkshop
         // [Experimental]
         public bool HQTooltips { get; set; }
         public int TerrainDistance { get; set; }
-        public bool DebugWeaponSwings { get; set; }
 
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
@@ -162,13 +160,11 @@ namespace DaggerfallWorkshop
             HeadBobbing = GetBool(sectionControls, "HeadBobbing");
             Handedness = GetInt(sectionControls, "Handedness", 0, 3);
             WeaponSwingThreshold = GetFloat(sectionControls, "WeaponSwingThreshold", 0.1f, 1.0f);
-            WeaponSwingTriggerCount = GetInt(sectionControls, "WeaponSwingTriggerCount", 1, 10);
             WeaponSensitivity = GetFloat(sectionControls, "WeaponSensitivity", 0.1f, 10.0f);
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
             StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
             HQTooltips = GetBool(sectionExperimental, "HQTooltips");
-            DebugWeaponSwings = GetBool(sectionExperimental, "DebugWeaponSwings");
             TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
@@ -216,13 +212,11 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "HeadBobbing", HeadBobbing);
             SetInt(sectionControls, "Handedness", Handedness);
             SetFloat(sectionControls, "WeaponSwingThreshold", WeaponSwingThreshold);
-            SetInt(sectionControls, "WeaponSwingTriggerCount", WeaponSwingTriggerCount);
             SetFloat(sectionControls, "WeaponSensitivity", WeaponSensitivity);
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);
             SetBool(sectionStartup, "StartInDungeon", StartInDungeon);
             SetBool(sectionExperimental, "HQTooltips", HQTooltips);
-            SetBool(sectionExperimental, "DebugWeaponSwings", DebugWeaponSwings);
             SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
