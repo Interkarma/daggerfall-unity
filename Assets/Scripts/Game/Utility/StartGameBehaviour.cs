@@ -202,9 +202,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Weapon swing settings
             WeaponManager weaponManager = GameManager.Instance.WeaponManager;
-            weaponManager.HorizontalThreshold = DaggerfallUnity.Settings.WeaponSwingThreshold;
-            weaponManager.VerticalThreshold = DaggerfallUnity.Settings.WeaponSwingThreshold;
-            weaponManager.TriggerCount = DaggerfallUnity.Settings.WeaponSwingTriggerCount;
+            weaponManager.AttackThreshold = DaggerfallUnity.Settings.WeaponAttackThreshold;
 
             // Weapon hand settings
             // Only supporting left-hand rendering for now
