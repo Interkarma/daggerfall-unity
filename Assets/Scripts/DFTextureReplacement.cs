@@ -6,8 +6,7 @@
 // Original Author: TheLacus
 // Contributors:
 // 
-// Notes: LoadCustomTexture can import textures for billboards, but the actual sprites replacement is not implemented yet
-// TO DO: add support for bump maps
+// Notes: 'LoadCustomTexture' can import textures for billboards, but the actual sprites replacement is not implemented yet
 //
 
 using System.IO;
@@ -116,6 +115,46 @@ namespace DaggerfallWorkshop
             tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/textures/cif/" + filename + "_" + record.ToString() + "-" + frame.ToString() + ".png"));
 
             return tex; //assign image to the actual texture
+        }
+
+        /// <summary>
+        /// Load custom image files from disk to use as normal maps
+        /// .png files are located in persistentData/textures
+        /// and are named 'archive_record-frame_Normal.png' 
+        /// for example '112_3-0_Normal.png'
+        /// </summary>
+        /// <param name="archive">Archive index from TEXTURE.XXX</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for animated billboards</param>
+
+        /// check if file exist on disk. 
+        /// <returns>Bool</returns>
+        static public bool CustomNormalExist(int archive, int record, int frame)
+        {
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
+                && File.Exists(Application.persistentDataPath + "/textures/" + archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Normal.png"))
+                return true;
+
+            return false;
+        }
+
+        /// import custom image as texture2D
+        /// <returns>Texture2D</returns>
+        static public Texture2D LoadCustomNormal(int archive, int record, int frame)
+        {
+            Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, true); //create empty texture, size will be the actual size of .png file
+            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/textures/" + archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Normal.png"));
+
+            Color32[] colours = tex.GetPixels32();
+            for (int i = 0; i < colours.Length; i++)
+            {
+                colours[i].a = colours[i].r;
+                colours[i].r = colours[i].b = colours[i].g;
+            }
+            tex.SetPixels32(colours);
+            tex.Apply();
+
+            return tex;
         }
 
         /// <summary>
