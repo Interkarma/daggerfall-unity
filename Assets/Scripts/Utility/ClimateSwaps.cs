@@ -371,37 +371,39 @@ namespace DaggerfallWorkshop.Utility
         public static int GetNatureArchive(ClimateNatureSets natureSet, ClimateSeason climateSeason)
         {
             // Get base set
-            int archive;
+            DFLocation.ClimateTextureSet textureSet;
             switch (natureSet)
             {
                 case ClimateNatureSets.RainForest:
-                    archive = 500;
+                    textureSet = DFLocation.ClimateTextureSet.Nature_RainForest;
                     break;
                 case ClimateNatureSets.SubTropical:
-                    archive = 501;
+                    textureSet = DFLocation.ClimateTextureSet.Nature_SubTropical;
                     break;
                 case ClimateNatureSets.Swamp:
-                    archive = 502;
+                    textureSet = DFLocation.ClimateTextureSet.Nature_Swamp;
                     break;
                 case ClimateNatureSets.Desert:
-                    archive = 503;
+                    textureSet = DFLocation.ClimateTextureSet.Nature_Desert;
                     break;
                 case ClimateNatureSets.TemperateWoodland:
-                    archive = 504;
+                    textureSet = DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     break;
                 case ClimateNatureSets.WoodlandHills:
-                    archive = 506;
+                    textureSet = DFLocation.ClimateTextureSet.Nature_WoodlandHills;
                     break;
                 case ClimateNatureSets.HauntedWoodlands:
-                    archive = 508;
+                    textureSet = DFLocation.ClimateTextureSet.Nature_HauntedWoodlands;
                     break;
                 case ClimateNatureSets.Mountains:
-                    archive = 510;
+                    textureSet = DFLocation.ClimateTextureSet.Nature_Mountains;
                     break;
                 default:
-                    archive = 504;
+                    textureSet = DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     break;
             }
+
+            var archive = (int) textureSet;
 
             // Winter modifier
             if (climateSeason == ClimateSeason.Winter)
