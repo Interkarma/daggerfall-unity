@@ -62,6 +62,7 @@ namespace DaggerfallWorkshop
             GameObject object3D = Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString()) as GameObject;
             cachedMaterialsOut = new CachedMaterial[object3D.GetComponent<MeshRenderer>().sharedMaterials.Length];
 
+            // If it's not winter or the model doesn't have a winter version, it loads default materials
             // "Material_x" where x go from zero to (number of materials)-1
             if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue != DaggerfallDateTime.Seasons.Winter) || (Resources.Load("Models/" + modelID.ToString() + "/material_w_0") == null))
             {
