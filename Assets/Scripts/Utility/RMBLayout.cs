@@ -186,7 +186,6 @@ namespace DaggerfallWorkshop.Utility
                     }
                     else
                     {
-                        // int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
                         GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(natureArchive, scenery.TextureRecord, flatsParent);
                         go.transform.position = billboardPosition;
                         AlignBillboardToBase(go);

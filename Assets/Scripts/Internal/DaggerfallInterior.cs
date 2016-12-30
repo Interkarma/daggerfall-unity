@@ -220,8 +220,11 @@ namespace DaggerfallWorkshop
                 if (modelData.Doors != null)
                     doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
 
-                // Combine or add
-                if (dfUnity.Option_CombineRMB && !DFMeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                // Use custom prefab
+                if (DFMeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
+                    DFMeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
+                // Use Daggerfall Mesh: Combine or add
+                else if (dfUnity.Option_CombineRMB && !DFMeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
                 {
                     combiner.Add(ref modelData, modelMatrix);
                 }
@@ -234,7 +237,7 @@ namespace DaggerfallWorkshop
 
                     // Update climate
                     DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
-                    dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
+                    dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);                   
                 }
             }
 

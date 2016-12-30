@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <returns>Bool</returns>
 
-        /// models
+        // Models (mesh + materials)
         static public bool ReplacmentModelExist(uint modelID)
         {
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
@@ -32,7 +32,17 @@ namespace DaggerfallWorkshop
             return false;
         }
 
-        /// billboards
+        // Models (prefabs)
+        static public bool ReplacementPrefabExist(uint modelID)
+        {
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
+                 && Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_default") != null)
+                return true;
+
+            return false;
+        }
+
+        // Billboards
         static public bool ReplacementFlatExist(int archive, int record)
         {
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
@@ -45,14 +55,13 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Import the model and the material(s) from Resources
         /// </summary>
-       
-        /// models
+
+        // Models (mesh + materials)
         static public Mesh LoadReplacementModel(uint modelID, ref CachedMaterial[] cachedMaterialsOut)
         {
             GameObject object3D = Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString()) as GameObject;
             cachedMaterialsOut = new CachedMaterial[object3D.GetComponent<MeshRenderer>().sharedMaterials.Length];
 
-            // If it's NOT winter or the models doesn't have a winter version, it loads default materials
             // "Material_x" where x go from zero to (number of materials)-1
             if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue != DaggerfallDateTime.Seasons.Winter) || (Resources.Load("Models/" + modelID.ToString() + "/material_w_0") == null))
             {
@@ -82,12 +91,38 @@ namespace DaggerfallWorkshop
             return object3D.GetComponent<MeshFilter>().sharedMesh;
         }
 
-        /// billboards
+        // Models (prefabs)
+        static public void LoadReplacementPrefab(uint modelID, Vector3 position, Transform parent, Quaternion rotation)
+        {
+            GameObject object3D = null;
+
+            // If it's not winter or the model doesn't have a winter version, it loads default prefab
+            if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue != DaggerfallDateTime.Seasons.Winter) || (Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_winter") == null))
+                object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_default") as GameObject);
+            // If it's winter and the model has a winter version, it loads winter prefab
+            else
+                object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_winter") as GameObject);
+
+            // Position
+            object3D.transform.parent = parent;
+            object3D.transform.position = position;
+            object3D.transform.rotation = rotation;
+            
+            // Assign texture filtermode as user settings
+            for (int i=0; i < object3D.GetComponent<Renderer>().materials.Length; i++)
+                object3D.GetComponent<Renderer>().materials[i].mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+        }
+
+        // Billboards
         static public void LoadReplacementFlat(int archive, int record, Vector3 position, Transform parent)
         {
             GameObject object3D = GameObject.Instantiate(Resources.Load("Flats/" + archive.ToString() + "_" + record.ToString() + "/" + archive.ToString() + "_" + record.ToString()) as GameObject);
             object3D.transform.parent = parent;
             object3D.transform.localPosition = position;
+
+            // Assign texture filtermode as user settings
+            for (int i = 0; i < object3D.GetComponent<Renderer>().materials.Length; i++)
+                object3D.GetComponent<Renderer>().materials[i].mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
         }
     }
 }
