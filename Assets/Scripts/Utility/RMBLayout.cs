@@ -175,14 +175,17 @@ namespace DaggerfallWorkshop.Utility
                         natureFlatsOffsetY,
                         y * BlocksFile.TileDimension + BlocksFile.TileDimension) * MeshReader.GlobalScale;
 
+                    // Use 3d model instead of flat
+                    int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
+                    if (DFMeshReplacement.ReplacementFlatExist(natureArchive, scenery.TextureRecord))
+                        DFMeshReplacement.LoadReplacementFlat(natureArchive, scenery.TextureRecord, billboardPosition, flatsParent);
                     // Add billboard to batch or standalone
-                    if (billboardBatch != null)
+                    else if (billboardBatch != null)
                     {
                         billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
                     }
                     else
                     {
-                        int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
                         GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(natureArchive, scenery.TextureRecord, flatsParent);
                         go.transform.position = billboardPosition;
                         AlignBillboardToBase(go);
@@ -220,20 +223,27 @@ namespace DaggerfallWorkshop.Utility
                         -obj.YPos + blockFlatsOffsetY,
                         obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
-                    // Add billboard to batch or standalone
-                    if (billboardBatch != null)
-                    {
-                        billboardBatch.AddItem(obj.TextureRecord, billboardPosition);
-                    }
+                    // Use 3d model instead of flat
+                    if (DFMeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))
+                        DFMeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
+                    // Use flat
                     else
                     {
-                        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
-                        go.transform.position = billboardPosition;
-                        AlignBillboardToBase(go);
-                    }
+                        // Add billboard to batch or standalone
+                        if (billboardBatch != null)
+                        {
+                            billboardBatch.AddItem(obj.TextureRecord, billboardPosition);
+                        }
+                        else
+                        {
+                            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+                            go.transform.position = billboardPosition;
+                            AlignBillboardToBase(go);
+                        }
 
-                    // Import light prefab
-                    AddLight(dfUnity, obj, lightsParent);
+                        // Import light prefab
+                        AddLight(dfUnity, obj, lightsParent);
+                    }
                 }
             }
         }
@@ -266,28 +276,35 @@ namespace DaggerfallWorkshop.Utility
                     -obj.YPos + blockFlatsOffsetY,
                     obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
-                // Use misc billboard atlas where available
-                if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
-                {
-                    TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
-                    if (item.key != -1)
-                    {
-                        miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
-                        continue;
-                    }
-                }
-
-                // Add to batch where available
-                if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
-                {
-                    animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
-                }
+                // Use 3d model instead of flat
+                if (DFMeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))    
+                    DFMeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
+                // Use flat
                 else
                 {
-                    // Add standalone billboard gameobject
-                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
-                    go.transform.position = billboardPosition;
-                    AlignBillboardToBase(go);
+                    // Use misc billboard atlas where available
+                    if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
+                    {
+                        TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
+                        if (item.key != -1)
+                        {
+                            miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
+                            continue;
+                        }
+                    }
+
+                    // Add to batch where available
+                    if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
+                    {
+                        animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
+                    }
+                    else
+                    {
+                        // Add standalone billboard gameobject
+                        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+                        go.transform.position = billboardPosition;
+                        AlignBillboardToBase(go);
+                    }
                 }
             }
         }

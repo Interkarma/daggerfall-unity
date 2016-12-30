@@ -324,38 +324,44 @@ namespace DaggerfallWorkshop.Utility
                 {
                     if (obj.Type == DFBlock.RdbResourceTypes.Flat)
                     {
-                        // Add flat
-                        GameObject flatObject = AddFlat(obj, flatsNode.transform);
-
-                        // Store editor objects and start markers
-                        int archive = obj.Resources.FlatResource.TextureArchive;
-                        int record = obj.Resources.FlatResource.TextureRecord;
-                        if (archive == TextureReader.EditorFlatsTextureArchive)
+                        // Use 3d model instead of flat
+                        if (DFMeshReplacement.ReplacementFlatExist(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord))
+                            DFMeshReplacement.LoadReplacementFlat(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform);
+                        // Use flat
+                        else
                         {
-                            editorObjects.Add(obj);
-                            if (record == 10)
-                                startMarkers.Add(flatObject);
-                            else if (record == 8)
-                                enterMarkers.Add(flatObject);
+                            // Add flat
+                            GameObject flatObject = AddFlat(obj, flatsNode.transform);
 
-                            //add editor flats to actionLinkDict
-                            if (!actionLinkDict.ContainsKey(obj.This))
+                            // Store editor objects and start markers
+                            int archive = obj.Resources.FlatResource.TextureArchive;
+                            int record = obj.Resources.FlatResource.TextureRecord;
+                            if (archive == TextureReader.EditorFlatsTextureArchive)
                             {
-                                ActionLink link;
-                                link.gameObject = flatObject;
-                                link.nextKey = obj.Resources.FlatResource.NextObjectOffset;
-                                link.prevKey = -1;
-                                actionLinkDict.Add(obj.This, link);
+                                editorObjects.Add(obj);
+                                if (record == 10)
+                                    startMarkers.Add(flatObject);
+                                else if (record == 8)
+                                    enterMarkers.Add(flatObject);
+
+                                //add editor flats to actionLinkDict
+                                if (!actionLinkDict.ContainsKey(obj.This))
+                                {
+                                    ActionLink link;
+                                    link.gameObject = flatObject;
+                                    link.nextKey = obj.Resources.FlatResource.NextObjectOffset;
+                                    link.prevKey = -1;
+                                    actionLinkDict.Add(obj.This, link);
+                                }
+
                             }
 
+                            //add action component to flat if it has an action
+                            if (obj.Resources.FlatResource.Action > 0)
+                            {
+                                AddActionFlatHelper(flatObject, actionLinkDict, ref blockData, obj);
+                            }
                         }
-
-                        //add action component to flat if it has an action
-                        if (obj.Resources.FlatResource.Action > 0)
-                        {
-                            AddActionFlatHelper(flatObject, actionLinkDict, ref blockData, obj);
-                        }
-
                     }
                 }
             }
