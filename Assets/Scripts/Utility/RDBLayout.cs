@@ -551,33 +551,39 @@ namespace DaggerfallWorkshop.Utility
 
                         // Check if model has an action record
                         bool hasAction = HasAction(obj);
-
-                        // Special handling for tapestries and banners
-                        // Some of these are so far out from wall player can become stuck behind them
-                        // Adding model invidually without collider to avoid problem
-                        // Not sure if these object ever actions, but bypass this hack if they do
-                        if (modelId >= minTapestryID && modelId <= maxTapestryID && !hasAction)
-                        {
-                            AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, hasAction, true);
-                            continue;
-                        }
-
-                        // Add or combine
-                        GameObject standaloneObject = null;
-                        Transform parent = (hasAction) ? actionModelsParent : modelsParent;
-                        if (combiner == null || hasAction || DFMeshReplacement.ReplacmentModelExist(modelId)) 
-                        {
-                            standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
-                            standaloneObject.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
-                        }
+                        
+                        // Use custom prefab
+                        if (DFMeshReplacement.ReplacementPrefabExist(modelId) && !hasAction)
+                            DFMeshReplacement.LoadReplacementPrefab(modelId, modelMatrix.GetColumn(3), modelsParent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
                         else
                         {
-                            combiner.Add(ref modelData, modelMatrix);
-                        }
+                            // Special handling for tapestries and banners
+                            // Some of these are so far out from wall player can become stuck behind them
+                            // Adding model invidually without collider to avoid problem
+                            // Not sure if these object ever actions, but bypass this hack if they do
+                            if (modelId >= minTapestryID && modelId <= maxTapestryID && !hasAction)
+                            {
+                                AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, hasAction, true);
+                                continue;
+                            }
 
-                        // Add action
-                        if (hasAction && standaloneObject != null)
-                            AddActionModelHelper(standaloneObject, actionLinkDict, obj, ref blockData, serialize);
+                            // Add or combine
+                            GameObject standaloneObject = null;
+                            Transform parent = (hasAction) ? actionModelsParent : modelsParent;
+                            if (combiner == null || hasAction || DFMeshReplacement.ReplacmentModelExist(modelId))
+                            {
+                                standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
+                                standaloneObject.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
+                            }
+                            else
+                            {
+                                combiner.Add(ref modelData, modelMatrix);
+                            }
+
+                            // Add action
+                            if (hasAction && standaloneObject != null)
+                                AddActionModelHelper(standaloneObject, actionLinkDict, obj, ref blockData, serialize);
+                        }
                     }
                 }
             }
