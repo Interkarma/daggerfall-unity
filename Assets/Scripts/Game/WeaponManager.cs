@@ -183,6 +183,26 @@ namespace DaggerfallWorkshop.Game
             ShowWeapons(false);
         }
 
+        public int CalculateWeaponDamage(WeaponTypes weaponType, MetalTypes metalType)
+        {
+            // Fudge values, to be replaced
+            int damage_low = 1;
+            int damage_high = 24;
+
+            // Hand-to-hand damage formula based on Daggerfall Chronicles and testing original game.
+            // Daggerfall Chronicles table lists hand-to-hand skills of 80 and above (45 through 79 are omitted)
+            // as if they cause 2 to be added to damage_high instead of 1, but the hand-to-hand damage display
+            // in the in-game character sheet contradicts this.
+            // From testing in original Daggerfall there didn't seem to be a difference in damage from swing type.
+            if (weaponType == WeaponTypes.Melee)
+            {
+                int skill = playerEntity.Skills.HandToHand;
+                damage_low = (skill / 10) + 1;
+                damage_high = (skill / 5) + 1;
+            }
+            return Random.Range(damage_low, damage_high + 1);
+        }
+
         public void Reset()
         {
             usingRightHand = true;
@@ -481,22 +501,18 @@ namespace DaggerfallWorkshop.Game
 
                 // TODO: Use correct damage based on weapon and swing type
                 // Just using fudge values during development
-                int damage_low = 1;
-                int damage_high = 24;
 
-                // Hand-to-hand damage formula based on Daggerfall Chronicles and testing original game.
-                // Daggerfall Chronicles table lists hand-to-hand skills of 80 and above (45 through 79 are omitted)
-                // as if they cause 2 to be added to damage_high instead of 1, but the hand-to-hand damage display in the
-                // character sheet in the original game contradicts this.
-                // From some quick testing in original Daggerfall there didn't seem to be a difference in damage from swing type
-                if (weapon.WeaponType == WeaponTypes.Melee)
+                // Get damage before strength modifier
+                int damage = CalculateWeaponDamage(weapon.WeaponType, weapon.MetalType);
+
+                // Apply the strength modifier. Testing in original Daggerfall shows hand-to-hand ignores it
+                if (weapon.WeaponType != WeaponTypes.Melee)
                 {
-                    int skill = playerEntity.Skills.HandToHand;
-                    damage_low = (skill / 10) + 1;
-                    damage_high = (skill / 5) + 1;
+                    int strengthModifier = (playerEntity.Stats.Strength / 10) - 5;
+
+                    // Weapons can do 0 damage (no blood or hit sound in original Daggerfall)
+                    damage = Mathf.Max(0, damage + strengthModifier);
                 }
-                
-                int damage = Random.Range(damage_low, damage_high + 1);
 
                 //// Check if hit has an EnemyHealth
                 //// This is part of the old Demo code and will eventually be removed
