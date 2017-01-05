@@ -6,8 +6,17 @@
 // Original Author: TheLacus
 // Contributors:
 // 
-// Notes: 'LoadCustomTexture' can import textures for billboards, but the actual sprites replacement is not implemented yet
+// Notes:
 //
+
+/*
+ * TODO:
+ * 1. Animated billboards
+ * 2. Dungeon enemies
+ * 3. Exterior billboards
+ * 4. PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
+         (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
+ */
 
 using System.IO;
 using UnityEngine;
@@ -49,6 +58,35 @@ namespace DaggerfallWorkshop
             tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/textures/" + archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + ".png"));
 
             return tex; //assign image to the actual texture
+        }
+
+        /// import custom image as texture2D for Billboards
+        /// This works only for non-animated interior and dungeon billboards for now
+        static public void LoadCustomBillboardTexture(int archive, int record, ref GameObject go)
+        {
+            // Main texture
+            go.GetComponent<Renderer>().materials[0].SetTexture("_MainTex", LoadCustomTexture(archive, record, 0));
+            go.GetComponent<Renderer>().materials[0].mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+
+            // Emission map
+            // Import emission map
+            if (CustomEmissionExist(archive, record, 0))
+            {
+                Texture2D emissionMap = LoadCustomEmission(archive, record, 0);
+                emissionMap.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                go.GetComponent<Renderer>().materials[0].SetTexture("_EmissionMap", emissionMap);
+            }
+            // If texture is emissive but no emission map is provided, emits from the whole surface
+            else if (go.GetComponent<Renderer>().materials[0].GetTexture("_EmissionMap") != null)
+                go.GetComponent<Renderer>().materials[0].SetTexture("_EmissionMap", go.GetComponent<Renderer>().materials[0].GetTexture("_MainTex"));
+
+            // Create new UV map
+            Vector2[] uv = new Vector2[4];
+            uv[0] = new Vector2(0, 1);
+            uv[1] = new Vector2(1, 1);
+            uv[2] = new Vector2(0, 0);
+            uv[3] = new Vector2(1, 0);
+            go.GetComponent<MeshFilter>().mesh.uv = uv;
         }
 
         /// <summary>

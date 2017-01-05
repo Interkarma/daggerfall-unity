@@ -260,6 +260,10 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallBillboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
             dfBillboard.SetMaterial(archive, record);
 
+            // Import custom texture
+            if (DFTextureReplacement.CustomTextureExist(archive, record, 0))
+                DFTextureReplacement.LoadCustomBillboardTexture(archive, record, ref go);
+
             return go;
         }
 
