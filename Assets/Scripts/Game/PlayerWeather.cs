@@ -10,9 +10,8 @@
 //
 
 using UnityEngine;
-using System.Collections;
-using DaggerfallWorkshop.Game;
 using DaggerfallConnect;
+using DaggerfallWorkshop.Game.Weather;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -27,24 +26,17 @@ namespace DaggerfallWorkshop.Game
     {
         public GameObject RainParticles;
         public GameObject SnowParticles;
-        public WeatherTypes WeatherType = WeatherTypes.None;
+        public WeatherType WeatherType = WeatherType.Sunny;
+        public PlayerGPS PlayerGps { get; private set; }
 
-        PlayerGPS playerGPS;
         PlayerEnterExit playerEnterExit;
-        WeatherTypes currentWeatherType = WeatherTypes.None;
+        WeatherType _currentWeatherType = WeatherType.Sunny;
         DFLocation.ClimateBaseType currentClimateType = DFLocation.ClimateBaseType.None;
         bool isInside = false;
 
-        public enum WeatherTypes
-        {
-            None,
-            Rain_Normal,
-            Snow_Normal,
-        }
-
         void Start()
         {
-            playerGPS = GetComponent<PlayerGPS>();
+            PlayerGps = GetComponent<PlayerGPS>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
             if (RainParticles) RainParticles.SetActive(false);
             if (SnowParticles) SnowParticles.SetActive(false);
@@ -53,13 +45,13 @@ namespace DaggerfallWorkshop.Game
         void Update()
         {
             // Update weather if context changes
-            if (WeatherType != currentWeatherType ||
+            if (WeatherType != _currentWeatherType ||
                 playerEnterExit.IsPlayerInside != isInside ||
-                playerGPS.ClimateSettings.ClimateType != currentClimateType)
+                PlayerGps.ClimateSettings.ClimateType != currentClimateType)
             {
                 isInside = playerEnterExit.IsPlayerInside;
-                currentClimateType = playerGPS.ClimateSettings.ClimateType;
-                currentWeatherType = WeatherType;
+                currentClimateType = PlayerGps.ClimateSettings.ClimateType;
+                _currentWeatherType = WeatherType;
                 SetWeather();
             }
         }
@@ -74,27 +66,20 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            // Always snow in desert climate
-            if (currentClimateType == DFLocation.ClimateBaseType.Desert &&
-                currentWeatherType == WeatherTypes.Snow_Normal)
-            {
-                currentWeatherType = WeatherTypes.None;
-                WeatherType = WeatherTypes.None;
-            }
-
             switch (WeatherType)
             {
-                case WeatherTypes.None:
-                    if (RainParticles) RainParticles.SetActive(false);
-                    if (SnowParticles) SnowParticles.SetActive(false);
-                    break;
-                case WeatherTypes.Rain_Normal:
+                case WeatherType.Rain:
+                case WeatherType.Thunder:
                     if (RainParticles) RainParticles.SetActive(true);
                     if (SnowParticles) SnowParticles.SetActive(false);
                     break;
-                case WeatherTypes.Snow_Normal:
+                case WeatherType.Snow:
                     if (RainParticles) RainParticles.SetActive(false);
                     if (SnowParticles) SnowParticles.SetActive(true);
+                    break;
+                default:
+                    if (RainParticles) RainParticles.SetActive(false);
+                    if (SnowParticles) SnowParticles.SetActive(false);
                     break;
             }
         }

@@ -11,12 +11,15 @@
  * 
  */
 
-using UnityEngine;
+using System;
+using System.Diagnostics;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Utility;
-using DaggerfallConnect.Utility;
-
+using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 
 /* Setup instructions:
@@ -70,7 +73,7 @@ namespace EnhancedSky
         public PlayerEnterExit  playerEE;
         public GameObject       exteriorParent;
 
-        System.Diagnostics.Stopwatch _stopWatch;
+        Stopwatch _stopWatch;
         CloudGenerator  _cloudGen;
         GameObject      _container;
         GameObject      _containerPrefab;
@@ -92,8 +95,8 @@ namespace EnhancedSky
         public SkyObjectSize SkyObjectSizeSetting { get; set; }
         public CloudGenerator CloudGen  { get { return (_cloudGen != null) ? _cloudGen : _cloudGen = this.GetComponent<CloudGenerator>(); } }
         public bool UseSunFlare         { get; set; }
-        public bool IsOvercast          { get { return (weatherMan != null) ? weatherMan.IsOvercast : false; } }
-        public bool IsNight             { get { return (TimeScript != null) ? TimeScript.IsNight : false; } }
+        public bool IsOvercast          { get; private set; }
+        public bool IsNight             { get { return (TimeScript != null) && TimeScript.IsNight; } }
         public float CurrentSeconds     { get { return UpdateTime(); } }
         public float TimeRatio          { get {return (CurrentSeconds / DAYINSECONDS); }}
         public int DawnTime             { get; private set; }
@@ -109,7 +112,7 @@ namespace EnhancedSky
         {
             get { 
                 if(_instance == null)
-                    _instance = GameObject.FindObjectOfType<SkyManager>();
+                    _instance = FindObjectOfType<SkyManager>();
                 return _instance;
             }
             private set { _instance = value; }
@@ -147,8 +150,22 @@ namespace EnhancedSky
                 ToggleSkyObjects(true);                 //enable sky objects
         }
 
-        public void WeatherManagerSkyEventsHandler()
+        public void WeatherManagerSkyEventsHandler(WeatherType weather)
         {
+            switch (weather)
+            {
+                case WeatherType.Sunny:
+                case WeatherType.Cloudy:
+                    IsOvercast = false;
+                    break;
+                case WeatherType.Overcast:
+                case WeatherType.Fog:
+                case WeatherType.Rain:
+                case WeatherType.Thunder:
+                case WeatherType.Snow:
+                    IsOvercast = true;
+                    break;
+            }
             if (updateSkyEvent != null)
                 updateSkyEvent(IsOvercast);
 
@@ -177,21 +194,21 @@ namespace EnhancedSky
                     if(SkyMat)
                         RenderSettings.skybox = SkyMat;
                     else
-                        throw new System.NullReferenceException();
+                        throw new NullReferenceException();
                     if (_containerPrefab)
                     {
                         _container = Instantiate(_containerPrefab);
                         _container.transform.SetParent(exteriorParent.transform, true);
                     }
                     else
-                        throw new System.NullReferenceException();
+                        throw new NullReferenceException();
 
                     dfallSky.SetActive(false);
                     SkyObjectSizeChange(SkyObjectSizeSetting);
                 }
                 
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.LogWarning("Error enabling or diabling Daggerfall Sky object. ");
                 Debug.LogWarning(ex.Message + " | in ToggleSkyObjects toggle: " + toggle);
@@ -211,7 +228,7 @@ namespace EnhancedSky
         public void EnhancedSkyUpdate(DFPosition worldPos)                         //player teleporting
         {
             //Debug.Log("EnhancedSkyUpdate");
-            if (updateSkyEvent != null && SkyManager.instance.EnhancedSkyCurrentToggle)   //only trigger if eSky on
+            if (updateSkyEvent != null && instance.EnhancedSkyCurrentToggle)   //only trigger if eSky on
             {
                 //Debug.Log("triggering fastTravelEvent");
                 updateSkyEvent(IsOvercast);
@@ -229,16 +246,14 @@ namespace EnhancedSky
             {
                 Destroy(this.gameObject);
             }
-            _stopWatch = new System.Diagnostics.Stopwatch();
+            _stopWatch = new Stopwatch();
 
             PlayerEnterExit.OnTransitionInterior        += InteriorTransitionEvent; //interior transition
             PlayerEnterExit.OnTransitionDungeonInterior += InteriorTransitionEvent; //dungeon interior transition
             PlayerEnterExit.OnTransitionExterior        += ExteriorTransitionEvent; //exterior transition
             PlayerEnterExit.OnTransitionDungeonExterior += ExteriorTransitionEvent; //dungeon exterior transition
             StreamingWorld.OnTeleportToCoordinates      += EnhancedSkyUpdate;
-            WeatherManager.OnClearOvercast              += WeatherManagerSkyEventsHandler;
-            WeatherManager.OnSetRainOvercast            += WeatherManagerSkyEventsHandler;
-            WeatherManager.OnSetSnowOvercast            += WeatherManagerSkyEventsHandler;
+            WeatherManager.OnWeatherChange              += WeatherManagerSkyEventsHandler;
 
         }
 
@@ -277,9 +292,7 @@ namespace EnhancedSky
             PlayerEnterExit.OnTransitionExterior        -= ExteriorTransitionEvent; //exterior transition
             PlayerEnterExit.OnTransitionDungeonExterior -= ExteriorTransitionEvent; //dungeon exterior transition
             StreamingWorld.OnTeleportToCoordinates      -= EnhancedSkyUpdate;
-            WeatherManager.OnClearOvercast              -= WeatherManagerSkyEventsHandler;
-            WeatherManager.OnSetRainOvercast            -= WeatherManagerSkyEventsHandler;
-            WeatherManager.OnSetSnowOvercast            -= WeatherManagerSkyEventsHandler;
+            WeatherManager.OnWeatherChange              -= WeatherManagerSkyEventsHandler;
 
             Destroy(StarsMat);
             Destroy(_skyObjMat);

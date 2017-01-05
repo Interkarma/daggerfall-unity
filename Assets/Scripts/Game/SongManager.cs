@@ -15,6 +15,7 @@ using System.Collections;
 using DaggerfallWorkshop;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Weather;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -372,10 +373,13 @@ namespace DaggerfallWorkshop.Game
 
             switch (playerWeather.WeatherType)
             {
-                case PlayerWeather.WeatherTypes.Rain_Normal:
+                case WeatherType.Overcast:
+                case WeatherType.Fog:
+                case WeatherType.Rain:
+                case WeatherType.Thunder:
                     currentPlayerMusicWeather = PlayerMusicWeather.Rain;
                     break;
-                case PlayerWeather.WeatherTypes.Snow_Normal:
+                case WeatherType.Snow:
                     currentPlayerMusicWeather = PlayerMusicWeather.Snow;
                     break;
                 default:

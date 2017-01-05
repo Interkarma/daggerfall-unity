@@ -10,6 +10,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Entity;
 using System.IO;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Weather;
 
 namespace Wenzil.Console
 {
@@ -162,7 +163,7 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 WeatherManager weatherManager = GameManager.Instance.WeatherManager;
-                int weatherType = 0;
+                int weatherCode = 0;
 
                 if (args == null || args.Length < 1)
                     return HelpCommand.Execute(SetWeather.name);
@@ -172,20 +173,11 @@ namespace Wenzil.Console
                     return HelpCommand.Execute(SetWeather.name);
 
                 }
-                else if (int.TryParse(args[0], out weatherType))
+                else if (int.TryParse(args[0], out weatherCode))
                 {
-                    if (weatherType >= 0 && weatherType < 4)
-                    {
-                        weatherManager.ClearAllWeather();
-
-                        if (weatherType == 1)
-                            weatherManager.StartRaining();
-                        else if (weatherType == 2)
-                            weatherManager.StartStorming();
-                        else if (weatherType == 3)
-                            weatherManager.StartSnowing();
-                        return "Set weather.";
-                    }
+                    var type = (WeatherType) weatherCode;
+                    weatherManager.SetWeather(type);
+                    return "Set weather.";
 
                 }
 
