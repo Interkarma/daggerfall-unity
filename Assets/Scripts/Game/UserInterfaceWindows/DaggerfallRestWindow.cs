@@ -306,10 +306,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool TickVitals()
         {
-            // For alpha purposes, all vitals are recovered in a uniform manner
-            // There's a lot to account for later based on player health/magicka regeneration
-            // Also need to decouple this back to formula provider when properly implemented
-            playerEntity.CurrentHealth += (int)(playerEntity.MaxHealth * recoveryRate);
+            // For alpha purposes, magicka and fatigue are recovered in a uniform manner
+            // Need to decouple this back to formula provider when properly implemented
+
+            // Health recovery rate based on testing in original Daggerfall and http://forums.dfworkshop.net/viewtopic.php?f=4&t=270
+            int healthRecoveryRate = (int)CalculateHealthRecoveryRate();
+
+            playerEntity.CurrentHealth += healthRecoveryRate;
             playerEntity.CurrentFatigue += (int)(playerEntity.MaxFatigue * recoveryRate);
             playerEntity.CurrentMagicka += (int)(playerEntity.MaxMagicka * recoveryRate);
 
@@ -324,6 +327,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             return false;
+        }
+
+        float CalculateHealthRecoveryRate()
+        {
+            float medicalModifier = ((float)playerEntity.Skills.Medical / 10) + 6;
+
+            // Original Daggerfall seems to have a bug with negative endurance modifiers on healing rate.
+            // They are applied as modifier + 1, so a -1 modifier is the same as a 0 modifier.
+            int enduranceModifier = (playerEntity.Stats.Endurance / 10) - 5;
+
+            float maxHealthModifier = ((float)playerEntity.MaxHealth / 100);
+            return (medicalModifier * maxHealthModifier) + enduranceModifier;
         }
 
         #endregion
