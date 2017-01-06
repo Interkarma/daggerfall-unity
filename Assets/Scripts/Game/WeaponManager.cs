@@ -13,6 +13,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -136,7 +137,7 @@ namespace DaggerfallWorkshop.Game
                     weapon = RightHandWeapon;
 
                 // Transfer melee damage
-                MeleeDamage(weapon);
+                MeleeDamage(weapon, lastAction);
 
                 // Weapon cooldown
                 if (weapon.Cooldown > 0.0f)
@@ -183,34 +184,42 @@ namespace DaggerfallWorkshop.Game
             ShowWeapons(false);
         }
 
-        public int CalculateWeaponMinDamage(WeaponTypes weaponType, MetalTypes metalType)
+        public int CalculateWeaponMinDamage(FPSWeapon weapon)
         {
-            // Temp value, to be replaced
-            int damage_low = 1;
+            int damage_low;
 
             // Hand-to-hand damage formula from Daggerfall Chronicles and testing
-            if (weaponType == WeaponTypes.Melee)
+            if (weapon.WeaponType == WeaponTypes.Melee)
             {
                 int skill = playerEntity.Skills.HandToHand;
+
                 damage_low = (skill / 10) + 1;
+            }
+            else
+            {
+                damage_low = Mathf.Max(0, weapon.DamageRange[0] + getMaterialModifier(weapon.MetalType));
             }
 
             return damage_low;
         }
 
-        public int CalculateWeaponMaxDamage(WeaponTypes weaponType, MetalTypes metalType)
+        public int CalculateWeaponMaxDamage(FPSWeapon weapon)
         {
-            // Temp value, to be replaced
-            int damage_high = 24;
+            int damage_high;
 
             // Hand-to-hand damage formula from Daggerfall Chronicles and testing
             // Daggerfall Chronicles table lists hand-to-hand skills of 80 and above (45 through 79 are omitted)
             // as if they cause 2 to be added to damage_high instead of 1, but the hand-to-hand damage display
             // in the in-game character sheet contradicts this.
-            if (weaponType == WeaponTypes.Melee)
+            if (weapon.WeaponType == WeaponTypes.Melee)
             {
                 int skill = playerEntity.Skills.HandToHand;
+
                 damage_high = (skill / 5) + 1;
+            }
+            else
+            {
+                damage_high = weapon.DamageRange[1] + getMaterialModifier(weapon.MetalType);
             }
 
             return damage_high;
@@ -321,6 +330,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             // Setup target
+            target.DamageRange = getBaseWeaponDamageRange(weapon.TemplateIndex);
             target.WeaponType = DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(weapon);
             target.MetalType = DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(weapon);
             target.DrawWeaponSound = weapon.GetEquipSound();
@@ -427,22 +437,28 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private int CalculateWeaponDamage(FPSWeapon weapon)
+        private int CalculateWeaponDamage(FPSWeapon weapon, MouseDirections swingDirection)
         {          
-            int damage_low = CalculateWeaponMinDamage(weapon.WeaponType, weapon.MetalType);
-            int damage_high = CalculateWeaponMaxDamage(weapon.WeaponType, weapon.MetalType);
+            int damage_low = CalculateWeaponMinDamage(weapon);
+            int damage_high = CalculateWeaponMaxDamage(weapon);
             int damage = Random.Range(damage_low, damage_high + 1);
 
             // Apply the strength modifier. Testing in original Daggerfall shows hand-to-hand ignores it.
             if (weapon.WeaponType != WeaponTypes.Melee)
             {
                 int strengthModifier = (playerEntity.Stats.Strength / 10) - 5;
+               
+                damage += strengthModifier;
 
-                // Weapons can do 0 damage. Causes no blood or hit sound in original Daggerfall.
-                damage = Mathf.Max(0, damage + strengthModifier);
+                // Bows do not factor in swing direction
+                if (weapon.WeaponType != WeaponTypes.Bow)
+                {
+                    damage += getDirectionModifier(swingDirection);
+                }
             }
 
-            return damage;
+            // Weapons can do 0 damage. Causes no blood or hit sound in original Daggerfall.
+            return Mathf.Max(0, damage);
         }
 
         private bool IsPassive(float value, float threshold)
@@ -505,7 +521,7 @@ namespace DaggerfallWorkshop.Game
             if (RightHandWeapon) RightHandWeapon.ShowWeapon = show;
         }
 
-        private void MeleeDamage(FPSWeapon weapon)
+        private void MeleeDamage(FPSWeapon weapon, MouseDirections swingDirection)
         {
             if (!mainCamera || !weapon)
                 return;
@@ -530,13 +546,8 @@ namespace DaggerfallWorkshop.Game
                     return;
                 }
 
-                // TODO: Use correct damage based on weapon and swing type
-                // Just using fudge values during development
-
                 // Calculate damage
-                int damage = CalculateWeaponDamage(weapon);
-
-                Debug.Log(damage);
+                int damage = CalculateWeaponDamage(weapon, lastAction);
 
                 //// Check if hit has an EnemyHealth
                 //// This is part of the old Demo code and will eventually be removed
@@ -590,6 +601,95 @@ namespace DaggerfallWorkshop.Game
             {
                 if (LeftHandWeapon) LeftHandWeapon.PlayActivateSound();
                 if (RightHandWeapon) RightHandWeapon.PlayActivateSound();
+            }
+        }
+
+        // Couldn't find the actual modifier values used in Daggerfall, so defaulted to Arena's modifiers
+        private int getDirectionModifier (MouseDirections direction)
+        {
+            switch (direction) 
+            {
+                // Vertical Swing
+                case MouseDirections.Down:
+                    return 4;
+                // Diagonal Swing
+                case MouseDirections.DownLeft:
+                case MouseDirections.DownRight:
+                    return 2;
+                // Forward Thrust
+                case MouseDirections.Up:
+                case MouseDirections.UpLeft:
+                case MouseDirections.UpRight:
+                    return -4;
+                // Horizontal Swing
+                default:
+                    return 0;
+            }
+        }
+
+        private int getMaterialModifier (MetalTypes type)
+        {
+            switch (type)
+            {
+                case MetalTypes.Iron:
+                    return -2;
+                case MetalTypes.Elven:
+                    return 2;
+                case MetalTypes.Dwarven:
+                    return 4;
+                case MetalTypes.Mithril:
+                case MetalTypes.Adamantium:
+                    return 6;
+                case MetalTypes.Ebony:
+                    return 8;
+                case MetalTypes.Orcish:
+                    return 10;
+                case MetalTypes.Daedric:
+                    return 12;
+                // Covers Iron and Steel
+                default:
+                    return 0;
+            }
+        }
+
+        private List<int> getBaseWeaponDamageRange (int itemIndex)
+        {
+            switch (itemIndex)
+            {
+                case (int)Weapons.Dagger:
+                    return new List<int> { 1, 6 };
+                case (int)Weapons.Shortsword:
+                case (int)Weapons.Tanto:
+                case (int)Weapons.Staff:
+                    return new List<int> { 1, 8 };
+                case (int)Weapons.Wakazashi:
+                    return new List<int> { 1, 10 };
+                case (int)Weapons.Broadsword:
+                case (int)Weapons.Mace:
+                    return new List<int> { 1, 12 };
+                case (int)Weapons.Battle_Axe:
+                    return new List<int> { 2, 12 };
+                case (int)Weapons.Flail:
+                    return new List<int> { 2, 14 };
+                case (int)Weapons.Longsword:
+                case (int)Weapons.War_Axe:
+                    return new List<int> { 2, 16 };
+                case (int)Weapons.Claymore:
+                    return new List<int> { 2, 18 };
+                case (int)Weapons.Saber:
+                    return new List<int> { 3, 12 };
+                case (int)Weapons.Katana:
+                    return new List<int> { 3, 16 };
+                case (int)Weapons.Warhammer:
+                    return new List<int> { 3, 18 };
+                case (int)Weapons.Dai_Katana:
+                    return new List<int> { 3, 21 };
+                case (int)Weapons.Short_Bow:
+                    return new List<int> { 4, 16 };
+                case (int)Weapons.Long_Bow:
+                    return new List<int> { 4, 18 };
+                default:
+                    return new List<int> { 0, 0 };
             }
         }
 

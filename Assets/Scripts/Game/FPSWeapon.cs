@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game
     {
         public bool ShowWeapon = true;
         public bool LeftHand = false;
+        public List<int> DamageRange = new List<int> { 0, 0 };
         public WeaponTypes WeaponType = WeaponTypes.None;
         public MetalTypes MetalType = MetalTypes.None;
         public float Reach = 2.5f;
