@@ -51,11 +51,10 @@ namespace DaggerfallWorkshop.Game
         [Range(0, 1)]
         public float HeavyFogDensity = 0.05f;
 
-        public float PollWeatherInSeconds = 30f;
-
         DaggerfallUnity _dfUnity;
         float _pollTimer;
         private WeatherTable _weatherTable;
+        private float _pollWeatherInSeconds = 30f;
 
         public bool IsRaining { get; private set; }
 
@@ -246,7 +245,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Increment poll timer
             _pollTimer += Time.deltaTime;
-            if (_pollTimer < PollWeatherInSeconds)
+            if (_pollTimer < _pollWeatherInSeconds)
                 return;
 
             // Reset timer
