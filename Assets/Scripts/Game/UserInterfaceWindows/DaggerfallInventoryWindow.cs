@@ -1154,6 +1154,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mb.InputDistanceY = -6;
             mb.TextBox.Numeric = true;
             mb.TextBox.MaxCharacters = 8;
+            mb.TextBox.Text = "0";
             mb.OnGotUserInput += DropGoldPopup_OnGotUserInput;
             mb.Show();
         }

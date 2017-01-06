@@ -499,6 +499,15 @@ namespace DaggerfallWorkshop.Game
 
         #region Static Helpers
 
+        public static void SetFocus(BaseScreenComponent control)
+        {
+            IUserInterfaceWindow topWindow = Instance.uiManager.TopWindow;
+            if (topWindow != null)
+            {
+                topWindow.SetFocus(control);
+            }
+        }
+
         public static Button AddButton(Vector2 position, Vector2 size, Panel panel = null)
         {
             Button button = new Button();
@@ -546,6 +555,37 @@ namespace DaggerfallWorkshop.Game
                 panel.Components.Add(textLabel);
 
             return textLabel;
+        }
+
+        public static TextBox AddTextBox(Rect rect, string defaultText, Panel panel = null, int maxCharacters = -1, DaggerfallFont font = null, int glyphSpacing = 1)
+        {
+            TextBox textBox = new TextBox(font);
+
+            textBox.Position = new Vector2(rect.x, rect.y);
+            textBox.Size = new Vector2(rect.width, rect.height);
+            textBox.DefaultText = defaultText;
+            textBox.MaxCharacters = maxCharacters;
+            textBox.TextOffset = 2;
+
+            if (panel != null)
+                panel.Components.Add(textBox);
+
+            return textBox;
+        }
+
+        public static Button AddTextButton(Rect rect, string text, Panel panel = null)
+        {
+            Button button = new UserInterface.Button();
+            button.Position = new Vector2(rect.x, rect.y);
+            button.Size = new Vector2(rect.width, rect.height);
+            button.Outline.Enabled = true;
+            button.Label.HorizontalAlignment = HorizontalAlignment.Center;
+            button.Label.ShadowPosition = Vector2.zero;
+            button.Label.Text = text;
+            if (panel != null)
+                panel.Components.Add(button);
+
+            return button;
         }
 
         public static TextLabel AddDefaultShadowedTextLabel(Vector2 position, Panel panel = null, int glyphSpacing = 1)

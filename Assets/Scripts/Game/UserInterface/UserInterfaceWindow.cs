@@ -24,6 +24,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool Enabled { get; set; }
         bool PauseWhileOpen { get; set; }
         Panel ParentPanel { get; }
+        BaseScreenComponent FocusControl { get; }
+        void SetFocus(BaseScreenComponent control);
         void Update();
         void Draw();
         void ProcessMessages();
@@ -40,6 +42,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected IUserInterfaceManager uiManager;
         protected bool enabled = true;
         protected bool pauseWhileOpened = true;
+        protected BaseScreenComponent focusControl = null;
 
         public UserInterfaceWindow Value
         {
@@ -55,6 +58,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public Panel ParentPanel
         {
             get { return parentPanel; }
+        }
+
+        public BaseScreenComponent FocusControl
+        {
+            get { return focusControl; }
         }
 
         public UserInterfaceWindow()
@@ -133,6 +141,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return pauseWhileOpened; }
             set { pauseWhileOpened = value; }
+        }
+
+        public virtual void SetFocus(BaseScreenComponent control)
+        {
+            // Old control losing focus
+            if (focusControl != null)
+                focusControl.LostFocus();
+
+            // New control gaining focus
+            if (control != null)
+                control.GotFocus();
+
+            // Cache focus control
+            focusControl = control;
         }
 
         //internal protected virtual void WindowChanged(object sender, EventArgs e)

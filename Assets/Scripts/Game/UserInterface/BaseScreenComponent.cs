@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         BaseScreenComponent parent;
         Vector2 position;
         Vector2 size;
-        bool hasFocus = false;
+        bool useFocus = false;
 
         ToolTip toolTip = null;
         string toolTipText = string.Empty;
@@ -119,11 +119,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Flags for control focus.
+        /// Gets or sets flag to make control focus-senstitive.
+        /// When enabled, this control will gain focus when clicked and lose focus when another control is clicked.
+        /// How focus is implemented depends on inherited control.
         /// </summary>
-        public bool HasFocus
+        public bool UseFocus
         {
-            get { return hasFocus; }
+            get { return useFocus; }
+            set { useFocus = value; }
         }
 
         /// <summary>
@@ -591,6 +594,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return localRect;
         }
 
+        /// <summary>
+        /// Called when control gains focus in window.
+        /// </summary>
+        public virtual void GotFocus()
+        {
+        }
+
+        /// <summary>
+        /// Called when control loses focus in window.
+        /// </summary>
+        public virtual void LostFocus()
+        {
+        }
+
         #endregion
 
         #region Protected Methods
@@ -602,6 +619,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (OnMouseClick != null)
                 OnMouseClick(this, clickPosition);
+
+
+            // Set focus on click
+            if (UseFocus)
+                SetFocus();
         }
 
         /// <summary>
@@ -611,6 +633,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (OnRightMouseClick != null)
                 OnRightMouseClick(this, clickPosition);
+
+            // Set focus on click
+            if (UseFocus)
+                SetFocus();
         }
 
         /// <summary>
@@ -724,6 +750,33 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     position.y = otherRect.yMax + distance;
                     break;
             }
+        }
+
+        /// <summary>
+        /// Set focus to this control.
+        /// </summary>
+        public void SetFocus()
+        {
+            IUserInterfaceWindow topWindow = DaggerfallUI.UIManager.TopWindow;
+            if (topWindow != null)
+            {
+                topWindow.SetFocus(this);
+            }
+        }
+
+        /// <summary>
+        /// Checks if this control has focus.
+        /// </summary>
+        public bool HasFocus()
+        {
+            IUserInterfaceWindow topWindow = DaggerfallUI.UIManager.TopWindow;
+            if (topWindow != null)
+            {
+                if (topWindow.FocusControl == this)
+                    return true;
+            }
+
+            return false;
         }
 
         #endregion
