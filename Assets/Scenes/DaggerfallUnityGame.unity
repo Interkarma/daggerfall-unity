@@ -1624,12 +1624,12 @@ MonoBehaviour:
   StormSunlightScale: 0.35
   SnowSunlightScale: 0.5
   WinterSunlightScale: 0.9
+  SunnyFogDensity: 0.00005
+  OvercastFogDensity: 0.00005
+  RainyFogDensity: 0.0001
+  SnowyFogDensity: 0.001
+  HeavyFogDensity: 0.05
   PollWeatherInSeconds: 4
-  ChanceToRainOvercast: 0.03
-  ChanceToStartRaining: 0.04
-  ChanceToStartStorming: 0.1
-  ChanceToSnowOvercast: 0.03
-  ChanceToStartSnowing: 0.1
 --- !u!1 &1463923235
 GameObject:
   m_ObjectHideFlags: 0
@@ -2634,7 +2634,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value
