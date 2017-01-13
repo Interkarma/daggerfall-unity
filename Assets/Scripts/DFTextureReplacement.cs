@@ -11,22 +11,29 @@
 
 /*
  * TODO:
- * 1. Animated billboards
- * 2. Dungeon enemies
- * 3. Exterior billboards
- * 4. PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
-         (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
+ * 1. Dungeon enemies
+ * 2. Exterior billboards
+ * 3. PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
+ *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
  */
 
 using System.IO;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop
 {
+    /// <summary>
+    /// Handles import and injection of custom textures and images
+    /// with the purpose of providing modding support.
+    /// </summary>
     static public class DFTextureReplacement
     {
+
+        #region Textures import
+
         /// <summary>
         /// Load custom image files from disk to use as textures on models or billboards
         /// .png files are located in persistentData/textures
@@ -39,7 +46,7 @@ namespace DaggerfallWorkshop
 
         /// check if file exist on disk. 
         /// <returns>Bool</returns>
-        static public bool CustomTextureExist(int archive, int record, int frame)
+        static public bool CustomTextureExist(int archive, int record, int frame = 0)
         {
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
                 && File.Exists(Application.persistentDataPath + "/textures/" + archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + ".png"))
@@ -58,35 +65,6 @@ namespace DaggerfallWorkshop
             tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/textures/" + archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + ".png"));
 
             return tex; //assign image to the actual texture
-        }
-
-        /// import custom image as texture2D for Billboards
-        /// This works only for non-animated interior and dungeon billboards for now
-        static public void LoadCustomBillboardTexture(int archive, int record, ref GameObject go)
-        {
-            // Main texture
-            go.GetComponent<Renderer>().materials[0].SetTexture("_MainTex", LoadCustomTexture(archive, record, 0));
-            go.GetComponent<Renderer>().materials[0].mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-
-            // Emission map
-            // Import emission map
-            if (CustomEmissionExist(archive, record, 0))
-            {
-                Texture2D emissionMap = LoadCustomEmission(archive, record, 0);
-                emissionMap.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                go.GetComponent<Renderer>().materials[0].SetTexture("_EmissionMap", emissionMap);
-            }
-            // If texture is emissive but no emission map is provided, emits from the whole surface
-            else if (go.GetComponent<Renderer>().materials[0].GetTexture("_EmissionMap") != null)
-                go.GetComponent<Renderer>().materials[0].SetTexture("_EmissionMap", go.GetComponent<Renderer>().materials[0].GetTexture("_MainTex"));
-
-            // Create new UV map
-            Vector2[] uv = new Vector2[4];
-            uv[0] = new Vector2(0, 1);
-            uv[1] = new Vector2(1, 1);
-            uv[2] = new Vector2(0, 0);
-            uv[3] = new Vector2(1, 0);
-            go.GetComponent<MeshFilter>().mesh.uv = uv;
         }
 
         /// <summary>
@@ -228,5 +206,106 @@ namespace DaggerfallWorkshop
 
             return tex; //assign image to the actual texture
         }
+
+        #endregion
+
+        #region Texture injection
+
+        /// <summary>
+        /// Replace texture(s) on billboard gameobject.
+        /// This is implemented only for interior and dungeon billboards for now
+        /// </summary>
+        /// <paran name="go">Billboard gameobject.</param>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        static public void LoadCustomBillboardTexture(ref GameObject go, int archive, int record)
+        {
+            Texture2D albedoTexture, emissionMap;
+            MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
+
+            // Check if billboard is emissive
+            bool isEmissive = false;
+            if (meshRenderer.materials[0].GetTexture("_EmissionMap") != null)
+                isEmissive = true;
+
+            // Import texture(s)
+            LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record);
+
+            // Main texture
+            meshRenderer.materials[0].SetTexture("_MainTex", albedoTexture);
+
+            // Emission maps for lights
+            if (isEmissive)
+                meshRenderer.materials[0].SetTexture("_EmissionMap", emissionMap);
+
+            // Update UV map
+            Vector2[] uv = new Vector2[4];
+            uv[0] = new Vector2(0, 1);
+            uv[1] = new Vector2(1, 1);
+            uv[2] = new Vector2(0, 0);
+            uv[3] = new Vector2(1, 0);
+            go.GetComponent<MeshFilter>().mesh.uv = uv;
+
+            // Check if billboard is animated
+            int NumberOfFrames = NumberOfAvailableFrames(archive, record);
+            if (NumberOfFrames > 1)
+            {
+                // Import textures for each frame 
+                go.GetComponent<DaggerfallBillboard>().SetCustomMaterial(archive, record, NumberOfFrames, isEmissive);
+            }
+        }
+
+        #endregion
+
+        #region Utilities
+
+        /// <summary>
+        /// Import texture(s) for billboard gameobject for specified frame. 
+        /// </summary>
+        /// <paran name="isEmissive">True for lights.</param>
+        /// <paran name="albedoTexture">Main texture for this frame.</param>
+        /// <paran name="emissionMap">Eventual Emission map for this frame.</param>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for animated billboards.</param>
+        static public void LoadCustomBillboardFrameTexture(bool isEmissive, out Texture2D albedoTexture, out Texture2D emissionMap, int archive, int record, int frame = 0)
+        {
+            // Main texture
+            albedoTexture = LoadCustomTexture(archive, record, frame);
+            albedoTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+
+            // Emission map
+            if (isEmissive)
+            {
+                // Import emission map if available on disk
+                if (CustomEmissionExist(archive, record, frame))
+                    emissionMap = LoadCustomEmission(archive, record, frame);
+                // If texture is emissive but no emission map is provided, emits from the whole surface
+                else
+                    emissionMap = albedoTexture;
+
+                emissionMap.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+            }
+            else
+                emissionMap = null;
+        }
+
+        /// <summary>
+        /// Check all frames available on disk.
+        /// </summary>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <returns>Number of textures present on disk for this record</returns>
+        static public int NumberOfAvailableFrames(int archive, int record)
+        {
+            int frames = 0;
+            while (CustomTextureExist(archive, record, frames))
+            {
+                frames++;
+            }
+            return frames;
+        }
+
+        #endregion
     }
 }
