@@ -438,7 +438,7 @@ namespace DaggerfallWorkshop.Game
             {
                 int strengthModifier = (playerEntity.Stats.Strength / 10) - 5;
 
-                // Weapons can do 0 damage. Causes no blood or hit sound in original Daggerfall.
+                // Weapons can do 0 damage. Plays no hit sound or blood splash.
                 damage = Mathf.Max(0, damage + strengthModifier);
             }
 
@@ -536,8 +536,6 @@ namespace DaggerfallWorkshop.Game
                 // Calculate damage
                 int damage = CalculateWeaponDamage(weapon);
 
-                Debug.Log(damage);
-
                 //// Check if hit has an EnemyHealth
                 //// This is part of the old Demo code and will eventually be removed
                 //// For now enemies should either use EnemyHealth (deprecated) or EnemyEntity (current) to track enemy health
@@ -562,7 +560,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Check if hit an entity and remove health
                 DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                if (entityBehaviour)
+                if (entityBehaviour && damage > 0)
                 {
                     if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
                     {
