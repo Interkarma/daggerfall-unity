@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game
         public int MinWaitTime = 4;             // Min wait time in seconds before next sound
         public int MaxWaitTime = 35;            // Max wait time in seconds before next sound
         public AmbientSoundPresets Presets;     // Ambient sound preset
-        public bool doNotPlayInPalace = true;   // Do not play ambient effects in palace blocks
+        public bool doNotPlayInCastle = true;   // Do not play ambient effects in castle blocks
         public bool PlayLightningEffect;        // Play a lightning effect where appropriate
         //public DaggerfallSky SkyForEffects;     // Sky to receive effects
         public Light LightForEffects;           // Light to receive effects
@@ -140,13 +140,13 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                // Do not play ambient effect in palace blocks
-                if (doNotPlayInPalace)
+                // Do not play ambient effect in castle blocks
+                if (doNotPlayInCastle)
                 {
                     PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
                     if (playerEnterExit)
                     {
-                        if (playerEnterExit.IsPlayerInsideDungeonPalace)
+                        if (playerEnterExit.IsPlayerInsideDungeonCastle)
                             return;
                     }
                 }

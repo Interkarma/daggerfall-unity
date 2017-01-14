@@ -32,19 +32,18 @@ namespace DaggerfallWorkshop.Game
         public PlayerGPS LocalPlayerGPS;            // Must be peered with PlayerWeather and PlayerEnterExit for full support
         public StreamingWorld StreamingWorld;
 
-        public SongFiles[] CityDaySongs = _cityDaySongs;
-        public SongFiles[] CityNightSongs = _cityNightSongs;
-        public SongFiles[] DungeonExteriorSongs = _dungeonExteriorSongs;
-        public SongFiles[] DungeonInteriorSongs = _dungeonInteriorSongs;
-        public SongFiles[] GraveyardSongs = _graveyardSongs;
-        public SongFiles[] GuildSongs = _guildSongs;
-        public SongFiles[] InteriorSongs = _interiorSongs;
-        public SongFiles[] PalaceSongs = _palaceSongs;
-        public SongFiles[] ShopSongs = _shopSongs;
-        public SongFiles[] TavernSongs = _tavernSongs;
+        public SongFiles[] DungeonInteriorSongs = _dungeonSongs;
+        public SongFiles[] DaySongs = _daySongs;
         public SongFiles[] WeatherRainSongs = _weatherRainSongs;
         public SongFiles[] WeatherSnowSongs = _weatherSnowSongs;
-        public SongFiles[] WildernessSongs = _wildernessSongs;
+        public SongFiles[] TempleSongs = _templeSongs;
+        public SongFiles[] TavernSongs = _tavernSongs;
+        public SongFiles[] NightSongs = _nightSongs;
+        public SongFiles[] ShopSongs = _shopSongs;
+        public SongFiles[] MagesGuildSongs = _magesGuildSongs;
+        public SongFiles[] InteriorSongs = _interiorSongs;
+        public SongFiles[] PalaceSongs = _palaceSongs;
+        public SongFiles[] CastleSongs = _castleSongs;
 
         DaggerfallUnity dfUnity;
         DaggerfallSongPlayer songPlayer;
@@ -69,15 +68,17 @@ namespace DaggerfallWorkshop.Game
 
         enum PlayerMusicEnvironment
         {
+            Castle,
             City,
             DungeonExterior,
             DungeonInterior,
             Graveyard,
-            Guild,
+            MagesGuild,
             Interior,
             Palace,
             Shop,
             Tavern,
+            Temple,
             Wilderness,
         }
 
@@ -322,8 +323,8 @@ namespace DaggerfallWorkshop.Game
             // Dungeons
             if (playerEnterExit.IsPlayerInsideDungeon)
             {
-                if (playerEnterExit.IsPlayerInsideDungeonPalace)
-                    currentPlayerMusicEnvironment = PlayerMusicEnvironment.Palace;
+                if (playerEnterExit.IsPlayerInsideDungeonCastle)
+                    currentPlayerMusicEnvironment = PlayerMusicEnvironment.Castle;
                 else
                     currentPlayerMusicEnvironment = PlayerMusicEnvironment.DungeonInterior;
 
@@ -352,10 +353,13 @@ namespace DaggerfallWorkshop.Game
                         currentPlayerMusicEnvironment = PlayerMusicEnvironment.Tavern;
                         break;
                     case DFLocation.BuildingTypes.GuildHall:
-                        currentPlayerMusicEnvironment = PlayerMusicEnvironment.Guild;
+                        currentPlayerMusicEnvironment = PlayerMusicEnvironment.MagesGuild;
                         break;
                     case DFLocation.BuildingTypes.Palace:
                         currentPlayerMusicEnvironment = PlayerMusicEnvironment.Palace;
+                        break;
+                    case DFLocation.BuildingTypes.Temple:
+                        currentPlayerMusicEnvironment = PlayerMusicEnvironment.Temple;
                         break;
                     default:
                         currentPlayerMusicEnvironment = PlayerMusicEnvironment.Interior;
@@ -416,13 +420,13 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Cities
-            if (currentPlayerMusicEnvironment == PlayerMusicEnvironment.City)
+            if (currentPlayerMusicEnvironment == PlayerMusicEnvironment.City || currentPlayerMusicEnvironment == PlayerMusicEnvironment.Wilderness)
             {
                 // Day/night
                 if (!dfUnity.WorldTime.Now.IsNight)
-                    currentPlaylist = CityDaySongs;
+                    currentPlaylist = DaySongs;
                 else
-                    currentPlaylist = CityNightSongs;
+                    currentPlaylist = NightSongs;
 
                 return;
             }
@@ -430,17 +434,20 @@ namespace DaggerfallWorkshop.Game
             // Environment
             switch (currentPlayerMusicEnvironment)
             {
+                case PlayerMusicEnvironment.Castle:
+                    currentPlaylist = CastleSongs;
+                    break;
                 case PlayerMusicEnvironment.DungeonExterior:
-                    currentPlaylist = DungeonExteriorSongs;
+                    currentPlaylist = NightSongs;
                     break;
                 case PlayerMusicEnvironment.DungeonInterior:
                     currentPlaylist = DungeonInteriorSongs;
                     break;
                 case PlayerMusicEnvironment.Graveyard:
-                    currentPlaylist = GraveyardSongs;
+                    currentPlaylist = NightSongs;
                     break;
-                case PlayerMusicEnvironment.Guild:
-                    currentPlaylist = GuildSongs;
+                case PlayerMusicEnvironment.MagesGuild:
+                    currentPlaylist = MagesGuildSongs;
                     break;
                 case PlayerMusicEnvironment.Interior:
                     currentPlaylist = InteriorSongs;
@@ -454,8 +461,8 @@ namespace DaggerfallWorkshop.Game
                 case PlayerMusicEnvironment.Tavern:
                     currentPlaylist = TavernSongs;
                     break;
-                case PlayerMusicEnvironment.Wilderness:
-                    currentPlaylist = WildernessSongs;
+                case PlayerMusicEnvironment.Temple:
+                    currentPlaylist = TempleSongs;
                     break;
             }
         }
@@ -464,54 +471,192 @@ namespace DaggerfallWorkshop.Game
 
         #region Song Playlists
 
-        // City - Day
-        static SongFiles[] _cityDaySongs = new SongFiles[]
+        // Dungeon
+        static SongFiles[] _dungeonSongs = new SongFiles[]
         {
+            SongFiles.song_dungeon,
+            SongFiles.song_dungeon5,
+            SongFiles.song_dungeon6,
+            SongFiles.song_dungeon7,
+            SongFiles.song_dungeon8,
+            SongFiles.song_dungeon9,
+            SongFiles.song_gdngn10,
+            SongFiles.song_gdngn11,
+            SongFiles.song_gdungn4,
+            SongFiles.song_gdungn9,
+            SongFiles.song_04,
+            SongFiles.song_05,
+            SongFiles.song_07,
+            SongFiles.song_15,
+            SongFiles.song_28,
+        };
+
+        // Day
+        static SongFiles[] _daySongs = new SongFiles[]
+        {
+            SongFiles.song_gday___d,
+            SongFiles.song_swimming,
+            SongFiles.song_gsunny2,
+            SongFiles.song_sunnyday,
             SongFiles.song_02,
             SongFiles.song_03,
-            SongFiles.song_06,
-            SongFiles.song_12,
-            SongFiles.song_15,
-            SongFiles.song_20,
             SongFiles.song_22,
             SongFiles.song_29,
-            SongFiles.song_gday___d,
-            SongFiles.song_ggood,
-            SongFiles.song_sunnyday,
-            SongFiles.song_gsunny2,
-            SongFiles.song_swimming,
+            SongFiles.song_12,
+            SongFiles.song_13,
+            SongFiles.song_gpalac,
         };
 
-        // City - night
-        static SongFiles[] _cityNightSongs = new SongFiles[]
+        // Weather - Raining
+        static SongFiles[] _weatherRainSongs = new SongFiles[]
         {
-            SongFiles.song_07,
+            SongFiles.song_overcast,
+            SongFiles.song_overlong,        // Long version of overcast
+            SongFiles.song_raining,
+            SongFiles.song_08,
+        };
+
+        // Weather - Snowing
+        static SongFiles[] _weatherSnowSongs = new SongFiles[]
+        {
+            SongFiles.song_20,
+            SongFiles.song_gsnow__b,
+            SongFiles.song_oversnow,
+            SongFiles.song_snowing,
+        };
+
+        // Sneaking? These are next to each other in FALL.EXE but seem to be unused in-game
+        /*static SongFiles[] _sneakingSongs = new SongFiles[]
+        {
+            SongFiles.song_gsneak2,
+            SongFiles.song_sneaking,
+            SongFiles.song_sneakng2,        // Used in Arena when trespassing in homes
+            SongFiles.song_16,
+            SongFiles.song_09,
+            SongFiles.song_25,
+            SongFiles.song_30,
+        };*/
+
+        // Temple
+        static SongFiles[] _templeSongs = new SongFiles[]
+        {
+            SongFiles.song_ggood,
+            SongFiles.song_gbad,
+            SongFiles.song_gneut,
+        };
+
+        // Tavern
+        static SongFiles[] _tavernSongs = new SongFiles[]
+        {
+            SongFiles.song_square_2,
+            SongFiles.song_tavern,
+            SongFiles.song_folk1,
+            SongFiles.song_folk2,
+            SongFiles.song_folk3,
+        };
+
+        // Night
+        static SongFiles[] _nightSongs = new SongFiles[]
+        {
             SongFiles.song_10,
             SongFiles.song_11,
-            SongFiles.song_13,
-            SongFiles.song_16,
-            SongFiles.song_21,
-            SongFiles.song_25,
-        };
-
-        // Dungeon - Exterior
-        static SongFiles[] _dungeonExteriorSongs = new SongFiles[]
-        {
-            SongFiles.song_04,
-            SongFiles.song_07,
-            SongFiles.song_10,
-            SongFiles.song_13,
-            SongFiles.song_18,
-            SongFiles.song_21,
             SongFiles.song_gcurse,
+            SongFiles.song_geerie,
             SongFiles.song_gruins,
+            SongFiles.song_18,
+            SongFiles.song_21,          // Missing in Daggerfall classic. Only the FM version is used there.
         };
 
-        // Dungeon - Interior
-        static SongFiles[] _dungeonInteriorSongs = new SongFiles[]
+        // Dungeon FM version
+        /*static SongFiles[] _dungeonSongsFM = new SongFiles[]
+        {
+            SongFiles.song_fm_dngn1,
+            SongFiles.song_fm_dngn2,
+            SongFiles.song_fm_dngn3,
+            SongFiles.song_fm_dngn4,
+            SongFiles.song_fm_dngn5,
+            SongFiles.song_fdngn10,
+            SongFiles.song_fdngn11,
+            SongFiles.song_fdungn4,
+            SongFiles.song_fdungn9,
+            SongFiles.song_04fm,
+            SongFiles.song_05fm,
+            SongFiles.song_07fm,
+            SongFiles.song_15fm,
+        };
+
+        // Day FM version
+        static SongFiles[] _daySongsFM = new SongFiles[]
+        {
+            SongFiles.song_fday___d,
+            SongFiles.song_fm_swim2,
+            SongFiles.song_fm_sunny,
+            SongFiles.song_02fm,
+            SongFiles.song_03fm,
+            SongFiles.song_22fm,
+            SongFiles.song_29fm,
+            SongFiles.song_12fm,
+            SongFiles.song_13fm,
+            SongFiles.song_fpalac,
+        };
+
+        // Weather - Raining FM version
+        static SongFiles[] _weatherRainSongsFM = new SongFiles[]
+        {
+            SongFiles.song_fmover_c,
+            SongFiles.song_fm_rain,
+            SongFiles.song_08fm,
+        };
+
+        // Weather - Snowing FM version
+        static SongFiles[] _weatherSnowSongsFM = new SongFiles[]
+        {
+            SongFiles.song_20fm,
+            SongFiles.song_fsnow__b,
+            SongFiles.song_fmover_s,
+        };
+
+        // Sneaking? FM version. These are next to each other in FALL.EXE but seem to be unused in-game.
+        static SongFiles[] _sneakingSongsFM = new SongFiles[]
+        {
+            SongFiles.song_fsneak2,
+            SongFiles.song_fmsneak2,        // Used in Arena when trespassing in homes
+            SongFiles.song_fsneak2,
+            SongFiles.song_16fm,
+            SongFiles.song_09fm,
+            SongFiles.song_25fm,
+            SongFiles.song_30fm,
+        };
+
+        // Temple FM version
+        static SongFiles[] _templeSongsFM = new SongFiles[]
+        {
+            SongFiles.song_fgood,
+            SongFiles.song_fbad,
+            SongFiles.song_fneut,
+        };
+
+        // Tavern FM version
+        static SongFiles[] _tavernSongsFM = new SongFiles[]
+        {
+            SongFiles.song_fm_sqr_2,
+        };
+
+        // Night FM version
+        static SongFiles[] _nightSongsFM = new SongFiles[]
+        {
+            SongFiles.song_11fm,
+            SongFiles.song_fcurse,
+            SongFiles.song_feerie,
+            SongFiles.song_fruins,
+            SongFiles.song_18fm,
+            SongFiles.song_21fm,
+        };
+
+        // Unused dungeon music?
+        static SongFiles[] _unusedDungeonSongs = new SongFiles[]
         {
             SongFiles.song_d1,
-            SongFiles.song_d10,
             SongFiles.song_d2,
             SongFiles.song_d3,
             SongFiles.song_d4,
@@ -520,108 +665,90 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_d7,
             SongFiles.song_d8,
             SongFiles.song_d9,
-            SongFiles.song_dungeon,
-            SongFiles.song_gdngn10,
-            SongFiles.song_gdngn11,
-            SongFiles.song_gdungn4,
-            SongFiles.song_gdungn9,
+            SongFiles.song_d10,
         };
 
-        // Graveyards
-        static SongFiles[] _graveyardSongs = new SongFiles[]
+        // Unused dungeon music? FM version
+        static SongFiles[] _unusedDungeonSongsFM = new SongFiles[]
         {
-            SongFiles.song_04,
-            SongFiles.song_07,
-            SongFiles.song_10,
-            SongFiles.song_13,
-            SongFiles.song_21,
-            SongFiles.song_geerie,
-            SongFiles.song_gruins,
+            SongFiles.song_d1fm,
+            SongFiles.song_d2fm,
+            SongFiles.song_d3fm,
+            SongFiles.song_d4fm,
+            SongFiles.song_d5fm,
+            SongFiles.song_d6fm,
+            SongFiles.song_d7fm,
+            SongFiles.song_d8fm,
+            SongFiles.song_d9fm,
+            SongFiles.song_d10fm,
+        };*/
+
+        // Shop
+        static SongFiles[] _shopSongs = new SongFiles[]
+        {
+            SongFiles.song_gshop,
         };
 
-        // Guilds
-        static SongFiles[] _guildSongs = new SongFiles[]
+        // Shop FM version
+        /*static SongFiles[] _shopSongsFM = new SongFiles[]
+        {
+            SongFiles.song_fm_sqr_2,
+        };*/
+
+        // Mages Guild
+        static SongFiles[] _magesGuildSongs = new SongFiles[]
         {
             SongFiles.song_gmage_3,
             SongFiles.song_magic_2,
         };
 
-        // Interiors
+        // Mages Guild FM version
+        /*static SongFiles[] _magesGuildSongsFM = new SongFiles[]
+        {
+            SongFiles.song_fm_nite3,
+        };*/
+
+        // Interior
         static SongFiles[] _interiorSongs = new SongFiles[]
         {
             SongFiles.song_23,
-            SongFiles.song_gneut,
         };
+
+        // Interior FM version
+        /*static SongFiles[] _interiorSongsFM = new SongFiles[]
+        {
+            SongFiles.song_23fm,
+        };*/
+
+        // Unknown. Doesn't seem to be used in final product
+        /*static SongFiles[] _unknownSong = new SongFiles[]
+        {  
+            SongFiles.song_17,
+        };
+
+        // Unknown. Doesn't seem to be used in final product
+        static SongFiles[] _unknownSongFM = new SongFiles[]
+        {
+            SongFiles.song_17fm,
+        };*/
 
         // Palace
         static SongFiles[] _palaceSongs = new SongFiles[]
         {
+            SongFiles.song_06,
+        };
+
+        // Palace FM version
+        /*static SongFiles[] _palaceSongsFM = new SongFiles[]
+        {
+            SongFiles.song_06fm,
+        };*/
+
+        // Castle
+        static SongFiles[] _castleSongs = new SongFiles[]
+        {
             SongFiles.song_gpalac,
         };
-
-        // Shops
-        static SongFiles[] _shopSongs = new SongFiles[]
-        {
-            SongFiles.song_gshop,
-            SongFiles.song_square_2,
-        };
-
-        // Taverns
-        static SongFiles[] _tavernSongs = new SongFiles[]
-        {
-            SongFiles.song_folk1,
-            SongFiles.song_folk2,
-            SongFiles.song_folk3,
-            SongFiles.song_tavern,
-        };
-
-        // Weather - Raining
-        static SongFiles[] _weatherRainSongs = new SongFiles[]
-        {
-            SongFiles.song_12,
-            SongFiles.song_gbad,
-            SongFiles.song_overcast,
-            SongFiles.song_overlong,        // Long version of overcast
-            SongFiles.song_raining,
-        };
-
-        // Weather - Snowing
-        static SongFiles[] _weatherSnowSongs = new SongFiles[]
-        {
-            SongFiles.song_08,
-            SongFiles.song_gsnow__b,
-            SongFiles.song_snowing,
-        };
-
-        // Wilderness
-        static SongFiles[] _wildernessSongs = new SongFiles[]
-        {
-            SongFiles.song_11,
-            SongFiles.song_13,
-            SongFiles.song_18,
-            SongFiles.song_21,
-            SongFiles.song_gcurse,
-            SongFiles.song_gruins,
-        };
-
-        //// Uncategorized
-        //static SongFiles[] UnCategorizedSongs = new SongFiles[]
-        //{
-        //    SongFiles.song_05,              // dungeon?
-        //    SongFiles.song_09,              // unknown
-        //    SongFiles.song_17,              // unknown
-        //    SongFiles.song_28,              // unknown
-        //    SongFiles.song_30,              // dungeon?
-        //    SongFiles.song_sneaking,        // unknown
-        //    SongFiles.song_gsneak2,         // unknown
-        //    SongFiles.song_sneakng2,        // unknown
-        //    SongFiles.song_dungeon5,        // Not sure these dungeont tracks fit the mood (or if Daggerfall uses)
-        //    SongFiles.song_dungeon6,
-        //    SongFiles.song_dungeon7,
-        //    SongFiles.song_dungeon8,
-        //    SongFiles.song_dungeon9,
-        //};
-
         #endregion
     }
 }

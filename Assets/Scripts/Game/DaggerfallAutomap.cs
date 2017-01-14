@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game
         {
             dictAutomapDungeonsDiscoveryState = savedDictAutomapDungeonsDiscoveryState;
 
-            if ((GameManager.Instance.IsPlayerInsidePalace)||(GameManager.Instance.IsPlayerInsideDungeon))
+            if ((GameManager.Instance.IsPlayerInsideCastle)||(GameManager.Instance.IsPlayerInsideDungeon))
             {                
                 InitWhenInInteriorOrDungeon(null, true);
                 restoreStateAutomapDungeon();
@@ -307,7 +307,7 @@ namespace DaggerfallWorkshop.Game
             
             gameobjectBeacons.SetActive(false);
 
-            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonPalace)))
+            if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle)))
             {
                 // and get rid of lights used to light the automap level geometry
                 UnityEngine.Object.Destroy(gameobjectAutomapKeyLight);
@@ -558,7 +558,7 @@ namespace DaggerfallWorkshop.Game
                     // test if startup was inside dungeon or interior (and no transition event happened)                
                     InitWhenInInteriorOrDungeon();
                     // do initial geometry discovery
-                    if (gameobjectGeometry) // this is necessary since when game starts up it can happen that InitWhenInInteriorOrDungeon() does not create geometry because GameManger.Instance.IsPlayerInsideDungeon and GameManager.Instance.IsPlayerInsidePalace are false
+                    if (gameobjectGeometry) // this is necessary since when game starts up it can happen that InitWhenInInteriorOrDungeon() does not create geometry because GameManger.Instance.IsPlayerInsideDungeon and GameManager.Instance.IsPlayerInsideCastle are false
                     {
                         gameobjectGeometry.SetActive(true); // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
                         CheckForNewlyDiscoveredMeshes();
@@ -716,7 +716,7 @@ namespace DaggerfallWorkshop.Game
             if (!GameManager.Instance.IsPlayerInside)
                 return;
 
-            if ((gameobjectGeometry != null) && ((GameManager.Instance.IsPlayerInsideBuilding) || (GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace)))
+            if ((gameobjectGeometry != null) && ((GameManager.Instance.IsPlayerInsideBuilding) || (GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle)))
             {
                 // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
                 gameobjectGeometry.SetActive(true);
@@ -896,7 +896,7 @@ namespace DaggerfallWorkshop.Game
         /// will inject materials and properties to MeshRenderer in the proper hierarchy level of automap level geometry GameObject
         /// note: the proper hierarchy level differs between an "Interior" and a "Dungeon" geometry GameObject
         /// </summary>
-        /// <param name="resetDiscoveryState"> if true resets the discovery state for geometry that needs to be discovered (when inside dungeons or palaces) </param>
+        /// <param name="resetDiscoveryState"> if true resets the discovery state for geometry that needs to be discovered (when inside dungeons or castles) </param>
         private void injectMeshAndMaterialProperties(bool resetDiscoveryState = true)
         {
             if (GameManager.Instance.IsPlayerInsideBuilding)
@@ -926,7 +926,7 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
-            else if ((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsidePalace))
+            else if ((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsideCastle))
             {
                 // find all MeshRenderers in 4th hierarchy level
                 foreach (Transform elem in gameobjectGeometry.transform)
@@ -1042,7 +1042,7 @@ namespace DaggerfallWorkshop.Game
                 gameObjectEntrancePositionCubeMarker.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
             }
 
-            if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
+            if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle))
             {
                 // entrance marker to dungeon start marker
                 DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();                
@@ -1290,7 +1290,7 @@ namespace DaggerfallWorkshop.Game
                 fillLight.intensity = 0.6f;
                 backLight.intensity = 0.2f;
             }
-            else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
+            else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle))
             {
                 Light keyLight = gameobjectAutomapKeyLight.GetComponent<Light>();
                 Light fillLight = gameobjectAutomapFillLight.GetComponent<Light>();
@@ -1655,7 +1655,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectGeometry.SetActive(false);
                 gameobjectBeacons.SetActive(false);
             }
-            else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
+            else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle))
             {
                 createDungeonGeometryForAutomap();
                 restoreStateAutomapDungeon(!initFromLoadingSave); // if a save game was loaded, do not reset the revisited state (don't set parameter forceNotVisitedInThisRun to true)

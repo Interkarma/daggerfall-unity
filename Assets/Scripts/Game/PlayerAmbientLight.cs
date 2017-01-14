@@ -17,8 +17,8 @@ namespace DaggerfallWorkshop.Game
 {
     /// <summary>
     /// Peer this with Player and PlayerEnterExit to change ambient light based on player surroundings.
-    /// For example, Daggerfall scales ambient light up and down in dungeons with palace blocks (e.g. Wayrest).
-    /// Ambient light is dimmed when player leaves palace block and brightened on return.
+    /// For example, Daggerfall scales ambient light up and down in dungeons with castle blocks (e.g. Wayrest).
+    /// Ambient light is dimmed when player leaves castle block and brightened on return.
     /// </summary>
     public class PlayerAmbientLight : MonoBehaviour
     {
@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game
         public Color ExteriorNightAmbientLight = new Color(0.25f, 0.25f, 0.25f);
         public Color InteriorAmbientLight = new Color(0.18f, 0.18f, 0.18f);
         public Color DungeonAmbientLight = new Color(0.12f, 0.12f, 0.12f);
-        public Color PalaceAmbientLight = new Color(0.58f, 0.58f, 0.58f);
+        public Color CastleAmbientLight = new Color(0.58f, 0.58f, 0.58f);
         public float FadeDuration = 3f;
         public float FadeStep = 0.1f;
 
@@ -65,8 +65,8 @@ namespace DaggerfallWorkshop.Game
                 }
                 else if (playerEnterExit.IsPlayerInside && playerEnterExit.IsPlayerInsideDungeon)
                 {
-                    if (playerEnterExit.IsPlayerInsideDungeonPalace)
-                        targetAmbientLight = PalaceAmbientLight;
+                    if (playerEnterExit.IsPlayerInsideDungeonCastle)
+                        targetAmbientLight = CastleAmbientLight;
                     else
                         targetAmbientLight = DungeonAmbientLight;
                 }

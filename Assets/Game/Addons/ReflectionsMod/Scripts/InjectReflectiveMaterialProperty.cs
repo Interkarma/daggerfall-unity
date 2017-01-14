@@ -32,7 +32,7 @@ namespace ReflectionsMod
         private Texture texReflectionGround = null;
         private Texture texReflectionLowerLevel = null;
         private bool playerInside = false;
-        private enum InsideSpecification { Building, DungeonOrPalace, Unknown };
+        private enum InsideSpecification { Building, DungeonOrCastle, Unknown };
         InsideSpecification whereInside = InsideSpecification.Unknown;
         private GameObject gameObjectInterior = null;
         private GameObject gameObjectDungeon = null;
@@ -162,7 +162,7 @@ namespace ReflectionsMod
             if ((texReflectionGround) && (texReflectionLowerLevel)) // do not change playerInside state before the reflection textures are initialized
             {
                 // mechanism implemented according to Interkarma's suggestions
-                // transition: inside -> dungeon/palace/building
+                // transition: inside -> dungeon/castle/building
                 if (GameManager.Instance.PlayerEnterExit.IsPlayerInside && !playerInside)
                 {
                     playerInside = true; // player now inside
@@ -173,15 +173,15 @@ namespace ReflectionsMod
                         gameObjectInterior = GameObject.Find("Interior");
                         whereInside = InsideSpecification.Building;
                     }
-                    else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace))
+                    else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle))
                     {
                         gameObjectDungeon = GameObject.Find("Dungeon");
-                        whereInside = InsideSpecification.DungeonOrPalace;
+                        whereInside = InsideSpecification.DungeonOrCastle;
                     }
 
                     InjectMaterialPropertiesIndoor();
                 }
-                // transition: dungeon/palace/building -> outside
+                // transition: dungeon/castle/building -> outside
                 else if (!GameManager.Instance.PlayerEnterExit.IsPlayerInside && playerInside)
                 {
                     playerInside = false; // player no longer inside
@@ -193,8 +193,8 @@ namespace ReflectionsMod
                     whereInside = InsideSpecification.Unknown;
                 }
 
-                // transition: dungeon/palace -> building
-                if ((GameManager.Instance.IsPlayerInsideBuilding) && (whereInside == InsideSpecification.DungeonOrPalace))
+                // transition: dungeon/castle -> building
+                if ((GameManager.Instance.IsPlayerInsideBuilding) && (whereInside == InsideSpecification.DungeonOrCastle))
                 {
                     gameObjectInterior = GameObject.Find("Interior");
                     gameObjectDungeon = null;
@@ -202,13 +202,13 @@ namespace ReflectionsMod
                     //injectIndoor = true;
                     whereInside = InsideSpecification.Building;
                 }
-                // transition: building -> dungeon/palace
-                else if (((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsidePalace)) && (whereInside == InsideSpecification.Building))
+                // transition: building -> dungeon/castle
+                else if (((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle)) && (whereInside == InsideSpecification.Building))
                 {
                     gameObjectDungeon = GameObject.Find("Dungeon");
                     gameObjectInterior = null;
                     InjectMaterialPropertiesIndoor();
-                    whereInside = InsideSpecification.DungeonOrPalace;
+                    whereInside = InsideSpecification.DungeonOrCastle;
                 }
             }
             else
@@ -350,7 +350,7 @@ namespace ReflectionsMod
             {
                 renderers = gameObjectInterior.GetComponentsInChildren<Renderer>();
             }
-            else if (GameManager.Instance.IsPlayerInsideDungeon || GameManager.Instance.IsPlayerInsidePalace)
+            else if (GameManager.Instance.IsPlayerInsideDungeon || GameManager.Instance.IsPlayerInsideCastle)
             {
                 renderers = gameObjectDungeon.GetComponentsInChildren<Renderer>();
             }
