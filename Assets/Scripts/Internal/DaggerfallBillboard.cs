@@ -73,6 +73,11 @@ namespace DaggerfallWorkshop
             public int Gender;                                  // RDB gender field
             public int FactionMobileID;                         // RDB Faction/Mobile ID
             public MobileTypes FixedEnemyType;                  // Type for fixed enemy marker
+            // Custom textures:
+            public System.Collections.Generic.List<Texture2D> CustomMainTexture; // List of custom albedo maps
+            public System.Collections.Generic.List<Texture2D> CustomEmissionMap; // List of custom emission maps
+            public bool isCustomEmissive;                                        // True if billboard is emissive
+            public int NumberOfCustomFrames;                                     // number of frame textures avilable on disk
         }
 
         void Start()
@@ -125,22 +130,46 @@ namespace DaggerfallWorkshop
                 if (meshFilter != null)
                 {
                     summary.CurrentFrame++;
-                    if (summary.CurrentFrame >= summary.AtlasIndices[summary.Record].frameCount)
-                    {
-                        summary.CurrentFrame = 0;
-                        if (OneShot)
-                            GameObject.Destroy(gameObject);
-                    }
-                    int index = summary.AtlasIndices[summary.Record].startIndex + summary.CurrentFrame;
-                    Rect rect = summary.AtlasRects[index];
 
-                    // Update UVs on mesh
-                    Vector2[] uvs = new Vector2[4];
-                    uvs[0] = new Vector2(rect.x, rect.yMax);
-                    uvs[1] = new Vector2(rect.xMax, rect.yMax);
-                    uvs[2] = new Vector2(rect.x, rect.y);
-                    uvs[3] = new Vector2(rect.xMax, rect.y);
-                    meshFilter.sharedMesh.uv = uvs;
+                    // Original Daggerfall textures
+                    if (!DFTextureReplacement.CustomTextureExist(summary.Archive, summary.Record))
+                    {
+                        if (summary.CurrentFrame >= summary.AtlasIndices[summary.Record].frameCount)
+                        {
+                            summary.CurrentFrame = 0;
+                            if (OneShot)
+                                GameObject.Destroy(gameObject);
+                        }
+                        int index = summary.AtlasIndices[summary.Record].startIndex + summary.CurrentFrame;
+                        Rect rect = summary.AtlasRects[index];
+
+                        // Update UVs on mesh
+                        Vector2[] uvs = new Vector2[4];
+                        uvs[0] = new Vector2(rect.x, rect.yMax);
+                        uvs[1] = new Vector2(rect.xMax, rect.yMax);
+                        uvs[2] = new Vector2(rect.x, rect.y);
+                        uvs[3] = new Vector2(rect.xMax, rect.y);
+                        meshFilter.sharedMesh.uv = uvs;
+                    }
+                    // Custom textures
+                    else
+                    {
+                        // Restart animation or destroy gameobject
+                        // The game uses all -and only- textures found on disk, even if they are less or more than vanilla frames
+                        if (summary.CurrentFrame >= summary.NumberOfCustomFrames)
+                        {
+                            summary.CurrentFrame = 0;
+                            if (OneShot)
+                                GameObject.Destroy(gameObject);
+                        }
+
+                        // Set Main texture for current frame
+                        meshRenderer.materials[0].SetTexture("_MainTex", summary.CustomMainTexture[summary.CurrentFrame]);
+
+                        // Set Emission map for current frame
+                        if (summary.isCustomEmissive)
+                            meshRenderer.materials[0].SetTexture("_EmissionMap", summary.CustomEmissionMap[summary.CurrentFrame]);
+                    }
                 }
 
                 yield return new WaitForSeconds(1f / speed);
@@ -273,6 +302,40 @@ namespace DaggerfallWorkshop
             meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
 
             return material;
+        }
+
+        /// <summary>
+        /// Import custom textures for each frame.
+        /// </summary>
+        /// <param name="dfUnity">DaggerfallUnity singleton. Required for content readers and settings.</param>
+        /// <param name="archive">Texture archive index.</param>
+        /// <param name="record">Texture record index.</param>
+        /// <param name="NumberOfFrames">Number of textures present on disk for this record</param>
+        /// <param name="isEmissive">True for lights billboards. Will import emission maps.</param>
+        public void SetCustomMaterial(int archive, int record, int NumberOfFrames, bool isEmissive)
+        {
+            // Get DaggerfallUnity
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Import custom textures for each frame
+            System.Collections.Generic.List<Texture2D> albedoTextures = new System.Collections.Generic.List<Texture2D>();
+            System.Collections.Generic.List<Texture2D> emissionmaps = new System.Collections.Generic.List<Texture2D>();
+            Texture2D albedoTexture, emissionMap;
+            for (int frame = 0; frame < NumberOfFrames; frame++)
+            {
+                DFTextureReplacement.LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record, frame);
+                albedoTextures.Add(albedoTexture);
+                if (isEmissive)
+                    emissionmaps.Add(emissionMap);
+            }
+
+            // Save summary
+            summary.CustomMainTexture = albedoTextures;
+            summary.CustomEmissionMap = emissionmaps;
+            summary.isCustomEmissive = isEmissive;
+            summary.NumberOfCustomFrames = NumberOfFrames;
         }
 
         /// <summary>
