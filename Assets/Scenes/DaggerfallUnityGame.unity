@@ -159,6 +159,16 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: LocalPlayerGPS
+      value: 
+      objectReference: {fileID: 1891957992}
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: StreamingWorld
+      value: 
+      objectReference: {fileID: 401895382}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
   m_IsPrefabParent: 0
@@ -217,6 +227,16 @@ Prefab:
       propertyPath: reverbZoneMixCustomCurve.m_RotationOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: LocalPlayerGPS
+      value: 
+      objectReference: {fileID: 1891957992}
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: StreamingWorld
+      value: 
+      objectReference: {fileID: 401895382}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
   m_IsPrefabParent: 0
@@ -464,7 +484,7 @@ MonoBehaviour:
   MinWaitTime: 4
   MaxWaitTime: 25
   Presets: 0
-  doNotPlayInPalace: 1
+  doNotPlayInCastle: 1
   PlayLightningEffect: 0
   LightForEffects: {fileID: 0}
 --- !u!114 &102824933
@@ -1162,7 +1182,7 @@ MonoBehaviour:
   MinWaitTime: 4
   MaxWaitTime: 28
   Presets: 1
-  doNotPlayInPalace: 1
+  doNotPlayInCastle: 1
   PlayLightningEffect: 0
   LightForEffects: {fileID: 0}
 --- !u!114 &948908900
@@ -1629,7 +1649,6 @@ MonoBehaviour:
   RainyFogDensity: 0.0001
   SnowyFogDensity: 0.001
   HeavyFogDensity: 0.05
-  PollWeatherInSeconds: 4
 --- !u!1 &1463923235
 GameObject:
   m_ObjectHideFlags: 0
@@ -2387,7 +2406,7 @@ MonoBehaviour:
   ExteriorNightAmbientLight: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   InteriorAmbientLight: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
   DungeonAmbientLight: {r: 0.23529412, g: 0.23529412, b: 0.23529412, a: 1}
-  PalaceAmbientLight: {r: 0.64705884, g: 0.64705884, b: 0.64705884, a: 1}
+  CastleAmbientLight: {r: 0.58, g: 0.58, b: 0.58, a: 1}
   FadeDuration: 3
   FadeStep: 0.1
 --- !u!114 &1891958007
@@ -2466,6 +2485,16 @@ Prefab:
       propertyPath: reverbZoneMixCustomCurve.m_RotationOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: LocalPlayerGPS
+      value: 
+      objectReference: {fileID: 1891957992}
+    - target: {fileID: 114000014236563532, guid: 48d7e9ceb6b670f478927df5fbd99043,
+        type: 2}
+      propertyPath: StreamingWorld
+      value: 
+      objectReference: {fileID: 401895382}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48d7e9ceb6b670f478927df5fbd99043, type: 2}
   m_IsPrefabParent: 0
@@ -2634,7 +2663,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value
