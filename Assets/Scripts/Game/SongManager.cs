@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game
         PlayerMusicTime lastPlayerMusicTime;
 
         SongFiles[] currentPlaylist;
+        SongFiles[] lastPlaylist;
         SongFiles currentSong;
         int currentSongIndex = 0;
         bool playSong = true;
@@ -150,31 +151,30 @@ namespace DaggerfallWorkshop.Game
             UpdatePlayerMusicWeather();
             UpdatePlayerMusicTime();
 
-            // Switch playlists if context changes or if not playing then select a new song
+            // Update current playlist if context changed
             bool overrideSong = false;
             if (currentPlayerMusicEnvironment != lastPlayerMusicEnvironment || 
                 currentPlayerMusicWeather != lastPlayerMusicWeather ||
                 currentPlayerMusicTime != lastPlayerMusicTime ||
                 (!songPlayer.IsPlaying && playSong))
             {
-                // Keep song if playing the same weather, but not when entering dungeons
-                if (currentPlayerMusicWeather != PlayerMusicWeather.Normal &&
-                    currentPlayerMusicWeather == lastPlayerMusicWeather &&
-                    currentPlayerMusicEnvironment != PlayerMusicEnvironment.DungeonInterior)
-                {
-                    return;
-                }
-
-                // Change song
                 lastPlayerMusicEnvironment = currentPlayerMusicEnvironment;
                 lastPlayerMusicWeather = currentPlayerMusicWeather;
                 lastPlayerMusicTime = currentPlayerMusicTime;
+                lastPlaylist = currentPlaylist;
+
+                // Get playlist for current context
                 AssignPlaylist();
-                SelectCurrentSong();
-                overrideSong = true;
+
+                // If current playlist is different from last playlist, pick a song from the current playlist
+                if (currentPlaylist != lastPlaylist)
+                {
+                    SelectCurrentSong();
+                    overrideSong = true;
+                }
             }
 
-            // Play song
+            // Play song if no song was playing or if playlist changed
             if (!songPlayer.IsPlaying || overrideSong)
                 PlayCurrentSong();
         }
