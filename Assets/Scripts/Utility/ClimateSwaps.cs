@@ -192,7 +192,7 @@ namespace DaggerfallWorkshop.Utility
                     break;
 
                 // Interior sets (do not support winter)
-                case DFLocation.ClimateTextureSet.Interior_PalaceInt:
+                case DFLocation.ClimateTextureSet.Interior_CastleInt:
                 case DFLocation.ClimateTextureSet.Interior_CityInt:
                 case DFLocation.ClimateTextureSet.Interior_CryptA:
                 case DFLocation.ClimateTextureSet.Interior_CryptB:

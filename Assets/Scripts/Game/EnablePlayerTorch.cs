@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game
             bool enableTorch = false;
             if (!playerEnterExit.IsPlayerInside && dfUnity.WorldTime.Now.IsCityLightsOn)
                 enableTorch = true;
-            if (playerEnterExit.IsPlayerInsideDungeon && !playerEnterExit.IsPlayerInsideDungeonPalace)
+            if (playerEnterExit.IsPlayerInsideDungeon && !playerEnterExit.IsPlayerInsideDungeonCastle)
                 enableTorch = true;
 
             PlayerTorch.SetActive(enableTorch);

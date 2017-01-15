@@ -276,9 +276,9 @@ namespace DaggerfallWorkshop.Game
             get { return PlayerEnterExit.IsPlayerInsideBuilding; }
         }
 
-        public bool IsPlayerInsidePalace
+        public bool IsPlayerInsideCastle
         {
-            get { return PlayerEnterExit.IsPlayerInsideDungeonPalace; }
+            get { return PlayerEnterExit.IsPlayerInsideDungeonCastle; }
         }
 
         #endregion

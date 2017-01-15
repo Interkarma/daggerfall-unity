@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game
         //PlayerMouseLook playerMouseLook;
         bool isPlayerInside = false;
         bool isPlayerInsideDungeon = false;
-        bool isPlayerInsideDungeonPalace = false;
+        bool isPlayerInsideDungeonCastle = false;
         bool isRespawning = false;
         DaggerfallInterior interior;
         DaggerfallDungeon dungeon;
@@ -77,12 +77,12 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// True only when player inside palace blocks of a dungeon.
+        /// True only when player inside castle blocks of a dungeon.
         /// For example, main hall in Daggerfall castle.
         /// </summary>
-        public bool IsPlayerInsideDungeonPalace
+        public bool IsPlayerInsideDungeonCastle
         {
-            get { return isPlayerInsideDungeonPalace; }
+            get { return isPlayerInsideDungeonCastle; }
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     dungeon.GetBlockData(playerBlockIndex, out playerDungeonBlockData);
                     lastPlayerDungeonBlockIndex = playerBlockIndex;
-                    PalaceCheck();
+                    CastleCheck();
                     //Debug.Log(string.Format("Player is now inside block {0}", playerDungeonBlockData.BlockName));
                 }
             }
@@ -223,7 +223,7 @@ namespace DaggerfallWorkshop.Game
             // Reset inside state
             isPlayerInside = false;
             isPlayerInsideDungeon = false;
-            isPlayerInsideDungeonPalace = false;
+            isPlayerInsideDungeonCastle = false;
 
             // Set player GPS coordinates
             playerGPS.WorldX = worldX;
@@ -656,7 +656,7 @@ namespace DaggerfallWorkshop.Game
             // Player is now outside dungeon
             isPlayerInside = false;
             isPlayerInsideDungeon = false;
-            isPlayerInsideDungeonPalace = false;
+            isPlayerInsideDungeonCastle = false;
             lastPlayerDungeonBlockIndex = -1;
             playerDungeonBlockData = new DFLocation.DungeonBlock();
 
@@ -675,28 +675,28 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        // Check if current block is a palace block
-        private void PalaceCheck()
+        // Check if current block is a castle block
+        private void CastleCheck()
         {
             if (!isPlayerInsideDungeon)
             {
-                isPlayerInsideDungeonPalace = false;
+                isPlayerInsideDungeonCastle = false;
                 return;
             }
 
             switch (playerDungeonBlockData.BlockName)
             {
-                case "S0000020.RDB":    // Orsinium palace area
-                case "S0000040.RDB":    // Sentinel palace area
+                case "S0000020.RDB":    // Orsinium castle area
+                case "S0000040.RDB":    // Sentinel castle area
                 case "S0000041.RDB":
                 case "S0000042.RDB":
-                case "S0000080.RDB":    // Wayrest palace area
+                case "S0000080.RDB":    // Wayrest castle area
                 case "S0000081.RDB":
-                case "S0000160.RDB":    // Daggerfall palace area
-                    isPlayerInsideDungeonPalace = true;
+                case "S0000160.RDB":    // Daggerfall castle area
+                    isPlayerInsideDungeonCastle = true;
                     break;
                 default:
-                    isPlayerInsideDungeonPalace = false;
+                    isPlayerInsideDungeonCastle = false;
                     break;
             }
         }
