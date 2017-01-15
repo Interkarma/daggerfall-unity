@@ -202,12 +202,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 new Color32(colors.GetRed(240), colors.GetGreen(240), colors.GetBlue(240), 255),  //dungkeep (R191, G87, B27)
                 new Color32(colors.GetRed(243), colors.GetGreen(243), colors.GetBlue(243), 255),  //dungruin (R171, G51, B15)
                 new Color32(colors.GetRed(246), colors.GetGreen(246), colors.GetBlue(246), 255),  //graveyards (R147, G15, B7)
+                new Color32(colors.GetRed(0), colors.GetGreen(0), colors.GetBlue(0), 255),        //coven (R15, G15, B15)
                 new Color32(colors.GetRed(37), colors.GetGreen(37), colors.GetBlue(37), 255),     //farms (R165, G100, B70)
                 new Color32(colors.GetRed(35), colors.GetGreen(35), colors.GetBlue(35), 255),     //wealthy (R193, G133, B100)
                 new Color32(colors.GetRed(39), colors.GetGreen(39), colors.GetBlue(39), 255),     //poor (R140, G86, B55)
                 new Color32(colors.GetRed(96), colors.GetGreen(96), colors.GetBlue(96), 255),     //temple (R176, G205, B255)
                 new Color32(colors.GetRed(101), colors.GetGreen(101), colors.GetBlue(101), 255),  //cult (R68, G124, B192)
-                new Color32(colors.GetRed(0), colors.GetGreen(0), colors.GetBlue(0), 255),        //coven (R15, G15, B15)
                 new Color32(colors.GetRed(55), colors.GetGreen(55), colors.GetBlue(55), 255),     //tavern (R126, G81, B89)
                 new Color32(colors.GetRed(49), colors.GetGreen(49), colors.GetBlue(49), 255),     //city (R220, G177, B177)
                 new Color32(colors.GetRed(51), colors.GetGreen(51), colors.GetBlue(51), 255),     //hamlet (R188, G138, B138)
@@ -1156,24 +1156,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 case DFRegion.LocationTypes.GraveyardForgotten:
                     index = 3;
                     break;
-                case DFRegion.LocationTypes.HomeFarms:
+                case DFRegion.LocationTypes.Coven:
                     index = 4;
                     break;
-                case DFRegion.LocationTypes.HomeWealthy:
+                case DFRegion.LocationTypes.HomeFarms:
                     index = 5;
                     break;
-                case DFRegion.LocationTypes.HomePoor:
+                case DFRegion.LocationTypes.HomeWealthy:
                     index = 6;
+                    break;
+                case DFRegion.LocationTypes.HomePoor:
+                    index = 7;
                     break;
                 case DFRegion.LocationTypes.HomeYourShips:
                     break;
                 case DFRegion.LocationTypes.ReligionTemple:
-                    index = 7;
-                    break;
-                case DFRegion.LocationTypes.ReligionCult:
                     index = 8;
                     break;
-                case DFRegion.LocationTypes.ReligionCoven:
+                case DFRegion.LocationTypes.ReligionCult:
                     index = 9;
                     break;
                 case DFRegion.LocationTypes.Tavern:
@@ -1193,11 +1193,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             if (index < 0)
                 return index;
-            else if (index < 4 && filterDungeons)
+            else if (index < 5 && filterDungeons)
                 index = -1;
-            else if (index > 3 && index < 7 && filterHomes)
+            else if (index > 4 && index < 8 && filterHomes)
                 index = -1;
-            else if (index > 6 && index < 10 && filterTemples)
+            else if (index > 7 && index < 10 && filterTemples)
                 index = -1;
             else if (index > 9 && index < 14 && filterTowns)
                 index = -1;
