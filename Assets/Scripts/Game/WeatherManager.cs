@@ -102,7 +102,8 @@ namespace DaggerfallWorkshop.Game
 
         public void SetFog(bool isFoggy, float density)
         {
-            RenderSettings.fog = isFoggy;
+            // edit by Nystul: don't disable RenderSettings fog! Rendering Fog != Weather Fog
+            //RenderSettings.fog = isFoggy;
 
             if (isFoggy)
             {
