@@ -57,5 +57,6 @@ LypyL_EnhancedSky=False
 Nystul_IncreasedTerrainDistance=False
 Nystul_RealtimeReflections=False
 UncannyValley_RealGrass=False
+TheLacus_GrassAndPlants=False
 UncannyValley_BirdsInDaggerfall=False
 MeshAndTextureReplacement=False
