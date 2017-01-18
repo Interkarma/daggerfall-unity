@@ -222,9 +222,9 @@ namespace DaggerfallWorkshop.Utility
                     imageData.size = imgFile.GetSize(0);
 
                     // texture pack support
-                    if ((DFTextureReplacement.CustomImageExist(filename)) && (createTexture))
+                    if ((AssetInjection.TextureReplacement.CustomImageExist(filename)) && (createTexture))
                     {
-                        imageData.texture = DFTextureReplacement.LoadCustomImage(filename);
+                        imageData.texture = AssetInjection.TextureReplacement.LoadCustomImage(filename);
                         createTexture = false;
                     }
 
@@ -240,9 +240,9 @@ namespace DaggerfallWorkshop.Utility
                     imageData.size = cifFile.GetSize(record);
 
                     // texture pack support
-                    if ((DFTextureReplacement.CustomCifExist(filename, record, frame)) && (createTexture))
+                    if ((AssetInjection.TextureReplacement.CustomCifExist(filename, record, frame)) && (createTexture))
                     {
-                        imageData.texture = DFTextureReplacement.LoadCustomCif(filename, record, frame);
+                        imageData.texture = AssetInjection.TextureReplacement.LoadCustomCif(filename, record, frame);
                         createTexture = false;
                     }
 

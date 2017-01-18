@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
@@ -221,10 +222,10 @@ namespace DaggerfallWorkshop
                     doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
 
                 // Use custom prefab
-                if (DFMeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
-                    DFMeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
+                if (MeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
+                    MeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
                 // Use Daggerfall Mesh: Combine or add
-                else if (dfUnity.Option_CombineRMB && !DFMeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                else if (dfUnity.Option_CombineRMB && !MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
                 {
                     combiner.Add(ref modelData, modelMatrix);
                 }
@@ -273,8 +274,8 @@ namespace DaggerfallWorkshop
             foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
             {
                 // use 3d model instead of flat
-                if (DFMeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))
-                    DFMeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, node.transform);
+                if (MeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))
+                    MeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, node.transform);
                 // use billboard
                 else
                 {

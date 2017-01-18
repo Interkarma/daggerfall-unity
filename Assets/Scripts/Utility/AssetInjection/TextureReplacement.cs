@@ -19,17 +19,14 @@
 
 using System.IO;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using DaggerfallWorkshop.Utility;
 
-namespace DaggerfallWorkshop
+namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
     /// Handles import and injection of custom textures and images
     /// with the purpose of providing modding support.
     /// </summary>
-    static public class DFTextureReplacement
+    static public class TextureReplacement
     {
 
         #region Textures import

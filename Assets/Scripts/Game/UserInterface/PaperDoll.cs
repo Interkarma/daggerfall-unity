@@ -204,9 +204,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Import custom image
                 // We assume the image provided is already wihout borders
-                if (DFTextureReplacement.CustomImageExist(entity.RaceTemplate.PaperDollBackground))
+                if (DaggerfallWorkshop.Utility.AssetInjection.TextureReplacement.CustomImageExist(entity.RaceTemplate.PaperDollBackground))
                 {
-                    texture = DFTextureReplacement.LoadCustomImage(entity.RaceTemplate.PaperDollBackground);
+                    texture = DaggerfallWorkshop.Utility.AssetInjection.TextureReplacement.LoadCustomImage(entity.RaceTemplate.PaperDollBackground);
                     backgroundPanel.Size = new Vector2(paperDollWidth, paperDollHeight);
                 }
                 // Use vanilla Daggerfall image and remove borders

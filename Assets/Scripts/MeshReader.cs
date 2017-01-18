@@ -151,9 +151,9 @@ namespace DaggerfallWorkshop
                 return null;
 
             // model replacement support
-            if (DFMeshReplacement.ReplacmentModelExist(modelID))
+            if (Utility.AssetInjection.MeshReplacement.ReplacmentModelExist(modelID))
             {
-                return DFMeshReplacement.LoadReplacementModel(modelID, ref cachedMaterialsOut);
+                return Utility.AssetInjection.MeshReplacement.LoadReplacementModel(modelID, ref cachedMaterialsOut);
             }
 
             else

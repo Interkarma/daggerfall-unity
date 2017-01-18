@@ -21,6 +21,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
@@ -317,15 +318,15 @@ namespace DaggerfallWorkshop
             GetTextureResults results = textureReader.GetTexture2D(settings, AlphaTextureFormat, NonAlphaTextureFormat);
 
             // Import custom texture 
-            if (DFTextureReplacement.CustomTextureExist(archive, record, frame))
+            if (TextureReplacement.CustomTextureExist(archive, record, frame))
             {
                 // Main texture
-                results.albedoMap = DFTextureReplacement.LoadCustomTexture(archive, record, frame);
+                results.albedoMap = TextureReplacement.LoadCustomTexture(archive, record, frame);
 
                 // Normal map
-                if (DFTextureReplacement.CustomNormalExist(archive, record, frame))
+                if (TextureReplacement.CustomNormalExist(archive, record, frame))
                 {
-                    results.normalMap = DFTextureReplacement.LoadCustomNormal(archive, record, frame);
+                    results.normalMap = TextureReplacement.LoadCustomNormal(archive, record, frame);
                     GenerateNormals = true;
                 }
 
@@ -334,8 +335,8 @@ namespace DaggerfallWorkshop
                 // non-window use the main texture as emission, unless a custom map is provided
                 if (results.isEmissive)
                 {
-                    if (DFTextureReplacement.CustomEmissionExist(archive, record, frame)) //import emission texture
-                        results.emissionMap = DFTextureReplacement.LoadCustomEmission(archive, record, frame);
+                    if (TextureReplacement.CustomEmissionExist(archive, record, frame)) //import emission texture
+                        results.emissionMap = TextureReplacement.LoadCustomEmission(archive, record, frame);
                     else if (!results.isWindow) //reuse albedo map for basic colour emission
                         results.emissionMap = results.albedoMap;
                 }

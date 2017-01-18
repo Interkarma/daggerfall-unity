@@ -19,6 +19,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -325,8 +326,8 @@ namespace DaggerfallWorkshop.Utility
                     if (obj.Type == DFBlock.RdbResourceTypes.Flat)
                     {
                         // Use 3d model instead of flat
-                        if (DFMeshReplacement.ReplacementFlatExist(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord))
-                            DFMeshReplacement.LoadReplacementFlat(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform);
+                        if (MeshReplacement.ReplacementFlatExist(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord))
+                            MeshReplacement.LoadReplacementFlat(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform);
                         // Use flat
                         else
                         {
@@ -553,8 +554,8 @@ namespace DaggerfallWorkshop.Utility
                         bool hasAction = HasAction(obj);
                         
                         // Use custom prefab
-                        if (DFMeshReplacement.ReplacementPrefabExist(modelId) && !hasAction)
-                            DFMeshReplacement.LoadReplacementPrefab(modelId, modelMatrix.GetColumn(3), modelsParent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
+                        if (MeshReplacement.ReplacementPrefabExist(modelId) && !hasAction)
+                            MeshReplacement.LoadReplacementPrefab(modelId, modelMatrix.GetColumn(3), modelsParent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
                         else
                         {
                             // Special handling for tapestries and banners
@@ -570,7 +571,7 @@ namespace DaggerfallWorkshop.Utility
                             // Add or combine
                             GameObject standaloneObject = null;
                             Transform parent = (hasAction) ? actionModelsParent : modelsParent;
-                            if (combiner == null || hasAction || DFMeshReplacement.ReplacmentModelExist(modelId))
+                            if (combiner == null || hasAction || MeshReplacement.ReplacmentModelExist(modelId))
                             {
                                 standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
                                 standaloneObject.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);

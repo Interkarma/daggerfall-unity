@@ -10,16 +10,14 @@
 //
 
 using UnityEngine;
-using System.Collections;
-using DaggerfallWorkshop.Utility;
 
-namespace DaggerfallWorkshop
+namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
     /// Handles import and injection of custom meshes and materials
     /// with the purpose of providing modding support.
     /// </summary>
-    static public class DFMeshReplacement
+    static public class MeshReplacement
     {
         #region asset-injection
 
