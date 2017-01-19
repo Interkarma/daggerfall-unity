@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.IO;
 using System.Text;
 using System.Collections;
@@ -28,9 +29,31 @@ namespace DaggerfallWorkshop.Game.Questing
     public class QuestMachine : MonoBehaviour
     {
         #region Fields
+
+        const string questSourceFolderName = "Quests";
+        const string questTablesFolderName = "Tables";
+
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets Quests source folder in StreamingAssets.
+        /// </summary>
+        public string QuestSourceFolder
+        {
+            get { return Path.Combine(Application.streamingAssetsPath, questSourceFolderName); }
+        }
+
+        /// <summary>
+        /// Gets Tables source folder in StreamingAssets.
+        /// TODO: This folder isn't ultimately exclusive to quests. Find a more generic spot later, e.g. GameManager.
+        /// </summary>
+        public string TablesSourceFolder
+        {
+            get { return Path.Combine(Application.streamingAssetsPath, questTablesFolderName); }
+        }
+
         #endregion
 
         #region Unity
@@ -47,6 +70,88 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Attempts to load quest source text from StreamingAssets/Quests.
+        /// </summary>
+        /// <param name="questName">Quest filename. Extension .txt is optional.</param>
+        /// <returns>Array of lines in quest text, or empty array.</returns>
+        public string[] GetQuestSourceText(string questName)
+        {
+            string[] source = new string[0];
+
+            // Append extension if not present
+            if (!questName.EndsWith(".txt"))
+                questName += ".txt";
+
+            // Attempt to load quest source file
+            string path = Path.Combine(QuestSourceFolder, questName);
+            if (!File.Exists(path))
+            {
+                Debug.LogErrorFormat("Quest filename path {0} not found.", path);
+            }
+            else
+            {
+                source = File.ReadAllLines(path);
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// Attempts to load table text from StreamingAssets/Tables.
+        /// TODO: Tables are ultimately not exclusive to quests. Relocate this later.
+        /// </summary>
+        /// <param name="tableName">Table filename. Extension .txt is optional.</param>
+        /// <returns>Array of lines in table text, or empty array.</returns>
+        public string[] GetTableSourceText(string tableName)
+        {
+            string[] table = new string[0];
+
+            // Append extension if not present
+            if (!tableName.EndsWith(".txt"))
+                tableName += ".txt";
+
+            // Attempt to load quest source file
+            string path = Path.Combine(TablesSourceFolder, tableName);
+            if (!File.Exists(path))
+            {
+                Debug.LogErrorFormat("Table filename path {0} not found.", path);
+            }
+            else
+            {
+                table = File.ReadAllLines(path);
+            }
+
+            return table;
+        }
+
+        /// <summary>
+        /// Instantiate a new quest from name.
+        /// Quest will attempt to load from QuestSourceFolder property path.
+        /// </summary>
+        /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
+        /// <returns>Quest.</returns>
+        public Quest InstantiateQuest(string questName)
+        {
+            // Load quest source
+            string[] source = GetQuestSourceText(questName);
+            if (source == null || source.Length == 0)
+                return null;
+
+            return InstantiateQuest(source);
+        }
+
+        /// <summary>
+        /// Instantiate a new quest from source array.
+        /// </summary>
+        /// <param name="questSource">Array of lines from quuest source file.</param>
+        /// <returns>Quest.</returns>
+        public Quest InstantiateQuest(string[] questSource)
+        {
+            return new Quest(questSource);
+        }
+
         #endregion
 
         #region Private Methods

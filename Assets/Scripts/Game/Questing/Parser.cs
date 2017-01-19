@@ -30,6 +30,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         const string idCol = "id";
         const string nameCol = "name";
+        const string globalVarsFilename = "Quests-GlobalVars";
+        const string staticMessagesFilename = "Quests-StaticMessages";
 
         Table globalVars;
         Table messageTypes;
@@ -43,8 +45,8 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public Parser()
         {
-            //globalVars = new Table(QuestMachine.GetQuestTableText("Globals"));
-            //messageTypes = new Table(QuestMachine.GetQuestTableText("Messages"));
+            globalVars = new Table(QuestMachine.Instance.GetTableSourceText(globalVarsFilename));
+            messageTypes = new Table(QuestMachine.Instance.GetTableSourceText(staticMessagesFilename));
         }
 
         #endregion

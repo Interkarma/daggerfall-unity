@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -66,6 +67,8 @@ namespace DaggerfallWorkshop.Game
         ItemHelper itemHelper = null;
         StateManager stateManager = null;
         DaggerfallAutomap automap = null;
+        QuestMachine questMachine = null;
+
         #endregion
 
         #region Properties
@@ -254,6 +257,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (automap != null) ? automap : automap = GetComponentFromObject<DaggerfallAutomap>(GetGameObjectWithName("Automap")); }
             set { automap = value; }
+        }
+
+        public QuestMachine QuestMachine
+        {
+            get { return (questMachine) ? questMachine : questMachine = GetMonoBehaviour<QuestMachine>(); }
+            set { questMachine = value; }
         }
 
         public bool IsPlayerOnHUD

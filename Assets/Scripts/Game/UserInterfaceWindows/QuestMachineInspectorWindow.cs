@@ -9,9 +9,11 @@
 // Notes:
 //
 
+using System;
 using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -23,6 +25,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class QuestMachineInspectorWindow : DaggerfallPopupWindow
     {
         #region UI Rects
+
+        QuestMachine questMachine;
+
+        Vector2 mainPanelSize = new Vector2(600, 360);
+        TextBox addQuestTextBox;
+
+        #endregion
+
+        #region UI Controls
+
+        Panel mainPanel = new Panel();
+
+        Color questListBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.4f);
+        Color questListTextColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
+        Color mainPanelBackgroundColor = new Color(0.0f, 0f, 0.0f, 1.0f);
+        Color mainButtonBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+
         #endregion
 
         #region Constructors
@@ -30,6 +49,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public QuestMachineInspectorWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null, int screenWidth = 640, int screenHeight = 400)
             : base(uiManager, previous, screenWidth, screenHeight)
         {
+            // Get reference to questmachine
+            questMachine = QuestMachine.Instance;
+            if (!questMachine)
+                throw new Exception("QuestMachine instance not found in scene.");
         }
 
         #endregion
@@ -38,6 +61,81 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
+            // Always dim background
+            ParentPanel.BackgroundColor = ScreenDimColor;
+
+            // Main panel
+            mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            mainPanel.VerticalAlignment = VerticalAlignment.Middle;
+            mainPanel.Size = mainPanelSize;
+            mainPanel.Outline.Enabled = true;
+            mainPanel.BackgroundColor = mainPanelBackgroundColor;
+            NativePanel.Components.Add(mainPanel);
+
+            // Add other panels
+            SetupActiveQuestsPanel();
+
+            //// Quest list
+            //questList.Position = new Vector2(2, 2);
+            //questList.Size = new Vector2(91, 129);
+            //questList.TextColor = questListTextColor;
+            //questList.BackgroundColor = questListBackgroundColor;
+            //questList.ShadowPosition = Vector2.zero;
+            //questList.RowsDisplayed = 16;
+            //questList.OnScroll += QuestList_OnScroll;
+            //questPanel.Components.Add(questList);
+            //questList.AddItem("_BRISIEN");
+            //questList.AddItem("_TUTOR__");
+            //questList.AddItem("20C00Y00");
+        }
+
+        #endregion
+
+        #region Panel Setup
+
+        Panel AddPanel(Rect rect, string title)
+        {
+            // Panel
+            Panel panel = new Panel();
+            panel.Position = new Vector2(rect.x, rect.y);
+            panel.Size = new Vector2(rect.width, rect.height);
+            panel.Outline.Enabled = true;
+            mainPanel.Components.Add(panel);
+
+            // Label
+            TextLabel label = new TextLabel();
+            label.ShadowPosition = Vector2.zero;
+            label.Position = new Vector2(rect.x, rect.y);
+            label.HorizontalAlignment = HorizontalAlignment.Center;
+            label.Text = title;
+            panel.Components.Add(label);
+
+            return panel;
+        }
+
+        void SetupActiveQuestsPanel()
+        {
+            Panel questPanel = AddPanel(new Rect(4, 4, 100, 140), "Active Quests");
+            addQuestTextBox = DaggerfallUI.AddTextBox(new Rect(2, 12, 76, 10), "Quest Filename", questPanel, 8);
+            addQuestTextBox.UpperOnly = true;
+            addQuestTextBox.FixedSize = true;
+            addQuestTextBox.Outline.Enabled = true;
+            addQuestTextBox.UseFocus = true;
+            addQuestTextBox.Text = "_BRISIEN";
+            addQuestTextBox.SetFocus();
+
+            Button addQuestButton = DaggerfallUI.AddTextButton(new Rect(80, 12, 18, 10), "Add", questPanel);
+            addQuestButton.BackgroundColor = mainButtonBackgroundColor;
+            addQuestButton.OnMouseClick += AddQuestButton_OnMouseClick;
+        }
+
+        #endregion
+
+        #region QuestsPanel Event Handlers
+
+        private void AddQuestButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            questMachine.InstantiateQuest(addQuestTextBox.Text);
         }
 
         #endregion
