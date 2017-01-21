@@ -686,8 +686,8 @@ namespace DaggerfallWorkshop.Game
             Texture2D texture = null;
 
             // Texture packs support
-            if (DFTextureReplacement.CustomImageExist(name))
-                texture = DFTextureReplacement.LoadCustomImage(name);
+            if (DaggerfallWorkshop.Utility.AssetInjection.TextureReplacement.CustomImageExist(name))
+                texture = DaggerfallWorkshop.Utility.AssetInjection.TextureReplacement.LoadCustomImage(name);
             else
             {
                 imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));

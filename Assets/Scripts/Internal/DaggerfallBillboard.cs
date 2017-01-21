@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop
                     summary.CurrentFrame++;
 
                     // Original Daggerfall textures
-                    if (!DFTextureReplacement.CustomTextureExist(summary.Archive, summary.Record))
+                    if (!Utility.AssetInjection.TextureReplacement.CustomTextureExist(summary.Archive, summary.Record))
                     {
                         if (summary.CurrentFrame >= summary.AtlasIndices[summary.Record].frameCount)
                         {
@@ -325,7 +325,7 @@ namespace DaggerfallWorkshop
             Texture2D albedoTexture, emissionMap;
             for (int frame = 0; frame < NumberOfFrames; frame++)
             {
-                DFTextureReplacement.LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record, frame);
+                Utility.AssetInjection.TextureReplacement.LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record, frame);
                 albedoTextures.Add(albedoTexture);
                 if (isEmissive)
                     emissionmaps.Add(emissionMap);

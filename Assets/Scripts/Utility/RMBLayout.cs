@@ -17,6 +17,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -177,8 +178,8 @@ namespace DaggerfallWorkshop.Utility
 
                     // Use 3d model instead of flat
                     int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
-                    if (DFMeshReplacement.ReplacementFlatExist(natureArchive, scenery.TextureRecord))
-                        DFMeshReplacement.LoadReplacementFlat(natureArchive, scenery.TextureRecord, billboardPosition, flatsParent);
+                    if (MeshReplacement.ReplacementFlatExist(natureArchive, scenery.TextureRecord))
+                        MeshReplacement.LoadReplacementFlat(natureArchive, scenery.TextureRecord, billboardPosition, flatsParent);
                     // Add billboard to batch or standalone
                     else if (billboardBatch != null)
                     {
@@ -224,8 +225,8 @@ namespace DaggerfallWorkshop.Utility
                         obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
                     // Use 3d model instead of flat
-                    if (DFMeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))
-                        DFMeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
+                    if (MeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))
+                        MeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
                     // Use flat
                     else
                     {
@@ -277,8 +278,8 @@ namespace DaggerfallWorkshop.Utility
                     obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
                 // Use 3d model instead of flat
-                if (DFMeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))    
-                    DFMeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
+                if (MeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))    
+                    MeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
                 // Use flat
                 else
                 {
@@ -474,10 +475,10 @@ namespace DaggerfallWorkshop.Utility
                         doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix));
 
                     // Use custom prefab
-                    if (DFMeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
-                        DFMeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
+                    if (MeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
+                        MeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
                     // Add or combine
-                    else if (combiner == null || IsCityGate(obj.ModelIdNum) || DFMeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                    else if (combiner == null || IsCityGate(obj.ModelIdNum) || MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
                         AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                     else
                         combiner.Add(ref modelData, modelMatrix);
@@ -514,10 +515,10 @@ namespace DaggerfallWorkshop.Utility
                     doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
 
                 // Use custom prefab
-                if (DFMeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
-                    DFMeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
+                if (MeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
+                    MeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
                 // Add or combine
-                else if (combiner == null || DFMeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                else if (combiner == null || MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
                     AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                 else
                     combiner.Add(ref modelData, modelMatrix);
