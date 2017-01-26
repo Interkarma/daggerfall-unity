@@ -357,33 +357,43 @@ namespace DaggerfallWorkshop.Game
             
             cameraTransformRotationSaved = Quaternion.identity;
             cameraOrthographicSizeSaved = 10.0f; // dummy value > 0.0f -> will be overwritten once camera zoom is applied
+
+            // important that transition events/delegates are created in Awake() instead of OnEnable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
+            PlayerGPS.OnMapPixelChanged += OnMapPixelChanged;
+            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
+            PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeonInterior;
+            SaveLoadManager.OnLoad += OnLoadEvent;
         }
 
         void OnDestroy()
         {
-
+            // important that transition events/delegates are destroyed in OnDestroy() instead of OnDisable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
+            PlayerGPS.OnMapPixelChanged -= OnMapPixelChanged;
+            PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
+            PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
+            PlayerEnterExit.OnTransitionInterior -= OnTransitionToInterior;
+            PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeonInterior;
+            SaveLoadManager.OnLoad -= OnLoadEvent;
         }
 
+        /*
         void OnEnable()
         {
-            PlayerGPS.OnMapPixelChanged += OnMapPixelChanged;
-            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
-            PlayerEnterExit.OnTransitionDungeonExterior += OnTransitionToDungeonExterior;
-            SaveLoadManager.OnLoad += OnLoadEvent;
+
         }
 
         void OnDisable()
         {
-            PlayerGPS.OnMapPixelChanged -= OnMapPixelChanged;
-            PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
-            PlayerEnterExit.OnTransitionDungeonExterior -= OnTransitionToDungeonExterior;
-            SaveLoadManager.OnLoad -= OnLoadEvent;
+
         }
 
         void Start()
         {
 
         }
+        */
 
         void Update()
         {
@@ -983,8 +993,19 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        private void OnTransitionToInterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            gameobjectExteriorAutomap.SetActive(false);
+        }
+
+        private void OnTransitionToDungeonInterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            gameobjectExteriorAutomap.SetActive(false);
+        }
+
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
         {
+            gameobjectExteriorAutomap.SetActive(true);
             DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
             ContentReader.MapSummary mapSummary;
             if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
@@ -995,6 +1016,7 @@ namespace DaggerfallWorkshop.Game
 
         private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
         {
+            gameobjectExteriorAutomap.SetActive(true);
             DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
             ContentReader.MapSummary mapSummary;
             if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
@@ -1007,6 +1029,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (!GameManager.Instance.IsPlayerInside)
             {
+                gameobjectExteriorAutomap.SetActive(true);
                 DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
                 ContentReader.MapSummary mapSummary;
                 if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
