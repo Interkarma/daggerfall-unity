@@ -1207,6 +1207,12 @@ namespace DaggerfallWorkshop.Utility
             if (obj.Resources.FlatResource.Action == (int)DFBlock.EnemyReactionTypes.Passive)
                 reaction = MobileReactions.Passive;
 
+            MobileGender gender = MobileGender.Unspecified;
+            if ((int)obj.Resources.FlatResource.Gender == (int)DFBlock.EnemyGenders.Female)
+                gender = MobileGender.Female;
+            if ((int)obj.Resources.FlatResource.Gender == (int)DFBlock.EnemyGenders.Male)
+                gender = MobileGender.Male;
+
             // Just setup demo enemies at this time
             string name = string.Format("DaggerfallEnemy [{0}]", type.ToString());
             Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
@@ -1215,7 +1221,7 @@ namespace DaggerfallWorkshop.Utility
             if (setupEnemy != null)
             {
                 // Configure enemy
-                setupEnemy.ApplyEnemySettings(type, reaction);
+                setupEnemy.ApplyEnemySettings(type, reaction, gender);
 
                 // Align non-flying units with ground
                 DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();

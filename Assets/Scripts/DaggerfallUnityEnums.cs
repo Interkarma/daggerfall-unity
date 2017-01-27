@@ -271,8 +271,8 @@ namespace DaggerfallWorkshop
     public enum MobileGender
     {
         Unspecified,
-        Male,
         Female,
+        Male,
     }
 
     /// <summary>

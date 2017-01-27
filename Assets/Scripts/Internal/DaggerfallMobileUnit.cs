@@ -388,7 +388,7 @@ namespace DaggerfallWorkshop
             // If human with unspecified gender then randomise gender
             if (summary.Enemy.Affinity == MobileAffinity.Human && summary.Enemy.Gender == MobileGender.Unspecified)
             {
-                if (DFRandom.random_range(0, 1) == 0)
+                if (DFRandom.random_range(0, 2) == 0)
                     summary.Enemy.Gender = MobileGender.Male;
                 else
                     summary.Enemy.Gender = MobileGender.Female;

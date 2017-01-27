@@ -16,6 +16,7 @@ namespace DaggerfallWorkshop.Game
     {
         public MobileTypes EnemyType = MobileTypes.SkeletalWarrior;
         public MobileReactions EnemyReaction = MobileReactions.Hostile;
+        public MobileGender Gender = MobileGender.Unspecified;
 
         DaggerfallEntityBehaviour entityBehaviour;
 
@@ -52,6 +53,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // Setup mobile billboard
                 Vector2 size = Vector2.one;
+                mobileEnemy.Gender = Gender;
                 dfMobile.SetEnemy(dfUnity, mobileEnemy, EnemyReaction);
 
                 // Setup controller
@@ -114,10 +116,11 @@ namespace DaggerfallWorkshop.Game
         /// Change enemy settings and configure in a single call.
         /// </summary>
         /// <param name="enemyType">Enemy type.</param>
-        public void ApplyEnemySettings(MobileTypes enemyType, MobileReactions enemyReaction)
+        public void ApplyEnemySettings(MobileTypes enemyType, MobileReactions enemyReaction, MobileGender gender)
         {
             EnemyType = enemyType;
             EnemyReaction = enemyReaction;
+            Gender = gender;
             ApplyEnemySettings();
         }
 
@@ -136,8 +139,9 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             MobileReactions enemyReaction = (isHostile) ? MobileReactions.Hostile : MobileReactions.Passive;
+            MobileGender enemyGender = MobileGender.Unspecified; // TODO: Gender should be included in and read from save file
 
-            ApplyEnemySettings(mobileType, enemyReaction);
+            ApplyEnemySettings(mobileType, enemyReaction, enemyGender);
         }
 
         public void AlignToGround()
