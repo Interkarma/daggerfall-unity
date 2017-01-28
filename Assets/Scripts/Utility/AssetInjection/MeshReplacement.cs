@@ -9,6 +9,11 @@
 // Notes:
 //
 
+/*
+ * TODO:
+ * 1. Action models in RDB
+ */
+
 using UnityEngine;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
@@ -130,18 +135,48 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         #endregion
-        
+
         #region Utilities
 
         /// <summary>
-        /// Assign texture filtermode as user settings and check integrity of materials
+        /// Assign texture filtermode as user settings and check integrity of materials.
+        /// Import textures from disk if available. This is for consistency when custom models
+        /// use one or more vanilla textures and the user has installed a texture pack.
+        /// Vanilla textures should follow the nomenclature (archive_record-frame.png) while unique
+        /// textures should have unique names (MyModelPack_WoodChair2.png) to avoid involuntary replacements.
+        /// This can also be used to import optional normal maps.
         /// </summary>
+        /// <param name="object3D">Custom prefab</param>
+        /// <param name="ModelName">ID of model or sprite to be replaced. Used for debugging</param>
         static public void FinaliseCustomGameObject(ref GameObject object3D, string ModelName)
         {
-            for (int i = 0; i < object3D.GetComponent<Renderer>().materials.Length; i++)
+            // Get MeshRenderer
+            MeshRenderer meshRenderer = object3D.GetComponent<MeshRenderer>();
+
+            // Check all materials
+            for (int i = 0; i < meshRenderer.materials.Length; i++)
             {
-                if (object3D.GetComponent<Renderer>().materials[i].mainTexture != null)
-                    object3D.GetComponent<Renderer>().materials[i].mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                if (meshRenderer.materials[i].mainTexture != null)
+                {
+                    // Get name of texture
+                    string textureName = meshRenderer.materials[i].mainTexture.name;
+
+                    // Use texture(s) from disk if available
+                    // Albedo
+                    if (TextureReplacement.CustomTextureExist(textureName))
+                        meshRenderer.materials[i].mainTexture = TextureReplacement.LoadCustomTexture(textureName);
+                    // Normal map
+                    if (TextureReplacement.CustomNormalExist(textureName))
+                    {
+                        meshRenderer.materials[i].EnableKeyword("_NORMALMAP"); // Enable normal map in the shader if the original material doesn't have one
+                        meshRenderer.materials[i].SetTexture("_BumpMap", TextureReplacement.LoadCustomNormal(textureName));
+                    }
+
+                    // Assign filtermode
+                    meshRenderer.materials[i].mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                    if (meshRenderer.materials[i].GetTexture("_BumpMap") != null)
+                        meshRenderer.materials[i].GetTexture("_BumpMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                }
                 else
                     Debug.LogError("Custom model " + ModelName + " is missing a material or a texture");
             }
