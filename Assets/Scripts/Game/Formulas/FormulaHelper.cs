@@ -93,7 +93,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         // Calculate how much health the player should recover per hour of rest
         public static int CalculateHealthRecoveryRate(int medical, int endurance, int maxHealth)
-        {           
+        {
             return (int)Mathf.Floor((HealingRateModifierMedical(medical) * HealingRateModifierMaxHealth(maxHealth)) + HealingRateModifier(endurance));
         }
 
@@ -146,6 +146,83 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             return damage;
+        }
+
+        #endregion
+
+        #region Fast Travel
+
+        // Calculate fast travel cost. Based on observing classic Daggerfall behavior.
+        public static int CalculateTripCost(float travelTimeTotalLand, float travelTimeTotalWater, bool speedCautious, bool sleepModeInn, bool travelFoot, int cautiousMod, float shipMod)
+        {
+            int tripCost = 0;
+
+            // For cost calculations we need to know the time taken on land and water for both a cautious and reckless trip
+            float travelTimeTotalLandCautious = travelTimeTotalLand;
+            float travelTimeTotalLandReckless = travelTimeTotalLand;
+            float travelTimeTotalWaterCautious = travelTimeTotalWater;
+            float travelTimeTotalWaterReckless = travelTimeTotalWater;
+
+            if (speedCautious)
+            {
+                travelTimeTotalLandReckless /= cautiousMod;
+                travelTimeTotalWaterReckless /= cautiousMod;
+            }
+            else
+            {
+                travelTimeTotalLandCautious *= cautiousMod;
+                travelTimeTotalWaterCautious *= cautiousMod;
+            }
+
+            // Get reckless travel times in days
+            int travelTimeDaysLandReckless = 0;
+            int travelTimeDaysWaterReckless = 0;
+            int travelTimeDaysTotalReckless = 0;
+
+            if (travelTimeTotalLandReckless > 0)
+                travelTimeDaysLandReckless = (int)((travelTimeTotalLandReckless / 60 / 24) + 0.5);
+            if (travelTimeTotalWaterReckless > 0)
+                travelTimeDaysWaterReckless = (int)((travelTimeTotalWaterReckless / 60 / 24) + 0.5);
+            travelTimeDaysTotalReckless = travelTimeDaysLandReckless + travelTimeDaysWaterReckless;
+
+            // Get cautious travel times in days
+            int travelTimeDaysLandCautious = 0;
+            int travelTimeDaysWaterCautious = 0;
+            int travelTimeDaysTotalCautious = 0;
+
+            if (travelTimeTotalLandCautious > 0)
+                travelTimeDaysLandCautious = (int)((travelTimeTotalLandCautious / 60 / 24) + 0.5);
+            if (travelTimeTotalWaterCautious > 0)
+                travelTimeDaysWaterCautious = (int)((travelTimeTotalWaterCautious / 60 / 24) + 0.5);
+            travelTimeDaysTotalCautious = travelTimeDaysLandCautious + travelTimeDaysWaterCautious;
+
+            // Calculate inn costs. Use cautious travel cost as a base.
+            // Inns cost (5 * total land travel days) for land-only travel or travel that crosses water if a ship is used.
+            if ((travelTimeTotalWater <= 0 || !travelFoot) && sleepModeInn && (travelTimeTotalLand > 0))
+                tripCost += Mathf.Max(5, travelTimeDaysLandCautious * 5);
+
+            // For travel that crosses water and is by foot/horse, the cost of
+            // inns is (5 * (total travel days - days on water for reckless travel using a ship)).
+            else if ((travelTimeTotalWater > 0) && sleepModeInn && travelFoot)
+            {
+                int travelTimeRecklessShipDays = (int)((travelTimeTotalWaterReckless * shipMod / 60 / 24) + 0.5);
+                tripCost += Mathf.Max(5, (travelTimeDaysTotalCautious - travelTimeRecklessShipDays) * 5);
+            }
+
+            // Cost for inns in reckless travel is reduced from cautious travel cost by
+            // (number of days less than cautious travel * 5)
+            if (!speedCautious)
+            {
+                if (sleepModeInn)
+                    tripCost -= Mathf.Min(tripCost, ((travelTimeDaysTotalCautious - travelTimeDaysTotalReckless) * 5));
+            }
+
+            // Calculate ship costs.
+            // Ships cost (25 * (days on water for cautious travel))
+            if (!travelFoot && (travelTimeTotalWater > 0))
+                tripCost += Mathf.Max(25, travelTimeDaysWaterCautious * 25);
+
+            return tripCost;
         }
 
         #endregion

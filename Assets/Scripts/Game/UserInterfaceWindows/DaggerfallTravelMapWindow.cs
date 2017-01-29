@@ -661,7 +661,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (FindingLocation)
                     StopRegionIdentify(true);
                 else
-                    CreateConfirmationPopUp();
+                    CreatePopUpWindow();
             }
             else if (MouseOverOtherRegion)      //if clicked while mouse over other region & not a location, switch to that region
                 OpenRegionPanel(mouseOverRegion);
