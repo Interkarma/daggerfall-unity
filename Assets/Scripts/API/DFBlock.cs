@@ -119,6 +119,13 @@ namespace DaggerfallConnect
             Passive = 99,
         }
 
+        public enum EnemyGenders
+        {
+            Unspecified = 0,
+            Female = 1,
+            Male = 2,
+        }
+
         #endregion
 
         #region RMB Structures
@@ -560,6 +567,12 @@ namespace DaggerfallConnect
         {
             /// <summary>No gender specified.</summary>
             Unspecified = 0,
+
+            /// <summary>Mobile is female</summary>
+            FemaleMobile = 1,
+
+            /// <summary>Mobile is male</summary>
+            MaleMobile = 2,
 
             /// <summary>NPC is male.</summary>
             Male = 0x1200,
