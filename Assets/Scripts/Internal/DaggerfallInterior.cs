@@ -221,24 +221,27 @@ namespace DaggerfallWorkshop
                 if (modelData.Doors != null)
                     doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
 
-                // Use custom prefab
-                if (MeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
-                    MeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
-                // Use Daggerfall Mesh: Combine or add
-                else if (dfUnity.Option_CombineRMB && !MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                // Import custom GameObject
+                bool modelExist;
+                MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out modelExist);
+                if (!modelExist)
                 {
-                    combiner.Add(ref modelData, modelMatrix);
-                }
-                else
-                {
-                    // Add GameObject
-                    GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(obj.ModelIdNum, node.transform, dfUnity.Option_SetStaticFlags);
-                    go.transform.position = modelMatrix.GetColumn(3);
-                    go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(modelMatrix);
+                    // Use Daggerfall Mesh: Combine or add
+                    if (dfUnity.Option_CombineRMB && !MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                    {
+                        combiner.Add(ref modelData, modelMatrix);
+                    }
+                    else
+                    {
+                        // Add GameObject
+                        GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(obj.ModelIdNum, node.transform, dfUnity.Option_SetStaticFlags);
+                        go.transform.position = modelMatrix.GetColumn(3);
+                        go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(modelMatrix);
 
-                    // Update climate
-                    DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
-                    dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);                   
+                        // Update climate
+                        DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
+                        dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
+                    }
                 }
             }
 

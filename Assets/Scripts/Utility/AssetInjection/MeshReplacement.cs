@@ -12,9 +12,12 @@
 /*
  * TODO:
  * 1. Action models in RDB
+ * 2. Optimize and improve AssetBundle import
  */
 
+using System.IO;
 using UnityEngine;
+using System.Collections;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -32,6 +35,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Bool</returns>
 
         // Models (mesh + materials)
+        // Legacy: this can eventually be removed
         static public bool ReplacmentModelExist(uint modelID)
         {
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
@@ -132,6 +136,68 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             object3D.transform.localPosition = position;
 
             FinaliseCustomGameObject(ref object3D, archive.ToString() + "_" + record.ToString());
+        }
+
+        /// <summary>
+        /// Import the custom gameobject if available
+        /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
+        /// </summary>
+        static public void ImportCustomGameobject (uint modelID, Vector3 position, Transform parent, Quaternion rotation, out bool modelExist)
+        {
+            // Check user settings
+            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            {
+                modelExist = false;
+                return;
+            }
+
+            // Import Gameobject from Resources
+            // This is useful to test models
+            if (ReplacementPrefabExist(modelID))
+            {
+                LoadReplacementPrefab(modelID, position, parent, rotation);
+                modelExist = true;
+                return;
+            }
+
+            // Load AssetBundle
+            // TODO: Use mod system to import prefabs from all mods and use load order
+            // Debug.Log("Loading Assetbundle");
+            string modelsPath = Path.Combine(Application.persistentDataPath, "Models");
+            string assetBundleName = "myassetbundle.dfmod";
+            var LoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(modelsPath, assetBundleName));
+            if (LoadedAssetBundle == null)
+            {
+                // Debug.Log("Failed to load AssetBundle");
+                modelExist = false;
+                return;
+            }
+
+            // Check if AssetBundle contain the model we are looking for and assign the name according to the current season
+            string modelName = modelID.ToString();
+            if (!LoadedAssetBundle.Contains(modelName))
+            {
+                modelExist = false;
+                LoadedAssetBundle.Unload(false);
+                return;
+            }
+            else if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter) && (LoadedAssetBundle.Contains(modelName + "_winter")))
+                modelName += "_winter";
+            // Debug.Log("Assetbundle contains " + modelName);
+
+            // Instantiate GameObject
+            modelExist = true;
+            GameObject object3D = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
+            LoadedAssetBundle.Unload(false);
+
+            // Update Position
+            object3D.transform.parent = parent;
+            object3D.transform.position = position;
+            object3D.transform.rotation = rotation;
+
+            // Finalise gameobject
+            FinaliseCustomGameObject(ref object3D, modelName);
+            // Debug.Log(modelName + " injected");
         }
 
         #endregion
