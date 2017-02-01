@@ -35,7 +35,6 @@ namespace DaggerfallWorkshop.Game
     /// Real Grass thread on DU forums:
     /// http://forums.dfworkshop.net/viewtopic.php?f=14&t=17
     /// </summary>
-
     public class GrassAndPlants : MonoBehaviour
     {
         // Textures for grass billboards
@@ -70,7 +69,12 @@ namespace DaggerfallWorkshop.Game
         private Color32[] tilemap;
         private int[,] details0, details1, details2, details3;
         private DaggerfallDateTime.Seasons currentSeason;
+        enum Climate { None, Ocean=223, Desert, Desert2, Mountain, Swamp, Swamp2, Desert3, Mountain2, Temperate, Temperate2 }
+        private Climate currentClimate;
 
+        /// <summary>
+        /// Awake mod and set up vegetation settings
+        /// </summary>
         private void Awake()
         {
             // Disable self if the mod is not enabled or the original Real Grass is enabled.
@@ -133,7 +137,6 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Add Grass and plants on terrain.
         /// </summary>
-
         private void AddGrass(DaggerfallTerrain daggerTerrain, TerrainData terrainData)
         {
             //			Used to check performance
@@ -146,8 +149,9 @@ namespace DaggerfallWorkshop.Game
             details2 = new int[256, 256];
             details3 = new int[256, 256];
 
-            // Get the current season
+            // Get the current season and climate
             currentSeason = DaggerfallUnity.Instance.WorldTime.Now.SeasonValue;
+            currentClimate = (Climate)daggerTerrain.MapData.worldClimate;
 
             // Terrain settings 
             tilemap = daggerTerrain.TileMap;
@@ -155,18 +159,18 @@ namespace DaggerfallWorkshop.Game
             terrainData.SetDetailResolution(256, 8);
 
             // Proceed if it's not winter, and if the worldClimate contains grass, which is everything above 225, with the exception of 229
-            if (currentSeason != DaggerfallDateTime.Seasons.Winter && (daggerTerrain.MapData.worldClimate > 225 && daggerTerrain.MapData.worldClimate != 229))
+            if (currentSeason != DaggerfallDateTime.Seasons.Winter && ((int)currentClimate > 225 && currentClimate != Climate.Desert3))
             {
                 // Switch the grass texture and plants model based on the climate
                 // Mountain
-                if (daggerTerrain.MapData.worldClimate == 226 || daggerTerrain.MapData.worldClimate == 230)
+                if (currentClimate == Climate.Mountain || currentClimate == Climate.Mountain2)
                 {
                     detailPrototype[0].prototypeTexture = brownGrass;
                     detailPrototype[1].prototype = MountainGrass;
                     detailPrototype[2].prototype = WaterMountainGrass;
                 }
                 // Swamp
-                else if (daggerTerrain.MapData.worldClimate == 227 || daggerTerrain.MapData.worldClimate == 228)
+                else if (currentClimate == Climate.Swamp || currentClimate == Climate.Swamp2)
                 {
                     detailPrototype[0].prototypeTexture = brownGrass;
                     detailPrototype[1].prototype = SwampGrass;
@@ -179,9 +183,6 @@ namespace DaggerfallWorkshop.Game
                     detailPrototype[1].prototype = TemperateGrass;
                     detailPrototype[2].prototype = Waterlily;
                 }
-
-                // Assign detail prototypes to the terrain
-                terrainData.detailPrototypes = detailPrototype;
 
                 int colorValue;
 
@@ -415,13 +416,13 @@ namespace DaggerfallWorkshop.Game
                             case 2:
                             case 3:
                                 // Mountain grass
-                                if (daggerTerrain.MapData.worldClimate == 226 || daggerTerrain.MapData.worldClimate == 230)
+                                if (currentClimate == Climate.Mountain || currentClimate == Climate.Mountain2)
                                 {
                                     details2[i * 2, j * 2] = Random.Range(1, 2);
                                     details2[(i * 2) + 1, (j * 2) + 1] = Random.Range(1, 2);
                                 }
                                 // Temperate waterlilies
-                                else
+                                else if (currentClimate == Climate.Temperate || currentClimate == Climate.Temperate2) 
                                 {
                                     details2[i * 2, j * 2] = 1;
                                     details2[(i * 2) + 1, (j * 2) + 1] = 1;
@@ -445,13 +446,10 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Desert has grass around water but not on mainland, also desert regions don't have winter season
-            else if (daggerTerrain.MapData.worldClimate == 224 || daggerTerrain.MapData.worldClimate == 225 || daggerTerrain.MapData.worldClimate == 229)
+            else if (currentClimate == Climate.Desert || currentClimate == Climate.Desert2 || currentClimate == Climate.Desert3)
             {
                 // Assign desert grass model
                 detailPrototype[1].prototype = DesertGrass;
-
-                // Assign detail prototypes to the terrain
-                terrainData.detailPrototypes = detailPrototype;
 
                 int colorValue;
 
@@ -506,13 +504,11 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            // Assign detail prototypes to the terrain
             // Waiting for winter protoypes, we use empty maps for the winter season
-            else
-            {
-                // Assign detail prototypes to the terrain
-                terrainData.detailPrototypes = detailPrototype;
-            }
+            terrainData.detailPrototypes = detailPrototype;
 
+            // Assign detail layers to the terrain
             terrainData.SetDetailLayer(0, 0, 0, details0); // Grass
             terrainData.SetDetailLayer(0, 0, 1, details1); // Water plants near water
             terrainData.SetDetailLayer(0, 0, 2, details2); // Waterlilies and grass inside water
@@ -527,7 +523,6 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Generate random values for the placement of thin grass. 
         /// </summary>
-
         static int RandomThin()
         {
             return Random.Range(thinLower, thinHigher);
@@ -536,7 +531,6 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Generate random values for the placement of thick grass.
         /// </summary>
-
         static int RandomThick()
         {
             return Random.Range(thickLower, thickHigher);
@@ -545,7 +539,6 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Generate random values for the placement of water plants.
         /// </summary>
-
         static int RandomWaterPlants()
         {
             return Random.Range(waterPlantsLower, waterPlantsHigher);
@@ -554,7 +547,6 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Generate random values for the placement of desert grass.
         /// </summary>
-
         static int RandomDesert()
         {
             return Random.Range(desertLower, desertHigher);
