@@ -12,9 +12,12 @@
 /*
  * TODO:
  * 1. Action models in RDB
+ * 2. Optimize and improve AssetBundle import
  */
 
+using System.IO;
 using UnityEngine;
+using System.Collections;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -28,34 +31,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         /// <summary>
         /// Check existence of model in Resources
+        /// Legacy: this can eventually be removed
         /// </summary>
         /// <returns>Bool</returns>
-
-        // Models (mesh + materials)
         static public bool ReplacmentModelExist(uint modelID)
         {
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                 && Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString()) != null)
-                return true;
-
-            return false;
-        }
-
-        // Models (prefabs)
-        static public bool ReplacementPrefabExist(uint modelID)
-        {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                 && Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_default") != null)
-                return true;
-
-            return false;
-        }
-
-        // Billboards
-        static public bool ReplacementFlatExist(int archive, int record)
-        {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                 && Resources.Load("Flats/" + archive.ToString() + "_" + record.ToString() + "/" + archive.ToString() + "_" + record.ToString()) != null)
+                 && Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_mesh") != null)
                 return true;
       
             return false;
@@ -64,13 +46,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Import the model and the material(s) from Resources
         /// </summary>
-
-        // Models (mesh + materials)
         static public Mesh LoadReplacementModel(uint modelID, ref CachedMaterial[] cachedMaterialsOut)
         {
             // Import mesh
-            GameObject object3D = Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString()) as GameObject;
-
+            GameObject object3D = Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_mesh") as GameObject;
+ 
             // Import materials
             cachedMaterialsOut = new CachedMaterial[object3D.GetComponent<MeshRenderer>().sharedMaterials.Length];
 
@@ -99,8 +79,85 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             return object3D.GetComponent<MeshFilter>().sharedMesh;
         }
-
-        // Models (prefabs)
+  
+        /// <summary>
+        /// Import the custom gameobject if available
+        /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
+        /// </summary>
+        static public void ImportCustomGameobject (uint modelID, Vector3 position, Transform parent, Quaternion rotation, out bool modelExist)
+        {
+            // Check user settings
+            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            {
+                modelExist = false;
+                return;
+            }
+ 
+            // Import Gameobject from Resources
+            // This is useful to test models
+            if (ReplacementPrefabExist(modelID))
+            {
+                LoadReplacementPrefab(modelID, position, parent, rotation);
+                modelExist = true;
+                return;
+            }
+ 
+            // Load AssetBundle
+            // TODO: Use mod system to import prefabs from all mods and use load order
+            // Debug.Log("Loading Assetbundle");
+            string modelsPath = Path.Combine(Application.persistentDataPath, "Models");
+            string assetBundleName = "myassetbundle.dfmod";
+            var LoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(modelsPath, assetBundleName));
+            if (LoadedAssetBundle == null)
+            {
+                Debug.Log("Failed to load AssetBundle");
+                modelExist = false;
+                return;
+            }
+ 
+            // Check if AssetBundle contain the model we are looking for and assign the name according to the current season
+            string modelName = modelID.ToString();
+            if (!LoadedAssetBundle.Contains(modelName))
+            {
+                modelExist = false;
+                LoadedAssetBundle.Unload(false);
+                return;
+            }
+            else if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter) && (LoadedAssetBundle.Contains(modelName + "_winter")))
+                modelName += "_winter";
+            // Debug.Log("Assetbundle contains " + modelName);
+ 
+            // Instantiate GameObject
+            modelExist = true;
+            GameObject object3D = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
+            LoadedAssetBundle.Unload(false);
+ 
+            // Update Position
+            object3D.transform.parent = parent;
+            object3D.transform.position = position;
+            object3D.transform.rotation = rotation;
+ 
+            // Finalise gameobject
+            FinaliseCustomGameObject(ref object3D, modelName);
+            // Debug.Log(modelName + " injected");
+        }
+        
+        /// <summary>
+        /// Check existence of gameobject in Resources
+        /// </summary>
+        /// <returns>Bool</returns>
+        static public bool ReplacementPrefabExist(uint modelID)
+        {
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
+                 && Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString()) != null)
+                return true;
+ 
+            return false;
+        }
+        
+        /// <summary>
+        /// Import gameobject from Resources
+        /// </summary>
         static public void LoadReplacementPrefab(uint modelID, Vector3 position, Transform parent, Quaternion rotation)
         {
             // Import GameObject
@@ -108,7 +165,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             // If it's not winter or the model doesn't have a winter version, it loads default prefab
             if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue != DaggerfallDateTime.Seasons.Winter) || (Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_winter") == null))
-                object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_default") as GameObject);
+                object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString()) as GameObject);
             // If it's winter and the model has a winter version, it loads winter prefab
             else
                 object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_winter") as GameObject);
@@ -121,19 +178,94 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             FinaliseCustomGameObject(ref object3D, modelID.ToString());
         }
 
-        // Billboards
+        /// <summary>
+        /// Import the custom gameobject for billboard if available
+        /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
+        /// </summary>
+        static public void ImportCustomFlatGameobject (int archive, int record, Vector3 position, Transform parent, out bool modelExist)
+        {
+            // Check user settings
+            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            {
+                modelExist = false;
+                return;
+            }
+
+            // Import Gameobject from Resources
+            // This is useful to test models
+            if (ReplacementFlatExist(archive, record)) 
+            {
+                LoadReplacementFlat(archive, record, position, parent);
+                modelExist = true;
+                return;
+            }
+
+            // Load AssetBundle
+            // TODO: Use mod system to import prefabs from all mods and use load order
+            // Debug.Log("Loading Assetbundle");
+            string modelsPath = Path.Combine(Application.persistentDataPath, "Models");
+            string assetBundleName = "myassetbundle.dfmod";
+            var LoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(modelsPath, assetBundleName));
+            if (LoadedAssetBundle == null)
+            {
+                // Debug.Log("Failed to load AssetBundle");
+                Debug.Log("Failed to load AssetBundle");
+                modelExist = false;
+                return;
+            }
+ 
+            // Check if AssetBundle contain the model we are looking for
+            string modelName = archive.ToString() + "_" + record.ToString();
+            if (!LoadedAssetBundle.Contains(modelName))
+            {
+                modelExist = false;
+                LoadedAssetBundle.Unload(false);
+                return;
+            }
+            // Debug.Log("Assetbundle contains " + modelName);
+
+            // Instantiate GameObject
+            modelExist = true;
+            GameObject object3D = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
+            LoadedAssetBundle.Unload(false);
+
+            // Update Position
+            object3D.transform.parent = parent;
+            object3D.transform.localPosition = position;
+            
+            // Finalise gameobject
+            FinaliseCustomGameObject(ref object3D, modelName);
+            // Debug.Log(modelName + " injected");
+        }
+        
+        /// <summary>
+        /// Check existence of gameobject for billboard in Resources
+        /// </summary>
+        /// <returns>Bool</returns>
+        static public bool ReplacementFlatExist(int archive, int record)
+        {
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
+                 && Resources.Load("Flats/" + archive.ToString() + "_" + record.ToString() + "/" + archive.ToString() + "_" + record.ToString()) != null)
+                return true;
+      
+            return false;
+        }
+        
+        /// <summary>
+        /// Import gameobject from Resources
+        /// </summary>
         static public void LoadReplacementFlat(int archive, int record, Vector3 position, Transform parent)
         {
             // Import GameObject
             GameObject object3D = GameObject.Instantiate(Resources.Load("Flats/" + archive.ToString() + "_" + record.ToString() + "/" + archive.ToString() + "_" + record.ToString()) as GameObject);
-
+ 
             // Position
             object3D.transform.parent = parent;
             object3D.transform.localPosition = position;
-
+ 
             FinaliseCustomGameObject(ref object3D, archive.ToString() + "_" + record.ToString());
         }
-
+ 
         #endregion
 
         #region Utilities

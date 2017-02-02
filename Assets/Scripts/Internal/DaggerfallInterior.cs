@@ -221,24 +221,27 @@ namespace DaggerfallWorkshop
                 if (modelData.Doors != null)
                     doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
 
-                // Use custom prefab
-                if (MeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
-                    MeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
-                // Use Daggerfall Mesh: Combine or add
-                else if (dfUnity.Option_CombineRMB && !MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                // Import custom GameObject
+                bool modelExist;
+                MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out modelExist);
+                if (!modelExist)
                 {
-                    combiner.Add(ref modelData, modelMatrix);
-                }
-                else
-                {
-                    // Add GameObject
-                    GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(obj.ModelIdNum, node.transform, dfUnity.Option_SetStaticFlags);
-                    go.transform.position = modelMatrix.GetColumn(3);
-                    go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(modelMatrix);
+                    // Use Daggerfall Mesh: Combine or add
+                    if (dfUnity.Option_CombineRMB && !MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                    {
+                        combiner.Add(ref modelData, modelMatrix);
+                    }
+                    else
+                    {
+                        // Add GameObject
+                        GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(obj.ModelIdNum, node.transform, dfUnity.Option_SetStaticFlags);
+                        go.transform.position = modelMatrix.GetColumn(3);
+                        go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(modelMatrix);
 
-                    // Update climate
-                    DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
-                    dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);                   
+                        // Update climate
+                        DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
+                        dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
+                    }
                 }
             }
 
@@ -273,32 +276,32 @@ namespace DaggerfallWorkshop
             markers.Clear();
             foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
             {
-                // use 3d model instead of flat
-                if (MeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))
-                    MeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, node.transform);
-                // use billboard
-                else
+                // Import custom 3d gameobject instead of flat
+                bool modelExist;
+                MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, node.transform, out modelExist);
+                // Use billboard
+                if (!modelExist)
                 {
-                // Spawn billboard gameobject
-                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
+                    // Spawn billboard gameobject
+                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
 
-                // Set position
-                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-                go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+                    // Set position
+                    DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                    go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+                    go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
-                // Add to enter marker list, which is TEXTURE.199, index 8.
-                // Sometimes marker 199.4 is used where the 199.8 enter marker should be
-                // Being a little forgiving and also accepting 199.4 as enter marker
-                // Will add more of these cases if I find them
-                if (obj.TextureArchive == TextureReader.EditorFlatsTextureArchive && (obj.TextureRecord == 8 || obj.TextureRecord == 4))
-                    markers.Add(go);
+                    // Add to enter marker list, which is TEXTURE.199, index 8.
+                    // Sometimes marker 199.4 is used where the 199.8 enter marker should be
+                    // Being a little forgiving and also accepting 199.4 as enter marker
+                    // Will add more of these cases if I find them
+                    if (obj.TextureArchive == TextureReader.EditorFlatsTextureArchive && (obj.TextureRecord == 8 || obj.TextureRecord == 4))
+                        markers.Add(go);
 
-                // Add point lights
-                if (obj.TextureArchive == TextureReader.LightsTextureArchive)
-                {
-                    AddLight(obj, go.transform);
-                }
+                    // Add point lights
+                    if (obj.TextureArchive == TextureReader.LightsTextureArchive)
+                    {
+                        AddLight(obj, go.transform);
+                    }
                 }
             }
         }
