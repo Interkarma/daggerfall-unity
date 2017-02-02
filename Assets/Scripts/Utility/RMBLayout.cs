@@ -176,20 +176,26 @@ namespace DaggerfallWorkshop.Utility
                         natureFlatsOffsetY,
                         y * BlocksFile.TileDimension + BlocksFile.TileDimension) * MeshReader.GlobalScale;
 
-                    // Use 3d model instead of flat
+                    // Get Archive
                     int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
-                    if (MeshReplacement.ReplacementFlatExist(natureArchive, scenery.TextureRecord))
-                        MeshReplacement.LoadReplacementFlat(natureArchive, scenery.TextureRecord, billboardPosition, flatsParent);
-                    // Add billboard to batch or standalone
-                    else if (billboardBatch != null)
+
+                    // Import custom 3d gameobject instead of flat
+                    bool modelExist;
+                    MeshReplacement.ImportCustomFlatGameobject(natureArchive, scenery.TextureRecord, billboardPosition, flatsParent, out modelExist);
+                    // Use billboard
+                    if (!modelExist)
                     {
-                        billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
-                    }
-                    else
-                    {
-                        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(natureArchive, scenery.TextureRecord, flatsParent);
-                        go.transform.position = billboardPosition;
-                        AlignBillboardToBase(go);
+                        // Add billboard to batch or standalone
+                        if (billboardBatch != null)
+                        {
+                            billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
+                        }
+                        else
+                        {
+                            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(natureArchive, scenery.TextureRecord, flatsParent);
+                            go.transform.position = billboardPosition;
+                            AlignBillboardToBase(go);
+                        }
                     }
                 }
             }
@@ -224,11 +230,11 @@ namespace DaggerfallWorkshop.Utility
                         -obj.YPos + blockFlatsOffsetY,
                         obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
-                    // Use 3d model instead of flat
-                    if (MeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))
-                        MeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
-                    // Use flat
-                    else
+                    // Import custom 3d gameobject instead of flat
+                    bool modelExist;
+                    MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent, out modelExist);
+                    // Use billboard
+                    if (!modelExist)
                     {
                         // Add billboard to batch or standalone
                         if (billboardBatch != null)
@@ -277,11 +283,11 @@ namespace DaggerfallWorkshop.Utility
                     -obj.YPos + blockFlatsOffsetY,
                     obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
-                // Use 3d model instead of flat
-                if (MeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))    
-                    MeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
-                // Use flat
-                else
+                // Import custom 3d gameobject instead of flat
+                bool modelExist;
+                MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent, out modelExist);
+                // Use billboard
+                if (!modelExist)
                 {
                     // Use misc billboard atlas where available
                     if (miscBillboardsAtlas != null && miscBillboardsBatch != null)

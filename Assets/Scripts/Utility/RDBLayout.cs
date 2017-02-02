@@ -325,11 +325,11 @@ namespace DaggerfallWorkshop.Utility
                 {
                     if (obj.Type == DFBlock.RdbResourceTypes.Flat)
                     {
-                        // Use 3d model instead of flat
-                        if (MeshReplacement.ReplacementFlatExist(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord))
-                            MeshReplacement.LoadReplacementFlat(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform);
+                        // Import custom 3d gameobject instead of flat
+                        bool modelExist;
+                        MeshReplacement.ImportCustomFlatGameobject(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform, out modelExist);
                         // Use flat
-                        else
+                        if (!modelExist)
                         {
                             // Add flat
                             GameObject flatObject = AddFlat(obj, flatsNode.transform);
@@ -552,11 +552,15 @@ namespace DaggerfallWorkshop.Utility
 
                         // Check if model has an action record
                         bool hasAction = HasAction(obj);
-                        
-                        // Use custom prefab
-                        if (MeshReplacement.ReplacementPrefabExist(modelId) && !hasAction)
-                            MeshReplacement.LoadReplacementPrefab(modelId, modelMatrix.GetColumn(3), modelsParent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
+
+                        // Import custom GameObject
+                        bool modelExist;
+                        if (!hasAction)
+                            MeshReplacement.ImportCustomGameobject(modelId, modelMatrix.GetColumn(3), modelsParent, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out modelExist);
                         else
+                            modelExist = false;
+
+                        if (!modelExist)
                         {
                             // Special handling for tapestries and banners
                             // Some of these are so far out from wall player can become stuck behind them

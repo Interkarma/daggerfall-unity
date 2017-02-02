@@ -276,32 +276,32 @@ namespace DaggerfallWorkshop
             markers.Clear();
             foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
             {
-                // use 3d model instead of flat
-                if (MeshReplacement.ReplacementFlatExist(obj.TextureArchive, obj.TextureRecord))
-                    MeshReplacement.LoadReplacementFlat(obj.TextureArchive, obj.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, node.transform);
-                // use billboard
-                else
+                // Import custom 3d gameobject instead of flat
+                bool modelExist;
+                MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, node.transform, out modelExist);
+                // Use billboard
+                if (!modelExist)
                 {
-                // Spawn billboard gameobject
-                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
+                    // Spawn billboard gameobject
+                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
 
-                // Set position
-                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-                go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+                    // Set position
+                    DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                    go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+                    go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
-                // Add to enter marker list, which is TEXTURE.199, index 8.
-                // Sometimes marker 199.4 is used where the 199.8 enter marker should be
-                // Being a little forgiving and also accepting 199.4 as enter marker
-                // Will add more of these cases if I find them
-                if (obj.TextureArchive == TextureReader.EditorFlatsTextureArchive && (obj.TextureRecord == 8 || obj.TextureRecord == 4))
-                    markers.Add(go);
+                    // Add to enter marker list, which is TEXTURE.199, index 8.
+                    // Sometimes marker 199.4 is used where the 199.8 enter marker should be
+                    // Being a little forgiving and also accepting 199.4 as enter marker
+                    // Will add more of these cases if I find them
+                    if (obj.TextureArchive == TextureReader.EditorFlatsTextureArchive && (obj.TextureRecord == 8 || obj.TextureRecord == 4))
+                        markers.Add(go);
 
-                // Add point lights
-                if (obj.TextureArchive == TextureReader.LightsTextureArchive)
-                {
-                    AddLight(obj, go.transform);
-                }
+                    // Add point lights
+                    if (obj.TextureArchive == TextureReader.LightsTextureArchive)
+                    {
+                        AddLight(obj, go.transform);
+                    }
                 }
             }
         }
