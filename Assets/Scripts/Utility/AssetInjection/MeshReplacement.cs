@@ -81,8 +81,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
   
         /// <summary>
-        /// Import the custom gameobject if available
+        /// Import the custom GameObject if available
         /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
+        /// TODO: Integrate with the mod system to import models from mods using load order
         /// </summary>
         static public void ImportCustomGameobject (uint modelID, Vector3 position, Transform parent, Quaternion rotation, out bool modelExist)
         {
@@ -103,29 +104,32 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
  
             // Load AssetBundle
-            // TODO: Use mod system to import prefabs from all mods and use load order
-            // Debug.Log("Loading Assetbundle");
-            string modelsPath = Path.Combine(Application.persistentDataPath, "Models");
-            string assetBundleName = "myassetbundle.dfmod";
-            var LoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(modelsPath, assetBundleName));
+            string modelsPath = Path.Combine(Application.streamingAssetsPath, "Models");
+            string modelName = modelID.ToString();
+            modelsPath = Path.Combine(modelsPath, modelName + ".model");
+            if (!File.Exists(modelsPath))
+            {
+                modelExist = false;
+                return;
+            }
+            var LoadedAssetBundle = AssetBundle.LoadFromFile(modelsPath);
             if (LoadedAssetBundle == null)
             {
-                Debug.Log("Failed to load AssetBundle");
+                Debug.LogError("Failed to load AssetBundle " + modelName + ".model");
                 modelExist = false;
                 return;
             }
  
             // Check if AssetBundle contain the model we are looking for and assign the name according to the current season
-            string modelName = modelID.ToString();
             if (!LoadedAssetBundle.Contains(modelName))
             {
+                Debug.LogError("AssetBundle " + modelName + ".model is invalid");
                 modelExist = false;
                 LoadedAssetBundle.Unload(false);
                 return;
             }
             else if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter) && (LoadedAssetBundle.Contains(modelName + "_winter")))
                 modelName += "_winter";
-            // Debug.Log("Assetbundle contains " + modelName);
  
             // Instantiate GameObject
             modelExist = true;
@@ -139,7 +143,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
  
             // Finalise gameobject
             FinaliseCustomGameObject(ref object3D, modelName);
-            // Debug.Log(modelName + " injected");
         }
         
         /// <summary>
@@ -179,8 +182,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Import the custom gameobject for billboard if available
+        /// Import the custom GameObject for billboard if available
         /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
+        /// TODO: Integrate with the mod system to import models from mods using load order
         /// </summary>
         static public void ImportCustomFlatGameobject (int archive, int record, Vector3 position, Transform parent, out bool modelExist)
         {
@@ -201,28 +205,30 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             // Load AssetBundle
-            // TODO: Use mod system to import prefabs from all mods and use load order
-            // Debug.Log("Loading Assetbundle");
-            string modelsPath = Path.Combine(Application.persistentDataPath, "Models");
-            string assetBundleName = "myassetbundle.dfmod";
-            var LoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(modelsPath, assetBundleName));
+            string modelsPath = Path.Combine(Application.streamingAssetsPath, "Flats");
+            string modelName = archive.ToString() + "_" + record.ToString();
+            modelsPath = Path.Combine(modelsPath, modelName + ".flat");
+            if (!File.Exists(modelsPath))
+            {
+                modelExist = false;
+                return;
+            }
+            var LoadedAssetBundle = AssetBundle.LoadFromFile(modelsPath);
             if (LoadedAssetBundle == null)
             {
-                // Debug.Log("Failed to load AssetBundle");
-                Debug.Log("Failed to load AssetBundle");
+                Debug.LogError("Failed to load AssetBundle " + modelName + ".flat");
                 modelExist = false;
                 return;
             }
  
             // Check if AssetBundle contain the model we are looking for
-            string modelName = archive.ToString() + "_" + record.ToString();
             if (!LoadedAssetBundle.Contains(modelName))
             {
+                Debug.LogError("AssetBundle " + modelName + ".flat is invalid");
                 modelExist = false;
                 LoadedAssetBundle.Unload(false);
                 return;
             }
-            // Debug.Log("Assetbundle contains " + modelName);
 
             // Instantiate GameObject
             modelExist = true;
@@ -235,7 +241,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             
             // Finalise gameobject
             FinaliseCustomGameObject(ref object3D, modelName);
-            // Debug.Log(modelName + " injected");
         }
         
         /// <summary>

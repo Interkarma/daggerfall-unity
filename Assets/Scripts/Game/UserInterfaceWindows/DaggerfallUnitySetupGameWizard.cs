@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox mouseSmoothing;
         Checkbox leftHandWeapons;
         Checkbox playerNudity;
+        Checkbox meshAndTextureReplacement;
 
         Checkbox enhancedSky;
         Checkbox distantTerrain;
@@ -70,7 +71,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox tallGrass;
         Checkbox grassAndPlants;
         Checkbox flyingBirds;
-        Checkbox meshAndTextureReplacement;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
         Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
@@ -451,6 +451,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mouseSmoothing = AddOption(x, "Mouse Smoothing", "Smooth mouse-look sampling", DaggerfallUnity.Settings.MouseLookSmoothing);
             leftHandWeapons = AddOption(x, "Left Hand Weapons", "Draw weapons on left side of screen", GetLeftHandWeapons());
             playerNudity = AddOption(x, "Player Nudity", "Allow nudity on paper doll", DaggerfallUnity.Settings.PlayerNudity);
+            meshAndTextureReplacement = AddOption(x, "Support for Graphical Mods", "Enable replacement of textures and models", DaggerfallUnity.Settings.MeshAndTextureReplacement);
 
             // Setup mods checkboxes
             x = 165;
@@ -461,7 +462,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             tallGrass = AddOption(x, "Tall Grass (Uncanny_Valley)", "Animated tall grass", DaggerfallUnity.Settings.UncannyValley_RealGrass);
             grassAndPlants = AddOption(x, "Grass and Plants (TheLacus)", "Uncanny_Valley's Tall grass plus water plants", DaggerfallUnity.Settings.TheLacus_GrassAndPlants);
             flyingBirds = AddOption(x, "Flying Birds (Uncanny Valley)", "Animated flying birds", DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall);
-            meshAndTextureReplacement = AddOption(x, "Support for texture packs", "Enable replacement of textures", DaggerfallUnity.Settings.MeshAndTextureReplacement);
 
             // Add mod note
             string modNote = "Note: Enabling mods can increase performance requirements";
