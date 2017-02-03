@@ -480,11 +480,15 @@ namespace DaggerfallWorkshop.Utility
                     if (modelData.Doors != null)
                         doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix));
 
-                    // Use custom prefab
-                    if (MeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
-                        MeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
+                    // Import custom GameObject
+                    bool modelExist;
+                    MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out modelExist);
+                    if (modelExist)
+                        continue;
+
+                    // Use Daggerfall Model
                     // Add or combine
-                    else if (combiner == null || IsCityGate(obj.ModelIdNum) || MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                    if (combiner == null || IsCityGate(obj.ModelIdNum) || MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
                         AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                     else
                         combiner.Add(ref modelData, modelMatrix);
@@ -520,11 +524,15 @@ namespace DaggerfallWorkshop.Utility
                 if (modelData.Doors != null)
                     doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
 
-                // Use custom prefab
-                if (MeshReplacement.ReplacementPrefabExist(obj.ModelIdNum))
-                    MeshReplacement.LoadReplacementPrefab(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
+                // Import custom GameObject
+                bool modelExist;
+                MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out modelExist);
+                if (modelExist)
+                    continue;
+
+                // Use Daggerfall Model
                 // Add or combine
-                else if (combiner == null || MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                if (combiner == null || MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
                     AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                 else
                     combiner.Add(ref modelData, modelMatrix);
