@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
@@ -25,75 +26,70 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallControlsWindow : DaggerfallPopupWindow
     {
-        #region UI Rects
+        Texture2D nativeTexture;
+        Panel controlsPanel = new Panel();
 
+        const string nativeImgName = "CNFG00I0.IMG";
 
-
-        #endregion
-
-        #region UI Controls
-
-
-
-        #endregion
-
-        #region UI Textures
-
-        Texture2D baseTexture;
-
-        #endregion
-
-        #region Fields
-
-        const string baseTextureName = "CNFG00I0.IMG";
-
-        #endregion
-
-        #region Constructors
-
-        public DaggerfallControlsWindow(IUserInterfaceManager uiManager)
-            : base(uiManager)
+        public DaggerfallControlsWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
+            :base(uiManager, previousWindow)
         {
-            StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
-
-        #endregion
-
-        #region Setup Methods
 
         protected override void Setup()
         {
-            // Load all the textures used by inventory system
-            LoadTextures();
+            // Load native texture
+            nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName);
+            if (!nativeTexture)
+                throw new Exception("DaggerfallControlsWindow: Could not load native texture.");
 
             // Always dim background
             ParentPanel.BackgroundColor = ScreenDimColor;
 
-            // Setup native panel background
-            NativePanel.BackgroundTexture = baseTexture;
+            //Controls panel
+            controlsPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            controlsPanel.Size = new Vector2(nativeTexture.width, nativeTexture.height);
+            controlsPanel.BackgroundTexture = nativeTexture;
+            NativePanel.Components.Add(controlsPanel);
+
+            //Joystick
+            Button joystickButton = DaggerfallUI.AddButton(new Rect(0, 190, 80, 10), controlsPanel);
+            joystickButton.OnMouseClick += JoystickButton_OnMouseClick;
+
+            //Mouse
+            Button mouseButton = DaggerfallUI.AddButton(new Rect(80, 190, 80, 10), controlsPanel);
+            mouseButton.OnMouseClick += MouseButton_OnMouseClick;
+
+            //Default
+            Button defaultButton = DaggerfallUI.AddButton(new Rect(160, 190, 80, 10), controlsPanel);
+            defaultButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+            defaultButton.OnMouseClick += DefaultButton_OnMouseClick;
+
+            // Continue
+            Button continueButton = DaggerfallUI.AddButton(new Rect(240, 190, 80, 10), controlsPanel);
+            continueButton.OnMouseClick += ContinueButton_OnMouseClick;
         }
 
-        #endregion
+        #region Tab Event Handlers
 
-        #region Private Methods
-
-        void LoadTextures()
+        private void JoystickButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            //Load source textures
-            baseTexture = ImageReader.GetTexture(baseTextureName);
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenJoystickControlsWindow);
         }
 
-        #endregion
-
-        #region Other Event Handlers
-
-        private void StartGameBehaviour_OnNewGame()
+        private void MouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // Reset certain elements on a new game
-            if (IsSetup)
-            {
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenMouseControlsWindow);
+        }
 
-            }
+        private void DefaultButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            //Set keybinds back to default
+        }
+
+        private void ContinueButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CancelWindow();
         }
 
         #endregion

@@ -76,6 +76,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallCharacterSheetWindow dfCharacterSheetWindow;
         DaggerfallInventoryWindow dfInventoryWindow;
         DaggerfallControlsWindow dfControlsWindow;
+        DaggerfallJoystickControlsWindow dfJoystickControlsWindow;
+        DaggerfallMouseControlsWindow dfMouseControlsWindow;
         DaggerfallTravelMapWindow dfTravelMapWindow;
         DaggerfallAutomapWindow dfAutomapWindow;
         DaggerfallExteriorAutomapWindow dfExteriorAutomapWindow;
@@ -142,6 +144,16 @@ namespace DaggerfallWorkshop.Game
             get { return dfControlsWindow; }
         }
 
+        public DaggerfallJoystickControlsWindow JoystickControlsWindow
+        {
+            get { return dfJoystickControlsWindow; }
+        }
+
+        public DaggerfallMouseControlsWindow MouseControlsWindow
+        {
+            get { return dfMouseControlsWindow; }
+        }
+
         public DaggerfallBookReaderWindow BookReaderWindow
         {
             get { return dfBookReaderWindow; }
@@ -169,6 +181,8 @@ namespace DaggerfallWorkshop.Game
             dfCharacterSheetWindow = new DaggerfallCharacterSheetWindow(uiManager);
             dfInventoryWindow = new DaggerfallInventoryWindow(uiManager);
             dfControlsWindow = new DaggerfallControlsWindow(uiManager);
+            dfJoystickControlsWindow = new DaggerfallJoystickControlsWindow(uiManager);
+            dfMouseControlsWindow = new DaggerfallMouseControlsWindow(uiManager);
             dfTravelMapWindow = new DaggerfallTravelMapWindow(uiManager);
             dfAutomapWindow = new DaggerfallAutomapWindow(uiManager);
             dfBookReaderWindow = new DaggerfallBookReaderWindow(uiManager);
@@ -277,6 +291,12 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case DaggerfallUIMessages.dfuiOpenControlsWindow:
                     uiManager.PushWindow(dfControlsWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenJoystickControlsWindow:
+                    uiManager.PushWindow(dfJoystickControlsWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenMouseControlsWindow:
+                    uiManager.PushWindow(dfMouseControlsWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
                     if (!GameManager.Instance.IsPlayerInside)        //TODO: pop-up when try to travel near enemies
