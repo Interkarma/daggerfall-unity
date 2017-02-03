@@ -28,6 +28,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     static public class TextureReplacement
     {
+        static string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
+        static string imgPath = Path.Combine(texturesPath, "img");
+        static string cifPath = Path.Combine(texturesPath, "cif");
 
         #region Textures import
 
@@ -51,7 +54,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public bool CustomTextureExist(string name)
         {
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Application.persistentDataPath + "/textures/" + name + ".png"))
+                && File.Exists(Path.Combine(texturesPath, name + ".png")))
                 return true;
 
             return false;
@@ -69,7 +72,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Texture2D tex = new Texture2D(2, 2); //create empty texture, size will be the actual size of .png file
 
             //load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/textures/" + name + ".png"));
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(texturesPath, name + ".png")));
 
             return tex; //assign image to the actual texture
         }
@@ -88,7 +91,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
 
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Application.persistentDataPath + "/textures/img/" + filename + ".png"))
+                && File.Exists(Path.Combine(imgPath, filename + ".png")))
                 return true;
 
             return false;
@@ -101,7 +104,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Texture2D tex = new Texture2D(2, 2); //create empty texture, size will be the actual size of .png file
 
             //load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/textures/img/" + filename + ".png"));
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(imgPath, filename + ".png")));
 
             return tex; //assign image to the actual texture
         }
@@ -122,7 +125,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
 
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Application.persistentDataPath + "/textures/cif/" + filename + "_" + record.ToString() + "-" + frame.ToString() + ".png"))
+                && File.Exists(Path.Combine(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString() + ".png")))
                 return true;
 
             return false;
@@ -135,7 +138,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Texture2D tex = new Texture2D(2, 2); //create empty texture, size will be the actual size of .png file
 
             //load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/textures/cif/" + filename + "_" + record.ToString() + "-" + frame.ToString() + ".png"));
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString() + ".png")));
 
             return tex; //assign image to the actual texture
         }
@@ -160,7 +163,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public bool CustomNormalExist(string name)
         {
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Application.persistentDataPath + "/textures/" + name + "_Normal.png"))
+                && File.Exists(Path.Combine(texturesPath, name + "_Normal.png")))
                 return true;
 
             return false;
@@ -176,7 +179,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public Texture2D LoadCustomNormal(string name)
         {
             Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, true); //create empty texture, size will be the actual size of .png file
-            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/textures/" + name + "_Normal.png"));
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(texturesPath, name + "_Normal.png")));
 
             Color32[] colours = tex.GetPixels32();
             for (int i = 0; i < colours.Length; i++)
@@ -206,7 +209,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public bool CustomEmissionExist(int archive, int record, int frame)
         {
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Application.persistentDataPath + "/textures/" + archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Emission.png"))
+                && File.Exists(Path.Combine(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Emission.png")))
                 return true;
 
             return false;
@@ -219,7 +222,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Texture2D tex = new Texture2D(2, 2); //create empty texture, size will be the actual size of .png file
 
             //load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/textures/" + archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Emission.png"));
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Emission.png")));
 
             return tex; //assign image to the actual texture
         }
