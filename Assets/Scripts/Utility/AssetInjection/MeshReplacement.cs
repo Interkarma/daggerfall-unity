@@ -205,7 +205,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             // Load AssetBundle
-            string modelsPath = Path.Combine(Application.persistentDataPath, "Flats");
+            string modelsPath = Path.Combine(Application.streamingAssetsPath, "Flats");
             string modelName = archive.ToString() + "_" + record.ToString();
             modelsPath = Path.Combine(modelsPath, modelName + ".flat");
             if (!File.Exists(modelsPath))
