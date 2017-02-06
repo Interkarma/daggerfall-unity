@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Utility;
@@ -684,10 +685,11 @@ namespace DaggerfallWorkshop.Game
 
             ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);            
             Texture2D texture = null;
-
-            // Texture packs support
-            if (DaggerfallWorkshop.Utility.AssetInjection.TextureReplacement.CustomImageExist(name))
-                texture = DaggerfallWorkshop.Utility.AssetInjection.TextureReplacement.LoadCustomImage(name);
+ 
+            // Custom texture
+            if (TextureReplacement.CustomImageExist(name))
+                texture = TextureReplacement.LoadCustomImage(name);
+            // Daggerfall texture
             else
             {
                 imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
@@ -737,11 +739,20 @@ namespace DaggerfallWorkshop.Game
                 return null;
 
             CifRciFile cifRciFile = new CifRciFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
-            cifRciFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cifRciFile.PaletteName));
-            DFBitmap bitmap = cifRciFile.GetDFBitmap(record, frame);
-            Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
-            texture.SetPixels32(cifRciFile.GetColor32(bitmap, 0));
-            texture.Apply(false, true);
+            Texture2D texture=null;
+            
+            // Custom texture
+            if (TextureReplacement.CustomCifExist(name, record, frame))
+                texture = TextureReplacement.LoadCustomCif(name, record, frame);
+            // Daggerfall texture
+            else
+            { 
+                cifRciFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cifRciFile.PaletteName));
+                DFBitmap bitmap = cifRciFile.GetDFBitmap(record, frame);
+                texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
+                texture.SetPixels32(cifRciFile.GetColor32(bitmap, 0));
+                texture.Apply(false, true);
+            }
             texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             offset = cifRciFile.GetOffset(record);

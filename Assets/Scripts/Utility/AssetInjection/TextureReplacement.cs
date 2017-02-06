@@ -121,7 +121,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         /// check if file exist on disk. 
         /// <returns>Bool</returns>
-        static public bool CustomCifExist(string filename, int record, int frame)
+        static public bool CustomCifExist(string filename, int record, int frame = 0)
         {
 
             if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
