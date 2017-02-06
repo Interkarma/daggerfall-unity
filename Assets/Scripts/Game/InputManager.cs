@@ -17,6 +17,7 @@ using System.Text;
 using System.IO;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Serialization;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -137,10 +138,10 @@ namespace DaggerfallWorkshop.Game
 
             MoveForwards,
             MoveBackwards,
-            MoveLeft,
-            MoveRight,
             TurnLeft,
+            MoveLeft,
             TurnRight,
+            MoveRight,
 
             FloatUp,
             FloatDown,
@@ -397,42 +398,52 @@ namespace DaggerfallWorkshop.Game
             return keyCodes.ToArray();
         }
 
-        #endregion
-
-        #region Public Static Methods
-
-        public static bool FindSingleton(out InputManager singletonOut)
+        // Bind a KeyCode to an action
+        public void SetBinding(KeyCode code, Actions action)
         {
-            singletonOut = GameObject.FindObjectOfType(typeof(InputManager)) as InputManager;
-            if (singletonOut == null)
+            if (!actionKeyDict.ContainsKey(code))
             {
-                DaggerfallUnity.LogMessage("Could not locate InputManager GameObject instance in scene!", true);
-                return false;
+                actionKeyDict.Add(code, action);
             }
-
-            return true;
+            else
+            {
+                actionKeyDict.Remove(code);
+                actionKeyDict.Add(code, action);
+            }
         }
 
-        #endregion
-
-        #region Private Methods
-
-        private void SetupSingleton()
+        // Unbind a KeyCode or action
+        public void ClearBinding(KeyCode code)
         {
-            if (instance == null)
-                instance = this;
-            else if (instance != this)
+            if (actionKeyDict.ContainsKey(code))
             {
-                if (Application.isPlaying)
-                {
-                    DaggerfallUnity.LogMessage("Multiple InputManager instances detected in scene!", true);
-                    Destroy(gameObject);
-                }
+                actionKeyDict.Remove(code);
             }
+        }
+
+        public void ClearBinding(Actions action)
+        {
+            foreach (var binding in actionKeyDict.Where(kvp => kvp.Value == action).ToList())
+            {
+                Debug.Log(binding);
+                actionKeyDict.Remove(binding.Key);
+            }
+        }
+
+        // Save keybindings
+        public void SaveKeyBinds()
+        {
+            string path = GetKeyBindsSavePath();
+
+            KeyBindData_v1 keyBindsData = new KeyBindData_v1();
+            keyBindsData.actionKeyBinds = actionKeyDict;
+            string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
+            File.WriteAllText(path, json);
+            RaiseSavedKeyBindsEvent();
         }
 
         // Deploys default values if action missing from loaded keybinds
-        void SetupDefaults()
+        public void SetupDefaults()
         {
             TestSetBinding(KeyCode.Escape, Actions.Escape);
             TestSetBinding(KeyCode.BackQuote, Actions.ToggleConsole);
@@ -491,37 +502,48 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.F12, Actions.QuickLoad);
         }
 
-        // Bind a KeyCode to an action
-        void SetBinding(KeyCode code, Actions action)
-        {
-            if (!actionKeyDict.ContainsKey(code))
-            {
-                actionKeyDict.Add(code, action);
-            }
-            else
-            {
-                actionKeyDict.Remove(code);
-                actionKeyDict.Add(code, action);
-            }
-        }
-
-        // Unbind a KeyCode from an action
-        void ClearBinding(KeyCode code)
-        {
-            if (actionKeyDict.ContainsKey(code))
-            {
-                actionKeyDict.Remove(code);
-            }
-        }
-
         // Sets KeyCode binding only if action is missing
         // This is to ensure default actions are restored if missing
         // and to push out new actions to existing keybind files
-        void TestSetBinding(KeyCode code, Actions action)
+        public void TestSetBinding(KeyCode code, Actions action)
         {
             if (!actionKeyDict.ContainsValue(action))
             {
                 SetBinding(code, action);
+            }
+        }
+
+        #endregion
+
+        #region Public Static Methods
+
+        public static bool FindSingleton(out InputManager singletonOut)
+        {
+            singletonOut = GameObject.FindObjectOfType(typeof(InputManager)) as InputManager;
+            if (singletonOut == null)
+            {
+                DaggerfallUnity.LogMessage("Could not locate InputManager GameObject instance in scene!", true);
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void SetupSingleton()
+        {
+            if (instance == null)
+                instance = this;
+            else if (instance != this)
+            {
+                if (Application.isPlaying)
+                {
+                    DaggerfallUnity.LogMessage("Multiple InputManager instances detected in scene!", true);
+                    Destroy(gameObject);
+                }
             }
         }
 
@@ -618,17 +640,6 @@ namespace DaggerfallWorkshop.Game
                 return true;
 
             return false;
-        }
-
-        void SaveKeyBinds()
-        {
-            string path = GetKeyBindsSavePath();
-
-            KeyBindData_v1 keyBindsData = new KeyBindData_v1();
-            keyBindsData.actionKeyBinds = actionKeyDict;
-            string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
-            File.WriteAllText(path, json);
-            RaiseSavedKeyBindsEvent();
         }
 
         void LoadKeyBinds()
