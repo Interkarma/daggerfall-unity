@@ -28,9 +28,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     static public class TextureReplacement
     {
-        static string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
-        static string imgPath = Path.Combine(texturesPath, "img");
-        static string cifPath = Path.Combine(texturesPath, "cif");
+        static public string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
+        static public string imgPath = Path.Combine(texturesPath, "img");
+        static public string cifPath = Path.Combine(texturesPath, "cif");
 
         #region Textures import
 
