@@ -10,7 +10,8 @@
 //
 
 using UnityEngine;
-
+using DaggerfallWorkshop.Utility.AssetInjection;
+ 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
@@ -36,14 +37,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (CrosshairTexture && Enabled)
             {
                 BackgroundTexture = CrosshairTexture;
-                Size = new Vector2(CrosshairTexture.width * CrosshairScale, CrosshairTexture.height * CrosshairScale);
+
+                if (TextureReplacement.CustomTextureExist(defaultCrosshairFilename))
+                    Size = new Vector2(XMLManager.GetValue(defaultCrosshairFilename, "width") * CrosshairScale, 
+                        XMLManager.GetValue(defaultCrosshairFilename, "height") * CrosshairScale);
+                else
+                    Size = new Vector2(CrosshairTexture.width * CrosshairScale, CrosshairTexture.height * CrosshairScale);
+
                 base.Update();
             }
         }
 
         void LoadAssets()
         {
-            CrosshairTexture = Resources.Load<Texture2D>(defaultCrosshairFilename);
+            if (TextureReplacement.CustomTextureExist(defaultCrosshairFilename))
+                CrosshairTexture = TextureReplacement.LoadCustomTexture(defaultCrosshairFilename);
+            else
+                CrosshairTexture = Resources.Load<Texture2D>(defaultCrosshairFilename);
         }
     }
 }
