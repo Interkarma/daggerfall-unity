@@ -73,10 +73,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (!AllowCancel && Input.GetKeyDown(KeyCode.Escape))
             {
-                DaggerfallMessageBox multipleAssignmentsBox = new DaggerfallMessageBox(uiManager, this);
-                multipleAssignmentsBox.SetText(new string[] { "You have multiple assignments..." });
-                multipleAssignmentsBox.ClickAnywhereToClose = true;
-                multipleAssignmentsBox.Show();
+                ShowMultipleAssignmentsMessage();
             }
         }
 
@@ -131,15 +128,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             #region Keybind Buttons
 
-            SetupKeybindButtons(moveKeysOne, 2, 8, 56, 12, true);
-            SetupKeybindButtons(moveKeysTwo, 8, 14, 163, 12, true);
-            SetupKeybindButtons(modeKeys, 14, 20, 269, 12, true);
-            SetupKeybindButtons(magicKeys, 20, 24, 101, 79, true);
-            SetupKeybindButtons(weaponKeys, 24, 27, 101, 124, true);
-            SetupKeybindButtons(statusKeys, 27, 30, 101, 158, true);
-            SetupKeybindButtons(activateKeys, 30, 32, 269, 79, true);
-            SetupKeybindButtons(lookKeys, 32, 36, 269, 102, true);
-            SetupKeybindButtons(uiKeys, 36, 40, 269, 147, true);
+            SetupKeybindButtons(moveKeysOne, 2, 8, 57, 13, true);
+            SetupKeybindButtons(moveKeysTwo, 8, 14, 164, 13, true);
+            SetupKeybindButtons(modeKeys, 14, 20, 270, 13, true);
+            SetupKeybindButtons(magicKeys, 20, 24, 102, 80, true);
+            SetupKeybindButtons(weaponKeys, 24, 27, 102, 125, true);
+            SetupKeybindButtons(statusKeys, 27, 30, 102, 159, true);
+            SetupKeybindButtons(activateKeys, 30, 32, 270, 80, true);
+            SetupKeybindButtons(lookKeys, 32, 36, 270, 103, true);
+            SetupKeybindButtons(uiKeys, 36, 40, 270, 148, true);
 
             #endregion
         }
@@ -148,18 +145,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        private void SetupKeybindButtons(List<Button> buttonGroup, int startPoint, int endPoint, int leftOffset, int topOffset, bool firstPass)
+        private void SetupKeybindButtons(List<Button> buttonGroup, int startPoint, int endPoint, int leftOffset, int topOffset, bool firstSetup)
         {
             for (int i = startPoint; i < endPoint; i++)
             {
                 InputManager.Actions key = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), actions[i]);
                 int j = i - startPoint;
 
-                if (firstPass)
+                if (firstSetup)
                 {
                     buttonGroup.Add(new Button());
-                    buttonGroup[j].Label.ShadowPosition = new Vector2(0, 0);
-                    buttonGroup[j].Size = new Vector2(48, 8);
+                    buttonGroup[j].Label.ShadowPosition = Vector2.zero;
+                    buttonGroup[j].Size = new Vector2(47, 7);
 
                     if (j == 0)
                         buttonGroup[j].Position = new Vector2(leftOffset, topOffset);
@@ -243,6 +240,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButtons(uiKeys, 36, 40, 269, 147, false);
         }
 
+        private void ShowMultipleAssignmentsMessage()
+        {
+            DaggerfallMessageBox multipleAssignmentsBox = new DaggerfallMessageBox(uiManager, this);
+            multipleAssignmentsBox.SetText(HardStrings.multipleAssignments);
+            multipleAssignmentsBox.ClickAnywhereToClose = true;
+            multipleAssignmentsBox.Show();
+        }
+
         #endregion
 
         #region Tab Button Event Handlers
@@ -267,10 +272,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!AllowCancel)
             {
-                DaggerfallMessageBox multipleAssignmentsBox = new DaggerfallMessageBox(uiManager, this);
-                multipleAssignmentsBox.SetText(new string[] { "You have multiple assignments..." });
-                multipleAssignmentsBox.ClickAnywhereToClose = true;
-                multipleAssignmentsBox.Show();
+                ShowMultipleAssignmentsMessage();
             }
             else
             {
