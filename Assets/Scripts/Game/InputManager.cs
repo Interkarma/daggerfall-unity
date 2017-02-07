@@ -425,7 +425,6 @@ namespace DaggerfallWorkshop.Game
         {
             foreach (var binding in actionKeyDict.Where(kvp => kvp.Value == action).ToList())
             {
-                Debug.Log(binding);
                 actionKeyDict.Remove(binding.Key);
             }
         }
@@ -442,8 +441,115 @@ namespace DaggerfallWorkshop.Game
             RaiseSavedKeyBindsEvent();
         }
 
+        // Set keybindings to defaults
+        public void ResetDefaults()
+        {
+            actionKeyDict.Clear();
+
+            SetBinding(KeyCode.Escape, Actions.Escape);
+            SetBinding(KeyCode.BackQuote, Actions.ToggleConsole);
+
+            SetBinding(KeyCode.W, Actions.MoveForwards);
+            SetBinding(KeyCode.S, Actions.MoveBackwards);
+            SetBinding(KeyCode.A, Actions.MoveLeft);
+            SetBinding(KeyCode.D, Actions.MoveRight);
+            SetBinding(KeyCode.LeftArrow, Actions.TurnLeft);
+            SetBinding(KeyCode.RightArrow, Actions.TurnRight);
+
+            SetBinding(KeyCode.PageUp, Actions.FloatUp);
+            SetBinding(KeyCode.PageDown, Actions.FloatDown);
+            SetBinding(KeyCode.Space, Actions.Jump);
+            SetBinding(KeyCode.C, Actions.Crouch);
+            SetBinding(KeyCode.LeftControl, Actions.Slide);
+            SetBinding(KeyCode.RightControl, Actions.Slide);
+            SetBinding(KeyCode.LeftShift, Actions.Run);
+            SetBinding(KeyCode.RightShift, Actions.Run);
+
+            SetBinding(KeyCode.R, Actions.Rest);
+            SetBinding(KeyCode.T, Actions.Transport);
+            SetBinding(KeyCode.F1, Actions.StealMode);
+            SetBinding(KeyCode.F2, Actions.GrabMode);
+            SetBinding(KeyCode.F3, Actions.InfoMode);
+            SetBinding(KeyCode.F4, Actions.TalkMode);
+
+            SetBinding(KeyCode.Backspace, Actions.CastSpell);
+            SetBinding(KeyCode.Q, Actions.RecastSpell);
+            SetBinding(KeyCode.E, Actions.AbortSpell);
+            SetBinding(KeyCode.U, Actions.UseMagicItem);
+
+            SetBinding(KeyCode.Z, Actions.ReadyWeapon);
+            SetBinding(KeyCode.Mouse1, Actions.SwingWeapon);
+            SetBinding(KeyCode.H, Actions.SwitchHand);
+
+            SetBinding(KeyCode.I, Actions.Status);
+            SetBinding(KeyCode.F5, Actions.CharacterSheet);
+            SetBinding(KeyCode.F6, Actions.Inventory);
+
+            SetBinding(KeyCode.Mouse0, Actions.ActivateCenterObject);
+            SetBinding(KeyCode.Return, Actions.ActivateCursor);
+
+            SetBinding(KeyCode.Insert, Actions.LookUp);
+            SetBinding(KeyCode.Delete, Actions.LookDown);
+            SetBinding(KeyCode.Home, Actions.CenterView);
+            SetBinding(KeyCode.LeftAlt, Actions.Sneak);
+            SetBinding(KeyCode.RightAlt, Actions.Sneak);
+
+            SetBinding(KeyCode.L, Actions.LogBook);
+            SetBinding(KeyCode.N, Actions.NoteBook);
+            SetBinding(KeyCode.M, Actions.AutoMap);
+            SetBinding(KeyCode.V, Actions.TravelMap);
+
+            SetBinding(KeyCode.F9, Actions.QuickSave);
+            SetBinding(KeyCode.F12, Actions.QuickLoad);
+        }
+
+        #endregion
+
+        #region Public Static Methods
+
+        public static bool FindSingleton(out InputManager singletonOut)
+        {
+            singletonOut = GameObject.FindObjectOfType(typeof(InputManager)) as InputManager;
+            if (singletonOut == null)
+            {
+                DaggerfallUnity.LogMessage("Could not locate InputManager GameObject instance in scene!", true);
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void SetupSingleton()
+        {
+            if (instance == null)
+                instance = this;
+            else if (instance != this)
+            {
+                if (Application.isPlaying)
+                {
+                    DaggerfallUnity.LogMessage("Multiple InputManager instances detected in scene!", true);
+                    Destroy(gameObject);
+                }
+            }
+        }
+
+        // Sets KeyCode binding only if action is missing
+        // This is to ensure default actions are restored if missing
+        // and to push out new actions to existing keybind files
+        private void TestSetBinding(KeyCode code, Actions action)
+        {
+            if (!actionKeyDict.ContainsValue(action))
+            {
+                SetBinding(code, action);
+            }
+        }
+
         // Deploys default values if action missing from loaded keybinds
-        public void SetupDefaults()
+        private void SetupDefaults()
         {
             TestSetBinding(KeyCode.Escape, Actions.Escape);
             TestSetBinding(KeyCode.BackQuote, Actions.ToggleConsole);
@@ -500,51 +606,6 @@ namespace DaggerfallWorkshop.Game
 
             TestSetBinding(KeyCode.F9, Actions.QuickSave);
             TestSetBinding(KeyCode.F12, Actions.QuickLoad);
-        }
-
-        // Sets KeyCode binding only if action is missing
-        // This is to ensure default actions are restored if missing
-        // and to push out new actions to existing keybind files
-        public void TestSetBinding(KeyCode code, Actions action)
-        {
-            if (!actionKeyDict.ContainsValue(action))
-            {
-                SetBinding(code, action);
-            }
-        }
-
-        #endregion
-
-        #region Public Static Methods
-
-        public static bool FindSingleton(out InputManager singletonOut)
-        {
-            singletonOut = GameObject.FindObjectOfType(typeof(InputManager)) as InputManager;
-            if (singletonOut == null)
-            {
-                DaggerfallUnity.LogMessage("Could not locate InputManager GameObject instance in scene!", true);
-                return false;
-            }
-
-            return true;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private void SetupSingleton()
-        {
-            if (instance == null)
-                instance = this;
-            else if (instance != this)
-            {
-                if (Application.isPlaying)
-                {
-                    DaggerfallUnity.LogMessage("Multiple InputManager instances detected in scene!", true);
-                    Destroy(gameObject);
-                }
-            }
         }
 
         // Apply force to horizontal axis

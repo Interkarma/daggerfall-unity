@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -44,11 +45,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<Button> lookKeys = new List<Button>();
         List<Button> uiKeys = new List<Button>();
         List<List<Button>> allKeys = new List<List<Button>>();
+        List<string> allLabels = new List<string>();
+        List<string> dupeLabels = new List<string>();
 
         string[] actions = Enum.GetNames(typeof(InputManager.Actions));
         const string nativeTextureName = "CNFG00I0.IMG";
         const string mLookAltTextureName = "CNFG00I1.IMG";
-        bool multipleAssignments = false;
+        bool dupeHelper = false;
+        bool waitingForInput = false;
 
         #endregion
 
@@ -57,6 +61,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallControlsWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             :base(uiManager, previousWindow)
         {
+        }
+
+        #endregion
+
+        #region Unity
+
+        public override void Update()
+        {
+            base.Update();
+
+            if (!AllowCancel && Input.GetKeyDown(KeyCode.Escape))
+            {
+                DaggerfallMessageBox multipleAssignmentsBox = new DaggerfallMessageBox(uiManager, this);
+                multipleAssignmentsBox.SetText(new string[] { "You have multiple assignments..." });
+                multipleAssignmentsBox.ClickAnywhereToClose = true;
+                multipleAssignmentsBox.Show();
+            }
         }
 
         #endregion
@@ -90,15 +111,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Joystick
             Button joystickButton = DaggerfallUI.AddButton(new Rect(0, 190, 80, 10), controlsPanel);
+            joystickButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
             joystickButton.OnMouseClick += JoystickButton_OnMouseClick;
 
             // Mouse
             Button mouseButton = DaggerfallUI.AddButton(new Rect(80, 190, 80, 10), controlsPanel);
+            joystickButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
             mouseButton.OnMouseClick += MouseButton_OnMouseClick;
 
             // Default
             Button defaultButton = DaggerfallUI.AddButton(new Rect(160, 190, 80, 10), controlsPanel);
-            defaultButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
             defaultButton.OnMouseClick += DefaultButton_OnMouseClick;
 
             // Continue
@@ -109,15 +131,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             #region Keybind Buttons
 
-            positionKeybindButtons(moveKeysOne, 2, 8, 56, 12);
-            positionKeybindButtons(moveKeysTwo, 8, 14, 163, 12);
-            positionKeybindButtons(modeKeys, 14, 20, 269, 12);
-            positionKeybindButtons(magicKeys, 20, 24, 101, 79);
-            positionKeybindButtons(weaponKeys, 24, 27, 101, 124);
-            positionKeybindButtons(statusKeys, 27, 30, 101, 158);
-            positionKeybindButtons(activateKeys, 30, 32, 269, 79);
-            positionKeybindButtons(lookKeys, 32, 36, 269, 102);
-            positionKeybindButtons(uiKeys, 36, 40, 269, 147);
+            SetupKeybindButtons(moveKeysOne, 2, 8, 56, 12, true);
+            SetupKeybindButtons(moveKeysTwo, 8, 14, 163, 12, true);
+            SetupKeybindButtons(modeKeys, 14, 20, 269, 12, true);
+            SetupKeybindButtons(magicKeys, 20, 24, 101, 79, true);
+            SetupKeybindButtons(weaponKeys, 24, 27, 101, 124, true);
+            SetupKeybindButtons(statusKeys, 27, 30, 101, 158, true);
+            SetupKeybindButtons(activateKeys, 30, 32, 269, 79, true);
+            SetupKeybindButtons(lookKeys, 32, 36, 269, 102, true);
+            SetupKeybindButtons(uiKeys, 36, 40, 269, 147, true);
 
             #endregion
         }
@@ -126,32 +148,99 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        private void positionKeybindButtons(List<Button> buttonGroup, int startPoint, int endPoint, int leftOffset, int topOffset)
+        private void SetupKeybindButtons(List<Button> buttonGroup, int startPoint, int endPoint, int leftOffset, int topOffset, bool firstPass)
         {
             for (int i = startPoint; i < endPoint; i++)
             {
                 InputManager.Actions key = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), actions[i]);
                 int j = i - startPoint;
 
-                buttonGroup.Add(new Button());
-                buttonGroup[j].Label.Text = InputManager.Instance.GetBinding(key).ToString();
-                buttonGroup[j].Label.ShadowPosition = new Vector2(0, 0);
-                buttonGroup[j].Size = new Vector2(48, 8);
-
-                if (j == 0)
-                    buttonGroup[j].Position = new Vector2(leftOffset, topOffset);
-                else
-                    buttonGroup[j].Position = new Vector2(leftOffset, buttonGroup[j - 1].Position.y + 11);
-
-                controlsPanel.Components.Add(buttonGroup[j]);
-                buttonGroup[j].Name = actions[i];
-                buttonGroup[j].OnMouseClick += KeybindButton_OnMouseClick;
-
-                if (i == endPoint - 1)
+                if (firstPass)
                 {
-                    allKeys.Add(buttonGroup);
+                    buttonGroup.Add(new Button());
+                    buttonGroup[j].Label.ShadowPosition = new Vector2(0, 0);
+                    buttonGroup[j].Size = new Vector2(48, 8);
+
+                    if (j == 0)
+                        buttonGroup[j].Position = new Vector2(leftOffset, topOffset);
+                    else
+                        buttonGroup[j].Position = new Vector2(leftOffset, buttonGroup[j - 1].Position.y + 11);
+
+                    controlsPanel.Components.Add(buttonGroup[j]);
+                    buttonGroup[j].Name = actions[i];
+                    buttonGroup[j].OnMouseClick += KeybindButton_OnMouseClick;
+                    if (i == endPoint - 1)
+                    {
+                        allKeys.Add(buttonGroup);
+                    }
+                }
+
+                buttonGroup[j].Label.Text = InputManager.Instance.GetBinding(key).ToString();
+                buttonGroup[j].Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
+            }
+        }
+
+        private void CheckDuplicates()
+        {
+            foreach (List<Button> buttonGroup in allKeys)
+            {
+                foreach (Button keybindButton in buttonGroup)
+                {
+                    if (!dupeHelper)
+                    {
+                        allLabels.Add(keybindButton.Label.Text);
+                    }
+                    else
+                    {
+                        if (dupeLabels.Contains(keybindButton.Label.Text))
+                        {
+                            keybindButton.Label.TextColor = new Color(1, 0, 0);
+                        }
+                        else
+                        {
+                            keybindButton.Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
+                        }
+                    }
                 }
             }
+
+            if (!dupeHelper)
+            {
+                dupeLabels = allLabels.GroupBy(x => x)
+                             .Where(g => g.Count() > 1)
+                             .Select(g => g.Key)
+                             .ToList();
+                if (dupeLabels.Count() > 0)
+                {
+                    AllowCancel = false;
+                }
+                else
+                {
+                    AllowCancel = true;
+                }
+                dupeHelper = true;
+                CheckDuplicates();
+            }
+            else
+            {
+                allLabels.Clear();
+                dupeLabels.Clear();
+                dupeHelper = false;
+            }
+        }
+
+        private void SetDefaults()
+        {
+            InputManager.Instance.ResetDefaults();
+            SetupKeybindButtons(moveKeysOne, 2, 8, 56, 12, false);
+            SetupKeybindButtons(moveKeysTwo, 8, 14, 163, 12, false);
+            SetupKeybindButtons(modeKeys, 14, 20, 269, 12, false);
+            SetupKeybindButtons(magicKeys, 20, 24, 101, 79, false);
+            SetupKeybindButtons(weaponKeys, 24, 27, 101, 124, false);
+            SetupKeybindButtons(statusKeys, 27, 30, 101, 158, false);
+            SetupKeybindButtons(activateKeys, 30, 32, 269, 79, false);
+            SetupKeybindButtons(lookKeys, 32, 36, 269, 102, false);
+            SetupKeybindButtons(uiKeys, 36, 40, 269, 147, false);
         }
 
         #endregion
@@ -160,24 +249,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void JoystickButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenJoystickControlsWindow);
+            // uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenJoystickControlsWindow);
         }
 
         private void MouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenMouseControlsWindow);
+            // uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenMouseControlsWindow);
         }
 
         private void DefaultButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // Set keybinds to default
+            SetDefaults();
+            InputManager.Instance.SaveKeyBinds();
         }
 
         private void ContinueButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (multipleAssignments)
+            if (!AllowCancel)
             {
-                // Prevent window from closing
+                DaggerfallMessageBox multipleAssignmentsBox = new DaggerfallMessageBox(uiManager, this);
+                multipleAssignmentsBox.SetText(new string[] { "You have multiple assignments..." });
+                multipleAssignmentsBox.ClickAnywhereToClose = true;
+                multipleAssignmentsBox.Show();
             }
             else
             {
@@ -192,7 +285,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void KeybindButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             Button thisKeybindButton = (Button)sender;
-            InputManager.Instance.StartCoroutine(WaitForKeyPress(thisKeybindButton));
+            if (!waitingForInput)
+                InputManager.Instance.StartCoroutine(WaitForKeyPress(thisKeybindButton));
         }
 
         IEnumerator WaitForKeyPress(Button button)
@@ -202,25 +296,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             button.Label.Text = "";
             yield return new WaitForSecondsRealtime(0.05f);
+
             while(!Input.anyKeyDown)
             {
+                waitingForInput = true;
                 yield return null;
             }
+            waitingForInput = false;
+
             foreach (KeyCode code in Enum.GetValues(typeof(KeyCode)))
             {
                 if (Input.GetKeyDown(code))
                 {
                     if (code.ToString() != "Escape")
                     {
-                        foreach (List<Button> buttonGroup in allKeys)
-                        {
-                            foreach (Button keybindButton in buttonGroup)
-                            {
-                                // Prevent duplicate keybindings
-                            }
-                        }
-
                         button.Label.Text = code.ToString();
+                        CheckDuplicates();
                         InputManager.Instance.ClearBinding(buttonAction);
                         InputManager.Instance.SetBinding(code, buttonAction);
                         InputManager.Instance.SaveKeyBinds();
