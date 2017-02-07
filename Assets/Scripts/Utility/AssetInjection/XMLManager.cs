@@ -22,6 +22,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     {
         /// <summary>
         /// Get value from Xml file on disk
+        /// This is useful to get additional informations for custom textures.
         /// </summary>
         /// <param name="fileName">Name of texture. Correspond to the name of Xml file</param>
         /// <param name="valueName">Name of value to be searched</param>
@@ -33,6 +34,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             // Get path
             string path;
+            string originalName = fileName;
             if (isImage)
                 path = TextureReplacement.imgPath;
             else if (isCif)
@@ -51,8 +53,26 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 XElement xml = XElement.Load(path + ".xml");
                 return (int)xml.Element(valueName);
             }
-
-            // If missing, try to get value from texture
+            
+            // If missing, try to get value from Daggerfall vanilla texture
+            if (isImage)
+            {
+                ImageData imageData = ImageReader.GetImageData(fileName, createTexture: false);
+                if (valueName == "width")
+                    return imageData.width;
+                else if (valueName == "height")
+                    return imageData.height;
+            }
+            else if (isCif)
+            {
+                ImageData imageData = ImageReader.GetImageData(originalName, record, createTexture: false);
+                if (valueName == "width")
+                    return imageData.width;
+                else if (valueName == "height")
+                    return imageData.height;
+            }
+             
+            // If missing, try to get value from custom texture
             // This may give the wanted result if texture is same resolution as vanilla
             if (valueName == "width")
             {
@@ -71,6 +91,54 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             Debug.LogError(path + ".xml is missing");
             return 0;         
+        }
+
+        /// <summary>
+        /// Get float value from Xml file on disk.
+        /// This is useful to import rgba values.
+        /// </summary>
+        /// <param name="fileName">Name of texture. Correspond to the name of Xml file</param>
+        /// <param name="valueName">Name of value to be searched</param>
+        /// <returns>Float value</returns>
+        static public float GetColorValue(string fileName, string valueName)
+        {
+            // Get path
+            string path = Path.Combine(TextureReplacement.texturesPath, fileName);
+
+            // Get value from xml
+            if (File.Exists(path + ".xml"))
+            {
+                XElement xml = XElement.Load(path + ".xml");
+                return (float)xml.Element(valueName);
+            }
+
+            Debug.LogError(path + ".xml is missing");
+            return 0;
+        }
+
+        /// <summary>
+        /// Get string from Xml file on disk.
+        /// </summary>
+        /// <param name="fileName">Name of texture. Correspond to the name of Xml file</param>
+        /// <param name="valueName">Name of value to be searched</param>
+        /// <param name="isRequired">By default return an empty string if file is missing, if false return "NULL"</param>
+        /// <returns>String</returns>
+        static public string GetString (string fileName, string valueName, bool isRequired = true)
+        {
+            string path = Path.Combine(TextureReplacement.texturesPath, fileName);
+
+            // Get string from xml
+            if (File.Exists(path + ".xml"))
+            {
+                XElement xml = XElement.Load(path + ".xml");
+                return (string)xml.Element(valueName);
+            }
+            // Return NULL if the file is not found and isRequired is false
+            else if (!isRequired)
+                return "NULL";
+
+            Debug.LogError(path + ".xml is missing");
+            return "";
         }
     }
 }

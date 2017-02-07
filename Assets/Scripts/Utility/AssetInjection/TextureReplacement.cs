@@ -19,6 +19,7 @@
 
 using System.IO;
 using UnityEngine;
+using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -273,6 +274,27 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // Import textures for each frame 
                 go.GetComponent<DaggerfallBillboard>().SetCustomMaterial(archive, record, NumberOfFrames, isEmissive);
             }
+        }
+
+        /// <summary>
+        /// Import custom texture and label settings for buttons
+        /// </summary>
+        /// <param name="button">Button</param>
+        /// <param name="colorName">Name of texture</param>
+        static public void SetCustomButton(ref Button button, string colorName)
+        {
+            // Load texture
+            button.BackgroundTexture = TextureReplacement.LoadCustomTexture(colorName);
+
+            // Load settings from Xml (if present)
+            // Set custom color
+            if (XMLManager.GetString(colorName, "customtext", false) == "true")
+                button.Label.TextColor = new Color(XMLManager.GetColorValue(colorName, "r"), 
+                    XMLManager.GetColorValue(colorName, "g"),  XMLManager.GetColorValue(colorName, "b"), 
+                    XMLManager.GetColorValue(colorName, "a"));
+            // Disable text. This is useful if text is drawn on texture
+            else if (XMLManager.GetString(colorName, "customtext", false) == "notext")
+                button.Label.Text = "";
         }
 
         #endregion
