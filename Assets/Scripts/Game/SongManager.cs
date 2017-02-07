@@ -269,7 +269,7 @@ namespace DaggerfallWorkshop.Game
         void PlayCurrentSong(bool forcePlay = false)
         {
             // Do nothing if already playing this song or play disabled
-            if ((songPlayer.Song == currentSong || !playSong) && !forcePlay)
+            if (((songPlayer.Song == currentSong && songPlayer.IsPlaying) || !playSong) && !forcePlay)
                 return;
 
             songPlayer.Song = currentSong;

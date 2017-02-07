@@ -134,6 +134,7 @@ namespace DaggerfallWorkshop
                 midiSequencer.Play();
                 currentMidiName = filename;
                 playEnabled = true;
+                IsPlaying = true;
             }
         }
 
