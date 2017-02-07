@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Mouse
             Button mouseButton = DaggerfallUI.AddButton(new Rect(80, 190, 80, 10), controlsPanel);
-            joystickButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+            mouseButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
             mouseButton.OnMouseClick += MouseButton_OnMouseClick;
 
             // Default
