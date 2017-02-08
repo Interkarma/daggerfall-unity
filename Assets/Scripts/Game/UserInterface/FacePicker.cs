@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Player;
 
@@ -102,7 +103,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             currentFaceTexture = faceTextures[faceIndex];
             if (currentFaceTexture != null)
             {
-                facePanel.Size = new Vector2(currentFaceTexture.width, currentFaceTexture.height);
+                if ((raceGender == Genders.Male) && (TextureReplacement.CustomCifExist(raceTemplate.PaperDollHeadsMale, faceIndex)))
+                    facePanel.Size = new Vector2(XMLManager.GetValue(raceTemplate.PaperDollHeadsMale, "width", isCif: true, record: faceIndex), 
+                        XMLManager.GetValue(raceTemplate.PaperDollHeadsMale, "height", isCif: true, record: faceIndex));
+                else if ((raceGender == Genders.Female) && (TextureReplacement.CustomCifExist(raceTemplate.PaperDollHeadsFemale, faceIndex)))
+                    facePanel.Size = new Vector2(XMLManager.GetValue(raceTemplate.PaperDollHeadsFemale, "width", isCif: true, record: faceIndex),
+                        XMLManager.GetValue(raceTemplate.PaperDollHeadsFemale, "height", isCif: true, record: faceIndex));
+                else
+                    facePanel.Size = new Vector2(currentFaceTexture.width, currentFaceTexture.height);
+
                 facePanel.BackgroundTexture = currentFaceTexture;
             }
         }

@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -65,7 +66,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (Enabled)
             {
                 base.Update();
-                Size = new Vector2(compassBoxTexture.width * Scale.x, compassBoxTexture.height * Scale.y);
+                if (TextureReplacement.CustomImageExist(compassBoxFilename))
+                    Size = new Vector2(XMLManager.GetValue(compassBoxFilename, "width", isImage: true) * Scale.x, 
+                        XMLManager.GetValue(compassBoxFilename, "height", isImage: true) * Scale.y);
+                else
+                    Size = new Vector2(compassBoxTexture.width * Scale.x, compassBoxTexture.height * Scale.y);
             }
         }
 
@@ -107,14 +112,39 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect compassBoxRect = new Rect();
             compassBoxRect.x = Position.x;
             compassBoxRect.y = Position.y;
-            compassBoxRect.width = compassBoxTexture.width * Scale.x;
-            compassBoxRect.height = compassBoxTexture.height * Scale.y;
+            if (TextureReplacement.CustomImageExist(compassBoxFilename))
+            {
+                // Get custom size of compass box for custom imag
+                compassBoxRect.width = XMLManager.GetValue(compassBoxFilename, "width", isImage:true) * Scale.x;
+                compassBoxRect.height = XMLManager.GetValue(compassBoxFilename, "height", isImage:true) * Scale.y; 
+            }
+            else
+            {
+                // Use default texture with default size
+                compassBoxRect.width = compassBoxTexture.width * Scale.x;
+                compassBoxRect.height = compassBoxTexture.height * Scale.y;
+            }
+
+            // Get compassTexture size
+            float compassTextureWidth, compassTextureHeight;
+            if (TextureReplacement.CustomImageExist(compassFilename))
+            {
+                // Get custom size for custom image
+                compassTextureWidth = XMLManager.GetValue(compassFilename, "width", isImage: true);
+                compassTextureHeight = XMLManager.GetValue(compassFilename, "height", isImage: true);
+            }
+            else
+            {
+                // Get default size for default texture
+                compassTextureWidth = (float)compassTexture.width;
+                compassTextureHeight = (float)compassTexture.height;
+            }
 
             // Compass strip source
             Rect compassSrcRect = new Rect();
-            compassSrcRect.xMin = scroll / (float)compassTexture.width;
+            compassSrcRect.xMin = scroll / compassTextureWidth;
             compassSrcRect.yMin = 0;
-            compassSrcRect.xMax = compassSrcRect.xMin + (float)boxInterior / (float)compassTexture.width;
+            compassSrcRect.xMax = compassSrcRect.xMin + (float)boxInterior / compassTextureWidth;
             compassSrcRect.yMax = 1;
 
             // Compass strip destination
@@ -122,7 +152,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             compassDstRect.x = compassBoxRect.x + boxOutlineSize * Scale.x;
             compassDstRect.y = compassBoxRect.y + boxOutlineSize * Scale.y;
             compassDstRect.width = compassBoxRect.width - (boxOutlineSize * 2) * Scale.x;
-            compassDstRect.height = compassTexture.height * Scale.y;
+            compassDstRect.height = compassTextureHeight * Scale.y;
 
             GUI.DrawTextureWithTexCoords(compassDstRect, compassTexture, compassSrcRect, false);
             GUI.DrawTexture(compassBoxRect, compassBoxTexture, ScaleMode.StretchToFill, true);
