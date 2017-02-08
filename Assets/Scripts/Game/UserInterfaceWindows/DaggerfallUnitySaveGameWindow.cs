@@ -475,6 +475,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 UpdateSelectedSaveInfo();
             }
         }
+
         private void SavesList_OnSelectItem()
         {
             saveNameTextBox.Text = savesList.SelectedItem;
