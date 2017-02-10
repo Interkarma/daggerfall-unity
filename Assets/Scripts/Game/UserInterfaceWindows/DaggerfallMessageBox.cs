@@ -103,6 +103,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupBox(textId, buttons);
         }
 
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, string text, IUserInterfaceWindow previous = null)
+            : base(uiManager, previous)
+        {
+            SetupBox(text, buttons);
+        }
+
         protected override void Setup()
         {
             if (IsSetup)
@@ -275,6 +281,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void SetupBox(int textId, CommonMessageBoxButtons buttons)
         {
             SetTextTokens(textId);
+            switch (buttons)
+            {
+                case CommonMessageBoxButtons.YesNo:
+                    AddButton(MessageBoxButtons.Yes);
+                    AddButton(MessageBoxButtons.No);
+                    break;
+            }
+        }
+
+        void SetupBox(string text, CommonMessageBoxButtons buttons)
+        {
+            SetText(text);
             switch (buttons)
             {
                 case CommonMessageBoxButtons.YesNo:
