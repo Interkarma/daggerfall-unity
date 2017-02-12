@@ -319,28 +319,7 @@ namespace DaggerfallWorkshop
 
             // Import custom texture 
             if (TextureReplacement.CustomTextureExist(archive, record, frame))
-            {
-                // Main texture
-                results.albedoMap = TextureReplacement.LoadCustomTexture(archive, record, frame);
-
-                // Normal map
-                if (TextureReplacement.CustomNormalExist(archive, record, frame))
-                {
-                    results.normalMap = TextureReplacement.LoadCustomNormal(archive, record, frame);
-                    GenerateNormals = true;
-                }
-
-                // Emission map
-                // windowed walls use a custom emission map or stick with vanilla
-                // non-window use the main texture as emission, unless a custom map is provided
-                if (results.isEmissive)
-                {
-                    if (TextureReplacement.CustomEmissionExist(archive, record, frame)) //import emission texture
-                        results.emissionMap = TextureReplacement.LoadCustomEmission(archive, record, frame);
-                    else if (!results.isWindow) //reuse albedo map for basic colour emission
-                        results.emissionMap = results.albedoMap;
-                }
-            }
+                TextureReplacement.LoadCustomTextureResults(archive, record, frame, ref results, ref GenerateNormals);
 
             rectOut = results.singleRect;
 

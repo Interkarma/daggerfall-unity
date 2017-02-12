@@ -12,12 +12,11 @@
 /*
  * TODO:
  * 1. Action models in RDB
- * 2. Optimize and improve AssetBundle import
+ * 2. Integrate with the mod system to import models from mods using load order
  */
 
 using System.IO;
 using UnityEngine;
-using System.Collections;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -27,7 +26,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     static public class MeshReplacement
     {
-        #region asset-injection
+        #region Asset-injection
 
         /// <summary>
         /// Check existence of model in Resources
@@ -83,7 +82,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Import the custom GameObject if available
         /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
-        /// TODO: Integrate with the mod system to import models from mods using load order
         /// </summary>
         static public void ImportCustomGameobject (uint modelID, Vector3 position, Transform parent, Quaternion rotation, out bool modelExist)
         {
@@ -184,7 +182,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Import the custom GameObject for billboard if available
         /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
-        /// TODO: Integrate with the mod system to import models from mods using load order
         /// </summary>
         static public void ImportCustomFlatGameobject (int archive, int record, Vector3 position, Transform parent, out bool modelExist, bool inDungeon = false)
         {
