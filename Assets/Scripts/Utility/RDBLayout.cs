@@ -327,7 +327,8 @@ namespace DaggerfallWorkshop.Utility
                     {
                         // Import custom 3d gameobject instead of flat
                         bool modelExist;
-                        MeshReplacement.ImportCustomFlatGameobject(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform, out modelExist);
+                        MeshReplacement.ImportCustomFlatGameobject(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord, 
+                            new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform, out modelExist, true);
                         // Use flat
                         if (!modelExist)
                         {

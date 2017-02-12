@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
         /// TODO: Integrate with the mod system to import models from mods using load order
         /// </summary>
-        static public void ImportCustomFlatGameobject (int archive, int record, Vector3 position, Transform parent, out bool modelExist)
+        static public void ImportCustomFlatGameobject (int archive, int record, Vector3 position, Transform parent, out bool modelExist, bool inDungeon = false)
         {
             // Check user settings
             if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
@@ -199,7 +199,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // This is useful to test models
             if (ReplacementFlatExist(archive, record)) 
             {
-                LoadReplacementFlat(archive, record, position, parent);
+                LoadReplacementFlat(archive, record, position, parent, inDungeon);
                 modelExist = true;
                 return;
             }
@@ -236,6 +236,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             LoadedAssetBundle.Unload(false);
 
             // Update Position
+            if (inDungeon)
+                GetFixedPosition(ref position, archive, record);
             object3D.transform.parent = parent;
             object3D.transform.localPosition = position;
             
@@ -259,12 +261,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Import gameobject from Resources
         /// </summary>
-        static public void LoadReplacementFlat(int archive, int record, Vector3 position, Transform parent)
+        static public void LoadReplacementFlat(int archive, int record, Vector3 position, Transform parent, bool inDungeon = false)
         {
             // Import GameObject
             GameObject object3D = GameObject.Instantiate(Resources.Load("Flats/" + archive.ToString() + "_" + record.ToString() + "/" + archive.ToString() + "_" + record.ToString()) as GameObject);
  
             // Position
+            if (inDungeon)
+                GetFixedPosition(ref position, archive, record);
             object3D.transform.parent = parent;
             object3D.transform.localPosition = position;
  
@@ -317,6 +321,22 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 else
                     Debug.LogError("Custom model " + ModelName + " is missing a material or a texture");
             }
+        }
+
+
+        /// <summary>
+        /// Fix position of dungeon gameobjects.
+        /// </summary>
+        /// <param name="position">localPosition</param>
+        /// <param name="archive">Archive of billboard texture</param>
+        /// <param name="record">Record of billboard texture</param>
+        static void GetFixedPosition (ref Vector3 position, int archive, int record)
+        {
+            // Get height
+            int height = ImageReader.GetImageData("TEXTURE." + archive, record, createTexture:false).height;
+
+            // Correct transform
+            position.y -= height / 2 * MeshReader.GlobalScale;
         }
 
         #endregion
