@@ -18,6 +18,7 @@
  */
 
 using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 
@@ -29,9 +30,21 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     static public class TextureReplacement
     {
+        #region Fields & Structs
+
         static public string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
         static public string imgPath = Path.Combine(texturesPath, "img");
         static public string cifPath = Path.Combine(texturesPath, "cif");
+
+        public struct CustomBillboard
+        {
+            public List<Texture2D> MainTexture;          // List of custom albedo maps
+            public List<Texture2D> EmissionMap;          // List of custom emission maps
+            public bool isEmissive;                      // True if billboard is emissive
+            public int NumberOfFrames;                   // number of frame textures avilable on disk
+        }
+
+        #endregion
 
         #region Textures import
 
@@ -233,6 +246,38 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #region Texture injection
 
         /// <summary>
+        /// Import texture(s) used on models.
+        /// </summary>
+        /// <param name="archive">Archive index</param>
+        /// <param name="record">Record index</param>
+        /// <param name="frame">Texture frame</param>
+        /// <param name="results">Texture Results</param>
+        /// <param name="GenerateNormals">Will create normal map</param>
+        static public void LoadCustomTextureResults(int archive, int record, int frame, ref GetTextureResults results, ref bool GenerateNormals)
+        {
+            // Main texture
+            results.albedoMap = LoadCustomTexture(archive, record, frame);
+
+            // Normal map
+            if (CustomNormalExist(archive, record, frame))
+            {
+                results.normalMap = LoadCustomNormal(archive, record, frame);
+                GenerateNormals = true;
+            }
+
+            // Emission map
+            // windowed walls use a custom emission map or stick with vanilla
+            // non-window use the main texture as emission, unless a custom map is provided
+            if (results.isEmissive)
+            {
+                if (CustomEmissionExist(archive, record, frame)) //import emission texture
+                    results.emissionMap = LoadCustomEmission(archive, record, frame);
+                else if (!results.isWindow) //reuse albedo map for basic colour emission
+                    results.emissionMap = results.albedoMap;
+            }
+        }
+
+        /// <summary>
         /// Replace texture(s) on billboard gameobject.
         /// This is implemented only for interior and dungeon billboards for now
         /// </summary>
@@ -258,6 +303,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Emission maps for lights
             if (isEmissive)
                 meshRenderer.materials[0].SetTexture("_EmissionMap", emissionMap);
+
+            // Customize billboard size (scale)
+            string XmlFile = archive + "_" + record + "-0";
+            if (File.Exists(Path.Combine(texturesPath, XmlFile + ".xml")))
+            {
+                // Get current scale
+                Transform transform = go.GetComponent<Transform>();
+                Vector3 scale = transform.localScale;
+
+                // Get new scale
+                scale.x = XMLManager.GetColorValue(XmlFile, "scaleX");
+                scale.y = XMLManager.GetColorValue(XmlFile, "scaleY");
+
+                // Set new scale
+                transform.localScale = scale;
+                go.GetComponent<DaggerfallBillboard>().SetCustomSize(archive, record, scale.y);
+            }
 
             // Update UV map
             Vector2[] uv = new Vector2[4];
@@ -351,3 +413,4 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #endregion
     }
 }
+ 

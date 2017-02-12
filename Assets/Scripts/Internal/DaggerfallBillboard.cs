@@ -14,12 +14,14 @@ using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.Rendering;
-using System.Collections;
 using System;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
@@ -73,11 +75,8 @@ namespace DaggerfallWorkshop
             public int Gender;                                  // RDB gender field
             public int FactionMobileID;                         // RDB Faction/Mobile ID
             public MobileTypes FixedEnemyType;                  // Type for fixed enemy marker
-            // Custom textures:
-            public System.Collections.Generic.List<Texture2D> CustomMainTexture; // List of custom albedo maps
-            public System.Collections.Generic.List<Texture2D> CustomEmissionMap; // List of custom emission maps
-            public bool isCustomEmissive;                                        // True if billboard is emissive
-            public int NumberOfCustomFrames;                                     // number of frame textures avilable on disk
+            public TextureReplacement.CustomBillboard 
+                CustomBillboard;                                // Custom textures
         }
 
         void Start()
@@ -156,7 +155,7 @@ namespace DaggerfallWorkshop
                     {
                         // Restart animation or destroy gameobject
                         // The game uses all -and only- textures found on disk, even if they are less or more than vanilla frames
-                        if (summary.CurrentFrame >= summary.NumberOfCustomFrames)
+                        if (summary.CurrentFrame >= summary.CustomBillboard.NumberOfFrames)
                         {
                             summary.CurrentFrame = 0;
                             if (OneShot)
@@ -164,11 +163,11 @@ namespace DaggerfallWorkshop
                         }
 
                         // Set Main texture for current frame
-                        meshRenderer.materials[0].SetTexture("_MainTex", summary.CustomMainTexture[summary.CurrentFrame]);
+                        meshRenderer.materials[0].SetTexture("_MainTex", summary.CustomBillboard.MainTexture[summary.CurrentFrame]);
 
                         // Set Emission map for current frame
-                        if (summary.isCustomEmissive)
-                            meshRenderer.materials[0].SetTexture("_EmissionMap", summary.CustomEmissionMap[summary.CurrentFrame]);
+                        if (summary.CustomBillboard.isEmissive)
+                            meshRenderer.materials[0].SetTexture("_EmissionMap", summary.CustomBillboard.EmissionMap[summary.CurrentFrame]);
                     }
                 }
 
@@ -320,22 +319,33 @@ namespace DaggerfallWorkshop
                 return;
 
             // Import custom textures for each frame
-            System.Collections.Generic.List<Texture2D> albedoTextures = new System.Collections.Generic.List<Texture2D>();
-            System.Collections.Generic.List<Texture2D> emissionmaps = new System.Collections.Generic.List<Texture2D>();
+            List<Texture2D> albedoTextures = new List<Texture2D>();
+            List<Texture2D> emissionmaps = new List<Texture2D>();
             Texture2D albedoTexture, emissionMap;
             for (int frame = 0; frame < NumberOfFrames; frame++)
             {
-                Utility.AssetInjection.TextureReplacement.LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record, frame);
+                TextureReplacement.LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record, frame);
                 albedoTextures.Add(albedoTexture);
                 if (isEmissive)
                     emissionmaps.Add(emissionMap);
             }
 
             // Save summary
-            summary.CustomMainTexture = albedoTextures;
-            summary.CustomEmissionMap = emissionmaps;
-            summary.isCustomEmissive = isEmissive;
-            summary.NumberOfCustomFrames = NumberOfFrames;
+            summary.CustomBillboard.MainTexture = albedoTextures;
+            summary.CustomBillboard.EmissionMap = emissionmaps;
+            summary.CustomBillboard.isEmissive = isEmissive;
+            summary.CustomBillboard.NumberOfFrames = NumberOfFrames;
+        }
+
+        /// <summary>
+        /// Set new Y size for correct positioning.
+        /// </summary>
+        /// <param name="archive">Texture archive index.</param>
+        /// <param name="record">Texture record index.</param>
+        /// <param name="scaleY">height scale</param>
+        public void SetCustomSize(int archive, int record, float scaleY)
+        {
+            summary.Size.y *= scaleY;
         }
 
         /// <summary>
