@@ -15,12 +15,14 @@ using UnityEditor;
 #endif
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
@@ -66,6 +68,8 @@ namespace DaggerfallWorkshop
             public MobileEnemy Enemy;                           // Mobile enemy settings
             public MobileStates EnemyState;                     // Animation state
             public MobileAnimation[] StateAnims;                // Animation frames for this state
+            public TextureReplacement.CustomEnemyMaterial 
+                CustomMaterial;                                 // Custom material
         }
 
         void Start()
@@ -121,6 +125,33 @@ namespace DaggerfallWorkshop
             int archive = GetTextureArchive();
             CacheRecordSizesAndFrames(dfUnity, archive);
             AssignMeshAndMaterial(dfUnity, archive);
+
+            // Get custom material if available
+            if (TextureReplacement.CustomTextureExist(archive, 0))
+            {
+                MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+                TextureReplacement.SetupCustomEnemyMaterial(ref meshRenderer, ref meshFilter, archive);
+                summary.CustomMaterial.isCustom = true;
+
+                // Import textures
+                int recordNumber = 0;
+                summary.CustomMaterial.MainTexture = new List<List<Texture2D>>();
+                while (TextureReplacement.CustomTextureExist(archive, recordNumber))
+                {
+                    int frame = 0;
+                    List<Texture2D> frameTextures = new List<Texture2D>();
+                    while (TextureReplacement.CustomTextureExist(archive, recordNumber, frame))
+                    { 
+                        frameTextures.Add(TextureReplacement.LoadCustomTexture(archive, recordNumber, frame));
+                        frameTextures[frame].filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                        frame++;
+                    }
+                    summary.CustomMaterial.MainTexture.Add(frameTextures);
+                    recordNumber++;
+                }
+            }
+            else
+                summary.CustomMaterial.isCustom = false;
 
             // Apply enemy state and update orientation
             lastOrientation = -1;
@@ -326,23 +357,35 @@ namespace DaggerfallWorkshop
                 summary.EnemyState == MobileStates.Idle || summary.EnemyState == MobileStates.Move)
                 flip = !flip;
 
-            // Update UVs on mesh
-            Vector2[] uvs = new Vector2[4];
-            if (flip)
+            // Update Record/Frame texture
+            if (summary.CustomMaterial.isCustom)
             {
-                uvs[0] = new Vector2(rect.xMax, rect.yMax);
-                uvs[1] = new Vector2(rect.x, rect.yMax);
-                uvs[2] = new Vector2(rect.xMax, rect.y);
-                uvs[3] = new Vector2(rect.x, rect.y);
+                // Custom material: Update texture
+                if ((record < summary.CustomMaterial.MainTexture.Count) && (currentFrame < summary.CustomMaterial.MainTexture[record].Count))
+                    GetComponent<MeshRenderer>().material.mainTexture = summary.CustomMaterial.MainTexture[record][currentFrame];
+                else
+                    Debug.LogError("Texture " + GetTextureArchive() + "_" + record + "-" + currentFrame + ".png is missing"); 
             }
             else
             {
-                uvs[0] = new Vector2(rect.x, rect.yMax);
-                uvs[1] = new Vector2(rect.xMax, rect.yMax);
-                uvs[2] = new Vector2(rect.x, rect.y);
-                uvs[3] = new Vector2(rect.xMax, rect.y);
+                // Daggerfall Atlas: Update UVs on mesh
+                Vector2[] uvs = new Vector2[4];
+                if (flip)
+                {
+                    uvs[0] = new Vector2(rect.xMax, rect.yMax);
+                    uvs[1] = new Vector2(rect.x, rect.yMax);
+                    uvs[2] = new Vector2(rect.xMax, rect.y);
+                    uvs[3] = new Vector2(rect.x, rect.y);
+                }
+                else
+                {
+                    uvs[0] = new Vector2(rect.x, rect.yMax);
+                    uvs[1] = new Vector2(rect.xMax, rect.yMax);
+                    uvs[2] = new Vector2(rect.x, rect.y);
+                    uvs[3] = new Vector2(rect.xMax, rect.y);
+                }
+                meshFilter.sharedMesh.uv = uvs;
             }
-            meshFilter.sharedMesh.uv = uvs;
 
             // Assign new orientation
             lastOrientation = orientation;
