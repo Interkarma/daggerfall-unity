@@ -123,35 +123,12 @@ namespace DaggerfallWorkshop
 
             // Load enemy content
             int archive = GetTextureArchive();
-            CacheRecordSizesAndFrames(dfUnity, archive);
-            AssignMeshAndMaterial(dfUnity, archive);
-
-            // Get custom material if available
             if (TextureReplacement.CustomTextureExist(archive, 0))
-            {
-                MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-                TextureReplacement.SetupCustomEnemyMaterial(ref meshRenderer, ref meshFilter, archive);
                 summary.CustomMaterial.isCustom = true;
-
-                // Import textures
-                int recordNumber = 0;
-                summary.CustomMaterial.MainTexture = new List<List<Texture2D>>();
-                while (TextureReplacement.CustomTextureExist(archive, recordNumber))
-                {
-                    int frame = 0;
-                    List<Texture2D> frameTextures = new List<Texture2D>();
-                    while (TextureReplacement.CustomTextureExist(archive, recordNumber, frame))
-                    { 
-                        frameTextures.Add(TextureReplacement.LoadCustomTexture(archive, recordNumber, frame));
-                        frameTextures[frame].filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                        frame++;
-                    }
-                    summary.CustomMaterial.MainTexture.Add(frameTextures);
-                    recordNumber++;
-                }
-            }
             else
                 summary.CustomMaterial.isCustom = false;
+            CacheRecordSizesAndFrames(dfUnity, archive);
+            AssignMeshAndMaterial(dfUnity, archive);
 
             // Apply enemy state and update orientation
             lastOrientation = -1;
@@ -478,7 +455,18 @@ namespace DaggerfallWorkshop
                 int yChange = (int)(size.Height * (scale.Height / BlocksFile.ScaleDivisor));
                 finalSize.x = (size.Width + xChange);
                 finalSize.y = (size.Height + yChange);
-
+                
+                // Get eventual custom scale
+                if(summary.CustomMaterial.isCustom)
+                {
+                    string fileName = archive.ToString() + "_" + i + "-0";
+                    if (File.Exists(Path.Combine(TextureReplacement.texturesPath, fileName + ".xml")))
+                    {
+                        finalSize.x *= XMLManager.GetColorValue(fileName, "scaleX");
+                        finalSize.y *= XMLManager.GetColorValue(fileName, "scaleY");
+                    }
+                }
+ 
                 // Store final size and frame count
                 summary.RecordSizes[i] = finalSize * MeshReader.GlobalScale;
                 summary.RecordFrames[i] = textureFile.GetFrameCount(i);
@@ -546,6 +534,37 @@ namespace DaggerfallWorkshop
 
             // Set new enemy material
             GetComponent<MeshRenderer>().sharedMaterial = material;
+
+            // Get custom material if available
+            if (summary.CustomMaterial.isCustom)
+                AssignCustomMaterial(archive);
+        }
+
+        /// <summary>
+        /// Get custom textures from disk
+        /// </summary>
+        /// <param name="archive">Texture archive index derived from type and gender.</param>
+        private void AssignCustomMaterial(int archive)
+        {
+            MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+            TextureReplacement.SetupCustomEnemyMaterial(ref meshRenderer, ref meshFilter, archive);
+
+            // Import textures
+            int recordNumber = 0;
+            summary.CustomMaterial.MainTexture = new List<List<Texture2D>>();
+            while (TextureReplacement.CustomTextureExist(archive, recordNumber))
+            {
+                int frame = 0;
+                List<Texture2D> frameTextures = new List<Texture2D>();
+                while (TextureReplacement.CustomTextureExist(archive, recordNumber, frame))
+                {
+                    frameTextures.Add(TextureReplacement.LoadCustomTexture(archive, recordNumber, frame));
+                    frameTextures[frame].filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                    frame++;
+                }
+                summary.CustomMaterial.MainTexture.Add(frameTextures);
+                recordNumber++;
+            }
         }
 
         /// <summary>
