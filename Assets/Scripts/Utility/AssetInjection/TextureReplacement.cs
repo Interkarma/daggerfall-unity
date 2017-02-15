@@ -11,9 +11,8 @@
 
 /*
  * TODO:
- * 1. Dungeon enemies
- * 2. Exterior billboards
- * 3. PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
+ * 1. Exterior billboards
+ * 2. PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
  *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
  */
 
@@ -42,6 +41,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             public List<Texture2D> EmissionMap;          // List of custom emission maps
             public bool isEmissive;                      // True if billboard is emissive
             public int NumberOfFrames;                   // number of frame textures avilable on disk
+        }
+
+        public struct CustomEnemyMaterial
+        {
+            public bool isCustom;                        // True if enemy uses custom textures
+            public List<List<Texture2D>> MainTexture;    // Textures
         }
 
         #endregion
@@ -336,6 +341,22 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // Import textures for each frame 
                 go.GetComponent<DaggerfallBillboard>().SetCustomMaterial(archive, record, NumberOfFrames, isEmissive);
             }
+        }
+
+        static public void SetupCustomEnemyMaterial(ref MeshRenderer meshRenderer, ref MeshFilter meshFilter, int archive)
+        {
+            // Set Main Texture
+            Texture2D albedoTexture = LoadCustomTexture(archive, 0, 0);
+            albedoTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+            meshRenderer.material.mainTexture = albedoTexture;
+
+            // Update UV map
+            Vector2[] uv = new Vector2[4];
+            uv[0] = new Vector2(0, 1);
+            uv[1] = new Vector2(1, 1);
+            uv[2] = new Vector2(0, 0);
+            uv[3] = new Vector2(1, 0);
+            meshFilter.mesh.uv = uv;
         }
 
         /// <summary>
