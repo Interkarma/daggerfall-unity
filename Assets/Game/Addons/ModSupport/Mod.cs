@@ -26,18 +26,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         private ModInfo modInfo;
         private AssetBundle assetBundle;                             //.dfmod file
         private string dirPath;                                      //directory the mod file is in
-//        private IModController modController;
-
         private string[] assetNames;
-        private List<Source> Sources;                                //any source code found in asset bundle
-        private List<System.Reflection.Assembly> Assemblies;         //compiled source code for this mod
-        private Dictionary<string, LoadedAsset> LoadedAssets;
+        private List<Source> sources;                                //any source code found in asset bundle
+        private List<System.Reflection.Assembly> assemblies;         //compiled source code for this mod
+        private Dictionary<string, LoadedAsset> loadedAssets;
 
 
         #region properties
-
+        [SerializeField]
         public string Name { get { return ModInfo.ModFileName; } private set { ModInfo.ModFileName = value; } }
-
+        [SerializeField]
         public string Title { get { return ModInfo.ModTitle; } private set { ModInfo.ModTitle = value; } }
 
         public bool IsReady
@@ -45,13 +43,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             get { return isReady; }
             set { isReady = value; }
         }
-
+        [SerializeField]
         public bool Enabled
         {
             get { return enabled; }
             set { enabled = value; }
         }
-
+        [SerializeField]
         public int LoadPriority
         {
             get { return loadPriorty; }
@@ -83,11 +81,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         #region constructors
 
+        public Mod()
+        {
+            if (modInfo == null)
+            {
+                modInfo = new ModInfo();
+            }
+        }
+
         public Mod(string name, string dirPath, AssetBundle ab)
         {
-            LoadedAssets = new Dictionary<string, LoadedAsset>();
-            Assemblies = new List<System.Reflection.Assembly>(1);
-            Sources = new List<Source>(5);
+            loadedAssets = new Dictionary<string, LoadedAsset>();
+            assemblies = new List<System.Reflection.Assembly>(1);
+            sources = new List<Source>(5);
 
             this.AssetBundle = ab;
             if (ab != null)
@@ -137,7 +143,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 if (IsAssetLoaded(assetName))
                 {
-                    la = LoadedAssets[assetName];
+                    la = loadedAssets[assetName];
                     return la.Obj as T;
                 }
                 if (assetBundle == null)
@@ -301,12 +307,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (string.IsNullOrEmpty(type))
                 return null;
 
-            for (int i = 0; i < Assemblies.Count; i++)
+            for (int i = 0; i < assemblies.Count; i++)
             {
-                if (Assemblies[i] == null)
+                if (assemblies[i] == null)
                     continue;
 
-                t = Assemblies[i].GetType(type);
+                t = assemblies[i].GetType(type);
                 if (t != null)
                     return t;
             }
@@ -315,6 +321,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         #region setup
 
+        // Returns array containing names of all assets in asset bundle
         private string[] GetAllAssetNames()
         {
             try
@@ -337,6 +344,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
         }
 
+        // Loads the serialized mod info file from bundle
         private bool LoadModInfoFromBundle()
         {
             try
@@ -364,12 +372,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
         }
 
+        // Loads all the source code found in bundle as Text Assets & adds to Sources list
         private bool LoadSourceCodeFromModBundle()
         {
             try
             {
-                if (Sources == null)
-                    Sources = new List<Source>();
+                if (sources == null)
+                    sources = new List<Source>();
 
                 string[] assetNames = assetBundle.GetAllAssetNames();
 
@@ -387,7 +396,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         {
                             newUncompiledSource.sourceTxt = newSource;
                             newUncompiledSource.isPreCompiled = name.EndsWith(".dll");
-                            Sources.Add(newUncompiledSource);
+                            sources.Add(newUncompiledSource);
                         }
                     }
                 }
@@ -401,24 +410,28 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
         }
 
+        /// <summary>
+        /// Compiles all source files to assembly
+        /// </summary>
+        /// <returns></returns>
         public List<Assembly> CompileSourceToAssemblies()
         {
-            List<string> stringSource   = new List<string>(Sources.Count);
+            List<string> stringSource   = new List<string>(sources.Count);
             Assembly assembly           = null;
 
             try
             {
-                for (int i = 0; i < Sources.Count; i++)
+                for (int i = 0; i < sources.Count; i++)
                 {
-                    if (Sources[i].isPreCompiled)
+                    if (sources[i].isPreCompiled)
                     {
-                        assembly = Assembly.Load(Sources[i].sourceTxt.bytes);
+                        assembly = Assembly.Load(sources[i].sourceTxt.bytes);
                         if (assembly != null)
-                            Assemblies.Add(assembly);
+                            assemblies.Add(assembly);
                     }
                     else
                     {
-                        stringSource.Add(Sources[i].sourceTxt.ToString());
+                        stringSource.Add(sources[i].sourceTxt.ToString());
                     }
                 }
                 if (stringSource.Count > 0)
@@ -426,12 +439,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     assembly = ModManager.CompileFromSourceAssets(stringSource.ToArray());
 
                     if (assembly != null)
-                        Assemblies.Add(assembly);
+                        assemblies.Add(assembly);
                 }
 
                 stringSource    = null;
-                Sources         = null;
-                return Assemblies;
+                sources         = null;
+                return assemblies;
             }
             catch(Exception ex)
             {
@@ -441,18 +454,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         }
 
+        /// <summary>
+        /// Returns a list of any valid mod setup functions
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
         public List<SetupOptions> FindModLoaders(StateManager.StateTypes state)
         {
-            if (Assemblies == null || Assemblies.Count < 1)
+            if (assemblies == null || assemblies.Count < 1)
                 return null;
 
             List<SetupOptions> modLoaders = new List<SetupOptions>(1);
 
-            for(int i = 0; i < Assemblies.Count; i++)
+            for(int i = 0; i < assemblies.Count; i++)
             {
                 try
                 {
-                    Type[] types = Assemblies[i].GetTypes();
+                    Type[] types = assemblies[i].GetTypes();
 
                     foreach(Type t in types)
                     {
@@ -498,7 +516,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         public bool IsAssetLoaded(string AssetName)
         {
-            return LoadedAssets.ContainsKey(AssetName);
+            return loadedAssets.ContainsKey(AssetName);
         }
 
 
@@ -519,7 +537,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return false;
             else
             {
-                LoadedAssets.Add(assetName, la);
+                loadedAssets.Add(assetName, la);
 
                 if (this.modInfo != null && this.Name != null)
                     ModManager.OnLoadAsset(this.Name, assetName, la.T);
@@ -575,6 +593,111 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         #endregion
+
+        /// <summary>
+        /// Uses serialized data from asset bundle to setup prefab
+        /// </summary>
+        /// <param name="prefabName">name of prefab asset</param>
+        /// <param name="serializedDataName">name of serialized data txt asset</param>
+        /// <returns></returns>
+        public GameObject SetupPrefabHelper(string prefabName, string serializedDataName = null)
+        {
+            GameObject prefab = GetAsset<GameObject>(prefabName, false);
+
+            if(prefab == null)
+            {
+                if (!prefabName.EndsWith(".prefab"))
+                {
+                    prefabName = prefabName + ".prefab";
+                    prefab = GetAsset<GameObject>(prefabName);
+                }
+                if (prefab == null)
+                {
+                    Debug.LogError(string.Format("Failed to locate prefab in mod file: {0} {1}", this.Title, prefabName));
+                    return null;
+                }
+            }
+
+            //if serializedDataName is null, defaults to checking for prefabName.serialized.prefab.txt
+            if (string.IsNullOrEmpty(serializedDataName))
+                serializedDataName = prefabName.Substring(0, prefabName.Length-7) + ".serialized" + ".prefab" + ".txt";
+
+            string serializedData = "";
+
+            try
+            {
+                serializedData = GetAsset<TextAsset>(serializedDataName).text;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("Failed to load serializedData: {0} {1} {2} {3}", this.Title, prefabName, serializedDataName, ex.Message));
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(serializedData))
+            {
+                Debug.LogError(string.Format("Failed to locate serialized data for prefab in mod file: {0} {1} {2}", this.Title, prefabName, serializedDataName));
+                return null;
+            }
+
+            object deserialized = null;
+            FullSerializer.fsData data = FullSerializer.fsJsonParser.Parse(serializedData);
+            ModManager._serializer.TryDeserialize(data, typeof(Dictionary<string, List<SerializedRecord>>), ref deserialized).AssertSuccessWithoutWarnings();
+
+
+            if (deserialized != null)
+                return SetupPrefabHelper(prefab, deserialized as Dictionary<string, List<SerializedRecord>>);
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Helper function that uses serialized data from asset bundle to setup prefab
+        /// </summary>
+        /// <param name="prefab">prefab object to setup</param>
+        /// <param name="recordDictionary">serialized data</param>
+        /// <returns></returns>
+        public GameObject SetupPrefabHelper(GameObject prefab, Dictionary<string, List<SerializedRecord>> recordDictionary)
+        {
+            if (prefab == null || recordDictionary == null)
+            {
+                Debug.LogError("Failed to setup prefab - either the prefab or the deserialized dictionary was null - stopping");
+                return null;
+            }
+
+            List<Transform> transforms = new List<Transform>();
+            ModManager.GetAllChildren(prefab.transform, ref transforms);
+
+            for (int i = 0; i < transforms.Count; i++)
+            {
+                GameObject go = transforms[i].gameObject;
+
+                if (recordDictionary.ContainsKey(go.name))
+                {
+                    List<SerializedRecord> records = recordDictionary[go.name];
+
+                    for (int j = 0; j < records.Count; j++)
+                    {
+                        SerializedRecord sr = records[j];
+                        Component co = go.AddComponent(sr.componentType);
+                        Idfmod_Serializable isCustomSerializable = co as Idfmod_Serializable;
+
+                        if (isCustomSerializable == null)
+                            continue;
+                        if (sr.serializedObjects == null || sr.serializedObjects.Length < 1)
+                            continue;
+                        for (int k = 0; k < sr.serializedObjects.Length; k++)
+                        {
+                            isCustomSerializable.Deseralized(sr.serializedObjects);
+                        }
+                    }
+                }
+            }
+            return prefab;
+
+        }
+
+
     }
 
 }
