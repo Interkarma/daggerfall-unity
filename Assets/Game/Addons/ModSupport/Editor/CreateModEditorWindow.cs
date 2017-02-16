@@ -36,9 +36,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         string currentFilePath = "";
         string modOutPutPath = "";
 
-        [SerializeField]
-        public string TempDirectory = "ModBuilder";
-
         public bool fileOpen = false;
         [SerializeField]
         public bool ShowFileFoldOut = false;
@@ -220,7 +217,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 GUILayoutHelper.Horizontal(() =>
                 {
                     if (GUILayout.Button("Add Selected Asset(s)"))
-                        AddAssetToMod();
+                        AddSelectedAssetsToMod();
 
                     else if (GUILayout.Button("Remove Selected Asset(s)"))
                     {
@@ -402,11 +399,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             AssetBundleBuild[] buildMap = new AssetBundleBuild[1];
             buildMap[0].assetBundleName = modInfo.ModFileName + ".dfmod";
             buildMap[0].assetBundleVariant = "";                                //TODO
-            buildMap[0].assetNames = Assets.ToArray();
+            List<string> tempAssetPaths = Assets;
 
-            for (int i = 0; i < buildMap[0].assetNames.Length; i++ )
+            for (int i = 0; i < tempAssetPaths.Count; i++ )
             {
-                string filePath = buildMap[0].assetNames[i];
+                string filePath =  tempAssetPaths[i];
+
                 if(!File.Exists(filePath))
                 {
                     Debug.LogError("Asset not found: " + filePath);
@@ -420,14 +418,26 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 if (filePath.ToLower().EndsWith(".cs"))
                 {
                     filePath = CreateNewTextAssetFromScript(filePath);
-                    buildMap[0].assetNames[i] = GetAssetPathFromFilePath(filePath);
-                    Debug.Log(string.Format("{0} {1}", i, filePath));
+                    tempAssetPaths[i] = GetAssetPathFromFilePath(filePath);
+                }
+                else if (filePath.ToLower().EndsWith(".prefab"))
+                {
+                    string assetPath = SerializePrefab(filePath);
+                    if (assetPath != null)
+                    {
+                        if(!tempAssetPaths.Contains(assetPath))
+                            tempAssetPaths.Add(assetPath);
+                    }
                 }
             }
+
+            buildMap[0].assetNames = tempAssetPaths.ToArray();
 
             //build for every target in buildTarget array
             for (int i = 0; i < buildTargets.Length; i++)
             {
+                if (buildTargetsToggles[i] == false) { continue;  }
+
                 string fullPath = Path.Combine(modOutPutPath, buildTargets[i].ToString());
                 if (!Directory.Exists(fullPath))
                 {
@@ -459,7 +469,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             return newPath;
         }
-
 
         string GetAssetPathFromFilePath(string fullPath)
         {
@@ -506,6 +515,122 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             else
                 return fullPath;
         }
+
+        /// <summary>
+        /// Serializes prefab & adds serialized txt asset to mod
+        /// </summary>
+        /// <param name="prefabPath"></param>
+        /// <returns></returns>
+        private string SerializePrefab(string prefabPath)
+        {
+            GameObject prefabObject = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject)) as GameObject;
+            if (prefabObject == null)
+            {
+                Debug.LogWarning("Failed to load prefab: " + prefabObject);
+                return null;
+            }
+
+            string path = GetTempModDirPath();
+            string serialized = "";
+
+            try
+            {
+                if (!SerializePrefabHelper(prefabObject, out serialized))
+                {
+                    Debug.LogWarning("Failed to serialize prefab: " + prefabObject.name);
+                    return null;
+                }
+            }
+            catch (Exception ex) 
+            {
+                Debug.LogError(string.Format("Error trying to serialize prefab: {0} {1} {3}", modInfo.ModTitle, prefabPath, ex.InnerException));
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(serialized))
+                return null;
+
+            path = GetAssetPathFromFilePath(Path.Combine(path, prefabObject.name + ".serialized" + ".prefab" + ".txt"));
+            File.WriteAllText(path, serialized);
+            AddAssetToMod(path);
+            AssetDatabase.Refresh();
+            return path;
+        }
+
+        /// <summary>
+        /// Serializes components on gameobject & children w/ Idfmod_Serializable interface
+        /// </summary>
+        /// <param name="prefab">base prefab</param>
+        /// <param name="serialized">serialized string</param>
+        /// <returns></returns>
+        private static bool SerializePrefabHelper(GameObject prefab, out string serialized)
+        {
+            serialized = "";
+
+            Dictionary<string, List<SerializedRecord>> recordDictionary = new Dictionary<string, List<SerializedRecord>>();
+            List<Transform> transforms = new List<Transform>();
+            ModManager.GetAllChildren(prefab.transform, ref transforms);
+
+            for (int i = 0; i < transforms.Count; i++)
+            {
+                if (transforms[i] == null)
+                    continue;
+
+                GameObject go = transforms[i].gameObject;
+                List<SerializedRecord> serializedRecords = new List<SerializedRecord>();
+                Component[] components = go.GetComponents<Component>();
+
+                for (int j = 0; j < components.Length; j++)
+                {
+                    if (components[j] == null)
+                        continue;
+
+                    Component co = components[j];
+                    Idfmod_Serializable sModInterface = co as Idfmod_Serializable;
+
+                    if (sModInterface == null)
+                        continue;
+                    else if (sModInterface.Ignore)
+                        continue;
+
+                    object[] toSerialize = sModInterface.ToSerialize();
+                    if (toSerialize != null)
+                    {
+                        for (int k = 0; k < toSerialize.Length; k++)
+                        {
+                            if (toSerialize[k].GetType().IsSubclassOf(typeof(Component)))
+                            {
+                                Debug.LogError("Can't serialize monobehaviours: " + toSerialize[k].ToString());
+                                return false;
+                            }
+                        }
+                    }
+
+                    SerializedRecord sr = new SerializedRecord(go.name, co, toSerialize);
+                    serializedRecords.Add(sr);
+                }
+
+                if (serializedRecords.Count > 0)
+                {
+                    if (recordDictionary.ContainsKey(go.name))
+                    {
+                        Debug.LogWarning("Please make sure all game objects have unique names, can't serialize objects for: " + go.name);
+                        continue;
+                    }
+                    else
+                    {
+                        recordDictionary.Add(go.name, serializedRecords);
+                    }
+                }
+            }
+
+            FullSerializer.fsData sData;
+            FullSerializer.fsResult result = ModManager._serializer.TrySerialize(typeof(Dictionary<string, List<SerializedRecord>>), recordDictionary, out sData).AssertSuccessWithoutWarnings();
+
+            serialized = FullSerializer.fsJsonPrinter.PrettyJson(sData);
+            return result.Succeeded;
+        }
+
 
 
     }

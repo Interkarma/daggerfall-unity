@@ -607,7 +607,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// helper function to assist w/ serializing & deserializing prefabs
         /// </summary>
-        /// <param name="trans"></param>
+        /// <param name="trans">parent transform</param>
         /// <param name="transforms"></param>
         /// <returns></returns>
         public static List<Transform> GetAllChildren(Transform trans, ref List<Transform> transforms)
