@@ -52,10 +52,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         //asset bundles will be created for any targets here
         BuildTarget[] buildTargets = new BuildTarget[]
         {
-        BuildTarget.StandaloneWindows,
-        BuildTarget.StandaloneOSXUniversal,
-        BuildTarget.StandaloneLinux,
+            BuildTarget.StandaloneWindows,
+            BuildTarget.StandaloneOSXUniversal,
+            BuildTarget.StandaloneLinux,
         };
+
+        bool[] buildTargetsToggles = new bool[] {true, true, true};
+
 
         bool ModInfoReady { get { return ModInfoReadyTowrite(); } }
         List<string> Assets { get { return modInfo.Files; } set { modInfo.Files = value; } }         //list of assets to be added
@@ -250,6 +253,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             EditorGUILayout.Space();
             EditorGUILayout.Space();
+            EditorGUILayout.Space();
+
+            GUILayout.Label("Build Targets");
+
+            GUILayoutHelper.Horizontal(() =>
+            {
+                for (int i = 0; i < buildTargetsToggles.Length; i++)
+                {
+                    buildTargetsToggles[i] = EditorGUILayout.Toggle(buildTargets[i].ToString(), buildTargetsToggles[i], GUILayout.ExpandWidth(true));
+                }
+            });
 
             GUILayoutHelper.Horizontal(() =>
             {
@@ -285,7 +299,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 path = Path.Combine(path, modInfo.ModFileName + ModManager.MODINFOEXTENSION);
 
-                Debug.Log("writing to: " + path);
                 File.WriteAllText(path, outPut);
                 AssetDatabase.Refresh();
 
@@ -296,7 +309,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         if (Assets[i].EndsWith(ModManager.MODINFOEXTENSION))
                             Assets.RemoveAt(i);
                     }
-                        //Assets.RemoveAt(Assets.LastIndexOf(path));
                 }
 
                 //get Asset path
@@ -313,7 +325,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         //Add selected assets in editor to File list
-        void AddAssetToMod()
+        void AddSelectedAssetsToMod()
         {
             if (Assets == null || !fileOpen)
             {
@@ -351,6 +363,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 if (!Assets.Contains(path))
                     Assets.Add(path);
             }
+        }
+
+        bool AddAssetToMod(string assetPath)
+        {
+            if (!Assets.Contains(assetPath))
+            {
+                Assets.Add(assetPath);
+                return true;
+            }
+            else
+                return false;
         }
 
 
@@ -425,13 +448,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             if (!File.Exists(filePath))
                 return null;
+
             string name = filePath.Substring(filePath.LastIndexOfAny(new char[]{'\\', '/'}) + 1) + ".txt";
-
-            Debug.Log("file name: " + name);
-
             string newPath = Path.Combine(GetTempModDirPath(), name);
-
             string content = File.ReadAllText(filePath);
+
             File.WriteAllText(newPath, content, System.Text.Encoding.UTF8);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
