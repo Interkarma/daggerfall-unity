@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -53,6 +54,7 @@ namespace DaggerfallWorkshop.Game
         Rect weaponPosition;
         float weaponScaleX;
         float weaponScaleY;
+        string weaponFilename;
 
         DaggerfallAudioSource dfAudioSource;
         WeaponAnimation[] weaponAnims;
@@ -87,7 +89,14 @@ namespace DaggerfallWorkshop.Game
             {
                 // Draw weapon texture behind other HUD elements
                 GUI.depth = 1;
-                GUI.DrawTextureWithTexCoords(weaponPosition, weaponAtlas, curAnimRect);
+                if (TextureReplacement.CustomCifExist(weaponFilename, (int)weaponState, currentFrame))
+                {
+                    Texture2D tex = TextureReplacement.LoadCustomCif(weaponFilename, (int)weaponState, currentFrame);
+                    tex.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                    GUI.DrawTexture(weaponPosition, tex);
+                }
+                else
+                    GUI.DrawTextureWithTexCoords(weaponPosition, weaponAtlas, curAnimRect);
             }
         }
 
@@ -359,12 +368,12 @@ namespace DaggerfallWorkshop.Game
         private void LoadWeaponAtlas()
         {
             // Get weapon filename
-            string filename = WeaponBasics.GetWeaponFilename(WeaponType);
+            weaponFilename = WeaponBasics.GetWeaponFilename(WeaponType);
 
             // Load the weapon texture atlas
             // Texture is dilated into a transparent coloured border to remove dark edges when filtered
             // Important to use returned UV rects when drawing to get right dimensions
-            weaponAtlas = GetWeaponTextureAtlas(filename, MetalType, out weaponRects, out weaponIndices, 2, 2, true);
+            weaponAtlas = GetWeaponTextureAtlas(weaponFilename, MetalType, out weaponRects, out weaponIndices, 2, 2, true);
             weaponAtlas.filterMode = dfUnity.MaterialReader.MainFilterMode;
 
             // Get weapon anims
