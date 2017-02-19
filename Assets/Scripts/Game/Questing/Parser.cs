@@ -28,13 +28,19 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
+        // Constants
         const string idCol = "id";
         const string nameCol = "name";
         const string globalVarsFilename = "Quests-GlobalVars";
         const string staticMessagesFilename = "Quests-StaticMessages";
 
+        // Data tables
         Table globalVars;
         Table messageTypes;
+
+        // Quest object collections
+        Dictionary<int, Message> messages = new Dictionary<int, Message>();
+        Dictionary<string, Clock> clocks = new Dictionary<string, Clock>();
 
         #endregion
 
@@ -66,6 +72,9 @@ namespace DaggerfallWorkshop.Game.Questing
             bool inQBN = false;
             List<string> qrcLines = new List<string>();
             List<string> qbnLines = new List<string>();
+
+            // Clear existing quest data
+            messages = new Dictionary<int, Message>();
 
             // Start diagnostic timer
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -134,11 +143,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception("Parse() error: Quest has no QBN section.");
             }
 
-            // Parse QRC
+            // Parse QRC and QBN
             ParseQRC(qrcLines);
-            //Debug.Log(string.Format("ParseQRC() found {0} messages.", messagesFound));
-
-            // Parse QBN
             ParseQBN(qbnLines);
 
             // End timer
@@ -163,7 +169,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Check for start of message block
                 // Only present in QRC section
                 // Begins with field Message: (or fixed message type)
-                List<Message> messages = new List<Message>();
                 string[] parts = SplitField(lines[i]);
                 if (messageTypes.HasValue(parts[0]))
                 {
@@ -197,22 +202,35 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Instantiate message
                     Message message = new Message(messageID, messageLines.ToArray());
 
-                    // Add message to list
-                    messages.Add(message);
+                    // Add message to collection
+                    messages.Add(messageID, message);
                 }
             }
         }
 
         void ParseQBN(List<string> lines)
         {
+            for (int i = 0; i < lines.Count; i++)
+            {
+                // Skip empty lines while scanning for next QBN item
+                if (string.IsNullOrEmpty(lines[i].Trim()))
+                    continue;
 
+                // Simple way to identify certain lines
+                // This is just to get started on some basics for now
+                if (lines[i].StartsWith("clock", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Clock clock = new Clock(lines[i]);
+                    //clocks.Add()
+                }
+            }
         }
 
         #endregion
 
         #region Helpers
 
-        string[] SplitLine(string text, bool trim = true)
+        public static string[] SplitLine(string text, bool trim = true)
         {
             string[] parts = text.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
 
@@ -226,7 +244,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         // Splits a field with format 'FieldName: Value" using : as separator
         // Be default expects two string values as result
-        string[] SplitField(string text, int expectedCount = 2, bool trim = true)
+        public static string[] SplitField(string text, int expectedCount = 2, bool trim = true)
         {
             const string error = "SplitField() encountered invalid number of results.";
 
@@ -243,27 +261,30 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         // Gets string value from text field with format 'FieldName: String'
-        string GetFieldStringValue(string text)
+        public static string GetFieldStringValue(string text)
         {
             string[] parts = SplitField(text);
             return parts[1].Trim();
         }
 
         // Gets int value from text field with format 'FieldName: Int'
-        int GetFieldIntValue(string text)
+        public static int GetFieldIntValue(string text)
         {
             string[] parts = SplitField(text);
             return ParseInt(parts[1].Trim());
         }
 
-        // Just a wrapper for int.Parse
-        int ParseInt(string text)
+        // Just a wrapper for int.Parse with default of 0 for null or empty strings
+        public static int ParseInt(string text)
         {
-            return int.Parse(text);
+            if (string.IsNullOrEmpty(text))
+                return 0;
+            else
+                return int.Parse(text);
         }
 
         // Trims all lines in string array
-        void TrimLines(ref string[] lines)
+        public static void TrimLines(ref string[] lines)
         {
             for (int i = 0; i < lines.Length; i++)
             {

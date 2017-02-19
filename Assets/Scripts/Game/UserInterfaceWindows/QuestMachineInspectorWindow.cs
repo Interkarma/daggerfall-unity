@@ -74,6 +74,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Add other panels
             SetupActiveQuestsPanel();
+            SetupResourceSelectPanel();
+            SetupResourceInspectPanel();
+            SetupSourcePanel();
 
             //// Quest list
             //questList.Position = new Vector2(2, 2);
@@ -100,12 +103,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             panel.Position = new Vector2(rect.x, rect.y);
             panel.Size = new Vector2(rect.width, rect.height);
             panel.Outline.Enabled = true;
+            panel.Outline.Color = Color.gray;
+            panel.BackgroundColor = new Color(0.25f, 0.25f, 0.25f, 0.5f);
             mainPanel.Components.Add(panel);
 
             // Label
             TextLabel label = new TextLabel();
             label.ShadowPosition = Vector2.zero;
-            label.Position = new Vector2(rect.x, rect.y);
+            label.Position = new Vector2(0, 4);
             label.HorizontalAlignment = HorizontalAlignment.Center;
             label.Text = title;
             panel.Components.Add(label);
@@ -115,18 +120,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetupActiveQuestsPanel()
         {
-            Panel questPanel = AddPanel(new Rect(4, 4, 100, 140), "Active Quests");
+            Panel questPanel = AddPanel(new Rect(4, 4, 100, 352), "Active Quests");
             addQuestTextBox = DaggerfallUI.AddTextBox(new Rect(2, 12, 76, 10), "Quest Filename", questPanel, 8);
+            addQuestTextBox.BackgroundColor = Color.black;
             addQuestTextBox.UpperOnly = true;
             addQuestTextBox.FixedSize = true;
             addQuestTextBox.Outline.Enabled = true;
             addQuestTextBox.UseFocus = true;
-            addQuestTextBox.Text = "_BRISIEN";
+            addQuestTextBox.Text = "_TUTOR__";
             addQuestTextBox.SetFocus();
 
             Button addQuestButton = DaggerfallUI.AddTextButton(new Rect(80, 12, 18, 10), "Add", questPanel);
             addQuestButton.BackgroundColor = mainButtonBackgroundColor;
             addQuestButton.OnMouseClick += AddQuestButton_OnMouseClick;
+        }
+
+        void SetupResourceSelectPanel()
+        {
+            Panel resourcePanel = AddPanel(new Rect(108, 4, 100, 352), "Resources");
+        }
+
+        void SetupResourceInspectPanel()
+        {
+            Panel inspectPanel = AddPanel(new Rect(212, 4, 384, 240), "Visual Inspector");
+        }
+
+        void SetupSourcePanel()
+        {
+            Panel sourcePanel = AddPanel(new Rect(212, 248, 384, 108), "Related Source");
         }
 
         #endregion
