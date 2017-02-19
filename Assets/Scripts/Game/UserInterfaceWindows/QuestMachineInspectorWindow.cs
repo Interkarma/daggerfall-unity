@@ -128,6 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             addQuestTextBox.Outline.Enabled = true;
             addQuestTextBox.UseFocus = true;
             addQuestTextBox.Text = "_TUTOR__";
+            //addQuestTextBox.Text = "_BRISIEN";
             addQuestTextBox.SetFocus();
 
             Button addQuestButton = DaggerfallUI.AddTextButton(new Rect(80, 12, 18, 10), "Add", questPanel);

@@ -210,6 +210,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void ParseQBN(List<string> lines)
         {
+            bool foundEntryPoint = false;
+            string entryLine = string.Empty;
+
             for (int i = 0; i < lines.Count; i++)
             {
                 // Skip empty lines while scanning for next QBN item
@@ -218,17 +221,102 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Simple way to identify certain lines
                 // This is just to get started on some basics for now
+                bool skipBlock = false;
                 if (lines[i].StartsWith("clock", StringComparison.InvariantCultureIgnoreCase))
                 {
                     Clock clock = new Clock(lines[i]);
-                    //clocks.Add()
+                    clocks.Add(clock.Symbol, clock);
                 }
+                else if (lines[i].StartsWith("item", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // This is an item declaration
+                }
+                else if (lines[i].StartsWith("person", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // This is a person declaration
+                }
+                else if (lines[i].StartsWith("place", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // This is a place declaration
+                }
+                else if (lines[i].StartsWith("variable", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // This is a variable declaration
+                }
+                else if (lines[i].Contains("task:"))
+                {
+                    // This is a task declaration
+                    skipBlock = true;
+                }
+                else if (lines[i].Contains("performed:"))
+                {
+                    // This is a repeating task
+                    skipBlock = true;
+                }
+                else if (IsGlobalReference(lines[i]))
+                {
+                    // This is a global variable reference
+                }
+                else if (foundEntryPoint == false)
+                {
+                    // The first QBN line found that is not a resource declaration should be our entry point
+                    foundEntryPoint = true;
+                    entryLine = lines[i];
+                    skipBlock = true;
+                }
+                else
+                {
+                    throw new Exception(string.Format("Unknown line signature encounted '{0}'.", lines[i]));
+                }
+
+                // For not implemented items just skip to end of declaration block for now
+                if (skipBlock)
+                {
+                    while (true)
+                    {
+                        // Running out of lines can also end block!
+                        if (i + 1 >= lines.Count)
+                            break;
+
+                        // Trim and look for pure white-space
+                        string text = lines[++i].TrimEnd('\r');
+                        if (string.IsNullOrEmpty(text))
+                            break;
+                    }
+                    skipBlock = false;
+                }
+            }
+
+            // Report entry point after parsing QBN
+            if (foundEntryPoint)
+            {
+                Debug.LogFormat("Entry point looks like '{0}'", entryLine);
+            }
+            else
+            {
+                throw new Exception("Did not find quest entry point.");
             }
         }
 
         #endregion
 
-        #region Helpers
+        #region Private Methods
+
+        bool IsGlobalReference(string line)
+        {
+            string[] parts = SplitLine(line);
+            if (parts == null || parts.Length == 0)
+                return false;
+
+            if (globalVars.HasValue(parts[0]))
+                return true;
+
+            return false;
+        }
+
+        #endregion
+
+        #region Static Helpers
 
         public static string[] SplitLine(string text, bool trim = true)
         {
