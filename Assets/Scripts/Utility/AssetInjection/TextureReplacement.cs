@@ -162,6 +162,27 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return tex; //assign image to the actual texture
         }
 
+        /// Check if file exist on disk for a specific metal type. 
+        /// Ex: WEAPON04.CIF_0-0.Png for Iron --> WEAPON04.CIF-1_0-0.Png
+        /// <returns>Bool</returns>
+        static public bool CustomCifExist(string filename, int record, int frame, MetalTypes metalType)
+        {
+            if (metalType == MetalTypes.None)
+                return CustomCifExist(filename, record, frame);
+
+            return CustomCifExist(filename + "-" + (int)metalType, record, frame);
+        }
+
+        /// Load custom image as texture2D for a specific metal type.
+        /// <returns>Texture2D.</returns>
+        static public Texture2D LoadCustomCif(string filename, int record, int frame, MetalTypes metalType)
+        {
+            if (metalType == MetalTypes.None)
+                return LoadCustomCif(filename, record, frame);
+
+            return LoadCustomCif(filename + "-" + (int)metalType, record, frame);
+        }
+
         /// <summary>
         /// Load custom image files from disk to use as normal maps
         /// .png files are located in persistentData/textures
@@ -327,12 +348,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             // Update UV map
-            Vector2[] uv = new Vector2[4];
-            uv[0] = new Vector2(0, 1);
-            uv[1] = new Vector2(1, 1);
-            uv[2] = new Vector2(0, 0);
-            uv[3] = new Vector2(1, 0);
-            go.GetComponent<MeshFilter>().mesh.uv = uv;
+            MeshFilter meshFilter = go.GetComponent<MeshFilter>();
+            UpdateUV(ref meshFilter);
 
             // Check if billboard is animated
             int NumberOfFrames = NumberOfAvailableFrames(archive, record);
@@ -351,12 +368,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             meshRenderer.material.mainTexture = albedoTexture;
 
             // Update UV map
-            Vector2[] uv = new Vector2[4];
-            uv[0] = new Vector2(0, 1);
-            uv[1] = new Vector2(1, 1);
-            uv[2] = new Vector2(0, 0);
-            uv[3] = new Vector2(1, 0);
-            meshFilter.mesh.uv = uv;
+            UpdateUV(ref meshFilter);
         }
 
         /// <summary>
@@ -429,6 +441,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 frames++;
             }
             return frames;
+        }
+
+        /// <summary>
+        /// Update UV map
+        /// </summary>
+        /// <param name="meshFilter">MeshFilter of GameObject</param>
+        static private void UpdateUV (ref MeshFilter meshFilter)
+        {
+            Vector2[] uv = new Vector2[4];
+            uv[0] = new Vector2(0, 1);
+            uv[1] = new Vector2(1, 1);
+            uv[2] = new Vector2(0, 0);
+            uv[3] = new Vector2(1, 0);
+            meshFilter.mesh.uv = uv;
         }
 
         #endregion
