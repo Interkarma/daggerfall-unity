@@ -14,6 +14,7 @@
  * 1. Exterior billboards
  * 2. PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
  *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
+ * 3. Weapons dye
  */
 
 using System.IO;

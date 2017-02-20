@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game
         Rect weaponPosition;
         float weaponScaleX;
         float weaponScaleY;
-        string weaponFilename;
+        Dictionary<string, Texture2D> CustomTextures;
 
         DaggerfallAudioSource dfAudioSource;
         WeaponAnimation[] weaponAnims;
@@ -89,12 +89,9 @@ namespace DaggerfallWorkshop.Game
             {
                 // Draw weapon texture behind other HUD elements
                 GUI.depth = 1;
-                if (TextureReplacement.CustomCifExist(weaponFilename, (int)weaponState, currentFrame))
-                {
-                    Texture2D tex = TextureReplacement.LoadCustomCif(weaponFilename, (int)weaponState, currentFrame);
-                    tex.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                Texture2D tex;
+                if (CustomTextures.TryGetValue((int)weaponState + "-" + currentFrame, out tex))
                     GUI.DrawTexture(weaponPosition, tex);
-                }
                 else
                     GUI.DrawTextureWithTexCoords(weaponPosition, weaponAtlas, curAnimRect);
             }
@@ -368,12 +365,12 @@ namespace DaggerfallWorkshop.Game
         private void LoadWeaponAtlas()
         {
             // Get weapon filename
-            weaponFilename = WeaponBasics.GetWeaponFilename(WeaponType);
+            string filename = WeaponBasics.GetWeaponFilename(WeaponType);
 
             // Load the weapon texture atlas
             // Texture is dilated into a transparent coloured border to remove dark edges when filtered
             // Important to use returned UV rects when drawing to get right dimensions
-            weaponAtlas = GetWeaponTextureAtlas(weaponFilename, MetalType, out weaponRects, out weaponIndices, 2, 2, true);
+            weaponAtlas = GetWeaponTextureAtlas(filename, MetalType, out weaponRects, out weaponIndices, 2, 2, true);
             weaponAtlas.filterMode = dfUnity.MaterialReader.MainFilterMode;
 
             // Get weapon anims
@@ -404,6 +401,7 @@ namespace DaggerfallWorkshop.Game
             Rect rect;
             List<Texture2D> textures = new List<Texture2D>();
             List<RecordIndex> indices = new List<RecordIndex>();
+            CustomTextures = new Dictionary<string, Texture2D>();
             for (int record = 0; record < cifFile.RecordCount; record++)
             {
                 int frames = cifFile.GetFrameCount(record);
@@ -419,6 +417,14 @@ namespace DaggerfallWorkshop.Game
                 for (int frame = 0; frame < frames; frame++)
                 {
                     textures.Add(GetWeaponTexture2D(filename, record, frame, metalType, out rect, border, dilate));
+
+                    // Import custom texture
+                    if (TextureReplacement.CustomCifExist(filename, record, frame))
+                    {
+                        Texture2D tex = TextureReplacement.LoadCustomCif(filename, record, frame);
+                        tex.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                        CustomTextures.Add(record + "-" + frame, tex);
+                    }
                 }
             }
 
