@@ -14,7 +14,6 @@
  * 1. Exterior billboards
  * 2. PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
  *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
- * 3. Weapons dye
  */
 
 using System.IO;
@@ -161,6 +160,27 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             tex.LoadImage(File.ReadAllBytes(Path.Combine(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString() + ".png")));
 
             return tex; //assign image to the actual texture
+        }
+
+        /// Check if file exist on disk for a specific metal type. 
+        /// Ex: WEAPON04.CIF_0-0.Png for Iron --> WEAPON04.CIF-1_0-0.Png
+        /// <returns>Bool</returns>
+        static public bool CustomCifExist(string filename, int record, int frame, MetalTypes metalType)
+        {
+            if (metalType == MetalTypes.None)
+                return CustomCifExist(filename, record, frame);
+
+            return CustomCifExist(filename + "-" + (int)metalType, record, frame);
+        }
+
+        /// Load custom image as texture2D for a specific metal type.
+        /// <returns>Texture2D.</returns>
+        static public Texture2D LoadCustomCif(string filename, int record, int frame, MetalTypes metalType)
+        {
+            if (metalType == MetalTypes.None)
+                return LoadCustomCif(filename, record, frame);
+
+            return LoadCustomCif(filename + "-" + (int)metalType, record, frame);
         }
 
         /// <summary>

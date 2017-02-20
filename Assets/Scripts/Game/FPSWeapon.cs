@@ -419,9 +419,9 @@ namespace DaggerfallWorkshop.Game
                     textures.Add(GetWeaponTexture2D(filename, record, frame, metalType, out rect, border, dilate));
 
                     // Import custom texture
-                    if (TextureReplacement.CustomCifExist(filename, record, frame))
+                    if (TextureReplacement.CustomCifExist(filename, record, frame, metalType))
                     {
-                        Texture2D tex = TextureReplacement.LoadCustomCif(filename, record, frame);
+                        Texture2D tex = TextureReplacement.LoadCustomCif(filename, record, frame, metalType);
                         tex.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                         CustomTextures.Add(record + "-" + frame, tex);
                     }
