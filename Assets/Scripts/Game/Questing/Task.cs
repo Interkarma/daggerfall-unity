@@ -10,6 +10,8 @@
 //
 
 using UnityEngine;
+using System;
+using System.Text.RegularExpressions;
 using System.Collections;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -24,5 +26,124 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class Task
     {
+        #region Fields
+
+        string name;        // Unique name of task, can be used like a boolean if to check if task has completed
+        string target;      // Name of target task/variable to check, used by repeating tasks only
+        TaskType type;      // Type of task
+
+        #endregion
+
+        #region Properties
+
+        public string Name
+        {
+            get { return name; }
+        }
+
+        public TaskType Type
+        {
+            get { return type; }
+        }
+
+        #endregion
+
+        #region Enumerations
+
+        public enum TaskType
+        {
+            Standard,
+            Repeating,
+            Variable,
+            Headless,
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public Task()
+        {
+        }
+
+        /// <summary>
+        /// Create a task from QBN source code.
+        /// </summary>
+        /// <param name="lines">Source lines of task block.</param>
+        public Task(string[] lines)
+        {
+            SetTask(lines);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void SetTask(string[] lines)
+        {
+            int i = 0;
+            if (ReadTaskHeader(lines[i]))
+            {
+                // Increment to next line after header
+                i++;
+            }
+        }
+
+        #endregion
+
+        #region Private Method
+
+        /// <summary>
+        /// Reads task header based on support task types.
+        /// </summary>
+        /// <param name="line">Header source line.</param>
+        /// <returns>True if header found, or false for a headless task.</returns>
+        bool ReadTaskHeader(string line)
+        {
+            // Try to match task types
+            Match match = Regex.Match(line, @"(?<symbol>\w+) (?<task>task):|until (?<symbol>\w+) (?<repeating>performed:)|(?<variable>variable) (?<symbol>\w+)");
+            if (match.Success)
+            {
+                if (!string.IsNullOrEmpty(match.Groups["task"].Value))
+                {
+                    // Standard task
+                    type = TaskType.Standard;
+                    target = string.Empty;
+                    name = match.Groups["symbol"].Value;
+                }
+                else if (!string.IsNullOrEmpty(match.Groups["repeating"].Value))
+                {
+                    // Repeating task
+                    // Repeating tasks start executing right away and check another task/variable to know when to stop
+                    type = TaskType.Repeating;
+                    target = match.Groups["symbol"].Value;
+                    name = DaggerfallUnity.NextUID.ToString();
+                }
+                else if (!string.IsNullOrEmpty(match.Groups["variable"].Value))
+                {
+                    // Variable
+                    type = TaskType.Variable;
+                    target = string.Empty;
+                    name = match.Groups["symbol"].Value;
+                }
+
+                return true;
+            }
+            else
+            {
+                // No match on task header, treat as a headless task (e.g. startup task)
+                // Headless tasks start executing right away
+                type = TaskType.Headless;
+                target = string.Empty;
+                name = DaggerfallUnity.NextUID.ToString();
+
+                return false;
+            }
+        }
+
+        #endregion
     }
 }

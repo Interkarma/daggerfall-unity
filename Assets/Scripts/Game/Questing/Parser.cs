@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.Questing
         // Quest object collections
         Dictionary<int, Message> messages = new Dictionary<int, Message>();
         Dictionary<string, Clock> clocks = new Dictionary<string, Clock>();
+        Dictionary<string, Task> tasks = new Dictionary<string, Task>();
 
         #endregion
 
@@ -210,9 +211,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void ParseQBN(List<string> lines)
         {
-            bool foundEntryPoint = false;
-            string entryLine = string.Empty;
-
+            bool foundHeadlessTask = false;
             for (int i = 0; i < lines.Count; i++)
             {
                 // Skip empty lines while scanning for next QBN item
@@ -221,7 +220,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Simple way to identify certain lines
                 // This is just to get started on some basics for now
-                bool skipBlock = false;
                 if (lines[i].StartsWith("clock", StringComparison.InvariantCultureIgnoreCase))
                 {
                     Clock clock = new Clock(lines[i]);
@@ -235,72 +233,74 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // This is a person declaration
                 }
+                else if (lines[i].StartsWith("foe", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // This is an enemy declaration
+                }
                 else if (lines[i].StartsWith("place", StringComparison.InvariantCultureIgnoreCase))
                 {
                     // This is a place declaration
                 }
                 else if (lines[i].StartsWith("variable", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    // This is a variable declaration
+                    // This is a single-line variable declaration task
+                    string[] variableLines = new string[1];
+                    variableLines[0] = lines[i];
+                    Task task = new Task(variableLines);
+                    tasks.Add(task.Name, task);
                 }
-                else if (lines[i].Contains("task:"))
+                else if (lines[i].Contains("task:") ||
+                    (lines[i].StartsWith("until", StringComparison.InvariantCultureIgnoreCase) && lines[i].Contains("performed:")))
                 {
-                    // This is a task declaration
-                    skipBlock = true;
-                }
-                else if (lines[i].Contains("performed:"))
-                {
-                    // This is a repeating task
-                    skipBlock = true;
+                    // This is a standard or repeating task declaration
+                    List<string> taskLines = ReadBlock(lines, ref i);
+                    Task task = new Task(taskLines.ToArray());
+                    tasks.Add(task.Name, task);
                 }
                 else if (IsGlobalReference(lines[i]))
                 {
                     // This is a global variable reference
                 }
-                else if (foundEntryPoint == false)
+                else if (foundHeadlessTask == false)
                 {
-                    // The first QBN line found that is not a resource declaration should be our entry point
-                    foundEntryPoint = true;
-                    entryLine = lines[i];
-                    skipBlock = true;
+                    // The first QBN line found that is not a resource declaration should be our headless entry point
+                    List<string> taskLines = ReadBlock(lines, ref i);
+                    Task task = new Task(taskLines.ToArray());
+                    tasks.Add(task.Name, task);
+                    foundHeadlessTask = true;
                 }
                 else
                 {
+                    // Something went wrong
                     throw new Exception(string.Format("Unknown line signature encounted '{0}'.", lines[i]));
                 }
-
-                // For not implemented items just skip to end of declaration block for now
-                if (skipBlock)
-                {
-                    while (true)
-                    {
-                        // Running out of lines can also end block!
-                        if (i + 1 >= lines.Count)
-                            break;
-
-                        // Trim and look for pure white-space
-                        string text = lines[++i].TrimEnd('\r');
-                        if (string.IsNullOrEmpty(text))
-                            break;
-                    }
-                    skipBlock = false;
-                }
-            }
-
-            // Report entry point after parsing QBN
-            if (foundEntryPoint)
-            {
-                Debug.LogFormat("Entry point looks like '{0}'", entryLine);
-            }
-            else
-            {
-                throw new Exception("Did not find quest entry point.");
             }
         }
 
         #endregion
 
         #region Private Methods
+
+        List<string> ReadBlock(List<string> linesIn, ref int currentLine)
+        {
+            List<string> linesOut = new List<string>();
+            while (true)
+            {
+                // Add current line to lines out
+                linesOut.Add(linesIn[currentLine].Trim('\t'));
+
+                // End block if about to overflow lines
+                if (currentLine + 1 >= linesIn.Count)
+                    break;
+
+                // Trim and look for pure white-space to end block
+                string text = linesIn[++currentLine].TrimEnd('\r');
+                if (string.IsNullOrEmpty(text))
+                    break;
+            }
+
+            return linesOut;
+        }
 
         bool IsGlobalReference(string line)
         {

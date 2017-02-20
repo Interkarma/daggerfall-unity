@@ -139,10 +139,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
             public void Set(string text)
             {
-                Match match;
-
                 // Match dd.hh:mm OR hh:mm OR mm
-                match = Regex.Match(text, @"(?<days>\d+).(?<hours>\d+):(?<minutes>\d+)|(?<hours>\d+):(?<minutes>\d+)|(?<minutes>\d+)");
+                Match match = Regex.Match(text, @"(?<days>\d+).(?<hours>\d+):(?<minutes>\d+)|(?<hours>\d+):(?<minutes>\d+)|(?<minutes>\d+)");
                 if (match.Success)
                 {
                     Days = Parser.ParseInt(match.Groups["days"].Value);
