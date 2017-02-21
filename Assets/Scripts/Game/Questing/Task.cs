@@ -90,6 +90,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Increment to next line after header
                 i++;
             }
+            else
+            {
+                // No match on task header treat as a headless task (e.g. startup task)
+                type = TaskType.Headless;
+                target = string.Empty;
+                name = DaggerfallUnity.NextUID.ToString();
+            }
         }
 
         #endregion
@@ -100,11 +107,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Reads task header based on support task types.
         /// </summary>
         /// <param name="line">Header source line.</param>
-        /// <returns>True if header found, or false for a headless task.</returns>
+        /// <returns>True if task header match found.</returns>
         bool ReadTaskHeader(string line)
         {
             // Try to match task types
-            Match match = Regex.Match(line, @"(?<symbol>\w+) (?<task>task):|until (?<symbol>\w+) (?<repeating>performed:)|(?<variable>variable) (?<symbol>\w+)");
+            Match match = Regex.Match(line, @"(?<symbol>[a-zA-Z0-9_.]+) (?<task>task):|until (?<symbol>[a-zA-Z0-9_.]+) (?<repeating>performed:)|(?<variable>variable) (?<symbol>[a-zA-Z0-9_.]+)");
             if (match.Success)
             {
                 if (!string.IsNullOrEmpty(match.Groups["task"].Value))
@@ -132,16 +139,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 return true;
             }
-            else
-            {
-                // No match on task header, treat as a headless task (e.g. startup task)
-                // Headless tasks start executing right away
-                type = TaskType.Headless;
-                target = string.Empty;
-                name = DaggerfallUnity.NextUID.ToString();
 
-                return false;
-            }
+            return false;
         }
 
         #endregion

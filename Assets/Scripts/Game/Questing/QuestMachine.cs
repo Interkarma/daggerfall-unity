@@ -149,7 +149,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <returns>Quest.</returns>
         public Quest InstantiateQuest(string[] questSource)
         {
-            return new Quest(questSource);
+            Parser parser = new Parser();
+            Quest quest = parser.Parse(questSource);
+
+            return quest;
         }
 
         #endregion

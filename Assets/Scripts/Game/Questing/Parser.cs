@@ -64,8 +64,9 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Attempts to parse a text source file.
         /// </summary>
         /// <param name="source">Array of text lines from quest source.</param>
-        public void Parse(string[] source)
+        public Quest Parse(string[] source)
         {
+            Quest quest = new Quest();
             const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
 
             string questName = string.Empty;
@@ -151,6 +152,8 @@ namespace DaggerfallWorkshop.Game.Questing
             // End timer
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
             Debug.Log(string.Format("Time to parse quest {0} was {1}ms.", questName, totalTime));
+
+            return quest;
         }
 
         #endregion
@@ -264,6 +267,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (foundHeadlessTask == false)
                 {
                     // The first QBN line found that is not a resource declaration should be our headless entry point
+                    // Currently only a single headless task is expected for startup task
+                    // May be expanded later to allow multiple headless tasks
                     List<string> taskLines = ReadBlock(lines, ref i);
                     Task task = new Task(taskLines.ToArray());
                     tasks.Add(task.Name, task);

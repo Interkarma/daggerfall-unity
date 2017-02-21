@@ -35,29 +35,9 @@ namespace DaggerfallWorkshop.Game.Questing
         {
         }
 
-        /// <summary>
-        /// Parse constructor.
-        /// </summary>
-        /// <param name="sourceName">Quest source.</param>
-        public Quest(string[] source)
-        {
-            Parse(source);
-        }
-
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Parse quest source into a quest object.
-        /// </summary>
-        /// <param name="source">Quest source.</param>
-        public void Parse(string[] source)
-        {
-            Parser parser = new Parser();
-            parser.Parse(source);
-        }
-
         #endregion
 
         #region Private Methods
