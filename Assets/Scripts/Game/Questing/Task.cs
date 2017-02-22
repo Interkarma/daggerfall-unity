@@ -17,11 +17,11 @@ using System.Collections;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Tasks are subsets of execution flow triggered by other tasks or clock timeouts. Somewhat like a subroutine.
+    /// Tasks are executed by other tasks, clock timeouts, etc. Somewhat like a subroutine.
     /// Tasks can contain conditions at start that if not met appear to prevent further execution of task.
-    /// Most tasks need to be executed directly, but certain tasks (e.g. until _variable_ performed) will
-    ///   start and continue to check condition until they can execute.
-    /// Tasks expose a flag stating if they have been completed or not.
+    /// Task name can also be used as a symbol to query if task has been completed or not.
+    /// Provided conditions are met, commands under a task usually run once then end.
+    /// Repeating tasks execute (i.e. each command stays alive) until target task/variable completed.
     /// Variables are a special task with no conditions or actions, just set/unset.
     /// </summary>
     public class Task
@@ -52,10 +52,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public enum TaskType
         {
+            Headless,
             Standard,
             Repeating,
             Variable,
-            Headless,
         }
 
         #endregion
@@ -97,6 +97,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 target = string.Empty;
                 name = DaggerfallUnity.NextUID.ToString();
             }
+
+            // TODO: Read task conditions and commands
         }
 
         #endregion
@@ -104,7 +106,7 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Private Method
 
         /// <summary>
-        /// Reads task header based on support task types.
+        /// Reads task header based on supported task types.
         /// </summary>
         /// <param name="line">Header source line.</param>
         /// <returns>True if task header match found.</returns>
@@ -124,7 +126,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (!string.IsNullOrEmpty(match.Groups["repeating"].Value))
                 {
                     // Repeating task
-                    // Repeating tasks start executing right away and check another task/variable to know when to stop
                     type = TaskType.Repeating;
                     target = match.Groups["symbol"].Value;
                     name = DaggerfallUnity.NextUID.ToString();
