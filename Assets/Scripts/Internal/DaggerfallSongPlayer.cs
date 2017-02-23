@@ -228,6 +228,11 @@ namespace DaggerfallWorkshop
 
         private byte[] LoadSong(string filename)
         {
+            // Get custom song
+            if (Utility.AssetInjection.SoundReplacement.CustomSongExist(filename))
+                return Utility.AssetInjection.SoundReplacement.LoadCustomSong(filename);
+
+            // Get Daggerfal song
             TextAsset asset = Resources.Load<TextAsset>(Path.Combine(SongFolder, filename));
             if (asset != null)
             {

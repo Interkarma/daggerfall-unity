@@ -17,8 +17,8 @@ using UnityEngine;
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
-    /// Handles import and injection of custom AudioClips
-    /// with the purpose of providing modding support.
+    /// Handles import and injection of custom sounds and
+    /// songs with the purpose of providing modding support.
     /// </summary>
     static public class SoundReplacement
     {
@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Load custom sound file files from disk.
+        /// Load custom sound file from disk.
         /// </summary>
         /// <param name="soundIndex">Index of clip. Will be casted to SoundClips enum for better readability.</param>
         /// <returns></returns>
@@ -52,6 +52,38 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             string path = "file://" + soundPath;
             WWW soundFile = new WWW(Path.Combine(path, (SoundClips)soundIndex + extension));
             return soundFile;
+        }
+
+        /// <summary>
+        /// Check if song file exists on disk.
+        /// We use the same nomenclature used in SongFiles enum.
+        /// </summary>
+        /// <param name="filename">Name of song, including .mid extension</param>
+        /// <returns></returns>
+        static public bool CustomSongExist(string filename)
+        {
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement
+                && File.Exists(Path.Combine(soundPath, "song_" + filename)))
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Load custom song file from disk as a byte array.
+        /// We use the same nomenclature used in SongFiles enum.
+        /// </summary>
+        /// <param name="filename">Name of song, including .mid extension</param>
+        /// <returns></returns>
+        static public byte[] LoadCustomSong(string filename)
+        {
+            byte[] songFile = File.ReadAllBytes(Path.Combine(soundPath, "song_" + filename));
+
+            if (songFile != null)
+                return songFile;
+
+            Debug.LogError("can't load custom song song_" + filename);
+            return null;
         }
     }
 }
