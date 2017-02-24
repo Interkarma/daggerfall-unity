@@ -9,8 +9,6 @@
 // Notes:
 //
 
-using System;
-using System.Collections;
 using System.IO;
 using UnityEngine;
 
@@ -26,7 +24,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static private string soundPath = Path.Combine(Application.streamingAssetsPath, "Sound");
         const string extension = ".wav";
 
-        // Methods
+        // Sound Methods
 
         /// <summary>
         /// Check if sound file exist on disk.
@@ -53,6 +51,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             WWW soundFile = new WWW(Path.Combine(path, (SoundClips)soundIndex + extension));
             return soundFile;
         }
+
+        // Songs Methods
 
         /// <summary>
         /// Check if song file exists on disk.

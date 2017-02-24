@@ -488,7 +488,7 @@ namespace DaggerfallWorkshop.Utility
 
                     // Use Daggerfall Model
                     // Add or combine
-                    if (combiner == null || IsCityGate(obj.ModelIdNum) || MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                    if (combiner == null || IsCityGate(obj.ModelIdNum))
                         AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                     else
                         combiner.Add(ref modelData, modelMatrix);
@@ -532,7 +532,7 @@ namespace DaggerfallWorkshop.Utility
 
                 // Use Daggerfall Model
                 // Add or combine
-                if (combiner == null || MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                if (combiner == null)
                     AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                 else
                     combiner.Add(ref modelData, modelMatrix);
