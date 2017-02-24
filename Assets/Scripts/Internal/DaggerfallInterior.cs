@@ -227,7 +227,7 @@ namespace DaggerfallWorkshop
                 if (!modelExist)
                 {
                     // Use Daggerfall Mesh: Combine or add
-                    if (dfUnity.Option_CombineRMB && !MeshReplacement.ReplacmentModelExist(obj.ModelIdNum))
+                    if (dfUnity.Option_CombineRMB)
                     {
                         combiner.Add(ref modelData, modelMatrix);
                     }

@@ -150,70 +150,59 @@ namespace DaggerfallWorkshop
             if (!IsReady)
                 return null;
 
-            // model replacement support
-            if (Utility.AssetInjection.MeshReplacement.ReplacmentModelExist(modelID))
+            // Get model data
+            ModelData model;
+            if (!GetModelData(modelID, out model))
             {
-                return Utility.AssetInjection.MeshReplacement.LoadReplacementModel(modelID, ref cachedMaterialsOut);
+                DaggerfallUnity.LogMessage(string.Format("Unknown ModelID {0}.", modelID.ToString()), true);
+                return null;
             }
 
-            else
+            // Load materials
+            cachedMaterialsOut = new CachedMaterial[model.SubMeshes.Length];
+            textureKeysOut = new int[model.SubMeshes.Length];
+            for (int i = 0; i < model.SubMeshes.Length; i++)
             {
-                // Get model data
-                ModelData model;
-                if (!GetModelData(modelID, out model))
-                {
-                    DaggerfallUnity.LogMessage(string.Format("Unknown ModelID {0}.", modelID.ToString()), true);
-                    return null;
-                }
+                int archive = model.DFMesh.SubMeshes[i].TextureArchive;
+                int record = model.DFMesh.SubMeshes[i].TextureRecord;
+                textureKeysOut[i] = MaterialReader.MakeTextureKey((short)archive, (byte)record, (byte)0);
 
-                // Load materials
-                cachedMaterialsOut = new CachedMaterial[model.SubMeshes.Length];
-                textureKeysOut = new int[model.SubMeshes.Length];
-                for (int i = 0; i < model.SubMeshes.Length; i++)
-                {
-                    int archive = model.DFMesh.SubMeshes[i].TextureArchive;
-                    int record = model.DFMesh.SubMeshes[i].TextureRecord;
-                    textureKeysOut[i] = MaterialReader.MakeTextureKey((short)archive, (byte)record, (byte)0);
+                // Add material to array
+                CachedMaterial cachedMaterial;
+                dfUnity.MaterialReader.GetCachedMaterial(archive, record, 0, out cachedMaterial);
+                cachedMaterialsOut[i] = cachedMaterial;
 
-                    // Add material to array
-                    CachedMaterial cachedMaterial;
-                    dfUnity.MaterialReader.GetCachedMaterial(archive, record, 0, out cachedMaterial);
-                    cachedMaterialsOut[i] = cachedMaterial;
-
-                    // Set animation flag
-                    if (cachedMaterial.singleFrameCount > 1 && !hasAnimationsOut)
-                        hasAnimationsOut = true;
-                }
-
-                // Create mesh
-                Mesh mesh = new Mesh();
-                mesh.name = modelID.ToString();
-                mesh.vertices = model.Vertices;
-                mesh.normals = model.Normals;
-                mesh.uv = model.UVs;
-                mesh.subMeshCount = model.SubMeshes.Length;
-
-                // Set submesh triangles
-                for (int s = 0; s < mesh.subMeshCount; s++)
-                {
-                    var sub = model.SubMeshes[s];
-                    int[] triangles = new int[sub.PrimitiveCount * 3];
-                    for (int t = 0; t < sub.PrimitiveCount * 3; t++)
-                    {
-                        triangles[t] = model.Indices[sub.StartIndex + t];
-                    }
-                    mesh.SetTriangles(triangles, s);
-                }
-
-                // Finalise mesh
-                if (solveTangents) TangentSolver(mesh);
-                if (lightmapUVs) AddLightmapUVs(mesh);
-                mesh.RecalculateBounds();
-                mesh.Optimize();
-                return mesh;
+                // Set animation flag
+                if (cachedMaterial.singleFrameCount > 1 && !hasAnimationsOut)
+                    hasAnimationsOut = true;
             }
 
+            // Create mesh
+            Mesh mesh = new Mesh();
+            mesh.name = modelID.ToString();
+            mesh.vertices = model.Vertices;
+            mesh.normals = model.Normals;
+            mesh.uv = model.UVs;
+            mesh.subMeshCount = model.SubMeshes.Length;
 
+            // Set submesh triangles
+            for (int s = 0; s < mesh.subMeshCount; s++)
+            {
+                var sub = model.SubMeshes[s];
+                int[] triangles = new int[sub.PrimitiveCount * 3];
+                for (int t = 0; t < sub.PrimitiveCount * 3; t++)
+                {
+                    triangles[t] = model.Indices[sub.StartIndex + t];
+                }
+                mesh.SetTriangles(triangles, s);
+            }
+
+            // Finalise mesh
+            if (solveTangents) TangentSolver(mesh);
+            if (lightmapUVs) AddLightmapUVs(mesh);
+            mesh.RecalculateBounds();
+            mesh.Optimize();
+            return mesh;
         }
 
         /// <summary>

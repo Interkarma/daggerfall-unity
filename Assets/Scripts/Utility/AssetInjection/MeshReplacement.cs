@@ -26,59 +26,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     static public class MeshReplacement
     {
-        #region Asset-injection
+        // Fields
+        static private string modelsPath = Path.Combine(Application.streamingAssetsPath, "Models");
+        static private string flatsPath = Path.Combine(Application.streamingAssetsPath, "Flats");
 
-        /// <summary>
-        /// Check existence of model in Resources
-        /// Legacy: this can eventually be removed
-        /// </summary>
-        /// <returns>Bool</returns>
-        static public bool ReplacmentModelExist(uint modelID)
-        {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                 && Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_mesh") != null)
-                return true;
-      
-            return false;
-        }
+        #region Models
 
-        /// <summary>
-        /// Import the model and the material(s) from Resources
-        /// </summary>
-        static public Mesh LoadReplacementModel(uint modelID, ref CachedMaterial[] cachedMaterialsOut)
-        {
-            // Import mesh
-            GameObject object3D = Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_mesh") as GameObject;
- 
-            // Import materials
-            cachedMaterialsOut = new CachedMaterial[object3D.GetComponent<MeshRenderer>().sharedMaterials.Length];
-
-            string materialPath;
-
-            // If it's not winter or the model doesn't have a winter version, it loads default materials
-            if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue != DaggerfallDateTime.Seasons.Winter) || (Resources.Load("Models/" + modelID.ToString() + "/material_w_0") == null))
-                materialPath = "/material_";
-            // If it's winter and the model has a winter version, it loads winter materials
-            else
-                materialPath = "/material_w_";
-
-            for (int i = 0; i < cachedMaterialsOut.Length; i++)
-            {
-                if (Resources.Load("Models/" + modelID.ToString() + materialPath + i) != null)
-                {
-                    cachedMaterialsOut[i].material = Resources.Load("Models/" + modelID.ToString() + materialPath + i) as Material;
-                    if (cachedMaterialsOut[i].material.mainTexture != null)
-                        cachedMaterialsOut[i].material.mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode; //assign texture filtermode as user settings
-                    else
-                        Debug.LogError("Custom model " + modelID + " is missing a texture");
-                }
-                else
-                    Debug.LogError("Custom model " + modelID + " is missing a material");
-            }
-
-            return object3D.GetComponent<MeshFilter>().sharedMesh;
-        }
-  
         /// <summary>
         /// Import the custom GameObject if available
         /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
@@ -100,33 +53,24 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 modelExist = true;
                 return;
             }
- 
-            // Load AssetBundle
-            string modelsPath = Path.Combine(Application.streamingAssetsPath, "Models");
+
+            // Get AssetBundle
             string modelName = modelID.ToString();
-            modelsPath = Path.Combine(modelsPath, modelName + ".model");
-            if (!File.Exists(modelsPath))
+            string path = Path.Combine(modelsPath, modelName + ".model");
+            if (!File.Exists(path))
             {
                 modelExist = false;
                 return;
             }
-            var LoadedAssetBundle = AssetBundle.LoadFromFile(modelsPath);
-            if (LoadedAssetBundle == null)
+            AssetBundle LoadedAssetBundle;
+            if (!TryGetAssetBundle(path, modelName, out LoadedAssetBundle))
             {
-                Debug.LogError("Failed to load AssetBundle " + modelName + ".model");
                 modelExist = false;
                 return;
             }
- 
-            // Check if AssetBundle contain the model we are looking for and assign the name according to the current season
-            if (!LoadedAssetBundle.Contains(modelName))
-            {
-                Debug.LogError("AssetBundle " + modelName + ".model is invalid");
-                modelExist = false;
-                LoadedAssetBundle.Unload(false);
-                return;
-            }
-            else if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter) && (LoadedAssetBundle.Contains(modelName + "_winter")))
+
+            // Assign the name according to the current season
+            if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter) && (LoadedAssetBundle.Contains(modelName + "_winter")))
                 modelName += "_winter";
  
             // Instantiate GameObject
@@ -155,7 +99,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
  
             return false;
         }
-        
+
         /// <summary>
         /// Import gameobject from Resources
         /// </summary>
@@ -179,6 +123,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             FinaliseCustomGameObject(ref object3D, modelID.ToString());
         }
 
+        #endregion
+
+        #region Flats
+
         /// <summary>
         /// Import the custom GameObject for billboard if available
         /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
@@ -201,29 +149,18 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 return;
             }
 
-            // Load AssetBundle
-            string modelsPath = Path.Combine(Application.streamingAssetsPath, "Flats");
+            // Get AssetBundle
             string modelName = archive.ToString() + "_" + record.ToString();
-            modelsPath = Path.Combine(modelsPath, modelName + ".flat");
-            if (!File.Exists(modelsPath))
+            string path = Path.Combine(flatsPath, modelName + ".flat");
+            if (!File.Exists(path))
             {
                 modelExist = false;
                 return;
             }
-            var LoadedAssetBundle = AssetBundle.LoadFromFile(modelsPath);
-            if (LoadedAssetBundle == null)
+            AssetBundle LoadedAssetBundle;
+            if (!TryGetAssetBundle(path, modelName, out LoadedAssetBundle))
             {
-                Debug.LogError("Failed to load AssetBundle " + modelName + ".flat");
                 modelExist = false;
-                return;
-            }
- 
-            // Check if AssetBundle contain the model we are looking for
-            if (!LoadedAssetBundle.Contains(modelName))
-            {
-                Debug.LogError("AssetBundle " + modelName + ".flat is invalid");
-                modelExist = false;
-                LoadedAssetBundle.Unload(false);
                 return;
             }
 
@@ -271,10 +208,38 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
  
             FinaliseCustomGameObject(ref object3D, archive.ToString() + "_" + record.ToString());
         }
- 
+
         #endregion
 
-        #region Utilities
+        #region Private Methods
+
+        /// <summary>
+        /// Try loading AssetBundle and check if it contains the GameObject.
+        /// </summary>
+        /// <param name="path">Location of the AssetBundle.</param>
+        /// <param name="modelName">Name of GameObject.</param>
+        /// <param name="assetBundle">Loaded AssetBundle.</param>
+        /// <returns>True if AssetBundle is loaded.</returns>
+        static private bool TryGetAssetBundle (string path, string modelName, out AssetBundle assetBundle)
+        {
+            var loadedAssetBundle = AssetBundle.LoadFromFile(path);
+            if (loadedAssetBundle != null)
+            {
+                // Check if AssetBundle contain the model we are looking for
+                if (loadedAssetBundle.Contains(modelName))
+                {
+                    assetBundle = loadedAssetBundle;
+                    return true;
+                }
+                else
+                    loadedAssetBundle.Unload(false);
+            }
+
+            Debug.LogError("Error with AssetBundle: " + path + "doesn't contain " + 
+                modelName + " or is corrupted.");
+            assetBundle = null;
+            return false;
+        }
 
         /// <summary>
         /// Assign texture filtermode as user settings and check integrity of materials.
@@ -286,7 +251,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         /// <param name="object3D">Custom prefab</param>
         /// <param name="ModelName">ID of model or sprite to be replaced. Used for debugging</param>
-        static public void FinaliseCustomGameObject(ref GameObject object3D, string ModelName)
+        static private void FinaliseCustomGameObject(ref GameObject object3D, string ModelName)
         {
             // Get MeshRenderer
             MeshRenderer meshRenderer = object3D.GetComponent<MeshRenderer>();
@@ -320,14 +285,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
         }
 
-
         /// <summary>
         /// Fix position of dungeon gameobjects.
         /// </summary>
         /// <param name="position">localPosition</param>
         /// <param name="archive">Archive of billboard texture</param>
         /// <param name="record">Record of billboard texture</param>
-        static void GetFixedPosition (ref Vector3 position, int archive, int record)
+        static private void GetFixedPosition (ref Vector3 position, int archive, int record)
         {
             // Get height
             int height = ImageReader.GetImageData("TEXTURE." + archive, record, createTexture:false).height;
@@ -335,6 +299,48 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Correct transform
             position.y -= height / 2 * MeshReader.GlobalScale;
         }
+
+        #endregion
+
+        #region Legacy Methods
+
+        // This was used to import mesh and materials separately from Resources.
+        // It might be useful again in the future.
+        //
+        //static public Mesh LoadReplacementModel(uint modelID, ref CachedMaterial[] cachedMaterialsOut)
+        //{
+        //    // Import mesh
+        //    GameObject object3D = Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_mesh") as GameObject;
+        //
+        //    // Import materials
+        //    cachedMaterialsOut = new CachedMaterial[object3D.GetComponent<MeshRenderer>().sharedMaterials.Length];
+        //
+        //    string materialPath;
+        //
+        //    // If it's not winter or the model doesn't have a winter version, it loads default materials
+        //    if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue != DaggerfallDateTime.Seasons.Winter) || (Resources.Load("Models/" + modelID.ToString() + "/material_w_0") == null))
+        //        materialPath = "/material_";
+        //    // If it's winter and the model has a winter version, it loads winter materials
+        //   else
+        //        materialPath = "/material_w_";
+        //
+        //    for (int i = 0; i < cachedMaterialsOut.Length; i++)
+        //    {
+        //        if (Resources.Load("Models/" + modelID.ToString() + materialPath + i) != null)
+        //        {
+        //            cachedMaterialsOut[i].material = Resources.Load("Models/" + modelID.ToString() + materialPath + i) as Material;
+        //            if (cachedMaterialsOut[i].material.mainTexture != null)
+        //                cachedMaterialsOut[i].material.mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode; //assign texture filtermode as user settings
+        //            else
+        //                Debug.LogError("Custom model " + modelID + " is missing a texture");
+        //        }
+        //        else
+        //            Debug.LogError("Custom model " + modelID + " is missing a material");
+        //    }
+        //
+        //    return object3D.GetComponent<MeshFilter>().sharedMesh;
+        //}
+        //
 
         #endregion
     }

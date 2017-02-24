@@ -67,33 +67,24 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Bool</returns>
         static public bool CustomTextureExist(int archive, int record, int frame = 0)
         {
-            return CustomTextureExist(archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
+            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
         }
 
         static public bool CustomTextureExist(string name)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Path.Combine(texturesPath, name + ".png")))
-                return true;
-
-            return false;
+            return TextureFileExist(texturesPath, name);
         }
 
         /// import custom image as texture2D
         /// <returns>Texture2D</returns>
         static public Texture2D LoadCustomTexture(int archive, int record, int frame)
         {
-            return LoadCustomTexture(archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
+            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
         }
 
         static public Texture2D LoadCustomTexture(string name)
         {
-            Texture2D tex = new Texture2D(2, 2); //create empty texture, size will be the actual size of .png file
-
-            //load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Path.Combine(texturesPath, name + ".png")));
-
-            return tex; //assign image to the actual texture
+            return ImportTextureFile(texturesPath, name);
         }
 
         /// <summary>
@@ -108,24 +99,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Bool</returns>
         static public bool CustomImageExist(string filename)
         {
-
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Path.Combine(imgPath, filename + ".png")))
-                return true;
-
-            return false;
+            return TextureFileExist(imgPath, filename);
         }
 
         /// load custom image as texture2D
         /// <returns>Texture2D.</returns>
         static public Texture2D LoadCustomImage(string filename)
         {
-            Texture2D tex = new Texture2D(2, 2); //create empty texture, size will be the actual size of .png file
-
-            //load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Path.Combine(imgPath, filename + ".png")));
-
-            return tex; //assign image to the actual texture
+            return ImportTextureFile(imgPath, filename);
         }
 
         /// <summary>
@@ -142,24 +123,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Bool</returns>
         static public bool CustomCifExist(string filename, int record, int frame = 0)
         {
-
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Path.Combine(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString() + ".png")))
-                return true;
-
-            return false;
+            return TextureFileExist(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString());
         }
 
         /// load custom image as texture2D
         /// <returns>Texture2D.</returns>
         static public Texture2D LoadCustomCif(string filename, int record, int frame)
         {
-            Texture2D tex = new Texture2D(2, 2); //create empty texture, size will be the actual size of .png file
-
-            //load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Path.Combine(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString() + ".png")));
-
-            return tex; //assign image to the actual texture
+            return ImportTextureFile(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString());
         }
 
         /// Check if file exist on disk for a specific metal type. 
@@ -197,16 +168,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Bool</returns>
         static public bool CustomNormalExist(int archive, int record, int frame)
         {
-            return CustomNormalExist(archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
+            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Normal");
         }
 
         static public bool CustomNormalExist(string name)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Path.Combine(texturesPath, name + "_Normal.png")))
-                return true;
-
-            return false;
+            return TextureFileExist(texturesPath, name + "_Normal");
         }
 
         /// import custom image as texture2D
@@ -248,23 +215,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Bool</returns>
         static public bool CustomEmissionExist(int archive, int record, int frame)
         {
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
-                && File.Exists(Path.Combine(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Emission.png")))
-                return true;
-
-            return false;
+            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Emission");
         }
 
         /// import custom image as texture2D
         /// <returns>Texture2D</returns>
         static public Texture2D LoadCustomEmission(int archive, int record, int frame)
         {
-            Texture2D tex = new Texture2D(2, 2); //create empty texture, size will be the actual size of .png file
-
-            //load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Path.Combine(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Emission.png")));
-
-            return tex; //assign image to the actual texture
+            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Emission");
         }
 
         #endregion
@@ -312,23 +270,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="record">Record index.</param>
         static public void LoadCustomBillboardTexture(ref GameObject go, int archive, int record)
         {
-            Texture2D albedoTexture, emissionMap;
+            // Get MeshRenderer
             MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
-
-            // Check if billboard is emissive
-            bool isEmissive = false;
-            if (meshRenderer.materials[0].GetTexture("_EmissionMap") != null)
-                isEmissive = true;
-
-            // Import texture(s)
-            LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record);
-
-            // Main texture
-            meshRenderer.materials[0].SetTexture("_MainTex", albedoTexture);
-
-            // Emission maps for lights
-            if (isEmissive)
-                meshRenderer.materials[0].SetTexture("_EmissionMap", emissionMap);
 
             // Customize billboard size (scale)
             string XmlFile = archive + "_" + record + "-0";
@@ -350,6 +293,22 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Update UV map
             MeshFilter meshFilter = go.GetComponent<MeshFilter>();
             UpdateUV(ref meshFilter);
+
+            // Check if billboard is emissive
+            bool isEmissive = false;
+            if (meshRenderer.materials[0].GetTexture("_EmissionMap") != null)
+                isEmissive = true;
+
+            // Import texture(s)
+            Texture2D albedoTexture, emissionMap;
+            LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record);
+
+            // Main texture
+            meshRenderer.materials[0].SetTexture("_MainTex", albedoTexture);
+
+            // Emission maps for lights
+            if (isEmissive)
+                meshRenderer.materials[0].SetTexture("_EmissionMap", emissionMap);
 
             // Check if billboard is animated
             int NumberOfFrames = NumberOfAvailableFrames(archive, record);
@@ -379,7 +338,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public void SetCustomButton(ref Button button, string colorName)
         {
             // Load texture
-            button.BackgroundTexture = TextureReplacement.LoadCustomTexture(colorName);
+            button.BackgroundTexture = LoadCustomTexture(colorName);
+            button.BackgroundTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.GUIFilterMode;
 
             // Load settings from Xml (if present)
             // Set custom color
@@ -427,27 +387,53 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 emissionMap = null;
         }
 
+        #endregion
+
+        #region Private Methods
+
         /// <summary>
-        /// Check all frames available on disk.
+        /// Check if image file exist on disk.
         /// </summary>
-        /// <param name="archive">Archive index.</param>
-        /// <param name="record">Record index.</param>
-        /// <returns>Number of textures present on disk for this record</returns>
-        static public int NumberOfAvailableFrames(int archive, int record)
+        /// <param name="path">Location of image file.</param>
+        /// <param name="name">Name of image file.</param>
+        /// <returns></returns>
+        static private bool TextureFileExist (string path, string name)
         {
-            int frames = 0;
-            while (CustomTextureExist(archive, record, frames))
-            {
-                frames++;
-            }
-            return frames;
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement //check .ini setting
+                && File.Exists(Path.Combine(path, name + ".png")))
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Import image file with .png extension from disk,
+        /// to be used as a texture.
+        /// </summary>
+        /// <param name="path">Location of image file.</param>
+        /// <param name="name">Name of image file.</param>
+        /// <returns></returns>
+        static private Texture2D ImportTextureFile (string path, string name)
+        {
+            // Create empty texture, size will be the actual size of .png file
+            Texture2D tex = new Texture2D(2, 2);
+
+            // Load image as Texture2D
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(path, name + ".png")));
+
+            // Return imported texture
+            if (tex != null)
+                return tex;
+
+            Debug.LogError("Can't import custom texture " + name + ".png from " + path);
+            return null;
         }
 
         /// <summary>
         /// Update UV map
         /// </summary>
         /// <param name="meshFilter">MeshFilter of GameObject</param>
-        static private void UpdateUV (ref MeshFilter meshFilter)
+        static private void UpdateUV(ref MeshFilter meshFilter)
         {
             Vector2[] uv = new Vector2[4];
             uv[0] = new Vector2(0, 1);
@@ -455,6 +441,22 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             uv[2] = new Vector2(0, 0);
             uv[3] = new Vector2(1, 0);
             meshFilter.mesh.uv = uv;
+        }
+
+        /// <summary>
+        /// Check all frames available on disk.
+        /// </summary>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <returns>Number of textures present on disk for this record</returns>
+        static private int NumberOfAvailableFrames(int archive, int record)
+        {
+            int frames = 0;
+            while (CustomTextureExist(archive, record, frames))
+            {
+                frames++;
+            }
+            return frames;
         }
 
         #endregion
