@@ -65,7 +65,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox playerNudity;
         Checkbox meshAndTextureReplacement;
 
-        Checkbox enhancedSky;
         Checkbox distantTerrain;
         Checkbox realtimeReflections;
         Checkbox tallGrass;
@@ -456,7 +455,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup mods checkboxes
             x = 165;
             optionPos = 20;
-            enhancedSky = AddOption(x, "Enhanced Sky (LypyL)", "Enhanced sky with lunar cycles", DaggerfallUnity.Settings.LypyL_EnhancedSky);
             distantTerrain = AddOption(x, "Distant Terrain (Nystul)", "Enhanced and distant terrain", DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance);
             realtimeReflections = AddOption(x, "Realtime Reflections (Nystul)", "Realtime reflections on water and select surfaces", DaggerfallUnity.Settings.Nystul_RealtimeReflections);
             tallGrass = AddOption(x, "Tall Grass (Uncanny_Valley)", "Animated tall grass", DaggerfallUnity.Settings.UncannyValley_RealGrass);
@@ -705,7 +703,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
 
-            DaggerfallUnity.Settings.LypyL_EnhancedSky = enhancedSky.IsChecked;
             DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance = distantTerrain.IsChecked;
             DaggerfallUnity.Settings.Nystul_RealtimeReflections = realtimeReflections.IsChecked;
             DaggerfallUnity.Settings.UncannyValley_RealGrass = tallGrass.IsChecked;
