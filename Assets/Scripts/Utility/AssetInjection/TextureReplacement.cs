@@ -268,7 +268,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <paran name="go">Billboard gameobject.</param>
         /// <param name="archive">Archive index.</param>
         /// <param name="record">Record index.</param>
-        static public void LoadCustomBillboardTexture(ref GameObject go, int archive, int record)
+        static public void LoadCustomBillboardTexture(GameObject go, int archive, int record)
         {
             // Get MeshRenderer
             MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
