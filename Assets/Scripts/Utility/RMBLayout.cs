@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Utility
                     if (!modelExist)
                     {
                         // Add billboard to batch or standalone
-                        if (billboardBatch != null)
+                        if ((billboardBatch != null) && (!TextureReplacement.CustomTextureExist(natureArchive, scenery.TextureRecord)))
                         {
                             billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
                         }
@@ -237,7 +237,7 @@ namespace DaggerfallWorkshop.Utility
                     if (!modelExist)
                     {
                         // Add billboard to batch or standalone
-                        if (billboardBatch != null)
+                        if ((billboardBatch != null) && (!TextureReplacement.CustomTextureExist(obj.TextureArchive, obj.TextureRecord)))
                         {
                             billboardBatch.AddItem(obj.TextureRecord, billboardPosition);
                         }
@@ -289,29 +289,31 @@ namespace DaggerfallWorkshop.Utility
                 // Use billboard
                 if (!modelExist)
                 {
-                    // Use misc billboard atlas where available
-                    if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
+                    if (!TextureReplacement.CustomTextureExist(obj.TextureArchive, obj.TextureRecord))
                     {
-                        TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
-                        if (item.key != -1)
+                        // Use misc billboard atlas where available
+                        if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
                         {
-                            miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
+                            TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
+                            if (item.key != -1)
+                            {
+                                miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
+                                continue;
+                            }
+                        }
+
+                        // Add to batch where available
+                        if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
+                        {
+                            animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
                             continue;
                         }
                     }
 
-                    // Add to batch where available
-                    if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
-                    {
-                        animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
-                    }
-                    else
-                    {
-                        // Add standalone billboard gameobject
-                        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
-                        go.transform.position = billboardPosition;
-                        AlignBillboardToBase(go);
-                    }
+                    // Add standalone billboard gameobject
+                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+                    go.transform.position = billboardPosition;
+                    AlignBillboardToBase(go);
                 }
             }
         }
