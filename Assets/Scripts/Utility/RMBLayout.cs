@@ -483,9 +483,7 @@ namespace DaggerfallWorkshop.Utility
                         doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix));
 
                     // Import custom GameObject
-                    bool modelExist;
-                    MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out modelExist);
-                    if (modelExist)
+                    if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix)))
                         continue;
 
                     // Use Daggerfall Model
@@ -527,9 +525,7 @@ namespace DaggerfallWorkshop.Utility
                     doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
 
                 // Import custom GameObject
-                bool modelExist;
-                MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out modelExist);
-                if (modelExist)
+                if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix)))
                     continue;
 
                 // Use Daggerfall Model

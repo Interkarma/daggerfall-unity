@@ -11,8 +11,8 @@
 
 /*
  * TODO:
- * 1. Action models in RDB
- * 2. Integrate with the mod system to import models from mods using load order
+ * 1. Integrate with the mod system to import models from mods using load order
+ * 2. StreamingWorld
  */
 
 using System.IO;
@@ -23,6 +23,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// <summary>
     /// Handles import and injection of custom meshes and materials
     /// with the purpose of providing modding support.
+    /// Models are imported through AssetBundles. These should 
+    /// be created using the Mod Builder inside the Daggerfall Tools.
     /// </summary>
     static public class MeshReplacement
     {
@@ -34,59 +36,79 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         /// <summary>
         /// Import the custom GameObject if available
-        /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
         /// </summary>
-        static public void ImportCustomGameobject (uint modelID, Vector3 position, Transform parent, Quaternion rotation, out bool modelExist)
+        /// <returns>True if model is found and imported, false otherwise.</returns>
+        static public bool ImportCustomGameobject (uint modelID, Vector3 position, Transform parent, Quaternion rotation)
         {
             // Check user settings
             if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
-            {
-                modelExist = false;
-                return;
-            }
+                return false;
  
             // Import Gameobject from Resources
             // This is useful to test models
             if (ReplacementPrefabExist(modelID))
             {
                 LoadReplacementPrefab(modelID, position, parent, rotation);
-                modelExist = true;
-                return;
+                return true;
             }
 
             // Get AssetBundle
             string modelName = modelID.ToString();
             string path = Path.Combine(modelsPath, modelName + ".model");
             if (!File.Exists(path))
-            {
-                modelExist = false;
-                return;
-            }
+                return false;
             AssetBundle LoadedAssetBundle;
             if (!TryGetAssetBundle(path, modelName, out LoadedAssetBundle))
-            {
-                modelExist = false;
-                return;
-            }
+                return false;
 
             // Assign the name according to the current season
             if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter) && (LoadedAssetBundle.Contains(modelName + "_winter")))
                 modelName += "_winter";
  
             // Instantiate GameObject
-            modelExist = true;
             GameObject object3D = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
             LoadedAssetBundle.Unload(false);
- 
-            // Update Position
-            object3D.transform.parent = parent;
-            object3D.transform.position = position;
-            object3D.transform.rotation = rotation;
- 
-            // Finalise gameobject
-            FinaliseCustomGameObject(ref object3D, modelName);
+            InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelName);
+            return true;
         }
-        
+
+        /// <summary>
+        /// Import and get the custom GameObject if available
+        /// This is useful for dungeon props with an action (levers etc.)
+        /// </summary>
+        /// <returns>True if model is found and imported, false otherwise.</returns>
+        static public bool ImportCustomGameobject(uint modelID, Vector3 position, Transform parent, Quaternion rotation, out GameObject object3D)
+        {
+            object3D = null;
+
+            // Check user settings
+            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
+                return false;
+
+            // Import Gameobject from Resources
+            // This is useful to test models
+            if (ReplacementPrefabExist(modelID))
+            {
+                LoadReplacementPrefab(modelID, position, parent, rotation, out object3D);
+                return true;
+            }
+
+            // Get AssetBundle
+            string modelName = modelID.ToString();
+            string path = Path.Combine(modelsPath, modelName + ".model");
+            if (!File.Exists(path))
+                return false;
+            AssetBundle LoadedAssetBundle;
+            if (!TryGetAssetBundle(path, modelName, out LoadedAssetBundle))
+                return false;
+
+            // Instantiate GameObject
+            object3D = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
+            LoadedAssetBundle.Unload(false);
+            InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelName);
+            return true;
+        }
+
         /// <summary>
         /// Check existence of gameobject in Resources
         /// </summary>
@@ -115,12 +137,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             else
                 object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + "_winter") as GameObject);
 
-            // Position
-            object3D.transform.parent = parent;
-            object3D.transform.position = position;
-            object3D.transform.rotation = rotation;
+            InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelID.ToString());
+        }
 
-            FinaliseCustomGameObject(ref object3D, modelID.ToString());
+        /// <summary>
+        /// Import and get gameobject from Resources
+        /// This is useful for dungeon props with an action (levers etc.)
+        /// </summary>
+        static public void LoadReplacementPrefab(uint modelID, Vector3 position, Transform parent, Quaternion rotation, out GameObject object3D)
+        {
+            object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString()) as GameObject);
+            InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelID.ToString());
         }
 
         #endregion
@@ -129,7 +156,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         /// <summary>
         /// Import the custom GameObject for billboard if available
-        /// Assetbundles should be created using the Mod Builder inside the Daggerfall Tools
         /// </summary>
         static public void ImportCustomFlatGameobject (int archive, int record, Vector3 position, Transform parent, out bool modelExist, bool inDungeon = false)
         {
@@ -168,15 +194,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             modelExist = true;
             GameObject object3D = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
             LoadedAssetBundle.Unload(false);
-
-            // Update Position
-            if (inDungeon)
-                GetFixedPosition(ref position, archive, record);
-            object3D.transform.parent = parent;
-            object3D.transform.localPosition = position;
-            
-            // Finalise gameobject
-            FinaliseCustomGameObject(ref object3D, modelName);
+            InstantiateCustomFlat(object3D, ref position, parent, archive, record, inDungeon);
         }
         
         /// <summary>
@@ -197,16 +215,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         static public void LoadReplacementFlat(int archive, int record, Vector3 position, Transform parent, bool inDungeon = false)
         {
-            // Import GameObject
             GameObject object3D = GameObject.Instantiate(Resources.Load("Flats/" + archive.ToString() + "_" + record.ToString() + "/" + archive.ToString() + "_" + record.ToString()) as GameObject);
- 
-            // Position
-            if (inDungeon)
-                GetFixedPosition(ref position, archive, record);
-            object3D.transform.parent = parent;
-            object3D.transform.localPosition = position;
- 
-            FinaliseCustomGameObject(ref object3D, archive.ToString() + "_" + record.ToString());
+            InstantiateCustomFlat(object3D, ref position, parent, archive, record, inDungeon);
         }
 
         #endregion
@@ -235,10 +245,48 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     loadedAssetBundle.Unload(false);
             }
 
-            Debug.LogError("Error with AssetBundle: " + path + "doesn't contain " + 
+            Debug.LogError("Error with AssetBundle: " + path + " doesn't contain " + 
                 modelName + " or is corrupted.");
             assetBundle = null;
             return false;
+        }
+
+        /// <summary>
+        /// Assign parent, position, rotation and texture filtermode.
+        /// </summary>
+        static private void InstantiateCustomModel(GameObject go, ref Vector3 position, Transform parent, ref Quaternion rotation, string modelName)
+        {
+            // Update Position
+            go.transform.parent = parent;
+            go.transform.position = position;
+            go.transform.rotation = rotation;
+
+            // Finalise gameobject
+            FinaliseCustomGameObject(ref go, modelName);
+        }
+
+        /// <summary>
+        /// Assign parent, position, rotation and texture filtermode.
+        /// </summary>
+        static private void InstantiateCustomFlat(GameObject go, ref Vector3 position, Transform parent, int archive, int record, bool inDungeon)
+        {
+            // Update Position
+            if (inDungeon)
+                GetFixedPosition(ref position, archive, record);
+            go.transform.parent = parent;
+            go.transform.localPosition = position;
+
+            // Assign a random rotation so that flats in group won't look all aligned.
+            // We use a seed becuse we want the models to have the same
+            // rotation every time the same location is loaded.
+            if (go.GetComponent<FaceWall>() == null)
+            {
+                Random.InitState((int)position.x);
+                go.transform.Rotate(0, Random.Range(0f, 360f), 0);
+            }
+
+            // Finalise gameobject
+            FinaliseCustomGameObject(ref go, archive.ToString() + "_" + record.ToString());
         }
 
         /// <summary>
