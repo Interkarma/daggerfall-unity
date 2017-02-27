@@ -221,10 +221,8 @@ namespace DaggerfallWorkshop
                 if (modelData.Doors != null)
                     doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
 
-                // Import custom GameObject
-                bool modelExist;
-                MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out modelExist);
-                if (!modelExist)
+                // Get GameObject
+                if (!MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix)))
                 {
                     // Use Daggerfall Mesh: Combine or add
                     if (dfUnity.Option_CombineRMB)

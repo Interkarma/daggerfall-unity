@@ -554,14 +554,11 @@ namespace DaggerfallWorkshop.Utility
                         // Check if model has an action record
                         bool hasAction = HasAction(obj);
 
-                        // Import custom GameObject
-                        bool modelExist;
-                        if (!hasAction)
-                            MeshReplacement.ImportCustomGameobject(modelId, modelMatrix.GetColumn(3), modelsParent, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out modelExist);
-                        else
-                            modelExist = false;
+                        // Get GameObject
+                        GameObject standaloneObject = null;
+                        Transform parent = (hasAction) ? actionModelsParent : modelsParent;
 
-                        if (!modelExist)
+                        if (!MeshReplacement.ImportCustomGameobject(modelId, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out standaloneObject))
                         {
                             // Special handling for tapestries and banners
                             // Some of these are so far out from wall player can become stuck behind them
@@ -574,8 +571,6 @@ namespace DaggerfallWorkshop.Utility
                             }
 
                             // Add or combine
-                            GameObject standaloneObject = null;
-                            Transform parent = (hasAction) ? actionModelsParent : modelsParent;
                             if (combiner == null || hasAction)
                             {
                                 standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
@@ -585,15 +580,14 @@ namespace DaggerfallWorkshop.Utility
                             {
                                 combiner.Add(ref modelData, modelMatrix);
                             }
-
-                            // Add action
-                            if (hasAction && standaloneObject != null)
-                                AddActionModelHelper(standaloneObject, actionLinkDict, obj, ref blockData, serialize);
                         }
+
+                        // Add action
+                        if (hasAction && standaloneObject != null)
+                            AddActionModelHelper(standaloneObject, actionLinkDict, obj, ref blockData, serialize);
                     }
                 }
             }
-
         }
 
         /// <summary>

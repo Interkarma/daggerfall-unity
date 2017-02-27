@@ -241,16 +241,20 @@ namespace DaggerfallWorkshop
                 {
                     // Apply recalculated nature archive
                     db.SetMaterial(natureArchive, db.Summary.Record);
+
+                    // Custom texture
+                    if (Utility.AssetInjection.TextureReplacement.CustomTextureExist(natureArchive, db.Summary.Record))
+                        Utility.AssetInjection.TextureReplacement.LoadCustomBillboardTexture(db.gameObject, natureArchive, db.Summary.Record);
                 }
                 else
                 {
                     // All other flats are just reapplied to handle any other changes
                     db.SetMaterial(db.Summary.Archive, db.Summary.Record);
-                }
 
-                // Custom texture
-                if (Utility.AssetInjection.TextureReplacement.CustomTextureExist(natureArchive, db.Summary.Record))
-                    Utility.AssetInjection.TextureReplacement.LoadCustomBillboardTexture(db.gameObject, natureArchive, db.Summary.Record);
+                    // Custom texture
+                    if (Utility.AssetInjection.TextureReplacement.CustomTextureExist(db.Summary.Archive, db.Summary.Record))
+                        Utility.AssetInjection.TextureReplacement.LoadCustomBillboardTexture(db.gameObject, db.Summary.Archive, db.Summary.Record);
+                }
             }
 
             // Process nature billboard batch
