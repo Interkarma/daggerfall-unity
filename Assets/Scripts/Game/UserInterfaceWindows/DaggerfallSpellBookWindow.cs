@@ -98,13 +98,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             listBox.OnMouseScrollUp         += listBox_OnMouseScroll;
             mainPanel.Components.Add(listBox);
 
-            SetupButton(out deleteButton,   new Rect(3, 152, 38, 9), mainPanel, deleteButton_OnMouseClick, "delete_button");
-            SetupButton(out upButton,       new Rect(48, 152, 38, 9), mainPanel, swapButton_OnMouseClick, "up_button");
-            SetupButton(out sortButton,     new Rect(90, 152, 38, 9), mainPanel, sortButton_OnMouseClick, "sort_button");
-            SetupButton(out downButton,     new Rect(132, 152, 38, 9), mainPanel, swapButton_OnMouseClick, "down_button");
-            SetupButton(out upArrowButton, new Rect(121, 11, 9, 16), mainPanel, arrowButton_OnMouseClick, "upArrow_button");
-            SetupButton(out downArrowButton, new Rect(121, 132, 9, 16), mainPanel, arrowButton_OnMouseClick, "downArrow_button");
-            SetupButton(out exitButton,     new Rect(216, 149, 42.5f, 14.5f), mainPanel, exitButton_OnMouseClick, "exit_button");
+            deleteButton                = DaggerfallUI.AddButton(new Rect(3, 152, 38, 9), mainPanel);
+            deleteButton.Name           = "delete_button";
+            deleteButton.OnMouseClick   += deleteButton_OnMouseClick;
+
+            upButton                    = DaggerfallUI.AddButton(new Rect(48, 152, 38, 9), mainPanel);
+            upButton.Name                = "up_button";
+            upButton.OnMouseClick       += swapButton_OnMouseClick;
+
+            sortButton                  = DaggerfallUI.AddButton(new Rect(90, 152, 38, 9), mainPanel);
+            sortButton.Name             = "sort_button";
+            sortButton.OnMouseClick     += sortButton_OnMouseClick;
+
+            downButton                  = DaggerfallUI.AddButton(new Rect(132, 152, 38, 9), mainPanel);
+            downButton.Name             = "down_button";
+            downButton.OnMouseClick     += swapButton_OnMouseClick;
+
+            upArrowButton               = DaggerfallUI.AddButton(new Rect(121, 11, 9, 16), mainPanel);
+            upArrowButton.Name          = "upArrow_button";
+            upArrowButton.OnMouseClick  += arrowButton_OnMouseClick;
+
+            downArrowButton             = DaggerfallUI.AddButton(new Rect(121, 132, 9, 16), mainPanel);
+            downArrowButton.Name        = "downArrow_button";
+            downArrowButton.OnMouseClick += arrowButton_OnMouseClick;
+
+            exitButton                  = DaggerfallUI.AddButton(new Rect(216, 149, 42.5f, 14.5f), mainPanel);
+            exitButton.Name             = "exit_button";
+            exitButton.OnMouseClick     += exitButton_OnMouseClick;
 
             scrollBar                       = new VerticalScrollBar();
             scrollBar.HorizontalAlignment   = HorizontalAlignment.None;
@@ -263,20 +283,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh = false;
         }
 
-        //helper function to add buttons 
-        void SetupButton(out Button button, Rect buttonRect, Panel parentPanel, Button.OnMouseClickHandler onClickFunc, string name = "")
-        {
-            if (parentPanel == null)
-            {
-                DaggerfallUnity.LogMessage("ParentPanel was null, can't add button");
-            }
-
-            button = DaggerfallUI.AddButton(buttonRect, parentPanel);
-            button.Name = name;
-            if (onClickFunc != null)
-                button.OnMouseClick += onClickFunc;
-        }
-
         //set the text for the effect label
         void SetEffectLabel(TextLabel[] labels, string[] effectDescriptions)
         {
@@ -427,9 +433,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             Debug.Log("swap position button clicked: " + sender.Name);
 
-            if(sender.Name == upButton.Name && listBox.SelectedIndex > 0)
+            if(sender.Name == downButton.Name && listBox.SelectedIndex < listBox.Count-1)
                 listBox.SwapItems(listBox.SelectedIndex, ++listBox.SelectedIndex);
-            else if(sender.Name == downButton.Name && listBox.SelectedIndex < listBox.Count)
+            else if(sender.Name == upButton.Name && listBox.SelectedIndex > 0)
                 listBox.SwapItems(listBox.SelectedIndex, --listBox.SelectedIndex);
 
             Refresh = true;

@@ -94,10 +94,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             listBox.OnMouseScrollUp         += listBox_OnMouseScroll;
             mainPanel.Components.Add(listBox);
 
-            SetupButton(out buyButton,      new Rect(3, 152, 36, 9), mainPanel, buyButton_OnMouseClick, "delete_button");
-            SetupButton(out upArrowButton, new Rect(121, 11, 9, 16), mainPanel, arrowButton_OnMouseClick, "upArrow_button");
-            SetupButton(out downArrowButton, new Rect(121, 132, 9, 16), mainPanel, arrowButton_OnMouseClick, "downArrow_button");
-            SetupButton(out exitButton,     new Rect(216, 149, 42, 14.5f), mainPanel, exitButton_OnMouseClick, "exit_button");
+            buyButton                   = DaggerfallUI.AddButton(new Rect(3, 152, 36, 9), mainPanel);
+            buyButton.Name              = "buy_button";
+            buyButton.OnMouseClick      += buyButton_OnMouseClick;
+
+            upArrowButton               = DaggerfallUI.AddButton(new Rect(121, 11, 9, 16), mainPanel);
+            upArrowButton.Name          = "upArroow_button";
+            upArrowButton.OnMouseClick  += arrowButton_OnMouseClick;
+
+            downArrowButton             = DaggerfallUI.AddButton(new Rect(121, 132, 9, 16), mainPanel);
+            downArrowButton.Name        = "downArroow_button";
+            downArrowButton.OnMouseClick += arrowButton_OnMouseClick;
+
+            exitButton                  = DaggerfallUI.AddButton(new Rect(216, 149, 42, 14.5f), mainPanel);
+            exitButton.Name             = "downArroow_button";
+            exitButton.OnMouseClick     += exitButton_OnMouseClick;
 
             scrollBar                       = new VerticalScrollBar();
             scrollBar.HorizontalAlignment   = HorizontalAlignment.None;
@@ -248,20 +259,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ///3. update magica cost
 
             Refresh = false;
-        }
-
-        //helper function to add buttons 
-        void SetupButton(out Button button, Rect buttonRect, Panel parentPanel, Button.OnMouseClickHandler onClickFunc, string name = "")
-        {
-            if (parentPanel == null)
-            {
-                DaggerfallUnity.LogMessage("ParentPanel was null, can't add button");
-            }
-
-            button = DaggerfallUI.AddButton(buttonRect, parentPanel);
-            button.Name = name;
-            if (onClickFunc != null)
-                button.OnMouseClick += onClickFunc;
         }
 
         //set the text for the effect label
