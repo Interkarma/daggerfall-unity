@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             parentPanel.BackgroundColor = Color.clear;
             ShowPopupText = true;
-            ShowCrosshair = true;
+            ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
             ShowVitals = true;
             ShowCompass = true;
 
