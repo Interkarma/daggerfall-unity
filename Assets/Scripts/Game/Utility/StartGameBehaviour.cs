@@ -191,8 +191,8 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // HUD settings
             DaggerfallHUD hud = DaggerfallUI.Instance.DaggerfallHUD;
-            if (hud != null)
-                hud.ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
+            if (hud != null)                                              //null at startup
+                hud.ShowCrosshair = DaggerfallUnity.Settings.Crosshair; 
 
             // Weapon swing settings
             WeaponManager weaponManager = GameManager.Instance.WeaponManager;
