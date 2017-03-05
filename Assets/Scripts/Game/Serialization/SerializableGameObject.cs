@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Lypyl (lypyldf@gmail.com)
 // 
 // Notes:
 //
@@ -68,6 +68,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public DungeonData_v1 dungeonData;
         public EnemyData_v1[] enemyData;
         public LootContainerData_v1[] lootContainers;
+        public BankRecordData_v1[] bankAccounts;
     }
 
     #endregion
@@ -263,6 +264,16 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string saveName;
         public string characterName;
         public DateAndTime_v1 dateAndTime;
+    }
+
+    [fsObject("v1")]
+    public class BankRecordData_v1
+    {
+        public long total;
+        public long loanTotal;
+        public long loanDueDate;
+        public int regionIndex;
+        //public Byte unknown;
     }
 
     #endregion
