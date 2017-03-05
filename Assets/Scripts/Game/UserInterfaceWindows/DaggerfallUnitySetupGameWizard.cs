@@ -505,6 +505,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 ShowModsButton.OnMouseClick += ModsButton_OnOnMouseBlick;
             }
 
+            // Advanced Settings
+            Button AdvancedSettingsButton = new Button();
+            AdvancedSettingsButton.Label.Text = "Advanced";
+            AdvancedSettingsButton.Position = new Vector2(0, optionsConfirmButton.Position.y);
+            AdvancedSettingsButton.HorizontalAlignment = HorizontalAlignment.Right;
+            AdvancedSettingsButton.Size = new Vector2(45, 12);
+            AdvancedSettingsButton.BackgroundColor = optionsConfirmButton.BackgroundColor;
+            AdvancedSettingsButton.Label.TextColor = optionsConfirmButton.Label.TextColor;
+            AdvancedSettingsButton.Outline.Enabled = true;
+            optionsPanel.Components.Add(AdvancedSettingsButton);
+            AdvancedSettingsButton.OnMouseClick += AdvancedSettingsButton_OnOnMouseBlick;
+
         }
 
         //void ShowSummaryPanel()
@@ -744,6 +756,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUI.UIManager.PushWindow(modLoaderWindow);
             }
         }
+
+        // Advanced Settings
+        private void AdvancedSettingsButton_OnOnMouseBlick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (optionsPanel.Enabled)
+            {
+                AdvancedSettingsWindow advancedSettingsWindow = new AdvancedSettingsWindow(DaggerfallUI.UIManager);
+                DaggerfallUI.UIManager.PushWindow(advancedSettingsWindow);
+            }
+        }
+
         #endregion
     }
 }
