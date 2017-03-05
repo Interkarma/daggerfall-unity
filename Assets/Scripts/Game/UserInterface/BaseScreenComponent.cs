@@ -45,8 +45,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         VerticalAlignment verticalAlignment = VerticalAlignment.None;
 
         float doubleClickDelay = 0.3f;
-        float clickTime;
-        float lastClickTime;
+        float leftClickTime;
+        float lastLeftClickTime;
+        float rightClickTime;
+        float lastRightClickTime;
+        float middleClickTime;
+        float lastMiddleClickTime;
 
         float updateTime;
         float lastUpdateTime;
@@ -65,6 +69,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool mouseOverComponent = false;
         bool leftMouseWasHeldDown = false;
         bool rightMouseWasHeldDown = false;
+        bool middleMouseWasHeldDown = false;
 
         float minAutoScale = 0;
         float maxAutoScale = 0;
@@ -87,6 +92,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public delegate void OnMouseClickHandler(BaseScreenComponent sender, Vector2 position);
         public event OnMouseClickHandler OnMouseClick;
 
+        public delegate void OnMouseDoubleClickHandler(BaseScreenComponent sender, Vector2 position);
+        public event OnMouseDoubleClickHandler OnMouseDoubleClick;
+
         public delegate void OnRightMouseDownHandler(BaseScreenComponent sender, Vector2 position);
         public event OnRightMouseDownHandler OnRightMouseDown;
         
@@ -96,8 +104,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public delegate void OnRightMouseClickHandler(BaseScreenComponent sender, Vector2 position);
         public event OnRightMouseClickHandler OnRightMouseClick;
 
-        public delegate void OnMouseDoubleClickHandler(BaseScreenComponent sender, Vector2 position);
-        public event OnMouseDoubleClickHandler OnMouseDoubleClick;
+        public delegate void OnRightMouseDoubleClickHandler(BaseScreenComponent sender, Vector2 position);
+        public event OnRightMouseDoubleClickHandler OnRightMouseDoubleClick;
+
+        public delegate void OnMiddleMouseDownHandler(BaseScreenComponent sender, Vector2 position);
+        public event OnMiddleMouseDownHandler OnMiddleMouseDown;
+
+        public delegate void OnMiddleMouseUpHandler(BaseScreenComponent sender, Vector2 position);
+        public event OnMiddleMouseUpHandler OnMiddleMouseUp;
+
+        public delegate void OnMiddleMouseClickHandler(BaseScreenComponent sender, Vector2 position);
+        public event OnMiddleMouseClickHandler OnMiddleMouseClick;
+
+        public delegate void OnMiddleMouseDoubleClickHandler(BaseScreenComponent sender, Vector2 position);
+        public event OnMiddleMouseDoubleClickHandler OnMiddleMouseDoubleClick;
 
         public delegate void OnMouseScrollUpEventHandler();
         public event OnMouseScrollUpEventHandler OnMouseScrollUp;
@@ -444,10 +464,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Get left and right mouse down for general click handling and double-click sampling
             bool leftMouseDown = Input.GetMouseButtonDown(0);
             bool rightMouseDown = Input.GetMouseButtonDown(1);
+            bool middleMouseDown = Input.GetMouseButtonDown(2);
 
             // Get left and right mouse down for up/down events
             bool leftMouseHeldDown = Input.GetMouseButton(0);
             bool rightMouseHeldDown = Input.GetMouseButton(1);
+            bool middleMouseHeldDown = Input.GetMouseButton(2);
 
             // Handle left mouse down/up events
             // Can only trigger mouse down while over component but can release from anywhere
@@ -479,6 +501,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     OnRightMouseUp(this, scaledMousePosition);
             }
 
+            // Handle middle mouse down/up events
+            // Can only trigger mouse down while over component but can release from anywhere
+            if (mouseOverComponent && middleMouseHeldDown && !middleMouseWasHeldDown)
+            {
+                middleMouseWasHeldDown = true;
+                if (OnMiddleMouseDown != null)
+                    OnMiddleMouseDown(this, scaledMousePosition);
+            }
+            if (!middleMouseHeldDown && middleMouseWasHeldDown)
+            {
+                middleMouseWasHeldDown = false;
+                if (OnMiddleMouseUp != null)
+                    OnMiddleMouseUp(this, scaledMousePosition);
+            }
+
             // Handle left mouse clicks
             if (mouseOverComponent && leftMouseDown)
             {
@@ -486,11 +523,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 MouseClick(scaledMousePosition);
 
                 // Store mouse click timing
-                lastClickTime = clickTime;
-                clickTime = Time.realtimeSinceStartup;
+                lastLeftClickTime = leftClickTime;
+                leftClickTime = Time.realtimeSinceStartup;
 
                 // Handle left mouse double-clicks
-                if (clickTime - lastClickTime < doubleClickDelay)
+                if (leftClickTime - lastLeftClickTime < doubleClickDelay)
                     MouseDoubleClick(scaledMousePosition);
             }
 
@@ -499,6 +536,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 // Single click event
                 RightMouseClick(scaledMousePosition);
+
+                // Store mouse click timing
+                lastRightClickTime = rightClickTime;
+                rightClickTime = Time.realtimeSinceStartup;
+
+                // Handle right mouse double-clicks
+                if (rightClickTime - lastRightClickTime < doubleClickDelay)
+                    RightMouseDoubleClick(scaledMousePosition);
+            }
+
+            // Handle middle mouse clicks
+            if (mouseOverComponent && middleMouseDown)
+            {
+                // Single click event
+                MiddleMouseClick(scaledMousePosition);
+
+                // Store mouse click timing
+                lastMiddleClickTime = middleClickTime;
+                middleClickTime = Time.realtimeSinceStartup;
+
+                // Handle middle mouse double-clicks
+                if (middleClickTime - lastMiddleClickTime < doubleClickDelay)
+                    MiddleMouseDoubleClick(scaledMousePosition);
             }
 
             // Handle mouse wheel
@@ -627,12 +687,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Mouse clicked inside control area.
+        /// Right Mouse clicked inside control area.
         /// </summary>
         protected virtual void RightMouseClick(Vector2 clickPosition)
         {
             if (OnRightMouseClick != null)
                 OnRightMouseClick(this, clickPosition);
+
+            // Set focus on click
+            if (UseFocus)
+                SetFocus();
+        }
+
+        /// <summary>
+        /// Middle Mouse clicked inside control area.
+        /// </summary>
+        protected virtual void MiddleMouseClick(Vector2 clickPosition)
+        {
+            if (OnMiddleMouseClick != null)
+                OnMiddleMouseClick(this, clickPosition);
 
             // Set focus on click
             if (UseFocus)
@@ -646,6 +719,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (OnMouseDoubleClick != null)
                 OnMouseDoubleClick(this, clickPosition);
+        }
+
+        /// <summary>
+        /// Right Mouse double-clicked inside control area.
+        /// </summary>
+        protected virtual void RightMouseDoubleClick(Vector2 clickPosition)
+        {
+            if (OnRightMouseDoubleClick != null)
+                OnRightMouseDoubleClick(this, clickPosition);
+        }
+
+        /// <summary>
+        /// Middle Mouse double-clicked inside control area.
+        /// </summary>
+        protected virtual void MiddleMouseDoubleClick(Vector2 clickPosition)
+        {
+            if (OnMiddleMouseDoubleClick != null)
+                OnMiddleMouseDoubleClick(this, clickPosition);
         }
 
         /// <summary>
