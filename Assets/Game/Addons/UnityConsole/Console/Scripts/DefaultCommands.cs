@@ -54,7 +54,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(Groundme.name, Groundme.description, Groundme.usage, Groundme.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ExecuteScript.name, ExecuteScript.description, ExecuteScript.usage, ExecuteScript.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddInventoryItem.name, AddInventoryItem.description, AddInventoryItem.usage, AddInventoryItem.Execute);
-
+            ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
         }
 
         private static class GodCommand
@@ -1030,6 +1030,25 @@ namespace Wenzil.Console
                 }
             }
         }
+
+        private static class ShowBankWindow
+        {
+            public static readonly string name = "showbankwindow";
+            public static readonly string description = "Opens a banking window for specified region";
+            public static readonly string usage = "showbankwindow {region index}";
+            public static DaggerfallWorkshop.Game.UserInterface.DaggerfallBankingWindow bankWindow;
+
+            public static string Execute(params string[] args)
+            {
+                if(bankWindow == null)
+                    bankWindow = new DaggerfallWorkshop.Game.UserInterface.DaggerfallBankingWindow(DaggerfallUI.UIManager);
+                DaggerfallUI.UIManager.PushWindow(bankWindow);
+                return "Finished";
+
+            }
+
+        }
+
 
         private static class ExecuteScript
         {

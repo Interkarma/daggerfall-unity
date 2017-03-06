@@ -302,7 +302,7 @@ namespace DaggerfallWorkshop.Game.Banking
                     else
                     {
                         BankAccounts[regionIndex].loanTotal += (int)(amount + amount * .1);
-                        BankAccounts[regionIndex].total += (int)(amount + amount * .1);
+                        BankAccounts[regionIndex].total += (int)(amount);
                     }
                     break;
                 default:

@@ -799,7 +799,19 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         BankRecordData_v1[] GetBankData()
         {
-            return Banking.DaggerfallBankManager.BankAccounts;
+            List<BankRecordData_v1> records = new List<BankRecordData_v1>();
+
+            foreach (var record in Banking.DaggerfallBankManager.BankAccounts)
+            {
+                if (record == null)
+                    continue;
+                else if (record.total == 0 && record.loanTotal == 0 && record.loanDueDate == 0)
+                    continue;
+                else
+                    records.Add(record);
+            }
+
+            return records.ToArray();
         }
 
         /// <summary>
