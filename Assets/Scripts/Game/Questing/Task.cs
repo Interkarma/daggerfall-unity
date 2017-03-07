@@ -13,13 +13,14 @@ using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
     /// Tasks are executed by other tasks, clock timeouts, etc. Somewhat like a subroutine.
     /// Tasks can contain conditions at start that if not met appear to prevent further execution of task.
-    /// Task name can also be used as a symbol to query if task has been completed or not.
+    /// Task name can also be used as a symbol to query if task has been triggered or not.
     /// Provided conditions are met, commands under a task usually run once then end.
     /// Repeating tasks execute (i.e. each command stays alive) until target task/variable completed.
     /// Variables are a special task with no conditions or actions, just set/unset.
@@ -28,9 +29,14 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        string name;        // Unique name of task, can be used like a boolean if to check if task has completed
-        string target;      // Name of target task/variable to check, used by repeating tasks only
-        TaskType type;      // Type of task
+        string name;            // Unique name of task, can be used like a boolean if to check if task has completed
+        string target;          // Name of target task/variable to check, used by repeating tasks only
+        bool triggered;         // Has task been triggered?
+        TaskType type;          // Type of task
+
+        List<IQuestAction> actions = new List<IQuestAction>();
+
+        bool conditionsMet;     // Flag updated every frame stating if task conditions are met
 
         #endregion
 
@@ -44,6 +50,16 @@ namespace DaggerfallWorkshop.Game.Questing
         public TaskType Type
         {
             get { return type; }
+        }
+
+        public bool ConditionsMet
+        {
+            get { return conditionsMet; }
+        }
+
+        public bool Triggered
+        {
+            get { return triggered; }
         }
 
         #endregion
@@ -93,12 +109,30 @@ namespace DaggerfallWorkshop.Game.Questing
             else
             {
                 // No match on task header treat as a headless task (e.g. startup task)
+                // Startup task begins as triggered
                 type = TaskType.Headless;
                 target = string.Empty;
+                triggered = true;
                 name = DaggerfallUnity.NextUID.ToString();
             }
 
-            // TODO: Read task conditions and commands
+            // Read task lines
+            ReadTaskLines(lines, i);
+        }
+
+        public void Update(Quest owner)
+        {
+            // TODO: Check task conditions, always true for now
+            conditionsMet = true;
+
+            // Update actions inside this task if conditions met and task has been triggered
+            if (conditionsMet && triggered)
+            {
+                foreach(IQuestAction action in actions)
+                {
+                    action.Update(this);
+                }
+            }
         }
 
         #endregion
@@ -128,6 +162,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Repeating task
                     type = TaskType.Repeating;
                     target = match.Groups["symbol"].Value;
+                    triggered = true;
                     name = DaggerfallUnity.NextUID.ToString();
                 }
                 else if (!string.IsNullOrEmpty(match.Groups["variable"].Value))
@@ -142,6 +177,56 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Reads task lines to find conditions and actions.
+        /// Must be 
+        /// </summary>
+        /// <param name="lines">Array of lines in this task block.</param>
+        /// <param name="startLine">First line after task header (if present).</param>
+        void ReadTaskLines(string[] lines, int startLine)
+        {
+            // Step through lines of quest and log when encountering unsupported lines
+            // This will generate a lot of log noise early on until things are further along
+            for (int i = startLine; i < lines.Length; i++)
+            {
+                if (IsCondition(lines[i]))
+                {
+                    // TODO: Create condition and add to task
+                    Debug.LogFormat("Conditions not implemented. Ignoring: '{0}'", lines[i]);
+                }
+                else
+                {
+                    // Try to find registered action template using this line
+                    IQuestAction actionTemplate = QuestMachine.Instance.GetActionTemplate(lines[i]);
+                    if (actionTemplate != null)
+                    {
+                        // Create a new action from template (don't link template itself)
+                        IQuestAction action = actionTemplate.Create(lines[i]);
+                        actions.Add(action);
+                    }
+                    else
+                    {
+                        Debug.LogFormat("Action not found. Ignoring '{0}'", lines[i]);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Quickly identify condition lines.
+        /// </summary>
+        /// <param name="line">Line to evaluate.</param>
+        /// <returns>True if this is a condition.</returns>
+        bool IsCondition(string line)
+        {
+            string matchStr = @"cast|clicked|daily|dropped|faction|from|have|injured|killed|level|pc at|repute|toting|(?<anItem>[a-zA-Z0-9_.]+) used do|(?<anItem>[a-zA-Z0-9_.]+) used saying|when";
+            Match match = Regex.Match(line, matchStr);
+            if (match.Success)
+                return true;
+            else
+                return false;
         }
 
         #endregion

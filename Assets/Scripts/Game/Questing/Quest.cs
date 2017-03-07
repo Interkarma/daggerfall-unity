@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -21,6 +22,12 @@ namespace DaggerfallWorkshop.Game.Questing
     public class Quest
     {
         #region Fields
+
+        // Quest object collections
+        Dictionary<int, Message> messages = new Dictionary<int, Message>();
+        Dictionary<string, Clock> clocks = new Dictionary<string, Clock>();
+        Dictionary<string, Task> tasks = new Dictionary<string, Task>();
+
         #endregion
 
         #region Properties
@@ -38,6 +45,38 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Update quest.
+        /// </summary>
+        public void Update()
+        {
+            // Iteratively update each task
+            foreach(Task task in tasks.Values)
+            {
+                task.Update(this);
+            }
+        }
+
+        #endregion
+
+        #region Resource Allocation Methods
+
+        public void AddMessage(int messageID, Message message)
+        {
+            messages.Add(messageID, message);
+        }
+
+        public void AddClock(string symbol, Clock clock)
+        {
+            clocks.Add(symbol, clock);
+        }
+
+        public void AddTask(string symbol, Task task)
+        {
+            tasks.Add(symbol, task);
+        }
+
         #endregion
 
         #region Private Methods

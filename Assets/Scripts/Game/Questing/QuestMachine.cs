@@ -14,7 +14,9 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Questing.Actions;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -32,6 +34,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
         const string questSourceFolderName = "Quests";
         const string questTablesFolderName = "Tables";
+
+        List<IQuestAction> actionTemplates = new List<IQuestAction>();
+        List<Quest> quests = new List<Quest>();
 
         #endregion
 
@@ -65,6 +70,39 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void Start()
         {
+            RegisterActionTemplates();
+        }
+
+        private void Update()
+        {
+            // Iteratively update each task
+            foreach (Quest quest in quests)
+            {
+                quest.Update();
+            }
+        }
+
+        #endregion
+
+        #region Action Methods
+
+        /// <summary>
+        /// All actions must be registered here so they can be evaluated and factoried at runtime.
+        /// If an action pattern match cannot be found that action will just be ignored by quest system.
+        /// The goal is to add incremental action support over time until 100% compatibility is reached.
+        /// </summary>
+        void RegisterActionTemplates()
+        {
+            // Register example actions
+            RegisterAction(new JuggleAction());
+
+            // Register default actions
+            RegisterAction(new Prompt());
+        }
+
+        void RegisterAction(IQuestAction actionTemplate)
+        {
+            actionTemplates.Add(actionTemplate);
         }
 
         #endregion
@@ -131,7 +169,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Quest will attempt to load from QuestSourceFolder property path.
         /// </summary>
         /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
-        /// <returns>Quest.</returns>
+        /// <returns>Quest object if successfully parsed, otherwise null.</returns>
         public Quest InstantiateQuest(string questName)
         {
             // Load quest source
@@ -143,7 +181,7 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Instantiate a new quest from source array.
+        /// Instantiate a new quest from source text array.
         /// </summary>
         /// <param name="questSource">Array of lines from quuest source file.</param>
         /// <returns>Quest.</returns>
@@ -151,8 +189,31 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             Parser parser = new Parser();
             Quest quest = parser.Parse(questSource);
+            if (quest != null)
+            {
+                quests.Add(quest);
+            }
 
             return quest;
+        }
+
+        /// <summary>
+        /// Find registered action template based on source line.
+        /// </summary>
+        /// <param name="source">Action source line.</param>
+        /// <returns>IQuestAction template.</returns>
+        public IQuestAction GetActionTemplate(string source)
+        {
+            // Brute force check every registered action for now
+            // Would like a more elegant way of accomplishing this
+            foreach(IQuestAction action in actionTemplates)
+            {
+                if (action.Test(source).Success)
+                    return action;
+            }
+
+            // No pattern match found
+            return null;
         }
 
         #endregion

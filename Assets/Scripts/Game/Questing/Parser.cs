@@ -38,11 +38,6 @@ namespace DaggerfallWorkshop.Game.Questing
         Table globalVars;
         Table messageTypes;
 
-        // Quest object collections
-        Dictionary<int, Message> messages = new Dictionary<int, Message>();
-        Dictionary<string, Clock> clocks = new Dictionary<string, Clock>();
-        Dictionary<string, Task> tasks = new Dictionary<string, Task>();
-
         #endregion
 
         #region Constructors
@@ -74,9 +69,6 @@ namespace DaggerfallWorkshop.Game.Questing
             bool inQBN = false;
             List<string> qrcLines = new List<string>();
             List<string> qbnLines = new List<string>();
-
-            // Clear existing quest data
-            messages = new Dictionary<int, Message>();
 
             // Start diagnostic timer
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -146,8 +138,8 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Parse QRC and QBN
-            ParseQRC(qrcLines);
-            ParseQBN(qbnLines);
+            ParseQRC(qrcLines, quest);
+            ParseQBN(qbnLines, quest);
 
             // End timer
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
@@ -160,7 +152,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #region Private Methods
 
-        void ParseQRC(List<string> lines)
+        void ParseQRC(List<string> lines, Quest quest)
         {
             const string parseIdError = "Could not parse text '{0}' to an int. Expected message ID value.";
 
@@ -207,12 +199,12 @@ namespace DaggerfallWorkshop.Game.Questing
                     Message message = new Message(messageID, messageLines.ToArray());
 
                     // Add message to collection
-                    messages.Add(messageID, message);
+                    quest.AddMessage(messageID, message);
                 }
             }
         }
 
-        void ParseQBN(List<string> lines)
+        void ParseQBN(List<string> lines, Quest quest)
         {
             bool foundHeadlessTask = false;
             for (int i = 0; i < lines.Count; i++)
@@ -226,7 +218,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (lines[i].StartsWith("clock", StringComparison.InvariantCultureIgnoreCase))
                 {
                     Clock clock = new Clock(lines[i]);
-                    clocks.Add(clock.Symbol, clock);
+                    quest.AddClock(clock.Symbol, clock);
                 }
                 else if (lines[i].StartsWith("item", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -250,7 +242,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     string[] variableLines = new string[1];
                     variableLines[0] = lines[i];
                     Task task = new Task(variableLines);
-                    tasks.Add(task.Name, task);
+                    quest.AddTask(task.Name, task);
                 }
                 else if (lines[i].Contains("task:") ||
                     (lines[i].StartsWith("until", StringComparison.InvariantCultureIgnoreCase) && lines[i].Contains("performed:")))
@@ -258,7 +250,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // This is a standard or repeating task declaration
                     List<string> taskLines = ReadBlock(lines, ref i);
                     Task task = new Task(taskLines.ToArray());
-                    tasks.Add(task.Name, task);
+                    quest.AddTask(task.Name, task);
                 }
                 else if (IsGlobalReference(lines[i]))
                 {
@@ -271,7 +263,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // May be expanded later to allow multiple headless tasks
                     List<string> taskLines = ReadBlock(lines, ref i);
                     Task task = new Task(taskLines.ToArray());
-                    tasks.Add(task.Name, task);
+                    quest.AddTask(task.Name, task);
                     foundHeadlessTask = true;
                 }
                 else

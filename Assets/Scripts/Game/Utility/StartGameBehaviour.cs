@@ -345,6 +345,9 @@ namespace DaggerfallWorkshop.Game.Utility
             DaggerfallUI.Instance.FadeHUDFromBlack();
             DaggerfallUI.PostMessage(PostStartMessage);
 
+            // Start an example quest for testing
+            //GameManager.Instance.QuestMachine.InstantiateQuest("__DEMO01");
+
             if (OnStartGame != null)
                 OnStartGame(this, null);
         }
