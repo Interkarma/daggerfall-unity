@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Lypyl (lypyldf@gmail.com)
 // 
 // Notes:
 //
@@ -340,6 +340,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign starting gear to player entity
             DaggerfallUnity.Instance.ItemHelper.AssignStartingGear(playerEntity);
 
+            //##Setup bank accounts
+            Banking.DaggerfallBankManager.SetupAccounts();
+
             // Start game
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
@@ -421,6 +424,10 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Assign gold pieces
             playerEntity.GoldPieces = (int)characterRecord.ParsedData.physicalGold;
+
+            //Setup bank accounts
+            var bankRecords = saveTree.FindRecord(RecordTypes.BankAccount);
+            Banking.DaggerfallBankManager.ReadNativeBankData(bankRecords);
 
             // Start game
             DaggerfallUI.Instance.PopToHUD();
