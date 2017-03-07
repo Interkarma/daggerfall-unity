@@ -27,17 +27,6 @@ namespace DaggerfallWorkshop.Game.Questing
     public class Parser
     {
         #region Fields
-
-        // Constants
-        const string idCol = "id";
-        const string nameCol = "name";
-        const string globalVarsFilename = "Quests-GlobalVars";
-        const string staticMessagesFilename = "Quests-StaticMessages";
-
-        // Data tables
-        Table globalVars;
-        Table messageTypes;
-
         #endregion
 
         #region Constructors
@@ -47,8 +36,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public Parser()
         {
-            globalVars = new Table(QuestMachine.Instance.GetTableSourceText(globalVarsFilename));
-            messageTypes = new Table(QuestMachine.Instance.GetTableSourceText(staticMessagesFilename));
         }
 
         #endregion
@@ -156,6 +143,9 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             const string parseIdError = "Could not parse text '{0}' to an int. Expected message ID value.";
 
+            const string idCol = "id";
+            Table staticMessagesTable = QuestMachine.Instance.StaticMessagesTable;
+
             for (int i = 0; i < lines.Count; i++)
             {
                 // Skip empty lines while scanning for start of message block
@@ -166,16 +156,16 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Only present in QRC section
                 // Begins with field Message: (or fixed message type)
                 string[] parts = SplitField(lines[i]);
-                if (messageTypes.HasValue(parts[0]))
+                if (staticMessagesTable.HasValue(parts[0]))
                 {
                     // Read ID of message
                     int messageID = 0;
                     if (parts[1].StartsWith("[") && parts[1].EndsWith("]"))
                     {
                         // Fixed message types use ID from table
-                        messageID = messageTypes.GetInt(idCol, parts[0]);
+                        messageID = staticMessagesTable.GetInt(idCol, parts[0]);
                         if (messageID == -1)
-                            throw new Exception(string.Format(parseIdError, messageTypes.GetInt(idCol, parts[0])));
+                            throw new Exception(string.Format(parseIdError, staticMessagesTable.GetInt(idCol, parts[0])));
                     }
                     else
                     {
@@ -305,7 +295,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (parts == null || parts.Length == 0)
                 return false;
 
-            if (globalVars.HasValue(parts[0]))
+            if (QuestMachine.Instance.GlobalVarsTable.HasValue(parts[0]))
                 return true;
 
             return false;

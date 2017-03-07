@@ -32,8 +32,19 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
+        // Folder names constants
         const string questSourceFolderName = "Quests";
         const string questTablesFolderName = "Tables";
+
+        // Table constants
+        const string globalVarsTableFilename = "Quests-GlobalVars";
+        const string staticMessagesTableFilename = "Quests-StaticMessages";
+        const string placesTableFilename = "Quests-Places";
+
+        // Data tables
+        Table globalVarsTable;
+        Table staticMessagesTable;
+        Table placesTable;
 
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
         List<Quest> quests = new List<Quest>();
@@ -59,6 +70,30 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return Path.Combine(Application.streamingAssetsPath, questTablesFolderName); }
         }
 
+        /// <summary>
+        /// Gets the global variables data table.
+        /// </summary>
+        public Table GlobalVarsTable
+        {
+            get { return globalVarsTable; }
+        }
+
+        /// <summary>
+        /// Gets the static message names data table.
+        /// </summary>
+        public Table StaticMessagesTable
+        {
+            get { return staticMessagesTable; }
+        }
+
+        /// <summary>
+        /// Gets the places data table.
+        /// </summary>
+        public Table PlacesTable
+        {
+            get { return placesTable; }
+        }
+
         #endregion
 
         #region Unity
@@ -66,6 +101,10 @@ namespace DaggerfallWorkshop.Game.Questing
         void Awake()
         {
             SetupSingleton();
+
+            globalVarsTable = new Table(Instance.GetTableSourceText(globalVarsTableFilename));
+            staticMessagesTable = new Table(Instance.GetTableSourceText(staticMessagesTableFilename));
+            placesTable = new Table(Instance.GetTableSourceText(placesTableFilename));
         }
 
         void Start()
