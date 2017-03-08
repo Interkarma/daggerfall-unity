@@ -1,6 +1,6 @@
 - Minimal example quest used to demonstrate how to script custom actions
 
-Quest: _BASIC01
+Quest: __DEMO01
 
 QRC:
 

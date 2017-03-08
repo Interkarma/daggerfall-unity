@@ -27,6 +27,7 @@ namespace DaggerfallWorkshop.Game.Questing
         Dictionary<int, Message> messages = new Dictionary<int, Message>();
         Dictionary<string, Clock> clocks = new Dictionary<string, Clock>();
         Dictionary<string, Task> tasks = new Dictionary<string, Task>();
+        Dictionary<string, Place> places = new Dictionary<string, Place>();
 
         #endregion
 
@@ -70,6 +71,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public void AddClock(string symbol, Clock clock)
         {
             clocks.Add(symbol, clock);
+        }
+
+        public void AddPlace(string symbol, Place place)
+        {
+            places.Add(symbol, place);
         }
 
         public void AddTask(string symbol, Task task)

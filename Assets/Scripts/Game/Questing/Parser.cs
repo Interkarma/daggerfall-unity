@@ -225,6 +225,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (lines[i].StartsWith("place", StringComparison.InvariantCultureIgnoreCase))
                 {
                     // This is a place declaration
+                    Place place = new Place(lines[i]);
+                    quest.AddPlace(place.Symbol, place);
                 }
                 else if (lines[i].StartsWith("variable", StringComparison.InvariantCultureIgnoreCase))
                 {
