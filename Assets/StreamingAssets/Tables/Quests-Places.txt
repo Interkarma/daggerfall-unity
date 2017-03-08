@@ -1,6 +1,6 @@
 -- NOTE: Contents adapted from Template 1.11 by Donald Tipton
 
-schema: *name,u1,u2,u3
+schema: *name,p1,p2,p3
 
 --	Location classes for the Places section of a Qbn file.
 --	The cataloguer joins #2 and #3 to create a unique internal code,

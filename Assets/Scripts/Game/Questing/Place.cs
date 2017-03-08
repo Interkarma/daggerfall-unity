@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Collections;
 using DaggerfallWorkshop.Utility;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -29,9 +30,11 @@ namespace DaggerfallWorkshop.Game.Questing
         string symbol;          // Symbol of place
         PlaceTypes placeType;   // Fixed/remote/local
         string name;            // Source name for data table
-        int u1;                 // Unknown parameter 1
-        int u2;                 // Unknown parameter 2
-        int u3;                 // Unknown parameter 3
+        int p1;                 // Parameter 1
+        int p2;                 // Parameter 2
+        int p3;                 // Parameter 3
+
+        DFLocation location;    // Location data
 
         #endregion
 
@@ -78,7 +81,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public int Param1
         {
-            get { return u1; }
+            get { return p1; }
         }
 
         /// <summary>
@@ -86,7 +89,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public int Param2
         {
-            get { return u2; }
+            get { return p2; }
         }
 
         /// <summary>
@@ -94,7 +97,31 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public int Param3
         {
-            get { return u3; }
+            get { return p3; }
+        }
+
+        /// <summary>
+        /// True if location has been loaded and ready to use.
+        /// </summary>
+        public bool IsLocationLoaded
+        {
+            get { return location.Loaded; }
+        }
+
+        /// <summary>
+        /// Gets region name of location.
+        /// </summary>
+        public string RegionName
+        {
+            get { return location.RegionName; }
+        }
+
+        /// <summary>
+        /// Gets map name of location.
+        /// </summary>
+        public string MapName
+        {
+            get { return location.Name; }
         }
 
         #endregion
@@ -162,17 +189,22 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (placesTable.HasValue(name))
                 {
                     // Store values
-                    u1 = CustomParseInt(placesTable.GetValue("u1", name));
-                    u2 = CustomParseInt(placesTable.GetValue("u2", name));
-                    u3 = CustomParseInt(placesTable.GetValue("u3", name));
+                    p1 = CustomParseInt(placesTable.GetValue("p1", name));
+                    p2 = CustomParseInt(placesTable.GetValue("p2", name));
+                    p3 = CustomParseInt(placesTable.GetValue("p3", name));
                 }
                 else
                 {
                     throw new Exception(string.Format("Could not find place name in data table: '{0};", name));
                 }
 
-                // TODO: Now that symbol, type, name, and params have been resolved we can create a mapping to fixed location or generate mapping to random site.
-                // This mapping will be used as an engine-specific place marker for Daggerfall Unity.
+                // Handle fixed location, either exterior or dungeon
+                if (placeType == PlaceTypes.Fixed && p1 > 0xc300)
+                {
+                    SetupFixedLocation();
+                }
+
+                // TODO: Handle local and remote locations
             }
         }
 
@@ -196,6 +228,29 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Setup a fixed location.
+        /// </summary>
+        void SetupFixedLocation()
+        {
+            DFLocation test;
+            DaggerfallUnity.Instance.ContentReader.GetLocation(17, 179, out test);
+
+            // Dungeon interiors have p2 > 0xfa00, exteriors have p2 = 0x01
+            // Need to subtract 1 if inside dungeon for exterior mapid
+            int locationId = -1;
+            if (p2 > 0xfa00)
+                locationId = p1 - 1;
+            else
+                locationId = p1;
+
+            // Get location
+            if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(locationId, out location))
+            {
+                Debug.LogFormat("Could not find locationId: '{0};", locationId);
+            }
         }
 
         #endregion

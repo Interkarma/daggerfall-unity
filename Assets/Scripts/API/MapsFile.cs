@@ -938,6 +938,35 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
+        /// Quickly reads the LocationId with minimal overhead.
+        /// Region must be loaded before calling this method.
+        /// </summary>
+        /// <param name="region">Region index.</param>
+        /// <param name="location">Location index.</param>
+        /// <returns>LocationId.</returns>
+        public int ReadLocationIdFast(int region, int location)
+        {
+            // Get reader
+            BinaryReader reader = regions[region].MapPItem.GetReader();
+
+            // Position reader at location record by reading offset and adding to end of offset table
+            reader.BaseStream.Position = location * 4;
+            reader.BaseStream.Position = (regions[region].DFRegion.LocationCount * 4) + reader.ReadUInt32();
+
+            // Skip doors (+6 bytes per door)
+            UInt32 doorCount = reader.ReadUInt32();
+            reader.BaseStream.Position += doorCount * 6;
+
+            // Skip to LocationId (+33 bytes)
+            reader.BaseStream.Position += 33;
+
+            // Read the LocationId
+            int locationId = reader.ReadUInt16();
+
+            return locationId;
+        }
+
+        /// <summary>
         /// Reads MapPItem data.
         /// </summary>
         /// <param name="reader">A binary reader to data.</param>
