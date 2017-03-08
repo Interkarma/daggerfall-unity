@@ -235,9 +235,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         void SetupFixedLocation()
         {
-            DFLocation test;
-            DaggerfallUnity.Instance.ContentReader.GetLocation(17, 179, out test);
-
             // Dungeon interiors have p2 > 0xfa00, exteriors have p2 = 0x01
             // Need to subtract 1 if inside dungeon for exterior mapid
             int locationId = -1;
