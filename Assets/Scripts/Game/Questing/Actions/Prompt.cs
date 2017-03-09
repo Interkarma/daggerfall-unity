@@ -13,6 +13,8 @@ using UnityEngine;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -21,6 +23,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     /// </summary>
     public class Prompt : ActionTemplate
     {
+        int id;
+        string yesTaskName;
+        string noTaskName;
+
+        bool done = false;
+
         public override string Pattern
         {
             get { return @"prompt (?<id>\d+) yes (?<yesTaskName>[a-zA-Z0-9_.]+) no (?<noTaskName>[a-zA-Z0-9_.]+)"; }
@@ -30,13 +38,16 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             // Source must match pattern
             Match match = Test(source);
-            if (match.Success)
+            if (!match.Success)
                 return null;
 
-            // Factory new action
-            Prompt action = new Prompt();
+            // Factory new prompt
+            Prompt prompt = new Prompt();
+            prompt.id = Parser.ParseInt(match.Groups["id"].Value);
+            prompt.yesTaskName = match.Groups["yesTaskName"].Value;
+            prompt.noTaskName = match.Groups["noTaskName"].Value;
 
-            return action;
+            return prompt;
         }
 
         public override object GetSaveData()
@@ -46,6 +57,31 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override void RestoreSaveData(object dataIn)
         {
+        }
+
+        public override void Update(Task caller)
+        {
+            if (!done)
+            {
+                ShowPrompt(caller);
+                done = true;
+            }
+        }
+
+        void ShowPrompt(Task caller)
+        {
+            // Get message resource
+            Message message = caller.ParentQuest.GetMessage(id);
+            if (message == null)
+                return;
+
+            // Get message tokens
+            TextFile.Token[] tokens = message.GetTextTokens();
+
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, tokens);
+            messageBox.ClickAnywhereToClose = false;
+            messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.Show();
         }
     }
 }

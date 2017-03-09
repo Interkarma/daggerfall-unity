@@ -50,7 +50,8 @@ namespace DaggerfallWorkshop.Game.Questing
         Table placesTable;
 
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
-        List<Quest> quests = new List<Quest>();
+        Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
+        List<Quest> questsToRemove = new List<Quest>();
 
         float updateTimer = 0;
 
@@ -125,9 +126,18 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             // Update quests
-            foreach (Quest quest in quests)
+            questsToRemove.Clear();
+            foreach (Quest quest in quests.Values)
             {
                 quest.Update();
+                if (quest.QuestComplete)
+                    questsToRemove.Add(quest);
+            }
+
+            // Remove completed quests after update completed
+            foreach (Quest quest in questsToRemove)
+            {
+                quests.Remove(quest.UID);
             }
 
             // Reset update timer
@@ -149,6 +159,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new JuggleAction());
 
             // Register default actions
+            RegisterAction(new EndQuest());
             RegisterAction(new Prompt());
         }
 
@@ -243,7 +254,7 @@ namespace DaggerfallWorkshop.Game.Questing
             Quest quest = parser.Parse(questSource);
             if (quest != null)
             {
-                quests.Add(quest);
+                quests.Add(quest.UID, quest);
             }
 
             return quest;

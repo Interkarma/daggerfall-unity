@@ -97,6 +97,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
         }
 
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, TextFile.Token[] tokens, IUserInterfaceWindow previous = null)
+            : base(uiManager, previous)
+        {
+            SetupBox(tokens, buttons);
+        }
+
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, int textId, IUserInterfaceWindow previous = null)
             : base(uiManager, previous)
         {
@@ -276,6 +282,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 height = minimum;
 
             messagePanel.Size = new Vector2(width, height);
+        }
+
+        void SetupBox(TextFile.Token[] tokens, CommonMessageBoxButtons buttons)
+        {
+            SetTextTokens(tokens);
+            switch (buttons)
+            {
+                case CommonMessageBoxButtons.YesNo:
+                    AddButton(MessageBoxButtons.Yes);
+                    AddButton(MessageBoxButtons.No);
+                    break;
+            }
         }
 
         void SetupBox(int textId, CommonMessageBoxButtons buttons)

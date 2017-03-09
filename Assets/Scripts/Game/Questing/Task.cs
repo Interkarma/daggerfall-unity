@@ -36,8 +36,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
         List<IQuestAction> actions = new List<IQuestAction>();
 
-        bool conditionsMet;     // Flag updated every frame stating if task conditions are met
-
         #endregion
 
         #region Properties
@@ -52,13 +50,9 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return type; }
         }
 
-        public bool ConditionsMet
-        {
-            get { return conditionsMet; }
-        }
-
         public bool Triggered
         {
+            set { triggered = value; }
             get { return triggered; }
         }
 
@@ -126,11 +120,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public void Update()
         {
-            // TODO: Check task conditions, always true for now
-            conditionsMet = true;
-
-            // Update actions inside this task if conditions met and task has been triggered
-            if (conditionsMet && triggered)
+            // Update actions inside this task if triggered
+            if (triggered)
             {
                 foreach(IQuestAction action in actions)
                 {
@@ -164,9 +155,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (!string.IsNullOrEmpty(match.Groups["repeating"].Value))
                 {
                     // Repeating task
+                    // These appear to be triggered automatically but need to confirm
                     type = TaskType.Repeating;
                     target = match.Groups["symbol"].Value;
-                    triggered = true;
+                    triggered = false;
                     name = DaggerfallUnity.NextUID.ToString();
                 }
                 else if (!string.IsNullOrEmpty(match.Groups["variable"].Value))
@@ -174,6 +166,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Variable
                     type = TaskType.Variable;
                     target = string.Empty;
+                    triggered = false;
                     name = match.Groups["symbol"].Value;
                 }
 

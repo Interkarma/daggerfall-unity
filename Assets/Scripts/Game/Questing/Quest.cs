@@ -18,6 +18,9 @@ namespace DaggerfallWorkshop.Game.Questing
     /// <summary>
     /// Contains live state of quests in play.
     /// Quests are instantiated from text source and executed inside quest machine.
+    /// Each quest is assigned a unique id (UID) as its possible for same question to be instantiated multiple times,
+    /// such as a basic fetch quest to two different dungeons. The name of quest cannot not be used for unique identification.
+    /// Child resources generally will not care about quest UID, but this is used by quest machine.
     /// </summary>
     public class Quest
     {
@@ -29,9 +32,29 @@ namespace DaggerfallWorkshop.Game.Questing
         Dictionary<string, Task> tasks = new Dictionary<string, Task>();
         Dictionary<string, Place> places = new Dictionary<string, Place>();
 
+        ulong uid;
+        bool questComplete = false;
+
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets quest UID assigned at create time.
+        /// </summary>
+        public ulong UID
+        {
+            get { return uid; }
+        }
+
+        /// <summary>
+        /// True when quest has completed and will be deleted from quest machine.
+        /// </summary>
+        public bool QuestComplete
+        {
+            get { return questComplete; }
+        }
+
         #endregion
 
         #region Constructors
@@ -41,6 +64,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public Quest()
         {
+            uid = DaggerfallUnity.NextUID;
         }
 
         #endregion
@@ -52,11 +76,33 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public void Update()
         {
+            // Do nothing if complete
+            // Now waiting to be removed from quest machine
+            if (questComplete)
+                return;
+
             // Update tasks
             foreach(Task task in tasks.Values)
             {
                 task.Update();
             }
+        }
+
+        public void EndQuest()
+        {
+            questComplete = true;
+        }
+
+        #endregion
+
+        #region Resource Query Methods
+
+        public Message GetMessage(int messageID)
+        {
+            if (messages.ContainsKey(messageID))
+                return messages[messageID];
+            else
+                return null;
         }
 
         #endregion
