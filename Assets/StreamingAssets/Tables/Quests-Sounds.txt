@@ -77,7 +77,7 @@ schema: id,*name
 345, levelup_tes1
 346, sword_ready
 347, pounding
-348, sword_clang
+348, sword_clang2
 349, spell_ball_lightning
 350, spell_fizzle
 351, spell_lightning

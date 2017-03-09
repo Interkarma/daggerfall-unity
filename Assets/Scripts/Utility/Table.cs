@@ -392,7 +392,14 @@ namespace DaggerfallWorkshop.Utility
                 // Link primary key value to current index
                 if (i == primaryColumnIndex)
                 {
-                    columns[i].keyIndexDict.Add(value, columns[i].values.Count - 1);
+                    if (columns[i].keyIndexDict.ContainsKey(value))
+                    {
+                        Debug.LogErrorFormat("Duplicate key found: {0}", value);
+                    }
+                    else
+                    {
+                        columns[i].keyIndexDict.Add(value, columns[i].values.Count - 1);
+                    }
                 }
             }
         }
