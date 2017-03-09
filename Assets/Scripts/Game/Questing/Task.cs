@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// Repeating tasks execute (i.e. each command stays alive) until target task/variable completed.
     /// Variables are a special task with no conditions or actions, just set/unset.
     /// </summary>
-    public class Task
+    public class Task : QuestResource
     {
         #region Fields
 
@@ -81,15 +81,19 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public Task()
+        /// <param name="parentQuest">Parent quest.</param>
+        public Task(Quest parentQuest)
+            : base(parentQuest)
         {
         }
 
         /// <summary>
         /// Create a task from QBN source code.
         /// </summary>
+        /// <param name="parentQuest">Parent quest.</param>
         /// <param name="lines">Source lines of task block.</param>
-        public Task(string[] lines)
+        public Task(Quest parentQuest, string[] lines)
+            : base(parentQuest)
         {
             SetTask(lines);
         }
@@ -120,7 +124,7 @@ namespace DaggerfallWorkshop.Game.Questing
             ReadTaskLines(lines, i);
         }
 
-        public void Update(Quest owner)
+        public void Update()
         {
             // TODO: Check task conditions, always true for now
             conditionsMet = true;

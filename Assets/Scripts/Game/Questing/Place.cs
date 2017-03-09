@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// A location or site involved in a quest.
     /// A Place can be a random local/remote location or a fixed permanent location.
     /// </summary>
-    public class Place
+    public class Place : QuestResource
     {
         #region Fields
 
@@ -131,15 +131,19 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public Place()
+        /// <param name="parentQuest">Parent quest.</param>
+        public Place(Quest parentQuest)
+            : base(parentQuest)
         {
         }
 
         /// <summary>
         /// Construct a Place resource from QBN input.
         /// </summary>
+        /// <param name="parentQuest">Parent quest.</param>
         /// <param name="line">Place definition line from QBN.</param>
-        public Place(string line)
+        public Place(Quest parentQuest, string line)
+            : base(parentQuest)
         {
             SetPlace(line);
         }

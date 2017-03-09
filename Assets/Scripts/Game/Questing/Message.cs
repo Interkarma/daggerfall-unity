@@ -17,7 +17,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// <summary>
     /// A message stores text for popups, journal, letters, rumours, etc.
     /// </summary>
-    public class Message
+    public class Message : QuestResource
     {
         #region Fields
 
@@ -39,14 +39,16 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public Message()
+        public Message(Quest parentQuest)
+            : base(parentQuest)
         {
         }
 
         /// <summary>
         /// Load message constructor.
         /// </summary>
-        public Message(int id, string[] source)
+        public Message(Quest parentQuest, int id, string[] source)
+            : base(parentQuest)
         {
             LoadMessage(id, source);
         }

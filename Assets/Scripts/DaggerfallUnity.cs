@@ -330,7 +330,7 @@ namespace DaggerfallWorkshop
             string path = TestArena2Exists(Settings.MyDaggerfallPath);
             if (!string.IsNullOrEmpty(path))
             {
-                LogMessage("Trying Daggerfall path " + path, true);
+                //LogMessage("Trying Daggerfall path " + path, true);
                 if (Directory.Exists(path))
                     found = true;
                 else
@@ -349,7 +349,7 @@ namespace DaggerfallWorkshop
             if (found)
             {
                 // If it appears valid set this is as our path
-                LogMessage(string.Format("Testing arena2 path at '{0}'.", path), true);
+                //LogMessage(string.Format("Testing arena2 path at '{0}'.", path), true);
                 if (ValidateArena2Path(path))
                 {
                     Arena2Path = path;

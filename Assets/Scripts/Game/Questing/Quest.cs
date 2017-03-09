@@ -52,10 +52,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public void Update()
         {
-            // Iteratively update each task
+            // Update tasks
             foreach(Task task in tasks.Values)
             {
-                task.Update(this);
+                task.Update();
             }
         }
 

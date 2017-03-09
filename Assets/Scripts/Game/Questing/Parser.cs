@@ -125,8 +125,8 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Parse QRC and QBN
-            ParseQRC(qrcLines, quest);
-            ParseQBN(qbnLines, quest);
+            ParseQRC(quest, qrcLines);
+            ParseQBN(quest, qbnLines);
 
             // End timer
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
@@ -139,7 +139,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #region Private Methods
 
-        void ParseQRC(List<string> lines, Quest quest)
+        void ParseQRC(Quest quest, List<string> lines)
         {
             const string parseIdError = "Could not parse text '{0}' to an int. Expected message ID value.";
 
@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     }
 
                     // Instantiate message
-                    Message message = new Message(messageID, messageLines.ToArray());
+                    Message message = new Message(quest, messageID, messageLines.ToArray());
 
                     // Add message to collection
                     quest.AddMessage(messageID, message);
@@ -194,7 +194,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
-        void ParseQBN(List<string> lines, Quest quest)
+        void ParseQBN(Quest quest, List<string> lines)
         {
             bool foundHeadlessTask = false;
             for (int i = 0; i < lines.Count; i++)
@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 // This is just to get started on some basics for now
                 if (lines[i].StartsWith("clock", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Clock clock = new Clock(lines[i]);
+                    Clock clock = new Clock(quest, lines[i]);
                     quest.AddClock(clock.Symbol, clock);
                 }
                 else if (lines[i].StartsWith("item", StringComparison.InvariantCultureIgnoreCase))
@@ -225,7 +225,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (lines[i].StartsWith("place", StringComparison.InvariantCultureIgnoreCase))
                 {
                     // This is a place declaration
-                    Place place = new Place(lines[i]);
+                    Place place = new Place(quest, lines[i]);
                     quest.AddPlace(place.Symbol, place);
                 }
                 else if (lines[i].StartsWith("variable", StringComparison.InvariantCultureIgnoreCase))
@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // This is a single-line variable declaration task
                     string[] variableLines = new string[1];
                     variableLines[0] = lines[i];
-                    Task task = new Task(variableLines);
+                    Task task = new Task(quest, variableLines);
                     quest.AddTask(task.Name, task);
                 }
                 else if (lines[i].Contains("task:") ||
@@ -241,7 +241,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // This is a standard or repeating task declaration
                     List<string> taskLines = ReadBlock(lines, ref i);
-                    Task task = new Task(taskLines.ToArray());
+                    Task task = new Task(quest, taskLines.ToArray());
                     quest.AddTask(task.Name, task);
                 }
                 else if (IsGlobalReference(lines[i]))
@@ -254,7 +254,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Currently only a single headless task is expected for startup task
                     // May be expanded later to allow multiple headless tasks
                     List<string> taskLines = ReadBlock(lines, ref i);
-                    Task task = new Task(taskLines.ToArray());
+                    Task task = new Task(quest, taskLines.ToArray());
                     quest.AddTask(task.Name, task);
                     foundHeadlessTask = true;
                 }

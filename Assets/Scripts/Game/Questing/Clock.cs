@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// Clocks can be defined ahead of time and will not start running until specified.
     /// Clocks will usually execute some task when they are finished running.
     /// </summary>
-    public class Clock
+    public class Clock : QuestResource
     {
         #region Fields
 
@@ -48,15 +48,19 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public Clock()
+        /// <param name="parentQuest">Parent quest.</param>
+        public Clock(Quest parentQuest)
+            : base(parentQuest)
         {
         }
 
         /// <summary>
         /// Construct a clock from QBN input.
         /// </summary>
+        /// <param name="parentQuest">Parent quest.</param>
         /// <param name="line">Clock definition line from QBN.</param>
-        public Clock(string line)
+        public Clock(Quest parentQuest, string line)
+            : base(parentQuest)
         {
             SetClock(line);
         }

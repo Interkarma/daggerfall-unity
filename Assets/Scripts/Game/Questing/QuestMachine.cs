@@ -32,6 +32,9 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
+        // How often quest machine will tick quest logic per second
+        const float ticksPerSecond = 10;
+
         // Folder names constants
         const string questSourceFolderName = "Quests";
         const string questTablesFolderName = "Tables";
@@ -48,6 +51,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
         List<Quest> quests = new List<Quest>();
+
+        float updateTimer = 0;
 
         #endregion
 
@@ -114,11 +119,19 @@ namespace DaggerfallWorkshop.Game.Questing
 
         private void Update()
         {
-            // Iteratively update each task
+            // Increment update timer
+            updateTimer += Time.deltaTime;
+            if (updateTimer < (1f / ticksPerSecond))
+                return;
+
+            // Update quests
             foreach (Quest quest in quests)
             {
                 quest.Update();
             }
+
+            // Reset update timer
+            updateTimer = 0;
         }
 
         #endregion

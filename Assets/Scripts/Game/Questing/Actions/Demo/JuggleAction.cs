@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         int dropPercent;
 
         // These fields are for internal use
-        float timer = 0;
+        float nextTick = 0;
 
         /// <summary>
         /// Data to serialize action state can be placed in a struct.
@@ -119,8 +119,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public override void Update(Task caller)
         {
             // Increment timer
-            timer += Time.deltaTime;
-            if (timer < interval)
+            if (Time.realtimeSinceStartup < nextTick)
                 return;
 
             // Juggle 'em if you got 'em
@@ -129,8 +128,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 Juggle();
             }
 
-            // Reset timer
-            timer = 0;
+            // Update timer
+            nextTick = Time.realtimeSinceStartup + interval;
         }
 
         /// <summary>
