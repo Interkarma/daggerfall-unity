@@ -3,7 +3,7 @@
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// All quest resources (People, Place, Foe, Clock, etc.) must inherit from this base class.
+    /// All quest resources hosted by a quest must inherit from this base class.
     /// </summary>
     public abstract class QuestResource
     {

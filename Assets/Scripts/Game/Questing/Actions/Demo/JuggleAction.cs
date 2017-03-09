@@ -59,13 +59,22 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         }
 
         /// <summary>
+        /// Constructor must set parent quest.
+        /// </summary>
+        /// <param name="parentQuest">Quest this action belongs to. Can be null for template.</param>
+        public JuggleAction(Quest parentQuest)
+            : base(parentQuest)
+        {
+        }
+
+        /// <summary>
         /// Create is called when action is factoried during parse time.
         /// Any setup required should be checked and instantiated from here.
         /// If anything prevents action from starting, please throw or log descriptive information.
         /// </summary>
         /// <param name="source">Source line.</param>
         /// <returns>New quest action from this template or null if not created.</returns>
-        public override IQuestAction Create(string source)
+        public override IQuestAction Create(string source, Quest parentQuest)
         {
             // Source must match pattern
             Match match = Test(source);
@@ -73,7 +82,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return null;
 
             // Factory new action and set default data as needed
-            JuggleAction action = new JuggleAction();
+            JuggleAction action = new JuggleAction(parentQuest);
             action.thingName = match.Groups["thingName"].Value;
             action.thingsRemaining = Parser.ParseInt(match.Groups["numberOfThings"].Value);
             action.interval = Parser.ParseInt(match.Groups["interval"].Value);

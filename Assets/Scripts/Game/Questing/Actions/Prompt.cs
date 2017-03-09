@@ -34,7 +34,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             get { return @"prompt (?<id>\d+) yes (?<yesTaskName>[a-zA-Z0-9_.]+) no (?<noTaskName>[a-zA-Z0-9_.]+)"; }
         }
 
-        public override IQuestAction Create(string source)
+        public Prompt(Quest parentQuest)
+            : base(parentQuest)
+        {
+        }
+
+        public override IQuestAction Create(string source, Quest parentQuest)
         {
             // Source must match pattern
             Match match = Test(source);
@@ -42,7 +47,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return null;
 
             // Factory new prompt
-            Prompt prompt = new Prompt();
+            Prompt prompt = new Prompt(parentQuest);
             prompt.id = Parser.ParseInt(match.Groups["id"].Value);
             prompt.yesTaskName = match.Groups["yesTaskName"].Value;
             prompt.noTaskName = match.Groups["noTaskName"].Value;
@@ -80,8 +85,16 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, tokens);
             messageBox.ClickAnywhereToClose = false;
+            messageBox.AllowCancel = false;
             messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.OnButtonClick += MessageBox_OnButtonClick;
             messageBox.Show();
+        }
+
+        private void MessageBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
+                sender.CloseWindow();
         }
     }
 }

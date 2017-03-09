@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Factory new instance of this action from source line.
         /// </summary>
-        IQuestAction Create(string source);
+        IQuestAction Create(string source, Quest parentQuest);
 
         /// <summary>
         /// Get action state data to serialize.
@@ -62,12 +62,17 @@ namespace DaggerfallWorkshop.Game.Questing
     /// For example, the "vengeance" sound played in nighttime Daggerfall is an action that persists until Lysandus is put to rest.
     /// Currently still unclear on when actions get reset (e.g. when does "play sound 10 times" counter get reset?).
     /// </summary>
-    public abstract class ActionTemplate : IQuestAction
+    public abstract class ActionTemplate : QuestResource, IQuestAction
     {
         public abstract string Pattern { get; }
-        public abstract IQuestAction Create(string source);
+        public abstract IQuestAction Create(string source, Quest parentQuest);
         public abstract object GetSaveData();
         public abstract void RestoreSaveData(object dataIn);
+
+        public ActionTemplate(Quest parentQuest)
+            : base(parentQuest)
+        {
+        }
 
         public virtual Match Test(string source)
         {

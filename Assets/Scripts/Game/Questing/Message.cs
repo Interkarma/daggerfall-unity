@@ -116,6 +116,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // TODO: Handle =string_ text
 
+                // TODO: Handle =binding("actionName") text
+
                 // Add tokens
                 AddToken(TextFile.Formatting.Text, line, variant.tokens);
                 AddToken(formatting, variant.tokens);

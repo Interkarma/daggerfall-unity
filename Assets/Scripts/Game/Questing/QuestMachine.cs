@@ -156,11 +156,11 @@ namespace DaggerfallWorkshop.Game.Questing
         void RegisterActionTemplates()
         {
             // Register example actions
-            RegisterAction(new JuggleAction());
+            RegisterAction(new JuggleAction(null));
 
             // Register default actions
-            RegisterAction(new EndQuest());
-            RegisterAction(new Prompt());
+            RegisterAction(new EndQuest(null));
+            RegisterAction(new Prompt(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)

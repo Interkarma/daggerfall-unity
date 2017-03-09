@@ -200,7 +200,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (actionTemplate != null)
                     {
                         // Create a new action from template (don't link template itself)
-                        IQuestAction action = actionTemplate.Create(lines[i]);
+                        IQuestAction action = actionTemplate.Create(lines[i], ParentQuest);
                         actions.Add(action);
                     }
                     else

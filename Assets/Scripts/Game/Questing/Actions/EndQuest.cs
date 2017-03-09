@@ -23,7 +23,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             get { return "end quest"; }
         }
 
-        public override IQuestAction Create(string source)
+        public EndQuest(Quest parentQuest)
+            : base(parentQuest)
+        {
+        }
+
+        public override IQuestAction Create(string source, Quest parentQuest)
         {
             // Source must match pattern
             Match match = Test(source);
@@ -31,7 +36,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return null;
 
             // Factory new action
-            EndQuest action = new EndQuest();
+            EndQuest action = new EndQuest(parentQuest);
 
             return action;
         }
