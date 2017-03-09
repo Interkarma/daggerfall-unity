@@ -93,6 +93,20 @@ namespace DaggerfallWorkshop.Game.Questing
             questComplete = true;
         }
 
+        public void StartTask(string name)
+        {
+            Task task = GetTask(name);
+            if (task != null)
+                task.Start();
+        }
+
+        public void StopTask(string name)
+        {
+            Task task = GetTask(name);
+            if (task != null)
+                task.Stop();
+        }
+
         #endregion
 
         #region Resource Query Methods
@@ -101,6 +115,14 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             if (messages.ContainsKey(messageID))
                 return messages[messageID];
+            else
+                return null;
+        }
+
+        public Task GetTask(string name)
+        {
+            if (tasks.ContainsKey(name))
+                return tasks[name];
             else
                 return null;
         }

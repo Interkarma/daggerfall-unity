@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -128,6 +128,22 @@ namespace DaggerfallWorkshop.Game.Questing
                     action.Update(this);
                 }
             }
+        }
+
+        /// <summary>
+        /// Another way to set/trigger task.
+        /// </summary>
+        public void Start()
+        {
+            triggered = true;
+        }
+
+        /// <summary>
+        /// Another way to stop/rearm task.
+        /// </summary>
+        public void Stop()
+        {
+            triggered = false;
         }
 
         #endregion

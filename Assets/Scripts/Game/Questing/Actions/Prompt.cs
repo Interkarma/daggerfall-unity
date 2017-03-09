@@ -26,7 +26,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         int id;
         string yesTaskName;
         string noTaskName;
-
         bool done = false;
 
         public override string Pattern
@@ -76,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         void ShowPrompt(Task caller)
         {
             // Get message resource
-            Message message = caller.ParentQuest.GetMessage(id);
+            Message message = ParentQuest.GetMessage(id);
             if (message == null)
                 return;
 
@@ -93,8 +92,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         private void MessageBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
-            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
-                sender.CloseWindow();
+            // Start yes or no task
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+                ParentQuest.StartTask(yesTaskName);
+            else
+                ParentQuest.StartTask(noTaskName);
+
+            // Close prompt
+            sender.CloseWindow();
         }
     }
 }

@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             // Source must match pattern
             Match match = Test(source);
-            if (match.Success)
+            if (!match.Success)
                 return null;
 
             // Factory new action
@@ -53,7 +53,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public override void Update(Task caller)
         {
             // Flag quest over so quest machine can remove it
-            caller.ParentQuest.EndQuest();
+            //Debug.LogFormat("Ending quest {0}", ParentQuest.UID);
+            ParentQuest.EndQuest();
         }
     }
 }
