@@ -85,11 +85,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
             this.id = id;
 
-            if (id == 1010)
-            {
-                int foo = 0;
-            }
-
             // Read through message lines and create a new variant on split token <--->
             // Variants are used to provide some randomness to text, e.g. rumours
             MessageVariant variant = CreateVariant();
@@ -121,16 +116,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // TODO: Handle =string_ text
 
-                // Add formatting token
-                TextFile.Token formattingToken = new TextFile.Token();
-                formattingToken.formatting = formatting;
-                variant.tokens.Add(formattingToken);
-
-                // Add text token
-                TextFile.Token textToken = new TextFile.Token();
-                textToken.formatting = TextFile.Formatting.Text;
-                textToken.text = line;
-                variant.tokens.Add(textToken);
+                // Add tokens
+                AddToken(TextFile.Formatting.Text, line, variant.tokens);
+                AddToken(formatting, variant.tokens);
             }
 
             // Add final variant
@@ -167,6 +155,19 @@ namespace DaggerfallWorkshop.Game.Questing
             variant.tokens = new List<TextFile.Token>();
 
             return variant;
+        }
+
+        void AddToken(TextFile.Formatting formatting, List<TextFile.Token> tokenList)
+        {
+            AddToken(formatting, string.Empty, tokenList);
+        }
+
+        void AddToken(TextFile.Formatting formatting, string text, List<TextFile.Token> tokenList)
+        {
+            TextFile.Token token = new TextFile.Token();
+            token.formatting = formatting;
+            token.text = text;
+            tokenList.Add(token);
         }
 
         #endregion
