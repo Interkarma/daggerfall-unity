@@ -133,15 +133,15 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Another way to set/trigger task.
         /// </summary>
-        public void Start()
+        public void Set()
         {
             triggered = true;
         }
 
         /// <summary>
-        /// Another way to stop/rearm task.
+        /// Another way to unset/rearm task.
         /// </summary>
-        public void Stop()
+        public void Unset()
         {
             triggered = false;
         }

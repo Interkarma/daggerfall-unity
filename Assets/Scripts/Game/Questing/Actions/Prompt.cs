@@ -94,9 +94,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             // Start yes or no task
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
-                ParentQuest.StartTask(yesTaskName);
+                ParentQuest.SetTask(yesTaskName);
             else
-                ParentQuest.StartTask(noTaskName);
+                ParentQuest.SetTask(noTaskName);
 
             // Close prompt
             sender.CloseWindow();

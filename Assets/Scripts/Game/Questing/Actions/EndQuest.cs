@@ -53,7 +53,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public override void Update(Task caller)
         {
             // Flag quest over so quest machine can remove it
-            //Debug.LogFormat("Ending quest {0}", ParentQuest.UID);
+            Debug.LogFormat("Ending quest {0}", ParentQuest.UID);
             ParentQuest.EndQuest();
         }
     }

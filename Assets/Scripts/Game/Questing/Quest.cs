@@ -93,18 +93,18 @@ namespace DaggerfallWorkshop.Game.Questing
             questComplete = true;
         }
 
-        public void StartTask(string name)
+        public void SetTask(string name)
         {
             Task task = GetTask(name);
             if (task != null)
-                task.Start();
+                task.Set();
         }
 
-        public void StopTask(string name)
+        public void UnsetTask(string name)
         {
             Task task = GetTask(name);
             if (task != null)
-                task.Stop();
+                task.Unset();
         }
 
         #endregion
