@@ -1,25 +1,34 @@
-﻿using System.Collections;
+﻿// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
+// Web Site:        http://www.dfworkshop.net
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: Lypyl (lypyldf@gmail.com)
+// Contributors:    
+// 
+// Notes:
+//
+
+using System.Collections;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using FullSerializer;
 
-// Place actions in this namespace
-//Unlike message posts, a sound once started by the play sound command performs indefinitely.
-//To stop a playing sound, clear the task that started it.
+
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
 
-    /// <summary>
-    /// Plays sound for quests (only used in Sx977...vengence)
-    /// See Quests-Sounds.txt for valid sounds
-    /// Unlike message posts, the play sound command performs until task is cleared
-    /// can be in the form of:
-    /// play sound (soundname) every x minutes y times
-    /// or play sound (soundname) x y
-    /// the second number is not currently used for anything - purpose is unkown.
-    /// </summary>
     public class PlaySound : ActionTemplate
     {
+        /// Plays sound for quests (only used in Sx977...vengence)
+        /// See Quests-Sounds.txt for valid sounds
+        /// Unlike message posts, the play sound command performs until task is cleared
+        /// can be in the form of:
+        /// play sound (soundname) every x minutes y times
+        /// or play sound (soundname) x y
+        /// the second number is not currently used for anything - purpose is unkown.
+
+
         public string   soundName;        //used to lookup sound index in sound table
         public int      soundIndex;
         public uint     interval;            //how often to play; measured in game minutes
