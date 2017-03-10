@@ -115,8 +115,6 @@ namespace DaggerfallWorkshop
         public bool LypyL_EnhancedSky { get; set; }
         public bool Nystul_IncreasedTerrainDistance { get; set; }
         public bool Nystul_RealtimeReflections { get; set; }
-        public bool UncannyValley_RealGrass { get; set; }
-        public bool TheLacus_GrassAndPlants { get; set; }
         public bool UncannyValley_BirdsInDaggerfall { get; set; }
         public bool MeshAndTextureReplacement { get; set; }
 
@@ -176,8 +174,6 @@ namespace DaggerfallWorkshop
             LypyL_EnhancedSky = GetBool(sectionEnhancements, "LypyL_EnhancedSky");
             Nystul_IncreasedTerrainDistance = GetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance");
             Nystul_RealtimeReflections = GetBool(sectionEnhancements, "Nystul_RealtimeReflections");
-            UncannyValley_RealGrass = GetBool(sectionEnhancements, "UncannyValley_RealGrass");
-            TheLacus_GrassAndPlants = GetBool(sectionEnhancements, "TheLacus_GrassAndPlants");
             UncannyValley_BirdsInDaggerfall = GetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall");
             MeshAndTextureReplacement = GetBool(sectionEnhancements, "MeshAndTextureReplacement");
         }
@@ -231,8 +227,6 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "LypyL_EnhancedSky", LypyL_EnhancedSky);
             SetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance", Nystul_IncreasedTerrainDistance);
             SetBool(sectionEnhancements, "Nystul_RealtimeReflections", Nystul_RealtimeReflections);
-            SetBool(sectionEnhancements, "UncannyValley_RealGrass", UncannyValley_RealGrass);
-            SetBool(sectionEnhancements, "TheLacus_GrassAndPlants", TheLacus_GrassAndPlants);
             SetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall", UncannyValley_BirdsInDaggerfall);
             SetBool(sectionEnhancements, "MeshAndTextureReplacement", MeshAndTextureReplacement);
 
