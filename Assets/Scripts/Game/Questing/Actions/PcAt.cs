@@ -16,36 +16,33 @@ using System;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
-    public class EndQuest : ActionTemplate
+    /// <summary>
+    /// Condition which checks if player character at a specific place.
+    /// </summary>
+    public class PcAt : ActionTemplate
     {
         public override string Pattern
         {
-            get { return "end quest"; }
+            // Notes:
+            // Docs use form "pc at aPlace do aTask"
+            // But observed quests actually seem to use "pc at aPlace set aTask"
+            // Probably a change between writing of docs and Template v1.11.
+            // Docs also missing ""pc at aPlace set aTask saying nnnn"
+            get { return @"pc at (?<aPlace>[a-zA-Z0-9_.]+) set (?<aTask>[a-zA-Z0-9_.]+)|pc at (?<aPlace>[a-zA-Z0-9_.]+) set (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)"; }
         }
 
-        public EndQuest(Quest parentQuest)
+        public PcAt(Quest parentQuest)
             : base(parentQuest)
         {
         }
 
         public override IQuestAction Create(string source, Quest parentQuest)
         {
-            // Source must match pattern
-            Match match = Test(source);
-            if (!match.Success)
-                return null;
-
-            // Factory new action
-            EndQuest action = new EndQuest(parentQuest);
-
-            return action;
+            return null;
         }
 
         public override void Update(Task caller)
         {
-            // Flag quest over so quest machine can remove it
-            //Debug.LogFormat("Ending quest {0}", ParentQuest.UID);
-            ParentQuest.EndQuest();
         }
     }
 }

@@ -32,8 +32,8 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        // How often quest machine will tick quest logic per second
-        const float ticksPerSecond = 10;
+        const float startupDelay = 1.0f;        // How long quest machine will wait before running active quests
+        const float ticksPerSecond = 10;        // How often quest machine will tick quest logic per second
 
         // Folder names constants
         const string questSourceFolderName = "Quests";
@@ -55,6 +55,8 @@ namespace DaggerfallWorkshop.Game.Questing
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
         List<Quest> questsToRemove = new List<Quest>();
 
+        bool waitingForStartup = true;
+        float startupTimer = 0;
         float updateTimer = 0;
 
         #endregion
@@ -131,6 +133,15 @@ namespace DaggerfallWorkshop.Game.Questing
 
         private void Update()
         {
+            // Handle startup delay
+            if (waitingForStartup)
+            {
+                startupTimer += Time.deltaTime;
+                if (startupTimer < startupDelay)
+                    return;
+                waitingForStartup = false;
+            }
+
             // Increment update timer
             updateTimer += Time.deltaTime;
             if (updateTimer < (1f / ticksPerSecond))
@@ -172,6 +183,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Register default actions
             RegisterAction(new EndQuest(null));
             RegisterAction(new Prompt(null));
+            RegisterAction(new Say(null));
             RegisterAction(new PlaySound(null));
             RegisterAction(new ClearTask(null));
             RegisterAction(new LogMessage(null));

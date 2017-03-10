@@ -19,20 +19,18 @@ using DaggerfallConnect.Arena2;
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Prompt which displays a yes/no dialog that executes a different task based on user input.
+    /// Displays a prompt which user can click to dismiss.
     /// </summary>
-    public class Prompt : ActionTemplate
+    public class Say : ActionTemplate
     {
         int id;
-        string yesTaskName;
-        string noTaskName;
 
         public override string Pattern
         {
-            get { return @"prompt (?<id>\d+) yes (?<yesTaskName>[a-zA-Z0-9_.]+) no (?<noTaskName>[a-zA-Z0-9_.]+)"; }
+            get { return @"say (?<id>\d+)"; }
         }
 
-        public Prompt(Quest parentQuest)
+        public Say(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -44,22 +42,20 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (!match.Success)
                 return null;
 
-            // Factory new prompt
-            Prompt prompt = new Prompt(parentQuest);
-            prompt.id = Parser.ParseInt(match.Groups["id"].Value);
-            prompt.yesTaskName = match.Groups["yesTaskName"].Value;
-            prompt.noTaskName = match.Groups["noTaskName"].Value;
+            // Factory new say
+            Say say = new Say(parentQuest);
+            say.id = Parser.ParseInt(match.Groups["id"].Value);
 
-            return prompt;
+            return say;
         }
 
         public override void Update(Task caller)
         {
-            ShowPrompt(caller);
+            ShowPopup();
             SetComplete();
         }
 
-        void ShowPrompt(Task caller)
+        void ShowPopup()
         {
             // Get message resource
             Message message = ParentQuest.GetMessage(id);
@@ -69,24 +65,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Get message tokens
             TextFile.Token[] tokens = message.GetTextTokens();
 
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, tokens);
-            messageBox.ClickAnywhereToClose = false;
-            messageBox.AllowCancel = false;
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+            messageBox.SetTextTokens(tokens);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.AllowCancel = true;
             messageBox.ParentPanel.BackgroundColor = Color.clear;
-            messageBox.OnButtonClick += MessageBox_OnButtonClick;
             messageBox.Show();
-        }
-
-        private void MessageBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
-        {
-            // Start yes or no task
-            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
-                ParentQuest.SetTask(yesTaskName);
-            else
-                ParentQuest.SetTask(noTaskName);
-
-            // Close prompt
-            sender.CloseWindow();
         }
     }
 }

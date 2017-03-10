@@ -25,6 +25,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Must be provided by action implementor.
         /// </summary>
         string Pattern { get; }
+        
+        /// <summary>
+        /// Returns true if action called SetComplete().
+        /// </summary>
+        bool IsComplete { get; }
 
         /// <summary>
         /// Helper to test if source is a match for Pattern.
@@ -51,10 +56,17 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Called once per frame by owning task.
         /// </summary>
         void Update(Task caller);
+
+        /// <summary>
+        /// Sets action as complete so as not to be called again by task.
+        /// Used for one-and-done actions.
+        /// </summary>
+        void SetComplete();
     }
 
     /// <summary>
-    /// Base class template for all quest actions.
+    /// Base class template for all quest actions and conditions used by tasks.
+    /// Handles some of the boilerplate of IQuestAction.
     /// This class can be used to test and factory new action interfaces from itself.
     /// Actions belong to a task and perform a specific function when task is active and conditions are met.
     /// An action will persist until task terminates.
@@ -64,10 +76,12 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public abstract class ActionTemplate : QuestResource, IQuestAction
     {
+        bool complete = false;
+
+        public bool IsComplete { get { return complete; } }
+
         public abstract string Pattern { get; }
         public abstract IQuestAction Create(string source, Quest parentQuest);
-        public abstract object GetSaveData();
-        public abstract void RestoreSaveData(object dataIn);
 
         public ActionTemplate(Quest parentQuest)
             : base(parentQuest)
@@ -81,6 +95,20 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public virtual void Update(Task caller)
         {
+        }
+
+        public virtual object GetSaveData()
+        {
+            return string.Empty;
+        }
+
+        public virtual void RestoreSaveData(object dataIn)
+        {
+        }
+
+        public virtual void SetComplete()
+        {
+            complete = true;
         }
     }
 }
