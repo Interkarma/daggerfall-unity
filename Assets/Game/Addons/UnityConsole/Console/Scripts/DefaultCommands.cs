@@ -55,6 +55,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ExecuteScript.name, ExecuteScript.description, ExecuteScript.usage, ExecuteScript.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddInventoryItem.name, AddInventoryItem.description, AddInventoryItem.usage, AddInventoryItem.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(StartQuest.name, StartQuest.usage, StartQuest.description, StartQuest.Execute);
         }
 
         private static class GodCommand
@@ -1049,6 +1050,21 @@ namespace Wenzil.Console
 
         }
 
+        private static class StartQuest
+        {
+            public static readonly string name = "startquest";
+            public static readonly string description = "Starts the specified quest";
+            public static readonly string usage = "startquest {quest name}";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length < 1)
+                    return usage;
+                DaggerfallWorkshop.Game.Questing.QuestMachine.Instance.InstantiateQuest(args[0]);
+                return "Finished";
+            }
+
+        }
 
         private static class ExecuteScript
         {
