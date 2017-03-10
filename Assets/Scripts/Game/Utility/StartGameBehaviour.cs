@@ -52,6 +52,7 @@ namespace DaggerfallWorkshop.Game.Utility
         GameObject player;
         PlayerEnterExit playerEnterExit;
         PlayerHealth playerHealth;
+        StartMethods lastStartMethod;
 
         #endregion
 
@@ -67,6 +68,11 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             get { return classicSaveIndex; }
             set { classicSaveIndex = value; }
+        }
+
+        public StartMethods LastStartMethod
+        {
+            get { return lastStartMethod; }
         }
 
         #endregion
@@ -233,6 +239,7 @@ namespace DaggerfallWorkshop.Game.Utility
             playerEnterExit.DisableAllParents();
             ResetWeaponManager();
             NoWorld = true;
+            lastStartMethod = StartMethods.Void;
         }
 
         void StartTitleMenu()
@@ -246,6 +253,8 @@ namespace DaggerfallWorkshop.Game.Utility
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGame);
             else
                 DaggerfallUI.PostMessage(PostStartMessage);
+
+            lastStartMethod = StartMethods.TitleMenu;
 
             if (OnStartMenu != null)
                 OnStartMenu(this, null);
@@ -270,6 +279,8 @@ namespace DaggerfallWorkshop.Game.Utility
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiInitGameFromDeath);
             else
                 DaggerfallUI.PostMessage(PostStartMessage);
+
+            lastStartMethod = StartMethods.TitleMenuFromDeath;
 
             if (OnStartMenu != null)
                 OnStartMenu(this, null);
@@ -348,11 +359,17 @@ namespace DaggerfallWorkshop.Game.Utility
             DaggerfallUI.Instance.FadeHUDFromBlack();
             DaggerfallUI.PostMessage(PostStartMessage);
 
-            // Start an example quest for testing
-            //GameManager.Instance.QuestMachine.InstantiateQuest("__DEMO01");
+            lastStartMethod = StartMethods.NewCharacter;
 
             if (OnStartGame != null)
                 OnStartGame(this, null);
+
+            // Following quests are auto-created with every new character
+            GameManager.Instance.QuestMachine.InstantiateQuest("_TUTOR__");
+            GameManager.Instance.QuestMachine.InstantiateQuest("_BRISIEN");
+
+            // Start an example quest for testing
+            //GameManager.Instance.QuestMachine.InstantiateQuest("__DEMO01");
         }
 
         #endregion
@@ -434,6 +451,8 @@ namespace DaggerfallWorkshop.Game.Utility
             GameManager.Instance.PauseGame(false);
             DaggerfallUI.Instance.FadeHUDFromBlack();
             DaggerfallUI.PostMessage(PostStartMessage);
+
+            lastStartMethod = StartMethods.LoadClassicSave;
 
             if (OnStartGame != null)
                 OnStartGame(this, null);

@@ -125,7 +125,8 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 foreach(IQuestAction action in actions)
                 {
-                    action.Update(this);
+                    if (!action.IsComplete)
+                        action.Update(this);
                 }
             }
         }
@@ -204,43 +205,49 @@ namespace DaggerfallWorkshop.Game.Questing
             // This will generate a lot of log noise early on until things are further along
             for (int i = startLine; i < lines.Length; i++)
             {
-                if (IsCondition(lines[i]))
+                //if (IsCondition(lines[i]))
+                //{
+                //    // TODO: Create condition and add to task
+                //    Debug.LogFormat("Conditions not implemented. Ignoring: '{0}'", lines[i]);
+                //}
+                //else
+                //{
+
+                // NOTE: Experimenting with conditions as just another kind of action
+
+                // Try to find registered action template using this line
+                IQuestAction actionTemplate = QuestMachine.Instance.GetActionTemplate(lines[i]);
+                if (actionTemplate != null)
                 {
-                    // TODO: Create condition and add to task
-                    Debug.LogFormat("Conditions not implemented. Ignoring: '{0}'", lines[i]);
+                    // Create a new action from template (don't link template itself)
+                    IQuestAction action = actionTemplate.Create(lines[i], ParentQuest);
+                    actions.Add(action);
                 }
                 else
                 {
-                    // Try to find registered action template using this line
-                    IQuestAction actionTemplate = QuestMachine.Instance.GetActionTemplate(lines[i]);
-                    if (actionTemplate != null)
-                    {
-                        // Create a new action from template (don't link template itself)
-                        IQuestAction action = actionTemplate.Create(lines[i], ParentQuest);
-                        actions.Add(action);
-                    }
-                    else
-                    {
-                        Debug.LogFormat("Action not found. Ignoring '{0}'", lines[i]);
-                    }
+                    Debug.LogFormat("Action not found. Ignoring '{0}'", lines[i]);
                 }
+
+                //}
             }
         }
 
-        /// <summary>
-        /// Quickly identify condition lines.
-        /// </summary>
-        /// <param name="line">Line to evaluate.</param>
-        /// <returns>True if this is a condition.</returns>
-        bool IsCondition(string line)
-        {
-            string matchStr = @"cast|clicked|daily|dropped|faction|from|have|injured|killed|level|pc at|repute|toting|(?<anItem>[a-zA-Z0-9_.]+) used do|(?<anItem>[a-zA-Z0-9_.]+) used saying|when";
-            Match match = Regex.Match(line, matchStr);
-            if (match.Success)
-                return true;
-            else
-                return false;
-        }
+        // NOTE: Experimenting with conditions as just another kind of action
+
+        ///// <summary>
+        ///// Quickly identify condition lines.
+        ///// </summary>
+        ///// <param name="line">Line to evaluate.</param>
+        ///// <returns>True if this is a condition.</returns>
+        //bool IsCondition(string line)
+        //{
+        //    string matchStr = @"cast|clicked|daily|dropped|faction|from|have|injured|killed|level|pc at|repute|toting|(?<anItem>[a-zA-Z0-9_.]+) used do|(?<anItem>[a-zA-Z0-9_.]+) used saying|when";
+        //    Match match = Regex.Match(line, matchStr);
+        //    if (match.Success)
+        //        return true;
+        //    else
+        //        return false;
+        //}
 
         #endregion
     }
