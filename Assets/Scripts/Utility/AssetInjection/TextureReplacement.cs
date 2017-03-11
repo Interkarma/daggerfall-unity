@@ -135,14 +135,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// Check if file exist on disk for a specific metal type. 
-        /// Ex: WEAPON04.CIF_0-0.Png for Iron --> WEAPON04.CIF-1_0-0.Png
+        /// Ex: WEAPON04.CIF_0-0.Png for Iron --> WEAPON04.CIF_0-0_Iron.Png
         /// <returns>Bool</returns>
         static public bool CustomCifExist(string filename, int record, int frame, MetalTypes metalType)
         {
             if (metalType == MetalTypes.None)
                 return CustomCifExist(filename, record, frame);
 
-            return CustomCifExist(filename + "-" + (int)metalType, record, frame);
+            return TextureFileExist(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString() + "_" + metalType);
         }
 
         /// Load custom image as texture2D for a specific metal type.
@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (metalType == MetalTypes.None)
                 return LoadCustomCif(filename, record, frame);
 
-            return LoadCustomCif(filename + "-" + (int)metalType, record, frame);
+            return ImportTextureFile(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString() + "_" + metalType);
         }
 
         /// <summary>

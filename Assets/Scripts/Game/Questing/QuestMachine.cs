@@ -17,6 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing.Actions;
+using DaggerfallWorkshop.Game.Questing.Conditions;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -180,11 +181,15 @@ namespace DaggerfallWorkshop.Game.Questing
             // Register example actions
             RegisterAction(new JuggleAction(null));
 
+            // Register default conditions
+            RegisterAction(new WhenTask(null));
+
             // Register default actions
             RegisterAction(new EndQuest(null));
             RegisterAction(new Prompt(null));
             RegisterAction(new Say(null));
             RegisterAction(new PlaySound(null));
+            RegisterAction(new StartTask(null));
             RegisterAction(new ClearTask(null));
             RegisterAction(new LogMessage(null));
             RegisterAction(new PickRandomTask(null));
