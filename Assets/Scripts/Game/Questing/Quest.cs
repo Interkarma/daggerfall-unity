@@ -139,10 +139,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="messageID">MessageID to display for this step.</param>
         public void AddLogStep(int stepID, int messageID)
         {
-            // Cannot log step more than once at a time
+            // Replacing existing log step if it exists
             if (activeLogMessages.ContainsKey(stepID))
             {
-                throw new System.Exception("Attempting to log stepID + " + stepID + "more than once.");
+                activeLogMessages.Remove(stepID);
             }
 
             // Add the step to active log messages

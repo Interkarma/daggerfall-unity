@@ -1,0 +1,44 @@
+- This quest is for testing early task condition support
+
+Quest: __DEMO02
+
+
+QRC:
+
+Message: 1010
+Not wearing a hat or shades.
+
+Message:  1011
+Wearing hat and shades.
+
+Message:  1012
+Wearing hat without shades.
+
+Message: 1013
+Wearing shades without a hat.
+
+
+QBN:
+
+variable hat
+variable shades
+
+- Entry point
+set hat
+set shades
+
+_NoHatOrShades_ task:
+when not hat and not shades
+say 1010
+
+_HatAndShades_ task:
+when hat and shades
+say 1011
+
+_HatAndNoShades_ task:
+when hat and not shades
+say 1012
+
+_ShadesNoHat_ task:
+when not hat and shades
+say 1013

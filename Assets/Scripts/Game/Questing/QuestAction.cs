@@ -32,6 +32,11 @@ namespace DaggerfallWorkshop.Game.Questing
         bool IsComplete { get; }
 
         /// <summary>
+        /// Returns true if this action considers itself a conditional operator.
+        /// </summary>
+        bool IsCondition { get; }
+
+        /// <summary>
         /// Helper to test if source is a match for Pattern.
         /// </summary>
         Match Test(string source);
@@ -58,6 +63,12 @@ namespace DaggerfallWorkshop.Game.Questing
         void Update(Task caller);
 
         /// <summary>
+        /// Check condition status.
+        /// Allows task to become active when condition returns true.
+        /// </summary>
+        bool CheckCondition(Task caller);
+
+        /// <summary>
         /// Sets action as complete so as not to be called again by task.
         /// Used for one-and-done actions.
         /// </summary>
@@ -77,8 +88,10 @@ namespace DaggerfallWorkshop.Game.Questing
     public abstract class ActionTemplate : QuestResource, IQuestAction
     {
         bool complete = false;
+        bool condition = false;
 
         public bool IsComplete { get { return complete; } }
+        public bool IsCondition { get { return condition; } protected set { condition = value; } }
 
         public abstract string Pattern { get; }
         public abstract IQuestAction Create(string source, Quest parentQuest);
@@ -95,6 +108,11 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public virtual void Update(Task caller)
         {
+        }
+
+        public virtual bool CheckCondition(Task caller)
+        {
+            return false;
         }
 
         public virtual object GetSaveData()
