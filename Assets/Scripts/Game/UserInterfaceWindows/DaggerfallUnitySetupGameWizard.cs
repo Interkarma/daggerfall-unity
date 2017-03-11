@@ -67,8 +67,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Checkbox distantTerrain;
         Checkbox realtimeReflections;
-        Checkbox tallGrass;
-        Checkbox grassAndPlants;
         Checkbox flyingBirds;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -457,8 +455,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             optionPos = 20;
             distantTerrain = AddOption(x, "Distant Terrain (Nystul)", "Enhanced and distant terrain", DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance);
             realtimeReflections = AddOption(x, "Realtime Reflections (Nystul)", "Realtime reflections on water and select surfaces", DaggerfallUnity.Settings.Nystul_RealtimeReflections);
-            tallGrass = AddOption(x, "Tall Grass (Uncanny_Valley)", "Animated tall grass", DaggerfallUnity.Settings.UncannyValley_RealGrass);
-            grassAndPlants = AddOption(x, "Grass and Plants (TheLacus)", "Uncanny_Valley's Tall grass plus water plants", DaggerfallUnity.Settings.TheLacus_GrassAndPlants);
             flyingBirds = AddOption(x, "Flying Birds (Uncanny Valley)", "Animated flying birds", DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall);
 
             // Add mod note
@@ -717,8 +713,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance = distantTerrain.IsChecked;
             DaggerfallUnity.Settings.Nystul_RealtimeReflections = realtimeReflections.IsChecked;
-            DaggerfallUnity.Settings.UncannyValley_RealGrass = tallGrass.IsChecked;
-            DaggerfallUnity.Settings.TheLacus_GrassAndPlants = grassAndPlants.IsChecked;
             DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall = flyingBirds.IsChecked;
             DaggerfallUnity.Settings.MeshAndTextureReplacement = meshAndTextureReplacement.IsChecked;
 
