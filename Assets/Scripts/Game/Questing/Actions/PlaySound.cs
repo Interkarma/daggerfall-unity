@@ -29,11 +29,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         /// the second number is not currently used for anything - purpose is unkown.
 
 
-        public string   soundName;        //used to lookup sound index in sound table
+        public string   soundName;              //used to lookup sound index in sound table
         public int      soundIndex;
-        public uint     interval;            //how often to play; measured in game minutes
-        public int      unknown;             //according to Tipton's documentation, doesn't do anything
-        public ulong    lastTimePlayed = 0;       //last time sound was played
+        public uint     interval;               //how often to play; measured in game minutes
+        public int      unknown;                //according to Tipton's documentation, doesn't do anything
+        public ulong    lastTimePlayed = 0;     //last time sound was played
         public AudioClip clip;
 
 
@@ -147,6 +147,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                     lastTimePlayed = gameSeconds;
                 }
             }
+            // Unlike message posts, the play sound command performs until task is cleared
         }
 
     }
