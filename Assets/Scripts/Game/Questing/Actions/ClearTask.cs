@@ -80,6 +80,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 if(task != null)
                     task.Unset();
             }
+
+            SetComplete();
         }
     }
 }

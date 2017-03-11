@@ -82,8 +82,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override void Update(Task caller)
         {
-            //##TODO - add message to log
-            //var message = ParentQuest.GetMessage(messageID);
+            ParentQuest.AddLogStep(stepID, messageID);
+            SetComplete();
         }
     }
 }
