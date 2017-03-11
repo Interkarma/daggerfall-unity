@@ -119,7 +119,7 @@ Transform:
   - {fileID: 1844948392}
   - {fileID: 1646954600}
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 17
 --- !u!1001 &2602850
 Prefab:
   m_ObjectHideFlags: 0
@@ -890,52 +890,6 @@ Prefab:
 GameObject:
   m_PrefabParentObject: {fileID: 100000, guid: f0a81702cca1eaa4388e167564519165, type: 2}
   m_PrefabInternal: {fileID: 476548251}
---- !u!1001 &502912984
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4000012812943976, guid: fa60c9a3146c3364aa1c7186c79f87ac, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000012812943976, guid: fa60c9a3146c3364aa1c7186c79f87ac, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000012812943976, guid: fa60c9a3146c3364aa1c7186c79f87ac, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000012812943976, guid: fa60c9a3146c3364aa1c7186c79f87ac, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 6.6097587e-12
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000012812943976, guid: fa60c9a3146c3364aa1c7186c79f87ac, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000012812943976, guid: fa60c9a3146c3364aa1c7186c79f87ac, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0.0000018099951
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000012812943976, guid: fa60c9a3146c3364aa1c7186c79f87ac, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 0.0000036517765
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000012812943976, guid: fa60c9a3146c3364aa1c7186c79f87ac, type: 2}
-      propertyPath: m_RootOrder
-      value: 18
-      objectReference: {fileID: 0}
-    - target: {fileID: 1000010633462242, guid: fa60c9a3146c3364aa1c7186c79f87ac, type: 2}
-      propertyPath: m_Name
-      value: GrassAndPlantsMod
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: fa60c9a3146c3364aa1c7186c79f87ac, type: 2}
-  m_IsPrefabParent: 0
 --- !u!4 &591652369 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 121467206f5a86740875d0647bdea509, type: 2}
@@ -2102,64 +2056,6 @@ MonoBehaviour:
   heightDensity: 2
   startDistance: 0
   fogShader: {fileID: 4800000, guid: 70d8568987ac0499f952b54c7c13e265, type: 3}
---- !u!1001 &1750674361
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 452500, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 452500, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 452500, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 452500, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 452500, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 452500, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 452500, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 452500, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: m_RootOrder
-      value: 17
-      objectReference: {fileID: 0}
-    - target: {fileID: 164000, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: m_Name
-      value: RealGrassMod
-      objectReference: {fileID: 0}
-    - target: {fileID: 164000, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11406978, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: greenGrass
-      value: 
-      objectReference: {fileID: 2800000, guid: 02e6a9f25fb3bb74caa13a5c17516cf5, type: 3}
-    - target: {fileID: 11406978, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-      propertyPath: brownGrass
-      value: 
-      objectReference: {fileID: 2800000, guid: cc883c400ead15c4cbe223b3dd968960, type: 3}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 15e94e8b33002d44eb718dc65c51ae1a, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &1769263313
 GameObject:
   m_ObjectHideFlags: 0
