@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        const string specialTagToken = "-+";
+        const string specialFieldToken = "--+";
         #endregion
 
         #region Constructors
@@ -75,9 +75,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Handle special tag code lines
                 // This will parse as comments to Template but have special meaning in Daggerfall Unity
-                if (text.StartsWith(specialTagToken, comparison))
+                if (text.StartsWith(specialFieldToken, comparison))
                 {
-                    ReadSpecialTag(quest, line);
+                    ReadSpecialField(quest, line);
                     continue;
                 }
 
@@ -283,14 +283,14 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
-        void ReadSpecialTag(Quest quest, string line)
+        void ReadSpecialField(Quest quest, string line)
         {
-            // Read tag field
-            line = line.Replace(specialTagToken, "");
-            string[] tag = SplitField(line, 2);
+            // Read field
+            line = line.Replace(specialFieldToken, "");
+            string[] field = SplitField(line, 2);
 
-            if (string.Compare(tag[0], "DisplayName", true) == 0)
-                quest.DisplayName = tag[1];
+            if (string.Compare(field[0], "DisplayName", true) == 0)
+                quest.DisplayName = field[1];
         }
 
         #endregion

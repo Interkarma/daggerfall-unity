@@ -1,4 +1,4 @@
--+ DisplayName: Tutorial
+--+ DisplayName: Tutorial
 
 -- Quest: C:\QUESTS\WORKING\_TUTOR__.Qbn.
 -- StartsBy: letter
