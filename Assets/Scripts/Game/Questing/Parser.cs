@@ -160,7 +160,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // Read ID of message
                     int messageID = 0;
-                    if (parts[1].StartsWith("[") && parts[1].EndsWith("]"))
+                    if (parts[0] == "QuestLogEntry")
+                    {
+                        var match = System.Text.RegularExpressions.Regex.Match(parts[1], "(?<id>[0-9]+)");
+                        if(!int.TryParse(match.Groups["id"].Value, out messageID))
+                            throw new Exception(string.Format(parseIdError, parts[1]));
+                    }
+                    else if (parts[1].StartsWith("[") && parts[1].EndsWith("]"))
                     {
                         // Fixed message types use ID from table
                         messageID = staticMessagesTable.GetInt(idCol, parts[0]);
