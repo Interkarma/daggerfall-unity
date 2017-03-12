@@ -123,29 +123,52 @@ namespace DaggerfallWorkshop.Game.Questing.Conditions
             bool left = false, right = false;
             for (int i = 0; i < evaluations.Count; i++)
             {
+                // Get task state based on operator
+                Operator op = evaluations[i].op;
                 string task = evaluations[i].task;
-                switch(evaluations[i].op)
+                switch(op)
                 {
                     case Operator.When:
-                        right = IsTaskSet(task);
-                        break;
-                    case Operator.WhenNot:
-                        right = !IsTaskSet(task);
-                        break;
-
                     case Operator.And:
+                    case Operator.Or:
                         right = IsTaskSet(task);
-                        if (!left || !right)
-                            return false;
                         break;
 
+                    case Operator.WhenNot:
                     case Operator.AndNot:
+                    case Operator.OrNot:
                         right = !IsTaskSet(task);
+                        break;
+
+                    default:
+                        return false;
+                }
+
+                // Evaluate short-circuit conditions
+                switch (op)
+                {
+                    // Handle single-task condition
+                    case Operator.When:
+                    case Operator.WhenNot:
+                        if (evaluations.Count == 1 && !right)
+                            return false;
+                        break;
+
+                    // Both sides must be true
+                    case Operator.And:
+                    case Operator.AndNot:
                         if (!left || !right)
                             return false;
                         break;
 
-                    // TODO: or / or not
+                    // Either side can be true to result as true
+                    case Operator.Or:
+                    case Operator.OrNot:
+                        if (!left && !right)
+                            return false;
+                        else
+                            right = true;
+                        break;
 
                     default:
                         return false;
@@ -155,19 +178,18 @@ namespace DaggerfallWorkshop.Game.Questing.Conditions
                 left = right;
             }
 
-            // If we made it this far then all present conditions in chain evaluated as true
+            // All conditions have evaluated
             return true;
         }
 
         /// <summary>
         /// Checks is a task is set.
-        /// Will also return false if task not found.
         /// </summary>
         bool IsTaskSet(string name)
         {
             Task task = ParentQuest.GetTask(name);
             if (task == null)
-                return false;
+                throw new Exception(string.Format("Task/Variable not found '{0}'", name));
 
             return task.IsSet;
         }
