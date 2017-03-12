@@ -192,6 +192,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new StartTask(null));
             RegisterAction(new ClearTask(null));
             RegisterAction(new LogMessage(null));
+            RegisterAction(new PickRandomTask(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)
@@ -256,6 +257,29 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return table;
+        }
+
+        /// <summary>
+        /// Returns a list of all active log messages from all active quests
+        /// </summary>
+        /// <returns>List of log messages</returns>
+        public List<Message> GetAllQuestLogMessages()
+        {
+            List<Message> questMessages = new List<Message>();
+
+            foreach (var quest in quests.Values)
+            {
+                var logEntries = quest.GetLogMessages();
+
+                foreach (var logEntry in logEntries)
+                {
+                    var message = quest.GetMessage(logEntry.messageID);
+                    if (message != null)
+                        questMessages.Add(message);
+                }
+            }
+
+            return questMessages;
         }
 
         /// <summary>

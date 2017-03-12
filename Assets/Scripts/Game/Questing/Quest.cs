@@ -189,9 +189,11 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Create an array of active log messages
             LogEntry[] logs = new LogEntry[activeLogMessages.Count];
+            int count = 0;
             foreach (LogEntry log in activeLogMessages.Values)
             {
-                logs[0] = log;
+                logs[count] = log;
+                count++;
             }
 
             return logs;

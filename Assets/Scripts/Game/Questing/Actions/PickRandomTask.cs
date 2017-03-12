@@ -17,18 +17,18 @@ using System;
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Unsets 1 or more tasks so they can be triggered again
+    /// This action triggers a random task
     /// </summary>
-    public class ClearTask : ActionTemplate
+    public class PickRandomTask : ActionTemplate
     {
-        public string[] tasknames;
+        public string[] taskNames;
 
         public override string Pattern
         {
-            get { return @"clear [a-zA-Z0-9_.]+"; }
+            get { return @"pick one of [a-zA-Z0-9_.]+"; }
         }
 
-        public ClearTask(Quest parentQuest)
+        public PickRandomTask(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -40,45 +40,63 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (!match.Success)
                 return null;
 
-            ClearTask action = new ClearTask(parentQuest);
-
+            // Factory new action
+            PickRandomTask action = new PickRandomTask(parentQuest);
             try
             {
-                string[] tasks = source.Split();
-                action.tasknames = new String[tasks.Length - 1];
-                for (int i = 0; i < action.tasknames.Length; i++)
+                var splits = source.Split();
+                if (splits == null || splits.Length < 4)
+                    return null;
+                else
+                    action.taskNames = new String[splits.Length - 3];
+
+                for (int i = 0; i < action.taskNames.Length; i++)
                 {
-                    action.tasknames[i] = tasks[i+1];
+                    action.taskNames[i] = splits[i + 3];
                 }
+
             }
             catch (System.Exception ex)
             {
-                DaggerfallUnity.LogMessage("ClearTask.Create() failed with exception: " + ex.Message, true);
+                DaggerfallUnity.LogMessage("PickRandomTask.Create() failed with exception: " + ex.Message, true);
                 action = null;
             }
 
             return action;
+
         }
 
         public override object GetSaveData()
         {
-            return tasknames;
+            return taskNames;
         }
 
         public override void RestoreSaveData(object dataIn)
         {
             if (dataIn == null)
                 return;
-            tasknames = (String[])dataIn;
+            taskNames = (String[])dataIn;
         }
 
         public override void Update(Task caller)
         {
-            foreach (var taskname in this.tasknames)
+            bool success = false;
+            if(ParentQuest != null)
             {
-                var task = ParentQuest.GetTask(taskname);
+                UnityEngine.Random.InitState(System.Environment.TickCount);
+                var selected = taskNames[UnityEngine.Random.Range(0, taskNames.Length)];
+                var task = ParentQuest.GetTask(selected);
+
                 if (task != null)
-                    task.Unset();
+                {
+                    success = true;
+                    task.Set();
+                }
+            }
+
+            if(!success)
+            {
+                Debug.LogError(string.Format("PickRandomTask failed to activate task.  Quest: {0} Task: {1}", ParentQuest.UID, caller.Name));
             }
 
             SetComplete();
