@@ -27,6 +27,8 @@ namespace DaggerfallWorkshop.Game.Questing
     public class Parser
     {
         #region Fields
+
+        const string specialTagToken = "-+";
         #endregion
 
         #region Constructors
@@ -71,7 +73,15 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Trim trailing white space from either end of source line data
                 string text = line.Trim();
 
-                // Skip comment lines
+                // Handle special tag code lines
+                // This will parse as comments to Template but have special meaning in Daggerfall Unity
+                if (text.StartsWith(specialTagToken, comparison))
+                {
+                    ReadSpecialTag(quest, line);
+                    continue;
+                }
+
+                // Skip other comment lines
                 if (text.StartsWith("-", comparison))
                     continue;
 
@@ -130,7 +140,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // End timer
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            Debug.Log(string.Format("Time to parse quest {0} was {1}ms.", questName, totalTime));
+            if (string.IsNullOrEmpty(quest.DisplayName))
+            {
+                Debug.Log(string.Format("Time to parse quest {0} was {1}ms.", questName, totalTime));
+            }
+            else
+            {
+                Debug.Log(string.Format("Time to parse quest {0} ({1}) was {2}ms.", questName, quest.DisplayName, totalTime));
+            }
 
             return quest;
         }
@@ -264,6 +281,16 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception(string.Format("Unknown line signature encounted '{0}'.", lines[i]));
                 }
             }
+        }
+
+        void ReadSpecialTag(Quest quest, string line)
+        {
+            // Read tag field
+            line = line.Replace(specialTagToken, "");
+            string[] tag = SplitField(line, 2);
+
+            if (string.Compare(tag[0], "DisplayName", true) == 0)
+                quest.DisplayName = tag[1];
         }
 
         #endregion

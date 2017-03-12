@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool questComplete = false;
         Dictionary<int, LogEntry> activeLogMessages = new Dictionary<int, LogEntry>();
 
+        string displayName;
         DaggerfallDateTime questStartTime;
 
         #endregion
@@ -72,6 +73,15 @@ namespace DaggerfallWorkshop.Game.Questing
         public bool QuestComplete
         {
             get { return questComplete; }
+        }
+
+        /// <summary>
+        /// Display name for quest log.
+        /// </summary>
+        public string DisplayName
+        {
+            get { return displayName; }
+            set { displayName = value; }
         }
 
         #endregion
