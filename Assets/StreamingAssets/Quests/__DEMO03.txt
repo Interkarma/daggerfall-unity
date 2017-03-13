@@ -1,0 +1,96 @@
+- This is for testing log action + journal ui
+
+Quest: __DEMO02
+
+QRC:
+
+QuestLogEntry:  [1001]
+%qdt:
+ _qgiver_ of the Dark Brotherhood
+ in __qgiver_, ___qgiver_
+ has me paying a visit on =assassin_,
+ a competing assassin, where %g is completing a contract
+ in ___mondung_. If I can find any
+ clues about =assassin_'s employer,
+ I am to account him or her also.
+ Either way, the whole bloody business needs
+ to be done in =queston_ days.
+
+QuestLogEntry:  [1002]
+%qdt:
+ The Fighters Guild of ___qgiver_
+ has asked me to slay a wild beast which
+ has gotten into _house_. It's got
+ be done in one day.
+
+QuestLogEntry:  [1003]
+%qdt:
+ _qgiver_ in ___qgiver_ gave
+ me the job of killing a tiger or bear
+ that got into _house_
+ in __house_. If I get back
+ to him within =2dung_ days I get
+ _gold_ gold pieces.
+
+
+QuestLogEntry:  [1004]
+On %qdt,
+ I met with _agent_ of ___agent_.
+ %g told me that a mysterious client of
+ %g3 was looking for daedric _ingredient_.
+ If I can find it, I will get the _artifact_.
+ The daedric _ingredient_ is somewhere
+ in ___dungeon_.  When I find it, I am
+ to meet a _qgiver_ at
+ _meetingplace_ here in __meetingplace_.
+
+QuestLogEntry:  [1005]
+%qdt:
+ I met secretly with _qgiver_ in
+ ___qgiver_ who gave me a
+ falsified letter. I am to sneak into the
+ _inn_ in __inn_ and
+ replace the true letter. I have =traveltime_ days
+ to complete this quest. If I am caught,
+ I am on my own.
+
+QuestLogEntry:  [1006]
+%qdt
+ _giver_ of ___giver_ has offered me _gold_
+ gold to find %g3 book, _book_.
+
+QuestLogEntry:  [1007]
+%qdt:
+ _qgiver_ of
+ ==qgiver_ in ___qgiver_
+ says that Daedras are pouring
+ through a dimensional rift.
+ I must go to ___dungeon_
+ and kill them all. They will
+ contact me by spell when I
+ have slain the last of them.
+ I have =2dung_ days before it
+ is too late.
+
+QuestLogEntry:  [1008]
+%qdt:
+ _qgiver_ of __qgiver_,
+ in ___qgiver_, told me that %g3 god was
+ angered. %g needs untainted
+ _ingredient_ from ___dungeon_
+ for a rite of atonement. It
+ must be in _qgiver_'s
+ hands at __qgiver_
+ within =traveltime_ days.
+
+QBN:
+
+- Headless entry point with custom action
+log 1001 step 0
+log 1002 step 1
+log 1003 step 2
+log 1004 step 3
+log 1005 step 4
+log 1006 step 5
+log 1007 step 6
+log 1008 step 7
