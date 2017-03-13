@@ -105,6 +105,19 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        public void StartClock()
+        {
+            // ##TODO - start or restart clock
+            // unknown if time should reset on restart?
+            // used by StartClock action
+        }
+
+        public void StopClock()
+        {
+            // ##TODO - Stop clock without triggering any tasks
+            // used by StopClock action
+        }
+
         #endregion
 
         #region TimeValue Class

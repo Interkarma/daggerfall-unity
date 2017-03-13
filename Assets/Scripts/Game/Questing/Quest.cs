@@ -246,6 +246,14 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
         }
 
+        public Clock GetClock(string name)
+        {
+            if (clocks.ContainsKey(name))
+                return clocks[name];
+            else
+                return null;
+        }
+
         #endregion
 
         #region Resource Allocation Methods
