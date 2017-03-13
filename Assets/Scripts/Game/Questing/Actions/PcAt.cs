@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // But observed quests actually seem to use "pc at aPlace set aTask"
             // Probably a change between writing of docs and Template v1.11.
             // Docs also missing ""pc at aPlace set aTask saying nnnn"
-            get { return @"pc at (?<aPlace>[a-zA-Z0-9_.]+) set (?<aTask>[a-zA-Z0-9_.]+)|pc at (?<aPlace>[a-zA-Z0-9_.]+) set (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)"; }
+            get { return @"pc at (?<aPlace>\w+) set (?<aTask>[a-zA-Z0-9_.]+)|pc at (?<aPlace>\w+) set (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)"; }
         }
 
         public PcAt(Quest parentQuest)
