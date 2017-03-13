@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Starts a task by setting it active. Added alternate form "set taskname".
+    /// Starts a task by setting it active. Added alternate form "setvar taskname".
     /// </summary>
     public class StartTask : ActionTemplate
     {
@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override string Pattern
         {
-            get { return @"start task (?<taskName>[a-zA-Z0-9_.]+)|set (?<taskName>[a-zA-Z0-9_.]+)"; }
+            get { return @"start task (?<taskName>[a-zA-Z0-9_.]+)|setvar (?<taskName>[a-zA-Z0-9_.]+)"; }
         }
 
         public StartTask(Quest parentQuest)

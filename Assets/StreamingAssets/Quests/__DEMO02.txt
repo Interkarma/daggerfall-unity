@@ -17,8 +17,8 @@ variable pants
 
 - Entry point
 set hat
--set shades
--set pants
+-setvar shades
+-setvar pants
 
 _NoHatOrShades_ task:
 when not pants and hat or shades
