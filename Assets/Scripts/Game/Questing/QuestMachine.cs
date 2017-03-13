@@ -195,6 +195,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new PickRandomTask(null));
             RegisterAction(new StartClock(null));
             RegisterAction(new StopClock(null));
+            RegisterAction(new RemoveLogMessage(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)
