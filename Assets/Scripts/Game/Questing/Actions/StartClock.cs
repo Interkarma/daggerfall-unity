@@ -65,9 +65,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             var clock = ParentQuest.GetClock(clockName);
 
             if (clock != null)
+            {
                 clock.StartClock();
+                SetComplete();
+            }
             else
+            {
                 Debug.LogWarning(string.Format("StopClock failed to locate clock: {0} in task {1} for quest: {2}", clockName, caller.Name, ParentQuest.UID));
+            }
         }
     }
 }

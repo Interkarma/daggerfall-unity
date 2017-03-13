@@ -248,8 +248,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public Clock GetClock(string name)
         {
-            if (clocks.ContainsKey(name))
-                return clocks[name];
+            if (resources.ContainsKey(name))
+                return (Clock)resources[name];
             else
                 return null;
         }
