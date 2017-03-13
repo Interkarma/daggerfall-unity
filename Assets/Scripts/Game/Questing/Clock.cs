@@ -25,7 +25,6 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        string symbol;      // Symbol of clock, also name of task to execute when clock ends
         TimeValue start;    // Minimum amount of time once clock starts
         TimeValue end;      // Maximum amount of time once clock starts - ignored if less than start
         int flag;           // Currently unknown flag found after 'flag' in clock declaration
@@ -35,12 +34,6 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Properties
-
-        public string Symbol
-        {
-            get { return symbol; }
-        }
-
         #endregion
 
         #region Constructors
@@ -84,7 +77,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Get symbol
-            symbol = parts[1];
+            Symbol = parts[1];
 
             // Get start value
             if (parts.Length >= 3)

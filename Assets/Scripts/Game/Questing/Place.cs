@@ -27,7 +27,6 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        string symbol;          // Symbol of place
         PlaceTypes placeType;   // Fixed/remote/local
         string name;            // Source name for data table
         int p1;                 // Parameter 1
@@ -51,14 +50,6 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets the symbol of this Place.
-        /// </summary>
-        public string Symbol
-        {
-            get { return symbol; }
-        }
 
         /// <summary>
         /// Gets the PlaceType of this Place.
@@ -162,7 +153,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (match.Success)
             {
                 // Store symbol for quest system
-                symbol = match.Groups["symbol"].Value;
+                Symbol = match.Groups["symbol"].Value;
 
                 // Get place type
                 if (!string.IsNullOrEmpty(match.Groups["aPermanentPlace"].Value))

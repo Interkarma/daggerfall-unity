@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (lines[i].StartsWith("clock", StringComparison.InvariantCultureIgnoreCase))
                 {
                     Clock clock = new Clock(quest, lines[i]);
-                    quest.AddClock(clock.Symbol, clock);
+                    quest.AddResource(clock);
                 }
                 else if (lines[i].StartsWith("item", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -249,7 +249,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // This is a place declaration
                     Place place = new Place(quest, lines[i]);
-                    quest.AddPlace(place.Symbol, place);
+                    quest.AddResource(place);
                 }
                 else if (lines[i].StartsWith("variable", StringComparison.InvariantCultureIgnoreCase))
                 {

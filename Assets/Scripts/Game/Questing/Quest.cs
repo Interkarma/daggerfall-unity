@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
@@ -29,9 +30,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
         // Quest object collections
         Dictionary<int, Message> messages = new Dictionary<int, Message>();
-        Dictionary<string, Clock> clocks = new Dictionary<string, Clock>();
         Dictionary<string, Task> tasks = new Dictionary<string, Task>();
-        Dictionary<string, Place> places = new Dictionary<string, Place>();
+
+        // Clock, Place, Person, Foe, etc. all share a common resource dictionary
+        Dictionary<string, QuestResource> resources = new Dictionary<string, QuestResource>();
 
         ulong uid;
         bool questComplete = false;
@@ -253,14 +255,14 @@ namespace DaggerfallWorkshop.Game.Questing
             messages.Add(messageID, message);
         }
 
-        public void AddClock(string symbol, Clock clock)
+        public void AddResource(QuestResource resource)
         {
-            clocks.Add(symbol, clock);
-        }
+            if (resources.ContainsKey(resource.Symbol))
+            {
+                throw new Exception(string.Format("Duplicate QuestResource symbol name found: {0}", resource.Symbol));
+            }
 
-        public void AddPlace(string symbol, Place place)
-        {
-            places.Add(symbol, place);
+            resources.Add(resource.Symbol, resource);
         }
 
         public void AddTask(string symbol, Task task)
