@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public void SetPlace(string line)
         {
             // Match string for Place variants
-            string matchStr = @"Place (?<symbol>[a-zA-Z0-9_.]+) permanent (?<aPermanentPlace>[a-zA-Z0-9_.]+)|Place (?<symbol>[a-zA-Z0-9_.]+) remote (?<aRemoteSite>[a-zA-Z0-9_.]+)|Place (?<symbol>[a-zA-Z0-9_.]+) local (?<aLocalSite>[a-zA-Z0-9_.]+)";
+            string matchStr = @"Place (?<symbol>\w+) permanent (?<aPermanentPlace>\w+)|Place (?<symbol>\w+) remote (?<aRemoteSite>\w+)|Place (?<symbol>\w+) local (?<aLocalSite>\w+)";
 
             // Try to match source line with pattern
             Match match = Regex.Match(line, matchStr);
