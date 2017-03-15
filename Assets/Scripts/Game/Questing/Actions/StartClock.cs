@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             }
             else
             {
-                Debug.LogWarning(string.Format("StopClock failed to locate clock: {0} in task {1} for quest: {2}", clockName, caller.Name, ParentQuest.UID));
+                Debug.LogWarning(string.Format("StopClock failed to locate clock: {0} in task {1} for quest: {2}", clockName, caller.Symbol.Name, ParentQuest.UID));
             }
         }
     }

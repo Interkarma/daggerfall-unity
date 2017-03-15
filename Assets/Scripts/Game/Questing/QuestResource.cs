@@ -9,12 +9,12 @@ namespace DaggerfallWorkshop.Game.Questing
     public abstract class QuestResource
     {
         Quest parentQuest = null;
-        string symbol;
+        Symbol symbol;
 
         /// <summary>
         /// Symbol of this quest resource (if any).
         /// </summary>
-        public string Symbol
+        public Symbol Symbol
         {
             get { return symbol; }
             protected set { symbol = value; }

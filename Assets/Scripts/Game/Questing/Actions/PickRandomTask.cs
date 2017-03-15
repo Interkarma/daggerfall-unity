@@ -96,7 +96,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             if(!success)
             {
-                Debug.LogError(string.Format("PickRandomTask failed to activate task.  Quest: {0} Task: {1}", ParentQuest.UID, caller.Name));
+                Debug.LogError(string.Format("PickRandomTask failed to activate task.  Quest: {0} Task: {1}", ParentQuest.UID, caller.Symbol.Name));
             }
 
             SetComplete();

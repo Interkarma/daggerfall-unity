@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        string name;            // Unique name of task, can be used like a boolean if to check if task has completed
+        Symbol symbol;          // Unique symbol of task, can be used like a boolean if to check if task has completed
         string target;          // Name of target task/variable to check, used by repeating tasks only
         bool triggered;         // Has task been triggered?
         TaskType type;          // Type of task
@@ -47,9 +47,9 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return parentQuest; }
         }
 
-        public string Name
+        public Symbol Symbol
         {
-            get { return name; }
+            get { return symbol; }
         }
 
         public TaskType Type
@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 type = TaskType.Headless;
                 target = string.Empty;
                 triggered = true;
-                name = DaggerfallUnity.NextUID.ToString();
+                symbol = new Symbol(DaggerfallUnity.NextUID.ToString());
             }
 
             // Read task lines
@@ -190,7 +190,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Standard task
                     type = TaskType.Standard;
                     target = string.Empty;
-                    name = match.Groups["symbol"].Value;
+                    symbol = new Symbol(match.Groups["symbol"].Value);
                 }
                 else if (!string.IsNullOrEmpty(match.Groups["repeating"].Value))
                 {
@@ -199,7 +199,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     type = TaskType.Repeating;
                     target = match.Groups["symbol"].Value;
                     triggered = false;
-                    name = DaggerfallUnity.NextUID.ToString();
+                    symbol = new Symbol(DaggerfallUnity.NextUID.ToString());
                 }
                 else if (!string.IsNullOrEmpty(match.Groups["variable"].Value))
                 {
@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     type = TaskType.Variable;
                     target = string.Empty;
                     triggered = false;
-                    name = match.Groups["symbol"].Value;
+                    symbol = new Symbol(match.Groups["symbol"].Value);
                 }
 
                 return true;

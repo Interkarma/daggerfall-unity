@@ -108,13 +108,6 @@ namespace DaggerfallWorkshop.Game.Questing
                     variant = CreateVariant();
                 }
 
-                // TODO: Handle %var text
-
-                // TODO: Handle _symbol_ text
-
-                // TODO: Handle =string_ text
-
-                // TODO: Handle =binding("actionName") text
 
                 // Add tokens
                 AddToken(TextFile.Formatting.Text, line, variant.tokens);

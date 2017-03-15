@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (match.Success)
             {
                 // Store symbol for quest system
-                Symbol = match.Groups["symbol"].Value;
+                Symbol = new Symbol(match.Groups["symbol"].Value);
 
                 // Get place type
                 if (!string.IsNullOrEmpty(match.Groups["aPermanentPlace"].Value))

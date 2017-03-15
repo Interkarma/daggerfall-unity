@@ -257,7 +257,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     string[] variableLines = new string[1];
                     variableLines[0] = lines[i];
                     Task task = new Task(quest, variableLines);
-                    quest.AddTask(task.Name, task);
+                    quest.AddTask(task);
                 }
                 else if (lines[i].Contains("task:") ||
                     (lines[i].StartsWith("until", StringComparison.InvariantCultureIgnoreCase) && lines[i].Contains("performed:")))
@@ -265,7 +265,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // This is a standard or repeating task declaration
                     List<string> taskLines = ReadBlock(lines, ref i);
                     Task task = new Task(quest, taskLines.ToArray());
-                    quest.AddTask(task.Name, task);
+                    quest.AddTask(task);
                 }
                 else if (IsGlobalReference(lines[i]))
                 {
@@ -278,7 +278,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // May be expanded later to allow multiple headless tasks
                     List<string> taskLines = ReadBlock(lines, ref i);
                     Task task = new Task(quest, taskLines.ToArray());
-                    quest.AddTask(task.Name, task);
+                    quest.AddTask(task);
                     foundHeadlessTask = true;
                 }
                 else
@@ -400,6 +400,21 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 lines[i] = lines[i].Trim();
             }
+        }
+
+        // Gets inner symbol name between e.g. "_symbol_" or "=symbol_" becomes "symbol"
+        // Does not care about context just wants the interior name
+        // Does not trim inner characters - for example "_one_day_" will become "one_day"
+        public static string GetInnerSymbolName(string symbol)
+        {
+            string result;
+
+            // Trim symbol wrappers from outside in
+            result = symbol.Trim('=');          // Outer =
+            result = symbol.Trim('#');          // Outer # (custom, gets binding)
+            result = symbol.Trim('_');          // Outer _
+
+            return result;
         }
 
         #endregion

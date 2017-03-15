@@ -265,17 +265,17 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public void AddResource(QuestResource resource)
         {
-            if (resources.ContainsKey(resource.Symbol))
+            if (resources.ContainsKey(resource.Symbol.Name))
             {
                 throw new Exception(string.Format("Duplicate QuestResource symbol name found: {0}", resource.Symbol));
             }
 
-            resources.Add(resource.Symbol, resource);
+            resources.Add(resource.Symbol.Name, resource);
         }
 
-        public void AddTask(string symbol, Task task)
+        public void AddTask(Task task)
         {
-            tasks.Add(symbol, task);
+            tasks.Add(task.Symbol.Name, task);
         }
 
         #endregion

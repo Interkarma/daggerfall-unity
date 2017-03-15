@@ -70,14 +70,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception("Clock: line empty or invalid.");
 
             // Verify this looks like a clock resource
-            if (string.Compare(parts[0], "clock", true) != 0 ||
-                !parts[1].StartsWith("_") || !parts[1].EndsWith("_"))
+            if (string.Compare(parts[0], "clock", true) != 0)
             {
                 throw new Exception("Clock: line does not begin with 'clock _symbol_'");
             }
 
             // Get symbol
-            Symbol = parts[1];
+            Symbol = new Symbol(parts[1]);
 
             // Get start value
             if (parts.Length >= 3)

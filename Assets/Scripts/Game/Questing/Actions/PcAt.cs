@@ -34,11 +34,17 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public PcAt(Quest parentQuest)
             : base(parentQuest)
         {
+            IsCondition = true;
         }
 
         public override IQuestAction Create(string source, Quest parentQuest)
         {
             return null;
+        }
+
+        public override bool CheckCondition(Task caller)
+        {
+            return false;
         }
 
         public override void Update(Task caller)
