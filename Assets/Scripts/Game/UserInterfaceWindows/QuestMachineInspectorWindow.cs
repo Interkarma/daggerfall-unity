@@ -37,8 +37,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Panel mainPanel = new Panel();
 
-        Color questListBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.4f);
-        Color questListTextColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
+        //Color questListBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.4f);
+        //Color questListTextColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
         Color mainPanelBackgroundColor = new Color(0.0f, 0f, 0.0f, 1.0f);
         Color mainButtonBackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
 
@@ -138,17 +138,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetupResourceSelectPanel()
         {
-            Panel resourcePanel = AddPanel(new Rect(108, 4, 100, 352), "Resources");
+            /*Panel resourcePanel = */AddPanel(new Rect(108, 4, 100, 352), "Resources");
         }
 
         void SetupResourceInspectPanel()
         {
-            Panel inspectPanel = AddPanel(new Rect(212, 4, 384, 240), "Visual Inspector");
+            /*Panel inspectPanel = */AddPanel(new Rect(212, 4, 384, 240), "Visual Inspector");
         }
 
         void SetupSourcePanel()
         {
-            Panel sourcePanel = AddPanel(new Rect(212, 248, 384, 108), "Related Source");
+            /*Panel sourcePanel = */AddPanel(new Rect(212, 248, 384, 108), "Related Source");
         }
 
         #endregion

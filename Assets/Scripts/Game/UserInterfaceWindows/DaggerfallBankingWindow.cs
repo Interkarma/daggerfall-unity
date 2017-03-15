@@ -310,23 +310,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (result == TransactionResult.DEPOSIT_LOC) //show messagebox window w/ yes no buttons
             {
-                Button yesbutton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                /*Button yesbutton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                /*Button noButton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.ClickAnywhereToClose = false;
                 messageBox.OnButtonClick += DepositLOC_messageBox_OnButtonClick;
             }
 
             else if (result == TransactionResult.SELL_HOUSE_OFFER) //show messagebox window w/ yes no buttons
             {
-                Button yesbutton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                /*Button yesbutton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                /*Button noButton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.ClickAnywhereToClose = false;
                 messageBox.OnButtonClick += SellHouse_messageBox_OnButtonClick;
             }
             else if (result == TransactionResult.SELL_SHIP_OFFER)
             {
-                Button yesbutton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                /*Button yesbutton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                /*Button noButton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.ClickAnywhereToClose = false;
                 messageBox.OnButtonClick += SellShip_messageBox_OnButtonClick;
             }

@@ -148,12 +148,12 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
         // Graphic Quality
         y = 20f;
-        TextLabel qualityOptions = AddTextlabel (leftPanel, graphicQualityText);
+        /*TextLabel qualityOptions = */AddTextlabel (leftPanel, graphicQualityText);
         DungeonLightShadows = AddCheckbox(leftPanel, "Dungeon Light Shadows", "Dungeon lights cast shadows", DaggerfallUnity.Settings.DungeonLightShadows);
         UseLegacyDeferred = AddCheckbox(leftPanel, "Use Legacy Deferred", "Use Legacy Deferred", DaggerfallUnity.Settings.UseLegacyDeferred);
 
         // GUI
-        TextLabel guiOptions = AddTextlabel(leftPanel, guiText);
+        /*TextLabel guiOptions = */AddTextlabel(leftPanel, guiText);
         EnableToolTips = AddCheckbox(leftPanel, "Tool Tips", "Enable Tool Tips", DaggerfallUnity.Settings.EnableToolTips);
         HQTooltips = AddCheckbox(leftPanel, "HQ Tool Tips", "Use High Quality Tool Tips", DaggerfallUnity.Settings.HQTooltips);
         if (!DaggerfallUnity.Settings.EnableToolTips)
@@ -161,13 +161,13 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         Crosshair = AddCheckbox(leftPanel, "Crosshair", "Enable Crosshair on HUD", DaggerfallUnity.Settings.Crosshair);
 
         // Gameplay
-        TextLabel gameplayOptions = AddTextlabel(leftPanel, gameplayOptionsText);
+        /*TextLabel gameplayOptions = */AddTextlabel(leftPanel, gameplayOptionsText);
         DebugWeaponSwings = AddCheckbox(leftPanel, "New weapon Swings", "Debug Weapon Swings", DaggerfallUnity.Settings.DebugWeaponSwings);
         StartInDungeon = AddCheckbox(leftPanel, "Start In Dungeon", "Start new game inside the first dungeon", DaggerfallUnity.Settings.StartInDungeon);
 
         // Info
-        TextLabel info = AddTextlabel(leftPanel, infoText);
-        TextLabel qualityLevel = AddTextlabel(leftPanel, "Quality Level: " + ((QualityLevel)DaggerfallUnity.Settings.QualityLevel).ToString(), HorizontalAlignment.Left);
+        /*TextLabel info = */AddTextlabel(leftPanel, infoText);
+        /*TextLabel qualityLevel = */AddTextlabel(leftPanel, "Quality Level: " + ((QualityLevel)DaggerfallUnity.Settings.QualityLevel).ToString(), HorizontalAlignment.Left);
 
         // FOV
         y = 20f;
@@ -203,12 +203,12 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         y = 20f;
         TextLabel filterModes = AddTextlabel (rightPanel, filterModesText);
         AddToolTipToTextLabel(filterModes, "Many users want Point filter with vanilla textures.");
-        TextLabel mainFilterMode = AddTextlabel (rightPanel, "Main Filter");
+        /*TextLabel mainFilterMode = */AddTextlabel (rightPanel, "Main Filter");
         MainFilterMode = AddListbox (rightPanel, FilterModes(), DaggerfallUnity.Settings.MainFilterMode);
         MainFilterMode.OnSelectItem += mainFilterMode_OnSelectItem;
-        TextLabel guiFilterMode = AddTextlabel (rightPanel, "GUI Filter");
+        /*TextLabel guiFilterMode = */AddTextlabel (rightPanel, "GUI Filter");
         GUIFilterMode = AddListbox (rightPanel, FilterModes(), DaggerfallUnity.Settings.GUIFilterMode);
-        TextLabel videoFilterMode = AddTextlabel (rightPanel, "Video Filter");
+        /*TextLabel videoFilterMode = */AddTextlabel (rightPanel, "Video Filter");
         VideoFilterMode = AddListbox (rightPanel, FilterModes(), DaggerfallUnity.Settings.VideoFilterMode);
 
         // Add Close button
