@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public string Name
         {
-            get { return original; }
+            get { return name; }
             set { Set(value); }
         }
 

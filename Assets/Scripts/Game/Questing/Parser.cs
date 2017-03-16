@@ -407,9 +407,11 @@ namespace DaggerfallWorkshop.Game.Questing
         // Does not trim inner characters - for example "_one_day_" will become "one_day"
         public static string GetInnerSymbolName(string symbol)
         {
-            string result;
+            if (string.IsNullOrEmpty(symbol))
+                return string.Empty;
 
             // Trim symbol wrappers from outside in
+            string result;
             result = symbol.Trim('=');          // Outer =
             result = symbol.Trim('#');          // Outer # (custom, gets binding)
             result = symbol.Trim('_');          // Outer _

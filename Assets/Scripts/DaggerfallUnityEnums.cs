@@ -547,4 +547,21 @@ namespace DaggerfallWorkshop
         Dungeon,
     }
 
+    /// <summary>
+    /// Text macros used by various systems (quest messages, items, stats, etc.).
+    /// Macro output depends on the characters wrapping symbol name.
+    /// Not all objects support all macro types.
+    /// </summary>
+    public enum MacroTypes
+    {
+        None,
+        NameMacro1,         // _symbol_    - replaced with name of symbol itself, such as person, house, or business
+        NameMacro2,         // __symbol_   - replaced with name of city where symbol is found
+        NameMacro3,         // ___symbol_  - replaced with name of place, such as dungeon name or house where symbol is found
+        NameMacro4,         // ____symbol_ - replaced with name of region where symbol is found
+        DetailsMacro,       // =symbol_    - replaced with detail based on target symbol type (e.g. days remaining on a clock, player class, enemy name)
+        FactionMacro,       // ==symbol_   - replaced with faction of target symbol, such as an NPC faction
+        ContextMacro,       // %symbol     - replaced with output based on context (e.g. pronoun macros relate back to previous NPC/foe symbol in source text)
+        BindingMacro,       // =#symbol_   - replaced with current keybind for symbol action (Daggerfall Unity only)
+    }
 }

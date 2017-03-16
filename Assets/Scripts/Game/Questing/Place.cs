@@ -203,6 +203,44 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        /// <summary>
+        /// Expand macro for a Place.
+        /// </summary>
+        /// <param name="macro">Macro type to expand.</param>
+        /// <param name="text">Expanded text for this macro type. Empty if macro cannot be expanded.</param>
+        /// <returns>True if macro expanded, otherwise false.</returns>
+        public override bool ExpandMacro(MacroTypes macro, out string textOut)
+        {
+            textOut = string.Empty;
+            bool result = true;
+            switch (macro)
+            {
+                // TODO: Just stubbing out for testing right now as Place class not complete enough to return real values
+
+                case MacroTypes.NameMacro1:             // Name of house/business (e.g. Odd Blades)
+                    textOut = "BusinessName";
+                    break;
+
+                case MacroTypes.NameMacro2:             // Name of location (e.g. Gothway Garden)
+                    textOut = "LocationName";
+                    break;
+
+                case MacroTypes.NameMacro3:             // Name of dungeon (e.g. Privateer's Hold)
+                    textOut = "DungeonName";
+                    break;
+
+                case MacroTypes.NameMacro4:             // Name of region (e.g. Tigonus)
+                    textOut = "RegionName";
+                    break;
+
+                default:                                // Macro not supported
+                    result = false;
+                    break;
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region Private Methods

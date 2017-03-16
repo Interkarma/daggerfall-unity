@@ -1,4 +1,5 @@
 ﻿using System;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -35,6 +36,19 @@ namespace DaggerfallWorkshop.Game.Questing
         public QuestResource(Quest parentQuest)
         {
             this.parentQuest = parentQuest;
+        }
+
+        /// <summary>
+        /// Expand a macro from this resource.
+        /// </summary>
+        /// <param name="macro">Type of macro to expand.</param>
+        /// <param name="textOut">Expanded text for this macro type. Empty if macro cannot be expanded.</param>
+        /// <returns>True if macro expanded, otherwise false.</returns>
+        public virtual bool ExpandMacro(MacroTypes macro, out string textOut)
+        {
+            textOut = string.Empty;
+
+            return false;
         }
     }
 }

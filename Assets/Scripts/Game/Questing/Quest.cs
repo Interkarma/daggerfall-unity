@@ -240,7 +240,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public Task GetTask(string name)
         {
-            if (tasks.ContainsKey(name))
+            if (!string.IsNullOrEmpty(name) && tasks.ContainsKey(name))
                 return tasks[name];
             else
                 return null;
@@ -248,8 +248,16 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public Clock GetClock(string name)
         {
-            if (resources.ContainsKey(name))
+            if (!string.IsNullOrEmpty(name) && resources.ContainsKey(name))
                 return (Clock)resources[name];
+            else
+                return null;
+        }
+
+        public QuestResource GetResource(string name)
+        {
+            if (!string.IsNullOrEmpty(name) && resources.ContainsKey(name))
+                return resources[name];
             else
                 return null;
         }
@@ -265,6 +273,11 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public void AddResource(QuestResource resource)
         {
+            if (string.IsNullOrEmpty(resource.Symbol.Name))
+            {
+                throw new Exception("QuestResource must have a symbol name.");
+            }
+
             if (resources.ContainsKey(resource.Symbol.Name))
             {
                 throw new Exception(string.Format("Duplicate QuestResource symbol name found: {0}", resource.Symbol));

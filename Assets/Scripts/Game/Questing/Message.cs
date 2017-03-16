@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -23,6 +24,7 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Fields
 
         int id;
+        Quest parentQuest = null;
         List<MessageVariant> variants = new List<MessageVariant>();
 
         #endregion
@@ -32,6 +34,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public int ID
         {
             get { return id; }
+        }
+
+        public Quest ParentQuest
+        {
+            get { return parentQuest; }
         }
 
         public int VariantCount
@@ -57,6 +64,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public Message(Quest parentQuest)
         {
+            this.parentQuest = parentQuest;
         }
 
         /// <summary>
@@ -64,6 +72,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public Message(Quest parentQuest, int id, string[] source)
         {
+            this.parentQuest = parentQuest;
             LoadMessage(id, source);
         }
 
@@ -108,6 +117,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     variant = CreateVariant();
                 }
 
+                // TODO: Resolve string variables
 
                 // Add tokens
                 AddToken(TextFile.Formatting.Text, line, variant.tokens);
@@ -125,8 +135,9 @@ namespace DaggerfallWorkshop.Game.Questing
         /// It is safe to leave variant as -1 if you don't care about the variant you receive.
         /// </summary>
         /// <param name="randomVariant">True for a random variant, otherwise use first and only variant.</param>
+        /// <param name="expandMacros">True to expand text macros like %foo and __foo_.</param>
         /// <returns>Array of text tokens.</returns>
-        public TextFile.Token[] GetTextTokens(int variant = -1)
+        public TextFile.Token[] GetTextTokens(int variant = -1, bool expandMacros = true)
         {
             // Randomise variant
             int index;
@@ -135,7 +146,17 @@ namespace DaggerfallWorkshop.Game.Questing
             else
                 index = 0;
 
-            return variants[index].tokens.ToArray();
+            // Get token array
+            TextFile.Token[] tokens = variants[index].tokens.ToArray();
+
+            // Expand macros
+            if (expandMacros)
+            {
+                MacroHelper macroHelper = new MacroHelper();
+                macroHelper.ExpandQuestMessage(ParentQuest, ref tokens);
+            }
+
+            return tokens;
         }
 
         #endregion
