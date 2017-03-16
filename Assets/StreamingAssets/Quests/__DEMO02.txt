@@ -2,24 +2,20 @@
 
 Quest: __DEMO02
 
-
 QRC:
 
 Message: 1010
-Success
-
+Wearing hat and shades
 
 QBN:
 
 variable hat
 variable shades
-variable pants
 
 - Entry point
-set hat
--setvar shades
--setvar pants
+setvar hat
+setvar shades
 
-_NoHatOrShades_ task:
-when not pants and hat or shades
+_HatAndShades_ task:
+when hat and shades
 say 1010
