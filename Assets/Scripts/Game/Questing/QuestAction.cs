@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Returns true if this action considers itself a conditional operator.
         /// </summary>
-        bool IsCondition { get; }
+        bool IsTriggerCondition { get; }
 
         /// <summary>
         /// Helper to test if source is a match for Pattern.
@@ -88,10 +88,10 @@ namespace DaggerfallWorkshop.Game.Questing
     public abstract class ActionTemplate : QuestResource, IQuestAction
     {
         bool complete = false;
-        bool condition = false;
+        bool triggerCondition = false;
 
         public bool IsComplete { get { return complete; } }
-        public bool IsCondition { get { return condition; } protected set { condition = value; } }
+        public bool IsTriggerCondition { get { return triggerCondition; } protected set { triggerCondition = value; } }
 
         public abstract string Pattern { get; }
         public abstract IQuestAction Create(string source, Quest parentQuest);

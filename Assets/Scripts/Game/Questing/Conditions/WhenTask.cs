@@ -50,7 +50,7 @@ namespace DaggerfallWorkshop.Game.Questing.Conditions
         public WhenTask(Quest parentQuest)
             : base(parentQuest)
         {
-            IsCondition = true;
+            IsTriggerCondition = true;
         }
 
         public override IQuestAction Create(string source, Quest parentQuest)

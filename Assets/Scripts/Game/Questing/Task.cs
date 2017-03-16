@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.Questing
         TaskType type;          // Type of task
 
         Quest parentQuest = null;
-        bool hasConditions = false;
+        bool hasTriggerConditions = false;
         List<IQuestAction> actions = new List<IQuestAction>();
 
         #endregion
@@ -63,9 +63,9 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return triggered; }
         }
 
-        public bool HasConditions
+        public bool HasTriggerConditions
         {
-            get { return hasConditions; }
+            get { return hasTriggerConditions; }
         }
 
         #endregion
@@ -139,15 +139,15 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (action.IsComplete)
                     continue;
 
-                // Check conditions on inactive tasks
-                if (!triggered && action.IsCondition)
+                // Check trigger conditions on inactive tasks
+                if (!triggered && action.IsTriggerCondition)
                 {
                     if (action.CheckCondition(this))
                         triggered = true;
                 }
 
                 // Tick actions when active
-                if (triggered && !action.IsCondition)
+                if (triggered && !action.IsTriggerCondition)
                 {
                     action.Update(this);
                 }
@@ -237,8 +237,8 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (action != null)
                     {
                         actions.Add(action);
-                        if (action.IsCondition)
-                            hasConditions = true;
+                        if (action.IsTriggerCondition)
+                            hasTriggerConditions = true;
                     }
                 }
                 else
