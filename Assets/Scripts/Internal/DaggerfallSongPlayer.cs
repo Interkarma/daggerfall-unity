@@ -18,6 +18,7 @@ using DaggerfallWorkshop.AudioSynthesis.Bank;
 using DaggerfallWorkshop.AudioSynthesis.Sequencer;
 using DaggerfallWorkshop.AudioSynthesis.Synthesis;
 using DaggerfallWorkshop.AudioSynthesis.Midi;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
@@ -53,6 +54,8 @@ namespace DaggerfallWorkshop
         bool playEnabled = false;
         bool awakeComplete = false;
 
+        SoundReplacement.CustomSong customSong;
+
         /// <summary>
         /// Gets peer AudioSource component.
         /// </summary>
@@ -64,29 +67,49 @@ namespace DaggerfallWorkshop
         void Start()
         {
             InitSynth();
+
+            InitCustomSongs();
         }
 
         void Update()
         {
-            // Update status
-            if (midiSequencer != null)
+            if (!customSong.UseCustomSong)
             {
-                IsPlaying = midiSequencer.IsPlaying;
-                CurrentTime = midiSequencer.CurrentTime;
-                EndTime = midiSequencer.EndTime;
+                // Update status
+                if (midiSequencer != null)
+                {
+                    IsPlaying = midiSequencer.IsPlaying;
+                    CurrentTime = midiSequencer.CurrentTime;
+                    EndTime = midiSequencer.EndTime;
+                }
+            }
+            else if (customSong.IsReady)
+            {
+                // Frame rate independent timer
+                customSong.Timer += Time.deltaTime;
+
+                // Triggered on end of audio clip
+                if (customSong.Timer >= customSong.Lenght)
+                {
+                    IsPlaying = false;
+                    customSong.UseCustomSong = false;
+                }
             }
         }
 
         void LateUpdate()
         {
-            if (audioSource.playOnAwake && (midiSequencer != null && !midiSequencer.IsPlaying) && !awakeComplete)
+            if (!customSong.UseCustomSong)
             {
-                Play();
-                awakeComplete = true;
-            }
-            if (audioSource.loop && !midiSequencer.IsPlaying)
-            {
-                Play();
+                if (audioSource.playOnAwake && (midiSequencer != null && !midiSequencer.IsPlaying) && !awakeComplete)
+                {
+                    Play();
+                    awakeComplete = true;
+                }
+                if (audioSource.loop && !midiSequencer.IsPlaying)
+                {
+                    Play();
+                }
             }
         }
 
@@ -121,6 +144,29 @@ namespace DaggerfallWorkshop
             // Stop if playing another song
             Stop();
 
+            // Import custom song from disk
+            if (SoundReplacement.CustomSongExist(song))
+            {
+                // Load song file
+                WWW customSongFile = SoundReplacement.LoadCustomSong(song);
+                if (customSongFile != null)
+                {
+                    // Let www import the song
+                    customSong.IsReady = false;
+
+                    // Play song
+                    StartCoroutine(PlayCustomSong(customSongFile));
+
+                    // Settings
+                    Song = song;
+                    customSong.UseCustomSong = true;
+                    IsPlaying = true;
+
+                    return;
+                }
+                Debug.LogError("Can't load custom song " + song);
+            }
+
             // Load song data
             string filename = EnumToFilename(song);
             byte[] songData = LoadSong(filename);
@@ -146,6 +192,9 @@ namespace DaggerfallWorkshop
             if (!InitSynth())
                 return;
 
+            if (customSong.UseCustomSong)
+                customSong.UseCustomSong = false;
+
             // Stop if playing a song
             if (midiSequencer.IsPlaying)
             {
@@ -154,6 +203,34 @@ namespace DaggerfallWorkshop
                 midiSynthesizer.ResetSynthControls();
                 midiSynthesizer.ResetPrograms();
                 playEnabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Load AudioClip from WWW to get custom song.
+        /// </summary>
+        /// <param name="www">WWW object</param>
+        IEnumerator PlayCustomSong(WWW www)
+        {
+            // Get clip
+            AudioClip clip = www.audioClip;
+
+            // Import song
+            while (clip.loadState != AudioDataLoadState.Loaded)
+                yield return www;
+
+            if (clip.loadState == AudioDataLoadState.Failed)
+                Debug.LogError("Can't load custom song " + Song);
+            else
+            {
+                // Play clip
+                audioSource.clip = clip;
+                audioSource.Play();
+
+                // Set timer to get end of audio clip
+                customSong.Timer = 0f;
+                customSong.Lenght = clip.length;
+                customSong.IsReady = true;
             }
         }
 
@@ -207,6 +284,12 @@ namespace DaggerfallWorkshop
             return true;
         }
 
+        private void InitCustomSongs()
+        {
+            customSong.UseCustomSong = false;
+            customSong.IsReady = false;
+        }
+
         private string EnumToFilename(SongFiles song)
         {
             string enumName = song.ToString();
@@ -228,9 +311,9 @@ namespace DaggerfallWorkshop
 
         private byte[] LoadSong(string filename)
         {
-            // Get custom song
-            if (Utility.AssetInjection.SoundReplacement.CustomSongExist(filename))
-                return Utility.AssetInjection.SoundReplacement.LoadCustomSong(filename);
+            // Get custom midi song
+            if (SoundReplacement.CustomMidiSongExist(filename))
+                return SoundReplacement.LoadCustomMidiSong(filename);
 
             // Get Daggerfal song
             TextAsset asset = Resources.Load<TextAsset>(Path.Combine(SongFolder, filename));
@@ -252,7 +335,9 @@ namespace DaggerfallWorkshop
                 return "Synthesizer not ready.";
 
             string final;
-            if (midiSequencer.IsPlaying)
+            if (customSong.UseCustomSong)
+                final = string.Format("Playing custom song '{0}' at position {1}/{2}", Song, customSong.Timer, customSong.Lenght);
+            else if (midiSequencer.IsPlaying)
                 final = string.Format("Playing song '{0}' at position {1}/{2}", currentMidiName, midiSequencer.CurrentTime, midiSequencer.EndTime);
             else
                 final = string.Format("Song '{0}' ready. Not playing.", currentMidiName);
