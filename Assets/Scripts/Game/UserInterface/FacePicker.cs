@@ -104,11 +104,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (currentFaceTexture != null)
             {
                 if ((raceGender == Genders.Male) && (TextureReplacement.CustomCifExist(raceTemplate.PaperDollHeadsMale, faceIndex)))
-                    facePanel.Size = new Vector2(XMLManager.GetValue(raceTemplate.PaperDollHeadsMale, "width", isCif: true, record: faceIndex), 
-                        XMLManager.GetValue(raceTemplate.PaperDollHeadsMale, "height", isCif: true, record: faceIndex));
+                {
+                    ImageData imagedata = ImageReader.GetImageData(raceTemplate.PaperDollHeadsMale, faceIndex, createTexture: false);
+                    facePanel.Size = new Vector2(imagedata.width, imagedata.height);
+                }
                 else if ((raceGender == Genders.Female) && (TextureReplacement.CustomCifExist(raceTemplate.PaperDollHeadsFemale, faceIndex)))
-                    facePanel.Size = new Vector2(XMLManager.GetValue(raceTemplate.PaperDollHeadsFemale, "width", isCif: true, record: faceIndex),
-                        XMLManager.GetValue(raceTemplate.PaperDollHeadsFemale, "height", isCif: true, record: faceIndex));
+                {
+                    ImageData imagedata = ImageReader.GetImageData(raceTemplate.PaperDollHeadsFemale, faceIndex, createTexture: false);
+                    facePanel.Size = new Vector2(imagedata.width, imagedata.height);
+                }
                 else
                     facePanel.Size = new Vector2(currentFaceTexture.width, currentFaceTexture.height);
 

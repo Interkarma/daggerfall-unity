@@ -20,7 +20,18 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     static public class XMLManager
     {
+        #region Constants
+
+        // Files extension
         const string extension = ".xml";
+
+        // Keys
+        const string widthKey = "width";
+        const string heightKey = "height";
+        const string scaleXKey = "scaleX";
+        const string scaleYKey = "scaleY";
+
+        #endregion
 
         #region Public Methods
 
@@ -127,102 +138,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Get value from Xml file on disk
-        /// This is useful to get additional informations for custom textures.
-        /// </summary>
-        /// <param name="fileName">Name of texture. Correspond to the name of Xml file</param>
-        /// <param name="valueName">Name of value to be searched</param>
-        /// <param name="isImage">True if .IMG</param>
-        /// <param name="isCif">True if .CIF or .RCI</param>
-        /// <param name="record">Texture record</param>
-        /// <returns>Integer value</returns>
-        static public int GetValue(string fileName, string valueName, bool isImage = false, bool isCif = false, int record = 0)
-        {
-            // Get path
-            string path;
-            string originalName = fileName;
-            if (isImage)
-                path = TextureReplacement.imgPath;
-            else if (isCif)
-            {
-                path = TextureReplacement.cifPath;
-                fileName = fileName + "_" + record + "-0";
-            } 
-            else
-                path = TextureReplacement.texturesPath;
-
-            path = Path.Combine(path, fileName);
-
-            // Get value from xml
-            if (File.Exists(path + ".xml"))
-            {
-                XElement xml = XElement.Load(path + ".xml");
-                return (int)xml.Element(valueName);
-            }
-            
-            // If missing, try to get value from Daggerfall vanilla texture
-            if (isImage)
-            {
-                ImageData imageData = ImageReader.GetImageData(fileName, createTexture: false);
-                if (valueName == "width")
-                    return imageData.width;
-                else if (valueName == "height")
-                    return imageData.height;
-            }
-            else if (isCif)
-            {
-                ImageData imageData = ImageReader.GetImageData(originalName, record, createTexture: false);
-                if (valueName == "width")
-                    return imageData.width;
-                else if (valueName == "height")
-                    return imageData.height;
-            }
-             
-            // If missing, try to get value from custom texture
-            // This may give the wanted result if texture is same resolution as vanilla
-            if (valueName == "width")
-            {
-                Debug.Log(path + ".xml is missing, get width from " + fileName + ".png");
-                Texture2D tex = new Texture2D(2, 2);
-                tex.LoadImage(File.ReadAllBytes(path + ".png"));
-                return tex.width;
-            }
-            if (valueName == "height")
-            {
-                Debug.Log(path + ".xml is missing, get height from " + fileName + ".png");
-                Texture2D tex = new Texture2D(2, 2);
-                tex.LoadImage(File.ReadAllBytes(path + ".png"));
-                return tex.height;
-            }
-
-            Debug.LogError(path + ".xml is missing");
-            return 0;         
-        }
-
-        /// <summary>
-        /// Get float value from Xml file on disk.
-        /// This is useful to import rgba values.
-        /// </summary>
-        /// <param name="fileName">Name of texture. Correspond to the name of Xml file</param>
-        /// <param name="valueName">Name of value to be searched</param>
-        /// <returns>Float value</returns>
-        static public float GetColorValue(string fileName, string valueName)
-        {
-            // Get path
-            string path = Path.Combine(TextureReplacement.texturesPath, fileName);
-
-            // Get value from xml
-            if (File.Exists(path + ".xml"))
-            {
-                XElement xml = XElement.Load(path + ".xml");
-                return (float)xml.Element(valueName);
-            }
-
-            Debug.LogError(path + ".xml is missing");
-            return 0;
-        }
-
-        /// <summary>
         /// Create a new color from rgba value on xml file.
         /// Default color will be used if xml file contains invalid data.
         /// Alpha channel is set to A value from default color if omitted.
@@ -281,27 +196,40 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
+        /// Get (x,y,z) Vector3 from Xml file for a 2D scale,
+        /// setting a fallback scale.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="path"></param>
+        /// <param name="defaultScale"></param>
+        /// <returns></returns>
+        static public Vector3 GetScale(string fileName, string path, Vector3 defaultScale)
+        {
+            Vector3 scale = GetScale(fileName, path, defaultScale.x, defaultScale.y);
+            scale.z = defaultScale.z;
+            return scale;
+        }
+
+        /// <summary>
         /// Get (x,y) scale from Xml file,
         /// setting a fallback scale.
-        /// Z is set from Z value of fallback.
         /// </summary>
         /// <param name="fileName">Name of file.</param>
         /// <param name="path">Path.</param>
         /// <param name="defaultScale">Fallback scale.</param>
         /// <returns>Scale from xml or fallback.</returns>
-        static public Vector3 GetScale(string fileName, string path, Vector3 defaultScale)
+        static public Vector2 GetScale(string fileName, string path, Vector2 defaultScale)
         {
-            return GetScale(fileName, path, defaultScale.x, defaultScale.y, defaultScale.z);
+            return GetScale(fileName, path, defaultScale.x, defaultScale.y);
         }
 
         /// <summary>
         /// Get (x,y) scale from Xml file.
-        /// Z is set to 1;
         /// </summary>
         /// <param name="fileName">Name of file.</param>
         /// <param name="path">Path.</param>
         /// <returns>Scale from xml or fallback.</returns>
-        static public Vector3 GetScale (string fileName, string path, float defaultX = 1, float defaultY = 1, float defaultZ = 1)
+        static public Vector2 GetScale (string fileName, string path, float defaultX = 1, float defaultY = 1)
         {
             // Fields
             XElement X, Y;
@@ -310,23 +238,51 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Get XML file
             XElement xml = GetXmlFile(fileName, path);
             if (xml == null)
-                return new Vector3(defaultX, defaultY, defaultZ);
+                return new Vector2(defaultX, defaultY);
 
             // Get X
-            X = xml.Element("scaleX");
+            X = xml.Element(scaleXKey);
             if (X != null)
                 x = (float)X;
             else
                 x = defaultX;
 
             // Get Y
-            Y = xml.Element("scaleY");
+            Y = xml.Element(scaleYKey);
             if (Y != null)
                 y = (float)Y;
             else
                 y = defaultY;
 
-            return new Vector3(x, y, defaultZ);
+            return new Vector2(x, y);
+        }
+
+        /// <summary>
+        /// Get size from xml file for specified image.
+        /// </summary>
+        /// <returns>Size from xml or from original imagedata.</returns>
+        static public Vector2 GetSize(string fileName, string path, float additionalScaleX = 1, float additionaScaleY = 1)
+        {
+            // Get size from xml
+            path = Path.Combine(path, fileName) + extension;
+            if (File.Exists(path))
+            {
+                XElement xml = XElement.Load(path);
+                if (xml != null)
+                {
+                    XElement width = xml.Element(widthKey);
+                    if (width != null)
+                    {
+                        XElement height = xml.Element(heightKey);
+                        if (height != null)
+                            return new Vector2((float)width * additionalScaleX, (float)height * additionaScaleY);
+                    }
+                }
+            }
+
+            // Fallback: get size from imagedata
+            ImageData imageData = ImageReader.GetImageData(fileName, createTexture: false);
+            return new Vector2(imageData.width * additionalScaleX, imageData.height * additionaScaleY);
         }
 
         #endregion
@@ -342,16 +298,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static private XElement GetXmlFile(string fileName, string path)
         {
             // Get path
-            path = Path.Combine(path, fileName);
+            path = Path.Combine(path, fileName) + extension;
 
             // Get XML file
-            if (File.Exists(path + extension))
+            if (File.Exists(path))
             {
-                return XElement.Load(path + extension);
+                return XElement.Load(path);
             }
             else
             {
-                Debug.LogError(path + extension + " is missing");
+                Debug.LogError(path + " is missing");
                 return null;
             }
         }
