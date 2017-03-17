@@ -322,11 +322,27 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         meshRenderer.materials[i].EnableKeyword("_NORMALMAP"); // Enable normal map in the shader if the original material doesn't have one
                         meshRenderer.materials[i].SetTexture("_BumpMap", TextureReplacement.LoadCustomNormal(textureName));
                     }
+                    // Emission map
+                    if (TextureReplacement.CustomEmissionExist(textureName))
+                    {
+                        meshRenderer.materials[i].EnableKeyword("_EMISSION"); // Enable emission map in the shader if the original material doesn't have one
+                        meshRenderer.materials[i].SetTexture("_EmissionMap", TextureReplacement.LoadCustomEmission(textureName));
+                    }
+                    // MetallicGloss map
+                    if (TextureReplacement.CustomMetallicGlossExist(textureName))
+                    {
+                        meshRenderer.materials[i].EnableKeyword("_METALLICGLOSSMAP"); // Enable metallicgloss map in the shader if the original material doesn't have one
+                        meshRenderer.materials[i].SetTexture("_MetallicGlossMap", TextureReplacement.LoadCustomMetallicGloss(textureName));
+                    }
 
                     // Assign filtermode
                     meshRenderer.materials[i].mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                     if (meshRenderer.materials[i].GetTexture("_BumpMap") != null)
                         meshRenderer.materials[i].GetTexture("_BumpMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                    if (meshRenderer.materials[i].GetTexture("_EmissionMap") != null)
+                        meshRenderer.materials[i].GetTexture("_EmissionMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                    if (meshRenderer.materials[i].GetTexture("_MetallicGlossMap") != null)
+                        meshRenderer.materials[i].GetTexture("_MetallicGlossMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                 }
                 else
                     Debug.LogError("Custom model " + ModelName + " is missing a material or a texture");

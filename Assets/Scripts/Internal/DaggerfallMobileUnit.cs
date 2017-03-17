@@ -457,14 +457,11 @@ namespace DaggerfallWorkshop
                 finalSize.y = (size.Height + yChange);
                 
                 // Get eventual custom scale
-                if(summary.CustomMaterial.isCustom)
+                if ((summary.CustomMaterial.isCustom) && (XMLManager.XmlFileExist(archive, i)))
                 {
-                    string fileName = archive.ToString() + "_" + i + "-0";
-                    if (File.Exists(Path.Combine(TextureReplacement.texturesPath, fileName + ".xml")))
-                    {
-                        finalSize.x *= XMLManager.GetColorValue(fileName, "scaleX");
-                        finalSize.y *= XMLManager.GetColorValue(fileName, "scaleY");
-                    }
+                    Vector2 enemyScale = XMLManager.GetScale(TextureReplacement.GetName(archive, i), TextureReplacement.texturesPath);
+                    finalSize.x *= enemyScale.x;
+                    finalSize.y *= enemyScale.y;
                 }
  
                 // Store final size and frame count

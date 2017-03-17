@@ -32,10 +32,21 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     {
         #region Fields & Structs
 
+        // Paths
         static public string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
         static public string imgPath = Path.Combine(texturesPath, "img");
         static public string cifPath = Path.Combine(texturesPath, "cif");
 
+        // Map tags
+        const string NormalTag =  "_Normal";
+        const string EmissionTag = "_Emission";
+        const string MetallicGlossTag = "_MetallicGloss";
+
+        // Structs
+
+        /// <summary>
+        /// Material components and settings for custom billboards.
+        /// </summary>
         public struct CustomBillboard
         {
             public List<Texture2D> MainTexture;          // List of custom albedo maps
@@ -44,6 +55,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             public int NumberOfFrames;                   // number of frame textures avilable on disk
         }
 
+        /// <summary>
+        /// Custom textures for enemies.
+        /// </summary>
         public struct CustomEnemyMaterial
         {
             public bool isCustom;                        // True if enemy uses custom textures
@@ -52,91 +66,112 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #endregion
 
-        #region Textures import
+        #region Textures Import
 
         /// <summary>
-        /// Load custom image files from disk to use as textures on models or billboards
-        /// .png files are located in persistentData/textures
-        /// and are named 'archive_record-frame.png' 
-        /// for example '86_3-0.png'
+        /// Search for image files on disk to use as textures on models or billboards
+        /// (archive_record-frame.png, for example '86_3-0.png').
         /// </summary>
         /// <param name="archive">Archive index from TEXTURE.XXX</param>
         /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for animated billboards</param>
-
-        /// check if file exist on disk. 
-        /// <returns>Bool</returns>
+        /// <param name="frame">Frame index. It's different than zero only for animated billboards.</param>
+        /// <returns>True if texture exists.</returns>
         static public bool CustomTextureExist(int archive, int record, int frame = 0)
         {
             return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
         }
 
+        /// <summary>
+        /// Search for image files on disk to use as textures on models or billboards
+        /// (name.png).
+        /// </summary>
+        /// <param name="name">Name of texture without extension.</param>
+        /// <returns>True if texture exists.</returns>
         static public bool CustomTextureExist(string name)
         {
             return TextureFileExist(texturesPath, name);
         }
 
-        /// import custom image as texture2D
-        /// <returns>Texture2D</returns>
+        /// <summary>
+        /// Import image from disk as texture2D
+        /// (archive_record-frame.png, for example '86_3-0.png').
+        /// </summary>
+        /// <param name="archive">Archive index from TEXTURE.XXX</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for animated billboards</param>
+        /// <returns>Texture.</returns>
         static public Texture2D LoadCustomTexture(int archive, int record, int frame)
         {
             return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
         }
 
+        /// <summary>
+        /// Import image from disk as texture2D
+        /// (name.png).
+        /// </summary>
+        /// <param name="name">Name of texture without extension.</param>
+        /// <returns>Texture.</returns>
         static public Texture2D LoadCustomTexture(string name)
         {
             return ImportTextureFile(texturesPath, name);
         }
 
         /// <summary>
-        /// Load custom image files from disk to replace .IMGs. Useful for customizing the UI
-        /// .png files are located in persistentdata/textures/img
-        /// and are named 'imagefile.png' 
-        /// for example 'REST02I0.IMG.png'
+        /// Search for image file on disk to replace .IMGs.
+        /// (imagefile.png, for example 'REST02I0.IMG.png').
         /// </summary>
-        /// <param name="filename">Name of standalone file as it appears in arena2 folder.</param>
-
-        /// check if file exist on disk. 
-        /// <returns>Bool</returns>
+        /// <param name="filename">Name of image.</param>
+        /// <returns>True if texture exists.</returns>
         static public bool CustomImageExist(string filename)
         {
             return TextureFileExist(imgPath, filename);
         }
 
-        /// load custom image as texture2D
-        /// <returns>Texture2D.</returns>
+        /// <summary>
+        /// Import image from disk as texture2D
+        /// (imagefile.png, for example 'REST02I0.IMG.png').
+        /// </summary>
+        /// <param name="filename">Name of image.</param>
+        /// <returns>Image.</returns>
         static public Texture2D LoadCustomImage(string filename)
         {
             return ImportTextureFile(imgPath, filename);
         }
 
         /// <summary>
-        /// Load custom image files from disk to replace .CIFs and .RCIs
-        /// .png files are located in persistentdata/textures/cif
-        /// and are named 'CifFile_record-frame.png' 
-        /// for example 'INVE16I0.CIF_1-0.png'
+        /// Search for image file on disk to replace .CIFs and .RCIs.
+        /// (filename_record-frame.png, for example 'INVE16I0.CIF_1-0.png').
         /// </summary>
-        /// <param name="filename">Name of standalone file as it appears in arena2 folder.</param>
+        /// <param name="filename">Name of image.</param>
         /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for weapon animations (WEAPONXX.CIF) </param>
-
-        /// check if file exist on disk. 
-        /// <returns>Bool</returns>
+        /// <param name="frame">Frame index. It's different than zero only for weapon animations (WEAPONXX.CIF).</param> 
+        /// <returns>True if image exists.</returns>
         static public bool CustomCifExist(string filename, int record, int frame = 0)
         {
             return TextureFileExist(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString());
         }
 
-        /// load custom image as texture2D
-        /// <returns>Texture2D.</returns>
+        /// <summary>
+        /// Import image as Texture2D to replace .CIFs and .RCIs.
+        /// (filename_record-frame.png, for example 'INVE16I0.CIF_1-0.png').
+        /// </summary>
+        /// <param name="filename">Name of image.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for weapon animations (WEAPONXX.CIF) </param> 
+        /// <returns>Image.</returns>
         static public Texture2D LoadCustomCif(string filename, int record, int frame)
         {
             return ImportTextureFile(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString());
         }
 
-        /// Check if file exist on disk for a specific metal type. 
-        /// Ex: WEAPON04.CIF_0-0.Png for Iron --> WEAPON04.CIF_0-0_Iron.Png
-        /// <returns>Bool</returns>
+        /// <summary>
+        /// Search for image on disk to replace .CIFs and .RCIs. for a specific metalType
+        /// (filename_record-frame_metalType.png, for example 'WEAPON04.CIF_0-0_Iron.Png').
+        /// </summary>
+        /// <param name="filename">Name of image.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for weapon animations (WEAPONXX.CIF) </param> 
+        /// <returns>True if generic or specific image exists.</returns>
         static public bool CustomCifExist(string filename, int record, int frame, MetalTypes metalType)
         {
             if (metalType == MetalTypes.None)
@@ -145,8 +180,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return TextureFileExist(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString() + "_" + metalType);
         }
 
-        /// Load custom image as texture2D for a specific metal type.
-        /// <returns>Texture2D.</returns>
+
+        /// <summary>
+        /// Import image from disk to replace .CIFs and .RCIs. for a specific metalType
+        /// (filename_record-frame_metalType.png', for example 'WEAPON04.CIF_0-0_Iron.Png').
+        /// </summary>
+        /// <param name="filename">Name of image.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for weapon animations (WEAPONXX.CIF) </param> 
+        /// <returns>Image for this metalType or generic image if metalType is None.</returns>
         static public Texture2D LoadCustomCif(string filename, int record, int frame, MetalTypes metalType)
         {
             if (metalType == MetalTypes.None)
@@ -156,38 +198,52 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Load custom image files from disk to use as normal maps
-        /// .png files are located in persistentData/textures
-        /// and are named 'archive_record-frame_Normal.png' 
-        /// for example '112_3-0_Normal.png'
+        /// Search for image file on disk to use as normal map
+        /// (archive_record-frame_Normal.png, for example '112_3-0_Normal.png').
         /// </summary>
         /// <param name="archive">Archive index from TEXTURE.XXX</param>
         /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for animated billboards</param>
-
-        /// check if file exist on disk. 
-        /// <returns>Bool</returns>
+        /// <param name="frame">Frame index.</param>
+        /// <returns>True if normal map exists.</returns>
         static public bool CustomNormalExist(int archive, int record, int frame)
         {
-            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Normal");
+            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + NormalTag);
         }
 
+        /// <summary>
+        /// Search for image file on disk to use as normal map
+        /// (name_Normal.png).
+        /// </summary>
+        /// <param name="name">Name of texture.</param>
+        /// <returns>True if normal map exists.</returns>
         static public bool CustomNormalExist(string name)
         {
-            return TextureFileExist(texturesPath, name + "_Normal");
+            return TextureFileExist(texturesPath, name + NormalTag);
         }
 
-        /// import custom image as texture2D
-        /// <returns>Texture2D</returns>
+        /// <summary>
+        /// Import image file from disk to use as normal map.
+        /// (archive_record-frame_Normal.png, for example '112_3-0_Normal.png').
+        /// </summary>
+        /// <param name="archive">Archive index from TEXTURE.XXX</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index.</param> 
+        /// <returns>Normal map.</returns>
         static public Texture2D LoadCustomNormal(int archive, int record, int frame)
         {
             return LoadCustomNormal(archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
         }
 
+        /// <summary>
+        /// Import image file from disk to use as normal map
+        /// (name_Normal.png).
+        /// </summary>
+        /// <param name="name">Name of texture.</param>
+        /// <returns>Normal map.</returns>
         static public Texture2D LoadCustomNormal(string name)
         {
             Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, true); //create empty texture, size will be the actual size of .png file
-            tex.LoadImage(File.ReadAllBytes(Path.Combine(texturesPath, name + "_Normal.png")));
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(texturesPath, name + NormalTag)));
 
             Color32[] colours = tex.GetPixels32();
             for (int i = 0; i < colours.Length; i++)
@@ -202,33 +258,104 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Load custom image files from disk to use as emission maps
-        /// This is useful for walls, where only the windows emits light
-        /// .png files are located in persistentData/textures
-        /// and are named 'archive_record-frame_Emission.png' 
-        /// for example '112_3-0_Emission.png'
+        /// Search for image file on disk to use as emission map
+        /// (archive_record-frame_Emission.png, for example '112_3-0_Emission.png).
+        /// </summary>
+        /// <param name="archive">Archive index from TEXTURE.XXX</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for animated billboards.</param>
+        /// <returns>True if emission map exists.</returns>
+        static public bool CustomEmissionExist(int archive, int record, int frame)
+        {
+            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + EmissionTag);
+        }
+
+        /// <summary>
+        /// Search for image file on disk to use as emission map
+        /// (name_Emission.png)
+        /// </summary>
+        /// <param name="name">Name of texture.</param>
+        /// <returns>True if emission map exists.</returns>
+        static public bool CustomEmissionExist(string name)
+        {
+            return TextureFileExist(texturesPath, name + EmissionTag);
+        }
+
+        /// <summary>
+        /// Import image file from disk to use as emission map
+        /// (archive_record-frame_Emission.png, for example '112_3-0_Emission.png').
         /// </summary>
         /// <param name="archive">Archive index from TEXTURE.XXX</param>
         /// <param name="record">Record index.</param>
         /// <param name="frame">Frame index. It's different than zero only for animated billboards</param>
-
-        /// check if file exist on disk. 
-        /// <returns>Bool</returns>
-        static public bool CustomEmissionExist(int archive, int record, int frame)
-        {
-            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Emission");
-        }
-
-        /// import custom image as texture2D
-        /// <returns>Texture2D</returns>
+        /// <returns>Emission map.</returns>
         static public Texture2D LoadCustomEmission(int archive, int record, int frame)
         {
-            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + "_Emission");
+            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + EmissionTag);
+        }
+
+        /// <summary>
+        /// Import image file from disk to use as emission map
+        /// (name_Emission.png)
+        /// </summary>
+        /// <param name="name">Name of texture.</param>
+        /// <returns>Emission map.</returns>
+        static public Texture2D LoadCustomEmission(string name)
+        {
+            return ImportTextureFile(texturesPath, name + EmissionTag);
+        }
+
+        /// <summary>
+        /// Search for image file on disk to use as metallic map
+        /// (archive_record-frame_MetallicGloss.png).
+        /// </summary>
+        /// <param name="archive">Archive index from TEXTURE.XXX</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index.</param> 
+        /// <returns>True if MetallicGloss map exist.</returns>
+        static public bool CustomMetallicGlossExist(int archive, int record, int frame)
+        {
+            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MetallicGlossTag);
+        }
+
+        /// <summary>
+        /// Search for image file on disk to use as metallic map
+        /// (name_MetallicGloss.png).
+        /// </summary>
+        /// <param name="name">Name of texture.</param> 
+        /// <returns>True if MetallicGloss map exist.</returns>
+        static public bool CustomMetallicGlossExist(string name)
+        {
+            return TextureFileExist(texturesPath, name + MetallicGlossTag);
+        }
+
+        /// <summary>
+        /// Import image file from disk to use as metallic map.
+        /// (archive_record-frame_MetallicGloss.png).
+        /// </summary>
+        /// <param name="archive">Archive index from TEXTURE.XXX</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index.</param> 
+        /// <returns>MetallicGloss map.</returns>
+        static public Texture2D LoadCustomMetallicGloss(int archive, int record, int frame)
+        {
+            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MetallicGlossTag);
+        }
+
+        /// <summary>
+        /// Import image file from disk to use as MetallicGloss map
+        /// (name_MetallicGloss.png).
+        /// </summary>
+        /// <param name="name">Name of texture.</param>
+        /// <returns>MetallicGloss map.</returns>
+        static public Texture2D LoadCustomMetallicGloss(string name)
+        {
+            return ImportTextureFile(texturesPath, name + MetallicGlossTag);
         }
 
         #endregion
 
-        #region Texture injection
+        #region Texture Injection
 
         /// <summary>
         /// Import texture(s) used on models.
@@ -263,6 +390,38 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
+        /// Import additional custom components of material.
+        /// </summary>
+        /// <param name="archive">Archive index</param>
+        /// <param name="record">Record index</param>
+        /// <param name="frame">Texture frame</param>
+        /// <param name="material">Material.</param>
+        static public void CustomizeMaterial(int archive, int record, int frame, Material material)
+        {
+            // MetallicGloss map
+            if (CustomMetallicGlossExist(archive, record, frame))
+            {
+                material.EnableKeyword("_METALLICGLOSSMAP");
+                material.SetTexture("_MetallicGlossMap", LoadCustomMetallicGloss(archive, record, frame));
+            }
+
+            // Properties
+            if (XMLManager.XmlFileExist(archive, record, frame))
+            {
+                string fileName = GetName(archive, record, frame);
+                float value;
+
+                // Metallic parameter
+                if (XMLManager.TryGetFloat(fileName, "metallic", out value, texturesPath))
+                    material.SetFloat("_Metallic", value);
+
+                // Smoothness parameter
+                if (XMLManager.TryGetFloat(fileName, "smoothness", out value, texturesPath))
+                    material.SetFloat("_Glossiness", value);
+            }
+        }
+
+        /// <summary>
         /// Replace texture(s) on billboard gameobject.
         /// This is implemented only for interior and dungeon billboards for now
         /// </summary>
@@ -275,20 +434,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
 
             // Customize billboard size (scale)
-            string XmlFile = archive + "_" + record + "-0";
-            if (File.Exists(Path.Combine(texturesPath, XmlFile + ".xml")))
+            if (XMLManager.XmlFileExist(archive, record))
             {
-                // Get current scale
+                // Set scale
                 Transform transform = go.GetComponent<Transform>();
-                Vector3 scale = transform.localScale;
-
-                // Get new scale
-                scale.x = XMLManager.GetColorValue(XmlFile, "scaleX");
-                scale.y = XMLManager.GetColorValue(XmlFile, "scaleY");
-
-                // Set new scale
-                transform.localScale = scale;
-                go.GetComponent<DaggerfallBillboard>().SetCustomSize(archive, record, scale.y);
+                transform.localScale = XMLManager.GetScale(GetName(archive, record), texturesPath, transform.localScale);
+                go.GetComponent<DaggerfallBillboard>().SetCustomSize(archive, record, transform.localScale.y);
             }
 
             // Update UV map
@@ -342,20 +493,33 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             button.BackgroundTexture = LoadCustomTexture(colorName);
             button.BackgroundTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.GUIFilterMode;
 
-            // Load settings from Xml (if present)
-            // Set custom color
-            if (XMLManager.GetString(colorName, "customtext", false) == "true")
-                button.Label.TextColor = new Color(XMLManager.GetColorValue(colorName, "r"), 
-                    XMLManager.GetColorValue(colorName, "g"),  XMLManager.GetColorValue(colorName, "b"), 
-                    XMLManager.GetColorValue(colorName, "a"));
-            // Disable text. This is useful if text is drawn on texture
-            else if (XMLManager.GetString(colorName, "customtext", false) == "notext")
-                button.Label.Text = "";
+            // Load settings from Xml
+            if (XMLManager.XmlFileExist(colorName, texturesPath))
+            {
+                // Set custom color
+                if (XMLManager.GetString(colorName, "customtext", texturesPath) == "true")
+                    button.Label.TextColor = XMLManager.GetColor(colorName, texturesPath);
+                // Disable text. This is useful if text is drawn on texture
+                else if (XMLManager.GetString(colorName, "customtext", texturesPath) == "notext")
+                    button.Label.Text = "";
+            }            
         }
 
         #endregion
 
         #region Utilities
+
+        /// <summary>
+        /// Convert (archive, record, frame) to string name.
+        /// </summary>
+        /// <param name="archive">Archive index from TEXTURE.XXX</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for animations.</param>
+        /// <returns></returns>
+        static public string GetName (int archive, int record, int frame = 0)
+        {
+            return archive.ToString() + "_" + record.ToString() + "-" + frame.ToString();
+        }
 
         /// <summary>
         /// Import texture(s) for billboard gameobject for specified frame. 

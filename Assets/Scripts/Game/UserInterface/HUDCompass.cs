@@ -67,8 +67,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 base.Update();
                 if (TextureReplacement.CustomImageExist(compassBoxFilename))
-                    Size = new Vector2(XMLManager.GetValue(compassBoxFilename, "width", isImage: true) * Scale.x, 
-                        XMLManager.GetValue(compassBoxFilename, "height", isImage: true) * Scale.y);
+                    Size = XMLManager.GetSize(compassBoxFilename, TextureReplacement.imgPath, Scale.x, Scale.y);
                 else
                     Size = new Vector2(compassBoxTexture.width * Scale.x, compassBoxTexture.height * Scale.y);
             }
@@ -114,9 +113,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             compassBoxRect.y = Position.y;
             if (TextureReplacement.CustomImageExist(compassBoxFilename))
             {
-                // Get custom size of compass box for custom imag
-                compassBoxRect.width = XMLManager.GetValue(compassBoxFilename, "width", isImage:true) * Scale.x;
-                compassBoxRect.height = XMLManager.GetValue(compassBoxFilename, "height", isImage:true) * Scale.y; 
+                // Get custom size of compass box for custom image
+                Vector2 customSize = XMLManager.GetSize(compassBoxFilename, TextureReplacement.imgPath, Scale.x, Scale.y);
+                compassBoxRect.width = customSize.x;
+                compassBoxRect.height = customSize.y; 
             }
             else
             {
@@ -130,8 +130,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (TextureReplacement.CustomImageExist(compassFilename))
             {
                 // Get custom size for custom image
-                compassTextureWidth = XMLManager.GetValue(compassFilename, "width", isImage: true);
-                compassTextureHeight = XMLManager.GetValue(compassFilename, "height", isImage: true);
+                Vector2 customSize = XMLManager.GetSize(compassFilename, TextureReplacement.imgPath);
+                compassTextureWidth = customSize.x;
+                compassTextureHeight = customSize.y;
             }
             else
             {
