@@ -112,6 +112,20 @@ namespace DaggerfallWorkshop.Utility
                         singleton = true;
                     }
                     break;
+
+                case DFLocation.BuildingTypes.Palace:
+                    // Main palace names (e.g. "Castle Daggerfall" appear to be hardcoded in FALL.EXE
+                    // Other palaces are just named "Palace"
+                    // Need to confirm behaviour before implementing
+                    // Just calling everything "Palace" for now.
+                    a = "Palace";
+                    singleton = true;
+                    break;
+
+                default:
+                    // Do nothing for unknown/unsupported building type
+                    // Houses can actually change names based on active quests
+                    return string.Empty;
             }
 
             // Replace %cn
