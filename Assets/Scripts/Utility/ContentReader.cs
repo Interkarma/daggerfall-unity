@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Utility
         MapsFile mapFileReader;
         MonsterFile monsterFileReader;
         WoodsFile woodsFileReader;
+        FactionFile factionFileReader;
         Dictionary<int, MapSummary> mapDict;
         Dictionary<int, int> locationIdToMapIdDict;
 
@@ -66,6 +67,11 @@ namespace DaggerfallWorkshop.Utility
         public WoodsFile WoodsFileReader
         {
             get { return woodsFileReader; }
+        }
+
+        public FactionFile FactionFileReader
+        {
+            get { return factionFileReader; }
         }
 
         #region Constructors
@@ -260,6 +266,8 @@ namespace DaggerfallWorkshop.Utility
                 monsterFileReader = new MonsterFile(Path.Combine(arena2Path, MonsterFile.Filename), FileUsage.UseMemory, true);
             if (woodsFileReader == null)
                 woodsFileReader = new WoodsFile(Path.Combine(arena2Path, WoodsFile.Filename), FileUsage.UseMemory, true);
+            if (factionFileReader == null)
+                factionFileReader = new FactionFile(Path.Combine(arena2Path, FactionFile.Filename), FileUsage.UseMemory, true);
 
             // Build map lookup dictionary
             if (mapDict == null && mapFileReader != null)

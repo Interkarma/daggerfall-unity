@@ -169,7 +169,8 @@ namespace DaggerfallConnect
             public DFLocation.BuildingData[] BuildingDataList;
 
             /// <summary>Unknown data.</summary>
-            internal Byte[] Section2UnknownData;
+            internal UInt32[] Section2UnknownData;
+            //internal Byte[] Section2UnknownData;
 
             /// <summary>Length of block record data in bytes (array is 32 records long, but only up to numBlockDataRecords have valid data).</summary>
             public Int32[] BlockDataSizes;
