@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.Questing
         private int rangeHigh   = -1;
         private bool isArtifact = false;
 
-        public DaggerfallUnityItem Item
+        public DaggerfallUnityItem DaggerfallUnityItem
         {
             get { return item; }
             set { item = value; }
