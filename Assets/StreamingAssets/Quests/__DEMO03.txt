@@ -4,7 +4,7 @@ Quest: __DEMO02
 
 QRC:
 
-QuestLogEntry:  [1001]
+QuestLogEntry: [1010]
 %qdt:
  _qgiver_ of the Dark Brotherhood
  in __qgiver_, ___qgiver_
@@ -16,14 +16,14 @@ QuestLogEntry:  [1001]
  Either way, the whole bloody business needs
  to be done in =queston_ days.
 
-QuestLogEntry:  [1002]
+Message:	1012
 %qdt:
  The Fighters Guild of ___qgiver_
  has asked me to slay a wild beast which
  has gotten into _house_. It's got
  be done in one day.
 
-QuestLogEntry:  [1003]
+Message:	1013
 %qdt:
  _qgiver_ in ___qgiver_ gave
  me the job of killing a tiger or bear
@@ -33,7 +33,7 @@ QuestLogEntry:  [1003]
  _gold_ gold pieces.
 
 
-QuestLogEntry:  [1004]
+Message:	1014
 On %qdt,
  I met with _agent_ of ___agent_.
  %g told me that a mysterious client of
@@ -44,7 +44,7 @@ On %qdt,
  to meet a _qgiver_ at
  _meetingplace_ here in __meetingplace_.
 
-QuestLogEntry:  [1005]
+Message:	1015
 %qdt:
  I met secretly with _qgiver_ in
  ___qgiver_ who gave me a
@@ -54,12 +54,12 @@ QuestLogEntry:  [1005]
  to complete this quest. If I am caught,
  I am on my own.
 
-QuestLogEntry:  [1006]
+Message:	1016
 %qdt
  _giver_ of ___giver_ has offered me _gold_
  gold to find %g3 book, _book_.
 
-QuestLogEntry:  [1007]
+Message:	1017
 %qdt:
  _qgiver_ of
  ==qgiver_ in ___qgiver_
@@ -72,7 +72,7 @@ QuestLogEntry:  [1007]
  I have =2dung_ days before it
  is too late.
 
-QuestLogEntry:  [1008]
+Message:	1018
 %qdt:
  _qgiver_ of __qgiver_,
  in ___qgiver_, told me that %g3 god was
@@ -86,11 +86,11 @@ QuestLogEntry:  [1008]
 QBN:
 
 - Headless entry point with custom action
-log 1001 step 0
-log 1002 step 1
-log 1003 step 2
-log 1004 step 3
-log 1005 step 4
-log 1006 step 5
-log 1007 step 6
-log 1008 step 7
+log 1010 step 0
+log 1012 step 1
+log 1013 step 2
+log 1014 step 3
+log 1015 step 4
+log 1016 step 5
+log 1017 step 6
+log 1018 step 7
