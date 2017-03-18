@@ -45,12 +45,14 @@ namespace DaggerfallWorkshop.Game.Questing
         const string staticMessagesTableFilename = "Quests-StaticMessages";
         const string placesTableFilename = "Quests-Places";
         const string soundsTableFilename = "Quests-Sounds";
+        const string itemsTableFileName = "Quests-items";
 
         // Data tables
         Table globalVarsTable;
         Table staticMessagesTable;
         Table placesTable;
         Table soundsTable;
+        Table itemsTable;
 
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
@@ -113,6 +115,14 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return soundsTable; }
         }
 
+        /// <summary>
+        /// Gets the items data table.
+        /// </summary>
+        public Table ItemsTable
+        {
+            get { return itemsTable; }
+        }
+
         #endregion
 
         #region Unity
@@ -125,6 +135,7 @@ namespace DaggerfallWorkshop.Game.Questing
             staticMessagesTable = new Table(Instance.GetTableSourceText(staticMessagesTableFilename));
             placesTable = new Table(Instance.GetTableSourceText(placesTableFilename));
             soundsTable = new Table(Instance.GetTableSourceText(soundsTableFilename));
+            itemsTable = new Table(Instance.GetTableSourceText(itemsTableFileName));
         }
 
         void Start()
@@ -196,6 +207,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new StartClock(null));
             RegisterAction(new StopClock(null));
             RegisterAction(new RemoveLogMessage(null));
+            RegisterAction(new PlayVideo(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)
