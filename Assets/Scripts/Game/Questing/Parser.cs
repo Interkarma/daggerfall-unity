@@ -177,13 +177,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // Read ID of message
                     int messageID = 0;
-                    if (parts[0] == "QuestLogEntry")
-                    {
-                        var match = System.Text.RegularExpressions.Regex.Match(parts[1], "(?<id>[0-9]+)");
-                        if(!int.TryParse(match.Groups["id"].Value, out messageID))
-                            throw new Exception(string.Format(parseIdError, parts[1]));
-                    }
-                    else if (parts[1].StartsWith("[") && parts[1].EndsWith("]"))
+
+                    if (parts[1].StartsWith("[") && parts[1].EndsWith("]"))
                     {
                         // Fixed message types use ID from table
                         messageID = staticMessagesTable.GetInt(idCol, parts[0]);
@@ -233,9 +228,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     Clock clock = new Clock(quest, lines[i]);
                     quest.AddResource(clock);
                 }
-                else if (lines[i].StartsWith("item", StringComparison.InvariantCultureIgnoreCase))
+                else if (lines[i].StartsWith("Item", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    // This is an item declaration
+                    Item item = new Item(quest, lines[i]);
+                    quest.AddResource(item);
                 }
                 else if (lines[i].StartsWith("person", StringComparison.InvariantCultureIgnoreCase))
                 {
