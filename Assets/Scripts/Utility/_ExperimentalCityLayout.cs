@@ -261,7 +261,7 @@ namespace DaggerfallWorkshop.Utility
                 case DFLocation.BuildingTypes.Alchemist:
                 //case DFLocation.BuildingTypes.HouseForSale:
                 case DFLocation.BuildingTypes.Armorer:
-                //case DFLocation.BuildingTypes.Bank:
+                case DFLocation.BuildingTypes.Bank:
                 case DFLocation.BuildingTypes.Bookseller:
                 case DFLocation.BuildingTypes.ClothingStore:
                 case DFLocation.BuildingTypes.FurnitureStore:
