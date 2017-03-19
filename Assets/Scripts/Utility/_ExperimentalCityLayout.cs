@@ -29,6 +29,16 @@ namespace DaggerfallWorkshop.Utility
 
         List<DFLocation.LocationDoorElement> cityDoors = new List<DFLocation.LocationDoorElement>();
         List<DFLocation.BuildingData> cityBuildings = new List<DFLocation.BuildingData>();
+        List<string> cityBuildingNames = new List<string>();
+        List<string> blockBuildingNames = new List<string>();
+
+        List<BuildingPoolItem> specialBuildingPool = new List<BuildingPoolItem>();
+
+        struct BuildingPoolItem
+        {
+            public DFLocation.BuildingData buildingData;
+            public bool used;
+        }
 
         /// <summary>
         /// Rough layout code to drop hierarchy only into scene.
@@ -47,12 +57,18 @@ namespace DaggerfallWorkshop.Utility
             GameObject locationGameObject = new GameObject(string.Format("ExperimentalLocation [Region={0}, Name={1}]", location.RegionName, location.Name));
             locationGameObject.transform.position = Vector3.zero;
 
+            // Create building list object
+            GameObject buildingListGameObject = new GameObject("BuildingList");
+            buildingListGameObject.transform.position = Vector3.zero;
+            buildingListGameObject.transform.parent = locationGameObject.transform;
+
             // Get city dimensions
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
 
             // Import buildings
-            int totalMapBuildings = AddBuildings(ref location, locationGameObject);
+            int totalMapDoors;
+            int totalMapBuildings = AddBuildings(ref location, buildingListGameObject, out totalMapDoors);
 
             // Import blocks
             int totalBlockBuildings = 0;
@@ -64,13 +80,27 @@ namespace DaggerfallWorkshop.Utility
                 }
             }
 
-            Debug.LogFormat("Total map buildings: {0}, Total block buildings: {1}", totalMapBuildings, totalBlockBuildings);
+            // Name arrays should be same size
+            if (cityBuildingNames.Count != blockBuildingNames.Count)
+                throw new Exception("Name array size mismatch");
+
+            Debug.LogFormat("Total map buildings: {0}, Total block buildings: {1}, Total \"doors\": {2}", totalMapBuildings, totalBlockBuildings, totalMapDoors);
+
+            // Find where linking failed name should be equal on both sides
+            for (int i = 0; i < cityBuildingNames.Count; i++)
+            {
+                if (cityBuildingNames[i] != blockBuildingNames[i])
+                {
+                    Debug.LogErrorFormat("Name mismatch from index {0}", i);
+                    break;
+                }
+            }
         }
 
         /// <summary>
         /// One problem I'm still not satisfied with is how to correctly link buildings in map data to buildings in block data.
         /// </summary>
-        int AddBuildings(ref DFLocation location, GameObject parent)
+        int AddBuildings(ref DFLocation location, GameObject parent, out int doorCountOut)
         {
             int totalMapBuildings = 0;
 
@@ -83,9 +113,18 @@ namespace DaggerfallWorkshop.Utility
                 cityBuildings.Add(building);
 
                 string buildingName = BuildingNames.GetName(building.NameSeed, building.BuildingType, building.FactionId, location.Name, location.RegionName);
+                if (IsSpecial(building.BuildingType))
+                {
+                    cityBuildingNames.Add(buildingName);
+
+                    BuildingPoolItem bp = new BuildingPoolItem();
+                    bp.buildingData = building;
+                    bp.used = false;
+                    specialBuildingPool.Add(bp);
+                }
 
                 // Would love to know what this "Sector" value actually is
-                buildingGameObjectArray[i] = new GameObject(string.Format("Building: {0} [{1}]", building.BuildingType, building.Sector));
+                buildingGameObjectArray[i] = new GameObject(string.Format("Building: {0} [{1}]", building.BuildingType, buildingName));
                 buildingGameObjectArray[i].transform.parent = parent.transform;
                 totalMapBuildings++;
             }
@@ -93,8 +132,8 @@ namespace DaggerfallWorkshop.Utility
             // UESP guesses these records are doors. They do map to a building index but do not distribute as doors would.
             // A building might have 0-N of these items regardless of how many doors that building actually has.
             // What is this data, really?
-            // Observation: the Unknown1 value is often (but not always) +2-3 greater than Sector value on building itself.
-            // Observation: templates often have a larger number of these records attached than any other building type.
+            // Observations: One of the Unknown1 values is often (but not always) +2-3 greater than Sector value on building itself.
+            // Observation: temples often have a larger number of these records attached than any other building type.
             int doorCount = (int)location.Exterior.RecordElement.DoorCount;
             for (int i = 0; i < doorCount; i++)
             {
@@ -106,6 +145,8 @@ namespace DaggerfallWorkshop.Utility
                 GameObject doorGameObject = new GameObject(string.Format("Door: Mask={0}, Unknown1={1}, Unknown2={2}", door.Mask, door.Unknown1, door.Unknown2));
                 doorGameObject.transform.parent = buildingGameObjectArray[door.BuildingDataIndex].transform;
             }
+
+            doorCountOut = doorCount;
 
             return totalMapBuildings;
         }
@@ -133,22 +174,110 @@ namespace DaggerfallWorkshop.Utility
             {
                 DFLocation.BuildingData building = block.RmbBlock.FldHeader.BuildingDataList[i];
 
-                string buildingName;
+                string name;
                 if (i < buildingCount)
                 {
-                    buildingName = string.Format("[{0}] Building: {1}", i, building.BuildingType);
+                    name = string.Format("[{0}] Building: {1}", i, building.BuildingType);
                     totalBlockBuildings++;
+
+                    // Link special buildings
+                    if (IsSpecial(building.BuildingType))
+                    {
+                        // Try to find next building
+                        BuildingPoolItem item;
+                        bool found = GetNextBuildingFromPool(building.BuildingType, out item); //FindNextBuildingType(building.BuildingType, buildingIndex);
+                        if (!found)
+                            throw new Exception(string.Format("End of city building list reached without finding building type {0}", building.BuildingType));
+
+                        // Copy city building data to block level
+                        building.NameSeed = item.buildingData.NameSeed;
+                        building.FactionId = item.buildingData.FactionId;
+                        building.LocationId = item.buildingData.LocationId;
+                        building.Quality = item.buildingData.Quality;
+                        building.Sector = item.buildingData.Sector;
+
+                        // Resolve name for block building
+                        string buildingName = BuildingNames.GetName(building.NameSeed, building.BuildingType, building.FactionId, location.Name, location.RegionName);
+                        blockBuildingNames.Add(buildingName);
+                        name += string.Format(" [{0}]", buildingName);
+                    }
                 }
                 else
                 {
-                    buildingName = string.Format("[{0}] Unused", i);
+                    continue;
+                    //name = string.Format("[{0}] Unused", i);
                 }
                 //DFBlock.RmbBlockHeader header = block.RmbBlock.SubRecords[i].Exterior.Header;
-                GameObject buildingGameObject = new GameObject(buildingName);
+                GameObject buildingGameObject = new GameObject(name);
                 buildingGameObject.transform.parent = blockGameObject.transform;
             }
 
             return totalBlockBuildings;
+        }
+
+        /// <summary>
+        /// Draws and consume building from pool.
+        /// Checking if buildings are ordered by special type.
+        /// </summary>
+        bool GetNextBuildingFromPool(DFLocation.BuildingTypes buildingType, out BuildingPoolItem itemOut)
+        {
+            itemOut = new BuildingPoolItem();
+            for (int i = 0; i < specialBuildingPool.Count; i++)
+            {
+                if (!specialBuildingPool[i].used && specialBuildingPool[i].buildingData.BuildingType == buildingType)
+                {
+                    BuildingPoolItem item = specialBuildingPool[i];
+                    item.used = true;
+                    specialBuildingPool[i] = item;
+                    itemOut = item;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        ///// <summary>
+        ///// Finds next building of specified type.
+        ///// </summary>
+        //int FindNextBuildingType(DFLocation.BuildingTypes buildingType, int startIndex)
+        //{
+        //    for (int i = startIndex; i < cityBuildings.Count; i++)
+        //    {
+        //        if (cityBuildings[i].BuildingType == buildingType)
+        //            return i;
+        //    }
+
+        //    return -1;
+        //}
+
+        /// <summary>
+        /// Checks if building type is a special (i.e. not a home).
+        /// </summary>
+        bool IsSpecial(DFLocation.BuildingTypes buildingType)
+        {
+            switch (buildingType)
+            {
+                case DFLocation.BuildingTypes.Alchemist:
+                //case DFLocation.BuildingTypes.HouseForSale:
+                case DFLocation.BuildingTypes.Armorer:
+                //case DFLocation.BuildingTypes.Bank:
+                case DFLocation.BuildingTypes.Bookseller:
+                case DFLocation.BuildingTypes.ClothingStore:
+                case DFLocation.BuildingTypes.FurnitureStore:
+                case DFLocation.BuildingTypes.GemStore:
+                case DFLocation.BuildingTypes.GeneralStore:
+                case DFLocation.BuildingTypes.Library:
+                case DFLocation.BuildingTypes.GuildHall:
+                case DFLocation.BuildingTypes.PawnShop:
+                case DFLocation.BuildingTypes.WeaponSmith:
+                case DFLocation.BuildingTypes.Temple:
+                case DFLocation.BuildingTypes.Tavern:
+                case DFLocation.BuildingTypes.Palace:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }
