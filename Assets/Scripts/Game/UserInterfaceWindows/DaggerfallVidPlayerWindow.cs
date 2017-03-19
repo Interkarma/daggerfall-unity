@@ -15,6 +15,7 @@ using System.IO;
 using System.Collections;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -24,6 +25,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class DaggerfallVidPlayerWindow : DaggerfallBaseWindow
     {
         DaggerfallVideo video;
+        CustomVideoPlayer customVideo;
+        bool UseCustomVideo = false;
+
         bool hideCursor = true;
         bool endOnAnyKey = true;
 
@@ -53,21 +57,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            const int nativeScreenWidth = 320;
-            const int nativeScreenHeight = 200;
-
-            // Add video player control
-            video = new DaggerfallVideo();
-            video.HorizontalAlignment = HorizontalAlignment.Center;
-            video.Size = new Vector2(nativeScreenWidth, nativeScreenHeight);
-            NativePanel.Components.Add(video);
-
-            // Start playing
-            if (!string.IsNullOrEmpty(PlayOnStart))
+            if (VideoReplacement.CustomVideoExist(PlayOnStart))
             {
-                video.Open(PlayOnStart);
-                video.Playing = true;
-                Cursor.visible = false;
+                // Play custom video
+                customVideo = DaggerfallUI.Instance.gameObject.AddComponent<CustomVideoPlayer>();
+                customVideo.PlayVideo(PlayOnStart);
+                UseCustomVideo = true;
+            }
+            else
+            {
+                const int nativeScreenWidth = 320;
+                const int nativeScreenHeight = 200;
+
+                // Add video player control
+                video = new DaggerfallVideo();
+                video.HorizontalAlignment = HorizontalAlignment.Center;
+                video.Size = new Vector2(nativeScreenWidth, nativeScreenHeight);
+                NativePanel.Components.Add(video);
+
+                // Start playing
+                if (!string.IsNullOrEmpty(PlayOnStart))
+                {
+                    video.Open(PlayOnStart);
+                    video.Playing = true;
+                    Cursor.visible = false;
+                }
             }
         }
 
@@ -76,13 +90,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             // Handle exit any key or end of video
-            if (endOnAnyKey && Input.anyKeyDown ||
-                video.VidFile.EndOfFile && video.Playing)
+            if (UseCustomVideo)
             {
-                video.Playing = false;
-                video.Dispose();
-                RaiseOnVideoFinishedHandler();
-                CloseWindow();
+                if (endOnAnyKey && Input.anyKeyDown || 
+                    !customVideo.Playing )
+                {
+                    customVideo.StopVideo();
+                    RaiseOnVideoFinishedHandler();
+                    CloseWindow();
+                }
+            }
+            else
+            {
+                if (endOnAnyKey && Input.anyKeyDown ||
+                video.VidFile.EndOfFile && video.Playing)
+                {
+                    video.Playing = false;
+                    video.Dispose();
+                    RaiseOnVideoFinishedHandler();
+                    CloseWindow();
+                }
             }
         }
 
