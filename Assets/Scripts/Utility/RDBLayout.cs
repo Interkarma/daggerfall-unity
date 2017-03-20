@@ -325,44 +325,48 @@ namespace DaggerfallWorkshop.Utility
                 {
                     if (obj.Type == DFBlock.RdbResourceTypes.Flat)
                     {
+                        GameObject flatObject;
+
                         // Import custom 3d gameobject instead of flat
-                        bool modelExist;
-                        MeshReplacement.ImportCustomFlatGameobject(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord, 
-                            new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform, out modelExist, true);
-                        // Use flat
-                        if (!modelExist)
+                        flatObject = MeshReplacement.ImportCustomFlatGameobject(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord,
+                            new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform, true);
+                        if (flatObject != null)
                         {
-                            // Add flat
-                            GameObject flatObject = AddFlat(obj, flatsNode.transform);
+                            // Add torch burning sound
+                            if (MeshReplacement.HasTorchSound (obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord))
+                                AddTorchAudioSource(flatObject);
+                            continue;
+                        }
 
-                            // Store editor objects and start markers
-                            int archive = obj.Resources.FlatResource.TextureArchive;
-                            int record = obj.Resources.FlatResource.TextureRecord;
-                            if (archive == TextureReader.EditorFlatsTextureArchive)
+                        // Add flat
+                        flatObject = AddFlat(obj, flatsNode.transform);
+
+                        // Store editor objects and start markers
+                        int archive = obj.Resources.FlatResource.TextureArchive;
+                        int record = obj.Resources.FlatResource.TextureRecord;
+                        if (archive == TextureReader.EditorFlatsTextureArchive)
+                        {
+                            editorObjects.Add(obj);
+                            if (record == 10)
+                                startMarkers.Add(flatObject);
+                            else if (record == 8)
+                                enterMarkers.Add(flatObject);
+
+                            //add editor flats to actionLinkDict
+                            if (!actionLinkDict.ContainsKey(obj.This))
                             {
-                                editorObjects.Add(obj);
-                                if (record == 10)
-                                    startMarkers.Add(flatObject);
-                                else if (record == 8)
-                                    enterMarkers.Add(flatObject);
-
-                                //add editor flats to actionLinkDict
-                                if (!actionLinkDict.ContainsKey(obj.This))
-                                {
-                                    ActionLink link;
-                                    link.gameObject = flatObject;
-                                    link.nextKey = obj.Resources.FlatResource.NextObjectOffset;
-                                    link.prevKey = -1;
-                                    actionLinkDict.Add(obj.This, link);
-                                }
-
+                                ActionLink link;
+                                link.gameObject = flatObject;
+                                link.nextKey = obj.Resources.FlatResource.NextObjectOffset;
+                                link.prevKey = -1;
+                                actionLinkDict.Add(obj.This, link);
                             }
+                        }
 
-                            //add action component to flat if it has an action
-                            if (obj.Resources.FlatResource.Action > 0)
-                            {
-                                AddActionFlatHelper(flatObject, actionLinkDict, ref blockData, obj);
-                            }
+                        //add action component to flat if it has an action
+                        if (obj.Resources.FlatResource.Action > 0)
+                        {
+                            AddActionFlatHelper(flatObject, actionLinkDict, ref blockData, obj);
                         }
                     }
                 }
