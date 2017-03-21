@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Utility
                         // Create a descriptive name string for gameobject
                         // Add nameplate for named buildings
                         string goName = string.Format("Building: {0}", buildingSummary[i].BuildingType);
-                        if (RMBLayout.IsNamedBuildng(buildingSummary[i].BuildingType))
+                        if (RMBLayout.IsNamedBuilding(buildingSummary[i].BuildingType))
                             goName += string.Format(" [{0}]", buildingName);
 
                         // Add building object
