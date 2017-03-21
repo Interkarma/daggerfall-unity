@@ -511,71 +511,96 @@ namespace DaggerfallWorkshop.Game
             gameObjectBuildingNamePlates = new GameObject("building name plates");
             gameObjectBuildingNamePlates.transform.SetParent(gameobjectExteriorAutomap.transform);
 
-            foreach (var layout in exteriorLayout)
+            //foreach (var layout in exteriorLayout)
+            //{
+            //    DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(layout.name);
+            //}
+            
+            DFBlock[] blocks;
+            RMBLayout.GetLocationBuildingData(location, out blocks);
+            int width = location.Exterior.ExteriorData.Width;
+            int height = location.Exterior.ExteriorData.Height;
+            for (int y = 0; y < height; y++)
             {
-                DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(layout.name);
-
-                RMBLayout.BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(block);
-                foreach (RMBLayout.BuildingSummary buildingSummary in buildingsInBlock)
+                for (int x = 0; x < width; x++)
                 {
-                    //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
-                    int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
-                    int yPosBuilding = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                    int index = y * width + x;
+                    RMBLayout.BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(blocks[index]);
+                    BlockLayout layout = exteriorLayout[index];
 
-                    //if (buildingSummary.BuildingType == DFLocation.BuildingTypes.WeaponSmith)
+                    foreach (RMBLayout.BuildingSummary buildingSummary in buildingsInBlock)
                     {
+                        //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
+                        int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+                        int yPosBuilding = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);
+
                         BuildingNamePlate newBuildingNamePlate;
-                        newBuildingNamePlate.name = "";
-                        switch (buildingSummary.BuildingType)
+                        try
                         {
-                            case DFLocation.BuildingTypes.Alchemist:
-                                newBuildingNamePlate.name = "Alchemist";
-                                break;
-                            case DFLocation.BuildingTypes.Armorer:
-                                newBuildingNamePlate.name = "Armorer";
-                                break;
-                            case DFLocation.BuildingTypes.Bank:
-                                newBuildingNamePlate.name = "Bank";
-                                break;
-                            case DFLocation.BuildingTypes.Bookseller:
-                                newBuildingNamePlate.name = "Bookseller";
-                                break;
-                            case DFLocation.BuildingTypes.ClothingStore:
-                                newBuildingNamePlate.name = "Clothing Store";
-                                break;
-                            case DFLocation.BuildingTypes.FurnitureStore:
-                                newBuildingNamePlate.name = "Furniture Store";
-                                break;
-                            case DFLocation.BuildingTypes.GemStore:
-                                newBuildingNamePlate.name = "Gem Store";
-                                break;
-                            case DFLocation.BuildingTypes.GeneralStore:
-                                newBuildingNamePlate.name = "General Store";
-                                break;
-                            case DFLocation.BuildingTypes.GuildHall:
-                                newBuildingNamePlate.name = "Guild Hall";
-                                break;
-                            case DFLocation.BuildingTypes.HouseForSale:
-                                newBuildingNamePlate.name = "House for Sale";
-                                break;
-                            case DFLocation.BuildingTypes.Library:
-                                newBuildingNamePlate.name = "Library";
-                                break;
-                            case DFLocation.BuildingTypes.Palace:
-                                newBuildingNamePlate.name = "Palace";
-                                break;
-                            case DFLocation.BuildingTypes.PawnShop:
-                                newBuildingNamePlate.name = "Pawn Shop";
-                                break;
-                            case DFLocation.BuildingTypes.Tavern:
-                                newBuildingNamePlate.name = "Tavern";
-                                break;
-                            case DFLocation.BuildingTypes.Temple:
-                                newBuildingNamePlate.name = "Temple";
-                                break;
-                            case DFLocation.BuildingTypes.WeaponSmith:
-                                newBuildingNamePlate.name = "Weapon Smith";
-                                break;
+                            newBuildingNamePlate.name = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                        }
+                        catch (Exception e)
+                        {
+                            string exceptionMessage = String.Format("exception occured in function BuildingNames.GetName (exception message: " + e.Message + @") with params: 
+                                                                     seed: {0}, type: {1}, factionID: {2}, locationName: {3}, regionName: {4}",
+                                                                     buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                            DaggerfallUnity.LogMessage(exceptionMessage, true);
+
+                            //fallback
+                            switch (buildingSummary.BuildingType)
+                            {
+                                case DFLocation.BuildingTypes.Alchemist:
+                                    newBuildingNamePlate.name = "Alchemist";
+                                    break;
+                                case DFLocation.BuildingTypes.Armorer:
+                                    newBuildingNamePlate.name = "Armorer";
+                                    break;
+                                case DFLocation.BuildingTypes.Bank:
+                                    newBuildingNamePlate.name = "Bank";
+                                    break;
+                                case DFLocation.BuildingTypes.Bookseller:
+                                    newBuildingNamePlate.name = "Bookseller";
+                                    break;
+                                case DFLocation.BuildingTypes.ClothingStore:
+                                    newBuildingNamePlate.name = "Clothing Store";
+                                    break;
+                                case DFLocation.BuildingTypes.FurnitureStore:
+                                    newBuildingNamePlate.name = "Furniture Store";
+                                    break;
+                                case DFLocation.BuildingTypes.GemStore:
+                                    newBuildingNamePlate.name = "Gem Store";
+                                    break;
+                                case DFLocation.BuildingTypes.GeneralStore:
+                                    newBuildingNamePlate.name = "General Store";
+                                    break;
+                                case DFLocation.BuildingTypes.GuildHall:
+                                    newBuildingNamePlate.name = "Guild Hall";
+                                    break;
+                                case DFLocation.BuildingTypes.HouseForSale:
+                                    newBuildingNamePlate.name = "House for Sale";
+                                    break;
+                                case DFLocation.BuildingTypes.Library:
+                                    newBuildingNamePlate.name = "Library";
+                                    break;
+                                case DFLocation.BuildingTypes.Palace:
+                                    newBuildingNamePlate.name = "Palace";
+                                    break;
+                                case DFLocation.BuildingTypes.PawnShop:
+                                    newBuildingNamePlate.name = "Pawn Shop";
+                                    break;
+                                case DFLocation.BuildingTypes.Tavern:
+                                    newBuildingNamePlate.name = "Tavern";
+                                    break;
+                                case DFLocation.BuildingTypes.Temple:
+                                    newBuildingNamePlate.name = "Temple";
+                                    break;
+                                case DFLocation.BuildingTypes.WeaponSmith:
+                                    newBuildingNamePlate.name = "Weapon Smith";
+                                    break;
+                                default:
+                                    newBuildingNamePlate.name = "unknown";
+                                    break;
+                            }
                         }
 
                         if (newBuildingNamePlate.name != "")
@@ -586,9 +611,9 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNamePlate.textLabel.TextColor = Color.yellow;
                             newBuildingNamePlate.gameObject = new GameObject(String.Format("building name plate for [{0}]", newBuildingNamePlate.name));
                             MeshFilter meshFilter = (MeshFilter)newBuildingNamePlate.gameObject.AddComponent(typeof(MeshFilter));
-                            int width = newBuildingNamePlate.textLabel.Texture.width;
-                            int height = newBuildingNamePlate.textLabel.Texture.height;
-                            meshFilter.mesh = CreateMesh(width, height); // create quad with normal facing into positive y-direction
+                            int widthNamePlate = newBuildingNamePlate.textLabel.Texture.width;
+                            int heightNamePlate = newBuildingNamePlate.textLabel.Texture.height;
+                            meshFilter.mesh = CreateMesh(widthNamePlate, heightNamePlate); // create quad with normal facing into positive y-direction
                             MeshRenderer renderer = newBuildingNamePlate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
 
                             renderer.material.shader = Shader.Find("Unlit/Transparent");
