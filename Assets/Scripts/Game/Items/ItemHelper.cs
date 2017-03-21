@@ -750,6 +750,9 @@ namespace DaggerfallWorkshop.Game.Items
                 items.AddItem(ItemBuilder.CreateRandomIngredient());
                 items.AddItem(ItemBuilder.CreateRandomBook());
             }
+
+            // Add some starting gold
+            playerEntity.GoldPieces += 100;
         }
 
         #endregion
