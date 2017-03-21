@@ -17,6 +17,7 @@
 
 using System.IO;
 using UnityEngine;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -48,76 +49,38 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Import the custom GameObject if available
         /// </summary>
-        /// <returns>True if model is found and imported, false otherwise.</returns>
-        static public bool ImportCustomGameobject (uint modelID, Vector3 position, Transform parent, Quaternion rotation)
+        /// <returns>Returns the imported model or null.</returns>
+        static public GameObject ImportCustomGameobject (uint modelID, Vector3 position, Transform parent, Quaternion rotation)
         {
             // Check user settings
             if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
-                return false;
- 
+                return null;
+
             // Import Gameobject from Resources
             // This is useful to test models
             if (ReplacementPrefabExist(modelID))
-            {
-                LoadReplacementPrefab(modelID, position, parent, rotation);
-                return true;
-            }
+                return LoadReplacementPrefab(modelID, position, parent, rotation);
 
             // Get AssetBundle
             string modelName = modelID.ToString();
             string path = Path.Combine(modelsPath, modelName + modelExtension);
             if (!File.Exists(path))
-                return false;
+                return null;
             AssetBundle LoadedAssetBundle;
             if (!TryGetAssetBundle(path, modelName, out LoadedAssetBundle))
-                return false;
+                return null;
 
             // Assign the name according to the current season
-            if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter) && (LoadedAssetBundle.Contains(modelName + winterTag)))
+            if ((GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType != DaggerfallConnect.DFLocation.ClimateBaseType.Desert) && 
+                (DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter) && 
+                (LoadedAssetBundle.Contains(modelName + winterTag)))
                 modelName += winterTag;
  
             // Instantiate GameObject
             GameObject object3D = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
             LoadedAssetBundle.Unload(false);
             InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelName);
-            return true;
-        }
-
-        /// <summary>
-        /// Import and get the custom GameObject if available
-        /// This is useful for dungeon props with an action (levers etc.)
-        /// </summary>
-        /// <returns>True if model is found and imported, false otherwise.</returns>
-        static public bool ImportCustomGameobject(uint modelID, Vector3 position, Transform parent, Quaternion rotation, out GameObject object3D)
-        {
-            object3D = null;
-
-            // Check user settings
-            if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
-                return false;
-
-            // Import Gameobject from Resources
-            // This is useful to test models
-            if (ReplacementPrefabExist(modelID))
-            {
-                LoadReplacementPrefab(modelID, position, parent, rotation, out object3D);
-                return true;
-            }
-
-            // Get AssetBundle
-            string modelName = modelID.ToString();
-            string path = Path.Combine(modelsPath, modelName + modelExtension);
-            if (!File.Exists(path))
-                return false;
-            AssetBundle LoadedAssetBundle;
-            if (!TryGetAssetBundle(path, modelName, out LoadedAssetBundle))
-                return false;
-
-            // Instantiate GameObject
-            object3D = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
-            LoadedAssetBundle.Unload(false);
-            InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelName);
-            return true;
+            return object3D;
         }
 
         /// <summary>
@@ -136,29 +99,22 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Import gameobject from Resources
         /// </summary>
-        static public void LoadReplacementPrefab(uint modelID, Vector3 position, Transform parent, Quaternion rotation)
+        static public GameObject LoadReplacementPrefab(uint modelID, Vector3 position, Transform parent, Quaternion rotation)
         {
             // Import GameObject
             GameObject object3D = null;
 
             // If it's not winter or the model doesn't have a winter version, it loads default prefab
-            if ((DaggerfallUnity.Instance.WorldTime.Now.SeasonValue != DaggerfallDateTime.Seasons.Winter) || (Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + winterTag) == null))
+            if ((GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType == DaggerfallConnect.DFLocation.ClimateBaseType.Desert) || 
+                (DaggerfallUnity.Instance.WorldTime.Now.SeasonValue != DaggerfallDateTime.Seasons.Winter) || 
+                (Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + winterTag) == null))
                 object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString()) as GameObject);
             // If it's winter and the model has a winter version, it loads winter prefab
             else
                 object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + winterTag) as GameObject);
 
             InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelID.ToString());
-        }
-
-        /// <summary>
-        /// Import and get gameobject from Resources
-        /// This is useful for dungeon props with an action (levers etc.)
-        /// </summary>
-        static public void LoadReplacementPrefab(uint modelID, Vector3 position, Transform parent, Quaternion rotation, out GameObject object3D)
-        {
-            object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString()) as GameObject);
-            InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelID.ToString());
+            return object3D;
         }
 
         #endregion

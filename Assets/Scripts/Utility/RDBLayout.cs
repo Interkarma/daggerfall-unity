@@ -559,10 +559,9 @@ namespace DaggerfallWorkshop.Utility
                         bool hasAction = HasAction(obj);
 
                         // Get GameObject
-                        GameObject standaloneObject = null;
                         Transform parent = (hasAction) ? actionModelsParent : modelsParent;
-
-                        if (!MeshReplacement.ImportCustomGameobject(modelId, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out standaloneObject))
+                        GameObject standaloneObject = MeshReplacement.ImportCustomGameobject(modelId, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
+                        if (standaloneObject == null)
                         {
                             // Special handling for tapestries and banners
                             // Some of these are so far out from wall player can become stuck behind them

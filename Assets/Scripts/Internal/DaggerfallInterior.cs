@@ -222,7 +222,7 @@ namespace DaggerfallWorkshop
                     doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
 
                 // Get GameObject
-                if (!MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix)))
+                if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix)) == null)
                 {
                     // Use Daggerfall Mesh: Combine or add
                     if (dfUnity.Option_CombineRMB)
