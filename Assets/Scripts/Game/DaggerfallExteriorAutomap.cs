@@ -541,7 +541,7 @@ namespace DaggerfallWorkshop.Game
                         }
                         catch (Exception e)
                         {
-                            string exceptionMessage = String.Format("exception occured in function BuildingNames.GetName (exception " + e.Message + @") with params: 
+                            string exceptionMessage = String.Format("exception occured in function BuildingNames.GetName (exception message: " + e.Message + @") with params: 
                                                                      seed: {0}, type: {1}, factionID: {2}, locationName: {3}, regionName: {4}",
                                                                      buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
                             DaggerfallUnity.LogMessage(exceptionMessage, true);
