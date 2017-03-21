@@ -37,6 +37,16 @@ namespace DaggerfallWorkshop.Utility
         public const uint CityGateOpenModelID = 446;
         public const uint CityGateClosedModelID = 447;
 
+        #region Structures
+
+        struct BuildingPoolItem
+        {
+            public DFLocation.BuildingData buildingData;
+            public bool used;
+        }
+
+        #endregion
+
         #region Layout Methods
 
         /// <summary>
@@ -415,7 +425,7 @@ namespace DaggerfallWorkshop.Utility
         /// Gets BuildingSummary array generated from DFBlock data.
         /// </summary>
         /// <param name="blockData"></param>
-        /// <returns></returns>
+        /// <returns>BuildingSummary.</returns>
         public static BuildingSummary[] GetBuildingData(DFBlock blockData)
         {
             // Store building information
@@ -442,6 +452,133 @@ namespace DaggerfallWorkshop.Utility
             }
 
             return buildings;
+        }
+
+        /// <summary>
+        /// Gets all RMB blocks from a location populated with building data from MAPS.BSA.
+        /// This method is using "best effort" process at this point in time.
+        /// However, it does yield very accurate results most of the time.
+        /// Please use exception handling when calling this method for now.
+        /// It will be progressed over time.
+        /// </summary>
+        /// <param name="location">Location to use.</param>
+        /// <param name="blocksOut">Array of blocks populated with data from MAPS.BSA.</param>
+        public static void GetLocationBuildingData(DFLocation location, out DFBlock[] blocksOut)
+        {
+            List<BuildingPoolItem> namedBuildingPool = new List<BuildingPoolItem>();
+            List<DFBlock> blocks = new List<DFBlock>();
+
+            // Get content reader
+            ContentReader contentReader = DaggerfallUnity.Instance.ContentReader;
+            if (contentReader == null)
+                throw new Exception("GetCompleteBuildingData() could not find ContentReader.");
+
+            // Store named buildings in pool for distribution
+            for (int i = 0; i < location.Exterior.BuildingCount; i++)
+            {
+                DFLocation.BuildingData building = location.Exterior.Buildings[i];
+                if (IsNamedBuildng(building.BuildingType))
+                {
+                    BuildingPoolItem bpi = new BuildingPoolItem();
+                    bpi.buildingData = building;
+                    bpi.used = false;
+                    namedBuildingPool.Add(bpi);
+                }
+            }
+
+            // Get building summary of all blocks in this location
+            int width = location.Exterior.ExteriorData.Width;
+            int height = location.Exterior.ExteriorData.Height;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    // Get block name
+                    string blockName = contentReader.BlockFileReader.CheckName(contentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
+
+                    // Get block data
+                    DFBlock block;
+                    if (!contentReader.GetBlock(blockName, out block))
+                        throw new Exception("GetCompleteBuildingData() could not read block " + blockName);
+
+                    // Assign building data for this block
+                    for (int i = 0; i < block.RmbBlock.SubRecords.Length; i++)
+                    {
+                        DFLocation.BuildingData building = block.RmbBlock.FldHeader.BuildingDataList[i];
+                        if (IsNamedBuildng(building.BuildingType))
+                        {
+                            // Try to find next building
+                            BuildingPoolItem item;
+                            if (!GetNextBuildingFromPool(namedBuildingPool, building.BuildingType, out item))
+                                throw new Exception(string.Format("End of city building list reached without finding building type {0}", building.BuildingType));
+
+                            // Copy city building data to block level
+                            building.NameSeed = item.buildingData.NameSeed;
+                            building.FactionId = item.buildingData.FactionId;
+                            building.LocationId = item.buildingData.LocationId;
+                            building.Quality = item.buildingData.Quality;
+                            building.Sector = item.buildingData.Sector;
+                            block.RmbBlock.FldHeader.BuildingDataList[i] = building;
+                        }
+                    }
+
+                    // Save block data
+                    blocks.Add(block);
+                }
+            }
+
+            // Send blocks array back to caller
+            blocksOut = blocks.ToArray();
+        }
+
+        /// <summary>
+        /// Draws and consume building from pool.
+        /// Checking if buildings are ordered by special type.
+        /// </summary>
+        static bool GetNextBuildingFromPool(List<BuildingPoolItem> namedBuildingPool, DFLocation.BuildingTypes buildingType, out BuildingPoolItem itemOut)
+        {
+            itemOut = new BuildingPoolItem();
+            for (int i = 0; i < namedBuildingPool.Count; i++)
+            {
+                if (!namedBuildingPool[i].used && namedBuildingPool[i].buildingData.BuildingType == buildingType)
+                {
+                    BuildingPoolItem item = namedBuildingPool[i];
+                    item.used = true;
+                    namedBuildingPool[i] = item;
+                    itemOut = item;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if building type is a special named building.
+        /// </summary>
+        public static bool IsNamedBuildng(DFLocation.BuildingTypes buildingType)
+        {
+            switch (buildingType)
+            {
+                case DFLocation.BuildingTypes.Alchemist:
+                case DFLocation.BuildingTypes.Armorer:
+                case DFLocation.BuildingTypes.Bank:
+                case DFLocation.BuildingTypes.Bookseller:
+                case DFLocation.BuildingTypes.ClothingStore:
+                case DFLocation.BuildingTypes.FurnitureStore:
+                case DFLocation.BuildingTypes.GemStore:
+                case DFLocation.BuildingTypes.GeneralStore:
+                case DFLocation.BuildingTypes.Library:
+                case DFLocation.BuildingTypes.GuildHall:
+                case DFLocation.BuildingTypes.PawnShop:
+                case DFLocation.BuildingTypes.WeaponSmith:
+                case DFLocation.BuildingTypes.Temple:
+                case DFLocation.BuildingTypes.Tavern:
+                case DFLocation.BuildingTypes.Palace:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         #endregion
