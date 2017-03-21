@@ -477,7 +477,7 @@ namespace DaggerfallWorkshop.Utility
             for (int i = 0; i < location.Exterior.BuildingCount; i++)
             {
                 DFLocation.BuildingData building = location.Exterior.Buildings[i];
-                if (IsNamedBuildng(building.BuildingType))
+                if (IsNamedBuilding(building.BuildingType))
                 {
                     BuildingPoolItem bpi = new BuildingPoolItem();
                     bpi.buildingData = building;
@@ -505,7 +505,7 @@ namespace DaggerfallWorkshop.Utility
                     for (int i = 0; i < block.RmbBlock.SubRecords.Length; i++)
                     {
                         DFLocation.BuildingData building = block.RmbBlock.FldHeader.BuildingDataList[i];
-                        if (IsNamedBuildng(building.BuildingType))
+                        if (IsNamedBuilding(building.BuildingType))
                         {
                             // Try to find next building
                             BuildingPoolItem item;
@@ -556,7 +556,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Checks if building type is a special named building.
         /// </summary>
-        public static bool IsNamedBuildng(DFLocation.BuildingTypes buildingType)
+        public static bool IsNamedBuilding(DFLocation.BuildingTypes buildingType)
         {
             switch (buildingType)
             {
