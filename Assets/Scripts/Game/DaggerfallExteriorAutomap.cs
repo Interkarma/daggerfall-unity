@@ -85,11 +85,13 @@ namespace DaggerfallWorkshop.Game
 
         private struct BuildingNamePlate
         {
-            public int posX;
-            public int posY;
+            public float posX;
+            public float posY;
             public string name;
             public TextLabel textLabel;
             public GameObject gameObject;
+            public Vector2 anchorPoint;
+            public float scale;
         }
 
         List<BuildingNamePlate> buildingNamePlates = null;
@@ -300,7 +302,12 @@ namespace DaggerfallWorkshop.Game
         {
             foreach (var buildingNamePlate in buildingNamePlates)
             {
-                buildingNamePlate.gameObject.transform.Rotate(new Vector3(0.0f, angle, 0.0f));
+                // Rotate(new Vector3(0.0f, angle, 0.0f));
+                //newBuildingNamePlate.gameObject.transform.position widthNamePlate * scaleNamePlate * 0.5f
+                Vector3 rotationPoint = Vector3.zero;
+                rotationPoint.x = buildingNamePlate.anchorPoint.x; // +(widthNamePlate * scaleNamePlate * 0.5f);
+                rotationPoint.z = buildingNamePlate.anchorPoint.y;
+                buildingNamePlate.gameObject.transform.RotateAround(rotationPoint, Vector3.up, angle);  
             }
         }
 
@@ -464,6 +471,28 @@ namespace DaggerfallWorkshop.Game
             return m;
         }
 
+        private Mesh CreateLeftAlignedMesh(float width, float height)
+        {
+            Mesh m = new Mesh();
+            m.name = "ScriptedMesh";
+            m.vertices = new Vector3[] {
+                new Vector3(0.0f, 0.01f, height/2.0f),
+                new Vector3(width, 0.01f, height/2.0f),
+                new Vector3(width, 0.01f, -height/2.0f),
+                new Vector3(0.0f, 0.01f, -height/2.0f)
+            };
+            m.uv = new Vector2[] {
+                new Vector2 (0, 1),
+                new Vector2 (1, 1),                
+                new Vector2(1, 0),
+                new Vector2 (0, 0)
+            };
+            m.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
+            m.RecalculateNormals();
+
+            return m;
+        }
+
         /// <summary>
         /// creates the quad that is used for exterior automap drawing
         /// </summary>        
@@ -604,7 +633,7 @@ namespace DaggerfallWorkshop.Game
                         }
 
                         if (newBuildingNamePlate.name != "")
-                        {
+                        {                            
                             newBuildingNamePlate.posX = xPosBuilding;
                             newBuildingNamePlate.posY = yPosBuilding;
                             newBuildingNamePlate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNamePlate.name);
@@ -613,9 +642,9 @@ namespace DaggerfallWorkshop.Game
                             MeshFilter meshFilter = (MeshFilter)newBuildingNamePlate.gameObject.AddComponent(typeof(MeshFilter));
                             int widthNamePlate = newBuildingNamePlate.textLabel.Texture.width;
                             int heightNamePlate = newBuildingNamePlate.textLabel.Texture.height;
-                            meshFilter.mesh = CreateMesh(widthNamePlate, heightNamePlate); // create quad with normal facing into positive y-direction
+                            meshFilter.mesh = CreateLeftAlignedMesh(widthNamePlate, heightNamePlate); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
                             MeshRenderer renderer = newBuildingNamePlate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-
+                            
                             renderer.material.shader = Shader.Find("Unlit/Transparent");
                             renderer.material.mainTexture = newBuildingNamePlate.textLabel.Texture;
                             renderer.enabled = true;
@@ -625,8 +654,10 @@ namespace DaggerfallWorkshop.Game
 
                             float posX = newBuildingNamePlate.posX - locationWidth * blockSizeWidth * 0.5f;
                             float posY = newBuildingNamePlate.posY - locationHeight * blockSizeHeight * 0.5f;
+                            newBuildingNamePlate.anchorPoint = new Vector2(posX, posY);
+                            newBuildingNamePlate.scale = 0.5f;
                             newBuildingNamePlate.gameObject.transform.position = new Vector3(posX, 4.0f, posY);
-                            newBuildingNamePlate.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                            newBuildingNamePlate.gameObject.transform.localScale = new Vector3(newBuildingNamePlate.scale, newBuildingNamePlate.scale, newBuildingNamePlate.scale);
                             buildingNamePlates.Add(newBuildingNamePlate);
                         }
                     }
