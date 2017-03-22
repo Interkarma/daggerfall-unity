@@ -93,6 +93,12 @@ namespace DaggerfallWorkshop.Game
             public Vector2 anchorPoint;
             public float scale;
             public Vector2 offsetPlate;
+            public float width;
+            public float height;
+            public Vector2 upperLeftCorner;
+            public Vector2 upperRightCorner;
+            public Vector2 lowerLeftCorner;
+            public Vector2 lowerRightCorner;
         }
 
         List<BuildingNamePlate> buildingNamePlates = null;
@@ -302,8 +308,9 @@ namespace DaggerfallWorkshop.Game
         public void rotateBuildingNamePlates(float angle)
         {
             undoNameplateOffsets();
-            foreach (var buildingNamePlate in buildingNamePlates)
+            for (int i = 0; i < buildingNamePlates.Count; i++)
             {
+                BuildingNamePlate buildingNamePlate = buildingNamePlates[i];
                 // 
                 //newBuildingNamePlate.gameObject.transform.position widthNamePlate * scaleNamePlate * 0.5f
                 //Vector3 rotationPoint = Vector3.zero;
@@ -311,6 +318,23 @@ namespace DaggerfallWorkshop.Game
                 //rotationPoint.z = buildingNamePlate.anchorPoint.y;
                 //buildingNamePlate.gameObject.transform.RotateAround(rotationPoint, Vector3.up, angle);  
                 buildingNamePlate.gameObject.transform.Rotate(new Vector3(0.0f, angle, 0.0f));
+
+                /*
+                buildingNamePlate.upperLeftCorner = Quaternion.Euler(0, 0, angle) * buildingNamePlate.upperLeftCorner;
+                buildingNamePlate.upperRightCorner = Quaternion.Euler(0, 0, angle) * buildingNamePlate.upperRightCorner;
+                buildingNamePlate.lowerLeftCorner = Quaternion.Euler(0, 0, angle) * buildingNamePlate.lowerLeftCorner;
+                buildingNamePlate.lowerRightCorner = Quaternion.Euler(0, 0, angle) * buildingNamePlate.lowerRightCorner;
+                */
+                
+                buildingNamePlate.upperLeftCorner = Quaternion.AngleAxis(angle, Vector3.forward) * buildingNamePlate.upperLeftCorner;
+                buildingNamePlate.upperRightCorner = Quaternion.AngleAxis(angle, Vector3.forward) * buildingNamePlate.upperRightCorner;
+                buildingNamePlate.lowerLeftCorner = Quaternion.AngleAxis(angle, Vector3.forward) * buildingNamePlate.lowerLeftCorner;
+                buildingNamePlate.lowerRightCorner = Quaternion.AngleAxis(angle, Vector3.forward) * buildingNamePlate.lowerRightCorner;
+
+                buildingNamePlates[i] = buildingNamePlate;
+                //Vector3 start = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.upperLeftCorner.x, 0.01f, buildingNamePlate.upperLeftCorner.y);
+                //Vector3 end = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.lowerRightCorner.x, 0.01f, buildingNamePlate.lowerRightCorner.y);
+                //Debug.DrawLine(start, end);
             }
             computeNameplateOffsets();
             applyNameplateOffsets();
@@ -645,9 +669,9 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNamePlate.textLabel.TextColor = Color.yellow;
                             newBuildingNamePlate.gameObject = new GameObject(String.Format("building name plate for [{0}]", newBuildingNamePlate.name));
                             MeshFilter meshFilter = (MeshFilter)newBuildingNamePlate.gameObject.AddComponent(typeof(MeshFilter));
-                            int widthNamePlate = newBuildingNamePlate.textLabel.Texture.width;
-                            int heightNamePlate = newBuildingNamePlate.textLabel.Texture.height;
-                            meshFilter.mesh = CreateLeftAlignedMesh(widthNamePlate, heightNamePlate); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
+                            newBuildingNamePlate.width = newBuildingNamePlate.textLabel.Texture.width;
+                            newBuildingNamePlate.height = newBuildingNamePlate.textLabel.Texture.height;
+                            meshFilter.mesh = CreateLeftAlignedMesh(newBuildingNamePlate.width, newBuildingNamePlate.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
                             MeshRenderer renderer = newBuildingNamePlate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
 
                             renderer.material.shader = Shader.Find("Unlit/Transparent");
@@ -664,6 +688,12 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNamePlate.gameObject.transform.position = new Vector3(posX, 4.0f, posY);
                             newBuildingNamePlate.gameObject.transform.localScale = new Vector3(newBuildingNamePlate.scale, newBuildingNamePlate.scale, newBuildingNamePlate.scale);
                             newBuildingNamePlate.offsetPlate = Vector2.zero;
+                            newBuildingNamePlate.upperLeftCorner = new Vector2(0.0f, -newBuildingNamePlate.height * 0.5f);
+                            newBuildingNamePlate.upperRightCorner = new Vector2(newBuildingNamePlate.width, -newBuildingNamePlate.height * 0.5f);
+                            newBuildingNamePlate.lowerLeftCorner = new Vector2(0.0f, +newBuildingNamePlate.height * 0.5f);
+                            newBuildingNamePlate.lowerRightCorner = new Vector2(newBuildingNamePlate.width, +newBuildingNamePlate.height * 0.5f);
+
+
 
                             buildingNamePlates.Add(newBuildingNamePlate);                            
                         }
@@ -707,10 +737,19 @@ namespace DaggerfallWorkshop.Game
                     if (first.name == second.name) // skip self reference (should never happen since j was initialized in loop head with i + 1)
                         continue;
 
-                    MeshRenderer renderer1 = first.gameObject.GetComponent<MeshRenderer>();
-                    MeshRenderer renderer2 = second.gameObject.GetComponent<MeshRenderer>();
-                    Bounds bounds1 = renderer1.bounds;
-                    Bounds bounds2 = renderer2.bounds;
+                    //MeshRenderer renderer1 = first.gameObject.GetComponent<MeshRenderer>();
+                    //MeshRenderer renderer2 = second.gameObject.GetComponent<MeshRenderer>();
+                    //Bounds bounds1 = renderer1.bounds;
+                    //Bounds bounds2 = renderer2.bounds;
+
+                    Vector3 center = new Vector3(first.gameObject.transform.position.x + first.width * 0.5f, 0.0f, first.anchorPoint.y);
+                    Vector3 size = new Vector3(first.width, 0.0f, first.height);
+                    Bounds bounds1 = new Bounds(center, size);
+
+                    center = new Vector3(second.anchorPoint.x + second.width * 0.5f, 0.0f, second.anchorPoint.y);
+                    size = new Vector3(second.width, 0.0f, second.height);
+                    Bounds bounds2 = new Bounds(center, size);
+
                     //float ySize = (bounds1.size.z * first.scale + bounds2.size.z * second.scale) * 0.5f;
                     float ySize = (bounds1.size.z + bounds2.size.z) * 0.5f;
                     if (bounds1.Intersects(bounds2))
@@ -720,11 +759,22 @@ namespace DaggerfallWorkshop.Game
                         {
                             if (second.offsetPlate.y == 0.0f)
                             {
+                                TextLabel newTextLabel;
                                 if (yDiff <= 0)
+                                {
                                     second.offsetPlate = new Vector2(0.0f, ySize + yDiff);
+                                    newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("v {0}", second.name));
+                                }
                                 else
+                                {
                                     second.offsetPlate = new Vector2(0.0f, -ySize + yDiff);
-                                buildingNamePlates[j] = second;
+                                    newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("^ {0}", second.name));
+                                }
+                                
+                                second.textLabel = newTextLabel;
+                                MeshRenderer renderer = second.gameObject.GetComponent<MeshRenderer>();
+                                renderer.material.mainTexture = newTextLabel.Texture;
+                                buildingNamePlates[j] = second;                                
                             }
                         }
                     }
@@ -742,9 +792,18 @@ namespace DaggerfallWorkshop.Game
 
         private void undoNameplateOffsets()
         {
-            foreach (var buildingNamePlate in buildingNamePlates)
+            for (int i=0; i < buildingNamePlates.Count; i++)
             {
+                BuildingNamePlate buildingNamePlate = buildingNamePlates[i];
                 buildingNamePlate.gameObject.transform.Translate(-buildingNamePlate.offsetPlate.x, 0.0f, -buildingNamePlate.offsetPlate.y);
+                buildingNamePlate.offsetPlate = Vector2.zero;
+
+                TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, buildingNamePlate.name);
+                buildingNamePlate.textLabel = newTextLabel;
+                MeshRenderer renderer = buildingNamePlate.gameObject.GetComponent<MeshRenderer>();
+                renderer.material.mainTexture = newTextLabel.Texture;
+
+                buildingNamePlates[i] = buildingNamePlate;
             }
         }
 
