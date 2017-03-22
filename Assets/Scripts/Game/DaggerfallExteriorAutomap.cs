@@ -92,6 +92,7 @@ namespace DaggerfallWorkshop.Game
             public GameObject gameObject;
             public Vector2 anchorPoint;
             public float scale;
+            public Vector2 offsetPlate;
         }
 
         List<BuildingNamePlate> buildingNamePlates = null;
@@ -300,15 +301,19 @@ namespace DaggerfallWorkshop.Game
 
         public void rotateBuildingNamePlates(float angle)
         {
+            undoNameplateOffsets();
             foreach (var buildingNamePlate in buildingNamePlates)
             {
-                // Rotate(new Vector3(0.0f, angle, 0.0f));
+                // 
                 //newBuildingNamePlate.gameObject.transform.position widthNamePlate * scaleNamePlate * 0.5f
-                Vector3 rotationPoint = Vector3.zero;
-                rotationPoint.x = buildingNamePlate.anchorPoint.x; // +(widthNamePlate * scaleNamePlate * 0.5f);
-                rotationPoint.z = buildingNamePlate.anchorPoint.y;
-                buildingNamePlate.gameObject.transform.RotateAround(rotationPoint, Vector3.up, angle);  
+                //Vector3 rotationPoint = Vector3.zero;
+                //rotationPoint.x = buildingNamePlate.anchorPoint.x; // +(widthNamePlate * scaleNamePlate * 0.5f);
+                //rotationPoint.z = buildingNamePlate.anchorPoint.y;
+                //buildingNamePlate.gameObject.transform.RotateAround(rotationPoint, Vector3.up, angle);  
+                buildingNamePlate.gameObject.transform.Rotate(new Vector3(0.0f, angle, 0.0f));
             }
+            computeNameplateOffsets();
+            applyNameplateOffsets();
         }
 
         public void resetRotationBuildingNamePlates()
@@ -644,7 +649,7 @@ namespace DaggerfallWorkshop.Game
                             int heightNamePlate = newBuildingNamePlate.textLabel.Texture.height;
                             meshFilter.mesh = CreateLeftAlignedMesh(widthNamePlate, heightNamePlate); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
                             MeshRenderer renderer = newBuildingNamePlate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-                            
+
                             renderer.material.shader = Shader.Find("Unlit/Transparent");
                             renderer.material.mainTexture = newBuildingNamePlate.textLabel.Texture;
                             renderer.enabled = true;
@@ -658,11 +663,15 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNamePlate.scale = 0.5f;
                             newBuildingNamePlate.gameObject.transform.position = new Vector3(posX, 4.0f, posY);
                             newBuildingNamePlate.gameObject.transform.localScale = new Vector3(newBuildingNamePlate.scale, newBuildingNamePlate.scale, newBuildingNamePlate.scale);
-                            buildingNamePlates.Add(newBuildingNamePlate);
+                            newBuildingNamePlate.offsetPlate = Vector2.zero;
+
+                            buildingNamePlates.Add(newBuildingNamePlate);                            
                         }
                     }
                 }
-            }            
+            }
+            computeNameplateOffsets();
+            applyNameplateOffsets();
         }
 
         private void deleteBuildingNamePlates()
@@ -684,6 +693,58 @@ namespace DaggerfallWorkshop.Game
             {
                 UnityEngine.Object.Destroy(gameObjectBuildingNamePlates);
                 gameObjectBuildingNamePlates = null;
+            }
+        }
+
+        private void computeNameplateOffsets()
+        {
+            for (int i = 0; i < buildingNamePlates.Count; i++ )
+            {
+                BuildingNamePlate first = buildingNamePlates[i];
+                for (int j = i + 1; j < buildingNamePlates.Count; j++ )
+                {
+                    BuildingNamePlate second = buildingNamePlates[j];
+                    if (first.name == second.name) // skip self reference (should never happen since j was initialized in loop head with i + 1)
+                        continue;
+
+                    MeshRenderer renderer1 = first.gameObject.GetComponent<MeshRenderer>();
+                    MeshRenderer renderer2 = second.gameObject.GetComponent<MeshRenderer>();
+                    Bounds bounds1 = renderer1.bounds;
+                    Bounds bounds2 = renderer2.bounds;
+                    //float ySize = (bounds1.size.z * first.scale + bounds2.size.z * second.scale) * 0.5f;
+                    float ySize = (bounds1.size.z + bounds2.size.z) * 0.5f;
+                    if (bounds1.Intersects(bounds2))
+                    {
+                        float yDiff = bounds1.center.z - bounds2.center.z;
+                        if (Math.Abs(yDiff) < ySize)
+                        {
+                            if (second.offsetPlate.y == 0.0f)
+                            {
+                                if (yDiff <= 0)
+                                    second.offsetPlate = new Vector2(0.0f, ySize + yDiff);
+                                else
+                                    second.offsetPlate = new Vector2(0.0f, -ySize + yDiff);
+                                buildingNamePlates[j] = second;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void applyNameplateOffsets()
+        {
+            foreach (var buildingNamePlate in buildingNamePlates)
+            {
+                buildingNamePlate.gameObject.transform.Translate(buildingNamePlate.offsetPlate.x, 0.0f, buildingNamePlate.offsetPlate.y);
+            }
+        }
+
+        private void undoNameplateOffsets()
+        {
+            foreach (var buildingNamePlate in buildingNamePlates)
+            {
+                buildingNamePlate.gameObject.transform.Translate(-buildingNamePlate.offsetPlate.x, 0.0f, -buildingNamePlate.offsetPlate.y);
             }
         }
 
