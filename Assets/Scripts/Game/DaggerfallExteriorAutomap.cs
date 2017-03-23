@@ -726,6 +726,43 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        private bool checkIntersectionOfLineSegments(Vector2 startLine1, Vector2 endLine1, Vector2 startLine2, Vector2 endLine2)
+        {
+            float m = (endLine1.y - startLine1.y) / (endLine1.x - startLine1.x);
+            float b = endLine1.y - m * endLine1.x;
+            Vector3 line1 = new Vector3(m, 0, b);
+            m = (endLine2.y - startLine2.y) / (endLine2.x - startLine2.x);
+            b = endLine2.y - m * endLine2.x;
+            Vector3 line2 = new Vector3(m, 0, b);
+            Vector3 intersectionPointHomogenous = Vector3.Cross(line1, line2); // intersection in homogenous coordinates
+            if (intersectionPointHomogenous.z != 0.0f) // only proceed if lines are not parallel (its intersection point is not a point at infinity)
+            {
+                Vector2 intersectionPoint = new Vector2(intersectionPointHomogenous.x / intersectionPointHomogenous.z, intersectionPointHomogenous.y / intersectionPointHomogenous.z);
+                float sx = 0;
+                float sy = 0;
+                if (endLine1.x - startLine1.x != 0)
+                    sx = (intersectionPoint.x - startLine1.x) / (endLine1.x - startLine1.x);
+                if (endLine1.y - startLine1.y != 0)
+                    sy = (intersectionPoint.y - startLine1.y) / (endLine1.y - startLine1.y);
+                float s = Math.Max(sx, sy);
+                if ((s < 0.0f) || (s > 1.0f))
+                    return false; // not on first line segment
+
+                sx = 0;
+                sy = 0;
+                if (endLine2.x - startLine2.x != 0)
+                    sx = (intersectionPoint.x - startLine2.x) / (endLine2.x - startLine2.x);
+                if (endLine2.y - startLine2.y != 0)
+                    sy = (intersectionPoint.y - startLine2.y) / (endLine2.y - startLine2.y);
+                s = Math.Max(sx, sy);
+                if ((s < 0.0f) || (s > 1.0f))
+                    return false; // not on second line segment
+
+                return true; // intersection is on both line segments
+            }
+            return false;
+        }
+
         private void computeNameplateOffsets()
         {
             for (int i = 0; i < buildingNamePlates.Count; i++ )
@@ -737,11 +774,15 @@ namespace DaggerfallWorkshop.Game
                     if (first.name == second.name) // skip self reference (should never happen since j was initialized in loop head with i + 1)
                         continue;
 
+                    bool check = true;
+                    check = check & checkIntersectionOfLineSegments(first.upperLeftCorner, first.lowerLeftCorner, second.upperLeftCorner, second.upperRightCorner);
+
                     //MeshRenderer renderer1 = first.gameObject.GetComponent<MeshRenderer>();
                     //MeshRenderer renderer2 = second.gameObject.GetComponent<MeshRenderer>();
                     //Bounds bounds1 = renderer1.bounds;
                     //Bounds bounds2 = renderer2.bounds;
 
+                    /*
                     Vector3 center = new Vector3(first.gameObject.transform.position.x + first.width * 0.5f, 0.0f, first.anchorPoint.y);
                     Vector3 size = new Vector3(first.width, 0.0f, first.height);
                     Bounds bounds1 = new Bounds(center, size);
@@ -778,6 +819,7 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
                     }
+                    */
                 }
             }
         }
