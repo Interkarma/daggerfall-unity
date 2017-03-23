@@ -26,6 +26,8 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using Wenzil.Console;
 
+//#define DEBUG_NAMEPLATES
+
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
@@ -95,12 +97,18 @@ namespace DaggerfallWorkshop.Game
             public Vector2 anchorPoint;
             public float scale;
             public Vector2 offsetPlate;
+            public GameObject anchorLine;
             public float width;
             public float height;
+            public float angle;
             public Vector2 upperLeftCorner;
             public Vector2 upperRightCorner;
             public Vector2 lowerLeftCorner;
             public Vector2 lowerRightCorner;
+            #if DEBUG_NAMEPLATES
+            public GameObject debugLine1;
+            public GameObject debugLine2;
+            #endif
         }
 
         List<BuildingNamePlate> buildingNamePlates = null;
@@ -147,9 +155,9 @@ namespace DaggerfallWorkshop.Game
 
         Texture2D exteriorLayoutTexture = null;
 
-        #endregion
+#endregion
 
-        #region Properties
+#region Properties
 
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to get automap layer
@@ -196,9 +204,9 @@ namespace DaggerfallWorkshop.Game
             set { resetAutomapSettingsFromExternalScript = value; }
         }
 
-        #endregion
+#endregion
 
-        #region Public Methods
+#region Public Methods
 
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to signal this script to update when automap window was pushed - TODO: check if this can done with an event (if events work with gui windows)
@@ -307,6 +315,22 @@ namespace DaggerfallWorkshop.Game
             return (pos);
         }
 
+        private GameObject DrawLine(Vector3 start, Vector3 end, Color color, float startWidth = 0.3f, float endWidth = 0.3f)
+        {
+            GameObject line = new GameObject();
+            line.layer = layerAutomap;
+            line.transform.position = start;
+            line.AddComponent<LineRenderer>();
+            LineRenderer lr = line.GetComponent<LineRenderer>();
+            lr.material = new Material(Shader.Find("Unlit/Color"));
+            lr.material.color = color;
+            lr.startWidth = startWidth;
+            lr.endWidth = endWidth;
+            lr.SetPosition(0, start);
+            lr.SetPosition(1, end);
+            return line;
+        }
+
         public void rotateBuildingNamePlates(float angle)
         {
             undoNameplateOffsets();
@@ -332,11 +356,10 @@ namespace DaggerfallWorkshop.Game
                 buildingNamePlate.upperRightCorner = Quaternion.AngleAxis(-angle, Vector3.forward) * buildingNamePlate.upperRightCorner;
                 buildingNamePlate.lowerLeftCorner = Quaternion.AngleAxis(-angle, Vector3.forward) * buildingNamePlate.lowerLeftCorner;
                 buildingNamePlate.lowerRightCorner = Quaternion.AngleAxis(-angle, Vector3.forward) * buildingNamePlate.lowerRightCorner;
-                
+
+                buildingNamePlate.angle += angle; 
+
                 buildingNamePlates[i] = buildingNamePlate;
-                Vector3 start = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.upperLeftCorner.x, 0.01f, buildingNamePlate.upperLeftCorner.y);
-                Vector3 end = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.lowerRightCorner.x, 0.01f, buildingNamePlate.lowerRightCorner.y);
-                Debug.DrawLine(start, end, Color.red);
             }
             computeNameplateOffsets();
             applyNameplateOffsets();
@@ -358,9 +381,9 @@ namespace DaggerfallWorkshop.Game
             Update();
         }
 
-        #endregion
+#endregion
 
-        #region Unity
+#region Unity
 
         void Awake()
         {
@@ -442,9 +465,9 @@ namespace DaggerfallWorkshop.Game
             //}
         }
 
-        #endregion
+#endregion
 
-        #region Private Methods
+#region Private Methods
 
         /// <summary>
         /// sets layer of a GameObject and all of its childs recursively
@@ -692,10 +715,18 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNamePlate.gameObject.transform.position = new Vector3(posX, 4.0f, posY);
                             newBuildingNamePlate.gameObject.transform.localScale = new Vector3(newBuildingNamePlate.scale, newBuildingNamePlate.scale, newBuildingNamePlate.scale);
                             newBuildingNamePlate.offsetPlate = Vector2.zero;
-                            newBuildingNamePlate.upperLeftCorner = new Vector2(0.0f, -newBuildingNamePlate.height * 0.5f);
-                            newBuildingNamePlate.upperRightCorner = new Vector2(newBuildingNamePlate.width, -newBuildingNamePlate.height * 0.5f);
-                            newBuildingNamePlate.lowerLeftCorner = new Vector2(0.0f, +newBuildingNamePlate.height * 0.5f);
-                            newBuildingNamePlate.lowerRightCorner = new Vector2(newBuildingNamePlate.width, +newBuildingNamePlate.height * 0.5f);
+                            newBuildingNamePlate.angle = 0.0f;
+                            newBuildingNamePlate.upperLeftCorner = new Vector2(0.0f, +newBuildingNamePlate.height * 0.5f);
+                            newBuildingNamePlate.upperRightCorner = new Vector2(newBuildingNamePlate.width, +newBuildingNamePlate.height * 0.5f);
+                            newBuildingNamePlate.lowerLeftCorner = new Vector2(0.0f, -newBuildingNamePlate.height * 0.5f);
+                            newBuildingNamePlate.lowerRightCorner = new Vector2(newBuildingNamePlate.width, -newBuildingNamePlate.height * 0.5f);
+
+                            newBuildingNamePlate.anchorLine = null;
+                            
+                            #if DEBUG_NAMEPLATES
+                            newBuildingNamePlate.debugLine1 = null;
+                            newBuildingNamePlate.debugLine2 = null;
+                            #endif
 
                             buildingNamePlates.Add(newBuildingNamePlate);                            
                         }
@@ -727,7 +758,7 @@ namespace DaggerfallWorkshop.Game
                 gameObjectBuildingNamePlates = null;
             }
         }
-
+        /*
         private bool checkIntersectionOfLineSegments(Vector2 startLine1, Vector2 endLine1, Vector2 startLine2, Vector2 endLine2, out Vector2? outIntersectionPoint)
         {
             float m = (endLine1.y - startLine1.y) / (endLine1.x - startLine1.x);
@@ -766,6 +797,7 @@ namespace DaggerfallWorkshop.Game
             outIntersectionPoint = null;
             return false;
         }
+        */
 
         private void computeNameplateOffsets()
         {
@@ -775,32 +807,11 @@ namespace DaggerfallWorkshop.Game
                 for (int j = i + 1; j < buildingNamePlates.Count; j++ )
                 {
                     BuildingNamePlate second = buildingNamePlates[j];
-                    //if (first.name == second.name) // skip self reference (should never happen since j was initialized in loop head with i + 1)
-                    //    continue;
-
-                    /*
-                    bool check = true;
-                    Vector2? intersectionPointDummy;
-                    Vector2 posFirst = new Vector2(first.gameObject.transform.position.x, first.gameObject.transform.position.z);
-                    Vector2 posSecond = new Vector2(second.gameObject.transform.position.x, second.gameObject.transform.position.z);
-                    check = check & checkIntersectionOfLineSegments(posFirst + first.upperLeftCorner, posFirst + first.lowerLeftCorner, posSecond + second.upperLeftCorner, posSecond + second.upperRightCorner, out intersectionPointDummy);
-                    check = check & checkIntersectionOfLineSegments(posFirst + first.upperLeftCorner, posFirst + first.lowerLeftCorner, posSecond + second.lowerLeftCorner, posSecond + second.lowerRightCorner, out intersectionPointDummy);
-                    check = check & checkIntersectionOfLineSegments(posFirst + first.upperRightCorner, posFirst + first.lowerRightCorner, posSecond + second.upperLeftCorner, posSecond + second.upperRightCorner, out intersectionPointDummy);
-                    check = check & checkIntersectionOfLineSegments(posFirst + first.upperRightCorner, posFirst + first.lowerRightCorner, posSecond + second.lowerLeftCorner, posSecond + second.lowerRightCorner, out intersectionPointDummy);
-                    check = check & checkIntersectionOfLineSegments(posFirst + first.upperLeftCorner, posFirst + first.upperRightCorner, posSecond + second.upperLeftCorner, posSecond + second.lowerLeftCorner, out intersectionPointDummy);
-                    check = check & checkIntersectionOfLineSegments(posFirst + first.upperLeftCorner, posFirst + first.upperRightCorner, posSecond + second.upperRightCorner, posSecond + second.lowerRightCorner, out intersectionPointDummy);
-                    check = check & checkIntersectionOfLineSegments(posFirst + first.lowerLeftCorner, posFirst + first.lowerRightCorner, posSecond + second.upperLeftCorner, posSecond + second.lowerLeftCorner, out intersectionPointDummy);
-                    check = check & checkIntersectionOfLineSegments(posFirst + first.lowerLeftCorner, posFirst + first.lowerRightCorner, posSecond + second.upperRightCorner, posSecond + second.lowerRightCorner, out intersectionPointDummy);
-
-                    if (!check)
-                        continue;
-                    */
-
 
                     Vector2 vectorBetweenNamePlates = new Vector2(second.gameObject.transform.position.x, second.gameObject.transform.position.z) - new Vector2(first.gameObject.transform.position.x, first.gameObject.transform.position.z);
                     //Vector2 offsetNamePlates = new Vector2(second.gameObject.transform.position.x, second.gameObject.transform.position.z) - new Vector2(first.gameObject.transform.position.x, first.gameObject.transform.position.z);
-                    Vector2 centerNamePlate1 = (first.upperRightCorner + first.lowerLeftCorner) * 0.5f;
-                    Vector2 centerNamePlate2 = vectorBetweenNamePlates + (second.upperRightCorner + second.lowerLeftCorner) * 0.5f;
+                    Vector2 centerNamePlate1 = Vector2.zero; //(first.upperRightCorner + first.lowerLeftCorner) * 0.5f;
+                    Vector2 centerNamePlate2 = vectorBetweenNamePlates; // + (second.upperRightCorner + second.lowerLeftCorner) * 0.5f;
 
                     //Vector2 centerNamePlate1 = new Vector2(first.gameObject.transform.position.x, first.gameObject.transform.position.z) + (first.upperRightCorner + first.lowerLeftCorner) * 0.5f;
                     //Vector2 centerNamePlate2 = new Vector2(second.gameObject.transform.position.x, second.gameObject.transform.position.z) + (second.upperRightCorner + second.lowerLeftCorner) * 0.5f;
@@ -904,10 +915,54 @@ namespace DaggerfallWorkshop.Game
 
         private void applyNameplateOffsets()
         {
-            foreach (var buildingNamePlate in buildingNamePlates)
+            for (int i=0; i < buildingNamePlates.Count; i++)
             {
+                BuildingNamePlate buildingNamePlate = buildingNamePlates[i];
+
+                //buildingNamePlate.offsetPlate = Quaternion.AngleAxis(buildingNamePlate.angle, Vector3.forward) * buildingNamePlate.offsetPlate;
                 //buildingNamePlate.gameObject.transform.localPosition += new Vector3(buildingNamePlate.offsetPlate.x, 0.0f, buildingNamePlate.offsetPlate.y);
                 buildingNamePlate.gameObject.transform.Translate(buildingNamePlate.offsetPlate.x, 0.0f, buildingNamePlate.offsetPlate.y);
+
+                Vector3 posAnchor = buildingNamePlate.gameObject.transform.position;
+                Vector3 posNamePlate = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.offsetPlate.x, 0.0f, buildingNamePlate.offsetPlate.y);
+                if (buildingNamePlate.anchorLine != null)
+                {
+                    buildingNamePlate.anchorLine.SetActive(false); // hide old line gameobject immediately (since destroy seems to be delayed this is necessary)                    
+                    GameObject.Destroy(buildingNamePlate.anchorLine);
+                    buildingNamePlate.anchorLine = null;
+                }
+                buildingNamePlate.anchorLine = DrawLine(posAnchor, posNamePlate, Color.yellow, 0.5f, 0.5f);                
+                buildingNamePlate.anchorLine.hideFlags = HideFlags.HideAndDontSave;                
+
+                buildingNamePlates[i] = buildingNamePlate;
+
+
+#if DEBUG_NAMEPLATES
+                Vector3 start1 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.upperLeftCorner.x, 0.5f, buildingNamePlate.upperLeftCorner.y);
+                Vector3 end1 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.lowerRightCorner.x, 0.5f, buildingNamePlate.lowerRightCorner.y);
+                Vector3 start2 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.lowerLeftCorner.x, 0.5f, buildingNamePlate.lowerLeftCorner.y);
+                Vector3 end2 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.upperRightCorner.x, 0.5f, buildingNamePlate.upperRightCorner.y);
+
+                if (buildingNamePlate.debugLine1 != null)
+                {
+                    buildingNamePlate.debugLine1.SetActive(false); // hide old line gameobject immediately (since destroy seems to be delayed this is necessary)                    
+                    GameObject.Destroy(buildingNamePlate.debugLine1);
+                    buildingNamePlate.debugLine1 = null;
+                }
+                if (buildingNamePlate.debugLine2 != null)
+                {
+                    buildingNamePlate.debugLine2.SetActive(false); // hide old line gameobject immediately (since destroy seems to be delayed this is necessary)                    
+                    GameObject.Destroy(buildingNamePlate.debugLine2);
+                    buildingNamePlate.debugLine2 = null;
+                }
+
+                buildingNamePlate.debugLine1 = DrawLine(start1, end1, Color.blue);
+                buildingNamePlate.debugLine2 = DrawLine(start2, end2, Color.red);
+                buildingNamePlate.debugLine1.hideFlags = HideFlags.HideAndDontSave;
+                buildingNamePlate.debugLine2.hideFlags = HideFlags.HideAndDontSave;
+
+                buildingNamePlates[i] = buildingNamePlate;
+#endif
             }
         }
 
@@ -1337,6 +1392,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        #endregion
+#endregion
     }
 }
