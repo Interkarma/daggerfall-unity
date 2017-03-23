@@ -820,6 +820,7 @@ namespace DaggerfallWorkshop.Game
                     // test if (rotated) nameplates intersect
                     bool intersect = distanceVertical < ySize;
                     float distanceHorizontal = Vector2.Distance(centerNamePlate1, p);
+                    float sign = ((centerNamePlate1 - p).y > 0.0f) ? -1.0f : 1.0f;
                     intersect &= distanceHorizontal < xSize;
 
                     string firstName = "The King's Fairy"; // "The Odd Blades"
@@ -840,6 +841,23 @@ namespace DaggerfallWorkshop.Game
                         //    bool test = false;
                         //}
 
+                        TextLabel newTextLabel;
+                        first.offsetPlate += n * -sign * ((ySize - Math.Abs(distanceVertical)) * 0.5f);
+                        newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} ^", first.name));
+                        first.textLabel = newTextLabel;
+                        MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
+                        renderer.material.mainTexture = newTextLabel.Texture;
+                        buildingNamePlates[i] = first;
+
+
+                        second.offsetPlate += n * sign * ((ySize - Math.Abs(distanceVertical)) * 0.5f);
+                        newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} v", second.name));
+                        second.textLabel = newTextLabel;
+                        renderer = second.gameObject.GetComponent<MeshRenderer>();
+                        renderer.material.mainTexture = newTextLabel.Texture;
+                        buildingNamePlates[j] = second;
+
+                        /*
                         if (second.offsetPlate.y == 0.0f)
                         {
                             TextLabel newTextLabel;
@@ -850,7 +868,7 @@ namespace DaggerfallWorkshop.Game
                             }
                             else
                             {
-                                second.offsetPlate = n * (-ySize + distanceVertical);
+                                second.offsetPlate = n * (ySize - distanceVertical);
                                 newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} ^", second.name));
                             }                                                                                  
 
@@ -878,6 +896,7 @@ namespace DaggerfallWorkshop.Game
                             renderer.material.mainTexture = newTextLabel.Texture;
                             buildingNamePlates[j] = second;
                         }
+                        */
                     }
                 }
             }
