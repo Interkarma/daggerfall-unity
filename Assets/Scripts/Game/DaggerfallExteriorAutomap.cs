@@ -336,12 +336,7 @@ namespace DaggerfallWorkshop.Game
             for (int i = 0; i < buildingNamePlates.Count; i++)
             {
                 BuildingNamePlate buildingNamePlate = buildingNamePlates[i];
-                // 
-                //newBuildingNamePlate.gameObject.transform.position widthNamePlate * scaleNamePlate * 0.5f
-                //Vector3 rotationPoint = Vector3.zero;
-                //rotationPoint.x = buildingNamePlate.anchorPoint.x; // +(widthNamePlate * scaleNamePlate * 0.5f);
-                //rotationPoint.z = buildingNamePlate.anchorPoint.y;
-                //buildingNamePlate.gameObject.transform.RotateAround(rotationPoint, Vector3.up, angle);  
+
                 buildingNamePlate.gameObject.transform.Rotate(new Vector3(0.0f, angle, 0.0f));
 
                 /*
@@ -366,10 +361,13 @@ namespace DaggerfallWorkshop.Game
 
         public void resetRotationBuildingNamePlates()
         {
+            undoNameplateOffsets();
             foreach (var buildingNamePlate in buildingNamePlates)
             {
                 buildingNamePlate.gameObject.transform.rotation = Quaternion.Euler(Vector3.zero);
             }
+            computeNameplateOffsets();
+            applyNameplateOffsets();
         }
 
         /// <summary>
@@ -809,56 +807,67 @@ namespace DaggerfallWorkshop.Game
 
                     Vector2 vectorBetweenNamePlates = new Vector2(second.gameObject.transform.position.x, second.gameObject.transform.position.z) - new Vector2(first.gameObject.transform.position.x, first.gameObject.transform.position.z);
                     //Vector2 offsetNamePlates = new Vector2(second.gameObject.transform.position.x, second.gameObject.transform.position.z) - new Vector2(first.gameObject.transform.position.x, first.gameObject.transform.position.z);
-                    Vector2 centerNamePlate1 = Vector2.zero; //(first.upperRightCorner + first.lowerLeftCorner) * 0.5f;
-                    Vector2 centerNamePlate2 = vectorBetweenNamePlates; // + (second.upperRightCorner + second.lowerLeftCorner) * 0.5f;
+                    Vector2 posNamePlate1 = Vector2.zero; //(first.upperRightCorner + first.lowerLeftCorner) * 0.5f;
+                    Vector2 posNamePlate2 = vectorBetweenNamePlates; // + (second.upperRightCorner + second.lowerLeftCorner) * 0.5f;
 
                     //Vector2 centerNamePlate1 = new Vector2(first.gameObject.transform.position.x, first.gameObject.transform.position.z) + (first.upperRightCorner + first.lowerLeftCorner) * 0.5f;
                     //Vector2 centerNamePlate2 = new Vector2(second.gameObject.transform.position.x, second.gameObject.transform.position.z) + (second.upperRightCorner + second.lowerLeftCorner) * 0.5f;
 
-                    Vector2 b = centerNamePlate1 + (first.upperRightCorner - first.upperLeftCorner);
+                    Vector2 b = posNamePlate1 + (first.upperRightCorner - first.upperLeftCorner);
                     b.Normalize();
-                    Vector2 a = centerNamePlate2 - centerNamePlate1;
+                    Vector2 a = posNamePlate2 - posNamePlate1;
                     float a1 = Vector2.Dot(a, b); // length of projected vector a onto b
-                    Vector2 p = centerNamePlate1 + b * a1;
-                    float distanceVertical = Vector2.Distance(centerNamePlate2, p);
+                    Vector2 p = posNamePlate1 + b * a1;
+                    float distanceVertical = Vector2.Distance(posNamePlate2, p);
 
-                    float xSize = Vector2.Distance(first.upperRightCorner, first.upperLeftCorner) * 0.5f + Vector2.Distance(second.upperRightCorner, second.upperLeftCorner) * 0.5f; //(first.width * first.scale + second.width * second.scale) * 0.5f;
+                    //float xSize = Vector2.Distance(first.upperRightCorner, first.upperLeftCorner) * 0.5f + Vector2.Distance(second.upperRightCorner, second.upperLeftCorner) * 0.5f; //(first.width * first.scale + second.width * second.scale) * 0.5f;
+                    float xSize = Vector2.Distance(first.upperRightCorner, first.upperLeftCorner); // assume that first nameplate is "left" of second (in terms of the rotated coordinate system
+                    // test if second nameplate is "left" and our initial assumption is false
+                    Vector2 pointRightNamePlate1 = (first.upperRightCorner + first.lowerRightCorner) * 0.5f;
+                    Vector2 u = pointRightNamePlate1 /* - Vector2.zero */; // direction vector of line
+                    float s = (p.x - 0.0f) / u.x;
+                    if (s < 0)
+                    {
+                        xSize = Vector2.Distance(second.upperRightCorner, second.upperLeftCorner);
+                    }
+
                     float ySize = Vector2.Distance(first.lowerLeftCorner, first.upperLeftCorner) * 0.5f + Vector2.Distance(second.lowerLeftCorner, second.upperLeftCorner) * 0.5f; //(first.height * first.scale + second.height * second.scale) * 0.5f;
 
                     // test if (rotated) nameplates intersect
                     bool intersect = distanceVertical < ySize;
-                    float distanceHorizontal = Vector2.Distance(centerNamePlate1, p);
-                    float sign = ((centerNamePlate1 - p).y > 0.0f) ? -1.0f : 1.0f;
+                    float distanceHorizontal = Vector2.Distance(posNamePlate1, p);
+                    //float sign = ((posNamePlate1 - p).y > 0.0f) ? -1.0f : 1.0f;
                     intersect &= distanceHorizontal < xSize;
 
-                    string firstName = "The Odd Blades"; // "The King's Fairy"; // "The Odd Blades"
-                    string secondName = "The Lucky Wolf"; // "The White Muskrat"; // "The Lucky Wolf"
+                    if (!intersect)
+                        continue;
+
+                    string firstName = "The Odd Bijoutry"; // "The Red Porcupine"; // "The King's Fairy"; // "The Odd Blades"
+                    string secondName = "The Emperor's Jewelers"; // "Daggerfall's Best Tailoring"; // "The White Muskrat"; // "The Lucky Wolf"
                     if (((first.name == firstName) && (second.name == secondName)) || ((first.name == secondName) && (second.name == firstName)))
                     {
                         bool test = false;
                     }
 
-                    if (!intersect)
-                        continue;
+
                     
                     if (Math.Abs(distanceVertical) < ySize)
                     {
-                        Vector2 halfPoint = (centerNamePlate2 + p) * 0.5f; // point lying halfway between centerNamePlate2 and p
+                        Vector2 halfPoint = (posNamePlate2 + p) * 0.5f; // point lying halfway between centerNamePlate2 and p
                         Vector2 vectorDirFirstNamePlate = (p - halfPoint).normalized;
-                        Vector2 vectorDirSecondNamePlate = (centerNamePlate2 - halfPoint).normalized;
-                        //Vector2 vectorBiasFirstNamePlate = new Vector2(0.0f, ySize * 0.5f); // default bias is up half the size of the plate (in case distance is
-                        if ((vectorDirFirstNamePlate.y == 0.0f) && (vectorDirFirstNamePlate.x == 0.0f))
+                        Vector2 vectorDirSecondNamePlate = (posNamePlate2 - halfPoint).normalized;                        
+                        if (vectorDirFirstNamePlate == Vector2.zero)
                         {
                             vectorDirFirstNamePlate = Vector2.up;                            
                         }
-                        if ((vectorDirSecondNamePlate.y == 0.0f) && (vectorDirSecondNamePlate.x == 0.0f))
+                        if (vectorDirSecondNamePlate == Vector2.zero)
                         {
                             vectorDirSecondNamePlate = Vector2.down;
                         }
                         Vector2 vectorBiasFirstNamePlate = vectorDirFirstNamePlate * (ySize - Math.Abs(distanceVertical)) * 0.5f;                        
                         Vector2 vectorBiasSecondNamePlate = vectorDirSecondNamePlate * (ySize - Math.Abs(distanceVertical)) * 0.5f;
 
-                        if ( (first.offsetPlate.y == 0.0f) && (second.offsetPlate.y == 0.0f) )
+                        if ( (first.offsetPlate == Vector2.zero) && (second.offsetPlate == Vector2.zero) )
                         {
                             TextLabel newTextLabel;
                             first.offsetPlate += vectorBiasFirstNamePlate;
@@ -875,94 +884,26 @@ namespace DaggerfallWorkshop.Game
                             renderer.material.mainTexture = newTextLabel.Texture;
                             buildingNamePlates[j] = second;
                         }
-                        else if ( (first.offsetPlate.y != 0.0f) && (second.offsetPlate.y == 0.0f) )
+                        else if ((first.offsetPlate != Vector2.zero) && (second.offsetPlate == Vector2.zero))
                         {
                             TextLabel newTextLabel;
-                            second.offsetPlate += vectorBiasSecondNamePlate * 2.0f;
+                            second.offsetPlate += vectorBiasSecondNamePlate * -2.0f;
                             newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} vv", second.name));
                             second.textLabel = newTextLabel;
                             MeshRenderer renderer = second.gameObject.GetComponent<MeshRenderer>();
                             renderer.material.mainTexture = newTextLabel.Texture;
                             buildingNamePlates[j] = second;
                         }
-                        else if ( (first.offsetPlate.y == 0.0f) && (second.offsetPlate.y != 0.0f) )
+                        else if ((first.offsetPlate == Vector2.zero) && (second.offsetPlate != Vector2.zero))
                         {
                             TextLabel newTextLabel;
-                            first.offsetPlate += vectorBiasFirstNamePlate * 2.0f;
+                            first.offsetPlate += vectorBiasFirstNamePlate * -2.0f;
                             newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} ^^", first.name));
                             first.textLabel = newTextLabel;
                             MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
                             renderer.material.mainTexture = newTextLabel.Texture;
                             buildingNamePlates[i] = first;
                         }
-
-                        //if ((first.name == "The Emperor's Jewelers") || (second.name == "The Emperor's Jewelers"))
-                        //if ((first.name == "The Dead Griffin") || (second.name == "The Dead Griffin"))
-                        //{
-                        //    bool test = false;
-                        //}
-
-                        /*
-                        Vector2 n = new Vector2(-b.y, b.x); // vector normal
-                        n.Normalize();
-
-                        TextLabel newTextLabel;
-                        first.offsetPlate += n * -sign * ((ySize - Math.Abs(distanceVertical)) * 0.5f);
-                        newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} ^", first.name));
-                        first.textLabel = newTextLabel;
-                        MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
-                        renderer.material.mainTexture = newTextLabel.Texture;
-                        buildingNamePlates[i] = first;
-
-
-                        second.offsetPlate += n * sign * ((ySize - Math.Abs(distanceVertical)) * 0.5f);
-                        newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} v", second.name));
-                        second.textLabel = newTextLabel;
-                        renderer = second.gameObject.GetComponent<MeshRenderer>();
-                        renderer.material.mainTexture = newTextLabel.Texture;
-                        buildingNamePlates[j] = second;
-                        */
-                         
-                        /*
-                        if (second.offsetPlate.y == 0.0f)
-                        {
-                            TextLabel newTextLabel;
-                            if (distanceVertical <= 0)
-                            {
-                                second.offsetPlate = n * (ySize + distanceVertical);
-                                newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} v", second.name));
-                            }
-                            else
-                            {
-                                second.offsetPlate = n * (ySize - distanceVertical);
-                                newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} ^", second.name));
-                            }                                                                                  
-
-                            second.textLabel = newTextLabel;
-                            MeshRenderer renderer = second.gameObject.GetComponent<MeshRenderer>();
-                            renderer.material.mainTexture = newTextLabel.Texture;
-                            buildingNamePlates[j] = second;
-                        }
-                        else if (first.offsetPlate.y == 0.0f)
-                        {
-                            TextLabel newTextLabel;
-                            if (distanceVertical <= 0)
-                            {
-                                first.offsetPlate = - n * (ySize + distanceVertical);
-                                newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} *v", second.name));
-                            }
-                            else
-                            {
-                                first.offsetPlate = - n * (-ySize + distanceVertical);
-                                newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} *^", second.name));
-                            }
-
-                            second.textLabel = newTextLabel;
-                            MeshRenderer renderer = second.gameObject.GetComponent<MeshRenderer>();
-                            renderer.material.mainTexture = newTextLabel.Texture;
-                            buildingNamePlates[j] = second;
-                        }
-                        */
                     }
                 }
             }
