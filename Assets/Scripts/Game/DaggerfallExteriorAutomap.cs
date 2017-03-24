@@ -155,9 +155,9 @@ namespace DaggerfallWorkshop.Game
 
         Texture2D exteriorLayoutTexture = null;
 
-#endregion
+        #endregion
 
-#region Properties
+        #region Properties
 
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to get automap layer
@@ -204,9 +204,9 @@ namespace DaggerfallWorkshop.Game
             set { resetAutomapSettingsFromExternalScript = value; }
         }
 
-#endregion
+        #endregion
 
-#region Public Methods
+        #region Public Methods
 
         /// <summary>
         /// DaggerfallExteriorAutomapWindow script will use this to signal this script to update when automap window was pushed - TODO: check if this can done with an event (if events work with gui windows)
@@ -324,8 +324,7 @@ namespace DaggerfallWorkshop.Game
             LineRenderer lr = line.GetComponent<LineRenderer>();
             lr.material = new Material(Shader.Find("Unlit/Color"));
             lr.material.color = color;
-            lr.startWidth = startWidth;
-            lr.endWidth = endWidth;
+            lr.SetWidth(startWidth, endWidth);
             lr.SetPosition(0, start);
             lr.SetPosition(1, end);
             return line;
@@ -381,9 +380,9 @@ namespace DaggerfallWorkshop.Game
             Update();
         }
 
-#endregion
+        #endregion
 
-#region Unity
+        #region Unity
 
         void Awake()
         {
@@ -465,9 +464,9 @@ namespace DaggerfallWorkshop.Game
             //}
         }
 
-#endregion
+        #endregion
 
-#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// sets layer of a GameObject and all of its childs recursively
@@ -625,8 +624,8 @@ namespace DaggerfallWorkshop.Game
                         catch (Exception e)
                         {
                             string exceptionMessage = String.Format("exception occured in function BuildingNames.GetName (exception message: " + e.Message + @") with params: 
-                                                                     seed: {0}, type: {1}, factionID: {2}, locationName: {3}, regionName: {4}",
-                                                                     buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                                                                        seed: {0}, type: {1}, factionID: {2}, locationName: {3}, regionName: {4}",
+                                                                        buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
                             DaggerfallUnity.LogMessage(exceptionMessage, true);
 
                             //fallback
@@ -724,8 +723,8 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNamePlate.anchorLine = null;
                             
                             #if DEBUG_NAMEPLATES
-                            newBuildingNamePlate.debugLine1 = null;
-                            newBuildingNamePlate.debugLine2 = null;
+                                    newBuildingNamePlate.debugLine1 = null;
+                    newBuildingNamePlate.debugLine2 = null;
                             #endif
 
                             buildingNamePlates.Add(newBuildingNamePlate);                            
@@ -822,8 +821,6 @@ namespace DaggerfallWorkshop.Game
                     float a1 = Vector2.Dot(a, b); // length of projected vector a onto b
                     Vector2 p = centerNamePlate1 + b * a1;
                     float distanceVertical = Vector2.Distance(centerNamePlate2, p);
-                    Vector2 n = new Vector2(-b.y, b.x); // vector normal
-                    n.Normalize();
 
                     float xSize = Vector2.Distance(first.upperRightCorner, first.upperLeftCorner) * 0.5f + Vector2.Distance(second.upperRightCorner, second.upperLeftCorner) * 0.5f; //(first.width * first.scale + second.width * second.scale) * 0.5f;
                     float ySize = Vector2.Distance(first.lowerLeftCorner, first.upperLeftCorner) * 0.5f + Vector2.Distance(second.lowerLeftCorner, second.upperLeftCorner) * 0.5f; //(first.height * first.scale + second.height * second.scale) * 0.5f;
@@ -834,8 +831,8 @@ namespace DaggerfallWorkshop.Game
                     float sign = ((centerNamePlate1 - p).y > 0.0f) ? -1.0f : 1.0f;
                     intersect &= distanceHorizontal < xSize;
 
-                    string firstName = "The King's Fairy"; // "The Odd Blades"
-                    string secondName = "The White Muskrat"; // "The Lucky Wolf"
+                    string firstName = "The Odd Blades"; // "The King's Fairy"; // "The Odd Blades"
+                    string secondName = "The Lucky Wolf"; // "The White Muskrat"; // "The Lucky Wolf"
                     if (((first.name == firstName) && (second.name == secondName)) || ((first.name == secondName) && (second.name == firstName)))
                     {
                         bool test = false;
@@ -846,11 +843,68 @@ namespace DaggerfallWorkshop.Game
                     
                     if (Math.Abs(distanceVertical) < ySize)
                     {
+                        Vector2 halfPoint = (centerNamePlate2 + p) * 0.5f; // point lying halfway between centerNamePlate2 and p
+                        Vector2 vectorDirFirstNamePlate = (p - halfPoint).normalized;
+                        Vector2 vectorDirSecondNamePlate = (centerNamePlate2 - halfPoint).normalized;
+                        //Vector2 vectorBiasFirstNamePlate = new Vector2(0.0f, ySize * 0.5f); // default bias is up half the size of the plate (in case distance is
+                        if ((vectorDirFirstNamePlate.y == 0.0f) && (vectorDirFirstNamePlate.x == 0.0f))
+                        {
+                            vectorDirFirstNamePlate = Vector2.up;                            
+                        }
+                        if ((vectorDirSecondNamePlate.y == 0.0f) && (vectorDirSecondNamePlate.x == 0.0f))
+                        {
+                            vectorDirSecondNamePlate = Vector2.down;
+                        }
+                        Vector2 vectorBiasFirstNamePlate = vectorDirFirstNamePlate * (ySize - Math.Abs(distanceVertical)) * 0.5f;                        
+                        Vector2 vectorBiasSecondNamePlate = vectorDirSecondNamePlate * (ySize - Math.Abs(distanceVertical)) * 0.5f;
+
+                        if ( (first.offsetPlate.y == 0.0f) && (second.offsetPlate.y == 0.0f) )
+                        {
+                            TextLabel newTextLabel;
+                            first.offsetPlate += vectorBiasFirstNamePlate;
+                            newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} ^", first.name));
+                            first.textLabel = newTextLabel;
+                            MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
+                            renderer.material.mainTexture = newTextLabel.Texture;
+                            buildingNamePlates[i] = first;
+
+                            second.offsetPlate += vectorBiasSecondNamePlate;
+                            newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} v", second.name));
+                            second.textLabel = newTextLabel;
+                            renderer = second.gameObject.GetComponent<MeshRenderer>();
+                            renderer.material.mainTexture = newTextLabel.Texture;
+                            buildingNamePlates[j] = second;
+                        }
+                        else if ( (first.offsetPlate.y != 0.0f) && (second.offsetPlate.y == 0.0f) )
+                        {
+                            TextLabel newTextLabel;
+                            second.offsetPlate += vectorBiasSecondNamePlate * 2.0f;
+                            newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} vv", second.name));
+                            second.textLabel = newTextLabel;
+                            MeshRenderer renderer = second.gameObject.GetComponent<MeshRenderer>();
+                            renderer.material.mainTexture = newTextLabel.Texture;
+                            buildingNamePlates[j] = second;
+                        }
+                        else if ( (first.offsetPlate.y == 0.0f) && (second.offsetPlate.y != 0.0f) )
+                        {
+                            TextLabel newTextLabel;
+                            first.offsetPlate += vectorBiasFirstNamePlate * 2.0f;
+                            newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} ^^", first.name));
+                            first.textLabel = newTextLabel;
+                            MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
+                            renderer.material.mainTexture = newTextLabel.Texture;
+                            buildingNamePlates[i] = first;
+                        }
+
                         //if ((first.name == "The Emperor's Jewelers") || (second.name == "The Emperor's Jewelers"))
                         //if ((first.name == "The Dead Griffin") || (second.name == "The Dead Griffin"))
                         //{
                         //    bool test = false;
                         //}
+
+                        /*
+                        Vector2 n = new Vector2(-b.y, b.x); // vector normal
+                        n.Normalize();
 
                         TextLabel newTextLabel;
                         first.offsetPlate += n * -sign * ((ySize - Math.Abs(distanceVertical)) * 0.5f);
@@ -867,7 +921,8 @@ namespace DaggerfallWorkshop.Game
                         renderer = second.gameObject.GetComponent<MeshRenderer>();
                         renderer.material.mainTexture = newTextLabel.Texture;
                         buildingNamePlates[j] = second;
-
+                        */
+                         
                         /*
                         if (second.offsetPlate.y == 0.0f)
                         {
@@ -923,6 +978,7 @@ namespace DaggerfallWorkshop.Game
                 //buildingNamePlate.gameObject.transform.localPosition += new Vector3(buildingNamePlate.offsetPlate.x, 0.0f, buildingNamePlate.offsetPlate.y);
                 buildingNamePlate.gameObject.transform.Translate(buildingNamePlate.offsetPlate.x, 0.0f, buildingNamePlate.offsetPlate.y);
 
+#if DEBUG_NAMEPLATES
                 Vector3 posAnchor = buildingNamePlate.gameObject.transform.position;
                 Vector3 posNamePlate = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.offsetPlate.x, 0.0f, buildingNamePlate.offsetPlate.y);
                 if (buildingNamePlate.anchorLine != null)
@@ -935,10 +991,7 @@ namespace DaggerfallWorkshop.Game
                 buildingNamePlate.anchorLine.hideFlags = HideFlags.HideAndDontSave;                
 
                 buildingNamePlates[i] = buildingNamePlate;
-
-
-#if DEBUG_NAMEPLATES
-                Vector3 start1 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.upperLeftCorner.x, 0.5f, buildingNamePlate.upperLeftCorner.y);
+                                                                                                                                                                       Vector3 start1 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.upperLeftCorner.x, 0.5f, buildingNamePlate.upperLeftCorner.y);
                 Vector3 end1 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.lowerRightCorner.x, 0.5f, buildingNamePlate.lowerRightCorner.y);
                 Vector3 start2 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.lowerLeftCorner.x, 0.5f, buildingNamePlate.lowerLeftCorner.y);
                 Vector3 end2 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.upperRightCorner.x, 0.5f, buildingNamePlate.upperRightCorner.y);
@@ -1391,7 +1444,6 @@ namespace DaggerfallWorkshop.Game
                 }
             }
         }
-
-#endregion
+        #endregion
     }
 }
