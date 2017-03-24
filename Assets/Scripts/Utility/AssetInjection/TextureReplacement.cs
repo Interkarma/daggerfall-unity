@@ -433,18 +433,27 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Get MeshRenderer
             MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
 
+            // UV default values
+            var uv = Vector2.zero;
+
             // Customize billboard size (scale)
             if (XMLManager.XmlFileExist(archive, record))
             {
+                // Get name of file
+                string name = GetName(archive, record);
+
                 // Set scale
                 Transform transform = go.GetComponent<Transform>();
-                transform.localScale = XMLManager.GetScale(GetName(archive, record), texturesPath, transform.localScale);
+                transform.localScale = XMLManager.GetScale(name, texturesPath, transform.localScale);
                 go.GetComponent<DaggerfallBillboard>().SetCustomSize(archive, record, transform.localScale.y);
+
+                // Get UV
+                uv = XMLManager.GetUv(name, texturesPath, uv.x, uv.y);
             }
 
             // Update UV map
             MeshFilter meshFilter = go.GetComponent<MeshFilter>();
-            UpdateUV(ref meshFilter);
+            UpdateUV(meshFilter, uv.x, uv.y);
 
             // Check if billboard is emissive
             bool isEmissive = false;
@@ -479,7 +488,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             meshRenderer.material.mainTexture = albedoTexture;
 
             // Update UV map
-            UpdateUV(ref meshFilter);
+            UpdateUV(meshFilter);
         }
 
         /// <summary>
@@ -598,13 +607,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// Update UV map
         /// </summary>
         /// <param name="meshFilter">MeshFilter of GameObject</param>
-        static private void UpdateUV(ref MeshFilter meshFilter)
+        static private void UpdateUV (MeshFilter meshFilter, float x = 0, float y = 0)
         {
             Vector2[] uv = new Vector2[4];
-            uv[0] = new Vector2(0, 1);
-            uv[1] = new Vector2(1, 1);
-            uv[2] = new Vector2(0, 0);
-            uv[3] = new Vector2(1, 0);
+            uv[0] = new Vector2(x, 1 - y);
+            uv[1] = new Vector2(1 - x, 1 - y);
+            uv[2] = new Vector2(x, y);
+            uv[3] = new Vector2(1 - x, y);
             meshFilter.mesh.uv = uv;
         }
 
