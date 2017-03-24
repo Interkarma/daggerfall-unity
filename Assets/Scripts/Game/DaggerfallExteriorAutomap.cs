@@ -101,14 +101,15 @@ namespace DaggerfallWorkshop.Game
             public float width;
             public float height;
             public float angle;
+            public Vector2 offsetPlateFromInitial;
             public Vector2 upperLeftCorner;
             public Vector2 upperRightCorner;
             public Vector2 lowerLeftCorner;
             public Vector2 lowerRightCorner;
-            #if DEBUG_NAMEPLATES
+#if DEBUG_NAMEPLATES
             public GameObject debugLine1;
             public GameObject debugLine2;
-            #endif
+#endif
         }
 
         List<BuildingNamePlate> buildingNamePlates = null;
@@ -215,7 +216,7 @@ namespace DaggerfallWorkshop.Game
         {
             // create camera (if not present) that will render automap level geometry
             createExteriorAutomapCamera();
-            
+
             // restore camera rotation and zoom
             gameObjectCameraExteriorAutomap.transform.rotation = cameraTransformRotationSaved;
             cameraExteriorAutomap.orthographicSize = cameraOrthographicSizeSaved;
@@ -231,7 +232,7 @@ namespace DaggerfallWorkshop.Game
         /// DaggerfallExteriorAutomapWindow script will use this to signal this script to update when automap window was popped - TODO: check if this can done with an event (if events work with gui windows)
         /// </summary>
         public void updateAutomapStateOnWindowPop()
-        {            
+        {
             cameraTransformRotationSaved = gameObjectCameraExteriorAutomap.transform.rotation;
             cameraOrthographicSizeSaved = cameraExteriorAutomap.orthographicSize;
 
@@ -296,7 +297,7 @@ namespace DaggerfallWorkshop.Game
         {
             int locationWidth = (int)(layoutWidth * layoutMultiplier);
             int locationHeight = (int)(layoutHeight * layoutMultiplier);
-            Vector3 pos = Vector3.zero;                        
+            Vector3 pos = Vector3.zero;
             switch (locationBorder)
             {
                 case LocationBorder.Top:
@@ -345,13 +346,13 @@ namespace DaggerfallWorkshop.Game
                 buildingNamePlate.lowerLeftCorner = Quaternion.Euler(0, 0, -angle) * buildingNamePlate.lowerLeftCorner;
                 buildingNamePlate.lowerRightCorner = Quaternion.Euler(0, 0, -angle) * buildingNamePlate.lowerRightCorner;
                 */
-                
+
                 buildingNamePlate.upperLeftCorner = Quaternion.AngleAxis(-angle, Vector3.forward) * buildingNamePlate.upperLeftCorner;
                 buildingNamePlate.upperRightCorner = Quaternion.AngleAxis(-angle, Vector3.forward) * buildingNamePlate.upperRightCorner;
                 buildingNamePlate.lowerLeftCorner = Quaternion.AngleAxis(-angle, Vector3.forward) * buildingNamePlate.lowerLeftCorner;
                 buildingNamePlate.lowerRightCorner = Quaternion.AngleAxis(-angle, Vector3.forward) * buildingNamePlate.lowerRightCorner;
 
-                buildingNamePlate.angle += angle; 
+                buildingNamePlate.angle += angle;
 
                 buildingNamePlates[i] = buildingNamePlate;
             }
@@ -362,9 +363,16 @@ namespace DaggerfallWorkshop.Game
         public void resetRotationBuildingNamePlates()
         {
             undoNameplateOffsets();
-            foreach (var buildingNamePlate in buildingNamePlates)
+            for (int i = 0; i < buildingNamePlates.Count; i++)
             {
+                BuildingNamePlate buildingNamePlate = buildingNamePlates[i];
                 buildingNamePlate.gameObject.transform.rotation = Quaternion.Euler(Vector3.zero);
+                buildingNamePlate.angle = 0.0f;
+                buildingNamePlate.upperLeftCorner = new Vector2(0.0f, +buildingNamePlate.height * 0.5f);
+                buildingNamePlate.upperRightCorner = new Vector2(buildingNamePlate.width, +buildingNamePlate.height * 0.5f);
+                buildingNamePlate.lowerLeftCorner = new Vector2(0.0f, -buildingNamePlate.height * 0.5f);
+                buildingNamePlate.lowerRightCorner = new Vector2(buildingNamePlate.width, -buildingNamePlate.height * 0.5f);
+                buildingNamePlates[i] = buildingNamePlate;
             }
             computeNameplateOffsets();
             applyNameplateOffsets();
@@ -412,7 +420,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             Camera.main.cullingMask = Camera.main.cullingMask & ~((1 << layerAutomap)); // don't render automap layer with main camera
-            
+
             cameraTransformRotationSaved = Quaternion.identity;
             cameraOrthographicSizeSaved = 10.0f; // dummy value > 0.0f -> will be overwritten once camera zoom is applied
 
@@ -493,9 +501,9 @@ namespace DaggerfallWorkshop.Game
                 cameraExteriorAutomap.clearFlags = CameraClearFlags.SolidColor;
                 cameraExteriorAutomap.cullingMask = 1 << layerAutomap;
                 cameraExteriorAutomap.renderingPath = Camera.main.renderingPath;
-                cameraExteriorAutomap.orthographic = true;                
+                cameraExteriorAutomap.orthographic = true;
                 cameraExteriorAutomap.nearClipPlane = 0.7f;
-                cameraExteriorAutomap.farClipPlane = 5000.0f;                
+                cameraExteriorAutomap.farClipPlane = 5000.0f;
                 gameObjectCameraExteriorAutomap.transform.SetParent(gameobjectExteriorAutomap.transform);
             }
         }
@@ -516,7 +524,7 @@ namespace DaggerfallWorkshop.Game
                 new Vector2(1, 0),
                 new Vector2 (0, 0)
             };
-            m.triangles = new int[] { 0, 1, 2, 0, 2, 3};
+            m.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
             m.RecalculateNormals();
 
             return m;
@@ -595,7 +603,7 @@ namespace DaggerfallWorkshop.Game
             //{
             //    DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(layout.name);
             //}
-            
+
             DFBlock[] blocks;
             RMBLayout.GetLocationBuildingData(location, out blocks);
             int width = location.Exterior.ExteriorData.Width;
@@ -684,7 +692,7 @@ namespace DaggerfallWorkshop.Game
                         }
 
                         if (newBuildingNamePlate.name != "")
-                        {                            
+                        {
                             newBuildingNamePlate.posX = xPosBuilding;
                             newBuildingNamePlate.posY = yPosBuilding;
                             newBuildingNamePlate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNamePlate.name);
@@ -712,6 +720,7 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNamePlate.gameObject.transform.position = new Vector3(posX, 4.0f, posY);
                             newBuildingNamePlate.gameObject.transform.localScale = new Vector3(newBuildingNamePlate.scale, newBuildingNamePlate.scale, newBuildingNamePlate.scale);
                             newBuildingNamePlate.offsetPlate = Vector2.zero;
+                            newBuildingNamePlate.offsetPlateFromInitial = Vector2.zero;
                             newBuildingNamePlate.angle = 0.0f;
                             newBuildingNamePlate.upperLeftCorner = new Vector2(0.0f, +newBuildingNamePlate.height * 0.5f);
                             newBuildingNamePlate.upperRightCorner = new Vector2(newBuildingNamePlate.width, +newBuildingNamePlate.height * 0.5f);
@@ -719,13 +728,13 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNamePlate.lowerRightCorner = new Vector2(newBuildingNamePlate.width, -newBuildingNamePlate.height * 0.5f);
 
                             newBuildingNamePlate.anchorLine = null;
-                            
-                            #if DEBUG_NAMEPLATES
+
+#if DEBUG_NAMEPLATES
                                     newBuildingNamePlate.debugLine1 = null;
                     newBuildingNamePlate.debugLine2 = null;
-                            #endif
+#endif
 
-                            buildingNamePlates.Add(newBuildingNamePlate);                            
+                            buildingNamePlates.Add(newBuildingNamePlate);
                         }
                     }
                 }
@@ -798,10 +807,10 @@ namespace DaggerfallWorkshop.Game
 
         private void computeNameplateOffsets()
         {
-            for (int i = 0; i < buildingNamePlates.Count; i++ )
+            for (int i = 0; i < buildingNamePlates.Count; i++)
             {
                 BuildingNamePlate first = buildingNamePlates[i];
-                for (int j = i + 1; j < buildingNamePlates.Count; j++ )
+                for (int j = i + 1; j < buildingNamePlates.Count; j++)
                 {
                     BuildingNamePlate second = buildingNamePlates[j];
 
@@ -850,24 +859,27 @@ namespace DaggerfallWorkshop.Game
                     }
 
 
-                    
+
                     if (Math.Abs(distanceVertical) < ySize)
                     {
                         Vector2 halfPoint = (posNamePlate2 + p) * 0.5f; // point lying halfway between centerNamePlate2 and p
                         Vector2 vectorDirFirstNamePlate = (p - halfPoint).normalized;
-                        Vector2 vectorDirSecondNamePlate = (posNamePlate2 - halfPoint).normalized;                        
+                        Vector2 vectorDirSecondNamePlate = (posNamePlate2 - halfPoint).normalized;
                         if (vectorDirFirstNamePlate == Vector2.zero)
                         {
-                            vectorDirFirstNamePlate = Vector2.up;                            
+                            vectorDirFirstNamePlate = Vector2.up;
                         }
                         if (vectorDirSecondNamePlate == Vector2.zero)
                         {
                             vectorDirSecondNamePlate = Vector2.down;
                         }
-                        Vector2 vectorBiasFirstNamePlate = vectorDirFirstNamePlate * (ySize - Math.Abs(distanceVertical)) * 0.5f;                        
+                        Vector2 vectorBiasFirstNamePlate = vectorDirFirstNamePlate * (ySize - Math.Abs(distanceVertical)) * 0.5f;
                         Vector2 vectorBiasSecondNamePlate = vectorDirSecondNamePlate * (ySize - Math.Abs(distanceVertical)) * 0.5f;
 
-                        if ( (first.offsetPlate == Vector2.zero) && (second.offsetPlate == Vector2.zero) )
+                        vectorBiasFirstNamePlate = Quaternion.AngleAxis(first.angle, Vector3.forward) * vectorBiasFirstNamePlate;
+                        vectorBiasSecondNamePlate = Quaternion.AngleAxis(second.angle, Vector3.forward) * vectorBiasSecondNamePlate;
+
+                        if ((first.offsetPlate == Vector2.zero) && (second.offsetPlate == Vector2.zero))
                         {
                             TextLabel newTextLabel;
                             first.offsetPlate += vectorBiasFirstNamePlate;
@@ -887,7 +899,7 @@ namespace DaggerfallWorkshop.Game
                         else if ((first.offsetPlate != Vector2.zero) && (second.offsetPlate == Vector2.zero))
                         {
                             TextLabel newTextLabel;
-                            second.offsetPlate += vectorBiasSecondNamePlate * -2.0f;
+                            second.offsetPlate -= vectorBiasSecondNamePlate * -2.0f;
                             newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} vv", second.name));
                             second.textLabel = newTextLabel;
                             MeshRenderer renderer = second.gameObject.GetComponent<MeshRenderer>();
@@ -897,7 +909,7 @@ namespace DaggerfallWorkshop.Game
                         else if ((first.offsetPlate == Vector2.zero) && (second.offsetPlate != Vector2.zero))
                         {
                             TextLabel newTextLabel;
-                            first.offsetPlate += vectorBiasFirstNamePlate * -2.0f;
+                            first.offsetPlate -= vectorBiasFirstNamePlate * -2.0f;
                             newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, String.Format("{0} ^^", first.name));
                             first.textLabel = newTextLabel;
                             MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
@@ -911,15 +923,15 @@ namespace DaggerfallWorkshop.Game
 
         private void applyNameplateOffsets()
         {
-            for (int i=0; i < buildingNamePlates.Count; i++)
+            for (int i = 0; i < buildingNamePlates.Count; i++)
             {
                 BuildingNamePlate buildingNamePlate = buildingNamePlates[i];
 
                 //buildingNamePlate.offsetPlate = Quaternion.AngleAxis(buildingNamePlate.angle, Vector3.forward) * buildingNamePlate.offsetPlate;
                 //buildingNamePlate.gameObject.transform.localPosition += new Vector3(buildingNamePlate.offsetPlate.x, 0.0f, buildingNamePlate.offsetPlate.y);
                 buildingNamePlate.gameObject.transform.Translate(buildingNamePlate.offsetPlate.x, 0.0f, buildingNamePlate.offsetPlate.y);
+                buildingNamePlate.offsetPlateFromInitial += buildingNamePlate.offsetPlate;
 
-#if DEBUG_NAMEPLATES
                 Vector3 posAnchor = buildingNamePlate.gameObject.transform.position;
                 Vector3 posNamePlate = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.offsetPlate.x, 0.0f, buildingNamePlate.offsetPlate.y);
                 if (buildingNamePlate.anchorLine != null)
@@ -928,11 +940,13 @@ namespace DaggerfallWorkshop.Game
                     GameObject.Destroy(buildingNamePlate.anchorLine);
                     buildingNamePlate.anchorLine = null;
                 }
-                buildingNamePlate.anchorLine = DrawLine(posAnchor, posNamePlate, Color.yellow, 0.5f, 0.5f);                
-                buildingNamePlate.anchorLine.hideFlags = HideFlags.HideAndDontSave;                
+                buildingNamePlate.anchorLine = DrawLine(posAnchor, posNamePlate, Color.yellow, 0.5f, 0.5f);
+                buildingNamePlate.anchorLine.hideFlags = HideFlags.HideAndDontSave;
 
                 buildingNamePlates[i] = buildingNamePlate;
-                                                                                                                                                                       Vector3 start1 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.upperLeftCorner.x, 0.5f, buildingNamePlate.upperLeftCorner.y);
+
+#if DEBUG_NAMEPLATES
+                Vector3 start1 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.upperLeftCorner.x, 0.5f, buildingNamePlate.upperLeftCorner.y);
                 Vector3 end1 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.lowerRightCorner.x, 0.5f, buildingNamePlate.lowerRightCorner.y);
                 Vector3 start2 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.lowerLeftCorner.x, 0.5f, buildingNamePlate.lowerLeftCorner.y);
                 Vector3 end2 = buildingNamePlate.gameObject.transform.position + new Vector3(buildingNamePlate.upperRightCorner.x, 0.5f, buildingNamePlate.upperRightCorner.y);
@@ -962,11 +976,12 @@ namespace DaggerfallWorkshop.Game
 
         private void undoNameplateOffsets()
         {
-            for (int i=0; i < buildingNamePlates.Count; i++)
+            for (int i = 0; i < buildingNamePlates.Count; i++)
             {
                 BuildingNamePlate buildingNamePlate = buildingNamePlates[i];
                 //buildingNamePlate.gameObject.transform.localPosition += new Vector3(-buildingNamePlate.offsetPlate.x, 0.0f, -buildingNamePlate.offsetPlate.y);
                 buildingNamePlate.gameObject.transform.Translate(-buildingNamePlate.offsetPlate.x, 0.0f, -buildingNamePlate.offsetPlate.y);
+                buildingNamePlate.offsetPlateFromInitial = Vector2.zero;
                 buildingNamePlate.offsetPlate = Vector2.zero;
 
                 TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, buildingNamePlate.name);
@@ -986,7 +1001,7 @@ namespace DaggerfallWorkshop.Game
             playerPos.x = ((GameManager.Instance.PlayerGPS.transform.position.x) % scale) / scale;
             playerPos.z = ((GameManager.Instance.PlayerGPS.transform.position.z) % scale) / scale;
             playerPos.y = 0.0f;
-                        
+
             int refWidth = (int)(blockSizeWidth * 8 * layoutMultiplier); // layoutWidth / layoutMultiplier
             int refHeight = (int)(blockSizeHeight * 8 * layoutMultiplier); // layoutHeight / layoutMultiplier
             playerPos.x *= refWidth;
@@ -1032,7 +1047,7 @@ namespace DaggerfallWorkshop.Game
                     string blockName = DaggerfallUnity.Instance.ContentReader.BlockFileReader.CheckName(DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
 
                     // Get the block data
-//                    DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockName);
+                    //                    DFBlock block = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(blockName);
 
                     // Now we can get the automap image data for this block and lay it out
                     //block.RmbBlock.SubRecords.
@@ -1136,7 +1151,7 @@ namespace DaggerfallWorkshop.Game
                                     colors[o].g = 60;
                                     colors[o].b = 40;
                                     colors[o].a = 255;
-                                }                                                                
+                                }
                                 break;
                             case 0:
                                 colors[o].r = 0;
@@ -1165,7 +1180,7 @@ namespace DaggerfallWorkshop.Game
                 //    //exteriorLayoutTexture.SetPixel(xPosBuilding, yPosBuilding, Color.yellow);
                 //}
 
-                exteriorLayoutTexture.Apply();                
+                exteriorLayoutTexture.Apply();
 
                 DaggerfallUnity.Instance.ContentReader.BlockFileReader.DiscardBlock(block.Index);
             }
@@ -1200,7 +1215,7 @@ namespace DaggerfallWorkshop.Game
             if ((location.Loaded) && (currentPlayerLocation.Name == location.Name)) // if already loaded
             {
                 return; // do nothing
-            }            
+            }
 
             unloadLocationExteriorAutomap(); // first make sure to unload location exterior automap and destroy resources
 
