@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using DaggerfallWorkshop.Game.Serialization;
 
@@ -329,6 +330,38 @@ namespace DaggerfallWorkshop.Game.Items
                 DaggerfallUnityItem item = new DaggerfallUnityItem(itemArray[i]);
                 AddItem(item);
             }
+        }
+
+        /// <summary>
+        /// Linear search that returns all items of particular group and template from this collection.
+        /// Does not change items in this collection.
+        /// For speed purposes returns actual item reference not a clone.
+        /// </summary>
+        /// <param name="itemGroup">Item group.</param>
+        /// <param name="templateIndex">Item template index. Use -1 to match group only.</param>
+        /// <returns>List of item references.</returns>
+        public List<DaggerfallUnityItem> SearchItems(ItemGroups itemGroup, int templateIndex = -1)
+        {
+            List<DaggerfallUnityItem> results = new List<DaggerfallUnityItem>();
+            foreach (DaggerfallUnityItem item in items)
+            {
+                if (templateIndex == -1)
+                {
+                    if (item.GroupIndex == (int)itemGroup)
+                    {
+                        results.Add(item);
+                    }
+                }
+                else
+                {
+                    if (item.IsOfTemplate(itemGroup, templateIndex))
+                    {
+                        results.Add(item);
+                    }
+                }
+            }
+
+            return results;
         }
 
         #endregion
