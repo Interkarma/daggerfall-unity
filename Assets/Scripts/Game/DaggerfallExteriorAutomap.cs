@@ -90,6 +90,7 @@ namespace DaggerfallWorkshop.Game
             public float posX;
             public float posY;
             public string name;
+            public int uniqueIndex;
             public TextLabel textLabel;
             public GameObject gameObject;
             public float textureWidth;
@@ -694,6 +695,7 @@ namespace DaggerfallWorkshop.Game
 
                         if (newBuildingNameplate.name != "")
                         {
+                            newBuildingNameplate.uniqueIndex = index;
                             newBuildingNameplate.posX = xPosBuilding;
                             newBuildingNameplate.posY = yPosBuilding;
                             newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNameplate.name);
@@ -808,7 +810,7 @@ namespace DaggerfallWorkshop.Game
 
         private bool checkIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 offset1, BuildingNameplate nameplate2, Vector2 offset2, out Vector2 posNameplate1, out Vector2 posNameplate2, out Vector2 p, out float ySize, out float distanceVertical)
         {
-            Vector2 vectorBetweenNamePlates = (new Vector2(nameplate2.gameObject.transform.position.x, nameplate2.gameObject.transform.position.z) + offset1) - (new Vector2(nameplate1.gameObject.transform.position.x, nameplate1.gameObject.transform.position.z) + offset2);
+            Vector2 vectorBetweenNamePlates = (new Vector2(nameplate2.gameObject.transform.position.x, nameplate2.gameObject.transform.position.z) + offset2) - (new Vector2(nameplate1.gameObject.transform.position.x, nameplate1.gameObject.transform.position.z) + offset1);
             posNameplate1 = Vector2.zero;
             posNameplate2 = vectorBetweenNamePlates;
 
@@ -837,13 +839,6 @@ namespace DaggerfallWorkshop.Game
             //float sign = ((posNamePlate1 - p).y > 0.0f) ? -1.0f : 1.0f;
             intersect &= distanceHorizontal < xSize;
 
-            string firstName = "The Restless Djinn"; // "The Odd Bijoutry"; // "The Red Porcupine"; // "The King's Fairy"; // "The Odd Blades"
-            string secondName = "The Bank of Daggerfall"; // "The Emperor's Jewelers"; // "Daggerfall's Best Tailoring"; // "The White Muskrat"; // "The Lucky Wolf"
-            if (((nameplate1.name == firstName) && (nameplate2.name == secondName)) || ((nameplate1.name == secondName) && (nameplate2.name == firstName)))
-            {
-                bool test = false;
-            }
-
             return intersect;
         }
 
@@ -858,9 +853,12 @@ namespace DaggerfallWorkshop.Game
             bool check = false;
             foreach (BuildingNameplate otherNameplate in buildingNameplates)
             {
-                check &= checkIntersectionOfNameplates(nameplate, offset, otherNameplate, Vector2.zero);
-                if (check)
-                    break;
+                if (nameplate.uniqueIndex != otherNameplate.uniqueIndex)
+                {
+                    check &= checkIntersectionOfNameplates(nameplate, offset, otherNameplate, Vector2.zero);
+                    if (check)
+                        break;
+                }
             }
             return check;
         }
@@ -912,26 +910,69 @@ namespace DaggerfallWorkshop.Game
                         string offsetInfoNameplate2 = "";
                         if ((first.offsetPlateCoordsInOriginalBase == Vector2.zero) && (second.offsetPlateCoordsInOriginalBase == Vector2.zero))
                         {
-                            
-                            first.offsetPlateCoordsInOriginalBase += vectorBiasFirstNameplateInOriginalBase;
-                            first.offsetPlateCoordsInNewBase += vectorBiasFirstNameplate;
-                            offsetInfoNameplate1 = "^";
+                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplateInOriginalBase) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplateInOriginalBase))
+                            {
+                                first.offsetPlateCoordsInOriginalBase += vectorBiasFirstNameplateInOriginalBase;
+                                first.offsetPlateCoordsInNewBase += vectorBiasFirstNameplate;
+                                offsetInfoNameplate1 = "^";
 
-                            second.offsetPlateCoordsInOriginalBase += vectorBiasSecondNameplateInOriginalBase;
-                            second.offsetPlateCoordsInNewBase += vectorBiasSecondNameplate;
-                            offsetInfoNameplate2 = "v";
+                                second.offsetPlateCoordsInOriginalBase += vectorBiasSecondNameplateInOriginalBase;
+                                second.offsetPlateCoordsInNewBase += vectorBiasSecondNameplate;
+                                offsetInfoNameplate2 = "v";
+                            }
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplateInOriginalBase * 2.0f))
+                            {
+                                first.offsetPlateCoordsInOriginalBase += vectorBiasFirstNameplateInOriginalBase * 2.0f;
+                                first.offsetPlateCoordsInNewBase += vectorBiasFirstNameplate * 2.0f;
+                                offsetInfoNameplate1 = "_^";
+                            }
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplateInOriginalBase * 2.0f))
+                            {
+                                second.offsetPlateCoordsInOriginalBase += vectorBiasSecondNameplateInOriginalBase * 2.0f;
+                                second.offsetPlateCoordsInNewBase += vectorBiasSecondNameplate * 2.0f;
+                                offsetInfoNameplate2 = "_v";
+                            }
+                            else
+                            {
+                                second.gameObject.SetActive(false);
+                            }
                         }
                         else if ((first.offsetPlateCoordsInOriginalBase != Vector2.zero) && (second.offsetPlateCoordsInOriginalBase == Vector2.zero))
                         {
-                            second.offsetPlateCoordsInOriginalBase += vectorBiasSecondNameplateInOriginalBase * -2.0f;
-                            second.offsetPlateCoordsInNewBase += vectorBiasSecondNameplate * -2.0f;
-                            offsetInfoNameplate2 = "vv";
+                            if (!checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplateInOriginalBase * 2.0f))
+                            {
+                                second.offsetPlateCoordsInOriginalBase += vectorBiasSecondNameplateInOriginalBase * -2.0f;
+                                second.offsetPlateCoordsInNewBase += vectorBiasSecondNameplate * -2.0f;
+                                offsetInfoNameplate2 = "vv";
+                            }
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplateInOriginalBase * -2.0f))
+                            {
+                                first.offsetPlateCoordsInOriginalBase += vectorBiasFirstNameplateInOriginalBase * -2.0f;
+                                first.offsetPlateCoordsInNewBase += vectorBiasFirstNameplate * -2.0f;
+                                offsetInfoNameplate1 = "^^";
+                            }
+                            else
+                            {
+                                second.gameObject.SetActive(false);
+                            }
                         }
                         else if ((first.offsetPlateCoordsInOriginalBase == Vector2.zero) && (second.offsetPlateCoordsInOriginalBase != Vector2.zero))
                         {
-                            first.offsetPlateCoordsInOriginalBase -= vectorBiasFirstNameplateInOriginalBase * -2.0f;                            
-                            first.offsetPlateCoordsInNewBase -= vectorBiasFirstNameplate * -2.0f;
-                            offsetInfoNameplate1 = "^^";                            
+                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplateInOriginalBase * 2.0f))
+                            {
+                                first.offsetPlateCoordsInOriginalBase += vectorBiasFirstNameplateInOriginalBase * 2.0f;
+                                first.offsetPlateCoordsInNewBase += vectorBiasFirstNameplate * 2.0f;
+                                offsetInfoNameplate1 = "^^";
+                            } else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplateInOriginalBase * -2.0f))
+                            {
+                                first.offsetPlateCoordsInOriginalBase += vectorBiasFirstNameplateInOriginalBase * -2.0f;
+                                first.offsetPlateCoordsInNewBase += vectorBiasFirstNameplate * -2.0f;
+                                offsetInfoNameplate1 = "vv";
+                            }
+                            else
+                            {
+                                first.gameObject.SetActive(false);
+                            }
                         }
 
                         if (offsetInfoNameplate1 != "")
@@ -1016,6 +1057,7 @@ namespace DaggerfallWorkshop.Game
                 buildingNameplate.gameObject.transform.Translate(-buildingNameplate.offsetPlateCoordsInOriginalBase.x, 0.0f, -buildingNameplate.offsetPlateCoordsInOriginalBase.y, Space.Self);
                 buildingNameplate.offsetPlateCoordsInNewBase = Vector2.zero;
                 buildingNameplate.offsetPlateCoordsInOriginalBase = Vector2.zero;
+                buildingNameplate.gameObject.SetActive(true);
 
                 TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, buildingNameplate.name);
                 buildingNameplate.textLabel = newTextLabel;
