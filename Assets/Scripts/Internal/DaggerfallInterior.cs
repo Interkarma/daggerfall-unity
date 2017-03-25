@@ -532,6 +532,7 @@ namespace DaggerfallWorkshop
 
             // TODO: Could also adjust light colour and intensity, or change prefab entirely above for any obj.TextureRecord
         }
+
         /// <summary>
         /// Add interior people flats.
         /// </summary>
@@ -543,6 +544,11 @@ namespace DaggerfallWorkshop
             // Add block flats
             foreach (DFBlock.RmbBlockPeopleRecord obj in recordData.Interior.BlockPeopleRecords)
             {
+                // Import 3D character instead of billboard
+                if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, 
+                    new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, node.transform) != null)
+                    continue;
+
                 // Spawn billboard gameobject
                 GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
 
