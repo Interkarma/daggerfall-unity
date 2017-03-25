@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Controls
             Button controlsButton = DaggerfallUI.AddButton(new Rect(5, 60, 70, 17), optionsPanel);
-            controlsButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
+            controlsButton.OnMouseClick += ControlsButton_OnMouseClick;
 
             // Full screen
             Button fullScreenButton = DaggerfallUI.AddButton(new Rect(5, 47, 70, 8), optionsPanel);
@@ -129,6 +129,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnitySaveGameWindow loadWindow = new DaggerfallUnitySaveGameWindow(uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, this);
             uiManager.PushWindow(loadWindow);
+        }
+
+        private void ControlsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenControlsWindow);
         }
 
         #endregion

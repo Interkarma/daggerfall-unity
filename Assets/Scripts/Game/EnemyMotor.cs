@@ -10,7 +10,6 @@
 //
 
 using UnityEngine;
-using System.Collections;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -38,6 +37,8 @@ namespace DaggerfallWorkshop.Game
         Vector3 lastTargetPos;                      // Target from previous update
         float giveUpTimer;                          // Timer before enemy gives up
         bool isHostile;                             // Is enemy hostile to player
+        bool flies;                                 // The enemy can fly
+        int enemyLayerMask;                         // Layer mask for Enemies to optimize collision checks
 
         public bool IsHostile
         {
@@ -50,7 +51,10 @@ namespace DaggerfallWorkshop.Game
             senses = GetComponent<EnemySenses>();
             controller = GetComponent<CharacterController>();
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
-            isHostile = (mobile.Summary.Enemy.Reactions == MobileReactions.Hostile);
+            isHostile = mobile.Summary.Enemy.Reactions == MobileReactions.Hostile;
+            flies = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying ||
+                    mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
+            enemyLayerMask = LayerMask.GetMask("Enemies");
         }
 
         void Update()
@@ -92,6 +96,45 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
+        /// <summary>
+        /// Prevent Rat Stacks by checking for collisions with other enemies along the planned motion path.
+        ///
+        /// Since enemies are moving capsule bodies, if one collides with a shorter enemy (like a rat), it will "roll"
+        /// over the shorter enemy, causing stacks of enemies.
+        ///
+        /// This is a very simple path planning approach. One might use NavMeshes and NavMeshAgents to compute this
+        /// automatically, but I didn't want to introduce that level of complexity early on during development, when
+        /// things can easily change.
+        /// </summary>
+        /// <param name="plannedMotion">Path to check for collisions. This will be updated if a collision is found.</param>
+        void AvoidEnemies(ref Vector3 plannedMotion)
+        {
+            // Compute the capsule start/end points for the casting operation
+            var capsuleStart = transform.position;
+            var capsuleEnd = transform.position;
+            capsuleStart.y += controller.height / 2 - controller.radius;
+            capsuleEnd.y -= controller.height / 2 + controller.radius;
+
+            // We capsule cast because a ray might grace the edge of an enemy and allow it to move across & over
+            // We use cast all to detect a collision at the start of the cast as well
+            // To optimize, cast only in enemy layer and don't cause triggers to fire
+            var hits = Physics.CapsuleCastAll(capsuleStart, capsuleEnd, controller.radius, plannedMotion,
+                controller.radius * 2, enemyLayerMask, QueryTriggerInteraction.Ignore);
+
+            // Note: CapsuleCastAll doesn't know about the "source", so "this" enemy will always count as a collision.
+            if (hits.Length <= 1)
+                return;
+
+            // Simplest approach: Stop moving.
+            plannedMotion *= 0;
+
+            // Slightly better approach: Route around.
+            // This isn't perfect. In some cases enemies may still stack. It seems to happen when enemies are very close.
+            // Always choose one direction. If this is random, the enemy will wiggle behind the other enemy because it's
+            // computed so frequently. We could choose a direction at a lower rate to still give some randomness.
+//            plannedMotion = Quaternion.Euler(0, 90, 0) * plannedMotion;
+        }
+
         private void Move()
         {
             // Do nothing if playing a one-shot animation
@@ -126,27 +169,37 @@ namespace DaggerfallWorkshop.Game
                 giveUpTimer = 0;
             }
 
-            // Get distance to target
-            float distance = Vector3.Distance(targetPos, transform.position);
-
             // Flying enemies aim for player face
-            if (mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying ||
-                mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral)
+            if (flies)
                 targetPos.y += 0.9f;
+            else
+            {
+                // Ground enemies target at their own height
+                // This avoids short enemies from stepping on each other as they approach the player
+                // Otherwise, their target vector aims up towards the player
+                var playerController = senses.Player.GetComponent<CharacterController>();
+                var deltaHeight = (playerController.height - controller.height) / 2;
+                targetPos.y -= deltaHeight;
+            }
 
-            // Get direction and face target
-            Vector3 direction = targetPos - transform.position;
+            // Get direction & distance and face target
+            var direction = targetPos - transform.position;
+            float distance = direction.magnitude;
             transform.forward = direction.normalized;
 
             // Move towards target
             if (distance > stopDistance)
             {
                 mobile.ChangeEnemyState(MobileStates.Move);
-                if (mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying ||
-                    mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral)
-                    controller.Move(transform.forward * (FlySpeed * Time.deltaTime));
+                var motion = transform.forward * (flies ? FlySpeed : MoveSpeed);
+
+                // Prevent rat stacks (enemies don't stand on shorter enemies)
+                AvoidEnemies(ref motion);
+
+                if (flies)
+                    controller.Move(motion * Time.deltaTime);
                 else
-                    controller.SimpleMove(transform.forward * MoveSpeed);
+                    controller.SimpleMove(motion);
             }
             else
             {

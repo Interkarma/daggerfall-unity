@@ -13,6 +13,8 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
+using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Formulas;
 
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -20,6 +22,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
     public class DaggerfallTravelPopUp : DaggerfallPopupWindow
     {
+        #region Classic Text IDs
+
+        const int notEnoughGoldTextId = 454;
+
+        #endregion
 
         #region fields
         DaggerfallTravelMapWindow travelWindow = null;
@@ -29,7 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public float InnModifier        = .86f;
         public float HorseMod           = .5f;
         public float CartMod            = .75f;
-        public float ShipMod            = 1f;
+        public float ShipMod            = .3125f;
         public int CautiousMod          = 2;
 
         public float BaseTemperateTravelTime        = 60.5f;    //represents time to travel 1 pixel on foot recklessly, camping out, for different terrains
@@ -90,7 +97,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Vector2 shipPos             = new Vector2(165, 63.25f);
         DFPosition endPos           = new DFPosition(109, 158);
 
-        TextLabel avaliableGoldLabel;
+        TextLabel availableGoldLabel;
         TextLabel tripCostLabel;
         TextLabel travelTimeLabel;
 
@@ -99,7 +106,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool sleepModeInn   = true;
 
         int tripCost = 0;
-        double finalTravelTime = 1;
+        float travelTimeTotalLand = 0;
+        float travelTimeTotalWater = 0;
 
         List<TerrainTypes> terrains = new List<TerrainTypes>();
 
@@ -142,8 +150,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             travelPanel = DaggerfallUI.AddPanel(nativePanelRect, NativePanel);
             travelPanel.BackgroundTexture = nativeTexture;
 
-            avaliableGoldLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(148, 97), "0", NativePanel);
-            avaliableGoldLabel.MaxCharacters = 12;
+            availableGoldLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(148, 97), "0", NativePanel);
+            availableGoldLabel.MaxCharacters = 12;
 
             tripCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(117,107), "0", NativePanel);
             tripCostLabel.MaxCharacters = 18;
@@ -204,11 +212,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //Update when player pushes buttons etc.
         void Refresh()
         {
-            finalTravelTime = CalculateTravelTimeTotal(speedCautious, sleepModeInn, travelFoot);
+            CalculateTravelTimeTotal(speedCautious, sleepModeInn, travelFoot);
             UpdateTogglePanels();
             UpdateLabels();
         }
-
 
         //Updates the positions for the panels to indicate which button is selected
         void UpdateTogglePanels()
@@ -260,94 +267,125 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        float CalculateTravelTimeTotal(bool cautiousSpeed = false, bool inn = false, bool horse = false, bool cart = false, bool ship = false)
+        void CalculateTravelTimeTotal(bool cautiousSpeed = false, bool inn = false, bool horse = false, bool cart = false, bool ship = false)
         {
-            float time = 0;
-            foreach(TerrainTypes terrain in terrains)
+            travelTimeTotalLand = 0;
+            travelTimeTotalWater = 0;
+            foreach (TerrainTypes terrain in terrains)
             {
-                time += CalculateTravelTime(terrain, cautiousSpeed, inn, horse, cart, ship);
+                CalculateTravelTime(terrain, cautiousSpeed, inn, horse, cart, ship);
             }
 
             //Debug.Log(string.Format("Total Time Cost: {0}  Inn: {1} PlayerHasShip {2} PlayerHasCart: {3} PlayerHasHorse: {4}", time, inn, PlayerHasShip, PlayerHasCart, PlayerHasHorse));
-            return time;
 
         }
 
-
-        float CalculateTravelTime(TerrainTypes terrainType, bool cautiousSpeed = false, bool inn = false, bool horse = false, bool cart = false, bool ship = false)
+        void CalculateTravelTime(TerrainTypes terrainType, bool cautiousSpeed = false, bool inn = false, bool horse = false, bool cart = false, bool ship = false)
         {
-            float time = 0;
+            float travelTimeLand = 0;
+            float travelTimeWater = 0;
 
             switch (terrainType)
             {
                 case TerrainTypes.None:
-                    time += BaseTemperateTravelTime;
+                    travelTimeLand += BaseTemperateTravelTime;
                     break;
                 case TerrainTypes.ocean:
-                    time += BaseOceanTravelTime;
+                    travelTimeWater += BaseOceanTravelTime;
                     break;
                 case TerrainTypes.Desert:
-                    time += BaseDesert224_225TravelTime;
+                    travelTimeLand += BaseDesert224_225TravelTime;
                     break;
                 case TerrainTypes.Desert2:
-                    time += BaseDesert224_225TravelTime;
+                    travelTimeLand += BaseDesert224_225TravelTime;
                     break;
                 case TerrainTypes.Mountain:
-                    time += BaseMountain226TravelTime;
+                    travelTimeLand += BaseMountain226TravelTime;
                     break;
                 case TerrainTypes.Swamp:
-                    time += BaseSwamp227_228TravelTime;
+                    travelTimeLand += BaseSwamp227_228TravelTime;
                     break;
                 case TerrainTypes.Swamp2:
-                    time += BaseSwamp227_228TravelTime;
+                    travelTimeLand += BaseSwamp227_228TravelTime;
                     break;
                 case TerrainTypes.Desert3:
-                    time += BaseDesert229TravelTime;
+                    travelTimeLand += BaseDesert229TravelTime;
                     break;
                 case TerrainTypes.Mountain2:
-                    time += BaseMountain230TravelTime;
+                    travelTimeLand += BaseMountain230TravelTime;
                     break;
                 case TerrainTypes.Temperate:
-                    time += BaseTemperateTravelTime;
+                    travelTimeLand += BaseTemperateTravelTime;
                     break;
                 case TerrainTypes.Temperate2:
-                    time += BaseTemperateTravelTime;
+                    travelTimeLand += BaseTemperateTravelTime;
                     break;
                 default:
-                    time += BaseTemperateTravelTime;
+                    travelTimeLand += BaseTemperateTravelTime;
                     break;
             }
 
-            if (cautiousSpeed)
-                time = time * 2;
-            if (terrainType == TerrainTypes.ocean && PlayerHasShip)
-                time *= ShipMod;
+            if (terrainType == TerrainTypes.ocean && !travelFoot)
+                travelTimeWater *= ShipMod;
             else if (terrainType != TerrainTypes.ocean)
             {
                 if (inn)
-                    time *= InnModifier;
+                    travelTimeLand *= InnModifier;
                 if (PlayerHasCart)
-                    time *= CartMod;
+                    travelTimeLand *= CartMod;
                 else if (PlayerHasHorse)
-                    time *= HorseMod;
+                    travelTimeLand *= HorseMod;
+            }
+
+            if (speedCautious)
+            {
+                travelTimeLand *= CautiousMod;
+                travelTimeWater *= CautiousMod;
             }
 
             //Debug.Log(string.Format("Time Cost: {0} Terrain Type: {1} Inn: {2} PlayerHasShip {3} PlayerHasCart: {4} PlayerHasHorse: {5}", time, terrainType.ToString(), inn, PlayerHasShip, PlayerHasCart, PlayerHasHorse));
-            return time;
+            travelTimeTotalLand += travelTimeLand;
+            travelTimeTotalWater += travelTimeWater;
 
         }
 
         //Updates text labels
         void UpdateLabels()
         {
-            avaliableGoldLabel.Text = "0";  //##TODO - when player gold implemented, update this
-            tripCostLabel.Text = tripCost.ToString();
+            availableGoldLabel.Text = GameManager.Instance.PlayerEntity.GoldPieces.ToString();
 
-            int travelTimeHours = (int)finalTravelTime / 60;
-            if (travelTimeHours <= 24)
-                travelTimeLabel.Text = "1";
-            else
-                travelTimeLabel.Text = string.Format("{0}", travelTimeHours / 24);
+            int travelTimeDaysLand = 0;
+            int travelTimeDaysWater = 0;
+            int travelTimeDaysTotal = 0;
+            
+            if (travelTimeTotalLand > 0)
+                travelTimeDaysLand = (int)((travelTimeTotalLand / 60 / 24) + 0.5);
+            if (travelTimeTotalWater > 0)
+                travelTimeDaysWater = (int)((travelTimeTotalWater / 60 / 24) + 0.5);
+            travelTimeDaysTotal = travelTimeDaysLand + travelTimeDaysWater;
+
+            tripCost = FormulaHelper.CalculateTripCost(travelTimeTotalLand, travelTimeTotalWater, speedCautious, sleepModeInn, travelFoot, CautiousMod, ShipMod);
+
+            travelTimeLabel.Text = string.Format("{0}", travelTimeDaysTotal);
+            tripCostLabel.Text = tripCost.ToString();
+        }
+
+        // Return whether player has enough gold for the selected travel options
+        bool enoughGoldCheck()
+        {
+            return (GameManager.Instance.PlayerEntity.GoldPieces >= tripCost);
+        }
+
+        void showNotEnoughGoldPopup()
+        {
+            TextFile.Token[] tokens = DaggerfallUnity.TextProvider.GetRSCTokens(notEnoughGoldTextId);
+            if (tokens != null && tokens.Length > 0)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens(tokens);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+            }
         }
 
         #endregion
@@ -358,9 +396,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void BeginButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             Refresh();
-            Debug.Log("Final Travel Time: " + finalTravelTime);
+            if (!enoughGoldCheck())
+            {
+                showNotEnoughGoldPopup();
+                return;
+            }
+            else
+                GameManager.Instance.PlayerEntity.GoldPieces -= tripCost;
+
             GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
-            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((float)finalTravelTime * 60);
+            if (speedCautious)
+            {
+                GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.MaxHealth;
+                GameManager.Instance.PlayerEntity.CurrentFatigue = GameManager.Instance.PlayerEntity.MaxFatigue;
+                GameManager.Instance.PlayerEntity.CurrentMagicka = GameManager.Instance.PlayerEntity.MaxMagicka;
+            }
+
+            DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((travelTimeTotalLand + travelTimeTotalWater) * 60);
+
             terrains.Clear();
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
             travelWindow.CloseTravelWindows(true);

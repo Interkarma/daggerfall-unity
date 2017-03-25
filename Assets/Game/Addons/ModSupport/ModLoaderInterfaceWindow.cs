@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Linq;
-using System.Collections.Generic;
+using System.IO;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -31,7 +31,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
     Button disableAllButton         = new Button();
     Button saveAndCloseButton       = new Button();
     Button extractFilesButton       = new Button();
-    Button showModDescriptionButton  = new Button();
+    Button showModDescriptionButton = new Button();
 
     Checkbox modEnabledCheckBox         = new Checkbox();
     TextLabel modLoadPriorityLabel      = new TextLabel();
@@ -240,8 +240,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
         if(currentSelection != modList.SelectedIndex && modList.Count > 0)
         {
-                currentSelection = modList.SelectedIndex;
-                UpdateModPanel();
+            currentSelection = modList.SelectedIndex;
+            UpdateModPanel();
         }
 
         modListScrollBar.TotalUnits = modList.Count;
@@ -288,6 +288,10 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             modList.AddItem(modsett.modInfo.ModFileName);
         }
 
+        if (modList.SelectedIndex < 0 || modList.SelectedIndex >= modList.Count)
+        {
+            modList.SelectedIndex = 0;
+        }
         mods = null;
     }
 
@@ -375,7 +379,6 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
     {
         if(modSettings == null)
         {
-            //Debug.LogWarning("modsettings array was null");
             return;
         }
 
@@ -388,6 +391,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             mod.LoadPriority = i;
             mod = null;
         }
+        //save current mod settings to file
+        ModManager.WriteModSettings();
         DaggerfallUI.UIManager.PopWindow();
     }
 
@@ -458,7 +463,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         UpdateModPanel();
     }
 
-   void ShowModDescriptionPopUp_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+    void ShowModDescriptionPopUp_OnMouseClick(BaseScreenComponent sender, Vector2 position)
     {
         if (modSettings == null || modSettings.Length < 1)
             return;
@@ -470,10 +475,9 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         ModDescriptionMessageBox.ClickAnywhereToClose = true;
         ModDescriptionMessageBox.ParentPanel.BackgroundTexture = null;
 
-       string[] modDescription = modSettings[currentSelection].modInfo.ModDescription.Split('\n');
-       ModDescriptionMessageBox.SetText(modDescription);
-       uiManager.PushWindow(ModDescriptionMessageBox);
-
+        string[] modDescription = modSettings[currentSelection].modInfo.ModDescription.Split('\n');
+        ModDescriptionMessageBox.SetText(modDescription);
+        uiManager.PushWindow(ModDescriptionMessageBox);
     }
 
 
@@ -504,3 +508,4 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
     #endregion
 
 }
+

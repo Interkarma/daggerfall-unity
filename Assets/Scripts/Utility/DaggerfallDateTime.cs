@@ -278,6 +278,44 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
+        #region Constructors
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public DaggerfallDateTime()
+        {
+        }
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="source">Source time to copy from.</param>
+        public DaggerfallDateTime(DaggerfallDateTime source)
+        {
+            Year = source.Year;
+            Month = source.Month;
+            Day = source.Day;
+            Hour = source.Hour;
+            Minute = source.Minute;
+            Second = source.Second;
+        }
+
+        /// <summary>
+        /// Construct from time components.
+        /// </summary>
+        public DaggerfallDateTime(int year, int month, int day, int hour, int minute, float second)
+        {
+            Year = year;
+            Month = month;
+            Day = day;
+            Hour = hour;
+            Minute = minute;
+            Second = second;
+        }
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -454,6 +492,23 @@ namespace DaggerfallWorkshop.Utility
                 return true;
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Clone time to a new instance.
+        /// </summary>
+        /// <returns>DaggerfallDateTime clone.</returns>
+        public DaggerfallDateTime Clone()
+        {
+            DaggerfallDateTime clone = new DaggerfallDateTime();
+            clone.Year = Year;
+            clone.Month = Month;
+            clone.Day = Day;
+            clone.Hour = Hour;
+            clone.Minute = Minute;
+            clone.Second = Second;
+
+            return clone;
         }
 
         #endregion

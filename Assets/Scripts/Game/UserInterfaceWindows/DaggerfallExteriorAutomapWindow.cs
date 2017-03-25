@@ -42,8 +42,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float dragRotateSpeed = 5.0f; // hold right mouse button down and move left/right to rotate geometry with this speed        
         //const float dragZoomSpeed = 0.007f; // hold right mouse button down and move up/down to zoom in/out
 
-        const float cameraHeight = 90.0f; // initial camera height
-
         const float maxZoom = 25.0f; // the minimum external automap camera height
         const float minZoom = 250.0f; // the maximum external automap camera height
 
@@ -155,7 +153,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         GameObject gameobjectExteriorAutomap = null; // used to hold reference to instance of GameObject "ExteriorAutomap" (which has script Game/DaggerfallExteriorAutomap.cs attached)
 
-        Camera cameraExteriorAutomap = null; // camera for automap camera
+        Camera cameraExteriorAutomap = null; // camera for exterior automap camera        
 
         Panel dummyPanelAutomap = null; // used to determine correct render panel position
         Panel panelRenderAutomap = null; // level geometry is rendered into this panel
@@ -165,7 +163,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel dummyPanelCompass = null; // used to determine correct compass position
 
         // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
+#pragma warning disable 414
         bool leftMouseClickedOnPanelAutomap = false; // used for debug teleport mode clicks
+#pragma warning restore 414
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
         bool leftMouseDownOnForwardButton = false;
@@ -425,14 +425,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public override void OnPush()
         {
-            initGlobalResources(); // initialize gameobjectAutomap, daggerfallExteriorAutomap and layerAutomap
+            initGlobalResources(); // initialize gameobjectExteriorAutomap, daggerfallExteriorAutomap and layerAutomap
 
             if (!isSetup) // if Setup() has not run, run it now
                 Setup();
 
-            daggerfallExteriorAutomap.IsOpenAutomap = true; // signal DaggerfallExteriorAutomap script that automap is open and it should do its stuff in its Update() function            
-
-            daggerfallExteriorAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallExteriorAutomap script that automap window was closed and that it should update its state (updates player marker arrow)
+            daggerfallExteriorAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallExteriorAutomap script that exterior automap window was closed and that it should update its state (updates player marker arrow)
 
             // get automap camera
             cameraExteriorAutomap = daggerfallExteriorAutomap.CameraExteriorAutomap;
@@ -446,16 +444,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 compass.CompassCamera = cameraExteriorAutomap;
             }
 
+
             if (daggerfallExteriorAutomap.ResetAutomapSettingsSignalForExternalScript == true) // signaled to reset automap settings
             {
                 // reset values to default whenever player enters building or dungeon
                 resetCameraPosition();
 
                 daggerfallExteriorAutomap.ResetAutomapSettingsSignalForExternalScript = false; // indicate the settings were reset
-            }
-            else
-            {
-                resetCameraPosition();
             }
 
             // and update the automap view
@@ -467,8 +462,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public override void OnPop()
         {
-            daggerfallExteriorAutomap.IsOpenAutomap = false; // signal DaggerfallExteriorAutomap script that automap was closed
-
             // destroy the other gameobjects as well so they don't use system resources
 
             cameraExteriorAutomap.targetTexture = null;
@@ -483,7 +476,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 UnityEngine.Object.Destroy(textureExteriorAutomap);
             }
 
-            daggerfallExteriorAutomap.updateAutomapStateOnWindowPop(); // signal DaggerfallExteriorAutomap script that automap window was closed
+            daggerfallExteriorAutomap.updateAutomapStateOnWindowPop(); // signal DaggerfallExteriorAutomap script that exterior automap window was closed
         }
 
         /// <summary>
@@ -801,7 +794,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <param name="height"> the expected height of the RenderTexture and Texture2D </param>
         private void createExteriorAutomapTextures(int width, int height)
         {
-            if ((!cameraExteriorAutomap) || (!renderTextureExteriorAutomap) || (oldRenderTextureExteriorAutomapWidth != width) || (oldRenderTextureExteriorAutomapHeight != height))
+            if ((cameraExteriorAutomap) || (!renderTextureExteriorAutomap) || (oldRenderTextureExteriorAutomapWidth != width) || (oldRenderTextureExteriorAutomapHeight != height))
             {
                 cameraExteriorAutomap.targetTexture = null;
                 if (renderTextureExteriorAutomap)
@@ -834,7 +827,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void resetCameraTransform()
         {
             cameraExteriorAutomap.orthographicSize = locationSizeBasedStartZoomMultiplier * Math.Max(daggerfallExteriorAutomap.LocationWidth, daggerfallExteriorAutomap.LocationHeight) * daggerfallExteriorAutomap.LayoutMultiplier;
-            cameraExteriorAutomap.orthographicSize = Math.Min(minZoom, Math.Max(maxZoom * daggerfallExteriorAutomap.LayoutMultiplier, cameraExteriorAutomap.orthographicSize));
+            cameraExteriorAutomap.orthographicSize = Math.Min(minZoom * daggerfallExteriorAutomap.LayoutMultiplier, Math.Max(maxZoom * daggerfallExteriorAutomap.LayoutMultiplier, cameraExteriorAutomap.orthographicSize));
             cameraExteriorAutomap.transform.position = daggerfallExteriorAutomap.GameobjectPlayerMarkerArrow.transform.position + new Vector3(0.0f, 10.0f, 0.0f); //Vector3.zero + Vector3.up * cameraHeight;
             cameraExteriorAutomap.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             //cameraExteriorAutomap.transform.LookAt(Vector3.zero);            
@@ -931,6 +924,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionRotate(float rotationAmount)
         {
             cameraExteriorAutomap.transform.RotateAround(cameraExteriorAutomap.transform.position, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            daggerfallExteriorAutomap.rotateBuildingNamePlates(rotationAmount * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
@@ -953,6 +947,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ActionRotateAroundPlayerPos(float rotationAmount)
         {
             cameraExteriorAutomap.transform.RotateAround(daggerfallExteriorAutomap.GameobjectPlayerMarkerArrow.transform.position, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
+            daggerfallExteriorAutomap.rotateBuildingNamePlates(rotationAmount * Time.unscaledDeltaTime);
             updateAutomapView();
         }
 
@@ -995,7 +990,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionApplyMinZoom()
         {
-            cameraExteriorAutomap.orthographicSize = minZoom;
+            cameraExteriorAutomap.orthographicSize = minZoom * daggerfallExteriorAutomap.LayoutMultiplier;
             updateAutomapView();
         }
 
@@ -1004,7 +999,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public void ActionApplyMaxZoom()
         {
-            cameraExteriorAutomap.orthographicSize = maxZoom;
+            cameraExteriorAutomap.orthographicSize = maxZoom * daggerfallExteriorAutomap.LayoutMultiplier;
             updateAutomapView();
         }
 
@@ -1141,6 +1136,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // reset values to default
             resetCameraPosition();
+            daggerfallExteriorAutomap.resetRotationBuildingNamePlates();            
             updateAutomapView();
         }
 

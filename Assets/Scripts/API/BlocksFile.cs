@@ -588,7 +588,12 @@ namespace DaggerfallConnect.Arena2
             }
 
             // Section2 unknown data
-            blocks[block].DFBlock.RmbBlock.FldHeader.Section2UnknownData = reader.ReadBytes(128);
+            //blocks[block].DFBlock.RmbBlock.FldHeader.Section2UnknownData = reader.ReadBytes(128);
+            blocks[block].DFBlock.RmbBlock.FldHeader.Section2UnknownData = new UInt32[32];
+            for (int i = 0; i < 32; i++)
+            {
+                blocks[block].DFBlock.RmbBlock.FldHeader.Section2UnknownData[i] = reader.ReadUInt32();
+            }
 
             // Block data sizes
             blocks[block].DFBlock.RmbBlock.FldHeader.BlockDataSizes = new Int32[32];

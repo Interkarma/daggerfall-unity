@@ -21,6 +21,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
@@ -315,6 +316,11 @@ namespace DaggerfallWorkshop
 
             // Get texture
             GetTextureResults results = textureReader.GetTexture2D(settings, AlphaTextureFormat, NonAlphaTextureFormat);
+
+            // Import custom texture(s) 
+            if (TextureReplacement.CustomTextureExist(archive, record, frame))
+                TextureReplacement.LoadCustomTextureResults(archive, record, frame, ref results, ref GenerateNormals);
+
             rectOut = results.singleRect;
 
             // Create material
@@ -352,6 +358,9 @@ namespace DaggerfallWorkshop
                 material.SetColor("_EmissionColor", DayWindowColor * DayWindowIntensity);
                 material.EnableKeyword("_EMISSION");
             }
+
+            // Import additional custom components of material
+            TextureReplacement.CustomizeMaterial(archive, record, frame, material);
 
             // Setup cached material
             DFSize size = results.textureFile.GetSize(record);

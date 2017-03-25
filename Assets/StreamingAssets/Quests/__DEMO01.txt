@@ -1,0 +1,12 @@
+- Minimal example quest used to demonstrate how to script custom actions
+
+Quest: __DEMO01
+
+QRC:
+
+- No text resources
+
+QBN:
+
+- Headless entry point with custom action
+juggle 5 apples every 2 seconds drop 40%

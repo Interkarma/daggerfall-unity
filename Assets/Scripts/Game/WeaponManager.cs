@@ -13,6 +13,7 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -183,7 +184,7 @@ namespace DaggerfallWorkshop.Game
             ShowWeapons(false);
         }
 
-        public void Reset()
+    public void Reset()
         {
             usingRightHand = true;
             holdingShield = false;
@@ -481,7 +482,9 @@ namespace DaggerfallWorkshop.Game
 
                 // TODO: Use correct damage based on weapon and swing type
                 // Just using fudge values during development
-                int damage = Random.Range(1, 25);
+
+                // Calculate damage
+                int damage = FormulaHelper.CalculateMeleeDamage(weapon, playerEntity);
 
                 //// Check if hit has an EnemyHealth
                 //// This is part of the old Demo code and will eventually be removed
@@ -507,7 +510,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Check if hit an entity and remove health
                 DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                if (entityBehaviour)
+                if (entityBehaviour && damage > 0)
                 {
                     if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
                     {

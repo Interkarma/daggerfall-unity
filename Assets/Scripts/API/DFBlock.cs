@@ -119,6 +119,13 @@ namespace DaggerfallConnect
             Passive = 99,
         }
 
+        public enum EnemyGenders
+        {
+            Unspecified = 0,
+            Female = 1,
+            Male = 2,
+        }
+
         #endregion
 
         #region RMB Structures
@@ -162,7 +169,8 @@ namespace DaggerfallConnect
             public DFLocation.BuildingData[] BuildingDataList;
 
             /// <summary>Unknown data.</summary>
-            internal Byte[] Section2UnknownData;
+            internal UInt32[] Section2UnknownData;
+            //internal Byte[] Section2UnknownData;
 
             /// <summary>Length of block record data in bytes (array is 32 records long, but only up to numBlockDataRecords have valid data).</summary>
             public Int32[] BlockDataSizes;
@@ -560,6 +568,12 @@ namespace DaggerfallConnect
         {
             /// <summary>No gender specified.</summary>
             Unspecified = 0,
+
+            /// <summary>Mobile is female</summary>
+            FemaleMobile = 1,
+
+            /// <summary>Mobile is male</summary>
+            MaleMobile = 2,
 
             /// <summary>NPC is male.</summary>
             Male = 0x1200,

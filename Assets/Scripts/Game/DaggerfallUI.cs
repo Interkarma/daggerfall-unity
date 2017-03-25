@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Utility;
@@ -75,6 +76,9 @@ namespace DaggerfallWorkshop.Game
         DaggerfallPauseOptionsWindow dfPauseOptionsWindow;
         DaggerfallCharacterSheetWindow dfCharacterSheetWindow;
         DaggerfallInventoryWindow dfInventoryWindow;
+        DaggerfallControlsWindow dfControlsWindow;
+        DaggerfallJoystickControlsWindow dfJoystickControlsWindow;
+        DaggerfallUnityMouseControlsWindow dfUnityMouseControlsWindow;
         DaggerfallTravelMapWindow dfTravelMapWindow;
         DaggerfallAutomapWindow dfAutomapWindow;
         DaggerfallExteriorAutomapWindow dfExteriorAutomapWindow;
@@ -136,6 +140,21 @@ namespace DaggerfallWorkshop.Game
             get { return dfInventoryWindow; }
         }
 
+        public DaggerfallControlsWindow ControlsWindow
+        {
+            get { return dfControlsWindow; }
+        }
+
+        public DaggerfallJoystickControlsWindow JoystickControlsWindow
+        {
+            get { return dfJoystickControlsWindow; }
+        }
+
+        public DaggerfallUnityMouseControlsWindow MouseControlsWindow
+        {
+            get { return dfUnityMouseControlsWindow; }
+        }
+
         public DaggerfallBookReaderWindow BookReaderWindow
         {
             get { return dfBookReaderWindow; }
@@ -162,6 +181,9 @@ namespace DaggerfallWorkshop.Game
             dfPauseOptionsWindow = new DaggerfallPauseOptionsWindow(uiManager);
             dfCharacterSheetWindow = new DaggerfallCharacterSheetWindow(uiManager);
             dfInventoryWindow = new DaggerfallInventoryWindow(uiManager);
+            dfControlsWindow = new DaggerfallControlsWindow(uiManager);
+            dfJoystickControlsWindow = new DaggerfallJoystickControlsWindow(uiManager);
+            dfUnityMouseControlsWindow = new DaggerfallUnityMouseControlsWindow(uiManager);
             dfTravelMapWindow = new DaggerfallTravelMapWindow(uiManager);
             dfAutomapWindow = new DaggerfallAutomapWindow(uiManager);
             dfBookReaderWindow = new DaggerfallBookReaderWindow(uiManager);
@@ -267,6 +289,15 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case DaggerfallUIMessages.dfuiOpenInventoryWindow:
                     uiManager.PushWindow(dfInventoryWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenControlsWindow:
+                    uiManager.PushWindow(dfControlsWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenJoystickControlsWindow:
+                    uiManager.PushWindow(dfJoystickControlsWindow);
+                    break;
+                case DaggerfallUIMessages.dfuiOpenMouseControlsWindow:
+                    uiManager.PushWindow(dfUnityMouseControlsWindow);
                     break;
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
                     if (!GameManager.Instance.IsPlayerInside)        //TODO: pop-up when try to travel near enemies
@@ -499,6 +530,15 @@ namespace DaggerfallWorkshop.Game
 
         #region Static Helpers
 
+        public static void SetFocus(BaseScreenComponent control)
+        {
+            IUserInterfaceWindow topWindow = Instance.uiManager.TopWindow;
+            if (topWindow != null)
+            {
+                topWindow.SetFocus(control);
+            }
+        }
+
         public static Button AddButton(Vector2 position, Vector2 size, Panel panel = null)
         {
             Button button = new Button();
@@ -546,6 +586,37 @@ namespace DaggerfallWorkshop.Game
                 panel.Components.Add(textLabel);
 
             return textLabel;
+        }
+
+        public static TextBox AddTextBox(Rect rect, string defaultText, Panel panel = null, int maxCharacters = -1, DaggerfallFont font = null, int glyphSpacing = 1)
+        {
+            TextBox textBox = new TextBox(font);
+
+            textBox.Position = new Vector2(rect.x, rect.y);
+            textBox.Size = new Vector2(rect.width, rect.height);
+            textBox.DefaultText = defaultText;
+            textBox.MaxCharacters = maxCharacters;
+            textBox.TextOffset = 2;
+
+            if (panel != null)
+                panel.Components.Add(textBox);
+
+            return textBox;
+        }
+
+        public static Button AddTextButton(Rect rect, string text, Panel panel = null)
+        {
+            Button button = new UserInterface.Button();
+            button.Position = new Vector2(rect.x, rect.y);
+            button.Size = new Vector2(rect.width, rect.height);
+            button.Outline.Enabled = true;
+            button.Label.HorizontalAlignment = HorizontalAlignment.Center;
+            button.Label.ShadowPosition = Vector2.zero;
+            button.Label.Text = text;
+            if (panel != null)
+                panel.Components.Add(button);
+
+            return button;
         }
 
         public static TextLabel AddDefaultShadowedTextLabel(Vector2 position, Panel panel = null, int glyphSpacing = 1)
@@ -642,11 +713,20 @@ namespace DaggerfallWorkshop.Game
             if (!dfUnity.IsReady)
                 return null;
 
-            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
-            imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
-            Texture2D texture = GetTextureFromImg(imgFile, format);
+            ImgFile imgFile = new ImgFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);            
+            Texture2D texture = null;
+ 
+            // Custom texture
+            if (TextureReplacement.CustomImageExist(name))
+                texture = TextureReplacement.LoadCustomImage(name);
+            // Daggerfall texture
+            else
+            {
+                imgFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, imgFile.PaletteName));
+                texture = GetTextureFromImg(imgFile, format);
+            }
+                
             texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
-
             offset = imgFile.ImageOffset;
 
             return texture;
@@ -689,11 +769,20 @@ namespace DaggerfallWorkshop.Game
                 return null;
 
             CifRciFile cifRciFile = new CifRciFile(Path.Combine(dfUnity.Arena2Path, name), FileUsage.UseMemory, true);
-            cifRciFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cifRciFile.PaletteName));
-            DFBitmap bitmap = cifRciFile.GetDFBitmap(record, frame);
-            Texture2D texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
-            texture.SetPixels32(cifRciFile.GetColor32(bitmap, 0));
-            texture.Apply(false, true);
+            Texture2D texture=null;
+            
+            // Custom texture
+            if (TextureReplacement.CustomCifExist(name, record, frame))
+                texture = TextureReplacement.LoadCustomCif(name, record, frame);
+            // Daggerfall texture
+            else
+            { 
+                cifRciFile.LoadPalette(Path.Combine(dfUnity.Arena2Path, cifRciFile.PaletteName));
+                DFBitmap bitmap = cifRciFile.GetDFBitmap(record, frame);
+                texture = new Texture2D(bitmap.Width, bitmap.Height, format, false);
+                texture.SetPixels32(cifRciFile.GetColor32(bitmap, 0));
+                texture.Apply(false, true);
+            }
             texture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             offset = cifRciFile.GetOffset(record);

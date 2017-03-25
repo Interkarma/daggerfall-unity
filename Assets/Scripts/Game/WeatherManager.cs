@@ -4,19 +4,25 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Utility;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
     /// Helper component to assign weather settings across multiple components.
+    ///
+    /// The logic for weather changes are based on the climate and weather table described in the Daggerfall Chronicles,
+    /// pg. 47. Plus some additional logic to handle more natural weather transitions.
+    ///
+    /// TODO add smooth weather transitions
     /// </summary>
     public class WeatherManager : MonoBehaviour
     {
@@ -34,56 +40,40 @@ namespace DaggerfallWorkshop.Game
         [Range(0, 1)]
         public float WinterSunlightScale = 0.65f;
 
-        public float PollWeatherInSeconds = 4;
-
         [Range(0, 1)]
-        public float ChanceToRainOvercast = 0.03f;
+        public float SunnyFogDensity = 0.00005f;
         [Range(0, 1)]
-        public float ChanceToStartRaining = 0.04f;
+        public float OvercastFogDensity = 0.00005f;
         [Range(0, 1)]
-        public float ChanceToStartStorming = 0.1f;
-
+        public float RainyFogDensity = 0.0001f;
         [Range(0, 1)]
-        public float ChanceToSnowOvercast = 0.03f;
+        public float SnowyFogDensity = 0.001f;
         [Range(0, 1)]
-        public float ChanceToStartSnowing = 0.1f;
+        public float HeavyFogDensity = 0.05f;
 
-        DaggerfallUnity dfUnity;
-        bool isRaining = false;
-        bool isStorming = false;
-        bool isSnowing = false;
-        bool isOvercast = false;
-        float pollTimer = 0;
+        DaggerfallUnity _dfUnity;
+        float _pollTimer;
+        private WeatherTable _weatherTable;
+        private float _pollWeatherInSeconds = 30f;
 
-        public bool IsRaining
-        {
-            get { return isRaining; }
-        }
+        public bool IsRaining { get; private set; }
 
-        public bool IsStorming
-        {
-            get { return isStorming; }
-        }
+        public bool IsStorming { get; private set; }
 
-        public bool IsSnowing
-        {
-            get { return isSnowing; }
-        }
+        public bool IsSnowing { get; private set; }
 
-        public bool IsOvercast
-        {
-            get { return isOvercast; }
-        }
+        public bool IsOvercast { get; private set; }
 
         void Awake()
         {
-            Serialization.SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
         }
 
         void Start()
         {
-            dfUnity = DaggerfallUnity.Instance;
+            _dfUnity = DaggerfallUnity.Instance;
+            _weatherTable = WeatherTable.ParseJsonTable();
         }
 
         void Update()
@@ -97,8 +87,8 @@ namespace DaggerfallWorkshop.Game
         {
             if (DaggerfallSky)
                 DaggerfallSky.WeatherStyle = WeatherStyle.Normal;
-            isOvercast = false;
-            RaiseOnClearOvercastEvent();
+            IsOvercast = false;
+            SetFog(false, SunnyFogDensity);
         }
 
         public void ClearAllWeather()
@@ -108,98 +98,90 @@ namespace DaggerfallWorkshop.Game
             ClearOvercast();
         }
 
+        #region Fog
+
+        public void SetFog(bool isFoggy, float density)
+        {
+            // edit by Nystul: don't disable RenderSettings fog! Rendering Fog != Weather Fog
+            //RenderSettings.fog = isFoggy;
+
+            if (isFoggy)
+            {
+                RenderSettings.fogDensity = density;
+//                RenderSettings.fogMode = FogMode.Exponential;
+//                RenderSettings.fogColor = Color.gray;
+            }
+            else
+            {
+                RenderSettings.fogDensity = SunnyFogDensity;
+                // TODO set this based on ... something.
+                // ex. time of day/angle of sun so we can get nice sunset/rise atmospheric effects
+                // also blend with climate so climates end up having faint 'tints' to them
+//                RenderSettings.fogColor = Color.clear;
+            }
+        }
+
+        #endregion
+
         #region Rain
 
-        public void SetRainOvercast(bool rainOvercast)
+        public void SetRainOvercast()
         {
-            if (DaggerfallSky && rainOvercast)
+            if (DaggerfallSky)
             {
                 if (Random.Range(0, 1) > 0.5f)
                     DaggerfallSky.WeatherStyle = WeatherStyle.Rain1;
                 else
                     DaggerfallSky.WeatherStyle = WeatherStyle.Rain2;
             }
-            else if (DaggerfallSky && !rainOvercast)
-            {
-                DaggerfallSky.WeatherStyle = WeatherStyle.Normal;
-            }
-
-            isOvercast = true;
-            RaiseOnSetRainOvercastEvent();
+            SetFog(true, RainyFogDensity);
+            IsOvercast = true;
         }
 
         public void StartRaining()
         {
-            StopSnowing();
-            SetRainOvercast(true);
-            isRaining = true;
-            
-            if (PlayerWeather)
-                PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.Rain_Normal;
-
-            RaiseOnStartRainingEvent();
+            SetRainOvercast();
+            IsRaining = true;
         }
 
         public void StartStorming()
         {
             StartRaining();
-            isStorming = true;
-            RaiseOnStartStormingEvent();
+            IsStorming = true;
         }
 
         public void StopRaining()
         {
-            isRaining = false;
-            isStorming = false;
-
-            if (PlayerWeather)
-                PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.None;
-
-            RaiseOnStopRainingEvent();
+            IsRaining = false;
+            IsStorming = false;
         }
 
         #endregion
 
         #region Snow
 
-        public void SetSnowOvercast(bool snowOvercast)
+        public void SetSnowOvercast()
         {
-            if (DaggerfallSky && snowOvercast)
+            if (DaggerfallSky)
             {
                 if (Random.Range(0, 1) > 0.5f)
                     DaggerfallSky.WeatherStyle = WeatherStyle.Snow1;
                 else
                     DaggerfallSky.WeatherStyle = WeatherStyle.Snow2;
             }
-            else if (DaggerfallSky && !snowOvercast)
-            {
-                DaggerfallSky.WeatherStyle = WeatherStyle.Normal;
-            }
-
-            isOvercast = true;
-            RaiseOnSetSnowOvercastEvent();
+            SetFog(true, SnowyFogDensity);
+            IsOvercast = true;
         }
 
         public void StartSnowing()
         {
-            StopRaining();
-            SetSnowOvercast(true);
-            isSnowing = true;
-
-            if (PlayerWeather)
-                PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.Snow_Normal;
-
-            RaiseOnStartSnowingEvent();
+            SetSnowOvercast();
+            IsSnowing = true;
         }
 
         public void StopSnowing()
         {
-            isSnowing = false;
-
-            if (PlayerWeather)
-                PlayerWeather.WeatherType = PlayerWeather.WeatherTypes.None;
-
-            RaiseOnStopSnowingEvent();
+            IsSnowing = false;
         }
 
         #endregion
@@ -212,15 +194,15 @@ namespace DaggerfallWorkshop.Game
             float scale = SunlightManager.defaultScaleFactor;
 
             // Apply winter
-            if (dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter)
+            if (_dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter)
                 scale = WinterSunlightScale;
 
             // Apply rain, storm, snow light scale
-            if (isRaining && !isStorming)
+            if (IsRaining && !IsStorming)
                 scale = RainSunlightScale;
-            else if (isRaining && isStorming)
+            else if (IsRaining && IsStorming)
                 scale = StormSunlightScale;
-            else if (isSnowing)
+            else if (IsSnowing)
                 scale = SnowSunlightScale;
 
             // Apply scale to sunlight manager
@@ -234,12 +216,12 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             // Set presets based on weather type
-            if (isRaining && !isStorming)
+            if (IsRaining && !IsStorming)
             {
                 WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.Rain;
                 return;
             }
-            else if (isRaining && isStorming)
+            else if (IsRaining && IsStorming)
             {
                 WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.Storm;
                 return;
@@ -263,76 +245,77 @@ namespace DaggerfallWorkshop.Game
         void PollWeatherChanges()
         {
             // Increment poll timer
-            pollTimer += Time.deltaTime;
-            if (pollTimer < PollWeatherInSeconds)
+            _pollTimer += Time.deltaTime;
+            if (_pollTimer < _pollWeatherInSeconds)
                 return;
 
             // Reset timer
-            pollTimer = 0;
+            _pollTimer = 0;
 
-            // Very simple weather ramp based on season - will improve later
-            if (dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Spring ||
-                dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Summer)
+            var climate = PlayerWeather.PlayerGps.CurrentClimateIndex;
+            var next = _weatherTable.GetWeather(climate, _dfUnity.WorldTime.Now.SeasonValue);
+            if (next == PlayerWeather.WeatherType)
+                return;
+
+            // TODO smooth weather transitions. eg: storming to sunny is a jarring transition
+
+            SetWeather(next);
+        }
+
+        public void SetWeather(WeatherType next)
+        {
+            Debug.Log("Next weather change: " + next);
+            ClearAllWeather();
+            switch (next)
             {
-                // Start overcast
-                if (!IsOvercast && !IsRaining && !IsStorming)
-                {
-                    if (Random.value < ChanceToRainOvercast)
-                    {
-                        SetRainOvercast(true);
-                        return;
-                    }
-                }
+                case WeatherType.Cloudy:
+                    // TODO make skybox cloudy
+                    SetFog(true, SunnyFogDensity);
+                    break;
 
-                // Progress to rain
-                if (IsOvercast && !IsRaining && !IsStorming)
-                {
-                    if (Random.value < ChanceToStartRaining)
-                    {
-                        StartRaining();
-                        return;
-                    }
-                }
+                case WeatherType.Overcast:
+                    SetRainOvercast();
+                    break;
 
-                // Progress to storm
-                if (IsRaining)
-                {
-                    if (Random.value < ChanceToStartStorming)
-                    {
-                        StartStorming();
-                        return;
-                    }
-                }
+                case WeatherType.Fog:
+                    SetRainOvercast();
+                    SetFog(true, HeavyFogDensity);
+                    break;
+
+                case WeatherType.Rain:
+                    StartRaining();
+                    break;
+
+                case WeatherType.Thunder:
+                    StartStorming();
+                    break;
+
+                case WeatherType.Snow:
+                    StartSnowing();
+                    break;
             }
-            else
-            {
-                // Start overcast
-                if (!IsOvercast && !IsSnowing)
-                {
-                    if (Random.value < ChanceToSnowOvercast)
-                        SetSnowOvercast(true);
-                }
-
-                // Progress to snow
-                if (IsOvercast && !IsSnowing)
-                {
-                    if (Random.value < ChanceToStartSnowing)
-                        StartSnowing();
-                }
-            }
+            RaiseOnWeatherChangeEvent(next);
+            PlayerWeather.WeatherType = next;
         }
 
         #endregion
 
         #region Events Handlers
 
-        private void SaveLoadManager_OnLoad(Serialization.SaveData_v1 saveData)
+        void SaveLoadManager_OnLoad(SaveData_v1 saveData)
         {
-            // TODO: Save/load weather state
-            ClearAllWeather();
+            switch (saveData.playerData.playerPosition.weather)
+            {
+                case WeatherType.Rain:
+                    StartRaining();
+                    break;
+                case WeatherType.Snow:
+                    StartSnowing();
+                    break;
+            }
         }
 
-        private void StreamingWorld_OnInitWorld()
+        void StreamingWorld_OnInitWorld()
         {
             // Clear weather when starting up world
             ClearAllWeather();
@@ -342,76 +325,13 @@ namespace DaggerfallWorkshop.Game
 
         #region Events
 
-        // OnSetRainOvercast
-        public delegate void OnSetRainOvercastEventHandler();
-        public static event OnSetRainOvercastEventHandler OnSetRainOvercast;
-        protected virtual void RaiseOnSetRainOvercastEvent()
-        {
-            if (OnSetRainOvercast != null)
-                OnSetRainOvercast();
-        }
+        public delegate void OnWeatherChangeHandler(WeatherType weather);
+        public static event OnWeatherChangeHandler OnWeatherChange;
 
-        // OnSetSnowOvercast
-        public delegate void OnSetSnowOvercastEventHandler();
-        public static event OnSetSnowOvercastEventHandler OnSetSnowOvercast;
-        protected virtual void RaiseOnSetSnowOvercastEvent()
+        static void RaiseOnWeatherChangeEvent(WeatherType weather)
         {
-            if (OnSetSnowOvercast != null)
-                OnSetSnowOvercast();
-        }
-
-        // OnClearOvercast
-        public delegate void OnClearOvercastEventHandler();
-        public static event OnClearOvercastEventHandler OnClearOvercast;
-        protected virtual void RaiseOnClearOvercastEvent()
-        {
-            if (OnClearOvercast != null)
-                OnClearOvercast();
-        }
-
-        // OnStartRaining
-        public delegate void OnStartRainingEventHandler();
-        public static event OnStartRainingEventHandler OnStartRaining;
-        protected virtual void RaiseOnStartRainingEvent()
-        {
-            if (OnStartRaining != null)
-                OnStartRaining();
-        }
-
-        // OnStartStorming
-        public delegate void OnStartStormingEventHandler();
-        public static event OnStartStormingEventHandler OnStartStorming;
-        protected virtual void RaiseOnStartStormingEvent()
-        {
-            if (OnStartStorming != null)
-                OnStartStorming();
-        }
-
-        // OnStopRaining
-        public delegate void OnStopRainingEventHandler();
-        public static event OnStopRainingEventHandler OnStopRaining;
-        protected virtual void RaiseOnStopRainingEvent()
-        {
-            if (OnStopRaining != null)
-                OnStopRaining();
-        }
-
-        // OnStartSnowing
-        public delegate void OnStartSnowingEventHandler();
-        public static event OnStartSnowingEventHandler OnStartSnowing;
-        protected virtual void RaiseOnStartSnowingEvent()
-        {
-            if (OnStartSnowing != null)
-                OnStartSnowing();
-        }
-
-        // OnStopSnowing
-        public delegate void OnStopSnowingEventHandler();
-        public static event OnStopSnowingEventHandler OnStopSnowing;
-        protected virtual void RaiseOnStopSnowingEvent()
-        {
-            if (OnStopSnowing != null)
-                OnStopSnowing();
+            if (OnWeatherChange != null)
+                OnWeatherChange(weather);
         }
 
         #endregion

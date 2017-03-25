@@ -28,12 +28,7 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        const string idCol = "id";
-        const string nameCol = "name";
-
-        Table globalVars;
-        Table messageTypes;
-
+        const string specialFieldToken = "--+";
         #endregion
 
         #region Constructors
@@ -43,8 +38,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public Parser()
         {
-            //globalVars = new Table(QuestMachine.GetQuestTableText("Globals"));
-            //messageTypes = new Table(QuestMachine.GetQuestTableText("Messages"));
         }
 
         #endregion
@@ -55,8 +48,9 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Attempts to parse a text source file.
         /// </summary>
         /// <param name="source">Array of text lines from quest source.</param>
-        public void Parse(string[] source)
+        public Quest Parse(string[] source)
         {
+            Quest quest = new Quest();
             const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
 
             string questName = string.Empty;
@@ -79,7 +73,15 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Trim trailing white space from either end of source line data
                 string text = line.Trim();
 
-                // Skip comment lines
+                // Handle special tag code lines
+                // This will parse as comments to Template but have special meaning in Daggerfall Unity
+                if (text.StartsWith(specialFieldToken, comparison))
+                {
+                    ReadSpecialField(quest, line);
+                    continue;
+                }
+
+                // Skip other comment lines
                 if (text.StartsWith("-", comparison))
                     continue;
 
@@ -132,25 +134,34 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception("Parse() error: Quest has no QBN section.");
             }
 
-            // Parse QRC
-            ParseQRC(qrcLines);
-            //Debug.Log(string.Format("ParseQRC() found {0} messages.", messagesFound));
-
-            // Parse QBN
-            ParseQBN(qbnLines);
+            // Parse QRC and QBN
+            ParseQRC(quest, qrcLines);
+            ParseQBN(quest, qbnLines);
 
             // End timer
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
-            Debug.Log(string.Format("Time to parse quest {0} was {1}ms.", questName, totalTime));
+            if (string.IsNullOrEmpty(quest.DisplayName))
+            {
+                Debug.Log(string.Format("Time to parse quest {0} was {1}ms.", questName, totalTime));
+            }
+            else
+            {
+                Debug.Log(string.Format("Time to parse quest {0} ({1}) was {2}ms.", questName, quest.DisplayName, totalTime));
+            }
+
+            return quest;
         }
 
         #endregion
 
         #region Private Methods
 
-        void ParseQRC(List<string> lines)
+        void ParseQRC(Quest quest, List<string> lines)
         {
             const string parseIdError = "Could not parse text '{0}' to an int. Expected message ID value.";
+
+            const string idCol = "id";
+            Table staticMessagesTable = QuestMachine.Instance.StaticMessagesTable;
 
             for (int i = 0; i < lines.Count; i++)
             {
@@ -161,18 +172,18 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Check for start of message block
                 // Only present in QRC section
                 // Begins with field Message: (or fixed message type)
-                List<Message> messages = new List<Message>();
                 string[] parts = SplitField(lines[i]);
-                if (messageTypes.HasValue(parts[0]))
+                if (staticMessagesTable.HasValue(parts[0]))
                 {
                     // Read ID of message
                     int messageID = 0;
+
                     if (parts[1].StartsWith("[") && parts[1].EndsWith("]"))
                     {
                         // Fixed message types use ID from table
-                        messageID = messageTypes.GetInt(idCol, parts[0]);
+                        messageID = staticMessagesTable.GetInt(idCol, parts[0]);
                         if (messageID == -1)
-                            throw new Exception(string.Format(parseIdError, messageTypes.GetInt(idCol, parts[0])));
+                            throw new Exception(string.Format(parseIdError, staticMessagesTable.GetInt(idCol, parts[0])));
                     }
                     else
                     {
@@ -193,24 +204,139 @@ namespace DaggerfallWorkshop.Game.Questing
                     }
 
                     // Instantiate message
-                    Message message = new Message(messageID, messageLines.ToArray());
+                    Message message = new Message(quest, messageID, messageLines.ToArray());
 
-                    // Add message to list
-                    messages.Add(message);
+                    // Add message to collection
+                    quest.AddMessage(messageID, message);
                 }
             }
         }
 
-        void ParseQBN(List<string> lines)
+        void ParseQBN(Quest quest, List<string> lines)
         {
+            bool foundHeadlessTask = false;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                // Skip empty lines while scanning for next QBN item
+                if (string.IsNullOrEmpty(lines[i].Trim()))
+                    continue;
 
+                // Simple way to identify certain lines
+                // This is just to get started on some basics for now
+                if (lines[i].StartsWith("clock", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Clock clock = new Clock(quest, lines[i]);
+                    quest.AddResource(clock);
+                }
+                else if (lines[i].StartsWith("Item", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Item item = new Item(quest, lines[i]);
+                    quest.AddResource(item);
+                }
+                else if (lines[i].StartsWith("person", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // This is a person declaration
+                }
+                else if (lines[i].StartsWith("foe", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // This is an enemy declaration
+                }
+                else if (lines[i].StartsWith("place", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // This is a place declaration
+                    Place place = new Place(quest, lines[i]);
+                    quest.AddResource(place);
+                }
+                else if (lines[i].StartsWith("variable", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // This is a single-line variable declaration task
+                    string[] variableLines = new string[1];
+                    variableLines[0] = lines[i];
+                    Task task = new Task(quest, variableLines);
+                    quest.AddTask(task);
+                }
+                else if (lines[i].Contains("task:") ||
+                    (lines[i].StartsWith("until", StringComparison.InvariantCultureIgnoreCase) && lines[i].Contains("performed:")))
+                {
+                    // This is a standard or repeating task declaration
+                    List<string> taskLines = ReadBlock(lines, ref i);
+                    Task task = new Task(quest, taskLines.ToArray());
+                    quest.AddTask(task);
+                }
+                else if (IsGlobalReference(lines[i]))
+                {
+                    // This is a global variable reference
+                }
+                else if (foundHeadlessTask == false)
+                {
+                    // The first QBN line found that is not a resource declaration should be our headless entry point
+                    // Currently only a single headless task is expected for startup task
+                    // May be expanded later to allow multiple headless tasks
+                    List<string> taskLines = ReadBlock(lines, ref i);
+                    Task task = new Task(quest, taskLines.ToArray());
+                    quest.AddTask(task);
+                    foundHeadlessTask = true;
+                }
+                else
+                {
+                    // Something went wrong
+                    throw new Exception(string.Format("Unknown line signature encounted '{0}'.", lines[i]));
+                }
+            }
+        }
+
+        void ReadSpecialField(Quest quest, string line)
+        {
+            // Read field
+            line = line.Replace(specialFieldToken, "");
+            string[] field = SplitField(line, 2);
+
+            if (string.Compare(field[0], "DisplayName", true) == 0)
+                quest.DisplayName = field[1];
         }
 
         #endregion
 
-        #region Helpers
+        #region Private Methods
 
-        string[] SplitLine(string text, bool trim = true)
+        List<string> ReadBlock(List<string> linesIn, ref int currentLine)
+        {
+            List<string> linesOut = new List<string>();
+            while (true)
+            {
+                // Add current line to lines out
+                linesOut.Add(linesIn[currentLine].Trim('\t'));
+
+                // End block if about to overflow lines
+                if (currentLine + 1 >= linesIn.Count)
+                    break;
+
+                // Trim and look for pure white-space to end block
+                string text = linesIn[++currentLine].TrimEnd('\r');
+                if (string.IsNullOrEmpty(text))
+                    break;
+            }
+
+            return linesOut;
+        }
+
+        bool IsGlobalReference(string line)
+        {
+            string[] parts = SplitLine(line);
+            if (parts == null || parts.Length == 0)
+                return false;
+
+            if (QuestMachine.Instance.GlobalVarsTable.HasValue(parts[0]))
+                return true;
+
+            return false;
+        }
+
+        #endregion
+
+        #region Static Helpers
+
+        public static string[] SplitLine(string text, bool trim = true)
         {
             string[] parts = text.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
 
@@ -224,7 +350,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         // Splits a field with format 'FieldName: Value" using : as separator
         // Be default expects two string values as result
-        string[] SplitField(string text, int expectedCount = 2, bool trim = true)
+        public static string[] SplitField(string text, int expectedCount = 2, bool trim = true)
         {
             const string error = "SplitField() encountered invalid number of results.";
 
@@ -241,32 +367,52 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         // Gets string value from text field with format 'FieldName: String'
-        string GetFieldStringValue(string text)
+        public static string GetFieldStringValue(string text)
         {
             string[] parts = SplitField(text);
             return parts[1].Trim();
         }
 
         // Gets int value from text field with format 'FieldName: Int'
-        int GetFieldIntValue(string text)
+        public static int GetFieldIntValue(string text)
         {
             string[] parts = SplitField(text);
             return ParseInt(parts[1].Trim());
         }
 
-        // Just a wrapper for int.Parse
-        int ParseInt(string text)
+        // Just a wrapper for int.Parse with default of 0 for null or empty strings
+        public static int ParseInt(string text)
         {
-            return int.Parse(text);
+            if (string.IsNullOrEmpty(text))
+                return 0;
+            else
+                return int.Parse(text);
         }
 
         // Trims all lines in string array
-        void TrimLines(ref string[] lines)
+        public static void TrimLines(ref string[] lines)
         {
             for (int i = 0; i < lines.Length; i++)
             {
                 lines[i] = lines[i].Trim();
             }
+        }
+
+        // Gets inner symbol name between e.g. "_symbol_" or "=symbol_" becomes "symbol"
+        // Does not care about context just wants the interior name
+        // Does not trim inner characters - for example "_one_day_" will become "one_day"
+        public static string GetInnerSymbolName(string symbol)
+        {
+            if (string.IsNullOrEmpty(symbol))
+                return string.Empty;
+
+            // Trim symbol wrappers from outside in
+            string result;
+            result = symbol.Trim('=');          // Outer =
+            result = symbol.Trim('#');          // Outer # (custom, gets binding)
+            result = symbol.Trim('_');          // Outer _
+
+            return result;
         }
 
         #endregion

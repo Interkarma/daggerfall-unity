@@ -1,0 +1,188 @@
+{
+  "Desert": {
+    "Winter": {
+      "Sunny": 75,
+      "Cloudy": 15,
+      "Fog": 3,
+      "Rain": 5,
+      "Thunder": 2
+    },
+    "Spring": {
+      "Sunny": 75,
+      "Cloudy": 15,
+      "Rain": 5,
+      "Thunder": 5
+    },
+    "Summer": {
+      "Sunny": 85,
+      "Cloudy": 15
+    },
+    "Fall": {
+      "Sunny": 80,
+      "Cloudy": 15,
+      "Rain": 3,
+      "Thunder": 2
+    }
+  },
+  "Mountains": {
+    "Winter": {
+      "Sunny": 18,
+      "Cloudy": 20,
+      "Overcast": 25,
+      "Fog": 2,
+      "Snow": 35
+    },
+    "Spring": {
+      "Sunny": 30,
+      "Cloudy": 23,
+      "Overcast": 15,
+      "Fog": 2,
+      "Rain": 20,
+      "Thunder": 10
+    },
+    "Summer": {
+      "Sunny": 45,
+      "Cloudy": 25,
+      "Overcast": 15,
+      "Rain": 10,
+      "Thunder": 5
+    },
+    "Fall": {
+      "Sunny": 30,
+      "Cloudy": 18,
+      "Overcast": 20,
+      "Fog": 2,
+      "Rain": 20,
+      "Thunder": 10
+    }
+  },
+  "Jungle": {
+    "Winter": {
+      "Sunny": 15,
+      "Cloudy": 20,
+      "Overcast": 25,
+      "Fog": 3,
+      "Rain": 25,
+      "Thunder": 12
+    },
+    "Spring": {
+      "Sunny": 20,
+      "Cloudy": 15,
+      "Overcast": 10,
+      "Fog": 3,
+      "Rain": 37,
+      "Thunder": 15
+    },
+    "Summer": {
+      "Sunny": 35,
+      "Cloudy": 20,
+      "Overcast": 10,
+      "Rain": 25,
+      "Thunder": 10
+    },
+    "Fall": {
+      "Sunny": 20,
+      "Cloudy": 20,
+      "Overcast": 20,
+      "Rain": 25,
+      "Thunder": 15
+    }
+  },
+  "Swamp": {
+    "Winter": {
+      "Sunny": 15,
+      "Cloudy": 20,
+      "Overcast": 25,
+      "Fog": 25,
+      "Snow": 15
+    },
+    "Spring": {
+      "Sunny": 10,
+      "Cloudy": 10,
+      "Overcast": 20,
+      "Fog": 20,
+      "Rain": 25,
+      "Thunder": 15
+    },
+    "Summer": {
+      "Sunny": 25,
+      "Cloudy": 15,
+      "Overcast": 15,
+      "Fog": 15,
+      "Rain": 20,
+      "Thunder": 10
+    },
+    "Fall": {
+      "Sunny": 15,
+      "Cloudy": 15,
+      "Overcast": 15,
+      "Fog": 20,
+      "Rain": 20,
+      "Thunder": 15
+    }
+  },
+  "Subtropical": {
+    "Winter": {
+      "Sunny": 20,
+      "Cloudy": 20,
+      "Overcast": 20,
+      "Fog": 5,
+      "Rain": 25,
+      "Thunder": 10
+    },
+    "Spring": {
+      "Sunny": 30,
+      "Cloudy": 15,
+      "Overcast": 10,
+      "Fog": 3,
+      "Rain": 27,
+      "Thunder": 15
+    },
+    "Summer": {
+      "Sunny": 40,
+      "Cloudy": 15,
+      "Overcast": 10,
+      "Rain": 20,
+      "Thunder": 15
+    },
+    "Fall": {
+      "Sunny": 25,
+      "Cloudy": 20,
+      "Overcast": 15,
+      "Rain": 25,
+      "Thunder": 15
+    }
+  },
+  "Woodlands": {
+    "Winter": {
+      "Sunny": 25,
+      "Cloudy": 15,
+      "Overcast": 20,
+      "Fog": 5,
+      "Snow": 25
+    },
+    "Spring": {
+      "Sunny": 35,
+      "Cloudy": 15,
+      "Overcast": 10,
+      "Fog": 5,
+      "Rain": 25,
+      "Thunder": 10
+    },
+    "Summer": {
+      "Sunny": 60,
+      "Cloudy": 20,
+      "Overcast": 5,
+      "Rain": 10,
+      "Thunder": 5
+    },
+    "Fall": {
+      "Sunny": 25,
+      "Cloudy": 15,
+      "Overcast": 20,
+      "Fog": 10,
+      "Rain": 20,
+      "Thunder": 10
+    }
+  }
+}

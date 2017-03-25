@@ -63,11 +63,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox mouseSmoothing;
         Checkbox leftHandWeapons;
         Checkbox playerNudity;
+        Checkbox meshAndTextureReplacement;
 
-        Checkbox enhancedSky;
         Checkbox distantTerrain;
         Checkbox realtimeReflections;
-        Checkbox tallGrass;
         Checkbox flyingBirds;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -449,14 +448,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mouseSmoothing = AddOption(x, "Mouse Smoothing", "Smooth mouse-look sampling", DaggerfallUnity.Settings.MouseLookSmoothing);
             leftHandWeapons = AddOption(x, "Left Hand Weapons", "Draw weapons on left side of screen", GetLeftHandWeapons());
             playerNudity = AddOption(x, "Player Nudity", "Allow nudity on paper doll", DaggerfallUnity.Settings.PlayerNudity);
+            meshAndTextureReplacement = AddOption(x, "Support for Graphical Mods", "Enable replacement of textures and models", DaggerfallUnity.Settings.MeshAndTextureReplacement);
 
             // Setup mods checkboxes
             x = 165;
             optionPos = 20;
-            enhancedSky = AddOption(x, "Enhanced Sky (LypyL)", "Enhanced sky with lunar cycles", DaggerfallUnity.Settings.LypyL_EnhancedSky);
             distantTerrain = AddOption(x, "Distant Terrain (Nystul)", "Enhanced and distant terrain", DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance);
             realtimeReflections = AddOption(x, "Realtime Reflections (Nystul)", "Realtime reflections on water and select surfaces", DaggerfallUnity.Settings.Nystul_RealtimeReflections);
-            tallGrass = AddOption(x, "Tall Grass (Uncanny_Valley)", "Animated tall grass", DaggerfallUnity.Settings.UncannyValley_RealGrass);
             flyingBirds = AddOption(x, "Flying Birds (Uncanny Valley)", "Animated flying birds", DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall);
 
             // Add mod note
@@ -502,6 +500,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 optionsPanel.Components.Add(ShowModsButton);
                 ShowModsButton.OnMouseClick += ModsButton_OnOnMouseBlick;
             }
+
+            // Advanced Settings
+            Button AdvancedSettingsButton = new Button();
+            AdvancedSettingsButton.Label.Text = "Advanced";
+            AdvancedSettingsButton.Position = new Vector2(0, optionsConfirmButton.Position.y);
+            AdvancedSettingsButton.HorizontalAlignment = HorizontalAlignment.Right;
+            AdvancedSettingsButton.Size = new Vector2(45, 12);
+            AdvancedSettingsButton.BackgroundColor = optionsConfirmButton.BackgroundColor;
+            AdvancedSettingsButton.Label.TextColor = optionsConfirmButton.Label.TextColor;
+            AdvancedSettingsButton.Outline.Enabled = true;
+            optionsPanel.Components.Add(AdvancedSettingsButton);
+            AdvancedSettingsButton.OnMouseClick += AdvancedSettingsButton_OnOnMouseBlick;
 
         }
 
@@ -701,11 +711,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
 
-            DaggerfallUnity.Settings.LypyL_EnhancedSky = enhancedSky.IsChecked;
             DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance = distantTerrain.IsChecked;
             DaggerfallUnity.Settings.Nystul_RealtimeReflections = realtimeReflections.IsChecked;
-            DaggerfallUnity.Settings.UncannyValley_RealGrass = tallGrass.IsChecked;
             DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall = flyingBirds.IsChecked;
+            DaggerfallUnity.Settings.MeshAndTextureReplacement = meshAndTextureReplacement.IsChecked;
 
             DaggerfallUnity.Settings.SaveSettings();
             moveNextStage = true;
@@ -741,6 +750,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUI.UIManager.PushWindow(modLoaderWindow);
             }
         }
+
+        // Advanced Settings
+        private void AdvancedSettingsButton_OnOnMouseBlick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (optionsPanel.Enabled)
+            {
+                AdvancedSettingsWindow advancedSettingsWindow = new AdvancedSettingsWindow(DaggerfallUI.UIManager);
+                DaggerfallUI.UIManager.PushWindow(advancedSettingsWindow);
+            }
+        }
+
         #endregion
     }
 }

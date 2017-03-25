@@ -1,0 +1,866 @@
+﻿[
+        {
+            "name": "Stamina",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 59,
+                            "name": "Pure water"
+                        },
+                        {
+                            "id": 30,
+                            "name": "Aloe"
+                        },
+                        {
+                            "id": 27,
+                            "name": "Ginkgo leaves"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 64,
+                            "name": "Ichor"
+                        },
+                        {
+                            "id": 7,
+                            "name": "Amber"
+                        },
+                        {
+                            "id": 30,
+                            "name": "Aloe"
+                        },
+                        {
+                            "id": 27,
+                            "name": "Ginkgo leaves"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Orc Strength",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 61,
+                            "name": "Orc's blood"
+                        },
+                        {
+                            "id": 71,
+                            "name": "Iron"
+                        },
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 71,
+                            "name": "Iron"
+                        },
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Healing",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        },
+                        {
+                            "id": 16,
+                            "name": "Red berries"
+                        },
+                        {
+                            "id": 14,
+                            "name": "Pine branch"
+                        },
+                        {
+                            "id": 37,
+                            "name": "Unicorn horn"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        },
+                        {
+                            "id": 17,
+                            "name": "Yellow berries"
+                        },
+                        {
+                            "id": 15,
+                            "name": "Green berries"
+                        },
+                        {
+                            "id": 37,
+                            "name": "Unicorn horn"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Waterwalking",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 59,
+                            "name": "Pure water"
+                        },
+                        {
+                            "id": 29,
+                            "name": "Palm"
+                        },
+                        {
+                            "id": 20,
+                            "name": "Yellow rose"
+                        },
+                        {
+                            "id": 69,
+                            "name": "Sulphur"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Restore Power",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 73,
+                            "name": "Silver"
+                        },
+                        {
+                            "id": 33,
+                            "name": "Werewolf's blood"
+                        },
+                        {
+                            "id": 68,
+                            "name": "Lodestone"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 73,
+                            "name": "Silver"
+                        },
+                        {
+                            "id": 33,
+                            "name": "Werewolf's blood"
+                        },
+                        {
+                            "id": 54,
+                            "name": "Saint's hair"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Resist Fire",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 64,
+                            "name": "Ichor"
+                        },
+                        {
+                            "id": 7,
+                            "name": "Amber"
+                        },
+                        {
+                            "id": 10,
+                            "name": "Red flowers"
+                        },
+                        {
+                            "id": 35,
+                            "name": "Fairy dragon's scales"
+                        },
+                        {
+                            "id": 32,
+                            "name": "Cactus"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 64,
+                            "name": "Ichor"
+                        },
+                        {
+                            "id": 10,
+                            "name": "Red flowers"
+                        },
+                        {
+                            "id": 35,
+                            "name": "Fairy dragon's scales"
+                        },
+                        {
+                            "id": 32,
+                            "name": "Cactus"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Resist Frost",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 64,
+                            "name": "Ichor"
+                        },
+                        {
+                            "id": 5,
+                            "name": "Turquoise"
+                        },
+                        {
+                            "id": 14,
+                            "name": "Pine branch"
+                        },
+                        {
+                            "id": 22,
+                            "name": "White rose"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Resist Shock",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 64,
+                            "name": "Ichor"
+                        },
+                        {
+                            "id": 68,
+                            "name": "Lodestone"
+                        },
+                        {
+                            "id": 16,
+                            "name": "Red berries"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 64,
+                            "name": "Ichor"
+                        },
+                        {
+                            "id": 68,
+                            "name": "Lodestone"
+                        },
+                        {
+                            "id": 17,
+                            "name": "Yellow berries"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 64,
+                            "name": "Ichor"
+                        },
+                        {
+                            "id": 41,
+                            "name": "Spider's venom"
+                        },
+                        {
+                            "id": 8,
+                            "name": "Twigs"
+                        },
+                        {
+                            "id": 28,
+                            "name": "Bamboo"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Cure Disease",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        },
+                        {
+                            "id": 31,
+                            "name": "Fig"
+                        },
+                        {
+                            "id": 56,
+                            "name": "Big tooth"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        },
+                        {
+                            "id": 31,
+                            "name": "Fig"
+                        },
+                        {
+                            "id": 36,
+                            "name": "Nymph hair"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Slow Falling",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 59,
+                            "name": "Pure water"
+                        },
+                        {
+                            "id": 26,
+                            "name": "White poppy"
+                        },
+                        {
+                            "id": 24,
+                            "name": "Black poppy"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Water Breathing",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        },
+                        {
+                            "id": 76,
+                            "name": "Ivory"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Heal True",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        },
+                        {
+                            "id": 16,
+                            "name": "Red berries"
+                        },
+                        {
+                            "id": 14,
+                            "name": "Pine branch"
+                        },
+                        {
+                            "id": 37,
+                            "name": "Unicorn horn"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        },
+                        {
+                            "id": 17,
+                            "name": "Yellow berries"
+                        },
+                        {
+                            "id": 15,
+                            "name": "Green berries"
+                        },
+                        {
+                            "id": 37,
+                            "name": "Unicorn horn"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Levitation",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 59,
+                            "name": "Pure water"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 39,
+                            "name": "Ectoplasm"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 61,
+                            "name": "Orc's blood"
+                        },
+                        {
+                            "id": 59,
+                            "name": "Pure water"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 39,
+                            "name": "Ectoplasm"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Resist Poison",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 64,
+                            "name": "Ichor"
+                        },
+                        {
+                            "id": 43,
+                            "name": "Snake venom"
+                        },
+                        {
+                            "id": 25,
+                            "name": "Golden poppy"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 43,
+                            "name": "Snake venom"
+                        },
+                        {
+                            "id": 25,
+                            "name": "Golden poppy"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Free Action",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 64,
+                            "name": "Ichor"
+                        },
+                        {
+                            "id": 41,
+                            "name": "Spider's venom"
+                        },
+                        {
+                            "id": 8,
+                            "name": "Twigs"
+                        },
+                        {
+                            "id": 28,
+                            "name": "Bamboo"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Cure Poison",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 64,
+                            "name": "Ichor"
+                        },
+                        {
+                            "id": 47,
+                            "name": "Giant scorpion stinger"
+                        },
+                        {
+                            "id": 58,
+                            "name": "Small tooth"
+                        },
+                        {
+                            "id": 77,
+                            "name": "Pearl"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Chaemelon Form",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 9,
+                            "name": "Green leaves"
+                        },
+                        {
+                            "id": 11,
+                            "name": "Yellow flowers"
+                        },
+                        {
+                            "id": 15,
+                            "name": "Green berries"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 9,
+                            "name": "Green leaves"
+                        },
+                        {
+                            "id": 11,
+                            "name": "Yellow flowers"
+                        },
+                        {
+                            "id": 16,
+                            "name": "Red berries"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 9,
+                            "name": "Green leaves"
+                        },
+                        {
+                            "id": 15,
+                            "name": "Green berries"
+                        },
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Shadow Form",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 6,
+                            "name": "Malachite"
+                        },
+                        {
+                            "id": 21,
+                            "name": "Black rose"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 59,
+                            "name": "Pure water"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 6,
+                            "name": "Malachite"
+                        },
+                        {
+                            "id": 21,
+                            "name": "Black rose"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Invisibility",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 39,
+                            "name": "Ectoplasm"
+                        },
+                        {
+                            "id": 3,
+                            "name": "Diamond"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 6,
+                            "name": "Malachite"
+                        },
+                        {
+                            "id": 21,
+                            "name": "Black rose"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 39,
+                            "name": "Ectoplasm"
+                        },
+                        {
+                            "id": 3,
+                            "name": "Diamond"
+                        },
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        },
+                        {
+                            "id": 31,
+                            "name": "Fig"
+                        },
+                        {
+                            "id": 36,
+                            "name": "Nymph hair"
+                        },
+                        {
+                            "id": 49,
+                            "name": "Mummy wrappings"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Purification",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 31,
+                            "name": "Fig"
+                        },
+                        {
+                            "id": 56,
+                            "name": "Big tooth"
+                        },
+                        {
+                            "id": 39,
+                            "name": "Ectoplasm"
+                        },
+                        {
+                            "id": 3,
+                            "name": "Diamond"
+                        },
+                        {
+                            "id": 49,
+                            "name": "Mummy wrappings"
+                        }
+                    ]
+                },
+                {
+                    "ingredients": [
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        },
+                        {
+                            "id": 63,
+                            "name": "Nectar"
+                        },
+                        {
+                            "id": 60,
+                            "name": "Rain water"
+                        },
+                        {
+                            "id": 31,
+                            "name": "Fig"
+                        },
+                        {
+                            "id": 56,
+                            "name": "Big tooth"
+                        },
+                        {
+                            "id": 39,
+                            "name": "Ectoplasm"
+                        },
+                        {
+                            "id": 3,
+                            "name": "Diamond"
+                        },
+                        {
+                            "id": 49,
+                            "name": "Mummy wrappings"
+                        },
+                        {
+                            "id": 62,
+                            "name": "Elixir vitae"
+                        }
+                    ]
+                }
+            ]
+        }
+]

@@ -202,7 +202,6 @@ namespace DaggerfallWorkshop
             if (lightmapUVs) AddLightmapUVs(mesh);
             mesh.RecalculateBounds();
             mesh.Optimize();
-
             return mesh;
         }
 

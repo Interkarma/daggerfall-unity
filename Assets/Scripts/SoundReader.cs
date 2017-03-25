@@ -67,23 +67,35 @@ namespace DaggerfallWorkshop
             if (cachedClip)
                 return cachedClip;
 
-            // Get sound data
-            DFSound dfSound;
-            if (!soundFile.GetSound(soundIndex, out dfSound))
-                return null;
-
-            // Create audio clip
+            // Get clip
             AudioClip clip;
             string name = string.Format("DaggerfallClip [Index={0}, ID={1}]", soundIndex, (int)soundFile.BsaFile.GetRecordId(soundIndex));
-            clip = AudioClip.Create(name, dfSound.WaveData.Length, 1, SndFile.SampleRate, false);
+            if (Utility.AssetInjection.SoundReplacement.CustomSoundExist(soundIndex))
+            {
+                // Get audio clip from sound file on disk
+                WWW customSoundFile = Utility.AssetInjection.SoundReplacement.LoadCustomSound(soundIndex);
+                clip = customSoundFile.audioClip;
+                clip.name = name;
+                StartCoroutine(WaitForSoundFile(customSoundFile, clip));
+            }
+            else
+            {
+                // Get sound data
+                DFSound dfSound;
+                if (!soundFile.GetSound(soundIndex, out dfSound))
+                    return null;
 
-            // Create data array
-            float[] data = new float[dfSound.WaveData.Length];
-            for (int i = 0; i < dfSound.WaveData.Length; i++)
-                data[i] = (dfSound.WaveData[i] - 128) * divisor;
+                // Create audio clip
+                clip = AudioClip.Create(name, dfSound.WaveData.Length, 1, SndFile.SampleRate, false);
 
-            // Set clip data
-            clip.SetData(data, 0);
+                // Create data array
+                float[] data = new float[dfSound.WaveData.Length];
+                for (int i = 0; i < dfSound.WaveData.Length; i++)
+                    data[i] = (dfSound.WaveData[i] - 128) * divisor;
+
+                // Set clip data
+                clip.SetData(data, 0);
+            }
 
             // Cache the clip
             CacheClip(soundIndex, clip);
@@ -141,6 +153,21 @@ namespace DaggerfallWorkshop
                 return -1;
 
             return soundFile.GetRecordIndex((uint)soundID);
+        }
+
+        /// <summary>
+        /// Load AudioClip from WWW to get custom sound.
+        /// </summary>
+        /// <param name="www">WWW object</param>
+        /// <param name="clip">Audio clip from WWW</param>
+        /// <returns></returns>
+        IEnumerator WaitForSoundFile(WWW www, AudioClip clip)
+        {
+            while (clip.loadState != AudioDataLoadState.Loaded)
+                yield return www;
+
+            if (clip.loadState == AudioDataLoadState.Failed)
+                Debug.LogError("Can't load custom clip audio " + clip.name);
         }
 
         #endregion

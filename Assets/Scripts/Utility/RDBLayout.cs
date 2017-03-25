@@ -19,6 +19,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -324,38 +325,45 @@ namespace DaggerfallWorkshop.Utility
                 {
                     if (obj.Type == DFBlock.RdbResourceTypes.Flat)
                     {
-                        // Add flat
-                        GameObject flatObject = AddFlat(obj, flatsNode.transform);
-
-                        // Store editor objects and start markers
-                        int archive = obj.Resources.FlatResource.TextureArchive;
-                        int record = obj.Resources.FlatResource.TextureRecord;
-                        if (archive == TextureReader.EditorFlatsTextureArchive)
+                        // Import custom 3d gameobject instead of flat
+                        bool modelExist;
+                        MeshReplacement.ImportCustomFlatGameobject(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord, 
+                            new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform, out modelExist, true);
+                        // Use flat
+                        if (!modelExist)
                         {
-                            editorObjects.Add(obj);
-                            if (record == 10)
-                                startMarkers.Add(flatObject);
-                            else if (record == 8)
-                                enterMarkers.Add(flatObject);
+                            // Add flat
+                            GameObject flatObject = AddFlat(obj, flatsNode.transform);
 
-                            //add editor flats to actionLinkDict
-                            if (!actionLinkDict.ContainsKey(obj.This))
+                            // Store editor objects and start markers
+                            int archive = obj.Resources.FlatResource.TextureArchive;
+                            int record = obj.Resources.FlatResource.TextureRecord;
+                            if (archive == TextureReader.EditorFlatsTextureArchive)
                             {
-                                ActionLink link;
-                                link.gameObject = flatObject;
-                                link.nextKey = obj.Resources.FlatResource.NextObjectOffset;
-                                link.prevKey = -1;
-                                actionLinkDict.Add(obj.This, link);
+                                editorObjects.Add(obj);
+                                if (record == 10)
+                                    startMarkers.Add(flatObject);
+                                else if (record == 8)
+                                    enterMarkers.Add(flatObject);
+
+                                //add editor flats to actionLinkDict
+                                if (!actionLinkDict.ContainsKey(obj.This))
+                                {
+                                    ActionLink link;
+                                    link.gameObject = flatObject;
+                                    link.nextKey = obj.Resources.FlatResource.NextObjectOffset;
+                                    link.prevKey = -1;
+                                    actionLinkDict.Add(obj.This, link);
+                                }
+
                             }
 
+                            //add action component to flat if it has an action
+                            if (obj.Resources.FlatResource.Action > 0)
+                            {
+                                AddActionFlatHelper(flatObject, actionLinkDict, ref blockData, obj);
+                            }
                         }
-
-                        //add action component to flat if it has an action
-                        if (obj.Resources.FlatResource.Action > 0)
-                        {
-                            AddActionFlatHelper(flatObject, actionLinkDict, ref blockData, obj);
-                        }
-
                     }
                 }
             }
@@ -546,27 +554,32 @@ namespace DaggerfallWorkshop.Utility
                         // Check if model has an action record
                         bool hasAction = HasAction(obj);
 
-                        // Special handling for tapestries and banners
-                        // Some of these are so far out from wall player can become stuck behind them
-                        // Adding model invidually without collider to avoid problem
-                        // Not sure if these object ever actions, but bypass this hack if they do
-                        if (modelId >= minTapestryID && modelId <= maxTapestryID && !hasAction)
-                        {
-                            AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, hasAction, true);
-                            continue;
-                        }
-
-                        // Add or combine
+                        // Get GameObject
                         GameObject standaloneObject = null;
                         Transform parent = (hasAction) ? actionModelsParent : modelsParent;
-                        if (combiner == null || hasAction)
+
+                        if (!MeshReplacement.ImportCustomGameobject(modelId, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix), out standaloneObject))
                         {
-                            standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
-                            standaloneObject.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
-                        }
-                        else
-                        {
-                            combiner.Add(ref modelData, modelMatrix);
+                            // Special handling for tapestries and banners
+                            // Some of these are so far out from wall player can become stuck behind them
+                            // Adding model invidually without collider to avoid problem
+                            // Not sure if these object ever actions, but bypass this hack if they do
+                            if (modelId >= minTapestryID && modelId <= maxTapestryID && !hasAction)
+                            {
+                                AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, hasAction, true);
+                                continue;
+                            }
+
+                            // Add or combine
+                            if (combiner == null || hasAction)
+                            {
+                                standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
+                                standaloneObject.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
+                            }
+                            else
+                            {
+                                combiner.Add(ref modelData, modelMatrix);
+                            }
                         }
 
                         // Add action
@@ -575,7 +588,6 @@ namespace DaggerfallWorkshop.Utility
                     }
                 }
             }
-
         }
 
         /// <summary>
@@ -1194,6 +1206,12 @@ namespace DaggerfallWorkshop.Utility
             if (obj.Resources.FlatResource.Action == (int)DFBlock.EnemyReactionTypes.Passive)
                 reaction = MobileReactions.Passive;
 
+            MobileGender gender = MobileGender.Unspecified;
+            if ((int)obj.Resources.FlatResource.Gender == (int)DFBlock.EnemyGenders.Female)
+                gender = MobileGender.Female;
+            if ((int)obj.Resources.FlatResource.Gender == (int)DFBlock.EnemyGenders.Male)
+                gender = MobileGender.Male;
+
             // Just setup demo enemies at this time
             string name = string.Format("DaggerfallEnemy [{0}]", type.ToString());
             Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
@@ -1202,7 +1220,7 @@ namespace DaggerfallWorkshop.Utility
             if (setupEnemy != null)
             {
                 // Configure enemy
-                setupEnemy.ApplyEnemySettings(type, reaction);
+                setupEnemy.ApplyEnemySettings(type, reaction, gender);
 
                 // Align non-flying units with ground
                 DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();

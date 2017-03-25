@@ -330,6 +330,19 @@ namespace DaggerfallWorkshop
                     });
 
                     EditorGUILayout.Space();
+                    var propExperimentalCityName = Prop("Experimental_CityLayoutName");
+                    EditorGUILayout.LabelField(new GUIContent("Experimental City Layout (temp)", "Enter name of city for experimental city layout builder."));
+                    GUILayoutHelper.Horizontal(() =>
+                    {
+                        propExperimentalCityName.stringValue = EditorGUILayout.TextField(propExperimentalCityName.stringValue.Trim());
+                        if (GUILayout.Button("Import"))
+                        {
+                            _ExperimentalCityLayout layout = new _ExperimentalCityLayout();
+                            layout.Layout(propExperimentalCityName.stringValue);
+                        }
+                    });
+
+                    EditorGUILayout.Space();
                     var propDungeonName = Prop("DungeonImporter_DungeonName");
                     EditorGUILayout.LabelField(new GUIContent("Dungeon Name", "Enter exact dungeon name in format RegionName/DungeonName. Case-sensitive."));
                     GUILayoutHelper.Horizontal(() =>

@@ -220,6 +220,14 @@ namespace DaggerfallWorkshop.Utility
                     imageData.offset = imgFile.ImageOffset;
                     imageData.scale = new DFSize();
                     imageData.size = imgFile.GetSize(0);
+
+                    // texture pack support
+                    if ((AssetInjection.TextureReplacement.CustomImageExist(filename)) && (createTexture))
+                    {
+                        imageData.texture = AssetInjection.TextureReplacement.LoadCustomImage(filename);
+                        createTexture = false;
+                    }
+
                     break;
 
                 case ImageTypes.CIF:
@@ -230,6 +238,14 @@ namespace DaggerfallWorkshop.Utility
                     imageData.offset = cifFile.GetOffset(record);
                     imageData.scale = new DFSize();
                     imageData.size = cifFile.GetSize(record);
+
+                    // texture pack support
+                    if ((AssetInjection.TextureReplacement.CustomCifExist(filename, record, frame)) && (createTexture))
+                    {
+                        imageData.texture = AssetInjection.TextureReplacement.LoadCustomCif(filename, record, frame);
+                        createTexture = false;
+                    }
+
                     break;
 
                 default:

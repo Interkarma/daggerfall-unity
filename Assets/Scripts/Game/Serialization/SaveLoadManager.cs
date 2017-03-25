@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Lypyl (lypyldf@gmail.com)
 // 
 // Notes:
 //
@@ -380,10 +380,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             int key = FindSaveFolderByNames(characterName, quickSaveName);
 
             // Get folder
-            if (key == -1)
-                return false;
-
-            return true;
+            return key != -1;
         }
 
         #endregion
@@ -392,11 +389,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public static bool FindSingleton(out SaveLoadManager singletonOut)
         {
-            singletonOut = GameObject.FindObjectOfType(typeof(SaveLoadManager)) as SaveLoadManager;
-            if (singletonOut == null)
-                return false;
-
-            return true;
+            singletonOut = FindObjectOfType(typeof(SaveLoadManager)) as SaveLoadManager;
+            return singletonOut != null;
         }
 
         /// <summary>
@@ -720,6 +714,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.dungeonData = GetDungeonData();
             saveData.enemyData = GetEnemyData();
             saveData.lootContainers = GetLootContainerData();
+            saveData.bankAccounts = GetBankData();
 
             return saveData;
         }
@@ -802,6 +797,23 @@ namespace DaggerfallWorkshop.Game.Serialization
             return containers.ToArray();
         }
 
+        BankRecordData_v1[] GetBankData()
+        {
+            List<BankRecordData_v1> records = new List<BankRecordData_v1>();
+
+            foreach (var record in Banking.DaggerfallBankManager.BankAccounts)
+            {
+                if (record == null)
+                    continue;
+                else if (record.total == 0 && record.loanTotal == 0 && record.loanDueDate == 0)
+                    continue;
+                else
+                    records.Add(record);
+            }
+
+            return records.ToArray();
+        }
+
         /// <summary>
         /// Gets a specific save path.
         /// </summary>
@@ -836,7 +848,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 key++;
             }
 
-            return GetSavePath(savePrefix + key.ToString(), true);
+            return GetSavePath(savePrefix + key, true);
         }
 
         #endregion
@@ -851,6 +863,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             RestoreDungeonData(saveData.dungeonData);
             RestoreEnemyData(saveData.enemyData);
             RestoreLootContainerData(saveData.lootContainers);
+            RestoreBankData(saveData.bankAccounts);
         }
 
         void RestoreDateTimeData(DateAndTime_v1 dateTimeData)
@@ -955,6 +968,22 @@ namespace DaggerfallWorkshop.Game.Serialization
                         }
                     }
                 }
+            }
+        }
+
+        void RestoreBankData(BankRecordData_v1 [] bankData)
+        {
+            Banking.DaggerfallBankManager.SetupAccounts();
+
+            if (bankData == null)
+                return;
+
+            for (int i = 0; i < bankData.Length; i++)
+            {
+                if (bankData[i].regionIndex < 0 || bankData[i].regionIndex >= Banking.DaggerfallBankManager.BankAccounts.Length)
+                    continue;
+
+                Banking.DaggerfallBankManager.BankAccounts[bankData[i].regionIndex] = bankData[i];
             }
         }
 

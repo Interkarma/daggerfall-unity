@@ -22,6 +22,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -48,6 +49,7 @@ namespace DaggerfallWorkshop
         MeshReader meshReader;
         SoundReader soundReader;
         ItemHelper itemHelper;
+        NameHelper nameHelper;
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITextProvider textProvider = new DefaultTextProvider();
 
@@ -63,6 +65,7 @@ namespace DaggerfallWorkshop
         public int ModelImporter_ModelID = 456;
         public string BlockImporter_BlockName = "MAGEAA01.RMB";
         public string CityImporter_CityName = "Daggerfall/Daggerfall";
+        public string Experimental_CityLayoutName = "Daggerfall/Aldcart";
         public string DungeonImporter_DungeonName = "Daggerfall/Privateer's Hold";
 
         // Performance options
@@ -151,6 +154,11 @@ namespace DaggerfallWorkshop
         public ItemHelper ItemHelper
         {
             get { return (itemHelper != null) ? itemHelper : itemHelper = new ItemHelper(); }
+        }
+
+        public NameHelper NameHelper
+        {
+            get { return (nameHelper != null) ? nameHelper : nameHelper = new NameHelper(); }
         }
 
         public WorldTime WorldTime
@@ -330,7 +338,7 @@ namespace DaggerfallWorkshop
             string path = TestArena2Exists(Settings.MyDaggerfallPath);
             if (!string.IsNullOrEmpty(path))
             {
-                LogMessage("Trying Daggerfall path " + path, true);
+                //LogMessage("Trying Daggerfall path " + path, true);
                 if (Directory.Exists(path))
                     found = true;
                 else
@@ -349,7 +357,7 @@ namespace DaggerfallWorkshop
             if (found)
             {
                 // If it appears valid set this is as our path
-                LogMessage(string.Format("Testing arena2 path at '{0}'.", path), true);
+                //LogMessage(string.Format("Testing arena2 path at '{0}'.", path), true);
                 if (ValidateArena2Path(path))
                 {
                     Arena2Path = path;

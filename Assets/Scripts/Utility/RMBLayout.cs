@@ -17,6 +17,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -35,6 +36,16 @@ namespace DaggerfallWorkshop.Utility
         const float natureFlatsOffsetY = -2f;
         public const uint CityGateOpenModelID = 446;
         public const uint CityGateClosedModelID = 447;
+
+        #region Structures
+
+        struct BuildingPoolItem
+        {
+            public DFLocation.BuildingData buildingData;
+            public bool used;
+        }
+
+        #endregion
 
         #region Layout Methods
 
@@ -175,17 +186,26 @@ namespace DaggerfallWorkshop.Utility
                         natureFlatsOffsetY,
                         y * BlocksFile.TileDimension + BlocksFile.TileDimension) * MeshReader.GlobalScale;
 
-                    // Add billboard to batch or standalone
-                    if (billboardBatch != null)
+                    // Get Archive
+                    int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
+
+                    // Import custom 3d gameobject instead of flat
+                    bool modelExist;
+                    MeshReplacement.ImportCustomFlatGameobject(natureArchive, scenery.TextureRecord, billboardPosition, flatsParent, out modelExist);
+                    // Use billboard
+                    if (!modelExist)
                     {
-                        billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
-                    }
-                    else
-                    {
-                        int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
-                        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(natureArchive, scenery.TextureRecord, flatsParent);
-                        go.transform.position = billboardPosition;
-                        AlignBillboardToBase(go);
+                        // Add billboard to batch or standalone
+                        if ((billboardBatch != null) && (!TextureReplacement.CustomTextureExist(natureArchive, scenery.TextureRecord)))
+                        {
+                            billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
+                        }
+                        else
+                        {
+                            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(natureArchive, scenery.TextureRecord, flatsParent);
+                            go.transform.position = billboardPosition;
+                            AlignBillboardToBase(go);
+                        }
                     }
                 }
             }
@@ -220,20 +240,27 @@ namespace DaggerfallWorkshop.Utility
                         -obj.YPos + blockFlatsOffsetY,
                         obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
-                    // Add billboard to batch or standalone
-                    if (billboardBatch != null)
+                    // Import custom 3d gameobject instead of flat
+                    bool modelExist;
+                    MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent, out modelExist);
+                    // Use billboard
+                    if (!modelExist)
                     {
-                        billboardBatch.AddItem(obj.TextureRecord, billboardPosition);
-                    }
-                    else
-                    {
-                        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
-                        go.transform.position = billboardPosition;
-                        AlignBillboardToBase(go);
-                    }
+                        // Add billboard to batch or standalone
+                        if ((billboardBatch != null) && (!TextureReplacement.CustomTextureExist(obj.TextureArchive, obj.TextureRecord)))
+                        {
+                            billboardBatch.AddItem(obj.TextureRecord, billboardPosition);
+                        }
+                        else
+                        {
+                            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+                            go.transform.position = billboardPosition;
+                            AlignBillboardToBase(go);
+                        }
 
-                    // Import light prefab
-                    AddLight(dfUnity, obj, lightsParent);
+                        // Import light prefab
+                        AddLight(dfUnity, obj, lightsParent);
+                    }
                 }
             }
         }
@@ -266,24 +293,33 @@ namespace DaggerfallWorkshop.Utility
                     -obj.YPos + blockFlatsOffsetY,
                     obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
-                // Use misc billboard atlas where available
-                if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
+                // Import custom 3d gameobject instead of flat
+                bool modelExist;
+                MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent, out modelExist);
+                // Use billboard
+                if (!modelExist)
                 {
-                    TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
-                    if (item.key != -1)
+                    if (!TextureReplacement.CustomTextureExist(obj.TextureArchive, obj.TextureRecord))
                     {
-                        miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
-                        continue;
-                    }
-                }
+                        // Use misc billboard atlas where available
+                        if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
+                        {
+                            TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
+                            if (item.key != -1)
+                            {
+                                miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
+                                continue;
+                            }
+                        }
 
-                // Add to batch where available
-                if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
-                {
-                    animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
-                }
-                else
-                {
+                        // Add to batch where available
+                        if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
+                        {
+                            animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
+                            continue;
+                        }
+                    }
+
                     // Add standalone billboard gameobject
                     GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
                     go.transform.position = billboardPosition;
@@ -389,7 +425,7 @@ namespace DaggerfallWorkshop.Utility
         /// Gets BuildingSummary array generated from DFBlock data.
         /// </summary>
         /// <param name="blockData"></param>
-        /// <returns></returns>
+        /// <returns>BuildingSummary.</returns>
         public static BuildingSummary[] GetBuildingData(DFBlock blockData)
         {
             // Store building information
@@ -416,6 +452,133 @@ namespace DaggerfallWorkshop.Utility
             }
 
             return buildings;
+        }
+
+        /// <summary>
+        /// Gets all RMB blocks from a location populated with building data from MAPS.BSA.
+        /// This method is using "best effort" process at this point in time.
+        /// However, it does yield very accurate results most of the time.
+        /// Please use exception handling when calling this method for now.
+        /// It will be progressed over time.
+        /// </summary>
+        /// <param name="location">Location to use.</param>
+        /// <param name="blocksOut">Array of blocks populated with data from MAPS.BSA.</param>
+        public static void GetLocationBuildingData(DFLocation location, out DFBlock[] blocksOut)
+        {
+            List<BuildingPoolItem> namedBuildingPool = new List<BuildingPoolItem>();
+            List<DFBlock> blocks = new List<DFBlock>();
+
+            // Get content reader
+            ContentReader contentReader = DaggerfallUnity.Instance.ContentReader;
+            if (contentReader == null)
+                throw new Exception("GetCompleteBuildingData() could not find ContentReader.");
+
+            // Store named buildings in pool for distribution
+            for (int i = 0; i < location.Exterior.BuildingCount; i++)
+            {
+                DFLocation.BuildingData building = location.Exterior.Buildings[i];
+                if (IsNamedBuilding(building.BuildingType))
+                {
+                    BuildingPoolItem bpi = new BuildingPoolItem();
+                    bpi.buildingData = building;
+                    bpi.used = false;
+                    namedBuildingPool.Add(bpi);
+                }
+            }
+
+            // Get building summary of all blocks in this location
+            int width = location.Exterior.ExteriorData.Width;
+            int height = location.Exterior.ExteriorData.Height;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    // Get block name
+                    string blockName = contentReader.BlockFileReader.CheckName(contentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
+
+                    // Get block data
+                    DFBlock block;
+                    if (!contentReader.GetBlock(blockName, out block))
+                        throw new Exception("GetCompleteBuildingData() could not read block " + blockName);
+
+                    // Assign building data for this block
+                    for (int i = 0; i < block.RmbBlock.SubRecords.Length; i++)
+                    {
+                        DFLocation.BuildingData building = block.RmbBlock.FldHeader.BuildingDataList[i];
+                        if (IsNamedBuilding(building.BuildingType))
+                        {
+                            // Try to find next building
+                            BuildingPoolItem item;
+                            if (!GetNextBuildingFromPool(namedBuildingPool, building.BuildingType, out item))
+                                throw new Exception(string.Format("End of city building list reached without finding building type {0}", building.BuildingType));
+
+                            // Copy city building data to block level
+                            building.NameSeed = item.buildingData.NameSeed;
+                            building.FactionId = item.buildingData.FactionId;
+                            building.LocationId = item.buildingData.LocationId;
+                            building.Quality = item.buildingData.Quality;
+                            building.Sector = item.buildingData.Sector;
+                            block.RmbBlock.FldHeader.BuildingDataList[i] = building;
+                        }
+                    }
+
+                    // Save block data
+                    blocks.Add(block);
+                }
+            }
+
+            // Send blocks array back to caller
+            blocksOut = blocks.ToArray();
+        }
+
+        /// <summary>
+        /// Draws and consume building from pool.
+        /// Checking if buildings are ordered by special type.
+        /// </summary>
+        static bool GetNextBuildingFromPool(List<BuildingPoolItem> namedBuildingPool, DFLocation.BuildingTypes buildingType, out BuildingPoolItem itemOut)
+        {
+            itemOut = new BuildingPoolItem();
+            for (int i = 0; i < namedBuildingPool.Count; i++)
+            {
+                if (!namedBuildingPool[i].used && namedBuildingPool[i].buildingData.BuildingType == buildingType)
+                {
+                    BuildingPoolItem item = namedBuildingPool[i];
+                    item.used = true;
+                    namedBuildingPool[i] = item;
+                    itemOut = item;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if building type is a special named building.
+        /// </summary>
+        public static bool IsNamedBuilding(DFLocation.BuildingTypes buildingType)
+        {
+            switch (buildingType)
+            {
+                case DFLocation.BuildingTypes.Alchemist:
+                case DFLocation.BuildingTypes.Armorer:
+                case DFLocation.BuildingTypes.Bank:
+                case DFLocation.BuildingTypes.Bookseller:
+                case DFLocation.BuildingTypes.ClothingStore:
+                case DFLocation.BuildingTypes.FurnitureStore:
+                case DFLocation.BuildingTypes.GemStore:
+                case DFLocation.BuildingTypes.GeneralStore:
+                case DFLocation.BuildingTypes.Library:
+                case DFLocation.BuildingTypes.GuildHall:
+                case DFLocation.BuildingTypes.PawnShop:
+                case DFLocation.BuildingTypes.WeaponSmith:
+                case DFLocation.BuildingTypes.Temple:
+                case DFLocation.BuildingTypes.Tavern:
+                case DFLocation.BuildingTypes.Palace:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         #endregion
@@ -456,6 +619,11 @@ namespace DaggerfallWorkshop.Utility
                     if (modelData.Doors != null)
                         doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix));
 
+                    // Import custom GameObject
+                    if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix)))
+                        continue;
+
+                    // Use Daggerfall Model
                     // Add or combine
                     if (combiner == null || IsCityGate(obj.ModelIdNum))
                         AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
@@ -493,6 +661,11 @@ namespace DaggerfallWorkshop.Utility
                 if (modelData.Doors != null)
                     doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
 
+                // Import custom GameObject
+                if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix)))
+                    continue;
+
+                // Use Daggerfall Model
                 // Add or combine
                 if (combiner == null)
                     AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);

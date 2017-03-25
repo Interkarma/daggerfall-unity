@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -120,7 +121,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.BackgroundTexture = baseTexture;
             mainPanel.Position = new Vector2(0, 50);
-            mainPanel.Size = new Vector2(baseTexture.width, baseTexture.height);
+            mainPanel.Size = new Vector2(ImageReader.GetImageData("REST00I0.IMG", 0, 0, false, false).width, ImageReader.GetImageData("REST00I0.IMG", 0, 0, false, false).height);
+
             NativePanel.Components.Add(mainPanel);
 
             // Create buttons
@@ -305,10 +307,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool TickVitals()
         {
-            // For alpha purposes, all vitals are recovered in a uniform manner
-            // There's a lot to account for later based on player health/magicka regeneration
-            // Also need to decouple this back to formula provider when properly implemented
-            playerEntity.CurrentHealth += (int)(playerEntity.MaxHealth * recoveryRate);
+            // For alpha purposes, magicka and fatigue are recovered in a uniform manner
+            // Need to decouple this back to formula provider when properly implemented
+
+            int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(playerEntity.Skills.Medical, playerEntity.Stats.Endurance, playerEntity.MaxHealth);
+
+            playerEntity.CurrentHealth += healthRecoveryRate;
             playerEntity.CurrentFatigue += (int)(playerEntity.MaxFatigue * recoveryRate);
             playerEntity.CurrentMagicka += (int)(playerEntity.MaxMagicka * recoveryRate);
 

@@ -324,6 +324,39 @@ namespace DaggerfallConnect.Arena2
             header.DataPosition = reader.BaseStream.Position;
         }
 
+        /// <summary>
+        /// Reads RLE compressed data from source reader to destination writer.
+        /// </summary>
+        /// <param name="reader">Source reader positioned at start of input data.</param>
+        /// <param name="length">Length of source data.</param>
+        /// <param name="writer">Destination writer positioned at start of output data.</param>
+        /// <returns>True if succeeded, otherwise false.</returns>
+        internal void ReadRleData(ref BinaryReader reader, int length, ref BinaryWriter writer)
+        {
+            // Read image bytes
+            byte pixel = 0;
+            byte code = 0;
+            int pos = 0;
+            do
+            {
+                code = reader.ReadByte();
+                if (code > 127)
+                {
+                    pixel = reader.ReadByte();
+                    for (int i = 0; i < code - 127; i++)
+                    {
+                        writer.Write(pixel);
+                        pos++;
+                    }
+                }
+                else
+                {
+                    writer.Write(reader.ReadBytes(code + 1));
+                    pos += (code + 1);
+                }
+            } while (pos < length);
+        }
+
         #endregion 
     }
 }

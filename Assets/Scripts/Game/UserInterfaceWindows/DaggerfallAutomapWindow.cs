@@ -190,6 +190,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool leftMouseClickedOnPanelAutomap = false; // used for debug teleport mode clicks
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
+        bool middleMouseDownOnPanelAutomap = false;
         bool leftMouseDownOnForwardButton = false;
         bool rightMouseDownOnForwardButton = false;
         bool leftMouseDownOnBackwardButton = false;
@@ -208,7 +209,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool rightMouseDownOnDownstairsButton = false;
         bool alreadyInMouseDown = false;
         bool alreadyInRightMouseDown = false;
-        bool inDragMode() { return leftMouseDownOnPanelAutomap || rightMouseDownOnPanelAutomap; }
+        bool alreadyInMiddleMouseDown = false;
+        bool inDragMode() { return leftMouseDownOnPanelAutomap || rightMouseDownOnPanelAutomap || middleMouseDownOnPanelAutomap; }
 
         Texture2D nativeTexture; // background image will be stored in this Texture2D
 
@@ -341,6 +343,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             panelRenderAutomap.OnMouseUp += PanelAutomap_OnMouseUp;
             panelRenderAutomap.OnRightMouseDown += PanelAutomap_OnRightMouseDown;
             panelRenderAutomap.OnRightMouseUp += PanelAutomap_OnRightMouseUp;
+            panelRenderAutomap.OnMiddleMouseDown += PanelAutomap_OnMiddleMouseDown;
+            panelRenderAutomap.OnMiddleMouseUp += PanelAutomap_OnMiddleMouseUp;
+            panelRenderAutomap.OnMouseDoubleClick += PanelAutomap_OnMouseDoubleClick;
+            panelRenderAutomap.OnRightMouseDoubleClick += PanelAutomap_OnRightMouseDoubleClick;
+            panelRenderAutomap.OnMiddleMouseDoubleClick += PanelAutomap_OnMiddleMouseDoubleClick;
 
             // Grid button (toggle 2D <-> 3D view)
             gridButton = DaggerfallUI.AddButton(new Rect(78, 171, 27, 19), NativePanel);
@@ -419,7 +426,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             upstairsButton.OnRightMouseDown += UpstairsButton_OnRightMouseDown;
             upstairsButton.OnRightMouseUp += UpstairsButton_OnRightMouseUp;
             upstairsButton.ToolTip = defaultToolTip;
-            upstairsButton.ToolTipText = "left click: increase viewpoint (hotkey: page up)\rright click: increase slice level (hotkey: control+page up)\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key";
+            upstairsButton.ToolTipText = "left click: increase viewpoint (hotkey: page up)\rright click: increase slice level (hotkey: control+page up)\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key\r(alternative: double-click middle mouse button)";
             upstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // downstairs button
@@ -429,7 +436,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             downstairsButton.OnRightMouseDown += DownstairsButton_OnRightMouseDown;
             downstairsButton.OnRightMouseUp += DownstairsButton_OnRightMouseUp;
             downstairsButton.ToolTip = defaultToolTip;
-            downstairsButton.ToolTipText = "left click: decrease viewpoint (hotkey: page down)\rright click: decrease slice level (hotkey: control+page down)\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key";
+            downstairsButton.ToolTipText = "left click: decrease viewpoint (hotkey: page down)\rright click: decrease slice level (hotkey: control+page down)\rslice level can also be adjusted by holding down middle mouse button\r\rhint: different render modes may show hidden geometry:\rhotkey F2: cutout mode\rhotkey F3: wireframe mode\rhotkey F4: transparent mode\rswitch between modes with return key\r(alternative: double-click middle mouse button)";
             downstairsButton.ToolTip.ToolTipDelay = toolTipDelay;
 
             // Exit button
@@ -444,7 +451,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dummyPanelCompass.OnMouseClick += Compass_OnMouseClick;
             dummyPanelCompass.OnRightMouseClick += Compass_OnRightMouseClick;
             dummyPanelCompass.ToolTip = defaultToolTip;
-            dummyPanelCompass.ToolTipText = "left click: toggle focus (hotkey: tab)\rred beacon: player, green beacon: entrance, blue beacon: rotation center\r\rright click: reset view (hotkey: backspace)";
+            dummyPanelCompass.ToolTipText = "left click: toggle focus (hotkey: tab,\ralternative: double-click left mouse button)\rred beacon: player, green beacon: entrance, blue beacon: rotation center\r\rright click: reset view (hotkey: backspace,\ralternative: double-click right mouse button)";
             dummyPanelCompass.ToolTip.ToolTipDelay = toolTipDelay;
 
             // compass            
@@ -469,7 +476,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             daggerfallAutomap.IsOpenAutomap = true; // signal DaggerfallAutomap script that automap is open and it should do its stuff in its Update() function            
 
-            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was closed and that it should update its state (updates player marker arrow)
+            daggerfallAutomap.updateAutomapStateOnWindowPush(); // signal DaggerfallAutomap script that automap window was opened and that it should update its state (updates player marker arrow)
 
             // get automap camera
             cameraAutomap = daggerfallAutomap.CameraAutomap;
@@ -510,6 +517,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // reset values to default whenever player enters building or dungeon
                 resetCameraPosition();
                 fieldOfViewCameraMode3D = defaultFieldOfViewCameraMode3D;
+
+                // set standard automap render mode dependent where player is
+                if (GameManager.Instance.IsPlayerInsideBuilding) // if inside building
+                {
+                    ActionSwitchToAutomapRenderModeCutout(); // set automap render mode to cutout (since floors above the current are often distracting when viewing a building)
+                }
+                else // if inside dungeon or palace
+                {
+                    ActionSwitchToAutomapRenderModeTransparent(); // set automap render mode to transparent (since people that don't know the map functionality often think cutout mode is a bug)
+                }
 
                 daggerfallAutomap.ResetAutomapSettingsSignalForExternalScript = false; // indicate the settings were reset
             }
@@ -798,6 +815,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         ActionrotateCameraOnCameraYZplaneAroundObject(-dragRotateCameraOnCameraYZplaneAroundObjectSpeedInView3D * bias.y);
                         break;
                 }
+
+                updateAutomapView();
+                oldMousePosition = mousePosition;
+            }
+
+            if (middleMouseDownOnPanelAutomap)
+            {
+                Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+
+                Vector2 bias = mousePosition - oldMousePosition;
+
+                ActionMoveSliceLevel(bias.y);
 
                 updateAutomapView();
                 oldMousePosition = mousePosition;
@@ -1408,6 +1437,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
+        /// action for moving (adjusting) slice level relative to current level
+        /// </summary>
+        private void ActionMoveSliceLevel(float bias)
+        {
+            daggerfallAutomap.SlicingBiasY += Vector3.down.y * bias * Time.unscaledDeltaTime;
+            updateAutomapView();
+        }
+
+        /// <summary>
         /// action for zooming in
         /// </summary>
         private void ActionZoomIn(float zoomSpeed)
@@ -1660,6 +1698,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ActionZoomOut(zoomSpeedMouseWheel);
         }
 
+        private void PanelAutomap_OnMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
+        {
+            ActionSwitchFocusToNextBeaconObject();
+        }
+
+        private void PanelAutomap_OnRightMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
+        {
+            ActionResetView();
+        }
+
+        private void PanelAutomap_OnMiddleMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
+        {
+            ActionSwitchToNextAutomapRenderMode();
+        }
+
         private void PanelAutomap_OnMouseDown(BaseScreenComponent sender, Vector2 position)
         {
             if (alreadyInMouseDown)
@@ -1698,6 +1751,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             rightMouseDownOnPanelAutomap = false;
             alreadyInRightMouseDown = false;
+        }
+
+        private void PanelAutomap_OnMiddleMouseDown(BaseScreenComponent sender, Vector2 position)
+        {
+            if (alreadyInMiddleMouseDown)
+                return;
+
+            Vector2 mousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            oldMousePosition = mousePosition;
+            middleMouseDownOnPanelAutomap = true;
+            alreadyInMiddleMouseDown = true;
+        }
+
+        private void PanelAutomap_OnMiddleMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            middleMouseDownOnPanelAutomap = false;
+            alreadyInMiddleMouseDown = false;
         }
 
         private void GridButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

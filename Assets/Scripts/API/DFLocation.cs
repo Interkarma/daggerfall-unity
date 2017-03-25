@@ -205,7 +205,7 @@ namespace DaggerfallConnect
             Exterior_Barn_Snow = 172,
 
             // Interior sets
-            Interior_PalaceInt = 11,
+            Interior_CastleInt = 11,
             Interior_CityInt = 16,
             Interior_CryptA = 19,
             Interior_CryptB = 20,

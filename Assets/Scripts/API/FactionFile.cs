@@ -29,6 +29,7 @@ namespace DaggerfallConnect.Arena2
 
         FileProxy factionFile = new FileProxy();
         Dictionary<int, FactionData> factionDict = new Dictionary<int, FactionData>();
+        Dictionary<string, int> factionNameToIDDict = new Dictionary<string, int>();
 
         #endregion
 
@@ -254,6 +255,37 @@ namespace DaggerfallConnect.Arena2
             return dict;
         }
 
+        /// <summary>
+        /// Gets faction data from faction ID.
+        /// </summary>
+        /// <param name="factionID">Faction ID.</param>
+        /// <param name="factionDataOut">Receives faction data.</param>
+        /// <returns>True if successful.</returns>
+        public bool GetFactionData(int factionID, out FactionData factionDataOut)
+        {
+            factionDataOut = new FactionData();
+            if (factionDict.ContainsKey(factionID))
+            {
+                factionDataOut = factionDict[factionID];
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets faction ID from name. Experimental.
+        /// </summary>
+        /// <param name="name">Name of faction to get ID of.</param>
+        /// <returns>Faction ID if name found, otherwise -1.</returns>
+        public int GetFactionID(string name)
+        {
+            if (factionNameToIDDict.ContainsKey(name))
+                return factionNameToIDDict[name];
+
+            return -1;
+        }
+
         #endregion
 
         #region Private Methods
@@ -345,6 +377,18 @@ namespace DaggerfallConnect.Arena2
                     // Duplicate id detected
                     faction.id = resolverId++;
                     factionDict.Add(faction.id, faction);
+                }
+
+                // Key faction name to faction id
+                if (!factionNameToIDDict.ContainsKey(faction.name))
+                {
+                    factionNameToIDDict.Add(faction.name, faction.id);
+                }
+                else
+                {
+                    // Just ignoring duplicates for now
+                    // Currently only using name to id lookup for to find region faction quickly
+                    //UnityEngine.Debug.LogWarningFormat("Duplicate name detected " + faction.name);
                 }
 
                 previousFaction = faction;

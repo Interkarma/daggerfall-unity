@@ -260,6 +260,10 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallBillboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
             dfBillboard.SetMaterial(archive, record);
 
+            // Import custom texture(s)
+            if (AssetInjection.TextureReplacement.CustomTextureExist(archive, record))
+                AssetInjection.TextureReplacement.LoadCustomBillboardTexture(go, archive, record);
+
             return go;
         }
 
@@ -494,6 +498,10 @@ namespace DaggerfallWorkshop.Utility
             // Setup billboard component
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
             dfBillboard.SetMaterial(textureArchive, textureRecord);
+
+            // Setup custom material if available
+            if (AssetInjection.TextureReplacement.CustomTextureExist(textureArchive, textureRecord))
+                AssetInjection.TextureReplacement.LoadCustomBillboardTexture(go, textureArchive, textureRecord);
 
             // Setup DaggerfallLoot component to make lootable
             DaggerfallLoot loot = go.GetComponent<DaggerfallLoot>();

@@ -40,6 +40,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Rect bottomBorderRect = new Rect();
 
         Outline outline = new Outline();
+        Color hasFocusOutlineColor = Color.yellow;
+        Color lostFocusOutlineColor = Color.gray;
 
         ScreenComponentCollection components;
         public ScreenComponentCollection Components
@@ -52,6 +54,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
         ///  Must use SetBorderTextures() before enabling border.
         /// </summary>
         public bool EnableBorder { get; set; }
+
+        /// <summary>
+        /// Automatically change outline color when gaining focus.
+        /// Only works when UseFocus true.
+        /// </summary>
+        public Color HasFocusOutlineColor
+        {
+            get { return hasFocusOutlineColor; }
+            set { hasFocusOutlineColor = value; }
+        }
+
+        /// <summary>
+        /// Automatically change outline color when losing focus.
+        /// Only works when UseFocus true.
+        /// </summary>
+        public Color LostFocusOutlineColor
+        {
+            get { return lostFocusOutlineColor; }
+            set { lostFocusOutlineColor = value; }
+        }
 
         public Outline Outline
         {
@@ -149,6 +171,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set flags
             bordersSet = true;
             EnableBorder = true;
+        }
+
+        public override void GotFocus()
+        {
+            if (UseFocus)
+            {
+                base.GotFocus();
+                Outline.Color = HasFocusOutlineColor;
+            }
+        }
+
+        public override void LostFocus()
+        {
+            if (UseFocus)
+            {
+                base.LostFocus();
+                Outline.Color = LostFocusOutlineColor;
+            }
         }
 
         #region Private Methods

@@ -44,6 +44,9 @@ namespace DaggerfallWorkshop.Game
         // "In game windows" window messages
         public const string dfuiOpenCharacterSheetWindow = "dfuiOpenCharacterSheetWindow";
         public const string dfuiOpenInventoryWindow = "dfuiOpenInventoryWindow";
+        public const string dfuiOpenControlsWindow = "dfuiOpenControlsWindow";
+        public const string dfuiOpenJoystickControlsWindow = "dfuiOpenJoystickControlsWindow";
+        public const string dfuiOpenMouseControlsWindow = "dfuiOpenMouseControlsWindow";
         public const string dfuiOpenTravelMapWindow = "dfuiOpenTravelMapWindow";
         public const string dfuiOpenRestWindow = "dfuiOpenRestWindow";
         public const string dfuiOpenAutomap = "dfuiOpenAutomap";

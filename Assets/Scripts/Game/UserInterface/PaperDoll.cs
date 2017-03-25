@@ -200,11 +200,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (lastBackgroundName != entity.RaceTemplate.PaperDollBackground)
             {
-                ImageData data = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBackground, 0, 0, false, false);
-                Texture2D texture = ImageReader.GetSubTexture(data, backgroundSubRect);
+                Texture2D texture = null;
+
+                // Import custom image
+                // We assume the image provided is already wihout borders
+                if (DaggerfallWorkshop.Utility.AssetInjection.TextureReplacement.CustomImageExist(entity.RaceTemplate.PaperDollBackground))
+                {
+                    texture = DaggerfallWorkshop.Utility.AssetInjection.TextureReplacement.LoadCustomImage(entity.RaceTemplate.PaperDollBackground);
+                    backgroundPanel.Size = new Vector2(paperDollWidth, paperDollHeight);
+                }
+                // Use vanilla Daggerfall image and remove borders
+                else
+                {
+                    ImageData data = ImageReader.GetImageData(entity.RaceTemplate.PaperDollBackground, 0, 0, false, false);
+                    texture = ImageReader.GetSubTexture(data, backgroundSubRect);
+                    backgroundPanel.Size = new Vector2(texture.width, texture.height);
+                }
 
                 backgroundPanel.BackgroundTexture = texture;
-                backgroundPanel.Size = new Vector2(texture.width, texture.height);
                 lastBackgroundName = entity.RaceTemplate.PaperDollBackground;
             }
         }

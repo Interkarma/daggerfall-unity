@@ -1154,6 +1154,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mb.InputDistanceY = -6;
             mb.TextBox.Numeric = true;
             mb.TextBox.MaxCharacters = 8;
+            mb.TextBox.Text = "0";
             mb.OnGotUserInput += DropGoldPopup_OnGotUserInput;
             mb.Show();
         }
@@ -1390,12 +1391,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     } else if (item.TemplateIndex == (int)Books.Parchment)
                     {
                         // TODO: implement note viewer? Or is parchment just blank paper? -IC112016
-                    } else if (item.TemplateIndex == (int)Books.Potion_recipe)
-                    {
-                        // TODO: implement potion viewer -IC112016
                     }
                 } else if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe) {
-                    // TODO: implement potion viewer -IC112016
+                    // TODO: There may be other objects that result in this dialog box, but for now I'm sure this one says it.
+                    // -IC122016
+                    DaggerfallMessageBox cannotUse = new DaggerfallMessageBox(uiManager, this);
+                    cannotUse.SetText(HardStrings.cannotUseThis);
+                    cannotUse.ClickAnywhereToClose = true;
+                    cannotUse.Show();
                 } else {
                     NextVariant(item);
                 }
@@ -1410,7 +1413,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Info)
             {
-                ShowInfoPopup(item);
+                if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe)
+                {
+                    DaggerfallPotionRecipeWindow readerWindow = new DaggerfallPotionRecipeWindow(uiManager, item.hits3, this);
+                    uiManager.PushWindow(readerWindow);
+                }
+                else
+                    ShowInfoPopup(item);
             }
         }
 

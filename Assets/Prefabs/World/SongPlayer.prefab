@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 405984}
   - 82: {fileID: 8202900}
   - 114: {fileID: 11412750}
-  - 114: {fileID: 11439748}
+  - 114: {fileID: 114000014236563532}
   m_Layer: 0
   m_Name: SongPlayer
   m_TagString: Untagged
@@ -121,7 +121,18 @@ MonoBehaviour:
   SoundBank: chorium.sf2
   SongFolder: Songs/
   Song: -1
---- !u!114 &11439748
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 166566}
+  m_IsPrefabParent: 1
+--- !u!114 &114000014236563532
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -134,27 +145,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LocalPlayerGPS: {fileID: 0}
   StreamingWorld: {fileID: 0}
-  CityDaySongs: 000000000200000009000000140000001800000020000000240000002b000000690000006f000000810000007700000082000000
-  CityNightSongs: 0b0000001100000012000000160000001a0000002200000028000000
-  DungeonExteriorSongs: 040000000b00000011000000160000001e000000220000006800000073000000
-  DungeonInteriorSongs: 2f00000030000000330000003500000037000000390000003b0000003d0000003f00000041000000430000006a0000006b0000006c0000006d000000
-  GraveyardSongs: 040000000b0000001100000016000000220000006e00000073000000
-  GuildSongs: 7000000078000000
-  InteriorSongs: 2600000071000000
-  PalaceSongs: 72000000
-  ShopSongs: 7400000080000000
-  TavernSongs: 60000000610000006200000083000000
-  WeatherRainSongs: 1400000067000000790000007a0000007c000000
-  WeatherSnowSongs: 0d000000760000007f000000
-  WildernessSongs: 12000000160000001e000000220000006800000073000000
---- !u!1001 &100100000
-Prefab:
-  m_ObjectHideFlags: 1
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications: []
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 166566}
-  m_IsPrefabParent: 1
+  DungeonInteriorSongs: 4300000044000000450000004600000047000000480000006a0000006b0000006c0000006d00000004000000060000000b000000180000002a000000
+  DaySongs: 690000008200000077000000810000000000000002000000240000002b000000140000001600000072000000
+  WeatherRainSongs: 790000007a0000007c0000000d000000
+  WeatherSnowSongs: 20000000760000007b0000007f000000
+  TempleSongs: 6f0000006700000071000000
+  TavernSongs: 8000000083000000600000006100000062000000
+  NightSongs: 1100000012000000680000006e000000730000001e00000022000000
+  ShopSongs: 74000000
+  MagesGuildSongs: 7000000078000000
+  InteriorSongs: 26000000
+  PalaceSongs: 09000000
+  CastleSongs: 72000000

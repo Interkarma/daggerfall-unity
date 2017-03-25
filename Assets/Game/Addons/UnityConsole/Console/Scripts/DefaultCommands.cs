@@ -10,6 +10,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Entity;
 using System.IO;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Weather;
 
 namespace Wenzil.Console
 {
@@ -53,7 +54,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(Groundme.name, Groundme.description, Groundme.usage, Groundme.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ExecuteScript.name, ExecuteScript.description, ExecuteScript.usage, ExecuteScript.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddInventoryItem.name, AddInventoryItem.description, AddInventoryItem.usage, AddInventoryItem.Execute);
-
+            ConsoleCommandsDatabase.RegisterCommand(ShowBankWindow.name, ShowBankWindow.description, ShowBankWindow.usage, ShowBankWindow.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(StartQuest.name, StartQuest.usage, StartQuest.description, StartQuest.Execute);
         }
 
         private static class GodCommand
@@ -162,7 +164,7 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 WeatherManager weatherManager = GameManager.Instance.WeatherManager;
-                int weatherType = 0;
+                int weatherCode = 0;
 
                 if (args == null || args.Length < 1)
                     return HelpCommand.Execute(SetWeather.name);
@@ -172,20 +174,11 @@ namespace Wenzil.Console
                     return HelpCommand.Execute(SetWeather.name);
 
                 }
-                else if (int.TryParse(args[0], out weatherType))
+                else if (int.TryParse(args[0], out weatherCode))
                 {
-                    if (weatherType >= 0 && weatherType < 4)
-                    {
-                        weatherManager.ClearAllWeather();
-
-                        if (weatherType == 1)
-                            weatherManager.StartRaining();
-                        else if (weatherType == 2)
-                            weatherManager.StartStorming();
-                        else if (weatherType == 3)
-                            weatherManager.StartSnowing();
-                        return "Set weather.";
-                    }
+                    var type = (WeatherType) weatherCode;
+                    weatherManager.SetWeather(type);
+                    return "Set weather.";
 
                 }
 
@@ -1037,6 +1030,40 @@ namespace Wenzil.Console
                     return "Finished - moved to last known good location at " + playerMotor.ContactPoint.ToString();
                 }
             }
+        }
+
+        private static class ShowBankWindow
+        {
+            public static readonly string name = "showbankwindow";
+            public static readonly string description = "Opens a banking window for specified region";
+            public static readonly string usage = "showbankwindow {region index}";
+            public static DaggerfallWorkshop.Game.UserInterface.DaggerfallBankingWindow bankWindow;
+
+            public static string Execute(params string[] args)
+            {
+                if(bankWindow == null)
+                    bankWindow = new DaggerfallWorkshop.Game.UserInterface.DaggerfallBankingWindow(DaggerfallUI.UIManager);
+                DaggerfallUI.UIManager.PushWindow(bankWindow);
+                return "Finished";
+
+            }
+
+        }
+
+        private static class StartQuest
+        {
+            public static readonly string name = "startquest";
+            public static readonly string description = "Starts the specified quest";
+            public static readonly string usage = "startquest {quest name}";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length < 1)
+                    return usage;
+                DaggerfallWorkshop.Game.Questing.QuestMachine.Instance.InstantiateQuest(args[0]);
+                return "Finished";
+            }
+
         }
 
         private static class ExecuteScript

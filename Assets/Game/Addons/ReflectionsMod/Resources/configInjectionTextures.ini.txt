@@ -183,7 +183,7 @@ useMetallicGlossMap = false
 reflectivity = 0.16
 smoothness = 0.72
 
-[044_3 {House and Palace Ground Texture (Desert)}]
+[044_3 {House and Castle Ground Texture (Desert)}]
 textureArchive = 044
 textureRecord = 3
 textureFrame = 0

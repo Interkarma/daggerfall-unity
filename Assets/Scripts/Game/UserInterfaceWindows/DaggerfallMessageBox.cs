@@ -97,10 +97,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
         }
 
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, TextFile.Token[] tokens, IUserInterfaceWindow previous = null)
+            : base(uiManager, previous)
+        {
+            SetupBox(tokens, buttons);
+        }
+
         public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, int textId, IUserInterfaceWindow previous = null)
             : base(uiManager, previous)
         {
             SetupBox(textId, buttons);
+        }
+
+        public DaggerfallMessageBox(IUserInterfaceManager uiManager, CommonMessageBoxButtons buttons, string text, IUserInterfaceWindow previous = null)
+            : base(uiManager, previous)
+        {
+            SetupBox(text, buttons);
         }
 
         protected override void Setup()
@@ -146,6 +158,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Setup();
 
             uiManager.PushWindow(this);
+        }
+
+        public override void Update()
+        {
+            base.Update();
+        
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+              CloseWindow();
         }
 
         public Button AddButton(MessageBoxButtons messageBoxButton)
@@ -264,9 +284,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messagePanel.Size = new Vector2(width, height);
         }
 
+        void SetupBox(TextFile.Token[] tokens, CommonMessageBoxButtons buttons)
+        {
+            SetTextTokens(tokens);
+            switch (buttons)
+            {
+                case CommonMessageBoxButtons.YesNo:
+                    AddButton(MessageBoxButtons.Yes);
+                    AddButton(MessageBoxButtons.No);
+                    break;
+            }
+        }
+
         void SetupBox(int textId, CommonMessageBoxButtons buttons)
         {
             SetTextTokens(textId);
+            switch (buttons)
+            {
+                case CommonMessageBoxButtons.YesNo:
+                    AddButton(MessageBoxButtons.Yes);
+                    AddButton(MessageBoxButtons.No);
+                    break;
+            }
+        }
+
+        void SetupBox(string text, CommonMessageBoxButtons buttons)
+        {
+            SetText(text);
             switch (buttons)
             {
                 case CommonMessageBoxButtons.YesNo:
