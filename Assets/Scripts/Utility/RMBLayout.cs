@@ -190,23 +190,20 @@ namespace DaggerfallWorkshop.Utility
                     int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
 
                     // Import custom 3d gameobject instead of flat
-                    bool modelExist;
-                    MeshReplacement.ImportCustomFlatGameobject(natureArchive, scenery.TextureRecord, billboardPosition, flatsParent, out modelExist);
-                    // Use billboard
-                    if (!modelExist)
+                    if (MeshReplacement.ImportCustomFlatGameobject(natureArchive, scenery.TextureRecord, billboardPosition, flatsParent) != null)
+                        continue;
+
+                    // Add billboard to batch or standalone
+                    if ((billboardBatch != null) && (!TextureReplacement.CustomTextureExist(natureArchive, scenery.TextureRecord)))
                     {
-                        // Add billboard to batch or standalone
-                        if ((billboardBatch != null) && (!TextureReplacement.CustomTextureExist(natureArchive, scenery.TextureRecord)))
-                        {
-                            billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
-                        }
-                        else
-                        {
-                            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(natureArchive, scenery.TextureRecord, flatsParent);
-                            go.transform.position = billboardPosition;
-                            AlignBillboardToBase(go);
-                        }
+                        billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
                     }
+                    else
+                    {
+                        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(natureArchive, scenery.TextureRecord, flatsParent);
+                        go.transform.position = billboardPosition;
+                        AlignBillboardToBase(go);
+                    } 
                 }
             }
         }
@@ -241,26 +238,23 @@ namespace DaggerfallWorkshop.Utility
                         obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
                     // Import custom 3d gameobject instead of flat
-                    bool modelExist;
-                    MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent, out modelExist);
-                    // Use billboard
-                    if (!modelExist)
-                    {
-                        // Add billboard to batch or standalone
-                        if ((billboardBatch != null) && (!TextureReplacement.CustomTextureExist(obj.TextureArchive, obj.TextureRecord)))
-                        {
-                            billboardBatch.AddItem(obj.TextureRecord, billboardPosition);
-                        }
-                        else
-                        {
-                            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
-                            go.transform.position = billboardPosition;
-                            AlignBillboardToBase(go);
-                        }
+                    if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent) != null)
+                        continue;
 
-                        // Import light prefab
-                        AddLight(dfUnity, obj, lightsParent);
+                    // Add billboard to batch or standalone
+                    if ((billboardBatch != null) && (!TextureReplacement.CustomTextureExist(obj.TextureArchive, obj.TextureRecord)))
+                    {
+                        billboardBatch.AddItem(obj.TextureRecord, billboardPosition);
                     }
+                    else
+                    {
+                        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+                        go.transform.position = billboardPosition;
+                        AlignBillboardToBase(go);
+                    }
+
+                    // Import light prefab
+                    AddLight(dfUnity, obj, lightsParent);       
                 }
             }
         }
@@ -294,37 +288,34 @@ namespace DaggerfallWorkshop.Utility
                     obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
                 // Import custom 3d gameobject instead of flat
-                bool modelExist;
-                MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent, out modelExist);
-                // Use billboard
-                if (!modelExist)
-                {
-                    if (!TextureReplacement.CustomTextureExist(obj.TextureArchive, obj.TextureRecord))
-                    {
-                        // Use misc billboard atlas where available
-                        if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
-                        {
-                            TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
-                            if (item.key != -1)
-                            {
-                                miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
-                                continue;
-                            }
-                        }
+                if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent) != null)
+                    continue;
 
-                        // Add to batch where available
-                        if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
+                if (!TextureReplacement.CustomTextureExist(obj.TextureArchive, obj.TextureRecord))
+                {
+                    // Use misc billboard atlas where available
+                    if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
+                    {
+                        TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
+                        if (item.key != -1)
                         {
-                            animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
+                            miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
                             continue;
                         }
                     }
 
-                    // Add standalone billboard gameobject
-                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
-                    go.transform.position = billboardPosition;
-                    AlignBillboardToBase(go);
+                    // Add to batch where available
+                    if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
+                    {
+                        animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
+                        continue;
+                    }
                 }
+
+                // Add standalone billboard gameobject
+                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+                go.transform.position = billboardPosition;
+                AlignBillboardToBase(go);
             }
         }
 
@@ -620,7 +611,7 @@ namespace DaggerfallWorkshop.Utility
                         doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix));
 
                     // Import custom GameObject
-                    if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix)))
+                    if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix)) != null)
                         continue;
 
                     // Use Daggerfall Model
@@ -662,7 +653,7 @@ namespace DaggerfallWorkshop.Utility
                     doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, 0, modelMatrix));
 
                 // Import custom GameObject
-                if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix)))
+                if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix)) != null)
                     continue;
 
                 // Use Daggerfall Model
