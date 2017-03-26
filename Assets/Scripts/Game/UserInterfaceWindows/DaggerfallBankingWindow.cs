@@ -25,7 +25,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
  * Todo -
  * buy / sell house / ships
  * depositing / withdrawing LOC
- * displaying loan due date string
  */ 
 
     public class DaggerfallBankingWindow : DaggerfallPopupWindow
@@ -110,7 +109,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             loanDueBy.Position      = new Vector2(71, 44);
             loanDueBy.Size          = new Vector2(60, 13);
             loanDueBy.Name          = "loan_by_label";
-            loanDueBy.MaxCharacters = 29;
+            loanDueBy.MaxCharacters = 33;
             mainPanel.Components.Add(loanDueBy);
 
             depoGoldButton          = new Button();
@@ -249,7 +248,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             inventoryAmount.Text    = playerEntity.GoldPieces.ToString();
             accountAmount.Text      = DaggerfallBankManager.GetAccountTotal(regionIndex).ToString();
             loanAmountDue.Text      = DaggerfallBankManager.GetLoanedTotal(regionIndex).ToString();
-            loanDueBy.Text          = DaggerfallBankManager.GetLoanDueDate(regionIndex).ToString();
+            loanDueBy.Text          = DaggerfallBankManager.GetLoanDueDateString(regionIndex);
         }
 
         void UpdateButtons()
@@ -282,11 +281,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void HandleTransactionInput()
         {
-            uint amount = 0;
+            int amount = 0;
 
             if (string.IsNullOrEmpty(transactionInput.Text))
                 return;
-            else if (!System.UInt32.TryParse(transactionInput.Text, out amount))
+            else if (!System.Int32.TryParse(transactionInput.Text, out amount))
             {
                 Debug.LogError("Failed to parse input");
                 return;
@@ -294,12 +293,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else if (amount < 1)
                 return;
             else
-                DaggerfallBankManager.MakeTransaction(transactionType, (int)amount, regionIndex);
+                DaggerfallBankManager.MakeTransaction(transactionType, amount, regionIndex);
         }
 
         //generates pop-ups, either to indicate failed transaction
         //or to prompt with yes / no option
-        void GeneratePopup(TransactionResult result, int amount = 0)
+        void GeneratePopup(TransactionResult result, long amount = 0)
         {
             if (result == TransactionResult.NONE)
                 return;
@@ -310,23 +309,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (result == TransactionResult.DEPOSIT_LOC) //show messagebox window w/ yes no buttons
             {
-                /*Button yesbutton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                /*Button noButton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.ClickAnywhereToClose = false;
                 messageBox.OnButtonClick += DepositLOC_messageBox_OnButtonClick;
             }
 
             else if (result == TransactionResult.SELL_HOUSE_OFFER) //show messagebox window w/ yes no buttons
             {
-                /*Button yesbutton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                /*Button noButton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.ClickAnywhereToClose = false;
                 messageBox.OnButtonClick += SellHouse_messageBox_OnButtonClick;
             }
             else if (result == TransactionResult.SELL_SHIP_OFFER)
             {
-                /*Button yesbutton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                /*Button noButton = */messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.ClickAnywhereToClose = false;
                 messageBox.OnButtonClick += SellShip_messageBox_OnButtonClick;
             }

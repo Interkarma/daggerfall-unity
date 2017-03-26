@@ -269,11 +269,10 @@ namespace DaggerfallWorkshop.Game.Serialization
     [fsObject("v1")]
     public class BankRecordData_v1
     {
-        public long total;
-        public long loanTotal;
-        public long loanDueDate;
+        public int accountGold;
+        public int loanTotal;
+        public uint loanDueDate;
         public int regionIndex;
-        //public Byte unknown;
     }
 
     #endregion
