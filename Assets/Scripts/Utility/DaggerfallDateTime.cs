@@ -393,6 +393,17 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Get date string in format of Day Name the xth of Month Name
+        /// </summary>
+        public string DateString()
+        {
+            string suffix = GetSuffix(Day+1);
+            string final = string.Format("{0} the {1}{2} of {3:00}", DayName, Day + 1, suffix, MonthName);
+            return final;
+        }
+
+
+        /// <summary>
         /// Gets the current time in seconds since year zero.
         /// </summary>
         public ulong ToSeconds()
