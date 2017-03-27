@@ -814,7 +814,17 @@ namespace DaggerfallWorkshop.Game
 
         private bool checkIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 offset1, BuildingNameplate nameplate2, Vector2 offset2, out Vector2 posNameplate1, out Vector2 posNameplate2, out Vector2 p, out float ySize, out float distanceVertical)
         {
-            Vector2 vectorBetweenNamePlates = (new Vector2(nameplate2.gameObject.transform.position.x, nameplate2.gameObject.transform.position.z) + nameplate2.offsetPlateCoordsInNewBase + offset2) - (new Vector2(nameplate1.gameObject.transform.position.x, nameplate1.gameObject.transform.position.z) + nameplate1.offsetPlateCoordsInNewBase + offset1);
+            Vector2 vectorBetweenNamePlates;
+            Vector2 offset1used, offset2used;
+            if (offset1 != Vector2.zero)
+                offset1used = offset1;
+            else
+                offset1used = nameplate1.offsetPlateCoordsInOriginalBase;
+            if (offset2 != Vector2.zero)
+                offset2used = offset2;
+            else
+                offset2used = nameplate2.offsetPlateCoordsInOriginalBase;
+            vectorBetweenNamePlates = (new Vector2(nameplate2.gameObject.transform.position.x, nameplate2.gameObject.transform.position.z) + offset2used) - (new Vector2(nameplate1.gameObject.transform.position.x, nameplate1.gameObject.transform.position.z) + offset1used);
             posNameplate1 = Vector2.zero;
             posNameplate2 = vectorBetweenNamePlates;
 
