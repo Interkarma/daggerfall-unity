@@ -148,6 +148,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 createCharNameSelectWindow.OnClose += NameSelectWindow_OnClose;
             }
 
+            createCharNameSelectWindow.RaceTemplate = characterDocument.raceTemplate;
+            createCharNameSelectWindow.Gender = characterDocument.gender;
+
             wizardStage = WizardStages.SelectName;
             uiManager.PushWindow(createCharNameSelectWindow);
         }
