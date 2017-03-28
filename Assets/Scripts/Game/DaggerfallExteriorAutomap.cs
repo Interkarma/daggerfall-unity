@@ -85,6 +85,8 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectPlayerMarkerArrowStamp = null; // GameObject which will hold player marker arrow stamp
         GameObject gameobjectPlayerMarkerCircle = null; // GameObject which will hold player marker circle (actually a cylinder)
 
+        const bool allowRightAlignedNameplates = false;
+
         private struct BuildingNameplate
         {
             public float posX;
@@ -781,46 +783,6 @@ namespace DaggerfallWorkshop.Game
                 gameObjectBuildingNameplates = null;
             }
         }
-        /*
-        private bool checkIntersectionOfLineSegments(Vector2 startLine1, Vector2 endLine1, Vector2 startLine2, Vector2 endLine2, out Vector2? outIntersectionPoint)
-        {
-            float m = (endLine1.y - startLine1.y) / (endLine1.x - startLine1.x);
-            float b = endLine1.y - m * endLine1.x;
-            Vector3 line1 = new Vector3(m, 0, b);
-            m = (endLine2.y - startLine2.y) / (endLine2.x - startLine2.x);
-            b = endLine2.y - m * endLine2.x;
-            Vector3 line2 = new Vector3(m, 0, b);
-            Vector3 intersectionPointHomogenous = Vector3.Cross(line1, line2); // intersection in homogenous coordinates
-            if (intersectionPointHomogenous.z != 0.0f) // only proceed if lines are not parallel (its intersection point is not a point at infinity)
-            {
-                Vector2 intersectionPoint = new Vector2(intersectionPointHomogenous.x / intersectionPointHomogenous.z, intersectionPointHomogenous.y / intersectionPointHomogenous.z);
-                outIntersectionPoint = intersectionPoint;
-                float sx = 0;
-                float sy = 0;
-                if (endLine1.x - startLine1.x != 0)
-                    sx = (intersectionPoint.x - startLine1.x) / (endLine1.x - startLine1.x);
-                if (endLine1.y - startLine1.y != 0)
-                    sy = (intersectionPoint.y - startLine1.y) / (endLine1.y - startLine1.y);
-                float s = Math.Max(sx, sy);
-                if ((s < 0.0f) || (s > 1.0f))
-                    return false; // not on first line segment
-
-                sx = 0;
-                sy = 0;
-                if (endLine2.x - startLine2.x != 0)
-                    sx = (intersectionPoint.x - startLine2.x) / (endLine2.x - startLine2.x);
-                if (endLine2.y - startLine2.y != 0)
-                    sy = (intersectionPoint.y - startLine2.y) / (endLine2.y - startLine2.y);
-                s = Math.Max(sx, sy);
-                if ((s < 0.0f) || (s > 1.0f))
-                    return false; // not on second line segment
-
-                return true; // intersection is on both line segments
-            }
-            outIntersectionPoint = null;
-            return false;
-        }
-        */
 
         private bool checkIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 offset1, BuildingNameplate nameplate2, Vector2 offset2, out Vector2 vectorNameplate1VerticalOffset, out Vector2 vectorNameplate2VerticalOffset, out float ySize, out float distanceVertical)
         {        
@@ -936,22 +898,25 @@ namespace DaggerfallWorkshop.Game
                 }
                 buildingNameplates[i] = buildingNameplate;
             }
-            /*
-            // compute number of collisions for right aligned nameplates and directly place those with numCollisionsDetected == 0
-            for (int i = 0; i < buildingNameplates.Count; i++)
+                        
+            if (allowRightAlignedNameplates)
             {
-                BuildingNameplate buildingNameplate = buildingNameplates[i];
-                Vector2 vectorDirNameplate = (buildingNameplate.upperLeftCorner - buildingNameplate.lowerLeftCorner).normalized;
-                Vector2 vectorNormalBiasFirstNameplate = (first.upperLeftCorner - first.upperRightCorner);
-                buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, vectorNormalBiasFirstNameplate, false, false);
-                if (buildingNameplate.numCollisionsDetected == 0)
+                // compute number of collisions for right aligned nameplates and directly place those with numCollisionsDetected == 0
+                for (int i = 0; i < buildingNameplates.Length; i++)
                 {
-                    buildingNameplate.offset = vectorNormalBiasFirstNameplate;
-                    buildingNameplate.placed = true; // place it in current position since there is no collision
+                    BuildingNameplate buildingNameplate = buildingNameplates[i];
+                    if (buildingNameplate.placed)
+                        continue;
+                    Vector2 vectorNormalBiasNameplate = (buildingNameplate.upperLeftCorner - buildingNameplate.upperRightCorner);
+                    buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, vectorNormalBiasNameplate, false, false);
+                    if (buildingNameplate.numCollisionsDetected == 0)
+                    {
+                        buildingNameplate.offset = vectorNormalBiasNameplate;
+                        buildingNameplate.placed = true; // place it in current position since there is no collision
+                    }
+                    buildingNameplates[i] = buildingNameplate;
                 }
-                buildingNameplates[i] = buildingNameplate;
             }
-            */
         }
 
         private void computeNameplateOffsets()
@@ -1015,7 +980,7 @@ namespace DaggerfallWorkshop.Game
                                 second.placed = true;
                                 //stringNameplate2 = String.Format("{0} {1}", second.name, "v");
                             }
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 + vectorNormalBiasNameplate1, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2, true, false, first))
+                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 + vectorNormalBiasNameplate1, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2, true, false, first))
                             {
                                 first.offset = vectorBiasNameplate1 + vectorNormalBiasNameplate1;
                                 first.placed = true;
@@ -1023,8 +988,7 @@ namespace DaggerfallWorkshop.Game
                                 second.offset = vectorBiasNameplate2;
                                 second.placed = true;
                             }
-
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2 + vectorNormalBiasNameplate2, true, false, first))
+                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2 + vectorNormalBiasNameplate2, true, false, first))
                             {
                                 first.offset = vectorBiasNameplate1;
                                 first.placed = true;
@@ -1044,17 +1008,16 @@ namespace DaggerfallWorkshop.Game
                                 first.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "_v");
                             }
-
-                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1, true, false))
-                            //{
-                            //    first.offset = vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1;
-                            //    first.placed = true;
-                            //}
-                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1, true, false))
-                            //{
-                            //    first.offset = -vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1;
-                            //    first.placed = true;
-                            //}                   
+                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1, true, false))
+                            {
+                                first.offset = vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1;
+                                first.placed = true;
+                            }
+                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1, true, false))
+                            {
+                                first.offset = -vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1;
+                                first.placed = true;
+                            }
 
                             //if (stringNameplate1 != "")
                             //{
@@ -1100,17 +1063,16 @@ namespace DaggerfallWorkshop.Game
                                 first.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "__v");
                             }
-
-                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
-                            //{
-                            //    first.offset = vectorBiasNameplate + vectorNormalBiasNameplate;
-                            //    first.placed = true;
-                            //}
-                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
-                            //{
-                            //    first.offset = -vectorBiasNameplate + vectorNormalBiasNameplate;
-                            //    first.placed = true;
-                            //}
+                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
+                            {
+                                first.offset = vectorBiasNameplate + vectorNormalBiasNameplate;
+                                first.placed = true;
+                            }
+                            else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
+                            {
+                                first.offset = -vectorBiasNameplate + vectorNormalBiasNameplate;
+                                first.placed = true;
+                            }
 
                             //if (stringNameplate1 != "")
                             //{
@@ -1157,17 +1119,16 @@ namespace DaggerfallWorkshop.Game
                         first.placed = true;
                         //stringNameplate1 = String.Format("{0} {1}", first.name, "_v");
                     }
-
-                    //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
-                    //{
-                    //    first.offset = vectorBiasNameplate + vectorNormalBiasNameplate;
-                    //    first.placed = true;
-                    //}
-                    //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
-                    //{
-                    //    first.offset = -vectorBiasNameplate + vectorNormalBiasNameplate;
-                    //    first.placed = true;
-                    //}                
+                    else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
+                    {
+                        first.offset = vectorBiasNameplate + vectorNormalBiasNameplate;
+                        first.placed = true;
+                    }
+                    else if (allowRightAlignedNameplates && !checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
+                    {
+                        first.offset = -vectorBiasNameplate + vectorNormalBiasNameplate;
+                        first.placed = true;
+                    }                
 
                     //TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate1);
                     //first.textLabel = newTextLabel;
