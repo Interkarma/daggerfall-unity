@@ -107,6 +107,7 @@ namespace DaggerfallWorkshop.Game
             public Vector2 lowerRightCorner;
             public int numCollisionsDetected;
             public bool placed;
+            public bool nameplateReplaced;
 #if DEBUG_Nameplates
             public GameObject anchorLine;
             public GameObject debugLine1;
@@ -733,6 +734,7 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.lowerLeftCorner = new Vector2(0.0f, -newBuildingNameplate.height * 0.5f);
                             newBuildingNameplate.lowerRightCorner = new Vector2(newBuildingNameplate.width, -newBuildingNameplate.height * 0.5f);
                             newBuildingNameplate.placed = false;
+                            newBuildingNameplate.nameplateReplaced = false;
                             newBuildingNameplate.numCollisionsDetected = 0;                            
 
                             #if DEBUG_Nameplates
@@ -1128,7 +1130,7 @@ namespace DaggerfallWorkshop.Game
             }
         
             // re-compute number of collisions for every nameplate and place those with numCollisionsDetected == 0
-            //computeAndPlaceZeroCollisionsNameplates();
+            //computeAndPlaceZeroCollisionsNameplates(false);
             
             // now try to place remaining nameplates (all nameplates with more than 1 collisions)
             for (int i = 0; i < buildingNameplates.Length; i++)
@@ -1139,20 +1141,20 @@ namespace DaggerfallWorkshop.Game
                 if (first.placed)
                     continue;
                 Vector2 vectorDirectionNameplate = (first.upperLeftCorner - first.lowerLeftCorner).normalized;
-                Vector2 vectorBiasNameplate = vectorDirectionNameplate * (first.height) * 0.5f;
+                Vector2 vectorBiasNameplate = vectorDirectionNameplate * (first.height);
                 Vector2 vectorNormalBiasNameplate = (first.upperLeftCorner - first.upperRightCorner);
 
                 //string stringNameplate1 = "";
 
-                if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate * 2.0f, true, false))
+                if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate, true, false))
                 {
-                    first.offset += vectorBiasNameplate * 2.0f;
+                    first.offset += vectorBiasNameplate;
                     first.placed = true;
                     //stringNameplate1 = String.Format("{0} {1}", first.name, "_^");
                 }
-                else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate * 2.0f, true, false))
+                else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate, true, false))
                 {
-                    first.offset -= vectorBiasNameplate * 2.0f;
+                    first.offset -= vectorBiasNameplate;
                     first.placed = true;
                     //stringNameplate1 = String.Format("{0} {1}", first.name, "_v");
                 }
@@ -1178,7 +1180,7 @@ namespace DaggerfallWorkshop.Game
             }       
             
             // final pass to check if now some nameplates can be set that no longer have collisions             
-            computeAndPlaceZeroCollisionsNameplates();
+            computeAndPlaceZeroCollisionsNameplates(false);
 
             for (int i = 0; i < buildingNameplates.Length; i++)
             {
@@ -1194,8 +1196,9 @@ namespace DaggerfallWorkshop.Game
                     TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate);
                     buildingNameplate.textLabel = newTextLabel;
                     MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();
-                    renderer.material.mainTexture = newTextLabel.Texture;                    
+                    renderer.material.mainTexture = newTextLabel.Texture;
 
+                    buildingNameplate.nameplateReplaced = true;
                     //buildingNameplate.gameObject.SetActive(false);
                 }
                 buildingNameplates[i] = buildingNameplate;
@@ -1401,10 +1404,14 @@ namespace DaggerfallWorkshop.Game
                 buildingNameplate.placed = false;
                 buildingNameplate.gameObject.SetActive(true);
 
-                TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, buildingNameplate.name);
-                buildingNameplate.textLabel = newTextLabel;
-                MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();
-                renderer.material.mainTexture = newTextLabel.Texture;
+                if (buildingNameplate.nameplateReplaced)
+                {
+                    TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, buildingNameplate.name);
+                    buildingNameplate.textLabel = newTextLabel;
+                    MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();
+                    renderer.material.mainTexture = newTextLabel.Texture;
+                    buildingNameplate.nameplateReplaced = false;
+                }
 
                 buildingNameplates[i] = buildingNameplate;
             }
