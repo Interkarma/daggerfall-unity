@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Game
 #endif
         }
 
-        List<BuildingNameplate> buildingNameplates = null;
+        BuildingNameplate[] buildingNameplates = null;
 
         GameObject gameObjectBuildingNameplates = null; // parent gameobject for all building name plates 
 
@@ -321,7 +321,7 @@ namespace DaggerfallWorkshop.Game
         public void rotateBuildingNameplates(float angle)
         {
             undoNameplateOffsets();
-            for (int i = 0; i < buildingNameplates.Count; i++)
+            for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
 
@@ -350,7 +350,7 @@ namespace DaggerfallWorkshop.Game
         public void resetRotationBuildingNameplates()
         {
             undoNameplateOffsets();
-            for (int i = 0; i < buildingNameplates.Count; i++)
+            for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
                 buildingNameplate.gameObject.transform.rotation = Quaternion.Euler(Vector3.zero);
@@ -597,7 +597,7 @@ namespace DaggerfallWorkshop.Game
         {
             deleteBuildingNameplates();
 
-            buildingNameplates = new List<BuildingNameplate>();
+            List<BuildingNameplate> buildingNameplatesList = new List<BuildingNameplate>();
 
             gameObjectBuildingNameplates = new GameObject("building name plates");
             gameObjectBuildingNameplates.transform.SetParent(gameobjectExteriorAutomap.transform);
@@ -610,8 +610,10 @@ namespace DaggerfallWorkshop.Game
             DFBlock[] blocks;
             RMBLayout.GetLocationBuildingData(location, out blocks);
             int width = location.Exterior.ExteriorData.Width;
-            int height = location.Exterior.ExteriorData.Height;
+            int height = location.Exterior.ExteriorData.Height;            
+          
             int uniqueIndex = 0;
+
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -739,11 +741,19 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.debugLine2 = null;
                             #endif
 
-                            buildingNameplates.Add(newBuildingNameplate);
+                            buildingNameplatesList.Add(newBuildingNameplate);
                         }
                     }
                 }
             }
+
+            buildingNameplates = new BuildingNameplate[buildingNameplatesList.Count];
+            for (int i = 0; i < buildingNameplatesList.Count; i++)
+            {
+                buildingNameplates[i] = buildingNameplatesList[i];
+            }
+            buildingNameplatesList.Clear();
+
             computeNameplateOffsets();
             applyNameplateOffsets();
         }
@@ -759,7 +769,7 @@ namespace DaggerfallWorkshop.Game
                         UnityEngine.Object.Destroy(n.gameObject);
                     }
                 }
-                buildingNameplates.Clear();
+                //buildingNameplates.Clear();
                 buildingNameplates = null;
             }
 
@@ -810,12 +820,13 @@ namespace DaggerfallWorkshop.Game
         }
         */
 
-        private bool checkIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 offset1, BuildingNameplate nameplate2, Vector2 offset2, out Vector2 posNameplate1, out Vector2 posNameplate2, out Vector2 p, out float ySize, out float distanceVertical)
+        private bool checkIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 offset1, BuildingNameplate nameplate2, Vector2 offset2, out Vector2 vectorNameplate1VerticalOffset, out Vector2 vectorNameplate2VerticalOffset, out float ySize, out float distanceVertical)
         {        
             Vector2 vectorBetweenNamePlates = (new Vector2(nameplate2.gameObject.transform.position.x, nameplate2.gameObject.transform.position.z) + nameplate2.offset + offset2) - (new Vector2(nameplate1.gameObject.transform.position.x, nameplate1.gameObject.transform.position.z) + nameplate1.offset + offset1);
-            
-            posNameplate1 = Vector2.zero;
-            posNameplate2 = vectorBetweenNamePlates;
+
+            Vector2 p;
+            Vector2 posNameplate1 = Vector2.zero;
+            Vector2 posNameplate2 = vectorBetweenNamePlates;
 
             Vector2 b = posNameplate1 + (nameplate1.upperRightCorner - nameplate1.upperLeftCorner);
             b.Normalize();
@@ -841,19 +852,31 @@ namespace DaggerfallWorkshop.Game
             float distanceHorizontal = Vector2.Distance(posNameplate1, p);
             intersect &= distanceHorizontal < xSize;
 
+            Vector2 halfPoint = (posNameplate2 + p) * 0.5f; // point lying halfway between centerNameplate2 and p
+            vectorNameplate1VerticalOffset = (p - halfPoint).normalized;
+            vectorNameplate2VerticalOffset = (posNameplate2 - halfPoint).normalized;
+            if (vectorNameplate1VerticalOffset == Vector2.zero)
+            {
+                vectorNameplate1VerticalOffset = Vector2.up;
+            }
+            if (vectorNameplate2VerticalOffset == Vector2.zero)
+            {
+                vectorNameplate2VerticalOffset = Vector2.down;
+            }
+
             return intersect;
         }
 
         private bool checkIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 offset1, BuildingNameplate nameplate2, Vector2 offset2)
         {
-            Vector2 p, posNameplate1, posNameplate2;
+            Vector2 vectorNameplate1VerticalOffset, vectorNameplate2VerticalOffset;
             float ySize, distanceVertical;
-            return (checkIntersectionOfNameplates(nameplate1, offset1, nameplate2, offset2, out posNameplate1, out posNameplate2, out p, out ySize, out distanceVertical));
+            return (checkIntersectionOfNameplates(nameplate1, offset1, nameplate2, offset2, out vectorNameplate1VerticalOffset, out vectorNameplate2VerticalOffset, out ySize, out distanceVertical));
         }
         private bool checkIntersectionOffsetNameplateAgainstOthers(BuildingNameplate nameplate, Vector2 offset, bool onlyCheckPlaced = false, bool onlyCheckUnplaced = false, BuildingNameplate? skipNameplate = null)
         {
             bool check = false;
-            for (int i=0; i < buildingNameplates.Count; i++)
+            for (int i=0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate otherNameplate = buildingNameplates[i];
                 if ((skipNameplate.HasValue) && (skipNameplate.Value.uniqueIndex == otherNameplate.uniqueIndex))
@@ -873,7 +896,7 @@ namespace DaggerfallWorkshop.Game
         private int numberOfCollisionsNameplatesWithOffsetNameplate(BuildingNameplate nameplate, Vector2 offset, bool onlyCountPlaced, bool onlyCountUnplaced = false)
         {
             int numCollisions = 0;
-            for (int i = 0; i < buildingNameplates.Count; i++)
+            for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate otherNameplate = buildingNameplates[i];
                 if (nameplate.uniqueIndex == otherNameplate.uniqueIndex)
@@ -890,195 +913,164 @@ namespace DaggerfallWorkshop.Game
             return numCollisions;
         }
 
-        public struct NameplatePlacementInfo
+        private void computeAndPlaceZeroCollisionsNameplates(bool recomputeNumberOfCollision = true)
         {
-            public int numCollisions;
-            public int uniqueIndex;
-            public bool toBeRemovedFromList;
-
-            public int NumCollisions
+            // compute number of collisions for every nameplate and directly place those with numCollisionsDetected == 0
+            for (int i = 0; i < buildingNameplates.Length; i++)
             {
-                get { return numCollisions; }
-                set { numCollisions = value; }
+                BuildingNameplate buildingNameplate = buildingNameplates[i];
+                //string name = "Gondastyr's Quality General Store"; //"Mordard's Spices"; //"The Restless Djinn"; // "Daggerfall's Best Tailoring"; // "The White Muskrat"; // "The Lucky Wolf"
+                //if (buildingNameplate.name == name)
+                //{
+                //    bool test = false;
+                //}
+                if (recomputeNumberOfCollision)
+                {
+                    buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, Vector2.zero, false, false);
+                }
+                if (buildingNameplate.numCollisionsDetected == 0)
+                {
+                    buildingNameplate.placed = true; // place it in current position since there is no collision
+                }
+                buildingNameplates[i] = buildingNameplate;
             }
-        }
-
-        public class ComparerNameplaceCollisions : IComparer<NameplatePlacementInfo>
-        {
-            public int Compare(NameplatePlacementInfo x, NameplatePlacementInfo y)
+            /*
+            // compute number of collisions for right aligned nameplates and directly place those with numCollisionsDetected == 0
+            for (int i = 0; i < buildingNameplates.Count; i++)
             {
-                return x.numCollisions - y.numCollisions;
+                BuildingNameplate buildingNameplate = buildingNameplates[i];
+                Vector2 vectorDirNameplate = (buildingNameplate.upperLeftCorner - buildingNameplate.lowerLeftCorner).normalized;
+                Vector2 vectorNormalBiasFirstNameplate = (first.upperLeftCorner - first.upperRightCorner);
+                buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, vectorNormalBiasFirstNameplate, false, false);
+                if (buildingNameplate.numCollisionsDetected == 0)
+                {
+                    buildingNameplate.offset = vectorNormalBiasFirstNameplate;
+                    buildingNameplate.placed = true; // place it in current position since there is no collision
+                }
+                buildingNameplates[i] = buildingNameplate;
             }
+            */
         }
 
         private void computeNameplateOffsets()
         {
-            for (int t = 0; t < 5; t++) // main loop max 10 times (then everything should either be solved or is considered unsolveable)
+            for (int t = 0; t < 3; t++) // main loop max n times (then everything should either be solved or is considered unsolveable)
             {
                 // compute number of collisions for every nameplate and directly place those with numCollisionsDetected == 0
-                for (int i = 0; i < buildingNameplates.Count; i++)
-                {
-                    BuildingNameplate buildingNameplate = buildingNameplates[i];
-                    //string name = "Gondastyr's Quality General Store"; //"Mordard's Spices"; //"The Restless Djinn"; // "Daggerfall's Best Tailoring"; // "The White Muskrat"; // "The Lucky Wolf"
-                    //if (buildingNameplate.name == name)
-                    //{
-                    //    bool test = false;
-                    //}
-                    buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, Vector2.zero, false, false);
-                    if (buildingNameplate.numCollisionsDetected == 0)
-                    {
-                        buildingNameplate.placed = true; // place it in current position since there is no collision
-                    }
-                    buildingNameplates[i] = buildingNameplate;
-                }
-                /*
-                // compute number of collisions for right aligned nameplates and directly place those with numCollisionsDetected == 0
-                for (int i = 0; i < buildingNameplates.Count; i++)
-                {
-                    BuildingNameplate buildingNameplate = buildingNameplates[i];
-                    Vector2 vectorDirNameplate = (buildingNameplate.upperLeftCorner - buildingNameplate.lowerLeftCorner).normalized;
-                    Vector2 vectorNormalBiasFirstNameplate = (first.upperLeftCorner - first.upperRightCorner);
-                    buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, vectorNormalBiasFirstNameplate, false, false);
-                    if (buildingNameplate.numCollisionsDetected == 0)
-                    {
-                        buildingNameplate.offset = vectorNormalBiasFirstNameplate;
-                        buildingNameplate.placed = true; // place it in current position since there is no collision
-                    }
-                    buildingNameplates[i] = buildingNameplate;
-                }
-                */
+                computeAndPlaceZeroCollisionsNameplates(t == 0);
 
-                for (int i = 0; i < buildingNameplates.Count; i++)
+
+                for (int i = 0; i < buildingNameplates.Length; i++)
                 {
-                    Vector2 p = Vector2.zero, posNameplate1 = Vector2.zero, posNameplate2 = Vector2.zero;
-                    float ySize = 0.0f;
-                    float distanceVertical = 0.0f;
                     BuildingNameplate first = buildingNameplates[i];
                     if (first.placed)
                         continue;
+
+                    Vector2 vectorNameplate1VerticalOffset = Vector2.zero, vectorNameplate2VerticalOffset = Vector2.zero;
+                    float ySize = 0.0f;
+                    float distanceVertical = 0.0f;
+
                     if (first.numCollisionsDetected == 1)
                     {
                         int j = 0;
-                        for (j = 0; j < buildingNameplates.Count; j++)
+                        for (j = 0; j < buildingNameplates.Length; j++)
                         {
                             BuildingNameplate otherBuildingNameplate = buildingNameplates[j];
                             if (first.uniqueIndex == otherBuildingNameplate.uniqueIndex)
                                 continue;
                             if (otherBuildingNameplate.placed) // don't check for already placed nameplates for collisions - since they can not collide with current nameplate since placed nameplates are enforced to not have collisions
                                 continue;
-                            if (checkIntersectionOfNameplates(first, Vector2.zero, otherBuildingNameplate, Vector2.zero, out posNameplate1, out posNameplate2, out p, out ySize, out distanceVertical))
+                            if (checkIntersectionOfNameplates(first, Vector2.zero, otherBuildingNameplate, Vector2.zero, out vectorNameplate1VerticalOffset, out vectorNameplate2VerticalOffset, out ySize, out distanceVertical))
                                 break;
                         }
 
-                        if (j >= buildingNameplates.Count)
+                        if (j >= buildingNameplates.Length)                        
+                        {
+                            first.numCollisionsDetected--;
+                            first.placed = true; // place it in current position since there is no collision
                             continue;
+                        }
 
                         BuildingNameplate second = buildingNameplates[j];
-
+                        
                         if (second.numCollisionsDetected == 1) // easy case, place both nameplates by switching half amount to up/down - but check if they then don't collide with already placed nameplates
                         {
-                            Vector2 halfPoint = (posNameplate2 + p) * 0.5f; // point lying halfway between centerNameplate2 and p
-                            Vector2 vectorDirFirstNameplate = (p - halfPoint).normalized;
-                            Vector2 vectorDirSecondNameplate = (posNameplate2 - halfPoint).normalized;
-                            if (vectorDirFirstNameplate == Vector2.zero)
-                            {
-                                vectorDirFirstNameplate = Vector2.up;
-                            }
-                            if (vectorDirSecondNameplate == Vector2.zero)
-                            {
-                                vectorDirSecondNameplate = Vector2.down;
-                            }
-                            Vector2 vectorBiasFirstNameplate = vectorDirFirstNameplate * (ySize - Math.Abs(distanceVertical)) * 0.5f;
-                            Vector2 vectorBiasSecondNameplate = vectorDirSecondNameplate * (ySize - Math.Abs(distanceVertical)) * 0.5f;
+                            Vector2 vectorBiasNameplate1 = vectorNameplate1VerticalOffset * (ySize - Math.Abs(distanceVertical)) * 0.5f;
+                            Vector2 vectorBiasNameplate2 = vectorNameplate2VerticalOffset * (ySize - Math.Abs(distanceVertical)) * 0.5f;
 
-                            Vector2 vectorNormalBiasFirstNameplate = (first.upperLeftCorner - first.upperRightCorner);
-                            Vector2 vectorNormalBiasSecondNameplate = (second.upperLeftCorner - second.upperRightCorner);
+                            Vector2 vectorNormalBiasNameplate1 = (first.upperLeftCorner - first.upperRightCorner);
+                            Vector2 vectorNormalBiasNameplate2 = (second.upperLeftCorner - second.upperRightCorner);
                             //string stringNameplate1 = "";
                             //string stringNameplate2 = "";
 
-                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplate, true, false, first))
+                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2, true, false, first))
                             {
-                                first.offset = vectorBiasFirstNameplate;
+                                first.offset = vectorBiasNameplate1;
                                 first.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "^");
 
-                                second.offset = vectorBiasSecondNameplate;
+                                second.offset = vectorBiasNameplate2;
                                 second.placed = true;
                                 //stringNameplate2 = String.Format("{0} {1}", second.name, "v");
                             }
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplate, true, false, first))
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 + vectorNormalBiasNameplate1, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2, true, false, first))
                             {
-                                first.offset = vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate;
+                                first.offset = vectorBiasNameplate1 + vectorNormalBiasNameplate1;
                                 first.placed = true;
 
-                                second.offset = vectorBiasSecondNameplate;
+                                second.offset = vectorBiasNameplate2;
                                 second.placed = true;
                             }
-                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplate, true, false, first))
-                            //{
-                            //    first.offset = vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate;
-                            //    first.placed = true;
 
-                            //    second.offset = vectorBiasSecondNameplate;
-                            //    second.placed = true;
-                            //}
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplate + vectorNormalBiasSecondNameplate, true, false, first))
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasNameplate2 + vectorNormalBiasNameplate2, true, false, first))
                             {
-                                first.offset = vectorBiasFirstNameplate;
+                                first.offset = vectorBiasNameplate1;
                                 first.placed = true;
 
-                                second.offset = vectorBiasSecondNameplate + vectorNormalBiasSecondNameplate;
+                                second.offset = vectorBiasNameplate2 + vectorNormalBiasNameplate2;
                                 second.placed = true;
                             }
-                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplate - vectorNormalBiasSecondNameplate, true, false, first))
-                            //{
-                            //    first.offset = vectorBiasFirstNameplate;
-                            //    first.placed = true;
-
-                            //    second.offset = vectorBiasSecondNameplate - vectorNormalBiasSecondNameplate;
-                            //    second.placed = true;
-                            //}
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate * 2.0f, true, false))
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 * 2.0f, true, false))
                             {
-                                first.offset = vectorBiasFirstNameplate * 2.0f;
+                                first.offset = vectorBiasNameplate1 * 2.0f;
                                 first.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "_^");
                             }
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplate * 2.0f, true, false))
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate1 * 2.0f, true, false))
                             {
-                                first.offset = -vectorBiasFirstNameplate * 2.0f;
+                                first.offset = -vectorBiasNameplate1 * 2.0f;
                                 first.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "_v");
                             }
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate * 2.0f + vectorNormalBiasFirstNameplate, true, false))
-                            {
-                                first.offset = vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate;
-                                first.placed = true;
-                            }
-                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate * 2.0f - vectorNormalBiasFirstNameplate, true, false))
+                            
+                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1, true, false))
                             //{
-                            //    first.offset = vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate;
+                            //    first.offset = vectorBiasNameplate1 + vectorNormalBiasNameplate1;
                             //    first.placed = true;
                             //}
-
-                            /*
-                            if (stringNameplate1 != "")
-                            {
-                                TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate1);
-                                first.textLabel = newTextLabel;
-                                MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
-                                renderer.material.mainTexture = newTextLabel.Texture;
-                                //buildingNameplates[i] = first;
-                            }
-                            if (stringNameplate2 != "")
-                            {
-                                TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate2);
-                                second.textLabel = newTextLabel;
-                                MeshRenderer renderer = second.gameObject.GetComponent<MeshRenderer>();
-                                renderer.material.mainTexture = newTextLabel.Texture;
-                                //buildingNameplates[j] = second;
-                            }
-                            */
+                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate1 * 2.0f + vectorNormalBiasNameplate1, true, false))
+                            //{
+                            //    first.offset = -vectorBiasNameplate1 + vectorNormalBiasNameplate1;
+                            //    first.placed = true;
+                            //}                   
+                            
+                            //if (stringNameplate1 != "")
+                            //{
+                            //    TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate1);
+                            //    first.textLabel = newTextLabel;
+                            //    MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
+                            //    renderer.material.mainTexture = newTextLabel.Texture;
+                            //    //buildingNameplates[i] = first;
+                            //}
+                            //if (stringNameplate2 != "")
+                            //{
+                            //    TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate2);
+                            //    second.textLabel = newTextLabel;
+                            //    MeshRenderer renderer = second.gameObject.GetComponent<MeshRenderer>();
+                            //    renderer.material.mainTexture = newTextLabel.Texture;
+                            //    //buildingNameplates[j] = second;
+                            //}
+                            
                         }
                         else if (second.numCollisionsDetected > 1) // second nameplate has multiple collisions -> only offset first nameplate then...
                         {
@@ -1089,184 +1081,110 @@ namespace DaggerfallWorkshop.Game
                             //    bool test = false;
                             //}
 
-                            Vector2 halfPoint = (posNameplate2 + p) * 0.5f; // point lying halfway between centerNameplate2 and p
-                            Vector2 vectorDirFirstNameplate = (p - halfPoint).normalized;
-                            if (vectorDirFirstNameplate == Vector2.zero)
-                            {
-                                vectorDirFirstNameplate = Vector2.up;
-                            }
-                            Vector2 vectorBiasFirstNameplate = vectorDirFirstNameplate * (ySize);
-                            Vector2 vectorNormalBiasFirstNameplate = (first.upperLeftCorner - first.upperRightCorner);
+                            Vector2 vectorBiasNameplate = vectorNameplate1VerticalOffset * (ySize);
+                            Vector2 vectorNormalBiasNameplate = (first.upperLeftCorner - first.upperRightCorner);
 
                             //string stringNameplate1 = "";
 
-                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate, true, false))
+                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate, true, false))
                             {
-                                first.offset = vectorBiasFirstNameplate;
+                                first.offset = vectorBiasNameplate;
                                 first.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "__^");
                             }
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplate, true, false))
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate, true, false))
                             {
-                                first.offset = -vectorBiasFirstNameplate;
+                                first.offset = -vectorBiasNameplate;
                                 first.placed = true;
                                 //stringNameplate1 = String.Format("{0} {1}", first.name, "__v");
                             }
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate, true, false))
-                            {
-                                first.offset = vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate;
-                                first.placed = true;
-                            }
-                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate, true, false))
+                            
+                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
                             //{
-                            //    first.offset = vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate;
+                            //    first.offset = vectorBiasNameplate + vectorNormalBiasNameplate;
                             //    first.placed = true;
                             //}
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate, true, false))
-                            {
-                                first.offset = -vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate;
-                                first.placed = true;
-                            }
-                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate, true, false))
+                            //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
                             //{
-                            //    first.offset = -vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate;
+                            //    first.offset = -vectorBiasNameplate + vectorNormalBiasNameplate;
                             //    first.placed = true;
                             //}
 
-                            /*
-                            if (stringNameplate1 != "")
-                            {
-                                TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate1);
-                                first.textLabel = newTextLabel;
-                                MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
-                                renderer.material.mainTexture = newTextLabel.Texture;
-                                //buildingNameplates[i] = first;
-                            }
-                            */
-                        }                  
+                            //if (stringNameplate1 != "")
+                            //{
+                            //    TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate1);
+                            //    first.textLabel = newTextLabel;
+                            //    MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
+                            //    renderer.material.mainTexture = newTextLabel.Texture;
+                            //    //buildingNameplates[i] = first;
+                            //}
+                        }                        
+                        first.numCollisionsDetected -= (first.placed)? 1 : 0;
+                        second.numCollisionsDetected -= (second.placed) ? 1 : 0;
                         buildingNameplates[i] = first;
                         buildingNameplates[j] = second;
                     }                    
                 }
             }
         
-            // re-compute number of collisions for every nameplate and directly place those with numCollisionsDetected == 0
-            for (int i = 0; i < buildingNameplates.Count; i++)
-            {
-                BuildingNameplate buildingNameplate = buildingNameplates[i];
-                buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, Vector2.zero, false, false);
-                if (buildingNameplate.numCollisionsDetected == 0)
-                {
-                    buildingNameplate.placed = true; // place it in current position since there is no collision
-                }
-                buildingNameplates[i] = buildingNameplate;
-            }
-            /*
-            // compute number of collisions for right aligned nameplates and directly place those with numCollisionsDetected == 0
-            for (int i = 0; i < buildingNameplates.Count; i++)
-            {
-                BuildingNameplate buildingNameplate = buildingNameplates[i];
-                Vector2 vectorDirNameplate = (buildingNameplate.upperLeftCorner - buildingNameplate.lowerLeftCorner).normalized;
-                Vector2 vectorNormalBiasFirstNameplate = (first.upperLeftCorner - first.upperRightCorner);
-                buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, vectorNormalBiasFirstNameplate, false, false);
-                if (buildingNameplate.numCollisionsDetected == 0)
-                {
-                    buildingNameplate.offset = vectorNormalBiasFirstNameplate;
-                    buildingNameplate.placed = true; // place it in current position since there is no collision
-                }
-                buildingNameplates[i] = buildingNameplate;
-            }
-            */
-
+            // re-compute number of collisions for every nameplate and place those with numCollisionsDetected == 0
+            //computeAndPlaceZeroCollisionsNameplates();
+            
             // now try to place remaining nameplates (all nameplates with more than 1 collisions)
-            for (int i = 0; i < buildingNameplates.Count; i++)
+            for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate first = buildingNameplates[i];
                 //if (first.numCollisionsDetected <= 1)
                 //    continue;
                 if (first.placed)
                     continue;
-                Vector2 vectorDirFirstNameplate = (first.upperLeftCorner - first.lowerLeftCorner).normalized;
-                Vector2 vectorBiasFirstNameplate = vectorDirFirstNameplate * (first.height) * 0.5f;
-                Vector2 vectorNormalBiasFirstNameplate = (first.upperLeftCorner - first.upperRightCorner);
+                Vector2 vectorDirectionNameplate = (first.upperLeftCorner - first.lowerLeftCorner).normalized;
+                Vector2 vectorBiasNameplate = vectorDirectionNameplate * (first.height) * 0.5f;
+                Vector2 vectorNormalBiasNameplate = (first.upperLeftCorner - first.upperRightCorner);
 
                 //string stringNameplate1 = "";
 
-                if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate * 2.0f, true, false))
+                if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate * 2.0f, true, false))
                 {
-                    first.offset += vectorBiasFirstNameplate * 2.0f;
+                    first.offset += vectorBiasNameplate * 2.0f;
                     first.placed = true;
                     //stringNameplate1 = String.Format("{0} {1}", first.name, "_^");
                 }
-                else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplate * 2.0f, true, false))
+                else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate * 2.0f, true, false))
                 {
-                    first.offset -= vectorBiasFirstNameplate * 2.0f;
+                    first.offset -= vectorBiasNameplate * 2.0f;
                     first.placed = true;
                     //stringNameplate1 = String.Format("{0} {1}", first.name, "_v");
                 }
-                else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate, true, false))
-                {
-                    first.offset = vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate;
-                    first.placed = true;
-                }
-                //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate, true, false))
+                
+                //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
                 //{
-                //    first.offset = vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate;
+                //    first.offset = vectorBiasNameplate + vectorNormalBiasNameplate;
                 //    first.placed = true;
                 //}
-                else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate, true, false))
-                {
-                    first.offset = -vectorBiasFirstNameplate + vectorNormalBiasFirstNameplate;
-                    first.placed = true;
-                }
-                //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate, true, false))
+                //else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasNameplate + vectorNormalBiasNameplate, true, false))
                 //{
-                //    first.offset = -vectorBiasFirstNameplate - vectorNormalBiasFirstNameplate;
+                //    first.offset = -vectorBiasNameplate + vectorNormalBiasNameplate;
                 //    first.placed = true;
-                //}
+                //}                
+                
+                //TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate1);
+                //first.textLabel = newTextLabel;
+                //MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
+                //renderer.material.mainTexture = newTextLabel.Texture;
 
-                /*
-                TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate1);
-                first.textLabel = newTextLabel;
-                MeshRenderer renderer = first.gameObject.GetComponent<MeshRenderer>();
-                renderer.material.mainTexture = newTextLabel.Texture;
-                */
+                first.numCollisionsDetected -= (first.placed) ? 1 : 0;
                 buildingNameplates[i] = first;
             }       
             
             // final pass to check if now some nameplates can be set that no longer have collisions             
-            for (int i = 0; i < buildingNameplates.Count; i++)
-            {
-                BuildingNameplate buildingNameplate = buildingNameplates[i];
-                buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, Vector2.zero, false, false);
-                if (buildingNameplate.numCollisionsDetected == 0)
-                {
-                    buildingNameplate.placed = true; // place it in current position since there is no collision
-                }
-                buildingNameplates[i] = buildingNameplate;
-            }
-            /*
-            // compute number of collisions for right aligned nameplates and directly place those with numCollisionsDetected == 0
-            for (int i = 0; i < buildingNameplates.Count; i++)
-            {
-                BuildingNameplate buildingNameplate = buildingNameplates[i];
-                Vector2 vectorDirNameplate = (buildingNameplate.upperLeftCorner - buildingNameplate.lowerLeftCorner).normalized;
-                Vector2 vectorNormalBiasFirstNameplate = (first.upperLeftCorner - first.upperRightCorner);
-                buildingNameplate.numCollisionsDetected = numberOfCollisionsNameplatesWithOffsetNameplate(buildingNameplate, vectorNormalBiasFirstNameplate, false, false);
-                if (buildingNameplate.numCollisionsDetected == 0)
-                {
-                    buildingNameplate.offset = vectorNormalBiasFirstNameplate;
-                    buildingNameplate.placed = true; // place it in current position since there is no collision
-                }
-                buildingNameplates[i] = buildingNameplate;
-            }
-            */
+            computeAndPlaceZeroCollisionsNameplates();
 
-            for (int i = 0; i < buildingNameplates.Count; i++)
+            for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
                 if (!buildingNameplate.placed)
-                {
+                {                    
                     string abbreviation = "*";
                     for (int c = 0; c < buildingNameplate.name.Length - 1; c++)
                         abbreviation += " ";
@@ -1276,8 +1194,9 @@ namespace DaggerfallWorkshop.Game
                     TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate);
                     buildingNameplate.textLabel = newTextLabel;
                     MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();
-                    renderer.material.mainTexture = newTextLabel.Texture;
-                    
+                    renderer.material.mainTexture = newTextLabel.Texture;                    
+
+                    //buildingNameplate.gameObject.SetActive(false);
                 }
                 buildingNameplates[i] = buildingNameplate;
             }
@@ -1422,10 +1341,10 @@ namespace DaggerfallWorkshop.Game
 
         private void applyNameplateOffsets()
         {
-            for (int i = 0; i < buildingNameplates.Count; i++)
+            for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
-
+                //buildingNameplate.gameObject.transform.position.Set(buildingNameplate.gameObject.transform.position.x + buildingNameplate.offset.x, buildingNameplate.gameObject.transform.position.y, buildingNameplate.gameObject.transform.position.z + buildingNameplate.offset.y);
                 buildingNameplate.gameObject.transform.Translate(buildingNameplate.offset.x, 0.0f, buildingNameplate.offset.y, Space.World);
 
 #if DEBUG_Nameplates
@@ -1472,9 +1391,10 @@ namespace DaggerfallWorkshop.Game
 
         private void undoNameplateOffsets()
         {
-            for (int i = 0; i < buildingNameplates.Count; i++)
+            for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
+                //buildingNameplate.gameObject.transform.position.Set(buildingNameplate.gameObject.transform.position.x - buildingNameplate.offset.x, buildingNameplate.gameObject.transform.position.y, buildingNameplate.gameObject.transform.position.z - buildingNameplate.offset.y);
                 buildingNameplate.gameObject.transform.Translate(-buildingNameplate.offset.x, 0.0f, -buildingNameplate.offset.y, Space.World);
                 buildingNameplate.offset = Vector2.zero;
                 
