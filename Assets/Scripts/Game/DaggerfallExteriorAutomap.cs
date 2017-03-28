@@ -813,7 +813,7 @@ namespace DaggerfallWorkshop.Game
         */
 
         private bool checkIntersectionOfNameplates(BuildingNameplate nameplate1, Vector2 offset1, BuildingNameplate nameplate2, Vector2 offset2, out Vector2 posNameplate1, out Vector2 posNameplate2, out Vector2 p, out float ySize, out float distanceVertical)
-        {
+        {        
             /*
             Vector2 vectorBetweenNamePlates;
             Vector2 offset1used, offset2used;
@@ -825,10 +825,13 @@ namespace DaggerfallWorkshop.Game
                 offset2used = offset2;
             else
                 offset2used = nameplate2.offsetPlateCoordsInNewBase;
-            Vector2 vectorBetweenNamePlatesWithoutOffset = Quaternion.AngleAxis(-nameplate1.angle, Vector3.forward) * (new Vector2(nameplate2.gameObject.transform.position.x, nameplate2.gameObject.transform.position.z) - new Vector2(nameplate1.gameObject.transform.position.x, nameplate1.gameObject.transform.position.z));
+            Vector2 vectorBetweenNamePlatesWithoutOffset = new Vector2(nameplate2.gameObject.transform.position.x, nameplate2.gameObject.transform.position.z) - new Vector2(nameplate1.gameObject.transform.position.x, nameplate1.gameObject.transform.position.z);
             vectorBetweenNamePlates = vectorBetweenNamePlatesWithoutOffset + offset1used + offset2used;
             */
-            Vector2 vectorBetweenNamePlates = (new Vector2(nameplate2.gameObject.transform.position.x, nameplate2.gameObject.transform.position.z) + nameplate2.offsetPlateCoordsInOriginalBase + offset2) - (new Vector2(nameplate1.gameObject.transform.position.x, nameplate1.gameObject.transform.position.z) + nameplate1.offsetPlateCoordsInOriginalBase + offset1);
+            Vector2 posNameplate1inNewBase = new Vector2(nameplate1.gameObject.transform.position.x, nameplate1.gameObject.transform.position.z);
+            Vector2 posNameplate2inNewBase = new Vector2(nameplate2.gameObject.transform.position.x, nameplate2.gameObject.transform.position.z);
+            Vector2 vectorBetweenNamePlates = (posNameplate2inNewBase + nameplate2.offsetPlateCoordsInNewBase + offset2) - (posNameplate1inNewBase + nameplate1.offsetPlateCoordsInNewBase + offset1);
+            
             posNameplate1 = Vector2.zero;
             posNameplate2 = vectorBetweenNamePlates;
 
@@ -992,13 +995,13 @@ namespace DaggerfallWorkshop.Game
                             Vector2 vectorBiasFirstNameplate = vectorDirFirstNameplate * (ySize - Math.Abs(distanceVertical)) * 0.5f;
                             Vector2 vectorBiasSecondNameplate = vectorDirSecondNameplate * (ySize - Math.Abs(distanceVertical)) * 0.5f;
 
-                            Vector2 vectorBiasFirstNameplateInOriginalBase = Quaternion.AngleAxis(-first.angle, Vector3.forward) * vectorBiasFirstNameplate;
-                            Vector2 vectorBiasSecondNameplateInOriginalBase = Quaternion.AngleAxis(-second.angle, Vector3.forward) * vectorBiasSecondNameplate;
+                            Vector2 vectorBiasFirstNameplateInOriginalBase = Quaternion.AngleAxis(first.angle, Vector3.forward) * vectorBiasFirstNameplate;
+                            Vector2 vectorBiasSecondNameplateInOriginalBase = Quaternion.AngleAxis(second.angle, Vector3.forward) * vectorBiasSecondNameplate;
 
                             string stringNameplate1 = "";
                             string stringNameplate2 = "";
 
-                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplateInOriginalBase, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplateInOriginalBase, true, false, first))
+                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate, true, false, second) && !checkIntersectionOffsetNameplateAgainstOthers(second, vectorBiasSecondNameplate, true, false, first))
                             {
                                 first.offsetPlateCoordsInOriginalBase = vectorBiasFirstNameplateInOriginalBase;
                                 first.offsetPlateCoordsInNewBase = vectorBiasFirstNameplate;
@@ -1009,15 +1012,15 @@ namespace DaggerfallWorkshop.Game
                                 second.offsetPlateCoordsInNewBase = vectorBiasSecondNameplate;
                                 second.placed = true;
                                 stringNameplate2 = String.Format("{0} {1}", second.name, "v");
-                            }/*
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplateInOriginalBase * 2.0f, true, false))
+                            }
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate * 2.0f, true, false))
                             {
                                 first.offsetPlateCoordsInOriginalBase = vectorBiasFirstNameplateInOriginalBase * 2.0f;
                                 first.offsetPlateCoordsInNewBase = vectorBiasFirstNameplate * 2.0f;
                                 first.placed = true;
                                 stringNameplate1 = String.Format("{0} {1}", first.name, "_^");
                             }
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplateInOriginalBase * 2.0f, true, false))
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplate * 2.0f, true, false))
                             {
                                 first.offsetPlateCoordsInOriginalBase = -vectorBiasFirstNameplateInOriginalBase * 2.0f;
                                 first.offsetPlateCoordsInNewBase = -vectorBiasFirstNameplate * 2.0f;
@@ -1032,7 +1035,7 @@ namespace DaggerfallWorkshop.Game
                                 stringNameplate2 = abbreviation;
                                 first.placed = true;
                                 //first.gameObject.SetActive(false);
-                            }*/
+                            }
 
                             if (stringNameplate1 != "")
                             {
@@ -1050,7 +1053,7 @@ namespace DaggerfallWorkshop.Game
                                 renderer.material.mainTexture = newTextLabel.Texture;
                                 //buildingNameplates[j] = second;
                             }                            
-                        }/*
+                        }
                         else if (second.numCollisionsDetected > 1) // second nameplate has multiple collisions -> only offset first nameplate then...
                         {
                             string firstName = "Gondastyr's Quality General Store"; //"Daggerfall Metalworks"; //"The Odd Bijoutry"; // "The Red Porcupine"; // "The King's Fairy"; // "The Odd Blades"
@@ -1062,32 +1065,24 @@ namespace DaggerfallWorkshop.Game
 
                             Vector2 halfPoint = (posNameplate2 + p) * 0.5f; // point lying halfway between centerNameplate2 and p
                             Vector2 vectorDirFirstNameplate = (p - halfPoint).normalized;
-                            Vector2 vectorDirSecondNameplate = (posNameplate2 - halfPoint).normalized;
                             if (vectorDirFirstNameplate == Vector2.zero)
                             {
                                 vectorDirFirstNameplate = Vector2.up;
                             }
-                            if (vectorDirSecondNameplate == Vector2.zero)
-                            {
-                                vectorDirSecondNameplate = Vector2.down;
-                            }
-                            Vector2 vectorBiasFirstNameplate = vectorDirFirstNameplate * (ySize - Math.Abs(distanceVertical)) * 0.5f;
-                            Vector2 vectorBiasSecondNameplate = vectorDirSecondNameplate * (ySize - Math.Abs(distanceVertical)) * 0.5f;
+                            Vector2 vectorBiasFirstNameplate = vectorDirFirstNameplate * (ySize) * 0.5f;
 
-                            Vector2 vectorBiasFirstNameplateInOriginalBase = Quaternion.AngleAxis(-first.angle, Vector3.forward) * vectorBiasFirstNameplate;
-                            Vector2 vectorBiasSecondNameplateInOriginalBase = Quaternion.AngleAxis(-second.angle, Vector3.forward) * vectorBiasSecondNameplate;
+                            Vector2 vectorBiasFirstNameplateInOriginalBase = Quaternion.AngleAxis(first.angle, Vector3.forward) * vectorBiasFirstNameplate;
 
                             string stringNameplate1 = "";
-                            string stringNameplate2 = "";
 
-                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplateInOriginalBase * 2.0f, true, false))
+                            if (!checkIntersectionOffsetNameplateAgainstOthers(first, vectorBiasFirstNameplate * 2.0f, true, false))
                             {
                                 first.offsetPlateCoordsInOriginalBase = vectorBiasFirstNameplateInOriginalBase * 2.0f;
                                 first.offsetPlateCoordsInNewBase = vectorBiasFirstNameplate * 2.0f;
                                 first.placed = true;
                                 stringNameplate1 = String.Format("{0} {1}", first.name, "__^");
                             }
-                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplateInOriginalBase * 2.0f, true, false))
+                            else if (!checkIntersectionOffsetNameplateAgainstOthers(first, -vectorBiasFirstNameplate * 2.0f, true, false))
                             {
                                 first.offsetPlateCoordsInOriginalBase = -vectorBiasFirstNameplateInOriginalBase * 2.0f;
                                 first.offsetPlateCoordsInNewBase = -vectorBiasFirstNameplate * 2.0f;
@@ -1099,7 +1094,7 @@ namespace DaggerfallWorkshop.Game
                                 string abbreviation = "#";
                                 for (int c = 0; c < first.name.Length - 1; c++)
                                     abbreviation += " ";
-                                stringNameplate2 = abbreviation;
+                                stringNameplate1 = abbreviation;
                                 first.placed = true;
                                 //first.gameObject.SetActive(false);
                             }
@@ -1111,7 +1106,7 @@ namespace DaggerfallWorkshop.Game
                                 renderer.material.mainTexture = newTextLabel.Texture;
                                 //buildingNameplates[i] = first;
                             }
-                        }     */                   
+                        }                  
                         buildingNameplates[i] = first;
                         buildingNameplates[j] = second;
                     }                    
@@ -1523,8 +1518,8 @@ namespace DaggerfallWorkshop.Game
 
                 //buildingNameplate.offsetPlateCoordsInOriginalBase = Quaternion.AngleAxis(buildingNameplate.angle, Vector3.forward) * buildingNameplate.offsetPlateCoordsInOriginalBase;
                 //buildingNameplate.gameObject.transform.localPosition += new Vector3(buildingNameplate.offsetPlateCoordsInOriginalBase.x, 0.0f, buildingNameplate.offsetPlateCoordsInOriginalBase.y);
-                //buildingNameplate.gameObject.transform.Translate(buildingNameplate.offsetPlateCoordsInNewBase.x, 0.0f, buildingNameplate.offsetPlateCoordsInNewBase.y, Space.Self);
-                buildingNameplate.gameObject.transform.Translate(buildingNameplate.offsetPlateCoordsInOriginalBase.x, 0.0f, buildingNameplate.offsetPlateCoordsInOriginalBase.y, Space.Self);
+                buildingNameplate.gameObject.transform.Translate(buildingNameplate.offsetPlateCoordsInNewBase.x, 0.0f, buildingNameplate.offsetPlateCoordsInNewBase.y, Space.World);
+                //buildingNameplate.gameObject.transform.Translate(buildingNameplate.offsetPlateCoordsInOriginalBase.x, 0.0f, buildingNameplate.offsetPlateCoordsInOriginalBase.y, Space.World);
 
 #if DEBUG_Nameplates
                 Vector3 posAnchor = buildingNameplate.gameObject.transform.position;
@@ -1574,8 +1569,8 @@ namespace DaggerfallWorkshop.Game
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
                 //buildingNameplate.gameObject.transform.localPosition += new Vector3(-buildingNameplate.offsetPlateCoordsInOriginalBase.x, 0.0f, -buildingNameplate.offsetPlateCoordsInOriginalBase.y);
-                //buildingNameplate.gameObject.transform.Translate(-buildingNameplate.offsetPlateCoordsInNewBase.x, 0.0f, -buildingNameplate.offsetPlateCoordsInNewBase.y, Space.Self);
-                buildingNameplate.gameObject.transform.Translate(-buildingNameplate.offsetPlateCoordsInOriginalBase.x, 0.0f, -buildingNameplate.offsetPlateCoordsInOriginalBase.y, Space.Self);
+                buildingNameplate.gameObject.transform.Translate(-buildingNameplate.offsetPlateCoordsInNewBase.x, 0.0f, -buildingNameplate.offsetPlateCoordsInNewBase.y, Space.World);
+                //buildingNameplate.gameObject.transform.Translate(-buildingNameplate.offsetPlateCoordsInOriginalBase.x, 0.0f, -buildingNameplate.offsetPlateCoordsInOriginalBase.y, Space.World);
                 buildingNameplate.offsetPlateCoordsInNewBase = Vector2.zero;
                 buildingNameplate.offsetPlateCoordsInOriginalBase = Vector2.zero;
                 buildingNameplate.placed = false;
