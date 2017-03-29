@@ -89,6 +89,8 @@ namespace DaggerfallWorkshop.Game
 
         const float nameplatesPlacementDepth = 4.0f; // the height at which the nameplates are positioned - set to be higher than player marker and layout texture
 
+        DaggerfallFont customFont = null;
+
         private struct BuildingNameplate
         {
             public float posX;
@@ -418,6 +420,11 @@ namespace DaggerfallWorkshop.Game
             cameraTransformRotationSaved = Quaternion.identity;
             cameraOrthographicSizeSaved = 10.0f; // dummy value > 0.0f -> will be overwritten once camera zoom is applied
 
+            // Creates a new DaggerfallFont using index 4 / default typeface
+            DaggerfallFont customFont = DaggerfallUI.Instance.GetFont();
+            // Reloads glyphs to Daggerfall's default yellowish text colour
+            customFont.ReloadFont(DaggerfallUI.DaggerfallDefaultTextColor);
+
             // important that transition events/delegates are created in Awake() instead of OnEnable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
             PlayerGPS.OnMapPixelChanged += OnMapPixelChanged;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
@@ -483,7 +490,7 @@ namespace DaggerfallWorkshop.Game
 
                     if (popUpNameplate == null)
                     {
-                        TextLabel textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, nameplateName);
+                        TextLabel textLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, nameplateName);
                         textLabel.BackgroundColor = Color.blue; // not working right now - always black background (have to look into this if I can make it work...)
                         textLabel.TextColor = Color.yellow;
                         popUpNameplate = new GameObject("pop-up nameplate");
@@ -777,8 +784,7 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.uniqueIndex = uniqueIndex++;
                             newBuildingNameplate.posX = xPosBuilding;
                             newBuildingNameplate.posY = yPosBuilding;
-                            newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNameplate.name);
-                            newBuildingNameplate.textLabel.TextColor = Color.yellow;
+                            newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, newBuildingNameplate.name);
                             newBuildingNameplate.gameObject = new GameObject(String.Format("building name plate for [{0}]+", newBuildingNameplate.name));
                             MeshFilter meshFilter = (MeshFilter)newBuildingNameplate.gameObject.AddComponent(typeof(MeshFilter));
                             newBuildingNameplate.textureWidth = newBuildingNameplate.textLabel.Texture.width;
@@ -1225,7 +1231,7 @@ namespace DaggerfallWorkshop.Game
                     string stringNameplate = abbreviation;
                     buildingNameplate.placed = true;
 
-                    TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate);
+                    TextLabel newTextLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, stringNameplate);
                     buildingNameplate.textLabel = newTextLabel;
                     //MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                    
                     MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
@@ -1309,7 +1315,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (buildingNameplate.nameplateReplaced)
                 {
-                    TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, buildingNameplate.name);
+                    TextLabel newTextLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, buildingNameplate.name);
                     buildingNameplate.textLabel = newTextLabel;
                     //MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                       
                     MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
