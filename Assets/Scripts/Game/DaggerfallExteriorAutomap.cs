@@ -453,11 +453,24 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
-            //// if we are not in game (e.g. title menu) skip update function (update must not be skipped when in game or in gui window (to propagate all map control changes))
-            //if ((GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.Game) && (GameManager.Instance.StateManager.CurrentState != StateManager.StateTypes.UI))
-            //{
-            //    return;
-            //}
+            if ((GameManager.Instance.StateManager.CurrentState == StateManager.StateTypes.UI) && cameraExteriorAutomap)            
+            {
+                DaggerfallUI daggerfallUI;
+                DaggerfallUI.FindDaggerfallUI(out daggerfallUI);
+
+                Panel panelExteriorAutomap = daggerfallUI.ExteriorAutomapWindow.PanelRenderAutomap;
+                Vector2 mousePosition = new Vector2(panelExteriorAutomap.MousePosition.x - panelExteriorAutomap.Position.x, panelExteriorAutomap.InteriorHeight - 1 - (panelExteriorAutomap.MousePosition.y - panelExteriorAutomap.Position.y)); // Input.mousePosition
+
+                Ray ray = cameraExteriorAutomap.ScreenPointToRay(mousePosition);
+                Debug.Log(String.Format("ox: {0}, oy: {1}, oz: {2}; dx: {3}, dy: {4}, dz: {5}", ray.origin.x, ray.origin.y, ray.origin.z, ray.direction.x, ray.direction.y, ray.direction.z));                
+                RaycastHit hit;                
+                if (Physics.Raycast(ray, out hit, layerAutomap))
+                {
+                    Debug.Log(hit.collider.gameObject.name);
+                }
+
+                return;
+            }
         }
 
         #endregion
@@ -713,6 +726,8 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.textureHeight = newBuildingNameplate.textLabel.Texture.height;
                             meshFilter.mesh = CreateLeftAlignedMesh(newBuildingNameplate.textureWidth, newBuildingNameplate.textureHeight); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
                             MeshRenderer renderer = newBuildingNameplate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+
+                            MeshCollider collider = newBuildingNameplate.gameObject.AddComponent<MeshCollider>();
 
                             renderer.material.shader = Shader.Find("Unlit/Transparent");
                             renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;

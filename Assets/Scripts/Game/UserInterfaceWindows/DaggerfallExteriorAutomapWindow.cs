@@ -206,6 +206,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 		
         bool isSetup = false;
 
+        public Panel PanelRenderAutomap
+        {
+            get { return panelRenderAutomap; }
+        }        
+
         public DaggerfallExteriorAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
