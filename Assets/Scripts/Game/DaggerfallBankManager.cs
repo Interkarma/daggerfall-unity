@@ -13,7 +13,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections;
-using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Serialization;
@@ -22,7 +22,6 @@ using DaggerfallWorkshop.Game.Serialization;
  * Todo
  * Depositing / withdrawing LOC
  * buying & selling ships/houses
- * loan due date
  * events
 */
 namespace DaggerfallWorkshop.Game.Banking
@@ -72,12 +71,7 @@ namespace DaggerfallWorkshop.Game.Banking
     {
         private static int loanMaxPerLevel = 50000;
 
-        public static int LoanMaxPerLevel
-        {
-            get { return loanMaxPerLevel = 50000; }
-            set { loanMaxPerLevel = value; }
-        }
-        
+        private static DaggerfallDateTime dateTime;
 
         private static BankRecordData_v1[] bankAccounts;
 
@@ -130,7 +124,7 @@ namespace DaggerfallWorkshop.Game.Banking
             if (!ValidateRegion(regionIndex))
                 throw new ArgumentOutOfRangeException();
             else
-                return BankAccounts[regionIndex].total;
+                return BankAccounts[regionIndex].accountGold;
         }
 
         /// <summary>
@@ -185,10 +179,10 @@ namespace DaggerfallWorkshop.Game.Banking
                     result = DepositAll_LOC(regionIndex);
                     break;
                 case TransactionType.Repaying_loan:
-                    result = UpdateLoan(type, amount, regionIndex);
+                    result = RepayLoan(ref amount, regionIndex);
                     break;
                 case TransactionType.Borrowing_loan:
-                    result = UpdateLoan(type, amount, regionIndex);
+                    result = BorrowLoan(amount, regionIndex);
                     break;
                 default:
                     result = TransactionResult.NONE;
@@ -205,7 +199,7 @@ namespace DaggerfallWorkshop.Game.Banking
             if (amount > GameManager.Instance.PlayerEntity.GoldPieces)
                 return TransactionResult.NOT_ENOUGH_INVENTORY;
 
-            BankAccounts[regionIndex].total += amount;
+            BankAccounts[regionIndex].accountGold += amount;
             GameManager.Instance.PlayerEntity.GoldPieces -= (int)amount;
             return TransactionResult.NONE;
         }
@@ -213,11 +207,11 @@ namespace DaggerfallWorkshop.Game.Banking
         public static TransactionResult WithdrawGold(int amount, int regionIndex)
         {
 
-            if (amount > BankAccounts[regionIndex].total)
+            if (amount > BankAccounts[regionIndex].accountGold)
                 return TransactionResult.NOT_ENOUGH_ACCOUNT;
             //##TODO - else if too much to carry
 
-            BankAccounts[regionIndex].total -= amount;
+            BankAccounts[regionIndex].accountGold -= amount;
             GameManager.Instance.PlayerEntity.GoldPieces += (int)amount;
             return TransactionResult.NONE;
         }
@@ -232,7 +226,7 @@ namespace DaggerfallWorkshop.Game.Banking
         public static TransactionResult Withdraw_LOC(int amount, int regionIndex)
         {
 
-            if (amount > BankAccounts[regionIndex].total + (.1 * BankAccounts[regionIndex].total))
+            if (amount > BankAccounts[regionIndex].accountGold + (.1 * BankAccounts[regionIndex].accountGold))
                 return TransactionResult.NOT_ENOUGH_ACCOUNT_LOC;
             else if (amount < 100)
                 return TransactionResult.LOC_REQUEST_TOO_SMALL;
@@ -268,55 +262,66 @@ namespace DaggerfallWorkshop.Game.Banking
         //rep. doesn't seem to effect cap, it's just level * 50k
         private static int CalculateMaxLoan()
         {
-            return GameManager.Instance.PlayerEntity.Level * LoanMaxPerLevel;
+            return GameManager.Instance.PlayerEntity.Level * loanMaxPerLevel;
         }
 
-        private static TransactionResult UpdateLoan(TransactionType type, int amount, int regionIndex)
-        {
 
+        //note - uses inv. gold pieces, account gold & loc
+        //TODO - check for LOC if repaying more than gold inv. + account gold
+        private static TransactionResult RepayLoan(ref int amount, int regionIndex)
+        {
+            var playerGold = GameManager.Instance.PlayerEntity.GoldPieces;
+            var accountGold = BankAccounts[regionIndex].accountGold;
             TransactionResult result = TransactionResult.NONE;
 
-            switch (type)
+            if (!HasLoan(regionIndex))
+                return TransactionResult.NONE;
+            else if (amount > playerGold + accountGold)
+                return TransactionResult.NOT_ENOUGH_INVENTORY;
+            else if (amount > BankAccounts[regionIndex].loanTotal)
             {
-                case TransactionType.Repaying_loan:
-                    if (!HasLoan(regionIndex))
-                        break;
-                    else if (BankAccounts[regionIndex].loanTotal - amount < 0)
-                    {
-                        result = TransactionResult.OVERPAID_LOAN;
-                        BankAccounts[regionIndex].loanTotal     = 0;
-                        BankAccounts[regionIndex].loanDueDate   = 0;
-                    }
-                    else
-                    {
-                        BankAccounts[regionIndex].loanTotal -= amount;
-                    }
-                    break;
-                case TransactionType.Borrowing_loan:
-                    if (HasLoan(regionIndex))
-                        result = TransactionResult.ALREADY_HAVE_LOAN;
-                    else if (amount < 100)
-                        result = TransactionResult.LOAN_REQUEST_TOO_LOW;
-                    else if (amount > CalculateMaxLoan())
-                        result = TransactionResult.LOAN_REQUEST_TOO_HIGH;
-                    else
-                    {
-                        BankAccounts[regionIndex].loanTotal += (int)(amount + amount * .1);
-                        BankAccounts[regionIndex].total += (int)(amount);
-                    }
-                    break;
-                default:
-                    break;
+                result = TransactionResult.OVERPAID_LOAN;
+                amount = BankAccounts[regionIndex].loanTotal;
             }
 
+            bankAccounts[regionIndex].loanTotal -= amount;
+            playerGold -= amount;
+
+            if (playerGold < 0)
+            {
+                accountGold += playerGold;
+                playerGold = 0;
+            }
+            if (bankAccounts[regionIndex].loanTotal <= 0)
+                bankAccounts[regionIndex].loanDueDate = 0;
+
+            bankAccounts[regionIndex].accountGold = accountGold;
+            GameManager.Instance.PlayerEntity.GoldPieces = playerGold;
+
             return result;
+        }
 
 
+        private static TransactionResult BorrowLoan(int amount, int regionIndex)
+        {
+            TransactionResult result = TransactionResult.NONE;
+            if (HasLoan(regionIndex))
+                result = TransactionResult.ALREADY_HAVE_LOAN;
+            else if (amount < 100)
+                result = TransactionResult.LOAN_REQUEST_TOO_LOW;
+            else if (amount > CalculateMaxLoan())
+                result = TransactionResult.LOAN_REQUEST_TOO_HIGH;
+            else
+            {
+                BankAccounts[regionIndex].loanTotal += (int)(amount + amount * .1);
+                BankAccounts[regionIndex].accountGold += amount;
+                bankAccounts[regionIndex].loanDueDate = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            }
+            return result;
         }
 
         private static bool ValidateRegion(int regionIndex)
         {
-
             if (regionIndex < 0)
                 return false;
             else if (regionIndex >= BankAccounts.Length)
@@ -324,6 +329,18 @@ namespace DaggerfallWorkshop.Game.Banking
             else
                 return true;
         }
+
+        public static string GetLoanDueDateString(int regionIndex)
+        {
+            if (BankAccounts[regionIndex].loanDueDate <= 0)
+                return "";
+            if (dateTime == null)
+                dateTime = new DaggerfallDateTime();
+            dateTime.FromClassicDaggerfallTime(BankAccounts[regionIndex].loanDueDate);
+            string timeString = dateTime.DateString();
+            return timeString;
+        }
+
 
         public static void ReadNativeBankData(SaveTreeBaseRecord records)
         {
@@ -340,9 +357,9 @@ namespace DaggerfallWorkshop.Game.Banking
             while (reader.BaseStream.Position + 13 < records.RecordLength)
             {
                 BankRecordData_v1 record = new BankRecordData_v1();
-                record.total            = reader.ReadInt32();
+                record.accountGold      = reader.ReadInt32();
                 record.loanTotal        = reader.ReadInt32();
-                record.loanDueDate      = reader.ReadInt32();
+                record.loanDueDate      = reader.ReadUInt32();
                 reader.BaseStream.Position++;   //skip over unused byte in each record
                 record.regionIndex = count;
 

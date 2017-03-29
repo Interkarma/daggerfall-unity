@@ -386,7 +386,12 @@ namespace DaggerfallWorkshop.Game
                 uiManager.PopWindow();
         }
 
-        public DaggerfallFont GetFont(int index)
+        /// <summary>
+        /// Gets a new DaggerfallFont.
+        /// </summary>
+        /// <param name="index">I ndex of font between 1-5 (default is 4).</param>
+        /// <returns>DaggerfallFont</returns>
+        public DaggerfallFont GetFont(int index = 4)
         {
             // Set path
             string path = string.Empty;

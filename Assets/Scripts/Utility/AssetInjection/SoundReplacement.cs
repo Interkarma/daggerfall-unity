@@ -23,7 +23,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #region Fields & Structs
 
         static private string soundPath = Path.Combine(Application.streamingAssetsPath, "Sound");
-        const string extension = ".wav";
+        const string soundExtension = ".wav";
+        const string songExtension = ".ogg";
 
         public struct CustomSong
         {
@@ -44,7 +45,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns></returns>
         static public bool CustomSoundExist(int soundIndex)
         {
-            return SoundFileExist((SoundClips)soundIndex + extension);
+            return SoundFileExist((SoundClips)soundIndex + soundExtension);
         }
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns></returns>
         static public WWW LoadCustomSound(int soundIndex)
         {
-            return GetWwwFile((SoundClips)soundIndex + extension);
+            return GetWwwFile((SoundClips)soundIndex + soundExtension);
         }
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns></returns>
         static public bool CustomSongExist(SongFiles song)
         {
-            return SoundFileExist(song.ToString() + extension);
+            return SoundFileExist(song.ToString() + songExtension);
         }
 
         /// <summary>
@@ -102,7 +103,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns></returns>
         static public WWW LoadCustomSong(SongFiles song)
         {
-            return GetWwwFile(song.ToString() + extension);
+            return GetWwwFile(song.ToString() + songExtension);
         }
 
         #endregion

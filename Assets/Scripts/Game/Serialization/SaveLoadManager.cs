@@ -805,7 +805,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             {
                 if (record == null)
                     continue;
-                else if (record.total == 0 && record.loanTotal == 0 && record.loanDueDate == 0)
+                else if (record.accountGold == 0 && record.loanTotal == 0 && record.loanDueDate == 0)
                     continue;
                 else
                     records.Add(record);

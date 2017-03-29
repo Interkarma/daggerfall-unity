@@ -30,6 +30,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         const string heightKey = "height";
         const string scaleXKey = "scaleX";
         const string scaleYKey = "scaleY";
+        const string UvXKey = "uvX";
+        const string UvYKey = "uvY";
 
         #endregion
 
@@ -249,6 +251,40 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             // Get Y
             Y = xml.Element(scaleYKey);
+            if (Y != null)
+                y = (float)Y;
+            else
+                y = defaultY;
+
+            return new Vector2(x, y);
+        }
+
+        /// <summary>
+        /// Get Uv from Xml file.
+        /// </summary>
+        /// <param name="fileName">Name of file.</param>
+        /// <param name="path">Path.</param>
+        /// <returns>Uv from xml or fallback.</returns>
+        static public Vector2 GetUv(string fileName, string path, float defaultX = 0, float defaultY = 0)
+        {
+            // Fields
+            XElement X, Y;
+            float x, y;
+
+            // Get XML file
+            XElement xml = GetXmlFile(fileName, path);
+            if (xml == null)
+                return new Vector2(defaultX, defaultY);
+
+            // Get X
+            X = xml.Element(UvXKey);
+            if (X != null)
+                x = (float)X;
+            else
+                x = defaultX;
+
+            // Get Y
+            Y = xml.Element(UvYKey);
             if (Y != null)
                 y = (float)Y;
             else
