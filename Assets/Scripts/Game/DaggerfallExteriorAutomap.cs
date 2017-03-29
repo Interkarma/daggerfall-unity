@@ -87,6 +87,8 @@ namespace DaggerfallWorkshop.Game
 
         const bool allowRightAlignedNameplates = false;
 
+        const float nameplatesPlacementDepth = 4.0f; // the height at which the nameplates are positioned - set to be higher than player marker and layout texture
+
         private struct BuildingNameplate
         {
             public float posX;
@@ -471,18 +473,24 @@ namespace DaggerfallWorkshop.Game
                     string currentNameplateName = "";
                     //Debug.Log(hit.collider.gameObject.name);
                     int lengthSkipStart = ("building name plate for [").Length;
-                    int lengthSkipEnd = ("]").Length;
+                    int lengthSkipEnd = ("]").Length + 1; // +1 for the "+" resp "*" character at the end to indicate if nameplate was placed with name or "*" on the map
                     string gameObjectName = hit.collider.gameObject.name;
                     string nameplateName = gameObjectName.Substring(lengthSkipStart, gameObjectName.Length - lengthSkipStart - lengthSkipEnd);
+                    
+                    bool shortFormUsed = gameObjectName.Substring(gameObjectName.Length - 1, 1) == "*";
+                    if (!shortFormUsed)
+                        return;
+
                     if (popUpNameplate == null)
                     {
                         TextLabel textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, nameplateName);
+                        textLabel.BackgroundColor = Color.blue; // not working right now - always black background (have to look into this if I can make it work...)
                         textLabel.TextColor = Color.yellow;
                         popUpNameplate = new GameObject("pop-up nameplate");
                         MeshFilter meshFilter = (MeshFilter)popUpNameplate.AddComponent(typeof(MeshFilter));
                         meshFilter.mesh = CreateLeftAlignedMesh(textLabel.Texture.width, textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
                         MeshRenderer renderer = popUpNameplate.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-                        renderer.material.shader = Shader.Find("Unlit/Transparent");
+                        renderer.material.shader = Shader.Find("Unlit/Texture");
                         renderer.material.mainTexture = textLabel.Texture;
                         renderer.enabled = true;
 
@@ -490,7 +498,7 @@ namespace DaggerfallWorkshop.Game
                         popUpNameplate.transform.SetParent(gameObjectBuildingNameplates.transform);
 
                         float scale = 0.5f;
-                        popUpNameplate.transform.position = new Vector3(hit.point.x, 5.0f, hit.point.z);
+                        popUpNameplate.transform.position = new Vector3(hit.point.x, nameplatesPlacementDepth + 2.0f, hit.point.z);
                         popUpNameplate.transform.rotation = hit.collider.gameObject.transform.rotation;
                         popUpNameplate.transform.localScale = new Vector3(scale, scale, scale);
                         
@@ -504,7 +512,7 @@ namespace DaggerfallWorkshop.Game
                         MeshRenderer renderer = popUpNameplate.GetComponent<MeshRenderer>();
                         renderer.material.mainTexture = textLabel.Texture;
 
-                        popUpNameplate.transform.position = new Vector3(hit.point.x, 5.0f, hit.point.z);
+                        popUpNameplate.transform.position = new Vector3(hit.point.x, nameplatesPlacementDepth + 2.0f, hit.point.z);
                         popUpNameplate.transform.rotation = hit.collider.gameObject.transform.rotation;
                         popUpNameplate.SetActive(true);
 
@@ -771,7 +779,7 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.posY = yPosBuilding;
                             newBuildingNameplate.textLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, newBuildingNameplate.name);
                             newBuildingNameplate.textLabel.TextColor = Color.yellow;
-                            newBuildingNameplate.gameObject = new GameObject(String.Format("building name plate for [{0}]", newBuildingNameplate.name));
+                            newBuildingNameplate.gameObject = new GameObject(String.Format("building name plate for [{0}]+", newBuildingNameplate.name));
                             MeshFilter meshFilter = (MeshFilter)newBuildingNameplate.gameObject.AddComponent(typeof(MeshFilter));
                             newBuildingNameplate.textureWidth = newBuildingNameplate.textLabel.Texture.width;
                             newBuildingNameplate.textureHeight = newBuildingNameplate.textLabel.Texture.height;
@@ -793,7 +801,7 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.scale = 0.5f;
                             newBuildingNameplate.width = newBuildingNameplate.textureWidth * newBuildingNameplate.scale;
                             newBuildingNameplate.height = newBuildingNameplate.textureHeight * newBuildingNameplate.scale;
-                            newBuildingNameplate.gameObject.transform.position = new Vector3(posX, 4.0f, posY);
+                            newBuildingNameplate.gameObject.transform.position = new Vector3(posX, nameplatesPlacementDepth, posY);
                             newBuildingNameplate.gameObject.transform.localScale = new Vector3(newBuildingNameplate.scale, newBuildingNameplate.scale, newBuildingNameplate.scale);
                             newBuildingNameplate.offset = Vector2.zero;
                             //newBuildingNameplate.angle = 0.0f;
@@ -1245,6 +1253,8 @@ namespace DaggerfallWorkshop.Game
                         buildingNameplate.textLabel.Parent = newTextLabel;
                     }
                     */
+                    buildingNameplate.gameObject.name = buildingNameplate.gameObject.name.Substring(0, buildingNameplate.gameObject.name.Length - 1) + "*";
+                    buildingNameplate.gameObject.transform.position = new Vector3(buildingNameplate.gameObject.transform.position.x, nameplatesPlacementDepth + 1.0f, buildingNameplate.gameObject.transform.position.z); // set a bit higher than other nameplates so that it will get mouse over pop-up
                     buildingNameplate.nameplateReplaced = true;
                     //buildingNameplate.gameObject.SetActive(false);
                 }
@@ -1327,6 +1337,8 @@ namespace DaggerfallWorkshop.Game
                     meshCollider.sharedMesh = meshFilter.mesh;
                     MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                    
                     renderer.material.mainTexture = newTextLabel.Texture;
+                    buildingNameplate.gameObject.name = buildingNameplate.gameObject.name.Substring(0, buildingNameplate.gameObject.name.Length - 1) + "+";
+                    buildingNameplate.gameObject.transform.position = new Vector3(buildingNameplate.gameObject.transform.position.x, nameplatesPlacementDepth, buildingNameplate.gameObject.transform.position.z); // set back to same height as other nameplates
                     buildingNameplate.nameplateReplaced = false;
                 }
 
