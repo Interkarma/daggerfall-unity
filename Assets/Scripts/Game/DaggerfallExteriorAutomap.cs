@@ -847,7 +847,6 @@ namespace DaggerfallWorkshop.Game
                         UnityEngine.Object.Destroy(n.gameObject);
                     }
                 }
-                //buildingNameplates.Clear();
                 buildingNameplates = null;
             }
 
@@ -1223,8 +1222,6 @@ namespace DaggerfallWorkshop.Game
                 if (!buildingNameplate.placed)
                 {        
                     string abbreviation = "*";
-                    //for (int c = 0; c < buildingNameplate.name.Length - 1; c++)
-                    //    abbreviation += " ";
                     string stringNameplate = abbreviation;
                     buildingNameplate.placed = true;
 
@@ -1239,24 +1236,10 @@ namespace DaggerfallWorkshop.Game
                     meshCollider.sharedMesh = meshFilter.mesh;
                     MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();
                     renderer.material.mainTexture = newTextLabel.Texture;
-                    /*
-                    buildingNameplate.textLabel.ToolTip = new ToolTip();
-                    buildingNameplate.textLabel.ToolTipText = buildingNameplate.name;
-                    buildingNameplate.textLabel.ToolTip.ToolTipDelay = 0;
-                    buildingNameplate.textLabel.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
-                    buildingNameplate.textLabel.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;
-                    buildingNameplate.textLabel.Parent = newTextLabel;
-                    // Experimental HQ tooltip
-                    if (DaggerfallUnity.Settings.HQTooltips)
-                    {
-                        buildingNameplate.textLabel.Font = DaggerfallUI.Instance.GetHQPixelFont(DaggerfallUI.HQPixelFonts.Petrock_32);
-                        buildingNameplate.textLabel.Parent = newTextLabel;
-                    }
-                    */
+
                     buildingNameplate.gameObject.name = buildingNameplate.gameObject.name.Substring(0, buildingNameplate.gameObject.name.Length - 1) + "*";
                     buildingNameplate.gameObject.transform.position = new Vector3(buildingNameplate.gameObject.transform.position.x, nameplatesPlacementDepth + 1.0f, buildingNameplate.gameObject.transform.position.z); // set a bit higher than other nameplates so that it will get mouse over pop-up
                     buildingNameplate.nameplateReplaced = true;
-                    //buildingNameplate.gameObject.SetActive(false);
                 }
                 buildingNameplates[i] = buildingNameplate;
             }
