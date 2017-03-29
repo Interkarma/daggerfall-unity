@@ -738,7 +738,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 ActionApplyMinZoom();
             }
-        }        
+        }
+
+        /// <summary>
+        /// updates the automap view - renders the automap level geometry afterwards into the automap render panel
+        /// </summary>
+        public void updateAutomapView()
+        {
+            //daggerfallExteriorAutomap.forceUpdate();
+
+            if ((!cameraExteriorAutomap) || (!renderTextureExteriorAutomap))
+                return;
+
+            cameraExteriorAutomap.Render();
+
+            RenderTexture.active = renderTextureExteriorAutomap;
+            textureExteriorAutomap.ReadPixels(new Rect(0, 0, renderTextureExteriorAutomap.width, renderTextureExteriorAutomap.height), 0, 0);
+            textureExteriorAutomap.Apply(false);
+            RenderTexture.active = null;
+
+            panelRenderAutomap.BackgroundTexture = textureExteriorAutomap;
+        }
 
         #region Private Methods
 
@@ -837,28 +857,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cameraExteriorAutomap.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             //cameraExteriorAutomap.transform.LookAt(Vector3.zero);            
         }
-
-
-        /// <summary>
-        /// updates the automap view - signals DaggerfallExteriorAutomap class to update and renders the automap level geometry afterwards into the automap render panel
-        /// </summary>
-        private void updateAutomapView()
-        {
-            daggerfallExteriorAutomap.forceUpdate();
-
-            if ((!cameraExteriorAutomap) || (!renderTextureExteriorAutomap))
-                return;
-
-            cameraExteriorAutomap.Render();
-
-            RenderTexture.active = renderTextureExteriorAutomap;
-            textureExteriorAutomap.ReadPixels(new Rect(0, 0, renderTextureExteriorAutomap.width, renderTextureExteriorAutomap.height), 0, 0);
-            textureExteriorAutomap.Apply(false);
-            RenderTexture.active = null;
-
-            panelRenderAutomap.BackgroundTexture = textureExteriorAutomap;
-        }
-
 
         #endregion
 
