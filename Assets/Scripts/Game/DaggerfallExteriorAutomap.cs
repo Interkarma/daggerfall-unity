@@ -1147,18 +1147,36 @@ namespace DaggerfallWorkshop.Game
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
                 if (!buildingNameplate.placed)
-                {                    
+                {        
                     string abbreviation = "*";
-                    for (int c = 0; c < buildingNameplate.name.Length - 1; c++)
-                        abbreviation += " ";
+                    //for (int c = 0; c < buildingNameplate.name.Length - 1; c++)
+                    //    abbreviation += " ";
                     string stringNameplate = abbreviation;
                     buildingNameplate.placed = true;
-                    
+
                     TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, stringNameplate);
                     buildingNameplate.textLabel = newTextLabel;
+                    //MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                    
+                    MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
+                    buildingNameplate.textureWidth = buildingNameplate.textLabel.Texture.width;
+                    buildingNameplate.textureHeight = buildingNameplate.textLabel.Texture.height;
+                    meshFilter.mesh = CreateLeftAlignedMesh(buildingNameplate.textureWidth, buildingNameplate.textureHeight); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
                     MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();
                     renderer.material.mainTexture = newTextLabel.Texture;
-
+                    /*
+                    buildingNameplate.textLabel.ToolTip = new ToolTip();
+                    buildingNameplate.textLabel.ToolTipText = buildingNameplate.name;
+                    buildingNameplate.textLabel.ToolTip.ToolTipDelay = 0;
+                    buildingNameplate.textLabel.BackgroundColor = DaggerfallUnity.Settings.ToolTipBackgroundColor;
+                    buildingNameplate.textLabel.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;
+                    buildingNameplate.textLabel.Parent = newTextLabel;
+                    // Experimental HQ tooltip
+                    if (DaggerfallUnity.Settings.HQTooltips)
+                    {
+                        buildingNameplate.textLabel.Font = DaggerfallUI.Instance.GetHQPixelFont(DaggerfallUI.HQPixelFonts.Petrock_32);
+                        buildingNameplate.textLabel.Parent = newTextLabel;
+                    }
+                    */
                     buildingNameplate.nameplateReplaced = true;
                     //buildingNameplate.gameObject.SetActive(false);
                 }
@@ -1232,7 +1250,12 @@ namespace DaggerfallWorkshop.Game
                 {
                     TextLabel newTextLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, buildingNameplate.name);
                     buildingNameplate.textLabel = newTextLabel;
-                    MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();
+                    //MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                    
+                    MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
+                    buildingNameplate.textureWidth = buildingNameplate.textLabel.Texture.width;
+                    buildingNameplate.textureHeight = buildingNameplate.textLabel.Texture.height;
+                    meshFilter.mesh = CreateLeftAlignedMesh(buildingNameplate.textureWidth, buildingNameplate.textureHeight); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
+                    MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                    
                     renderer.material.mainTexture = newTextLabel.Texture;
                     buildingNameplate.nameplateReplaced = false;
                 }
