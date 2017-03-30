@@ -944,7 +944,7 @@ namespace DaggerfallWorkshop.Game
         /// this function checks for intersection (collisions) of a given nameplate with a given offset against all other nameplates in array of nameplates with their current positions corrected by already applied offsets
         /// </summary>
         /// <param name="nameplate"> the nameplate to be checked </param>
-        /// <param name="offset"> offset in world coordinates for the nameplate to be tried/tested (without a former computed nameplate offset, since this is taken into account automatically) </param>
+        /// <param name="tryOffset"> offset in world coordinates for the nameplate to be tried/tested (without a former computed nameplate offset, since this is taken into account automatically) </param>
         /// <param name="onlyCheckPlaced"> if true only already placed nameplates are considered in this check </param>
         /// <param name="onlyCheckUnplaced"> if true only unplaced nameplates are considered in this check </param>
         /// <param name="skipNameplate"> an optional nameplate that can be skipped in the check </param>
@@ -970,7 +970,15 @@ namespace DaggerfallWorkshop.Game
             return check;
         }
 
-        private int numberOfCollisionsNameplatesWithOffsetNameplate(BuildingNameplate nameplate, Vector2 offset, bool onlyCountPlaced, bool onlyCountUnplaced = false)
+        /// <summary>
+        /// this functions counts the number of collisions for a given nameplate with a given offset
+        /// </summary>
+        /// <param name="nameplate"> the nameplate to be checked </param>
+        /// <param name="tryOffset"> offset in world coordinates for the nameplate to be tried/tested (without a former computed nameplate offset, since this is taken into account automatically) </param>
+        /// <param name="onlyCountPlaced"> if true only already placed nameplates are taken into account when counting </param>
+        /// <param name="onlyCountUnplaced"> if true only unplaced nameplates are taken into account when counting </param>
+        /// <returns> the number of collisions counted </returns>
+        private int numberOfCollisionsNameplatesWithOffsetNameplate(BuildingNameplate nameplate, Vector2 tryOffset, bool onlyCountPlaced, bool onlyCountUnplaced = false)
         {
             int numCollisions = 0;
             for (int i = 0; i < buildingNameplates.Length; i++)
@@ -982,7 +990,7 @@ namespace DaggerfallWorkshop.Game
                     continue;
                 if (onlyCountUnplaced && otherNameplate.placed)
                     continue;
-                if (checkIntersectionOfNameplates(nameplate, offset, otherNameplate, Vector2.zero))
+                if (checkIntersectionOfNameplates(nameplate, tryOffset, otherNameplate, Vector2.zero))
                 {
                     numCollisions++;
                 }
@@ -1256,6 +1264,7 @@ namespace DaggerfallWorkshop.Game
             // final pass to check if now some nameplates can be set that no longer have collisions             
             computeAndPlaceZeroCollisionsNameplates(false);
 
+            // now place all remaining nameplates (that could not be placed without collisions) as "*" nameplates
             for (int i = 0; i < buildingNameplates.Length; i++)
             {
                 BuildingNameplate buildingNameplate = buildingNameplates[i];
@@ -1348,8 +1357,7 @@ namespace DaggerfallWorkshop.Game
                 if (buildingNameplate.nameplateReplaced)
                 {
                     TextLabel newTextLabel = DaggerfallUI.AddTextLabel(customFont, Vector2.zero, buildingNameplate.name);
-                    buildingNameplate.textLabel = newTextLabel;
-                    //MeshRenderer renderer = buildingNameplate.gameObject.GetComponent<MeshRenderer>();                       
+                    buildingNameplate.textLabel = newTextLabel;                    
                     MeshFilter meshFilter = buildingNameplate.gameObject.GetComponent<MeshFilter>();
                     meshFilter.mesh = CreateLeftAlignedMesh(buildingNameplate.textLabel.Texture.width, buildingNameplate.textLabel.Texture.height); // create left aligned (in relation to gameobject position) quad with normal facing into positive y-direction
                     MeshCollider meshCollider = buildingNameplate.gameObject.GetComponent<MeshCollider>();
