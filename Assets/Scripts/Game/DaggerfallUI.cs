@@ -160,6 +160,15 @@ namespace DaggerfallWorkshop.Game
             get { return dfBookReaderWindow; }
         }
 
+        public DaggerfallAutomapWindow AutomapWindow
+        {
+            get { return dfAutomapWindow; }
+        }
+        public DaggerfallExteriorAutomapWindow ExteriorAutomapWindow
+        {
+            get { return dfExteriorAutomapWindow; }
+        }
+
         public enum PopupStyle
         {
             Parchment,
