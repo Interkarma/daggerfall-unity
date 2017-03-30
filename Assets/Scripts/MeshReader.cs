@@ -201,7 +201,7 @@ namespace DaggerfallWorkshop
             if (solveTangents) TangentSolver(mesh);
             if (lightmapUVs) AddLightmapUVs(mesh);
             mesh.RecalculateBounds();
-            ;
+            mesh.Optimize();
             return mesh;
         }
 
@@ -281,7 +281,7 @@ namespace DaggerfallWorkshop
             if (solveTangents) TangentSolver(mesh);
             if (lightmapUVs) AddLightmapUVs(mesh);
             mesh.RecalculateBounds();
-            ;
+            mesh.Optimize();
 
             return mesh;
         }
@@ -479,7 +479,7 @@ namespace DaggerfallWorkshop
             if (solveTangents) TangentSolver(mesh);
             if (lightmapUVs) AddLightmapUVs(mesh);
             mesh.RecalculateBounds();
-            ;
+            mesh.Optimize();
 
             return mesh;
         }
