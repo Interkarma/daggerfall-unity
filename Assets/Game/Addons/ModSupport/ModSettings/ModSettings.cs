@@ -29,6 +29,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         // UI Controls
         Panel modSettingsPanel        = new Panel();
+        const int elementsForColumn = 19;
+        const int spacing = 8;
         const int startY = 6;
         int x = 10;
         int y = startY;
@@ -38,6 +40,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         IniData data;
         FileIniDataParser parser      = new FileIniDataParser();
         List<TextBox> modTextBoxes    = new List<TextBox>();
+        List<Checkbox> modCheckboxes  = new List<Checkbox>();
+
+        // Colors
+        Color panelBackgroundColor    = new Color(0, 0, 0, 0.7f);
+        Color resetButtonColor        = new Color(1, 0, 0, 0.4f); //red with alpha
+        Color saveButtonColor         = new Color(0.0f, 0.5f, 0.0f, 0.4f); //green with alpha
+        Color cancelButtonColor       = new Color(0.2f, 0.2f, 0.2f, 0.4f); //grey with alpha
 
         // Properties
         public Mod Mod { get; set; }
@@ -54,7 +63,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             // Add panel
             ParentPanel.BackgroundColor = Color.clear;
-            modSettingsPanel.BackgroundColor = new Color(0, 0, 0, 0.7f);
+            modSettingsPanel.BackgroundColor = panelBackgroundColor;
             modSettingsPanel.Outline.Enabled = true;
             modSettingsPanel.HorizontalAlignment = HorizontalAlignment.Center;
             modSettingsPanel.Position = new Vector2(0, 8);
@@ -72,15 +81,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             LoadSettings();
 
             // Reset button
-            Button resetButton = GetButton("Reset", HorizontalAlignment.Left, new Color(1, 0, 0, 0.4f));
+            Button resetButton = GetButton("Reset", HorizontalAlignment.Left, resetButtonColor);
             resetButton.OnMouseClick += ResetButton_OnMouseClick;
 
             // Save button
-            Button saveButton = GetButton("Save", HorizontalAlignment.Center, new Color(0.0f, 0.5f, 0.0f, 0.4f));
+            Button saveButton = GetButton("Save", HorizontalAlignment.Center, saveButtonColor);
             saveButton.OnMouseClick += SaveButton_OnMouseClick;
 
             // Cancel button
-            Button cancelButton = GetButton("Cancel", HorizontalAlignment.Right, new Color(0.2f, 0.2f, 0.2f, 0.4f));
+            Button cancelButton = GetButton("Cancel", HorizontalAlignment.Right, cancelButtonColor);
             cancelButton.OnMouseClick += CancelButton_OnMouseClick;
         }
 
@@ -126,21 +135,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             data = parser.ReadFile(path);
 
             // Read settings
-            int i = 0;
+            int numberOfElements = 0;
             foreach (SectionData section in data.Sections)
             {
                 // Section label
-                y += 7;
+                y += spacing;
                 TextLabel textLabel = new TextLabel();
                 textLabel.Text = section.SectionName;
                 textLabel.TextColor = Color.blue;
                 textLabel.Position = new Vector2(x, y);
                 textLabel.HorizontalAlignment = HorizontalAlignment.None;
                 modSettingsPanel.Components.Add(textLabel);
+                numberOfElements++;
 
                 foreach (KeyData key in section.Keys)
                 {
-                    y += 7;
+                    y += spacing;
 
                     // Setting label
                     TextLabel settingName = new TextLabel();
@@ -148,30 +158,53 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     settingName.Position = new Vector2(x, y);
                     settingName.HorizontalAlignment = HorizontalAlignment.None;
                     modSettingsPanel.Components.Add(settingName);
-                    
+
                     // Setting field
-                    TextBox textBox = new TextBox();
-                    textBox.Position = new Vector2(x + 95, y);
-                    textBox.AutoSize = AutoSizeModes.None;
-                    textBox.FixedSize = true;
-                    textBox.Size = new Vector2(30, 6);
-                    textBox.Numeric = false;
-                    textBox.MaxCharacters = 20;
-                    textBox.DefaultText = key.Value;
-                    textBox.UseFocus = true;
-                    textBox.Outline.Enabled = true;
-                    textBox.HasFocusOutlineColor = Color.green;
-                    textBox.LostFocusOutlineColor = Color.white;
-                    //textBox.BackgroundColor = Color.yellow;
-                    modSettingsPanel.Components.Add(textBox);
-                    modTextBoxes.Add(textBox);
-                    i++;
+                    if (key.Value == "True")
+                        AddCheckBox(true);
+                    else if (key.Value == "False")
+                        AddCheckBox(false);
+                    else
+                    {
+                        TextBox textBox = new TextBox();
+                        textBox.Position = new Vector2(x + 95, y);
+                        textBox.AutoSize = AutoSizeModes.None;
+                        textBox.FixedSize = true;
+                        textBox.Size = new Vector2(40, 6);
+                        textBox.Numeric = false;
+                        textBox.MaxCharacters = 20;
+                        textBox.DefaultText = key.Value;
+                        textBox.UseFocus = true;
+                        textBox.Outline.Enabled = true;
+                        textBox.HasFocusOutlineColor = Color.green;
+                        textBox.LostFocusOutlineColor = Color.white;
+                        modSettingsPanel.Components.Add(textBox);
+                        modTextBoxes.Add(textBox);
+
+                        // Color
+                        if (textBox.DefaultText.Length == 8)
+                        {
+                            // Check if is a hex number or just a string with lenght eight
+                            int hexColor = 0;
+                            if (int.TryParse(textBox.DefaultText, System.Globalization.NumberStyles.HexNumber,
+                                     System.Globalization.CultureInfo.InvariantCulture, out hexColor))
+                            {
+                                // Use box background as a preview of the color
+                                Color32 color = ReadModSettings.ColorFromString(textBox.DefaultText);
+                                textBox.BackgroundColor = color;
+                                textBox.ToolTip = defaultToolTip;
+                                //textBox.ToolTipText = string.Format("{0}, {1}, {2}, {3}", color.r, color.g, color.b, color.a);
+                                textBox.ToolTipText = color.ToString();
+                            }
+                        }
+                    }
+                    numberOfElements++;
 
                     // Move to right column
-                    if (i == 15)
+                    if (numberOfElements == elementsForColumn)
                     {
                         y = startY;
-                        x += 140;
+                        x += 160;
                     }    
                 }
             }
@@ -183,13 +216,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         private void SaveSettings ()
         {
             // Set new values
-            int i = 0;
+            int checkBox = 0, textBox = 0;
             foreach (SectionData section in data.Sections)
             {
                 foreach (KeyData key in section.Keys)
                 {
-                    data[section.SectionName][key.KeyName] = modTextBoxes[i].ResultText;
-                    i++;
+                    if (key.Value == "True" || key.Value == "False")
+                    {
+                        data[section.SectionName][key.KeyName] = modCheckboxes[checkBox].IsChecked.ToString();
+                        checkBox++;
+                    }
+                    else
+                    {
+                        data[section.SectionName][key.KeyName] = modTextBoxes[textBox].ResultText;
+                        textBox++;
+                    }     
                 }
             }
 
@@ -211,6 +252,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             button.Label.Text = label;
             modSettingsPanel.Components.Add(button);
             return button;
+        }
+
+        /// <summary>
+        /// Add a checkbox.
+        /// </summary>
+        private void AddCheckBox (bool isChecked)
+        {
+            Checkbox checkbox = new Checkbox();
+            checkbox.Position = new Vector2(x + 95, y);
+            checkbox.Size = new Vector2(2, 2);
+            checkbox.CheckBoxColor = Color.white;
+            checkbox.IsChecked = isChecked;
+            modSettingsPanel.Components.Add(checkbox);
+            modCheckboxes.Add(checkbox);
         }
 
         #endregion
