@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (defaultSettings != null)
             {
                 // Create settings file
-                parser.WriteFile("newINIfile.ini", defaultSettings);
+                parser.WriteFile(path, defaultSettings);
                 Debug.Log(mod.Title + ": A new " + mod.Name + ".ini has been recreated with default settings");
                 return defaultSettings;
             }
