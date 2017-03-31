@@ -235,14 +235,36 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 
         /// <summary>
-        /// Load default settings and close the window.
+        /// Ask confirmation for setting default values.
         /// </summary>
         private void ResetButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TODO: ask confirmation
-            IniData defaultSettings = ReadModSettings.GetDefaultSettings(Mod);
-            parser.WriteFile(path, defaultSettings);
-            DaggerfallUI.UIManager.PopWindow();
+            // Open confirmation message box
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+            messageBox.SetText("Revert all settings to default values?");
+            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Cancel);
+            messageBox.OnButtonClick += ConfirmReset_OnButtonClick;
+            uiManager.PushWindow(messageBox);
+        }
+
+        /// <summary>
+        /// Set default settings on confirmation.
+        /// </summary>
+        private void ConfirmReset_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                // Get and save default settings
+                IniData defaultSettings = ReadModSettings.GetDefaultSettings(Mod);
+                parser.WriteFile(path, defaultSettings);
+
+                // Close settings window
+                CloseWindow();
+                DaggerfallUI.UIManager.PopWindow();
+            }
+            else
+                CloseWindow();
         }
 
         #endregion
