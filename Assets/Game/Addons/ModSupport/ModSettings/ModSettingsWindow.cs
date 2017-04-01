@@ -113,7 +113,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (mod.AssetBundle.Contains(mod.Name + ".ini.txt"))
             {
                 // Recreate file on disk using default values
-                IniData defaultSettings = ReadModSettings.GetDefaultSettings(mod);
+                IniData defaultSettings = ModSettings.GetDefaultSettings(mod);
                 FileIniDataParser defaultSettingsParser = new FileIniDataParser();
                 defaultSettingsParser.WriteFile(settingPath, defaultSettings);
                 return true;
@@ -190,7 +190,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                      System.Globalization.CultureInfo.InvariantCulture, out hexColor))
                             {
                                 // Use box background as a preview of the color
-                                Color32 color = ReadModSettings.ColorFromString(textBox.DefaultText);
+                                Color32 color = ModSettings.ColorFromString(textBox.DefaultText);
                                 textBox.BackgroundColor = color;
                                 textBox.ToolTip = defaultToolTip;
                                 //textBox.ToolTipText = string.Format("{0}, {1}, {2}, {3}", color.r, color.g, color.b, color.a);
@@ -311,7 +311,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 // Get and save default settings
-                IniData defaultSettings = ReadModSettings.GetDefaultSettings(Mod);
+                IniData defaultSettings = ModSettings.GetDefaultSettings(Mod);
                 parser.WriteFile(path, defaultSettings);
 
                 // Close settings window
