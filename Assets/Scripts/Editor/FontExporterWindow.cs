@@ -211,7 +211,7 @@ namespace DaggerfallWorkshop
                 DaggerfallUnity.LogMessage("FontGeneratorWindow: Failed to get TextureImporter. Ensure your target folder is called 'Resources'.", true);
                 return false;
             }
-            importer.textureType = TextureImporterType.Image;
+            importer.textureType = TextureImporterType.Default;
             importer.maxTextureSize = 256;
             importer.mipmapEnabled = false;
             importer.isReadable = false;
