@@ -787,7 +787,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d4b5bc6bb87e4948b2d181e1f85fb20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartMethod: 4
+  StartMethod: 2
   OverrideSaveIndex: -1
   PostStartMessage: 
   EnableVideos: 1
