@@ -95,36 +95,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         #endregion
 
-        #region Public Methods
-
-        /// <summary>
-        /// Check if a mod support settings. If configuration file
-        /// is missing it will be recreated with default values.
-        /// </summary>
-        public static bool HasSettings(Mod mod)
-        {
-            // Get path
-            string settingPath = Path.Combine(ModManager.Instance.ModDirectory, mod.Name + ".ini");
-
-            // File on disk
-            if (File.Exists(settingPath))
-                return true;
-
-            if (mod.AssetBundle.Contains(mod.Name + ".ini.txt"))
-            {
-                // Recreate file on disk using default values
-                IniData defaultSettings = ModSettings.GetDefaultSettings(mod);
-                FileIniDataParser defaultSettingsParser = new FileIniDataParser();
-                defaultSettingsParser.WriteFile(settingPath, defaultSettings);
-                return true;
-            }
-
-            return false;
-        }
-
-        #endregion
-
-        #region Private Methods
+        #region Methods
 
         /// <summary>
         /// Load settings from ini file.
@@ -133,11 +104,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             // Read file
             data = parser.ReadFile(path);
+            ModSettingsReader.UpdateSettings(ref data, ModSettingsReader.GetDefaultSettings(Mod), Mod);
 
             // Read settings
             int numberOfElements = 0;
             foreach (SectionData section in data.Sections)
             {
+                if (section.SectionName == ModSettingsReader.internalSection)
+                    continue;
+
                 // Section label
                 y += spacing;
                 TextLabel textLabel = new TextLabel();
@@ -146,6 +121,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 textLabel.Position = new Vector2(x, y);
                 textLabel.HorizontalAlignment = HorizontalAlignment.None;
                 modSettingsPanel.Components.Add(textLabel);
+                List<string> comments = section.Comments;
+                int comment = 0;
                 numberOfElements++;
 
                 foreach (KeyData key in section.Keys)
@@ -157,6 +134,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     settingName.Text = key.KeyName;
                     settingName.Position = new Vector2(x, y);
                     settingName.HorizontalAlignment = HorizontalAlignment.None;
+                    if (comment < comments.Count)
+                    {
+                        settingName.ToolTip = defaultToolTip;
+                        settingName.ToolTipText = comments[comment];
+                        comment++;
+                    }
                     modSettingsPanel.Components.Add(settingName);
 
                     // Setting field
@@ -190,7 +173,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                                      System.Globalization.CultureInfo.InvariantCulture, out hexColor))
                             {
                                 // Use box background as a preview of the color
-                                Color32 color = ModSettings.ColorFromString(textBox.DefaultText);
+                                Color32 color = ModSettingsReader.ColorFromString(textBox.DefaultText);
                                 textBox.BackgroundColor = color;
                                 textBox.ToolTip = defaultToolTip;
                                 //textBox.ToolTipText = string.Format("{0}, {1}, {2}, {3}", color.r, color.g, color.b, color.a);
@@ -219,6 +202,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             int checkBox = 0, textBox = 0;
             foreach (SectionData section in data.Sections)
             {
+                if (section.SectionName == ModSettingsReader.internalSection)
+                    continue;
+
                 foreach (KeyData key in section.Keys)
                 {
                     if (key.Value == "True" || key.Value == "False")
@@ -311,7 +297,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 // Get and save default settings
-                IniData defaultSettings = ModSettings.GetDefaultSettings(Mod);
+                IniData defaultSettings = ModSettingsReader.GetDefaultSettings(Mod);
                 parser.WriteFile(path, defaultSettings);
 
                 // Close settings window
