@@ -536,8 +536,21 @@ namespace DaggerfallWorkshop.Game
             Sheathed = !Sheathed;
             if (!Sheathed)
             {
-                if (LeftHandWeapon) LeftHandWeapon.PlayActivateSound();
-                if (RightHandWeapon) RightHandWeapon.PlayActivateSound();
+                // Play left-hand weapon equip sound
+                if (LeftHandWeapon &&
+                    LeftHandWeapon.WeaponType != WeaponTypes.Melee &&
+                    LeftHandWeapon.WeaponType != WeaponTypes.None)
+                {
+                    LeftHandWeapon.PlayActivateSound();
+                }
+
+                // Play right-hand weapon equip sound
+                if (RightHandWeapon &&
+                    RightHandWeapon.WeaponType != WeaponTypes.Melee &&
+                    RightHandWeapon.WeaponType != WeaponTypes.None)
+                {
+                    RightHandWeapon.PlayActivateSound();
+                }
             }
         }
 
