@@ -85,7 +85,8 @@ namespace DaggerfallWorkshop.Game
         GameObject gameobjectPlayerMarkerArrowStamp = null; // GameObject which will hold player marker arrow stamp
         GameObject gameobjectPlayerMarkerCircle = null; // GameObject which will hold player marker circle (actually a cylinder)
 
-        const bool allowRightAlignedNameplates = false;
+        // IK: Change to non-const to suppress compile-time warning
+        bool allowRightAlignedNameplates = false;
 
         const float nameplatesPlacementDepth = 4.0f; // the height at which the nameplates are positioned - set to be higher than player marker and layout texture
 
@@ -564,7 +565,9 @@ namespace DaggerfallWorkshop.Game
             LineRenderer lr = line.GetComponent<LineRenderer>();
             lr.material = new Material(Shader.Find("Unlit/Color"));
             lr.material.color = color;
-            lr.SetWidth(startWidth, endWidth);
+            lr.startWidth = startWidth;
+            lr.endWidth = endWidth;
+            //lr.SetWidth(startWidth, endWidth);    // IK: Change to suppress warning
             lr.SetPosition(0, start);
             lr.SetPosition(1, end);
             return line;
@@ -794,6 +797,10 @@ namespace DaggerfallWorkshop.Game
                             MeshRenderer renderer = newBuildingNameplate.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
 
                             MeshCollider collider = newBuildingNameplate.gameObject.AddComponent<MeshCollider>();
+                            if (collider)
+                            {
+                                // Doing nothing just to suppress warning
+                            }
 
                             renderer.material.shader = Shader.Find("Unlit/Transparent");
                             renderer.material.mainTexture = newBuildingNameplate.textLabel.Texture;

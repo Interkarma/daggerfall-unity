@@ -53,7 +53,7 @@ namespace DaggerfallWorkshop.Utility
                 
                 if (ps == null)
                     continue;
-                else if (ps.simulationSpace == ParticleSystemSimulationSpace.Local)
+                else if (ps.main.simulationSpace == ParticleSystemSimulationSpace.Local)
                     continue;
 
                 ParticleSystem.Particle[] particles;

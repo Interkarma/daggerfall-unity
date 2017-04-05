@@ -52,6 +52,11 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return symbol; }
         }
 
+        public string Target
+        {
+            get { return target; }
+        }
+
         public TaskType Type
         {
             get { return type; }

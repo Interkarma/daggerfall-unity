@@ -34,6 +34,32 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Properties
+
+        public TimeValue Start
+        {
+            get { return start; }
+        }
+
+        public TimeValue End
+        {
+            get { return end; }
+        }
+
+        public int Flag
+        {
+            get { return flag; }
+        }
+
+        public int Range1
+        {
+            get { return range1; }
+        }
+
+        public int Range2
+        {
+            get { return range2; }
+        }
+
         #endregion
 
         #region Constructors

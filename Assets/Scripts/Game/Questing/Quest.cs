@@ -86,6 +86,14 @@ namespace DaggerfallWorkshop.Game.Questing
             set { displayName = value; }
         }
 
+        /// <summary>
+        /// Gets world time of quest when started.
+        /// </summary>
+        public DaggerfallDateTime QuestStartTime
+        {
+            get { return questStartTime; }
+        }
+
         #endregion
 
         #region Constructors
