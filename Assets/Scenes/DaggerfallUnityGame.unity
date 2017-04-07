@@ -2040,7 +2040,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
       propertyPath: m_RenderingPath
-      value: -1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 10800000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
       propertyPath: m_Shadows.m_Type

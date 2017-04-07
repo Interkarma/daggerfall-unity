@@ -44,7 +44,37 @@ GraphicsSettings:
     useCascadedShadowMaps: 1
   m_DefaultRenderingPath: 3
   m_DefaultMobileRenderingPath: 1
-  m_TierSettings: []
+  m_TierSettings:
+  - serializedVersion: 2
+    m_BuildTarget: 1
+    m_Tier: 0
+    m_Settings:
+      standardShaderQuality: 2
+      renderingPath: 3
+      useCascadedShadowMaps: 1
+      useReflectionProbeBoxProjection: 1
+      useReflectionProbeBlending: 1
+    m_Automatic: 0
+  - serializedVersion: 2
+    m_BuildTarget: 1
+    m_Tier: 1
+    m_Settings:
+      standardShaderQuality: 2
+      renderingPath: 3
+      useCascadedShadowMaps: 1
+      useReflectionProbeBoxProjection: 1
+      useReflectionProbeBlending: 1
+    m_Automatic: 0
+  - serializedVersion: 2
+    m_BuildTarget: 1
+    m_Tier: 2
+    m_Settings:
+      standardShaderQuality: 2
+      renderingPath: 3
+      useCascadedShadowMaps: 1
+      useReflectionProbeBoxProjection: 1
+      useReflectionProbeBlending: 1
+    m_Automatic: 0
   m_LightmapStripping: 0
   m_FogStripping: 0
   m_LightmapKeepPlain: 1
