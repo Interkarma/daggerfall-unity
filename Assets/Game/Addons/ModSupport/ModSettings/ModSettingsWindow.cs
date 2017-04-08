@@ -123,7 +123,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 modSettingsPanel.Components.Add(textLabel);
                 List<string> comments = section.Comments;
                 int comment = 0;
+
+                // Move to right column
                 numberOfElements++;
+                if (numberOfElements == elementsForColumn)
+                {
+                    y = startY;
+                    x += 160;
+                }
 
                 foreach (KeyData key in section.Keys)
                 {
@@ -181,9 +188,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                             }
                         }
                     }
-                    numberOfElements++;
 
                     // Move to right column
+                    numberOfElements++;
                     if (numberOfElements == elementsForColumn)
                     {
                         y = startY;

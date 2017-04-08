@@ -133,7 +133,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             catch
             {
                 Debug.LogError("Failed to get " + section + ", " + name + " from " + path + ". Using default value.");
-                return defaultSettings[section][name];
+
+                try
+                {
+                    return defaultSettings[section][name];
+                }
+                catch
+                {
+                    Debug.LogError("Failed to get " + section + ", " + name + " from default settings of " + Mod.Title + ".");
+                    return null;
+                }
             }
         }
 
