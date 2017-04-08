@@ -37,12 +37,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public string imgPath = Path.Combine(texturesPath, "img");
         static public string cifPath = Path.Combine(texturesPath, "cif");
 
-        // Map tags
-        const string NormalTag =  "_Normal";
-        const string EmissionTag = "_Emission";
-        const string MetallicGlossTag = "_MetallicGloss";
-
-        // Structs
+        /// <summary>
+        /// Common tags for textures maps.
+        /// </summary>
+        public struct MapTags
+        {
+            public const string Normal = "_Normal";
+            public const string Emission = "_Emission";
+            public const string MetallicGloss = "_MetallicGloss";
+            public const string Heightmap = "_Heightmap"; //unused
+            public const string Occlusion = "_Occlusion"; //unused
+        }
 
         /// <summary>
         /// Material components and settings for custom billboards.
@@ -207,7 +212,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if normal map exists.</returns>
         static public bool CustomNormalExist(int archive, int record, int frame)
         {
-            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + NormalTag);
+            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MapTags.Normal);
         }
 
         /// <summary>
@@ -218,7 +223,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if normal map exists.</returns>
         static public bool CustomNormalExist(string name)
         {
-            return TextureFileExist(texturesPath, name + NormalTag);
+            return TextureFileExist(texturesPath, name + MapTags.Normal);
         }
 
         /// <summary>
@@ -231,7 +236,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Normal map.</returns>
         static public Texture2D LoadCustomNormal(int archive, int record, int frame)
         {
-            return LoadCustomNormal(archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
+            return ImportNormalMap(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
         }
 
         /// <summary>
@@ -242,19 +247,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Normal map.</returns>
         static public Texture2D LoadCustomNormal(string name)
         {
-            Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, true); //create empty texture, size will be the actual size of .png file
-            tex.LoadImage(File.ReadAllBytes(Path.Combine(texturesPath, name + NormalTag)));
-
-            Color32[] colours = tex.GetPixels32();
-            for (int i = 0; i < colours.Length; i++)
-            {
-                colours[i].a = colours[i].r;
-                colours[i].r = colours[i].b = colours[i].g;
-            }
-            tex.SetPixels32(colours);
-            tex.Apply();
-
-            return tex;
+            return ImportNormalMap(texturesPath, name);
         }
 
         /// <summary>
@@ -267,7 +260,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if emission map exists.</returns>
         static public bool CustomEmissionExist(int archive, int record, int frame)
         {
-            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + EmissionTag);
+            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MapTags.Emission);
         }
 
         /// <summary>
@@ -278,7 +271,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if emission map exists.</returns>
         static public bool CustomEmissionExist(string name)
         {
-            return TextureFileExist(texturesPath, name + EmissionTag);
+            return TextureFileExist(texturesPath, name + MapTags.Emission);
         }
 
         /// <summary>
@@ -291,7 +284,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Emission map.</returns>
         static public Texture2D LoadCustomEmission(int archive, int record, int frame)
         {
-            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + EmissionTag);
+            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MapTags.Emission);
         }
 
         /// <summary>
@@ -302,7 +295,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Emission map.</returns>
         static public Texture2D LoadCustomEmission(string name)
         {
-            return ImportTextureFile(texturesPath, name + EmissionTag);
+            return ImportTextureFile(texturesPath, name + MapTags.Emission);
         }
 
         /// <summary>
@@ -315,7 +308,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if MetallicGloss map exist.</returns>
         static public bool CustomMetallicGlossExist(int archive, int record, int frame)
         {
-            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MetallicGlossTag);
+            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MapTags.MetallicGloss);
         }
 
         /// <summary>
@@ -326,7 +319,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if MetallicGloss map exist.</returns>
         static public bool CustomMetallicGlossExist(string name)
         {
-            return TextureFileExist(texturesPath, name + MetallicGlossTag);
+            return TextureFileExist(texturesPath, name + MapTags.MetallicGloss);
         }
 
         /// <summary>
@@ -339,7 +332,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>MetallicGloss map.</returns>
         static public Texture2D LoadCustomMetallicGloss(int archive, int record, int frame)
         {
-            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MetallicGlossTag);
+            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MapTags.MetallicGloss);
         }
 
         /// <summary>
@@ -350,7 +343,33 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>MetallicGloss map.</returns>
         static public Texture2D LoadCustomMetallicGloss(string name)
         {
-            return ImportTextureFile(texturesPath, name + MetallicGlossTag);
+            return ImportTextureFile(texturesPath, name + MapTags.MetallicGloss);
+        }
+
+        // General import methods for mods or other external code.
+
+        /// <summary>
+        /// Import png file from disk as Texture2D.
+        /// </summary>
+        /// <param name="path">Path where image file is located.</param>
+        /// <param name="name">Name of image file without extension.</param>
+        static public Texture2D ImportTextureFromDisk(string path, string name)
+        {
+            return ImportTextureFile(path, name);
+        }
+
+        /// <summary>
+        /// Import png file from disk as Texture2D.
+        /// </summary>
+        /// <param name="path">Path where image file is located.</param>
+        /// <param name="name">Name of image file without extension.</param>
+        /// <param name="mapTag">Tag for texture map.</param>
+        static public Texture2D ImportTextureFromDisk (string path, string name, string mapTag)
+        {
+            if (mapTag == MapTags.Normal)
+                return ImportNormalMap(path, name);
+            else
+                return ImportTextureFile(path, name + mapTag);
         }
 
         #endregion
@@ -524,10 +543,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="archive">Archive index from TEXTURE.XXX</param>
         /// <param name="record">Record index.</param>
         /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        /// <returns></returns>
         static public string GetName (int archive, int record, int frame = 0)
         {
             return archive.ToString() + "_" + record.ToString() + "-" + frame.ToString();
+        }
+
+        /// <summary>
+        /// Convert (filename, record, frame) to string name.
+        /// </summary>
+        /// <param name="filename">Name of CIF/RCI file.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for animations.</param>
+        static public string GetNameCifRci (string filename, int record, int frame = 0)
+        {
+            return filename + "_" + record.ToString() + "-" + frame.ToString();
         }
 
         /// <summary>
@@ -601,6 +630,39 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             Debug.LogError("Can't import custom texture " + name + ".png from " + path);
             return null;
+        }
+
+        /// <summary>
+        /// Import image file with .png extension from disk,
+        /// to be used as a normal map.
+        /// </summary>
+        /// <param name="path">Location of image file.</param>
+        /// <param name="name">Name of image file.</param>
+        /// <returns>Normal map as Texture2D</returns>
+        static private Texture2D ImportNormalMap (string path, string name)
+        {
+            //create empty texture, size will be the actual size of .png file
+            Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, true);
+
+            // Load image as Texture2D
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(path, name + MapTags.Normal + ".png")));
+
+            if (tex == null)
+            {
+                Debug.LogError("Can't import custom texture " + name + ".png from " + path);
+                return null;
+            }
+
+            Color32[] colours = tex.GetPixels32();
+            for (int i = 0; i < colours.Length; i++)
+            {
+                colours[i].a = colours[i].r;
+                colours[i].r = colours[i].b = colours[i].g;
+            }
+            tex.SetPixels32(colours);
+            tex.Apply();
+
+            return tex;
         }
 
         /// <summary>
