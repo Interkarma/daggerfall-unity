@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -174,7 +175,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Setup();
 
             Texture2D background = DaggerfallUI.GetTextureFromCifRci(buttonsFilename, (int)messageBoxButton);
-            Button button = DaggerfallUI.AddButton(Vector2.zero, new Vector2(background.width, background.height), buttonPanel);
+            Button button = DaggerfallUI.AddButton(Vector2.zero, 
+                TextureReplacement.GetSizeFromTexture(background, buttonsFilename, (int)messageBoxButton), buttonPanel);
             button.BackgroundTexture = background;
             button.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
             button.Tag = messageBoxButton;

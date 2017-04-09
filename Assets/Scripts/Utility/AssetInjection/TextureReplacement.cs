@@ -590,6 +590,44 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 emissionMap = null;
         }
 
+        /// <summary>
+        /// Get size of vanilla texture, even if using a custom one.
+        /// </summary>
+        /// <param name="texture">Texture.</param>
+        /// <param name="textureName">Archive of texture.</param>
+        /// <param name="record">Record of texture.</param>
+        /// <param name="frame">Frame of texture.</param>
+        /// <returns>Vector2 with width and height</returns>
+        static public Vector2 GetSizeFromTexture(Texture2D texture, int archive, int record = 0, int frame = 0)
+        {
+            if (CustomTextureExist(archive, record, frame))
+            {
+                ImageData imageData = ImageReader.GetImageData("TEXTURE." + archive, createTexture: false);
+                return new Vector2(imageData.width, imageData.height);
+            }
+            else
+                return new Vector2(texture.width, texture.height);
+        }
+
+        /// <summary>
+        /// Get size of vanilla texture, even if using a custom one.
+        /// </summary>
+        /// <param name="texture">Texture.</param>
+        /// <param name="textureName">Name of texture file.</param>
+        /// <param name="record">Record of texture (CifRci only).</param>
+        /// <param name="frame">Frame of texture (CifRci only).</param>
+        /// <returns>Vector2 with width and height</returns>
+        static public Vector2 GetSizeFromTexture(Texture2D texture, string textureName, int record = 0, int frame = 0)
+        {
+            if (CustomImageExist(textureName) || CustomCifExist(textureName, record, frame))
+            {
+                ImageData imageData = ImageReader.GetImageData(textureName, createTexture: false);
+                return new Vector2(imageData.width, imageData.height);
+            }
+            else
+                return new Vector2(texture.width, texture.height);
+        }
+
         #endregion
 
         #region Private Methods
