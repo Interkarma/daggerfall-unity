@@ -240,6 +240,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         modSettingsButton.Label.Text = "Settings";
         modSettingsButton.Label.ToolTipText = "Change mod settings";
         modSettingsButton.OnMouseClick += ModSettingsButton_OnMouseClick;
+        modSettingsButton.Enabled = false;
         ModPanel.Components.Add(modSettingsButton);
 
         GetLoadedMods();
