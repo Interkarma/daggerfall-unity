@@ -36,8 +36,7 @@ MouseLookSmoothing=True
 MouseLookSensitivity=1.0
 HeadBobbing=False
 Handedness=0
-WeaponSwingThreshold=0.8
-WeaponSwingTriggerCount=3
+WeaponAttackThreshold=0.05
 WeaponSensitivity=1.0
 
 [Startup]

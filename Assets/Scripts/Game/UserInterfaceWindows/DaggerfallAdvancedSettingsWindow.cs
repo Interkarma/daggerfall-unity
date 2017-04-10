@@ -162,7 +162,6 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
         // Gameplay
         /*TextLabel gameplayOptions = */AddTextlabel(leftPanel, gameplayOptionsText);
-        DebugWeaponSwings = AddCheckbox(leftPanel, "New weapon Swings", "Debug Weapon Swings", DaggerfallUnity.Settings.DebugWeaponSwings);
         StartInDungeon = AddCheckbox(leftPanel, "Start In Dungeon", "Start new game inside the first dungeon", DaggerfallUnity.Settings.StartInDungeon);
 
         // Info
@@ -350,7 +349,6 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         DaggerfallUnity.Settings.HQTooltips = HQTooltips.IsChecked;
         DaggerfallUnity.Settings.Crosshair = Crosshair.IsChecked;
 
-        DaggerfallUnity.Settings.DebugWeaponSwings = DebugWeaponSwings.IsChecked;
         DaggerfallUnity.Settings.StartInDungeon = StartInDungeon.IsChecked;
 
         DaggerfallUnity.Settings.FieldOfView = fovLabel;
