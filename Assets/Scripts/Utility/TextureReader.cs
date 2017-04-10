@@ -83,13 +83,19 @@ namespace DaggerfallWorkshop.Utility
                 makeNoLongerReadable = false;
             }
 
-            DFSize sz;
-            Color32[] colors = image.GetColor32(record, frame, alphaIndex, 0, out sz);
-            Texture2D texture = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, createMipMaps);
-            texture.SetPixels32(colors);
-            texture.Apply(createMipMaps, makeNoLongerReadable);
-
-            return texture;
+            if (AssetInjection.TextureReplacement.CustomImageExist(image.FileName))
+                return AssetInjection.TextureReplacement.LoadCustomImage(image.FileName);
+            else if (AssetInjection.TextureReplacement.CustomCifExist(image.FileName, record, frame))
+                return AssetInjection.TextureReplacement.LoadCustomCif(image.FileName, record, frame);
+            else
+            {
+                DFSize sz;
+                Color32[] colors = image.GetColor32(record, frame, alphaIndex, 0, out sz);
+                Texture2D texture = new Texture2D(sz.Width, sz.Height, TextureFormat.RGBA32, createMipMaps);
+                texture.SetPixels32(colors);
+                texture.Apply(createMipMaps, makeNoLongerReadable);
+                return texture;
+            }  
         }
 
         /// <summary>

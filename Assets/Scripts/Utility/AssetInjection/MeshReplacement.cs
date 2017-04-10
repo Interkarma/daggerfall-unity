@@ -11,29 +11,28 @@
 
 /*
  * TODO:
- * 1. Integrate with the mod system to import models from mods using load order
- * 2. StreamingWorld
+ * - StreamingWorld
+ * - Optimize FinaliseCustomGameObject() to avoid importing the same texture more than once
  */
 
 using System.IO;
 using UnityEngine;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
     /// Handles import and injection of custom meshes and materials
     /// with the purpose of providing modding support.
-    /// Models are imported through AssetBundles. These should 
-    /// be created using the Mod Builder inside the Daggerfall Tools.
     /// </summary>
     static public class MeshReplacement
     {
         #region Fields
 
         // Paths
-        static private string modelsPath = Path.Combine(Application.streamingAssetsPath, "Models");
-        static private string flatsPath = Path.Combine(Application.streamingAssetsPath, "Flats");
+        static public string modelsPath = Path.Combine(Application.streamingAssetsPath, "Models");
+        static public string flatsPath = Path.Combine(Application.streamingAssetsPath, "Flats");
 
         // Extensions
         const string modelExtension = ".model";
@@ -61,26 +60,55 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (ReplacementPrefabExist(modelID))
                 return LoadReplacementPrefab(modelID, position, parent, rotation);
 
-            // Get AssetBundle
+            // Get model from disk
             string modelName = modelID.ToString();
             string path = Path.Combine(modelsPath, modelName + modelExtension);
-            if (!File.Exists(path))
-                return null;
-            AssetBundle LoadedAssetBundle;
-            if (!TryGetAssetBundle(path, modelName, out LoadedAssetBundle))
-                return null;
+            if (File.Exists(path))
+            {
+                // Get AssetBundle
+                AssetBundle LoadedAssetBundle;
+                if (TryGetAssetBundle(path, modelName, out LoadedAssetBundle))
+                {
+                    // Assign the name according to the current season
+                    if (IsWinter())
+                    {
+                        if (LoadedAssetBundle.Contains(modelName + winterTag))
+                            modelName += winterTag;
+                    }
 
-            // Assign the name according to the current season
-            if ((GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType != DaggerfallConnect.DFLocation.ClimateBaseType.Desert) && 
-                (DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter) && 
-                (LoadedAssetBundle.Contains(modelName + winterTag)))
-                modelName += winterTag;
- 
-            // Instantiate GameObject
-            GameObject object3D = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
-            LoadedAssetBundle.Unload(false);
-            InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelName);
-            return object3D;
+                    // Instantiate GameObject
+                    GameObject object3D = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
+                    LoadedAssetBundle.Unload(false);
+                    InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelName);
+                    return object3D;
+                }
+            }
+            
+            // Get model from mods using load order
+            Mod[] mods = ModManager.Instance.GetAllMods(true);
+            for (int i = mods.Length; i-- > 0;)
+            {
+                if (mods[i].AssetBundle.Contains(modelName))
+                {
+                    // Assign the name according to the current season
+                    if (IsWinter())
+                    {
+                        if (mods[i].AssetBundle.Contains(modelName + winterTag))
+                            modelName += winterTag;
+                    }
+
+                    GameObject go = mods[i].GetAsset<GameObject>(modelName, true);
+                    if (go != null)
+                    {
+                        InstantiateCustomModel(go, ref position, parent, ref rotation, modelName);
+                        return go;
+                    }
+
+                    Debug.LogError("Failed to import " + modelName + " from " + mods[i].Title + " as GameObject.");
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -101,18 +129,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         static public GameObject LoadReplacementPrefab(uint modelID, Vector3 position, Transform parent, Quaternion rotation)
         {
-            // Import GameObject
             GameObject object3D = null;
+            string name = modelID.ToString();
+            string path = "Models/" + name + "/";
 
-            // If it's not winter or the model doesn't have a winter version, it loads default prefab
-            if ((GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType == DaggerfallConnect.DFLocation.ClimateBaseType.Desert) || 
-                (DaggerfallUnity.Instance.WorldTime.Now.SeasonValue != DaggerfallDateTime.Seasons.Winter) || 
-                (Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + winterTag) == null))
-                object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString()) as GameObject);
-            // If it's winter and the model has a winter version, it loads winter prefab
-            else
-                object3D = GameObject.Instantiate(Resources.Load("Models/" + modelID.ToString() + "/" + modelID.ToString() + winterTag) as GameObject);
+            // Assign the name according to the current season
+            if (IsWinter())
+            {
+                if (Resources.Load(path + name + winterTag) != null)
+                    name += winterTag;
+            }
 
+            // Import GameObject
+            object3D = GameObject.Instantiate(Resources.Load(path + name) as GameObject);
             InstantiateCustomModel(object3D, ref position, parent, ref rotation, modelID.ToString());
             return object3D;
         }
@@ -137,20 +166,41 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (ReplacementFlatExist(archive, record)) 
                 return LoadReplacementFlat(archive, record, position, parent, inDungeon);
 
-            // Get AssetBundle
+            // Get model from disk
             string modelName = archive.ToString() + "_" + record.ToString();
             string path = Path.Combine(flatsPath, modelName + flatExtension);
-            if (!File.Exists(path))
-                return null;
-            AssetBundle LoadedAssetBundle;
-            if (!TryGetAssetBundle(path, modelName, out LoadedAssetBundle))
-                return null;
+            if (File.Exists(path))
+            {
+                // Get AssetBundle
+                AssetBundle LoadedAssetBundle;
+                if (TryGetAssetBundle(path, modelName, out LoadedAssetBundle))
+                {
+                    // Instantiate GameObject
+                    GameObject go = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
+                    LoadedAssetBundle.Unload(false);
+                    InstantiateCustomFlat(go, ref position, parent, archive, record, inDungeon);
+                    return go;
+                }
+            }
 
-            // Instantiate GameObject
-            GameObject go = GameObject.Instantiate(LoadedAssetBundle.LoadAsset<GameObject>(modelName));
-            LoadedAssetBundle.Unload(false);
-            InstantiateCustomFlat(go, ref position, parent, archive, record, inDungeon);
-            return go;
+            // Get model from mods using load order
+            Mod[] mods = ModManager.Instance.GetAllMods(true);
+            for (int i = mods.Length; i-- > 0;)
+            {
+                if (mods[i].AssetBundle.Contains(modelName))
+                {
+                    GameObject go = mods[i].GetAsset<GameObject>(modelName, true);
+                    if (go != null)
+                    {
+                        InstantiateCustomFlat(go, ref position, parent, archive, record, inDungeon);
+                        return go;
+                    }
+
+                    Debug.LogError("Failed to import " + modelName + " from " + mods[i].Title + " as GameObject.");
+                }
+            }
+
+            return null;
         }
         
         /// <summary>
@@ -203,6 +253,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Check if is winter and we are in a location which supports winter models.
+        /// </summary>
+        static private bool IsWinter()
+        {
+            return ((GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType != DaggerfallConnect.DFLocation.ClimateBaseType.Desert) 
+                && (DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter));
+        }
 
         /// <summary>
         /// Try loading AssetBundle and check if it contains the GameObject.

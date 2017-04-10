@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -54,7 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception("DaggerfallClassSelectWindow: Could not load native texture.");
 
             // Create panel for picker
-            pickerPanel.Size = new Vector2(nativeTexture.width, nativeTexture.height);
+            pickerPanel.Size = TextureReplacement.GetSizeFromTexture(nativeTexture, nativeImgName);
             pickerPanel.HorizontalAlignment = HorizontalAlignment.Center;
             pickerPanel.VerticalAlignment = VerticalAlignment.Middle;
             pickerPanel.BackgroundTexture = nativeTexture;
