@@ -36,7 +36,7 @@ MouseLookSmoothing=True
 MouseLookSensitivity=1.0
 HeadBobbing=False
 Handedness=0
-WeaponAttackThreshold=0.05
+WeaponAttackThreshold=0.03
 WeaponSensitivity=1.0
 
 [Startup]

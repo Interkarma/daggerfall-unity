@@ -53,7 +53,6 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     Checkbox HQTooltips;
     Checkbox Crosshair;
 
-    Checkbox DebugWeaponSwings;
     Checkbox StartInDungeon;
 
     VerticalScrollBar fovScroll;
