@@ -201,8 +201,6 @@ namespace ReflectionsMod
 
         public void OnPreRender()
         {
-            componentCreateReflectionLookupTextures.createReflectionTextureCoordinatesAndIndexTextures();
-
             if (material == null)
             {
                 return;
@@ -211,6 +209,8 @@ namespace ReflectionsMod
             {
                 return;
             }
+
+            componentCreateReflectionLookupTextures.createReflectionTextureCoordinatesAndIndexTextures();
 
             int downsampleAmount = 1; // 2;
 

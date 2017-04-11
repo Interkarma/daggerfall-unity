@@ -28,7 +28,7 @@ namespace ReflectionsMod
         private MirrorReflection mirrorReflSeaLevel = null;
 
         private bool useDeferredReflections = false;
-        private DeferredPlanarReflections componentDefferedPlanarReflections = null;
+        private DeferredPlanarReflections componentDeferredPlanarReflections = null;
 
         private bool playerInside = false;
 
@@ -341,7 +341,7 @@ namespace ReflectionsMod
 
             if (useDeferredReflections)
             {
-                componentDefferedPlanarReflections = GameManager.Instance.MainCameraObject.AddComponent<ReflectionsMod.DeferredPlanarReflections>();
+                componentDeferredPlanarReflections = GameManager.Instance.MainCameraObject.AddComponent<ReflectionsMod.DeferredPlanarReflections>();
             }
 
             playerInside = GameManager.Instance.IsPlayerInside;
@@ -516,7 +516,7 @@ namespace ReflectionsMod
 
                 if (useDeferredReflections)
                 {
-                    componentDefferedPlanarReflections.enabled = true;
+                    componentDeferredPlanarReflections.enabled = true;
                 }
             }
             else if (!GameManager.Instance.IsPlayerInside && playerInside)
@@ -528,7 +528,7 @@ namespace ReflectionsMod
 
                 if (useDeferredReflections)
                 {
-                    componentDefferedPlanarReflections.enabled = false;
+                    componentDeferredPlanarReflections.enabled = false;
                 }
             }
         }
