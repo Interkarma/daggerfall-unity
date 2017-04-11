@@ -4,7 +4,7 @@
 //Author: Michael Rauter (a.k.a. Nystul)
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 
-Shader "Daggerfall/ReflectionsMod/TilemapWithReflections" {
+Shader "Daggerfall/ReflectionsMod2/TilemapWithReflections" {
 	Properties {
 		// These params are required to stop terrain system throwing errors
 		// However we won't be using them as Unity likes to init these textures

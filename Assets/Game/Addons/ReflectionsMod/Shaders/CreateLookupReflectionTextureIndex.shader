@@ -6,7 +6,7 @@
 
 // used as replacement shader to create reflection texture sampling index (which reflection texture to sample from) for every fragment (in r channel of texture),
 // metallic amount is stored in g channel of the texture, glossiness amount is stored in b channel of the texture (for possible use in DeferredPlanarReflections shader)
-Shader "Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex" {
+Shader "Daggerfall/ReflectionsMod2/CreateLookupReflectionTextureIndex" {
     Properties
     {
 		_MainTex ("Base (RGB)", 2D) = "white" {}

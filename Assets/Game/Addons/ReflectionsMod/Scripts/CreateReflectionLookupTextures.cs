@@ -2,11 +2,11 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-using ReflectionsMod;
+using ReflectionsMod2;
 
 using DaggerfallWorkshop.Game;
 
-namespace ReflectionsMod
+namespace ReflectionsMod2
 {
     public class CreateReflectionLookupTextures : MonoBehaviour
     {
@@ -17,7 +17,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_ShaderCreateReflectionTextureCoordinates == null)
-                    m_ShaderCreateReflectionTextureCoordinates = Shader.Find("Daggerfall/ReflectionsMod/CreateLookupReflectionTextureCoordinates");
+                    m_ShaderCreateReflectionTextureCoordinates = Shader.Find("Daggerfall/ReflectionsMod2/CreateLookupReflectionTextureCoordinates");
 
                 return m_ShaderCreateReflectionTextureCoordinates;
             }
@@ -41,7 +41,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_ShaderCreateReflectionTextureIndex == null)
-                    m_ShaderCreateReflectionTextureIndex = Shader.Find("Daggerfall/ReflectionsMod/CreateLookupReflectionTextureIndex");
+                    m_ShaderCreateReflectionTextureIndex = Shader.Find("Daggerfall/ReflectionsMod2/CreateLookupReflectionTextureIndex");
 
                 return m_ShaderCreateReflectionTextureIndex;
             }

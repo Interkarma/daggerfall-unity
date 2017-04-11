@@ -2,13 +2,13 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-using ReflectionsMod;
+using ReflectionsMod2;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace ReflectionsMod
+namespace ReflectionsMod2
 {
     [ExecuteInEditMode]
 #if UNITY_5_4_OR_NEWER
@@ -84,7 +84,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_Shader == null)
-                    m_Shader = Shader.Find("Daggerfall/ReflectionsMod/DeferredPlanarReflections");
+                    m_Shader = Shader.Find("Daggerfall/ReflectionsMod2/DeferredPlanarReflections");
 
                 return m_Shader;
             }
@@ -96,7 +96,7 @@ namespace ReflectionsMod
             get
             {
                 if (m_Material == null)
-                    m_Material = ReflectionsMod.ImageEffectHelper.CheckShaderAndCreateMaterial(shader);
+                    m_Material = ReflectionsMod2.ImageEffectHelper.CheckShaderAndCreateMaterial(shader);
 
                 return m_Material;
             }
@@ -137,7 +137,7 @@ namespace ReflectionsMod
 
         private void OnEnable()
         {
-            //if (!ReflectionsMod.ImageEffectHelper.IsSupported(shader, false, true, this))
+            //if (!ReflectionsMod2.ImageEffectHelper.IsSupported(shader, false, true, this))
             //{
             //   enabled = false;
             //    return;

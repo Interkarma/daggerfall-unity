@@ -14,7 +14,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 
-namespace ReflectionsMod
+namespace ReflectionsMod2
 {
     public class UpdateReflectionTextures : MonoBehaviour
     {
@@ -341,7 +341,7 @@ namespace ReflectionsMod
 
             if (useDeferredReflections)
             {
-                componentDeferredPlanarReflections = GameManager.Instance.MainCameraObject.AddComponent<ReflectionsMod.DeferredPlanarReflections>();
+                componentDeferredPlanarReflections = GameManager.Instance.MainCameraObject.AddComponent<ReflectionsMod2.DeferredPlanarReflections>();
             }
 
             playerInside = GameManager.Instance.IsPlayerInside;

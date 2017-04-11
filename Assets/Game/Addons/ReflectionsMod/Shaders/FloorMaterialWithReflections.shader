@@ -4,7 +4,7 @@
 //Author: Michael Rauter (a.k.a. Nystul)
 //License: MIT License (http://www.opensource.org/licenses/mit-license.php)
 
-Shader "Daggerfall/ReflectionsMod/FloorMaterialWithReflections" {
+Shader "Daggerfall/ReflectionsMod2/FloorMaterialWithReflections" {
 	Properties {
 		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("Albedo Map", 2D) = "white" {}

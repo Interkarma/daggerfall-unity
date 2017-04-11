@@ -6,7 +6,7 @@
 
 // 1st pass: computes the reflection color for every pixel (stored in output texture)
 // 2nd pass: composite step to merge reflection color into output buffer
-Shader "Daggerfall/ReflectionsMod/DeferredPlanarReflections" {
+Shader "Daggerfall/ReflectionsMod2/DeferredPlanarReflections" {
     Properties
     {
 		_MainTex ("Base (RGB)", 2D) = "white" {}

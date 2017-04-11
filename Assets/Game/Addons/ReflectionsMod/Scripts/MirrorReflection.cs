@@ -10,7 +10,7 @@ using UnityEngine;
 using System.Collections;
 using ProjectIncreasedTerrainDistance;
  
-namespace ReflectionsMod
+namespace ReflectionsMod2
 {
     [ExecuteInEditMode] // Make mirror live-update even when not in play mode
     public class MirrorReflection : MonoBehaviour
