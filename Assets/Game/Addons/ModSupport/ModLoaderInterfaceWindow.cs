@@ -340,7 +340,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             modList.SelectedTextColor = Color.red;
 
         // Update buttons
-        if (ModSettingsReader.HasSettings(ModManager.Instance.GetMod(modList.SelectedIndex)))
+        if (ModSettingsReader.HasSettings(ModManager.Instance.GetMod(modSettings[modList.SelectedIndex].modInfo.ModTitle)))
         {
             modSettingsButton.Enabled = true;
             showModDescriptionButton.Position = new Vector2(5, 83);
