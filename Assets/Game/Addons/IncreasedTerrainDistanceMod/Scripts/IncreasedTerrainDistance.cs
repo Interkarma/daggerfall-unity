@@ -1079,7 +1079,7 @@ namespace ProjectIncreasedTerrainDistance
             #if REFLECTIONSMOD_CODE_AVAILABLE
             if (isActiveReflectionsMod)
             {
-                reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
+                reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent< ReflectionsMod2.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
                 if (reflectionSeaTexture != null)
                 {
                     terrainMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
@@ -1312,7 +1312,7 @@ namespace ProjectIncreasedTerrainDistance
 #if REFLECTIONSMOD_CODE_AVAILABLE
             if (isActiveReflectionsMod)
             {
-                reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
+                reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod2.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
                 if (reflectionSeaTexture != null)
                 {
                     newMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
