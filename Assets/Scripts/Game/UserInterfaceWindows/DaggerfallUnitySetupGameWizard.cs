@@ -65,7 +65,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox playerNudity;
         Checkbox meshAndTextureReplacement;
 
-        Checkbox distantTerrain;        
         Checkbox flyingBirds;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -451,8 +450,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Setup mods checkboxes
             x = 165;
-            optionPos = 20;
-            distantTerrain = AddOption(x, "Distant Terrain (Nystul)", "Enhanced and distant terrain", DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance);            
+            optionPos = 20;            
             flyingBirds = AddOption(x, "Flying Birds (Uncanny Valley)", "Animated flying birds", DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall);
 
             // Add mod note
@@ -709,7 +707,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
 
-            DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance = distantTerrain.IsChecked;
             DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall = flyingBirds.IsChecked;
             DaggerfallUnity.Settings.MeshAndTextureReplacement = meshAndTextureReplacement.IsChecked;
 
