@@ -249,8 +249,7 @@ namespace DaggerfallWorkshop.Utility
                 return string.Empty;
 
             // Select random text item
-            DFRandom.Seed = (uint)Time.realtimeSinceStartup;
-            int index = DFRandom.random_range(0, textItems.Count);
+            int index = UnityEngine.Random.Range(0, textItems.Count);
 
             return textItems[index];
         }

@@ -812,7 +812,7 @@ namespace DaggerfallWorkshop.Game
             const int set1StartID = 500;
             const int set2StartID = 520;
 
-            if (playerGPS)
+            if (playerGPS && !isPlayerInside)
             {
                 if (location.HasDungeon &&
                     location.MapTableData.DungeonType != DFRegion.DungeonTypes.NoDungeon &&
