@@ -295,24 +295,26 @@ namespace DaggerfallWorkshop
                 return;
 
             // Convert world coords to map pixel coords then back again
-            // This finds the SW origin of this map pixel in world coords
+            // This finds the absolute SW origin of this map pixel in world coords
             DFPosition mapPixel = CurrentMapPixel;
             DFPosition worldOrigin = MapsFile.MapPixelToWorldCoord(mapPixel.X, mapPixel.Y);
 
-            // Calculate centre point of this terrain area in world coords
-            DFPosition centrePoint = new DFPosition(
-                worldOrigin.X + (int)MapsFile.WorldMapTerrainDim / 2,
-                worldOrigin.Y + (int)MapsFile.WorldMapTerrainDim / 2);
+            // Find tile offset point using same logic as terrain helper
+            DFPosition tileOrigin = TerrainHelper.GetLocationTerrainTileOrigin(CurrentLocation);
+
+            // Adjust world origin by tileorigin*2 in world units
+            worldOrigin.X += (tileOrigin.X * 2) * MapsFile.WorldMapTileDim;
+            worldOrigin.Y += (tileOrigin.Y * 2) * MapsFile.WorldMapTileDim;
 
             // Get width and height of location in world units
-            int width = currentLocation.Exterior.ExteriorData.Width * (int)MapsFile.WorldMapRMBDim;
-            int height = currentLocation.Exterior.ExteriorData.Height * (int)MapsFile.WorldMapRMBDim;
+            int width = currentLocation.Exterior.ExteriorData.Width * MapsFile.WorldMapRMBDim;
+            int height = currentLocation.Exterior.ExteriorData.Height * MapsFile.WorldMapRMBDim;
 
-            // Set true location rect in world coordinates
-            locationWorldRectMinX = centrePoint.X - width / 2;
-            locationWorldRectMaxX = centrePoint.X + width / 2;
-            locationWorldRectMinZ = centrePoint.Y - height / 2;
-            locationWorldRectMaxZ = centrePoint.Y + height / 2;
+            // Set location rect in world coordinates
+            locationWorldRectMinX = worldOrigin.X;
+            locationWorldRectMaxX = worldOrigin.X + width;
+            locationWorldRectMinZ = worldOrigin.Y;
+            locationWorldRectMaxZ = worldOrigin.Y + height;
         }
 
         private void ClearWorldLocationRect()
