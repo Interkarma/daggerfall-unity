@@ -325,30 +325,47 @@ namespace DaggerfallWorkshop
 
         private void PlayerLocationRectCheck()
         {
+            // Bail if no current location at this map pixel
             if (!hasCurrentLocation)
             {
+                // Raise exit event if player was in location rect
                 if (isPlayerInLocationRect)
                 {
                     RaiseOnExitLocationRectEvent();
-                    isPlayerInLocationRect = false;
                 }
+
+                // Clear flag and exit
+                isPlayerInLocationRect = false;
                 return;
             }
 
-            // Check if player is inside current location rect
+            // Player can be inside a map pixel with location but not inside location rect
+            // So check if player currently inside location rect
+            bool check;
             if (WorldX >= locationWorldRectMinX && WorldX <= locationWorldRectMaxX &&
                 WorldZ >= locationWorldRectMinZ && WorldZ <= locationWorldRectMaxZ)
             {
-                //if (!isPlayerInLocationRect) Debug.Log("Player entered location rect of " + CurrentLocation.Name);
-                isPlayerInLocationRect = true;
-                RaiseOnEnterLocationRectEvent(CurrentLocation);
+                check = true;
             }
             else
             {
-                //if (isPlayerInLocationRect) Debug.Log("Player left location rect.");
-                isPlayerInLocationRect = false;
+                check = false;
+            }
+
+            // Call events based on location rect change
+            if (check && !isPlayerInLocationRect)
+            {
+                // Player has entered location rect
+                RaiseOnEnterLocationRectEvent(CurrentLocation);
+            }
+            else if (!check && isPlayerInLocationRect)
+            {
+                // Player has left a location rect
                 RaiseOnExitLocationRectEvent();
             }
+
+            // Update last known state
+            isPlayerInLocationRect = check;
         }
 
         private bool ReadyCheck()
