@@ -37,6 +37,14 @@ namespace DaggerfallWorkshop.Utility
         TextFile.Token[] GetRSCTokens(int id);
 
         /// <summary>
+        /// Gets random string from separated token array.
+        /// Example would be flavour text variants when finding dungeon exterior.
+        /// </summary>
+        /// <param name="id">Text resource ID.</param>
+        /// <returns>String randomly selected from variants.</returns>
+        string GetRandomText(int id);
+
+        /// <summary>
         /// Gets name of weapon material type.
         /// </summary>
         /// <param name="material">Material type of weapon.</param>
@@ -223,6 +231,28 @@ namespace DaggerfallWorkshop.Utility
                 return null;
 
             return TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
+        }
+
+        public virtual string GetRandomText(int id)
+        {
+            // Collect text items
+            List<string> textItems = new List<string>();
+            TextFile.Token[] tokens = GetRSCTokens(id);
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                if (tokens[i].formatting == TextFile.Formatting.Text)
+                    textItems.Add(tokens[i].text);
+            }
+
+            // Validate items
+            if (textItems.Count == 0)
+                return string.Empty;
+
+            // Select random text item
+            DFRandom.Seed = (uint)Time.realtimeSinceStartup;
+            int index = DFRandom.random_range(0, textItems.Count);
+
+            return textItems[index];
         }
 
         public string GetWeaponMaterialName(WeaponMaterialTypes material)

@@ -362,6 +362,14 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public static void AddHUDText(string message, float delay)
+        {
+            if (Instance.dfHUD != null)
+            {
+                Instance.dfHUD.PopupText.AddText(message, delay);
+            }
+        }
+
         public static void PostMessage(string message)
         {
             if (Instance.uiManager != null)

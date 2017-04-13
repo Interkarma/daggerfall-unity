@@ -187,6 +187,7 @@ namespace DaggerfallWorkshop
                 UpdateWorldInfo(pos.X, pos.Y);
                 lastMapPixelX = pos.X;
                 lastMapPixelY = pos.Y;
+                isPlayerInLocationRect = false;
             }
 
             // Raise other events
