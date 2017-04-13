@@ -27,6 +27,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         LinkedList<TextLabel> textRows = new LinkedList<TextLabel>();
         float timer = 0;
+        float nextPopDelay = popDelay;
 
         public PopupText()
             : base()
@@ -41,11 +42,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Remove item from front of list
             timer += Time.deltaTime;
-            if (timer > popDelay)
+            if (timer > nextPopDelay)
             {
                 timer = 0;
                 if (textRows.Count > 0)
                     textRows.RemoveFirst();
+
+                // Reset pop delay to default
+                nextPopDelay = popDelay;
             }
         }
 
@@ -79,6 +83,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
             label.Parent = Parent;
             textRows.AddLast(label);
             timer = 0;
+        }
+
+        /// <summary>
+        /// Adds text with custom delay.
+        /// Delay affects this item only. Subsequent text items can override delay.
+        /// Delay will return to default after time elapsed.
+        /// </summary>
+        /// <param name="text">Text to display.</param>
+        /// <param name="delayInSeconds">Time in seconds before removing text.</param>
+        public void AddText(string text, float delayInSeconds)
+        {
+            AddText(text);
+            nextPopDelay = delayInSeconds;
         }
     }
 }

@@ -183,7 +183,7 @@ namespace DaggerfallConnect.Arena2
         {
             soundOut = new DFSound();
 
-            if (sound < 0 || sound >= bsaFile.Count)
+            if (!IsValidIndex(sound))
                 return false;
 
             // Just return sound if already loaded
@@ -257,6 +257,19 @@ namespace DaggerfallConnect.Arena2
             if (sounds[sound].MemoryFile != null) sounds[sound].MemoryFile.Close();
             sounds[sound].MemoryFile = null;
             sounds[sound].DFSound = new DFSound();
+        }
+
+        /// <summary>
+        /// Quickly check if sound index in valid range.
+        /// </summary>
+        /// <param name="sound">Index of sound.</param>
+        /// <returns>True if index is within a valid range.</returns>
+        public bool IsValidIndex(int sound)
+        {
+            if (sound < 0 || sound >= bsaFile.Count)
+                return false;
+
+            return true;
         }
 
         #endregion

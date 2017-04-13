@@ -50,5 +50,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string potionRecipeFor = "Recipe for %po";
         public const string cannotUseThis = "You cannot use this.";
         public const string multipleAssignments = "You have multiple assignments...";
+
+        public const string youAreEntering = "You are entering %s";
     }
 }

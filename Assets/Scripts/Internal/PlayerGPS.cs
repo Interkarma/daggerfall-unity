@@ -187,6 +187,7 @@ namespace DaggerfallWorkshop
                 UpdateWorldInfo(pos.X, pos.Y);
                 lastMapPixelX = pos.X;
                 lastMapPixelY = pos.Y;
+                isPlayerInLocationRect = false;
             }
 
             // Raise other events
@@ -295,24 +296,26 @@ namespace DaggerfallWorkshop
                 return;
 
             // Convert world coords to map pixel coords then back again
-            // This finds the SW origin of this map pixel in world coords
+            // This finds the absolute SW origin of this map pixel in world coords
             DFPosition mapPixel = CurrentMapPixel;
             DFPosition worldOrigin = MapsFile.MapPixelToWorldCoord(mapPixel.X, mapPixel.Y);
 
-            // Calculate centre point of this terrain area in world coords
-            DFPosition centrePoint = new DFPosition(
-                worldOrigin.X + (int)MapsFile.WorldMapTerrainDim / 2,
-                worldOrigin.Y + (int)MapsFile.WorldMapTerrainDim / 2);
+            // Find tile offset point using same logic as terrain helper
+            DFPosition tileOrigin = TerrainHelper.GetLocationTerrainTileOrigin(CurrentLocation);
+
+            // Adjust world origin by tileorigin*2 in world units
+            worldOrigin.X += (tileOrigin.X * 2) * MapsFile.WorldMapTileDim;
+            worldOrigin.Y += (tileOrigin.Y * 2) * MapsFile.WorldMapTileDim;
 
             // Get width and height of location in world units
-            int width = currentLocation.Exterior.ExteriorData.Width * (int)MapsFile.WorldMapRMBDim;
-            int height = currentLocation.Exterior.ExteriorData.Height * (int)MapsFile.WorldMapRMBDim;
+            int width = currentLocation.Exterior.ExteriorData.Width * MapsFile.WorldMapRMBDim;
+            int height = currentLocation.Exterior.ExteriorData.Height * MapsFile.WorldMapRMBDim;
 
-            // Set true location rect in world coordinates
-            locationWorldRectMinX = centrePoint.X - width / 2;
-            locationWorldRectMaxX = centrePoint.X + width / 2;
-            locationWorldRectMinZ = centrePoint.Y - height / 2;
-            locationWorldRectMaxZ = centrePoint.Y + height / 2;
+            // Set location rect in world coordinates
+            locationWorldRectMinX = worldOrigin.X;
+            locationWorldRectMaxX = worldOrigin.X + width;
+            locationWorldRectMinZ = worldOrigin.Y;
+            locationWorldRectMaxZ = worldOrigin.Y + height;
         }
 
         private void ClearWorldLocationRect()
@@ -325,30 +328,47 @@ namespace DaggerfallWorkshop
 
         private void PlayerLocationRectCheck()
         {
+            // Bail if no current location at this map pixel
             if (!hasCurrentLocation)
             {
+                // Raise exit event if player was in location rect
                 if (isPlayerInLocationRect)
                 {
                     RaiseOnExitLocationRectEvent();
-                    isPlayerInLocationRect = false;
                 }
+
+                // Clear flag and exit
+                isPlayerInLocationRect = false;
                 return;
             }
 
-            // Check if player is inside current location rect
+            // Player can be inside a map pixel with location but not inside location rect
+            // So check if player currently inside location rect
+            bool check;
             if (WorldX >= locationWorldRectMinX && WorldX <= locationWorldRectMaxX &&
                 WorldZ >= locationWorldRectMinZ && WorldZ <= locationWorldRectMaxZ)
             {
-                //if (!isPlayerInLocationRect) Debug.Log("Player entered location rect of " + CurrentLocation.Name);
-                isPlayerInLocationRect = true;
-                RaiseOnEnterLocationRectEvent(CurrentLocation);
+                check = true;
             }
             else
             {
-                //if (isPlayerInLocationRect) Debug.Log("Player left location rect.");
-                isPlayerInLocationRect = false;
+                check = false;
+            }
+
+            // Call events based on location rect change
+            if (check && !isPlayerInLocationRect)
+            {
+                // Player has entered location rect
+                RaiseOnEnterLocationRectEvent(CurrentLocation);
+            }
+            else if (!check && isPlayerInLocationRect)
+            {
+                // Player has left a location rect
                 RaiseOnExitLocationRectEvent();
             }
+
+            // Update last known state
+            isPlayerInLocationRect = check;
         }
 
         private bool ReadyCheck()
