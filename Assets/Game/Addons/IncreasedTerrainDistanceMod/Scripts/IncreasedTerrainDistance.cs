@@ -312,8 +312,8 @@ namespace ProjectIncreasedTerrainDistance
             if (toggle)
             {
                 isActiveEnhancedSkyMod = true;
-                if(DaggerfallUnity.Settings.Nystul_RealtimeReflections)
-                    isActiveReflectionsMod = true;
+                //if(DaggerfallUnity.Settings.Nystul_RealtimeReflections)
+                //    isActiveReflectionsMod = true;
             }
             else
             {
@@ -443,11 +443,8 @@ namespace ProjectIncreasedTerrainDistance
 
             if (GameObject.Find("ReflectionsMod") != null)
             {
-                if (DaggerfallUnity.Settings.Nystul_RealtimeReflections)
-                {
-                    isActiveReflectionsMod = true;
-                    tileAtlasReflectiveTexture = Resources.Load("tileatlas_reflective") as Texture2D;
-                }
+                isActiveReflectionsMod = true;
+                tileAtlasReflectiveTexture = Resources.Load("tileatlas_reflective") as Texture2D;                
             }
 
             SetUpCameras();
@@ -1079,14 +1076,14 @@ namespace ProjectIncreasedTerrainDistance
             #if REFLECTIONSMOD_CODE_AVAILABLE
             if (isActiveReflectionsMod)
             {
-                reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent< ReflectionsMod2.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
-                if (reflectionSeaTexture != null)
-                {
-                    terrainMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
-                    terrainMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
-                    terrainMaterial.SetInt("_UseSeaReflectionTex", 1);
-                }
-                else
+                //reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent< ReflectionsMod.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
+                //if (reflectionSeaTexture != null)
+                //{
+                //    terrainMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
+                //    terrainMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
+                //    terrainMaterial.SetInt("_UseSeaReflectionTex", 1);
+                //}
+                //else
                 {
                     terrainMaterial.SetInt("_UseSeaReflectionTex", 0);
                 }
@@ -1312,18 +1309,18 @@ namespace ProjectIncreasedTerrainDistance
 #if REFLECTIONSMOD_CODE_AVAILABLE
             if (isActiveReflectionsMod)
             {
-                reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod2.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
-                if (reflectionSeaTexture != null)
-                {
-                    newMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
-                    newMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
-                    if (tileAtlasReflectiveTexture != null)
-                    {
-                        newMaterial.SetTexture("_TileAtlasReflectiveTex", tileAtlasReflectiveTexture);
-                    }
-                    newMaterial.SetInt("_UseSeaReflectionTex", 1);
-                }
-                else
+                //reflectionSeaTexture = GameObject.Find("ReflectionsMod").GetComponent<ReflectionsMod2.UpdateReflectionTextures>().getSeaReflectionRenderTexture();
+                //if (reflectionSeaTexture != null)
+                //{
+                //    newMaterial.EnableKeyword("ENABLE_WATER_REFLECTIONS");
+                //    newMaterial.SetTexture("_SeaReflectionTex", reflectionSeaTexture);
+                //    if (tileAtlasReflectiveTexture != null)
+                //    {
+                //        newMaterial.SetTexture("_TileAtlasReflectiveTex", tileAtlasReflectiveTexture);
+                //    }
+                //    newMaterial.SetInt("_UseSeaReflectionTex", 1);
+                //}
+                //else
                 {
                     newMaterial.SetInt("_UseSeaReflectionTex", 0);
                 }
