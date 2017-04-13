@@ -812,8 +812,6 @@ namespace DaggerfallWorkshop.Game
             const int set1StartID = 500;
             const int set2StartID = 520;
 
-            Debug.Log("Entering location rect");
-
             if (playerGPS)
             {
                 if (location.HasDungeon &&
