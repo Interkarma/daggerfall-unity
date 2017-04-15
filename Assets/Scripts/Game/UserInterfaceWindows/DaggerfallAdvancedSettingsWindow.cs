@@ -43,7 +43,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
     Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
     Color listBoxBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
-    Color scrollBarBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.7f);
+    Color scrollBarBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.7f);
 
     // Settings
     Checkbox DungeonLightShadows;
