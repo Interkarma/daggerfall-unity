@@ -53,10 +53,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         public ModInfo()
         {
-            if(Application.isEditor)
-                Files = new List<string>();
-
-            ModFileName         = "";
+            Files = new List<string>();
+            ModFileName = "";
         }
     }
 
