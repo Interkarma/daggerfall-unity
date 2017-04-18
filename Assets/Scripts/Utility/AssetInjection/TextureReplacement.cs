@@ -11,10 +11,10 @@
 
 /*
  * TODO:
- * 1. StreamingWorld billboards
+ * 1. StreamingWorld billboards (Use CreateTextureSettings() and GetTexture2DAtlas() with a 4096x4096 atlas)
  * 2. PaperDoll CharacterLayer textures works only if resolution is the same as vanilla 
  *        (http://forums.dfworkshop.net/viewtopic.php?f=22&p=3547&sid=6a99dbcffad1a15b08dd5e157274b772#p3547)
- * 3. Terrain textures
+ * 3. Terrain textures (Texture arrays)
  */
 
 using System.IO;
@@ -25,6 +25,19 @@ using DaggerfallWorkshop.Game.UserInterface;
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
+    /// Textures maps.
+    /// </summary>
+    public enum TextureMap
+    {
+        Albedo,
+        Normal,
+        Emission,
+        MetallicGloss,
+        Heightmap,
+        Occlusion
+    }
+
+    /// <summary>
     /// Handles import and injection of custom textures and images
     /// with the purpose of providing modding support.
     /// </summary>
@@ -33,9 +46,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #region Fields & Structs
 
         // Paths
-        static public string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
-        static public string imgPath = Path.Combine(texturesPath, "img");
-        static public string cifPath = Path.Combine(texturesPath, "cif");
+        static private string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
+        static private string imgPath = Path.Combine(texturesPath, "img");
+        static private string cifPath = Path.Combine(texturesPath, "cif");
 
         /// <summary>
         /// Common tags for textures maps.
@@ -60,6 +73,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             public int NumberOfFrames;                   // number of frame textures avilable on disk
         }
 
+        // Enemy will use custom textures if [archive, enemyDefaultRecord, enemyDefaultFrame] is found.
+        public const int enemyDefaultRecord = 0;          
+        public const int enemyDefaultFrame = 0;
+
         /// <summary>
         /// Custom textures for enemies.
         /// </summary>
@@ -67,6 +84,37 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         {
             public bool isCustom;                        // True if enemy uses custom textures
             public List<List<Texture2D>> MainTexture;    // Textures
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Path to custom textures on disk.
+        /// </summary>
+        static public string TexturesPath
+        {
+            get { return texturesPath; }
+            internal set { texturesPath = value; }
+        }
+
+        /// <summary>
+        /// Path to custom images on disk.
+        /// </summary>
+        static public string ImagesPath
+        {
+            get { return imgPath; }
+            internal set { imgPath = value; }
+        }
+
+        /// <summary>
+        /// Path to custom Cif and Rci files on disk.
+        /// </summary>
+        static public string CifRciPath
+        {
+            get { return cifPath; }
+            internal set { cifPath = value; }
         }
 
         #endregion
@@ -83,7 +131,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture exists.</returns>
         static public bool CustomTextureExist(int archive, int record, int frame = 0)
         {
-            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
+            return TextureFileExist(texturesPath, GetName(archive, record, frame));
         }
 
         /// <summary>
@@ -107,7 +155,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Texture.</returns>
         static public Texture2D LoadCustomTexture(int archive, int record, int frame)
         {
-            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
+            return ImportTextureFile(texturesPath, GetName(archive, record, frame));
         }
 
         /// <summary>
@@ -153,7 +201,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if image exists.</returns>
         static public bool CustomCifExist(string filename, int record, int frame = 0)
         {
-            return TextureFileExist(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString());
+            return TextureFileExist(cifPath, GetNameCifRci(filename, record, frame));
         }
 
         /// <summary>
@@ -166,7 +214,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Image.</returns>
         static public Texture2D LoadCustomCif(string filename, int record, int frame)
         {
-            return ImportTextureFile(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString());
+            return ImportTextureFile(cifPath, GetNameCifRci(filename, record, frame));
         }
 
         /// <summary>
@@ -179,10 +227,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if generic or specific image exists.</returns>
         static public bool CustomCifExist(string filename, int record, int frame, MetalTypes metalType)
         {
-            if (metalType == MetalTypes.None)
-                return CustomCifExist(filename, record, frame);
-
-            return TextureFileExist(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString() + "_" + metalType);
+            return TextureFileExist(cifPath, GetNameCifRci(filename, record, frame, metalType));
         }
 
 
@@ -196,10 +241,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Image for this metalType or generic image if metalType is None.</returns>
         static public Texture2D LoadCustomCif(string filename, int record, int frame, MetalTypes metalType)
         {
-            if (metalType == MetalTypes.None)
-                return LoadCustomCif(filename, record, frame);
-
-            return ImportTextureFile(cifPath, filename + "_" + record.ToString() + "-" + frame.ToString() + "_" + metalType);
+            return ImportTextureFile(cifPath, GetNameCifRci(filename, record, frame, metalType));
         }
 
         /// <summary>
@@ -212,7 +254,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if normal map exists.</returns>
         static public bool CustomNormalExist(int archive, int record, int frame)
         {
-            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MapTags.Normal);
+            return TextureFileExist(texturesPath, GetName(archive, record, frame) + MapTags.Normal);
         }
 
         /// <summary>
@@ -236,7 +278,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Normal map.</returns>
         static public Texture2D LoadCustomNormal(int archive, int record, int frame)
         {
-            return ImportNormalMap(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString());
+            return ImportNormalMap(texturesPath, GetName(archive, record, frame) + MapTags.Normal);
         }
 
         /// <summary>
@@ -247,7 +289,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Normal map.</returns>
         static public Texture2D LoadCustomNormal(string name)
         {
-            return ImportNormalMap(texturesPath, name);
+            return ImportNormalMap(texturesPath, name + MapTags.Normal);
         }
 
         /// <summary>
@@ -260,7 +302,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if emission map exists.</returns>
         static public bool CustomEmissionExist(int archive, int record, int frame)
         {
-            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MapTags.Emission);
+            return TextureFileExist(texturesPath, GetName(archive, record, frame) + MapTags.Emission);
         }
 
         /// <summary>
@@ -284,7 +326,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Emission map.</returns>
         static public Texture2D LoadCustomEmission(int archive, int record, int frame)
         {
-            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MapTags.Emission);
+            return ImportTextureFile(texturesPath, GetName(archive, record, frame) + MapTags.Emission);
         }
 
         /// <summary>
@@ -308,7 +350,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if MetallicGloss map exist.</returns>
         static public bool CustomMetallicGlossExist(int archive, int record, int frame)
         {
-            return TextureFileExist(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MapTags.MetallicGloss);
+            return TextureFileExist(texturesPath, GetName(archive, record, frame) + MapTags.MetallicGloss);
         }
 
         /// <summary>
@@ -332,7 +374,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>MetallicGloss map.</returns>
         static public Texture2D LoadCustomMetallicGloss(int archive, int record, int frame)
         {
-            return ImportTextureFile(texturesPath, archive.ToString() + "_" + record.ToString() + "-" + frame.ToString() + MapTags.MetallicGloss);
+            return ImportTextureFile(texturesPath, GetName(archive, record, frame) + MapTags.MetallicGloss);
         }
 
         /// <summary>
@@ -353,23 +395,28 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         /// <param name="path">Path where image file is located.</param>
         /// <param name="name">Name of image file without extension.</param>
-        static public Texture2D ImportTextureFromDisk(string path, string name)
+        /// <param name="texture">Texture.</param>
+        /// <param name="mapTag">Texture map.</param>
+        static public bool ImportTextureFromDisk (string path, string name, out Texture2D texture, TextureMap map = TextureMap.Albedo)
         {
-            return ImportTextureFile(path, name);
-        }
+            if (File.Exists(Path.Combine(path, name + ".png")))
+            {
+                switch (map)
+                {
+                    case TextureMap.Normal:
+                        texture = ImportNormalMap(path, name);
+                        break;
 
-        /// <summary>
-        /// Import png file from disk as Texture2D.
-        /// </summary>
-        /// <param name="path">Path where image file is located.</param>
-        /// <param name="name">Name of image file without extension.</param>
-        /// <param name="mapTag">Tag for texture map.</param>
-        static public Texture2D ImportTextureFromDisk (string path, string name, string mapTag)
-        {
-            if (mapTag == MapTags.Normal)
-                return ImportNormalMap(path, name);
-            else
-                return ImportTextureFile(path, name + mapTag);
+                    default:
+                        texture = ImportTextureFile(path, name);
+                        break;
+                }
+
+                return true;
+            }
+
+            texture = null;
+            return false;
         }
 
         #endregion
@@ -442,72 +489,147 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         /// <summary>
         /// Replace texture(s) on billboard gameobject.
-        /// This is implemented only for interior and dungeon billboards for now
         /// </summary>
         /// <paran name="go">Billboard gameobject.</param>
         /// <param name="archive">Archive index.</param>
         /// <param name="record">Record index.</param>
         static public void LoadCustomBillboardTexture(GameObject go, int archive, int record)
         {
-            // Get MeshRenderer
-            MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
+            int numberOfFrames;
+            string name = GetName(archive, record);
+            var meshRenderer = go.GetComponent<MeshRenderer>();
+            var daggerfallBillboard = go.GetComponent<DaggerfallBillboard>();
 
-            // UV default values
-            var uv = Vector2.zero;
+            // Check if billboard is emissive
+            bool isEmissive = false;
+            if (meshRenderer.material.GetTexture("_EmissionMap") != null)
+                isEmissive = true;
 
-            // Customize billboard size (scale)
+            // UVs
+            Vector2 uv = Vector2.zero;
+
             if (XMLManager.XmlFileExist(archive, record))
             {
-                // Get name of file
-                string name = GetName(archive, record);
-
-                // Set scale
+                // Customize billboard size (scale)
                 Transform transform = go.GetComponent<Transform>();
                 transform.localScale = XMLManager.GetScale(name, texturesPath, transform.localScale);
-                go.GetComponent<DaggerfallBillboard>().SetCustomSize(archive, record, transform.localScale.y);
+                daggerfallBillboard.SetCustomSize(archive, record, transform.localScale.y);
 
                 // Get UV
                 uv = XMLManager.GetUv(name, texturesPath, uv.x, uv.y);
             }
 
-            // Update UV map
-            MeshFilter meshFilter = go.GetComponent<MeshFilter>();
-            UpdateUV(meshFilter, uv.x, uv.y);
+            // Update UV
+            UpdateUV(go.GetComponent<MeshFilter>(), uv.x, uv.y);
 
-            // Check if billboard is emissive
-            bool isEmissive = false;
-            if (meshRenderer.materials[0].GetTexture("_EmissionMap") != null)
-                isEmissive = true;
-
-            // Import texture(s)
-            Texture2D albedoTexture, emissionMap;
-            LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record);
-
-            // Main texture
-            meshRenderer.materials[0].SetTexture("_MainTex", albedoTexture);
-
-            // Emission maps for lights
-            if (isEmissive)
-                meshRenderer.materials[0].SetTexture("_EmissionMap", emissionMap);
-
-            // Check if billboard is animated
-            int NumberOfFrames = NumberOfAvailableFrames(archive, record);
-            if (NumberOfFrames > 1)
+            // Get material from cache or import from disk
+            MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
+            CachedMaterial cachedMaterialOut;
+            if (materialReader.GetCachedMaterialCustomBillboard(archive, record, 0, out cachedMaterialOut))
             {
-                // Import textures for each frame 
-                go.GetComponent<DaggerfallBillboard>().SetCustomMaterial(archive, record, NumberOfFrames, isEmissive);
+                meshRenderer.material = cachedMaterialOut.material;
+                numberOfFrames = cachedMaterialOut.singleFrameCount;   
             }
+            else
+            {
+                // Import texture(s)
+                Texture2D albedoTexture, emissionMap;
+                LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record);
+
+                // Main texture
+                meshRenderer.material.SetTexture("_MainTex", albedoTexture);
+
+                // Emission maps for lights
+                if (isEmissive)
+                    meshRenderer.material.SetTexture("_EmissionMap", emissionMap);
+
+                // Get number of frames on disk
+                numberOfFrames = NumberOfAvailableFrames(archive, record);
+
+                // Save material in cache
+                CachedMaterial newcm = new CachedMaterial()
+                {
+                    albedoMap = albedoTexture,
+                    emissionMap = emissionMap,
+                    material = meshRenderer.material,
+                    singleFrameCount = numberOfFrames
+                };
+                materialReader.SetCachedMaterialCustomBillboard(archive, record, 0, newcm);
+            }
+
+            // Import textures for each frame if billboard is animated
+            if (numberOfFrames > 1)
+                daggerfallBillboard.SetCustomMaterial(archive, record, numberOfFrames, isEmissive);
         }
 
-        static public void SetupCustomEnemyMaterial(ref MeshRenderer meshRenderer, ref MeshFilter meshFilter, int archive)
+        /// <summary>
+        /// Import and set custom material on Enemy unit.
+        /// </summary>
+        /// <param name="go">Enemy Mobile Unit.</param>
+        /// <param name="archive">Archive which contains all textures except the dead enemy.</param>
+        /// <param name="textures">All textures for this enemy (except dead texture).</param>
+        static public void SetupCustomEnemyMaterial(GameObject go, int archive, out List<List<Texture2D>> textures)
         {
-            // Set Main Texture
-            Texture2D albedoTexture = LoadCustomTexture(archive, 0, 0);
-            albedoTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-            meshRenderer.material.mainTexture = albedoTexture;
+            // This is the first texture set on enemy. Enemies use all custom textures or all vanilla.
+            // If (archive, defaultRecord, defaultFrame) is present on disk all other textures are
+            // considered required, otherwise vanilla textures are used.
+            int record = enemyDefaultRecord, frame = enemyDefaultFrame;
 
             // Update UV map
-            UpdateUV(meshFilter);
+            UpdateUV(go.GetComponent<MeshFilter>());
+
+            // Get default texture from cache or import from disk
+            var meshRenderer = go.GetComponent<MeshRenderer>();
+            MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
+            CachedMaterial cachedMaterialOut;
+            if (materialReader.GetCachedMaterialCustomBillboard(archive, record, frame, out cachedMaterialOut))
+                meshRenderer.material.mainTexture = cachedMaterialOut.albedoMap;
+            else
+            {
+                // Get texture for default frame
+                Texture2D albedoTexture = LoadCustomTexture(archive, record, frame);
+                albedoTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+
+                // Set texture for default frame
+                meshRenderer.material.mainTexture = albedoTexture;
+
+                // Save in cache
+                CachedMaterial newcm = new CachedMaterial()
+                {
+                    albedoMap = albedoTexture,
+                    material = meshRenderer.material
+                };
+                materialReader.SetCachedMaterialCustomBillboard(archive, record, frame, newcm);
+            }
+
+            // Import textures for all records and frames
+            record = 0;
+            textures = new List<List<Texture2D>>();
+            while (CustomTextureExist(archive, record))
+            {
+                frame = 0;
+                List<Texture2D> frameTextures = new List<Texture2D>();
+                while (CustomTextureExist(archive, record, frame))
+                {
+                    if (materialReader.GetCachedMaterialCustomBillboard(archive, record, frame, out cachedMaterialOut))
+                        frameTextures.Add(cachedMaterialOut.albedoMap);
+                    else
+                    {
+                        // Get texture
+                        Texture2D tex = LoadCustomTexture(archive, record, frame);
+                        tex.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                        frameTextures.Add(tex);
+
+                        // Save in cache
+                        CachedMaterial newcm = new CachedMaterial() { albedoMap = tex };
+                        materialReader.SetCachedMaterialCustomBillboard(archive, record, frame, newcm);
+                    }
+
+                    frame++;
+                }
+                textures.Add(frameTextures);
+                record++;
+            }
         }
 
         /// <summary>
@@ -560,6 +682,21 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
+        /// Convert (filename, record, frame) to string name.
+        /// </summary>
+        /// <param name="filename">Name of CIF/RCI file.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for animations.</param>
+        /// <param name="metalType">Metal type of weapon.</param>
+        static public string GetNameCifRci(string filename, int record, int frame, MetalTypes metalType)
+        {
+            if (metalType == MetalTypes.None)
+                return filename + "_" + record.ToString() + "-" + frame.ToString();
+            else
+                return filename + "_" + record.ToString() + "-" + frame.ToString() + "_" + metalType;
+        }
+
+        /// <summary>
         /// Import texture(s) for billboard gameobject for specified frame. 
         /// </summary>
         /// <paran name="isEmissive">True for lights.</param>
@@ -570,24 +707,46 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="frame">Frame index. It's different than zero only for animated billboards.</param>
         static public void LoadCustomBillboardFrameTexture(bool isEmissive, out Texture2D albedoTexture, out Texture2D emissionMap, int archive, int record, int frame = 0)
         {
-            // Main texture
-            albedoTexture = LoadCustomTexture(archive, record, frame);
-            albedoTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-
-            // Emission map
-            if (isEmissive)
+            MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
+            CachedMaterial cachedMaterialOut;
+            if (materialReader.GetCachedMaterialCustomBillboard(archive, record, frame, out cachedMaterialOut))
             {
-                // Import emission map if available on disk
-                if (CustomEmissionExist(archive, record, frame))
-                    emissionMap = LoadCustomEmission(archive, record, frame);
-                // If texture is emissive but no emission map is provided, emits from the whole surface
-                else
-                    emissionMap = albedoTexture;
-
-                emissionMap.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                // Get textures from cache
+                albedoTexture = cachedMaterialOut.albedoMap;
+                emissionMap = cachedMaterialOut.emissionMap;
             }
             else
-                emissionMap = null;
+            {
+                // Import textures from disk
+                // Main texture
+                albedoTexture = LoadCustomTexture(archive, record, frame);
+                albedoTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                // Emission map
+                if (isEmissive)
+                {
+                    // Import emission map if available on disk
+                    if (CustomEmissionExist(archive, record, frame))
+                        emissionMap = LoadCustomEmission(archive, record, frame);
+                    // If texture is emissive but no emission map is provided, emits from the whole surface
+                    else
+                        emissionMap = albedoTexture;
+
+                    emissionMap.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                }
+                else
+                    emissionMap = null;
+
+                if (frame != 0)
+                {
+                    // Save textures in cache
+                    CachedMaterial newcm = new CachedMaterial()
+                    {
+                        albedoMap = albedoTexture,
+                        emissionMap = emissionMap
+                    };
+                    materialReader.SetCachedMaterialCustomBillboard(archive, record, frame, newcm);
+                }
+            }
         }
 
         /// <summary>
@@ -598,7 +757,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="record">Record of texture.</param>
         /// <param name="frame">Frame of texture.</param>
         /// <returns>Vector2 with width and height</returns>
-        static public Vector2 GetSizeFromTexture(Texture2D texture, int archive, int record = 0, int frame = 0)
+        static public Vector2 GetSizeFromTexture(Texture2D texture, int archive, int record, int frame = 0)
         {
             if (CustomTextureExist(archive, record, frame))
             {
@@ -626,6 +785,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
             else
                 return new Vector2(texture.width, texture.height);
+        }
+
+        /// <summary>
+        /// Get custom size or default size of texture.
+        /// </summary>
+        static public Vector2 GetSizeFromXml(Texture2D texture, string textureName, float scaleWidth = 1, float scaleHeight = 1)
+        {
+            if (CustomImageExist(textureName))
+                return XMLManager.GetSize(textureName, imgPath, scaleWidth, scaleHeight);
+            else
+                return new Vector2(texture.width * scaleWidth, texture.height * scaleHeight);
         }
 
         #endregion
@@ -683,7 +853,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, true);
 
             // Load image as Texture2D
-            tex.LoadImage(File.ReadAllBytes(Path.Combine(path, name + MapTags.Normal + ".png")));
+            tex.LoadImage(File.ReadAllBytes(Path.Combine(path, name + ".png")));
 
             if (tex == null)
             {

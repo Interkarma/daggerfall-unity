@@ -36,6 +36,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Path to custom sounds and music on disk.
+        /// </summary>
+        static public string SoundPath
+        {
+            get { return soundPath; }
+            internal set { soundPath = value; }
+        }
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
