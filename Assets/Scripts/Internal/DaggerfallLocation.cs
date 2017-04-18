@@ -244,7 +244,7 @@ namespace DaggerfallWorkshop
 
                     // Custom texture
                     if (Utility.AssetInjection.TextureReplacement.CustomTextureExist(natureArchive, db.Summary.Record))
-                        Utility.AssetInjection.TextureReplacement.LoadCustomBillboardTexture(db.gameObject, natureArchive, db.Summary.Record);
+                        Utility.AssetInjection.TextureReplacement.SetBillboardCustomMaterial(db.gameObject, natureArchive, db.Summary.Record);
                 }
                 else
                 {
@@ -253,7 +253,7 @@ namespace DaggerfallWorkshop
 
                     // Custom texture
                     if (Utility.AssetInjection.TextureReplacement.CustomTextureExist(db.Summary.Archive, db.Summary.Record))
-                        Utility.AssetInjection.TextureReplacement.LoadCustomBillboardTexture(db.gameObject, db.Summary.Archive, db.Summary.Record);
+                        Utility.AssetInjection.TextureReplacement.SetBillboardCustomMaterial(db.gameObject, db.Summary.Archive, db.Summary.Record);
                 }
             }
 
