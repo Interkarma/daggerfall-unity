@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         static public bool XmlFileExist(int archive, int record, int frame = 0)
         {
-            return XmlFileExist(TextureReplacement.GetName(archive, record, frame), TextureReplacement.texturesPath);
+            return XmlFileExist(TextureReplacement.GetName(archive, record, frame), TextureReplacement.TexturesPath);
         }
 
         /// <summary>

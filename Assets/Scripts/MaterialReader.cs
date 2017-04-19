@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop
         public const int MainKeyGroup = 0;
         public const int AtlasKeyGroup = 512;
         public const int TileMapKeyGroup = 1024;
-        //public const int UnusedKeyGroup1 = 1536;
+        public const int CustomBillboardKeyGroup = 1536;
         //public const int UnusedKeyGroup2 = 2048;
         //public const int UnusedKeyGroup3 = 2560;
         //public const int UnusedKeyGroup4 = 3584;
@@ -643,6 +643,39 @@ namespace DaggerfallWorkshop
 
             cachedMaterialOut = new CachedMaterial();
             return false;
+        }
+
+        /// <summary>
+        /// Gets CachedMaterial properties for a billboard with custom material.
+        /// </summary>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="cachedMaterialOut">CachedMaterial out</param>
+        /// <returns>True if CachedMaterial found.</returns>
+        public bool GetCachedMaterialCustomBillboard(int archive, int record, int frame, out CachedMaterial cachedMaterialOut)
+        {
+            int key = MakeTextureKey((short)archive, (byte)record, (byte)frame, CustomBillboardKeyGroup);
+            if (materialDict.ContainsKey(key))
+            {
+                cachedMaterialOut = materialDict[key];
+                return true;
+            }
+
+            cachedMaterialOut = new CachedMaterial();
+            return false;
+        }
+
+        /// <summary>
+        /// Sets CachedMaterial properties for a billboard with custom material.
+        /// </summary>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        public void SetCachedMaterialCustomBillboard(int archive, int record, int frame, CachedMaterial cachedMaterialIn)
+        {
+            int key = MakeTextureKey((short)archive, (byte)record, (byte)frame, CustomBillboardKeyGroup);
+            cachedMaterialIn.key = key;
+            cachedMaterialIn.keyGroup = CustomBillboardKeyGroup;
+            materialDict.Add(key, cachedMaterialIn);
         }
 
         /// <summary>

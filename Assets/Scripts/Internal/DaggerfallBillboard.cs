@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop
                     summary.CurrentFrame++;
 
                     // Original Daggerfall textures
-                    if (!Utility.AssetInjection.TextureReplacement.CustomTextureExist(summary.Archive, summary.Record))
+                    if (!TextureReplacement.CustomTextureExist(summary.Archive, summary.Record))
                     {
                         if (summary.CurrentFrame >= summary.AtlasIndices[summary.Record].frameCount)
                         {
@@ -304,37 +304,17 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Import custom textures for each frame.
+        /// Set custom textures and properties for billboard.
         /// </summary>
-        /// <param name="dfUnity">DaggerfallUnity singleton. Required for content readers and settings.</param>
-        /// <param name="archive">Texture archive index.</param>
-        /// <param name="record">Texture record index.</param>
-        /// <param name="NumberOfFrames">Number of textures present on disk for this record</param>
-        /// <param name="isEmissive">True for lights billboards. Will import emission maps.</param>
-        public void SetCustomMaterial(int archive, int record, int NumberOfFrames, bool isEmissive)
+        public void SetCustomMaterial(TextureReplacement.CustomBillboard customBillboard)
         {
             // Get DaggerfallUnity
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return;
 
-            // Import custom textures for each frame
-            List<Texture2D> albedoTextures = new List<Texture2D>();
-            List<Texture2D> emissionmaps = new List<Texture2D>();
-            Texture2D albedoTexture, emissionMap;
-            for (int frame = 0; frame < NumberOfFrames; frame++)
-            {
-                TextureReplacement.LoadCustomBillboardFrameTexture(isEmissive, out albedoTexture, out emissionMap, archive, record, frame);
-                albedoTextures.Add(albedoTexture);
-                if (isEmissive)
-                    emissionmaps.Add(emissionMap);
-            }
-
             // Save summary
-            summary.CustomBillboard.MainTexture = albedoTextures;
-            summary.CustomBillboard.EmissionMap = emissionmaps;
-            summary.CustomBillboard.isEmissive = isEmissive;
-            summary.CustomBillboard.NumberOfFrames = NumberOfFrames;
+            summary.CustomBillboard = customBillboard;
         }
 
         /// <summary>

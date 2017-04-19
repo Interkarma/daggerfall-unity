@@ -66,10 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (Enabled)
             {
                 base.Update();
-                if (TextureReplacement.CustomImageExist(compassBoxFilename))
-                    Size = XMLManager.GetSize(compassBoxFilename, TextureReplacement.imgPath, Scale.x, Scale.y);
-                else
-                    Size = new Vector2(compassBoxTexture.width * Scale.x, compassBoxTexture.height * Scale.y);
+                Size = TextureReplacement.GetSizeFromXml(compassBoxTexture, compassBoxFilename, Scale.x, Scale.y);
             }
         }
 
@@ -111,35 +108,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect compassBoxRect = new Rect();
             compassBoxRect.x = Position.x;
             compassBoxRect.y = Position.y;
-            if (TextureReplacement.CustomImageExist(compassBoxFilename))
-            {
-                // Get custom size of compass box for custom image
-                Vector2 customSize = XMLManager.GetSize(compassBoxFilename, TextureReplacement.imgPath, Scale.x, Scale.y);
-                compassBoxRect.width = customSize.x;
-                compassBoxRect.height = customSize.y; 
-            }
-            else
-            {
-                // Use default texture with default size
-                compassBoxRect.width = compassBoxTexture.width * Scale.x;
-                compassBoxRect.height = compassBoxTexture.height * Scale.y;
-            }
+
+            Vector2 boxRectSize = TextureReplacement.GetSizeFromXml(compassBoxTexture, compassBoxFilename, Scale.x, Scale.y);
+            compassBoxRect.width = boxRectSize.x;
+            compassBoxRect.height = boxRectSize.y;
 
             // Get compassTexture size
-            float compassTextureWidth, compassTextureHeight;
-            if (TextureReplacement.CustomImageExist(compassFilename))
-            {
-                // Get custom size for custom image
-                Vector2 customSize = XMLManager.GetSize(compassFilename, TextureReplacement.imgPath);
-                compassTextureWidth = customSize.x;
-                compassTextureHeight = customSize.y;
-            }
-            else
-            {
-                // Get default size for default texture
-                compassTextureWidth = (float)compassTexture.width;
-                compassTextureHeight = (float)compassTexture.height;
-            }
+            Vector2 compassTextureSize = TextureReplacement.GetSizeFromXml(compassTexture, compassFilename);
+            float compassTextureWidth = compassTextureSize.x;
+            float compassTextureHeight = compassTextureSize.y;
 
             // Compass strip source
             Rect compassSrcRect = new Rect();
