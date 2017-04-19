@@ -200,10 +200,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Get mod file name string for each loaded mod
         /// </summary>
         /// <returns></returns>
-        public string[] GetAllModNames()
+        public string[] GetAllModFileNames()
         {
-            var selection = from modInfo in GetAllModInfo()
-                            select modInfo.ModFileName;
+            var selection = from mod in Mods
+                            select mod.FileName;
             return selection.ToArray();
 
         }
@@ -321,7 +321,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             var modFiles = Directory.GetFiles(ModDirectory, "*" + MODEXTENSION, SearchOption.AllDirectories);
             var modFileNames = new string[modFiles.Length];
-            var loadedModNames = GetAllModNames();
+            var loadedModNames = GetAllModFileNames();
 
             for (int i = 0; i < modFiles.Length; i++)
             {
@@ -435,7 +435,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     UnloadMod(mod.Title, true);
                     continue;
                 }
-                Debug.Log("ModManager - started loading mod: " + mod.Name);
+                Debug.Log("ModManager - started loading mod: " + mod.Title);
                 mod.CompileSourceToAssemblies();
             }
             Debug.Log("ModManager - init finished.  Mod Count: " + LoadedModCount);
@@ -460,7 +460,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                         if (setupOptions == null)
                         {
-                            Debug.Log("No mod loaders found for mod: " + mods[i].Name);
+                            Debug.Log("No mod loaders found for mod: " + mods[i].Title);
                             continue;
                         }
 

@@ -33,21 +33,36 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public static bool HasSettings(Mod mod)
         {
             // Get path
-            string settingPath = Path.Combine(ModManager.Instance.ModDirectory, mod.Name + ".ini");
+            string settingPath = Path.Combine(mod.DirPath, mod.FileName + ".ini");
 
             // File on disk
             if (File.Exists(settingPath))
                 return true;
 
-            if (mod.AssetBundle.Contains(mod.Name + ".ini.txt"))
+            if (mod.AssetBundle.Contains("modsettings.ini.txt"))
             {
                 // Recreate file on disk using default values
                 IniData defaultSettings = GetDefaultSettings(mod);
                 parser.WriteFile(settingPath, defaultSettings);
                 return true;
             }
-
-            return false;
+            else if (mod.AssetBundle.Contains(mod.Title + ".ini.txt"))
+            {
+                // Recreate file on disk using default values
+                IniData defaultSettings = GetDefaultSettings(mod);
+                parser.WriteFile(settingPath, defaultSettings);
+                return true;
+            }
+            else if(mod.AssetBundle.Contains(mod.FileName + ".ini.txt"))
+            {
+                IniData defaultSettings = GetDefaultSettings(mod);
+                parser.WriteFile(settingPath, defaultSettings);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -57,7 +72,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <returns></returns>
         public static IniData GetSettings(Mod mod, bool getDefaultsAsFallback = true)
         {
-            string path = Path.Combine(ModManager.Instance.ModDirectory, mod.Name + ".ini");
+            string path = Path.Combine(mod.DirPath, mod.FileName + ".ini");
 
             if (File.Exists(path))
                 return parser.ReadFile(path);
@@ -71,7 +86,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             {
                 // Create settings file
                 parser.WriteFile(path, defaultSettings);
-                Debug.Log(mod.Title + ": A new " + mod.Name + ".ini has been recreated with default settings");
+                Debug.Log(mod.Title + ": A new " + mod.FileName + ".ini has been recreated with default settings");
                 return defaultSettings;
             }
             else
@@ -87,10 +102,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public static IniData GetDefaultSettings(Mod mod)
         {
             // Get modName.ini.txt from Mod
-            var iniFile = mod.GetAsset<TextAsset>(mod.Name + ".ini.txt");
-            if (iniFile == null)
+            TextAsset iniFile = null;
+            if (mod.AssetBundle.Contains(mod.Title + ".ini.txt"))
+                iniFile = mod.GetAsset<TextAsset>(mod.Title + ".ini.txt");
+            else if (mod.AssetBundle.Contains("modsettings.ini.txt"))
+                iniFile = mod.GetAsset<TextAsset>("modsettings.ini.txt");
+            else if (mod.AssetBundle.Contains(mod.FileName + ".ini.txt"))
+                iniFile = mod.GetAsset<TextAsset>(mod.FileName + ".ini.txt"); //should not be used, as file name can be changed by user
+            else
             {
-                Debug.LogError("Failed to get default settings from " + mod);
+                Debug.LogError("Failed to get default settings from " + mod.Title);
                 return null;
             }
 
@@ -111,7 +132,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             {
                 if (userSettings[internalSection][settingsVersionKey] != defaultSettings[internalSection][settingsVersionKey])
                 {
-                    parser.WriteFile(Path.Combine(ModManager.Instance.ModDirectory, mod.Name + ".ini"), defaultSettings);
+                    parser.WriteFile(Path.Combine(mod.DirPath, mod.FileName + ".ini"), defaultSettings);
                     userSettings = defaultSettings;
                     Debug.Log("Outdated settings for " + mod.Title +
                         " have been found and replaced with default values from new version.");

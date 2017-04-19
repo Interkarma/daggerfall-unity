@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public ModSettings(Mod mod)
         {
             Mod = mod;
-            path = Path.Combine(ModManager.Instance.ModDirectory, Mod.Name + ".ini");
+            path = Path.Combine(mod.DirPath, Mod.FileName + ".ini");
 
             // Read default settings
             defaultSettings = ModSettingsReader.GetDefaultSettings(Mod);
@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 // Create settings file with default values
                 userSettings = defaultSettings;
                 parser.WriteFile(path, defaultSettings);
-                Debug.Log(Mod.Title + ": failed to read " + path + "." + Mod.Title + ": A new " + Mod.Name 
+                Debug.Log(Mod.Title + ": failed to read " + path + "." + Mod.FileName + ": A new " + Mod.FileName
                     + ".ini has been recreated with default settings");
             }
         }
@@ -112,7 +112,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (int.TryParse(colorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hexColor))
                 return ModSettingsReader.ColorFromString(colorString);
 
-            Debug.LogError(colorString + " from " + Mod.Name + ".ini is not a valid color. Using default color.");
+            Debug.LogError(colorString + " from " + Mod.FileName + ".ini is not a valid color. Using default color.");
             return ModSettingsReader.ColorFromString(defaultSettings[section][name]);
         }
 

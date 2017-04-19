@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         protected override void Setup()
         {
             // Set path
-            path = Path.Combine(ModManager.Instance.ModDirectory, Mod.Name + ".ini");
+            path = Path.Combine(Mod.DirPath, Mod.FileName + ".ini");
 
             // Add panel
             ParentPanel.BackgroundColor = Color.clear;

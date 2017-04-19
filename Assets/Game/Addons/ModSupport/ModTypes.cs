@@ -11,19 +11,11 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
-    public interface IModController
-    {
-        string ModName { get;}
-        bool IsDisableable { get;}
-        void ShowControllerUIWindow();
-    }
-
     //loaded asset - used for lookups w/ mods
     public struct LoadedAsset
     {
@@ -42,19 +34,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     [System.Serializable]
     public class ModInfo
     {
-        public string ModFileName;      //Must be lowercase
         public string ModTitle;         //displayed in game
         public string ModVersion;
         public string ModAuthor;
         public string ContactInfo;
         public string DFUnity_Verion;
         public string ModDescription;
+        public string GUID = "invalid";
         public List<string> Files;      //list of assets to add to mod (only used during creation)
 
         public ModInfo()
         {
             Files = new List<string>();
-            ModFileName = "";
         }
     }
 
@@ -146,4 +137,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     }
 
 
+    public delegate void DFModMessageReceiver(string message, object data, DFModMessageCallback callBack);
+    public delegate void DFModMessageCallback(string message, object data);
 }
