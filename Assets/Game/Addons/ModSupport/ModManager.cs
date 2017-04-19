@@ -171,6 +171,53 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
+        /// Get mod from GUID
+        /// </summary>
+        /// <param name="modGUID"></param>
+        /// <returns></returns>
+        public Mod GetModFromGUID(string modGUID)
+        {
+            if (string.IsNullOrEmpty(modGUID))
+                return null;
+            else if (modGUID == "invalid")
+                return null;
+            else
+            {
+                foreach (var mod in Mods)
+                {
+                    if (mod.GUID == modGUID)
+                        return mod;
+                }
+
+                return null;
+            }
+
+        }
+
+        /// <summary>
+        /// Get mod title from GUID
+        /// </summary>
+        /// <param name="modGUID"></param>
+        /// <returns></returns>
+        public string GetModTitleFromGUID(string modGUID)
+        {
+            if (string.IsNullOrEmpty(modGUID))
+                return null;
+            else if (modGUID == "invalid")
+                return null;
+            else
+            {
+                foreach (var mod in Mods)
+                {
+                    if (mod.GUID == modGUID)
+                        return mod.Title;
+                }
+                return null;
+            }
+
+        }
+
+        /// <summary>
         /// Returns all loaded mods in array
         /// </summary>
         /// <param name="loadOrder">ordered by load priority if true</param>
@@ -217,6 +264,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             var selection = from mod in GetAllMods()
                             where (mod.ModInfo != null)
                             select mod.ModInfo;
+            return selection.ToArray();
+        }
+
+
+        public string[] GetAllModGUID()
+        {
+            var selection = from mod in Mods
+                            where (mod.ModInfo != null && mod.GUID != "invalid")
+                            select mod.ModInfo.GUID;
             return selection.ToArray();
         }
 
@@ -338,7 +394,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 }
 
                 //prevent trying to re-load same asset bundles on refresh
-                if(loadedModNames.Length > 0)
+                if (loadedModNames.Length > 0)
                 {
                     if (loadedModNames.Contains(modFileNames[i]))
                         continue;
@@ -625,6 +681,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
 
+        /// <summary>
+        /// Send data to a mod that has a valid DFModMessageReceiver delegate 
+        /// </summary>
+        /// <param name="modTitle"></param>
+        /// <param name="message"></param>
+        /// <param name="data"></param>
+        /// <param name="callback"></param>
+        public void SendModMessage(string modTitle, string message, object data = null, DFModMessageCallback callback = null)
+        {
+            if (Mods == null || Mods.Count < 1)
+                return;
+            var mod = GetMod(modTitle);
+            if (mod == null || mod.MessageReciver == null)
+                return;
+            else
+                mod.MessageReciver(message, data, callback);
+        }
 
 
 

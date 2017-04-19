@@ -107,6 +107,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 string inPut = File.ReadAllText(currentFilePath);
                 info = (ModInfo)JsonUtility.FromJson(inPut, typeof(ModInfo));
+                if (string.IsNullOrEmpty(info.GUID) || info.GUID == "invalid")
+                    info.GUID = System.Guid.NewGuid().ToString();
             }
             catch(System.Exception ex)
             {
