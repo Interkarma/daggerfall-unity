@@ -297,7 +297,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             modsett.modInfo = mods[i].ModInfo;
             modsett.enabled = mods[i].Enabled;
             modSettings[i] = modsett;
-            modList.AddItem(modsett.modInfo.ModFileName);
+            modList.AddItem(modsett.modInfo.ModTitle);
         }
 
         if (modList.SelectedIndex < 0 || modList.SelectedIndex >= modList.Count)
@@ -340,7 +340,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             modList.SelectedTextColor = Color.red;
 
         // Update buttons
-        if (ModSettingsReader.HasSettings(ModManager.Instance.GetMod(modSettings[modList.SelectedIndex].modInfo.ModTitle)))
+        if (ModManager.Instance.GetMod(ms.modInfo.ModTitle).HasSettings)
         {
             modSettingsButton.Enabled = true;
             showModDescriptionButton.Position = new Vector2(5, 83);

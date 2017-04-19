@@ -83,8 +83,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return false;
             else if (this.modInfo == null)
                 return false;
-            else if (string.IsNullOrEmpty(this.modInfo.ModFileName))
-                return false;
             else if (string.IsNullOrEmpty(this.modInfo.ModTitle))
                 return false;
             else
@@ -109,6 +107,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 string inPut = File.ReadAllText(currentFilePath);
                 info = (ModInfo)JsonUtility.FromJson(inPut, typeof(ModInfo));
+                if (string.IsNullOrEmpty(info.GUID) || info.GUID == "invalid")
+                    info.GUID = System.Guid.NewGuid().ToString();
             }
             catch(System.Exception ex)
             {
@@ -129,9 +129,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 if (GUILayout.Button("Create New Mod"))
                 {
-                    fileOpen = true;
                     modInfo = new ModInfo();
-                    if(modInfo != null)
+                    modInfo.GUID = System.Guid.NewGuid().ToString();
+                    fileOpen = SaveModFile();
+                    //currentFilePath = EditorUtility.SaveFilePanel("", GetTempModDirPath(), "", "dfmod.json");
+                    if (modInfo != null)
                     {
                         modInfo.DFUnity_Verion = VersionInfo.DaggerfallUnityVersion;
                     }
@@ -189,13 +191,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 GUILayoutHelper.Vertical(() =>
                 {
-                    EditorGUILayout.Space();
-
-                    GUILayoutHelper.Horizontal(() =>
-                    {
-                        EditorGUILayout.LabelField(new GUIContent("Mod File Name:"));
-                        modInfo.ModFileName = EditorGUILayout.TextField(modInfo.ModFileName.ToLower(), GUILayout.MinWidth(600));
-                    });
 
                     EditorGUILayout.Space();
 
@@ -245,6 +240,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     {
                         EditorGUILayout.LabelField(new GUIContent("Mod Description:"));
                         modInfo.ModDescription = EditorGUILayout.TextArea(modInfo.ModDescription, GUILayout.MinWidth(600));
+                    });
+
+                    EditorGUILayout.Space();
+
+                    GUILayoutHelper.Horizontal(() =>
+                    {
+                        EditorGUILayout.LabelField(new GUIContent("Mod GUID: "));
+                        EditorGUILayout.LabelField(new GUIContent(modInfo.GUID));
+                        if (GUILayout.Button("Generate New GUID"))
+                            modInfo.GUID = System.Guid.NewGuid().ToString();
+                        //modInfo.ModDescription = EditorGUILayout.TextArea(modInfo.ModDescription, GUILayout.MinWidth(600));
                     });
 
                 });
@@ -328,12 +334,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 if (GUILayout.Button("Save Mod Settings to File"))
                 {
-                    SaveModFile();
+                    SaveModFile(File.Exists(currentFilePath));
                     Debug.Log("got path: " + currentFilePath);
                 }
                 else if (GUILayout.Button("Build Mod"))
                 {
-                    SaveModFile();
+                    SaveModFile(true);
                     BuildMod();
                 }
 
@@ -341,45 +347,40 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
 
-        //create mod info json text asset, add path to file list
-        bool SaveModFile()
+        bool SaveModFile(bool supressWindow = false)
         {
-            try
-            {
-                if (!ModInfoReady)
-                {
-                    Debug.LogError("Error in mod builder - couldn't save mod file");
-                    return false;
-                }
+            string path = currentFilePath;
+            string outPut = JsonUtility.ToJson(modInfo, true);
+            string directory = "";
 
-                string path = GetTempModDirPath(modInfo.ModTitle);
-                string outPut = JsonUtility.ToJson(modInfo, true);
+            if (!supressWindow)
+                path = EditorUtility.SaveFilePanel("Save", GetTempModDirPath(), modInfo.ModTitle, "dfmod.json");
 
-                path = Path.Combine(path, modInfo.ModFileName + ModManager.MODINFOEXTENSION);
-                path = FixSeperatorCharacters(path);
+            Debug.Log("save path: " + path);
+
+            if (!string.IsNullOrEmpty(path))
+                directory = path.Substring(0, path.LastIndexOfAny(new char[] { '\\', '/' }));
+
+            if (Directory.Exists(directory))
                 File.WriteAllText(path, outPut);
-                AssetDatabase.Refresh();
-
-                while (Assets.FindAll(x => x.EndsWith(ModManager.MODINFOEXTENSION)).Count > 0)
-                {
-                    for (int i = 0; i < Assets.Count; i++ )
-                    {
-                        if (Assets[i].EndsWith(ModManager.MODINFOEXTENSION))
-                            Assets.RemoveAt(i);
-                    }
-                }
-
-                //get Asset path
-                path = GetAssetPathFromFilePath(path);
-                Assets.Add(path);
-
-                return true;
-            }
-            catch (Exception ex)
+            else
             {
-                Debug.Log("error saving mod file: " + ex.Message);
+                Debug.LogWarning("Save canceled or failed to save: " + path);
                 return false;
             }
+
+            if (File.Exists(path))
+            {
+                currentFilePath = path;
+                EditorPrefs.SetString("lastModFile", currentFilePath);
+                return true;
+            }
+            else
+            {
+                Debug.LogError("Error saving file to: " + path);
+                return false;
+            }
+
         }
 
         //Add selected assets in editor to File list
@@ -440,33 +441,43 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         bool BuildMod()
         {
             if (!ModInfoReady)
+            {
+                Debug.LogWarning("Not ready to build, canceled.");
                 return false;
+            }
 
             //get destination for mod
-            if(modOutPutPath == null || Directory.Exists(modOutPutPath) == false)
-                modOutPutPath = EditorUtility.SaveFolderPanel("Select Destination,", Application.dataPath, "");
+            //if(modOutPutPath == null || Directory.Exists(modOutPutPath) == false
+            modOutPutPath = (Directory.Exists(modOutPutPath) ? modOutPutPath : Application.dataPath);
+            string modFilePath = EditorUtility.SaveFilePanel("Save", modOutPutPath, modInfo.ModTitle, "dfmod");
 
-            if (!Directory.Exists(modOutPutPath))
+            if (!Directory.Exists(modOutPutPath) || string.IsNullOrEmpty(modFilePath))
             {
+                Debug.LogWarning("Invalid build path");
                 return false;
             }
             else if (Assets == null || Assets.Count < 0)
             {
+                Debug.LogWarning("No assets selected");
                 return false;
             }
+
+            modOutPutPath = modFilePath.Substring(0, modFilePath.LastIndexOfAny(new char[] { '\\', '/'})+1);
 
             //refresh
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
             AssetBundleBuild[] buildMap = new AssetBundleBuild[1];
-            buildMap[0].assetBundleName = modInfo.ModFileName + ".dfmod";
-            buildMap[0].assetBundleVariant = "";                                //TODO
-            List<string> tempAssetPaths = new List<string>(Assets);// Assets;
+            buildMap[0].assetBundleName = modFilePath.Substring(modFilePath.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
+            buildMap[0].assetBundleVariant = "";       //TODO
+            AddAssetToMod(GetAssetPathFromFilePath(currentFilePath));
+            List<string> tempAssetPaths = new List<string>(Assets);
+            
 
             for (int i = 0; i < tempAssetPaths.Count; i++ )
             {
-                string filePath =  Assets[i];// tempAssetPaths[i];
+                string filePath =  Assets[i];
 
                 if(!File.Exists(filePath))
                 {
@@ -480,7 +491,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 //replace c# file with text asset
                 if (filePath.ToLower().EndsWith(".cs"))
                 {
-                    filePath = CreateNewTextAssetFromScript(filePath);
+                    filePath = CopyAsset<TextAsset>(filePath, ".txt");
                     tempAssetPaths[i] = GetAssetPathFromFilePath(filePath);
                 }
                 else if (filePath.ToLower().EndsWith(".prefab"))
@@ -525,7 +536,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
 
-        string CopyAsset<T>(string path) where T : UnityEngine.Object
+        string CopyAsset<T>(string path, string suffix = "") where T : UnityEngine.Object
         {
             T oldAsset = AssetDatabase.LoadAssetAtPath<T>(path);
 
@@ -534,8 +545,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 Debug.LogError("Failed to load asset: " + path);
             }
 
-            string name = path.Substring(path.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
-            string newPath = Path.Combine(GetTempModDirPath(), name);
+            string name = path.Substring(path.LastIndexOfAny(new char[] { '\\', '/' }) + 1) + suffix;
+            string newPath = Path.Combine(GetTempModDirPath(modInfo.ModTitle), name);
             newPath = GetAssetPathFromFilePath(newPath);
 
             if (!AssetDatabase.CopyAsset(path, newPath))
@@ -546,26 +557,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             return newPath;
         } 
-
-
-        string CreateNewTextAssetFromScript(string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath))
-                return null;
-
-            if (!File.Exists(filePath))
-                return null;
-
-            string name = filePath.Substring(filePath.LastIndexOfAny(new char[]{'\\', '/'}) + 1) + ".txt";
-            string newPath = Path.Combine(GetTempModDirPath(), name);
-            string content = File.ReadAllText(filePath);
-
-            File.WriteAllText(newPath, content, System.Text.Encoding.UTF8);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-
-            return newPath;
-        }
 
 
         static string GetAssetPathFromFilePath(string fullPath)
