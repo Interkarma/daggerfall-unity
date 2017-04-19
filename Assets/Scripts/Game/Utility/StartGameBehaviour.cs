@@ -186,6 +186,24 @@ namespace DaggerfallWorkshop.Game.Utility
                     camera.renderingPath = RenderingPath.DeferredLighting;
             }
 
+            // Shadow Resoltion Mode
+            switch (DaggerfallUnity.Settings.ShadowResolutionMode)
+            {
+                case 0:
+                    QualitySettings.shadowResolution = ShadowResolution.Low;
+                    break;
+                case 1:
+                default:
+                    QualitySettings.shadowResolution = ShadowResolution.Medium;
+                    break;
+                case 2:
+                    QualitySettings.shadowResolution = ShadowResolution.High;
+                    break;
+                case 3:
+                    QualitySettings.shadowResolution = ShadowResolution.VeryHigh;
+                    break;
+            }        
+
             // VSync settings
             if (DaggerfallUnity.Settings.VSync)
                 QualitySettings.vSyncCount = 1;
