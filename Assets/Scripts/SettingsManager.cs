@@ -67,6 +67,7 @@ namespace DaggerfallWorkshop
         public bool VSync { get; set; }
         public bool Fullscreen { get; set; }
         public int FieldOfView { get; set; }
+        public int ShadowResolutionMode { get; set; }
         public int MainFilterMode { get; set; }
         public int QualityLevel { get; set; }
         public bool UseLegacyDeferred { get; set; }
@@ -134,6 +135,7 @@ namespace DaggerfallWorkshop
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
             MainFilterMode = GetInt(sectionVideo, "MainFilterMode", 0, 2);
+            ShadowResolutionMode = GetInt(sectionVideo, "ShadowResolutionMode", 0, 3);
             QualityLevel = GetInt(sectionVideo, "QualityLevel", 0, 5);
             UseLegacyDeferred = GetBool(sectionVideo, "UseLegacyDeferred");
             DungeonLightShadows = GetBool(sectionVideo, "DungeonLightShadows");
@@ -182,6 +184,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
             SetInt(sectionVideo, "MainFilterMode", MainFilterMode);
+            SetInt(sectionVideo, "ShadowResolutionMode", ShadowResolutionMode);
             SetInt(sectionVideo, "QualityLevel", QualityLevel);
             SetBool(sectionVideo, "UseLegacyDeferred", UseLegacyDeferred);
             SetBool(sectionVideo, "DungeonLightShadows", DungeonLightShadows);

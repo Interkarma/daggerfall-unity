@@ -10,6 +10,7 @@ Fullscreen=False
 FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
+ShadowResolutionMode=1
 UseLegacyDeferred=False
 DungeonLightShadows=False
 
