@@ -97,7 +97,8 @@ namespace DaggerfallWorkshop
             // Create terrain material
             if (terrainMaterial == null)
             {
-                terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTilemapShaderName));
+                //terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTilemapShaderName));
+                terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTilemapTextureArrayShaderName));
                 UpdateClimateMaterial();
             }
 
@@ -123,15 +124,29 @@ namespace DaggerfallWorkshop
                     groundArchive++;
                 }
 
-                // Get tileset material to "steal" atlas texture for our shader
-                // TODO: Improve material system to handle custom shaders
-                Material tileSetMaterial = dfUnity.MaterialReader.GetTerrainTilesetMaterial(groundArchive);
-                currentWorldClimate = MapData.worldClimate;
+                //// Get tileset material to "steal" atlas texture for our shader
+                //// TODO: Improve material system to handle custom shaders
+                //Material tileSetMaterial = dfUnity.MaterialReader.GetTerrainTilesetMaterial(groundArchive);
+                //currentWorldClimate = MapData.worldClimate;
 
-                // Assign textures
-                terrainMaterial.SetTexture("_TileAtlasTex", tileSetMaterial.GetTexture("_TileAtlasTex"));
-                terrainMaterial.SetTexture("_TilemapTex", tileMapTexture);
-                terrainMaterial.SetInt("_TilemapDim", tilemapDimension);
+                //// Assign textures
+                //terrainMaterial.SetTexture("_TileAtlasTex", tileSetMaterial.GetTexture("_TileAtlasTex"));
+                //terrainMaterial.SetTexture("_TilemapTex", tileMapTexture);
+                //terrainMaterial.SetInt("_TilemapDim", tilemapDimension);
+
+
+                if (SystemInfo.supports2DArrayTextures)
+                {
+                    //Material tileMaterial = dfUnity.MaterialReader.GetTerrainTextureArrayMaterial(groundArchive);
+                    Texture2DArray textureArrayTerrainTiles = dfUnity.MaterialReader.GetTerrainTextureArray(groundArchive);
+                    currentWorldClimate = MapData.worldClimate;
+
+                    // Assign textures
+                    //terrainMaterial.SetTexture("_TileTexArr", tileMaterial.GetTexture("_TileTexArr"));
+                    //terrainMaterial.SetTexture("_MainTex", tileMapTexture);
+                    terrainMaterial.SetTexture("_TileTexArr", textureArrayTerrainTiles);
+                    terrainMaterial.SetTexture("_TilemapTex", tileMapTexture);
+                }
             }
         }
 

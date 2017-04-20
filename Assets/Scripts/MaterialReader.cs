@@ -73,6 +73,7 @@ namespace DaggerfallWorkshop
         // Shader names
         public const string _StandardShaderName = "Standard";
         public const string _DaggerfallTilemapShaderName = "Daggerfall/Tilemap";
+        public const string _DaggerfallTilemapTextureArrayShaderName = "Daggerfall/TilemapTextureArray";
         public const string _DaggerfallBillboardShaderName = "Daggerfall/Billboard";
         public const string _DaggerfallBillboardBatchShaderName = "Daggerfall/BillboardBatch";
 
@@ -563,6 +564,80 @@ namespace DaggerfallWorkshop
             materialDict.Add(key, newcm);
 
             return material;
+        }
+        
+        /// <summary>
+        /// Gets Unity Material from Daggerfall terrain using texture arrays.
+        /// </summary>
+        /// <param name="archive">Archive index.</param>
+        /// <returns>Material or null.</returns>
+        public Material GetTerrainTextureArrayMaterial(int archive)
+        {
+            // Ready check
+            if (!IsReady)
+                return null;
+
+            // Return from cache if present
+            int key = MakeTextureKey((short)archive, (byte)0, (byte)0, TileMapKeyGroup);
+            if (materialDict.ContainsKey(key))
+            {
+                CachedMaterial cm = materialDict[key];
+                if (cm.filterMode == MainFilterMode)
+                {
+                    // Properties are the same
+                    return cm.material;
+                }
+                else
+                {
+                    // Properties don't match, remove material and reload
+                    materialDict.Remove(key);
+                }
+            }
+
+            // Generate texture array
+            // Not currently generating normals as very slow on such a large texture
+            // and results are not very noticeable
+            Texture2DArray textureArrayTerrainTiles = textureReader.GetTerrainTextureArray(archive);
+            textureArrayTerrainTiles.filterMode = MainFilterMode;
+
+            Shader shader = Shader.Find(_DaggerfallTilemapTextureArrayShaderName);
+            Material material = new Material(shader);
+            material.name = string.Format("TEXTURE.{0:000} [TilemapTextureArray]", archive);
+
+            //textureArrayTerrainTiles.filterMode = FilterMode.Point;
+            //material.mainTexture = textureArrayTerrainTiles;
+            //material.mainTexture = textureArrayTerrainTiles as Texture2DArray;
+
+            
+            material.SetTexture("_TileTexArr", textureArrayTerrainTiles);
+            //material.mainTexture = textureArrayTerrainTiles;
+            //material.SetTexture("_TileAtlasTex", results.albedoMap);
+
+            CachedMaterial newcm = new CachedMaterial()
+            {
+                key = key,
+                keyGroup = TileMapKeyGroup,
+                material = material,
+                filterMode = MainFilterMode,
+            };
+            materialDict.Add(key, newcm);
+
+            return material;
+        }
+
+        public Texture2DArray GetTerrainTextureArray(int archive)
+        {
+            // Ready check
+            if (!IsReady)
+                return null;
+
+            // Generate texture array
+            // Not currently generating normals as very slow on such a large texture
+            // and results are not very noticeable
+            Texture2DArray textureArrayTerrainTiles = textureReader.GetTerrainTextureArray(archive);
+            textureArrayTerrainTiles.filterMode = MainFilterMode;
+
+            return textureArrayTerrainTiles;
         }
 
         #endregion
