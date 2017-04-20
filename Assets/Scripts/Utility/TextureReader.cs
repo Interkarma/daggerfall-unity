@@ -653,7 +653,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Change settings for these textures
             textureArray.wrapMode = TextureWrapMode.Clamp;
-            textureArray.anisoLevel = 8;
+            textureArray.anisoLevel = 16;
 
             return textureArray;
         }
