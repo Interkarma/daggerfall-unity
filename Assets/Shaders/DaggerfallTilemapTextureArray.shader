@@ -41,13 +41,13 @@ Shader "Daggerfall/TilemapTextureArray" {
 		int _MaxIndex;
 		int _TilemapDim;
 
-//#if defined(SHADER_API_D3D11) || defined(SHADER_API_XBOXONE) || defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)
-//#define UNITY_SAMPLE_TEX2DARRAY_GRAD(tex,coord,dx,dy) tex.SampleGrad (sampler##tex,coord,dx,dy)
-//#else
-//#if defined(UNITY_COMPILER_HLSL2GLSL) || defined(SHADER_TARGET_SURFACE_ANALYSIS)
-//#define UNITY_SAMPLE_TEX2DARRAY_GRAD(tex,coord,dx,dy) tex2DArray(tex,coord,dx,dy)
-//#endif
-//#endif
+#if defined(SHADER_API_D3D11) || defined(SHADER_API_XBOXONE) || defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)
+#define UNITY_SAMPLE_TEX2DARRAY_GRAD(tex,coord,dx,dy) tex.SampleGrad (sampler##tex,coord,dx,dy)
+#else
+#if defined(UNITY_COMPILER_HLSL2GLSL) || defined(SHADER_TARGET_SURFACE_ANALYSIS)
+#define UNITY_SAMPLE_TEX2DARRAY_GRAD(tex,coord,dx,dy) texCUBEgrad(tex,coord,dx,dy)
+#endif
+#endif
 
 		UNITY_DECLARE_TEX2DARRAY(_TileTexArr);
 
@@ -55,7 +55,6 @@ Shader "Daggerfall/TilemapTextureArray" {
 		{
 			float2 uv_MainTex;
 			//float2 uv_BumpMap;
-			float3 worldPos; // interpolated vertex positions used for correct coast line texturing
 		};
 
 		void surf (Input IN, inout SurfaceOutputStandard o)
@@ -89,41 +88,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 			float3 uv3 = float3(uv, ((uint)index)/4); // compute correct texture array index from index
 			//half4 c = UNITY_SAMPLE_TEX2DARRAY(_TileTexArr, uv3); // ugly seams due to automatic mip map level selection algorithm being confused by our texture coordinate computation
 			//half4 c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 0); // no seems but either blurry or noisy when fixed to a certain level for every distance
-			//half4 c = UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileTexArr, uv3, ddx(uv), ddy(uv)); // (see https://forum.unity3d.com/threads/texture2d-array-mipmap-troubles.416799/) - would like to use, but even though it is mentioned that it "should" work, it does not because of shader errors
-
-			// since there is currently no UNITY_SAMPLE_TEX2DARRAY_GRAD function in unity, this is used as workaround
-			// mip map level is selected manually dependent on fragment's distance from camera
-			float dist = distance(IN.worldPos.xyz, _WorldSpaceCameraPos.xyz);
-			
-			half4 c;
-			if (dist < 10.0f)
-				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 0);
-			else if (dist < 25.0f)
-				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 1);
-			else if (dist < 50.0f)
-				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 2);
-			else if (dist < 125.0f)
-				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 3);
-			else if (dist < 250.0f)
-				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 4);
-			else if (dist < 500.0f)
-				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 5);
-			else if (dist < 1000.0f)
-				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 6);
-			else if (dist < 10000.0f)
-				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 7);
-			else
-				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 8);
-
-			//half4 c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, dist * 0.05f);
-			//half4 c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, exp(dist * 0.008f));
-			//half4 c = UNITY_SAMPLE_TEX2DARRAY(_TileTexArr, uv3);
-
-			//half4 c;
-			//if (dist < 10.0f)
-			//c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 0);
-			//else
-			//c = UNITY_SAMPLE_TEX2DARRAY(_TileTexArr, uv3);
+			half4 c = UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileTexArr, uv3, ddx(uv3), ddy(uv3)); // (see https://forum.unity3d.com/threads/texture2d-array-mipmap-troubles.416799/) - would like to use, but even though it is mentioned that it "should" work, it does not because of shader errors
 
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
