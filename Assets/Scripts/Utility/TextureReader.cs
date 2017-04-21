@@ -609,7 +609,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="archive">Archive index.</param>
         /// <param name="stayReadable">Texture should stay readable.</param>
         /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
-        /// <returns></returns>
+        /// <returns>Texture2DArray or null</returns>
         public Texture2DArray GetTerrainTextureArray(
             int archive,
             bool stayReadable = false,
@@ -620,40 +620,30 @@ namespace DaggerfallWorkshop.Utility
             int numSlices = 0;
             if (textureFile.RecordCount == 56)
             {
-                numSlices = textureFile.RecordCount * 4; // all 4 rotations (normal, rotated, flipped, flip-rotated)
+                numSlices = textureFile.RecordCount; // *4; // all 4 rotations (normal, rotated, flipped, flip-rotated)
             }
             else
             {
-                return new Texture2DArray(64, 64, 0, ParseTextureFormat(nonAlphaFormat), MipMaps);
+                return null;
             }
 
             Texture2DArray textureArray = new Texture2DArray(64, 64, numSlices, ParseTextureFormat(nonAlphaFormat), MipMaps);
 
             // Rollout tiles into texture array
-            int indexSlice = 0;
-            Color32[] tileColors = new Color32[64 * 64];
             for (int record = 0; record < textureFile.RecordCount; record++)
             {
                 // Create base image with gutter
                 DFSize sz;
                 Color32[] albedo = textureFile.GetColor32(record, 0, -1, 0, out sz);
 
-                // Create variants
-                Color32[] rotate = ImageProcessing.RotateColors(ref albedo, sz.Width, sz.Height);
-                Color32[] flip = ImageProcessing.FlipColors(ref albedo, sz.Width, sz.Height);
-                Color32[] rotateFlip = ImageProcessing.RotateColors(ref flip, sz.Width, sz.Height);
-
                 // Insert into texture array
-                textureArray.SetPixels32(albedo, indexSlice++, 0);
-                textureArray.SetPixels32(rotate, indexSlice++, 0);
-                textureArray.SetPixels32(flip, indexSlice++, 0);
-                textureArray.SetPixels32(rotateFlip, indexSlice++, 0);
+                textureArray.SetPixels32(albedo, record, 0);
             }
             textureArray.Apply(true, !stayReadable);
 
             // Change settings for these textures
             textureArray.wrapMode = TextureWrapMode.Clamp;
-            textureArray.anisoLevel = 16;
+            textureArray.anisoLevel = 8;
 
             return textureArray;
         }
