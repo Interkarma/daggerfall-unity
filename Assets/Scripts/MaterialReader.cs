@@ -625,21 +625,6 @@ namespace DaggerfallWorkshop
             return material;
         }
 
-        public Texture2DArray GetTerrainTextureArray(int archive)
-        {
-            // Ready check
-            if (!IsReady)
-                return null;
-
-            // Generate texture array
-            // Not currently generating normals as very slow on such a large texture
-            // and results are not very noticeable
-            Texture2DArray textureArrayTerrainTiles = textureReader.GetTerrainTextureArray(archive);
-            textureArrayTerrainTiles.filterMode = MainFilterMode;
-
-            return textureArrayTerrainTiles;
-        }
-
         #endregion
 
         #region Support
