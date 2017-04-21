@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -53,7 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             nativeTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
 
             // Setup spinner panel
-            Size = new Vector2(nativeTexture.width, nativeTexture.height);
+            Size = TextureReplacement.GetSizeFromTexture(nativeTexture, nativeImgName);
             backgroundTexture = nativeTexture;
 
             // Add up/down buttons
