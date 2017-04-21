@@ -88,7 +88,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 			float3 uv3 = float3(uv, ((uint)index)/4); // compute correct texture array index from index
 			//half4 c = UNITY_SAMPLE_TEX2DARRAY(_TileTexArr, uv3); // ugly seams due to automatic mip map level selection algorithm being confused by our texture coordinate computation
 			//half4 c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 0); // no seems but either blurry or noisy when fixed to a certain level for every distance
-			half4 c = UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileTexArr, uv3, ddx(uv3), ddy(uv3)); // (see https://forum.unity3d.com/threads/texture2d-array-mipmap-troubles.416799/) - would like to use, but even though it is mentioned that it "should" work, it does not because of shader errors
+			half4 c = UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileTexArr, uv3, ddx(uv3), ddy(uv3)); // (see https://forum.unity3d.com/threads/texture2d-array-mipmap-troubles.416799/)
 
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
