@@ -95,7 +95,29 @@ Shader "Daggerfall/TilemapTextureArray" {
 			// mip map level is selected manually dependent on fragment's distance from camera
 			float dist = distance(IN.worldPos.xyz, _WorldSpaceCameraPos.xyz);
 			
-			half4 c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, dist * 0.05f);
+			half4 c;
+			if (dist < 10.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 0);
+			else if (dist < 25.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 1);
+			else if (dist < 50.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 2);
+			else if (dist < 125.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 3);
+			else if (dist < 250.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 4);
+			else if (dist < 500.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 5);
+			else if (dist < 1000.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 6);
+			else if (dist < 10000.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 7);
+			else
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 8);
+
+			//half4 c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, dist * 0.05f);
+			//half4 c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, exp(dist * 0.008f));
+			//half4 c = UNITY_SAMPLE_TEX2DARRAY(_TileTexArr, uv3);
 
 			//half4 c;
 			//if (dist < 10.0f)
