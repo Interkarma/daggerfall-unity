@@ -9,11 +9,7 @@
 // Notes:
 //
 
-using System.IO;
-using System.Collections;
 using UnityEngine;
-using DaggerfallWorkshop.Game;
-using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -34,15 +30,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Play custom video with specified name.
+        /// Play specified video.
         /// </summary>
-        /// <param name="name">Name of video.</param>
-        public void PlayVideo (string name)
+        /// <param name="movieTexture">Video.</param>
+        public void PlayVideo (MovieTexture video)
         {
             Playing = true;
 
-            // Import video
-            movieTexture = VideoReplacement.GetVideo(name);
+            // Set filtermode
+            movieTexture = video;
             movieTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.VideoFilterMode;
 
             // Get audio

@@ -8,10 +8,16 @@
 // 
 // Notes:           Uses AssetBundle instead of www.movie because of this:
 //                  (https://issuetracker.unity3d.com/issues/calling-www-dot-movie-fails-to-load-and-prints-error-loadmovedata-got-null)
+//                  Use WWWAudioExtensions.GetMovieTexture in Unity 5.6
 //
 
-using System.IO;
+/*
+ * TODO:
+ * - Import videos from disk (see Notes).
+ */
+
 using UnityEngine;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -21,44 +27,30 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// </summary>
     static public class VideoReplacement
     {
-        static public string videosPath = Path.Combine(Application.streamingAssetsPath, "Videos");
-        const string extension = ".dfvideo";
-        const string fileExtension = ".ogg";
-
         /// <summary>
-        /// Check if video file exist on disk.
+        /// Import custom video from mods.
         /// </summary>
-        /// <param name="name">Name of sound file.</param>
-        static public bool CustomVideoExist(string name)
+        /// <param name="name">Name of video.</param>
+        static public bool ImportCustomVideo(string name, out MovieTexture video)
         {
-            name = name.Replace(".VID", extension);
+            if (DaggerfallUnity.Settings.MeshAndTextureReplacement)
+            {
+                Mod[] mods = ModManager.Instance.GetAllMods(true);
+                for (int i = mods.Length; i-- > 0;)
+                {
+                    if (mods[i].AssetBundle.Contains(name))
+                    {
+                        video = mods[i].GetAsset<MovieTexture>(name, true);
+                        if (video != null)
+                            return true;
 
-            if (DaggerfallUnity.Settings.MeshAndTextureReplacement
-                && File.Exists(Path.Combine(videosPath, name)))
-                return true;
+                        Debug.LogError("Failed to import " + name + " from " + mods[i].Title + " as MovieTexture.");
+                    }
+                }
+            }
 
+            video = null;
             return false;
-        }
-
-        /// <summary>
-        /// Get Video.
-        /// </summary>
-        /// <param name="name">Name of sound file.</param>
-        /// <returns>New WWW object</returns>
-        static public MovieTexture GetVideo(string name)
-        {
-            // Get AssetBundle
-            name = name.Replace(".VID", extension);
-            string path = Path.Combine(videosPath, name);
-            var loadedAssetBundle = AssetBundle.LoadFromFile(path);
-
-            // Get MovieTexture
-            name = name.Replace(extension, fileExtension);
-            if ((loadedAssetBundle != null) && (loadedAssetBundle.Contains(name)))
-                return loadedAssetBundle.LoadAsset<MovieTexture>(name);
-
-            Debug.LogError(string.Format("File {0} from {1} is corrupted", name, videosPath));
-            return null;
         }
     }
 }
