@@ -47,8 +47,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         // Paths
         static private string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
-        static private string imgPath = Path.Combine(texturesPath, "img");
-        static private string cifPath = Path.Combine(texturesPath, "cif");
+        static private string imgPath = Path.Combine(texturesPath, "Img");
+        static private string cifPath = Path.Combine(texturesPath, "CifRci");
 
         /// <summary>
         /// Common tags for textures maps.
