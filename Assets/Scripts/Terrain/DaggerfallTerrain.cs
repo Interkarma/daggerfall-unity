@@ -30,6 +30,8 @@ namespace DaggerfallWorkshop
     [RequireComponent(typeof(TerrainCollider))]
     public class DaggerfallTerrain : MonoBehaviour
     {
+        public static bool enableTextureArrays = true;
+
         // Settings are tuned for Daggerfall and fast procedural layout
         const int tilemapDimension = MapsFile.WorldMapTileDim;
         const int resolutionPerPatch = 16;
@@ -97,7 +99,7 @@ namespace DaggerfallWorkshop
             // Create terrain material
             if (terrainMaterial == null)
             {
-                if (SystemInfo.supports2DArrayTextures)
+                if ((SystemInfo.supports2DArrayTextures) && enableTextureArrays)
                 {
                     terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTilemapTextureArrayShaderName));
                 }
@@ -130,7 +132,7 @@ namespace DaggerfallWorkshop
                     groundArchive++;
                 }
 
-                if (SystemInfo.supports2DArrayTextures)
+                if ((SystemInfo.supports2DArrayTextures) && enableTextureArrays)
                 {
                     Material tileMaterial = dfUnity.MaterialReader.GetTerrainTextureArrayMaterial(groundArchive);
                     currentWorldClimate = MapData.worldClimate;
