@@ -96,7 +96,7 @@ namespace DaggerfallWorkshop
 
             // Create terrain material
             if (terrainMaterial == null)
-            {                
+            {
                 if (SystemInfo.supports2DArrayTextures)
                 {
                     terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTilemapTextureArrayShaderName));
@@ -137,6 +137,7 @@ namespace DaggerfallWorkshop
 
                     // Assign textures
                     terrainMaterial.SetTexture("_TileTexArr", tileMaterial.GetTexture("_TileTexArr"));
+                    terrainMaterial.SetTexture("_TileMetallicGlossMapTexArr", tileMaterial.GetTexture("_TileMetallicGlossMapTexArr"));
                     terrainMaterial.SetTexture("_TilemapTex", tileMapTexture);
                 }
                 else

@@ -21,6 +21,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 
 		// These params are used for our shader
 		_TileTexArr("Tile Texture Array", 2DArray) = "" {}
+		_TileMetallicGlossMapTexArr ("Tileset MetallicGlossMap Texture Array (RGBA)", 2DArray) = "" {}
 		_TilemapTex("Tilemap (R)", 2D) = "red" {}
 		//_BumpMap("Normal Map", 2D) = "bump" {} // activating _BumpMap gives a warning in unity inspector for that shader/material
 		_TilemapDim("Tilemap Dimension (in tiles)", Int) = 128
@@ -36,6 +37,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 		#pragma surface surf Standard
 		#pragma glsl
 
+		UNITY_DECLARE_TEX2DARRAY(_TileTexArr);
 		sampler2D _TilemapTex;
 		sampler2D _BumpMap;
 		int _MaxIndex;
@@ -49,12 +51,11 @@ Shader "Daggerfall/TilemapTextureArray" {
 #endif
 #endif
 
-		UNITY_DECLARE_TEX2DARRAY(_TileTexArr);
-
 		struct Input
 		{
 			float2 uv_MainTex;
 			//float2 uv_BumpMap;
+			float3 worldPos;
 		};
 
 		void surf (Input IN, inout SurfaceOutputStandard o)
@@ -86,7 +87,32 @@ Shader "Daggerfall/TilemapTextureArray" {
 
 			// Sample based on gradient and set output
 			float3 uv3 = float3(uv, ((uint)index)/4); // compute correct texture array index from index
-			half4 c = UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileTexArr, uv3, ddx(uv3), ddy(uv3)); // (see https://forum.unity3d.com/threads/texture2d-array-mipmap-troubles.416799/)
+			
+			//half4 c = UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileTexArr, uv3, ddx(uv3), ddy(uv3)); // (see https://forum.unity3d.com/threads/texture2d-array-mipmap-troubles.416799/)
+
+			// since there is currently no UNITY_SAMPLE_TEX2DARRAY_GRAD function in unity, this is used as workaround
+			// mip map level is selected manually dependent on fragment's distance from camera
+			float dist = distance(IN.worldPos.xyz, _WorldSpaceCameraPos.xyz);
+			
+			half4 c;
+			if (dist < 10.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 0);
+			else if (dist < 25.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 1);
+			else if (dist < 50.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 2);
+			else if (dist < 125.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 3);
+			else if (dist < 250.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 4);
+			else if (dist < 500.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 5);
+			else if (dist < 1000.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 6);
+			else if (dist < 10000.0f)
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 7);
+			else
+				c = UNITY_SAMPLE_TEX2DARRAY_LOD(_TileTexArr, uv3, 8);
 
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;

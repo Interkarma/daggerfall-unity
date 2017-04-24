@@ -466,6 +466,7 @@ namespace DaggerfallWorkshop
             // Setup material
             material.name = string.Format("TEXTURE.{0:000} [Atlas]", archive);
             GetTextureResults results = textureReader.GetTexture2DAtlas(settings, AlphaTextureFormat, NonAlphaTextureFormat);
+
             material.mainTexture = results.albedoMap;
             material.mainTexture.filterMode = MainFilterMode;
 
@@ -547,6 +548,7 @@ namespace DaggerfallWorkshop
             // Not currently generating normals as very slow on such a large texture
             // and results are not very noticeable
             GetTextureResults results = textureReader.GetTerrainTilesetTexture(archive);
+
             results.albedoMap.filterMode = MainFilterMode;
 
             Shader shader = Shader.Find(_DaggerfallTilemapShaderName);
@@ -597,7 +599,8 @@ namespace DaggerfallWorkshop
             // Generate texture array
             // Not currently generating normals as very slow on such a large texture
             // and results are not very noticeable
-            Texture2DArray textureArrayTerrainTiles = textureReader.GetTerrainTextureArray(archive);
+            Texture2DArray textureArrayTerrainTiles = textureReader.GetTerrainAlbedoTextureArray(archive);
+            Texture2DArray textureArrayTerrainTilesMetallicGloss = textureReader.GetTerrainMetallicGlossTextureArray(archive);
             textureArrayTerrainTiles.filterMode = MainFilterMode;
 
             Shader shader = Shader.Find(_DaggerfallTilemapTextureArrayShaderName);
@@ -612,6 +615,7 @@ namespace DaggerfallWorkshop
             material.SetTexture("_TileTexArr", textureArrayTerrainTiles);
             //material.mainTexture = textureArrayTerrainTiles;
             //material.SetTexture("_TileAtlasTex", results.albedoMap);
+            material.SetTexture("_TileMetallicGlossMapTexArr", textureArrayTerrainTilesMetallicGloss);
 
             CachedMaterial newcm = new CachedMaterial()
             {
