@@ -1,4 +1,4 @@
-// Project:         Daggerfall Tools For Unity
+﻿// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -17,6 +17,7 @@
  * 3. Terrain textures (Texture arrays)
  */
 
+using System;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
@@ -434,7 +435,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public void LoadCustomTextureResults(int archive, int record, int frame, ref GetTextureResults results, ref bool GenerateNormals)
         {
             // Main texture
-            results.albedoMap = LoadCustomTexture(archive, record, frame);
+            if (CustomTextureExist(archive, record, frame))
+            {
+                results.albedoMap = LoadCustomTexture(archive, record, frame);
+            }
 
             // Normal map
             if (CustomNormalExist(archive, record, frame))
@@ -448,10 +452,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // non-window use the main texture as emission, unless a custom map is provided
             if (results.isEmissive)
             {
-                if (CustomEmissionExist(archive, record, frame)) //import emission texture
+                if (CustomEmissionExist(archive, record, frame))
+                {
+                    // Import emission texture
                     results.emissionMap = LoadCustomEmission(archive, record, frame);
-                else if (!results.isWindow) //reuse albedo map for basic colour emission
+                }
+                else if (!results.isWindow && CustomTextureExist(archive, record, frame)) 
+                {
+                    // Reuse albedo map for basic colour emission
                     results.emissionMap = results.albedoMap;
+                }
+            }
+            else if (CustomEmissionExist(archive, record, frame))
+            {
+                // Force emission map
+                results.emissionMap = LoadCustomEmission(archive, record, frame);
+                results.isEmissive = true;
+                results.isWindow = false;
             }
         }
 
@@ -719,7 +736,30 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="frame">Frame index. It's different than zero only for animations.</param>
         static public string GetName (int archive, int record, int frame = 0)
         {
-            return archive.ToString() + "_" + record.ToString() + "-" + frame.ToString();
+            return archive.ToString("D3") + "_" + record.ToString() + "-" + frame.ToString();
+        }
+
+        /// <summary>
+        /// Get archive and record from "archive_record-0" string.
+        /// </summary>
+        /// <param name="name">"archive_record-frame string."</param>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <returns>True if texture is a Daggerfall texture.</returns>
+        static public bool IsDaggerfallTexture(string name, out int archive, out int record)
+        {
+            if ((name[3] == '_') && name.EndsWith("-0", StringComparison.CurrentCulture))
+            {
+                if (Int32.TryParse(name.Substring(0, 3), out archive))
+                {
+                    if ((name[5] == '-' && Int32.TryParse(name.Substring(4, 1), out record)) ||
+                            (name[6] == '-' && Int32.TryParse(name.Substring(4, 2), out record)))
+                        return true;
+                }
+            }
+
+            archive = record = -1;
+            return false;
         }
 
         /// <summary>
@@ -743,40 +783,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static public string GetNameCifRci(string filename, int record, int frame, MetalTypes metalType)
         {
             if (metalType == MetalTypes.None)
-                return filename + "_" + record.ToString() + "-" + frame.ToString();
+                return GetNameCifRci(filename, record, frame);
             else
-                return filename + "_" + record.ToString() + "-" + frame.ToString() + "_" + metalType;
-        }
-
-        /// <summary>
-        /// Import textures from disk for billboard gameobject for specified frame. 
-        /// </summary>
-        /// <paran name="isEmissive">True for lights.</param>
-        /// <paran name="albedoTexture">Main texture for this frame.</param>
-        /// <paran name="emissionMap">Eventual Emission map for this frame.</param>
-        /// <param name="archive">Archive index.</param>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index. It's different than zero only for animated billboards.</param>
-        static public void LoadCustomBillboardFrameTexture(bool isEmissive, out Texture2D albedoTexture, out Texture2D emissionMap, int archive, int record, int frame = 0)
-        {
-            // Main texture
-            albedoTexture = LoadCustomTexture(archive, record, frame);
-            albedoTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-
-            // Emission map
-            if (isEmissive)
-            {
-                // Import emission map if available on disk
-                if (CustomEmissionExist(archive, record, frame))
-                    emissionMap = LoadCustomEmission(archive, record, frame);
-                // If texture is emissive but no emission map is provided, emits from the whole surface
-                else
-                    emissionMap = albedoTexture;
-
-                emissionMap.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-            }
-            else
-                emissionMap = null;
+                return GetNameCifRci(filename, record, frame) + "_" + metalType;
         }
 
         /// <summary>
@@ -931,6 +940,43 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 frames++;
             }
             return frames;
+        }
+
+        /// <summary>
+        /// Import textures from disk for billboard gameobject for specified frame. 
+        /// </summary>
+        /// <paran name="isEmissive">True for lights.</param>
+        /// <paran name="albedoTexture">Main texture for this frame.</param>
+        /// <paran name="emissionMap">Eventual Emission map for this frame.</param>
+        /// <param name="archive">Archive index.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Frame index. It's different than zero only for animated billboards.</param>
+        static private void LoadCustomBillboardFrameTexture(
+            bool isEmissive, 
+            out Texture2D albedoTexture, 
+            out Texture2D emissionMap, 
+            int archive, 
+            int record, 
+            int frame = 0)
+        {
+            // Main texture
+            albedoTexture = LoadCustomTexture(archive, record, frame);
+            albedoTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+
+            // Emission map
+            if (isEmissive)
+            {
+                // Import emission map if available on disk
+                if (CustomEmissionExist(archive, record, frame))
+                    emissionMap = LoadCustomEmission(archive, record, frame);
+                // If texture is emissive but no emission map is provided, emits from the whole surface
+                else
+                    emissionMap = albedoTexture;
+
+                emissionMap.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+            }
+            else
+                emissionMap = null;
         }
 
         #endregion
