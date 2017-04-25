@@ -176,6 +176,28 @@ namespace DaggerfallWorkshop.Game.Questing
             triggered = false;
         }
 
+        /// <summary>
+        /// Add action to task
+        /// </summary>
+        /// <param name="questAction">Action</param>
+        public void AddQuestAction(IQuestAction questAction)
+        {
+            if (questAction != null && this.actions.Contains(questAction) == false)
+                actions.Add(questAction);
+        }
+
+        /// <summary>
+        /// Adds actions from existing task
+        /// </summary>
+        /// <param name="other"></param>
+        public void CopyQuestActions(Task other)
+        {
+            foreach (var action in other.actions)
+            {
+                this.actions.Add(action);
+            }
+        }
+
         #endregion
 
         #region Private Method
