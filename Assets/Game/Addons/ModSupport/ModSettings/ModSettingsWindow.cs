@@ -29,18 +29,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         // UI Controls
         Panel modSettingsPanel        = new Panel();
+        DaggerfallListPickerWindow presetPicker;
         const int elementsForColumn = 19;
         const int spacing = 8;
+        const int startX = 10;
         const int startY = 6;
-        int x = 10;
+        int x = startX;
         int y = startY;
 
         // Fields
         string path;
         IniData data;
+        IniData defaultSettings;
         FileIniDataParser parser      = new FileIniDataParser();
         List<TextBox> modTextBoxes    = new List<TextBox>();
         List<Checkbox> modCheckboxes  = new List<Checkbox>();
+        int currentPresetIndex;
+        List<IniData> presets         = new List<IniData>();
 
         // Colors
         Color panelBackgroundColor    = new Color(0, 0, 0, 0.7f);
@@ -54,12 +59,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         #region Setup
 
         /// <summary>
-        /// Setup.
+        /// Setup the panel.
         /// </summary>
         protected override void Setup()
         {
             // Set path
             path = Path.Combine(Mod.DirPath, Mod.FileName + ".ini");
+
+            // Default settings
+            defaultSettings = ModSettingsReader.GetDefaultSettings(Mod);
+
+            // Presets
+            presets = ModSettingsReader.GetPresets(Mod);
 
             // Add panel
             ParentPanel.BackgroundColor = Color.clear;
@@ -69,7 +80,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             modSettingsPanel.Position = new Vector2(0, 8);
             modSettingsPanel.Size = new Vector2(320, 175);
             NativePanel.Components.Add(modSettingsPanel);
+            InitPanel();
+        }
 
+        /// <summary>
+        /// Add components to panel.
+        /// </summary>
+        private void InitPanel()
+        {
             // Add title
             TextLabel titleLabel = new TextLabel();
             titleLabel.Text = Mod.Title + " settings";
@@ -91,6 +109,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             // Cancel button
             Button cancelButton = GetButton("Cancel", HorizontalAlignment.Right, cancelButtonColor);
             cancelButton.OnMouseClick += CancelButton_OnMouseClick;
+
+            // Presets button
+            if (presets.Count > 0)
+            {
+                Button presetButton = GetButton("Presets", HorizontalAlignment.Right, saveButtonColor);
+                presetButton.VerticalAlignment = VerticalAlignment.Top;
+                presetButton.Size = new Vector2(35, 9);
+                presetButton.OnMouseClick += PresetButton_OnMouseClick;
+            }
         }
 
         #endregion
@@ -104,7 +131,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             // Read file
             data = parser.ReadFile(path);
-            ModSettingsReader.UpdateSettings(ref data, ModSettingsReader.GetDefaultSettings(Mod), Mod);
+            ModSettingsReader.UpdateSettings(ref data, defaultSettings, Mod);
 
             // Read settings
             int numberOfElements = 0;
@@ -261,6 +288,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             modCheckboxes.Add(checkbox);
         }
 
+        /// <summary>
+        /// Remove all components and initialize the window again.
+        /// </summary>
+        private void RestartSettingsWindow()
+        {
+            modSettingsPanel.Components.Clear();
+
+            modTextBoxes.Clear();
+            modCheckboxes.Clear();
+
+            x = startX;
+            y = startY;
+
+            InitPanel();
+        }
+
         #endregion
 
         #region Event Handlers
@@ -304,12 +347,151 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 // Get and save default settings
-                IniData defaultSettings = ModSettingsReader.GetDefaultSettings(Mod);
                 parser.WriteFile(path, defaultSettings);
 
-                // Close settings window
+                // Restart settings window
                 CloseWindow();
-                DaggerfallUI.UIManager.PopWindow();
+                RestartSettingsWindow();
+            }
+            else
+                CloseWindow();
+        }
+
+        /// <summary>
+        /// Open preset listbox on preset button.
+        /// </summary>
+        private void PresetButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // Create presets listbox
+            presetPicker = new DaggerfallListPickerWindow(uiManager, this);
+            presetPicker.ListBox.MaxCharacters = 30;
+            presetPicker.OnItemPicked += HandlePresetPickEvent;
+
+            foreach (IniData presetData in presets)
+            {
+                string presetName;
+
+                try
+                {
+                    var section = presetData[ModSettingsReader.internalSection];
+
+                    // Get Name
+                    string name = section["PresetName"];
+                    if (name != null)
+                    {
+                        presetName = name;
+                    }
+                    else
+                    {
+                        presetName = "Unknown preset";
+                        Debug.LogError("A preset for mod " + Mod.Title + " is missing the key 'PresetName'");
+                    }
+
+                    // Get Author (if present)
+                    string author = section["PresetAuthor"];
+                    if (author != null)
+                    {
+                        presetName += " by " + author;
+                    }
+
+                    // Check Version
+                    string presetVersion = section["SettingsVersion"];
+                    string settingsVersion = data[ModSettingsReader.internalSection]["SettingsVersion"];
+                    if (presetVersion == null)
+                    {
+                        presetName = "[?] " + presetName;
+                        Debug.LogError("Preset " + presetName + " for mod " + Mod.Title + " is missing the key 'SettingsVersion'");
+                    }
+                    else if (presetVersion != settingsVersion)
+                    {
+                        presetName = "[!] " + presetName;
+                        Debug.Log("Preset " + presetName + " was made for version " + presetVersion + " but " + 
+                            Mod.Title + " has settings version " + settingsVersion);
+                    }
+                }
+                catch
+                {
+                    presetName = "[Unknown preset]";
+                    Debug.LogError("Failed to read the header from a preset for mod " + Mod.Title);
+                }
+
+                if (presetName.Length > 30)
+                {
+                    presetName = presetName.Substring(0, 27);
+                    presetName += "...";
+                }
+
+                // Add preset to listbox
+                presetPicker.ListBox.AddItem(presetName);
+            }
+
+            uiManager.PushWindow(presetPicker); 
+        }
+
+        /// <summary>
+        /// preset confirmation.
+        /// </summary>
+        /// <param name="index">Preset index.</param>
+        /// <param name="preset">Preset name.</param>
+        private void HandlePresetPickEvent (int index, string preset)
+        {
+            // Selected preset
+            currentPresetIndex = index;
+
+            // Open confirmation message box
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+            string message = "Import settings from " + preset + " ?";
+            try
+            {
+                string description = presets[currentPresetIndex][ModSettingsReader.internalSection]["Description"];
+                if (description != null)
+                {
+                    messageBox.SetText(description, "", message);
+                }
+                else
+                {
+                    messageBox.SetText(message);
+                }
+            }
+            catch
+            {
+                messageBox.SetText(message);
+            }
+            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Cancel);
+            messageBox.OnButtonClick += ConfirmPreset_OnButtonClick;
+            uiManager.PushWindow(messageBox);
+        }
+
+        /// <summary>
+        /// Apply selected preset.
+        /// </summary>
+        private void ConfirmPreset_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                // Save current settings
+                SaveSettings();
+                data = parser.ReadFile(path);
+
+                // Confront current settings and preset
+                IniData presetData = presets[currentPresetIndex];
+                foreach (SectionData section in presetData.Sections)
+                {
+                    if (section.SectionName == ModSettingsReader.internalSection)
+                        continue;
+
+                    foreach (KeyData key in section.Keys)
+                    {
+                        data[section.SectionName][key.KeyName] = presetData[section.SectionName][key.KeyName];
+                    }
+                }
+
+                // Save changes and restart window
+                parser.WriteFile(path, data);
+                CloseWindow();
+                presetPicker.CloseWindow();
+                RestartSettingsWindow();
             }
             else
                 CloseWindow();
