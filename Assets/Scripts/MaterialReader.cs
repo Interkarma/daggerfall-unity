@@ -600,6 +600,7 @@ namespace DaggerfallWorkshop
             // Not currently generating normals as very slow on such a large texture
             // and results are not very noticeable
             Texture2DArray textureArrayTerrainTiles = textureReader.GetTerrainAlbedoTextureArray(archive);
+            Texture2DArray textureArrayTerrainTilesNormalMap = textureReader.GetTerrainNormalMapTextureArray(archive);
             Texture2DArray textureArrayTerrainTilesMetallicGloss = textureReader.GetTerrainMetallicGlossTextureArray(archive);
             textureArrayTerrainTiles.filterMode = MainFilterMode;
 
@@ -615,6 +616,7 @@ namespace DaggerfallWorkshop
             material.SetTexture("_TileTexArr", textureArrayTerrainTiles);
             //material.mainTexture = textureArrayTerrainTiles;
             //material.SetTexture("_TileAtlasTex", results.albedoMap);
+            material.SetTexture("_TileNormalMapTexArr", textureArrayTerrainTilesNormalMap);
             material.SetTexture("_TileMetallicGlossMapTexArr", textureArrayTerrainTilesMetallicGloss);
 
             CachedMaterial newcm = new CachedMaterial()
