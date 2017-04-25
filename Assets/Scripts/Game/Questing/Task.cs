@@ -50,6 +50,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public Symbol Symbol
         {
             get { return symbol; }
+            set { symbol = value; }
         }
 
         public string Target
