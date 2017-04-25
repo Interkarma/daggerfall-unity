@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         DaggerfallVideo video;
         CustomVideoPlayer customVideo;
-        bool UseCustomVideo = false;
+        bool useCustomVideo = false;
 
         bool hideCursor = true;
         bool endOnAnyKey = true;
@@ -44,6 +44,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return video; }
         }
 
+        public CustomVideoPlayer CustomVideo
+        {
+            get { return customVideo; }
+        }
+
+        public bool UseCustomVideo
+        {
+            get { return useCustomVideo; }
+        }
+
         public DaggerfallVidPlayerWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
@@ -57,12 +67,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            if (VideoReplacement.CustomVideoExist(PlayOnStart))
+            MovieTexture customMovieTexture;
+            if (VideoReplacement.ImportCustomVideo(PlayOnStart, out customMovieTexture))
             {
                 // Play custom video
                 customVideo = DaggerfallUI.Instance.gameObject.AddComponent<CustomVideoPlayer>();
-                customVideo.PlayVideo(PlayOnStart);
-                UseCustomVideo = true;
+                customVideo.PlayVideo(customMovieTexture);
+                useCustomVideo = true;
             }
             else
             {
@@ -90,7 +101,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             // Handle exit any key or end of video
-            if (UseCustomVideo)
+            if (useCustomVideo)
             {
                 if (endOnAnyKey && Input.anyKeyDown || 
                     !customVideo.Playing )

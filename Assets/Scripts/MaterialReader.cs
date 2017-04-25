@@ -317,9 +317,8 @@ namespace DaggerfallWorkshop
             // Get texture
             GetTextureResults results = textureReader.GetTexture2D(settings, AlphaTextureFormat, NonAlphaTextureFormat);
 
-            // Import custom texture(s) 
-            if (TextureReplacement.CustomTextureExist(archive, record, frame))
-                TextureReplacement.LoadCustomTextureResults(archive, record, frame, ref results, ref GenerateNormals);
+            // Import custom textures
+            TextureReplacement.LoadCustomTextureResults(archive, record, frame, ref results, ref GenerateNormals);
 
             rectOut = results.singleRect;
 
