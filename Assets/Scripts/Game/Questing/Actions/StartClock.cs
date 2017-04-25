@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Factory new action
             StartClock action = new StartClock(parentQuest);
-            action.clockName = match.Groups["clockName"].Value;
+            action.clockName = match.Groups["clockName"].Value.Replace("_", "");
 
             return action;
         }
@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             }
             else
             {
-                Debug.LogWarning(string.Format("StopClock failed to locate clock: {0} in task {1} for quest: {2}", clockName, caller.Symbol.Name, ParentQuest.UID));
+                Debug.LogWarning(string.Format("StartClock failed to locate clock: {0} in task {1} for quest: {2}", clockName, caller.Symbol.Name, ParentQuest.UID));
             }
         }
     }
