@@ -296,7 +296,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public void AddTask(Task task)
         {
-            tasks.Add(task.Symbol.Name, task);
+            if (!tasks.ContainsKey(task.Symbol.Name))
+                tasks.Add(task.Symbol.Name, task);
+            else
+            {
+                //task w/ this symbol already exists, add actions to it
+                var existingTask = tasks[task.Symbol.Name];
+                existingTask.CopyQuestActions(task);
+            }
         }
 
         #endregion
