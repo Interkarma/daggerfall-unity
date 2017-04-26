@@ -168,6 +168,19 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         // Info
         /*TextLabel info = */AddTextlabel(leftPanel, infoText);
         /*TextLabel qualityLevel = */AddTextlabel(leftPanel, "Quality Level: " + ((QualityLevel)DaggerfallUnity.Settings.QualityLevel).ToString(), HorizontalAlignment.Left);
+        string textureArrayLabel = "Texture Arrays (";
+        if (SystemInfo.supports2DArrayTextures == true)
+            textureArrayLabel += "yes";
+        else
+            textureArrayLabel += "no";
+        textureArrayLabel += "): ";
+        if (DaggerfallUnity.Settings.EnableTextureArrays == true)        
+            textureArrayLabel += "enabled";
+        else
+            textureArrayLabel += "disabled";
+        TextLabel labelTextureArrayUsage = AddTextlabel(leftPanel, textureArrayLabel, HorizontalAlignment.Left);
+        labelTextureArrayUsage.ToolTip = defaultToolTip;
+        labelTextureArrayUsage.ToolTipText = "shows if texture arrays are supported on this system and if they are enabled\renabling/disabling can only be done in the settings.ini file";
 
         // FOV
         y = 20f;
