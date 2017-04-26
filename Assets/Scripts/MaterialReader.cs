@@ -607,16 +607,16 @@ namespace DaggerfallWorkshop
             Material material = new Material(shader);
             material.name = string.Format("TEXTURE.{0:000} [TilemapTextureArray]", archive);
 
-            //textureArrayTerrainTiles.filterMode = FilterMode.Point;
-            //material.mainTexture = textureArrayTerrainTiles;
-            //material.mainTexture = textureArrayTerrainTiles as Texture2DArray;
-
-            
             material.SetTexture("_TileTexArr", textureArrayTerrainTiles);
-            //material.mainTexture = textureArrayTerrainTiles;
-            //material.SetTexture("_TileAtlasTex", results.albedoMap);
-            material.SetTexture("_TileNormalMapTexArr", textureArrayTerrainTilesNormalMap);
-            material.SetTexture("_TileMetallicGlossMapTexArr", textureArrayTerrainTilesMetallicGloss);
+            if (textureArrayTerrainTilesNormalMap != null)
+            {
+                material.SetTexture("_TileNormalMapTexArr", textureArrayTerrainTilesNormalMap);
+                material.EnableKeyword("_NORMALMAP");
+            }
+            if (textureArrayTerrainTilesMetallicGloss != null)
+            {
+                material.SetTexture("_TileMetallicGlossMapTexArr", textureArrayTerrainTilesMetallicGloss);
+            }
 
             CachedMaterial newcm = new CachedMaterial()
             {

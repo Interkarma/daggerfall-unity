@@ -651,9 +651,9 @@ namespace DaggerfallWorkshop.Utility
 
                 // Import custom texture(s)
                 GetTextureResults resultsTile = new GetTextureResults();
-                if (TextureReplacement.CustomTextureExist(archive, record, 0))
+                if (TextureReplacement.CustomTextureExist(archive, /*record*/0, 0))
                 {
-                    TextureReplacement.LoadCustomTextureResults(archive, record, 0, ref resultsTile, ref DaggerfallUnity.Instance.MaterialReader.GenerateNormals);
+                    TextureReplacement.LoadCustomTextureResults(archive, /*record*/0, 0, ref resultsTile, ref DaggerfallUnity.Instance.MaterialReader.GenerateNormals);
                     albedo = resultsTile.albedoMap.GetPixels32();
                 }
 
@@ -708,35 +708,29 @@ namespace DaggerfallWorkshop.Utility
             }
             else
             {
-                // create default texture array (1x1 texture)
-                width = 1;
-                height = 1;
+                return null;
             }
 
             textureArray = new Texture2DArray(width, height, numSlices, TextureFormat.ARGB32, MipMaps);
-
-            defaultNormalMap = new Color32[width * height];
-            for (int i = 0; i < width * height; i++)
-            {
-                defaultNormalMap[i] = new Color32(0, 0, 0, 0);
-            }
-
 
             // Rollout tiles into texture array
             for (int record = 0; record < textureFile.RecordCount; record++)
             {
                 Texture2D normalMap;
                 // Import custom texture(s)
-                if (TextureReplacement.CustomNormalExist(archive, record, 0))
+                if (TextureReplacement.CustomNormalExist(archive, /*record*/0, 0))
                 {
-                    normalMap = TextureReplacement.LoadCustomNormal(archive, record, 0);
+                    normalMap = TextureReplacement.LoadCustomNormal(archive, /*record*/0, 0);
                 }
-                else
+                else // if current texture does not exist
                 {
-                    //continue;
-                    normalMap = new Texture2D(width, height, TextureFormat.ARGB32, MipMaps);
-                    normalMap.SetPixels32(defaultNormalMap);
+                    return null;
                 }
+
+                // enforce that all custom normal map textures have the same dimension (requirement of Texture2DArray)
+                if ((normalMap.width != width) || (normalMap.height != height))
+                    return null;
+
                 // Insert into texture array
                 textureArray.SetPixels32(normalMap.GetPixels32(), record, 0);
             }
@@ -816,6 +810,11 @@ namespace DaggerfallWorkshop.Utility
                     metallicGlossMap = new Texture2D(width, height, TextureFormat.ARGB32, MipMaps);
                     metallicGlossMap.SetPixels32(defaultMetallicGlossMap);
                 }
+
+                // enforce that all custom metallicgloss map textures have the same dimension (requirement of Texture2DArray)
+                if ((metallicGlossMap.width != width) || (metallicGlossMap.height != height))
+                    return null;
+
                 // Insert into texture array
                 textureArray.SetPixels32(metallicGlossMap.GetPixels32(), record, 0);
             }

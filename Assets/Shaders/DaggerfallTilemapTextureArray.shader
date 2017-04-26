@@ -23,8 +23,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 		_TileTexArr("Tile Texture Array", 2DArray) = "" {}
 		_TileNormalMapTexArr("Tileset NormalMap Texture Array (RGBA)", 2DArray) = "" {}
 		_TileMetallicGlossMapTexArr ("Tileset MetallicGlossMap Texture Array (RGBA)", 2DArray) = "" {}
-		_TilemapTex("Tilemap (R)", 2D) = "red" {}
-		//_BumpMap("Normal Map", 2D) = "bump" {} // activating _BumpMap gives a warning in unity inspector for that shader/material
+		_TilemapTex("Tilemap (R)", 2D) = "red" {}		
 		_TilemapDim("Tilemap Dimension (in tiles)", Int) = 128
 		_MaxIndex("Max Tileset Index", Int) = 255
 	}
@@ -38,10 +37,16 @@ Shader "Daggerfall/TilemapTextureArray" {
 		#pragma surface surf Standard
 		#pragma glsl
 
+		//#pragma shader_feature _NORMALMAP
+		#pragma multi_compile __ _NORMALMAP
+
 		UNITY_DECLARE_TEX2DARRAY(_TileTexArr);
-		UNITY_DECLARE_TEX2DARRAY(_TileNormalMapTexArr);
+
+		#ifdef _NORMALMAP
+			UNITY_DECLARE_TEX2DARRAY(_TileNormalMapTexArr);
+		#endif
+
 		sampler2D _TilemapTex;
-		sampler2D _BumpMap;
 		int _MaxIndex;
 		int _TilemapDim;
 
@@ -118,7 +123,11 @@ Shader "Daggerfall/TilemapTextureArray" {
 
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
-			//o.Normal = UnpackNormal(UNITY_SAMPLE_TEX2DARRAY_LOD(_TileNormalMapTexArr, uv3, 0));
+			
+			#ifdef _NORMALMAP
+				o.Normal = UnpackNormal(UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileNormalMapTexArr, uv3, ddx(uv3), ddy(uv3)));
+			#endif
+
 			o.Metallic = 0;
 		}
 		ENDCG

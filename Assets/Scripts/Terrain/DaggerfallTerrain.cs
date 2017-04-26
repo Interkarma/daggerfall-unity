@@ -140,6 +140,10 @@ namespace DaggerfallWorkshop
                     // Assign textures
                     terrainMaterial.SetTexture("_TileTexArr", tileMaterial.GetTexture("_TileTexArr"));
                     terrainMaterial.SetTexture("_TileNormalMapTexArr", tileMaterial.GetTexture("_TileNormalMapTexArr"));
+                    if (tileMaterial.IsKeywordEnabled("_NORMALMAP"))
+                        terrainMaterial.EnableKeyword("_NORMALMAP");
+                    else
+                        terrainMaterial.DisableKeyword("_NORMALMAP");
                     terrainMaterial.SetTexture("_TileMetallicGlossMapTexArr", tileMaterial.GetTexture("_TileMetallicGlossMapTexArr"));
                     terrainMaterial.SetTexture("_TilemapTex", tileMapTexture);
                 }
