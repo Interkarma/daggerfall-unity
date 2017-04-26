@@ -14,6 +14,7 @@ using System.Globalization;
 using IniParser;
 using IniParser.Model;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
@@ -115,12 +116,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 return null;
             }
 
-            // Read ini as stream
-            MemoryStream stream = new MemoryStream(iniFile.bytes);
-            StreamReader reader = new StreamReader(stream);
-            IniData defaultSettings = parser.ReadData(reader);
-            reader.Close();
-            return defaultSettings;
+            return GetIniDataFromTextAsset(iniFile);
         }
 
         /// <summary>
@@ -144,6 +140,29 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             }
         }
 
+        public static List<IniData> GetPresets (Mod mod)
+        {
+            List<IniData> presets = new List<IniData>();
+
+            // Get presets from disk
+            string[] presetsDirectories = Directory.GetFiles(mod.DirPath, mod.FileName + "preset" + "*.ini");
+            foreach (string path in presetsDirectories)
+            {
+                presets.Add(parser.ReadFile(path));
+            }
+
+            // Get presets from mod
+            int index = 0;
+            while (mod.AssetBundle.Contains("settingspreset" + index + ".ini.txt"))
+            {
+                TextAsset presetFile = mod.GetAsset<TextAsset>("settingspreset" + index + ".ini.txt");
+                presets.Add(GetIniDataFromTextAsset(presetFile));
+                index++;
+            }
+
+            return presets;
+        }
+
         /// <summary>
         /// Convert settings string to Color
         /// (ex: 000000FF --> Color.black).
@@ -165,6 +184,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             byte a = byte.Parse(colorStr.Substring(6, 2), NumberStyles.HexNumber);
 
             return new Color32(r, g, b, a);
+        }
+
+        private static IniData GetIniDataFromTextAsset (TextAsset textAsset)
+        {
+            MemoryStream stream = new MemoryStream(textAsset.bytes);
+            StreamReader reader = new StreamReader(stream);
+            IniData iniData = parser.ReadData(reader);
+            reader.Close();
+            return iniData;
         }
     }
 }
