@@ -96,8 +96,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 			float3 uv3 = float3(uv, ((uint)index)/4); // compute correct texture array index from index
 			
 			//half4 c = UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileTexArr, uv3, ddx(uv3), ddy(uv3)); // (see https://forum.unity3d.com/threads/texture2d-array-mipmap-troubles.416799/)
-
-			// since there is currently no UNITY_SAMPLE_TEX2DARRAY_GRAD function in unity, this is used as workaround
+			// since there is currently a bug with seams when using the UNITY_SAMPLE_TEX2DARRAY_GRAD function in unity, this is used as workaround
 			// mip map level is selected manually dependent on fragment's distance from camera
 			float dist = distance(IN.worldPos.xyz, _WorldSpaceCameraPos.xyz);
 			
@@ -127,8 +126,6 @@ Shader "Daggerfall/TilemapTextureArray" {
 			#ifdef _NORMALMAP
 				o.Normal = UnpackNormal(UNITY_SAMPLE_TEX2DARRAY_GRAD(_TileNormalMapTexArr, uv3, ddx(uv3), ddy(uv3)));
 			#endif
-
-			o.Metallic = 0;
 		}
 		ENDCG
 	} 

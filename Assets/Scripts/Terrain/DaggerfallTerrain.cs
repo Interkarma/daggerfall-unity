@@ -137,7 +137,7 @@ namespace DaggerfallWorkshop
                     Material tileMaterial = dfUnity.MaterialReader.GetTerrainTextureArrayMaterial(groundArchive);
                     currentWorldClimate = MapData.worldClimate;
 
-                    // Assign textures
+                    // Assign textures (propagate material settings from tileMaterial to terrainMaterial)
                     terrainMaterial.SetTexture("_TileTexArr", tileMaterial.GetTexture("_TileTexArr"));
                     terrainMaterial.SetTexture("_TileNormalMapTexArr", tileMaterial.GetTexture("_TileNormalMapTexArr"));
                     if (tileMaterial.IsKeywordEnabled("_NORMALMAP"))

@@ -651,9 +651,9 @@ namespace DaggerfallWorkshop.Utility
 
                 // Import custom texture(s)
                 GetTextureResults resultsTile = new GetTextureResults();
-                if (TextureReplacement.CustomTextureExist(archive, /*record*/0, 0))
+                if (TextureReplacement.CustomTextureExist(archive, record, 0))
                 {
-                    TextureReplacement.LoadCustomTextureResults(archive, /*record*/0, 0, ref resultsTile, ref DaggerfallUnity.Instance.MaterialReader.GenerateNormals);
+                    TextureReplacement.LoadCustomTextureResults(archive, record, 0, ref resultsTile, ref DaggerfallUnity.Instance.MaterialReader.GenerateNormals);
                     albedo = resultsTile.albedoMap.GetPixels32();
                 }
 
@@ -682,8 +682,6 @@ namespace DaggerfallWorkshop.Utility
             bool stayReadable = false,
             SupportedAlphaTextureFormats alphaFormat = SupportedAlphaTextureFormats.RGBA32)
         {
-            Color32[] defaultNormalMap;
-
             // Load texture file and check count matches terrain tiles
             TextureFile textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
             int numSlices = 0;
@@ -699,7 +697,8 @@ namespace DaggerfallWorkshop.Utility
             Texture2DArray textureArray;
             int width;
             int height;
-            // MetallicGloss map
+
+            // try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
             if (TextureReplacement.CustomNormalExist(archive, 0, 0))
             {
                 Texture2D normalMap = TextureReplacement.LoadCustomNormal(archive, 0, 0);
@@ -718,9 +717,9 @@ namespace DaggerfallWorkshop.Utility
             {
                 Texture2D normalMap;
                 // Import custom texture(s)
-                if (TextureReplacement.CustomNormalExist(archive, /*record*/0, 0))
+                if (TextureReplacement.CustomNormalExist(archive, record, 0))
                 {
-                    normalMap = TextureReplacement.LoadCustomNormal(archive, /*record*/0, 0);
+                    normalMap = TextureReplacement.LoadCustomNormal(archive, record, 0);
                 }
                 else // if current texture does not exist
                 {
@@ -744,13 +743,13 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets terrain metallic gloss texture array containing each terrain tile in a seperate array slice.        
+        /// Gets terrain metallic gloss map texture array containing each terrain tile in a seperate array slice.        
         /// </summary>
         /// <param name="archive">Archive index.</param>
         /// <param name="stayReadable">Texture should stay readable.</param>
         /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
         /// <returns>Texture2DArray or null</returns>
-        public Texture2DArray GetTerrainMetallicGlossTextureArray(
+        public Texture2DArray GetTerrainMetallicGlossMapTextureArray(
             int archive,
             bool stayReadable = false,
             SupportedNonAlphaTextureFormats nonAlphaFormat = SupportedNonAlphaTextureFormats.RGB24)
@@ -772,7 +771,8 @@ namespace DaggerfallWorkshop.Utility
             Texture2DArray textureArray;
             int width;
             int height;
-            // MetallicGloss map
+
+            // try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
             if (TextureReplacement.CustomMetallicGlossExist(archive, 0, 0))
             {                
                 Texture2D metallicGlossMap = TextureReplacement.LoadCustomMetallicGloss(archive, 0, 0);

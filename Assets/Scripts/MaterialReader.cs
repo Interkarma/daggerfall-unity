@@ -596,11 +596,9 @@ namespace DaggerfallWorkshop
             }
 
             // Generate texture array
-            // Not currently generating normals as very slow on such a large texture
-            // and results are not very noticeable
             Texture2DArray textureArrayTerrainTiles = textureReader.GetTerrainAlbedoTextureArray(archive);
             Texture2DArray textureArrayTerrainTilesNormalMap = textureReader.GetTerrainNormalMapTextureArray(archive);
-            Texture2DArray textureArrayTerrainTilesMetallicGloss = textureReader.GetTerrainMetallicGlossTextureArray(archive);
+            Texture2DArray textureArrayTerrainTilesMetallicGloss = textureReader.GetTerrainMetallicGlossMapTextureArray(archive);
             textureArrayTerrainTiles.filterMode = MainFilterMode;
 
             Shader shader = Shader.Find(_DaggerfallTilemapTextureArrayShaderName);
@@ -610,11 +608,13 @@ namespace DaggerfallWorkshop
             material.SetTexture("_TileTexArr", textureArrayTerrainTiles);
             if (textureArrayTerrainTilesNormalMap != null)
             {
+                // if normal map texture array was loaded successfully enable normalmap in shader and set texture
                 material.SetTexture("_TileNormalMapTexArr", textureArrayTerrainTilesNormalMap);
                 material.EnableKeyword("_NORMALMAP");
             }
             if (textureArrayTerrainTilesMetallicGloss != null)
             {
+                // if metallic gloss map texture array was loaded successfully set texture (should always contain a valid texture array - since it defaults to 1x1 textures)
                 material.SetTexture("_TileMetallicGlossMapTexArr", textureArrayTerrainTilesMetallicGloss);
             }
 
