@@ -13,6 +13,7 @@ QualityLevel=5
 ShadowResolutionMode=1
 UseLegacyDeferred=False
 DungeonLightShadows=False
+EnableTextureArrays=True
 
 [ChildGuard]
 PlayerNudity=False
