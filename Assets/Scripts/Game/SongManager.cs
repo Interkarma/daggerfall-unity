@@ -291,6 +291,8 @@ namespace DaggerfallWorkshop.Game
                         case DFRegion.LocationTypes.DungeonKeep:
                         case DFRegion.LocationTypes.DungeonLabyrinth:
                         case DFRegion.LocationTypes.DungeonRuin:
+                        case DFRegion.LocationTypes.Coven:
+                        case DFRegion.LocationTypes.HomePoor:
                             currentPlayerMusicEnvironment = PlayerMusicEnvironment.DungeonExterior;
                             break;
                         case DFRegion.LocationTypes.GraveyardCommon:
@@ -298,7 +300,6 @@ namespace DaggerfallWorkshop.Game
                             currentPlayerMusicEnvironment = PlayerMusicEnvironment.Graveyard;
                             break;
                         case DFRegion.LocationTypes.HomeFarms:
-                        case DFRegion.LocationTypes.HomePoor:
                         case DFRegion.LocationTypes.HomeWealthy:
                         case DFRegion.LocationTypes.Tavern:
                         case DFRegion.LocationTypes.TownCity:
