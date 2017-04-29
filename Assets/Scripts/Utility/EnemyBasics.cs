@@ -668,7 +668,7 @@ namespace DaggerfallWorkshop.Utility
                 BloodIndex = 2,
                 MoveSound = (int)SoundClips.EnemyGargoyleMove,
                 BarkSound = (int)SoundClips.EnemyGargoyleBark,
-                AttackSound = -1,
+                AttackSound = (int)SoundClips.EnemyGargoyleAttack,
                 MinMetalToHit = MetalTypes.Mithril,
                 MinDamage = 10,
                 MaxDamage = 15,
