@@ -233,11 +233,11 @@ namespace DaggerfallWorkshop
 
         EnemyOrcShamanMove = 178,
         EnemyOrcShamanBark = 179,
-        EnemyOrcShamanAttack = 180,
+        EnemyOrcShamanAttack = 138,
 
         EnemyGargoyleMove = 181,
         EnemyGargoyleBark = 182,
-        // Gargoyle attack sound missing.
+        EnemyGargoyleAttack = 180,
 
         EnemyWraithMove = 183,
         EnemyWraithBark = 184,
