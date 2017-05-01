@@ -689,7 +689,6 @@ namespace DaggerfallWorkshop.Game
 
             switch (playerDungeonBlockData.BlockName)
             {
-                case "S0000020.RDB":    // Orsinium castle area
                 case "S0000040.RDB":    // Sentinel castle area
                 case "S0000041.RDB":
                 case "S0000042.RDB":
