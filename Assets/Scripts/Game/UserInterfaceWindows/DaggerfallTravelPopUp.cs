@@ -414,6 +414,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((travelTimeTotalLand + travelTimeTotalWater) * 60);
 
+            if (speedCautious)
+            {
+                if ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour < 6)
+                    || ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour == 6) && (DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute < 10)))
+                {
+                    float raiseTime = (((6 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
+                                        + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
+                                        - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
+                    DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
+                }
+                else if (DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour > 17)
+                {
+                    float raiseTime = (((30 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
+                    + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
+                    - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
+                    DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
+                }
+            }
+
             terrains.Clear();
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
             travelWindow.CloseTravelWindows(true);
