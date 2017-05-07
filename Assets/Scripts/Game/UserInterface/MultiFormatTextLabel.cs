@@ -66,7 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public Color TextColor
         {
             get { return textColor; }
-            set { textColor = value; }
+            set { SetTextColor(value); }
         }
 
         public Color ShadowColor
@@ -272,6 +272,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 font = DaggerfallUI.DefaultFont;
 
             return font;
+        }
+
+        /// <summary>
+        /// Sets text colour.
+        /// </summary>
+        /// <param name="color">Color to use as text colour.</param>
+        private void SetTextColor(Color color)
+        {
+            textColor = color;
+            for (int i = 0; i < labels.Count; i++)
+            {
+                labels[i].TextColor = color;
+            }
         }
 
         #endregion

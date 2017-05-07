@@ -36,9 +36,10 @@ namespace DaggerfallWorkshop.Game
         const string splashVideo = "ANIM0001.VID";
         const string deathVideo = "ANIM0012.VID";
 
-        public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
+        public static Color DaggerfallDefaultTextColor = new Color32(226, 220, 0, 255); // Matched to Daggerfall Classic.
         public static Color DaggerfallDefaultInputTextColor = new Color32(227, 223, 0, 255);
-        public static Color DaggerfallDefaultShadowColor = new Color32(93, 77, 12, 255);
+        public static Color DaggerfallDefaultShadowColor = new Color32(93, 78, 14, 255); // Matched to Daggerfall Classic.
+        public static Color DaggerfallQuestTextColor = new Color32(255, 246, 103, 255); // Matched to Daggerfall Classic
         public static Color DaggerfallAlternateShadowColor1 = new Color32(44, 60, 60, 255);
         public static Color DaggerfallDefaultSelectedTextColor = new Color32(162, 36, 12, 255);
         public static Color DaggerfallDefaultTextCursorColor = new Color32(154, 134, 0, 200);
