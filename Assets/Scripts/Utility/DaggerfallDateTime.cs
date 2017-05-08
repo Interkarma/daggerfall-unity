@@ -361,7 +361,17 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets a short time string.
+        /// Gets a short time string without seconds.
+        /// </summary>
+        public string ShortTimeStringNoSeconds()
+        {
+            string final = string.Format("{0:00}:{1:00}", Hour, Minute);
+
+            return final;
+        }
+
+        /// <summary>
+        /// Gets a short time string with seconds.
         /// </summary>
         public string ShortTimeString()
         {
