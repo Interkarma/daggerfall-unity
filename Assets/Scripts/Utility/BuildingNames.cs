@@ -349,18 +349,19 @@ namespace DaggerfallWorkshop.Utility
             "Woodwork",
         };
 
-        static string[] LivestockStoresB = new string[]
-        {
-            "Livestock",
-            "Breeders",
-            "Farm Animals",
-            "Beasts",
-            "Creatures",
-            "Game",
-            "Animalia",
-            "Fauna",
-            "Menagerie",
-        };
+        // Currently unused
+        //static string[] LivestockStoresB = new string[]
+        //{
+        //    "Livestock",
+        //    "Breeders",
+        //    "Farm Animals",
+        //    "Beasts",
+        //    "Creatures",
+        //    "Game",
+        //    "Animalia",
+        //    "Fauna",
+        //    "Menagerie",
+        //};
 
         #endregion
 

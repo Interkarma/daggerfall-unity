@@ -1,0 +1,11 @@
+- Minimal example quest used to test place selection
+
+Quest: __DEMO05
+
+QRC:
+
+- No text resources
+
+QBN:
+
+place _testHouse_ local house

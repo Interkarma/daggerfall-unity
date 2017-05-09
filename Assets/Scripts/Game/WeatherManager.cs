@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game
         void Update()
         {
             SetAmbientEffects();
-            PollWeatherChanges();
+            //PollWeatherChanges();
             SetSunlightScale();
         }
 

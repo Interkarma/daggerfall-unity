@@ -17,6 +17,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -149,6 +150,8 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
+            // Wire event for when player enters a new location
+            PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
         }
 
         void Update()
@@ -686,7 +689,6 @@ namespace DaggerfallWorkshop.Game
 
             switch (playerDungeonBlockData.BlockName)
             {
-                case "S0000020.RDB":    // Orsinium castle area
                 case "S0000040.RDB":    // Sentinel castle area
                 case "S0000041.RDB":
                 case "S0000042.RDB":
@@ -800,6 +802,47 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Event Handlers
+
+        // Notify player when they enter location rect
+        // For exterior towns, print out "You are entering %s".
+        // For exterior dungeons, print out flavour text.
+        private void PlayerGPS_OnEnterLocationRect(DFLocation location)
+        {
+            const int set1StartID = 500;
+            const int set2StartID = 520;
+
+            if (playerGPS && !isPlayerInside)
+            {
+                if (location.HasDungeon &&
+                    location.MapTableData.DungeonType != DFRegion.DungeonTypes.NoDungeon &&
+                    location.MapTableData.DungeonType != DFRegion.DungeonTypes.Palace)
+                {
+                    // Get text ID based on set start and dungeon type index
+                    int dungeonTypeIndex = (int)location.MapTableData.DungeonType >> 8;
+                    int set1ID = set1StartID + dungeonTypeIndex;
+                    int set2ID = set2StartID + dungeonTypeIndex;
+
+                    // Select two sets of flavour text based on dungeon type
+                    string flavourText1 = DaggerfallUnity.Instance.TextProvider.GetRandomText(set1ID);
+                    string flavourText2 = DaggerfallUnity.Instance.TextProvider.GetRandomText(set2ID);
+
+                    // Show flavour text a bit longer than in classic
+                    DaggerfallUI.AddHUDText(flavourText1, 3);
+                    DaggerfallUI.AddHUDText(flavourText2, 3);
+                }
+                else
+                {
+                    // Show "You are entering %s"
+                    string youAreEntering = HardStrings.youAreEntering;
+                    youAreEntering = youAreEntering.Replace("%s", location.Name);
+                    DaggerfallUI.AddHUDText(youAreEntering);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Events
 
         // OnPreTransition - Called PRIOR to any transition, other events called AFTER transition.
         public delegate void OnPreTransitionEventHandler(TransitionEventArgs args);

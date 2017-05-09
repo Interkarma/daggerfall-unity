@@ -161,6 +161,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return width;
         }
 
+        /// <summary>
+        /// Reloads font glyphs with a different base colour (default is Color.white for normal UI tinting).
+        /// This is an expensive operation, only use this at font create time.
+        /// </summary>
+        /// <param name="color">New colour of glyphs.</param>
+        /// <returns>True if successful.</returns>
+        public bool ReloadFont(Color color)
+        {
+            textColor = color;
+            return LoadFont();
+        }
+
         #endregion
 
         #region Private Methods

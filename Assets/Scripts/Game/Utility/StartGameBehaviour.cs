@@ -186,6 +186,24 @@ namespace DaggerfallWorkshop.Game.Utility
                     camera.renderingPath = RenderingPath.DeferredLighting;
             }
 
+            // Shadow Resoltion Mode
+            switch (DaggerfallUnity.Settings.ShadowResolutionMode)
+            {
+                case 0:
+                    QualitySettings.shadowResolution = ShadowResolution.Low;
+                    break;
+                case 1:
+                default:
+                    QualitySettings.shadowResolution = ShadowResolution.Medium;
+                    break;
+                case 2:
+                    QualitySettings.shadowResolution = ShadowResolution.High;
+                    break;
+                case 3:
+                    QualitySettings.shadowResolution = ShadowResolution.VeryHigh;
+                    break;
+            }        
+
             // VSync settings
             if (DaggerfallUnity.Settings.VSync)
                 QualitySettings.vSyncCount = 1;
@@ -202,9 +220,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Weapon swing settings
             WeaponManager weaponManager = GameManager.Instance.WeaponManager;
-            weaponManager.HorizontalThreshold = DaggerfallUnity.Settings.WeaponSwingThreshold;
-            weaponManager.VerticalThreshold = DaggerfallUnity.Settings.WeaponSwingThreshold;
-            weaponManager.TriggerCount = DaggerfallUnity.Settings.WeaponSwingTriggerCount;
+            weaponManager.AttackThreshold = DaggerfallUnity.Settings.WeaponAttackThreshold;
 
             // Weapon hand settings
             // Only supporting left-hand rendering for now
@@ -217,15 +233,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Enable/disable videos
             DaggerfallUI.Instance.enableVideos = EnableVideos;
-
-            // Streaming world terrain distance
-            int terrainDistance = DaggerfallUnity.Settings.TerrainDistance;
-            if (DaggerfallUnity.Settings.Nystul_IncreasedTerrainDistance)
-            {
-                // Reduce terrain distance by 1 if far terrain enabled
-                terrainDistance = Mathf.Clamp(terrainDistance - 1, 1, 4);
-            }
-            GameManager.Instance.StreamingWorld.TerrainDistance = terrainDistance;
         }
 
         #endregion

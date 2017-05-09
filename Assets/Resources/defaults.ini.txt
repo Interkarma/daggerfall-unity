@@ -10,8 +10,10 @@ Fullscreen=False
 FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
+ShadowResolutionMode=1
 UseLegacyDeferred=False
 DungeonLightShadows=False
+EnableTextureArrays=True
 
 [ChildGuard]
 PlayerNudity=False
@@ -36,8 +38,7 @@ MouseLookSmoothing=True
 MouseLookSensitivity=1.0
 HeadBobbing=False
 Handedness=0
-WeaponSwingThreshold=0.8
-WeaponSwingTriggerCount=3
+WeaponAttackThreshold=0.03
 WeaponSensitivity=1.0
 
 [Startup]
@@ -55,8 +56,6 @@ LypyL_GameConsole=True
 LypyL_ModSystem=True
 MeshAndTextureReplacement=False
 LypyL_EnhancedSky=False
-Nystul_IncreasedTerrainDistance=False
-Nystul_RealtimeReflections=False
 UncannyValley_RealGrass=False
 TheLacus_GrassAndPlants=False
 UncannyValley_BirdsInDaggerfall=False

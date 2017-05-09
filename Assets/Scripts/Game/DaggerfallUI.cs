@@ -160,6 +160,15 @@ namespace DaggerfallWorkshop.Game
             get { return dfBookReaderWindow; }
         }
 
+        public DaggerfallAutomapWindow AutomapWindow
+        {
+            get { return dfAutomapWindow; }
+        }
+        public DaggerfallExteriorAutomapWindow ExteriorAutomapWindow
+        {
+            get { return dfExteriorAutomapWindow; }
+        }
+
         public enum PopupStyle
         {
             Parchment,
@@ -353,6 +362,14 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public static void AddHUDText(string message, float delay)
+        {
+            if (Instance.dfHUD != null)
+            {
+                Instance.dfHUD.PopupText.AddText(message, delay);
+            }
+        }
+
         public static void PostMessage(string message)
         {
             if (Instance.uiManager != null)
@@ -377,7 +394,12 @@ namespace DaggerfallWorkshop.Game
                 uiManager.PopWindow();
         }
 
-        public DaggerfallFont GetFont(int index)
+        /// <summary>
+        /// Gets a new DaggerfallFont.
+        /// </summary>
+        /// <param name="index">I ndex of font between 1-5 (default is 4).</param>
+        /// <returns>DaggerfallFont</returns>
+        public DaggerfallFont GetFont(int index = 4)
         {
             // Set path
             string path = string.Empty;

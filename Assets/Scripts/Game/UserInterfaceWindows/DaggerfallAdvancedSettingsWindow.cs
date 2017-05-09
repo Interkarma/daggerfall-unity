@@ -35,7 +35,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     // Panels
     Panel advancedSettingsPanel = new Panel();
     Panel leftPanel = new Panel();
-    Panel centrePanel = new Panel();
+    Panel centerPanel = new Panel();
     Panel rightPanel = new Panel();
 
     // Colors
@@ -43,7 +43,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
     Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
     Color listBoxBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
-    Color scrollBarBackgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.7f);
+    Color scrollBarBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.7f);
 
     // Settings
     Checkbox DungeonLightShadows;
@@ -53,7 +53,6 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     Checkbox HQTooltips;
     Checkbox Crosshair;
 
-    Checkbox DebugWeaponSwings;
     Checkbox StartInDungeon;
 
     VerticalScrollBar fovScroll;
@@ -65,9 +64,11 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     VerticalScrollBar terrainDistanceScroll;
     TextLabel terrainDistanceNumberLabel;
 
+    ListBox ShadowResolutionMode;
+
     ListBox MainFilterMode;
     ListBox GUIFilterMode;
-    ListBox VideoFilterMode;
+    ListBox VideoFilterMode;    
 
     #endregion
 
@@ -127,10 +128,10 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         advancedSettingsPanel.Components.Add(leftPanel);
 
         // Add centre Panel
-        centrePanel.Outline.Enabled = false;
-        centrePanel.Position = new Vector2(120, 0);
-        centrePanel.Size = new Vector2(120, 160);
-        advancedSettingsPanel.Components.Add(centrePanel);
+        centerPanel.Outline.Enabled = false;
+        centerPanel.Position = new Vector2(120, 0);
+        centerPanel.Size = new Vector2(120, 160);
+        advancedSettingsPanel.Components.Add(centerPanel);
 
         // Add right Panel
         rightPanel.Outline.Enabled = false;
@@ -162,42 +163,66 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
 
         // Gameplay
         /*TextLabel gameplayOptions = */AddTextlabel(leftPanel, gameplayOptionsText);
-        DebugWeaponSwings = AddCheckbox(leftPanel, "New weapon Swings", "Debug Weapon Swings", DaggerfallUnity.Settings.DebugWeaponSwings);
         StartInDungeon = AddCheckbox(leftPanel, "Start In Dungeon", "Start new game inside the first dungeon", DaggerfallUnity.Settings.StartInDungeon);
 
         // Info
         /*TextLabel info = */AddTextlabel(leftPanel, infoText);
         /*TextLabel qualityLevel = */AddTextlabel(leftPanel, "Quality Level: " + ((QualityLevel)DaggerfallUnity.Settings.QualityLevel).ToString(), HorizontalAlignment.Left);
+        string textureArrayLabel = "Texture Arrays (";
+        if (SystemInfo.supports2DArrayTextures == true)
+            textureArrayLabel += "yes";
+        else
+            textureArrayLabel += "no";
+        textureArrayLabel += "): ";
+        if (DaggerfallUnity.Settings.EnableTextureArrays == true)        
+            textureArrayLabel += "enabled";
+        else
+            textureArrayLabel += "disabled";
+        TextLabel labelTextureArrayUsage = AddTextlabel(leftPanel, textureArrayLabel, HorizontalAlignment.Left);
+        labelTextureArrayUsage.ToolTip = defaultToolTip;
+        labelTextureArrayUsage.ToolTipText = "shows if texture arrays are supported on this system and if they are enabled\renabling/disabling can only be done in the settings.ini file";
 
         // FOV
         y = 20f;
-        fovScroll = AddVerticalScrollBar(centrePanel, fovMin, fovMax, fovScroll_OnScroll);
-        TextLabel fovLabel = AddTextlabel(centrePanel, "Field Of View", HorizontalAlignment.None);
+        fovScroll = AddVerticalScrollBar(centerPanel, fovMin, fovMax, fovScroll_OnScroll);
+        fovScroll.Size = new Vector2(5.0f, 30.0f);
+        fovScroll.Update();
+        TextLabel fovLabel = AddTextlabel(centerPanel, "Field Of View", HorizontalAlignment.None);
         fovLabel.Position = new Vector2(ScrollLeftMargin, fovLabel.Position.y);
         AddToolTipToTextLabel(fovLabel, "The observable world that is seen at any given moment");
-        y += 10;
-        fovNumberLabel = AddTextlabel(centrePanel, DaggerfallUnity.Settings.FieldOfView.ToString());
+        y += 1;
+        fovNumberLabel = AddTextlabel(centerPanel, DaggerfallUnity.Settings.FieldOfView.ToString());
         fovScroll.ScrollIndex = DaggerfallUnity.Settings.FieldOfView - fovMin;
 
         // Mouse
-        y += 10;
-        mouseSensitivityScroll = AddVerticalScrollBar(centrePanel, sensitivityMin, sensitivityMax, mouseSensitivityScroll_OnScroll);
-        TextLabel mouseSensitivityLabel = AddTextlabel(centrePanel, "Mouse Sensitivity", HorizontalAlignment.None);
+        y += 9;
+        mouseSensitivityScroll = AddVerticalScrollBar(centerPanel, sensitivityMin, sensitivityMax, mouseSensitivityScroll_OnScroll);
+        mouseSensitivityScroll.Size = new Vector2(5.0f, 30.0f);
+        mouseSensitivityScroll.Update();
+        TextLabel mouseSensitivityLabel = AddTextlabel(centerPanel, "Mouse Sensitivity", HorizontalAlignment.None);
         mouseSensitivityLabel.Position = new Vector2(ScrollLeftMargin, mouseSensitivityLabel.Position.y);
         AddToolTipToTextLabel(mouseSensitivityLabel, "Mouse Sensitivity");
-        y += 10;
-        mouseSensitivityNumberLabel = AddTextlabel(centrePanel, DaggerfallUnity.Settings.MouseLookSensitivity.ToString());
+        y += 1;
+        mouseSensitivityNumberLabel = AddTextlabel(centerPanel, DaggerfallUnity.Settings.MouseLookSensitivity.ToString());
         mouseSensitivityScroll.ScrollIndex = (int)(DaggerfallUnity.Settings.MouseLookSensitivity * 10 - sensitivityMin);
 
         // Terrain distance
-        y += 10;
-        terrainDistanceScroll = AddVerticalScrollBar(centrePanel, terrainDistanceMin, terrainDistanceMax, terrainDistanceScroll_OnScroll);
-        TextLabel terrainDistanceTitleLabel = AddTextlabel(centrePanel, "Terrain Distance", HorizontalAlignment.None);
+        y += 9;
+        terrainDistanceScroll = AddVerticalScrollBar(centerPanel, terrainDistanceMin, terrainDistanceMax, terrainDistanceScroll_OnScroll);
+        terrainDistanceScroll.Size = new Vector2(5.0f, 20.0f);
+        terrainDistanceScroll.Update();
+        TextLabel terrainDistanceTitleLabel = AddTextlabel(centerPanel, "Terrain Distance", HorizontalAlignment.None);
         terrainDistanceTitleLabel.Position = new Vector2(ScrollLeftMargin, terrainDistanceTitleLabel.Position.y);
         AddToolTipToTextLabel(terrainDistanceTitleLabel, "Terrain Distance");
-        y += 10;
-        terrainDistanceNumberLabel = AddTextlabel(centrePanel, DaggerfallUnity.Settings.TerrainDistance.ToString());
+        y += 1;
+        terrainDistanceNumberLabel = AddTextlabel(centerPanel, DaggerfallUnity.Settings.TerrainDistance.ToString());
         terrainDistanceScroll.ScrollIndex = DaggerfallUnity.Settings.TerrainDistance - terrainDistanceMin;
+
+        // shadow resolution
+        AddTextlabel(centerPanel, "Shadow Resolution");
+        ShadowResolutionMode = AddListbox(centerPanel, ShadowResolutionModes(), DaggerfallUnity.Settings.ShadowResolutionMode);
+        ShadowResolutionMode.Position += new Vector2(30.0f, 0.0f);
+        ShadowResolutionMode.Update();
 
         // Filter modes
         y = 20f;
@@ -230,7 +255,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// <summary>
     /// Add a text label.
     /// </summary>
-    /// <param name="panel">leftPanel, centrePanel or rightPanel.</param>
+    /// <param name="panel">leftPanel, centerPanel or rightPanel.</param>
     /// <param name="text">Label.</param>
     /// <param name="alignment">Horizontal alignment.</param>
     TextLabel AddTextlabel (Panel panel, string text, HorizontalAlignment alignment = HorizontalAlignment.Center)
@@ -259,7 +284,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// <summary>
     /// Add a checkbox option.
     /// </summary>
-    /// <param name="panel">leftPanel, centrePanel or rightPanel.</param>
+    /// <param name="panel">leftPanel, centerPanel or rightPanel.</param>
     /// <param name="text">Label.</param>
     /// <param name="tip">Description.</param>
     /// <param name="isChecked"></param>
@@ -282,7 +307,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// <summary>
     /// Add a list of options.
     /// </summary>
-    /// <param name="panel">leftPanel, centrePanel or rightPanel.</param>
+    /// <param name="panel">leftPanel, centerPanel or rightPanel.</param>
     /// <param name="Options">List of labels.</param>
     /// <param name="selected">Selected option.</param>
     ListBox AddListbox (Panel panel, List<string> Options, int selected)
@@ -315,7 +340,7 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     /// <summary>
     /// Add a ScrollBar.
     /// </summary>
-    /// <param name="panel">leftPanel, centrePanel or rightPanel.</param>
+    /// <param name="panel">leftPanel, centerPanel or rightPanel.</param>
     /// <param name="minValue">Minimum value on scroll.</param>
     /// <param name="maxValue">Maximum value on scroll.</param>
     /// <param name="action">Action to execute on scroll.</param>
@@ -350,12 +375,13 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
         DaggerfallUnity.Settings.HQTooltips = HQTooltips.IsChecked;
         DaggerfallUnity.Settings.Crosshair = Crosshair.IsChecked;
 
-        DaggerfallUnity.Settings.DebugWeaponSwings = DebugWeaponSwings.IsChecked;
         DaggerfallUnity.Settings.StartInDungeon = StartInDungeon.IsChecked;
 
         DaggerfallUnity.Settings.FieldOfView = fovLabel;
         DaggerfallUnity.Settings.MouseLookSensitivity = sensitivityLabel;
         DaggerfallUnity.Settings.TerrainDistance = terrainDistanceLabel;
+
+        DaggerfallUnity.Settings.ShadowResolutionMode = ShadowResolutionMode.SelectedIndex;
 
         DaggerfallUnity.Settings.MainFilterMode = MainFilterMode.SelectedIndex;
         DaggerfallUnity.Settings.GUIFilterMode = GUIFilterMode.SelectedIndex;
@@ -435,6 +461,14 @@ public class AdvancedSettingsWindow : DaggerfallPopupWindow
     #endregion
 
     #region Helpers
+
+    /// <summary>
+    /// Create a list of options for shadow resolution settings.
+    /// </summary>
+    static private List<string> ShadowResolutionModes()
+    {
+        return new List<string> { "Low", "Medium", "High", "Very High" };
+    }
 
     /// <summary>
     /// Create a list of options for filtermode settings.

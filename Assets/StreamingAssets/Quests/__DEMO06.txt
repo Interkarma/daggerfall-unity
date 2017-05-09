@@ -1,0 +1,40 @@
+- Example quest demonstrating basic timer usage
+
+Quest: __DEMO006
+
+QRC:
+
+Message: 1021
+Timer1 Started
+
+Message: 1022
+Timer2 Started
+
+Message: 1023
+Finished!
+
+- No text resources
+
+QBN:
+
+variable run
+
+Clock _S.01_ 0.0:01 0.0:05
+Clock _S.02_ 0.0:05
+
+- Headless entry point with custom action
+
+setvar run
+
+
+_S.00_ task:
+when run
+say 1021
+start timer _S.01_
+
+_S.01_ task:
+say 1022
+start timer _S.02_
+
+_S.02_ task:
+say 1023

@@ -9,10 +9,8 @@
 // Notes:
 //
 
-using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
-using System.Collections;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -30,10 +28,38 @@ namespace DaggerfallWorkshop.Game.Questing
         int flag;           // Currently unknown flag found after 'flag' in clock declaration
         int range1;         // Currently unknown first value found after 'range' in clock declaration
         int range2;         // Currently unknown second value found after 'range' in clock declaration
+        Task clockTask;
+        ClockAction clockAction;
 
         #endregion
 
         #region Properties
+
+        public TimeValue Start
+        {
+            get { return start; }
+        }
+
+        public TimeValue End
+        {
+            get { return end; }
+        }
+
+        public int Flag
+        {
+            get { return flag; }
+        }
+
+        public int Range1
+        {
+            get { return range1; }
+        }
+
+        public int Range2
+        {
+            get { return range2; }
+        }
+
         #endregion
 
         #region Constructors
@@ -56,6 +82,13 @@ namespace DaggerfallWorkshop.Game.Questing
             : base(parentQuest)
         {
             SetClock(line);
+            //create clock task & action
+            this.clockTask          = new Task(this.ParentQuest);
+            this.clockTask.Symbol   = this.Symbol;
+            this.clockAction        = new ClockAction(this.ParentQuest);
+            this.clockTask.IsSet    = false;
+            this.clockTask.AddQuestAction(clockAction);
+            this.ParentQuest.AddTask(clockTask);
         }
 
         #endregion
@@ -104,17 +137,21 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        /// <summary>
+        /// Start timer, called by StartClock action
+        /// </summary>
         public void StartClock()
         {
-            // ##TODO - start or restart clock
-            // unknown if time should reset on restart?
-            // used by StartClock action
+            this.clockAction.SetTimes(start, end);
+            this.clockAction.IsRunning = true;
         }
 
+        /// <summary>
+        /// Stop timer without triggering task, called by StopClock
+        /// </summary>
         public void StopClock()
         {
-            // ##TODO - Stop clock without triggering any tasks
-            // used by StopClock action
+            this.clockAction.IsRunning = false;
         }
 
         #endregion

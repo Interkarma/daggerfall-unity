@@ -190,7 +190,8 @@ namespace DaggerfallWorkshop
                     case SearchPatterns.Dungeons:
                         if (type == DFRegion.LocationTypes.DungeonKeep ||
                             type == DFRegion.LocationTypes.DungeonLabyrinth ||
-                            type == DFRegion.LocationTypes.DungeonRuin)
+                            type == DFRegion.LocationTypes.DungeonRuin ||
+                            type == DFRegion.LocationTypes.Coven)
                         {
                             addName = true;
                         }
@@ -218,8 +219,7 @@ namespace DaggerfallWorkshop
                         }
                         break;
                     case SearchPatterns.Temples:
-                        if (type == DFRegion.LocationTypes.ReligionCoven ||
-                            type == DFRegion.LocationTypes.ReligionCult ||
+                        if (type == DFRegion.LocationTypes.ReligionCult ||
                             type == DFRegion.LocationTypes.ReligionTemple)
                         {
                             addName = true;

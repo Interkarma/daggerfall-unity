@@ -136,15 +136,17 @@ namespace DaggerfallWorkshop.Game.Questing
         public Place(Quest parentQuest, string line)
             : base(parentQuest)
         {
-            SetPlace(line);
+            SetResource(line);
         }
 
         #endregion
 
         #region Public Methods
 
-        public void SetPlace(string line)
+        public override void SetResource(string line)
         {
+            base.SetResource(line);
+
             // Match string for Place variants
             string matchStr = @"Place (?<symbol>\w+) permanent (?<aPermanentPlace>\w+)|Place (?<symbol>\w+) remote (?<aRemoteSite>\w+)|Place (?<symbol>\w+) local (?<aLocalSite>\w+)";
 
@@ -193,13 +195,24 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception(string.Format("Could not find place name in data table: '{0};", name));
                 }
 
-                // Handle fixed location, either exterior or dungeon
-                if (placeType == PlaceTypes.Fixed && p1 > 0xc300)
+                // Handle place by type
+                if (placeType == PlaceTypes.Local)
                 {
+                    // TODO: Handle local places
+                }
+                else if (placeType == PlaceTypes.Remote)
+                {
+                    // TODO: Handle remote places
+                }
+                else if (placeType == PlaceTypes.Fixed && p1 > 0xc300)
+                {
+                    // Handle fixed location, either exterior or dungeon
                     SetupFixedLocation();
                 }
-
-                // TODO: Handle local and remote locations
+                else
+                {
+                    throw new Exception("Invalid placeType in line: " + line);
+                }
             }
         }
 

@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -53,7 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Native options panel
             optionsPanel.HorizontalAlignment = HorizontalAlignment.Center;
             optionsPanel.Position = new Vector2(0, 40);
-            optionsPanel.Size = new Vector2(nativeTexture.width, nativeTexture.height);
+            optionsPanel.Size = TextureReplacement.GetSizeFromTexture(nativeTexture, nativeImgName);
             optionsPanel.BackgroundTexture = nativeTexture;
             NativePanel.Components.Add(optionsPanel);
 

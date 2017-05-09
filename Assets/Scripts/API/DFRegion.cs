@@ -78,6 +78,9 @@ namespace DaggerfallConnect
             /// <summary>Graveyard hidden.</summary>
             GraveyardForgotten = 140,
 
+            /// <summary>Coven.</summary>
+            Coven = 141,
+
             /// <summary>Farmhouse.</summary>
             HomeFarms = 163,
             /// <summary>Wealthy home.</summary>
@@ -94,8 +97,6 @@ namespace DaggerfallConnect
             ReligionTemple = 165,
             /// <summary>Cult.</summary>
             ReligionCult = 169,
-            /// <summary>Coven.</summary>
-            ReligionCoven = 141,
 
             /// <summary>Large settlement.</summary>
             TownCity = 160,

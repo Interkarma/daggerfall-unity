@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Factory new action
             StopClock action = new StopClock(parentQuest);
-            action.clockName = match.Groups["clockName"].Value;
+            action.clockName = match.Groups["clockName"].Value.Replace("_", "");
 
             return action;
         }

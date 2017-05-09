@@ -67,10 +67,12 @@ namespace DaggerfallWorkshop
         public bool VSync { get; set; }
         public bool Fullscreen { get; set; }
         public int FieldOfView { get; set; }
+        public int ShadowResolutionMode { get; set; }
         public int MainFilterMode { get; set; }
         public int QualityLevel { get; set; }
         public bool UseLegacyDeferred { get; set; }
         public bool DungeonLightShadows { get; set; }
+        public bool EnableTextureArrays { get; set; }
 
         // [ChildGuard]
         public bool PlayerNudity { get; set; }
@@ -95,8 +97,7 @@ namespace DaggerfallWorkshop
         public float MouseLookSensitivity { get; set; }
         public bool HeadBobbing { get; set; }
         public int Handedness { get; set; }
-        public float WeaponSwingThreshold { get; set; }
-        public int WeaponSwingTriggerCount { get; set; }
+        public float WeaponAttackThreshold { get; set; }
         public float WeaponSensitivity { get; set; }
 
         // [Startup]
@@ -107,13 +108,10 @@ namespace DaggerfallWorkshop
         // [Experimental]
         public bool HQTooltips { get; set; }
         public int TerrainDistance { get; set; }
-        public bool DebugWeaponSwings { get; set; }
 
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
         public bool LypyL_ModSystem { get; set; }
-        public bool Nystul_IncreasedTerrainDistance { get; set; }
-        public bool Nystul_RealtimeReflections { get; set; }
         public bool UncannyValley_BirdsInDaggerfall { get; set; }
         public bool MeshAndTextureReplacement { get; set; }
 
@@ -138,9 +136,11 @@ namespace DaggerfallWorkshop
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
             MainFilterMode = GetInt(sectionVideo, "MainFilterMode", 0, 2);
+            ShadowResolutionMode = GetInt(sectionVideo, "ShadowResolutionMode", 0, 3);
             QualityLevel = GetInt(sectionVideo, "QualityLevel", 0, 5);
             UseLegacyDeferred = GetBool(sectionVideo, "UseLegacyDeferred");
             DungeonLightShadows = GetBool(sectionVideo, "DungeonLightShadows");
+            EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             PlayerNudity = GetBool(sectionChildGuard, "PlayerNudity");
             ShowOptionsAtStart = GetBool(sectionGUI, "ShowOptionsAtStart");
             GUIFilterMode = GetInt(sectionGUI, "GUIFilterMode", 0, 2);
@@ -159,19 +159,15 @@ namespace DaggerfallWorkshop
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f);
             HeadBobbing = GetBool(sectionControls, "HeadBobbing");
             Handedness = GetInt(sectionControls, "Handedness", 0, 3);
-            WeaponSwingThreshold = GetFloat(sectionControls, "WeaponSwingThreshold", 0.1f, 1.0f);
-            WeaponSwingTriggerCount = GetInt(sectionControls, "WeaponSwingTriggerCount", 1, 10);
+            WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.01f, 1.0f);
             WeaponSensitivity = GetFloat(sectionControls, "WeaponSensitivity", 0.1f, 10.0f);
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
             StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
             HQTooltips = GetBool(sectionExperimental, "HQTooltips");
-            DebugWeaponSwings = GetBool(sectionExperimental, "DebugWeaponSwings");
             TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
-            Nystul_IncreasedTerrainDistance = GetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance");
-            Nystul_RealtimeReflections = GetBool(sectionEnhancements, "Nystul_RealtimeReflections");
             UncannyValley_BirdsInDaggerfall = GetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall");
             MeshAndTextureReplacement = GetBool(sectionEnhancements, "MeshAndTextureReplacement");
         }
@@ -190,9 +186,11 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
             SetInt(sectionVideo, "MainFilterMode", MainFilterMode);
+            SetInt(sectionVideo, "ShadowResolutionMode", ShadowResolutionMode);
             SetInt(sectionVideo, "QualityLevel", QualityLevel);
             SetBool(sectionVideo, "UseLegacyDeferred", UseLegacyDeferred);
             SetBool(sectionVideo, "DungeonLightShadows", DungeonLightShadows);
+            SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetBool(sectionChildGuard, "PlayerNudity", PlayerNudity);
             SetBool(sectionGUI, "ShowOptionsAtStart", ShowOptionsAtStart);
             SetInt(sectionGUI, "GUIFilterMode", GUIFilterMode);
@@ -211,19 +209,15 @@ namespace DaggerfallWorkshop
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);
             SetBool(sectionControls, "HeadBobbing", HeadBobbing);
             SetInt(sectionControls, "Handedness", Handedness);
-            SetFloat(sectionControls, "WeaponSwingThreshold", WeaponSwingThreshold);
-            SetInt(sectionControls, "WeaponSwingTriggerCount", WeaponSwingTriggerCount);
+            SetFloat(sectionControls, "WeaponAttackThreshold", WeaponAttackThreshold);
             SetFloat(sectionControls, "WeaponSensitivity", WeaponSensitivity);
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);
             SetBool(sectionStartup, "StartInDungeon", StartInDungeon);
             SetBool(sectionExperimental, "HQTooltips", HQTooltips);
-            SetBool(sectionExperimental, "DebugWeaponSwings", DebugWeaponSwings);
             SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
-            SetBool(sectionEnhancements, "Nystul_IncreasedTerrainDistance", Nystul_IncreasedTerrainDistance);
-            SetBool(sectionEnhancements, "Nystul_RealtimeReflections", Nystul_RealtimeReflections);
             SetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall", UncannyValley_BirdsInDaggerfall);
             SetBool(sectionEnhancements, "MeshAndTextureReplacement", MeshAndTextureReplacement);
 
