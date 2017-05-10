@@ -81,6 +81,31 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 
         /// <summary>
+        /// Get integer from user settings or, as fallback, from default settings.
+        /// Value is at least equal to min.
+        /// </summary>
+        /// <param name="section">Name of section inside .ini</param>
+        /// <param name="name">Name of key inside .ini</param>
+        /// <param name="min">Minimum accepted value.</param>
+        public int GetInt(string section, string name, int min)
+        {
+            return Mathf.Max(min, GetInt(section, name));
+        }
+
+        /// <summary>
+        /// Get integer from user settings or, as fallback, from default settings.
+        /// Value is clamped in range (min-max).
+        /// </summary>
+        /// <param name="section">Name of section inside .ini</param>
+        /// <param name="name">Name of key inside .ini</param>
+        /// <param name="min">Minimum accepted value.</param>
+        /// <param name="max">Maximum accepted value.</param>
+        public int GetInt(string section, string name, int min, int max)
+        {
+            return Mathf.Clamp(GetInt(section, name), min, max);
+        }
+
+        /// <summary>
         /// Get float from user settings or, as fallback, from default settings.
         /// </summary>
         /// <param name="section">Name of section inside .ini</param>
@@ -88,6 +113,31 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public float GetFloat(string section, string name)
         {
             return float.Parse(GetValue(section, name), NumberStyles.Float, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Get float from user settings or, as fallback, from default settings.
+        /// Value is at least equal to min.
+        /// </summary>
+        /// <param name="section">Name of section inside .ini</param>
+        /// <param name="name">Name of key inside .ini</param>
+        /// <param name="min">Minimum accepted value.</param>
+        public float GetFloat(string section, string name, float min)
+        {
+            return Mathf.Max(min, GetFloat(section, name));
+        }
+
+        /// <summary>
+        /// Get float from user settings or, as fallback, from default settings.
+        /// Value is clamped in range (min-max).
+        /// </summary>
+        /// <param name="section">Name of section inside .ini</param>
+        /// <param name="name">Name of key inside .ini</param>
+        /// <param name="min">Minimum accepted value.</param>
+        /// <param name="max">Maximum accepted value.</param>
+        public float GetFloat(string section, string name, float min, float max)
+        {
+            return Mathf.Clamp(GetFloat(section, name), min, max);
         }
 
         /// <summary>
