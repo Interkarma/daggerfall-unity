@@ -201,6 +201,7 @@ namespace DaggerfallWorkshop.Game
             if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !isAttacking)
             {
                 isAttacking = false;
+                lastAttackHand = Hand.None;
                 _gesture.Clear();
                 ShowWeapons(true);
                 return;
@@ -250,10 +251,21 @@ namespace DaggerfallWorkshop.Game
             // Restore weapon visibility
             ShowWeapons(true);
 
-            // Track mouse attack and exit if no action registered
-            var direction = TrackMouseAttack();
-            if (direction != MouseDirections.None)
-                ExecuteAttacks(direction);
+            var attackDirection = MouseDirections.None;
+            bool isBowAttacking = (RightHandWeapon && !LeftHandWeapon && (RightHandWeapon.WeaponType == WeaponTypes.Bow))
+                || (!RightHandWeapon && LeftHandWeapon && (LeftHandWeapon.WeaponType == WeaponTypes.Bow));
+            if (isBowAttacking)
+            {
+                // Ensure attack button was released before starting the next attack
+                if (lastAttackHand == Hand.None) 
+                    attackDirection = MouseDirections.Down; // Force attack without tracking a swing for Bow
+            }
+            else
+                attackDirection = TrackMouseAttack(); // Track swing direction for other weapons
+
+            // Exit if no attack action registered
+            if (attackDirection != MouseDirections.None)
+                ExecuteAttacks(attackDirection);
         }
 
         public void SheathWeapons()
