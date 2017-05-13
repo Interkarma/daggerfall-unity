@@ -98,10 +98,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             base.Update();
 
             // Update child components
-            foreach (BaseScreenComponent component in components)
+            for (int i = 0; i < components.Count; i++)
             {
-                if (component.Enabled)
-                    component.Update();
+                if (components[i].Enabled)
+                    Components[i].Update();
             }
         }
 
