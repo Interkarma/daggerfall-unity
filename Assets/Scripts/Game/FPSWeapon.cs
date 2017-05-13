@@ -131,10 +131,7 @@ namespace DaggerfallWorkshop.Game
 
             // Do not change if already playing attack animation
             if (!IsPlayingOneShot())
-            {
-                PlaySwingSound();
                 ChangeWeaponState(state);
-            }
         }
 
         public void ChangeWeaponState(WeaponStates state)
@@ -147,6 +144,11 @@ namespace DaggerfallWorkshop.Game
         public bool IsAttacking()
         {
             return IsPlayingOneShot();
+        }
+
+        public bool IsPastMiddleFrame()
+        {
+            return (currentFrame > (weaponAnims[(int)weaponState].NumFrames / 2));
         }
 
         public void PlayActivateSound()

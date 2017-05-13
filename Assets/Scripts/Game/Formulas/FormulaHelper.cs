@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage_high;
         }
 
-        public static int CalculateMeleeDamage(FPSWeapon weapon, DaggerfallWorkshop.Game.Entity.PlayerEntity player)
+        public static int CalculateWeaponDamage(FPSWeapon weapon, DaggerfallWorkshop.Game.Entity.PlayerEntity player)
         {
             int damage_low = CalculateWeaponMinDamage(weapon.WeaponType, weapon.MetalType, player.Skills.HandToHand);
             int damage_high = CalculateWeaponMaxDamage(weapon.WeaponType, weapon.MetalType, player.Skills.HandToHand);
