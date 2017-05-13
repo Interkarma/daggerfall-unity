@@ -71,18 +71,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
             LayoutPage();
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
         }
 
         private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (dfUnity.TextProvider.MoveNextPage())
+            {
                 LayoutPage();
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
+            }
         }
 
         private void PreviousPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (dfUnity.TextProvider.MovePreviousPage())
+            {
                 LayoutPage();
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
+            }
         }
 
 
@@ -94,7 +101,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             if (IsSetup)
+            {
                 LayoutPage();
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
+            }
         }
 
         void LayoutPage()
