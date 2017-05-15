@@ -1058,6 +1058,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!serializablePlayer)
                 yield break;
 
+            // Call start load event
+            RaiseOnStartLoadEvent(saveData);
+
             // Immediately set date so world is loaded with correct season
             RestoreDateTimeData(saveData.dateAndTime);
 
@@ -1177,6 +1180,15 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             if (OnSave != null)
                 OnSave(saveData);
+        }
+
+        // OnStartLoad
+        public delegate void OnStartLoadEventHandler(SaveData_v1 saveData);
+        public static event OnStartLoadEventHandler OnStartLoad;
+        protected virtual void RaiseOnStartLoadEvent(SaveData_v1 saveData)
+        {
+            if (OnStartLoad != null)
+                OnStartLoad(saveData);
         }
 
         // OnLoad
