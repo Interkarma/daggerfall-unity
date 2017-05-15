@@ -27,7 +27,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Classic Text IDs
 
+        const int noSpellsID = 12;
         const int goldToDropID = 25;
+        const int armorTextID = 1000;
+        const int weaponTextID = 1001;
+        const int miscTextID = 1003;
 
         #endregion
 
@@ -1288,17 +1292,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void ShowInfoPopup(DaggerfallUnityItem item)
         {
-            const int armorTextId = 1000;
-            const int weaponTextId = 1001;
-            const int miscTextId = 1003;
-
             TextFile.Token[] tokens = null;
             if (item.ItemGroup == ItemGroups.Armor)
-                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorTextId);
+                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorTextID);
             else if (item.ItemGroup == ItemGroups.Weapons)
-                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponTextId);
+                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponTextID);
             else
-                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(miscTextId);
+                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(miscTextID);
 
             if (tokens != null && tokens.Length > 0)
             {
@@ -1399,9 +1399,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     cannotUse.SetText(HardStrings.cannotUseThis);
                     cannotUse.ClickAnywhereToClose = true;
                     cannotUse.Show();
-                } else {
+                } else if (item.TemplateIndex == (int)MiscItems.Spellbook) {
+                    TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(noSpellsID);
+                    DaggerfallMessageBox noSpells = new DaggerfallMessageBox(uiManager, this);
+                    noSpells.SetTextTokens(textTokens);
+                    noSpells.ClickAnywhereToClose = true;
+                    noSpells.Show();
+                } else
                     NextVariant(item);
-                }
             }
             else if (selectedActionMode == ActionModes.Remove)
             {
