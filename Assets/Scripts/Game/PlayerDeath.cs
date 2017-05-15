@@ -31,6 +31,8 @@ namespace DaggerfallWorkshop.Game
         public float FadeDuration = 2f;
         public float TimeBeforeReset = 3;
 
+        public SoundClips PlayerDeathSound = SoundClips.PlayerDeath;
+
         StartGameBehaviour startGameBehaviour;
         DaggerfallEntityBehaviour entityBehaviour;
         PlayerEntity playerEntity;
@@ -159,6 +161,9 @@ namespace DaggerfallWorkshop.Game
             targetCameraHeight = playerController.height - (playerController.height * 1.25f);
             currentCameraHeight = startCameraHeight;
             DaggerfallUI.Instance.FadeHUDToBlack(FadeDuration);
+
+            if (DaggerfallUI.Instance.DaggerfallAudioSource)
+                DaggerfallUI.Instance.DaggerfallAudioSource.PlayOneShot(PlayerDeathSound, 0);
 
             if (OnPlayerDeath != null)
                 OnPlayerDeath(this, null);
