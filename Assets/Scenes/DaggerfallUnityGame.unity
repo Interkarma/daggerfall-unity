@@ -2298,6 +2298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FadeDuration: 2
   TimeBeforeReset: 3
+  PlayerDeathSound: 405
 --- !u!1001 &1893539169
 Prefab:
   m_ObjectHideFlags: 0
@@ -2527,7 +2528,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value
