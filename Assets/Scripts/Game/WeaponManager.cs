@@ -46,7 +46,8 @@ namespace DaggerfallWorkshop.Game
         PlayerEntity playerEntity;
         GameObject player;
         GameObject mainCamera;
-        bool isAttacking;
+        bool isStartingAttack = false;
+        bool isDamageFinished = false;
         Hand lastAttackHand = Hand.None;
         float cooldownTime = 0.0f;                  // Wait for weapon cooldown
 
@@ -196,30 +197,43 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            bool isBowAttacking = (RightHandWeapon && !LeftHandWeapon && (RightHandWeapon.WeaponType == WeaponTypes.Bow))
+    || (!RightHandWeapon && LeftHandWeapon && (LeftHandWeapon.WeaponType == WeaponTypes.Bow));
+
+            // If the last attack has tried to apply damage and the swing animation has finished, reset isDamageFinished
+            if (isDamageFinished && !IsLeftHandAttacking() && !IsRightHandAttacking())
+                isDamageFinished = false;
+
             // Reset tracking if user not holding down 'SwingWeapon' button and no attack in progress
-            //if (!Input.GetButton("Fire2") && !isAttacking)
-            if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !isAttacking)
+            if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && !isStartingAttack)
             {
-                isAttacking = false;
                 lastAttackHand = Hand.None;
                 _gesture.Clear();
                 ShowWeapons(true);
                 return;
             }
 
-            // Handle attack in progress
-            if (IsLeftHandAttacking() || IsRightHandAttacking())
+            // Handle attack in progress. For melee weapons set isAttacking but don't go further until the animation passes the middle frame.
+            // This recreates timing similar to classic Daggerfall.
+            // Bow is plays through its full animation before proceeding.
+            if (!isBowAttacking && ((IsLeftHandAttacking() && !LeftHandWeapon.IsPastMiddleFrame())
+                || (IsRightHandAttacking() && !RightHandWeapon.IsPastMiddleFrame())))
             {
-                isAttacking = true;
+                isStartingAttack = true;
+                return;
+            }
+            else if (isBowAttacking && (IsLeftHandAttacking() || IsRightHandAttacking()))
+            {
+                isStartingAttack = true;
                 return;
             }
 
-            // If an attack was in progress it is now complete.
+            // The attack has passed the middle animation frame.
             // Attempt to transfer damage based on last attack hand.
-            if (isAttacking)
+            if (isStartingAttack)
             {
-                // Complete attack
-                isAttacking = false;
+                // First part of attack is over (first half of melee swing, or the full animation for the bow)
+                isStartingAttack = false;
 
                 // Get attack hand weapon
                 FPSWeapon weapon;
@@ -235,8 +249,16 @@ namespace DaggerfallWorkshop.Game
                         return;
                 }
 
-                // Transfer melee damage
-                MeleeDamage(weapon);
+                // Transfer damage.
+                bool hitEnemy = false;
+                WeaponDamage(weapon, out hitEnemy);
+
+                // Play swing sound if attack didn't hit an enemy.
+                if (!hitEnemy)
+                    weapon.PlaySwingSound();
+
+                // Damage transfer is done. The attack now plays through the remainder of its animation frames.
+                isDamageFinished = true;
 
                 // Weapon cooldown
                 if (weapon.Cooldown > 0.0f)
@@ -252,8 +274,6 @@ namespace DaggerfallWorkshop.Game
             ShowWeapons(true);
 
             var attackDirection = MouseDirections.None;
-            bool isBowAttacking = (RightHandWeapon && !LeftHandWeapon && (RightHandWeapon.WeaponType == WeaponTypes.Bow))
-                || (!RightHandWeapon && LeftHandWeapon && (LeftHandWeapon.WeaponType == WeaponTypes.Bow));
             if (isBowAttacking)
             {
                 // Ensure attack button was released before starting the next attack
@@ -543,8 +563,10 @@ namespace DaggerfallWorkshop.Game
             if (RightHandWeapon) RightHandWeapon.ShowWeapon = show;
         }
 
-        private void MeleeDamage(FPSWeapon weapon)
+        private void WeaponDamage(FPSWeapon weapon, out bool hitEnemy)
         {
+            hitEnemy = false;
+
             if (!mainCamera || !weapon)
                 return;
 
@@ -572,7 +594,7 @@ namespace DaggerfallWorkshop.Game
                 // Just using fudge values during development
 
                 // Calculate damage
-                int damage = FormulaHelper.CalculateMeleeDamage(weapon, playerEntity);
+                int damage = FormulaHelper.CalculateWeaponDamage(weapon, playerEntity);
 
                 //// Check if hit has an EnemyHealth
                 //// This is part of the old Demo code and will eventually be removed
@@ -614,6 +636,7 @@ namespace DaggerfallWorkshop.Game
 
                         // Remove health
                         enemyEntity.DecreaseHealth(damage);
+                        hitEnemy = true;
                     }
                 }
             }
