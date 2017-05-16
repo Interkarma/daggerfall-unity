@@ -33,12 +33,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallTravelMapWindow : DaggerfallPopupWindow
     {
-        #region Classic Text IDs
-
-        const int doYouWishToTravelTo = 31;
-
-        #endregion
-
         #region Fields
 
         FilterMode filterMode = FilterMode.Point;
@@ -1350,11 +1344,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void CreateConfirmationPopUp()
         {
+            const int doYouWishToTravelToTextId = 31;
+
             if (!locationSelected)
                 return;
 
             // Get text tokens
-            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouWishToTravelTo);
+            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouWishToTravelToTextId);
 
             // Hack to set location name in text token for now
             textTokens[2].text = textTokens[2].text.Replace("%tcn", currentDFRegion.MapNames[locationSummary.MapIndex]);

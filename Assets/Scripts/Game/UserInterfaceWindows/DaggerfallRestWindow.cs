@@ -23,16 +23,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     public class DaggerfallRestWindow : DaggerfallPopupWindow
     {
-        #region Classic Text IDs
-
-        const int cannotRestMoreThan99Hours = 26;
-        const int cannotLoiterMoreThan3Hours = 27;
-        const int finishedLoitering = 349;
-        const int youAreHealed = 350;
-        const int youWakeUp = 353;
-
-        #endregion
-
         #region UI Rects
 
         Rect whileButtonRect = new Rect(4, 13, 48, 24);
@@ -285,21 +275,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void EndRest()
         {
+            const int youWakeUpTextId = 353;
+            const int youAreHealedTextId = 350;
+            const int finishedLoiteringTextId = 349;
+
             if (currentRestMode == RestModes.TimedRest)
             {
-                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youWakeUp);
+                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youWakeUpTextId);
                 mb.OnClose += RestFinishedPopup_OnClose;
                 currentRestMode = RestModes.Selection;
             }
             else if (currentRestMode == RestModes.FullRest)
             {
-                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youAreHealed);
+                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youAreHealedTextId);
                 mb.OnClose += RestFinishedPopup_OnClose;
                 currentRestMode = RestModes.Selection;
             }
             else if (currentRestMode == RestModes.Loiter)
             {
-                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(finishedLoitering);
+                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(finishedLoiteringTextId);
                 mb.OnClose += RestFinishedPopup_OnClose;
                 currentRestMode = RestModes.Selection;
             }
@@ -383,6 +377,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void TimedRestPrompt_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {
+            const int cannotRestMoreThan99HoursTextId = 26;
+
             // Validate input
             int time = 0;
             bool result = int.TryParse(input, out time);
@@ -396,7 +392,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (time > 99)
             {
-                DaggerfallUI.MessageBox(cannotRestMoreThan99Hours);
+                DaggerfallUI.MessageBox(cannotRestMoreThan99HoursTextId);
                 return;
             }
 
@@ -407,6 +403,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void LoiterPrompt_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {
+            const int cannotLoiterMoreThan3HoursTextId = 27;
+
             // Validate input
             int time = 0;
             bool result = int.TryParse(input, out time);
@@ -420,7 +418,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (time > 3)
             {
-                DaggerfallUI.MessageBox(cannotLoiterMoreThan3Hours);
+                DaggerfallUI.MessageBox(cannotLoiterMoreThan3HoursTextId);
                 return;
             }
 
