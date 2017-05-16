@@ -101,44 +101,32 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Damage
 
-        public static int CalculateWeaponMinDamage(WeaponTypes weaponType, MetalTypes metalType, int handToHandSkill)
+        public static int CalculateHandToHandMinDamage(int handToHandSkill)
         {
-            // Temp value, to be replaced
-            int damage_low = 1;
-
-            if (weaponType == WeaponTypes.Melee)
-            {
-                int skill = handToHandSkill;
-                damage_low = (skill / 10) + 1;
-            }
-
-            return damage_low;
+            return (handToHandSkill / 10) + 1;
         }
 
-        public static int CalculateWeaponMaxDamage(WeaponTypes weaponType, MetalTypes metalType, int handToHandSkill)
+        public static int CalculateHandToHandMaxDamage(int handToHandSkill)
         {
-            // Temp value, to be replaced
-            int damage_high = 24;
-
             // Daggerfall Chronicles table lists hand-to-hand skills of 80 and above (45 through 79 are omitted)
-            // as if they cause 2 to be added to damage_high instead of 1, but the hand-to-hand damage display
-            // in the in-game character sheet contradicts this.
-            if (weaponType == WeaponTypes.Melee)
-            {
-                int skill = handToHandSkill;
-                damage_high = (skill / 5) + 1;
-            }
-
-            return damage_high;
+            // as if they are (handToHandSkill / 5) + 2, but the hand-to-hand damage display in the character sheet
+            // in classic Daggerfall shows the damage as continuing to be (handToHandSkill / 5) + 1
+            return (handToHandSkill / 5) + 1;
         }
 
         public static int CalculateWeaponDamage(FPSWeapon weapon, DaggerfallWorkshop.Game.Entity.PlayerEntity player)
         {
-            int damage_low = CalculateWeaponMinDamage(weapon.WeaponType, weapon.MetalType, player.Skills.HandToHand);
-            int damage_high = CalculateWeaponMaxDamage(weapon.WeaponType, weapon.MetalType, player.Skills.HandToHand);
+            int damage_low = 1; // Temp value
+            if (weapon.WeaponType == WeaponTypes.Melee)
+                damage_low = CalculateHandToHandMinDamage(player.Skills.HandToHand);
+
+            int damage_high = 24; // Temp value
+            if (weapon.WeaponType == WeaponTypes.Melee)
+                damage_high = CalculateHandToHandMaxDamage(player.Skills.HandToHand);
+
             int damage = UnityEngine.Random.Range(damage_low, damage_high + 1);
 
-            // Apply the strength modifier. Testing in original Daggerfall shows hand-to-hand ignores it.
+            // Apply the strength modifier. Testing in classic Daggerfall shows hand-to-hand ignores it.
             if (weapon.WeaponType != WeaponTypes.Melee)
             {
                 // Weapons can do 0 damage. Plays no hit sound or blood splash.

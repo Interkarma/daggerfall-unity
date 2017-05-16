@@ -388,7 +388,7 @@ namespace DaggerfallWorkshop.Utility
                 case DFCareer.Skills.LongBlade:
                     return "Long Blade";
                 case DFCareer.Skills.HandToHand:
-                    return "Hand To Hand";
+                    return "Hand-to-Hand";
                 case DFCareer.Skills.Axe:
                     return "Axe";
                 case DFCareer.Skills.BluntWeapon:
