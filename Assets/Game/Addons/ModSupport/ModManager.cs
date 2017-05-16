@@ -602,7 +602,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
             catch(Exception ex)
             {
-                Debug.LogError(string.Format("Failed to write Mod Settings File", ex.Message));
+                Debug.LogError(string.Format("Failed to write mod settings: {0}", ex.Message));
                 return false;
             }
 
@@ -653,7 +653,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
             catch(Exception ex)
             {
-                Debug.LogError(string.Format("Error trying to load mod settings: ", ex.Message));
+                Debug.LogError(string.Format("Error trying to load mod settings: {0}", ex.Message));
                 return false;
             }
 
