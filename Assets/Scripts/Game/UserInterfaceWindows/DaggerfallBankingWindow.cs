@@ -53,7 +53,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         TextBox transactionInput;
 
         PlayerEntity playerEntity;
-        DaggerfallMessageBox messageBox;
         TransactionType transactionType = TransactionType.None;
 
         public int regionIndex = 0;
