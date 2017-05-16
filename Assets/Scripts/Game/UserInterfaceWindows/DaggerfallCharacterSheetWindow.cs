@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -219,9 +220,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ShowSkillsDialog(List<DFCareer.Skills> skills, bool twoColumn = false)
         {
             bool secondColumn = false;
+            bool showHandToHandDamage = false;
             List<TextFile.Token> tokens = new List<TextFile.Token>();
             for (int i = 0; i < skills.Count; i++)
             {
+                if (!showHandToHandDamage && (skills[i] == DFCareer.Skills.HandToHand))
+                    showHandToHandDamage = true;
+
                 if (!twoColumn)
                 {
                     tokens.AddRange(CreateSkillTokens(skills[i]));
@@ -243,6 +248,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             tokens.Add(TextFile.NewLineToken);
                     }
                 }
+            }
+
+            if (showHandToHandDamage)
+            {
+                tokens.Add(TextFile.NewLineToken);
+                TextFile.Token HandToHandDamageToken = new TextFile.Token();
+                int minDamage = FormulaHelper.CalculateHandToHandMinDamage(playerEntity.Skills.GetSkillValue(DFCareer.Skills.HandToHand));
+                int maxDamage = FormulaHelper.CalculateHandToHandMaxDamage(playerEntity.Skills.GetSkillValue(DFCareer.Skills.HandToHand));
+                HandToHandDamageToken.text = DaggerfallUnity.Instance.TextProvider.GetSkillName(DFCareer.Skills.HandToHand) + " dmg: " + minDamage + "-" + maxDamage;
+                HandToHandDamageToken.formatting = TextFile.Formatting.Text;
+                tokens.Add(HandToHandDamageToken);
             }
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
