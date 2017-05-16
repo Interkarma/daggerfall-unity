@@ -611,7 +611,7 @@ namespace DaggerfallWorkshop.Game
             }
             else if(obj == null && string.IsNullOrEmpty(tag))
             {
-                throw new Exception(string.Format("GameManager could not find component type {0} - both object & string were null.", typeof(T), obj.name));
+                throw new Exception(string.Format("GameManager could not find component type {0} - both object & string were null.", typeof(T)));
             }
             
             if(obj != null)

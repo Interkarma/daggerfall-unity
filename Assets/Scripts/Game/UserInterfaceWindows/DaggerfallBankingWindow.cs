@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             var background = DaggerfallUI.GetTextureFromImg(IMGNAME);
             if (background == null)
             {
-                Debug.LogError(string.Format("failed to load background image {0} for Banking pop-up"));
+                Debug.LogError(string.Format("Failed to load background image {0} for Banking pop-up", IMGNAME));
                 CloseWindow();
                 return;
             }

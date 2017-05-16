@@ -636,7 +636,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
             catch (Exception ex) 
             {
-                Debug.LogError(string.Format("Error trying to serialize prefab: {0} {1} {3}", modInfo.ModTitle, prefabPath, ex.InnerException));
+                Debug.LogError(string.Format("Error trying to serialize prefab: {0} {1} {2}", modInfo.ModTitle, prefabPath, ex.InnerException));
                 return null;
             }
 

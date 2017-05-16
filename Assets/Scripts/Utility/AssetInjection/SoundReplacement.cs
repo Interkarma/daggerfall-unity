@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (www!=null)
                 return www;
 
-            Debug.LogError(string.Format("File {1} from {2} is corrupted", name, soundPath));
+            Debug.LogError(string.Format("File {0} from {1} is corrupted", name, soundPath));
             return null;
         }
 

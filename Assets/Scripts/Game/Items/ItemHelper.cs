@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Items
         {
             if (templateIndex < 0 || templateIndex >= itemTemplates.Count)
             {
-                string message = string.Format("Item template index out of range: TemplateIndex={1}", templateIndex);
+                string message = string.Format("Item template index out of range: TemplateIndex={0}", templateIndex);
                 Debug.Log(message);
                 return new ItemTemplate();
             }
