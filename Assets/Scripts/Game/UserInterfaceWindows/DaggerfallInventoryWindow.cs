@@ -25,16 +25,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallInventoryWindow : DaggerfallPopupWindow
     {
-        #region Classic Text IDs
-
-        const int noSpellsID = 12;
-        const int goldToDropID = 25;
-        const int armorTextID = 1000;
-        const int weaponTextID = 1001;
-        const int miscTextID = 1003;
-
-        #endregion
-
         #region UI Rects
 
         Rect weaponsAndArmorRect = new Rect(0, 0, 92, 10);
@@ -1144,8 +1134,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void GoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            const int goldToDropTextId = 25;
+
             // Get text tokens
-            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(goldToDropID);
+            TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(goldToDropTextId);
 
             // Hack to set gold pieces in text token for now
             textTokens[0].text = textTokens[0].text.Replace("%gii", GameManager.Instance.PlayerEntity.GoldPieces.ToString());
@@ -1292,13 +1284,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void ShowInfoPopup(DaggerfallUnityItem item)
         {
+            const int armorTextId = 1000;
+            const int weaponTextId = 1001;
+            const int miscTextId = 1003;
+
             TextFile.Token[] tokens = null;
             if (item.ItemGroup == ItemGroups.Armor)
-                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorTextID);
+                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(armorTextId);
             else if (item.ItemGroup == ItemGroups.Weapons)
-                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponTextID);
+                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(weaponTextId);
             else
-                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(miscTextID);
+                tokens = DaggerfallUnity.TextProvider.GetRSCTokens(miscTextId);
 
             if (tokens != null && tokens.Length > 0)
             {
@@ -1364,6 +1360,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void LocalItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            const int noSpellsTextId = 12;
+
             // Get index
             int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
             if (index >= localItemsFiltered.Count)
@@ -1400,7 +1398,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     cannotUse.ClickAnywhereToClose = true;
                     cannotUse.Show();
                 } else if (item.TemplateIndex == (int)MiscItems.Spellbook) {
-                    TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(noSpellsID);
+                    TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(noSpellsTextId);
                     DaggerfallMessageBox noSpells = new DaggerfallMessageBox(uiManager, this);
                     noSpells.SetTextTokens(textTokens);
                     noSpells.ClickAnywhereToClose = true;

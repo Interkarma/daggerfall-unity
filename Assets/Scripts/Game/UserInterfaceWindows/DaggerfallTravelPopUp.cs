@@ -22,12 +22,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
     public class DaggerfallTravelPopUp : DaggerfallPopupWindow
     {
-        #region Classic Text IDs
-
-        const int notEnoughGoldTextId = 454;
-
-        #endregion
-
         #region fields
         DaggerfallTravelMapWindow travelWindow = null;
 
@@ -378,6 +372,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void showNotEnoughGoldPopup()
         {
+            const int notEnoughGoldTextId = 454;
+
             TextFile.Token[] tokens = DaggerfallUnity.TextProvider.GetRSCTokens(notEnoughGoldTextId);
             if (tokens != null && tokens.Length > 0)
             {
