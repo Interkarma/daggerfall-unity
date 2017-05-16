@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game
         {
             Quaternion q = Quaternion.LookRotation(forward);
             Vector3 v = q.eulerAngles;
-            SetFacing(v.y, v.x);
+            SetFacing(v.y, 0f);
         }
     }
 }
