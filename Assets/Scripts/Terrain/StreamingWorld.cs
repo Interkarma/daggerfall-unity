@@ -1119,7 +1119,7 @@ namespace DaggerfallWorkshop
             PlayerMouseLook playerMouseLook = GameManager.Instance.PlayerMouseLook;
             if (playerMouseLook)
             {
-                playerMouseLook.SetFacing(foundDoorNormal);
+                playerMouseLook.SetHorizontalFacing(foundDoorNormal);
             }
         }
 
