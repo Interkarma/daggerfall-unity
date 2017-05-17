@@ -849,13 +849,13 @@ namespace DaggerfallWorkshop.Game
         public static event OnPreTransitionEventHandler OnPreTransition;
         protected virtual void RaiseOnPreTransitionEvent(TransitionType transitionType)
         {
-            TransitionEventArgs args = new TransitionEventArgs(TransitionType.ToBuildingInterior);
+            TransitionEventArgs args = new TransitionEventArgs(transitionType);
             if (OnPreTransition != null)
                 OnPreTransition(args);
         }
         protected virtual void RaiseOnPreTransitionEvent(TransitionType transitionType, StaticDoor staticDoor)
         {
-            TransitionEventArgs args = new TransitionEventArgs(TransitionType.ToBuildingInterior, staticDoor);
+            TransitionEventArgs args = new TransitionEventArgs(transitionType, staticDoor);
             if (OnPreTransition != null)
                 OnPreTransition(args);
         }
