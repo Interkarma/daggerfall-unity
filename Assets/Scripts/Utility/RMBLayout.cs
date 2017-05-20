@@ -50,6 +50,31 @@ namespace DaggerfallWorkshop.Utility
         #region Layout Methods
 
         /// <summary>
+        /// Gets block data with validation.
+        /// </summary>
+        /// <param name="blockName">Block name.</param>
+        /// <param name="blockDataOut">DFBlock data out.</param>
+        /// <returns>True if validated and successful.</returns>
+        public static bool GetBlockData(string blockName, out DFBlock blockDataOut)
+        {
+            blockDataOut = new DFBlock();
+
+            // Validate
+            if (string.IsNullOrEmpty(blockName))
+                return false;
+            if (!blockName.EndsWith(".RMB", StringComparison.InvariantCultureIgnoreCase))
+                return false;
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return false;
+
+            // Get block data
+            blockDataOut = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
+
+            return true;
+        }
+
+        /// <summary>
         /// Create base RMB block by name.
         /// </summary>
         /// <param name="blockName">Name of block.</param>
@@ -68,19 +93,9 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Block GameObject.</returns>
         public static GameObject CreateBaseGameObject(string blockName, out DFBlock blockDataOut, DaggerfallRMBBlock cloneFrom = null)
         {
-            blockDataOut = new DFBlock();
-
-            // Validate
-            if (string.IsNullOrEmpty(blockName))
-                return null;
-            if (!blockName.EndsWith(".RMB", StringComparison.InvariantCultureIgnoreCase))
-                return null;
-            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
-            if (!dfUnity.IsReady)
-                return null;
-
             // Get block data
-            blockDataOut = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
+            if (!GetBlockData(blockName, out blockDataOut))
+                return null;
 
             return CreateBaseGameObject(ref blockDataOut, cloneFrom);
         }
@@ -126,11 +141,12 @@ namespace DaggerfallWorkshop.Utility
             // Lists to receive any doors found in this block
             List<StaticDoor> modelDoors;
             List<StaticDoor> propDoors;
+            List<StaticBuilding> modelBuildings;
 
             // Add models and static props
             GameObject modelsNode = new GameObject("Models");
             modelsNode.transform.parent = go.transform;
-            AddModels(dfUnity, ref blockData, out modelDoors, combiner, modelsNode.transform);
+            AddModels(dfUnity, ref blockData, out modelDoors, out modelBuildings, combiner, modelsNode.transform);
             AddProps(dfUnity, ref blockData, out propDoors, combiner, modelsNode.transform);
 
             // Add doors
@@ -139,6 +155,10 @@ namespace DaggerfallWorkshop.Utility
             if (propDoors.Count > 0) allDoors.AddRange(propDoors);
             if (allDoors.Count > 0)
                 AddStaticDoors(allDoors.ToArray(), go);
+
+            // Add buildings
+            if (modelBuildings.Count > 0)
+                AddStaticBuildings(modelBuildings.ToArray(), go);
 
             // Apply combiner
             if (combiner != null)
@@ -580,10 +600,12 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallUnity dfUnity,
             ref DFBlock blockData,
             out List<StaticDoor> doorsOut,
+            out List<StaticBuilding> buildingsOut,
             ModelCombiner combiner = null,
             Transform parent = null)
         {
             doorsOut = new List<StaticDoor>();
+            buildingsOut = new List<StaticBuilding>();
 
             // Iterate through all subrecords
             int recordCount = 0;
@@ -595,6 +617,7 @@ namespace DaggerfallWorkshop.Utility
                 Matrix4x4 subRecordMatrix = Matrix4x4.TRS(subRecordPosition, Quaternion.Euler(subRecordRotation), Vector3.one);
 
                 // Iterate through models in this subrecord
+                bool firstModel = true;
                 foreach (DFBlock.RmbBlock3dObjectRecord obj in subRecord.Exterior.Block3dObjectRecords)
                 {
                     // Get model transform
@@ -609,6 +632,23 @@ namespace DaggerfallWorkshop.Utility
                     // Does this model have doors?
                     if (modelData.Doors != null)
                         doorsOut.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix));
+
+                    // Store building information for first model of record
+                    // First model is main record structure, others are attachments like posts
+                    // Only main structure is needed to resolve building after hit-test
+                    if (firstModel)
+                    {
+                        StaticBuilding staticBuilding = new StaticBuilding();
+                        staticBuilding.modelMatrix = modelMatrix;
+                        staticBuilding.buildingData = blockData.RmbBlock.FldHeader.BuildingDataList[recordCount];
+                        staticBuilding.blockIndex = blockData.Index;
+                        staticBuilding.recordIndex = recordCount;
+                        staticBuilding.centre = new Vector3(modelData.DFMesh.Centre.X, modelData.DFMesh.Centre.Y, modelData.DFMesh.Centre.Z) * MeshReader.GlobalScale;
+                        staticBuilding.size = new Vector3(modelData.DFMesh.Size.X, modelData.DFMesh.Size.Y, modelData.DFMesh.Size.Z) * MeshReader.GlobalScale;
+                        staticBuilding.radius = modelData.DFMesh.Radius * MeshReader.GlobalScale;
+                        buildingsOut.Add(staticBuilding);
+                        firstModel = false;
+                    }
 
                     // Import custom GameObject
                     if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix)) != null)
@@ -709,6 +749,15 @@ namespace DaggerfallWorkshop.Utility
                 c = target.AddComponent<DaggerfallStaticDoors>();
             if (doors != null && target != null)
                 c.Doors = doors;
+        }
+
+        private static void AddStaticBuildings(StaticBuilding[] buildings, GameObject target)
+        {
+            DaggerfallStaticBuildings c = target.GetComponent<DaggerfallStaticBuildings>();
+            if (c == null)
+                c = target.AddComponent<DaggerfallStaticBuildings>();
+            if (buildings != null && target != null)
+                c.Buildings = buildings;
         }
 
         private static bool IsCityGate(uint modelID)

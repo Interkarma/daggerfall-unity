@@ -524,10 +524,6 @@ namespace DaggerfallWorkshop
 
         private IEnumerator UpdateLocation(int index, bool allowYield)
         {
-            //int key = TerrainHelper.MakeTerrainKey(terrainArray[index].mapPixelX, terrainArray[index].mapPixelY);
-            //int playerKey = TerrainHelper.MakeTerrainKey(MapPixelX, MapPixelY);
-            //bool isPlayerTerrain = (key == playerKey);
-
             if (terrainArray[index].active && terrainArray[index].hasLocation && terrainArray[index].updateLocation)
             {
                 // Disable update flag
@@ -560,20 +556,17 @@ namespace DaggerfallWorkshop
                     animalsBillboardBatch.hideFlags = defaultHideFlags;
                     miscBillboardBatch.hideFlags = defaultHideFlags;
 
-                    // RMB blocks are laid out in centre of terrain to align with ground
-                    //int width = location.Exterior.ExteriorData.Width;
-                    //int height = location.Exterior.ExteriorData.Height;
-                    //float offsetX = ((8 * RMBLayout.RMBSide) - (width * RMBLayout.RMBSide)) / 2;
-                    //float offsetZ = ((8 * RMBLayout.RMBSide) - (height * RMBLayout.RMBSide)) / 2;
-                    //Vector3 origin = new Vector3(offsetX, 2.0f * MeshReader.GlobalScale, offsetZ);
-
                     // Position RMB blocks inside terrain area
                     int width = location.Exterior.ExteriorData.Width;
                     int height = location.Exterior.ExteriorData.Height;
                     DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(location);
                     Vector3 origin = new Vector3(tilePos.X * RMBLayout.RMBTileSide, 2.0f * MeshReader.GlobalScale, tilePos.Y * RMBLayout.RMBTileSide);
 
-                    // Get location data
+                    // Get blocks for this location pre-populated with building data from MAPS.BSA
+                    DFBlock[] blocks;
+                    RMBLayout.GetLocationBuildingData(location, out blocks);
+
+                    // Get location component
                     DaggerfallLocation dfLocation = locationObject.GetComponent<DaggerfallLocation>();
 
                     // Perform layout and yield after each block is placed
@@ -589,10 +582,9 @@ namespace DaggerfallWorkshop
                             animalsBillboardBatch.BlockOrigin = blockOrigin;
                             miscBillboardBatch.BlockOrigin = blockOrigin;
 
-                            // Add block and yield
-                            string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
+                            // Add block
                             GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
-                                blockName,
+                                blocks[y * width + x],
                                 false,
                                 dfUnity.Option_CityBlockPrefab,
                                 natureBillboardBatch,
@@ -600,11 +592,16 @@ namespace DaggerfallWorkshop
                                 animalsBillboardBatch,
                                 miscBillboardAtlas,
                                 miscBillboardBatch);
+
+                            // Set game object properties
                             go.hideFlags = defaultHideFlags;
                             go.transform.parent = locationObject.transform;
                             go.transform.localPosition = blockOrigin;
                             dfLocation.ApplyClimateSettings();
-                            if (allowYield) yield return new WaitForEndOfFrame();
+
+                            // Optionally yield after placing block
+                            if (allowYield)
+                                yield return new WaitForEndOfFrame();
                         }
                     }
 
@@ -614,14 +611,6 @@ namespace DaggerfallWorkshop
                     animalsBillboardBatch.Apply();
                     miscBillboardBatch.Apply();
                 }
-            }
-            else if (terrainArray[index].active)
-            {
-                //if (playerKey == key && repositionMethod != RepositionMethods.None)
-                //{
-                //    //PositionPlayerToTerrain(MapPixelX, MapPixelY, Vector3.zero);
-                //    //repositionPlayer = false;
-                //}
             }
         }
 

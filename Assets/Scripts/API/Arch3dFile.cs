@@ -184,6 +184,8 @@ namespace DaggerfallConnect.Arena2
         {
             public TextureIndex[] UniqueTextures;
             public PurePlane[] Planes;
+            public DFMesh.DFPoint Size;
+            public DFMesh.DFPoint Centre;
         }
 
         /// <summary>
@@ -595,6 +597,7 @@ namespace DaggerfallConnect.Arena2
             BinaryReader reader = records[record].MemoryFile.GetReader(position);
             BinaryReader pointReader = records[record].MemoryFile.GetReader();
             BinaryReader planeDataReader = records[record].MemoryFile.GetReader();
+            int minX = 0, maxX = 0, minY = 0, maxY = 0, minZ = 0, maxZ = 0;
             for (int plane = 0; plane < faceCount; plane++)
             {
                 // Read plane header
@@ -686,11 +689,25 @@ namespace DaggerfallConnect.Arena2
                             break;
                     }
 
-                    // Store native point values
+                    // Read native point values
                     pointReader.BaseStream.Position = pointPosition;
-                    records[record].PureMesh.Planes[plane].Points[point].x = pointReader.ReadInt32();
-                    records[record].PureMesh.Planes[plane].Points[point].y = pointReader.ReadInt32();
-                    records[record].PureMesh.Planes[plane].Points[point].z = pointReader.ReadInt32();
+                    int x = pointReader.ReadInt32();
+                    int y = pointReader.ReadInt32();
+                    int z = pointReader.ReadInt32();
+
+                    // Find min/max values of native points so far
+                    // This can be used to construct a tight box around mesh
+                    if (x < minX) minX = x;
+                    if (x > maxX) maxX = x;
+                    if (y < minY) minY = y;
+                    if (y > maxY) maxY = y;
+                    if (z < minZ) minZ = z;
+                    if (z > maxZ) maxZ = z;
+
+                    // Store native point values
+                    records[record].PureMesh.Planes[plane].Points[point].x = x;
+                    records[record].PureMesh.Planes[plane].Points[point].y = y;
+                    records[record].PureMesh.Planes[plane].Points[point].z = z;
 
                     // Store native normal values for each vertex
                     records[record].PureMesh.Planes[plane].Points[point].nx = nx;
@@ -701,6 +718,20 @@ namespace DaggerfallConnect.Arena2
                 // Read unknown plane data
                 planeDataReader.BaseStream.Position = records[record].Header.PlaneDataOffset + plane * 24;
                 records[record].PureMesh.Planes[plane].PlaneData = planeDataReader.ReadBytes(24);
+
+                // Store size of mesh
+                DFMesh.DFPoint size = new DFMesh.DFPoint();
+                size.X = (maxX / pointDivisor - minX / pointDivisor);
+                size.Y = (maxY / pointDivisor - minY / pointDivisor);
+                size.Z = (maxZ / pointDivisor - minZ / pointDivisor);
+                records[record].PureMesh.Size = size;
+
+                // Store centre of mesh
+                DFMesh.DFPoint centre = new DFMesh.DFPoint();
+                centre.X = size.X / 2;
+                centre.Y = size.Y / 2;
+                centre.Z = size.Z / 2;
+                records[record].PureMesh.Centre = centre;
             }
 
             //// Read unknown object data, but ignore known non-conforming objects
@@ -800,6 +831,10 @@ namespace DaggerfallConnect.Arena2
 
             // Store total triangle across whole mesh
             records[record].DFMesh.TotalTriangles = totalTriangles;
+
+            // Copy size and centre of mesh
+            records[record].DFMesh.Size = records[record].PureMesh.Size;
+            records[record].DFMesh.Centre = records[record].PureMesh.Centre;
 
             return true;
         }

@@ -835,7 +835,7 @@ namespace DaggerfallWorkshop.Game
                     // Show "You are entering %s"
                     string youAreEntering = HardStrings.youAreEntering;
                     youAreEntering = youAreEntering.Replace("%s", location.Name);
-                    DaggerfallUI.AddHUDText(youAreEntering);
+                    DaggerfallUI.AddHUDText(youAreEntering, 2);
                 }
             }
         }

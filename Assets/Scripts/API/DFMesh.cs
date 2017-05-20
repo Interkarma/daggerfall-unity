@@ -37,6 +37,12 @@ namespace DaggerfallConnect
         /// <summary>Radius of this mesh from origin to farthest point.</summary>
         public float Radius;
 
+        /// <summary>Size of this mesh in each dimension from origin.</summary>
+        public DFPoint Size;
+
+        /// <summary>Centre of mesh vertex cloud.</summary>
+        public DFPoint Centre;
+
         /// <summary>Total number of vertices across all submeshes. Helpful for allocating vertex buffers.</summary>
         public int TotalVertices;
 

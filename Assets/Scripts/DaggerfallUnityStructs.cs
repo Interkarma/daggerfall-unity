@@ -280,11 +280,26 @@ namespace DaggerfallWorkshop
         public Matrix4x4 buildingMatrix;            // Matrix of individual building owning this door
         public DoorTypes doorType;                  // Type of door
         public int blockIndex;                      // Block index in BLOCKS.BSA
-        public int recordIndex;                     // Record index of interior
+        public int recordIndex;                     // Record index for interior
         public int doorIndex;                       // Door index for individual building/record (most buildings have only 1-2 doors)
         public Vector3 centre;                      // Door centre in model space
         public Vector3 size;                        // Door size in model space
         public Vector3 normal;                      // Normal pointing away from door
+    }
+
+    /// <summary>
+    /// Defines a static building inside a scene.
+    /// </summary>
+    [Serializable]
+    public struct StaticBuilding
+    {
+        public Matrix4x4 modelMatrix;                   // Matrix of individual model for this building
+        public DFLocation.BuildingData buildingData;    // Information about this building from MAPS.BSA
+        public int blockIndex;                          // Block index in BLOCKS.BSA
+        public int recordIndex;                         // Record index for building
+        public Vector3 centre;                          // Building centre in model space
+        public Vector3 size;                            // Building size
+        public float radius;                            // Building radius
     }
 
     /// <summary>

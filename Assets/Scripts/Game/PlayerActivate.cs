@@ -11,7 +11,10 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallConnect;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -50,8 +53,47 @@ namespace DaggerfallWorkshop.Game
                 if (hits != null)
                 {
                     // Check each hit in range for action, exit on first valid action processed
+                    bool hitBuilding = false;
+                    StaticBuilding building = new StaticBuilding();
                     for (int i = 0; i < hits.Length; i++)
                     {
+                        // Check for a static building hit
+                        Transform buildingOwner;
+                        DaggerfallStaticBuildings buildings = GetBuildings(hits[i].transform, out buildingOwner);
+                        if (buildings)
+                        {
+                            if (buildings.HasHit(hits[i].point, out building))
+                            {
+                                hitBuilding = true;
+
+                                //// TEMP: Print building name or type to HUD as a test
+                                //// This will be moved to a proper info click soon
+                                //if (building.buildingData.BuildingType >= DFLocation.BuildingTypes.House1 &&
+                                //    building.buildingData.BuildingType <= DFLocation.BuildingTypes.House6)
+                                //{
+                                //    DaggerfallUI.AddHUDText("Residence");
+                                //}
+                                //else
+                                //{
+                                //    ContentReader.MapSummary mapSummary;
+                                //    DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+                                //    if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+                                //    {
+                                //        DFLocation playerLocation = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
+
+                                //        string buildingName = BuildingNames.GetName(
+                                //            building.buildingData.NameSeed,
+                                //            building.buildingData.BuildingType,
+                                //            building.buildingData.FactionId,
+                                //            playerLocation.Name,
+                                //            playerLocation.RegionName);
+
+                                //        DaggerfallUI.AddHUDText(buildingName);
+                                //    }
+                                //}
+                            }
+                        }
+
                         // Check for a static door hit
                         Transform doorOwner;
                         DaggerfallStaticDoors doors = GetDoors(hits[i].transform, out doorOwner);
@@ -122,6 +164,25 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
+        }
+
+        // Look for building array on object, then on direct parent
+        private DaggerfallStaticBuildings GetBuildings(Transform transform, out Transform owner)
+        {
+            owner = null;
+            DaggerfallStaticBuildings buildings = transform.GetComponent<DaggerfallStaticBuildings>();
+            if (!buildings)
+            {
+                buildings = transform.GetComponentInParent<DaggerfallStaticBuildings>();
+                if (buildings)
+                    owner = buildings.transform;
+            }
+            else
+            {
+                owner = buildings.transform;
+            }
+
+            return buildings;
         }
 
         // Look for doors on object, then on direct parent

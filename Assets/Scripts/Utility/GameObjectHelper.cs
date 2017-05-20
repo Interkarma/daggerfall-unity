@@ -332,11 +332,47 @@ namespace DaggerfallWorkshop.Utility
         #region RMB & RDB Block Helpers
 
         /// <summary>
-        /// Layout a complete RMB block game object.
-        /// Can be used standalone or as part of a city build.
+        /// Layout RMB block gamne object from name only.
+        /// This will be missing information like building data and should only be used standalone.
         /// </summary>
         public static GameObject CreateRMBBlockGameObject(
             string blockName,
+            bool addGroundPlane = true,
+            DaggerfallRMBBlock cloneFrom = null,
+            DaggerfallBillboardBatch natureBillboardBatch = null,
+            DaggerfallBillboardBatch lightsBillboardBatch = null,
+            DaggerfallBillboardBatch animalsBillboardBatch = null,
+            TextureAtlasBuilder miscBillboardAtlas = null,
+            DaggerfallBillboardBatch miscBillboardBatch = null,
+            ClimateNatureSets climateNature = ClimateNatureSets.TemperateWoodland,
+            ClimateSeason climateSeason = ClimateSeason.Summer)
+        {
+            // Get block data from name
+            DFBlock blockData;
+            if (!RMBLayout.GetBlockData(blockName, out blockData))
+                return null;
+
+            // Create base object from block data
+            GameObject go = CreateRMBBlockGameObject(
+                blockData,
+                addGroundPlane,
+                cloneFrom,
+                natureBillboardBatch,
+                lightsBillboardBatch,
+                animalsBillboardBatch,
+                miscBillboardAtlas,
+                miscBillboardBatch,
+                climateNature,
+                climateSeason);
+
+            return go;
+        }
+
+        /// <summary>
+        /// Layout RMB block game object from DFBlock data.
+        /// </summary>
+        public static GameObject CreateRMBBlockGameObject(
+            DFBlock blockData,
             bool addGroundPlane = true,
             DaggerfallRMBBlock cloneFrom = null,
             DaggerfallBillboardBatch natureBillboardBatch = null,
@@ -353,8 +389,7 @@ namespace DaggerfallWorkshop.Utility
                 return null;
 
             // Create base object
-            DFBlock blockData;
-            GameObject go = RMBLayout.CreateBaseGameObject(blockName, out blockData, cloneFrom);
+            GameObject go = RMBLayout.CreateBaseGameObject(ref blockData, cloneFrom);
 
             // Create flats node
             GameObject flatsNode = new GameObject("Flats");
