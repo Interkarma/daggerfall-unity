@@ -665,7 +665,6 @@ namespace DaggerfallWorkshop.Utility
                 HasRangedAttack1 = false,
                 HasRangedAttack2 = false,
                 CanOpenDoors = true,
-                BloodIndex = 2,
                 MoveSound = (int)SoundClips.EnemyGargoyleMove,
                 BarkSound = (int)SoundClips.EnemyGargoyleBark,
                 AttackSound = (int)SoundClips.EnemyGargoyleAttack,
