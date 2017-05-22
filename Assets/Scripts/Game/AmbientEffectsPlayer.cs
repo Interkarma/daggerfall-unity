@@ -258,12 +258,12 @@ namespace DaggerfallWorkshop.Game
                     SoundClips.AmbientGrind,
                     SoundClips.AmbientStrumming,
                     SoundClips.AmbientWindBlow1,
-                    SoundClips.AmbientWindBlow2,
-                    SoundClips.AmbientMetalJangleLow,
+                    SoundClips.AmbientWindBlow1a,
+                    SoundClips.AmbientWindBlow1b,
+                    SoundClips.AmbientMonsterRoar,
+                    SoundClips.AmbientGoldPieces,
                     SoundClips.AmbientBirdCall,
-                    SoundClips.ArenaRat,
-                    SoundClips.AmbientClank,
-                    SoundClips.ArenaGhost,
+                    SoundClips.AmbientDoorClose,
                 };
             }
             else if (Presets == AmbientSoundPresets.Storm)

@@ -85,10 +85,10 @@ namespace DaggerfallWorkshop
         AmbientWindBlow1 = 70,
         AmbientWindBlow1a = 71,
         AmbientWindBlow1b = 72,
-        AmbientWindBlow2 = 73,
-        AmbientMetalJangleLow = 74,
+        AmbientMonsterRoar = 73,
+        AmbientGoldPieces = 74,
         AmbientBirdCall = 75,
-        AmbientClank = 76,
+        AmbientDoorClose = 76,
 
         FanfareSolo = 77,
 
