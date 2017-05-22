@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop
         AmbientDripLongHigh = 27,
         AmbientDrums = 28,
         AmbientWindMoan2 = 29,
+        ArenaHitSound = 30,
 
         ArenaFanfareLevelUp = 32,
         ArenaFanfareStaffOfChaos = 33,
@@ -72,8 +73,35 @@ namespace DaggerfallWorkshop
         
         ArenaHellHound = 41,
 
-        // 42-62 Grunts and groans. Perhaps player pain sounds by race and gender?
-        // Needs more research.
+        ArgonianMalePain3 = 42, // See 390-412
+
+        // 43-62 are female pain sounds.
+        // These are all unused in classic,
+        // but seem to correspond to the order that it stores
+        // the races. It sounds like they may go in increasing levels of pain,
+        // or the third is supposed to be when the character dies.
+        // These are IDs 267 through 286 in the sound file.
+        // The final ones, IDs 287 through 290, are below at 424-427 
+        BretonFemalePain1 = 43,
+        BretonFemalePain2 = 44,
+        BretonFemalePain3 = 45,
+        RedguardFemalePain1 = 46,
+        RedguardFemalePain2 = 47,
+        RedguardFemalePain3 = 48,
+        NordFemalePain1 = 49,
+        NordFemalePain2 = 50,
+        NordFemalePain3 = 51,
+        DarkElfFemalePain1 = 52,
+        DarkElfFemalePain2 = 53,
+        DarkElfFemalePain3 = 54,
+        HighElfFemalePain1 = 55,
+        HighElfFemalePain2 = 56,
+        HighElfFemalePain3 = 57,
+        WoodElfFemalePain1 = 58,
+        WoodElfFemalePain2 = 59,
+        WoodElfFemalePain3 = 60,
+        KhajiitFemalePain1 = 61,
+        KhajiitFemalePain2 = 62,
 
         AmbientDripShort = 63,
         AmbientDripLong = 64,
@@ -333,7 +361,7 @@ namespace DaggerfallWorkshop
 
         HorseClop2 = 298,
 
-        Gasp = 299,
+        PainSound = 299,
 
         DiceRoll = 300,
 
@@ -371,6 +399,8 @@ namespace DaggerfallWorkshop
         ActivateRatchet = 328,
 
         ArenaRat = 329,
+
+        // 330 through 333 are footsteps
 
         SplashSmallLow = 334,
 
@@ -412,7 +442,7 @@ namespace DaggerfallWorkshop
         PageTurn = 362,
         ParchmentScratching = 363,
 
-        // 364-365 TODO
+        MakePotion = 365,
 
         RaceBreton = 366,
         RaceRedguard = 367,
@@ -438,13 +468,42 @@ namespace DaggerfallWorkshop
         EquipJewellery = 383,
         OpenBook = 384,
 
+        SnoringByFire = 385,
+        MaleGasp = 386,
+        FemaleGasp = 387,
+
         BlowingWindIntro = 388,
         AmbientRaining = 389,
 
-        // 390-412 are more pain sounds.
-        // Needs more research.
-
-        PlayerDeath = 405,
+        // 390-412 are male pain sounds.
+        // These are unused in classic except for 405, which is used for player death,
+        // but they seem to correspond to the order that it stores
+        // the races.  It sounds like they may go in increasing levels of pain,
+        // or the third is supposed to be when the character dies. These are ID 243 through 265 in the sound file.
+        // The last Argonian Male pain effect, ID 266, is at index 42.
+        BretonMalePain1 = 390,
+        BretonMalePain2 = 391,
+        BretonMalePain3 = 392,
+        RedguardMalePain1 = 393,
+        RedguardMalePain2 = 394,
+        RedguardMalePain3 = 395,
+        NordMalePain1 = 396,
+        NordMalePain2 = 397,
+        NordMalePain3 = 398,
+        DarkElfMalePain1 = 399,
+        DarkElfMalePain2 = 400,
+        DarkElfMalePain3 = 401,
+        HighElfMalePain1 = 402,
+        HighElfMalePain2 = 403,
+        HighElfMalePain3 = 404,
+        PlayerDeath = 405, // or WoodElfMalePain1
+        WoodElfMalePain2 = 406,
+        WoodElfMalePain3 = 407,
+        KhajiitMalePain1 = 408,
+        KhajiitMalePain2 = 409,
+        KhajiitMalePain3 = 410,
+        ArgonianMalePain1 = 411,
+        ArgonianMalePain2 = 412,
 
         EquipMaceOrHammer = 413,
         EquipFlail = 414,
@@ -463,6 +522,12 @@ namespace DaggerfallWorkshop
         ArenaIronGolem = 422,
 
         SpookyHigh2 = 423,
+
+        // Continuation of 43-62
+        KhajiitFemalePain3 = 424,
+        ArgonianFemalePain1 = 425,
+        ArgonianFemalePain2 = 426,
+        ArgonianFemalePain3 = 427,
 
         // 428-436 are weapon parry sounds
         Parry1 = 428,
@@ -492,8 +557,9 @@ namespace DaggerfallWorkshop
         AmbientPeople9 = 449,
         AmbientPeople10 = 450,
 
-        // 452-453 might be activation sounds.
-        // Needs more research.
+        // 452 sounds like a boat creaking
+        // 453 may be activation sound.
+        // 454 is another wind sound.
 
         Vengeance = 455,
 
