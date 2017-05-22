@@ -90,6 +90,8 @@ namespace DaggerfallWorkshop
         public Color32 ToolTipBackgroundColor { get; set; }
         public Color32 ToolTipTextColor { get; set; }
         public int AutomapNumberOfDungeons { get; set; }
+        public int ShopQualityPresentation { get; set; }
+        public int ShopQualityHUDDelay { get; set; }
 
         // [Controls]
         public bool InvertMouseVertical { get; set; }
@@ -154,6 +156,8 @@ namespace DaggerfallWorkshop
             ToolTipBackgroundColor = GetColor(sectionGUI, "ToolTipBackgroundColor", DaggerfallUI.DaggerfallUnityDefaultToolTipBackgroundColor);
             ToolTipTextColor = GetColor(sectionGUI, "ToolTipTextColor", DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor);
             AutomapNumberOfDungeons = GetInt(sectionGUI, "AutomapNumberOfDungeons", 0, 100);
+            ShopQualityPresentation = GetInt(sectionGUI, "ShopQualityPresentation", 0, 2);
+            ShopQualityHUDDelay = GetInt(sectionGUI, "ShopQualityHUDDelay", 1, 10);
             InvertMouseVertical = GetBool(sectionControls, "InvertMouseVertical");
             MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f);
@@ -204,6 +208,8 @@ namespace DaggerfallWorkshop
             SetColor(sectionGUI, "ToolTipBackgroundColor", ToolTipBackgroundColor);
             SetColor(sectionGUI, "ToolTipTextColor", ToolTipTextColor);
             SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
+            SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
+            SetInt(sectionGUI, "ShopQualityHUDDelay", ShopQualityHUDDelay);
             SetBool(sectionControls, "InvertMouseVertical", InvertMouseVertical);
             SetBool(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);

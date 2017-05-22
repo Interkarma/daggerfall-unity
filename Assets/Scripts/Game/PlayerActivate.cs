@@ -27,6 +27,9 @@ namespace DaggerfallWorkshop.Game
         PlayerEnterExit playerEnterExit;        // Example component to enter/exit buildings
         GameObject mainCamera;
 
+        Transform deferredInteriorDoorOwner;    // Used to defer interior transition after popup message
+        StaticDoor deferredInteriorDoor;
+
         public float RayDistance = 2.0f;        // Distance of ray check, tune this to your scale and preference
 
         void Start()
@@ -104,6 +107,20 @@ namespace DaggerfallWorkshop.Game
                             {
                                 if (door.doorType == DoorTypes.Building && !playerEnterExit.IsPlayerInside)
                                 {
+                                    // If entering a shop let player know the quality level
+                                    if (hitBuilding)
+                                    {
+                                        DaggerfallMessageBox mb = PresentShopQuality(building.buildingData);
+                                        if (mb != null)
+                                        {
+                                            // Defer transition to interior to after user closes messagebox
+                                            deferredInteriorDoorOwner = doorOwner;
+                                            deferredInteriorDoor = door;
+                                            mb.OnClose += ShopQualityPopup_OnClose;
+                                            return;
+                                        }
+                                    }
+
                                     // Hit door while outside, transition inside
                                     playerEnterExit.TransitionInterior(doorOwner, door, true);
                                     return;
@@ -164,6 +181,12 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
+        }
+
+        // Shop quality message box closed, move to interior
+        private void ShopQualityPopup_OnClose()
+        {
+            playerEnterExit.TransitionInterior(deferredInteriorDoorOwner, deferredInteriorDoor, true);
         }
 
         // Look for building array on object, then on direct parent
@@ -243,6 +266,82 @@ namespace DaggerfallWorkshop.Game
                 return false;
             else
                 return true;
+        }
+
+        // Display a shop quality level
+        private DaggerfallMessageBox PresentShopQuality(DFLocation.BuildingData buildingData)
+        {
+            const int qualityLevel1TextId = 266;    // "Incense and soft music soothe your nerves"
+            const int qualityLevel2TextId = 267;    // "The shop is better appointed than many"
+            const int qualityLevel3TextId = 268;    // "The shop is laid out in a practical"
+            const int qualityLevel4TextId = 269;    // "Sturdy shelves, cobbled together"
+            const int qualityLevel5TextId = 270;    // "Rusty relics lie wherever they were last tossed"
+
+            // Do nothing if not a shop
+            if (!IsShop(buildingData.BuildingType))
+                return null;
+
+            // Set quality level text ID from quality value 01-20
+            // UESP states this is building quality / 4 but Daggerfall appears to use manual thresholds
+            // Below is best effort based on a small sample size (shops in Daggerall and Gothway Garden)
+            // TODO: Research and confirm thresholds
+            int qualityTextId;
+            if (buildingData.Quality <= 4)
+                qualityTextId = qualityLevel5TextId;        // 01 - 04
+            else if (buildingData.Quality <= 7)
+                qualityTextId = qualityLevel4TextId;        // 05 - 07
+            else if (buildingData.Quality <= 14)
+                qualityTextId = qualityLevel3TextId;        // 08 - 14
+            else if (buildingData.Quality <= 17)
+                qualityTextId = qualityLevel2TextId;        // 15 - 17
+            else
+                qualityTextId = qualityLevel1TextId;        // 18 - 20
+
+            // Log quality of building entered for debugging
+            //Debug.Log("Entered store with quality of " + buildingData.Quality);
+
+            // Output quality text based on settings
+            switch (DaggerfallUnity.Settings.ShopQualityPresentation)
+            {
+                case 0:     // Display popup as per classic
+                    return DaggerfallUI.MessageBox(qualityTextId);
+
+                case 1:     // Display HUD text only with variable delay
+                    DaggerfallConnect.Arena2.TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(qualityTextId);
+                    for (int i = 0; i < tokens.Length; i++)
+                    {
+                        if (tokens[i].formatting == DaggerfallConnect.Arena2.TextFile.Formatting.Text)
+                            DaggerfallUI.AddHUDText(tokens[i].text, DaggerfallUnity.Settings.ShopQualityHUDDelay);
+                    }
+                    break;
+
+                case 2:     // Display nothing about shop quality
+                default:
+                    return null;
+            }
+
+            return null;
+        }
+
+        // Determines if building type is a shop
+        private bool IsShop(DFLocation.BuildingTypes buildingType)
+        {
+            switch (buildingType)
+            {
+                case DFLocation.BuildingTypes.Alchemist:
+                case DFLocation.BuildingTypes.Armorer:
+                case DFLocation.BuildingTypes.Bookseller:
+                case DFLocation.BuildingTypes.ClothingStore:
+                case DFLocation.BuildingTypes.FurnitureStore:
+                case DFLocation.BuildingTypes.GemStore:
+                case DFLocation.BuildingTypes.GeneralStore:
+                case DFLocation.BuildingTypes.Library:
+                case DFLocation.BuildingTypes.PawnShop:
+                case DFLocation.BuildingTypes.WeaponSmith:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }

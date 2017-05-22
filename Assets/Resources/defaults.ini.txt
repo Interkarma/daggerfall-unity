@@ -31,6 +31,8 @@ ToolTipDelayInSeconds=0.0
 ToolTipBackgroundColor=404040D2
 ToolTipTextColor=E6E6C8FF
 AutomapNumberOfDungeons=5
+ShopQualityPresentation=0
+ShopQualityHUDDelay=4
 
 [Controls]
 InvertMouseVertical=False
