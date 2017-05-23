@@ -35,6 +35,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected ItemCollection otherItems = new ItemCollection();
         protected int goldPieces = 0;
 
+        protected short[] SkillUses = new short[34];
+
         #endregion
 
         #region Properties
@@ -163,6 +165,20 @@ namespace DaggerfallWorkshop.Game.Entity
                 stats.SetDefaults();
                 skills.SetDefaults();
                 FillVitalSigns();
+            }
+        }
+
+        /// <summary>
+        /// Tally skill usage.
+        /// </summary>
+        public void TallySkill(short skillId, short amount)
+        {
+            SkillUses[skillId] += amount;
+            if (SkillUses[skillId] > 20000)
+                SkillUses[skillId] = 20000;
+            else if (SkillUses[skillId] < 0)
+            {
+                SkillUses[skillId] = 0;
             }
         }
 
