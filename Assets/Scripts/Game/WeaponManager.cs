@@ -256,6 +256,16 @@ namespace DaggerfallWorkshop.Game
                 // Play swing sound if attack didn't hit an enemy.
                 if (!hitEnemy)
                     weapon.PlaySwingSound();
+                else
+                {
+                    // Tally skill for weapon used
+                    if (weapon.WeaponType == WeaponTypes.Melee || weapon.WeaponType == WeaponTypes.Werecreature)
+                        playerEntity.TallySkill((short)Skills.HandToHand, 1);
+                    else if (usingRightHand && (currentRightHandWeapon != null))
+                        playerEntity.TallySkill(currentRightHandWeapon.GetWeaponSkillUsed(), 1);
+                    else if (currentLeftHandWeapon != null)
+                        playerEntity.TallySkill(currentLeftHandWeapon.GetWeaponSkillUsed(), 1);
+                }
 
                 // Damage transfer is done. The attack now plays through the remainder of its animation frames.
                 isDamageFinished = true;
