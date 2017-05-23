@@ -77,6 +77,7 @@ namespace DaggerfallWorkshop.Game
         private Vector3 contactPoint;
         private bool playerControl = false;
         private int jumpTimer;
+        private bool isJumping = false;
 
         private bool cancelMovement = false;
 
@@ -88,6 +89,11 @@ namespace DaggerfallWorkshop.Game
         public bool IsRunning
         {
             get { return (speed == runSpeed); }
+        }
+
+        public bool IsJumping
+        {
+            get { return isJumping; }
         }
 
         public bool IsCrouching
@@ -148,6 +154,7 @@ namespace DaggerfallWorkshop.Game
 
             if (grounded)
             {
+                isJumping = false;
                 bool sliding = false;
                 // See if surface immediately below should be slid down. We use this normally rather than a ControllerColliderHit point,
                 // because that interferes with step climbing amongst other annoyances
@@ -223,6 +230,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         moveDirection.y = jumpSpeed;
                         jumpTimer = 0;
+                        isJumping = true;
 
                         // Modify crouching jump speed
                         if (isCrouching)
