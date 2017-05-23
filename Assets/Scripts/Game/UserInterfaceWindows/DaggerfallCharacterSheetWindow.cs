@@ -275,7 +275,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             classLabel.Text = PlayerEntity.Career.Name;
             levelLabel.Text = PlayerEntity.Level.ToString();
             goldLabel.Text = PlayerEntity.GoldPieces.ToString();
-            fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue, PlayerEntity.MaxFatigue);
+            fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / 64, PlayerEntity.MaxFatigue / 64);
             healthLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentHealth, PlayerEntity.MaxHealth);
 
             // Update stat labels
