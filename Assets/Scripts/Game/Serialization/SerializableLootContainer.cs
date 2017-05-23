@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -92,6 +93,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (billboard)
             {
                 billboard.SetMaterial(data.textureArchive, data.textureRecord);
+
+                // Setup custom material if available
+                if (TextureReplacement.CustomTextureExist(data.textureArchive, data.textureRecord))
+                    TextureReplacement.SetBillboardCustomMaterial(billboard.gameObject, data.textureArchive, data.textureRecord);
             }
 
             // Restore items
