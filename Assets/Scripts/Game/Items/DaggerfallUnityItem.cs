@@ -12,6 +12,7 @@
 using DaggerfallConnect.Save;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -489,6 +490,39 @@ namespace DaggerfallWorkshop.Game.Items
 
                 default:
                     return SoundClips.None;
+            }
+        }
+
+        public short GetWeaponSkillUsed()
+        {
+            switch (TemplateIndex)
+            {
+                case (int)Weapons.Dagger:
+                case (int)Weapons.Tanto:
+                case (int)Weapons.Wakazashi:
+                case (int)Weapons.Shortsword:
+                    return (int)Skills.ShortBlade;
+                case (int)Weapons.Broadsword:
+                case (int)Weapons.Longsword:
+                case (int)Weapons.Saber:
+                case (int)Weapons.Katana:
+                case (int)Weapons.Claymore:
+                case (int)Weapons.Dai_Katana:
+                    return (int)Skills.LongBlade;
+                case (int)Weapons.Battle_Axe:
+                case (int)Weapons.War_Axe:
+                    return (int)Skills.Axe;
+                case (int)Weapons.Flail:
+                case (int)Weapons.Mace:
+                case (int)Weapons.Warhammer:
+                case (int)Weapons.Staff:
+                    return (int)Skills.BluntWeapon;
+                case (int)Weapons.Short_Bow:
+                case (int)Weapons.Long_Bow:
+                    return (int)Skills.Archery;
+
+                default:
+                    return (int)Skills.None;
             }
         }
 
