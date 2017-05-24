@@ -861,9 +861,14 @@ namespace DaggerfallWorkshop.Utility
             if (description == "FLT")
             {
                 action.IsFlat = true;
-                //add box collider to flats with actions for raycasting - only flats that can be activated directly need this, so this can possibly be restricted in future
-                Collider col = go.AddComponent<BoxCollider>();
-                col.isTrigger = true;
+
+                // Add box collider to flats with actions for raycasting - only flats that can be activated directly need this, so this can possibly be restricted in future
+                // Skip this for flats that already have a collider assigned from elsewhere (e.g. NPC flats)
+                if (!go.GetComponent<Collider>())
+                {
+                    Collider col = go.AddComponent<BoxCollider>();
+                    col.isTrigger = true;
+                }
             }
             else
                 action.IsFlat = false;
@@ -1088,7 +1093,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Add RDB data to billboard
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-            dfBillboard.SetResourceData(obj.Resources.FlatResource);
+            dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
 
             // Set transform
             go.transform.position = billboardPosition;

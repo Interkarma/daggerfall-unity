@@ -168,6 +168,16 @@ namespace DaggerfallWorkshop.Game
                             DaggerfallUI.Instance.InventoryWindow.LootTarget = loot;
                             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
                         }
+
+                        // Check for static NPC hit
+                        // Will expand this later for a wider range of billboard hits
+                        DaggerfallBillboard npc;
+                        if (NPCCheck(hits[i], out npc))
+                        {
+                            // Show NPC info
+                            if (currentMode == PlayerActivateModes.Info)
+                                PresentNPCInfo(npc);
+                        }
                     }
                 }
             }
@@ -258,6 +268,23 @@ namespace DaggerfallWorkshop.Game
                 return true;
         }
 
+        // Check if raycast hit a static NPC billboard
+        private bool NPCCheck(RaycastHit hitInfo, out DaggerfallBillboard billboard)
+        {
+            billboard = hitInfo.transform.GetComponent<DaggerfallBillboard>();
+            if (billboard == null)
+                return false;
+            else
+            {
+                if (billboard.Summary.FlatType == FlatTypes.NPC)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         // Display a shop quality level
         private DaggerfallMessageBox PresentShopQuality(DFLocation.BuildingData buildingData)
         {
@@ -344,22 +371,26 @@ namespace DaggerfallWorkshop.Game
             // Set the new mode
             currentMode = newMode;
 
-            // Present new mode to player
+            // Get output text based on mode
+            string modeText = string.Empty;
             switch(currentMode)
             {
                 case PlayerActivateModes.Steal:
-                    DaggerfallUI.SetModeText(HardStrings.interactionIsNowInStealMode);
+                    modeText = HardStrings.steal;
                     break;
                 case PlayerActivateModes.Grab:
-                    DaggerfallUI.SetModeText(HardStrings.interactionIsNowInGrabMode);
+                    modeText = HardStrings.grab;
                     break;
                 case PlayerActivateModes.Info:
-                    DaggerfallUI.SetModeText(HardStrings.interactionIsNowInInfoMode);
+                    modeText = HardStrings.info;
                     break;
                 case PlayerActivateModes.Talk:
-                    DaggerfallUI.SetModeText(HardStrings.interactionIsNowInDialogueMode);
+                    modeText = HardStrings.dialogue;
                     break;
             }
+
+            // Present new mode to player
+            DaggerfallUI.SetModeText(HardStrings.interactionIsNowInMode.Replace("%s", modeText));
         }
 
         // Output building info to HUD
@@ -390,6 +421,13 @@ namespace DaggerfallWorkshop.Game
                 // Output building name to HUD
                 DaggerfallUI.AddHUDText(buildingName);
             }
+        }
+
+        // Output NPC info to HUD
+        private void PresentNPCInfo(DaggerfallBillboard npc)
+        {
+            // Placeholder text
+            DaggerfallUI.AddHUDText("You see an NPC.");
         }
     }
 }

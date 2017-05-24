@@ -178,20 +178,23 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Sets extended data about billboard from RDB flat resource data.
         /// </summary>
-        public void SetResourceData(DFBlock.RdbFlatResource resource)
+        public void SetRDBResourceData(DFBlock.RdbFlatResource resource)
         {
             // Add common data
             summary.Gender = (int)resource.Gender;
             summary.FactionMobileID = (int)resource.FactionMobileId;
             summary.FixedEnemyType = MobileTypes.None;
 
-            // If flat has gender and faction this is an NPC
-            // Exlude editor flats, currently unknown why some start markers have gender or faction
-            if (summary.Archive != Utility.TextureReader.EditorFlatsTextureArchive &&
-                summary.Gender != 0 && summary.FactionMobileID != 0)
-            {
-                summary.FlatType = FlatTypes.NPC;
-            }
+            // TODO: Disabling NPC tagging here as it only works for dungeons
+            // It's also possible for flat without gender or faction to have a name
+            // Will delete this later
+            //// If flat has gender and faction this is an NPC
+            //// Exlude editor flats, currently unknown why some start markers have gender or faction
+            //if (summary.Archive != Utility.TextureReader.EditorFlatsTextureArchive &&
+            //    summary.Gender != 0 && summary.FactionMobileID != 0)
+            //{
+            //    summary.FlatType = FlatTypes.NPC;
+            //}
 
             // Set data of fixed mobile types (e.g. non-random enemy spawn)
             if (resource.TextureArchive == 199 && resource.TextureRecord == 16)
@@ -279,6 +282,17 @@ namespace DaggerfallWorkshop
             if (summary.FlatType == FlatTypes.Editor)
                 summary.EditorFlatType = MaterialReader.GetEditorFlatType(summary.Record);
 
+            // Set NPC flat type based on archive
+            // This is just a hack for now while performing
+            // more research into NPC names
+            if (summary.Archive == 334 ||                               // Daggerfall people
+                summary.Archive == 346 ||                               // Wayrest people
+                summary.Archive == 357 ||                               // Sentinel people
+                summary.Archive >= 175 && summary.Archive <= 184)       // Other people
+            {
+                summary.FlatType = FlatTypes.NPC;
+            }
+
             // Assign mesh and material
             MeshFilter meshFilter = GetComponent<MeshFilter>();
             Mesh oldMesh = meshFilter.sharedMesh;
@@ -299,6 +313,13 @@ namespace DaggerfallWorkshop
 
             // Standalone billboards never cast shadows
             meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
+
+            // Add NPC trigger collider
+            if (summary.FlatType == FlatTypes.NPC)
+            {
+                Collider col = gameObject.AddComponent<BoxCollider>();
+                col.isTrigger = true;
+            }
 
             return material;
         }

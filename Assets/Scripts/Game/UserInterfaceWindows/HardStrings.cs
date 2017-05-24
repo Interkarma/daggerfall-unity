@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -53,11 +53,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string youAreEntering = "You are entering %s";
 
-        public const string interactionIsNowInStealMode = "Interaction is now in steal mode.";
-        public const string interactionIsNowInGrabMode = "Interaction is now in grab mode.";
-        public const string interactionIsNowInInfoMode = "Interaction is now in info mode.";
-        public const string interactionIsNowInDialogueMode = "Interaction is now in dialogue mode.";
-
+        public const string interactionIsNowInMode = "Interaction is now in %s mode.";
+        public const string steal = "steal";
+        public const string grab = "grab";
+        public const string info = "info";
+        public const string dialogue = "dialogue";
         public const string residence = "Residence";
     }
 }
