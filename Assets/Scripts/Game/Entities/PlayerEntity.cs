@@ -171,7 +171,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Tally skill usage.
         /// </summary>
-        public void TallySkill(short skillId, short amount)
+        public override void TallySkill(short skillId, short amount)
         {
             SkillUses[skillId] += amount;
             if (SkillUses[skillId] > 20000)

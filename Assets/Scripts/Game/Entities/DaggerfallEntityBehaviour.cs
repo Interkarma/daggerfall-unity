@@ -42,9 +42,9 @@ namespace DaggerfallWorkshop.Game.Entity
         //private int SwimmingFatigueLoss = 44;     // According to DF Chronicles
 
         private int JumpingFatigueLoss = 11;        // According to DF Chronicles and verified in classic
-        bool AppliedFatigueLossThisJump = false;
+        private bool CheckedCurrentJump = false;
 
-        bool gameStarted = false;
+        private bool gameStarted = false;
 
         #endregion
 
@@ -106,16 +106,17 @@ namespace DaggerfallWorkshop.Game.Entity
                     else
                         Entity.DecreaseFatigue(DefaultFatigueLoss);
                 }
-                // Reduce fatigue when jumping
-                if (!AppliedFatigueLossThisJump && playerMotor.IsJumping)
+                // Reduce fatigue when jumping and tally jumping skill
+                if (!CheckedCurrentJump && playerMotor.IsJumping)
                 {
                     Entity.DecreaseFatigue(JumpingFatigueLoss);
-                    AppliedFatigueLossThisJump = true;
+                    Entity.TallySkill((short)Skills.Jumping, 1);
+                    CheckedCurrentJump = true;
                 }
                 // Reset jump fatigue check when grounded
-                if (AppliedFatigueLossThisJump && playerMotor.IsGrounded)
+                if (CheckedCurrentJump && playerMotor.IsGrounded)
                 {
-                    AppliedFatigueLossThisJump = false;
+                    CheckedCurrentJump = false;
                 }
             }
         }
