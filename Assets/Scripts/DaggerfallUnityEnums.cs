@@ -298,6 +298,17 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
+    /// Modes for user when activating central object.
+    /// </summary>
+    public enum PlayerActivateModes
+    {
+        Steal,
+        Grab,
+        Info,
+        Talk,
+    }
+
+    /// <summary>
     /// Door types found around locations.
     /// </summary>
     public enum DoorTypes

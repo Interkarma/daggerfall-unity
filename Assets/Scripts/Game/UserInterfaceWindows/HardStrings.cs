@@ -52,5 +52,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string multipleAssignments = "You have multiple assignments...";
 
         public const string youAreEntering = "You are entering %s";
+
+        public const string interactionIsNowInStealMode = "Interaction is now in steal mode.";
+        public const string interactionIsNowInGrabMode = "Interaction is now in grab mode.";
+        public const string interactionIsNowInInfoMode = "Interaction is now in info mode.";
+        public const string interactionIsNowInDialogueMode = "Interaction is now in dialogue mode.";
+
+        public const string residence = "Residence";
     }
 }

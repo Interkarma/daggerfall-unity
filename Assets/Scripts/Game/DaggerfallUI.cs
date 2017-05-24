@@ -370,6 +370,14 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public static void SetModeText(string message, float delay = 1.5f)
+        {
+            if (Instance.dfHUD != null)
+            {
+                Instance.dfHUD.SetModeText(message, delay);
+            }
+        }
+
         public static void PostMessage(string message)
         {
             if (Instance.uiManager != null)

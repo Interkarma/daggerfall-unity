@@ -30,6 +30,8 @@ namespace DaggerfallWorkshop.Game
         Transform deferredInteriorDoorOwner;    // Used to defer interior transition after popup message
         StaticDoor deferredInteriorDoor;
 
+        PlayerActivateModes currentMode = PlayerActivateModes.Grab;
+
         public float RayDistance = 2.0f;        // Distance of ray check, tune this to your scale and preference
 
         void Start()
@@ -43,6 +45,16 @@ namespace DaggerfallWorkshop.Game
         {
             if (mainCamera == null)
                 return;
+
+            // Change activate mode
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.StealMode))
+                ChangeInteractionMode(PlayerActivateModes.Steal);
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.GrabMode))
+                ChangeInteractionMode(PlayerActivateModes.Grab);
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.InfoMode))
+                ChangeInteractionMode(PlayerActivateModes.Info);
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.TalkMode))
+                ChangeInteractionMode(PlayerActivateModes.Talk);
 
             // Fire ray into scene
             if (InputManager.Instance.ActionStarted(InputManager.Actions.ActivateCenterObject))
@@ -69,31 +81,9 @@ namespace DaggerfallWorkshop.Game
                             {
                                 hitBuilding = true;
 
-                                //// TEMP: Print building name or type to HUD as a test
-                                //// This will be moved to a proper info click soon
-                                //if (building.buildingData.BuildingType >= DFLocation.BuildingTypes.House1 &&
-                                //    building.buildingData.BuildingType <= DFLocation.BuildingTypes.House6)
-                                //{
-                                //    DaggerfallUI.AddHUDText("Residence");
-                                //}
-                                //else
-                                //{
-                                //    ContentReader.MapSummary mapSummary;
-                                //    DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
-                                //    if (DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
-                                //    {
-                                //        DFLocation playerLocation = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
-
-                                //        string buildingName = BuildingNames.GetName(
-                                //            building.buildingData.NameSeed,
-                                //            building.buildingData.BuildingType,
-                                //            building.buildingData.FactionId,
-                                //            playerLocation.Name,
-                                //            playerLocation.RegionName);
-
-                                //        DaggerfallUI.AddHUDText(buildingName);
-                                //    }
-                                //}
+                                // Show building info
+                                if (currentMode == PlayerActivateModes.Info)
+                                    PresentBuildingInfo(building);
                             }
                         }
 
@@ -341,6 +331,64 @@ namespace DaggerfallWorkshop.Game
                     return true;
                 default:
                     return false;
+            }
+        }
+
+        // Sets new activation mode
+        private void ChangeInteractionMode(PlayerActivateModes newMode)
+        {
+            // Do nothing if new mode matches current mode
+            if (newMode == currentMode)
+                return;
+
+            // Set the new mode
+            currentMode = newMode;
+
+            // Present new mode to player
+            switch(currentMode)
+            {
+                case PlayerActivateModes.Steal:
+                    DaggerfallUI.SetModeText(HardStrings.interactionIsNowInStealMode);
+                    break;
+                case PlayerActivateModes.Grab:
+                    DaggerfallUI.SetModeText(HardStrings.interactionIsNowInGrabMode);
+                    break;
+                case PlayerActivateModes.Info:
+                    DaggerfallUI.SetModeText(HardStrings.interactionIsNowInInfoMode);
+                    break;
+                case PlayerActivateModes.Talk:
+                    DaggerfallUI.SetModeText(HardStrings.interactionIsNowInDialogueMode);
+                    break;
+            }
+        }
+
+        // Output building info to HUD
+        private void PresentBuildingInfo(StaticBuilding building)
+        {
+            // Handle residences - only House1 & House2 seem to ID as "Residence" (to confirm)
+            if (building.buildingData.BuildingType >= DFLocation.BuildingTypes.House1 &&
+                building.buildingData.BuildingType <= DFLocation.BuildingTypes.House2)
+            {
+                DaggerfallUI.AddHUDText(HardStrings.residence);
+                //DaggerfallUI.AddHUDText(building.buildingData.BuildingType.ToString());
+            }
+            else
+            {
+                // Get player location
+                DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+                if (!location.Loaded)
+                    return;
+
+                // Get building name
+                string buildingName = BuildingNames.GetName(
+                    building.buildingData.NameSeed,
+                    building.buildingData.BuildingType,
+                    building.buildingData.FactionId,
+                    location.Name,
+                    location.RegionName);
+
+                // Output building name to HUD
+                DaggerfallUI.AddHUDText(buildingName);
             }
         }
     }

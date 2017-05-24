@@ -29,13 +29,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         float crosshairScale = 0.5f;
 
         PopupText popupText = new PopupText();
+        TextLabel modeTextLabel = new TextLabel();
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
         GameObject player;
         DaggerfallEntityBehaviour playerEntity;
 
+        float modeTextTimer = -1;
+        float modeTextDelay = 1.5f;
+
         public bool ShowPopupText { get; set; }
+        public bool ShowModeText { get; set; }
         public bool ShowCrosshair { get; set; }
         public bool ShowVitals { get; set; }
         public bool ShowCompass { get; set; }
@@ -61,6 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             parentPanel.BackgroundColor = Color.clear;
             ShowPopupText = true;
+            ShowModeText = true;
             ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
             ShowVitals = true;
             ShowCompass = true;
@@ -78,12 +84,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             popupText.Size = NativePanel.Size;
             NativePanel.Components.Add(popupText);
+
+            modeTextLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            modeTextLabel.Position = new Vector2(0, 146);
+            NativePanel.Components.Add(modeTextLabel);
         }
 
         public override void Update()
         {
             // Update HUD visibility
             popupText.Enabled = ShowPopupText;
+            modeTextLabel.Enabled = ShowModeText;
             crosshair.Enabled = ShowCrosshair;
             vitals.Enabled = ShowVitals;
             compass.Enabled = ShowCompass;
@@ -99,6 +110,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             float compassY = screenRect.height - (compass.Size.y);
             compass.Position = new Vector2(compassX, compassY);
 
+            // Update mode text timer and remove once complete
+            if (modeTextTimer != -1)
+            {
+                modeTextTimer += Time.deltaTime;
+                if (modeTextTimer > modeTextDelay)
+                {
+                    modeTextTimer = -1;
+                    modeTextLabel.Text = string.Empty;
+                }
+            }
+
             // Adjust vitals based on current player state
             if (playerEntity)
             {
@@ -109,6 +131,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             base.Update();
+        }
+
+        public void SetModeText(string message, float delay = 1.5f)
+        {
+            // Set text and start timing
+            modeTextLabel.Text = message;
+            modeTextTimer = 0;
+            modeTextDelay = delay;
         }
     }
 }
