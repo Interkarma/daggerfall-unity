@@ -505,11 +505,14 @@ namespace DaggerfallConnect
             /// <summary>Texture record from bitfield. Used to determine which texture record to load from archive.</summary>
             public int TextureRecord;
 
-            /// <summary>NPC type.</summary>
-            public Int16 NpcType;
+            /// <summary>NPC faction.</summary>
+            public Int16 FactionID;
 
-            /// <summary>Unknown.</summary>
-            internal Byte Unknown1;
+            /// <summary>
+            /// NPC flags. Known so far:
+            /// 00X00000    : X=0 is male, X=1 is female
+            /// </summary>
+            public Byte Flags;
         }
 
         /// <summary>
@@ -997,11 +1000,8 @@ namespace DaggerfallConnect
             /// <summary>Texture record from bitfield. Used to determine which texture record to load from archive.</summary>
             public int TextureRecord;
 
-            /// <summary> trigger flag of action flat </summary>
-            public UInt16 TriggerFlag;
-
-            /// <summary>NPC gender (if any).</summary>
-            public RdbFlatGenders Gender;
+            /// <summary>Flags for action, NPC, etc.</summary>
+            public UInt16 Flags;
 
             /// <summary> damage, distance to move etc.</summary>
             public byte Magnitude;

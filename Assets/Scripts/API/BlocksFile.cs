@@ -788,8 +788,8 @@ namespace DaggerfallConnect.Arena2
                 blockData.BlockPeopleRecords[i].TextureBitfield = reader.ReadUInt16();
                 blockData.BlockPeopleRecords[i].TextureArchive = blockData.BlockPeopleRecords[i].TextureBitfield >> 7;
                 blockData.BlockPeopleRecords[i].TextureRecord = blockData.BlockPeopleRecords[i].TextureBitfield & 0x7f;
-                blockData.BlockPeopleRecords[i].NpcType = reader.ReadInt16();
-                blockData.BlockPeopleRecords[i].Unknown1 = reader.ReadByte();
+                blockData.BlockPeopleRecords[i].FactionID = reader.ReadInt16();
+                blockData.BlockPeopleRecords[i].Flags = reader.ReadByte();
             }
 
             // Door records
@@ -1137,10 +1137,9 @@ namespace DaggerfallConnect.Arena2
             rdbObject.Resources.FlatResource.TextureBitfield = reader.ReadUInt16();
             rdbObject.Resources.FlatResource.TextureArchive = rdbObject.Resources.FlatResource.TextureBitfield >> 7;
             rdbObject.Resources.FlatResource.TextureRecord = rdbObject.Resources.FlatResource.TextureBitfield & 0x7f;
-            rdbObject.Resources.FlatResource.TriggerFlag = reader.ReadUInt16();
+            rdbObject.Resources.FlatResource.Flags = reader.ReadUInt16();
             rdbObject.Resources.FlatResource.Magnitude = reader.ReadByte();
             rdbObject.Resources.FlatResource.SoundIndex = reader.ReadByte();
-            rdbObject.Resources.FlatResource.Gender = (DFBlock.RdbFlatGenders)rdbObject.Resources.FlatResource.TriggerFlag;
             rdbObject.Resources.FlatResource.FactionMobileId = BitConverter.ToUInt16(new byte[] { rdbObject.Resources.FlatResource.Magnitude, rdbObject.Resources.FlatResource.SoundIndex }, 0);
             rdbObject.Resources.FlatResource.NextObjectOffset = reader.ReadInt32();
             rdbObject.Resources.FlatResource.Action = reader.ReadByte();

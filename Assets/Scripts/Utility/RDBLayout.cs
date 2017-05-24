@@ -808,8 +808,8 @@ namespace DaggerfallWorkshop.Utility
                 actionFlag = (DFBlock.RdbActionFlags)obj.Action;
 
             //set trigger flag if valid / known
-            if (Enum.IsDefined(typeof(DFBlock.RdbTriggerFlags), (DFBlock.RdbTriggerFlags)obj.TriggerFlag))
-                triggerFlag = (DFBlock.RdbTriggerFlags)obj.TriggerFlag;
+            if (Enum.IsDefined(typeof(DFBlock.RdbTriggerFlags), (DFBlock.RdbTriggerFlags)obj.Flags))
+                triggerFlag = (DFBlock.RdbTriggerFlags)obj.Flags;
 
             //add action node to actionLink dictionary
             if (!actionLinkDict.ContainsKey(rdbObj.This))
@@ -1214,10 +1214,12 @@ namespace DaggerfallWorkshop.Utility
             if (obj.Resources.FlatResource.Action == (int)DFBlock.EnemyReactionTypes.Passive)
                 reaction = MobileReactions.Passive;
 
+            // TODO: Review gender assignment from this flag data is always consistent
+            // Check against other usage of this flag byte for NPCs in interiors
             MobileGender gender = MobileGender.Unspecified;
-            if ((int)obj.Resources.FlatResource.Gender == (int)DFBlock.EnemyGenders.Female)
+            if (obj.Resources.FlatResource.Flags == (int)DFBlock.EnemyGenders.Female)
                 gender = MobileGender.Female;
-            if ((int)obj.Resources.FlatResource.Gender == (int)DFBlock.EnemyGenders.Male)
+            if (obj.Resources.FlatResource.Flags == (int)DFBlock.EnemyGenders.Male)
                 gender = MobileGender.Male;
 
             // Just setup demo enemies at this time

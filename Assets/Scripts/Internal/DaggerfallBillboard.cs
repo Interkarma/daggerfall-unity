@@ -68,12 +68,12 @@ namespace DaggerfallWorkshop
             public int CurrentFrame;                            // Current animation frame
             public FlatTypes FlatType;                          // Type of flat
             public EditorFlatTypes EditorFlatType;              // Sub-type of flat when editor/marker
-            //public bool InDungeon;                              // Billboard is inside a dungeon
             public bool IsMobile;                               // Billboard is a mobile enemy
             public int Archive;                                 // Texture archive index
             public int Record;                                  // Texture record index
-            public int Gender;                                  // RDB gender field
+            public int Flags;                                   // NPC Flags found in RMB and RDB NPC data
             public int FactionMobileID;                         // RDB Faction/Mobile ID
+            public string NPCName;                              // NPC name if resolved
             public MobileTypes FixedEnemyType;                  // Type for fixed enemy marker
             public TextureReplacement.CustomBillboard 
                 CustomBillboard;                                // Custom textures
@@ -176,25 +176,27 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Sets extended data about people billboard from RMB resource data.
+        /// </summary>
+        /// <param name="person"></param>
+        public void SetRMBPeopleData(DFBlock.RmbBlockPeopleRecord person)
+        {
+            // Add common data
+            summary.FactionMobileID = person.FactionID;
+            summary.FixedEnemyType = MobileTypes.None;
+            summary.Flags = person.Flags;
+        }
+
+        /// <summary>
         /// Sets extended data about billboard from RDB flat resource data.
         /// </summary>
         public void SetRDBResourceData(DFBlock.RdbFlatResource resource)
         {
             // Add common data
-            summary.Gender = (int)resource.Gender;
+            //summary.Flags = (int)resource.Gender;
+            summary.Flags = resource.Flags;
             summary.FactionMobileID = (int)resource.FactionMobileId;
             summary.FixedEnemyType = MobileTypes.None;
-
-            // TODO: Disabling NPC tagging here as it only works for dungeons
-            // It's also possible for flat without gender or faction to have a name
-            // Will delete this later
-            //// If flat has gender and faction this is an NPC
-            //// Exlude editor flats, currently unknown why some start markers have gender or faction
-            //if (summary.Archive != Utility.TextureReader.EditorFlatsTextureArchive &&
-            //    summary.Gender != 0 && summary.FactionMobileID != 0)
-            //{
-            //    summary.FlatType = FlatTypes.NPC;
-            //}
 
             // Set data of fixed mobile types (e.g. non-random enemy spawn)
             if (resource.TextureArchive == 199 && resource.TextureRecord == 16)

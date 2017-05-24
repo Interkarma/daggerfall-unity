@@ -556,6 +556,9 @@ namespace DaggerfallWorkshop
                 DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
                 go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
                 go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+
+                // Add RMB data to billboard
+                dfBillboard.SetRMBPeopleData(obj);
             }
         }
 
