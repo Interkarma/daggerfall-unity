@@ -301,12 +301,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool TickVitals()
         {
+            // NOTE: The below is not working - player does not recover health on rest. Reverting to original rest model.
             // For alpha purposes, magicka and fatigue are recovered in a uniform manner
             // Need to decouple this back to formula provider when properly implemented
+            //int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(playerEntity.Skills.Medical, playerEntity.Stats.Endurance, playerEntity.MaxHealth);
+            //playerEntity.CurrentHealth += healthRecoveryRate;
 
-            int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(playerEntity.Skills.Medical, playerEntity.Stats.Endurance, playerEntity.MaxHealth);
-
-            playerEntity.CurrentHealth += healthRecoveryRate;
+            playerEntity.CurrentHealth += (int)(playerEntity.MaxHealth * recoveryRate);
             playerEntity.CurrentFatigue += (int)(playerEntity.MaxFatigue * recoveryRate);
             playerEntity.CurrentMagicka += (int)(playerEntity.MaxMagicka * recoveryRate);
 
