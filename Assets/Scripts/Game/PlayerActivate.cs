@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -12,8 +12,10 @@
 using UnityEngine;
 using System.Collections;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
@@ -427,7 +429,24 @@ namespace DaggerfallWorkshop.Game
         private void PresentNPCInfo(DaggerfallBillboard npc)
         {
             // Placeholder text
-            DaggerfallUI.AddHUDText("You see an NPC.");
+            //DaggerfallUI.AddHUDText("You see an NPC.");
+
+            // Get player entity
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            if (playerEntity == null)
+                return;
+
+            // Get player faction state for this NPC
+            FactionFile.FactionData factionData;
+            if (!playerEntity.FactionData.GetFactionData(npc.Summary.FactionOrMobileID, out factionData))
+                return;
+
+            // TEMP: Just output faction name for now
+            // Need to differentiate between NPCs named directly from faction data and randomly named NPCs
+            // Also need to locate name seed for randomly named NPCs.
+            string output = HardStrings.youSee.Replace("%s", factionData.name);
+
+            DaggerfallUI.AddHUDText(output);
         }
     }
 }

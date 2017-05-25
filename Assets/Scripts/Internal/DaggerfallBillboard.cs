@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop
             public int Archive;                                 // Texture archive index
             public int Record;                                  // Texture record index
             public int Flags;                                   // NPC Flags found in RMB and RDB NPC data
-            public int FactionMobileID;                         // RDB Faction/Mobile ID
+            public int FactionOrMobileID;                       // FactionID for NPCs, Mobile ID for monsters
             public string NPCName;                              // NPC name if resolved
             public MobileTypes FixedEnemyType;                  // Type for fixed enemy marker
             public TextureReplacement.CustomBillboard 
@@ -182,7 +182,7 @@ namespace DaggerfallWorkshop
         public void SetRMBPeopleData(DFBlock.RmbBlockPeopleRecord person)
         {
             // Add common data
-            summary.FactionMobileID = person.FactionID;
+            summary.FactionOrMobileID = person.FactionID;
             summary.FixedEnemyType = MobileTypes.None;
             summary.Flags = person.Flags;
         }
@@ -195,7 +195,7 @@ namespace DaggerfallWorkshop
             // Add common data
             //summary.Flags = (int)resource.Gender;
             summary.Flags = resource.Flags;
-            summary.FactionMobileID = (int)resource.FactionMobileId;
+            summary.FactionOrMobileID = (int)resource.FactionMobileId;
             summary.FixedEnemyType = MobileTypes.None;
 
             // Set data of fixed mobile types (e.g. non-random enemy spawn)
@@ -203,7 +203,7 @@ namespace DaggerfallWorkshop
             {
                 summary.IsMobile = true;
                 summary.EditorFlatType = EditorFlatTypes.FixedMobile;
-                summary.FixedEnemyType = (MobileTypes)(summary.FactionMobileID & 0xff);
+                summary.FixedEnemyType = (MobileTypes)(summary.FactionOrMobileID & 0xff);
             }
         }
 

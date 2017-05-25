@@ -59,5 +59,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string info = "info";
         public const string dialogue = "dialogue";
         public const string residence = "Residence";
+        public const string youSee = "You see %s.";
     }
 }

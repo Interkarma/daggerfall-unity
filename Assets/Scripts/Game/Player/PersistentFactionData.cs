@@ -52,6 +52,37 @@ namespace DaggerfallWorkshop.Game.Player
         #region Public Methods
 
         /// <summary>
+        /// Gets faction data from faction ID.
+        /// </summary>
+        /// <param name="factionID">Faction ID.</param>
+        /// <param name="factionDataOut">Receives faction data.</param>
+        /// <returns>True if successful.</returns>
+        public bool GetFactionData(int factionID, out FactionFile.FactionData factionDataOut)
+        {
+            factionDataOut = new FactionFile.FactionData();
+            if (factionDict.ContainsKey(factionID))
+            {
+                factionDataOut = factionDict[factionID];
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets faction ID from name. Experimental.
+        /// </summary>
+        /// <param name="name">Name of faction to get ID of.</param>
+        /// <returns>Faction ID if name found, otherwise -1.</returns>
+        public int GetFactionID(string name)
+        {
+            if (factionNameToIDDict.ContainsKey(name))
+                return factionNameToIDDict[name];
+
+            return -1;
+        }
+
+        /// <summary>
         /// Resets faction state back to starting point from FACTION.TXT.
         /// </summary>
         public void Reset()
