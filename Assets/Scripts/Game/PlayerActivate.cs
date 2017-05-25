@@ -428,9 +428,6 @@ namespace DaggerfallWorkshop.Game
         // Output NPC info to HUD
         private void PresentNPCInfo(DaggerfallBillboard npc)
         {
-            // Placeholder text
-            //DaggerfallUI.AddHUDText("You see an NPC.");
-
             // Get player entity
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             if (playerEntity == null)
@@ -441,11 +438,23 @@ namespace DaggerfallWorkshop.Game
             if (!playerEntity.FactionData.GetFactionData(npc.Summary.FactionOrMobileID, out factionData))
                 return;
 
-            // TEMP: Just output faction name for now
-            // Need to differentiate between NPCs named directly from faction data and randomly named NPCs
-            // Also need to locate name seed for randomly named NPCs.
-            string output = HardStrings.youSee.Replace("%s", factionData.name);
+            // Get name NPC
+            string output = string.Empty;
+            if (factionData.type == (int)FactionFile.FactionTypes.Individual)
+            {
+                // This is an individual names from faction data
+                output = HardStrings.youSee.Replace("%s", factionData.name);
+            }
+            else
+            {
+                // This is a randomly named NPC
+                // Still looking for correct name seed for random name generator
+                // Just output placeholder text for now
+                DaggerfallUI.AddHUDText("You see an NPC.");
+                return;
+            }
 
+            // Output to HUD
             DaggerfallUI.AddHUDText(output);
         }
     }
