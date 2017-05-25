@@ -331,9 +331,15 @@ namespace DaggerfallWorkshop.Game
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenRestWindow:
-                    if (GameManager.Instance.CanPlayerRest())
+                    if (!GameManager.Instance.AreEnemiesNearby() && GameManager.Instance.PlayerController.isGrounded)
                     {
                         uiManager.PushWindow(new DaggerfallRestWindow(uiManager));
+                    }
+                    else
+                    {
+                        // Alert player if monsters nearby
+                        const int enemiesNearby = 354;
+                        MessageBox(enemiesNearby);
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenQuestInspector:

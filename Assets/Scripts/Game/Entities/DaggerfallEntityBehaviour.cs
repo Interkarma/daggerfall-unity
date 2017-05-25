@@ -113,7 +113,8 @@ namespace DaggerfallWorkshop.Game.Entity
                     Entity.TallySkill((short)Skills.Jumping, 1);
                     CheckedCurrentJump = true;
                 }
-                // Reset jump fatigue check when finished jumping
+
+                // Reset jump fatigue check when grounded
                 if (CheckedCurrentJump && !playerMotor.IsJumping)
                 {
                     CheckedCurrentJump = false;

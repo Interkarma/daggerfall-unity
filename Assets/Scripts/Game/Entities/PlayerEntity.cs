@@ -9,12 +9,16 @@
 // Notes:
 //
 
+using UnityEngine;
 using System.Collections.Generic;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Utility;
+using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -59,6 +63,7 @@ namespace DaggerfallWorkshop.Game.Entity
             :base()
         {
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+            OnExhausted += PlayerEntity_OnExhausted;
         }
 
         #endregion
@@ -192,6 +197,47 @@ namespace DaggerfallWorkshop.Game.Entity
         private void StartGameBehaviour_OnNewGame()
         {
             Reset();
+        }
+
+        private void PlayerEntity_OnExhausted(DaggerfallEntity entity)
+        {
+            GameManager.Instance.PlayerMotor.CancelMovement = true;
+
+            const int youDropToTheGround1 = 1071;
+            const int youDropToTheGround2 = 1072;
+            const float recoveryRate = 0.125f; // temporary value
+
+            bool enemiesNearby = GameManager.Instance.AreEnemiesNearby();
+
+            ITextProvider textProvider = DaggerfallUnity.Instance.TextProvider;
+            TextFile.Token[] tokens;
+
+            if (!enemiesNearby)
+                tokens = textProvider.GetRSCTokens(youDropToTheGround1);
+            else
+                tokens = textProvider.GetRSCTokens(youDropToTheGround2);
+
+            if (tokens != null && tokens.Length > 0)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+                messageBox.SetTextTokens(tokens);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.ParentPanel.BackgroundColor = Color.clear;
+                messageBox.Show();
+            }
+
+            if (!enemiesNearby)
+            {
+                // TODO: Duplicates rest code in rest window. Should be unified.
+                DaggerfallUnity.Instance.WorldTime.Now.RaiseTime(1 * DaggerfallDateTime.SecondsPerHour);
+                int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(Skills.Medical, Stats.Endurance, MaxHealth);
+
+                IncreaseHealth(healthRecoveryRate);
+                IncreaseFatigue((int)(MaxFatigue * recoveryRate));
+                IncreaseMagicka((int)(MaxMagicka * recoveryRate));
+            }
+            else
+                SetHealth(0);
         }
 
         #endregion

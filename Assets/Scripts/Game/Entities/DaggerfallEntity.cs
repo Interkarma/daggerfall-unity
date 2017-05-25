@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int SetFatigue(int amount)
         {
             currentFatigue = Mathf.Clamp(amount, 0, MaxFatigue);
-            if (currentFatigue <= 0)
+            if (currentFatigue <= 0 && currentHealth > 0)
                 RaiseOnExhaustedEvent();
 
             return currentFatigue;
@@ -256,7 +256,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public delegate void OnDeathHandler(DaggerfallEntity entity);
         public event OnDeathHandler OnDeath;
-        void RaiseOnDeathEvent()
+        protected void RaiseOnDeathEvent()
         {
             if (OnDeath != null && !quiesce)
                 OnDeath(this);
