@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -10,7 +10,9 @@
 //
 
 using UnityEngine;
+using System.Collections.Generic;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Weather;
@@ -251,6 +253,17 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool playerOwned;
         public bool customDrop;
         public ItemData_v1[] items;
+    }
+
+    #endregion
+
+    #region Faction Data
+
+    [fsObject("v1")]
+    public class FactionData_v1
+    {
+        public Dictionary<int, FactionFile.FactionData> factionDict;
+        public Dictionary<string, int> factionNameToIDDict;
     }
 
     #endregion

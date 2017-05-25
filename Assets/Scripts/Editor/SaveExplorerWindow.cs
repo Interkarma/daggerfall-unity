@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop
         bool showImageFoldout = false;
 
         Dictionary<int, FactionFile.FactionData> factionDict = new Dictionary<int, FactionFile.FactionData>();
-        Dictionary<int, bool> factionFoloutDict = new Dictionary<int, bool>();
+        Dictionary<int, bool> factionFoldoutDict = new Dictionary<int, bool>();
 
         int lastSelectedSave = -1;
         int selectedSave = 0;
@@ -250,10 +250,10 @@ namespace DaggerfallWorkshop
                 FactionFile.FactionData faction = kvp.Value;
                 string textLabel = faction.name;
 
-                if (!factionFoloutDict.ContainsKey(faction.id))
-                    factionFoloutDict.Add(faction.id, false);
+                if (!factionFoldoutDict.ContainsKey(faction.id))
+                    factionFoldoutDict.Add(faction.id, false);
 
-                factionFoloutDict[faction.id] = GUILayoutHelper.Foldout(factionFoloutDict[faction.id], new GUIContent(textLabel), () =>
+                factionFoldoutDict[faction.id] = GUILayoutHelper.Foldout(factionFoldoutDict[faction.id], new GUIContent(textLabel), () =>
                 {
                     GUILayoutHelper.Indent(() =>
                     {

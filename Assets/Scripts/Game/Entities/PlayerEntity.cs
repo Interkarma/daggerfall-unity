@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -34,8 +34,9 @@ namespace DaggerfallWorkshop.Game.Entity
         protected ItemCollection wagonItems = new ItemCollection();
         protected ItemCollection otherItems = new ItemCollection();
         protected int goldPieces = 0;
+        protected PersistentFactionData factionData = new PersistentFactionData();
 
-        protected short[] SkillUses = new short[34];
+        protected short[] skillUses = new short[34];
 
         #endregion
 
@@ -48,6 +49,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public ItemCollection WagonItems { get { return wagonItems; } set { wagonItems.ReplaceAll(value); } }
         public ItemCollection OtherItems { get { return otherItems; } set { otherItems.ReplaceAll(value); } }
         public int GoldPieces { get { return goldPieces; } set { goldPieces = value; } }
+        public PersistentFactionData FactionData { get { return factionData; } }
 
         #endregion
 
@@ -72,6 +74,7 @@ namespace DaggerfallWorkshop.Game.Entity
             items.Clear();
             wagonItems.Clear();
             otherItems.Clear();
+            factionData.Reset();
             SetEntityDefaults();
             goldPieces = 0;
         }
@@ -173,12 +176,12 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void TallySkill(short skillId, short amount)
         {
-            SkillUses[skillId] += amount;
-            if (SkillUses[skillId] > 20000)
-                SkillUses[skillId] = 20000;
-            else if (SkillUses[skillId] < 0)
+            skillUses[skillId] += amount;
+            if (skillUses[skillId] > 20000)
+                skillUses[skillId] = 20000;
+            else if (skillUses[skillId] < 0)
             {
-                SkillUses[skillId] = 0;
+                skillUses[skillId] = 0;
             }
         }
 

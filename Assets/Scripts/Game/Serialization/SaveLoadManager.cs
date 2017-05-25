@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string autoSaveName = "AutoSave";
         const string saveInfoFilename = "SaveInfo.txt";
         const string saveDataFilename = "SaveData.txt";
+        const string factionDataFilename = "FactionData.txt";
         const string containerDataFilename = "ContainerData.txt";
         const string automapDataFilename = "AutomapData.txt";
         const string screenshotFilename = "Screenshot.jpg";
@@ -727,6 +728,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             return (PlayerData_v1)serializablePlayer.GetSaveData();
         }
 
+        FactionData_v1 GetPlayerFactionData()
+        {
+            if (!serializablePlayer)
+                return null;
+
+            return (FactionData_v1)serializablePlayer.GetFactionSaveData();
+        }
+
         DateAndTime_v1 GetDateTimeData()
         {
             DateAndTime_v1 data = new DateAndTime_v1();
@@ -866,6 +875,15 @@ namespace DaggerfallWorkshop.Game.Serialization
             RestoreBankData(saveData.bankAccounts);
         }
 
+        void RestoreFactionData(FactionData_v1 factionData)
+        {
+            if (factionData == null)
+                return;
+
+            if (serializablePlayer)
+                serializablePlayer.RestoreFactionData(factionData);
+        }
+
         void RestoreDateTimeData(DateAndTime_v1 dateTimeData)
         {
             if (dateTimeData == null)
@@ -1003,9 +1021,13 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveInfo.characterName = saveData.playerData.playerEntity.name;
             saveInfo.dateAndTime = saveData.dateAndTime;
 
+            // Build faction data
+            FactionData_v1 factionData = GetPlayerFactionData();
+
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
             string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
+            string factionDataJson = Serialize(factionData.GetType(), factionData);
 
             // Create screenshot for save
             // TODO: Hide UI for screenshot or use a different method
@@ -1017,6 +1039,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Save data to files
             WriteSaveFile(Path.Combine(path, saveDataFilename), saveDataJson);
             WriteSaveFile(Path.Combine(path, saveInfoFilename), saveInfoJson);
+            WriteSaveFile(Path.Combine(path, factionDataFilename), factionDataJson);
 
             // Save automap state
             try
@@ -1050,6 +1073,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Read save data from files
             string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
+            string factionDataJson = ReadSaveFile(Path.Combine(path, factionDataFilename));
 
             // Deserialize JSON strings
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
@@ -1140,6 +1164,18 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore save data to objects in newly spawned world
             RestoreSaveData(saveData);
+
+            // Restore faction data to player entity
+            if (!string.IsNullOrEmpty(factionDataJson))
+            {
+                FactionData_v1 factionData = Deserialize(typeof(FactionData_v1), factionDataJson) as FactionData_v1;
+                RestoreFactionData(factionData);
+                Debug.Log("LoadGame() restored faction state from save.");
+            }
+            else
+            {
+                Debug.Log("LoadGame() did not find saved faction data. Player will resume with default faction state.");
+            }
 
             // Load automap state
             try
