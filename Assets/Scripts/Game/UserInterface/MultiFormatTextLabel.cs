@@ -14,7 +14,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -163,6 +166,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
+        /// Appends to a single text label.
+        /// </summary>
+        /// <param name="text">Text for this label.</param>
+        /// <returns>TextLabel.</returns>
+        public TextLabel AppendToTextLabel(TextLabel textLabel, string text)
+        {
+            textLabel.Text += text;
+            cursorX += textLabel.TextWidth;
+            return textLabel;
+        }
+
+        /// <summary>
         /// Start a new line.
         /// </summary>
         public void NewLine()
@@ -206,6 +221,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             TextFile.Token token = new TextFile.Token();
             TextFile.Token nextToken = new TextFile.Token();
+            bool appendToLastToken = true; // Sets whether the next parsed text or text from a variable will be appended to the last token.
+                                           // It's necessary to append regular text and text from variables into a single token
+                                           // so that a justify token at the end of a line will apply to the whole line and not just the last bit of added text.
+
             for (int i = 0; i < tokens.Length; i++)
             {
                 token = tokens[i];
@@ -219,15 +238,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     case TextFile.Formatting.NewLine:
                         NewLine();
+                        appendToLastToken = false;
                         break;
                     case TextFile.Formatting.JustifyLeft:
                         NewLine();
                         totalHeight += LineHeight; // Justify left adds to height regardless of there being anything afterwards
+                        appendToLastToken = false;
                         break;
                     case TextFile.Formatting.JustifyCenter:
                         if (lastLabel != null)
                             lastLabel.HorizontalAlignment = HorizontalAlignment.Center;
                         NewLine();
+                        appendToLastToken = false;
                         break;
                     case TextFile.Formatting.PositionPrefix:
                         if (token.x != 0)
@@ -241,9 +263,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
                             tabStop++;
                             cursorX = tabStop * tabWidth;
                         }
+                        appendToLastToken = false;
+                        break;
+                    case TextFile.Formatting.VariablePrefix:
+                        if (lastLabel != null && appendToLastToken)
+                            AppendToTextLabel(lastLabel, ParseTextVariable(token.text));
+                        else
+                            AddTextLabel(ParseTextVariable(token.text));
+                        appendToLastToken = true;
                         break;
                     case TextFile.Formatting.Text:
-                        AddTextLabel(token.text, font);
+                        if (lastLabel != null && appendToLastToken)
+                            AppendToTextLabel(lastLabel, token.text);
+                        else
+                            AddTextLabel(token.text, font);
+                        appendToLastToken = true;
                         break;
                     case TextFile.Formatting.InputCursorPositioner:
                         break;
@@ -264,6 +298,42 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             Size = new Vector2(totalWidth, totalHeight);
+        }
+
+        string ParseTextVariable(string text)
+        {
+            switch (text)
+            {
+                case ("cn"):
+                    ContentReader.MapSummary mapSummary;
+                    DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+                    if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+                    {
+                        // no location found
+                        return "";
+                    }
+                    DFLocation currentPlayerLocation = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
+                    return currentPlayerLocation.Name;
+                case ("crn"):
+                    mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
+                    if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
+                    {
+                        // no location found
+                        return ""; // do nothing
+                    }
+                    currentPlayerLocation = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
+                    return currentPlayerLocation.RegionName;
+                case ("tim"):
+                    return DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ShortTimeStringNoSeconds(); ;
+                case ("dat"):
+                    return DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.DateString();
+                case ("ltn"):
+                    // TODO: Legal reputation
+                    return "a common citizen";
+                default:
+                    Debug.Log("MultilineTextLabel: Unknown text variable: %" + text);
+                    return "%" + text;
+            }
         }
 
         PixelFont GetFont()

@@ -32,6 +32,12 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class DaggerfallUI : MonoBehaviour
     {
+        #region Classic Text IDs
+
+        const int youAreIn = 22;
+
+        #endregion
+
         const string parchmentBorderRCIFile = "SPOP.RCI";
         const string splashVideo = "ANIM0001.VID";
         const string deathVideo = "ANIM0012.VID";
@@ -340,6 +346,19 @@ namespace DaggerfallWorkshop.Game
                         // Alert player if monsters nearby
                         const int enemiesNearby = 354;
                         MessageBox(enemiesNearby);
+                    }
+                    break;
+                case DaggerfallUIMessages.dfuiOpenStatusWindow:
+                    ITextProvider textProvider = DaggerfallUnity.Instance.TextProvider;
+
+                    TextFile.Token[] tokens = textProvider.GetRSCTokens(youAreIn);
+                    if (tokens != null && tokens.Length > 0)
+                    {
+                        DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager);
+                        messageBox.SetTextTokens(tokens);
+                        messageBox.ClickAnywhereToClose = true;
+                        messageBox.ParentPanel.BackgroundColor = Color.clear;
+                        messageBox.Show();
                     }
                     break;
                 case DaggerfallUIMessages.dfuiOpenQuestInspector:

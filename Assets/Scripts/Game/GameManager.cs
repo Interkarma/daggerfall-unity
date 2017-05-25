@@ -23,6 +23,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -369,6 +370,11 @@ namespace DaggerfallWorkshop.Game
             else if (InputManager.Instance.ActionComplete(InputManager.Actions.Rest))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenRestWindow);
+            }
+
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.Status))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenStatusWindow);
             }
 
             if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoMap))

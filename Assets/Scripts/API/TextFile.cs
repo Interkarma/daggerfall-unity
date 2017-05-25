@@ -89,6 +89,7 @@ namespace DaggerfallConnect.Arena2
             PullPreceeding = 0x02,
 
             FirstCharacter = 0x20,
+            VariablePrefix = 0x25,
             LastCharacter = 0x7f,
 
             PositionPrefix = 0xfb,
@@ -354,7 +355,7 @@ namespace DaggerfallConnect.Arena2
                 if (nextByte == (byte)endToken)
                     break;
 
-                if (IsFormattingToken(nextByte))
+                if (IsFormattingToken(nextByte, ref buffer, position))
                     tokens.Add(ReadFormattingToken(ref buffer, position, out position));
                 else
                     tokens.Add(ReadTextToken(ref buffer, position, out position));     
@@ -386,6 +387,21 @@ namespace DaggerfallConnect.Arena2
                         position++;
                     }
                     break;
+                case Formatting.VariablePrefix:
+                    int start = position;
+                    int count = 0;
+                    while (position < buffer.Length && (count < 4)) // Daggerfall text variables seem to be up to 4 characters long
+                    {
+                        byte nextByte = buffer[position++];
+                        if (nextByte > (byte)Formatting.FirstCharacter && nextByte < (byte)Formatting.LastCharacter
+                            && nextByte != 0x2E && nextByte != 0x2C) // Stop if a period (0x2E) or comma (0x2C) is encountered.
+                            count++;
+                        else
+                            break;
+                    }
+                    token.text = Encoding.UTF8.GetString(buffer, start, count);
+                    endPosition = start + count;
+                    return token;
             }
             token.x = x;
             token.y = y;
@@ -402,7 +418,9 @@ namespace DaggerfallConnect.Arena2
             while (position < buffer.Length)
             {
                 byte nextByte = buffer[position++];
-                if (nextByte >= (byte)Formatting.FirstCharacter && nextByte <= (byte)Formatting.LastCharacter)
+                if (nextByte >= (byte)Formatting.FirstCharacter && nextByte <= (byte)Formatting.LastCharacter && nextByte != (byte)Formatting.VariablePrefix)
+                    count++;
+                else if (nextByte == (byte)Formatting.VariablePrefix && !IsFormattingToken(nextByte, ref buffer, position)) // The '%' is a regular percentage sign, not a formatting token
                     count++;
                 else
                     break;
@@ -417,8 +435,23 @@ namespace DaggerfallConnect.Arena2
             return token;
         }
 
-        private static bool IsFormattingToken(byte value)
+        private static bool IsFormattingToken(byte value, ref byte[] buffer, int position)
         {
+            // Handle % sign. This can be a formatting token that indicates a variable, or it can be used as a percentage sign.
+            // If the following byte is a letter or number, it will be used as a formatting token.
+            if (value == (byte)Formatting.VariablePrefix)
+            {
+                byte? peek;
+                peek = PeekByte(ref buffer, position);
+                if (peek != null)
+                {
+                    if (peek > (byte)Formatting.FirstCharacter && peek < (byte)Formatting.LastCharacter)
+                        return true;
+                }
+                else
+                    return false;
+            }
+
             if (value >= (byte)Formatting.FirstCharacter && value <= (byte)Formatting.LastCharacter)
                 return false;
             else
