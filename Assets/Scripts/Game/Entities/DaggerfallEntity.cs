@@ -229,6 +229,13 @@ namespace DaggerfallWorkshop.Game.Entity
             return miscSkills;
         }
 
+        /// <summary>
+        /// Tally skill usage.
+        /// </summary>
+        public virtual void TallySkill(short skillId, short amount)
+        {
+        }
+
         #endregion
 
         #region Helpers

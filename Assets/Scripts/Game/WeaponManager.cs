@@ -50,6 +50,7 @@ namespace DaggerfallWorkshop.Game
         bool isDamageFinished = false;
         Hand lastAttackHand = Hand.None;
         float cooldownTime = 0.0f;                  // Wait for weapon cooldown
+        int swingWeaponFatigueLoss = 11;            // According to DF Chronicles and verified in classic
 
         bool usingRightHand = true;
         bool holdingShield = false;
@@ -252,6 +253,9 @@ namespace DaggerfallWorkshop.Game
                 // Transfer damage.
                 bool hitEnemy = false;
                 WeaponDamage(weapon, out hitEnemy);
+
+                // Fatigue loss
+                playerEntity.DecreaseFatigue(swingWeaponFatigueLoss);
 
                 // Play swing sound if attack didn't hit an enemy.
                 if (!hitEnemy)

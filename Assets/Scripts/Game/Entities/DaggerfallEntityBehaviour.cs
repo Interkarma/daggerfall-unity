@@ -32,6 +32,20 @@ namespace DaggerfallWorkshop.Game.Entity
         EntityTypes lastEntityType = EntityTypes.None;
         DaggerfallEntity entity = null;
 
+        private int lastGameMinute = -1;
+        PlayerMotor playerMotor = null;
+
+        // Fatigue loss per in-game minute
+        private int DefaultFatigueLoss = 11;        // According to DF Chronicles and verified in classic
+        //private int ClimbingFatigueLoss = 22;     // According to DF Chronicles
+        private int RunningFatigueLoss = 88;        // According to DF Chronicles and verified in classic
+        //private int SwimmingFatigueLoss = 44;     // According to DF Chronicles
+
+        private int JumpingFatigueLoss = 11;        // According to DF Chronicles and verified in classic
+        private bool CheckedCurrentJump = false;
+
+        private bool gameStarted = false;
+
         #endregion
 
         #region Properties
@@ -52,6 +66,7 @@ namespace DaggerfallWorkshop.Game.Entity
         void Start()
         {
             SetEntityType(EntityType);
+            playerMotor = GameManager.Instance.PlayerMotor;
         }
 
         void Update()
@@ -69,6 +84,41 @@ namespace DaggerfallWorkshop.Game.Entity
 
             // Update entity
             Entity.Update(this);
+
+            if (EntityType == EntityTypes.Player)
+            {
+                // Wait until game has started and the game time has been set.
+                // If the game time is taken before then "30" is returned, which causes an initial player fatigue loss
+                // after loading or starting a game with a non-30 minute.
+                if (!gameStarted && !GameManager.Instance.StateManager.GameInProgress)
+                    return;
+                else if (!gameStarted)
+                    gameStarted = true;
+
+                // Every game minute, apply fatigue loss to the player
+                if (lastGameMinute == -1 && lastGameMinute != DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Minute)
+                    lastGameMinute = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Minute;
+                else if (lastGameMinute != DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Minute)
+                {
+                    lastGameMinute = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Minute;
+                    if (playerMotor.IsRunning)
+                        Entity.DecreaseFatigue(RunningFatigueLoss);
+                    else
+                        Entity.DecreaseFatigue(DefaultFatigueLoss);
+                }
+                // Reduce fatigue when jumping and tally jumping skill
+                if (!CheckedCurrentJump && playerMotor.IsJumping)
+                {
+                    Entity.DecreaseFatigue(JumpingFatigueLoss);
+                    Entity.TallySkill((short)Skills.Jumping, 1);
+                    CheckedCurrentJump = true;
+                }
+                // Reset jump fatigue check when grounded
+                if (CheckedCurrentJump && playerMotor.IsGrounded)
+                {
+                    CheckedCurrentJump = false;
+                }
+            }
         }
 
         #endregion
