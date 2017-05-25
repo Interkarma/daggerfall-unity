@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -1188,7 +1188,7 @@ namespace DaggerfallWorkshop.Utility
         private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, bool serialize)
         {
             // Get type value and ignore known invalid types
-            int typeValue = (int)(obj.Resources.FlatResource.FactionMobileId & 0xff);
+            int typeValue = (int)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
             if (typeValue == 99)
                 return;
 
@@ -1198,7 +1198,7 @@ namespace DaggerfallWorkshop.Utility
                 loadID = (ulong)(blockData.Position + obj.This);
 
             // Cast to enum
-            MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionMobileId & 0xff);
+            MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
 
             AddEnemy(obj, type, parent, loadID);
         }

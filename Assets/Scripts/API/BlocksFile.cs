@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -782,6 +782,7 @@ namespace DaggerfallConnect.Arena2
             blockData.BlockPeopleRecords = new DFBlock.RmbBlockPeopleRecord[numPeopleRecords];
             for (int i = 0; i < numPeopleRecords; i++)
             {
+                blockData.BlockPeopleRecords[i].Position = reader.BaseStream.Position;
                 blockData.BlockPeopleRecords[i].XPos = reader.ReadInt32();
                 blockData.BlockPeopleRecords[i].YPos = reader.ReadInt32();
                 blockData.BlockPeopleRecords[i].ZPos = reader.ReadInt32();
@@ -1134,13 +1135,14 @@ namespace DaggerfallConnect.Arena2
             reader.BaseStream.Position = rdbObject.ResourceOffset;
 
             // Read flat data
+            rdbObject.Resources.FlatResource.Position = reader.BaseStream.Position;
             rdbObject.Resources.FlatResource.TextureBitfield = reader.ReadUInt16();
             rdbObject.Resources.FlatResource.TextureArchive = rdbObject.Resources.FlatResource.TextureBitfield >> 7;
             rdbObject.Resources.FlatResource.TextureRecord = rdbObject.Resources.FlatResource.TextureBitfield & 0x7f;
             rdbObject.Resources.FlatResource.Flags = reader.ReadUInt16();
             rdbObject.Resources.FlatResource.Magnitude = reader.ReadByte();
             rdbObject.Resources.FlatResource.SoundIndex = reader.ReadByte();
-            rdbObject.Resources.FlatResource.FactionMobileId = BitConverter.ToUInt16(new byte[] { rdbObject.Resources.FlatResource.Magnitude, rdbObject.Resources.FlatResource.SoundIndex }, 0);
+            rdbObject.Resources.FlatResource.FactionOrMobileId = BitConverter.ToUInt16(new byte[] { rdbObject.Resources.FlatResource.Magnitude, rdbObject.Resources.FlatResource.SoundIndex }, 0);
             rdbObject.Resources.FlatResource.NextObjectOffset = reader.ReadInt32();
             rdbObject.Resources.FlatResource.Action = reader.ReadByte();
         }

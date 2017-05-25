@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -487,6 +487,9 @@ namespace DaggerfallConnect
         /// </summary>
         public struct RmbBlockPeopleRecord
         {
+            /// <summary>Position of this record in stream.</summary>
+            public long Position;
+
             /// <summary>X position in 3D space.</summary>
             public Int32 XPos;
 
@@ -991,6 +994,9 @@ namespace DaggerfallConnect
         /// </summary>
         public struct RdbFlatResource
         {
+            /// <summary>Position in stream to find this data.</summary>
+            public long Position;
+
             /// <summary>Index of texture compressed to a bitfield.</summary>
             internal UInt16 TextureBitfield;
 
@@ -1014,7 +1020,7 @@ namespace DaggerfallConnect
             /// Range 0-42 is index to monster in MONSTER.BSA.
             /// Range 128-146 is index to humanoid mobile type.
             /// </summary>
-            public UInt16 FactionMobileId;
+            public UInt16 FactionOrMobileId;
 
             /// <summary>Next object in action chain.</summary>
             public Int32 NextObjectOffset;

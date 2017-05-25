@@ -16,6 +16,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game
@@ -433,29 +434,29 @@ namespace DaggerfallWorkshop.Game
             if (playerEntity == null)
                 return;
 
-            // Get player faction state for this NPC
+            // Get player faction data for this NPC
             FactionFile.FactionData factionData;
-            if (!playerEntity.FactionData.GetFactionData(npc.Summary.FactionOrMobileID, out factionData))
-                return;
+            bool hasFaction = playerEntity.FactionData.GetFactionData(npc.Summary.FactionOrMobileID, out factionData);
 
-            // Get name NPC
-            string output = string.Empty;
-            if (factionData.type == (int)FactionFile.FactionTypes.Individual)
+            // Get NPC name
+            string name;
+            if (hasFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
             {
-                // This is an individual names from faction data
-                output = HardStrings.youSee.Replace("%s", factionData.name);
+                // This is an individually named NPC from faction data
+                name = factionData.name;
             }
             else
             {
-                // This is a randomly named NPC
-                // Still looking for correct name seed for random name generator
-                // Just output placeholder text for now
-                DaggerfallUI.AddHUDText("You see an NPC.");
-                return;
+                // This is a randomly named NPC from seed values
+                // TEMP: The correct name seed is not currently known
+                // Just using record position for now until correct data is found
+                Genders gender = ((npc.Summary.Flags & 32) == 32) ? Genders.Female : Genders.Male;
+                DFRandom.srand(npc.Summary.NameSeed);
+                name = DaggerfallUnity.Instance.NameHelper.FullName(NameHelper.BankTypes.Breton, gender);
             }
 
             // Output to HUD
-            DaggerfallUI.AddHUDText(output);
+            DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", name));
         }
     }
 }

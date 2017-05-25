@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop
             public int Record;                                  // Texture record index
             public int Flags;                                   // NPC Flags found in RMB and RDB NPC data
             public int FactionOrMobileID;                       // FactionID for NPCs, Mobile ID for monsters
-            public string NPCName;                              // NPC name if resolved
+            public int NameSeed;                                // NPC name seed
             public MobileTypes FixedEnemyType;                  // Type for fixed enemy marker
             public TextureReplacement.CustomBillboard 
                 CustomBillboard;                                // Custom textures
@@ -185,6 +185,9 @@ namespace DaggerfallWorkshop
             summary.FactionOrMobileID = person.FactionID;
             summary.FixedEnemyType = MobileTypes.None;
             summary.Flags = person.Flags;
+
+            // TEMP: Add name seed
+            summary.NameSeed = (int)person.Position;
         }
 
         /// <summary>
@@ -193,10 +196,12 @@ namespace DaggerfallWorkshop
         public void SetRDBResourceData(DFBlock.RdbFlatResource resource)
         {
             // Add common data
-            //summary.Flags = (int)resource.Gender;
             summary.Flags = resource.Flags;
-            summary.FactionOrMobileID = (int)resource.FactionMobileId;
+            summary.FactionOrMobileID = (int)resource.FactionOrMobileId;
             summary.FixedEnemyType = MobileTypes.None;
+
+            // TEMP: Add name seed
+            summary.NameSeed = (int)resource.Position;
 
             // Set data of fixed mobile types (e.g. non-random enemy spawn)
             if (resource.TextureArchive == 199 && resource.TextureRecord == 16)
