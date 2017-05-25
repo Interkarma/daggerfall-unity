@@ -94,7 +94,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate how much health the player should recover per hour of rest
         public static int CalculateHealthRecoveryRate(int medical, int endurance, int maxHealth)
         {
-            return (int)Mathf.Floor((HealingRateModifierMedical(medical) * HealingRateModifierMaxHealth(maxHealth)) + HealingRateModifier(endurance));
+            return Mathf.Max((int)Mathf.Floor(((HealingRateModifierMedical(medical) * HealingRateModifierMaxHealth(maxHealth)) + HealingRateModifier(endurance))), 1);
         }
 
         #endregion
