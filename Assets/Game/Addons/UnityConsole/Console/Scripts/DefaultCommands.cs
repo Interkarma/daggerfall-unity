@@ -89,7 +89,7 @@ namespace Wenzil.Console
             {
                 DaggerfallWorkshop.StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;//GameObject.FindObjectOfType<DaggerfallWorkshop.StreamingWorld>();
                 DaggerfallWorkshop.DaggerfallUnity daggerfallUnity = DaggerfallUnity.Instance;
-                DaggerfallSongPlayer songPlayer = GameObject.FindObjectOfType<DaggerfallSongPlayer>();
+                DaggerfallSongPlayer[] songPlayers = GameObject.FindObjectsOfType<DaggerfallSongPlayer>();
 
                 DefaultCommands.showDebugStrings = !DefaultCommands.showDebugStrings;
                 bool show = DefaultCommands.showDebugStrings;
@@ -97,8 +97,14 @@ namespace Wenzil.Console
                     streamingWorld.ShowDebugString = show;
                 if (daggerfallUnity)
                     daggerfallUnity.WorldTime.ShowDebugString = show;
-                if (songPlayer)
-                    songPlayer.ShowDebugString = show;
+                foreach (DaggerfallSongPlayer songPlayer in songPlayers)
+                {
+                    if (songPlayer && songPlayer.IsPlaying)
+                    {
+                        songPlayer.ShowDebugString = show;
+                        break;
+                    }
+                }
                 if (FPSDisplay.fpsDisplay == null)
                     GameManager.Instance.gameObject.AddComponent<FPSDisplay>();
                 FPSDisplay.fpsDisplay.ShowDebugString = show;
