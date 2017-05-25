@@ -82,6 +82,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { buttonTextDistance = value; }
         }
 
+        public MultiFormatTextLabel Label
+        {
+            get { return label; }
+            set { label = value; }
+        }
+
         public MessageBoxButtons SelectedButton
         {
             get { return selectedButton; }

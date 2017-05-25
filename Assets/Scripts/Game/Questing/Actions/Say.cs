@@ -70,6 +70,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             messageBox.ClickAnywhereToClose = true;
             messageBox.AllowCancel = true;
             messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.Label.TextColor = DaggerfallUI.DaggerfallQuestTextColor;
             messageBox.Show();
         }
     }
