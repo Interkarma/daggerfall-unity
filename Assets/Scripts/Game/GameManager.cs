@@ -425,19 +425,14 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Determines if player is able to rest or not.
+        /// Determines if enemies are nearby. Uses include whether player is able to rest or not.
         /// Based on minimum distance to nearest monster, and if monster can actually sense player.
         /// </summary>
         /// <param name="minMonsterDistance">Monsters must be at least this far away.</param>
-        /// <returns>True if player can rest.</returns>
-        public bool CanPlayerRest(float minMonsterDistance = 12f)
+        /// <returns>True if enemies are nearby.</returns>
+        public bool AreEnemiesNearby(float minMonsterDistance = 12f)
         {
-            const int enemiesNearby = 354;
-
-            if (!PlayerController.isGrounded)
-                return false;
-
-            bool canRest = true;
+            bool areEnemiesNearby = false;
             DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
             for (int i = 0; i < entityBehaviours.Length; i++)
             {
@@ -447,7 +442,7 @@ namespace DaggerfallWorkshop.Game
                     // Is a monster inside min distance?
                     if (Vector3.Distance(entityBehaviour.transform.position, PlayerController.transform.position) < minMonsterDistance)
                     {
-                        canRest = false;
+                        areEnemiesNearby = true;
                         break;
                     }
 
@@ -457,20 +452,14 @@ namespace DaggerfallWorkshop.Game
                     {
                         if (enemySenses.PlayerInSight || enemySenses.PlayerInEarshot)
                         {
-                            canRest = false;
+                            areEnemiesNearby = true;
                             break;
                         }
                     }
                 }
             }
 
-            // Alert player if monsters neaby
-            if (!canRest)
-            {
-                DaggerfallUI.MessageBox(enemiesNearby);
-            }
-
-            return canRest;
+            return areEnemiesNearby;
         }
 
         #endregion

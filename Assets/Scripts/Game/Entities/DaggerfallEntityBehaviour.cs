@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     CheckedCurrentJump = true;
                 }
                 // Reset jump fatigue check when grounded
-                if (CheckedCurrentJump && playerMotor.IsGrounded)
+                if (CheckedCurrentJump && !playerMotor.IsJumping)
                 {
                     CheckedCurrentJump = false;
                 }
