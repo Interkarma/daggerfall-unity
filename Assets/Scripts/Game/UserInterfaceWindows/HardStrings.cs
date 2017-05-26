@@ -60,5 +60,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string dialogue = "dialogue";
         public const string residence = "Residence";
         public const string youSee = "You see %s.";
+
+        public const string lockpickingSuccess = "The lock clicks open.";
+        public const string lockpickingFailure = "It does not unlock.";
     }
 }

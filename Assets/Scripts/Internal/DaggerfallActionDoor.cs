@@ -11,6 +11,9 @@
 
 using UnityEngine;
 using System.Collections;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop
 {
@@ -28,11 +31,12 @@ namespace DaggerfallWorkshop
         public bool IsTriggerWhenOpen = true;           // Collider is disabled when door opens
         public float ChanceToBash = 0.25f;              // Chance of successfully bashing open door (0=no chance, 1=first time)
         public bool PlaySounds = true;                  // Play open and close sounds if present (OpenSound > 0, CloseSound > 0)
+        public bool LockPickingAttempted = false;       // Has the player attempted to pick this door's lock (TODO: persist across save and load)
 
         public SoundClips OpenSound = SoundClips.NormalDoorOpen;            // Sound clip to use when door opens
         public SoundClips CloseSound = SoundClips.NormalDoorClose;          // Sound clip to use when door closes
         public SoundClips BashSound = SoundClips.PlayerDoorBash;            // Sound clip to use when bashing door
-        public SoundClips LockedSound = SoundClips.ActivateLockUnlock;      // Sound clip to use when trying to open locked door
+        public SoundClips PickedLockSound = SoundClips.ActivateLockUnlock;      // Sound clip to use when successfully picked a locked door
 
         ActionState currentState;
         int startingLockValue = 0;                      // if > 0, is locked.
@@ -76,7 +80,12 @@ namespace DaggerfallWorkshop
 
         public bool IsMagicallyHeld
         {
-            get { return CurrentLockValue >= 160; }
+            get { return CurrentLockValue >= 20; }
+        }
+
+        public bool IsNoLongerPickable
+        {
+            get { return LockPickingAttempted == true; }
         }
 
         public Quaternion ClosedRotation
@@ -124,6 +133,46 @@ namespace DaggerfallWorkshop
                 Close(duration);
         }
 
+        public void AttemptLockpicking()
+        {
+            int chance = 0;
+
+            if (IsMoving)
+                return;
+
+            if (!IsOpen && IsLocked)
+            {
+                if (!IsMagicallyHeld)
+                {
+                    PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
+                    player.TallySkill((short)Skills.Lockpicking, 1);
+                    chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.Lockpicking);
+
+                    if (Random.Range(0, 101) > chance)
+                        Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
+                    else
+                    {
+                        Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingSuccess);
+                        CurrentLockValue = 0;
+
+                        if (PlaySounds && PickedLockSound > 0 && audioSource)
+                        {
+                            DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                            if (dfAudioSource != null)
+                                dfAudioSource.PlayOneShot(PickedLockSound);
+                        }
+
+                        ToggleDoor();
+                    }
+                    LockPickingAttempted = true;
+                }
+                else
+                {
+                    Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
+                }
+            }
+        }
+
         public void AttemptBash()
         {
             if (!IsOpen)
@@ -156,7 +205,7 @@ namespace DaggerfallWorkshop
             OpenSound = SoundClips.NormalDoorOpen;
             CloseSound = SoundClips.NormalDoorClose;
             BashSound = SoundClips.PlayerDoorBash;
-            LockedSound = SoundClips.ActivateLockUnlock;
+            PickedLockSound = SoundClips.ActivateLockUnlock;
         }
 
         public void SetDungeonDoorSounds()
@@ -164,7 +213,7 @@ namespace DaggerfallWorkshop
             OpenSound = SoundClips.DungeonDoorOpen;
             CloseSound = SoundClips.DungeonDoorClose;
             BashSound = SoundClips.PlayerDoorBash;
-            LockedSound = SoundClips.ActivateLockUnlock;
+            PickedLockSound = SoundClips.ActivateLockUnlock;
         }
 
         /// <summary>
@@ -187,14 +236,6 @@ namespace DaggerfallWorkshop
             // Do nothing if door cannot be opened right now
             if ((IsLocked && !ignoreLocks) || IsOpen)
             {
-                // Play open sound if flagged and ready
-                if (PlaySounds && LockedSound > 0 && duration > 0 && audioSource)
-                {
-                    DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
-                    if (dfAudioSource != null)
-                        dfAudioSource.PlayOneShot(LockedSound);
-                }
-
                 //Just a temp. setup to provide feedback on locks until lockpicking is added
                 if(!IsOpen)
                 {

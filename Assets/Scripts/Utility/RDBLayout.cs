@@ -1053,7 +1053,7 @@ namespace DaggerfallWorkshop.Utility
             // Set starting lock value
             if (obj.Resources.ModelResource.TriggerFlag_StartingLock >= 16)
             {
-                actionDoor.StartingLockValue = (int)obj.Resources.ModelResource.TriggerFlag_StartingLock;
+                actionDoor.StartingLockValue = (int)obj.Resources.ModelResource.TriggerFlag_StartingLock / 8;
             }
 
             // Set LoadID
