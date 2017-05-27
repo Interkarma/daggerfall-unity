@@ -97,6 +97,24 @@ namespace DaggerfallWorkshop.Game.Formulas
             return Mathf.Max((int)Mathf.Floor(((HealingRateModifierMedical(medical) * HealingRateModifierMaxHealth(maxHealth)) + HealingRateModifier(endurance))), 1);
         }
 
+        // Calculate how much fatigue the player should recover per hour of rest
+        public static int CalculateFatigueRecoveryRate(int maxFatigue)
+        {
+            if (maxFatigue > 0)
+                return Mathf.Max((int)Mathf.Floor(maxFatigue / 8), 1);
+            else
+                return 0;
+        }
+
+        // Calculate how many spell points the player should recover per hour of rest
+        public static int CalculateSpellPointRecoveryRate(int maxSpellPoints)
+        {
+            if (maxSpellPoints > 0)
+                return Mathf.Max((int)Mathf.Floor(maxSpellPoints / 8), 1);
+            else
+                return 0;
+        }
+
         #endregion
 
         #region Damage

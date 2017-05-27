@@ -64,7 +64,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const float restWaitTimePerHour = 0.75f;
         const float loiterWaitTimePerHour = 1.25f;
-        const float recoveryRate = 0.125f;                          // Rate at which recovery runs (12.5% for alpha purposes)
 
         RestModes currentRestMode = RestModes.Selection;
         int hoursRemaining = 0;
@@ -301,12 +300,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool TickVitals()
         {
-            // For alpha purposes, magicka and fatigue are recovered in a uniform manner
-            // Need to decouple this back to formula provider when properly implemented
             int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(playerEntity.Skills.Medical, playerEntity.Stats.Endurance, playerEntity.MaxHealth);
+            int fatigueRecoveryRate = FormulaHelper.CalculateFatigueRecoveryRate(playerEntity.MaxFatigue);
+            int spellPointRecoveryRate = FormulaHelper.CalculateSpellPointRecoveryRate(playerEntity.MaxMagicka);
+
             playerEntity.CurrentHealth += healthRecoveryRate;
-            playerEntity.CurrentFatigue += (int)(playerEntity.MaxFatigue * recoveryRate);
-            playerEntity.CurrentMagicka += (int)(playerEntity.MaxMagicka * recoveryRate);
+            playerEntity.CurrentFatigue += fatigueRecoveryRate;
+            playerEntity.CurrentMagicka += spellPointRecoveryRate;
+
+            playerEntity.TallySkill((short)Skills.Medical, 1);
 
             // Check if player fully healed
             // Will eventually need to tailor check for character
