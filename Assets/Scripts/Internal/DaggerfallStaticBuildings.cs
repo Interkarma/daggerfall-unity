@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop
             BoxCollider c = go.AddComponent<BoxCollider>();
             c.isTrigger = true;
 
-            // Test each door in array
+            // Test each building in array
             bool found = false;
             for (int i = 0; i < Buildings.Length; i++)
             {
