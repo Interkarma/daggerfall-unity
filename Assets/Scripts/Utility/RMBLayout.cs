@@ -415,8 +415,6 @@ namespace DaggerfallWorkshop.Utility
         /// -The way Daggerfall links location building data with block building data is not 100% known.
         /// -Noted is that special buildings (taverns, shops, temples, etc.) seem to be laid out in same sequential order in blocks and locations.
         /// -So linking could simply be done by sequence, which may explain why Daggerfall can exhibit linking errors (e.g. taverns become residences).
-        /// -At this time, building data from location is not merged with with block building data.
-        /// -Current implementation is primarily to support exterior automap progress. May be moved to a different setup later.
         /// </summary>
         [Serializable]
         public struct BuildingSummary
@@ -429,7 +427,6 @@ namespace DaggerfallWorkshop.Utility
             public Vector3 Position;                            // Position of building
             public Vector3 Rotation;                            // Rotation of building
             public Matrix4x4 Matrix;                            // Transform matrix of building
-            public float Radius;                                // Radius of building
         }
 
         /// <summary>

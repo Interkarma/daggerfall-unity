@@ -370,14 +370,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
             if (OnStartGame != null)
                 OnStartGame(this, null);
-
-            // Following quests are auto-created with every new character
-            //GameManager.Instance.QuestMachine.InstantiateQuest("_TUTOR__");
-            //GameManager.Instance.QuestMachine.InstantiateQuest("_BRISIEN");
-
-            // Start an example quest for testing
-            //GameManager.Instance.QuestMachine.InstantiateQuest("__DEMO01");
-            //GameManager.Instance.QuestMachine.InstantiateQuest("__DEMO02");
         }
 
         #endregion

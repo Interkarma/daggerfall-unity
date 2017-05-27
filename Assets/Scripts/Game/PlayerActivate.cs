@@ -399,9 +399,9 @@ namespace DaggerfallWorkshop.Game
         // Output building info to HUD
         private void PresentBuildingInfo(StaticBuilding building)
         {
-            // Handle residences - only House1 & House2 seem to ID as "Residence" (to confirm)
+            // Handle residences - only House1-House4 seem to ID as "Residence" (to confirm)
             if (building.buildingData.BuildingType >= DFLocation.BuildingTypes.House1 &&
-                building.buildingData.BuildingType <= DFLocation.BuildingTypes.House2)
+                building.buildingData.BuildingType <= DFLocation.BuildingTypes.House4)
             {
                 DaggerfallUI.AddHUDText(HardStrings.residence);
                 //DaggerfallUI.AddHUDText(building.buildingData.BuildingType.ToString());

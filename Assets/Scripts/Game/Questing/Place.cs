@@ -14,6 +14,7 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Collections;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 
@@ -148,7 +149,7 @@ namespace DaggerfallWorkshop.Game.Questing
             base.SetResource(line);
 
             // Match string for Place variants
-            string matchStr = @"Place (?<symbol>\w+) permanent (?<aPermanentPlace>\w+)|Place (?<symbol>\w+) remote (?<aRemoteSite>\w+)|Place (?<symbol>\w+) local (?<aLocalSite>\w+)";
+            string matchStr = @"(Place|place) (?<symbol>\w+) (?<siteType>local|remote|permanent) (?<siteName>\w+)";
 
             // Try to match source line with pattern
             Match match = Regex.Match(line, matchStr);
@@ -158,27 +159,31 @@ namespace DaggerfallWorkshop.Game.Questing
                 Symbol = new Symbol(match.Groups["symbol"].Value);
 
                 // Get place type
-                if (!string.IsNullOrEmpty(match.Groups["aPermanentPlace"].Value))
+                string siteType = match.Groups["siteType"].Value;
+                if (string.Compare(siteType, "local", true) == 0)
                 {
-                    // This is a permanent/fixed location
-                    placeType = PlaceTypes.Fixed;
-                    name = match.Groups["aPermanentPlace"].Value;
-                }
-                else if (!string.IsNullOrEmpty(match.Groups["aRemoteSite"].Value))
-                {
-                    // This is a remote site/building
-                    placeType = PlaceTypes.Remote;
-                    name = match.Groups["aRemoteSite"].Value;
-                }
-                else if (!string.IsNullOrEmpty(match.Groups["aLocalSite"].Value))
-                {
-                    // This is a local site/building
+                    // This is a local place
                     placeType = PlaceTypes.Local;
-                    name = match.Groups["aLocalSite"].Value;
+                }
+                else if (string.Compare(siteType, "remote", true) == 0)
+                {
+                    // This is a remote place
+                    placeType = PlaceTypes.Remote;
+                }
+                else if (string.Compare(siteType, "permanent", true) == 0)
+                {
+                    placeType = PlaceTypes.Fixed;
                 }
                 else
                 {
-                    throw new Exception(string.Format("No Place type match found for source: '{0}'", line));
+                    throw new Exception(string.Format("Place found no site type match found for source: '{0}'. Must be local|remote|permanent.", line));
+                }
+
+                // Get place name for parameter lookup
+                name = match.Groups["siteName"].Value;
+                if (string.IsNullOrEmpty(name))
+                {
+                    throw new Exception(string.Format("Place site name empty for source: '{0}'", line));
                 }
 
                 // Try to read place variables from data table
@@ -198,7 +203,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Handle place by type
                 if (placeType == PlaceTypes.Local)
                 {
-                    // TODO: Handle local places
+                    // Handle local places
+                    SetupLocalSite();
                 }
                 else if (placeType == PlaceTypes.Remote)
                 {
@@ -252,6 +258,79 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return result;
+        }
+
+        #endregion
+
+        #region Local Place Methods
+
+        /// <summary>
+        /// Get a local building in the town player is currently at.
+        /// What happens if quest requests a local building type not available at current location?
+        /// </summary>
+        void SetupLocalSite()
+        {
+            // Seed random
+            DFRandom.srand((int)(Time.realtimeSinceStartup + Time.deltaTime));
+
+            // Get player location
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            if (!location.Loaded)
+                throw new Exception("Tried to setup a local site but player is not at location (i.e. player in wilderness).");
+
+            // Local dungeons not supported
+            if (p1 == 1)
+                throw new Exception("Cannot specify a local dungeon place resource. Only use of remote or fixed supported for dungeons.");
+
+            // Get building type
+            DFLocation.BuildingTypes buildingType = (DFLocation.BuildingTypes)p2;
+
+            // TODO: Get a random building type from available buildings
+            if (p2 == -1)
+            {
+                throw new Exception("Random local site not implemented at this time.");
+            }
+
+            // Get a collection of buildings with specified type
+            RMBLayout.BuildingSummary[] foundBuildings = CollectBuildingsOfType(location, buildingType);
+            if (foundBuildings.Length == 0)
+                throw new Exception(string.Format("Could not find local site of type {0} in location {1}.{2}.", buildingType, location.RegionName, location.Name));
+
+            // Select a random building from available list
+            int selectedIndex = DFRandom.random_range(0, foundBuildings.Length);
+            RMBLayout.BuildingSummary selectedBuilding = foundBuildings[selectedIndex];
+        }
+
+        /// <summary>
+        /// Generate a list of buildings based on type.
+        /// This uses actual location data rather than the (often inaccurate) list in map data.
+        /// </summary>
+        RMBLayout.BuildingSummary[] CollectBuildingsOfType(DFLocation location, DFLocation.BuildingTypes buildingType)
+        {
+            List<RMBLayout.BuildingSummary> foundBuildings = new List<RMBLayout.BuildingSummary>();
+
+            // Search through all buildings for type
+            DFBlock[] blocks;
+            RMBLayout.GetLocationBuildingData(location, out blocks);
+            int width = location.Exterior.ExteriorData.Width;
+            int height = location.Exterior.ExteriorData.Height;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int index = y * width + x;
+                    RMBLayout.BuildingSummary[] buildingSummary = RMBLayout.GetBuildingData(blocks[index]);
+                    for (int i = 0; i < buildingSummary.Length; i++)
+                    {
+                        if (buildingSummary[i].BuildingType == buildingType)
+                        {
+                            foundBuildings.Add(buildingSummary[i]);
+                        }
+                    }
+                }
+            }
+
+            return foundBuildings.ToArray();
         }
 
         #endregion

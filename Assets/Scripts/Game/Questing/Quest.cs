@@ -281,9 +281,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public void AddResource(QuestResource resource)
         {
-            if (string.IsNullOrEmpty(resource.Symbol.Name))
+            if (resource.Symbol == null || string.IsNullOrEmpty(resource.Symbol.Name))
             {
-                throw new Exception("QuestResource must have a symbol name.");
+                throw new Exception("QuestResource must have a named symbol.");
             }
 
             if (resources.ContainsKey(resource.Symbol.Name))
