@@ -115,6 +115,17 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return 0;
         }
 
+        // Calculate chance of successfully lockpicking a door in an interior. If this is higher than a random number between 0 and 100 (inclusive), the lockpicking succeeds.
+        public static int CalculateInteriorLockpickingChance(int level, int lockvalue, int lockpickingSkill)
+        {
+            int lockpickingChance = (5 * (level - lockvalue) + lockpickingSkill);
+            if (lockpickingChance > 95)
+                lockpickingChance = 95;
+            else if (lockpickingChance < 5)
+                lockpickingChance = 5;
+            return lockpickingChance;
+        }
+
         #endregion
 
         #region Damage
