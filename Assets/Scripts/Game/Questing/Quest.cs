@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -268,6 +268,21 @@ namespace DaggerfallWorkshop.Game.Questing
                 return resources[name];
             else
                 return null;
+        }
+
+        public QuestResource[] GetAllResources(Type resourceType)
+        {
+            List<QuestResource> foundResources = new List<QuestResource>();
+
+            foreach (var kvp in resources)
+            {
+                if (kvp.Value.GetType() == resourceType)
+                {
+                    foundResources.Add(kvp.Value);
+                }
+            }
+
+            return foundResources.ToArray();
         }
 
         #endregion

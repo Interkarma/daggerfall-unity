@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -126,11 +126,11 @@ namespace DaggerfallWorkshop.Utility
                 rmbBlock = go.AddComponent<DaggerfallRMBBlock>();
             }
 
-            // Attempt to set block data
+            // Attempt to set block building data
             // If using a prefab it must have DaggerfallRMBBlock component
             if (rmbBlock)
             {
-                rmbBlock.SetBlockData(blockData);
+                rmbBlock.SetBlockBuildingData(blockData);
             }
 
             // Setup combiner
@@ -419,6 +419,7 @@ namespace DaggerfallWorkshop.Utility
         [Serializable]
         public struct BuildingSummary
         {
+            public int RecordIndex;                             // Record index of building inside parent block data
             public int NameSeed;                                // Name seed of building - not set at block level
             public int FactionId;                               // Faction ID of building
             public int LocationId;                              // Unique location ID - not set at block level
@@ -432,7 +433,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Gets BuildingSummary array generated from DFBlock data.
         /// </summary>
-        /// <param name="blockData"></param>
+        /// <param name="blockData">DFBlock data.</param>
         /// <returns>BuildingSummary.</returns>
         public static BuildingSummary[] GetBuildingData(DFBlock blockData)
         {
@@ -446,6 +447,7 @@ namespace DaggerfallWorkshop.Utility
 
                 // Set building data
                 DFLocation.BuildingData buildingData = blockData.RmbBlock.FldHeader.BuildingDataList[i];
+                buildings[i].RecordIndex = i;
                 buildings[i].NameSeed = buildingData.NameSeed;
                 buildings[i].FactionId = buildingData.FactionId;
                 buildings[i].LocationId = buildingData.LocationId;
@@ -638,7 +640,7 @@ namespace DaggerfallWorkshop.Utility
                         StaticBuilding staticBuilding = new StaticBuilding();
                         staticBuilding.modelMatrix = modelMatrix;
                         staticBuilding.buildingData = blockData.RmbBlock.FldHeader.BuildingDataList[recordCount];
-                        staticBuilding.blockIndex = blockData.Index;
+                        staticBuilding.blocksFileIndex = blockData.Index;
                         staticBuilding.recordIndex = recordCount;
                         staticBuilding.centre = new Vector3(modelData.DFMesh.Centre.X, modelData.DFMesh.Centre.Y, modelData.DFMesh.Centre.Z) * MeshReader.GlobalScale;
                         staticBuilding.size = new Vector3(modelData.DFMesh.Size.X, modelData.DFMesh.Size.Y, modelData.DFMesh.Size.Z) * MeshReader.GlobalScale;

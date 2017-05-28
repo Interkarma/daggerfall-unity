@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -27,13 +27,15 @@ namespace DaggerfallWorkshop
     {
         public string Name;
         public int BuildingCount;
+        public int LayoutX = -1;
+        public int LayoutY = -1;
         public RMBLayout.BuildingSummary[] Buildings;
 
         /// <summary>
-        /// Sets block information during scene layout.
+        /// Sets block building information during scene layout.
         /// </summary>
         /// <param name="blockData">DFBlock data.</param>
-        public void SetBlockData(DFBlock blockData)
+        public void SetBlockBuildingData(DFBlock blockData)
         {
             // Create block summary
             Name = blockData.Name;

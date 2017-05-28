@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int p2;                 // Parameter 2
         int p3;                 // Parameter 3
 
-        DFLocation location;    // Location data
+        SiteDetails siteDetails;
 
         #endregion
 
@@ -93,27 +93,12 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// True if location has been loaded and ready to use.
+        /// Gets or sets full site details of Place.
         /// </summary>
-        public bool IsLocationLoaded
+        public SiteDetails SiteDetails
         {
-            get { return location.Loaded; }
-        }
-
-        /// <summary>
-        /// Gets region name of location.
-        /// </summary>
-        public string RegionName
-        {
-            get { return location.RegionName; }
-        }
-
-        /// <summary>
-        /// Gets map name of location.
-        /// </summary>
-        public string MapName
-        {
-            get { return location.Name; }
+            get { return siteDetails; }
+            set { siteDetails = value; }
         }
 
         #endregion
@@ -142,7 +127,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #endregion
 
-        #region Public Methods
+        #region Overrides
 
         public override void SetResource(string line)
         {
@@ -203,17 +188,17 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Handle place by type
                 if (placeType == PlaceTypes.Local)
                 {
-                    // Handle local places
+                    // Get a local site from same town quest was issued
                     SetupLocalSite();
                 }
                 else if (placeType == PlaceTypes.Remote)
                 {
-                    // TODO: Handle remote places
+                    // TODO: Get a remote site in same region quest was issued
                 }
                 else if (placeType == PlaceTypes.Fixed && p1 > 0xc300)
                 {
-                    // Handle fixed location, either exterior or dungeon
-                    SetupFixedLocation();
+                    // TODO: Get a fixed site, such as a key city or dungeon
+                    //SetupFixedLocation();
                 }
                 else
                 {
@@ -262,6 +247,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #endregion
 
+        #region Public Methods
+        #endregion
+
         #region Local Place Methods
 
         /// <summary>
@@ -270,13 +258,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         void SetupLocalSite()
         {
-            // Seed random
-            DFRandom.srand((int)(Time.realtimeSinceStartup + Time.deltaTime));
-
             // Get player location
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
             if (!location.Loaded)
-                throw new Exception("Tried to setup a local site but player is not at location (i.e. player in wilderness).");
+                throw new Exception("Tried to setup a local site but player is not in a location (i.e. player in wilderness).");
 
             // Local dungeons not supported
             if (p1 == 1)
@@ -287,29 +272,28 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // TODO: Get a random building type from available buildings
             if (p2 == -1)
-            {
                 throw new Exception("Random local site not implemented at this time.");
-            }
 
-            // Get a collection of buildings with specified type
-            RMBLayout.BuildingSummary[] foundBuildings = CollectBuildingsOfType(location, buildingType);
-            if (foundBuildings.Length == 0)
+            // Get an array of potential sites with specified building type
+            SiteDetails[] foundSites = CollectSitesOfBuildingType(location, buildingType);
+            if (foundSites == null || foundSites.Length == 0)
                 throw new Exception(string.Format("Could not find local site of type {0} in location {1}.{2}.", buildingType, location.RegionName, location.Name));
 
-            // Select a random building from available list
-            int selectedIndex = DFRandom.random_range(0, foundBuildings.Length);
-            RMBLayout.BuildingSummary selectedBuilding = foundBuildings[selectedIndex];
+            // Select a random site from available list
+            int selectedIndex = UnityEngine.Random.Range(0, foundSites.Length);
+            siteDetails = foundSites[selectedIndex];
         }
 
         /// <summary>
-        /// Generate a list of buildings based on type.
-        /// This uses actual location data rather than the (often inaccurate) list in map data.
+        /// Generate a list of potential sites based on building type.
+        /// This uses actual map layout and block data rather than the (often inaccurate) list of building in map data.
+        /// Likely to need refinement over time to exclude buildings without proper quest markers, etc.
         /// </summary>
-        RMBLayout.BuildingSummary[] CollectBuildingsOfType(DFLocation location, DFLocation.BuildingTypes buildingType)
+        SiteDetails[] CollectSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType)
         {
-            List<RMBLayout.BuildingSummary> foundBuildings = new List<RMBLayout.BuildingSummary>();
+            List<SiteDetails> foundSites = new List<SiteDetails>();
 
-            // Search through all buildings for type
+            // Iterate through all blocks
             DFBlock[] blocks;
             RMBLayout.GetLocationBuildingData(location, out blocks);
             int width = location.Exterior.ExteriorData.Width;
@@ -318,19 +302,40 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 for (int x = 0; x < width; x++)
                 {
+                    // Iterate through all buildings in this block
                     int index = y * width + x;
                     RMBLayout.BuildingSummary[] buildingSummary = RMBLayout.GetBuildingData(blocks[index]);
                     for (int i = 0; i < buildingSummary.Length; i++)
                     {
+                        // Match building against required type
                         if (buildingSummary[i].BuildingType == buildingType)
                         {
-                            foundBuildings.Add(buildingSummary[i]);
+                            // Get building name
+                            string buildingName = BuildingNames.GetName(
+                                buildingSummary[i].NameSeed,
+                                buildingSummary[i].BuildingType,
+                                buildingSummary[i].FactionId,
+                                location.Name,
+                                location.RegionName);
+
+                            // Configure new site details
+                            siteDetails = new SiteDetails();
+                            siteDetails.mapId = location.MapTableData.MapId;
+                            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+                            siteDetails.regionName = location.RegionName;
+                            siteDetails.locationName = location.Name;
+                            siteDetails.isBuilding = true;
+                            siteDetails.layoutX = x;
+                            siteDetails.layoutY = y;
+                            siteDetails.buildingName = buildingName;
+                            siteDetails.buildingSummary = buildingSummary[i];
+                            foundSites.Add(siteDetails);
                         }
                     }
                 }
             }
 
-            return foundBuildings.ToArray();
+            return foundSites.ToArray();
         }
 
         #endregion
@@ -355,25 +360,25 @@ namespace DaggerfallWorkshop.Game.Questing
             return result;
         }
 
-        /// <summary>
-        /// Setup a fixed location.
-        /// </summary>
-        void SetupFixedLocation()
-        {
-            // Dungeon interiors have p2 > 0xfa00, exteriors have p2 = 0x01
-            // Need to subtract 1 if inside dungeon for exterior mapid
-            int locationId = -1;
-            if (p2 > 0xfa00)
-                locationId = p1 - 1;
-            else
-                locationId = p1;
+        ///// <summary>
+        ///// Setup a fixed location.
+        ///// </summary>
+        //void SetupFixedLocation()
+        //{
+        //    // Dungeon interiors have p2 > 0xfa00, exteriors have p2 = 0x01
+        //    // Need to subtract 1 if inside dungeon for exterior mapid
+        //    int locationId = -1;
+        //    if (p2 > 0xfa00)
+        //        locationId = p1 - 1;
+        //    else
+        //        locationId = p1;
 
-            // Get location
-            if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(locationId, out location))
-            {
-                Debug.LogFormat("Could not find locationId: '{0};", locationId);
-            }
-        }
+        //    // Get location
+        //    if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(locationId, out location))
+        //    {
+        //        Debug.LogFormat("Could not find locationId: '{0};", locationId);
+        //    }
+        //}
 
         #endregion
     }

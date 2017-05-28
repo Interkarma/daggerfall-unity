@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop
         [Serializable]
         public struct LocationSummary
         {
-            public int ID;
+            public int MapID;
             public int Longitude;
             public int Latitude;
             public int MapPixelX;
@@ -150,7 +150,7 @@ namespace DaggerfallWorkshop
 
             // Set summary
             summary = new LocationSummary();
-            summary.ID = location.MapTableData.MapId;
+            summary.MapID = location.MapTableData.MapId;
             summary.Longitude = (int)location.MapTableData.Longitude;
             summary.Latitude = (int)location.MapTableData.Latitude;
             DFPosition mapPixel = MapsFile.LongitudeLatitudeToMapPixel(summary.Longitude, summary.Latitude);

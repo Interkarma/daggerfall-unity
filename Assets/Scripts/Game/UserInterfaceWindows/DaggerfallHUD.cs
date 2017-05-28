@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
+        HUDPlaceMarker placeMarker = new HUDPlaceMarker();
         GameObject player;
         DaggerfallEntityBehaviour playerEntity;
 
@@ -44,6 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public bool ShowCrosshair { get; set; }
         public bool ShowVitals { get; set; }
         public bool ShowCompass { get; set; }
+        public bool ShowLocalQuestPlaces { get; set; }
 
         public PopupText PopupText
         {
@@ -70,6 +72,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
             ShowVitals = true;
             ShowCompass = true;
+            ShowLocalQuestPlaces = true;
 
             // Get references
             player = GameObject.FindGameObjectWithTag("Player");
@@ -78,6 +81,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.Components.Add(crosshair);
             ParentPanel.Components.Add(vitals);
             ParentPanel.Components.Add(compass);
+            ParentPanel.Components.Add(placeMarker);
         }
 
         protected override void Setup()
@@ -98,6 +102,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             crosshair.Enabled = ShowCrosshair;
             vitals.Enabled = ShowVitals;
             compass.Enabled = ShowCompass;
+            placeMarker.Enabled = ShowLocalQuestPlaces;
 
             // Scale HUD elements
             compass.Scale = NativePanel.LocalScale;

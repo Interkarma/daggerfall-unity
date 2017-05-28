@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -380,6 +380,27 @@ namespace DaggerfallWorkshop
                 gameObject.transform.parent = StreamingTarget.transform;
         }
 
+        /// <summary>
+        /// Gets the DaggerfallLocation component for current player position.
+        /// </summary>
+        /// <returns>DaggerfallLocation component if player inside location map pixel, otherwise null.</returns>
+        public DaggerfallLocation GetPlayerLocationObject()
+        {
+            // Look for location at current map pixel coords inside loose object list
+            for (int i = 0; i < looseObjectsList.Count; i++)
+            {
+                LooseObjectDesc desc = looseObjectsList[i];
+                if (desc.gameObject && desc.mapPixelX == MapPixelX && desc.mapPixelY == MapPixelY)
+                {
+                    DaggerfallLocation location = desc.gameObject.GetComponent<DaggerfallLocation>();
+                    if (location)
+                        return location;
+                }
+            }
+
+            return null;
+        }
+
         #endregion
 
         #region World Setup Methods
@@ -592,6 +613,15 @@ namespace DaggerfallWorkshop
                                 animalsBillboardBatch,
                                 miscBillboardAtlas,
                                 miscBillboardBatch);
+
+                            // Set coordinates used by world map layouts
+                            // Can be used to identify child doors and buildings belonging to this block in map layout grid
+                            DaggerfallRMBBlock rmbBlock = go.GetComponent<DaggerfallRMBBlock>();
+                            if (rmbBlock)
+                            {
+                                rmbBlock.LayoutX = x;
+                                rmbBlock.LayoutY = y;
+                            }
 
                             // Set game object properties
                             go.hideFlags = defaultHideFlags;
@@ -1058,7 +1088,7 @@ namespace DaggerfallWorkshop
         {
             // Attempt to get location from current terrain transform
             if (!location)
-                location = GetPlayerLocation();
+                location = GetPlayerLocationObject();
 
             DaggerfallStaticDoors[] doors = location.StaticDoorCollections;
 
@@ -1115,7 +1145,7 @@ namespace DaggerfallWorkshop
         private void PositionPlayerToLocation()
         {
             // Find current location
-            DaggerfallLocation currentLocation = GetPlayerLocation();
+            DaggerfallLocation currentLocation = GetPlayerLocationObject();
             if (!currentLocation)
             {
                 // No location found, fail back to terrain origin
@@ -1138,23 +1168,6 @@ namespace DaggerfallWorkshop
                 width,
                 height,
                 (currentLocation.Summary.LocationType == DFRegion.LocationTypes.TownCity));
-        }
-
-        DaggerfallLocation GetPlayerLocation()
-        {
-            // Look for location at current map pixel coords inside loose object list
-            for (int i = 0; i < looseObjectsList.Count; i++)
-            {
-                LooseObjectDesc desc = looseObjectsList[i];
-                if (desc.gameObject && desc.mapPixelX == MapPixelX && desc.mapPixelY == MapPixelY)
-                {
-                    DaggerfallLocation location = desc.gameObject.GetComponent<DaggerfallLocation>();
-                    if (location)
-                        return location;
-                }
-            }
-
-            return null;
         }
 
         // Sets player to ground level near a location

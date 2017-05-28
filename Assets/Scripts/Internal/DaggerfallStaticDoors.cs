@@ -277,5 +277,13 @@ namespace DaggerfallWorkshop
         {
             return Vector3.Normalize(transform.rotation * Doors[index].buildingMatrix.MultiplyVector(Doors[index].normal));
         }
+
+        /// <summary>
+        /// Gets the first parent RMB block of this door component.
+        /// </summary>
+        public DaggerfallRMBBlock GetParentRMBBlock()
+        {
+            return GetComponentInParent<DaggerfallRMBBlock>();
+        }
     }
 }

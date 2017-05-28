@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -325,6 +325,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (quest != null)
             {
                 quests.Add(quest.UID, quest);
+                RaiseOnQuestStartedEvent(quest);
             }
 
             return quest;
@@ -347,6 +348,27 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // No pattern match found
             return null;
+        }
+
+        /// <summary>
+        /// Get all Place site details for all active quests.
+        /// </summary>
+        /// <returns></returns>
+        public SiteDetails[] GetAllActiveQuestSites()
+        {
+            List<SiteDetails> sites = new List<SiteDetails>();
+
+            foreach (var kvp in quests)
+            {
+                Quest quest = kvp.Value;
+                QuestResource[] foundResources = quest.GetAllResources(typeof(Place));
+                foreach(QuestResource resource in foundResources)
+                {
+                    sites.Add((resource as Place).SiteDetails);
+                }
+            }
+
+            return sites.ToArray();
         }
 
         #endregion
@@ -406,6 +428,19 @@ namespace DaggerfallWorkshop.Game.Questing
                     Destroy(gameObject);
                 }
             }
+        }
+
+        #endregion
+
+        #region Events
+
+        // OnQuestStarted
+        public delegate void OnQuestStartedEventHandler(Quest quest);
+        public static event OnQuestStartedEventHandler OnQuestStarted;
+        protected virtual void RaiseOnQuestStartedEvent(Quest quest)
+        {
+            if (OnQuestStarted != null)
+                OnQuestStarted(quest);
         }
 
         #endregion

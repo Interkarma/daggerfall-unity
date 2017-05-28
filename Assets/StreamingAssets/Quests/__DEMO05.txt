@@ -8,4 +8,4 @@ QRC:
 
 QBN:
 
-Place _testHouse_ local house1
+Place _testHouse_ local house2

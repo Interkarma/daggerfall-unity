@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -858,7 +858,7 @@ namespace DaggerfallWorkshop.Utility
                 {
                     buildingMatrix = buildingMatrix,
                     doorType = door.Type,
-                    blockIndex = blockIndex,
+                    blocksFileIndex = blockIndex,
                     recordIndex = recordIndex,
                     doorIndex = door.Index,
                     centre = (v0 + v2) / 2f,

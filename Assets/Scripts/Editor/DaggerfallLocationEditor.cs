@@ -75,8 +75,8 @@ namespace DaggerfallWorkshop
                 {
                     GUILayoutHelper.Horizontal(() =>
                     {
-                        EditorGUILayout.LabelField("ID", GUILayout.Width(EditorGUIUtility.labelWidth - 4));
-                        EditorGUILayout.SelectableLabel(dfLocation.Summary.ID.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.LabelField("MapID", GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                        EditorGUILayout.SelectableLabel(dfLocation.Summary.MapID.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {
