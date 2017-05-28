@@ -81,7 +81,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.Components.Add(crosshair);
             ParentPanel.Components.Add(vitals);
             ParentPanel.Components.Add(compass);
-            ParentPanel.Components.Add(placeMarker);
         }
 
         protected override void Setup()
@@ -92,6 +91,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             modeTextLabel.HorizontalAlignment = HorizontalAlignment.Center;
             modeTextLabel.Position = new Vector2(0, 146);
             NativePanel.Components.Add(modeTextLabel);
+
+            placeMarker.Size = new Vector2(640, 400);
+            placeMarker.AutoSize = AutoSizeModes.ScaleToFit;
+            ParentPanel.Components.Add(placeMarker);
         }
 
         public override void Update()

@@ -21,9 +21,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// A debugging class to hack a local quest site marker onto HUD.
     /// Not intended for gameplay - only used for bootstrapping site location in quest system.
     /// </summary>
-    public class HUDPlaceMarker : BaseScreenComponent
+    public class HUDPlaceMarker : Panel
     {
         List<Vector3> doorPositions = new List<Vector3>();
+        List<TextLabel> markerLabels = new List<TextLabel>();
 
         public HUDPlaceMarker()
             : base()
@@ -39,9 +40,34 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
-            // Do nothing if no positions
-            if (doorPositions.Count == 0)
-                return;
+            // Do nothing if inside - might be handy to add object markers later
+            bool enableMarkers = true;
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside)
+            {
+                enableMarkers = false;
+            }
+
+            // Do nothing if no positions or labels don't match markers
+            if (doorPositions.Count == 0 || doorPositions.Count != markerLabels.Count)
+            {
+                enableMarkers = false;
+            }
+
+            // Set marker label position and text
+            Rect rect = Rectangle;
+            Camera mainCamera = GameManager.Instance.MainCamera;
+            for (int i = 0; i < doorPositions.Count; i++)
+            {
+                markerLabels[i].Enabled = enableMarkers;
+
+                Vector3 screenPos = mainCamera.WorldToScreenPoint(doorPositions[i]);
+                if (screenPos.z < 0)
+                    continue;
+
+                Vector2 panelPos = ScreenToLocal(new Vector2(screenPos.x, rect.height - screenPos.y));
+                markerLabels[i].Position = panelPos;
+                markerLabels[i].Text = screenPos.z.ToString("[0]");
+            }
         }
 
         #region Private Methods
@@ -120,11 +146,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 ClearSites();
                 return;
             }
+
+            // Create a text label for door position
+            for (int i = 0; i < doorPositions.Count; i++)
+            {
+                TextLabel label = new TextLabel();
+                markerLabels.Add(label);
+                Components.Add(label);
+            }
         }
 
         void ClearSites()
         {
             doorPositions.Clear();
+            for (int i = 0; i < markerLabels.Count; i++)
+            {
+                Components.Remove(markerLabels[i]);
+                markerLabels[i].Dispose();
+                markerLabels[i] = null;
+            }
+            markerLabels.Clear();
         }
 
         #endregion
