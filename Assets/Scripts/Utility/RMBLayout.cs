@@ -591,6 +591,41 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        /// <summary>
+        /// Checks if building is a residence.
+        /// </summary>
+        public static bool IsResidence(DFLocation.BuildingTypes buildingType)
+        {
+            // Only House1-House4 seem to ID as "Residence" (to confirm)
+            if (buildingType >= DFLocation.BuildingTypes.House1 && buildingType <= DFLocation.BuildingTypes.House4)
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Checks if building is a shop with quality text.
+        /// </summary>
+        public static bool IsShop(DFLocation.BuildingTypes buildingType)
+        {
+            switch (buildingType)
+            {
+                case DFLocation.BuildingTypes.Alchemist:
+                case DFLocation.BuildingTypes.Armorer:
+                case DFLocation.BuildingTypes.Bookseller:
+                case DFLocation.BuildingTypes.ClothingStore:
+                case DFLocation.BuildingTypes.FurnitureStore:
+                case DFLocation.BuildingTypes.GemStore:
+                case DFLocation.BuildingTypes.GeneralStore:
+                case DFLocation.BuildingTypes.Library:
+                case DFLocation.BuildingTypes.PawnShop:
+                case DFLocation.BuildingTypes.WeaponSmith:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         #endregion
 
         #region Private Methods

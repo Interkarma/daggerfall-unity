@@ -23,8 +23,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// </summary>
     public class HUDPlaceMarker : Panel
     {
-        List<Vector3> doorPositions = new List<Vector3>();
-        List<TextLabel> markerLabels = new List<TextLabel>();
+        List<SiteTarget> siteTargets = new List<SiteTarget>();
+
+        struct SiteTarget
+        {
+            public Vector3 doorPosition;
+            public TextLabel markerLabel;
+            public string targetName;
+        }
 
         public HUDPlaceMarker()
             : base()
@@ -40,15 +46,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
-            // Do nothing if inside - might be handy to add object markers later
+            // Disable markers if inside or no targets
             bool enableMarkers = true;
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside)
-            {
-                enableMarkers = false;
-            }
-
-            // Do nothing if no positions or labels don't match markers
-            if (doorPositions.Count == 0 || doorPositions.Count != markerLabels.Count)
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || siteTargets.Count == 0)
             {
                 enableMarkers = false;
             }
@@ -56,17 +56,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set marker label position and text
             Rect rect = Rectangle;
             Camera mainCamera = GameManager.Instance.MainCamera;
-            for (int i = 0; i < doorPositions.Count; i++)
+            for (int i = 0; i < siteTargets.Count; i++)
             {
-                markerLabels[i].Enabled = enableMarkers;
+                siteTargets[i].markerLabel.Enabled = enableMarkers;
 
-                Vector3 screenPos = mainCamera.WorldToScreenPoint(doorPositions[i]);
+                Vector3 screenPos = mainCamera.WorldToScreenPoint(siteTargets[i].doorPosition);
                 if (screenPos.z < 0)
                     continue;
 
                 Vector2 panelPos = ScreenToLocal(new Vector2(screenPos.x, rect.height - screenPos.y));
-                markerLabels[i].Position = panelPos;
-                markerLabels[i].Text = screenPos.z.ToString("[0]");
+                siteTargets[i].markerLabel.Position = panelPos;
+                siteTargets[i].markerLabel.Text = string.Format("{0} {1}", siteTargets[i].targetName, screenPos.z.ToString("[0]"));
             }
         }
 
@@ -133,7 +133,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         {
                             foundTotal++;
                             Vector3 position = door.buildingMatrix.MultiplyPoint3x4(door.centre) + dfStaticDoors.transform.position;
-                            doorPositions.Add(position);
+
+                            SiteTarget target = new SiteTarget();
+                            target.doorPosition = position;
+                            target.markerLabel = new TextLabel();
+                            target.targetName = site.buildingName;
+                            Components.Add(target.markerLabel);
+                            siteTargets.Add(target);
                         }
                     }
                 }
@@ -146,26 +152,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 ClearSites();
                 return;
             }
-
-            // Create a text label for door position
-            for (int i = 0; i < doorPositions.Count; i++)
-            {
-                TextLabel label = new TextLabel();
-                markerLabels.Add(label);
-                Components.Add(label);
-            }
         }
 
         void ClearSites()
         {
-            doorPositions.Clear();
-            for (int i = 0; i < markerLabels.Count; i++)
+            for (int i = 0; i < siteTargets.Count; i++)
             {
-                Components.Remove(markerLabels[i]);
-                markerLabels[i].Dispose();
-                markerLabels[i] = null;
+                Components.Remove(siteTargets[i].markerLabel);
+                siteTargets[i].markerLabel.Dispose();
             }
-            markerLabels.Clear();
+            siteTargets.Clear();
         }
 
         #endregion

@@ -306,7 +306,7 @@ namespace DaggerfallWorkshop.Game
             const int qualityLevel5TextId = 270;    // "Rusty relics lie wherever they were last tossed"
 
             // Do nothing if not a shop
-            if (!IsShop(buildingData.BuildingType))
+            if (!RMBLayout.IsShop(buildingData.BuildingType))
                 return null;
 
             // Set quality level text ID from quality value 01-20
@@ -351,27 +351,6 @@ namespace DaggerfallWorkshop.Game
             return null;
         }
 
-        // Determines if building type is a shop
-        private bool IsShop(DFLocation.BuildingTypes buildingType)
-        {
-            switch (buildingType)
-            {
-                case DFLocation.BuildingTypes.Alchemist:
-                case DFLocation.BuildingTypes.Armorer:
-                case DFLocation.BuildingTypes.Bookseller:
-                case DFLocation.BuildingTypes.ClothingStore:
-                case DFLocation.BuildingTypes.FurnitureStore:
-                case DFLocation.BuildingTypes.GemStore:
-                case DFLocation.BuildingTypes.GeneralStore:
-                case DFLocation.BuildingTypes.Library:
-                case DFLocation.BuildingTypes.PawnShop:
-                case DFLocation.BuildingTypes.WeaponSmith:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
         // Sets new activation mode
         private void ChangeInteractionMode(PlayerActivateModes newMode)
         {
@@ -407,12 +386,10 @@ namespace DaggerfallWorkshop.Game
         // Output building info to HUD
         private void PresentBuildingInfo(StaticBuilding building)
         {
-            // Handle residences - only House1-House4 seem to ID as "Residence" (to confirm)
-            if (building.buildingData.BuildingType >= DFLocation.BuildingTypes.House1 &&
-                building.buildingData.BuildingType <= DFLocation.BuildingTypes.House4)
+            // Handle residences
+            if (RMBLayout.IsResidence(building.buildingData.BuildingType))
             {
                 DaggerfallUI.AddHUDText(HardStrings.residence);
-                //DaggerfallUI.AddHUDText(building.buildingData.BuildingType.ToString());
             }
             else
             {

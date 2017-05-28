@@ -17,6 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -310,13 +311,24 @@ namespace DaggerfallWorkshop.Game.Questing
                         // Match building against required type
                         if (buildingSummary[i].BuildingType == buildingType)
                         {
-                            // Get building name
-                            string buildingName = BuildingNames.GetName(
-                                buildingSummary[i].NameSeed,
-                                buildingSummary[i].BuildingType,
-                                buildingSummary[i].FactionId,
-                                location.Name,
-                                location.RegionName);
+                            // Get building name based on type
+                            string buildingName;
+                            if (RMBLayout.IsResidence(buildingType))
+                            {
+                                // Generate a random surname for this residence
+                                DFRandom.srand((int)Time.realtimeSinceStartup);
+                                string surname = DaggerfallUnity.Instance.NameHelper.Surname(Utility.NameHelper.BankTypes.Breton);
+                                buildingName = HardStrings.theNamedResidence.Replace("%s", surname);
+                            }
+                            else
+                            {
+                                buildingName = BuildingNames.GetName(
+                                    buildingSummary[i].NameSeed,
+                                    buildingSummary[i].BuildingType,
+                                    buildingSummary[i].FactionId,
+                                    location.Name,
+                                    location.RegionName);
+                            }
 
                             // Configure new site details
                             siteDetails = new SiteDetails();

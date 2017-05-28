@@ -2,10 +2,21 @@
 
 Quest: __DEMO05
 
+
 QRC:
 
-- No text resources
+Message: 1050
+You have arrived at the test building.
+
 
 QBN:
 
-Place _testHouse_ local house2
+Place _testLocalBuilding_ local house2
+
+
+_ArrivedAtLocalBuilding_ task:
+pc at _testLocalBuilding_ set _showResult_
+
+
+_ShowResult_ task:
+say 1050
