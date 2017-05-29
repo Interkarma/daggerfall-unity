@@ -100,19 +100,13 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate how much fatigue the player should recover per hour of rest
         public static int CalculateFatigueRecoveryRate(int maxFatigue)
         {
-            if (maxFatigue > 0)
-                return Mathf.Max((int)Mathf.Floor(maxFatigue / 8), 1);
-            else
-                return 0;
+            return Mathf.Max((int)Mathf.Floor(maxFatigue / 8), 1);
         }
 
         // Calculate how many spell points the player should recover per hour of rest
         public static int CalculateSpellPointRecoveryRate(int maxSpellPoints)
         {
-            if (maxSpellPoints > 0)
-                return Mathf.Max((int)Mathf.Floor(maxSpellPoints / 8), 1);
-            else
-                return 0;
+            return Mathf.Max((int)Mathf.Floor(maxSpellPoints / 8), 1);
         }
 
         // Calculate chance of successfully lockpicking a door in an interior. If this is higher than a random number between 0 and 100 (inclusive), the lockpicking succeeds.
