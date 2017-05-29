@@ -103,7 +103,7 @@ namespace DaggerfallWorkshop.Game
                                     // If entering a shop let player know the quality level
                                     if (hitBuilding)
                                     {
-                                        DaggerfallMessageBox mb = PresentShopQuality(building.buildingData);
+                                        DaggerfallMessageBox mb = PresentShopQuality(building);
                                         if (mb != null)
                                         {
                                             // Defer transition to interior to after user closes messagebox
@@ -297,7 +297,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Display a shop quality level
-        private DaggerfallMessageBox PresentShopQuality(DFLocation.BuildingData buildingData)
+        private DaggerfallMessageBox PresentShopQuality(StaticBuilding building)
         {
             const int qualityLevel1TextId = 266;    // "Incense and soft music soothe your nerves"
             const int qualityLevel2TextId = 267;    // "The shop is better appointed than many"
@@ -305,8 +305,18 @@ namespace DaggerfallWorkshop.Game
             const int qualityLevel4TextId = 269;    // "Sturdy shelves, cobbled together"
             const int qualityLevel5TextId = 270;    // "Rusty relics lie wherever they were last tossed"
 
+            // Get building directory for location
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (!buildingDirectory)
+                return null;
+
+            // Get detailed building data from directory
+            BuildingSummary buildingSummary;
+            if (!buildingDirectory.GetBuildingSummary(building.buildingKey, out buildingSummary))
+                return null;
+
             // Do nothing if not a shop
-            if (!RMBLayout.IsShop(buildingData.BuildingType))
+            if (!RMBLayout.IsShop(buildingSummary.BuildingType))
                 return null;
 
             // Set quality level text ID from quality value 01-20
@@ -314,13 +324,13 @@ namespace DaggerfallWorkshop.Game
             // Below is best effort based on a small sample size (shops in Daggerall and Gothway Garden)
             // TODO: Research and confirm thresholds
             int qualityTextId;
-            if (buildingData.Quality <= 4)
+            if (buildingSummary.Quality <= 4)
                 qualityTextId = qualityLevel5TextId;        // 01 - 04
-            else if (buildingData.Quality <= 7)
+            else if (buildingSummary.Quality <= 7)
                 qualityTextId = qualityLevel4TextId;        // 05 - 07
-            else if (buildingData.Quality <= 14)
+            else if (buildingSummary.Quality <= 14)
                 qualityTextId = qualityLevel3TextId;        // 08 - 14
-            else if (buildingData.Quality <= 17)
+            else if (buildingSummary.Quality <= 17)
                 qualityTextId = qualityLevel2TextId;        // 15 - 17
             else
                 qualityTextId = qualityLevel1TextId;        // 18 - 20
@@ -335,10 +345,10 @@ namespace DaggerfallWorkshop.Game
                     return DaggerfallUI.MessageBox(qualityTextId);
 
                 case 1:     // Display HUD text only with variable delay
-                    DaggerfallConnect.Arena2.TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(qualityTextId);
+                    TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(qualityTextId);
                     for (int i = 0; i < tokens.Length; i++)
                     {
-                        if (tokens[i].formatting == DaggerfallConnect.Arena2.TextFile.Formatting.Text)
+                        if (tokens[i].formatting == TextFile.Formatting.Text)
                             DaggerfallUI.AddHUDText(tokens[i].text, DaggerfallUnity.Settings.ShopQualityHUDDelay);
                     }
                     break;
@@ -386,29 +396,37 @@ namespace DaggerfallWorkshop.Game
         // Output building info to HUD
         private void PresentBuildingInfo(StaticBuilding building)
         {
-            // Handle residences
-            if (RMBLayout.IsResidence(building.buildingData.BuildingType))
+            // Get building directory for location
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (!buildingDirectory)
+                return;
+
+            // Get detailed building data from directory
+            BuildingSummary buildingSummary;
+            if (!buildingDirectory.GetBuildingSummary(building.buildingKey, out buildingSummary))
+                return;
+
+            // Resolve name by building type
+            string buildingName;
+            if (RMBLayout.IsResidence(buildingSummary.BuildingType))
             {
-                DaggerfallUI.AddHUDText(HardStrings.residence);
+                // Residence
+                // TODO: Link to quest system active sites
+                buildingName = HardStrings.residence;
             }
             else
             {
-                // Get player location
-                DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-                if (!location.Loaded)
-                    return;
-
-                // Get building name
-                string buildingName = BuildingNames.GetName(
-                    building.buildingData.NameSeed,
-                    building.buildingData.BuildingType,
-                    building.buildingData.FactionId,
-                    location.Name,
-                    location.RegionName);
-
-                // Output building name to HUD
-                DaggerfallUI.AddHUDText(buildingName);
+                // Fixed building name
+                buildingName = BuildingNames.GetName(
+                    buildingSummary.NameSeed,
+                    buildingSummary.BuildingType,
+                    buildingSummary.FactionId,
+                    buildingDirectory.LocationData.Name,
+                    buildingDirectory.LocationData.RegionName);
             }
+
+            // Output building name to HUD
+            DaggerfallUI.AddHUDText(buildingName);
         }
 
         // Output NPC info to HUD

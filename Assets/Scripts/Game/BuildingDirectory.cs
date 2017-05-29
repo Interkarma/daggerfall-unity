@@ -27,7 +27,46 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
+        uint locationId;
+        int mapId;
+        DFLocation locationData;
         Dictionary<int, BuildingSummary> buildingDict = new Dictionary<int, BuildingSummary>();
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets total number of buildings in this directory (can be 0).
+        /// </summary>
+        public int BuildingCount
+        {
+            get { return buildingDict.Count; }
+        }
+
+        /// <summary>
+        /// Gets LocationID of set location.
+        /// </summary>
+        public uint LocationID
+        {
+            get { return locationId; }
+        }
+
+        /// <summary>
+        /// Gets MapID of set location.
+        /// </summary>
+        public int MapID
+        {
+            get { return mapId; }
+        }
+
+        /// <summary>
+        /// Gets location data of set location.
+        /// </summary>
+        public DFLocation LocationData
+        {
+            get { return locationData; }
+        }
 
         #endregion
 
@@ -37,7 +76,7 @@ namespace DaggerfallWorkshop.Game
         /// Setup building directory from specified location.
         /// </summary>
         /// <param name="location">Source location data.</param>
-        public void SetupDirectory(DFLocation location)
+        public void SetLocation(DFLocation location)
         {
             // Clear existing buildings
             buildingDict.Clear();
@@ -63,11 +102,15 @@ namespace DaggerfallWorkshop.Game
                     // Add all buildings to directory
                     for (int i = 0; i < buildings.Length; i++)
                     {
-                        int key = MakeBuildingKey(buildings[i]);
-                        buildingDict.Add(key, buildings[i]);
+                        buildingDict.Add(buildings[i].buildingKey, buildings[i]);
                     }
                 }
             }
+
+            // Store location info
+            locationId = location.Exterior.ExteriorData.LocationId;
+            mapId = location.MapTableData.MapId;
+            locationData = location;
         }
 
         /// <summary>
@@ -103,20 +146,6 @@ namespace DaggerfallWorkshop.Game
         public static int MakeBuildingKey(byte layoutX, byte layoutY, byte recordIndex)
         {
             return (layoutX << 16) + (layoutY << 8) + recordIndex;
-        }
-
-        /// <summary>
-        /// Create a building key from building summary data.
-        /// Building summary must have layout coordinates set.
-        /// </summary>
-        /// <param name="building">BuildingSummary</param>
-        /// <returns></returns>
-        public static int MakeBuildingKey(BuildingSummary building)
-        {
-            if (building.LayoutX == -1 || building.LayoutY == -1)
-                throw new Exception("MakeBuildingKey(): BuildingSummary does not have building layout coords set.");
-
-            return MakeBuildingKey((byte)building.LayoutX, (byte)building.LayoutY, (byte)building.RecordIndex);
         }
 
         /// <summary>

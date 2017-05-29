@@ -83,7 +83,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             ClearSites();
 
             // Get player's location component in scene
-            DaggerfallLocation dfLocation = GameManager.Instance.StreamingWorld.GetPlayerLocationObject();
+            DaggerfallLocation dfLocation = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject;
             if (!dfLocation)
             {
                 ClearSites();
@@ -123,25 +123,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         continue;
 
                     // Check we're in the same block as site
-                    if (site.layoutX != rmbBlock.LayoutX || site.layoutY != rmbBlock.LayoutY)
-                        continue;
+                    continue;
+                    //if (site.layoutX != rmbBlock.LayoutX || site.layoutY != rmbBlock.LayoutY)
+                    //    continue;
 
-                    // Site is in the same location and layout position, check for matching building record
-                    foreach (StaticDoor door in dfStaticDoors.Doors)
-                    {
-                        if (door.recordIndex == site.buildingSummary.RecordIndex)
-                        {
-                            foundTotal++;
-                            Vector3 position = door.buildingMatrix.MultiplyPoint3x4(door.centre) + dfStaticDoors.transform.position;
+                    //// Site is in the same location and layout position, check for matching building record
+                    //foreach (StaticDoor door in dfStaticDoors.Doors)
+                    //{
+                    //    if (door.recordIndex == site.buildingSummary.RecordIndex)
+                    //    {
+                    //        foundTotal++;
+                    //        Vector3 position = door.buildingMatrix.MultiplyPoint3x4(door.centre) + dfStaticDoors.transform.position;
 
-                            SiteTarget target = new SiteTarget();
-                            target.doorPosition = position;
-                            target.markerLabel = new TextLabel();
-                            target.targetName = site.buildingName;
-                            Components.Add(target.markerLabel);
-                            siteTargets.Add(target);
-                        }
-                    }
+                    //        SiteTarget target = new SiteTarget();
+                    //        target.doorPosition = position;
+                    //        target.markerLabel = new TextLabel();
+                    //        target.targetName = site.buildingName;
+                    //        Components.Add(target.markerLabel);
+                    //        siteTargets.Add(target);
+                    //    }
+                    //}
                 }
             }
 

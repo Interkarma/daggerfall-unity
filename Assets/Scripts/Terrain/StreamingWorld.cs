@@ -101,6 +101,8 @@ namespace DaggerfallWorkshop
         bool terrainUpdateRunning;
         bool updateLocatations;
 
+        DaggerfallLocation currentPlayerLocationObject;
+
         #endregion
 
         #region Properties
@@ -141,6 +143,15 @@ namespace DaggerfallWorkshop
         public TerrainTexturing TerrainTexturing
         {
             get { return terrainTexturing; }
+        }
+
+        /// <summary>
+        /// Gets current DaggerfallLocation (if any) for player's current map pixel.
+        /// Will return null for any map pixel in wilderness or if world still being built on init.
+        /// </summary>
+        public DaggerfallLocation CurrentPlayerLocationObject
+        {
+            get { return currentPlayerLocationObject; }
         }
 
         #endregion
@@ -381,10 +392,22 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets the building directory for current player position.
+        /// </summary>
+        /// <returns>BuildingDirectory or null if player not inside a location map pixel.</returns>
+        public BuildingDirectory GetCurrentBuildingDirectory()
+        {
+            if (!currentPlayerLocationObject)
+                return null;
+
+            return currentPlayerLocationObject.GetComponent<BuildingDirectory>();
+        }
+
+        /// <summary>
         /// Gets the DaggerfallLocation component for current player position.
         /// </summary>
         /// <returns>DaggerfallLocation component if player inside location map pixel, otherwise null.</returns>
-        public DaggerfallLocation GetPlayerLocationObject()
+        private DaggerfallLocation GetPlayerLocationObject()
         {
             // Look for location at current map pixel coords inside loose object list
             for (int i = 0; i < looseObjectsList.Count; i++)
@@ -541,6 +564,9 @@ namespace DaggerfallWorkshop
                 if (terrainArray[i].active && terrainArray[i].hasLocation)
                     StartCoroutine(UpdateLocation(i, true));
             }
+
+            // Update current player location object once location update complete
+            currentPlayerLocationObject = GetPlayerLocationObject();
         }
 
         private IEnumerator UpdateLocation(int index, bool allowYield)
@@ -555,6 +581,10 @@ namespace DaggerfallWorkshop
                 GameObject locationObject = CreateLocationGameObject(index, out location);
                 if (locationObject)
                 {
+                    // Add building directory to location game object
+                    BuildingDirectory buildingDirectory = locationObject.AddComponent<BuildingDirectory>();
+                    buildingDirectory.SetLocation(location);
+
                     // Add location to loose object list
                     LooseObjectDesc looseObject = new LooseObjectDesc();
                     looseObject.gameObject = locationObject;
@@ -583,14 +613,11 @@ namespace DaggerfallWorkshop
                     DFPosition tilePos = TerrainHelper.GetLocationTerrainTileOrigin(location);
                     Vector3 origin = new Vector3(tilePos.X * RMBLayout.RMBTileSide, 2.0f * MeshReader.GlobalScale, tilePos.Y * RMBLayout.RMBTileSide);
 
-                    // Get blocks for this location pre-populated with building data from MAPS.BSA
-                    DFBlock[] blocks;
-                    RMBLayout.GetLocationBuildingData(location, out blocks);
-
                     // Get location component
                     DaggerfallLocation dfLocation = locationObject.GetComponent<DaggerfallLocation>();
 
                     // Perform layout and yield after each block is placed
+                    ContentReader contentReader = DaggerfallUnity.Instance.ContentReader;
                     for (int y = 0; y < height; y++)
                     {
                         for (int x = 0; x < width; x++)
@@ -603,9 +630,14 @@ namespace DaggerfallWorkshop
                             animalsBillboardBatch.BlockOrigin = blockOrigin;
                             miscBillboardBatch.BlockOrigin = blockOrigin;
 
+                            // Get block name
+                            string blockName = contentReader.BlockFileReader.CheckName(contentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
+
                             // Add block
                             GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
-                                blocks[y * width + x],
+                                blockName,
+                                x,
+                                y,
                                 false,
                                 dfUnity.Option_CityBlockPrefab,
                                 natureBillboardBatch,
@@ -613,15 +645,6 @@ namespace DaggerfallWorkshop
                                 animalsBillboardBatch,
                                 miscBillboardAtlas,
                                 miscBillboardBatch);
-
-                            // Set coordinates used by world map layouts
-                            // Can be used to identify child doors and buildings belonging to this block in map layout grid
-                            DaggerfallRMBBlock rmbBlock = go.GetComponent<DaggerfallRMBBlock>();
-                            if (rmbBlock)
-                            {
-                                rmbBlock.LayoutX = x;
-                                rmbBlock.LayoutY = y;
-                            }
 
                             // Set game object properties
                             go.hideFlags = defaultHideFlags;
@@ -1086,9 +1109,13 @@ namespace DaggerfallWorkshop
         // Position player outside first dungeon door of this location
         private void PositionPlayerToDungeonExit(DaggerfallLocation location = null)
         {
-            // Attempt to get location from current terrain transform
+            // If location is null, try current player location and bail if not found
             if (!location)
+            {
                 location = GetPlayerLocationObject();
+                if (!location)
+                    return;
+            }
 
             DaggerfallStaticDoors[] doors = location.StaticDoorCollections;
 

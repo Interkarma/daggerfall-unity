@@ -89,9 +89,9 @@ namespace DaggerfallWorkshop
             this.doorOwner = doorOwner;
 
             // Get block data
-            blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blocksFileIndex);
+            blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blockIndex);
             if (blockData.Type != DFBlock.BlockTypes.Rmb)
-                throw new Exception(string.Format("Could not load RMB block index {0}", door.blocksFileIndex), null);
+                throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
 
             // Get record data
             recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
@@ -126,9 +126,9 @@ namespace DaggerfallWorkshop
             this.doorOwner = doorOwner;
 
             // Get block data
-            blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blocksFileIndex);
+            blockData = dfUnity.ContentReader.BlockFileReader.GetBlock(door.blockIndex);
             if (blockData.Type != DFBlock.BlockTypes.Rmb)
-                throw new Exception(string.Format("Could not load RMB block index {0}", door.blocksFileIndex), null);
+                throw new Exception(string.Format("Could not load RMB block index {0}", door.blockIndex), null);
 
             // Get record data
             recordData = blockData.RmbBlock.SubRecords[door.recordIndex];
@@ -219,7 +219,7 @@ namespace DaggerfallWorkshop
 
                 // Does this model have doors?
                 if (modelData.Doors != null)
-                    doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blocksFileIndex, entryDoor.recordIndex, modelMatrix));
+                    doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
 
                 // Get GameObject
                 if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix)) == null)

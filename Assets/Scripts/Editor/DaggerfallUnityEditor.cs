@@ -300,7 +300,7 @@ namespace DaggerfallWorkshop
                             // Create block
                             if (propBlockName.stringValue.EndsWith(".RMB"))
                             {
-                                GameObjectHelper.CreateRMBBlockGameObject(propBlockName.stringValue, dfUnity.Option_RMBGroundPlane, dfUnity.Option_CityBlockPrefab);
+                                GameObjectHelper.CreateRMBBlockGameObject(propBlockName.stringValue, 0, 0, dfUnity.Option_RMBGroundPlane, dfUnity.Option_CityBlockPrefab);
                             }
                             else if (propBlockName.stringValue.EndsWith(".RDB"))
                             {

@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -78,34 +79,43 @@ namespace DaggerfallWorkshop.Utility
         /// Create base RMB block by name.
         /// </summary>
         /// <param name="blockName">Name of block.</param>
+        /// <param name="layoutX">X coordinate in parent map layout.</param>
+        /// <param name="layoutY">Y coordinate in parent map layout.</param>
+        /// <param name="cloneFrom">Prefab to clone from.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(string blockName, DaggerfallRMBBlock cloneFrom = null)
+        public static GameObject CreateBaseGameObject(string blockName, int layoutX, int layoutY, DaggerfallRMBBlock cloneFrom = null)
         {
             DFBlock blockData;
-            return CreateBaseGameObject(blockName, out blockData, cloneFrom);
+            return CreateBaseGameObject(blockName, layoutX, layoutY, out blockData, cloneFrom);
         }
 
         /// <summary>
         /// Create base RMB block by name and get back DFBlock data.
         /// </summary>
         /// <param name="blockName">Name of block.</param>
+        /// <param name="layoutX">X coordinate in parent map layout.</param>
+        /// <param name="layoutY">Y coordinate in parent map layout.</param>
         /// <param name="blockDataOut">DFBlock data out.</param>
+        /// <param name="cloneFrom">Prefab to clone from.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(string blockName, out DFBlock blockDataOut, DaggerfallRMBBlock cloneFrom = null)
+        public static GameObject CreateBaseGameObject(string blockName, int layoutX, int layoutY, out DFBlock blockDataOut, DaggerfallRMBBlock cloneFrom = null)
         {
             // Get block data
             if (!GetBlockData(blockName, out blockDataOut))
                 return null;
 
-            return CreateBaseGameObject(ref blockDataOut, cloneFrom);
+            return CreateBaseGameObject(ref blockDataOut, layoutX, layoutY, cloneFrom);
         }
 
         /// <summary>
         /// Instantiate base RMB block by DFBlock data.
         /// </summary>
         /// <param name="blockData">Block data.</param>
+        /// <param name="layoutX">X coordinate in parent map layout.</param>
+        /// /// <param name="layoutY">Y coordinate in parent map layout.</param>
+        /// <param name="cloneFrom">Prefab to clone from.</param>
         /// <returns>Block GameObject.</returns>
-        public static GameObject CreateBaseGameObject(ref DFBlock blockData, DaggerfallRMBBlock cloneFrom = null)
+        public static GameObject CreateBaseGameObject(ref DFBlock blockData, int layoutX, int layoutY, DaggerfallRMBBlock cloneFrom = null)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -126,12 +136,12 @@ namespace DaggerfallWorkshop.Utility
                 rmbBlock = go.AddComponent<DaggerfallRMBBlock>();
             }
 
-            // Attempt to set block building data
-            // If using a prefab it must have DaggerfallRMBBlock component
-            if (rmbBlock)
-            {
-                rmbBlock.SetBlockBuildingData(blockData);
-            }
+            //// Attempt to set block building data
+            //// If using a prefab it must have DaggerfallRMBBlock component
+            //if (rmbBlock)
+            //{
+            //    rmbBlock.SetBlockBuildingData(blockData);
+            //}
 
             // Setup combiner
             ModelCombiner combiner = null;
@@ -149,14 +159,32 @@ namespace DaggerfallWorkshop.Utility
             AddModels(dfUnity, ref blockData, out modelDoors, out modelBuildings, combiner, modelsNode.transform);
             AddProps(dfUnity, ref blockData, out propDoors, combiner, modelsNode.transform);
 
-            // Add doors
+            // Combine list of doors found in models and props
             List<StaticDoor> allDoors = new List<StaticDoor>();
             if (modelDoors.Count > 0) allDoors.AddRange(modelDoors);
             if (propDoors.Count > 0) allDoors.AddRange(propDoors);
+
+            // Assign building key to each door
+            for (int i = 0; i < allDoors.Count; i++)
+            {
+                StaticDoor door = allDoors[i];
+                door.buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)door.recordIndex);
+                allDoors[i] = door;
+            }
+
+            // Assign building key to each building
+            for (int i = 0; i < modelBuildings.Count; i++)
+            {
+                StaticBuilding building = modelBuildings[i];
+                building.buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)building.recordIndex);
+                modelBuildings[i] = building;
+            }
+
+            // Add static doors component
             if (allDoors.Count > 0)
                 AddStaticDoors(allDoors.ToArray(), go);
 
-            // Add buildings
+            // Add static buildings component
             if (modelBuildings.Count > 0)
                 AddStaticBuildings(modelBuildings.ToArray(), go);
 
@@ -407,10 +435,12 @@ namespace DaggerfallWorkshop.Utility
 
         /// <summary>
         /// Gets BuildingSummary array generated from DFBlock data.
+        /// DFBlock data should be provided from RMBLayout.GetLocationBuildingData() output.
+        /// Otherwise not all building data will be present.
         /// </summary>
         /// <param name="blockData">DFBlock data.</param>
-        /// <param name="layoutX">X position of parent block in map layout.</param>
-        /// <param name="layoutY">Y position of parent block in map layout.</param>
+        /// <param name="layoutX">X coordindate in map layout used to generate building key.</param>
+        /// <param name="layoutY">Y coordindate in map layout used to generate building key.</param>
         /// <returns>BuildingSummary.</returns>
         public static BuildingSummary[] GetBuildingData(DFBlock blockData, int layoutX = -1, int layoutY = -1)
         {
@@ -424,9 +454,7 @@ namespace DaggerfallWorkshop.Utility
 
                 // Set building data
                 DFLocation.BuildingData buildingData = blockData.RmbBlock.FldHeader.BuildingDataList[i];
-                buildings[i].LayoutX = layoutX;
-                buildings[i].LayoutY = layoutY;
-                buildings[i].RecordIndex = i;
+                buildings[i].buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)i);
                 buildings[i].NameSeed = buildingData.NameSeed;
                 buildings[i].FactionId = buildingData.FactionId;
                 buildings[i].BuildingType = buildingData.BuildingType;
@@ -495,17 +523,23 @@ namespace DaggerfallWorkshop.Utility
                         DFLocation.BuildingData building = block.RmbBlock.FldHeader.BuildingDataList[i];
                         if (IsNamedBuilding(building.BuildingType))
                         {
-                            // Try to find next building
+                            // Try to find next building and merge data
                             BuildingPoolItem item;
                             if (!GetNextBuildingFromPool(namedBuildingPool, building.BuildingType, out item))
-                                throw new Exception(string.Format("End of city building list reached without finding building type {0}", building.BuildingType));
+                            {
+                                Debug.LogFormat("End of city building list reached without finding building type {0} in location {1}.{2}", building.BuildingType, location.RegionName, location.Name);
+                            }
+                            else
+                            {
+                                // Copy found city building data to block level
+                                building.NameSeed = item.buildingData.NameSeed;
+                                building.FactionId = item.buildingData.FactionId;
+                                building.LocationId = item.buildingData.LocationId;
+                                building.Quality = item.buildingData.Quality;
+                                building.Sector = item.buildingData.Sector;
+                            }
 
-                            // Copy city building data to block level
-                            building.NameSeed = item.buildingData.NameSeed;
-                            building.FactionId = item.buildingData.FactionId;
-                            building.LocationId = item.buildingData.LocationId;
-                            building.Quality = item.buildingData.Quality;
-                            building.Sector = item.buildingData.Sector;
+                            // Set whatever building data we could find
                             block.RmbBlock.FldHeader.BuildingDataList[i] = building;
                         }
                     }
@@ -652,12 +686,9 @@ namespace DaggerfallWorkshop.Utility
                     {
                         StaticBuilding staticBuilding = new StaticBuilding();
                         staticBuilding.modelMatrix = modelMatrix;
-                        staticBuilding.buildingData = blockData.RmbBlock.FldHeader.BuildingDataList[recordCount];
-                        staticBuilding.blocksFileIndex = blockData.Index;
                         staticBuilding.recordIndex = recordCount;
                         staticBuilding.centre = new Vector3(modelData.DFMesh.Centre.X, modelData.DFMesh.Centre.Y, modelData.DFMesh.Centre.Z) * MeshReader.GlobalScale;
                         staticBuilding.size = new Vector3(modelData.DFMesh.Size.X, modelData.DFMesh.Size.Y, modelData.DFMesh.Size.Z) * MeshReader.GlobalScale;
-                        staticBuilding.radius = modelData.DFMesh.Radius * MeshReader.GlobalScale;
                         buildingsOut.Add(staticBuilding);
                         firstModel = false;
                     }

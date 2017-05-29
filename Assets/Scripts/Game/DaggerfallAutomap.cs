@@ -1114,7 +1114,7 @@ namespace DaggerfallWorkshop.Game
         /// <param name="args"> the static door for loading the correct interior </param>
         private void createIndoorGeometryForAutomap(StaticDoor door)
         {
-            String newGeometryName = string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blocksFileIndex, door.recordIndex);
+            String newGeometryName = string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex);
 
             if (gameobjectGeometry != null)
             {

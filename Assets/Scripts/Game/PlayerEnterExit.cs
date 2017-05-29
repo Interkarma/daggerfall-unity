@@ -326,7 +326,7 @@ namespace DaggerfallWorkshop.Game
 
             // Layout interior
             // This needs to be done first so we know where the enter markers are
-            GameObject newInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blocksFileIndex, door.recordIndex));
+            GameObject newInterior = new GameObject(string.Format("DaggerfallInterior [Block={0}, Record={1}]", door.blockIndex, door.recordIndex));
             newInterior.hideFlags = defaultHideFlags;
             interior = newInterior.AddComponent<DaggerfallInterior>();
 

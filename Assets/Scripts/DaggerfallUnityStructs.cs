@@ -271,16 +271,17 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
-    /// Defines a static door inside a scene.
+    /// Defines a static door for hit tests inside a scene.
     /// </summary>
     [Serializable]
     public struct StaticDoor
     {
+        public int buildingKey;                     // Unique key of building this door will access
         public Vector3 ownerPosition;               // World position of door owner
         public Quaternion ownerRotation;            // Rotation of door owner
         public Matrix4x4 buildingMatrix;            // Matrix of individual building owning this door
         public DoorTypes doorType;                  // Type of door
-        public int blocksFileIndex;                 // Block index in BLOCKS.BSA
+        public int blockIndex;                      // Block index in BLOCKS.BSA
         public int recordIndex;                     // Record index for interior
         public int doorIndex;                       // Door index for individual building/record (most buildings have only 1-2 doors)
         public Vector3 centre;                      // Door centre in model space
@@ -289,44 +290,32 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
-    /// Defines a static building inside a scene.
+    /// Defines a static building for hit tests inside scene.
     /// </summary>
     [Serializable]
     public struct StaticBuilding
     {
-        public Matrix4x4 modelMatrix;                   // Matrix of individual model for this building
-        public DFLocation.BuildingData buildingData;    // Information about this building from MAPS.BSA
-        public int blocksFileIndex;                     // Block index in BLOCKS.BSA
-        public int recordIndex;                         // Record index for building
-        public Vector3 centre;                          // Building centre in model space
-        public Vector3 size;                            // Building size
-        public float radius;                            // Building radius
+        public int buildingKey;                     // Building key unique to parent location
+        public Matrix4x4 modelMatrix;               // Matrix of individual model for this building
+        public int recordIndex;                     // Record index for building
+        public Vector3 centre;                      // Building centre in model space
+        public Vector3 size;                        // Building size
     }
 
     /// <summary>
-    /// Information about buildings in this block.
-    /// This is a trimmed-down version of DFLocation.BuildingData with some extra information for scene builders.
-    /// Notes:
-    /// -Daggerfall keeps a base building template in block data specifying generic information like building type.
-    /// -This building template is then merged with building data from location data to create unique buildings for each location.
-    /// -Which prevents any individual block (reused many hundreds of times across world) from always having same building names.
-    /// -The way Daggerfall links location building data with block building data is not 100% known.
-    /// -Noted is that special buildings (taverns, shops, temples, etc.) seem to be laid out in same sequential order in blocks and locations.
-    /// -So linking could simply be done by sequence, which may explain why Daggerfall can exhibit linking errors (e.g. taverns become residences).
+    /// Detailed information about a building for directory lookups.
     /// </summary>
     [Serializable]
     public struct BuildingSummary
     {
-        public int LayoutX;                                 // X position of parent block in map layout
-        public int LayoutY;                                 // Y position of parent block in map layout
-        public int RecordIndex;                             // Record index of building inside parent block data
-        public int NameSeed;                                // Name seed of building - not set at block level
-        public int FactionId;                               // Faction ID of building
-        public DFLocation.BuildingTypes BuildingType;       // Type of building
-        public int Quality;                                 // Quality of building
-        public Vector3 Position;                            // Position of building
-        public Vector3 Rotation;                            // Rotation of building
-        public Matrix4x4 Matrix;                            // Transform matrix of building
+        public int buildingKey;                         // Building key unique to parent location
+        public int NameSeed;                            // Name seed of building - not set at block level
+        public int FactionId;                           // Faction ID of building
+        public DFLocation.BuildingTypes BuildingType;   // Type of building
+        public int Quality;                             // Quality of building
+        public Vector3 Position;                        // Position of building
+        public Vector3 Rotation;                        // Rotation of building
+        public Matrix4x4 Matrix;                        // Transform matrix of building
     }
 
     /// <summary>

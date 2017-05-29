@@ -361,6 +361,8 @@ namespace DaggerfallWorkshop
                     string blockName = dfUnity.ContentReader.BlockFileReader.CheckName(dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
                     GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
                         blockName,
+                        x,
+                        y,
                         dfUnity.Option_RMBGroundPlane,
                         dfUnity.Option_CityBlockPrefab,
                         summary.NatureBillboardBatch,

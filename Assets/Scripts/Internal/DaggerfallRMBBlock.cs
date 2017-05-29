@@ -17,30 +17,28 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// Stores information related to exterior city blocks (RMB blocks).
-    /// Should be attached to city block game objects.
-    /// Currently storing building information for testing.
-    /// May be expanded later to track additional block-specific information.
+    /// This is back to a placeholder component for now.
+    /// Building lookup has been moved to DaggerfallLocation object by way of BuildingDirectory.
     /// </summary>
     [RequireComponent(typeof(DaggerfallStaticDoors))]
     public class DaggerfallRMBBlock : MonoBehaviour
     {
-        public string Name;
-        public int BuildingCount;
-        public int LayoutX = -1;
-        public int LayoutY = -1;
-        public BuildingSummary[] Buildings;
+        //public string Name;
+        //public int BuildingCount;
+        //public int LayoutX = -1;
+        //public int LayoutY = -1;
+        //public BuildingSummary[] Buildings;
 
-        /// <summary>
-        /// Sets block building information during scene layout.
-        /// </summary>
-        /// <param name="blockData">DFBlock data.</param>
-        public void SetBlockBuildingData(DFBlock blockData)
-        {
-            // Create block summary
-            Name = blockData.Name;
-            BuildingCount = blockData.RmbBlock.SubRecords.Length;
-            Buildings = RMBLayout.GetBuildingData(blockData);
-        }
+        ///// <summary>
+        ///// Sets block building information during scene layout.
+        ///// </summary>
+        ///// <param name="blockData">DFBlock data.</param>
+        //public void SetBlockBuildingData(DFBlock blockData)
+        //{
+        //    // Create block summary
+        //    Name = blockData.Name;
+        //    BuildingCount = blockData.RmbBlock.SubRecords.Length;
+        //    Buildings = RMBLayout.GetBuildingData(blockData);
+        //}
     }
 }

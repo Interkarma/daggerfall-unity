@@ -337,6 +337,8 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public static GameObject CreateRMBBlockGameObject(
             string blockName,
+            int layoutX,
+            int layoutY,
             bool addGroundPlane = true,
             DaggerfallRMBBlock cloneFrom = null,
             DaggerfallBillboardBatch natureBillboardBatch = null,
@@ -355,6 +357,8 @@ namespace DaggerfallWorkshop.Utility
             // Create base object from block data
             GameObject go = CreateRMBBlockGameObject(
                 blockData,
+                layoutX,
+                layoutY,
                 addGroundPlane,
                 cloneFrom,
                 natureBillboardBatch,
@@ -373,6 +377,8 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public static GameObject CreateRMBBlockGameObject(
             DFBlock blockData,
+            int layoutX,
+            int layoutY,
             bool addGroundPlane = true,
             DaggerfallRMBBlock cloneFrom = null,
             DaggerfallBillboardBatch natureBillboardBatch = null,
@@ -389,7 +395,7 @@ namespace DaggerfallWorkshop.Utility
                 return null;
 
             // Create base object
-            GameObject go = RMBLayout.CreateBaseGameObject(ref blockData, cloneFrom);
+            GameObject go = RMBLayout.CreateBaseGameObject(ref blockData, layoutX, layoutY, cloneFrom);
 
             // Create flats node
             GameObject flatsNode = new GameObject("Flats");
@@ -858,7 +864,7 @@ namespace DaggerfallWorkshop.Utility
                 {
                     buildingMatrix = buildingMatrix,
                     doorType = door.Type,
-                    blocksFileIndex = blockIndex,
+                    blockIndex = blockIndex,
                     recordIndex = recordIndex,
                     doorIndex = door.Index,
                     centre = (v0 + v2) / 2f,
