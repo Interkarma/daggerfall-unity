@@ -305,7 +305,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // Iterate through all buildings in this block
                     int index = y * width + x;
-                    RMBLayout.BuildingSummary[] buildingSummary = RMBLayout.GetBuildingData(blocks[index]);
+                    BuildingSummary[] buildingSummary = RMBLayout.GetBuildingData(blocks[index]);
                     for (int i = 0; i < buildingSummary.Length; i++)
                     {
                         // Match building against required type

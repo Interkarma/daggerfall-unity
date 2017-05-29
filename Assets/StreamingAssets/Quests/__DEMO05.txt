@@ -12,11 +12,7 @@ You have arrived at the test building.
 QBN:
 
 Place _testLocalBuilding_ local house2
-
-
-_ArrivedAtLocalBuilding_ task:
-pc at _testLocalBuilding_ set _showResult_
-
+pc at _testLocalBuilding_ set _ShowResult_
 
 _ShowResult_ task:
 say 1050

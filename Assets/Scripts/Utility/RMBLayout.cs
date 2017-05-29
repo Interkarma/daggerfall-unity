@@ -406,36 +406,13 @@ namespace DaggerfallWorkshop.Utility
         #region Building Methods
 
         /// <summary>
-        /// Information about buildings in this block.
-        /// This is a trimmed-down version of DFLocation.BuildingData with some extra information for scene builders.
-        /// Notes:
-        /// -Daggerfall keeps a base building template in block data specifying generic information like building type.
-        /// -This building template is then merged with building data from location data to create unique buildings for each location.
-        /// -Which prevents any individual block (reused many hundreds of times across world) from always having same building names.
-        /// -The way Daggerfall links location building data with block building data is not 100% known.
-        /// -Noted is that special buildings (taverns, shops, temples, etc.) seem to be laid out in same sequential order in blocks and locations.
-        /// -So linking could simply be done by sequence, which may explain why Daggerfall can exhibit linking errors (e.g. taverns become residences).
-        /// </summary>
-        [Serializable]
-        public struct BuildingSummary
-        {
-            public int RecordIndex;                             // Record index of building inside parent block data
-            public int NameSeed;                                // Name seed of building - not set at block level
-            public int FactionId;                               // Faction ID of building
-            public int LocationId;                              // Unique location ID - not set at block level
-            public DFLocation.BuildingTypes BuildingType;       // Type of building
-            public int Quality;                                 // Quality of building
-            public Vector3 Position;                            // Position of building
-            public Vector3 Rotation;                            // Rotation of building
-            public Matrix4x4 Matrix;                            // Transform matrix of building
-        }
-
-        /// <summary>
         /// Gets BuildingSummary array generated from DFBlock data.
         /// </summary>
         /// <param name="blockData">DFBlock data.</param>
+        /// <param name="layoutX">X position of parent block in map layout.</param>
+        /// <param name="layoutY">Y position of parent block in map layout.</param>
         /// <returns>BuildingSummary.</returns>
-        public static BuildingSummary[] GetBuildingData(DFBlock blockData)
+        public static BuildingSummary[] GetBuildingData(DFBlock blockData, int layoutX = -1, int layoutY = -1)
         {
             // Store building information
             int buildingCount = blockData.RmbBlock.SubRecords.Length;
@@ -447,10 +424,11 @@ namespace DaggerfallWorkshop.Utility
 
                 // Set building data
                 DFLocation.BuildingData buildingData = blockData.RmbBlock.FldHeader.BuildingDataList[i];
+                buildings[i].LayoutX = layoutX;
+                buildings[i].LayoutY = layoutY;
                 buildings[i].RecordIndex = i;
                 buildings[i].NameSeed = buildingData.NameSeed;
                 buildings[i].FactionId = buildingData.FactionId;
-                buildings[i].LocationId = buildingData.LocationId;
                 buildings[i].BuildingType = buildingData.BuildingType;
                 buildings[i].Quality = buildingData.Quality;
 

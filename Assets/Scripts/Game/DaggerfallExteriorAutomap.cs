@@ -707,10 +707,10 @@ namespace DaggerfallWorkshop.Game
                 for (int x = 0; x < width; x++)
                 {
                     int index = y * width + x;
-                    RMBLayout.BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(blocks[index]);
+                    BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(blocks[index]);
                     BlockLayout layout = exteriorLayout[index];
 
-                    foreach (RMBLayout.BuildingSummary buildingSummary in buildingsInBlock)
+                    foreach (BuildingSummary buildingSummary in buildingsInBlock)
                     {
                         //Debug.Log(String.Format("x: {0}, y: {1}", buildingSummary.Position.x, buildingSummary.Position.z));
                         int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * 64.0f);

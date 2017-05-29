@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop
         public int BuildingCount;
         public int LayoutX = -1;
         public int LayoutY = -1;
-        public RMBLayout.BuildingSummary[] Buildings;
+        public BuildingSummary[] Buildings;
 
         /// <summary>
         /// Sets block building information during scene layout.
