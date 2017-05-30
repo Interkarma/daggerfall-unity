@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         float crosshairScale = 0.5f;
 
         PopupText popupText = new PopupText();
-        TextLabel modeTextLabel = new TextLabel();
+        TextLabel midScreenTextLabel = new TextLabel();
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
@@ -37,11 +37,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         GameObject player;
         DaggerfallEntityBehaviour playerEntity;
 
-        float modeTextTimer = -1;
-        float modeTextDelay = 1.5f;
+        float midScreenTextTimer = -1;
+        float midScreenTextDelay = 1.5f;
 
         public bool ShowPopupText { get; set; }
-        public bool ShowModeText { get; set; }
+        public bool ShowMidScreenText { get; set; }
         public bool ShowCrosshair { get; set; }
         public bool ShowVitals { get; set; }
         public bool ShowCompass { get; set; }
@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             parentPanel.BackgroundColor = Color.clear;
             ShowPopupText = true;
-            ShowModeText = true;
+            ShowMidScreenText = true;
             ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
             ShowVitals = true;
             ShowCompass = true;
@@ -88,9 +88,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             popupText.Size = NativePanel.Size;
             NativePanel.Components.Add(popupText);
 
-            modeTextLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            modeTextLabel.Position = new Vector2(0, 146);
-            NativePanel.Components.Add(modeTextLabel);
+            midScreenTextLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            midScreenTextLabel.Position = new Vector2(0, 146);
+            NativePanel.Components.Add(midScreenTextLabel);
 
             placeMarker.Size = new Vector2(640, 400);
             placeMarker.AutoSize = AutoSizeModes.ScaleToFit;
@@ -101,7 +101,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Update HUD visibility
             popupText.Enabled = ShowPopupText;
-            modeTextLabel.Enabled = ShowModeText;
+            midScreenTextLabel.Enabled = ShowMidScreenText;
             crosshair.Enabled = ShowCrosshair;
             vitals.Enabled = ShowVitals;
             compass.Enabled = ShowCompass;
@@ -118,14 +118,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             float compassY = screenRect.height - (compass.Size.y);
             compass.Position = new Vector2(compassX, compassY);
 
-            // Update mode text timer and remove once complete
-            if (modeTextTimer != -1)
+            // Update midscreen text timer and remove once complete
+            if (midScreenTextTimer != -1)
             {
-                modeTextTimer += Time.deltaTime;
-                if (modeTextTimer > modeTextDelay)
+                midScreenTextTimer += Time.deltaTime;
+                if (midScreenTextTimer > midScreenTextDelay)
                 {
-                    modeTextTimer = -1;
-                    modeTextLabel.Text = string.Empty;
+                    midScreenTextTimer = -1;
+                    midScreenTextLabel.Text = string.Empty;
                 }
             }
 
@@ -141,12 +141,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
         }
 
-        public void SetModeText(string message, float delay = 1.5f)
+        public void SetMidScreenText(string message, float delay = 1.5f)
         {
             // Set text and start timing
-            modeTextLabel.Text = message;
-            modeTextTimer = 0;
-            modeTextDelay = delay;
+            midScreenTextLabel.Text = message;
+            midScreenTextTimer = 0;
+            midScreenTextDelay = delay;
         }
     }
 }

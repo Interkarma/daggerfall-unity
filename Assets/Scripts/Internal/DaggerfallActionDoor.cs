@@ -146,16 +146,16 @@ namespace DaggerfallWorkshop
                 if (chance >= 30)
                     if (chance >= 35)
                         if (chance >= 45)
-                            Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickChance[(chance - 45) / 5]);
+                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[(chance - 45) / 5]);
                         else
-                            Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickChance3);
+                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance3);
                     else
-                        Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickChance2);
+                        Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance2);
                 else
-                    Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickChance1);
+                    Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance1);
             }
             else
-                Game.DaggerfallUI.Instance.PopupMessage(HardStrings.magicLock);
+                Game.DaggerfallUI.SetMidScreenText(HardStrings.magicLock);
         }
 
         public void AttemptLockpicking()
