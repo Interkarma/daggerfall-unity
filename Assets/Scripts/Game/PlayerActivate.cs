@@ -390,7 +390,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Present new mode to player
-            DaggerfallUI.SetModeText(HardStrings.interactionIsNowInMode.Replace("%s", modeText));
+            DaggerfallUI.SetMidScreenText(HardStrings.interactionIsNowInMode.Replace("%s", modeText));
         }
 
         // Output building info to HUD

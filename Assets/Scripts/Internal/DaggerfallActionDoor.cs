@@ -133,6 +133,31 @@ namespace DaggerfallWorkshop
                 Close(duration);
         }
 
+        public void LookAtLock()
+        {
+            if (CurrentLockValue < 20)
+            {
+                PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
+                // There seems to be an oversight in classic. It uses two separate lockpicking functions (seems to be one for animated doors in interiors and one for exterior doors)
+                // but the difficulty text is always based on the exterior function.
+                // DF Unity doesn't have exterior locked doors yet, so the below uses the interior function.
+                int chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.Lockpicking);
+
+                if (chance >= 30)
+                    if (chance >= 35)
+                        if (chance >= 45)
+                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[(chance - 45) / 5]);
+                        else
+                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance3);
+                    else
+                        Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance2);
+                else
+                    Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance1);
+            }
+            else
+                Game.DaggerfallUI.SetMidScreenText(HardStrings.magicLock);
+        }
+
         public void AttemptLockpicking()
         {
             int chance = 0;
@@ -236,14 +261,8 @@ namespace DaggerfallWorkshop
             // Do nothing if door cannot be opened right now
             if ((IsLocked && !ignoreLocks) || IsOpen)
             {
-                //Just a temp. setup to provide feedback on locks until lockpicking is added
                 if(!IsOpen)
-                {
-                    string lockedDoorMessage = "This door is locked";
-                    if (IsMagicallyHeld)
-                        lockedDoorMessage = "This is a magically held door";
-                    DaggerfallWorkshop.Game.DaggerfallUI.Instance.PopupMessage(lockedDoorMessage);
-                }
+                    LookAtLock();
                 return;
             }
 

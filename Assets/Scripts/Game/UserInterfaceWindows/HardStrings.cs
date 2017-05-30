@@ -64,5 +64,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public const string lockpickingSuccess = "The lock clicks open.";
         public const string lockpickingFailure = "It does not unlock.";
+        public const string magicLock = "This is a magically held lock...";
+        public const string lockpickChance1 = "This lock has nothing to fear from you...";
+        public const string lockpickChance2 = "It'd be a miracle if you picked this lock...";
+        public const string lockpickChance3 = "This lock looks to be beyond your skills...";
+        public static readonly string[] lockpickChance =  {"You doubt your ability to open this lock...",
+                                                    "This lock looks difficult...",
+                                                    "You would be challenged by this lock...",
+                                                    "This lock would prove a good challenge...",
+                                                    "You think you should be able to pick this lock...",
+                                                    "This lock seems relatively easy...",
+                                                    "You are amused by this lock...",
+                                                    "You laugh at the amateur quality of this lock...",
+                                                    "You see a pathetic excuse for a lock...",
+                                                    "This lock is an insult to your abilities..."};
+
     }
 }

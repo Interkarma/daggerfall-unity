@@ -376,11 +376,11 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public static void SetModeText(string message, float delay = 1.5f)
+        public static void SetMidScreenText(string message, float delay = 1.5f)
         {
             if (Instance.dfHUD != null)
             {
-                Instance.dfHUD.SetModeText(message, delay);
+                Instance.dfHUD.SetMidScreenText(message, delay);
             }
         }
 

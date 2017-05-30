@@ -109,10 +109,21 @@ namespace DaggerfallWorkshop.Game.Formulas
             return Mathf.Max((int)Mathf.Floor(maxSpellPoints / 8), 1);
         }
 
-        // Calculate chance of successfully lockpicking a door in an interior. If this is higher than a random number between 0 and 100 (inclusive), the lockpicking succeeds.
+        // Calculate chance of successfully lockpicking a door in an interior (an animating door). If this is higher than a random number between 0 and 100 (inclusive), the lockpicking succeeds.
         public static int CalculateInteriorLockpickingChance(int level, int lockvalue, int lockpickingSkill)
         {
             int lockpickingChance = (5 * (level - lockvalue) + lockpickingSkill);
+            if (lockpickingChance > 95)
+                lockpickingChance = 95;
+            else if (lockpickingChance < 5)
+                lockpickingChance = 5;
+            return lockpickingChance;
+        }
+
+        // Calculate chance of successfully lockpicking a door in an exterior (a door that leads to an interior). If this is higher than a random number between 0 and 100 (inclusive), the lockpicking succeeds.
+        public static int CalculateExteriorLockpickingChance(int lockvalue, int lockpickingSkill)
+        {
+            int lockpickingChance = lockpickingSkill - (5 * lockvalue);
             if (lockpickingChance > 95)
                 lockpickingChance = 95;
             else if (lockpickingChance < 5)
