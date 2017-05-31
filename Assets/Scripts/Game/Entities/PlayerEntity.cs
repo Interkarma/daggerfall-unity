@@ -204,16 +204,15 @@ namespace DaggerfallWorkshop.Game.Entity
 
         private void PlayerEntity_OnExhausted(DaggerfallEntity entity)
         {
-            GameManager.Instance.PlayerMotor.CancelMovement = true;
-
             const int youDropToTheGround1 = 1071;
             const int youDropToTheGround2 = 1072;
-            const float recoveryRate = 0.125f; // temporary value
 
             bool enemiesNearby = GameManager.Instance.AreEnemiesNearby();
 
             ITextProvider textProvider = DaggerfallUnity.Instance.TextProvider;
             TextFile.Token[] tokens;
+
+            GameManager.Instance.PlayerMotor.CancelMovement = true;
 
             if (!enemiesNearby)
                 tokens = textProvider.GetRSCTokens(youDropToTheGround1);
