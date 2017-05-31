@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.Collections;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
@@ -404,7 +405,13 @@ namespace DaggerfallWorkshop.Game
             // Get detailed building data from directory
             BuildingSummary buildingSummary;
             if (!buildingDirectory.GetBuildingSummary(building.buildingKey, out buildingSummary))
-                return;
+            {
+                int layoutX, layoutY, recordIndex;
+                BuildingDirectory.ReverseBuildingKey(building.buildingKey, out layoutX, out layoutY, out recordIndex);
+                Debug.LogFormat("Unable to find expected building key {0} in {1}.{2}", building.buildingKey, buildingDirectory.LocationData.RegionName, buildingDirectory.LocationData.Name);
+                Debug.LogFormat("LayoutX={0}, LayoutY={1}, RecordIndex={2}", layoutX, layoutY, recordIndex);
+                throw new Exception("Error finding building key in directory.");
+            }
 
             // Resolve name by building type
             string buildingName;

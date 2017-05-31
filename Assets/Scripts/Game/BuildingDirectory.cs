@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop.Game
                     int index = y * width + x;
                     BuildingSummary[] buildings = RMBLayout.GetBuildingData(blocks[index], x, y);
                     if (buildings == null || buildings.Length == 0)
-                        return;
+                        continue;
 
                     // Add all buildings to directory
                     for (int i = 0; i < buildings.Length; i++)
