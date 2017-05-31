@@ -275,80 +275,15 @@ namespace DaggerfallWorkshop.Game.Questing
             if (p2 == -1)
                 throw new Exception("Random local site not implemented at this time.");
 
-            //// Get an array of potential sites with specified building type
-            //SiteDetails[] foundSites = CollectSitesOfBuildingType(location, buildingType);
-            //if (foundSites == null || foundSites.Length == 0)
-            //    throw new Exception(string.Format("Could not find local site of type {0} in location {1}.{2}.", buildingType, location.RegionName, location.Name));
+            // Get an array of potential sites with specified building type
+            SiteDetails[] foundSites = CollectSitesOfBuildingType(location, buildingType);
+            if (foundSites == null || foundSites.Length == 0)
+                throw new Exception(string.Format("Could not find local site of type {0} in location {1}.{2}.", buildingType, location.RegionName, location.Name));
 
-            //// Select a random site from available list
-            //int selectedIndex = UnityEngine.Random.Range(0, foundSites.Length);
-            //siteDetails = foundSites[selectedIndex];
+            // Select a random site from available list
+            int selectedIndex = UnityEngine.Random.Range(0, foundSites.Length);
+            siteDetails = foundSites[selectedIndex];
         }
-
-        ///// <summary>
-        ///// Generate a list of potential sites based on building type.
-        ///// This uses actual map layout and block data rather than the (often inaccurate) list of building in map data.
-        ///// Likely to need refinement over time to exclude buildings without proper quest markers, etc.
-        ///// </summary>
-        //SiteDetails[] CollectSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType)
-        //{
-        //    List<SiteDetails> foundSites = new List<SiteDetails>();
-
-        //    // Iterate through all blocks
-        //    DFBlock[] blocks;
-        //    RMBLayout.GetLocationBuildingData(location, out blocks);
-        //    int width = location.Exterior.ExteriorData.Width;
-        //    int height = location.Exterior.ExteriorData.Height;
-        //    for (int y = 0; y < height; y++)
-        //    {
-        //        for (int x = 0; x < width; x++)
-        //        {
-        //            // Iterate through all buildings in this block
-        //            int index = y * width + x;
-        //            BuildingSummary[] buildingSummary = RMBLayout.GetBuildingData(blocks[index]);
-        //            for (int i = 0; i < buildingSummary.Length; i++)
-        //            {
-        //                // Match building against required type
-        //                if (buildingSummary[i].BuildingType == buildingType)
-        //                {
-        //                    // Get building name based on type
-        //                    string buildingName;
-        //                    if (RMBLayout.IsResidence(buildingType))
-        //                    {
-        //                        // Generate a random surname for this residence
-        //                        DFRandom.srand((int)Time.realtimeSinceStartup);
-        //                        string surname = DaggerfallUnity.Instance.NameHelper.Surname(Utility.NameHelper.BankTypes.Breton);
-        //                        buildingName = HardStrings.theNamedResidence.Replace("%s", surname);
-        //                    }
-        //                    else
-        //                    {
-        //                        buildingName = BuildingNames.GetName(
-        //                            buildingSummary[i].NameSeed,
-        //                            buildingSummary[i].BuildingType,
-        //                            buildingSummary[i].FactionId,
-        //                            location.Name,
-        //                            location.RegionName);
-        //                    }
-
-        //                    // Configure new site details
-        //                    siteDetails = new SiteDetails();
-        //                    siteDetails.mapId = location.MapTableData.MapId;
-        //                    siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
-        //                    siteDetails.regionName = location.RegionName;
-        //                    siteDetails.locationName = location.Name;
-        //                    siteDetails.isBuilding = true;
-        //                    siteDetails.layoutX = x;
-        //                    siteDetails.layoutY = y;
-        //                    siteDetails.buildingName = buildingName;
-        //                    siteDetails.buildingSummary = buildingSummary[i];
-        //                    foundSites.Add(siteDetails);
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return foundSites.ToArray();
-        //}
 
         #endregion
 
@@ -370,6 +305,69 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Generate a list of potential sites based on building type.
+        /// This uses actual map layout and block data rather than the (often inaccurate) list of building in map data.
+        /// Likely to need refinement over time to exclude buildings without proper quest markers, etc.
+        /// </summary>
+        SiteDetails[] CollectSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType)
+        {
+            List<SiteDetails> foundSites = new List<SiteDetails>();
+
+            // Iterate through all blocks
+            DFBlock[] blocks;
+            RMBLayout.GetLocationBuildingData(location, out blocks);
+            int width = location.Exterior.ExteriorData.Width;
+            int height = location.Exterior.ExteriorData.Height;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    // Iterate through all buildings in this block
+                    int index = y * width + x;
+                    BuildingSummary[] buildingSummary = RMBLayout.GetBuildingData(blocks[index], x, y);
+                    for (int i = 0; i < buildingSummary.Length; i++)
+                    {
+                        // Match building against required type
+                        if (buildingSummary[i].BuildingType == buildingType)
+                        {
+                            // Get building name based on type
+                            string buildingName;
+                            if (RMBLayout.IsResidence(buildingType))
+                            {
+                                // Generate a random surname for this residence
+                                DFRandom.srand((int)Time.realtimeSinceStartup);
+                                string surname = DaggerfallUnity.Instance.NameHelper.Surname(Utility.NameHelper.BankTypes.Breton);
+                                buildingName = HardStrings.theNamedResidence.Replace("%s", surname);
+                            }
+                            else
+                            {
+                                buildingName = BuildingNames.GetName(
+                                    buildingSummary[i].NameSeed,
+                                    buildingSummary[i].BuildingType,
+                                    buildingSummary[i].FactionId,
+                                    location.Name,
+                                    location.RegionName);
+                            }
+
+                            // Configure new site details
+                            siteDetails = new SiteDetails();
+                            siteDetails.mapId = location.MapTableData.MapId;
+                            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+                            siteDetails.regionName = location.RegionName;
+                            siteDetails.locationName = location.Name;
+                            siteDetails.isBuilding = true;
+                            siteDetails.buildingKey = buildingSummary[i].buildingKey;
+                            siteDetails.buildingName = buildingName;
+                            foundSites.Add(siteDetails);
+                        }
+                    }
+                }
+            }
+
+            return foundSites.ToArray();
         }
 
         ///// <summary>

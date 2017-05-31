@@ -357,10 +357,8 @@ namespace DaggerfallWorkshop
         public string regionName;                   // Name of region containing this location
         public string locationName;                 // Name of exterior location itself
         public bool isBuilding;                     // True when target site is a specific building
-        public int layoutX;                         // Map layout block X position in grid
-        public int layoutY;                         // Map layout block Y position in grid
+        public int buildingKey;                     // Key of building site in this location
         public string buildingName;                 // Name of target building, e.g. 'The Odd Blades'
-        public BuildingSummary buildingSummary;     // Additional information used when site is a building
     }
 
     /// <summary>

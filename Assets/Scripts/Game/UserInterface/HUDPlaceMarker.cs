@@ -77,72 +77,65 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// Quite inefficient but this class is only intended for early quest testing.
         /// This method should only be run when player enters/exits a location rect or when a new quest begins.
         /// </summary>
-        void RefreshSites()
+        void RefreshSiteTargets()
         {
             // Clear existing sites
-            ClearSites();
+            ClearSiteTargets();
 
             // Get player's location component in scene
             DaggerfallLocation dfLocation = GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject;
             if (!dfLocation)
-            {
-                ClearSites();
                 return;
-            }
 
             // Get all active quest sites
             SiteDetails[] allSites = QuestMachine.Instance.GetAllActiveQuestSites();
             if (allSites == null || allSites.Length == 0)
-            {
-                ClearSites();
                 return;
-            }
 
-            // Get all doors attached to this location
+            // Get all door collections in this location
             DaggerfallStaticDoors[] allDoors = dfLocation.gameObject.GetComponentsInChildren<DaggerfallStaticDoors>();
             if (allDoors == null || allDoors.Length == 0)
-            {
-                ClearSites();
                 return;
-            }
 
             // Enumerate sites and look for entrance doors
             int foundTotal = 0;
             foreach (SiteDetails site in allSites)
             {
-                // Skip other locations
-                if (site.mapId != dfLocation.Summary.MapID)
+                // Only interested in buildings within player's current location
+                if (!site.isBuilding || site.mapId != dfLocation.Summary.MapID)
                     continue;
 
-                // Build a list of all location doors with matching block/record indices
+                // Get site layout coords
+                int siteLayoutX, siteLayoutY, siteRecordIndex;
+                BuildingDirectory.ReverseBuildingKey(site.buildingKey, out siteLayoutX, out siteLayoutY, out siteRecordIndex);
+
+                // Build a list of all doors matching site building index
                 foreach (DaggerfallStaticDoors dfStaticDoors in allDoors)
                 {
-                    // Get DaggerfallRMBBlock holding this door collection
-                    DaggerfallRMBBlock rmbBlock = dfStaticDoors.GetParentRMBBlock();
-                    if (!rmbBlock)
-                        continue;
+                    foreach (StaticDoor door in dfStaticDoors.Doors)
+                    {
+                        // Get building layout coords from door
+                        int doorLayoutX, doorLayoutY, doorRecordIndex;
+                        BuildingDirectory.ReverseBuildingKey(door.buildingKey, out doorLayoutX, out doorLayoutY, out doorRecordIndex);
 
-                    // Check we're in the same block as site
-                    continue;
-                    //if (site.layoutX != rmbBlock.LayoutX || site.layoutY != rmbBlock.LayoutY)
-                    //    continue;
+                        // Reject door collections belonging to a different block than site
+                        if (doorLayoutX != siteLayoutX || doorLayoutY != siteLayoutY)
+                            break;
 
-                    //// Site is in the same location and layout position, check for matching building record
-                    //foreach (StaticDoor door in dfStaticDoors.Doors)
-                    //{
-                    //    if (door.recordIndex == site.buildingSummary.RecordIndex)
-                    //    {
-                    //        foundTotal++;
-                    //        Vector3 position = door.buildingMatrix.MultiplyPoint3x4(door.centre) + dfStaticDoors.transform.position;
+                        // Match building keys
+                        if (door.buildingKey == site.buildingKey)
+                        {
+                            foundTotal++;
+                            Vector3 position = door.buildingMatrix.MultiplyPoint3x4(door.centre) + dfStaticDoors.transform.position;
 
-                    //        SiteTarget target = new SiteTarget();
-                    //        target.doorPosition = position;
-                    //        target.markerLabel = new TextLabel();
-                    //        target.targetName = site.buildingName;
-                    //        Components.Add(target.markerLabel);
-                    //        siteTargets.Add(target);
-                    //    }
-                    //}
+                            SiteTarget target = new SiteTarget();
+                            target.doorPosition = position;
+                            target.markerLabel = new TextLabel();
+                            target.targetName = site.buildingName;
+                            Components.Add(target.markerLabel);
+                            siteTargets.Add(target);
+                        }
+                    }
                 }
             }
 
@@ -150,12 +143,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Debug.LogFormat("Found {0} doors matching an active quest site in location {1}/{2}.", foundTotal, dfLocation.Summary.RegionName, dfLocation.Summary.LocationName);
             if (foundTotal == 0)
             {
-                ClearSites();
+                ClearSiteTargets();
                 return;
             }
         }
 
-        void ClearSites()
+        void ClearSiteTargets()
         {
             for (int i = 0; i < siteTargets.Count; i++)
             {
@@ -172,25 +165,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void PlayerGPS_OnEnterLocationRect(DaggerfallConnect.DFLocation location)
         {
             // Refresh when entering a location rect
-            RefreshSites();
+            RefreshSiteTargets();
         }
 
         private void QuestMachine_OnQuestStarted(Quest quest)
         {
             // Refresh when starting a new quest
-            RefreshSites();
+            RefreshSiteTargets();
         }
 
         private void PlayerGPS_OnExitLocationRect()
         {
             // Clear when exiting location rect
-            ClearSites();
+            ClearSiteTargets();
         }
 
         private void PlayerGPS_OnMapPixelChanged(DaggerfallConnect.Utility.DFPosition mapPixel)
         {
             // Clear when changing map pixel
-            ClearSites();
+            ClearSiteTargets();
         }
 
         #endregion
