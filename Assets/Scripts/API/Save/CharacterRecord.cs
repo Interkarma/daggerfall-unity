@@ -170,6 +170,10 @@ namespace DaggerfallConnect.Save
 
         UInt16 ReadTransportationFlags(BinaryReader reader)
         {
+            // Known values:
+            // 1 = Foot
+            // 3 = Horse
+            // 5 = Cart
             return reader.ReadUInt16();
         }
 
