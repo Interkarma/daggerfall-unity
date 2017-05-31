@@ -104,13 +104,16 @@ namespace DaggerfallWorkshop.Game.Entity
             this.stats = character.workingStats;
             this.skills = character.workingSkills;
             this.reflexes = character.reflexes;
+            this.MaxHealth = character.maxHealth;
+            this.CurrentHealth = character.currentHealth;
+            this.CurrentMagicka = character.currentSpellPoints;
+            this.currentFatigue = character.currentFatigue;
+            this.skillUses = character.skillUses;
 
             if (maxHealth <= 0)
                 this.maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
             else
                 this.maxHealth = maxHealth;
-
-            FillVitalSigns();
 
             DaggerfallUnity.LogMessage("Assigned character " + this.name, true);
         }

@@ -32,6 +32,11 @@ namespace DaggerfallWorkshop.Game.Player
         public DaggerfallSkills startingSkills;
         public DaggerfallSkills workingSkills;
         public PlayerReflexes reflexes;
+        public int currentHealth;
+        public int maxHealth;
+        public int currentSpellPoints;
+        public int currentFatigue;
+        public short[] skillUses;
 
         public CharacterDocument()
         {
