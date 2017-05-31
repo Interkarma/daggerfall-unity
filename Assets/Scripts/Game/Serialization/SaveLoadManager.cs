@@ -337,7 +337,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             Save(GameManager.Instance.PlayerEntity.Name, quickSaveName);
         }
 
-        public void Load(string characterName, string saveName)
+        public void Load(int key)
         {
             // Must be ready
             if (!IsReady())
@@ -346,9 +346,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Load must not be in progress
             if (loadInProgress)
                 return;
-
-            // Look for existing save with this character and name
-            int key = FindSaveFolderByNames(characterName, saveName);
 
             // Get folder
             string path;
@@ -360,10 +357,40 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Load game
             loadInProgress = true;
             GameManager.Instance.PauseGame(false);
-            StartCoroutine(LoadGame(saveName, path));
+            StartCoroutine(LoadGame(path));
 
             // Notify
             DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
+        }
+
+        public void Load(string characterName, string saveName)
+        {
+            //// Must be ready
+            //if (!IsReady())
+            //    throw new Exception(notReadyExceptionText);
+
+            //// Load must not be in progress
+            //if (loadInProgress)
+            //    return;
+
+            // Look for existing save with this character and name
+            int key = FindSaveFolderByNames(characterName, saveName);
+            Load(key);
+
+            //// Get folder
+            //string path;
+            //if (key == -1)
+            //    return;
+            //else
+            //    path = GetSaveFolder(key);
+
+            //// Load game
+            //loadInProgress = true;
+            //GameManager.Instance.PauseGame(false);
+            //StartCoroutine(LoadGame(path));
+
+            //// Notify
+            //DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
         }
 
         public void QuickLoad()
@@ -1065,7 +1092,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             DaggerfallUI.Instance.PopupMessage(HardStrings.gameSaved);
         }
 
-        IEnumerator LoadGame(string saveName, string path)
+        IEnumerator LoadGame(string path)
         {
             GameManager.Instance.PlayerDeath.ClearDeathAnimation();
             GameManager.Instance.PlayerMotor.CancelMovement = true;

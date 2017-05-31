@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         // Editor properties
         public StartMethods StartMethod = StartMethods.DoNothing;
-        public int OverrideSaveIndex = -1;
+        public int SaveIndex = -1;
         public string PostStartMessage = string.Empty;
         public bool EnableVideos = true;
         public bool NoWorld = false;
@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Game.Utility
             TitleMenu,                              // Open title menu
             TitleMenuFromDeath,                     // Open title menu after death
             NewCharacter,                           // Spawn character to start location in INI
-            //LoadDaggerfallUnitySave,              // TODO: Make this work with new save/load system
+            LoadDaggerfallUnitySave,                // Make this work with new save/load system
             LoadClassicSave,                        // Loads a classic save using start save index
         }
 
@@ -138,8 +138,11 @@ namespace DaggerfallWorkshop.Game.Utility
                 case StartMethods.NewCharacter:
                     StartNewCharacter();
                     break;
+                case StartMethods.LoadDaggerfallUnitySave:
+                    LoadDaggerfallUnitySave();
+                    break;
                 case StartMethods.LoadClassicSave:
-                    if (OverrideSaveIndex != -1) classicSaveIndex = OverrideSaveIndex;
+                    if (SaveIndex != -1) classicSaveIndex = SaveIndex;
                     StartFromClassicSave();
                     break;
                 default:
@@ -370,6 +373,19 @@ namespace DaggerfallWorkshop.Game.Utility
 
             if (OnStartGame != null)
                 OnStartGame(this, null);
+        }
+
+        #endregion
+
+        #region Daggerfall Unity Save Startup
+
+        void LoadDaggerfallUnitySave()
+        {
+            if (SaveIndex == -1)
+                return;
+
+            SaveLoadManager.Instance.EnumerateSaves();
+            SaveLoadManager.Instance.Load(SaveIndex);
         }
 
         #endregion
