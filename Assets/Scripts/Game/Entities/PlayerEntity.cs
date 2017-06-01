@@ -104,10 +104,10 @@ namespace DaggerfallWorkshop.Game.Entity
             this.stats = character.workingStats;
             this.skills = character.workingSkills;
             this.reflexes = character.reflexes;
-            this.MaxHealth = Mathf.Max(1, character.maxHealth);
-            this.CurrentHealth = Mathf.Max(1, character.currentHealth);
-            this.CurrentMagicka = character.currentSpellPoints;
-            this.CurrentFatigue = Mathf.Max(1, character.currentFatigue);
+            this.maxHealth = character.maxHealth;
+            this.currentHealth = character.currentHealth;
+            this.currentMagicka = character.currentSpellPoints;
+            this.currentFatigue = character.currentFatigue;
             this.skillUses = character.skillUses;
 
             if (maxHealth <= 0)
