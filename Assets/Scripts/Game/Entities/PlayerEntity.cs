@@ -87,7 +87,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Assigns player entity settings from a character document.
         /// </summary>
-        public void AssignCharacter(CharacterDocument character, int level = 1, int maxHealth = 0)
+        public void AssignCharacter(CharacterDocument character, int level = 1, int maxHealth = 0, bool fillVitals = true)
         {
             if (character == null)
             {
@@ -104,16 +104,19 @@ namespace DaggerfallWorkshop.Game.Entity
             this.stats = character.workingStats;
             this.skills = character.workingSkills;
             this.reflexes = character.reflexes;
-            this.MaxHealth = character.maxHealth;
-            this.CurrentHealth = character.currentHealth;
+            this.MaxHealth = Mathf.Max(1, character.maxHealth);
+            this.CurrentHealth = Mathf.Max(1, character.currentHealth);
             this.CurrentMagicka = character.currentSpellPoints;
-            this.currentFatigue = character.currentFatigue;
+            this.CurrentFatigue = Mathf.Max(1, character.currentFatigue);
             this.skillUses = character.skillUses;
 
             if (maxHealth <= 0)
                 this.maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
             else
                 this.maxHealth = maxHealth;
+
+            if (fillVitals)
+                FillVitalSigns();
 
             DaggerfallUnity.LogMessage("Assigned character " + this.name, true);
         }
