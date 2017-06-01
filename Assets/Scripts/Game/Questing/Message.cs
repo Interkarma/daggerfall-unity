@@ -100,15 +100,19 @@ namespace DaggerfallWorkshop.Game.Questing
                 string line = source[i];
 
                 // Handle known justification tokens
-                TextFile.Formatting formatting = TextFile.Formatting.JustifyCenter;
+                TextFile.Formatting formatting = TextFile.Formatting.Nothing;
                 if (line.StartsWith(centerToken))
                 {
                     formatting = TextFile.Formatting.JustifyCenter;
                     line = line.Replace(centerToken, "");
                 }
 
-                // Trim white space either side of line
-                line = line.Trim();
+                // Trim end of line only and preserve left format if no formatting defined
+                // Otherwise trim whole line and use formatting specified
+                if (formatting == TextFile.Formatting.Nothing)
+                    line = line.TrimEnd();
+                else
+                    line = line.Trim();
 
                 // Look for split token to start new variant
                 if (line == splitToken)

@@ -6,9 +6,10 @@ Quest: __DEMO05
 QRC:
 
 QuestLogEntry:  [1010]
-You have been asked to visit _TestBuilding_
-in the city of __TestBuilding_.
-Please make haste, %pcn. There's no time to lose!
+%qdt
+    You have been summoned to _TestBuilding_
+ in the city of __TestBuilding_.
+ Please make haste, %pcn. There's no time to lose!
 
 Message: 1050
 You have arrived at _TestBuilding_ in __TestBuilding_.
