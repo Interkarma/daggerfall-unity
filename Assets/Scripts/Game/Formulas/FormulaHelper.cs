@@ -131,6 +131,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             return lockpickingChance;
         }
 
+        // Calculate how many uses a skill needs before its value will rise. This is based on observations from classic and may not be completely accurate.
+        public static int CalculateSkillUsesForAdvancement(int skillValue, float modifier, int level)
+        {
+            return (int)((skillValue * modifier) + level);
+        }
+
         #endregion
 
         #region Damage
