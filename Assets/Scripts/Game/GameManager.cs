@@ -370,6 +370,10 @@ namespace DaggerfallWorkshop.Game
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenRestWindow);
             }
+            else if (InputManager.Instance.ActionComplete(InputManager.Actions.LogBook))
+            {
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenQuestJournalWindow);
+            }
 
             if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoMap))
             {

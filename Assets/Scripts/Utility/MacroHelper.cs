@@ -9,8 +9,9 @@
 // Notes:
 //
 
+using UnityEngine;
 using System.Text.RegularExpressions;
-using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallConnect.Arena2;
 
@@ -68,6 +69,17 @@ namespace DaggerfallWorkshop.Utility
                     if (macro.type == MacroTypes.ContextMacro)
                     {
                         // TODO: Get a quest context macro like %qdt
+
+                        // Quick support for common tokens
+                        // Will rework this later
+                        if (macro.token == "%pcn")
+                        {
+                            words[word] = words[word].Replace(macro.token, GameManager.Instance.PlayerEntity.Name);
+                        }
+                        else if (macro.token == "%qdt")
+                        {
+                            words[word] = words[word].Replace(macro.token, parentQuest.QuestStartTime.DateString());
+                        }
                     }
                     else
                     {
@@ -128,7 +140,7 @@ namespace DaggerfallWorkshop.Utility
                              @"(?<prefix>==)(?<FactionMacro_Symbol>[a-zA-Z0-9.]+)(?<suffix>_)|" +
                              @"(?<prefix>=#)(?<BindingMacro_Symbol>[a-zA-Z0-9.]+)(?<suffix>_)|" +
                              @"(?<prefix>=)(?<DetailsMacro_Symbol>[a-zA-Z0-9.]+)(?<suffix>_)|" +
-                             @"(?<prefix>%)(?<ContextMacro_Symbol>[a-zA-Z0-9.]+)";
+                             @"(?<prefix>%)(?<ContextMacro_Symbol>\w+)";
 
             // Mactch macro type and inner symbol
             Macro macro = new Macro();

@@ -63,14 +63,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 Vector3 screenPos = mainCamera.WorldToScreenPoint(siteTargets[i].doorPosition);
                 if (screenPos.z < 0)
-                {
                     siteTargets[i].markerLabel.Enabled = false;
-                    continue;
-                }
-                else
-                {
-                    siteTargets[i].markerLabel.Enabled = true;
-                }
 
                 Vector2 panelPos = ScreenToLocal(new Vector2(screenPos.x, rect.height - screenPos.y));
                 siteTargets[i].markerLabel.Position = panelPos;

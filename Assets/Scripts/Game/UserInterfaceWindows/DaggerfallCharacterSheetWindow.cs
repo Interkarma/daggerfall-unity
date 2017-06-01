@@ -118,7 +118,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Logbook button
             Button logBookButton = DaggerfallUI.AddButton(new Rect(3, 165, 65, 12), NativePanel);
-            logBookButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
+            logBookButton.OnMouseClick += LogBookButton_OnMouseClick;
+            //logBookButton.BackgroundColor = DaggerfallUI.DaggerfallUnityNotImplementedColor;
 
             // History button
             Button historyButton = DaggerfallUI.AddButton(new Rect(69, 165, 65, 12), NativePanel);
@@ -321,6 +322,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void InventoryButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+        }
+
+        private void LogBookButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenQuestJournalWindow);
         }
 
         private void StatButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
