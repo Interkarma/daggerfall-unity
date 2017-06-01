@@ -8,7 +8,7 @@ QRC:
 QuestLogEntry:  [1010]
 %qdt
     You have been summoned to _TestBuilding_
- in the town of __TestBuilding_ in ____TestBuilding_.
+ at __TestBuilding_ in ____TestBuilding_.
  Please make haste, %pcn. There's no time to lose!
 
 Message: 1050
