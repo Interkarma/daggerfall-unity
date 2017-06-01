@@ -13,8 +13,6 @@ using UnityEngine;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -51,26 +49,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override void Update(Task caller)
         {
-            ShowPopup();
+            ShowPopup(id);
             SetComplete();
-        }
-
-        void ShowPopup()
-        {
-            // Get message resource
-            Message message = ParentQuest.GetMessage(id);
-            if (message == null)
-                return;
-
-            // Get message tokens
-            TextFile.Token[] tokens = message.GetTextTokens();
-
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            messageBox.SetTextTokens(tokens);
-            messageBox.ClickAnywhereToClose = true;
-            messageBox.AllowCancel = true;
-            messageBox.ParentPanel.BackgroundColor = Color.clear;
-            messageBox.Show();
         }
     }
 }

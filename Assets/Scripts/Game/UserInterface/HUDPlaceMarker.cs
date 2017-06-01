@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Events used to update site list
             QuestMachine.OnQuestStarted += QuestMachine_OnQuestStarted;
+            QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
             PlayerGPS.OnEnterLocationRect += PlayerGPS_OnEnterLocationRect;
             PlayerGPS.OnExitLocationRect += PlayerGPS_OnExitLocationRect;
             PlayerGPS.OnMapPixelChanged += PlayerGPS_OnMapPixelChanged;
@@ -62,7 +63,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 Vector3 screenPos = mainCamera.WorldToScreenPoint(siteTargets[i].doorPosition);
                 if (screenPos.z < 0)
+                {
+                    siteTargets[i].markerLabel.Enabled = false;
                     continue;
+                }
+                else
+                {
+                    siteTargets[i].markerLabel.Enabled = true;
+                }
 
                 Vector2 panelPos = ScreenToLocal(new Vector2(screenPos.x, rect.height - screenPos.y));
                 siteTargets[i].markerLabel.Position = panelPos;
@@ -172,6 +180,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Refresh when starting a new quest
             RefreshSiteTargets();
+        }
+
+        private void QuestMachine_OnQuestEnded(Quest quest)
+        {
+            // Refresh when a quest ends
+            ClearSiteTargets();
         }
 
         private void PlayerGPS_OnExitLocationRect()

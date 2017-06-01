@@ -140,11 +140,23 @@ namespace DaggerfallWorkshop.Game.Questing
                 task.Set();
         }
 
+        public void SetTask(Symbol symbol)
+        {
+            if (symbol != null)
+                SetTask(symbol.Name);
+        }
+
         public void UnsetTask(string name)
         {
             Task task = GetTask(name);
             if (task != null)
                 task.Unset();
+        }
+
+        public void UnsetTask(Symbol symbol)
+        {
+            if (symbol != null)
+                UnsetTask(symbol.Name);
         }
 
         #endregion
@@ -262,10 +274,23 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
         }
 
+        public Place GetPlace(Symbol symbol)
+        {
+            return GetResource(symbol) as Place;
+        }
+
         public QuestResource GetResource(string name)
         {
             if (!string.IsNullOrEmpty(name) && resources.ContainsKey(name))
                 return resources[name];
+            else
+                return null;
+        }
+
+        public QuestResource GetResource(Symbol symbol)
+        {
+            if (symbol != null && resources.ContainsKey(symbol.Name))
+                return resources[symbol.Name];
             else
                 return null;
         }

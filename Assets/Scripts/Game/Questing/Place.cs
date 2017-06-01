@@ -223,19 +223,19 @@ namespace DaggerfallWorkshop.Game.Questing
                 // TODO: Just stubbing out for testing right now as Place class not complete enough to return real values
 
                 case MacroTypes.NameMacro1:             // Name of house/business (e.g. Odd Blades)
-                    textOut = "BusinessName";
+                    textOut = siteDetails.buildingName;
                     break;
 
                 case MacroTypes.NameMacro2:             // Name of location (e.g. Gothway Garden)
-                    textOut = "LocationName";
+                    textOut = siteDetails.locationName;
                     break;
 
-                case MacroTypes.NameMacro3:             // Name of dungeon (e.g. Privateer's Hold)
-                    textOut = "DungeonName";
+                case MacroTypes.NameMacro3:             // Name of dungeon (e.g. Privateer's Hold) - Not sure about this one, need to test
+                    textOut = siteDetails.locationName;
                     break;
 
                 case MacroTypes.NameMacro4:             // Name of region (e.g. Tigonus)
-                    textOut = "RegionName";
+                    textOut = siteDetails.regionName;
                     break;
 
                 default:                                // Macro not supported

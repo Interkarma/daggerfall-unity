@@ -228,7 +228,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     Clock clock = new Clock(quest, lines[i]);
                     quest.AddResource(clock);
                 }
-                else if (lines[i].StartsWith("Item", StringComparison.InvariantCultureIgnoreCase))
+                else if (lines[i].StartsWith("item", StringComparison.InvariantCultureIgnoreCase))
                 {
                     Item item = new Item(quest, lines[i]);
                     quest.AddResource(item);

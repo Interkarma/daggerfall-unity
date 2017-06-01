@@ -99,6 +99,11 @@ namespace DaggerfallWorkshop.Game
         public static DaggerfallFont TitleFont { get { return Instance.GetFont(2); } }
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
 
+        public bool FadeInProgress
+        {
+            get { return fadeInProgress; }
+        }
+
         public AudioSource AudioSource
         {
             get { return audioSource; }

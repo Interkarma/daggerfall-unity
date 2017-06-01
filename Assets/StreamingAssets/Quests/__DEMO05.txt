@@ -1,4 +1,4 @@
-- Minimal example quest used to test place selection
+---- Minimal example quest used to test place selection
 
 Quest: __DEMO05
 
@@ -6,13 +6,21 @@ Quest: __DEMO05
 QRC:
 
 Message: 1050
-You have arrived at the test building.
+You have arrived at _TestLocalBuilding_ in __TestLocalBuilding_.
 
 
 QBN:
 
-Place _testLocalBuilding_ local house2
-pc at _testLocalBuilding_ set _ShowResult_
+---- Define a target site using Place resource
+Place _TestLocalBuilding_ local house2
 
+
+---- This task triggers when player arrives at target site, basically 'when pc at set _target_'
+_PlayerArrived_ task:
+pc at _TestLocalBuilding_ set _ShowResult_
+
+
+---- This task is triggered by _PlayerArrived_ 'pc at' conditional task
 _ShowResult_ task:
 say 1050
+end quest

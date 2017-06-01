@@ -145,6 +145,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
         private void Update()
         {
+            // Do not tick while HUD fading
+            // This is to prevent quest popups or other actions while player
+            // moving between interior/exterior
+            if (DaggerfallUI.Instance.FadeInProgress)
+                return;
+
             // Handle startup delay
             if (waitingForStartup)
             {
@@ -172,6 +178,7 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (Quest quest in questsToRemove)
             {
                 quests.Remove(quest.UID);
+                RaiseOnQuestEndedEvent(quest);
             }
 
             // Reset update timer
@@ -208,6 +215,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new StopClock(null));
             RegisterAction(new RemoveLogMessage(null));
             RegisterAction(new PlayVideo(null));
+            RegisterAction(new PcAt(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)
@@ -441,6 +449,15 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             if (OnQuestStarted != null)
                 OnQuestStarted(quest);
+        }
+
+        // OnQuestEnded
+        public delegate void OnQuestEndedEventHandler(Quest quest);
+        public static event OnQuestEndedEventHandler OnQuestEnded;
+        protected virtual void RaiseOnQuestEndedEvent(Quest quest)
+        {
+            if (OnQuestEnded != null)
+                OnQuestEnded(quest);
         }
 
         #endregion

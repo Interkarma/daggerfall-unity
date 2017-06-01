@@ -123,17 +123,17 @@ namespace DaggerfallWorkshop.Utility
 
             // Create gameobject
             GameObject go;
-            DaggerfallRMBBlock rmbBlock = null;
+            //DaggerfallRMBBlock rmbBlock = null;
             string name = string.Format("DaggerfallBlock [{0}]", blockData.Name);
             if (cloneFrom != null)
             {
                 go = GameObjectHelper.InstantiatePrefab(cloneFrom.gameObject, name, null, Vector3.zero);
-                rmbBlock = go.GetComponent<DaggerfallRMBBlock>();
+                //rmbBlock = go.GetComponent<DaggerfallRMBBlock>();
             }
             else
             {
                 go = new GameObject(name);
-                rmbBlock = go.AddComponent<DaggerfallRMBBlock>();
+                //rmbBlock = go.AddComponent<DaggerfallRMBBlock>();
             }
 
             //// Attempt to set block building data
