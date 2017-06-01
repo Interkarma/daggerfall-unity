@@ -450,7 +450,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Assign data to player entity
             PlayerEntity playerEntity = FindPlayerEntity();
-            playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.startingHealth);
+            playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.maxHealth);
 
             // Assign items to player entity
             playerEntity.AssignItems(saveTree);
