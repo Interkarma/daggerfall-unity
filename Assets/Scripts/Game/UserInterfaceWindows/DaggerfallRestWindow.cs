@@ -194,6 +194,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Progress world time
             DaggerfallUnity.WorldTime.Now.RaiseTime(totalHours * DaggerfallDateTime.SecondsPerHour);
             Debug.Log(string.Format("Resting raised time by {0} hours", totalHours));
+            playerEntity.RaiseSkills();
         }
 
         #endregion

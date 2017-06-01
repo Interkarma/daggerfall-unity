@@ -432,6 +432,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             terrains.Clear();
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
             travelWindow.CloseTravelWindows(true);
+            GameManager.Instance.PlayerEntity.RaiseSkills();
         }
 
         public void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)

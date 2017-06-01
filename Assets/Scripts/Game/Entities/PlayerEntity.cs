@@ -40,7 +40,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int goldPieces = 0;
         protected PersistentFactionData factionData = new PersistentFactionData();
 
-        protected short[] skillUses = new short[34];
+        protected short[] skillUses = new short[34]; // TODO: Save to and load from DF Unity saves
+        protected uint timeOfLastSkillIncreaseCheck = 0; // TODO: Save to and and load from DF Unity saves, load from classic saves
 
         #endregion
 
@@ -82,6 +83,7 @@ namespace DaggerfallWorkshop.Game.Entity
             factionData.Reset();
             SetEntityDefaults();
             goldPieces = 0;
+            System.Array.Clear(skillUses, 0, skillUses.Length);
         }
 
         /// <summary>
@@ -117,6 +119,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
             if (fillVitals)
                 FillVitalSigns();
+
+            timeOfLastSkillIncreaseCheck = DaggerfallUnity.Instance.WorldTime.Now.ToClassicDaggerfallTime();
 
             DaggerfallUnity.LogMessage("Assigned character " + this.name, true);
         }
@@ -193,6 +197,30 @@ namespace DaggerfallWorkshop.Game.Entity
             else if (skillUses[skillId] < 0)
             {
                 skillUses[skillId] = 0;
+            }
+        }
+
+        /// <summary>
+        /// Raise skills if conditions are met.
+        /// </summary>
+        public void RaiseSkills()
+        {
+            DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+            if ((now.ToClassicDaggerfallTime() - timeOfLastSkillIncreaseCheck) <= 360)
+                return;
+
+            timeOfLastSkillIncreaseCheck = now.ToClassicDaggerfallTime();
+
+            for (short i = 0; i < skillUses.Length; i++)
+            {
+                float modifier = skills.GetAdvancementDifficultyModifier((DaggerfallConnect.DFCareer.Skills)i);
+                int usesNeededForAdvancement = FormulaHelper.CalculateSkillUsesForAdvancement(skills.GetSkillValue(i), modifier, level);
+                if (skillUses[i] >= usesNeededForAdvancement)
+                {
+                    skillUses[i] = 0;
+                    skills.SetSkillValue(i, (short)(skills.GetSkillValue(i) + 1));
+                    DaggerfallUI.Instance.PopupMessage(HardStrings.skillImprove.Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DaggerfallConnect.DFCareer.Skills)i)));
+                }
             }
         }
 
