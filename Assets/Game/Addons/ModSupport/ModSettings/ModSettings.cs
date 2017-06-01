@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+﻿// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -9,11 +9,13 @@
 // Notes:
 //
 
+using System;
 using System.IO;
 using System.Globalization;
 using UnityEngine;
 using IniParser;
 using IniParser.Model;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 {
@@ -164,6 +166,72 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
             Debug.LogError(colorString + " from " + Mod.FileName + ".ini is not a valid color. Using default color.");
             return ModSettingsReader.ColorFromString(defaultSettings[section][name]);
+        }
+
+        /// <summary>
+        /// Get Tuple from user settings or, as fallback, from default settings.
+        /// Format: {First}{delimiter}{Second}
+        /// </summary>
+        /// <param name="section">Name of section inside .ini</param>
+        /// <param name="name">Name of key inside .ini</param>
+        /// <param name="delimiter">Char between First and Second.</param>
+        public Tuple<string, string> GetTupleString (string section, string name, string delimiter = ModSettingsReader.tupleDelimiterChar)
+        {
+            try
+            {
+                string text = GetString(section, name);
+                int index = text.IndexOf(delimiter);
+                return new Tuple<string, string>(text.Substring(0, index), text.Substring(index + delimiter.Length));
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(string.Format("Failed to get {0},{1} from {2} settings!\n{2}", section, name, Mod.Title, e.Message));
+                return new Tuple<string, string>("", "");
+            }
+        }
+
+        /// <summary>
+        /// Get Tuple from user settings or, as fallback, from default settings.
+        /// Format: {First}{delimiter}{Second}
+        /// </summary>
+        /// <param name="section">Name of section inside .ini</param>
+        /// <param name="name">Name of key inside .ini</param>
+        /// <param name="delimiter">Char between First and Second.</param>
+        public Tuple<int, int> GetTupleInt(string section, string name, string delimiter = ModSettingsReader.tupleDelimiterChar)
+        {
+            try
+            {
+                var tuple = GetTupleString(section, name, delimiter);
+                return new Tuple<int, int>(int.Parse(tuple.First), int.Parse(tuple.Second));
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(string.Format("Failed to get {0},{1} from {2} settings!\n{2}", section, name, Mod.Title, e.Message));
+                return new Tuple<int, int>(0, 0);
+            }
+        }
+
+        /// <summary>
+        /// Get Tuple from user settings or, as fallback, from default settings.
+        /// Format: {First}{delimiter}{Second}
+        /// </summary>
+        /// <param name="section">Name of section inside .ini</param>
+        /// <param name="name">Name of key inside .ini</param>
+        /// <param name="delimiter">Char between First and Second.</param>
+        public Tuple<float, float> GetTupleFloat(string section, string name, string delimiter = ModSettingsReader.tupleDelimiterChar)
+        {
+            try
+            {
+                var tuple = GetTupleString(section, name, delimiter);
+                float first = float.Parse(tuple.First, NumberStyles.Float, CultureInfo.InvariantCulture);
+                float second = float.Parse(tuple.Second, NumberStyles.Float, CultureInfo.InvariantCulture);
+                return new Tuple<float, float>(first, second);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(string.Format("Failed to get {0},{1} from {2} settings!\n{2}", section, name, Mod.Title, e.Message));
+                return new Tuple<float, float>(0, 0);
+            }
         }
 
         #endregion
