@@ -587,7 +587,7 @@ namespace DaggerfallWorkshop.Game.Items
                     return BodyMorphology.Khajiit;
 
                 default:
-                    throw new Exception("GetBodyMorphology() encountered unsupprted race value.");
+                    throw new Exception("GetBodyMorphology() encountered unsupported race value.");
             }
         }
 
