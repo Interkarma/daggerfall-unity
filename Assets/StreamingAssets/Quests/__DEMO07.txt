@@ -8,7 +8,7 @@ QRC:
 QuestLogEntry:  [1010]
 %qdt
     You are to meet Lady Brisienna
- at at inn, _dirtypit_ in __dirtypit_. 
+ at an inn, _dirtypit_ in __dirtypit_. 
 
 QBN:
 

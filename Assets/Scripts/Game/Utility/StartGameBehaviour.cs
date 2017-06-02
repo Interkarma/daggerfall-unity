@@ -24,6 +24,7 @@ using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -38,7 +39,9 @@ namespace DaggerfallWorkshop.Game.Utility
         public StartMethods StartMethod = StartMethods.DoNothing;
         public int SaveIndex = -1;
         public string PostStartMessage = string.Empty;
+        public string LaunchQuest = string.Empty;
         public bool EnableVideos = true;
+        public bool ShowEditorFlats = false;
         public bool NoWorld = false;
         public bool GodMod = false;
 
@@ -147,6 +150,13 @@ namespace DaggerfallWorkshop.Game.Utility
                     break;
                 default:
                     break;
+            }
+
+            // Optionally start a quest
+            if (!string.IsNullOrEmpty(LaunchQuest))
+            {
+                QuestMachine.Instance.InstantiateQuest(LaunchQuest);
+                LaunchQuest = string.Empty;
             }
         }
 
@@ -469,6 +479,7 @@ namespace DaggerfallWorkshop.Game.Utility
             DaggerfallUI.PostMessage(PostStartMessage);
 
             lastStartMethod = StartMethods.LoadClassicSave;
+            SaveIndex = -1;
 
             if (OnStartGame != null)
                 OnStartGame(this, null);

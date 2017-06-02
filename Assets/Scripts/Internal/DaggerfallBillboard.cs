@@ -22,6 +22,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop
 {
@@ -84,7 +85,8 @@ namespace DaggerfallWorkshop
             if (Application.isPlaying)
             {
                 // Set self inactive if this is an editor marker
-                if (summary.FlatType == FlatTypes.Editor)
+                bool showEditorFlats = GameManager.Instance.StartGameBehaviour.ShowEditorFlats;
+                if (summary.FlatType == FlatTypes.Editor && !showEditorFlats)
                 {
                     this.gameObject.SetActive(false);
                     return;
