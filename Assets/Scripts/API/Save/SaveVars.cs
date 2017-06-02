@@ -29,11 +29,13 @@ namespace DaggerfallConnect.Save
         const string filename = "SAVEVARS.DAT";
         const int weaponDrawnOffset = 0x3BF;
         const int gameTimeOffset = 0x3C9;
+        const int godModeOffset = 0x173B;
         const int factionDataOffset = 0x17D0;
         const int factionDataLength = 92;
 
         bool weaponDrawn = false;
         uint gameTime = 0;
+        bool godMode = false;
 
         // Private fields
         FileProxy saveVarsFile = new FileProxy();
@@ -62,6 +64,14 @@ namespace DaggerfallConnect.Save
         public uint GameTime
         {
             get { return gameTime; }
+        }
+
+        /// <summary>
+        /// Gets whether GodMode is on from savevars.
+        /// </summary>
+        public bool GodMode
+        {
+            get { return godMode; }
         }
 
         /// <summary>
@@ -116,6 +126,7 @@ namespace DaggerfallConnect.Save
             // Read data
             ReadWeaponDrawn(reader);
             ReadGameTime(reader);
+            ReadGodMode(reader);
             ReadFactionData(reader);
 
             return true;
@@ -136,6 +147,13 @@ namespace DaggerfallConnect.Save
         {
             reader.BaseStream.Position = gameTimeOffset;
             gameTime = reader.ReadUInt32();
+        }
+
+        void ReadGodMode(BinaryReader reader)
+        {
+            reader.BaseStream.Position = godModeOffset;
+            if (reader.ReadByte() == 0x40)
+                godMode = true;
         }
 
         void ReadFactionData(BinaryReader reader)

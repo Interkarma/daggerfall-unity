@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.Utility
         public bool EnableVideos = true;
         public bool ShowEditorFlats = false;
         public bool NoWorld = false;
-        public bool GodMod = false;
+        public bool GodMode = false;
 
         //events used to update state in state manager
         public static System.EventHandler OnStartMenu;
@@ -242,7 +242,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 weaponManager.RightHandWeapon.LeftHand = true;
 
             // GodMode setting
-            playerHealth.GodMode = GodMod;
+            playerHealth.GodMode = GodMode;
 
             // Enable/disable videos
             DaggerfallUI.Instance.enableVideos = EnableVideos;
@@ -451,6 +451,9 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Set game time
             DaggerfallUnity.Instance.WorldTime.Now.FromClassicDaggerfallTime(saveVars.GameTime);
+
+            // GodMode setting
+            playerHealth.GodMode = saveVars.GodMode;
 
             // Get character record
             List<SaveTreeBaseRecord> records = saveTree.FindRecords(RecordTypes.Character);
