@@ -279,8 +279,8 @@ namespace DaggerfallWorkshop.Game.Questing
             if (p2 == -1)
                 throw new Exception("Random local site not implemented at this time.");
 
-            // Get an array of potential sites with specified building type
-            SiteDetails[] foundSites = CollectSitesOfBuildingType(location, buildingType);
+            // Get an array of potential quest sites with specified building type
+            SiteDetails[] foundSites = CollectQuestSitesOfBuildingType(location, buildingType);
             if (foundSites == null || foundSites.Length == 0)
                 throw new Exception(string.Format("Could not find local site of type {0} in location {1}.{2}.", buildingType, location.RegionName, location.Name));
 
@@ -362,7 +362,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// This uses actual map layout and block data rather than the (often inaccurate) list of building in map data.
         /// Likely to need refinement over time to exclude buildings without proper quest markers, etc.
         /// </summary>
-        SiteDetails[] CollectSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType)
+        SiteDetails[] CollectQuestSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType)
         {
             List<SiteDetails> foundSites = new List<SiteDetails>();
 
@@ -383,12 +383,17 @@ namespace DaggerfallWorkshop.Game.Questing
                         // Match building against required type
                         if (buildingSummary[i].BuildingType == buildingType)
                         {
+                            // Building must be a quest site
+                            // Checking for quest flat marker inside record interior
+                            if (!InteriorHasQuestMarker(blocks[index], i))
+                                continue;
+
                             // Get building name based on type
                             string buildingName;
                             if (RMBLayout.IsResidence(buildingType))
                             {
                                 // Generate a random surname for this residence
-                                DFRandom.srand((int)Time.renderedFrameCount);
+                                DFRandom.srand(Time.renderedFrameCount);
                                 string surname = DaggerfallUnity.Instance.NameHelper.Surname(Utility.NameHelper.BankTypes.Breton);
                                 buildingName = HardStrings.theNamedResidence.Replace("%s", surname);
                             }
@@ -462,9 +467,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (!HasBuildingType(locationData, requiredBuildingType))
                     continue;
 
-                // Get an array of potential sites with specified building type
+                // Get an array of potential quest sites with specified building type
                 // This ensures building site actually exists inside town, as MAPS.BSA directory can be incorrect
-                SiteDetails[] foundSites = CollectSitesOfBuildingType(locationData, requiredBuildingType);
+                SiteDetails[] foundSites = CollectQuestSitesOfBuildingType(locationData, requiredBuildingType);
                 if (foundSites == null || foundSites.Length == 0)
                     continue;
 
@@ -490,6 +495,21 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (var building in location.Exterior.Buildings)
             {
                 if (building.BuildingType == buildingType)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check interior for quest marker (199.11) indicating this can be a quest site.
+        /// </summary>
+        bool InteriorHasQuestMarker(DFBlock blockData, int recordIndex)
+        {
+            DFBlock.RmbSubRecord recordData = recordData = blockData.RmbBlock.SubRecords[recordIndex];
+            foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
+            {
+                if (obj.TextureArchive == 199 && obj.TextureRecord == 11)
                     return true;
             }
 

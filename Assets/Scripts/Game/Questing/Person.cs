@@ -110,6 +110,9 @@ namespace DaggerfallWorkshop.Game.Questing
             Match match = Regex.Match(line, declMatchStr);
             if (match.Success)
             {
+                // Seed random
+                UnityEngine.Random.InitState(Time.renderedFrameCount);
+
                 // Store symbol for quest system
                 Symbol = new Symbol(match.Groups["symbol"].Value);
 
@@ -150,9 +153,15 @@ namespace DaggerfallWorkshop.Game.Questing
                         case "female":
                             npcGender = Genders.Female;
                             break;
-                        default:
                         case "male":
                             npcGender = Genders.Male;
+                            break;
+                        default:
+                            // Random gender
+                            if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f)
+                                npcGender = Genders.Male;
+                            else
+                                npcGender = Genders.Female;
                             break;
                     }
                 }
