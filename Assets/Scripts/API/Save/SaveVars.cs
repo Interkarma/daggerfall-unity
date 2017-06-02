@@ -27,10 +27,12 @@ namespace DaggerfallConnect.Save
         #region Fields
 
         const string filename = "SAVEVARS.DAT";
-        const int factionDataOffset = 0x17D0;
+        const int weaponDrawnOffset = 0x3BF;
         const int gameTimeOffset = 0x3C9;
+        const int factionDataOffset = 0x17D0;
         const int factionDataLength = 92;
 
+        bool weaponDrawn = false;
         uint gameTime = 0;
 
         // Private fields
@@ -44,6 +46,14 @@ namespace DaggerfallConnect.Save
         public static string Filename
         {
             get { return filename; }
+        }
+
+        /// <summary>
+        /// Gets whether weapon is drawn from savevars.
+        /// </summary>
+        public bool WeaponDrawn
+        {
+            get { return weaponDrawn; }
         }
 
         /// <summary>
@@ -104,6 +114,7 @@ namespace DaggerfallConnect.Save
             BinaryReader reader = saveVarsFile.GetReader();
 
             // Read data
+            ReadWeaponDrawn(reader);
             ReadGameTime(reader);
             ReadFactionData(reader);
 
@@ -113,6 +124,13 @@ namespace DaggerfallConnect.Save
         #endregion
 
         #region Private Methods
+
+        void ReadWeaponDrawn(BinaryReader reader)
+        {
+            reader.BaseStream.Position = weaponDrawnOffset;
+            if (reader.ReadByte() == 0x40)
+                weaponDrawn = true;
+        }
 
         void ReadGameTime(BinaryReader reader)
         {

@@ -446,6 +446,9 @@ namespace DaggerfallWorkshop.Game.Utility
                 streamingWorld.suppressWorld = false;
             }
 
+            // Set whether the player's weapon is drawn
+            GameManager.Instance.WeaponManager.Sheathed = (!saveVars.WeaponDrawn);
+
             // Set game time
             DaggerfallUnity.Instance.WorldTime.Now.FromClassicDaggerfallTime(saveVars.GameTime);
 
