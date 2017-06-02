@@ -312,6 +312,31 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #endregion
 
+        #region Fixed Site Methods
+
+        /// <summary>
+        /// Setup a fixed location.
+        /// </summary>
+        void SetupFixedLocation()
+        {
+            // Dungeon interiors have p2 > 0xfa00, exteriors have p2 = 0x01 || p2 = 0x02
+            // Need to p1 - 1 if inside dungeon for exterior location id
+            int locationId = -1;
+            if (p2 > 0xfa00)
+                locationId = p1 - 1;
+            else
+                locationId = p1;
+
+            // Get location
+            DFLocation location;
+            if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(locationId, out location))
+                throw new Exception(string.Format("Could not find locationId: '{0};", locationId));
+
+            // TODO: Create a site for this location
+        }
+
+        #endregion
+
         #region Private Methods
 
         /// <summary>
@@ -470,26 +495,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
             return false;
         }
-
-        ///// <summary>
-        ///// Setup a fixed location.
-        ///// </summary>
-        //void SetupFixedLocation()
-        //{
-        //    // Dungeon interiors have p2 > 0xfa00, exteriors have p2 = 0x01
-        //    // Need to subtract 1 if inside dungeon for exterior mapid
-        //    int locationId = -1;
-        //    if (p2 > 0xfa00)
-        //        locationId = p1 - 1;
-        //    else
-        //        locationId = p1;
-
-        //    // Get location
-        //    if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(locationId, out location))
-        //    {
-        //        Debug.LogFormat("Could not find locationId: '{0};", locationId);
-        //    }
-        //}
 
         #endregion
     }

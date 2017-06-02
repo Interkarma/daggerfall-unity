@@ -45,7 +45,8 @@ namespace DaggerfallWorkshop.Game.Questing
         const string staticMessagesTableFilename = "Quests-StaticMessages";
         const string placesTableFilename = "Quests-Places";
         const string soundsTableFilename = "Quests-Sounds";
-        const string itemsTableFileName = "Quests-items";
+        const string itemsTableFileName = "Quests-Items";
+        const string factionsTableFileName = "Quests-Factions";
 
         // Data tables
         Table globalVarsTable;
@@ -53,6 +54,7 @@ namespace DaggerfallWorkshop.Game.Questing
         Table placesTable;
         Table soundsTable;
         Table itemsTable;
+        Table factionsTable;
 
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
@@ -136,6 +138,7 @@ namespace DaggerfallWorkshop.Game.Questing
             placesTable = new Table(Instance.GetTableSourceText(placesTableFilename));
             soundsTable = new Table(Instance.GetTableSourceText(soundsTableFilename));
             itemsTable = new Table(Instance.GetTableSourceText(itemsTableFileName));
+            factionsTable = new Table(Instance.GetTableSourceText(factionsTableFileName));
         }
 
         void Start()
