@@ -94,7 +94,7 @@ namespace DaggerfallConnect.Save
             parsedData.armorValues = reader.ReadBytes(7);
 
             reader.BaseStream.Position = 0x58;
-            parsedData.levelUpModifier = reader.ReadInt32(); // the starting total of all the primary skills, the two top major skills and the top minor skill
+            parsedData.levelUpModifier = reader.ReadInt32();
             parsedData.opponentUnknown = reader.ReadInt32();
 
             reader.BaseStream.Position = 0x5c;
@@ -245,7 +245,7 @@ namespace DaggerfallConnect.Save
             public UInt16 transportationFlags;
             public Races race;
             public Byte[] armorValues;
-            public Int32 levelUpModifier;
+            public Int32 levelUpModifier; // The starting total of all the primary skills, the two top major skills and the top minor skill
             public Int32 opponentUnknown;
             public Int16 baseHealth;
             public Int16 currentHealth;
