@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.Player
         public int currentSpellPoints;
         public int currentFatigue;
         public short[] skillUses;
+        public int startingLevelUpSkillSum;
 
         public CharacterDocument()
         {
@@ -53,6 +54,7 @@ namespace DaggerfallWorkshop.Game.Player
             reflexes = PlayerReflexes.Average;
             workingSkills.SetDefaults();
             workingStats.SetFromCareer(career);
+            startingLevelUpSkillSum = 0;
             faceIndex = 0;
         }
 

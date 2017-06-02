@@ -80,5 +80,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                                                     "This lock is an insult to your abilities..."};
 
         public const string skillImprove = "Your %s skill has improved.";
+        public const string mustDistributeBonusPoints = "You must distribute all bonus points.";
     }
 }

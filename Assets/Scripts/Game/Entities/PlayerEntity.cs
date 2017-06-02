@@ -43,6 +43,11 @@ namespace DaggerfallWorkshop.Game.Entity
         protected short[] skillUses = new short[34]; // TODO: Save to and load from DF Unity saves
         protected uint timeOfLastSkillIncreaseCheck = 0; // TODO: Save to and and load from DF Unity saves, load from classic saves
 
+        protected int startingLevelUpSkillSum = 0;
+        protected int currentLevelUpSkillSum = 0;
+
+        protected bool readyToLevelUp = false;
+
         #endregion
 
         #region Properties
@@ -55,6 +60,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public ItemCollection OtherItems { get { return otherItems; } set { otherItems.ReplaceAll(value); } }
         public int GoldPieces { get { return goldPieces; } set { goldPieces = value; } }
         public PersistentFactionData FactionData { get { return factionData; } }
+        public bool ReadyToLevelUp { get { return readyToLevelUp; } set { readyToLevelUp = value; } }
 
         #endregion
 
@@ -82,6 +88,8 @@ namespace DaggerfallWorkshop.Game.Entity
             otherItems.Clear();
             factionData.Reset();
             SetEntityDefaults();
+            startingLevelUpSkillSum = 0;
+            currentLevelUpSkillSum = 0;
             goldPieces = 0;
             System.Array.Clear(skillUses, 0, skillUses.Length);
         }
@@ -111,6 +119,14 @@ namespace DaggerfallWorkshop.Game.Entity
             this.currentMagicka = character.currentSpellPoints;
             this.currentFatigue = character.currentFatigue;
             this.skillUses = character.skillUses;
+            this.startingLevelUpSkillSum = character.startingLevelUpSkillSum;
+
+            SetCurrentLevelUpSkillSum();
+
+            if (startingLevelUpSkillSum <= 0) // new character
+            {
+                startingLevelUpSkillSum = currentLevelUpSkillSum;
+            }
 
             if (maxHealth <= 0)
                 this.maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
@@ -219,9 +235,77 @@ namespace DaggerfallWorkshop.Game.Entity
                 {
                     skillUses[i] = 0;
                     skills.SetSkillValue(i, (short)(skills.GetSkillValue(i) + 1));
+                    SetCurrentLevelUpSkillSum();
                     DaggerfallUI.Instance.PopupMessage(HardStrings.skillImprove.Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DaggerfallConnect.DFCareer.Skills)i)));
                 }
             }
+
+            if (CheckForLevelUp())
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
+        }
+
+        /// <summary>
+        /// Calculate current sum of skills used for determining player level.
+        /// </summary>
+        public void SetCurrentLevelUpSkillSum()
+        {
+            short sum = 0;
+            short lowestMajorSkillValue = 0;
+            short highestMinorSkillValue = 0;
+            List<DaggerfallConnect.DFCareer.Skills> primarySkills = GetPrimarySkills();
+            List<DaggerfallConnect.DFCareer.Skills> majorSkills = GetMajorSkills();
+            List<DaggerfallConnect.DFCareer.Skills> minorSkills = GetMinorSkills();
+            for (int i = 0; i < primarySkills.Count; i++)
+            {
+                sum += skills.GetSkillValue(primarySkills[i]);
+            }
+
+            for (int i = 0; i < majorSkills.Count; i++)
+            {
+                short value = skills.GetSkillValue(majorSkills[i]);
+                sum += value;
+                if (i == 0)
+                    lowestMajorSkillValue = value;
+                else if (value < lowestMajorSkillValue)
+                    lowestMajorSkillValue = value;
+            }
+
+            sum -= lowestMajorSkillValue;
+
+            for (int i = 0; i < minorSkills.Count; i++)
+            {
+                short value = skills.GetSkillValue(minorSkills[i]);
+                if (i == 0)
+                    highestMinorSkillValue = value;
+                else if (value > highestMinorSkillValue)
+                    highestMinorSkillValue = value;
+            }
+
+            sum += highestMinorSkillValue;
+            currentLevelUpSkillSum = sum;
+        }
+
+        /// <summary>
+        /// Estimate the starting sum of skills used for determining player level.
+        /// </summary>
+        public void EstimateStartingLevelUpSkillSum()
+        {
+            float estimatedLevel = level + 0.5f; // Assume the player is halfway through advancing a level
+            int estimatedSum = (int)((estimatedLevel * 15) - (28 + currentLevelUpSkillSum)) * -1;
+            startingLevelUpSkillSum = estimatedSum;
+        }
+
+        /// <summary>
+        /// Calculate level and check for level up.
+        /// </summary>
+        public bool CheckForLevelUp()
+        {
+            int calculatedLevel = FormulaHelper.CalculatePlayerLevel(startingLevelUpSkillSum, currentLevelUpSkillSum);
+            bool levelUp = (level < calculatedLevel);
+            if (levelUp)
+                readyToLevelUp = true;
+
+            return levelUp;
         }
 
         #endregion
