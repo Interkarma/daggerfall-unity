@@ -1,6 +1,6 @@
 ---- Example quest used to test person resource
 
-Quest: __DEMO05
+Quest: __DEMO07
 
 
 QRC:

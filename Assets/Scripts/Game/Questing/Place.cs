@@ -481,7 +481,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 found = true;
             }
 
-            Debug.LogFormat("Found remote candidate site in {0} attempts", attempts);
+            //Debug.LogFormat("Found remote candidate site in {0} attempts", attempts);
 
             return true;
         }
