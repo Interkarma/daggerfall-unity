@@ -506,7 +506,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         bool InteriorHasQuestMarker(DFBlock blockData, int recordIndex)
         {
-            DFBlock.RmbSubRecord recordData = recordData = blockData.RmbBlock.SubRecords[recordIndex];
+            DFBlock.RmbSubRecord recordData = blockData.RmbBlock.SubRecords[recordIndex];
             foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
             {
                 if (obj.TextureArchive == 199 && obj.TextureRecord == 11)
