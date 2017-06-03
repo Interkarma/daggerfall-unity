@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int goldPieces = 0;
         protected PersistentFactionData factionData = new PersistentFactionData();
 
-        protected short[] skillUses = new short[34]; // TODO: Save to and load from DF Unity saves
+        protected short[] skillUses; // TODO: Save to and load from DF Unity saves
         protected uint timeOfLastSkillIncreaseCheck = 0; // TODO: Save to and and load from DF Unity saves, load from classic saves
 
         #endregion
@@ -83,7 +83,8 @@ namespace DaggerfallWorkshop.Game.Entity
             factionData.Reset();
             SetEntityDefaults();
             goldPieces = 0;
-            System.Array.Clear(skillUses, 0, skillUses.Length);
+            if (skillUses != null)
+                System.Array.Clear(skillUses, 0, skillUses.Length);
         }
 
         /// <summary>

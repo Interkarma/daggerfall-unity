@@ -54,6 +54,7 @@ namespace DaggerfallWorkshop.Game.Player
             workingSkills.SetDefaults();
             workingStats.SetFromCareer(career);
             faceIndex = 0;
+            skillUses = new short[DaggerfallSkills.Count];
         }
 
         public static RaceTemplate GetRaceTemplate(Races race)
