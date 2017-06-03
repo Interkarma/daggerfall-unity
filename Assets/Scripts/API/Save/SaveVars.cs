@@ -27,11 +27,15 @@ namespace DaggerfallConnect.Save
         #region Fields
 
         const string filename = "SAVEVARS.DAT";
-        const int factionDataOffset = 0x17D0;
+        const int weaponDrawnOffset = 0x3BF;
         const int gameTimeOffset = 0x3C9;
+        const int godModeOffset = 0x173B;
+        const int factionDataOffset = 0x17D0;
         const int factionDataLength = 92;
 
+        bool weaponDrawn = false;
         uint gameTime = 0;
+        bool godMode = false;
 
         // Private fields
         FileProxy saveVarsFile = new FileProxy();
@@ -47,11 +51,27 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
+        /// Gets whether weapon is drawn from savevars.
+        /// </summary>
+        public bool WeaponDrawn
+        {
+            get { return weaponDrawn; }
+        }
+
+        /// <summary>
         /// Gets game time read from savevars.
         /// </summary>
         public uint GameTime
         {
             get { return gameTime; }
+        }
+
+        /// <summary>
+        /// Gets whether GodMode is on from savevars.
+        /// </summary>
+        public bool GodMode
+        {
+            get { return godMode; }
         }
 
         /// <summary>
@@ -104,7 +124,9 @@ namespace DaggerfallConnect.Save
             BinaryReader reader = saveVarsFile.GetReader();
 
             // Read data
+            ReadWeaponDrawn(reader);
             ReadGameTime(reader);
+            ReadGodMode(reader);
             ReadFactionData(reader);
 
             return true;
@@ -114,10 +136,24 @@ namespace DaggerfallConnect.Save
 
         #region Private Methods
 
+        void ReadWeaponDrawn(BinaryReader reader)
+        {
+            reader.BaseStream.Position = weaponDrawnOffset;
+            if (reader.ReadByte() == 0x40)
+                weaponDrawn = true;
+        }
+
         void ReadGameTime(BinaryReader reader)
         {
             reader.BaseStream.Position = gameTimeOffset;
             gameTime = reader.ReadUInt32();
+        }
+
+        void ReadGodMode(BinaryReader reader)
+        {
+            reader.BaseStream.Position = godModeOffset;
+            if (reader.ReadByte() == 0x40)
+                godMode = true;
         }
 
         void ReadFactionData(BinaryReader reader)
