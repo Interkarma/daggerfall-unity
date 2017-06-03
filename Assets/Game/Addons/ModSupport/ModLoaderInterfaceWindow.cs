@@ -510,8 +510,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
     void ModSettingsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
     {
-        ModSettingsWindow modSettingsWindow = new ModSettingsWindow(DaggerfallUI.UIManager);
-        modSettingsWindow.Mod = ModManager.Instance.GetMod(modSettings[modList.SelectedIndex].modInfo.ModTitle);
+        Mod mod = ModManager.Instance.GetMod(modSettings[modList.SelectedIndex].modInfo.ModTitle);
+        ModSettingsWindow modSettingsWindow = new ModSettingsWindow(DaggerfallUI.UIManager, mod);
         DaggerfallUI.UIManager.PushWindow(modSettingsWindow);
     }
 

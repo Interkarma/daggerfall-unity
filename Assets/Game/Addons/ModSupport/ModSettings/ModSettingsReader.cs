@@ -23,9 +23,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     /// </summary>
     public static class ModSettingsReader
     {
-        static FileIniDataParser parser = new FileIniDataParser();
+        /// <summary>
+        /// Section containing information used by the modding system.
+        /// </summary>
         public const string internalSection = "Internal";
+
+        /// <summary>
+        /// Key with version of settings file.
+        /// </summary>
         public const string settingsVersionKey = "SettingsVersion";
+
+        /// <summary>
+        /// Delimiter between First and Second value of a tuple.
+        /// </summary>
+        public const string tupleDelimiterChar = "<,>";
+
+        static FileIniDataParser parser = new FileIniDataParser();
 
         /// <summary>
         /// Check if a mod support settings. If configuration file
