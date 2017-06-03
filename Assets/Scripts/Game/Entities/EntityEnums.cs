@@ -43,6 +43,9 @@ namespace DaggerfallWorkshop.Game.Entity
         WoodElf = 6,
         Khajiit = 7,
         Argonian = 8,
+        Vampire = 9,
+        Werewolf = 10,
+        Wereboar = 11,
     }
 
     /// <summary>

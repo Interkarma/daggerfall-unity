@@ -94,7 +94,7 @@ namespace DaggerfallConnect.Save
             parsedData.armorValues = reader.ReadBytes(7);
 
             reader.BaseStream.Position = 0x58;
-            parsedData.levelUpModifier = reader.ReadInt32(); // the starting total of all the primary skills, the two top major skills and the top minor skill
+            parsedData.levelUpModifier = reader.ReadInt32();
             parsedData.opponentUnknown = reader.ReadInt32();
 
             reader.BaseStream.Position = 0x5c;
@@ -126,10 +126,13 @@ namespace DaggerfallConnect.Save
 
             parsedData.skills = ReadSkills(reader, out parsedData.skillUses);
 
-            reader.BaseStream.Position = 0x016f;
+            reader.BaseStream.Position = 0x16f;
             parsedData.equippedItems = ReadEquippedItems(reader);
 
-            reader.BaseStream.Position = 0x01fd;
+            reader.BaseStream.Position = 0x1f2;
+            parsedData.race2 = ReadRace(reader);
+
+            reader.BaseStream.Position = 0x1fd;
             parsedData.timeStamp = reader.ReadUInt32();
 
             reader.BaseStream.Position = 0x230;
@@ -242,7 +245,7 @@ namespace DaggerfallConnect.Save
             public UInt16 transportationFlags;
             public Races race;
             public Byte[] armorValues;
-            public Int32 levelUpModifier;
+            public Int32 levelUpModifier; // The starting total of all the primary skills, the two top major skills and the top minor skill
             public Int32 opponentUnknown;
             public Int16 baseHealth;
             public Int16 currentHealth;
@@ -262,6 +265,7 @@ namespace DaggerfallConnect.Save
             public DaggerfallSkills skills;
             public Int16[] skillUses;
             public UInt32[] equippedItems;
+            public Races race2; // Stores character's original race for when returning from being a vampire, werewolf or wereboar
             public UInt32 timeStamp;
             public DFCareer career;
         }
