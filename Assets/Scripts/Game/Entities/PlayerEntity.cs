@@ -40,8 +40,8 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int goldPieces = 0;
         protected PersistentFactionData factionData = new PersistentFactionData();
 
-        protected short[] skillUses; // TODO: Save to and load from DF Unity saves
-        protected uint timeOfLastSkillIncreaseCheck = 0; // TODO: Save to and and load from DF Unity saves, load from classic saves
+        protected short[] skillUses;
+        protected uint timeOfLastSkillIncreaseCheck = 0; // TODO: Load from classic saves
 
         protected int startingLevelUpSkillSum = 0;
         protected int currentLevelUpSkillSum = 0;
@@ -60,6 +60,9 @@ namespace DaggerfallWorkshop.Game.Entity
         public ItemCollection OtherItems { get { return otherItems; } set { otherItems.ReplaceAll(value); } }
         public int GoldPieces { get { return goldPieces; } set { goldPieces = value; } }
         public PersistentFactionData FactionData { get { return factionData; } }
+        public short[] SkillUses { get { return skillUses; } set { skillUses = value; } }
+        public uint TimeOfLastSkillIncreaseCheck { get { return timeOfLastSkillIncreaseCheck; } set { timeOfLastSkillIncreaseCheck = value; } }
+        public int StartingLevelUpSkillSum { get { return startingLevelUpSkillSum; } set { startingLevelUpSkillSum = value; } }
         public bool ReadyToLevelUp { get { return readyToLevelUp; } set { readyToLevelUp = value; } }
 
         #endregion

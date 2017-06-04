@@ -122,6 +122,9 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int currentHealth;
         public int currentFatigue;
         public int currentMagicka;
+        public short[] skillUses;
+        public uint timeOfLastSkillIncreaseCheck;
+        public int startingLevelUpSkillSum;
         public ulong[] equipTable;
         public ItemData_v1[] items;
         public ItemData_v1[] wagonItems;
