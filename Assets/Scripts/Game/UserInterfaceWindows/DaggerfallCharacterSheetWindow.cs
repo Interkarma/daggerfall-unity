@@ -46,6 +46,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
         PaperDoll characterPortrait = new PaperDoll();
 
+        StatsRollout statsRollout = new StatsRollout(true);
+
+        bool leveling = false;
+
+        const int minBonusPool = 4;        // The minimum number of free points to allocate on level up
+        const int maxBonusPool = 6;        // The maximum number of free points to allocate on level up
+
+        SoundClips levelUpSound = SoundClips.LevelUp;
+
         PlayerEntity PlayerEntity
         {
             get { return (playerEntity != null) ? playerEntity : playerEntity = GameManager.Instance.PlayerEntity; }
@@ -137,6 +146,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 AddAttributePopupButton((DFCareer.Stats)i, rect);
                 pos.y += 24f;
             }
+
+            statsRollout.OnStatChanged += StatsRollout_OnStatChanged;
 
             // Update player paper doll for first time
             UpdatePlayerValues();
@@ -270,6 +281,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void UpdatePlayerValues()
         {
+            // Handle leveling up
+            if (PlayerEntity.ReadyToLevelUp)
+            {
+                leveling = true;
+                PlayerEntity.Level++;
+                PlayerEntity.MaxHealth += PlayerEntity.Career.HitPointsPerLevelOrMonsterLevel;
+                DaggerfallUI.Instance.PlayOneShot(levelUpSound);
+
+                // Roll bonus pool for player to distribute
+                // Using maxBonusPool + 1 for inclusive range
+                int bonusPool = UnityEngine.Random.Range(minBonusPool, maxBonusPool + 1);
+
+                // Add stats rollout for leveling up
+                NativePanel.Components.Add(statsRollout);
+
+                this.statsRollout.StartingStats = PlayerEntity.Stats;
+                this.statsRollout.WorkingStats = PlayerEntity.Stats;
+                this.statsRollout.BonusPool = bonusPool;
+
+                PlayerEntity.ReadyToLevelUp = false;
+            }
+
             // Update main labels
             nameLabel.Text = PlayerEntity.Name;
             raceLabel.Text = PlayerEntity.RaceTemplate.Name;
@@ -282,7 +315,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update stat labels
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
-                statLabels[i].Text = PlayerEntity.Stats.GetStatValue(i).ToString();
+                if (!leveling)
+                    statLabels[i].Text = PlayerEntity.Stats.GetStatValue(i).ToString();
+                else
+                    statLabels[i].Text = ""; // If leveling, statsRollout will fill in the stat labels.
             }
         }
 
@@ -331,15 +367,50 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void StatButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-            messageBox.SetTextTokens((int)sender.Tag);
-            messageBox.ClickAnywhereToClose = true;
-            messageBox.Show();
+            if (!leveling)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetTextTokens((int)sender.Tag);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+            }
+            else
+            {
+                // If leveling, let the statsRollOut use the stat buttons
+            }
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            if (statsRollout.BonusPool > 0)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetText(HardStrings.mustDistributeBonusPoints);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+                return;
+            }
+
+            if (leveling)
+            {
+                leveling = false;
+                PlayerEntity.Stats = statsRollout.WorkingStats;
+                NativePanel.Components.Remove(statsRollout);
+            }
+
             CloseWindow();
+        }
+
+        private void StatsRollout_OnStatChanged()
+        {
+            UpdateSecondaryStatLabels();
+        }
+
+        private void UpdateSecondaryStatLabels()
+        {
+            DaggerfallStats workingStats = statsRollout.WorkingStats;
+            fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / 64, workingStats.Strength + workingStats.Endurance);
+            // TODO: Update encumbrance label
         }
 
         #endregion

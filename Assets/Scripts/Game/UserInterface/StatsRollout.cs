@@ -25,8 +25,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
     /// Implements control to distribute bonus stats.
-    /// Used both on the "add bonus points" stats window and
-    /// end summary window of character creation.
+    /// Used on the "add bonus points" stats window, the
+    /// end summary window of character creation and on
+    /// the character sheet when leveling.
     /// </summary>
     public class StatsRollout : Panel
     {
@@ -42,9 +43,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         int selectedStat = 0;
         DaggerfallStats startingStats;
         DaggerfallStats workingStats;
-        int bonusPool;
+        int bonusPool = 0;
         Color modifiedStatTextColor = Color.green;
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
+        bool characterSheetPositioning = false;
 
         public DaggerfallStats StartingStats
         {
@@ -64,28 +66,54 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { SetStats(startingStats, workingStats, value); }
         }
 
-        public StatsRollout()
+        public StatsRollout(bool onCharacterSheet = false)
             : base()
         {
+            if (onCharacterSheet)
+                characterSheetPositioning = true;
+
             // Add stat labels
             font = DaggerfallUI.DefaultFont;
-            Vector2 pos = new Vector2(19, 33);
+
+            Vector2 pos;
+
+            if (!onCharacterSheet)
+                pos = new Vector2(19, 33);
+            else
+                pos = new Vector2(150, 17);
+
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
                 statLabels[i] = DaggerfallUI.AddTextLabel(font, pos, string.Empty, this);
                 statLabels[i].ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
-                pos.y += 22f;
+                if (!onCharacterSheet)
+                    pos.y += 22f;
+                else
+                    pos.y += 24f;
             }
 
             // Add stat select buttons
-            pos = new Vector2(7, 20);
-            Vector2 size = new Vector2(36, 20);
+            if (!onCharacterSheet)
+                pos = new Vector2(7, 20);
+            else
+                pos = new Vector2(141, 6);
+
+            Vector2 size;
+
+            if (!onCharacterSheet)
+                size = new Vector2(36, 20);
+            else
+                size = new Vector2(28, 20);
+
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
                 Button button = DaggerfallUI.AddButton(pos, size, this);
                 button.Tag = i;
                 button.OnMouseClick += StatButton_OnMouseClick;
-                pos.y += 22;
+                if (!onCharacterSheet)
+                    pos.y += 22f;
+                else
+                    pos.y += 24f;
             }
 
             // Add up/down spinner
@@ -136,6 +164,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             this.bonusPool = bonusPool;
             spinner.Value = bonusPool;
             UpdateStatLabels();
+            SelectStat(0);
         }
 
         #endregion
@@ -158,7 +187,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SelectStat(int index)
         {
             selectedStat = index;
-            spinner.Position = new Vector2(44, 21 + (22 * index));
+            if (!characterSheetPositioning)
+                spinner.Position = new Vector2(44, 21 + (22 * index));
+            else
+                spinner.Position = new Vector2(176, 6 + (24 * index));
         }
 
         #endregion

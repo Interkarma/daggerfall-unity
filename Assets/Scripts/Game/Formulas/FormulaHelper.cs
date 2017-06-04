@@ -134,7 +134,13 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate how many uses a skill needs before its value will rise. This is based on observations from classic and may not be completely accurate.
         public static int CalculateSkillUsesForAdvancement(int skillValue, float modifier, int level)
         {
-            return (int)((skillValue * modifier) + level);
+            return (int)Mathf.Floor((skillValue * modifier) + level);
+        }
+
+        // Calculate player level.
+        public static int CalculatePlayerLevel(int startingLevelUpSkillsSum, int currentLevelUpSkillsSum)
+        {
+            return (int)Mathf.Floor((currentLevelUpSkillsSum - startingLevelUpSkillsSum + 28) / 15);
         }
 
         #endregion
