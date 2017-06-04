@@ -38,12 +38,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             Mod = mod;
         }
 
+        public override void Update()
+        {
+            base.Update();
+
+            if(Input.GetKeyDown(KeyCode.Tab) && modSettingsPages.Count > 1)
+                NextPage();
+        }
+
         #region Fields
 
         // UI Controls
         Panel modSettingsPanel = new Panel();
+        List<Panel> modSettingsPages = new List<Panel>();
+        Panel currentPanel;
+        int currentPage = 0;
+        Button nextPageButton;
         DaggerfallListPickerWindow presetPicker;
-        const int elementsForColumn = 19;
         const int spacing = 8;
         const int startX = 10;
         const int startY = 6;
@@ -109,9 +120,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             titleLabel.Position = new Vector2(0, y);
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             modSettingsPanel.Components.Add(titleLabel);
-
-            // Settings
-            LoadSettings();
+            currentPanel = modSettingsPanel;
 
             // Reset button
             Button resetButton = GetButton("Reset", HorizontalAlignment.Left, resetButtonColor);
@@ -133,6 +142,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 presetButton.Size = new Vector2(35, 9);
                 presetButton.OnMouseClick += PresetButton_OnMouseClick;
             }
+
+            // Settings
+            modSettingsPages.Add(GetPanel(true));
+            LoadSettings();
         }
 
         #endregion
@@ -163,17 +176,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 textLabel.TextColor = sectionTitleColor;
                 textLabel.Position = new Vector2(x, y);
                 textLabel.HorizontalAlignment = HorizontalAlignment.None;
-                modSettingsPanel.Components.Add(textLabel);
+                currentPanel.Components.Add(textLabel);
+
+                UpdateItemsCount(ref numberOfElements);
                 List<string> comments = section.Comments;
                 int comment = 0;
-
-                // Move to right column
-                numberOfElements++;
-                if (numberOfElements == elementsForColumn)
-                {
-                    y = startY;
-                    x += 160;
-                }
 
                 foreach (KeyData key in section.Keys)
                 {
@@ -190,7 +197,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                         settingName.ToolTipText = comments[comment];
                         comment++;
                     }
-                    modSettingsPanel.Components.Add(settingName);
+                    currentPanel.Components.Add(settingName);
 
                     // Setting field
                     if (key.Value == "True")
@@ -226,13 +233,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                         }
                     }
 
-                    // Move to right column
-                    numberOfElements++;
-                    if (numberOfElements == elementsForColumn)
-                    {
-                        y = startY;
-                        x += 160;
-                    }    
+                    UpdateItemsCount(ref numberOfElements);
                 }
             }
         }
@@ -274,6 +275,65 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 
         /// <summary>
+        /// Controls page and column disposition.
+        /// </summary>
+        /// <param name="numberOfElements">Number of titles and keys already placed on window.</param>
+        /// <returns>False on reached capacity limit.</returns>
+        private void UpdateItemsCount(ref int numberOfElements)
+        {
+            const int elementsPerColumn = 19;
+            const int elementsPerPage = elementsPerColumn * 2;
+
+            numberOfElements++;
+            if (numberOfElements % elementsPerPage == 0)
+            {
+                if (numberOfElements == elementsPerPage)
+                {
+                    // Create switch button
+                    nextPageButton = new Button()
+                    {
+                        Size = new Vector2(30, 6),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        BackgroundColor = cancelButtonColor
+                    };
+                    nextPageButton.Outline.Enabled = true;
+                    nextPageButton.Label.Text = "Page 1";
+                    nextPageButton.OnMouseClick += NextPageButton_OnMouseClick;
+                    modSettingsPanel.Components.Add(nextPageButton);    
+                }
+
+                // Add another page
+                modSettingsPages.Add(GetPanel(false));
+
+                // Move to left column
+                y = startY;
+                x = startX;
+            }
+            else if (numberOfElements % elementsPerColumn == 0)
+            {
+                // Move to right column
+                y = startY;
+                x += 160;
+            }
+        }
+
+        /// <summary>
+        /// Switch between pages.
+        /// </summary>
+        private void NextPage()
+        {
+            modSettingsPages[currentPage].Enabled = false;
+
+            currentPage++;
+            if (currentPage == modSettingsPages.Count)
+                currentPage = 0;
+
+            modSettingsPages[currentPage].Enabled = true;
+            nextPageButton.Label.Text = "Page " + (currentPage + 1).ToString();
+        }
+
+        /// <summary>
         /// Get a button.
         /// </summary>
         /// <param name="label">Text on button.</param>
@@ -291,10 +351,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             };
             button.Outline.Enabled = true;
             button.Label.Text = label;
-            modSettingsPanel.Components.Add(button);
+            currentPanel.Components.Add(button);
             return button;
         }
-
 
         /// <summary>
         /// Add a checkbox.
@@ -309,7 +368,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 CheckBoxColor = Color.white,
                 IsChecked = isChecked
             };
-            modSettingsPanel.Components.Add(checkbox);
+            currentPanel.Components.Add(checkbox);
             modCheckboxes.Add(checkbox);
         }
 
@@ -336,8 +395,27 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 LostFocusOutlineColor = Color.white,
             };
             textBox.Outline.Enabled = true;
-            modSettingsPanel.Components.Add(textBox);
+            currentPanel.Components.Add(textBox);
             return textBox;
+        }
+
+        /// <summary>
+        /// Get a panel and set it as current page.
+        /// </summary>
+        /// <param name="isEnabled">Is panel enabled?</param>
+        private Panel GetPanel(bool isEnabled)
+        {
+            Panel panel = new Panel()
+            {
+                BackgroundColor = Color.clear,
+                Position = new Vector2(0, 0),
+                Size = new Vector2(320, 175),
+                Enabled = isEnabled
+            };
+            panel.Outline.Enabled = false;
+            modSettingsPanel.Components.Add(panel);
+            currentPanel = panel;
+            return panel;
         }
 
         /// <summary>
@@ -346,11 +424,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         private void RestartSettingsWindow()
         {
             modSettingsPanel.Components.Clear();
+            modSettingsPages.Clear();
 
             modTextBoxes.Clear();
             modCheckboxes.Clear();
             modTuples.Clear();
 
+            currentPage = 0;
             x = startX;
             y = startY;
 
@@ -360,6 +440,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         #endregion
 
         #region Event Handlers
+
+        /// <summary>
+        /// Switch between pages.
+        /// </summary>
+        private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            NextPage();
+        }
 
         /// <summary>
         /// Save new settings and close the window.
