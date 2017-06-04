@@ -39,6 +39,9 @@ namespace DaggerfallWorkshop.Game.Entity
         public string PaperDollHeadsMale;                       // CIF filename of male head selection
         public string PaperDollHeadsFemale;                     // CIF filename of female head selection
 
+        public bool CompoundRace;                               // True when a base race is present for character, e.g. vampire/werecreature
+        public string TransformedPaperDollBackground;           // IMG filename of paper doll background when werecreature transformed
+
         public DFCareer.EffectFlags ResistanceFlags;            // Racial resistances
         public DFCareer.EffectFlags ImmunityFlags;              // Racial immunity
         public DFCareer.EffectFlags LowToleranceFlags;          // Racial low tolerance
@@ -63,6 +66,9 @@ namespace DaggerfallWorkshop.Game.Entity
             WoodElf woodElf = new WoodElf();
             Khajiit khajiit = new Khajiit();
             Argonian argonian = new Argonian();
+            //Vampire vampire = new Vampire();          // TODO: Uncomment later when paper doll and morphology support completed
+            //Werewolf werewolf = new Werewolf();
+            //Wereboar wereboar = new Wereboar();
 
             // Populate dictionary
             raceDict.Add(breton.ID, breton);
@@ -73,6 +79,9 @@ namespace DaggerfallWorkshop.Game.Entity
             raceDict.Add(woodElf.ID, woodElf);
             raceDict.Add(khajiit.ID, khajiit);
             raceDict.Add(argonian.ID, argonian);
+            //raceDict.Add(vampire.ID, vampire);      // TODO: Uncomment later when paper doll and morphology support completed
+            //raceDict.Add(werewolf.ID, werewolf);
+            //raceDict.Add(wereboar.ID, wereboar);
 
             return raceDict;
         }
@@ -249,6 +258,62 @@ namespace DaggerfallWorkshop.Game.Entity
 
             PaperDollHeadsMale = "FACE07I0.CIF";
             PaperDollHeadsFemale = "FACE17I0.CIF";
+        }
+    }
+
+    public class Vampire : RaceTemplate
+    {
+        public Vampire()
+        {
+            ID = (int)Races.Vampire;
+            Name = "Vampire";
+            DescriptionID = 0;
+            ClipID = 0;
+
+            PaperDollBackground = "SCBG08I0.IMG";
+
+            // TODO:
+            //  * Paper doll body to match base race
+            //  * Vampire heads in VAMP00I0.CIF need special handling
+            //  * Seems to be 1 head per base race - indices 0-7 female, 8-15 male
+
+            CompoundRace = true;
+        }
+    }
+
+    public class Werewolf : RaceTemplate
+    {
+        public Werewolf()
+        {
+            ID = (int)Races.Werewolf;
+            Name = "Werewolf";
+            DescriptionID = 0;
+            ClipID = 0;
+
+            // TODO:
+            //  * Paper doll setup to match base race when not transformed
+            //  * Otherwise draw transformed background only without usual paper doll
+
+            CompoundRace = true;
+            TransformedPaperDollBackground = "WOLF00I0.IMG";
+        }
+    }
+
+    public class Wereboar : RaceTemplate
+    {
+        public Wereboar()
+        {
+            ID = (int)Races.Wereboar;
+            Name = "Wereboar";
+            DescriptionID = 0;
+            ClipID = 0;
+
+            // TODO:
+            //  * Paper doll setup to match base race when not transformed
+            //  * Otherwise draw transformed background only without usual paper doll
+
+            CompoundRace = true;
+            TransformedPaperDollBackground = "BOAR00I0.IMG";
         }
     }
 
