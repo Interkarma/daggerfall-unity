@@ -190,7 +190,12 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.ItemEquipTable.DeserializeEquipTable(data.playerEntity.equipTable, entity.Items);
             entity.GoldPieces = data.playerEntity.goldPieces;
             entity.SetCurrentLevelUpSkillSum();
-            entity.EstimateStartingLevelUpSkillSum(); // TODO: Save and load starting skill sum. Only estimate if supporting saves without this data.
+
+            // Fill in missing data for saves
+            if (entity.StartingLevelUpSkillSum <= 0)
+                entity.EstimateStartingLevelUpSkillSum();
+            if (entity.SkillUses == null)
+                entity.SkillUses = new short[DaggerfallSkills.Count];
 
             // Flag determines if player position is restored
             bool restorePlayerPosition = true;

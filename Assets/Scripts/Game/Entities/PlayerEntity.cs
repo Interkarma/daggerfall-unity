@@ -296,7 +296,10 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             float estimatedLevel = level + 0.5f; // Assume the player is halfway through advancing a level
             int estimatedSum = (int)((estimatedLevel * 15) - (28 + currentLevelUpSkillSum)) * -1;
-            startingLevelUpSkillSum = estimatedSum;
+            if ((currentLevelUpSkillSum > 0) && (startingLevelUpSkillSum > currentLevelUpSkillSum))
+                startingLevelUpSkillSum = currentLevelUpSkillSum;
+            else
+                startingLevelUpSkillSum = estimatedSum;
         }
 
         /// <summary>
