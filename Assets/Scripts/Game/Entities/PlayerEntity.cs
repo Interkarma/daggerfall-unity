@@ -233,8 +233,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
             for (short i = 0; i < skillUses.Length; i++)
             {
-                float modifier = skills.GetAdvancementDifficultyModifier((DaggerfallConnect.DFCareer.Skills)i);
-                int usesNeededForAdvancement = FormulaHelper.CalculateSkillUsesForAdvancement(skills.GetSkillValue(i), modifier, level);
+                int skillAdvancementMultiplier = skills.GetAdvancementMultiplier((DaggerfallConnect.DFCareer.Skills)i);
+                float careerAdvancementMultiplier = Career.AdvancementMultiplier;
+                int usesNeededForAdvancement = FormulaHelper.CalculateSkillUsesForAdvancement(skills.GetSkillValue(i), skillAdvancementMultiplier, careerAdvancementMultiplier, level);
                 if (skillUses[i] >= usesNeededForAdvancement)
                 {
                     skillUses[i] = 0;
