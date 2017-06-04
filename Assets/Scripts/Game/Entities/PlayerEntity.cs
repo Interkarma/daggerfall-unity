@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected PersistentFactionData factionData = new PersistentFactionData();
 
         protected short[] skillUses;
-        protected uint timeOfLastSkillIncreaseCheck = 0; // TODO: Load from classic saves
+        protected uint timeOfLastSkillIncreaseCheck = 0;
 
         protected int startingLevelUpSkillSum = 0;
         protected int currentLevelUpSkillSum = 0;
@@ -94,6 +94,7 @@ namespace DaggerfallWorkshop.Game.Entity
             startingLevelUpSkillSum = 0;
             currentLevelUpSkillSum = 0;
             goldPieces = 0;
+            timeOfLastSkillIncreaseCheck = 0;
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
         }

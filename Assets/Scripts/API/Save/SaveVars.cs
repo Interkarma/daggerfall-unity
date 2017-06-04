@@ -30,12 +30,14 @@ namespace DaggerfallConnect.Save
         const int weaponDrawnOffset = 0x3BF;
         const int gameTimeOffset = 0x3C9;
         const int godModeOffset = 0x173B;
+        const int lastSkillCheckTimeOffset = 0x179A;
         const int factionDataOffset = 0x17D0;
         const int factionDataLength = 92;
 
         bool weaponDrawn = false;
         uint gameTime = 0;
         bool godMode = false;
+        uint lastSkillCheckTime = 0;
 
         // Private fields
         FileProxy saveVarsFile = new FileProxy();
@@ -72,6 +74,14 @@ namespace DaggerfallConnect.Save
         public bool GodMode
         {
             get { return godMode; }
+        }
+
+        /// <summary>
+        /// Gets time of last check for raising skills, read from savevars.
+        /// </summary>
+        public uint LastSkillCheckTime
+        {
+            get { return lastSkillCheckTime; }
         }
 
         /// <summary>
@@ -127,6 +137,7 @@ namespace DaggerfallConnect.Save
             ReadWeaponDrawn(reader);
             ReadGameTime(reader);
             ReadGodMode(reader);
+            ReadLastSkillCheckTime(reader);
             ReadFactionData(reader);
 
             return true;
@@ -154,6 +165,12 @@ namespace DaggerfallConnect.Save
             reader.BaseStream.Position = godModeOffset;
             if (reader.ReadByte() == 0x40)
                 godMode = true;
+        }
+
+        void ReadLastSkillCheckTime(BinaryReader reader)
+        {
+            reader.BaseStream.Position = lastSkillCheckTimeOffset;
+            lastSkillCheckTime = reader.ReadUInt32();
         }
 
         void ReadFactionData(BinaryReader reader)
