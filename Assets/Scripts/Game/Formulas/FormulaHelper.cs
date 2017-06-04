@@ -131,10 +131,11 @@ namespace DaggerfallWorkshop.Game.Formulas
             return lockpickingChance;
         }
 
-        // Calculate how many uses a skill needs before its value will rise. This is based on observations from classic and may not be completely accurate.
-        public static int CalculateSkillUsesForAdvancement(int skillValue, float modifier, int level)
+        // Calculate how many uses a skill needs before its value will rise.
+        public static int CalculateSkillUsesForAdvancement(int skillValue, int skillAdvancementMultiplier, float careerAdvancementMultiplier, int level)
         {
-            return (int)Mathf.Floor((skillValue * modifier) + level);
+            double levelMod = Math.Pow(1.04, level);
+            return (int)Math.Floor((skillValue * skillAdvancementMultiplier * careerAdvancementMultiplier * levelMod * 2 / 5) + 1);
         }
 
         // Calculate player level.

@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected PersistentFactionData factionData = new PersistentFactionData();
 
         protected short[] skillUses;
-        protected uint timeOfLastSkillIncreaseCheck = 0; // TODO: Load from classic saves
+        protected uint timeOfLastSkillIncreaseCheck = 0;
 
         protected int startingLevelUpSkillSum = 0;
         protected int currentLevelUpSkillSum = 0;
@@ -94,6 +94,7 @@ namespace DaggerfallWorkshop.Game.Entity
             startingLevelUpSkillSum = 0;
             currentLevelUpSkillSum = 0;
             goldPieces = 0;
+            timeOfLastSkillIncreaseCheck = 0;
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
         }
@@ -233,8 +234,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
             for (short i = 0; i < skillUses.Length; i++)
             {
-                float modifier = skills.GetAdvancementDifficultyModifier((DaggerfallConnect.DFCareer.Skills)i);
-                int usesNeededForAdvancement = FormulaHelper.CalculateSkillUsesForAdvancement(skills.GetSkillValue(i), modifier, level);
+                int skillAdvancementMultiplier = skills.GetAdvancementMultiplier((DaggerfallConnect.DFCareer.Skills)i);
+                float careerAdvancementMultiplier = Career.AdvancementMultiplier;
+                int usesNeededForAdvancement = FormulaHelper.CalculateSkillUsesForAdvancement(skills.GetSkillValue(i), skillAdvancementMultiplier, careerAdvancementMultiplier, level);
                 if (skillUses[i] >= usesNeededForAdvancement)
                 {
                     skillUses[i] = 0;

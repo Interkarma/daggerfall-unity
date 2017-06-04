@@ -368,20 +368,17 @@ namespace DaggerfallWorkshop.Game.Entity
             return GetPrimaryStat((DFCareer.Skills)index);
         }
 
-        // These are based on observations from testing classic and may not be completely accurate.
-        // They are used with the formula (int)((skillLevel * x) + PlayerLevel)) to give the number of skill uses needed to advance a skill,
-        // where x is the value returned from this function.
-        public float GetAdvancementDifficultyModifier(DFCareer.Skills skill)
+        public int GetAdvancementMultiplier(DFCareer.Skills skill)
         {
             switch (skill)
             {
                 case DFCareer.Skills.Medical:
-                    return 4.9f;
+                    return 12;
                 case DFCareer.Skills.Etiquette:
                 case DFCareer.Skills.Streetwise:
-                    return .4f;
+                    return 1;
                 case DFCareer.Skills.Jumping:
-                    return 2f;
+                    return 5;
                 case DFCareer.Skills.Orcish:
                 case DFCareer.Skills.Harpy:
                 case DFCareer.Skills.Giantish:
@@ -391,45 +388,45 @@ namespace DaggerfallWorkshop.Game.Entity
                 case DFCareer.Skills.Spriggan:
                 case DFCareer.Skills.Centaurian:
                 case DFCareer.Skills.Impish:
-                    return 6.2f;
+                    return 15;
                 case DFCareer.Skills.Lockpicking:
-                    return .8f;
+                    return 2;
                 case DFCareer.Skills.Mercantile:
-                    return .4f;
+                    return 1;
                 case DFCareer.Skills.Pickpocket:
                 case DFCareer.Skills.Stealth:
-                    return .8f;
+                    return 2;
                 case DFCareer.Skills.Swimming:
-                    return .4f;
+                    return 1;
                 case DFCareer.Skills.Climbing:
-                    return .8f;
+                    return 2;
                 case DFCareer.Skills.Backstabbing:
-                    return .4f;
+                    return 1;
                 case DFCareer.Skills.Dodging:
-                    return 1.6f;
+                    return 4;
                 case DFCareer.Skills.Running:
-                    return 20.8f;
+                    return 50;
                 case DFCareer.Skills.Destruction:
-                    return .4f;
+                    return 1;
                 case DFCareer.Skills.Restoration:
-                    return .8f;
+                    return 2;
                 case DFCareer.Skills.Illusion:
                 case DFCareer.Skills.Alteration:
-                    return .4f;
+                    return 1;
                 case DFCareer.Skills.Thaumaturgy:
-                    return .8f;
+                    return 2;
                 case DFCareer.Skills.Mysticism:
-                    return .4f;
+                    return 1;
                 case DFCareer.Skills.ShortBlade:
                 case DFCareer.Skills.LongBlade:
                 case DFCareer.Skills.HandToHand:
                 case DFCareer.Skills.Axe:
                 case DFCareer.Skills.BluntWeapon:
-                    return .8f;
+                    return 2;
                 case DFCareer.Skills.Archery:
-                    return .4f;
+                    return 1;
                 case DFCareer.Skills.CriticalStrike:
-                    return 3.3f;
+                    return 8;
                 default:
                     return 0;
             }

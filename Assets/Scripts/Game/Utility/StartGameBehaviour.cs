@@ -468,6 +468,9 @@ namespace DaggerfallWorkshop.Game.Utility
             PlayerEntity playerEntity = FindPlayerEntity();
             playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.maxHealth, false);
 
+            // Set time of last check for raising skills
+            playerEntity.TimeOfLastSkillIncreaseCheck = saveVars.LastSkillCheckTime;
+
             // Assign items to player entity
             playerEntity.AssignItems(saveTree);
 
