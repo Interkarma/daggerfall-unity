@@ -224,8 +224,6 @@ namespace DaggerfallWorkshop.Game.Questing
             bool result = true;
             switch (macro)
             {
-                // TODO: Just stubbing out for testing right now as Place class not complete enough to return real values
-
                 case MacroTypes.NameMacro1:             // Name of house/business (e.g. Odd Blades)
                     textOut = siteDetails.buildingName;
                     break;
@@ -385,7 +383,8 @@ namespace DaggerfallWorkshop.Game.Questing
                         {
                             // Building must be a quest site
                             // Checking for quest flat marker inside record interior
-                            if (!InteriorHasQuestMarker(blocks[index], i))
+                            int totalQuestMarkers, totalQuestItemMarkers;
+                            if (!EnumerateQuestMarkers(blocks[index], i, out totalQuestMarkers, out totalQuestItemMarkers))
                                 continue;
 
                             // Get building name based on type
@@ -416,6 +415,8 @@ namespace DaggerfallWorkshop.Game.Questing
                             siteDetails.isBuilding = true;
                             siteDetails.buildingKey = buildingSummary[i].buildingKey;
                             siteDetails.buildingName = buildingName;
+                            siteDetails.totalQuestMarkers = totalQuestMarkers;
+                            siteDetails.totalQuestItemMarkers = totalQuestItemMarkers;
                             foundSites.Add(siteDetails);
                         }
                     }
@@ -502,16 +503,32 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Check interior for quest marker (199.11) indicating this can be a quest site.
+        /// Check interior for total available quest markers.
         /// </summary>
-        bool InteriorHasQuestMarker(DFBlock blockData, int recordIndex)
+        bool EnumerateQuestMarkers(DFBlock blockData, int recordIndex, out int totalQuestMarkers, out int totalQuestItemMarkers)
         {
+            totalQuestMarkers = 0;
+            totalQuestItemMarkers = 0;
             DFBlock.RmbSubRecord recordData = blockData.RmbBlock.SubRecords[recordIndex];
             foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
             {
-                if (obj.TextureArchive == 199 && obj.TextureRecord == 11)
-                    return true;
+                if (obj.TextureArchive == 199)
+                {
+                    switch (obj.TextureRecord)
+                    {
+                        case 11:                        // Quest marker 199.11
+                            totalQuestMarkers++;
+                            break;
+                        case 18:
+                            totalQuestItemMarkers++;    // Quest item marker 199.18
+                            break;
+                    }
+                }
             }
+
+            // Return true if at least one quest marker
+            if (totalQuestMarkers > 0)
+                return true;
 
             return false;
         }

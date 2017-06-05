@@ -20,6 +20,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -1095,10 +1096,28 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
             dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
 
+            // TEST: Disable individual NPC if move by quest system
+            // This is just a test to help bootstrap requirements for this system
+            if (dfBillboard.Summary.FlatType == FlatTypes.NPC)
+            {
+                // Get player faction data for this NPC
+                FactionFile.FactionData factionData;
+                bool hasFaction = GameManager.Instance.PlayerEntity.FactionData.GetFactionData(dfBillboard.Summary.FactionOrMobileID, out factionData);
+                if (hasFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
+                {
+                    // Check if reserved by quest system
+                    if (QuestMachine.Instance.PermanentQuestPeople.ContainsKey(factionData.id))
+                    {
+                        go.SetActive(false);
+                        Debug.LogFormat("Disabled NPC {0} at home location as this person is reserved by quest system", factionData.name);
+                    }
+                }
+            }
+
             // Set transform
             go.transform.position = billboardPosition;
 
-            // Disable enemy flats
+            // Disable enemy editor flats
             if (archive == TextureReader.EditorFlatsTextureArchive && (record == 15 || record == 16))
                 go.SetActive(false);
 

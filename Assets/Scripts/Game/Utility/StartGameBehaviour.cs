@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.Utility
         public StartMethods StartMethod = StartMethods.DoNothing;
         public int SaveIndex = -1;
         public string PostStartMessage = string.Empty;
-        public string LaunchQuest = string.Empty;
+        public string LaunchQuestOnLoad = string.Empty;
         public bool EnableVideos = true;
         public bool ShowEditorFlats = false;
         public bool NoWorld = false;
@@ -108,6 +108,7 @@ namespace DaggerfallWorkshop.Game.Utility
         void Start()
         {
             ApplyStartSettings();
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
         }
 
         void Update()
@@ -152,12 +153,8 @@ namespace DaggerfallWorkshop.Game.Utility
                     break;
             }
 
-            // Optionally start a quest
-            if (!string.IsNullOrEmpty(LaunchQuest))
-            {
-                QuestMachine.Instance.InstantiateQuest(LaunchQuest);
-                LaunchQuest = string.Empty;
-            }
+            // Reset save index
+            SaveIndex = -1;
         }
 
         #endregion
@@ -547,6 +544,24 @@ namespace DaggerfallWorkshop.Game.Utility
             // Weapon hand and equip state not serialized currently
             // Interim measure is to reset weapon manager state on new game
             GameManager.Instance.WeaponManager.Reset();
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        /// <summary>
+        /// Launch starting quest on first load.
+        /// This is only used as a debug helper to launch a quest after
+        /// automatically loading a DFUnity save game.
+        /// </summary>
+        private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
+        {
+            if (!string.IsNullOrEmpty(LaunchQuestOnLoad))
+            {
+                QuestMachine.Instance.InstantiateQuest(LaunchQuestOnLoad);
+                LaunchQuestOnLoad = string.Empty;
+            }
         }
 
         #endregion

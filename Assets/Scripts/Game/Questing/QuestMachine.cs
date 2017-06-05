@@ -65,6 +65,10 @@ namespace DaggerfallWorkshop.Game.Questing
         List<Quest> questsToRemove = new List<Quest>();
         List<ReservedSite> reservedSites = new List<ReservedSite>();
 
+        // TEMP: Dictionary of individual NPCs moved around by quests
+        // Just experimenting at the moment, will reimplement this later
+        Dictionary<int, Person> permanentQuestPeople = new Dictionary<int, Person>();
+
         bool waitingForStartup = true;
         float startupTimer = 0;
         float updateTimer = 0;
@@ -72,6 +76,12 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Properties
+
+        // TEMP: Just testing for now
+        public Dictionary<int, Person> PermanentQuestPeople
+        {
+            get { return permanentQuestPeople; }
+        }
 
         /// <summary>
         /// Gets Quests source folder in StreamingAssets.
@@ -147,8 +157,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         struct ReservedSite
         {
-            public ulong uid;                      // UID of quest owning site
-            public SiteDetails siteDetails;        // Full details of site
+            public ulong uid;                       // UID of quest owning site
+            public SiteDetails siteDetails;         // Full details of site
+            //public List<Person> sitePeople;         // Quest people added to this site
+            //public List<Item> siteItems;            // Quest items added to this site
         }
 
         #endregion

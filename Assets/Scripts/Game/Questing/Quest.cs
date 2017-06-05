@@ -279,6 +279,11 @@ namespace DaggerfallWorkshop.Game.Questing
             return GetResource(symbol) as Place;
         }
 
+        public Person GetPerson(Symbol symbol)
+        {
+            return GetResource(symbol) as Person;
+        }
+
         public QuestResource GetResource(string name)
         {
             if (!string.IsNullOrEmpty(name) && resources.ContainsKey(name))

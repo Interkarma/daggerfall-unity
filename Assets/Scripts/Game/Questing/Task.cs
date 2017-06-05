@@ -246,7 +246,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Reads task lines to find conditions and actions.
-        /// Must be 
         /// </summary>
         /// <param name="lines">Array of lines in this task block.</param>
         /// <param name="startLine">First line after task header (if present).</param>
