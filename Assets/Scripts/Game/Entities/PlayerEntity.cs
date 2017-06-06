@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public short[] SkillUses { get { return skillUses; } set { skillUses = value; } }
         public uint TimeOfLastSkillIncreaseCheck { get { return timeOfLastSkillIncreaseCheck; } set { timeOfLastSkillIncreaseCheck = value; } }
         public int StartingLevelUpSkillSum { get { return startingLevelUpSkillSum; } set { startingLevelUpSkillSum = value; } }
+        public int CurrentLevelUpSkillSum {  get { return currentLevelUpSkillSum; } }
         public bool ReadyToLevelUp { get { return readyToLevelUp; } set { readyToLevelUp = value; } }
 
         #endregion
