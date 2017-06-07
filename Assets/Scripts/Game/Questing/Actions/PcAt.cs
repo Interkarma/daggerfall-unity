@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System;
+using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -74,8 +75,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Check building site
             if (place.SiteDetails.siteType == SiteTypes.Building)
                 result = CheckInsideBuilding(place);
-
-            // TODO: Check other place types as they are developed
+            else if (place.SiteDetails.siteType == SiteTypes.Town)
+                result = CheckInsideTown(place);
+            else if (place.SiteDetails.siteType == SiteTypes.Dungeon)
+                result = CheckInsideDungeon(place);
 
             // Handle positive check
             // TODO: Which should happen first, the "saying" popup or task execution?
@@ -98,6 +101,54 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         }
 
         #region Private Methods
+
+        bool CheckInsideDungeon(Place place)
+        {
+            // Get component handling player world status and transitions
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            if (!playerEnterExit)
+                return false;
+
+            // Player must be inside a dungeon
+            if (!playerEnterExit.IsPlayerInsideDungeon)
+                return false;
+
+            // Compare mapId of site and current location
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            if (location.Loaded)
+            {
+                if (location.MapTableData.MapId == place.SiteDetails.mapId)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check if player at specific town exterior.
+        /// This includes the exterior RMB area of dungeons in world.
+        /// </summary>
+        bool CheckInsideTown(Place place)
+        {
+            // Get component handling player world status and transitions
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            if (!playerEnterExit)
+                return false;
+
+            // Player must be outside
+            if (playerEnterExit.IsPlayerInside)
+                return false;
+
+            // Compare mapId of site and current location
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
+            if (location.Loaded && GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+            {
+                if (location.MapTableData.MapId == place.SiteDetails.mapId)
+                    return true;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Check if player inside a specific target site building.
