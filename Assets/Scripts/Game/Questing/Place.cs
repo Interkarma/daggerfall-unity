@@ -202,8 +202,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
                 else if (scope == Scopes.Fixed && p1 > 0xc300)
                 {
-                    // TODO: Get a fixed site, such as a key city or dungeon
-                    //SetupFixedLocation();
+                    // Get a fixed site, such as a capital city or dungeon
+                    SetupFixedLocation();
                 }
                 else
                 {
@@ -350,6 +350,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
+            // TODO: Enumerate dungeon quest markers
 
             Debug.LogFormat("Selected dungeon of type {0} at {1}\\{2}", dungeonTypeIndex, location.RegionName, location.Name);
 
@@ -435,23 +436,41 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Setup a fixed location.
+        /// TODO: Not sure if need to support last byte (01-04) for sites transferred to by teleport cheat.
+        /// Daggerfall Unity already has means of teleporting around world and dungeon different from classic.
+        /// But concerned this information might also be used to target sub-areas of quest sites. Time will tell.
         /// </summary>
         void SetupFixedLocation()
         {
             // Dungeon interiors have p2 > 0xfa00, exteriors have p2 = 0x01 || p2 = 0x02
             // Need to p1 - 1 if inside dungeon for exterior location id
+            SiteTypes siteType;
             int locationId = -1;
             if (p2 > 0xfa00)
+            {
+                siteType = SiteTypes.Dungeon;
                 locationId = p1 - 1;
+            }
             else
+            {
+                siteType = SiteTypes.Town;
                 locationId = p1;
+            }
 
             // Get location
             DFLocation location;
             if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(locationId, out location))
                 throw new Exception(string.Format("Could not find locationId: '{0};", locationId));
 
-            // TODO: Create a site for this location
+            // Create a new site for this location
+            siteDetails = new SiteDetails();
+            siteDetails.questUID = ParentQuest.UID;
+            siteDetails.siteType = siteType;
+            siteDetails.mapId = location.MapTableData.MapId;
+            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionName = location.RegionName;
+            siteDetails.locationName = location.Name;
+            // TODO: Enumerate dungeon quest markers
         }
 
         #endregion

@@ -165,6 +165,7 @@ namespace DaggerfallWorkshop.Utility
         /// The locationId is different to the mapId, which is derived from location coordinates in world.
         /// At this time, best known way to determine locationId is from LocationRecordElementHeader data.
         /// This is linked to mapId at in EnumerateMaps().
+        /// Note: Not all locations have a locationId, only certain key locations
         /// </summary>
         /// <param name="locationId">LocationId of map from quest system.</param>
         /// <param name="locationOut">DFLocation data out.</param>

@@ -64,13 +64,6 @@ namespace DaggerfallWorkshop.Game.Questing
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
         List<Quest> questsToRemove = new List<Quest>();
 
-        //// List of sites belonging to same map and quest combo
-        //Dictionary<MapQuestKey, ReservedSites> reservedSites = new Dictionary<MapQuestKey, ReservedSites>();
-
-        //// TEMP: Dictionary of individual NPCs moved around by quests
-        //// Just experimenting at the moment, will reimplement this later
-        //Dictionary<int, Person> permanentQuestPeople = new Dictionary<int, Person>();
-
         bool waitingForStartup = true;
         float startupTimer = 0;
         float updateTimer = 0;
@@ -78,12 +71,6 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Properties
-
-        //// TEMP: Just testing for now
-        //public Dictionary<int, Person> PermanentQuestPeople
-        //{
-        //    get { return permanentQuestPeople; }
-        //}
 
         /// <summary>
         /// Gets Quests source folder in StreamingAssets.
@@ -440,75 +427,6 @@ namespace DaggerfallWorkshop.Game.Questing
             return sites.ToArray();
         }
 
-        ///// <summary>
-        ///// Reserves a site before placing quest resources.
-        ///// </summary>
-        ///// <param name="siteDetails">SiteDetails of site to reserve.</param>
-        //public void ReserveSite(SiteDetails siteDetails)
-        //{
-        //    // Create key
-        //    MapQuestKey key = new MapQuestKey(siteDetails.mapId, siteDetails.questUID);
-
-        //    // Add site to existing map-quest collection or start a new one
-        //    if (reservedSites.ContainsKey(key))
-        //    {
-        //        reservedSites[key].sites.Add(siteDetails);
-        //    }
-        //    else
-        //    {
-        //        ReservedSites rs = new ReservedSites();
-        //        rs.sites = new List<SiteDetails>();
-        //        rs.sites.Add(siteDetails);
-        //        reservedSites.Add(key, rs);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Removes all sites reserved for a specific quest, no matter the location.
-        ///// Typically used when ending a quest.
-        ///// </summary>
-        ///// <param name="parentQuest">Quest for which to remove all sites.</param>
-        //public void RemoveReservedSites(Quest parentQuest)
-        //{
-        //    // Gather keys using this quest
-        //    List<MapQuestKey> keysToRemove = new List<MapQuestKey>();
-        //    foreach (MapQuestKey key in reservedSites.Keys)
-        //    {
-        //        if (key.QuestID == parentQuest.UID)
-        //        {
-        //            keysToRemove.Add(key);
-        //        }
-        //    }
-
-        //    // Remove found reservations
-        //    foreach(MapQuestKey key in keysToRemove)
-        //    {
-        //        reservedSites.Remove(key);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Gets all reserved sites for location with MapID.
-        ///// </summary>
-        ///// <param name="mapID">MapID of location.</param>
-        ///// <returns>SiteDetails[] array.</returns>
-        //public SiteDetails[] GetReservedSites(int mapID)
-        //{
-        //    List<SiteDetails> allSites = new List<SiteDetails>();
-        //    foreach(var kvp in reservedSites)
-        //    {
-        //        if (kvp.Key.MapID == mapID)
-        //        {
-        //            allSites.AddRange(kvp.Value.sites);
-        //        }
-        //    }
-
-        //    return allSites.ToArray();
-        //}
-
-        #endregion
-
-        #region Private Methods
         #endregion
 
         #region Singleton
