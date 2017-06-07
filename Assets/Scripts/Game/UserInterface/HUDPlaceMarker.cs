@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Output how many doors were found in thise location and get out if zero
-            Debug.LogFormat("Found {0} doors matching an active quest site in location {1}/{2}.", foundTotal, dfLocation.Summary.RegionName, dfLocation.Summary.LocationName);
+            //Debug.LogFormat("Found {0} doors matching an active quest site in location {1}/{2}.", foundTotal, dfLocation.Summary.RegionName, dfLocation.Summary.LocationName);
             if (foundTotal == 0)
             {
                 ClearSiteTargets();
