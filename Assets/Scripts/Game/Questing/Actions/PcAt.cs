@@ -72,16 +72,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return false;
 
             // Check building site
-            if (place.SiteDetails.isBuilding)
+            if (place.SiteDetails.siteType == SiteTypes.Building)
                 result = CheckInsideBuilding(place);
 
             // TODO: Check other place types as they are developed
 
             // Handle positive check
             // TODO: Which should happen first, the "saying" popup or task execution?
-            // With the current execution flow, any task "say" actions will happen before "pc at saying".
-            // Popups also trigger before scene transition fade.
-            // These fades are nice, but not of classic anyway - might just need to remove.
+            // With the current execution flow, any task "say" actions will happen before "pc at saying" check result here.
             if (result)
             {
                 // Trigger target task

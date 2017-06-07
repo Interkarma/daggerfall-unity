@@ -103,7 +103,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             foreach (SiteDetails site in allSites)
             {
                 // Only interested in buildings within player's current location
-                if (!site.isBuilding || site.mapId != dfLocation.Summary.MapID)
+                if (site.siteType != SiteTypes.Building || site.mapId != dfLocation.Summary.MapID)
                     continue;
 
                 // Get site layout coords

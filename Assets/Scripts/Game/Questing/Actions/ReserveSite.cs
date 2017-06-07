@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System;
 
@@ -18,9 +19,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
     /// Tipton calls this "create npc" but its true function seems to be to reserve a quest site
-    /// before placing a resource inside. "create npc" is usually followed by "place npc"
-    /// but can also be followed by "place item" or "create foe" for example. So not
-    /// just intended just for NPCs. This action likely initiates some book-keeping in Daggerfall's
+    /// before placing resources inside. "create npc" is usually followed by "place npc"
+    /// but can also be followed by "place item" or "create foe" for example. Clearly
+    /// not intended solely for NPCs. This action likely initiates some book-keeping in Daggerfall's
     /// quest system. Emulating behaviour as best understood for now.
     /// 
     /// Notes:
@@ -52,17 +53,92 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             ReserveSite reserveSite = new ReserveSite(parentQuest);
             reserveSite.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
 
-            // Attempt to get site being reserved by quest
+            // Attempt to get Place resource
             Place place = parentQuest.GetPlace(reserveSite.placeSymbol);
             if (place == null)
                 throw new Exception(string.Format("Attempted to reserve invalid Place symbol {0}", reserveSite.placeSymbol.Name));
 
             // Reserve site in quest machine
-            QuestMachine.Instance.ReserveSite(parentQuest, place.SiteDetails);
+            //QuestMachine.Instance.ReserveSite(place.SiteDetails);
 
             Debug.LogFormat("Reserved site {0} at {1} in {2}", place.SiteDetails.buildingName, place.SiteDetails.locationName, place.SiteDetails.regionName);
 
             return reserveSite;
         }
+
+        #region Private Methods
+
+        ///// <summary>
+        ///// Collect all available quest markers in building interior.
+        ///// </summary>
+        //void CollectBuildingQuestMarkers(DFBlock blockData, int recordIndex)
+        //{
+        //    List<QuestMarker> npcMarkers = new List<QuestMarker>();
+        //    List<QuestMarker> itemMarkers = new List<QuestMarker>();
+
+        //    // Iterate flat records to find quest markers
+        //    DFBlock.RmbSubRecord recordData = blockData.RmbBlock.SubRecords[recordIndex];
+        //    foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
+        //    {
+        //        // Only interested in editor flats
+        //        if (obj.TextureArchive != 199)
+        //            continue;
+
+        //        switch (obj.TextureRecord)
+        //        {
+        //            case (int)MarkerTypes.NPC:
+
+        //                break;
+        //            case (int)MarkerTypes.Item:
+        //                break;
+        //            default:
+        //                continue;
+        //        }
+        //    }
+
+        //    //totalQuestMarkers = 0;
+        //    //totalQuestItemMarkers = 0;
+        //    //DFBlock.RmbSubRecord recordData = blockData.RmbBlock.SubRecords[recordIndex];
+        //    //foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
+        //    //{
+        //    //    if (obj.TextureArchive == 199)
+        //    //    {
+        //    //        switch (obj.TextureRecord)
+        //    //        {
+        //    //            case 11:                        // Quest marker 199.11
+        //    //                totalQuestMarkers++;
+        //    //                break;
+        //    //            case 18:
+        //    //                totalQuestItemMarkers++;    // Quest item marker 199.18
+        //    //                break;
+        //    //        }
+        //    //    }
+        //    //}
+
+        //    //// Return true if at least one quest marker
+        //    //if (totalQuestMarkers > 0)
+        //    //    return true;
+
+        //    //return false;
+        //}
+
+        ///// <summary>
+        ///// Creates an empty quest marker.
+        ///// </summary>
+        //QuestMarker CreateQuestMarker(MarkerTypes markerType, SiteTypes siteType, int flatIndex, Vector3 flatPosition, int buildingKey = 0)
+        //{
+        //    QuestMarker marker = new QuestMarker();
+        //    marker.questUID = ParentQuest.UID;
+        //    marker.symbol = null;
+        //    marker.siteType = siteType;
+        //    marker.markerType = markerType;
+        //    marker.flatIndex = flatIndex;
+        //    marker.flatPosition = flatPosition;
+        //    marker.buildingKey = buildingKey;
+
+        //    return marker;
+        //}
+
+        #endregion
     }
 }

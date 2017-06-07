@@ -13,7 +13,6 @@ using UnityEngine;
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
@@ -22,26 +21,26 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// A location or site involved in a quest.
-    /// A Place can be a random local/remote location or a fixed permanent location.
+    /// A site involved in a quest.
+    /// Can be a random local/remote location or a fixed permanent location.
     /// </summary>
     public class Place : QuestResource
     {
         #region Fields
 
-        PlaceTypes placeType;   // Fixed/remote/local
-        string name;            // Source name for data table
-        int p1;                 // Parameter 1
-        int p2;                 // Parameter 2
-        int p3;                 // Parameter 3
+        Scopes scope;               // Fixed/remote/local
+        string name;                // Source name for data table
+        int p1;                     // Parameter 1
+        int p2;                     // Parameter 2
+        int p3;                     // Parameter 3
 
-        SiteDetails siteDetails;
+        SiteDetails siteDetails;    // Site found using inputs
 
         #endregion
 
         #region Enums
 
-        public enum PlaceTypes
+        public enum Scopes
         {
             None,
             Fixed,
@@ -54,11 +53,11 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Properties
 
         /// <summary>
-        /// Gets the PlaceType of this Place.
+        /// Gets the scope of this Place.
         /// </summary>
-        public PlaceTypes PlaceType
+        public Scopes Scope
         {
-            get { return placeType; }
+            get { return scope; }
         }
 
         /// <summary>
@@ -147,21 +146,22 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Store symbol for quest system
                 Symbol = new Symbol(match.Groups["symbol"].Value);
 
-                // Get place type
+                // Get place scope
                 string siteType = match.Groups["siteType"].Value;
                 if (string.Compare(siteType, "local", true) == 0)
                 {
                     // This is a local place
-                    placeType = PlaceTypes.Local;
+                    scope = Scopes.Local;
                 }
                 else if (string.Compare(siteType, "remote", true) == 0)
                 {
                     // This is a remote place
-                    placeType = PlaceTypes.Remote;
+                    scope = Scopes.Remote;
                 }
                 else if (string.Compare(siteType, "permanent", true) == 0)
                 {
-                    placeType = PlaceTypes.Fixed;
+                    // This is a permanent place
+                    scope = Scopes.Fixed;
                 }
                 else
                 {
@@ -189,18 +189,18 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception(string.Format("Could not find place name in data table: '{0};", name));
                 }
 
-                // Handle place by type
-                if (placeType == PlaceTypes.Local)
+                // Handle place by scope
+                if (scope == Scopes.Local)
                 {
                     // Get a local site from same town quest was issued
                     SetupLocalSite();
                 }
-                else if (placeType == PlaceTypes.Remote)
+                else if (scope == Scopes.Remote)
                 {
                     // Get a remote site in same region quest was issued
                     SetupRemoteSite();
                 }
-                else if (placeType == PlaceTypes.Fixed && p1 > 0xc300)
+                else if (scope == Scopes.Fixed && p1 > 0xc300)
                 {
                     // TODO: Get a fixed site, such as a key city or dungeon
                     //SetupFixedLocation();
@@ -253,11 +253,13 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Public Methods
         #endregion
 
-        #region Local Place Methods
+        #region Local Site Methods
 
         /// <summary>
         /// Get a local building in the town player is currently at.
-        /// What happens if quest requests a local building type not available at current location?
+        /// Throws exception if no valid buildings of specified type are found.
+        /// Example of how this can happen is issuing a quest to a local palace in a town with no palace.
+        /// Use remote palace instead to ensure quest can select from entire region.
         /// </summary>
         void SetupLocalSite()
         {
@@ -270,17 +272,16 @@ namespace DaggerfallWorkshop.Game.Questing
             if (p1 == 1)
                 throw new Exception("Cannot specify a local dungeon place resource. Only use of remote or fixed supported for dungeons.");
 
-            // Get building type
-            DFLocation.BuildingTypes buildingType = (DFLocation.BuildingTypes)p2;
-
-            // TODO: Support random site
+            // Get list of valid sites
+            SiteDetails[] foundSites = null;
             if (p2 == -1)
-                throw new Exception("Random local site not implemented at this time.");
+                foundSites = CollectRandomQuestSites(location);
+            else
+                foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2);
 
-            // Get an array of potential quest sites with specified building type
-            SiteDetails[] foundSites = CollectQuestSitesOfBuildingType(location, buildingType);
+            // Must have found at least one site
             if (foundSites == null || foundSites.Length == 0)
-                throw new Exception(string.Format("Could not find local site of type {0} in location {1}.{2}.", buildingType, location.RegionName, location.Name));
+                throw new Exception(string.Format("Could not find local site with P2={0} in {1}\\{2}.", p2, location.RegionName, location.Name));
 
             // Select a random site from available list
             int selectedIndex = UnityEngine.Random.Range(0, foundSites.Length);
@@ -296,16 +297,136 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         void SetupRemoteSite()
         {
-            // TODO: Support dungeons
+            // Select remote dungeon or building of building type
             if (p1 == 1)
-                throw new Exception("Remote dungeon site not implemented at this time.");
+                SelectRemoteDungeonSite(p2);
+            else
+                SelectRemoteTownSite((DFLocation.BuildingTypes)p2);
+        }
 
-            // TODO: Support random site
-            if (p2 == -1)
-                throw new Exception("Random remote site not implemented at this time.");
+        /// <summary>
+        /// Find a random dungeon site in player region.
+        /// dungeonTypeIndex == -1 will select from all available dungeons no matter type
+        /// dungeonTypeIndex == 0 through 16 will select from all available dungeons of that specific type
+        /// Note: Template only maps dungeon types 0-16 to p2 types dungeon0 through dungeon16.
+        /// Warning: Not all dungeon types are available in all regions. http://en.uesp.net/wiki/Daggerfall:Dungeons#Overview_of_Dungeon_Locations
+        /// </summary>
+        bool SelectRemoteDungeonSite(int dungeonTypeIndex)
+        {
+            // Get player region
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
 
-            // Get town candidate holding building type
-            GetRandomTownSite((DFLocation.BuildingTypes)p2);
+            // Cannot use a region with no locations
+            // This should not happen in normal play
+            if (regionData.LocationCount == 0)
+                return false;
+
+            Debug.LogFormat("Selecting for random dungeon of type {0} in {1}", dungeonTypeIndex, regionData.Name);
+
+            // Get indices for all dungeons of this type
+            int[] foundIndices = CollectDungeonIndicesOfType(regionData, dungeonTypeIndex);
+            if (foundIndices == null || foundIndices.Length == 0)
+            {
+                Debug.LogFormat("Could not find any random dungeons of type {0} in {1}", dungeonTypeIndex, regionData.Name);
+                return false;
+            }
+
+            Debug.LogFormat("Found a total of {0} possible dungeons of type {1} in {2}", foundIndices.Length, dungeonTypeIndex, regionData.Name);
+
+            // Select a random dungeon location index from available list
+            int index = UnityEngine.Random.Range(0, foundIndices.Length);
+
+            // Get location data for selected dungeon
+            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, foundIndices[index]);
+            if (!location.Loaded)
+                return false;
+
+            // Configure new site details
+            siteDetails = new SiteDetails();
+            siteDetails.questUID = ParentQuest.UID;
+            siteDetails.siteType = SiteTypes.Dungeon;
+            siteDetails.mapId = location.MapTableData.MapId;
+            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionName = location.RegionName;
+            siteDetails.locationName = location.Name;
+
+            Debug.LogFormat("Selected dungeon of type {0} at {1}\\{2}", dungeonTypeIndex, location.RegionName, location.Name);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Find a town for remote site containing building type.
+        /// Daggerfall's locations are so generic that we usually find a match within a few random attempts
+        /// compared to indexing several hundred locations and only selecting from known-good candidates.
+        /// In short, there are so many possible candidates it's not worth narrowing them down. Throw darts instead.
+        /// Basic checks are still done to reject unsuitable locations very quickly.
+        /// </summary>
+        bool SelectRemoteTownSite(DFLocation.BuildingTypes requiredBuildingType)
+        {
+            // Get player region
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
+
+            // Cannot use a region with no locations
+            // This should not happen in normal play
+            if (regionData.LocationCount == 0)
+                return false;
+
+            // Find random town containing building
+            int attempts = 0;
+            bool found = false;
+            while (!found)
+            {
+                // Increment attempts
+                attempts++;
+
+                // Get a random location index
+                int locationIndex = UnityEngine.Random.Range(0, (int)regionData.LocationCount);
+
+                // Discard all dungeon location types
+                if (IsDungeonType(regionData.MapTable[locationIndex].LocationType))
+                    continue;
+
+                // Get location data for town
+                DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, locationIndex);
+                if (!location.Loaded)
+                    continue;
+
+                // Get list of valid sites
+                SiteDetails[] foundSites = null;
+                if (p2 == -1)
+                {
+                    // Collect random building sites
+                    foundSites = CollectRandomQuestSites(location);
+                }
+                else
+                {
+                    // Check if town contains specified building type in MAPS.BSA directory
+                    if (!HasBuildingType(location, requiredBuildingType))
+                        continue;
+
+                    // Get an array of potential quest sites with specified building type
+                    // This ensures building site actually exists inside town, as MAPS.BSA directory can be incorrect
+                    foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2);
+                }
+
+                // Must have found at least one site
+                if (foundSites == null || foundSites.Length == 0)
+                    continue;
+
+                // Select a random site from available list
+                int selectedIndex = UnityEngine.Random.Range(0, foundSites.Length);
+                siteDetails = foundSites[selectedIndex];
+
+                // All conditions have been satisfied
+                found = true;
+            }
+
+            //Debug.LogFormat("Found remote candidate site in {0} attempts", attempts);
+
+            return true;
         }
 
         #endregion
@@ -356,6 +477,63 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Checks if location is one of the dungeon types.
+        /// </summary>
+        bool IsDungeonType(DFRegion.LocationTypes locationType)
+        {
+            // Consider 3 major dungeon types and 2 graveyard types as dungeons
+            // Will exclude locations with dungeons, such as Daggerfall, Wayrest, Sentinel
+            if (locationType == DFRegion.LocationTypes.DungeonKeep ||
+                locationType == DFRegion.LocationTypes.DungeonLabyrinth ||
+                locationType == DFRegion.LocationTypes.DungeonRuin ||
+                locationType == DFRegion.LocationTypes.GraveyardCommon ||
+                locationType == DFRegion.LocationTypes.GraveyardForgotten)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets random building type from set of valid types.
+        /// </summary>
+        DFLocation.BuildingTypes GetRandomBuildingType()
+        {
+            int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
+            int index = UnityEngine.Random.Range(0, validBuildingTypes.Length);
+
+            return (DFLocation.BuildingTypes)validBuildingTypes[index];
+        }
+
+        /// <summary>
+        /// Generate a list of potential sites based on a random building type.
+        /// Will try a few times to find a valid building type before giving up.
+        /// Caller must handle this outcome by throwing exception or trying again.
+        /// </summary>
+        SiteDetails[] CollectRandomQuestSites(DFLocation location)
+        {
+            const int maxAttempts = 3;
+
+            int attempts = 0;
+            while (true)
+            {
+                // Bail after maximum attempts
+                if (attempts++ > maxAttempts)
+                    break;
+
+                // Get valid quest sites of a random building type
+                SiteDetails[] foundSites = CollectQuestSitesOfBuildingType(location, GetRandomBuildingType());
+                if (foundSites == null || foundSites.Length == 0)
+                    continue;
+
+                return foundSites;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Generate a list of potential sites based on building type.
         /// This uses actual map layout and block data rather than the (often inaccurate) list of building in map data.
         /// Likely to need refinement over time to exclude buildings without proper quest markers, etc.
@@ -382,7 +560,7 @@ namespace DaggerfallWorkshop.Game.Questing
                         if (buildingSummary[i].BuildingType == buildingType)
                         {
                             // Building must be a quest site
-                            // Checking for quest flat marker inside record interior
+                            // Checking for one or more quest markers inside record interior
                             int totalQuestMarkers, totalQuestItemMarkers;
                             if (!EnumerateQuestMarkers(blocks[index], i, out totalQuestMarkers, out totalQuestItemMarkers))
                                 continue;
@@ -398,6 +576,7 @@ namespace DaggerfallWorkshop.Game.Questing
                             }
                             else
                             {
+                                // Use fixed name
                                 buildingName = BuildingNames.GetName(
                                     buildingSummary[i].NameSeed,
                                     buildingSummary[i].BuildingType,
@@ -407,84 +586,24 @@ namespace DaggerfallWorkshop.Game.Questing
                             }
 
                             // Configure new site details
-                            siteDetails = new SiteDetails();
-                            siteDetails.mapId = location.MapTableData.MapId;
-                            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
-                            siteDetails.regionName = location.RegionName;
-                            siteDetails.locationName = location.Name;
-                            siteDetails.isBuilding = true;
-                            siteDetails.buildingKey = buildingSummary[i].buildingKey;
-                            siteDetails.buildingName = buildingName;
-                            siteDetails.totalQuestMarkers = totalQuestMarkers;
-                            siteDetails.totalQuestItemMarkers = totalQuestItemMarkers;
-                            foundSites.Add(siteDetails);
+                            SiteDetails site = new SiteDetails();
+                            site.questUID = ParentQuest.UID;
+                            site.siteType = SiteTypes.Building;
+                            site.mapId = location.MapTableData.MapId;
+                            site.locationId = location.Exterior.ExteriorData.LocationId;
+                            site.regionName = location.RegionName;
+                            site.locationName = location.Name;
+                            site.buildingKey = buildingSummary[i].buildingKey;
+                            site.buildingName = buildingName;
+                            site.totalQuestMarkers = totalQuestMarkers;
+                            site.totalQuestItemMarkers = totalQuestItemMarkers;
+                            foundSites.Add(site);
                         }
                     }
                 }
             }
 
             return foundSites.ToArray();
-        }
-
-        /// <summary>
-        /// Gets a town for remote site containing building type.
-        /// Daggerfall's locations are so generic that we usually find a match within a few random attempts
-        /// compared to indexing several hundred locations and only selecting from known-good candidates.
-        /// In short, there are so many possible candidates it's not worth narrowing them down. Throw darts instead.
-        /// Basic checks are still done to reject unsuitable locations very quickly.
-        /// </summary>
-        bool GetRandomTownSite(DFLocation.BuildingTypes requiredBuildingType)
-        {
-            // Get player region
-            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
-
-            // Cannot use a region with no locations
-            // This should not happen in normal play
-            if (regionData.LocationCount == 0)
-                return false;
-
-            // Find random town containing building
-            int attempts = 0;
-            bool found = false;
-            while (!found)
-            {
-                // Increment attempts
-                attempts++;
-
-                // Get a random location index
-                int locationIndex = UnityEngine.Random.Range(0, (int)regionData.LocationCount);
-
-                // Discard all known dungeon types
-                if ((int)regionData.MapTable[locationIndex].DungeonType <= (int)DFRegion.DungeonTypes.Cemetery)
-                    continue;
-
-                // Get location data for town
-                DFLocation locationData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, locationIndex);
-                if (!locationData.Loaded)
-                    continue;
-
-                // Check if town contains building type in MAPS.BSA directory
-                if (!HasBuildingType(locationData, requiredBuildingType))
-                    continue;
-
-                // Get an array of potential quest sites with specified building type
-                // This ensures building site actually exists inside town, as MAPS.BSA directory can be incorrect
-                SiteDetails[] foundSites = CollectQuestSitesOfBuildingType(locationData, requiredBuildingType);
-                if (foundSites == null || foundSites.Length == 0)
-                    continue;
-
-                // Select a random site from available list
-                int selectedIndex = UnityEngine.Random.Range(0, foundSites.Length);
-                siteDetails = foundSites[selectedIndex];
-
-                // All conditions have been satisfied
-                found = true;
-            }
-
-            //Debug.LogFormat("Found remote candidate site in {0} attempts", attempts);
-
-            return true;
         }
 
         /// <summary>
@@ -500,6 +619,39 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Gets location indices for all dungeons of type.
+        /// dungeonTypeIndex == -1 will select all available dungeon
+        /// </summary>
+        int[] CollectDungeonIndicesOfType(DFRegion regionData, int dungeonTypeIndex)
+        {
+            // Collect all dungeon types
+            List<int> foundLocationIndices = new List<int>();
+            for (int i = 0; i < regionData.LocationCount; i++)
+            {
+                // Discard all non-dungeon location types
+                if (!IsDungeonType(regionData.MapTable[i].LocationType))
+                    continue;
+
+                //Debug.LogFormat("Checking dungeon type {0} at location {1}", (int)regionData.MapTable[i].DungeonType, regionData.MapNames[i]);
+
+                // Collect dungeons
+                if (dungeonTypeIndex == -1)
+                {
+                    // Collect all types for random dungeon assignment
+                    foundLocationIndices.Add(i);
+                }
+                else
+                {
+                    // Otherwise dungeon must be of specifed type
+                    if (((int)regionData.MapTable[i].DungeonType >> 8) == dungeonTypeIndex)
+                        foundLocationIndices.Add(i);
+                }
+            }
+
+            return foundLocationIndices.ToArray();
         }
 
         /// <summary>

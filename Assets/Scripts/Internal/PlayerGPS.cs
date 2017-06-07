@@ -128,6 +128,15 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets current location MapID.
+        /// Returns -1 when HasCurrentLocation=false
+        /// </summary>
+        public int CurrentMapID
+        {
+            get { return (hasCurrentLocation) ? currentLocation.MapTableData.MapId : -1; }
+        }
+
+        /// <summary>
         /// Gets current region name based on world position.
         /// </summary>
         public string CurrentRegionName

@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 throw new Exception(string.Format("Could not find NPC symbol {0}", placeNpc.npcSymbol));
 
             // TODO: Real house-keeping to place NPC at site, this is just for testing
-            QuestMachine.Instance.PermanentQuestPeople.Add(person.IndividualFactionIndex, person);
+            //QuestMachine.Instance.PermanentQuestPeople.Add(person.IndividualFactionIndex, person);
             Debug.LogFormat("Placed NPC {0} at {1}", placeNpc.npcSymbol.Name, placeNpc.placeSymbol.Name);
 
             return placeNpc;

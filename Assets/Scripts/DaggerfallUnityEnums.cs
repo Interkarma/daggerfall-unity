@@ -575,4 +575,27 @@ namespace DaggerfallWorkshop
         ContextMacro,       // %symbol     - replaced with output based on context (e.g. pronoun macros relate back to previous NPC/foe symbol in source text)
         BindingMacro,       // =#symbol_   - replaced with current keybind for symbol action (Daggerfall Unity only)
     }
+
+    /// <summary>
+    /// Types of sites player can be sent to for quests.
+    /// </summary>
+    public enum SiteTypes
+    {
+        None,
+        Town,
+        Dungeon,
+        Building,
+    }
+
+    /// <summary>
+    /// Types of markers in a location from TEXTURE.199.
+    /// Only used for quest resource placement right now.
+    /// Will be expanded later to include additional marker types (rest, ladders, etc.)
+    /// </summary>
+    public enum MarkerTypes
+    {
+        None = -1,
+        NPC = 11,               // Quest NPC marker
+        Item = 18,              // Quest Item marker
+    }
 }
