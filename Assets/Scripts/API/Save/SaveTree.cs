@@ -30,6 +30,7 @@ namespace DaggerfallConnect.Save
         public SaveTreeHeader Header;
         public SaveTreeLocationDetail LocationDetail;
         public SaveTreeBaseRecord RootRecord = new SaveTreeBaseRecord();
+        public PlayerDirectionRecord DirectionRecord = new PlayerDirectionRecord();
         public Dictionary<uint, SaveTreeBaseRecord> RecordDictionary = new Dictionary<uint, SaveTreeBaseRecord>();
 
         // Private fields
@@ -247,6 +248,18 @@ namespace DaggerfallConnect.Save
                     case RecordTypes.Container:
                         record = new ContainerRecord(reader, length);
                         break;
+                    case RecordTypes.CharacterParentUnknown1:
+                        // CharacterParentUnknown1's first values after the record type are the pitch and yaw of the player's view.
+                        // The same player position data as in the header, and then unknown data, follows.
+                        // For now just get the pitch and yaw.
+                        long position = reader.BaseStream.Position;
+                        reader.ReadByte();
+                        DirectionRecord.Pitch = reader.ReadInt16();
+                        DirectionRecord.Yaw = reader.ReadInt16();
+                        // Reset stream position and continue with default behavior
+                        reader.BaseStream.Position = position;
+                        record = new SaveTreeBaseRecord(reader, length);
+                        break;
                     //case RecordTypes.UnknownTownLink:
                     //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
                     //    continue;
@@ -324,6 +337,8 @@ namespace DaggerfallConnect.Save
         public Byte RecordType;                 // Must always be 0x01
         public UInt16 Unknown;
         public RecordPosition Position;
+        public Int16 Pitch;
+        public Int16 Yaw;
     }
 
     /// <summary>
@@ -344,6 +359,13 @@ namespace DaggerfallConnect.Save
         public Byte QuestID;                    // Associated quest ID of this record (0 if no quest)
         public UInt32 ParentRecordID;           // ID of parent record
         public RecordTypes ParentRecordType;    // Type of parent record
+    }
+
+    // Temporary struct until CharacterParentUnknown1 is understood
+    public struct PlayerDirectionRecord
+    {
+        public Int16 Pitch;
+        public Int16 Yaw;
     }
 
     /// <summary>

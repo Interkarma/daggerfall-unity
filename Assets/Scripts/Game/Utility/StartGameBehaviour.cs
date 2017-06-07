@@ -449,6 +449,24 @@ namespace DaggerfallWorkshop.Game.Utility
                 streamingWorld.suppressWorld = false;
             }
 
+            GameObject cameraObject = GameObject.FindGameObjectWithTag("MainCamera");
+            PlayerMouseLook mouseLook = cameraObject.GetComponent<PlayerMouseLook>();
+            if (mouseLook)
+            {
+                // Classic save value ranges from -256 (looking up) to 256 (looking down).
+                // The maximum up and down range of view in classic is similar to 45 degrees up and down in DF Unity.
+                float pitch = saveTree.DirectionRecord.Pitch;
+                if (pitch != 0)
+                    pitch = (pitch * 45 / 256);
+                mouseLook.Pitch = pitch;
+
+                float yaw = saveTree.DirectionRecord.Yaw;
+                // In classic saves 2048 units of yaw is 360 degrees.
+                if (yaw != 0)
+                    yaw = (yaw * 360 / 2048);
+                mouseLook.Yaw = yaw;
+            }
+
             // Set whether the player's weapon is drawn
             GameManager.Instance.WeaponManager.Sheathed = (!saveVars.WeaponDrawn);
 
