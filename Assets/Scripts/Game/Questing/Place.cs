@@ -447,38 +447,44 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Setup a fixed location.
-        /// TODO: Not sure if need to support last byte (01-04) for sites transferred to by teleport cheat.
-        /// Daggerfall Unity already has means of teleporting around world and dungeon different from classic.
-        /// But concerned this information might also be used to target sub-areas of quest sites. Time will tell.
+        /// TODO: Not sure if need to support last byte of p2 for "sites transferred to by teleport cheat".
+        /// I *think* p2 just reference start markers inside dungeon but may have some placement meaning.
         /// </summary>
         void SetupFixedLocation()
         {
-            // Dungeon interiors have p2 > 0xfa00, exteriors have p2 = 0x01 || p2 = 0x02
-            // Need to p1 - 1 if inside dungeon for exterior location id
+            // Attempt to get locationId by p1 - try p1 first then p1-1
+            // This should work out dungeon or exterior loctionId as needed
+            // No longer certain about p2 meaning of 0xfa
+            // Possible p2 only be used for teleport cheat
             SiteTypes siteType;
-            int locationId = -1;
-            if (p2 > 0xfa00)
+            DFLocation location;
+            if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(p1, out location))
             {
-                siteType = SiteTypes.Dungeon;
-                locationId = p1 - 1;
+                // Could be a dungeon, attempt to get locationId by p1-1
+                if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(p1 - 1, out location))
+                {
+                    // p1 is a completely unknown locationId
+                    throw new Exception(string.Format("Could not find locationId from p1 using: '{0}' or '{1}'", p1, p1 - 1));
+                }
+                else
+                {
+                    // If p1-1 resolves then dungeon is referenced
+                    siteType = SiteTypes.Dungeon;
+                }
             }
             else
             {
+                // If p1 resolves then exterior is referenced
                 siteType = SiteTypes.Town;
-                locationId = p1;
             }
-
-            // Get location
-            DFLocation location;
-            if (!DaggerfallUnity.Instance.ContentReader.GetQuestLocation(locationId, out location))
-                throw new Exception(string.Format("Could not find locationId: '{0};", locationId));
 
             // Check for one or more quest markers inside dungeon
             // Towns do not have quest markers
+            // Quite often town types are used only to reveal location on travel map
             int totalQuestMarkers = 0, totalQuestItemMarkers = 0;
             if (siteType == SiteTypes.Dungeon)
             {
-                // Fixed locations should always have markers, throw exception if none found
+                // Fixed dungeons should always have markers, throw exception if none found
                 if (!EnumerateDungeonQuestMarkers(location, out totalQuestMarkers, out totalQuestItemMarkers))
                     throw new Exception(string.Format("Could not find any quest markers in random dungeon {0}", location.Name));
             }
@@ -493,6 +499,8 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.locationName = location.Name;
             siteDetails.totalQuestMarkers = totalQuestMarkers;
             siteDetails.totalQuestItemMarkers = totalQuestItemMarkers;
+
+            Debug.LogFormat("Setup fixed location {0}\\{1} of type {2} with {3}/{4} quest/item markers.", location.RegionName, location.Name, siteType.ToString(), totalQuestMarkers, totalQuestItemMarkers);
         }
 
         #endregion
