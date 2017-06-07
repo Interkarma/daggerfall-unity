@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private int inputDistanceY = 0;                 //vertical distance between the input label & input box
         private bool useParchmentStyle = true;          //if true, box will use PopupStyle Parchment background
         private bool clickAnywhereToClose = false;
+        private bool showAtTopOfScreen = false;
 
         public bool ClickAnywhereToClose
         {
@@ -99,12 +100,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int maxCharacters = 31,
             string textBoxLabel = null,
             bool useParchmentBackGround = true,
+            bool showAtTopOfScreen = false,
             UserInterfaceWindow previous = null)
             : base(uiManager, previous)
         {
             this.textBox.MaxCharacters = maxCharacters;
             this.useParchmentStyle = useParchmentBackGround;
             this.SetTextBoxLabel(textBoxLabel);
+            this.showAtTopOfScreen = showAtTopOfScreen;
             SetupBox(textId);
         }
 
@@ -129,13 +132,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (useParchmentStyle)
                 DaggerfallUI.Instance.SetDaggerfallPopupStyle(DaggerfallUI.PopupStyle.Parchment, messagePanel);
+
             messagePanel.HorizontalAlignment = HorizontalAlignment.Center;
-            messagePanel.VerticalAlignment = VerticalAlignment.Middle;
+            if (showAtTopOfScreen)
+                messagePanel.VerticalAlignment = VerticalAlignment.Top;
+            else
+                messagePanel.VerticalAlignment = VerticalAlignment.Middle;
             messagePanel.OnMouseClick += MessagePanel_OnMouseClick;
             NativePanel.Components.Add(messagePanel);
 
             multiLineLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            multiLineLabel.VerticalAlignment = VerticalAlignment.Middle;
+            if (showAtTopOfScreen)
+                multiLineLabel.VerticalAlignment = VerticalAlignment.Top;
+            else
+                multiLineLabel.VerticalAlignment = VerticalAlignment.Middle;
             messagePanel.Components.Add(multiLineLabel);
 
             messagePanel.Components.Add(textPanel);
