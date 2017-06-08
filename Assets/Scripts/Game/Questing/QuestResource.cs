@@ -96,6 +96,15 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Called every Quest tick.
+        /// Allows quest resources like Clock to perform some action.
+        /// Quest will not call Tick() on ActionTemplate items, they should override Update() instead.
+        /// </summary>
+        public virtual void Tick(Quest caller)
+        {
+        }
+
+        /// <summary>
         /// Parse optional message tags from this resource.
         /// </summary>
         /// <param name="line"></param>

@@ -121,6 +121,12 @@ namespace DaggerfallWorkshop.Game.Questing
             if (questComplete)
                 return;
 
+            // Tick resources
+            foreach(QuestResource resource in resources.Values)
+            {
+                resource.Tick(this);
+            }
+
             // Update tasks
             foreach(Task task in tasks.Values)
             {
