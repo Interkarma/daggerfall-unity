@@ -399,6 +399,19 @@ namespace DaggerfallWorkshop.Game.Questing
             return sites.ToArray();
         }
 
+        /// <summary>
+        /// Gets an active quest based on UID.
+        /// </summary>
+        /// <param name="questUID">Quest UID to retrieve.</param>
+        /// <returns>Quest object. Returns null if UID not found.</returns>
+        public Quest GetActiveQuest(ulong questUID)
+        {
+            if (!quests.ContainsKey(questUID))
+                return null;
+
+            return quests[questUID];
+        }
+
         #endregion
 
         #region Site Links
@@ -438,20 +451,34 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Selects all actives site links matching parameters.
+        /// Very little information is needed to determine if player is in Town, Dungeon, or Building.
+        /// This information is intended to be easily reached by scene builders at layout time.
         /// </summary>
         /// <param name="siteType">Type of sites to select.</param>
         /// <param name="mapId">MapID in world.</param>
+        /// <param name="buildingKey">Building key for buidings. Not used if left at default 0.</param>
         /// <returns>SiteLink[] array of found links. Check for null or empty on return.</returns>
-        public SiteLink[] GetSiteLinks(SiteTypes siteType, int mapId)
+        public SiteLink[] GetSiteLinks(SiteTypes siteType, int mapId, int buildingKey = 0)
         {
             // Collect a copy of all site links matching params
             List<SiteLink> foundSiteLinks = new List<SiteLink>();
             foreach(SiteLink link in siteLinks)
             {
+                // Match site type
                 if (link.siteType ==siteType &&
                     link.mapId == mapId)
                 {
-                    foundSiteLinks.Add(link);
+                    if (buildingKey != 0)
+                    {
+                        // Match building key if specified
+                        if (buildingKey == link.buildingKey)
+                            foundSiteLinks.Add(link);
+                    }
+                    else
+                    {
+                        // Otherwise just add link
+                        foundSiteLinks.Add(link);
+                    }
                 }
             }
 

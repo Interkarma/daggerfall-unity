@@ -150,6 +150,12 @@ namespace DaggerfallConnect.Arena2
             public int rank;
         }
 
+        public struct FlatData
+        {
+            public int archive;
+            public int record;
+        }
+
         #endregion
 
         #region Static Properties
@@ -289,6 +295,20 @@ namespace DaggerfallConnect.Arena2
                 return factionNameToIDDict[name];
 
             return -1;
+        }
+
+        /// <summary>
+        /// Turns a flat int back into archive/record format
+        /// </summary>
+        /// <param name="flat"></param>
+        /// <returns></returns>
+        static public FlatData GetFlatData(int flat)
+        {
+            FlatData flatData = new FlatData();
+            flatData.archive = flat >> 7;
+            flatData.record = flat & 0x7f;
+
+            return flatData;
         }
 
         #endregion

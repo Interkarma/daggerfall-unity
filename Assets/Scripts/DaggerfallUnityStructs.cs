@@ -377,6 +377,7 @@ namespace DaggerfallWorkshop
     /// For example, quest NPCs might need to be injected to a certain building or dungeon interior.
     /// The same mechanism is used to place quest items and foes for the player.
     /// SiteLink contains enough information for external classes to determine if they belong to that site.
+    /// If layout classes find a matching SiteLink, they will deploy any assigned QuestMarkers assigned to site.
     /// </summary>
     [Serializable]
     public struct SiteLink

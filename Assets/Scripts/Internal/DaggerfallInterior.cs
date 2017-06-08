@@ -17,6 +17,8 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
@@ -103,6 +105,7 @@ namespace DaggerfallWorkshop
             AddFlats();
             AddPeople();
             AddActionDoors();
+            AddQuestResources();
 
             return true;
         }
@@ -602,6 +605,102 @@ namespace DaggerfallWorkshop
                 // Assign loadID
                 if (actionDoor)
                     actionDoor.LoadID = loadID;
+            }
+        }
+
+        #endregion
+
+        #region Quest Resources
+
+        /// <summary>
+        /// Finds SiteLinks matching this interior and walks Place markers to inject quest resources.
+        /// Some of this handling will be split and relocated for other builders.
+        /// Just working through the steps in buildings interiors for now.
+        /// </summary>
+        void AddQuestResources()
+        {
+            // Collect all SiteLinks for this building interior
+            SiteLink[] siteLinks = QuestMachine.Instance.GetSiteLinks(SiteTypes.Building, GameManager.Instance.PlayerGPS.CurrentMapID, entryDoor.buildingKey);
+            if (siteLinks == null || siteLinks.Length == 0)
+                return;
+
+            Debug.LogFormat("Player entered a building interior with {0} active site links", siteLinks.Length);
+
+            // Walk through all found SiteLinks
+            foreach(SiteLink link in siteLinks)
+            {
+                // Get the Quest object referenced by this link
+                Quest quest = QuestMachine.Instance.GetActiveQuest(link.questUID);
+                if (quest == null)
+                    throw new Exception(string.Format("Could not find active quest for UID {0}", link.questUID));
+
+                // Get the Place resource referenced by this link
+                Place place = quest.GetPlace(link.placeSymbol);
+                if (place == null)
+                    throw new Exception(string.Format("Could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID));
+
+                // Get the QuestMarkers in this Place
+                QuestMarker[] questMarkers = place.SiteDetails.questMarkers;
+                if (questMarkers == null || questMarkers.Length == 0)
+                    throw new Exception(string.Format("Quest markers array empty for Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID));
+
+                // Iterate quest markers and inject into scene
+                foreach(QuestMarker marker in questMarkers)
+                {
+                    // Marker quest UID should always match link
+                    if (marker.questUID != link.questUID)
+                        throw new Exception(string.Format("QuestMarker quest UID {0} does not match SiteLink quest UID {1}", marker.questUID, link.questUID));
+
+                    // Marker must have a target symbol
+                    Symbol targetSymbol = marker.targetSymbol;
+                    if (targetSymbol != null)
+                    {
+                        // Place QuestInjector for target and type
+                        if (marker.markerType == MarkerTypes.NPC)
+                            AddQuestNPC(quest, marker);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add a quest NPC to marker position.
+        /// </summary>
+        void AddQuestNPC(Quest quest, QuestMarker marker)
+        {
+            // Get the Person resource
+            Person person = quest.GetPerson(marker.targetSymbol);
+            if (person == null)
+                throw new Exception(string.Format("Could not find Person symbol {0} in quest UID {1}", marker.targetSymbol, marker.questUID));
+
+            // Handle permanent NPC
+            // Will need more work soon for completely random NPCs
+            if (person.IsPermanentNPC)
+            {
+                // Get faction details
+                FactionFile.FactionData factionData;
+                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(person.IndividualFactionIndex, out factionData))
+                {
+                    // Get billboard texture data
+                    // Permanent flats only have one set of texture indices that are not gender based
+                    FactionFile.FlatData flatData = FactionFile.GetFlatData(factionData.flat1);
+
+                    // Create target GameObject
+                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(flatData.archive, flatData.record, transform);
+                    go.name = string.Format("Injected NPC [{0}]", person.DisplayName);
+
+                    // Set position
+                    DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                    go.transform.position = marker.flatPosition;
+                    go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+
+                    // Add people data to billboard
+                    dfBillboard.SetRMBPeopleData(person.IndividualFactionIndex, factionData.flags);
+                }
+            }
+            else
+            {
+                Debug.Log("Random NPC injection not implemented yet.");
             }
         }
 

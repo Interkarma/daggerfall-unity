@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Questing
         Genders npcGender = Genders.Male;
         bool atHome = false;
 
+        bool isPermanentNPC = false;
         string displayName = string.Empty;
         int individualFactionIndex = 0;
 
@@ -86,6 +87,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public int IndividualFactionIndex
         {
             get { return individualFactionIndex; }
+        }
+
+        public bool IsPermanentNPC
+        {
+            get { return isPermanentNPC; }
         }
 
         #endregion
@@ -210,6 +216,7 @@ namespace DaggerfallWorkshop.Game.Questing
                             throw new Exception(string.Format("Named NPC {0} with FactionID {1} is not an individual NPC", permanentNPCName, p3));
 
                         // Store permanent NPC display name
+                        isPermanentNPC = true;
                         displayName = factionData.name;
                         individualFactionIndex = factionData.id;
                     }

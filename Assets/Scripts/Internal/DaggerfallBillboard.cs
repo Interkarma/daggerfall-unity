@@ -193,6 +193,19 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Sets people data directly.
+        /// </summary>
+        /// <param name="factionID">FactionID of person.</param>
+        /// <param name="flags">Person flags.</param>
+        public void SetRMBPeopleData(int factionID, int flags)
+        {
+            // Add common data
+            summary.FactionOrMobileID = factionID;
+            summary.FixedEnemyType = MobileTypes.None;
+            summary.Flags = flags;
+        }
+
+        /// <summary>
         /// Sets extended data about billboard from RDB flat resource data.
         /// </summary>
         public void SetRDBResourceData(DFBlock.RdbFlatResource resource)
