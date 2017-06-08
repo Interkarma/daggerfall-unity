@@ -49,6 +49,10 @@ namespace DaggerfallWorkshop.Game.Items
         int currentVariant = 0;
         ulong uid;
 
+        // Quest-related fields
+        ulong questUID = 0;
+        bool isQuestItem = false;
+
         // Item template is cached for faster checks
         // Does not need to be serialized
         ItemTemplate cachedItemTemplate;

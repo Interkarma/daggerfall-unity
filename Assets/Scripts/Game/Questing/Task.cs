@@ -80,10 +80,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public enum TaskType
         {
-            Headless,
-            Standard,
-            Repeating,
-            Variable,
+            Headless,           // Startup task - starts automatically when quest begins
+            Standard,           // Normal task - must be started by a set or trigger
+            PersistUntil,       // Automatic startup - when check is true, task and all members stop immediately
+            Variable,           // Boolean variable only - must be set/unset
         }
 
         #endregion
@@ -210,7 +210,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool ReadTaskHeader(string line)
         {
             // Try to match task types
-            Match match = Regex.Match(line, @"(?<symbol>[a-zA-Z0-9_.]+) (?<task>task):|until (?<symbol>[a-zA-Z0-9_.]+) (?<repeating>performed:)|(?<variable>variable) (?<symbol>[a-zA-Z0-9_.]+)");
+            Match match = Regex.Match(line, @"(?<symbol>[a-zA-Z0-9_.]+) (?<task>task):|until (?<symbol>[a-zA-Z0-9_.]+) (?<persist>performed:)|(?<variable>variable) (?<symbol>[a-zA-Z0-9_.]+)");
             if (match.Success)
             {
                 if (!string.IsNullOrEmpty(match.Groups["task"].Value))
@@ -220,13 +220,15 @@ namespace DaggerfallWorkshop.Game.Questing
                     target = string.Empty;
                     symbol = new Symbol(match.Groups["symbol"].Value);
                 }
-                else if (!string.IsNullOrEmpty(match.Groups["repeating"].Value))
+                else if (!string.IsNullOrEmpty(match.Groups["persist"].Value))
                 {
-                    // Repeating task
-                    // These appear to be triggered automatically but need to confirm
-                    type = TaskType.Repeating;
+                    // PersistUntil task
+                    // Starts automatically and terminates when target symbol is true
+                    // Daggerfall seems to use these most commonly to init state or begin timed spawns of enemy mobiles
+                    // It rarely makes sense for these actions to be repeated "over and over" as per Template docs
+                    type = TaskType.PersistUntil;
                     target = match.Groups["symbol"].Value;
-                    triggered = false;
+                    triggered = true;
                     symbol = new Symbol(DaggerfallUnity.NextUID.ToString());
                 }
                 else if (!string.IsNullOrEmpty(match.Groups["variable"].Value))

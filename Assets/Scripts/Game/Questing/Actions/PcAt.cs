@@ -96,10 +96,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             return result;
         }
 
-        public override void Update(Task caller)
-        {
-        }
-
         #region Private Methods
 
         bool CheckInsideDungeon(Place place)

@@ -1,0 +1,46 @@
+---- Example quest used to test person resource
+
+Quest: __DEMO08
+
+
+QRC:
+
+Message:  1020
+Dear %pcn,
+ 
+     I heard about your accident at sea, and feared the
+ worst. Now that I've heard you're alive and well, I
+ would like the opportunity to meet with you and discuss
+ our beloved Emperor's mission in the Iliac Bay.
+ 
+     Allow me to introduce myself. I am Lady Magnessen,
+ the Emperor's agent in the court of Daggerfall. My
+ position is not so official as an ambassador. None but
+ other agents of the Emperor know of my true affiliation.
+ The Iliac Bay is rife with rebels against the Imperial
+ throne, so your discretion is required.
+ 
+     For the purpose of our meeting, I will take a room
+ at an inn, _dirtypit_ in __dirtypit_
+ of Daggerfall, for a month. After that, I will no longer
+ be available. I will expect you as soon as possible.
+ 
+<ce>                            Yours sincerely,
+ 
+<ce>                       Brisienna, Lady Magnessen
+
+Message: 1025
+This should happen when clock expires.
+
+
+QBN:
+
+Item _letter1_ letter used 1020
+Clock _invitepc_ 0.0:1
+
+---- Quest startup
+
+
+_invitepc_ task:
+say 1025
+--give pc _letter1_ notify 1026 

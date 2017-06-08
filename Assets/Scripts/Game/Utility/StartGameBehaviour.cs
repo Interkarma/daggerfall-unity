@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.Utility
         public StartMethods StartMethod = StartMethods.DoNothing;
         public int SaveIndex = -1;
         public string PostStartMessage = string.Empty;
-        public string LaunchQuestOnLoad = string.Empty;
+        public string LaunchQuest = string.Empty;
         public bool EnableVideos = true;
         public bool ShowEditorFlats = false;
         public bool NoWorld = false;
@@ -378,6 +378,13 @@ namespace DaggerfallWorkshop.Game.Utility
 
             lastStartMethod = StartMethods.NewCharacter;
 
+            // Launch quest
+            if (!string.IsNullOrEmpty(LaunchQuest))
+            {
+                QuestMachine.Instance.InstantiateQuest(LaunchQuest);
+                LaunchQuest = string.Empty;
+            }
+
             if (OnStartGame != null)
                 OnStartGame(this, null);
         }
@@ -557,10 +564,10 @@ namespace DaggerfallWorkshop.Game.Utility
         /// </summary>
         private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
         {
-            if (!string.IsNullOrEmpty(LaunchQuestOnLoad))
+            if (!string.IsNullOrEmpty(LaunchQuest))
             {
-                QuestMachine.Instance.InstantiateQuest(LaunchQuestOnLoad);
-                LaunchQuestOnLoad = string.Empty;
+                QuestMachine.Instance.InstantiateQuest(LaunchQuest);
+                LaunchQuest = string.Empty;
             }
         }
 
