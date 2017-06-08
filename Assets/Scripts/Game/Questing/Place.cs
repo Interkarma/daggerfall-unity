@@ -251,6 +251,79 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Assigns a quest resource to this Place site.
+        /// Supports Persons, Items, and Foes from within same quest as Place.
+        /// Quest must have previously created SiteLink for layout builders to discover this assigned resources.
+        /// </summary>
+        /// <param name="targetSymbol">Resource symbol of Person, Item, or Foe to assign.</param>
+        public void AssignQuestResource(Symbol targetSymbol)
+        {
+            // Site must have at least one marker of each type
+            // This is more restrictive than site selection which requires one quest marker only
+            // Interested if these markers always travel together and allowing below just to get a feel for source data
+            // Likely to enforce this requirement at selection time later
+            if (siteDetails.totalQuestMarkers == 0 || siteDetails.totalQuestItemMarkers == 0)
+                throw new Exception(string.Format("Tried to assign resource {0} to Place with no available quest markers.", targetSymbol.Name));
+
+            // Handle marker array being null or empty for some reason
+            // This might help catch allocation and deserialization problems
+            // Otherwise should not happen in normal play
+            if (siteDetails.questMarkers == null || siteDetails.questMarkers.Length == 0)
+                throw new Exception(string.Format("Place {0} has markers but array is null or empty.", Symbol.Name));
+
+            // Attempt to get resource from symbol
+            QuestResource resource = ParentQuest.GetResource(targetSymbol);
+            if (resource == null)
+                throw new Exception(string.Format("Could not locate quest resource with symbol {0}", targetSymbol.Name));
+
+            // Must be a supported resource type
+            MarkerTypes requiredMarkerType = MarkerTypes.None;
+            if (resource is Person)
+                requiredMarkerType = MarkerTypes.NPC;
+            else if (resource is Item)
+                requiredMarkerType = MarkerTypes.Item;
+            else if (resource is Foe)
+                requiredMarkerType = MarkerTypes.NPC;
+            else
+                throw new Exception(string.Format("Tried to assign incompatible resource symbol {0} to Place", targetSymbol.Name));
+
+            // Find first free marker of required type
+            bool foundFreeMarker = false;
+            for (int i = 0; i < siteDetails.questMarkers.Length; i++)
+            {
+                if (siteDetails.questMarkers[i].markerType == requiredMarkerType &&
+                    siteDetails.questMarkers[i].targetSymbol == null)
+                {
+                    // Assign the resource symbol to marker
+                    siteDetails.questMarkers[i].targetSymbol = targetSymbol;
+                    foundFreeMarker = true;
+                    break;
+                }
+            }
+
+            // Make sure we found a marker
+            // This can happen if quest over-allocates more resources than site can handle
+            // Building sites generally have just 1x NPC/Foe and 1x Item marker available
+            // Dungeon sites might have a few more but still a limited resource
+            // If a quest hits this limitation it should assign some resources to a different Place
+            if (!foundFreeMarker)
+                throw new Exception(string.Format("Tried to assign resource symbol {0} to Place {1} but there are free markers for this resource type", targetSymbol.Name, Symbol.Name));
+
+            // Output debug info based on site and resource
+            if (siteDetails.siteType == SiteTypes.Building)
+            {
+                if (requiredMarkerType == MarkerTypes.NPC)
+                    Debug.LogFormat("Assigned NPC {0} to Building {1}", (resource as Person).DisplayName, SiteDetails.buildingName);
+            }
+            else if (siteDetails.siteType == SiteTypes.Dungeon)
+            {
+                if (requiredMarkerType == MarkerTypes.NPC)
+                    Debug.LogFormat("Assigned NPC {0} to Dungeon {1}", (resource as Person).DisplayName, SiteDetails.locationName);
+            }
+        }
+
         #endregion
 
         #region Local Site Methods
@@ -652,6 +725,7 @@ namespace DaggerfallWorkshop.Game.Questing
                             site.locationName = location.Name;
                             site.buildingKey = buildingSummary[i].buildingKey;
                             site.buildingName = buildingName;
+                            site.questMarkers = questMarkers;
                             site.totalQuestMarkers = totalQuestMarkers;
                             site.totalQuestItemMarkers = totalQuestItemMarkers;
                             foundSites.Add(site);

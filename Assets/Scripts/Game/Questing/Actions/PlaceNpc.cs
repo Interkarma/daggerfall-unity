@@ -56,11 +56,15 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Attempt to get Person resource
             Person person = parentQuest.GetPerson(placeNpc.npcSymbol);
             if (person == null)
-                throw new Exception(string.Format("Could not find NPC symbol {0}", placeNpc.npcSymbol));
+                throw new Exception(string.Format("Could not find NPC resource symbol {0}", placeNpc.npcSymbol));
 
-            // TODO: Real house-keeping to place NPC at site, this is just for testing
+            // Attempt to get Place resource
+            Place place = parentQuest.GetPlace(placeNpc.placeSymbol);
+            if (place == null)
+                throw new Exception(string.Format("Could not find Place resource symbol {0}", placeNpc.placeSymbol));
 
-            //Debug.LogFormat("Placed NPC {0} at {1}", placeNpc.npcSymbol.Name, placeNpc.placeSymbol.Name);
+            // Assign NPC to Place
+            place.AssignQuestResource(person.Symbol);
 
             return placeNpc;
         }
