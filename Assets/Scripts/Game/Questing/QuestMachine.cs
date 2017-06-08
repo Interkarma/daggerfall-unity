@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game.Questing
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
         List<Quest> questsToRemove = new List<Quest>();
+        List<SiteLink> siteLinks = new List<SiteLink>();
 
         bool waitingForStartup = true;
         float startupTimer = 0;
@@ -139,36 +140,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #endregion
 
-        #region Structs
-
-        /// <summary>
-        /// Two-value key for map-quest pair.
-        /// A quest can have site reservations in multiple locations.
-        /// A location can host reservations for multiple quests.
-        /// Might add additional logic to this class later.
-        /// </summary>
-        class MapQuestKey
-        {
-            public readonly int MapID;
-            public readonly ulong QuestID;
-            public MapQuestKey(int mapID, ulong questID)
-            {
-                MapID = mapID;
-                QuestID = questID;
-            }
-        }
-
-        /// <summary>
-        /// All reserved sites under a map-quest combo.
-        /// This can include town exterior, buildings, and dungeon.
-        /// </summary>
-        struct ReservedSites
-        {
-            public List<SiteDetails> sites;
-        }
-
-        #endregion
-
         #region Unity
 
         void Awake()
@@ -190,12 +161,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
         private void Update()
         {
-            // Do not tick while HUD fading
-            // This is to prevent quest popups or other actions while player
-            // moving between interior/exterior
-            if (DaggerfallUI.Instance.FadeInProgress)
-                return;
-
             // Handle startup delay
             if (waitingForStartup)
             {
@@ -204,6 +169,12 @@ namespace DaggerfallWorkshop.Game.Questing
                     return;
                 waitingForStartup = false;
             }
+
+            // Do not tick while HUD fading
+            // This is to prevent quest popups or other actions while player
+            // moving between interior/exterior
+            if (DaggerfallUI.Instance.FadeInProgress)
+                return;
 
             // Increment update timer
             updateTimer += Time.deltaTime;
@@ -224,6 +195,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 //RemoveReservedSites(quest);
                 quests.Remove(quest.UID);
+                RemoveQuestSiteLinks(quest.UID);
                 RaiseOnQuestEndedEvent(quest);
             }
 
@@ -262,7 +234,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new RemoveLogMessage(null));
             RegisterAction(new PlayVideo(null));
             RegisterAction(new PcAt(null));
-            RegisterAction(new ReserveSite(null));
+            RegisterAction(new CreateNpcAt(null));
             RegisterAction(new PlaceNpc(null));
         }
 
@@ -425,6 +397,65 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return sites.ToArray();
+        }
+
+        #endregion
+
+        #region Site Links
+
+        /// <summary>
+        /// Adds a site link to quest machine.
+        /// There is no strong unique key to use for site links so they are stored in a flat list.
+        /// Only a small number of site links will be ever active at one time in normal play.
+        /// </summary>
+        /// <param name="siteLink">SiteLink to add.</param>
+        public void AddSiteLink(SiteLink siteLink)
+        {
+            siteLinks.Add(siteLink);
+        }
+
+        /// <summary>
+        /// Removes all site links for a quest.
+        /// Typically done when quest has completed.
+        /// </summary>
+        /// <param name="questUID">UID of quest to remove site links to.</param>
+        public void RemoveQuestSiteLinks(ulong questUID)
+        {
+            // Collect indices of links using this quest
+            List<int> linksToRemove = new List<int>();
+            for (int i = 0; i < siteLinks.Count; i++)
+            {
+                if (siteLinks[i].questUID == questUID)
+                    linksToRemove.Add(i);
+            }
+
+            // Remove site links of that quest
+            foreach(int index in linksToRemove)
+            {
+                siteLinks.RemoveAt(index);
+            }
+        }
+
+        /// <summary>
+        /// Selects all actives site links matching parameters.
+        /// </summary>
+        /// <param name="siteType">Type of sites to select.</param>
+        /// <param name="mapId">MapID in world.</param>
+        /// <returns>SiteLink[] array of found links. Check for null or empty on return.</returns>
+        public SiteLink[] GetSiteLinks(SiteTypes siteType, int mapId)
+        {
+            // Collect a copy of all site links matching params
+            List<SiteLink> foundSiteLinks = new List<SiteLink>();
+            foreach(SiteLink link in siteLinks)
+            {
+                if (link.siteType ==siteType &&
+                    link.mapId == mapId)
+                {
+                    foundSiteLinks.Add(link);
+                }
+            }
+
+            return foundSiteLinks.ToArray();
         }
 
         #endregion

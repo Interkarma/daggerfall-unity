@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // TODO: Real house-keeping to place NPC at site, this is just for testing
 
-            Debug.LogFormat("Placed NPC {0} at {1}", placeNpc.npcSymbol.Name, placeNpc.placeSymbol.Name);
+            //Debug.LogFormat("Placed NPC {0} at {1}", placeNpc.npcSymbol.Name, placeNpc.placeSymbol.Name);
 
             return placeNpc;
         }

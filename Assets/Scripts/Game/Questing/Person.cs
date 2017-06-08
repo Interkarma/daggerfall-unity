@@ -188,33 +188,33 @@ namespace DaggerfallWorkshop.Game.Questing
                         atHome = true;
                 }
 
-                // TEMP: Reserve named NPC who is not at home
-                // Just working through base concepts for now, will reimplement soon
-                if (!string.IsNullOrEmpty(permanentNPCName) && !atHome)
-                {
-                    // Try to read place variables from data table
-                    Table factionsTable = QuestMachine.Instance.FactionsTable;
-                    if (factionsTable.HasValue(permanentNPCName))
-                    {
-                        // Get fixed NPC params
-                        int p3 = Parser.ParseInt(factionsTable.GetValue("p3", permanentNPCName));
+                //// TEMP: Reserve named NPC who is not at home
+                //// Just working through base concepts for now, will reimplement soon
+                //if (!string.IsNullOrEmpty(permanentNPCName) && !atHome)
+                //{
+                //    // Try to read place variables from data table
+                //    Table factionsTable = QuestMachine.Instance.FactionsTable;
+                //    if (factionsTable.HasValue(permanentNPCName))
+                //    {
+                //        // Get fixed NPC params
+                //        int p3 = Parser.ParseInt(factionsTable.GetValue("p3", permanentNPCName));
 
-                        // Get faction info for p3
-                        FactionFile.FactionData factionData;
-                        if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(p3, out factionData))
-                            throw new Exception(string.Format("Could not find faction data for named NPC {0} with FactionID {1}", permanentNPCName, p3));
+                //        // Get faction info for p3
+                //        FactionFile.FactionData factionData;
+                //        if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(p3, out factionData))
+                //            throw new Exception(string.Format("Could not find faction data for named NPC {0} with FactionID {1}", permanentNPCName, p3));
 
-                        // Check this is an individual NPC
-                        if (factionData.type != (int)FactionFile.FactionTypes.Individual)
-                            throw new Exception(string.Format("Named NPC {0} with FactionID {1} is not an individual NPC", permanentNPCName, p3));
+                //        // Check this is an individual NPC
+                //        if (factionData.type != (int)FactionFile.FactionTypes.Individual)
+                //            throw new Exception(string.Format("Named NPC {0} with FactionID {1} is not an individual NPC", permanentNPCName, p3));
 
-                        // Store permanent NPC display name
-                        displayName = factionData.name;
-                        individualFactionIndex = factionData.id;
+                //        // Store permanent NPC display name
+                //        displayName = factionData.name;
+                //        individualFactionIndex = factionData.id;
 
-                        Debug.LogFormat("Resolved named NPC {0} to {1}", permanentNPCName, displayName);
-                    }
-                }
+                //        Debug.LogFormat("Resolved named NPC {0} to {1}", permanentNPCName, displayName);
+                //    }
+                //}
             }
         }
 

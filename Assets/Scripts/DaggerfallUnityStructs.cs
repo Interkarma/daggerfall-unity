@@ -358,7 +358,7 @@ namespace DaggerfallWorkshop
     [Serializable]
     public struct SiteDetails
     {
-        public ulong questUID;                      // UID of quest who reserved this site
+        public ulong questUID;                      // Quest who owns this site
         public SiteTypes siteType;                  // Type of site
         public int mapId;                           // MapID of this location
         public uint locationId;                     // LocationID of this location
@@ -366,21 +366,38 @@ namespace DaggerfallWorkshop
         public string locationName;                 // Name of exterior location itself
         public int buildingKey;                     // Key of building site in this location
         public string buildingName;                 // Name of target building, e.g. 'The Odd Blades'
-        public int totalQuestMarkers;               // Number of quest markers in interior
-        public int totalQuestItemMarkers;           // Number of quest item markers in interior
+        public QuestMarker[] questMarkers;          // Array of quest markers found in site, can be null or empty
+        public int totalQuestMarkers;               // Number of quest markers available
+        public int totalQuestItemMarkers;           // Number of quest item markers available
+    }
+
+    /// <summary>
+    /// Site links are reserved by "create npc at" action.
+    /// Creates a bridge between world and quest markers for layout classes.
+    /// For example, quest NPCs might need to be injected to a certain building or dungeon interior.
+    /// The same mechanism is used to place quest items and foes for the player.
+    /// SiteLink contains enough information for external classes to determine if they belong to that site.
+    /// </summary>
+    [Serializable]
+    public struct SiteLink
+    {
+        public ulong questUID;                      // Quest which reserved link
+        public Symbol placeSymbol;                  // Symbol of Place/site target
+        public SiteTypes siteType;                  // Type of site involved in quest
+        public int mapId;                           // MapID of site location in world
+        public int buildingKey;                     // Key for building site types
     }
 
     /// <summary>
     /// Describes a single quest marker for NPC, item, etc.
-    /// These markers are added to a reserved site when an NPC or item is placed there.
+    /// These markers are added to a site and will target by NPCs, Items, Foes, etc.
     /// </summary>
     public struct QuestMarker
     {
-        public ulong questUID;                      // UID of quest who claimed this marker, 0 if unclaimed
-        public Symbol symbol;                       // Symbol of quest resource this marker represents, null if unclaimed
-        public SiteTypes siteType;                  // Site type this marker belongs to, None if unclaimed
-        public MarkerTypes markerType;              // Type of marker this represents, None if unclaimed
-        public int flatIndex;                       // Index of marker flat in block layout
+        public ulong questUID;                      // Quest who owns this marker
+        public Symbol placeSymbol;                  // Symbol of place who owns this marker
+        public Symbol targetSymbol;                 // Symbol of quest resource this marker represents, null if unclaimed
+        public MarkerTypes markerType;              // Type of marker this represents
         public Vector3 flatPosition;                // Position of marker flat in block layout
         public int buildingKey;                     // Building key if a building site
     }

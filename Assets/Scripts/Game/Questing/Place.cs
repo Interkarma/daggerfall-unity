@@ -281,7 +281,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Must have found at least one site
             if (foundSites == null || foundSites.Length == 0)
-                throw new Exception(string.Format("Could not find local site with P2={0} in {1}\\{2}.", p2, location.RegionName, location.Name));
+                throw new Exception(string.Format("Could not find local site with P2={0} in {1}/{2}.", p2, location.RegionName, location.Name));
 
             // Select a random site from available list
             int selectedIndex = UnityEngine.Random.Range(0, foundSites.Length);
@@ -343,9 +343,10 @@ namespace DaggerfallWorkshop.Game.Questing
             if (!location.Loaded)
                 return false;
 
-            // Check for one or more quest markers inside dungeon
+            // Dungeon must be a valid quest site
             int totalQuestMarkers, totalQuestItemMarkers;
-            if (!EnumerateDungeonQuestMarkers(location, out totalQuestMarkers, out totalQuestItemMarkers))
+            QuestMarker[] questMarkers = EnumerateDungeonQuestMarkers(location, out totalQuestMarkers, out totalQuestItemMarkers);
+            if (questMarkers == null || questMarkers.Length == 0)
             {
                 Debug.LogFormat("Could not find any quest markers in random dungeon {0}", location.Name);
                 return false;
@@ -359,11 +360,12 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
+            siteDetails.questMarkers = questMarkers;
             siteDetails.totalQuestMarkers = totalQuestMarkers;
             siteDetails.totalQuestItemMarkers = totalQuestItemMarkers;
 
             //Debug.LogFormat("Found {0} quest markers and {1} quest item markers in random dungeon {2}", totalQuestMarkers, totalQuestItemMarkers, location.Name);
-            //Debug.LogFormat("Selected dungeon of type {0} at {1}\\{2}", dungeonTypeIndex, location.RegionName, location.Name);
+            //Debug.LogFormat("Selected dungeon of type {0} at {1}/{2}", dungeonTypeIndex, location.RegionName, location.Name);
 
             return true;
         }
@@ -479,13 +481,14 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Check for one or more quest markers inside dungeon
-            // Towns do not have quest markers
-            // Quite often town types are used only to reveal location on travel map
+            // Town sites do not have quest markers and are usually used only to reveal their location on travel map
+            QuestMarker[] questMarkers = null;
             int totalQuestMarkers = 0, totalQuestItemMarkers = 0;
             if (siteType == SiteTypes.Dungeon)
             {
-                // Fixed dungeons should always have markers, throw exception if none found
-                if (!EnumerateDungeonQuestMarkers(location, out totalQuestMarkers, out totalQuestItemMarkers))
+                // Dungeon must be a valid quest site
+                questMarkers = EnumerateDungeonQuestMarkers(location, out totalQuestMarkers, out totalQuestItemMarkers);
+                if (questMarkers == null || questMarkers.Length == 0)
                     throw new Exception(string.Format("Could not find any quest markers in random dungeon {0}", location.Name));
             }
 
@@ -497,10 +500,11 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
+            siteDetails.questMarkers = questMarkers;
             siteDetails.totalQuestMarkers = totalQuestMarkers;
             siteDetails.totalQuestItemMarkers = totalQuestItemMarkers;
 
-            Debug.LogFormat("Setup fixed location {0}\\{1} of type {2} with {3}/{4} quest/item markers.", location.RegionName, location.Name, siteType.ToString(), totalQuestMarkers, totalQuestItemMarkers);
+            //Debug.LogFormat("Setup fixed location {0}/{1} of type {2} with {3}/{4} quest/item markers.", location.RegionName, location.Name, siteType.ToString(), totalQuestMarkers, totalQuestItemMarkers);
         }
 
         #endregion
@@ -549,7 +553,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         DFLocation.BuildingTypes GetRandomBuildingType()
         {
-            int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
+            // Includes house0-4 multiple times to increase chance of roll landing on a residence
+            // Residences make up almost all buildings but only a small number of overall building types
+            // Which results in shops being selected about 2/3 more often than residences for random quests
+            // Including residences multiple times evens this out to include them more often
+            int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20, 17, 18, 19, 20, 17, 18, 19, 20 };
             int index = UnityEngine.Random.Range(0, validBuildingTypes.Length);
 
             return (DFLocation.BuildingTypes)validBuildingTypes[index];
@@ -608,10 +616,10 @@ namespace DaggerfallWorkshop.Game.Questing
                         // Match building against required type
                         if (buildingSummary[i].BuildingType == buildingType)
                         {
-                            // Building must be a quest site
-                            // Checking for one or more quest markers inside record interior
+                            // Building must be a valid quest site
                             int totalQuestMarkers, totalQuestItemMarkers;
-                            if (!EnumerateBuildingQuestMarkers(blocks[index], i, out totalQuestMarkers, out totalQuestItemMarkers))
+                            QuestMarker[] questMarkers = EnumerateBuildingQuestMarkers(blocks[index], i, out totalQuestMarkers, out totalQuestItemMarkers);
+                            if (questMarkers == null || questMarkers.Length == 0)
                                 continue;
 
                             // Get building name based on type
@@ -705,46 +713,71 @@ namespace DaggerfallWorkshop.Game.Questing
             return foundLocationIndices.ToArray();
         }
 
+        #endregion
+
+        #region Quest Markers
+
         /// <summary>
-        /// Check building interior for total available quest markers.
+        /// Creates a new QuestMarker.
         /// </summary>
-        bool EnumerateBuildingQuestMarkers(DFBlock blockData, int recordIndex, out int totalQuestMarkers, out int totalQuestItemMarkers)
+        QuestMarker CreateQuestMarker(MarkerTypes markerType, Vector3 flatPosition)
+        {
+            QuestMarker questMarker = new QuestMarker();
+            questMarker.questUID = ParentQuest.UID;
+            questMarker.placeSymbol = Symbol;
+            questMarker.markerType = markerType;
+            questMarker.flatPosition = flatPosition;
+
+            return questMarker;
+        }
+
+        /// <summary>
+        /// Collect all quest markers inside a building.
+        /// </summary>
+        QuestMarker[] EnumerateBuildingQuestMarkers(DFBlock blockData, int recordIndex, out int totalQuestMarkers, out int totalQuestItemMarkers)
         {
             totalQuestMarkers = 0;
             totalQuestItemMarkers = 0;
+            List<QuestMarker> questMarkers = new List<QuestMarker>();
+
+            // Step through building layout to find markers
             DFBlock.RmbSubRecord recordData = blockData.RmbBlock.SubRecords[recordIndex];
             foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
             {
+                Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
                 if (obj.TextureArchive == 199)
                 {
                     switch (obj.TextureRecord)
                     {
-                        case 11:                        // Quest marker 199.11
+                        case 11:
+                            questMarkers.Add(CreateQuestMarker(MarkerTypes.NPC, position));
                             totalQuestMarkers++;
                             break;
                         case 18:
-                            totalQuestItemMarkers++;    // Quest item marker 199.18
+                            questMarkers.Add(CreateQuestMarker(MarkerTypes.Item, position));
+                            totalQuestItemMarkers++;
                             break;
                     }
                 }
             }
 
-            // Return true if at least one quest marker
+            // Return array if at least one quest marker found
             if (totalQuestMarkers > 0)
-                return true;
+                return questMarkers.ToArray();
 
-            return false;
+            return null;
         }
 
         /// <summary>
         /// Check dungeon interior for total available quest markers.
         /// </summary>
-        bool EnumerateDungeonQuestMarkers(DFLocation location, out int totalQuestMarkers, out int totalQuestItemMarkers)
+        QuestMarker[] EnumerateDungeonQuestMarkers(DFLocation location, out int totalQuestMarkers, out int totalQuestItemMarkers)
         {
             totalQuestMarkers = 0;
             totalQuestItemMarkers = 0;
+            List<QuestMarker> questMarkers = new List<QuestMarker>();
 
-            // Quickly step through dungeon layout to find all blocks with markers
+            // Step through dungeon layout to find all blocks with markers
             foreach (var db in location.Dungeon.Blocks)
             {
                 // Get block data
@@ -761,17 +794,20 @@ namespace DaggerfallWorkshop.Game.Questing
                     foreach (DFBlock.RdbObject obj in group.RdbObjects)
                     {
                         // Look for editor flats
+                        Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
                         if (obj.Type == DFBlock.RdbResourceTypes.Flat)
                         {
                             if (obj.Resources.FlatResource.TextureArchive == 199)
                             {
                                 switch (obj.Resources.FlatResource.TextureRecord)
                                 {
-                                    case 11:                        // Quest marker 199.11
+                                    case 11:
+                                        questMarkers.Add(CreateQuestMarker(MarkerTypes.NPC, position));
                                         totalQuestMarkers++;
                                         break;
                                     case 18:
-                                        totalQuestItemMarkers++;    // Quest item marker 199.18
+                                        questMarkers.Add(CreateQuestMarker(MarkerTypes.Item, position));
+                                        totalQuestItemMarkers++;
                                         break;
                                 }
                             }
@@ -780,11 +816,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
-            // Return true if at least one quest marker
+            // Return array if at least one quest marker found
             if (totalQuestMarkers > 0)
-                return true;
+                return questMarkers.ToArray();
 
-            return false;
+            return null;
         }
 
         #endregion
