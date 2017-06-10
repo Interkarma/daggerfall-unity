@@ -147,7 +147,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly HotkeySequence HotkeySequence_MaxZoom2 = new HotkeySequence(KeyCode.KeypadMinus, HotkeySequence.KeyModifiers.LeftControl | HotkeySequence.KeyModifiers.RightControl);
 
         const string nativeImgName = "AMAP00I0.IMG";
-        const string nativeImgNameGrid3D = "AMAP01I0.IMG";
+        const string nativeImgNameCaption = "TOWN00I0.IMG";
 
         DaggerfallExteriorAutomap daggerfallExteriorAutomap = null; // used to communicate with DaggerfallExteriorAutomap class
 
@@ -189,6 +189,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool inDragMode() { return leftMouseDownOnPanelAutomap || rightMouseDownOnPanelAutomap; }
 
         Texture2D nativeTexture; // background image will be stored in this Texture2D
+        
+        Color[] pixelsCaption; // caption texture (guilds, shops, taverns caption line) will be stored in here
 
         Color[] backgroundOriginal; // texture with orignial background will be stored in here
         Color[] backgroundAlternative1; // texture with first alternative background will be stored in here
@@ -244,16 +246,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!nativeTexture)
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (AMAP00I0.IMG).");
             
-            // Load alternative Grid Icon (3D View Grid graphics)
-            imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, nativeImgNameGrid3D), FileUsage.UseMemory, false);
+            // Load caption line
+            imgFile = new ImgFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, nativeImgNameCaption), FileUsage.UseMemory, false);
             imgFile.LoadPalette(Path.Combine(DaggerfallUnity.Instance.Arena2Path, imgFile.PaletteName));
             bitmap = imgFile.GetDFBitmap();
-            Texture2D nativeTextureGrid3D = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
-            nativeTextureGrid3D.SetPixels32(imgFile.GetColor32(bitmap, 0));
-            nativeTextureGrid3D.Apply(false, false); // make readable
-            nativeTextureGrid3D.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
-            if (!nativeTextureGrid3D)
-                throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (AMAP01I0.IMG).");
+            Texture2D nativeTextureCaption = new Texture2D(bitmap.Width, bitmap.Height, TextureFormat.ARGB32, false);
+            nativeTextureCaption.SetPixels32(imgFile.GetColor32(bitmap, 0));
+            nativeTextureCaption.Apply(false, false); // make readable
+            nativeTextureCaption.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
+            if (!nativeTextureCaption)
+                throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (TOWN00I0.IMG).");
+            pixelsCaption = nativeTextureCaption.GetPixels(0, 0, 320, 10);
+
+            // set caption line in bottom part of exterior automap window background image texture
+            nativeTexture.SetPixels(0, 0, 320, 10, pixelsCaption);
+            nativeTexture.Apply(false);
 
             // store background graphics from from background image
             backgroundOriginal = nativeTexture.GetPixels(0, 29, nativeTexture.width, nativeTexture.height - 29);
