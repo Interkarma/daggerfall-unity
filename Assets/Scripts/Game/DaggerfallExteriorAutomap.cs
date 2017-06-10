@@ -375,6 +375,14 @@ namespace DaggerfallWorkshop.Game
 
         #region Unity
 
+        void Start()
+        {
+            // Creates a new DaggerfallFont using default typeface
+            customFont = new DaggerfallFont();
+            // Reloads glyphs to Daggerfall's default yellowish text colour
+            customFont.ReloadFont(DaggerfallUI.DaggerfallDefaultTextColor);
+        }
+
         void Awake()
         {
             gameObjectPlayerAdvanced = GameObject.Find("PlayerAdvanced");
@@ -408,11 +416,6 @@ namespace DaggerfallWorkshop.Game
 
             cameraTransformRotationSaved = Quaternion.identity;
             cameraOrthographicSizeSaved = 10.0f; // dummy value > 0.0f -> will be overwritten once camera zoom is applied
-
-            // Creates a new DaggerfallFont using index 4 / default typeface
-            DaggerfallFont customFont = DaggerfallUI.Instance.GetFont();
-            // Reloads glyphs to Daggerfall's default yellowish text colour
-            customFont.ReloadFont(DaggerfallUI.DaggerfallDefaultTextColor);
 
             // important that transition events/delegates are created in Awake() instead of OnEnable (since exteriorAutomap gameobject is disabled when going indoors and enabled when going outdoors)
             PlayerGPS.OnMapPixelChanged += OnMapPixelChanged;

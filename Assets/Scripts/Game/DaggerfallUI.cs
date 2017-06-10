@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Game
         UserInterfaceManager uiManager = new UserInterfaceManager();
 
         Texture2D[] daggerfallParchmentTextures;
-        DaggerfallFont[] daggerfallFonts = new DaggerfallFont[4];
+        DaggerfallFont[] daggerfallFonts = new DaggerfallFont[5];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
 
