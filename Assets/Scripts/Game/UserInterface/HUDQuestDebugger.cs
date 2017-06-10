@@ -34,11 +34,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int taskColWidth = 60;
         const int timerColWidth = 100;
         const string noQuestsRunning = "NO QUESTS RUNNING";
+        const string questRunning = "Running";
+        const string questFinished = "Finished";
         const int taskLabelPoolCount = 84;
         const int timerLabelPoolCount = 20;
 
         Quest currentQuest;
         TextLabel questNameLabel = new TextLabel();
+        TextLabel processLabel = new TextLabel();
         TextLabel tasksHeaderLabel = new TextLabel();
         TextLabel timersHeaderLabel = new TextLabel();
         TextLabel[] taskLabelPool = new TextLabel[taskLabelPoolCount];
@@ -47,12 +50,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public HUDQuestDebugger()
             : base()
         {
+            QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
             // Quest name label
             questNameLabel.Text = noQuestsRunning;
             questNameLabel.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
             questNameLabel.ShadowPosition = Vector2.zero;
             questNameLabel.Position = new Vector2(0, 0);
             Components.Add(questNameLabel);
+
+            // Process label
+            processLabel.TextColor = Color.white;
+            processLabel.ShadowPosition = Vector2.zero;
+            processLabel.Position = new Vector2(0, 10);
+            Components.Add(processLabel);
 
             // Tasks header label
             tasksHeaderLabel.Text = "Tasks";
@@ -80,6 +90,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
+            // Allow current quest to remain visible even if finished
+            // Tester will need to move to another quest or close debugger to clear
+            if (currentQuest != null && currentQuest.QuestComplete)
+            {
+                return;
+            }
+
             // Must at least one running quests
             if (QuestMachine.Instance.QuestCount == 0)
             {
@@ -90,9 +107,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             }
 
-            // If no quest has been set or current quest ended, get the first active quest
+            // If no quest has been set, get the first active quest
             // We know from previous check there is at least one quest available
-            if (currentQuest == null || currentQuest.QuestComplete)
+            if (currentQuest == null)
             {
                 ulong[] activeQuests = QuestMachine.Instance.GetAllActiveQuests();
                 SetCurrentQuest(QuestMachine.Instance.GetActiveQuest(activeQuests[0]));
@@ -129,6 +146,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 else
                     timerLabelPool[i].TextColor = Color.red;
             }
+
+            // Set running status
+            // TODO: Use this line for step-through debugging
+            processLabel.Text = questRunning;
         }
 
         void SetupTaskLabels(Vector2 startPosition)
@@ -194,6 +215,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set headers
             questNameLabel.Text = noQuestsRunning;
             tasksHeaderLabel.Enabled = false;
+            processLabel.Enabled = false;
             timersHeaderLabel.Enabled = false;
 
             // Disable task labels
@@ -216,6 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set headers
             questNameLabel.Text = quest.QuestName;
             tasksHeaderLabel.Enabled = true;
+            processLabel.Enabled = true;
             timersHeaderLabel.Enabled = true;
 
             // Set task labels
@@ -234,6 +257,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
             for (int i = 0; i < clocks.Length; i++)
             {
                 timerLabelPool[i].Enabled = true;
+            }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void QuestMachine_OnQuestEnded(Quest quest)
+        {
+            if (quest.UID == currentQuest.UID)
+            {
+                // Show quest finished text
+                processLabel.Text = questFinished;
             }
         }
 
