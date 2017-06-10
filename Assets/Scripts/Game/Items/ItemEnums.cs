@@ -305,7 +305,7 @@ namespace DaggerfallWorkshop.Game.Items
         Common_symbol = 260,
         Bell = 261,
         Holy_water = 262,
-        Tailsman = 263,
+        Talisman = 263,
         Religious_item = 264,
         Small_statue = 265,
         Icon = 267,
@@ -371,7 +371,7 @@ namespace DaggerfallWorkshop.Game.Items
         Sapphire = 2,
         Diamond = 3,
         Jade = 4,
-        Turquiose = 5,
+        Turquoise = 5,
         Malachite = 6,
         Amber = 7,
     }
@@ -448,7 +448,7 @@ namespace DaggerfallWorkshop.Game.Items
 
     public enum CreatureIngredients3 //checked
     {
-        Wearboar_tusk = 34,
+        Wereboar_tusk = 34,
         Nymph_hair = 36,
         Unicorn_horn = 37,
     }

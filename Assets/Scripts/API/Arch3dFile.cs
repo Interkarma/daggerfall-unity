@@ -898,7 +898,7 @@ namespace DaggerfallConnect.Arena2
                 }
 
                 // Store UV generation method of this plane
-                subMeshBuffer[subMeshIndex].PlaneBuffer[planeIndex].UVGenerationMethod = DFMesh.UVGenerationMethods.ModifedMatrixGenerator;
+                subMeshBuffer[subMeshIndex].PlaneBuffer[planeIndex].UVGenerationMethod = DFMesh.UVGenerationMethods.ModifiedMatrixGenerator;
             }
 
             // Write first 3 points

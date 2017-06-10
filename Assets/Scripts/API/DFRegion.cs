@@ -117,7 +117,7 @@ namespace DaggerfallConnect
             /// <summary>HouseForSale</summary>
             HouseForSale = 0x01,
             /// <summary>Amorer</summary>
-            Amorer = 0x02,
+            Armorer = 0x02,
             /// <summary>Bank</summary>
             Bank = 0x03,
             /// <summary>Town4</summary>

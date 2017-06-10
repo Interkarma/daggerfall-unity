@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         List<Mod> Mods;
         public static FullSerializer.fsSerializer _serializer = new FullSerializer.fsSerializer();
 
-        public static string[] textExtentsions = new string[]
+        public static string[] textExtensions = new string[]
         {
             ".txt",
             ".html",
@@ -299,7 +299,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <param name="clone">return copy of asset</param>
         ///<param name="check">true if loaded sucessfully</param>
         /// <returns></returns>
-        public T GetAssestFromMod<T>(string assetName, string modTitle, bool clone, out bool check) where T : UnityEngine.Object
+        public T GetAssetFromMod<T>(string assetName, string modTitle, bool clone, out bool check) where T : UnityEngine.Object
         {
             check = false;
             T asset = null;
@@ -693,10 +693,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (Mods == null || Mods.Count < 1)
                 return;
             var mod = GetMod(modTitle);
-            if (mod == null || mod.MessageReciver == null)
+            if (mod == null || mod.MessageReceiver == null)
                 return;
             else
-                mod.MessageReciver(message, data, callback);
+                mod.MessageReceiver(message, data, callback);
         }
 
 
