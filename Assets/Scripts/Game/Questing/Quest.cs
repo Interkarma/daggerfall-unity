@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool questComplete = false;
         Dictionary<int, LogEntry> activeLogMessages = new Dictionary<int, LogEntry>();
 
+        string questName;
         string displayName;
         DaggerfallDateTime questStartTime;
 
@@ -77,8 +78,20 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return questComplete; }
         }
 
+
         /// <summary>
-        /// Display name for quest log.
+        /// Short quest name read from source.
+        /// e.g. "_BRISIEN"
+        /// </summary>
+        public string QuestName
+        {
+            get { return questName; }
+            set { questName = value; }
+        }
+
+        /// <summary>
+        /// Optional display name for future quest journal.
+        /// e.g. "Lady Brisienna's Letter"
         /// </summary>
         public string DisplayName
         {
@@ -139,30 +152,18 @@ namespace DaggerfallWorkshop.Game.Questing
             questComplete = true;
         }
 
-        public void SetTask(string name)
+        public void SetTask(Symbol symbol)
         {
-            Task task = GetTask(name);
+            Task task = GetTask(symbol);
             if (task != null)
                 task.Set();
         }
 
-        public void SetTask(Symbol symbol)
-        {
-            if (symbol != null)
-                SetTask(symbol.Name);
-        }
-
-        public void UnsetTask(string name)
-        {
-            Task task = GetTask(name);
-            if (task != null)
-                task.Unset();
-        }
-
         public void UnsetTask(Symbol symbol)
         {
-            if (symbol != null)
-                UnsetTask(symbol.Name);
+            Task task = GetTask(symbol);
+            if (task != null)
+                task.Unset();
         }
 
         #endregion
@@ -264,20 +265,17 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
         }
 
-        public Task GetTask(string name)
+        public Task GetTask(Symbol symbol)
         {
-            if (!string.IsNullOrEmpty(name) && tasks.ContainsKey(name))
-                return tasks[name];
+            if (symbol != null && tasks.ContainsKey(symbol.Name))
+                return tasks[symbol.Name];
             else
                 return null;
         }
 
-        public Clock GetClock(string name)
+        public Clock GetClock(Symbol symbol)
         {
-            if (!string.IsNullOrEmpty(name) && resources.ContainsKey(name))
-                return (Clock)resources[name];
-            else
-                return null;
+            return GetResource(symbol) as Clock;
         }
 
         public Place GetPlace(Symbol symbol)

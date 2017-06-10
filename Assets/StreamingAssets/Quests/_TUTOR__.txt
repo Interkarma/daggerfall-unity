@@ -205,7 +205,8 @@ Message:  1041
 <ce>          that you are (Daggerfall) in is highlighted in red.
 <ce>         Click on that region and you get a blow up map. There
 <ce>         are a lot of places on this map! Lets find the city of
-<ce> Daggerfall. Click FIND and type in DAGGERFALL. The most convenient way to travel is by clicking
+<ce>             Daggerfall. Click FIND and type in DAGGERFALL.
+<ce>            The most convenient way to travel is by clicking
 <ce>           CAUTIOUSLY and INNS, both of which are the default
 <ce>           settings. Otherwise you risk arriving at night and
 <ce>              having to climb the walls to get into town.

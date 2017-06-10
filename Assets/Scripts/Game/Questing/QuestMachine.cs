@@ -17,7 +17,6 @@ using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing.Actions;
-using DaggerfallWorkshop.Game.Questing.Conditions;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -235,6 +234,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new CreateNpcAt(null));
             RegisterAction(new PlaceNpc(null));
             RegisterAction(new GivePc(null));
+            RegisterAction(new StartStopTimer(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)

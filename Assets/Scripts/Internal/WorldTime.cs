@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop
     public class WorldTime : MonoBehaviour
     {
         public DaggerfallDateTime DaggerfallDateTime = new DaggerfallDateTime();
-        public float TimeScale = 10f;
+        public float TimeScale = 12f;
         public bool ShowDebugString = false;
 
         int lastHour;
@@ -35,6 +35,12 @@ namespace DaggerfallWorkshop
         int lastMonth;
         int lastYear;
 
+        /// <summary>
+        /// Get the current world time object.
+        /// Notes:
+        ///  This is the live world time instance - any changes to this will be reflected in game world
+        ///  If you just want a copy of value use Now.Clone()
+        /// </summary>
         public DaggerfallDateTime Now
         {
             get { return DaggerfallDateTime; }

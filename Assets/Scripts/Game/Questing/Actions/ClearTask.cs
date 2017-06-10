@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com)
-// Contributors:    
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     /// </summary>
     public class ClearTask : ActionTemplate
     {
-        public string[] tasknames;
+        public Symbol[] taskSymbols;
 
         public override string Pattern
         {
@@ -33,8 +33,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
         }
 
-        public override IQuestAction Create(string source, Quest parentQuest)
+        public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
+            base.CreateNew(source, parentQuest);
+
             // Source must match pattern
             Match match = Test(source);
             if (!match.Success)
@@ -45,10 +47,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             try
             {
                 string[] tasks = source.Split();
-                action.tasknames = new String[tasks.Length - 1];
-                for (int i = 0; i < action.tasknames.Length; i++)
+                action.taskSymbols = new Symbol[tasks.Length - 1];
+                for (int i = 0; i < action.taskSymbols.Length; i++)
                 {
-                    action.tasknames[i] = tasks[i+1];
+                    action.taskSymbols[i] = new Symbol(tasks[i+1]);
                 }
             }
             catch (System.Exception ex)
@@ -62,21 +64,21 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override object GetSaveData()
         {
-            return tasknames;
+            return taskSymbols;
         }
 
         public override void RestoreSaveData(object dataIn)
         {
             if (dataIn == null)
                 return;
-            tasknames = (String[])dataIn;
+            taskSymbols = (Symbol[])dataIn;
         }
 
         public override void Update(Task caller)
         {
-            foreach (var taskname in this.tasknames)
+            foreach (Symbol taskSymbol in taskSymbols)
             {
-                var task = ParentQuest.GetTask(taskname);
+                Task task = ParentQuest.GetTask(taskSymbol);
                 if (task != null)
                     task.Unset();
             }

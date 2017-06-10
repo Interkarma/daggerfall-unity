@@ -17,49 +17,51 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// A clock tracks time remaining on quests or intervals between actions.
+    /// A clock is an alarm that that executes a task with the same symbol name.
     /// Clock must be started and stopped by quest actions.
-    /// Clock will execute a task with same symbol name when countdown finished.
+    /// Clock runs down in game-time (default is 12x real-time).
+    /// This also means timer is paused when game is paused.
     /// </summary>
     public class Clock : QuestResource
     {
-        ClockTypes clockType;
-        DaggerfallDateTime clockStartTime;
-        DaggerfallDateTime clockEndTime;
-        bool clockRunning = false;
+        DaggerfallDateTime lastWorldTimeSample;
+        int initialTimeInSeconds;
+        int remainingTimeInSeconds;
+        int flag = 0;
+        int minRange = 0;
+        int maxRange = 0;
+        bool clockEnabled = false;
+        bool clockFinished = false;
 
         #region Properties
 
-        public ClockTypes ClockType
+        public bool Enabled
         {
-            get { return clockType; }
+            get { return clockEnabled; }
+            set { clockEnabled = value; }
         }
 
-        public DaggerfallDateTime StartTime
+        public bool Finished
         {
-            get { return clockStartTime; }
+            get { return clockFinished; }
         }
 
-        public DaggerfallDateTime EndTime
+        public int Flag
         {
-            get { return clockEndTime; }
+            get { return flag; }
+            set { flag = value; }
         }
 
-        public bool IsRunning
+        public int MinRange
         {
-            get { return clockRunning; }
+            get { return minRange; }
+            set { minRange = value; }
         }
 
-        #endregion
-
-        #region Enums
-
-        public enum ClockTypes
+        public int MaxRange
         {
-            None,               // Timer not set
-            Range,              // Timer starts from range between dd.hh:mm and dd.hh:mm
-            Fixed,              // Timer starts from a fixed dd.hh:mm
-            Basic,              // Timer is just random - currently unknown what extents classic uses here
+            get { return maxRange; }
+            set { maxRange = value; }
         }
 
         #endregion
@@ -92,18 +94,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override void SetResource(string line)
         {
-            int days, hours, minutes;
-            int maxDays, maxHours, maxMinutes;
-            int minDays, minHours, minMinutes;
-            int flag, minRange, maxRange;
-
             base.SetResource(line);
 
-            string declMatchStr = @"(?<range>Clock|clock) (?<symbol>[a-zA-Z0-9_.-]+) (?<maxDays>\d+).(?<maxHours>\d+):(?<maxMinutes>\d+) (?<minDays>\d+).(?<minHours>\d+):(?<minMinutes>\d+)|" +
-                                  @"(?<fixed>Clock|clock) (?<symbol>[a-zA-Z0-9_.-]+) (?<days>\d+).(?<hours>\d+):(?<minutes>\d+)|" +
-                                  @"(?<basic>Clock|clock) (?<symbol>[a-zA-Z0-9_.-]+)";
+            string declMatchStr = @"(Clock|clock) (?<symbol>[a-zA-Z0-9_.-]+)";
 
-            string optionsMatchStr = @"flag (?<flag>\d+)|" +
+            string optionsMatchStr = @"(?<ddhhmm>)\d+.\d+:\d+|" +
+                                     @"(?<hhmm>)\d+:\d+|" +
+                                     @"(?<mm>)\d+|" +
+                                     @"flag (?<flag>\d+)|" +
                                      @"range (?<minRange>\d+) (?<maxRange>\d+)";
 
             // Try to match source line with pattern
@@ -116,38 +114,43 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Store symbol for quest system
                 Symbol = new Symbol(match.Groups["symbol"].Value);
 
-                // Match clock type
-                if (!string.IsNullOrEmpty(match.Groups["range"].Value))
-                {
-                    clockType = ClockTypes.Range;
-                    maxDays = Parser.ParseInt(match.Groups["maxDays"].Value);
-                    maxHours = Parser.ParseInt(match.Groups["maxHours"].Value);
-                    maxMinutes = Parser.ParseInt(match.Groups["maxMinutes"].Value);
-                    minDays = Parser.ParseInt(match.Groups["minDays"].Value);
-                    minHours = Parser.ParseInt(match.Groups["minHours"].Value);
-                    minMinutes = Parser.ParseInt(match.Groups["minMinutes"].Value);
-                }
-                else if (!string.IsNullOrEmpty(match.Groups["fixed"].Value))
-                {
-                    clockType = ClockTypes.Fixed;
-                    days = Parser.ParseInt(match.Groups["days"].Value);
-                    hours = Parser.ParseInt(match.Groups["hours"].Value);
-                    minutes = Parser.ParseInt(match.Groups["minutes"].Value);
-                }
-                else if (!string.IsNullOrEmpty(match.Groups["basic"].Value))
-                {
-                    clockType = ClockTypes.Basic;
-                    // TODO: Find extents for basic random clock
-                }
-                else
-                {
-                    throw new Exception("Invalid clock syntax");
-                }
+                // Split options from declaration
+                string optionsLine = line.Substring(match.Length);
 
                 // Match all options
-                MatchCollection options = Regex.Matches(line, optionsMatchStr);
+                // TODO: Work out meaning of "flag" and "range" values
+                int timeValue0 = -1;
+                int timeValue1 = -1;
+                int currentTimeValue = 0;
+                MatchCollection options = Regex.Matches(optionsLine, optionsMatchStr);
                 foreach (Match option in options)
                 {
+                    // Match any possible time value syntax
+                    Group ddhhmmGroup = option.Groups["ddhhmm"];
+                    Group hhmmGroup = option.Groups["hhmm"];
+                    Group mmGroup = option.Groups["mm"];
+                    if (ddhhmmGroup.Success || hhmmGroup.Success | mmGroup.Success)
+                    {
+                        // Get time value
+                        int timeValue = MatchTimeValue(option.Value);
+
+                        // Assign time value
+                        if (currentTimeValue == 0)
+                        {
+                            timeValue0 = timeValue;
+                            currentTimeValue++;
+                        }
+                        else if (currentTimeValue == 1)
+                        {
+                            timeValue1 = timeValue;
+                            currentTimeValue++;
+                        }
+                        else
+                        {
+                            throw new Exception("Clock cannot specify more than 2 time values.");
+                        }
+                    }
+
                     // Unknown flag value
                     Group flagGroup = option.Groups["flag"];
                     if (flagGroup.Success)
@@ -163,11 +166,60 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (maxRangeGroup.Success)
                         maxRange = Parser.ParseInt(maxRangeGroup.Value);
                 }
+
+                // Set total clock time based on values
+                int clockTimeInSeconds = 0;
+                if (currentTimeValue == 0)
+                {
+                    // No time value specifed: "clock _symbol_"
+                    // Clock timer starts at a random value between 1 week and 1 minute
+                    // TODO: Work out the actual range Daggerfall uses here
+                    int minSeconds = GetTimeInSeconds(0, 0, 1);
+                    int maxSeconds = GetTimeInSeconds(7, 0, 0);
+                    clockTimeInSeconds = FromRange(minSeconds, maxSeconds);
+                }
+                else if (currentTimeValue == 1)
+                {
+                    // One time value specified: "clock _symbol_ dd.hh:mm"
+                    // Clock timer starts at this value
+                    clockTimeInSeconds = timeValue0;
+                }
+                else if (currentTimeValue == 2)
+                {
+                    // Two time values specified: "clock _symbol_ dd.hh:mm dd.hh:mm"
+                    // Clock timer starts at a random point between timeValue0 (max) and timeValue1 (min)
+                    clockTimeInSeconds = FromRange(timeValue1, timeValue0);
+                }
+
+                // Set timer value in seconds
+                InitialiseTimer(clockTimeInSeconds);
             }
         }
 
         public override void Tick(Quest caller)
         {
+            // Exit if not enabled or finished
+            if (!clockEnabled || clockFinished)
+                return;
+
+            // Get how much time has passed in whole seconds
+            DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now.Clone();
+            ulong difference = now.ToSeconds() - lastWorldTimeSample.ToSeconds();
+
+            // Remove time passed from time remaining
+            remainingTimeInSeconds -= (int)difference;
+
+            // Check if time is up
+            if (remainingTimeInSeconds <= 0)
+            {
+                TriggerTask();
+                clockEnabled = false;
+                clockFinished = true;
+                remainingTimeInSeconds = 0;
+            }
+
+            // Update last time sample to now
+            lastWorldTimeSample = now;
         }
 
         #endregion
@@ -175,13 +227,77 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Public Methods
 
         /// <summary>
-        /// Start or stop clock from running.
-        /// Clocks must started by an action.
+        /// Starts timer if not already running or complete.
         /// </summary>
-        /// <param name="running">Boolean to start and stop clock.</param>
-        public void SetClockRunning(bool running)
+        public void StartTimer()
         {
-            clockRunning = running;
+            if (!clockFinished)
+            {
+                clockEnabled = true;
+                lastWorldTimeSample = DaggerfallUnity.Instance.WorldTime.Now.Clone();
+            }
+        }
+
+        /// <summary>
+        /// Stops clock from running if not already complete.
+        /// </summary>
+        public void StopTimer()
+        {
+            if (!clockFinished)
+            {
+                clockEnabled = false;
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        int MatchTimeValue(string line)
+        {
+            string matchStr = @"(?<days>\d+).(?<hours>\d+):(?<minutes>\d+)|(?<hours>\d+):(?<minutes>\d+)|(?<minutes>\d+)";
+
+            Match match = Regex.Match(line, matchStr);
+            if (match.Success)
+            {
+                int days = Parser.ParseInt(match.Groups["days"].Value);
+                int hours = Parser.ParseInt(match.Groups["hours"].Value);
+                int minutes = Parser.ParseInt(match.Groups["minutes"].Value);
+
+                return GetTimeInSeconds(days, hours, minutes);
+            }
+
+            return 0;
+        }
+
+        int GetTimeInSeconds(int days, int hours, int minutes)
+        {
+            return (days * 86400) + (hours * 3600) + (minutes * 60);
+        }
+
+        int FromRange(int minSeconds, int maxSeconds)
+        {
+            return UnityEngine.Random.Range(minSeconds, maxSeconds);
+        }
+
+        void InitialiseTimer(int clockTimeInSeconds)
+        {
+            initialTimeInSeconds = clockTimeInSeconds;
+            remainingTimeInSeconds = clockTimeInSeconds;
+        }
+
+        void TriggerTask()
+        {
+            // Attempt to get task with same symbol name as this timer
+            Task task = ParentQuest.GetTask(Symbol);
+            if (task != null)
+            {
+                task.Set();
+            }
+            else
+            {
+                Debug.LogFormat("Clock timer {0} completed but could not find a task with same name.", Symbol.Name);
+            }
         }
 
         #endregion

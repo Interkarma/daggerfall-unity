@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Check trigger conditions on inactive tasks
                 if (!triggered && action.IsTriggerCondition)
                 {
-                    if (action.CheckCondition(this))
+                    if (action.CheckTrigger(this))
                         triggered = true;
                 }
 
@@ -262,7 +262,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (actionTemplate != null)
                 {
                     // Create a new action from template (don't link template itself)
-                    IQuestAction action = actionTemplate.Create(lines[i], ParentQuest);
+                    IQuestAction action = actionTemplate.CreateNew(lines[i], ParentQuest);
                     if (action != null)
                     {
                         actions.Add(action);

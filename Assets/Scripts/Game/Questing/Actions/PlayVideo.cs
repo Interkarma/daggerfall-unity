@@ -34,8 +34,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public PlayVideo(Quest parentQuest) : base(parentQuest) {}
 
-        public override IQuestAction Create(string source, Quest parentQuest)
+        public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
+            base.CreateNew(source, parentQuest);
+
             // Source must match pattern
             Match match = Test(source);
             if (!match.Success)

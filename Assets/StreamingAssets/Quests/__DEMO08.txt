@@ -35,11 +35,11 @@ This should happen when clock expires.
 
 QBN:
 
-Item _letter1_ letter used 1020
+--Item _letter1_ letter used 1020
 Clock _invitepc_ 0.0:1
 
 ---- Quest startup
-
+start timer _invitepc_
 
 _invitepc_ task:
 say 1025

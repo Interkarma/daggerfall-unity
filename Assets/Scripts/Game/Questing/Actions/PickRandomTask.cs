@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com)
-// Contributors:    
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     /// </summary>
     public class PickRandomTask : ActionTemplate
     {
-        public string[] taskNames;
+        public Symbol[] taskSymbols;
 
         public override string Pattern
         {
@@ -33,8 +33,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
         }
 
-        public override IQuestAction Create(string source, Quest parentQuest)
+        public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
+            base.CreateNew(source, parentQuest);
+
             // Source must match pattern
             Match match = Test(source);
             if (!match.Success)
@@ -48,11 +50,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 if (splits == null || splits.Length < 4)
                     return null;
                 else
-                    action.taskNames = new String[splits.Length - 3];
+                    action.taskSymbols = new Symbol[splits.Length - 3];
 
-                for (int i = 0; i < action.taskNames.Length; i++)
+                for (int i = 0; i < action.taskSymbols.Length; i++)
                 {
-                    action.taskNames[i] = splits[i + 3];
+                    action.taskSymbols[i] = new Symbol(splits[i + 3]);
                 }
 
             }
@@ -68,14 +70,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override object GetSaveData()
         {
-            return taskNames;
+            return taskSymbols;
         }
 
         public override void RestoreSaveData(object dataIn)
         {
             if (dataIn == null)
                 return;
-            taskNames = (String[])dataIn;
+            taskSymbols = (Symbol[])dataIn;
         }
 
         public override void Update(Task caller)
@@ -84,8 +86,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if(ParentQuest != null)
             {
                 UnityEngine.Random.InitState(System.Environment.TickCount);
-                var selected = taskNames[UnityEngine.Random.Range(0, taskNames.Length)];
-                var task = ParentQuest.GetTask(selected);
+                Symbol selected = taskSymbols[UnityEngine.Random.Range(0, taskSymbols.Length)];
+                Task task = ParentQuest.GetTask(selected);
 
                 if (task != null)
                 {

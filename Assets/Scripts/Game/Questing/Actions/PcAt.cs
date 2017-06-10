@@ -39,11 +39,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public PcAt(Quest parentQuest)
             : base(parentQuest)
         {
-            IsTriggerCondition = true;
         }
 
-        public override IQuestAction Create(string source, Quest parentQuest)
+        public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
+            base.CreateNew(source, parentQuest);
+
             // Source must match pattern
             Match match = Test(source);
             if (!match.Success)
@@ -58,19 +59,17 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             return pcat;
         }
 
-        // TODO:
-        // Need to check condition at least once for pre-started tasks (e.g. startup task).
-        // For example, _BRISIEN calls 'pc at PiratesHold set _exitstarter_' at startup to set _exitstarter_ flag if player starts in Privateer's Hold.
-        // This currently won't run because quest machine considers task running already and doesn't evaluate trigger condition.
-        // Will redesign conditional checks in near future.
-        public override bool CheckCondition(Task caller)
+        /// <summary>
+        /// Continuously checks where player is and sets target true/false based on site properties.
+        /// </summary>
+        public override void Update(Task caller)
         {
             bool result = false;
 
             // Get place resource
             Place place = ParentQuest.GetPlace(placeSymbol);
             if (place == null)
-                return false;
+                return;
 
             // Check building site
             if (place.SiteDetails.siteType == SiteTypes.Building)
@@ -81,19 +80,21 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 result = CheckInsideDungeon(place);
 
             // Handle positive check
-            // TODO: Which should happen first, the "saying" popup or task execution?
-            // With the current execution flow, any task "say" actions will happen before "pc at saying" check result here.
             if (result)
             {
-                // Trigger target task
-                ParentQuest.SetTask(taskSymbol);
-
                 // "saying" popup
+                // TODO: Should this run every time or only once?
                 if (textId != 0)
                     ShowPopup(textId);
-            }
 
-            return result;
+                // Enable target task
+                ParentQuest.SetTask(taskSymbol);
+            }
+            else
+            {
+                // Disable target task
+                ParentQuest.UnsetTask(taskSymbol);
+            }
         }
 
         #region Private Methods

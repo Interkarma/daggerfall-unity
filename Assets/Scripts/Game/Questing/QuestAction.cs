@@ -34,7 +34,9 @@ namespace DaggerfallWorkshop.Game.Questing
         bool IsComplete { get; }
 
         /// <summary>
-        /// Returns true if this action considers itself a conditional operator.
+        /// Returns true if this action considers itself a trigger condition.
+        ///  * Trigger will be checked even on inactive tasks
+        ///  * When trigger evaluates true the task will become active
         /// </summary>
         bool IsTriggerCondition { get; }
 
@@ -45,8 +47,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Factory new instance of this action from source line.
+        /// Overrides should always call base to set debug source line.
         /// </summary>
-        IQuestAction Create(string source, Quest parentQuest);
+        IQuestAction CreateNew(string source, Quest parentQuest);
 
         /// <summary>
         /// Get action state data to serialize.
@@ -65,10 +68,10 @@ namespace DaggerfallWorkshop.Game.Questing
         void Update(Task caller);
 
         /// <summary>
-        /// Check condition status.
+        /// Check trigger condition status.
         /// Allows task to become active when condition returns true.
         /// </summary>
-        bool CheckCondition(Task caller);
+        bool CheckTrigger(Task caller);
 
         /// <summary>
         /// Sets action as complete so as not to be called again by task.
@@ -91,12 +94,12 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         bool complete = false;
         bool triggerCondition = false;
+        string debugSource;
 
         public bool IsComplete { get { return complete; } }
         public bool IsTriggerCondition { get { return triggerCondition; } protected set { triggerCondition = value; } }
 
         public abstract string Pattern { get; }
-        public abstract IQuestAction Create(string source, Quest parentQuest);
 
         public ActionTemplate(Quest parentQuest)
             : base(parentQuest)
@@ -108,11 +111,18 @@ namespace DaggerfallWorkshop.Game.Questing
             return Regex.Match(source, Pattern);
         }
 
+        public virtual IQuestAction CreateNew(string source, Quest parentQuest)
+        {
+            debugSource = source;
+
+            return this;
+        }
+
         public virtual void Update(Task caller)
         {
         }
 
-        public virtual bool CheckCondition(Task caller)
+        public virtual bool CheckTrigger(Task caller)
         {
             return false;
         }

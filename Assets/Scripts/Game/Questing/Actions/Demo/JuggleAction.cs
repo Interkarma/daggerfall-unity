@@ -74,8 +74,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         /// </summary>
         /// <param name="source">Source line.</param>
         /// <returns>New quest action from this template or null if not created.</returns>
-        public override IQuestAction Create(string source, Quest parentQuest)
+        public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
+            base.CreateNew(source, parentQuest);
+
             // Source must match pattern
             Match match = Test(source);
             if (!match.Success)

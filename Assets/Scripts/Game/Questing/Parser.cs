@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Fields
 
         const string specialFieldToken = "--+";
+
         #endregion
 
         #region Constructors
@@ -89,6 +90,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (text.StartsWith("quest:", comparison))
                 {
                     questName = GetFieldStringValue(text);
+                    quest.QuestName = questName;
                 }
                 else if (text.StartsWith("qrc:", comparison))
                 {

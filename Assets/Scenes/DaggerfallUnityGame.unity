@@ -718,11 +718,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StartMethod: 2
-  OverrideSaveIndex: -1
+  SaveIndex: -1
   PostStartMessage: 
+  LaunchQuest: 
   EnableVideos: 1
+  ShowEditorFlats: 0
   NoWorld: 0
-  GodMod: 0
+  GodMode: 0
 --- !u!1001 &379206444
 Prefab:
   m_ObjectHideFlags: 0
@@ -1049,10 +1051,6 @@ Prefab:
       value: 
       objectReference: {fileID: 11486862, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559,
         type: 2}
-    - target: {fileID: 11400004, guid: 0811f78212229814d8c469c916304789, type: 2}
-      propertyPath: TimeScale
-      value: 12
-      objectReference: {fileID: 0}
     - target: {fileID: 11400008, guid: 0811f78212229814d8c469c916304789, type: 2}
       propertyPath: MipMaps
       value: 1

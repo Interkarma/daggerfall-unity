@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override string Pattern
         {
-            get { return @"give pc (?<anItem>[a-zA-Z0-9_.]+)||give pc (?<anItem>[a-zA-Z0-9_.]+) notify (?<id>\d+)||give pc (?<nothing>nothing)"; }
+            get { return @"give pc (?<anItem>[a-zA-Z0-9_.]+)|give pc (?<anItem>[a-zA-Z0-9_.]+) notify (?<id>\d+)|give pc (?<nothing>nothing)"; }
         }
 
         public GivePc(Quest parentQuest)
@@ -33,8 +33,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
         }
 
-        public override IQuestAction Create(string source, Quest parentQuest)
+        public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
+            base.CreateNew(source, parentQuest);
+
             // Source must match pattern
             Match match = Test(source);
             if (!match.Success)
@@ -50,11 +52,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 action.isNothing = false;
 
             return action;
-        }
-
-        public override void Update(Task caller)
-        {
-            base.Update(caller);
         }
     }
 }

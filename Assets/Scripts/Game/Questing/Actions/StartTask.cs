@@ -20,7 +20,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     /// </summary>
     public class StartTask : ActionTemplate
     {
-        string taskName;
+        Symbol taskSymbol;
 
         public override string Pattern
         {
@@ -32,8 +32,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
         }
 
-        public override IQuestAction Create(string source, Quest parentQuest)
+        public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
+            base.CreateNew(source, parentQuest);
+
             // Source must match pattern
             Match match = Test(source);
             if (!match.Success)
@@ -41,14 +43,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Factory new start task
             StartTask startTask = new StartTask(parentQuest);
-            startTask.taskName = match.Groups["taskName"].Value;
+            startTask.taskSymbol = new Symbol(match.Groups["taskName"].Value);
 
             return startTask;
         }
 
         public override void Update(Task caller)
         {
-            ParentQuest.SetTask(taskName);
+            ParentQuest.SetTask(taskSymbol);
             SetComplete();
         }
     }

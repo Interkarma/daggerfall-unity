@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System;
 
-namespace DaggerfallWorkshop.Game.Questing.Conditions
+namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
     /// Handles a when|when not task performed condition chain.
@@ -53,8 +53,10 @@ namespace DaggerfallWorkshop.Game.Questing.Conditions
             IsTriggerCondition = true;
         }
 
-        public override IQuestAction Create(string source, Quest parentQuest)
+        public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
+            base.CreateNew(source, parentQuest);
+
             // Full pattern to get chain of evaluations
             string fullPattern = @"when not (?<taskName>[a-zA-Z0-9_.]+)|when (?<taskName>[a-zA-Z0-9_.]+)|and not (?<taskName>[a-zA-Z0-9_.]+)|and (?<taskName>[a-zA-Z0-9_.]+)|or not (?<taskName>[a-zA-Z0-9_.]+)|or (?<taskName>[a-zA-Z0-9_.]+)";
 
@@ -70,7 +72,7 @@ namespace DaggerfallWorkshop.Game.Questing.Conditions
             return condition;
         }
 
-        public override bool CheckCondition(Task caller)
+        public override bool CheckTrigger(Task caller)
         {
             return CheckEvals();
         }
@@ -125,19 +127,19 @@ namespace DaggerfallWorkshop.Game.Questing.Conditions
             {
                 // Get task state based on operator
                 Operator op = evaluations[i].op;
-                string task = evaluations[i].task;
+                Symbol taskSymbol = new Symbol(evaluations[i].task);
                 switch(op)
                 {
                     case Operator.When:
                     case Operator.And:
                     case Operator.Or:
-                        right = IsTaskSet(task);
+                        right = IsTaskSet(taskSymbol);
                         break;
 
                     case Operator.WhenNot:
                     case Operator.AndNot:
                     case Operator.OrNot:
-                        right = !IsTaskSet(task);
+                        right = !IsTaskSet(taskSymbol);
                         break;
 
                     default:
@@ -185,11 +187,11 @@ namespace DaggerfallWorkshop.Game.Questing.Conditions
         /// <summary>
         /// Checks is a task is set.
         /// </summary>
-        bool IsTaskSet(string name)
+        bool IsTaskSet(Symbol symbol)
         {
-            Task task = ParentQuest.GetTask(name);
+            Task task = ParentQuest.GetTask(symbol);
             if (task == null)
-                throw new Exception(string.Format("Task/Variable not found '{0}'", name));
+                throw new Exception(string.Format("Task/Variable not found '{0}'", Symbol.Name));
 
             return task.IsSet;
         }

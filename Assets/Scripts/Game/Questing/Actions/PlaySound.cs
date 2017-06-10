@@ -67,8 +67,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public PlaySound(Quest quest) : base(quest) { }
 
 
-        public override IQuestAction Create(string source, Quest quest)
+        public override IQuestAction CreateNew(string source, Quest quest)
         {
+            base.CreateNew(source, quest);
+
             // Source must match pattern
             Match match = Test(source);
             if (!match.Success)

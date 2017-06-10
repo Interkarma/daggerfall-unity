@@ -24,8 +24,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     public class Prompt : ActionTemplate
     {
         int id;
-        string yesTaskName;
-        string noTaskName;
+        Symbol yesTaskSymbol;
+        Symbol noTaskSymbol;
 
         public override string Pattern
         {
@@ -37,8 +37,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
         }
 
-        public override IQuestAction Create(string source, Quest parentQuest)
+        public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
+            base.CreateNew(source, parentQuest);
+
             // Source must match pattern
             Match match = Test(source);
             if (!match.Success)
@@ -47,8 +49,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Factory new prompt
             Prompt prompt = new Prompt(parentQuest);
             prompt.id = Parser.ParseInt(match.Groups["id"].Value);
-            prompt.yesTaskName = match.Groups["yesTaskName"].Value;
-            prompt.noTaskName = match.Groups["noTaskName"].Value;
+            prompt.yesTaskSymbol = new Symbol(match.Groups["yesTaskName"].Value);
+            prompt.noTaskSymbol = new Symbol(match.Groups["noTaskName"].Value);
 
             return prompt;
         }
@@ -81,9 +83,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             // Start yes or no task
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
-                ParentQuest.SetTask(yesTaskName);
+                ParentQuest.SetTask(yesTaskSymbol);
             else
-                ParentQuest.SetTask(noTaskName);
+                ParentQuest.SetTask(noTaskSymbol);
 
             // Close prompt
             sender.CloseWindow();
