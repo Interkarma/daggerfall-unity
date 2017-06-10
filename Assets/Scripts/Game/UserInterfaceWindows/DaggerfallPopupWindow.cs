@@ -84,7 +84,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Draw();
         }
 
-        public void CancelWindow()
+        public virtual void CancelWindow()
         {
             cancelled = true;
             RaiseOnCancelEvent(this);
