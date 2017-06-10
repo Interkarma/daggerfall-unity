@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
         HUDPlaceMarker placeMarker = new HUDPlaceMarker();
+        HUDQuestDebugger questDebugger = new HUDQuestDebugger();
         GameObject player;
         DaggerfallEntityBehaviour playerEntity;
 
@@ -46,6 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public bool ShowVitals { get; set; }
         public bool ShowCompass { get; set; }
         public bool ShowLocalQuestPlaces { get; set; }
+        public bool ShowQuestDebugger { get; set; }
 
         public PopupText PopupText
         {
@@ -73,6 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowVitals = true;
             ShowCompass = true;
             ShowLocalQuestPlaces = true;
+            ShowQuestDebugger = true;
 
             // Get references
             player = GameObject.FindGameObjectWithTag("Player");
@@ -95,6 +98,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             placeMarker.Size = new Vector2(640, 400);
             placeMarker.AutoSize = AutoSizeModes.ScaleToFit;
             ParentPanel.Components.Add(placeMarker);
+
+            questDebugger.Size = new Vector2(640, 400);
+            questDebugger.AutoSize = AutoSizeModes.ScaleToFit;
+            ParentPanel.Components.Add(questDebugger);
         }
 
         public override void Update()
@@ -106,6 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             vitals.Enabled = ShowVitals;
             compass.Enabled = ShowCompass;
             placeMarker.Enabled = ShowLocalQuestPlaces;
+            questDebugger.Enabled = ShowQuestDebugger;
 
             // Scale HUD elements
             compass.Scale = NativePanel.LocalScale;

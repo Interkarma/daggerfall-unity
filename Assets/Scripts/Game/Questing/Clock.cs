@@ -64,6 +64,11 @@ namespace DaggerfallWorkshop.Game.Questing
             set { maxRange = value; }
         }
 
+        public int RemainingTimeInSeconds
+        {
+            get { return remainingTimeInSeconds; }
+        }
+
         #endregion
 
         #region Constructors
@@ -247,6 +252,13 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 clockEnabled = false;
             }
+        }
+
+        public string GetRemainingTimeString()
+        {
+            TimeSpan time = TimeSpan.FromSeconds(remainingTimeInSeconds);
+
+            return string.Format("{0}.{1}:{2}", time.Days, time.Hours, time.Minutes);
         }
 
         #endregion

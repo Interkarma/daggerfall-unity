@@ -58,6 +58,16 @@ namespace DaggerfallWorkshop.Game.Questing
             public int messageID;
         }
 
+        /// <summary>
+        /// Basic information about a single task
+        /// </summary>
+        public struct TaskState
+        {
+            public Task.TaskType type;
+            public string name;
+            public bool set;
+        }
+
         #endregion
 
         #region Properties
@@ -166,6 +176,21 @@ namespace DaggerfallWorkshop.Game.Questing
                 task.Unset();
         }
 
+        public TaskState[] GetTaskStates()
+        {
+            List<TaskState> states = new List<TaskState>();
+            foreach(Task task in tasks.Values)
+            {
+                TaskState state = new TaskState();
+                state.type = task.Type;
+                state.name = task.Symbol.Name;
+                state.set = task.IsSet;
+                states.Add(state);
+            }
+
+            return states.ToArray();
+        }
+
         #endregion
 
         #region Log Message Methods
@@ -189,10 +214,6 @@ namespace DaggerfallWorkshop.Game.Questing
             entry.stepID = stepID;
             entry.messageID = messageID;
             activeLogMessages.Add(stepID, entry);
-
-            // Test messages using popup
-            // To be removed
-            //TestLogMessages();
         }
 
         /// <summary>

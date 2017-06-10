@@ -73,6 +73,14 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Properties
 
         /// <summary>
+        /// Gets count of all quests running at this time.
+        /// </summary>
+        public int QuestCount
+        {
+            get { return quests.Count; }
+        }
+
+        /// <summary>
         /// Gets Quests source folder in StreamingAssets.
         /// </summary>
         public string QuestSourceFolder
@@ -409,6 +417,34 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             return quests[questUID];
+        }
+
+        /// <summary>
+        /// Check if quest UID is still active in quest machine.
+        /// </summary>
+        /// <param name="questUID">Quest UID to check.</param>
+        /// <returns>True if quest still active.</returns>
+        public bool IsQuestActive(ulong questUID)
+        {
+            if (quests.ContainsKey(questUID))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Returns an array of all active quest UIDs.
+        /// </summary>
+        /// <returns>ulong[] array of quest UIDs.</returns>
+        public ulong[] GetAllActiveQuests()
+        {
+            List<ulong> keys = new List<ulong>();
+            foreach (ulong key in quests.Keys)
+            {
+                keys.Add(key);
+            }
+
+            return keys.ToArray();
         }
 
         #endregion
