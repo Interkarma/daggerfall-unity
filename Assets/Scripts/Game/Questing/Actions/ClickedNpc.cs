@@ -11,26 +11,29 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System;
 
-namespace DaggerfallWorkshop.Game.Questing.Actions
+namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Displays a prompt which user can click to dismiss.
+    /// Handles player clicking on NPC.
     /// </summary>
-    public class Say : ActionTemplate
+    public class ClickedNpc : ActionTemplate
     {
-        int id;
+        Symbol npcSymbol;
 
         public override string Pattern
         {
-            get { return @"say (?<id>\d+)"; }
+            // Initial match only looks for opening "when not task"|"when task"
+            get { return @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+)"; }
         }
 
-        public Say(Quest parentQuest)
+        public ClickedNpc(Quest parentQuest)
             : base(parentQuest)
         {
+            IsTriggerCondition = true;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
@@ -42,18 +45,25 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (!match.Success)
                 return null;
 
-            // Factory new say
-            Say say = new Say(parentQuest);
-            say.id = Parser.ParseInt(match.Groups["id"].Value);
+            // Factory new action
+            ClickedNpc action = new ClickedNpc(parentQuest);
+            action.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
 
-            return say;
+            return action;
         }
 
-        public override void Update(Task caller)
+        public override bool CheckTrigger(Task caller)
         {
-            ParentQuest.ShowMessagePopup(id);
-            TaskReturn = true;
-            SetComplete();
+            // Get related Person resource
+            Person person = ParentQuest.GetPerson(npcSymbol);
+            if (person == null)
+                return false;
+
+            // Check player clicked flag
+            if (person.HasPlayerClicked)
+                return true;
+
+            return false;
         }
     }
 }

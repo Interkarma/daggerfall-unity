@@ -39,6 +39,17 @@ namespace DaggerfallWorkshop.Game.Questing
         bool IsTriggerCondition { get; }
 
         /// <summary>
+        /// States the task should return out after calling Update().
+        /// This is used by UI actions like "say" which need a frame tick to display.
+        /// Otherwise these actions all happen in same frame and final action appears on top.
+        /// TaskReturn flag will be lowered by Task once acted upon.
+        /// Remaining actions will be processed on next task loop - in script order.
+        /// May need to revisit this design. If a task is ended elsewhere after TaskReturn
+        /// then not all actions might run as intended.
+        /// </summary>
+        bool TaskReturn { get; set; }
+
+        /// <summary>
         /// Helper to test if source is a match for Pattern.
         /// </summary>
         Match Test(string source);
@@ -92,10 +103,12 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         bool complete = false;
         bool triggerCondition = false;
+        bool taskReturn = false;
         string debugSource;
 
         public bool IsComplete { get { return complete; } }
         public bool IsTriggerCondition { get { return triggerCondition; } protected set { triggerCondition = value; } }
+        public bool TaskReturn { get { return taskReturn; } set { taskReturn = value; } }
 
         public abstract string Pattern { get; }
 

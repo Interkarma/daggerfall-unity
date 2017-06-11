@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -189,6 +190,11 @@ namespace DaggerfallWorkshop.Game
                             // Show NPC info
                             if (currentMode == PlayerActivateModes.Info)
                                 PresentNPCInfo(npc);
+
+                            // Activate NPC quest click
+                            QuestNPCClickHandler npcClickHandler = npc.gameObject.GetComponent<QuestNPCClickHandler>();
+                            if (npcClickHandler)
+                                npcClickHandler.DoClick();
                         }
                     }
                 }

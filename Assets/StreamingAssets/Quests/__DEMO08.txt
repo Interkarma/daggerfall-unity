@@ -105,7 +105,7 @@ QBN:
 Item _letter1_ letter used 1020
 Person ladyBrisienna named Lady_Brisienna
 Place _dirtypit_ remote tavern
-Clock _invitepc_ 0
+Clock _invitepc_ 2
 
 ---- Quest startup
 start timer _invitepc_
@@ -116,5 +116,6 @@ create npc at _dirtypit_
 place npc ladyBrisienna at _dirtypit_
 
 _meetladyb_ task:
+clicked npc ladyBrisienna
 say 1015 
 say 1016

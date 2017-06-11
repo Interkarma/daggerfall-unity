@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool isPermanentNPC = false;
         string displayName = string.Empty;
         int individualFactionIndex = 0;
+        bool hasPlayerClicked = false;
 
         #endregion
 
@@ -92,6 +93,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public bool IsPermanentNPC
         {
             get { return isPermanentNPC; }
+        }
+
+        public bool HasPlayerClicked
+        {
+            get { return hasPlayerClicked; }
         }
 
         #endregion
@@ -242,6 +248,15 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return result;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void SetPlayerClicked()
+        {
+            hasPlayerClicked = true;
         }
 
         #endregion

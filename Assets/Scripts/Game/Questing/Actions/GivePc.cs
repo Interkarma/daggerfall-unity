@@ -17,6 +17,9 @@ using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
+    /// <summary>
+    /// Give items to player.
+    /// </summary>
     public class GivePc : ActionTemplate
     {
         Symbol itemSymbol;

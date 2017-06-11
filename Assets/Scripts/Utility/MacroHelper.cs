@@ -74,10 +74,19 @@ namespace DaggerfallWorkshop.Utility
                         // Will rework this later
                         if (macro.token == "%pcn")
                         {
+                            // Full name
                             words[word] = words[word].Replace(macro.token, GameManager.Instance.PlayerEntity.Name);
+                        }
+                        else if (macro.token == "%pcf")
+                        {
+                            // First name
+                            string[] parts = GameManager.Instance.PlayerEntity.Name.Split(' ');
+                            if (parts != null && parts.Length >= 1)
+                                words[word] = words[word].Replace(macro.token, parts[0]);
                         }
                         else if (macro.token == "%qdt")
                         {
+                            // Quest date time
                             words[word] = words[word].Replace(macro.token, parentQuest.QuestStartTime.DateString());
                         }
                     }

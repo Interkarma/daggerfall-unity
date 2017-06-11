@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -616,6 +616,7 @@ namespace DaggerfallWorkshop
         /// Finds SiteLinks matching this interior and walks Place markers to inject quest resources.
         /// Some of this handling will be split and relocated for other builders.
         /// Just working through the steps in buildings interiors for now.
+        /// This will be moved to a different setup class later.
         /// </summary>
         void AddQuestResources()
         {
@@ -624,7 +625,7 @@ namespace DaggerfallWorkshop
             if (siteLinks == null || siteLinks.Length == 0)
                 return;
 
-            Debug.LogFormat("Player entered a building interior with {0} active site links", siteLinks.Length);
+            //Debug.LogFormat("Player entered a building interior with {0} active site links", siteLinks.Length);
 
             // Walk through all found SiteLinks
             foreach(SiteLink link in siteLinks)
@@ -696,6 +697,11 @@ namespace DaggerfallWorkshop
 
                     // Add people data to billboard
                     dfBillboard.SetRMBPeopleData(person.IndividualFactionIndex, factionData.flags);
+
+                    // Add click handler to billboard
+                    QuestNPCClickHandler clickHandler = go.AddComponent<QuestNPCClickHandler>();
+                    clickHandler.QuestUID = quest.UID;
+                    clickHandler.QuestPersonSymbol = person.Symbol;
                 }
             }
             else

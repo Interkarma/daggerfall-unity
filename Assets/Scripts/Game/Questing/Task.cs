@@ -156,6 +156,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (triggered && !action.IsTriggerCondition)
                 {
                     action.Update(this);
+                    if (action.TaskReturn)
+                    {
+                        action.TaskReturn = false;
+                        return;
+                    }
                 }
             }
         }
