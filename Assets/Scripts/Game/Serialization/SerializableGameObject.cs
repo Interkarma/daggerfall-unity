@@ -130,6 +130,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ItemData_v1[] wagonItems;
         public ItemData_v1[] otherItems;
         public int goldPieces;
+        public GlobalVar[] globalVars;
     }
 
     [fsObject("v1")]

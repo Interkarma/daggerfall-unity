@@ -39,13 +39,13 @@ namespace DaggerfallWorkshop.Game.Entity
         protected ItemCollection otherItems = new ItemCollection();
         protected int goldPieces = 0;
         protected PersistentFactionData factionData = new PersistentFactionData();
+        protected PersistentGlobalVars globalVars = new PersistentGlobalVars();
 
         protected short[] skillUses;
         protected uint timeOfLastSkillIncreaseCheck = 0;
 
         protected int startingLevelUpSkillSum = 0;
         protected int currentLevelUpSkillSum = 0;
-
         protected bool readyToLevelUp = false;
 
         #endregion
@@ -60,6 +60,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public ItemCollection OtherItems { get { return otherItems; } set { otherItems.ReplaceAll(value); } }
         public int GoldPieces { get { return goldPieces; } set { goldPieces = value; } }
         public PersistentFactionData FactionData { get { return factionData; } }
+        public PersistentGlobalVars GlobalVars { get { return globalVars; } }
         public short[] SkillUses { get { return skillUses; } set { skillUses = value; } }
         public uint TimeOfLastSkillIncreaseCheck { get { return timeOfLastSkillIncreaseCheck; } set { timeOfLastSkillIncreaseCheck = value; } }
         public int StartingLevelUpSkillSum { get { return startingLevelUpSkillSum; } set { startingLevelUpSkillSum = value; } }
@@ -91,6 +92,7 @@ namespace DaggerfallWorkshop.Game.Entity
             wagonItems.Clear();
             otherItems.Clear();
             factionData.Reset();
+            globalVars.Reset();
             SetEntityDefaults();
             startingLevelUpSkillSum = 0;
             currentLevelUpSkillSum = 0;

@@ -437,4 +437,14 @@ namespace DaggerfallWorkshop
         public int M2;      // MiscellaneousIngredients2
         public int RL;      // ReligiousItems
     }
+
+    /// <summary>
+    /// A single global variable.
+    /// </summary>
+    public struct GlobalVar
+    {
+        public int index;
+        public string name;
+        public bool value;
+    }
 }

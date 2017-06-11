@@ -29,10 +29,13 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        Symbol symbol;          // Unique symbol of task, can be used like a boolean if to check if task has completed
-        string target;          // Name of target task/variable to check, used by repeating tasks only
-        bool triggered;         // Has task been triggered?
-        TaskType type;          // Type of task
+        Symbol symbol;              // Unique symbol of task, can be used like a boolean if to check if task has completed
+        string target;              // Name of target task/variable to check, used by repeating tasks only
+        bool triggered;             // Has task been triggered?
+        TaskType type;              // Type of task
+
+        string globalVarName;       // Name of global variable from source
+        int globalVarLink = -1;     // Link to a global variable
 
         Quest parentQuest = null;
         bool hasTriggerConditions = false;
@@ -65,13 +68,23 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public bool IsSet
         {
-            set { triggered = value; }
-            get { return triggered; }
+            get { return GetTriggerValue(); }
+            set { SetTriggerValue(value); }
         }
 
         public bool HasTriggerConditions
         {
             get { return hasTriggerConditions; }
+        }
+
+        public string GlobalVarName
+        {
+            get { return globalVarName; }
+        }
+
+        public int GlobalVarLink
+        {
+            get { return globalVarLink; }
         }
 
         #endregion
@@ -84,6 +97,7 @@ namespace DaggerfallWorkshop.Game.Questing
             Standard,           // Normal task - must be started by a set or trigger
             PersistUntil,       // Automatic startup - when check is true, task and all members stop immediately
             Variable,           // Boolean variable only - must be set/unset
+            GlobalVarLink,      // Boolean link to global variable - must be set/unset
         }
 
         #endregion
@@ -110,13 +124,41 @@ namespace DaggerfallWorkshop.Game.Questing
             SetTask(lines);
         }
 
+        /// <summary>
+        /// Global variable constructor.
+        /// </summary>
+        /// <param name="parentQuest">Parent quest.</param>
+        /// <param name="lines">Source lines of task block.</param>
+        /// <param name="globalVar">Global variable key.</param>
+        public Task(Quest parentQuest, string[] lines, int globalVar)
+        {
+            this.parentQuest = parentQuest;
+            SetTask(lines, globalVar);
+        }
+
         #endregion
 
         #region Public Methods
 
-        public void SetTask(string[] lines)
+        public void SetTask(string[] lines, int globalVar = -1)
         {
             int i = 0;
+
+            // Handle global variable link task
+            if (globalVar != -1)
+            {
+                // Read globalvar header for symbol
+                ReadGlobalVarTaskHeader(lines[i++]);
+
+                // Create custom task type
+                type = TaskType.GlobalVarLink;
+                target = string.Empty;
+                globalVarLink = globalVar;
+                ReadTaskLines(lines, i);
+                return;
+            }
+
+            // Handle standard, variable, and headless tasks
             if (ReadTaskHeader(lines[i]))
             {
                 // Increment to next line after header
@@ -170,7 +212,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public void Set()
         {
-            triggered = true;
+            IsSet = true;
         }
 
         /// <summary>
@@ -178,7 +220,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public void Unset()
         {
-            triggered = false;
+            IsSet = false;
         }
 
         /// <summary>
@@ -205,7 +247,20 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #endregion
 
-        #region Private Method
+        #region Private Methods
+
+        bool ReadGlobalVarTaskHeader(string line)
+        {
+            Match match = Regex.Match(line, @"(?<globalVarName>[a-zA-Z0-9_.]+) (?<symbol>[a-zA-Z0-9_.]+)");
+            if (match.Success)
+            {
+                globalVarName = match.Groups["globalVarName"].Value;
+                symbol = new Symbol(match.Groups["symbol"].Value);
+                return true;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Reads task header based on supported task types.
@@ -280,6 +335,22 @@ namespace DaggerfallWorkshop.Game.Questing
                     Debug.LogFormat("Action not found. Ignoring '{0}'", lines[i]);
                 }
             }
+        }
+
+        public bool GetTriggerValue()
+        {
+            if (globalVarLink != -1)
+                return GameManager.Instance.PlayerEntity.GlobalVars.GetGlobalVar(globalVarLink);
+            else
+                return triggered;
+        }
+
+        public void SetTriggerValue(bool value)
+        {
+            if (globalVarLink != -1)
+                GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(globalVarLink, value);
+            else
+                triggered = value;
         }
 
         #endregion

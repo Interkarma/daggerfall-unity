@@ -191,8 +191,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (currentTimeValue == 2)
                 {
                     // Two time values specified: "clock _symbol_ dd.hh:mm dd.hh:mm"
-                    // Clock timer starts at a random point between timeValue0 (max) and timeValue1 (min)
-                    clockTimeInSeconds = FromRange(timeValue1, timeValue0);
+                    // Clock timer starts at a random point between timeValue0 (min) and timeValue1 (max)
+                    // But second value must be greater than first to be a valid range
+                    if (timeValue1 > timeValue0)
+                        clockTimeInSeconds = FromRange(timeValue0, timeValue1);
+                    else
+                        clockTimeInSeconds = timeValue0;
                 }
 
                 // Set timer value in seconds

@@ -269,7 +269,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
                 else if (IsGlobalReference(lines[i]))
                 {
-                    // This is a global variable reference
+                    // This is a global variable link task
+                    // Could be just a link variable or have a body
+                    int globalVar = GetGlobalReference(lines[i]);
+                    List<string> taskLines = ReadBlock(lines, ref i);
+                    Task task = new Task(quest, taskLines.ToArray(), globalVar);
+                    quest.AddTask(task);
                 }
                 else if (foundHeadlessTask == false)
                 {
@@ -334,6 +339,20 @@ namespace DaggerfallWorkshop.Game.Questing
                 return true;
 
             return false;
+        }
+
+        int GetGlobalReference(string line)
+        {
+            string[] parts = SplitLine(line);
+            if (parts == null || parts.Length == 0)
+                return -1;
+
+            if (QuestMachine.Instance.GlobalVarsTable.HasValue(parts[0]))
+            {
+                return ParseInt(QuestMachine.Instance.GlobalVarsTable.GetValue("id", parts[0]));
+            }
+
+            return -1;
         }
 
         #endregion

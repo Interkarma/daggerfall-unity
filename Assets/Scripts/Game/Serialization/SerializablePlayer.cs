@@ -115,6 +115,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.wagonItems = entity.WagonItems.SerializeItems();
             data.playerEntity.otherItems = entity.OtherItems.SerializeItems();
             data.playerEntity.goldPieces = entity.GoldPieces;
+            data.playerEntity.globalVars = entity.GlobalVars.SerializeGlobalVars();
 
             // Store player position data
             data.playerPosition = new PlayerPositionData_v1();
@@ -189,6 +190,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.OtherItems.DeserializeItems(data.playerEntity.otherItems);
             entity.ItemEquipTable.DeserializeEquipTable(data.playerEntity.equipTable, entity.Items);
             entity.GoldPieces = data.playerEntity.goldPieces;
+            entity.GlobalVars.DeserializeGlobalVars(data.playerEntity.globalVars);
             entity.SetCurrentLevelUpSkillSum();
 
             // Fill in missing data for saves
