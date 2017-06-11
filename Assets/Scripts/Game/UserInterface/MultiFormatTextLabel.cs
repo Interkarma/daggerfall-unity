@@ -220,6 +220,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     case TextFile.Formatting.NewLine:
                         NewLine();
                         break;
+                    case TextFile.Formatting.Nothing:
                     case TextFile.Formatting.JustifyLeft:
                         NewLine();
                         totalHeight += LineHeight; // Justify left adds to height regardless of there being anything afterwards

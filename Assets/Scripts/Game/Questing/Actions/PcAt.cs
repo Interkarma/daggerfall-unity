@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 // "saying" popup
                 // TODO: Should this run every time or only once?
                 if (textId != 0)
-                    ShowPopup(textId);
+                    ParentQuest.ShowMessagePopup(textId);
 
                 // Enable target task
                 ParentQuest.SetTask(taskSymbol);

@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override void Update(Task caller)
         {
-            ShowPopup(id);
+            ParentQuest.ShowMessagePopup(id);
             SetComplete();
         }
     }

@@ -47,19 +47,26 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (!match.Success)
                 return null;
 
-            // Factory new CreateNpcAt
-            CreateNpcAt createNpcAt = new CreateNpcAt(parentQuest);
-            createNpcAt.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+            // Factory new action
+            CreateNpcAt action = new CreateNpcAt(parentQuest);
+            action.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+
+            return action;
+        }
+
+        public override void Update(Task caller)
+        {
+            base.Update(caller);
 
             // Attempt to get Place resource
-            Place place = parentQuest.GetPlace(createNpcAt.placeSymbol);
+            Place place = ParentQuest.GetPlace(placeSymbol);
             if (place == null)
-                throw new Exception(string.Format("Attempted to add SiteLink for invalid Place symbol {0}", createNpcAt.placeSymbol.Name));
+                throw new Exception(string.Format("Attempted to add SiteLink for invalid Place symbol {0}", placeSymbol.Name));
 
             // Create SiteLink in QuestMachine
             SiteLink siteLink = new SiteLink();
-            siteLink.questUID = createNpcAt.ParentQuest.UID;
-            siteLink.placeSymbol = createNpcAt.placeSymbol;
+            siteLink.questUID = ParentQuest.UID;
+            siteLink.placeSymbol = placeSymbol;
             siteLink.siteType = place.SiteDetails.siteType;
             siteLink.mapId = place.SiteDetails.mapId;
             siteLink.buildingKey = place.SiteDetails.buildingKey;
@@ -76,7 +83,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                     break;
             }
 
-            return createNpcAt;
+            SetComplete();
         }
     }
 }

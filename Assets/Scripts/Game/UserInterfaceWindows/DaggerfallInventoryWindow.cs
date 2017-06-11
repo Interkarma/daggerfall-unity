@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
@@ -17,6 +18,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -98,6 +100,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         PaperDoll paperDoll = new PaperDoll();
         //Panel localTargetIconPanel;
         Panel remoteTargetIconPanel;
+
+        Color questItemBackgroundColor = new Color(0f, 0.25f, 0f, 0.5f);
 
         #endregion
 
@@ -876,6 +880,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem item = localItemsFiltered[scrollIndex + i];
                 ImageData image = GetInventoryImage(item);
 
+                // TEST: Set green background for local quest items
+                if (item.IsQuestItem)
+                    localItemsButtons[i].BackgroundColor = questItemBackgroundColor;
+                else
+                    localItemsButtons[i].BackgroundColor = Color.clear;
+
                 // Set image to button icon
                 localItemsIconPanels[i].BackgroundTexture = image.texture;
                 localItemsIconPanels[i].Size = new Vector2(image.texture.width, image.texture.height);
@@ -1305,6 +1315,69 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        // Moving local and remote Use item clicks to new method
+        // This ensures the items are handled the same except when needed
+        // This will need more work as more usable items are available
+        void UseItem(DaggerfallUnityItem item)
+        {
+            const int noSpellsTextId = 12;
+
+            // Handle quest items on use clicks
+            if (item.IsQuestItem)
+            {
+                // Get the quest this item belongs to
+                Quest quest = QuestMachine.Instance.GetActiveQuest(item.QuestUID);
+                if (quest == null)
+                    throw new Exception("DaggerfallUnityItem references a quest that could not be found.");
+
+                // Get the Item resource from quest
+                Item questItem = quest.GetItem(item.QuestItemSymbol);
+
+                // Check for an on use value
+                if (questItem.UseID != 0)
+                {
+                    // Display the message popup
+                    quest.ShowMessagePopup(questItem.UseID);
+                }
+            }
+
+            // Handle local items
+            if (item.ItemGroup == ItemGroups.Books)
+            {
+                // Unreadable parchment (the one with a note graphic) is actually in UselessItems2
+                if (item.TemplateIndex == (int)Books.Book || item.TemplateIndex == (int)Books.Parchment)
+                {
+                    DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
+                    DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
+                }
+                else if (item.TemplateIndex == (int)Books.Parchment)
+                {
+                    // TODO: implement note viewer? Or is parchment just blank paper? -IC112016
+                }
+            }
+            else if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe)
+            {
+                // TODO: There may be other objects that result in this dialog box, but for now I'm sure this one says it.
+                // -IC122016
+                DaggerfallMessageBox cannotUse = new DaggerfallMessageBox(uiManager, this);
+                cannotUse.SetText(HardStrings.cannotUseThis);
+                cannotUse.ClickAnywhereToClose = true;
+                cannotUse.Show();
+            }
+            else if (item.TemplateIndex == (int)MiscItems.Spellbook)
+            {
+                TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(noSpellsTextId);
+                DaggerfallMessageBox noSpells = new DaggerfallMessageBox(uiManager, this);
+                noSpells.SetTextTokens(textTokens);
+                noSpells.ClickAnywhereToClose = true;
+                noSpells.Show();
+            }
+            else
+            {
+                NextVariant(item);
+            }
+        }
+
         #endregion
 
         #region Item Click Event Handlers
@@ -1360,8 +1433,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void LocalItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            const int noSpellsTextId = 12;
-
             // Get index
             int index = localItemsScrollBar.ScrollIndex + (int)sender.Tag;
             if (index >= localItemsFiltered.Count)
@@ -1379,32 +1450,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                if (item.ItemGroup == ItemGroups.Books)
-                {
-                    // Unreadable parchment (the one with a note graphic) is actually in UselessItems2
-                    if (item.TemplateIndex == (int)Books.Book || item.TemplateIndex == (int)Books.Parchment)
-                    {
-                        DaggerfallUI.Instance.BookReaderWindow.BookTarget = item;
-                        DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenBookReaderWindow);
-                    } else if (item.TemplateIndex == (int)Books.Parchment)
-                    {
-                        // TODO: implement note viewer? Or is parchment just blank paper? -IC112016
-                    }
-                } else if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe) {
-                    // TODO: There may be other objects that result in this dialog box, but for now I'm sure this one says it.
-                    // -IC122016
-                    DaggerfallMessageBox cannotUse = new DaggerfallMessageBox(uiManager, this);
-                    cannotUse.SetText(HardStrings.cannotUseThis);
-                    cannotUse.ClickAnywhereToClose = true;
-                    cannotUse.Show();
-                } else if (item.TemplateIndex == (int)MiscItems.Spellbook) {
-                    TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(noSpellsTextId);
-                    DaggerfallMessageBox noSpells = new DaggerfallMessageBox(uiManager, this);
-                    noSpells.SetTextTokens(textTokens);
-                    noSpells.ClickAnywhereToClose = true;
-                    noSpells.Show();
-                } else
-                    NextVariant(item);
+                UseItem(item);
             }
             else if (selectedActionMode == ActionModes.Remove)
             {
@@ -1449,7 +1495,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (selectedActionMode == ActionModes.Use)
             {
-                NextVariant(item);
+                UseItem(item);
             }
             else if (selectedActionMode == ActionModes.Remove)
             {

@@ -13,6 +13,7 @@ using DaggerfallConnect.Save;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -50,8 +51,9 @@ namespace DaggerfallWorkshop.Game.Items
         ulong uid;
 
         // Quest-related fields
-        ulong questUID = 0;
         bool isQuestItem = false;
+        ulong questUID = 0;
+        Symbol questItemSymbol = null;
 
         // Item template is cached for faster checks
         // Does not need to be serialized
@@ -200,6 +202,30 @@ namespace DaggerfallWorkshop.Game.Items
         public bool IsShield
         {
             get { return GetIsShield(); }
+        }
+
+        /// <summary>
+        /// Check if this is a quest item.
+        /// </summary>
+        public bool IsQuestItem
+        {
+            get { return isQuestItem; }
+        }
+
+        /// <summary>
+        /// Gets quest UID of quest owning this item.
+        /// </summary>
+        public ulong QuestUID
+        {
+            get { return questUID; }
+        }
+
+        /// <summary>
+        /// Gets symbol of quest item inside quest.
+        /// </summary>
+        public Symbol QuestItemSymbol
+        {
+            get { return questItemSymbol; }
         }
 
         #endregion
@@ -528,6 +554,19 @@ namespace DaggerfallWorkshop.Game.Items
                 default:
                     return (int)Skills.None;
             }
+        }
+
+
+        /// <summary>
+        /// Link this DaggerfallUnityItem to a quest Item resource.
+        /// </summary>
+        /// <param name="questUID">UID of quest owning Item resource.</param>
+        /// <param name="questItemSymbol">Symbol to locate Item resource in quest.</param>
+        public void LinkQuestItem(ulong questUID, Symbol questItemSymbol)
+        {
+            this.isQuestItem = true;
+            this.questUID = questUID;
+            this.questItemSymbol = questItemSymbol;
         }
 
         #endregion

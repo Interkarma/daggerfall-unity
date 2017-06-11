@@ -154,6 +154,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 var subType = Parser.ParseInt(row[2]);
                 this.item = new DaggerfallUnityItem(itemGroup, subType);
                 //Debug.Log(string.Format("found item string: {0} type: {1} sub: {2}", row[0], row[1], row[2]));
+
+                // Link quest Item resource to DaggerfallUnityItem
+                item.LinkQuestItem(ParentQuest.UID, Symbol);
             }
             else
                 Debug.LogWarning("item not found in table: " + itemString);

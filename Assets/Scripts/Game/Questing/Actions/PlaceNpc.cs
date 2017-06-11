@@ -50,25 +50,32 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (!match.Success)
                 return null;
 
-            // Factory new place npc at action
-            PlaceNpc placeNpc = new PlaceNpc(parentQuest);
-            placeNpc.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
-            placeNpc.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+            // Factory new action
+            PlaceNpc action = new PlaceNpc(parentQuest);
+            action.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
+            action.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+
+            return action;
+        }
+
+        public override void Update(Task caller)
+        {
+            base.Update(caller);
 
             // Attempt to get Person resource
-            Person person = parentQuest.GetPerson(placeNpc.npcSymbol);
+            Person person = ParentQuest.GetPerson(npcSymbol);
             if (person == null)
-                throw new Exception(string.Format("Could not find NPC resource symbol {0}", placeNpc.npcSymbol));
+                throw new Exception(string.Format("Could not find NPC resource symbol {0}", npcSymbol));
 
             // Attempt to get Place resource
-            Place place = parentQuest.GetPlace(placeNpc.placeSymbol);
+            Place place = ParentQuest.GetPlace(placeSymbol);
             if (place == null)
-                throw new Exception(string.Format("Could not find Place resource symbol {0}", placeNpc.placeSymbol));
+                throw new Exception(string.Format("Could not find Place resource symbol {0}", placeSymbol));
 
             // Assign NPC to Place
             place.AssignQuestResource(person.Symbol);
 
-            return placeNpc;
+            SetComplete();
         }
     }
 }

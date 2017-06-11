@@ -12,8 +12,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Text.RegularExpressions;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -139,24 +137,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public virtual void SetComplete()
         {
             complete = true;
-        }
-
-        protected void ShowPopup(int id)
-        {
-            // Get message resource
-            Message message = ParentQuest.GetMessage(id);
-            if (message == null)
-                return;
-
-            // Get message tokens
-            TextFile.Token[] tokens = message.GetTextTokens();
-
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
-            messageBox.SetTextTokens(tokens);
-            messageBox.ClickAnywhereToClose = true;
-            messageBox.AllowCancel = true;
-            messageBox.ParentPanel.BackgroundColor = Color.clear;
-            messageBox.Show();
         }
     }
 }

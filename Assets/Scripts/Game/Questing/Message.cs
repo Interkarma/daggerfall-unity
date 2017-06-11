@@ -115,10 +115,11 @@ namespace DaggerfallWorkshop.Game.Questing
                     line = line.Trim();
 
                 // Look for split token to start new variant
-                if (line == splitToken)
+                if (line.Contains(splitToken))
                 {
                     variants.Add(variant);
                     variant = CreateVariant();
+                    continue;
                 }
 
                 // TODO: Resolve string variables

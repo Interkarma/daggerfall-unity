@@ -14,6 +14,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
+using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -309,6 +311,11 @@ namespace DaggerfallWorkshop.Game.Questing
             return GetResource(symbol) as Person;
         }
 
+        public Item GetItem(Symbol symbol)
+        {
+            return GetResource(symbol) as Item;
+        }
+
         public QuestResource GetResource(string name)
         {
             if (!string.IsNullOrEmpty(name) && resources.ContainsKey(name))
@@ -338,6 +345,25 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return foundResources.ToArray();
+        }
+
+        public void ShowMessagePopup(int id)
+        {
+            // Get message resource
+            Message message = GetMessage(id);
+            if (message == null)
+                return;
+
+            // Get message tokens
+            TextFile.Token[] tokens = message.GetTextTokens();
+
+            // Present popup message
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+            messageBox.SetTextTokens(tokens);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.AllowCancel = true;
+            messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.Show();
         }
 
         #endregion

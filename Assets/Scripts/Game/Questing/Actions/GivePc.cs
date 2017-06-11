@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override string Pattern
         {
-            get { return @"give pc (?<anItem>[a-zA-Z0-9_.]+)|give pc (?<anItem>[a-zA-Z0-9_.]+) notify (?<id>\d+)|give pc (?<nothing>nothing)"; }
+            get { return @"give pc (?<anItem>[a-zA-Z0-9_.]+) notify (?<id>\d+)|give pc (?<anItem>[a-zA-Z0-9_.]+)|give pc (?<nothing>nothing)"; }
         }
 
         public GivePc(Quest parentQuest)
@@ -46,12 +46,40 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             GivePc action = new GivePc(parentQuest);
             action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
             action.textId = Parser.ParseInt(match.Groups["id"].Value);
-            if (!string.IsNullOrEmpty(match.Groups["persist"].Value))
+            if (!string.IsNullOrEmpty(match.Groups["nothing"].Value))
                 action.isNothing = true;
             else
                 action.isNothing = false;
 
             return action;
+        }
+
+        public override void Update(Task caller)
+        {
+            base.Update(caller);
+
+            // Do nothing if isNothing
+            if (isNothing)
+            {
+                SetComplete();
+                return;
+            }
+
+            // Attempt to get Item resource
+            Item item = ParentQuest.GetItem(itemSymbol);
+            if (item == null)
+                throw new Exception(string.Format("Could not find Item resource symbol {0}", itemSymbol));
+
+            // Add quest item to player
+            GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, Items.ItemCollection.AddPosition.Front);
+
+            // Show the popup message
+            if (textId != 0)
+            {
+                ParentQuest.ShowMessagePopup(textId);
+            }
+
+            SetComplete();
         }
     }
 }
