@@ -112,6 +112,11 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public abstract string Pattern { get; }
 
+        public string DebugSource
+        {
+            get { return debugSource; }
+        }
+
         public ActionTemplate(Quest parentQuest)
             : base(parentQuest)
         {
