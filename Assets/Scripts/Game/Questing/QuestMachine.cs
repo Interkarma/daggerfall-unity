@@ -50,6 +50,7 @@ namespace DaggerfallWorkshop.Game.Questing
         const string soundsTableFilename = "Quests-Sounds";
         const string itemsTableFileName = "Quests-Items";
         const string factionsTableFileName = "Quests-Factions";
+        const string foesTableFileName = "Quests-Foes";
 
         // Data tables
         Table globalVarsTable;
@@ -58,6 +59,7 @@ namespace DaggerfallWorkshop.Game.Questing
         Table soundsTable;
         Table itemsTable;
         Table factionsTable;
+        Table foesTable;
 
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
@@ -145,6 +147,14 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return factionsTable; }
         }
 
+        /// <summary>
+        /// Gets the foes data table.
+        /// </summary>
+        public Table FoesTable
+        {
+            get { return foesTable; }
+        }
+
         #endregion
 
         #region Unity
@@ -159,6 +169,7 @@ namespace DaggerfallWorkshop.Game.Questing
             soundsTable = new Table(Instance.GetTableSourceText(soundsTableFilename));
             itemsTable = new Table(Instance.GetTableSourceText(itemsTableFileName));
             factionsTable = new Table(Instance.GetTableSourceText(factionsTableFileName));
+            foesTable = new Table(Instance.GetTableSourceText(foesTableFileName));
         }
 
         void Start()
@@ -222,10 +233,11 @@ namespace DaggerfallWorkshop.Game.Questing
         void RegisterActionTemplates()
         {
             // Register example actions
-            RegisterAction(new JuggleAction(null));
+            //RegisterAction(new JuggleAction(null));
 
-            // Register default conditions
+            // Register trigger conditions
             RegisterAction(new WhenTask(null));
+            RegisterAction(new ClickedNpc(null));
 
             // Register default actions
             RegisterAction(new EndQuest(null));
@@ -243,7 +255,6 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new PlaceNpc(null));
             RegisterAction(new GivePc(null));
             RegisterAction(new StartStopTimer(null));
-            RegisterAction(new ClickedNpc(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)

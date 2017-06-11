@@ -72,7 +72,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Components.Add(tasksHeaderLabel);
 
             // Timers header label
-            timersHeaderLabel.Text = "Timers";
+            //timersHeaderLabel.Text = "Timers";
             timersHeaderLabel.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
             timersHeaderLabel.ShadowPosition = Vector2.zero;
             timersHeaderLabel.Position = new Vector2(0, 255);
@@ -150,6 +150,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set running status
             // TODO: Use this line for step-through debugging
             processLabel.Text = questRunning;
+
+            // Set timers header
+            timersHeaderLabel.Text = string.Format("Timers [{0}]", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString());
         }
 
         void SetupTaskLabels(Vector2 startPosition)

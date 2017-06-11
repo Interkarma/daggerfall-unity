@@ -361,35 +361,35 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets a short time string.
+        /// Gets minimum time string of HH:MM.
+        /// </summary>
+        public string MinTimeString()
+        {
+            return string.Format("{0:00}:{1:00}", Hour, Minute);
+        }
+
+        /// <summary>
+        /// Gets a short time string of HH:MM:SS.
         /// </summary>
         public string ShortTimeString()
         {
-            string final = string.Format("{0:00}:{1:00}:{2:00}", Hour, Minute, Second);
-
-            return final;
+            return string.Format("{0:00}:{1:00}:{2:00}", Hour, Minute, Second);
         }
 
         /// <summary>
-        /// Gets a mid time string.
+        /// Gets a mid time string of HH:MM:SS DD MonthName 3EYYY
         /// </summary>
         public string MidDateTimeString()
         {
-            string final = string.Format("{0:00}:{1:00}:{2:00} {3:00} {4:00} 3E{5}",
-                Hour, Minute, Second, Day + 1, MonthName, Year);
-
-            return final;
+            return string.Format("{0:00}:{1:00}:{2:00} {3:00} {4:00} 3E{5}", Hour, Minute, Second, Day + 1, MonthName, Year);
         }
 
         /// <summary>
-        /// Gets a long date time string.
+        /// Gets a long date time string of HH:MM:SS on Dayname of MonthName, 3EYYY
         /// </summary>
         public string LongDateTimeString()
         {
-            string final = string.Format("{0:00}:{1:00}:{2:00} on {3}, {4:00} of {5:00}, 3E{6}",
-                Hour, Minute, Second, DayName, Day + 1, MonthName, Year);
-
-            return final;
+            return string.Format("{0:00}:{1:00}:{2:00} on {3}, {4:00} of {5:00}, 3E{6}", Hour, Minute, Second, DayName, Day + 1, MonthName, Year);
         }
 
         /// <summary>
@@ -398,8 +398,7 @@ namespace DaggerfallWorkshop.Utility
         public string DateString()
         {
             string suffix = GetSuffix(Day+1);
-            string final = string.Format("{0} the {1}{2} of {3:00}", DayName, Day + 1, suffix, MonthName);
-            return final;
+            return string.Format("{0} the {1}{2} of {3:00}", DayName, Day + 1, suffix, MonthName);
         }
 
 
