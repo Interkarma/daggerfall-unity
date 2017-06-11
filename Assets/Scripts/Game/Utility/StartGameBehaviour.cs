@@ -239,7 +239,8 @@ namespace DaggerfallWorkshop.Game.Utility
                 weaponManager.RightHandWeapon.LeftHand = true;
 
             // GodMode setting
-            playerHealth.GodMode = GodMode;
+            PlayerEntity playerEntity = FindPlayerEntity();
+            playerEntity.GodMode = GodMode;
 
             // Enable/disable videos
             DaggerfallUI.Instance.enableVideos = EnableVideos;
@@ -456,9 +457,6 @@ namespace DaggerfallWorkshop.Game.Utility
             // Set game time
             DaggerfallUnity.Instance.WorldTime.Now.FromClassicDaggerfallTime(saveVars.GameTime);
 
-            // GodMode setting
-            playerHealth.GodMode = saveVars.GodMode;
-
             // Get character record
             List<SaveTreeBaseRecord> records = saveTree.FindRecords(RecordTypes.Character);
             if (records.Count != 1)
@@ -481,7 +479,10 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign gold pieces
             playerEntity.GoldPieces = (int)characterRecord.ParsedData.physicalGold;
 
-            //Setup bank accounts
+            // GodMode setting
+            playerEntity.GodMode = saveVars.GodMode;
+
+            // Setup bank accounts
             var bankRecords = saveTree.FindRecord(RecordTypes.BankAccount);
             Banking.DaggerfallBankManager.ReadNativeBankData(bankRecords);
 

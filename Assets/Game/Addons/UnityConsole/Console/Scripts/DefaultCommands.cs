@@ -70,8 +70,9 @@ namespace Wenzil.Console
                 PlayerHealth playerHealth = GameManager.Instance.PlayerHealth;//GameObject.FindObjectOfType<PlayerHealth>();
                 if (playerHealth)
                 {
-                    playerHealth.GodMode = !playerHealth.GodMode;
-                    return string.Format("Godmode enabled: {0}", playerHealth.GodMode);
+                    PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                    playerEntity.GodMode = !playerEntity.GodMode;
+                    return string.Format("Godmode enabled: {0}", playerEntity.GodMode);
                 }
                 else
                     return error;

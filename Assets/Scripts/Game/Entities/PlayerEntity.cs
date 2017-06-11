@@ -29,6 +29,8 @@ namespace DaggerfallWorkshop.Game.Entity
     {
         #region Fields
 
+        bool godMode = false;
+
         const int testPlayerLevel = 1;
         const string testPlayerName = "Nameless";
 
@@ -52,6 +54,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #region Properties
 
+        public bool GodMode { get { return godMode; } set { godMode = value; } }
         public Races Race { get { return (Races)RaceTemplate.ID; } }
         public RaceTemplate RaceTemplate { get { return raceTemplate; } set { raceTemplate = value; } }
         public int FaceIndex { get { return faceIndex; } set { faceIndex = value; } }
@@ -208,6 +211,42 @@ namespace DaggerfallWorkshop.Game.Entity
                 skills.SetDefaults();
                 FillVitalSigns();
             }
+        }
+
+        /// <summary>
+        /// Sets new health value.
+        /// Override for godmode support.
+        /// </summary>
+        public override int SetHealth(int amount)
+        {
+            if (godMode)
+                return currentHealth = MaxHealth;
+            else
+                return base.SetHealth(amount);
+        }
+
+        /// <summary>
+        /// Sets new fatigue value.
+        /// Override for godmode support.
+        /// </summary>
+        public override int SetFatigue(int amount)
+        {
+            if (godMode)
+                return currentFatigue = MaxFatigue;
+            else
+                return base.SetFatigue(amount);
+        }
+
+        /// <summary>
+        /// Sets new magicka value.
+        /// Override for godmode support.
+        /// </summary>
+        public override int SetMagicka(int amount)
+        {
+            if (godMode)
+                return currentMagicka = MaxMagicka;
+            else
+                return base.SetMagicka(amount);
         }
 
         /// <summary>

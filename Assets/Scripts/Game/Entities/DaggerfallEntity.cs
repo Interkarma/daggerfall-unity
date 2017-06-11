@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game.Entity
             return SetHealth(currentHealth - amount);
         }
 
-        public int SetHealth(int amount)
+        public virtual int SetHealth(int amount)
         {
             currentHealth = Mathf.Clamp(amount, 0, MaxHealth);
             if (currentHealth <= 0)
@@ -125,7 +125,7 @@ namespace DaggerfallWorkshop.Game.Entity
             return SetFatigue(currentFatigue - amount);
         }
 
-        public int SetFatigue(int amount)
+        public virtual int SetFatigue(int amount)
         {
             currentFatigue = Mathf.Clamp(amount, 0, MaxFatigue);
             if (currentFatigue <= 0 && currentHealth > 0)
@@ -144,7 +144,7 @@ namespace DaggerfallWorkshop.Game.Entity
             return SetMagicka(currentMagicka - amount);
         }
 
-        public int SetMagicka(int amount)
+        public virtual int SetMagicka(int amount)
         {
             currentMagicka = Mathf.Clamp(amount, 0, MaxMagicka);
             if (currentMagicka <= 0)

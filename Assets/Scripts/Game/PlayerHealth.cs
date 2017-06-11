@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -21,7 +21,7 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(ShowPlayerDamage))]
     public class PlayerHealth : MonoBehaviour
     {
-        public bool GodMode = false;
+        //public bool GodMode = false;
 
         DaggerfallEntityBehaviour entityBehaviour;
 
@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game
         void RemoveHealth(int amount)
         {
             GetComponent<ShowPlayerDamage>().Flash();
-            if (entityBehaviour && !GodMode)
+            if (entityBehaviour)
             {
                 PlayerEntity entity = entityBehaviour.Entity as PlayerEntity;
                 entity.DecreaseHealth(amount);
