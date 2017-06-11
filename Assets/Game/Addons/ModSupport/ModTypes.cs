@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public string ModVersion;
         public string ModAuthor;
         public string ContactInfo;
-        public string DFUnity_Verion;
+        public string DFUnity_Version;
         public string ModDescription;
         public string GUID = "invalid";
         public List<string> Files;      //list of assets to add to mod (only used during creation)
@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     public interface Idfmod_Serializable
     {
         System.Object[] ToSerialize();
-        void Deseralized(params System.Object[] obj);
+        void Deserialized(params System.Object[] obj);
         bool Ignore { get; set; }
     }
 

@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         private List<Source> sources;                                //any source code found in asset bundle
         private List<System.Reflection.Assembly> assemblies;         //compiled source code for this mod
         private Dictionary<string, LoadedAsset> loadedAssets;
-        private DFModMessageReceiver messageReciever;
+        private DFModMessageReceiver messageReceiver;
 
         #region properties
         [SerializeField]
@@ -80,10 +80,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             get { return (modInfo != null) ? modInfo.GUID : "invalid"; }
         }
 
-        public DFModMessageReceiver MessageReciver
+        public DFModMessageReceiver MessageReceiver
         {
-            get { return messageReciever; }
-            set { messageReciever = value; }
+            get { return messageReceiver; }
+            set { messageReceiver = value; }
         }
 
         public bool HasSettings { get; set; }
@@ -702,7 +702,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         if (sr.serializedObjects == null || sr.serializedObjects.Length < 1)
                             continue;
 
-                        isCustomSerializable.Deseralized(sr.serializedObjects);
+                        isCustomSerializable.Deserialized(sr.serializedObjects);
                     }
                 }
             }

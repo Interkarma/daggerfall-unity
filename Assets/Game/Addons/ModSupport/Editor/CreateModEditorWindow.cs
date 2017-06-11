@@ -135,7 +135,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     //currentFilePath = EditorUtility.SaveFilePanel("", GetTempModDirPath(), "", "dfmod.json");
                     if (modInfo != null)
                     {
-                        modInfo.DFUnity_Verion = VersionInfo.DaggerfallUnityVersion;
+                        modInfo.DFUnity_Version = VersionInfo.DaggerfallUnityVersion;
                     }
                 }
 
@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     GUILayoutHelper.Horizontal(() =>
                     {
                         EditorGUILayout.LabelField(new GUIContent("DFUnity Version:"));
-                        modInfo.DFUnity_Verion = EditorGUILayout.TextField(modInfo.DFUnity_Verion, GUILayout.MinWidth(600));
+                        modInfo.DFUnity_Version = EditorGUILayout.TextField(modInfo.DFUnity_Version, GUILayout.MinWidth(600));
                     });
 
                     EditorGUILayout.Space();

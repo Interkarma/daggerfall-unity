@@ -332,7 +332,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         modVersionLabel.Text        += ms.modInfo.ModVersion;
         modAuthorLabel.Text         += ms.modInfo.ModAuthor;
         modAuthorContactLabel.Text  += ms.modInfo.ContactInfo;
-        modDFTFUVersionLabel.Text   += ms.modInfo.DFUnity_Verion;
+        modDFTFUVersionLabel.Text   += ms.modInfo.DFUnity_Version;
 
         if (ms.enabled)
             modList.SelectedTextColor = selectedTextColor;
@@ -446,9 +446,9 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 
         for (int i = 0; i < assets.Length; i++)
         {
-            string extenstion = assets[i].Substring(assets[i].LastIndexOf('.'));
+            string extension = assets[i].Substring(assets[i].LastIndexOf('.'));
 
-            if (!ModManager.textExtentsions.Contains(extenstion))
+            if (!ModManager.textExtensions.Contains(extension))
                 continue;
 
             TextAsset asset = mod.GetAsset<TextAsset>(assets[i]);

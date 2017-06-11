@@ -66,7 +66,7 @@ namespace DaggerfallConnect
             /// <summary>Face has three points only.</summary>
             TriangleOnly,
             /// <summary>Using FaceUVTool matrix generator.</summary>
-            ModifedMatrixGenerator,
+            ModifiedMatrixGenerator,
         }
 
         /// <summary>
