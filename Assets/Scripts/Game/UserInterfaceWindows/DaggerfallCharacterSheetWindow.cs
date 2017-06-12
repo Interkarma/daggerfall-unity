@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
         PaperDoll characterPortrait = new PaperDoll();
 
-        StatsRollout statsRollout = new StatsRollout(true);
+        StatsRollout statsRollout;
 
         bool leveling = false;
 
@@ -147,6 +147,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 pos.y += 24f;
             }
 
+            statsRollout = new StatsRollout(true);
             statsRollout.OnStatChanged += StatsRollout_OnStatChanged;
 
             // Update player paper doll for first time
