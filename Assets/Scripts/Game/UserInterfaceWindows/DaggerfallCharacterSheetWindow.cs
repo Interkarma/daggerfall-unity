@@ -165,6 +165,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
+        public override void CancelWindow()
+        {
+            if (leveling)
+            {
+                if (!CheckIfDoneLeveling())
+                    return;
+            }
+            base.CancelWindow();
+        }
+
         #region Private Methods
 
         // Adds button for attribute popup text
@@ -332,6 +342,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        bool CheckIfDoneLeveling()
+        {
+            if (statsRollout.BonusPool > 0)
+            {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+                messageBox.SetText(HardStrings.mustDistributeBonusPoints);
+                messageBox.ClickAnywhereToClose = true;
+                messageBox.Show();
+                return false;
+            }
+            else
+            {
+                leveling = false;
+                PlayerEntity.Stats = statsRollout.WorkingStats;
+                NativePanel.Components.Remove(statsRollout);
+                return true;
+            }
+        }
+
         #endregion
 
         #region Event Handlers
@@ -383,22 +412,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (statsRollout.BonusPool > 0)
-            {
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                messageBox.SetText(HardStrings.mustDistributeBonusPoints);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.Show();
-                return;
-            }
-
             if (leveling)
             {
-                leveling = false;
-                PlayerEntity.Stats = statsRollout.WorkingStats;
-                NativePanel.Components.Remove(statsRollout);
+                if (!CheckIfDoneLeveling())
+                    return;
             }
-
             CloseWindow();
         }
 
