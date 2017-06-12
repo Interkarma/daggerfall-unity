@@ -244,6 +244,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (lines[i].StartsWith("foe", StringComparison.InvariantCultureIgnoreCase))
                 {
                     // This is an enemy declaration
+                    Foe foe = new Foe(quest, lines[i]);
+                    quest.AddResource(foe);
                 }
                 else if (lines[i].StartsWith("place", StringComparison.InvariantCultureIgnoreCase))
                 {

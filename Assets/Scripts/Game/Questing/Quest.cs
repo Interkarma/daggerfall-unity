@@ -316,6 +316,11 @@ namespace DaggerfallWorkshop.Game.Questing
             return GetResource(symbol) as Item;
         }
 
+        public Foe GetFoe(Symbol symbol)
+        {
+            return GetResource(symbol) as Foe;
+        }
+
         public QuestResource GetResource(string name)
         {
             if (!string.IsNullOrEmpty(name) && resources.ContainsKey(name))

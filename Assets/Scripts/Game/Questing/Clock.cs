@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Game.Questing
     public class Clock : QuestResource
     {
         DaggerfallDateTime lastWorldTimeSample;
+        int startingTimeInSeconds;
         int remainingTimeInSeconds;
         int flag = 0;
         int minRange = 0;
@@ -61,6 +62,11 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return maxRange; }
             set { maxRange = value; }
+        }
+
+        public int StartingTimeInSeconds
+        {
+            get { return startingTimeInSeconds; }
         }
 
         public int RemainingTimeInSeconds
@@ -297,6 +303,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void InitialiseTimer(int clockTimeInSeconds)
         {
+            startingTimeInSeconds = clockTimeInSeconds;
             remainingTimeInSeconds = clockTimeInSeconds;
         }
 

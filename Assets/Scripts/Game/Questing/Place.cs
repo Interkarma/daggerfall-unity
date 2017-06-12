@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (match.Success)
             {
                 // Seed random
-                UnityEngine.Random.InitState(Time.renderedFrameCount);
+                UnityEngine.Random.InitState(Time.frameCount);
 
                 // Store symbol for quest system
                 Symbol = new Symbol(match.Groups["symbol"].Value);

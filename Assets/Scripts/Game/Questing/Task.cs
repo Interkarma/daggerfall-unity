@@ -31,7 +31,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         Symbol symbol;              // Unique symbol of task, can be used like a boolean if to check if task has completed
         Symbol targetSymbol;        // Symbol of target task/variable to check, used by repeating tasks only
-        bool triggered;             // Has task been triggered?
+        bool triggered;             // Is the task currently triggered/true/set?
+        bool prevTriggered;         // Was the task triggered/true/set on last tick?
         TaskType type;              // Type of task
 
         string globalVarName;       // Name of global variable from source
@@ -200,9 +201,16 @@ namespace DaggerfallWorkshop.Game.Questing
                         triggered = false;
                 }
 
-                // Tick others actions when active
+                // Tick other actions when active
                 if (triggered)
                 {
+                    // Initialise action if task was previously untriggered
+                    if (!prevTriggered)
+                    {
+                        action.InitialiseOnSet();
+                    }
+
+                    // Update action
                     action.Update(this);
                     if (action.TaskReturn)
                     {
@@ -230,6 +238,9 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Would need strong evidence before allowing this
                 }
             }
+
+            // Store trigger state this update
+            prevTriggered = triggered;
         }
 
         /// <summary>

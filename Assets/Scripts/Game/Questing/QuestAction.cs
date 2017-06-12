@@ -55,6 +55,12 @@ namespace DaggerfallWorkshop.Game.Questing
         Match Test(string source);
 
         /// <summary>
+        /// Called by parent task any time it is set/rearmed.
+        /// This enables the action to reset state if needed.
+        /// </summary>
+        void InitialiseOnSet();
+
+        /// <summary>
         /// Factory new instance of this action from source line.
         /// Overrides should always call base to set debug source line.
         /// </summary>
@@ -125,6 +131,10 @@ namespace DaggerfallWorkshop.Game.Questing
         public virtual Match Test(string source)
         {
             return Regex.Match(source, Pattern);
+        }
+
+        public virtual void InitialiseOnSet()
+        {
         }
 
         public virtual IQuestAction CreateNew(string source, Quest parentQuest)

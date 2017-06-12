@@ -259,6 +259,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new GivePc(null));
             RegisterAction(new StartStopTimer(null));
             RegisterAction(new DailyFrom(null));
+            RegisterAction(new CreateFoe(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)
