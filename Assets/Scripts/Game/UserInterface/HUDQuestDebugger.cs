@@ -84,12 +84,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Set starting state
             ClearCurrentQuest();
+
+            // Tick with QuestMachine
+            QuestMachine.OnTick += QuestMachine_OnTick;
         }
 
-        public override void Update()
+        private void QuestMachine_OnTick()
         {
-            base.Update();
-
             // Allow current quest to remain visible even if finished
             // Tester will need to move to another quest or close debugger to clear
             if (currentQuest != null && currentQuest.QuestComplete)
@@ -251,8 +252,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 taskLabelPool[i].Enabled = true;
                 if (states[i].type == Task.TaskType.Headless)
                     taskLabelPool[i].Text = "startup";
+                else if (states[i].type == Task.TaskType.PersistUntil)
+                {
+                    Task task = quest.GetTask(states[i].symbol);
+                    taskLabelPool[i].Text = string.Format("until_{0}", task.TargetSymbol.Name);
+                }
                 else
-                    taskLabelPool[i].Text = states[i].name;
+                    taskLabelPool[i].Text = states[i].symbol.Name;
             }
 
             // Set timer status

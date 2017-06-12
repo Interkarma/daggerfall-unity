@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Fields
 
         const float startupDelay = 1.0f;        // How long quest machine will wait before running active quests
-        const float ticksPerSecond = 10;        // How often quest machine will tick quest logic per second
+        const float ticksPerSecond = 8;         // How often quest machine will tick quest logic per second
 
         // Folder names constants
         const string questSourceFolderName = "Quests";
@@ -219,6 +219,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Reset update timer
             updateTimer = 0;
+
+            // Fire tick event
+            RaiseOnTickEvent();
         }
 
         #endregion
@@ -591,6 +594,15 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Events
+
+        // OnTick
+        public delegate void OnTickEventHandler();
+        public static event OnTickEventHandler OnTick;
+        protected virtual void RaiseOnTickEvent()
+        {
+            if (OnTick != null)
+                OnTick();
+        }
 
         // OnQuestStarted
         public delegate void OnQuestStartedEventHandler(Quest quest);

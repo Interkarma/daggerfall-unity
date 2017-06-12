@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Fields
 
         Symbol symbol;              // Unique symbol of task, can be used like a boolean if to check if task has completed
-        string target;              // Name of target task/variable to check, used by repeating tasks only
+        Symbol targetSymbol;        // Symbol of target task/variable to check, used by repeating tasks only
         bool triggered;             // Has task been triggered?
         TaskType type;              // Type of task
 
@@ -56,9 +56,9 @@ namespace DaggerfallWorkshop.Game.Questing
             set { symbol = value; }
         }
 
-        public string Target
+        public Symbol TargetSymbol
         {
-            get { return target; }
+            get { return targetSymbol; }
         }
 
         public TaskType Type
@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Create custom task type
                 type = TaskType.GlobalVarLink;
-                target = string.Empty;
+                targetSymbol = null;
                 globalVarLink = globalVar;
                 ReadTaskLines(lines, i);
                 return;
@@ -169,7 +169,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 // No match on task header treat as a headless task (e.g. startup task)
                 // Startup task begins as triggered
                 type = TaskType.Headless;
-                target = string.Empty;
+                targetSymbol = null;
                 triggered = true;
                 symbol = new Symbol(DaggerfallUnity.NextUID.ToString());
             }
@@ -183,19 +183,25 @@ namespace DaggerfallWorkshop.Game.Questing
             // Iterate conditions and actions for this task
             foreach (IQuestAction action in actions)
             {
-                // Skip completed
+                // Completed actions are never executed again
+                // The action itself should decide if/when to be complete
+                // At a higher level, turning off the task will also disable actions
+                // The exception being triggers which always run even when task disabled
                 if (action.IsComplete)
                     continue;
 
-                // Check trigger conditions on inactive tasks
-                if (!triggered && action.IsTriggerCondition)
+                // Always check trigger conditions
+                // These can turn task on and off
+                if (action.IsTriggerCondition)
                 {
                     if (action.CheckTrigger(this))
                         triggered = true;
+                    else
+                        triggered = false;
                 }
 
-                // Tick actions when active
-                if (triggered && !action.IsTriggerCondition)
+                // Tick others actions when active
+                if (triggered)
                 {
                     action.Update(this);
                     if (action.TaskReturn)
@@ -203,6 +209,25 @@ namespace DaggerfallWorkshop.Game.Questing
                         action.TaskReturn = false;
                         return;
                     }
+                }
+            }
+
+            // If this is a PersistUntil task we need to check target condition for unset state.
+            // Experimentation seems to indicate these monitoring tasks get at least one tick.
+            // For example, starting player outside of PH in classic using Z.CFG cheat will
+            // cause main quest to start as normal before _exitstarter_ flag has a chance to
+            // terminate "until _exitstarter_ performed" task.
+            // Performing termination check AFTER executing task at least once to ensure behaviour matches classic.
+            if (type == TaskType.PersistUntil)
+            {
+                // Unset this task when target symbol is also unset
+                Task targetTask = ParentQuest.GetTask(targetSymbol);
+                if (targetTask != null)
+                {
+                    if (!targetTask.IsSet)
+                        Unset();
+                    // Should these tasks be able to rearm?
+                    // Would need strong evidence before allowing this
                 }
             }
         }
@@ -277,7 +302,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // Standard task
                     type = TaskType.Standard;
-                    target = string.Empty;
+                    targetSymbol = null;
                     symbol = new Symbol(match.Groups["symbol"].Value);
                 }
                 else if (!string.IsNullOrEmpty(match.Groups["persist"].Value))
@@ -287,7 +312,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Daggerfall seems to use these most commonly to init state or begin timed spawns of enemy mobiles
                     // It rarely makes sense for these actions to be repeated "over and over" as per Template docs
                     type = TaskType.PersistUntil;
-                    target = match.Groups["symbol"].Value;
+                    targetSymbol = new Symbol(match.Groups["symbol"].Value);
                     triggered = true;
                     symbol = new Symbol(DaggerfallUnity.NextUID.ToString());
                 }
@@ -295,7 +320,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // Variable
                     type = TaskType.Variable;
-                    target = string.Empty;
+                    targetSymbol = null;
                     triggered = false;
                     symbol = new Symbol(match.Groups["symbol"].Value);
                 }

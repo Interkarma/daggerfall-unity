@@ -54,7 +54,6 @@ namespace DaggerfallWorkshop.Game.Utility
         int classicSaveIndex = -1;
         GameObject player;
         PlayerEnterExit playerEnterExit;
-        PlayerHealth playerHealth;
         StartMethods lastStartMethod;
 
         #endregion
@@ -102,7 +101,6 @@ namespace DaggerfallWorkshop.Game.Utility
             // Get player objects
             player = FindPlayer();
             playerEnterExit = FindPlayerEnterExit(player);
-            playerHealth = FindPlayerHealth(player);
         }
 
         void Start()
@@ -528,15 +526,6 @@ namespace DaggerfallWorkshop.Game.Utility
                 throw new Exception("Could not find PlayerEnterExit.");
 
             return playerEnterExit;
-        }
-
-        PlayerHealth FindPlayerHealth(GameObject player)
-        {
-            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
-            if (!playerHealth)
-                throw new Exception("Could not find PlayerHealth.");
-
-            return playerHealth;
         }
 
         PlayerEntity FindPlayerEntity()

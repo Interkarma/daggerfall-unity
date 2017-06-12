@@ -66,7 +66,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public struct TaskState
         {
             public Task.TaskType type;
-            public string name;
+            public Symbol symbol;
             public bool set;
         }
 
@@ -185,7 +185,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 TaskState state = new TaskState();
                 state.type = task.Type;
-                state.name = task.Symbol.Name;
+                state.symbol = task.Symbol;
                 state.set = task.IsSet;
                 states.Add(state);
             }
