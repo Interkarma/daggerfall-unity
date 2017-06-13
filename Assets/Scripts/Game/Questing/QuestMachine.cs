@@ -15,7 +15,9 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing.Actions;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -153,6 +155,27 @@ namespace DaggerfallWorkshop.Game.Questing
         public Table FoesTable
         {
             get { return foesTable; }
+        }
+
+        #endregion
+
+        #region Enums
+
+        /// <summary>
+        /// Fixed quest message constants.
+        /// </summary>
+        public enum QuestMessages
+        {
+            QuestorOffer = 1000,
+            RefuseQuest = 1001,
+            AcceptQuest = 1002,
+            QuestFail = 1003,
+            QuestComplete = 1004,
+            RumorsDuringQuest = 1005,
+            RumorsPostFailure = 1006,
+            RumorsPostSuccess = 1007,
+            QuestorPostSuccess = 1008,
+            QuestorPostFailure = 1009,
         }
 
         #endregion
@@ -350,19 +373,18 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Instantiate a new quest from name.
+        /// Parses a new quest from name.
         /// Quest will attempt to load from QuestSourceFolder property path.
         /// </summary>
         /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
         /// <returns>Quest object if successfully parsed, otherwise null.</returns>
-        public Quest InstantiateQuest(string questName)
+        public Quest ParseQuest(string questName)
         {
-            // Load quest source
             string[] source = GetQuestSourceText(questName);
             if (source == null || source.Length == 0)
                 return null;
 
-            return InstantiateQuest(source);
+            return ParseQuest(source);
         }
 
         /// <summary>
@@ -370,17 +392,40 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="questSource">Array of lines from quuest source file.</param>
         /// <returns>Quest.</returns>
-        public Quest InstantiateQuest(string[] questSource)
+        public Quest ParseQuest(string[] questSource)
         {
+            // Parse quest
             Parser parser = new Parser();
             Quest quest = parser.Parse(questSource);
-            if (quest != null)
-            {
-                quests.Add(quest.UID, quest);
-                RaiseOnQuestStartedEvent(quest);
-            }
 
             return quest;
+        }
+
+        /// <summary>
+        /// Parse and instantiate a quest from quest name.
+        /// </summary>
+        /// <param name="questName">Quest name.</param>
+        /// <returns>Quest.</returns>
+        public Quest InstantiateQuest(string questName)
+        {
+            Quest quest = ParseQuest(questName);
+            if (quest != null)
+            {
+                InstantiateQuest(quest);
+                return quest;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Instantiate quest from a parsed quest object.
+        /// </summary>
+        /// <param name="quest">Quest.</param>
+        public void InstantiateQuest(Quest quest)
+        {
+            quests.Add(quest.UID, quest);
+            RaiseOnQuestStartedEvent(quest);
         }
 
         /// <summary>
@@ -392,7 +437,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Brute force check every registered action for now
             // Would like a more elegant way of accomplishing this
-            foreach(IQuestAction action in actionTemplates)
+            foreach (IQuestAction action in actionTemplates)
             {
                 if (action.Test(source).Success)
                     return action;
@@ -414,7 +459,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 Quest quest = kvp.Value;
                 QuestResource[] foundResources = quest.GetAllResources(typeof(Place));
-                foreach(QuestResource resource in foundResources)
+                foreach (QuestResource resource in foundResources)
                 {
                     sites.Add((resource as Place).SiteDetails);
                 }
@@ -464,6 +509,34 @@ namespace DaggerfallWorkshop.Game.Questing
             return keys.ToArray();
         }
 
+        /// <summary>
+        /// Creates a yes/no prompt from quest message.
+        /// Caller must set events and call Show() when ready.
+        /// </summary>
+        public DaggerfallMessageBox CreateMessagePrompt(Quest quest, int id)
+        {
+            Message message = quest.GetMessage(id);
+            if (message != null)
+                return CreateMessagePrompt(message);
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Creates a yes/no prompt from quest message.
+        /// Caller must set events and call Show() when ready.
+        /// </summary>
+        public DaggerfallMessageBox CreateMessagePrompt(Message message)
+        {
+            TextFile.Token[] tokens = message.GetTextTokens();
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, tokens);
+            messageBox.ClickAnywhereToClose = false;
+            messageBox.AllowCancel = false;
+            messageBox.ParentPanel.BackgroundColor = Color.clear;
+
+            return messageBox;
+        }
+
         #endregion
 
         #region Site Links
@@ -495,7 +568,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Remove site links of that quest
-            foreach(int index in linksToRemove)
+            foreach (int index in linksToRemove)
             {
                 siteLinks.RemoveAt(index);
             }
@@ -514,10 +587,10 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Collect a copy of all site links matching params
             List<SiteLink> foundSiteLinks = new List<SiteLink>();
-            foreach(SiteLink link in siteLinks)
+            foreach (SiteLink link in siteLinks)
             {
                 // Match site type
-                if (link.siteType ==siteType &&
+                if (link.siteType == siteType &&
                     link.mapId == mapId)
                 {
                     if (buildingKey != 0)

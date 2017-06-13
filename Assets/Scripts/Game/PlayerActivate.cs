@@ -187,17 +187,17 @@ namespace DaggerfallWorkshop.Game
                         DaggerfallBillboard npc;
                         if (NPCCheck(hits[i], out npc))
                         {
-                            // Show NPC info
-                            if (currentMode == PlayerActivateModes.Info)
-                                PresentNPCInfo(npc);
-
-                            // Check for questor
-                            QuestorCheck(npc);
-
-                            // Activate NPC quest click
-                            QuestNPCClickHandler npcClickHandler = npc.gameObject.GetComponent<QuestNPCClickHandler>();
-                            if (npcClickHandler)
-                                npcClickHandler.DoClick();
+                            switch(currentMode)
+                            {
+                                case PlayerActivateModes.Info:
+                                    PresentNPCInfo(npc);
+                                    break;
+                                case PlayerActivateModes.Grab:
+                                case PlayerActivateModes.Talk:
+                                    NPCClickCheck(npc);
+                                    QuestorCheck(npc);
+                                    break;
+                            }
                         }
                     }
                 }
@@ -466,16 +466,18 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                // This is a randomly named NPC from seed values
-                // TEMP: The correct name seed is not currently known
-                // Just using record position for now until correct data is found
-                Genders gender = ((npc.Summary.Flags & 32) == 32) ? Genders.Female : Genders.Male;
-                DFRandom.srand(npc.Summary.NameSeed);
-                name = DaggerfallUnity.Instance.NameHelper.FullName(NameHelper.BankTypes.Breton, gender);
+                name = npc.GetNPCName();
             }
 
             // Output to HUD
             DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", name));
+        }
+
+        void NPCClickCheck(DaggerfallBillboard npc)
+        {
+            QuestNPCClickHandler npcClickHandler = npc.gameObject.GetComponent<QuestNPCClickHandler>();
+            if (npcClickHandler)
+                npcClickHandler.DoClick();
         }
 
         void QuestorCheck(DaggerfallBillboard npc)
@@ -487,6 +489,7 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallGuildPopupWindow questor = new DaggerfallGuildPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
                 questor.CurrentGuild = DaggerfallGuildPopupWindow.TempGuilds.Fighter;
                 questor.CurrentRole = DaggerfallGuildPopupWindow.TempGuildRoles.Questor;
+                questor.QuestorNPC = npc;
                 DaggerfallUI.Instance.UserInterfaceManager.PushWindow(questor);
             }
         }

@@ -23,6 +23,8 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -381,6 +383,19 @@ namespace DaggerfallWorkshop
             Vector3 offset = Vector3.zero;
             offset.y = (summary.Size.y / 2);
             transform.position += offset;
+        }
+
+        /// <summary>
+        /// Gets name of NPC from stored name seed.
+        /// </summary>
+        public string GetNPCName()
+        {
+            // This is a randomly named NPC from seed values
+            // TEMP: The correct name seed is not currently known
+            // Just using record position for now until correct data is found
+            Genders gender = ((Summary.Flags & 32) == 32) ? Genders.Female : Genders.Male;
+            DFRandom.srand(Summary.NameSeed);
+            return DaggerfallUnity.Instance.NameHelper.FullName(NameHelper.BankTypes.Breton, gender);
         }
 
 #if UNITY_EDITOR

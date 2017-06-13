@@ -14,7 +14,6 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using System;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -57,26 +56,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override void Update(Task caller)
         {
-            ShowPrompt(caller);
+            DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(ParentQuest, id);
+            if (messageBox != null)
+            {
+                messageBox.OnButtonClick += MessageBox_OnButtonClick;
+                messageBox.Show();
+            }
+
             SetComplete();
-        }
-
-        void ShowPrompt(Task caller)
-        {
-            // Get message resource
-            Message message = ParentQuest.GetMessage(id);
-            if (message == null)
-                return;
-
-            // Get message tokens
-            TextFile.Token[] tokens = message.GetTextTokens();
-
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, tokens);
-            messageBox.ClickAnywhereToClose = false;
-            messageBox.AllowCancel = false;
-            messageBox.ParentPanel.BackgroundColor = Color.clear;
-            messageBox.OnButtonClick += MessageBox_OnButtonClick;
-            messageBox.Show();
         }
 
         private void MessageBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)

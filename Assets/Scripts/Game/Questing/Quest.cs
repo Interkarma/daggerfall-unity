@@ -45,6 +45,9 @@ namespace DaggerfallWorkshop.Game.Questing
         string displayName;
         DaggerfallDateTime questStartTime;
 
+        int questorFactionID = -1;
+        string questorName;
+
         #endregion
 
         #region Structures
@@ -119,6 +122,18 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return questStartTime; }
         }
 
+        // TEMP:
+        public int QuestorFactionID
+        {
+            get { return questorFactionID; }
+        }
+
+        // TEMP:
+        public string QuestorName
+        {
+            get { return questorName; }
+        }
+
         #endregion
 
         #region Constructors
@@ -191,6 +206,18 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return states.ToArray();
+        }
+
+        /// <summary>
+        /// Experimental.
+        /// Link information about questor who issued this quest.
+        /// Used to assign faction change on success/failure.
+        /// TODO: Fully integrate with Person resource.
+        /// </summary>
+        public void LinkQuestor(int factionID, string name)
+        {
+            questorFactionID = factionID;
+            questorName = name;
         }
 
         #endregion

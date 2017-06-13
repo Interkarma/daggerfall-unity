@@ -89,6 +89,11 @@ namespace DaggerfallWorkshop.Utility
                             // Quest date time
                             words[word] = words[word].Replace(macro.token, parentQuest.QuestStartTime.DateString());
                         }
+                        else if (macro.token == "%ra")
+                        {
+                            // Race
+                            words[word] = words[word].Replace(macro.token, GameManager.Instance.PlayerEntity.RaceTemplate.Name);
+                        }
                     }
                     else
                     {

@@ -57,12 +57,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const string baseTextureName = "GILD00I0.IMG";      // Join guild / Talk / Custom
 
+        DaggerfallBillboard questorNPC;
         TempGuilds currentGuild = TempGuilds.Fighter;
         TempGuildRoles currentRole = TempGuildRoles.Questor;
+        Quest offeredQuest = null;
 
         #endregion
 
         #region Properties
+
+        public DaggerfallBillboard QuestorNPC
+        {
+            get { return questorNPC; }
+            set { questorNPC = value; }
+        }
 
         public TempGuilds CurrentGuild
         {
@@ -191,8 +199,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int index = UnityEngine.Random.Range(0, files.Length);
             string questName = Path.GetFileName(files[index]);
 
-            // Start the quest
-            QuestMachine.Instance.InstantiateQuest(questName);
+            // Parse quest
+            offeredQuest = QuestMachine.Instance.ParseQuest(questName);
+
+            // Link questor NPC if set
+            if (questorNPC != null)
+            {
+                offeredQuest.LinkQuestor(questorNPC.Summary.FactionOrMobileID, questorNPC.GetNPCName());
+            }
+
+            // Offer the quest to player
+            DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);
+            if (messageBox != null)
+            {
+                messageBox.OnButtonClick += OfferQuest_OnButtonClick;
+                messageBox.Show();
+            }
         }
 
         string GetCurrentGuildPrefix()
@@ -218,6 +240,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void CustomButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             AssignRandomGuildQuest();
+        }
+
+        private void OfferQuest_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        {
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            {
+                // TODO: Show accept message, add quest
+            }
+            else
+            {
+                // TODO: Show refuse message
+            }
+
+            sender.CloseWindow();
         }
 
         #endregion

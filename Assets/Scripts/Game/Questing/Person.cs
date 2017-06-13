@@ -232,6 +232,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override bool ExpandMacro(MacroTypes macro, out string textOut)
         {
+            UpdateQuestorName();
+
             textOut = string.Empty;
             bool result = true;
             switch (macro)
@@ -248,6 +250,20 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return result;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        // TEMP: Set questor name ahead of macro expand.
+        void UpdateQuestorName()
+        {
+            // Assign questor name
+            if (groupAllianceName == "Questor")
+            {
+                displayName = ParentQuest.QuestorName;
+            }
         }
 
         #endregion
