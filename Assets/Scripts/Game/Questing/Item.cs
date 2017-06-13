@@ -3,8 +3,8 @@
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Lypyl (lypyldf@gmail.com)
+// Original Author: Lypyl (lypyldf@gmail.com)
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Items;
 
 /*Example patterns:
  * 
+ * Item _gold_ gold
  * Item _gold1_ gold range 5 to 25
  * Item talisman talisman
  * Item _book_ book2 anyInfo 1014 used 1014
@@ -41,6 +42,8 @@ namespace DaggerfallWorkshop.Game.Questing
         private int rangeLow    = -1;
         private int rangeHigh   = -1;
         private bool isArtifact = false;
+
+        int goldAmount = 0;
 
         public DaggerfallUnityItem DaggerfallUnityItem
         {
@@ -97,6 +100,24 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #endregion
 
+        #region Overrides
+
+        public override bool ExpandMacro(MacroTypes macro, out string textOut)
+        {
+            textOut = string.Empty;
+
+            // TEMP: Just hacking in gold value for now
+            if (itemString == "gold" && macro == MacroTypes.NameMacro1)
+            {
+                textOut = goldAmount.ToString();
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+
         #region public methods
 
         public void SetItem(string line)
@@ -132,34 +153,44 @@ namespace DaggerfallWorkshop.Game.Questing
                     this.rangeHigh  = Parser.ParseInt(r2.Value);
             }
 
-            var table = QuestMachine.Instance.ItemsTable;
-
-            if (table.HasValue(this.itemString))
+            // Handle item by type
+            if (itemString == "gold")
             {
-                var row = table.GetRow(table.GetRowIndex(itemString));
-
-                if(row == null || row.Length < 3)
-                {
-                    Debug.LogWarning("Failed to create quest item from string: " + itemString);
-                    this.item = null;
-                    return;
-                }
-
-                ItemGroups itemGroup = ItemGroups.None;
-                if (isArtifact)
-                    itemGroup = ItemGroups.Artifacts;
-                else
-                    itemGroup = (ItemGroups)Parser.ParseInt(row[1]);
-
-                var subType = Parser.ParseInt(row[2]);
-                this.item = new DaggerfallUnityItem(itemGroup, subType);
-                //Debug.Log(string.Format("found item string: {0} type: {1} sub: {2}", row[0], row[1], row[2]));
-
-                // Link quest Item resource to DaggerfallUnityItem
-                item.LinkQuestItem(ParentQuest.UID, Symbol);
+                // Gold given is in the range of 100 gold per player level
+                int goldMultiplier = UnityEngine.Random.Range(91, 109);
+                goldAmount = goldMultiplier * GameManager.Instance.PlayerEntity.Level;
             }
             else
-                Debug.LogWarning("item not found in table: " + itemString);
+            {
+                var table = QuestMachine.Instance.ItemsTable;
+
+                if (table.HasValue(this.itemString))
+                {
+                    var row = table.GetRow(table.GetRowIndex(itemString));
+
+                    if (row == null || row.Length < 3)
+                    {
+                        Debug.LogWarning("Failed to create quest item from string: " + itemString);
+                        this.item = null;
+                        return;
+                    }
+
+                    ItemGroups itemGroup = ItemGroups.None;
+                    if (isArtifact)
+                        itemGroup = ItemGroups.Artifacts;
+                    else
+                        itemGroup = (ItemGroups)Parser.ParseInt(row[1]);
+
+                    var subType = Parser.ParseInt(row[2]);
+                    this.item = new DaggerfallUnityItem(itemGroup, subType);
+                    //Debug.Log(string.Format("found item string: {0} type: {1} sub: {2}", row[0], row[1], row[2]));
+
+                    // Link quest Item resource to DaggerfallUnityItem
+                    item.LinkQuestItem(ParentQuest.UID, Symbol);
+                }
+                else
+                    Debug.LogWarning("item not found in table: " + itemString);
+            }
 
             return;
         }
