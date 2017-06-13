@@ -191,6 +191,9 @@ namespace DaggerfallWorkshop.Game
                             if (currentMode == PlayerActivateModes.Info)
                                 PresentNPCInfo(npc);
 
+                            // Check for questor
+                            QuestorCheck(npc);
+
                             // Activate NPC quest click
                             QuestNPCClickHandler npcClickHandler = npc.gameObject.GetComponent<QuestNPCClickHandler>();
                             if (npcClickHandler)
@@ -473,6 +476,19 @@ namespace DaggerfallWorkshop.Game
 
             // Output to HUD
             DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", name));
+        }
+
+        void QuestorCheck(DaggerfallBillboard npc)
+        {
+            // Detect Fighter's Guild Questors
+            if (npc.Summary.FactionOrMobileID == 851)
+            {
+                // Temp guild quest pump UI
+                DaggerfallGuildPopupWindow questor = new DaggerfallGuildPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                questor.CurrentGuild = DaggerfallGuildPopupWindow.TempGuilds.Fighter;
+                questor.CurrentRole = DaggerfallGuildPopupWindow.TempGuildRoles.Questor;
+                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(questor);
+            }
         }
     }
 }
