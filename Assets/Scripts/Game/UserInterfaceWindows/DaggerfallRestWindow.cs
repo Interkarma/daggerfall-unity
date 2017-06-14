@@ -157,7 +157,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowStatus();
             if (currentRestMode != RestModes.Selection)
             {
-                if ((hoursRemaining < 1) || TickRest())
+                if (TickRest())
                     EndRest();
             }
         }
