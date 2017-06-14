@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class Foe : QuestResource
     {
-        // Arbitrary limit to spawn count, need to check this is at/above max classic expects
-        const int maxSpawnCount = 10;
+        // Testing shows classic can spawn at least 50 of the same enemy at a time, and probably many more
+        const int maxSpawnCount = 50;
 
         int spawnCount;
         MobileTypes foeType;
