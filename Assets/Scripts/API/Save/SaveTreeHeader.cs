@@ -32,7 +32,7 @@ namespace DaggerfallConnect.Save
         public long StreamPosition;                             // Starting position in file stream
         public byte[] RawData;                                  // Raw byte data read from stream
         public Byte Version;                                    // Version - must be 0x26
-        public CharacterPositionRecord CharacterPosition;       // Character position
+        public HeaderCharacterPositionRecord CharacterPosition; // Character position
         public UInt16 Unknown;                                  // Unknown
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace DaggerfallConnect.Save
                 throw new Exception("SaveTree file has an invalid version number, must be 0x26.");
 
             // Read CharacterPosition.RecordType - must be 0x01
-            CharacterPosition = new CharacterPositionRecord();
+            CharacterPosition = new HeaderCharacterPositionRecord();
             CharacterPosition.RecordType = reader.ReadByte();
             if (CharacterPosition.RecordType != (int)RecordTypes.CharacterPosition)
                 throw new Exception("Expected CharacterPosition in SaveTreeHeader has an invalid record type, must be 0x01.");

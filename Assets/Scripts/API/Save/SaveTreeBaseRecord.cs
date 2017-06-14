@@ -222,24 +222,49 @@ namespace DaggerfallConnect.Save
                 return;
             }
 
+            // Direction
+            reader.BaseStream.Position = 1;
+            recordRoot.Pitch = reader.ReadInt16();
+            recordRoot.Yaw = reader.ReadInt16();
+
             // Position
-            reader.BaseStream.Position = 6;
+            reader.BaseStream.Position = 7;
             recordRoot.Position = SaveTree.ReadPosition(reader);
 
+            // 3d View Picture
+            reader.BaseStream.Position = 27;
+            recordRoot.Picture1 = reader.ReadUInt16();
+
+            // Inventory Picture
+            recordRoot.Picture2 = reader.ReadUInt16();
+
             // RecordID
-            reader.BaseStream.Position = 30;
             recordRoot.RecordID = reader.ReadUInt32();
 
             // QuestID
-            reader.BaseStream.Position = 37;
+            reader.BaseStream.Position = 38;
             recordRoot.QuestID = reader.ReadByte();
 
             // ParentRecordID
-            reader.BaseStream.Position = 38;
             recordRoot.ParentRecordID = reader.ReadUInt32();
 
+            // ItemObject
+            reader.BaseStream.Position = 47;
+            recordRoot.ItemObject = reader.ReadUInt32();
+
+            // QuestObjectID
+            recordRoot.QuestObjectID = reader.ReadUInt32();
+
+            // NextObject
+            recordRoot.NextObject = reader.ReadUInt32();
+
+            // ChildObject
+            recordRoot.ChildObject = reader.ReadUInt32();
+
+            // SublistHead
+            recordRoot.SublistHead = reader.ReadUInt32();
+
             // ParentRecordType
-            reader.BaseStream.Position = 66;
             recordRoot.ParentRecordType = (RecordTypes)reader.ReadInt32();
 
             reader.Close();

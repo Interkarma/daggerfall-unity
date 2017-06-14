@@ -30,7 +30,6 @@ namespace DaggerfallConnect.Save
         public SaveTreeHeader Header;
         public SaveTreeLocationDetail LocationDetail;
         public SaveTreeBaseRecord RootRecord = new SaveTreeBaseRecord();
-        public PlayerDirectionRecord DirectionRecord = new PlayerDirectionRecord();
         public Dictionary<uint, SaveTreeBaseRecord> RecordDictionary = new Dictionary<uint, SaveTreeBaseRecord>();
 
         // Private fields
@@ -239,26 +238,14 @@ namespace DaggerfallConnect.Save
                     case RecordTypes.Item:
                         record = new ItemRecord(reader, length);
                         break;
-                    case RecordTypes.Spell:
-                        record = new SpellRecord(reader, length);
-                        break;
                     case RecordTypes.Character:
                         record = new CharacterRecord(reader, length);
                         break;
+                    case RecordTypes.Spell:
+                        record = new SpellRecord(reader, length);
+                        break;
                     case RecordTypes.Container:
                         record = new ContainerRecord(reader, length);
-                        break;
-                    case RecordTypes.CharacterParentUnknown1:
-                        // CharacterParentUnknown1's first values after the record type are the pitch and yaw of the player's view.
-                        // The same player position data as in the header, and then unknown data, follows.
-                        // For now just get the pitch and yaw.
-                        long position = reader.BaseStream.Position;
-                        reader.ReadByte();
-                        DirectionRecord.Pitch = reader.ReadInt16();
-                        DirectionRecord.Yaw = reader.ReadInt16();
-                        // Reset stream position and continue with default behavior
-                        reader.BaseStream.Position = position;
-                        record = new SaveTreeBaseRecord(reader, length);
                         break;
                     //case RecordTypes.UnknownTownLink:
                     //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
@@ -332,13 +319,11 @@ namespace DaggerfallConnect.Save
     /// <summary>
     /// Character position record in header.
     /// </summary>
-    public struct CharacterPositionRecord
+    public struct HeaderCharacterPositionRecord
     {
         public Byte RecordType;                 // Must always be 0x01
         public UInt16 Unknown;
         public RecordPosition Position;
-        public Int16 Pitch;
-        public Int16 Yaw;
     }
 
     /// <summary>
@@ -354,10 +339,21 @@ namespace DaggerfallConnect.Save
 
     public struct RecordRoot
     {
+        // Some parts are identified based on save-game viewer "chunktcl"
+
+        public Int16 Pitch;                     // Pitch of object
+        public Int16 Yaw;                       // Yaw of object
         public RecordPosition Position;         // Position of the object in world (if applicable)
+        public UInt16 Picture1;                 // chunktcl's description: 3d view picture
+        public UInt16 Picture2;                 // chunktcl's description: Inventory picture
         public UInt32 RecordID;                 // Unique ID of this record
         public Byte QuestID;                    // Associated quest ID of this record (0 if no quest)
         public UInt32 ParentRecordID;           // ID of parent record
+        public UInt32 ItemObject;               // chunktcl's description: ItemObject. Active spell/spell book/permanent treasure container
+        public UInt32 QuestObjectID;            // chunktcl's description: QuestObjectID
+        public UInt32 NextObject;               // chunktcl's description: Link to next object in series
+        public UInt32 ChildObject;              // chunktcl's description: Link to first child object in series
+        public UInt32 SublistHead;              // chunktcl's description: Sublist head. Link to parent object of series
         public RecordTypes ParentRecordType;    // Type of parent record
     }
 
@@ -370,6 +366,7 @@ namespace DaggerfallConnect.Save
 
     /// <summary>
     /// Types of SaveTree records encountered.
+    /// Save viewer program "chunktcl" used to identify some.
     /// </summary>
     public enum RecordTypes
     {
@@ -377,28 +374,28 @@ namespace DaggerfallConnect.Save
         CharacterPosition = 0x01,
         Item = 0x02,
         Character = 0x03,
-        CharacterParentUnknown1 = 0x04,
-        CharacterParentUnknown2 = 0x05,
+        CharacterPositionRecord = 0x04,             // This record, not the position record in the header, determines where player is when game loads.
+        CharacterParentUnknown2 = 0x05,             // chunktcl calls this "Person"
         Unknown1 = 0x06,
         DungeonInformation = 0x07,                  // Length MUST be multiplied by 39 (0x27)
         Unknown2 = 0x08,
         Spell = 0x09,
         GuildMembership = 0x0a,
         QBNData = 0x0e,
-        QBNDataParent1 = 0x10,
-        QBNDataParent2 = 0x12,
+        QBNDataParent1 = 0x10,                      // chunktcl calls this "Quest Holder"
+        Monster = 0x12,
         SpellcastingCreatureListHead = 0x16,
         ControlSetting = 0x17,
-        LocationName1 = 0x18,                       // Possibly logbook entries
+        LocationName1 = 0x18,                       // Possibly logbook entries. chunktcl calls this "Logbook"
         BankAccount = 0x19,
         PotionMix = 0x1f,
-        UnknownTownLink = 0x20,
-        UnknownDungeonRecord = 0x21,                // Usually in dungeon saves
-        Creature1 = 0x22,
+        UnknownTownLink = 0x20,                     // chunktcl calls this "Door"
+        Treasure = 0x21,
+        Creature1 = 0x22,                           // From the 3d picture this seems to be for random monster markers
         UnknownItemRecord = 0x24,                   // Possibly items on store shelves
         MysteryRecord1 = 0x27,                      // Referenced but does not exist in file
-        LocationName2 = 0x28,                       // Possibly for quests
-        LocationName3 = 0x29,                       // Possible for quests
+        LocationName2 = 0x28,                       // Possibly for quests. chunktcl calls this "Quest site"
+        LocationName3 = 0x29,                       // Possible for quests. chunktcl calls this "Quest NPC"
         MysteryRecord2 = 0x2b,                      // Referenced but does not exist in file
         Creature2 = 0x2c,
         NPC = 0x2d,
