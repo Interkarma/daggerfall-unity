@@ -398,7 +398,7 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 // TODO: Duplicates rest code in rest window. Should be unified.
                 DaggerfallUnity.Instance.WorldTime.Now.RaiseTime(1 * DaggerfallDateTime.SecondsPerHour);
-                int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(Skills.Medical, Stats.Endurance, MaxHealth);
+                int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(this);
                 int fatigueRecoveryRate = FormulaHelper.CalculateFatigueRecoveryRate(MaxFatigue);
                 int spellPointRecoveryRate = FormulaHelper.CalculateSpellPointRecoveryRate(MaxMagicka);
 

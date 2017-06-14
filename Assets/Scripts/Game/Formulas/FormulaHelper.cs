@@ -60,16 +60,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             return (int)Mathf.Floor((float)endurance / 10f) - 5;
         }
 
-        public static float HealingRateModifierMedical(int medical)
-        {
-            return ((float)medical / 10f) + 6;
-        }
-
-        public static float HealingRateModifierMaxHealth(int maxHealth)
-        {
-            return ((float)maxHealth / 100f);
-        }
-
         #endregion
 
         #region Player
@@ -92,9 +82,22 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         // Calculate how much health the player should recover per hour of rest
-        public static int CalculateHealthRecoveryRate(int medical, int endurance, int maxHealth)
+        public static int CalculateHealthRecoveryRate(DaggerfallWorkshop.Game.Entity.PlayerEntity player)
         {
-            return Mathf.Max((int)Mathf.Floor(((HealingRateModifierMedical(medical) * HealingRateModifierMaxHealth(maxHealth)) + HealingRateModifier(endurance))), 1);
+            short medical = player.Skills.Medical;
+            int endurance = player.Stats.Endurance;
+            int maxHealth = player.MaxHealth;
+            DaggerfallConnect.DFCareer.RapidHealingFlags rapidHealingFlags = player.Career.RapidHealing;
+            if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.None)
+                medical += 60;
+            else if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.Always)
+                medical += 100;
+            else if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.IsDay)
+                if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.InLight)
+                    medical += 100;
+            else if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.InDarkness)
+                medical += 100;
+            return Mathf.Max((int)Mathf.Floor(HealingRateModifier(endurance) + medical * maxHealth / 1000), 1);
         }
 
         // Calculate how much fatigue the player should recover per hour of rest
