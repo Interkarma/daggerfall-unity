@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
@@ -674,40 +675,75 @@ namespace DaggerfallWorkshop
             if (person == null)
                 throw new Exception(string.Format("Could not find Person symbol {0} in quest UID {1}", marker.targetSymbol, marker.questUID));
 
-            // Handle permanent NPC
-            // Will need more work soon for completely random NPCs
-            if (person.IsPermanentNPC)
+            // Get billboard texture data
+            FactionFile.FlatData flatData;
+            if (person.IsIndividualNPC)
             {
-                // Get faction details
-                FactionFile.FactionData factionData;
-                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(person.IndividualFactionIndex, out factionData))
-                {
-                    // Get billboard texture data
-                    // Permanent flats only have one set of texture indices that are not gender based
-                    FactionFile.FlatData flatData = FactionFile.GetFlatData(factionData.flat1);
-
-                    // Create target GameObject
-                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(flatData.archive, flatData.record, transform);
-                    go.name = string.Format("Injected NPC [{0}]", person.DisplayName);
-
-                    // Set position
-                    DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                    go.transform.position = marker.flatPosition;
-                    go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
-
-                    // Add people data to billboard
-                    dfBillboard.SetRMBPeopleData(person.IndividualFactionIndex, factionData.flags);
-
-                    // Add click handler to billboard
-                    QuestNPCClickHandler clickHandler = go.AddComponent<QuestNPCClickHandler>();
-                    clickHandler.QuestUID = quest.UID;
-                    clickHandler.QuestPersonSymbol = person.Symbol;
-                }
+                // Individuals are always flat1 no matter gender
+                flatData = FactionFile.GetFlatData(person.FactionData.flat1);
+            }
+            if (person.Gender == Genders.Male)
+            {
+                // Male has flat1
+                flatData = FactionFile.GetFlatData(person.FactionData.flat1);
             }
             else
             {
-                Debug.Log("Random NPC injection not implemented yet.");
+                // Female has flat2
+                flatData = FactionFile.GetFlatData(person.FactionData.flat2);
             }
+
+            // Create target GameObject
+            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(flatData.archive, flatData.record, transform);
+            go.name = string.Format("Injected NPC [{0}]", person.DisplayName);
+
+            // Set position
+            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            go.transform.position = marker.flatPosition;
+            go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+
+            // Add people data to billboard
+            dfBillboard.SetRMBPeopleData(person.FactionIndex, person.FactionData.flags);
+
+            // Add click handler to billboard
+            QuestNPCClickHandler clickHandler = go.AddComponent<QuestNPCClickHandler>();
+            clickHandler.QuestUID = quest.UID;
+            clickHandler.QuestPersonSymbol = person.Symbol;
+
+            //// Handle permanent NPC
+            //// Will need more work soon for completely random NPCs
+            //if (person.IsIndividualNPC)
+            //{
+            //    // Get faction details
+            //    FactionFile.FactionData factionData;
+            //    if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(person.FactionIndex, out factionData))
+            //    {
+            //        // Get billboard texture data
+            //        // Permanent flats only have one set of texture indices that are not gender based
+            //        FactionFile.FlatData flatData = FactionFile.GetFlatData(factionData.flat1);
+
+            //        // Create target GameObject
+            //        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(flatData.archive, flatData.record, transform);
+            //        go.name = string.Format("Injected NPC [{0}]", person.DisplayName);
+
+            //        // Set position
+            //        DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            //        go.transform.position = marker.flatPosition;
+            //        go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+
+            //        // Add people data to billboard
+            //        dfBillboard.SetRMBPeopleData(person.FactionIndex, factionData.flags);
+
+            //        // Add click handler to billboard
+            //        QuestNPCClickHandler clickHandler = go.AddComponent<QuestNPCClickHandler>();
+            //        clickHandler.QuestUID = quest.UID;
+            //        clickHandler.QuestPersonSymbol = person.Symbol;
+            //    }
+            //}
+            //else
+            //{
+            //    Debug.Log("Random NPC injection not implemented yet.");
+            //}
         }
 
         #endregion

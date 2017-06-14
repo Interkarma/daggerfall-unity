@@ -70,6 +70,48 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         /// <summary>
+        /// Finds all faction data matching the search parameters.
+        /// Specify -1 to ignore a parameter. If all params are -1 then all regions are returned.
+        /// </summary>
+        /// <param name="type">Type to match.</param>
+        /// <param name="socialGroup">Social Group to match.</param>
+        /// <param name="guildGroup">Guild group to match.</param>
+        /// <param name="oneBasedRegionIndex">Region index to match. Must be ONE-BASED region index used by FACTION.TXT.</param>
+        /// <returns>FactionData[] array.</returns>
+        public FactionFile.FactionData[] FindFactions(int type = -1, int socialGroup = -1, int guildGroup = -1, int oneBasedRegionIndex = -1)
+        {
+            List<FactionFile.FactionData> factionDataList = new List<FactionFile.FactionData>();
+
+            // Match faction items
+            foreach(FactionFile.FactionData item in factionDict.Values)
+            {
+                bool match = true;
+
+                // Validate type if specified
+                if (type != -1 && type != item.type)
+                    match = false;
+
+                // Validate socialGroup if specified
+                if (socialGroup != -1 && socialGroup != item.sgroup)
+                    match = false;
+
+                // Validate guildGroup if specified
+                if (guildGroup != -1 && guildGroup != item.ggroup)
+                    match = false;
+
+                // Validate regionIndex if specified
+                if (oneBasedRegionIndex != -1 && oneBasedRegionIndex != item.region)
+                    match = false;
+
+                // Store if a match found
+                if (match)
+                    factionDataList.Add(item);
+            }
+
+            return factionDataList.ToArray();
+        }
+
+        /// <summary>
         /// Gets faction ID from name. Experimental.
         /// </summary>
         /// <param name="name">Name of faction to get ID of.</param>

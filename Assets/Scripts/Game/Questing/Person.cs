@@ -20,34 +20,27 @@ using DaggerfallConnect.Arena2;
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// A quest person is often used to assign or progress a quest.
-    /// Can contain tags, such as to add info and rumours to NPC dialog.
-    /// Persons can be added to world as needed or accessed from home position.
+    /// Defines an NPC involved in a quest.
     /// </summary>
     public class Person : QuestResource
     {
         #region Fields
 
-        string permanentNPCName = string.Empty;
-        int faceIndex = 0;
-        string factionTypeName = string.Empty;
-        string factionAllianceName = string.Empty;
-        string groupAllianceName = string.Empty;
         Genders npcGender = Genders.Male;
-        bool atHome = false;
-
-        bool isPermanentNPC = false;
+        int faceIndex = 0;
+        bool isIndividualNPC = false;
+        bool isIndividualAtHome = false;
         string displayName = string.Empty;
-        int individualFactionIndex = 0;
         bool hasPlayerClicked = false;
+        FactionFile.FactionData factionData;
 
         #endregion
 
         #region Properties
 
-        public string PermanentNPCName
+        public int FactionIndex
         {
-            get { return permanentNPCName; }
+            get { return factionData.id; }
         }
 
         public int FaceIndex
@@ -55,29 +48,19 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return faceIndex; }
         }
 
-        public string FactionTypeName
-        {
-            get { return factionTypeName; }
-        }
-
-        public string FactionAllianceName
-        {
-            get { return factionAllianceName; }
-        }
-
-        public string GroupAllianceName
-        {
-            get { return groupAllianceName; }
-        }
-
-        public Genders NPCGender
+        public Genders Gender
         {
             get { return npcGender; }
         }
 
-        public bool AtHome
+        public bool IsIndividualNPC
         {
-            get { return atHome; }
+            get { return isIndividualNPC; }
+        }
+
+        public bool IsIndividualAtHome
+        {
+            get { return isIndividualAtHome; }
         }
 
         public string DisplayName
@@ -85,19 +68,14 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return displayName; }
         }
 
-        public int IndividualFactionIndex
-        {
-            get { return individualFactionIndex; }
-        }
-
-        public bool IsPermanentNPC
-        {
-            get { return isPermanentNPC; }
-        }
-
         public bool HasPlayerClicked
         {
             get { return hasPlayerClicked; }
+        }
+
+        public FactionFile.FactionData FactionData
+        {
+            get { return factionData; }
         }
 
         #endregion
@@ -121,15 +99,22 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override void SetResource(string line)
         {
+            string individualNPCName = string.Empty;
+            string factionTypeName = string.Empty;
+            string factionAllianceName = string.Empty;
+            string careerAllianceName = string.Empty;
+            string genderName = string.Empty;
+            bool atHome = false;
+
             base.SetResource(line);
 
             // Match strings
             string declMatchStr = @"(Person|person) (?<symbol>[a-zA-Z0-9_.-]+)";
-            string optionsMatchStr = @"named (?<permanentNPCName>[a-zA-Z0-9_.-]+)|" +
+            string optionsMatchStr = @"named (?<individualNPCName>[a-zA-Z0-9_.-]+)|" +
                                      @"face (?<faceIndex>\d+)|" +
                                      @"factionType (?<factionType>\w+)|" +
                                      @"faction (?<factionAlliance>\w+)|" +
-                                     @"group (?<groupAlliance>\w+)|" +
+                                     @"group (?<careerAlliance>\w+)|" +
                                      @"(?<gender>female|male)|" +
                                      @"(?<atHome>atHome)";
 
@@ -147,10 +132,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 MatchCollection options = Regex.Matches(line, optionsMatchStr);
                 foreach (Match option in options)
                 {
-                    // Permanent NPC
-                    Group permanentNPCNameGroup = option.Groups["permanentNPCName"];
-                    if (permanentNPCNameGroup.Success)
-                        permanentNPCName = permanentNPCNameGroup.Value;
+                    // Individual NPC
+                    Group individualNPCNameGroup = option.Groups["individualNPCName"];
+                    if (individualNPCNameGroup.Success)
+                        individualNPCName = individualNPCNameGroup.Value;
 
                     // Face
                     Group faceGroup = option.Groups["faceIndex"];
@@ -168,72 +153,34 @@ namespace DaggerfallWorkshop.Game.Questing
                         factionAllianceName = faceGroup.Value;
 
                     // Group
-                    Group groupAllianceGroup = option.Groups["groupAlliance"];
-                    if (groupAllianceGroup.Success)
-                        groupAllianceName = groupAllianceGroup.Value;
+                    Group careerAllianceGroup = option.Groups["careerAlliance"];
+                    if (careerAllianceGroup.Success)
+                        careerAllianceName = careerAllianceGroup.Value;
 
                     // Gender
                     Group genderGroup = option.Groups["gender"];
                     if (genderGroup.Success)
-                    {
-                        switch (genderGroup.Value)
-                        {
-                            case "female":
-                                npcGender = Genders.Female;
-                                break;
-                            case "male":
-                                npcGender = Genders.Male;
-                                break;
-                            default:
-                                // Random gender
-                                if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f)
-                                    npcGender = Genders.Male;
-                                else
-                                    npcGender = Genders.Female;
-                                break;
-                        }
-                    }
+                        genderName = genderGroup.Value;
 
                     // At home
                     Group atHomeGroup = option.Groups["atHome"];
-                    if (atHomeGroup.Success)
-                        atHome = true;
+                    atHome = atHomeGroup.Success;
                 }
 
-                // Get permanent NPC display name and faction index
-                // This is a little clunky because display name comes from symbolic link to live faction data in player entity
-                // Might review how this is handled later
-                if (!string.IsNullOrEmpty(permanentNPCName))
+                // Setup NPC based on input parameters
+                if (!string.IsNullOrEmpty(individualNPCName))
                 {
-                    // Try to read place variables from data table
-                    Table factionsTable = QuestMachine.Instance.FactionsTable;
-                    if (factionsTable.HasValue(permanentNPCName))
-                    {
-                        // Get fixed NPC params
-                        int p3 = Parser.ParseInt(factionsTable.GetValue("p3", permanentNPCName));
-
-                        // Get faction info for p3
-                        FactionFile.FactionData factionData;
-                        if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(p3, out factionData))
-                            throw new Exception(string.Format("Could not find faction data for named NPC {0} with FactionID {1}", permanentNPCName, p3));
-
-                        // Check this is an individual NPC
-                        if (factionData.type != (int)FactionFile.FactionTypes.Individual)
-                            throw new Exception(string.Format("Named NPC {0} with FactionID {1} is not an individual NPC", permanentNPCName, p3));
-
-                        // Store permanent NPC display name
-                        isPermanentNPC = true;
-                        displayName = factionData.name;
-                        individualFactionIndex = factionData.id;
-                    }
+                    SetupIndividualNPC(individualNPCName, atHome);
+                }
+                else if (!string.IsNullOrEmpty(careerAllianceName))
+                {
+                    SetupCareerAllianceNPC(careerAllianceName, genderName);
                 }
             }
         }
 
         public override bool ExpandMacro(MacroTypes macro, out string textOut)
         {
-            UpdateQuestorName();
-
             textOut = string.Empty;
             bool result = true;
             switch (macro)
@@ -256,14 +203,193 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #region Private Methods
 
-        // TEMP: Set questor name ahead of macro expand.
-        void UpdateQuestorName()
+        // Creates an individual NPC like King Gothryd or Brisienna
+        void SetupIndividualNPC(string individualNPCName, bool atHome)
         {
-            // Assign questor name
-            if (groupAllianceName == "Questor")
+            // Get faction data
+            int factionID = GetIndividualFactionID(individualNPCName);
+            if (factionID != -1)
             {
-                displayName = ParentQuest.QuestorName;
+                FactionFile.FactionData factionData = GetFactionData(factionID);
+
+                // This must is an individual NPC
+                if (factionData.type != (int)FactionFile.FactionTypes.Individual)
+                    throw new Exception(string.Format("Named NPC {0} with FactionID {1} is not an individual NPC", individualNPCName, factionID));
+
+                // Setup Person resource
+                isIndividualNPC = true;
+                displayName = factionData.name;
+                isIndividualAtHome = atHome;
+                this.factionData = factionData;
             }
+            else
+            {
+                Debug.LogErrorFormat("SetupIndividualNPC() failed to setup {0}", individualNPCName);
+            }
+        }
+
+        // Creates a career-based NPC like a Shopkeeper or Banker
+        void SetupCareerAllianceNPC(string careerAllianceName, string genderName)
+        {
+            // Get faction data
+            int factionID = GetCareerFactionID(careerAllianceName);
+            if (factionID != -1)
+            {
+                FactionFile.FactionData factionData = GetFactionData(factionID);
+
+                // Setup Person resource with a random display name
+                DFRandom.srand(Time.frameCount);
+                npcGender = GetGender(genderName);
+                displayName = DaggerfallUnity.Instance.NameHelper.FullName(Utility.NameHelper.BankTypes.Breton, npcGender);
+                this.factionData = factionData;
+            }
+            else
+            {
+                Debug.LogErrorFormat("SetupCareerAllianceNPC() failed to setup {0}", careerAllianceName);
+            }
+        }
+
+        // Gets live faction data from player entity for faction ID
+        FactionFile.FactionData GetFactionData(int factionID)
+        {
+            FactionFile.FactionData factionData;
+            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData))
+                throw new Exception(string.Format("Could not find faction data for FactionID {0}", factionID));
+
+            return factionData;
+        }
+
+        Genders GetGender(string genderName)
+        {
+            Genders gender;
+            switch (genderName)
+            {
+                case "female":
+                    gender = Genders.Female;
+                    break;
+                case "male":
+                    gender = Genders.Male;
+                    break;
+                default:
+                    // Random gender
+                    if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f)
+                        gender = Genders.Male;
+                    else
+                        gender = Genders.Female;
+                    break;
+            }
+
+            return gender;
+        }
+
+        #endregion
+
+        #region FactionID Lookups
+
+        // Gets factionID of an individual NPC
+        int GetIndividualFactionID(string individualNPCName)
+        {
+            // P3 is individual factionID
+            Table factionsTable = QuestMachine.Instance.FactionsTable;
+            if (factionsTable.HasValue(individualNPCName))
+            {
+                return Parser.ParseInt(factionsTable.GetValue("p3", individualNPCName));
+            }
+            else
+            {
+                Debug.LogErrorFormat("Could not find individualNPCName {0}", individualNPCName);
+                return -1;
+            }
+        }
+
+        // Gets factionID of a career NPC
+        int GetCareerFactionID(string careerAllianceName)
+        {
+            const int magesGuild = 40;
+            const int genericTemple = 450;
+            const int merchants = 510;
+
+            // P2 is careerID
+            int careerID;
+            Table factionsTable = QuestMachine.Instance.FactionsTable;
+            if (factionsTable.HasValue(careerAllianceName))
+            {
+                careerID = Parser.ParseInt(factionsTable.GetValue("p2", careerAllianceName));
+            }
+            else
+            {
+                Debug.LogErrorFormat("Could not find careerAllianceName {0}", careerAllianceName);
+                return -1;
+            }
+
+            // Assign factionID based on careerID
+            // How Daggerfall links these is not 100% confirmed, some guesses below
+            // Most of these NPC careers seem to be aligned with faction #510 Merchants
+            // TODO: Questor to be handled elsewhere
+            switch (careerID)
+            {
+                case 0:
+                case 2:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 12:
+                case 13:
+                case 15:
+                    return merchants;                       // Merchants
+                case 11:
+                    return magesGuild;                      // Mages Guild
+                case 14:
+                    return genericTemple;                   // Generic Temple seems to link all the temples together
+                case 16:
+                    return GetCourtOfCurrentRegion();       // Not sure if "Noble" career maps to regional "court of" in classic
+                case 17:
+                case 18:
+                case 19:
+                case 20:
+                    return GetPeopleOfCurrentRegion();      // Not sure if "Resident1-4" career map to regional "people of" in classic
+                default:
+                    return -1;
+            }
+        }
+
+        // Gets the noble court faction in current region
+        int GetCourtOfCurrentRegion()
+        {
+            // Find court in current region
+            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex + 1;
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.Courts,
+                (int)FactionFile.SocialGroups.Nobility,
+                (int)FactionFile.GuildGroups.Region,
+                oneBasedPlayerRegion);
+
+            // Should always find a single court
+            if (factions == null || factions.Length != 1)
+                throw new Exception("GetCourtOfCurrentRegion() encountered did not find exactly 1 match.");
+
+            return factions[0].id;
+        }
+
+        // Gets the people of faction in current region
+        int GetPeopleOfCurrentRegion()
+        {
+            // Find people of current region
+            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex + 1;
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.People,
+                (int)FactionFile.SocialGroups.Commoners,
+                (int)FactionFile.GuildGroups.GeneralPopulace,
+                oneBasedPlayerRegion);
+
+            // Should always find a single people of
+            if (factions == null || factions.Length != 1)
+                throw new Exception("GetPeopleOfCurrentRegion() encountered did not find exactly 1 match.");
+
+            return factions[0].id;
         }
 
         #endregion

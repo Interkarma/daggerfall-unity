@@ -205,7 +205,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Link questor NPC if set
             if (questorNPC != null)
             {
-                offeredQuest.LinkQuestor(questorNPC.Summary.FactionOrMobileID, questorNPC.GetNPCName());
+                // TODO: Link questor to quest data
             }
 
             // Offer the quest to player

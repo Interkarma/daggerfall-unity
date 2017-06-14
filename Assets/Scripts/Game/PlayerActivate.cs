@@ -453,16 +453,13 @@ namespace DaggerfallWorkshop.Game
             if (playerEntity == null)
                 return;
 
-            // Get player faction data for this NPC
-            FactionFile.FactionData factionData;
-            bool hasFaction = playerEntity.FactionData.GetFactionData(npc.Summary.FactionOrMobileID, out factionData);
-
-            // Get NPC name
-            string name;
-            if (hasFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
+            // Check for a quest NPC using click handler
+            QuestNPCClickHandler npcClickHandler = npc.gameObject.GetComponent<QuestNPCClickHandler>();
+            if (npcClickHandler)
             {
-                // This is an individually named NPC from faction data
-                name = factionData.name;
+                Quest quest = QuestMachine.Instance.GetActiveQuest(npcClickHandler.QuestUID);
+                Person person = quest.GetPerson(npcClickHandler.QuestPersonSymbol);
+                name = person.DisplayName;
             }
             else
             {

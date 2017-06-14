@@ -120,6 +120,7 @@ namespace DaggerfallConnect.Arena2
 
         #region Structures
 
+        [Serializable]
         public struct FactionData
         {
             public int id;
