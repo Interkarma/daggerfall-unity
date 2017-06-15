@@ -302,7 +302,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool TickVitals()
         {
-            int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(playerEntity.Skills.Medical, playerEntity.Stats.Endurance, playerEntity.MaxHealth);
+            int healthRecoveryRate = FormulaHelper.CalculateHealthRecoveryRate(playerEntity);
             int fatigueRecoveryRate = FormulaHelper.CalculateFatigueRecoveryRate(playerEntity.MaxFatigue);
             int spellPointRecoveryRate = FormulaHelper.CalculateSpellPointRecoveryRate(playerEntity.MaxMagicka);
 
