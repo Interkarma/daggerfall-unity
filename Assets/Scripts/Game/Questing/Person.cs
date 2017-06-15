@@ -176,6 +176,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     SetupCareerAllianceNPC(careerAllianceName, genderName);
                 }
+                else if (!string.IsNullOrEmpty(factionTypeName))
+                {
+                    SetupFactionTypeNPC(factionTypeName, genderName);
+                }
             }
         }
 
@@ -249,6 +253,43 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        // Creates an NPC based on faction type
+        // This can yield some strange results - even Daggerfall uses it selectively
+        // Some guesses have been made and blanks filled in as not all faction types even exist in game
+        // For example, faction types 11, 12, 13 have no matching faction type and are never used in quests
+        // Redirecting these to known and similar factions to ensure an NPC is created over crashing the game
+        void SetupFactionTypeNPC(string factionTypeName, string genderName)
+        {
+            // Get faction data
+            int factionID = GetFactionTypeFactionID(factionTypeName);
+            if (factionID != -1)
+            {
+                FactionFile.FactionData factionData = GetFactionData(factionID);
+
+                // Setup Person resource
+                // Note: Some faction types have a single gender only (e.g. Witches always have female flat)
+                // Gender oconfiguration should take this into account at some point
+                DFRandom.srand(Time.frameCount);
+                npcGender = GetGender(genderName);
+                this.factionData = factionData;
+
+                // Assign name - some types have their own proper name to use
+                if (factionData.type == (int)FactionFile.FactionTypes.Individual ||
+                    factionData.type == (int)FactionFile.FactionTypes.Daedra)
+                {
+                    displayName = factionData.name;
+                }
+                else
+                {
+                    displayName = DaggerfallUnity.Instance.NameHelper.FullName(Utility.NameHelper.BankTypes.Breton, npcGender);
+                }
+            }
+            else
+            {
+                Debug.LogErrorFormat("SetupFactionTypeNPC() failed to setup {0}", factionTypeName);
+            }
+        }
+
         // Gets live faction data from player entity for faction ID
         FactionFile.FactionData GetFactionData(int factionID)
         {
@@ -299,6 +340,106 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 Debug.LogErrorFormat("Could not find individualNPCName {0}", individualNPCName);
                 return -1;
+            }
+        }
+
+        // Gets factionID of a faction type NPC
+        int GetFactionTypeFactionID(string factionTypeName)
+        {
+            // P3 is faction type
+            int factionType;
+            Table factionsTable = QuestMachine.Instance.FactionsTable;
+            if (factionsTable.HasValue(factionTypeName))
+            {
+                factionType = Parser.ParseInt(factionsTable.GetValue("p3", factionTypeName));
+            }
+            else
+            {
+                Debug.LogErrorFormat("Could not find factionTypeName {0}", factionTypeName);
+                return -1;
+            }
+
+            // TODO: Handle random faction type
+            // This should only select from a sensible pool - no random Daedra spawning in taverns
+            if (factionType == -1)
+                throw new NotImplementedException("Random faction type not implemented yet");
+
+            // Assign factionID based on factionType
+            // This value is 0-15 and maps to "type:" in faction.txt
+            // Daggerfall seems to largely select from selected pool of factionType objects at random
+            // But some factionTypes do not exist in file and suspect special handling for others
+            // Treating on a case-by-case basis for now
+            switch ((FactionFile.FactionTypes)factionType)
+            {
+                // These faction types do not generally have a specific region associated with them
+                // Select from pool of all objects this faction type
+                case FactionFile.FactionTypes.Daedra:
+                case FactionFile.FactionTypes.Group:
+                case FactionFile.FactionTypes.Subgroup:
+                case FactionFile.FactionTypes.Official:
+                case FactionFile.FactionTypes.Temple:
+                    return GetRandomFactionOfType(factionType);
+
+                // Faction type of God is never used in quests
+                // Many of these factions do not have an NPC flat
+                // Recommend never using - not sure how to redirect to working state yet
+                case FactionFile.FactionTypes.God:
+                    return GetRandomFactionOfType(factionType);
+
+                // The individual type is not used by any canonical quests
+                // It is more or less equivalent to reserving an individual NPC
+                // Not recommended to use this in quests
+                // Just returning a random person to ensure NPC is created
+                case FactionFile.FactionTypes.Individual:
+                    return GetRandomFactionOfType(factionType);
+
+                // Not sure how to use vampire clans yet
+                // These are *mostly* used by vampire quests where its assumed the player's vampire faction will be used
+                // It wouldn't make sense for player to gain reputation with another vampire clan after all
+                // As vampire factions not in game yet, just select one at random to ensure NPC is created
+                case FactionFile.FactionTypes.VampireClan:
+                    return GetRandomFactionOfType(factionType);
+
+                // Assign an NPC from current player region
+                case FactionFile.FactionTypes.Province:
+                    return GetCurrentRegionFaction();
+
+                // Not all regions have a witches coven associated
+                // Just select a random coven for now
+                case FactionFile.FactionTypes.WitchesCoven:
+                    return GetRandomFactionOfType(factionType);
+
+                // Type 10 Knightly_Guard does not exist in FACTION.TXT but IS used in some quests
+                // Redirecting this to "Generic Knightly Order" #844 to ensure NPC is created
+                case FactionFile.FactionTypes.KnightlyGuard:
+                    return 844;
+
+                // Type 11 Magic_User does not exist in FACTION.TXT and is not used in any quests
+                // Redirecting this to "Mages Guild" #40 to ensure NPC is created
+                case FactionFile.FactionTypes.MagicUser:
+                    return 40;
+
+                // Type 12 Generic_Group does not exist in FACTION.TXT and is not used in any quests
+                // Redirecting this to a random choice between "Generic Temple" #450 and "Generic Knightly Order" #844 to ensure NPC is created
+                case FactionFile.FactionTypes.Generic:
+                    return (UnityEngine.Random.Range(0f, 1f) < 0.5f) ? 450 : 844;
+
+                // Type 13 Thieves_Den does not exist in FACTION.TXT and is not used in any quests
+                // Redirecting this to "Thieves Guild" #42 to ensure NPC is created
+                case FactionFile.FactionTypes.Thieves:
+                    return 42;
+
+                // Get "court of" current region
+                case FactionFile.FactionTypes.Courts:
+                    return GetCourtOfCurrentRegion();
+
+                // Get "people of" current region
+                case FactionFile.FactionTypes.People:
+                    return GetPeopleOfCurrentRegion();
+
+                // Give up
+                default:
+                    return -1;
             }
         }
 
@@ -356,11 +497,24 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        int GetCurrentRegionFaction()
+        {
+            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.Province, -1, -1, oneBasedPlayerRegion);
+
+            // Should always find a single region
+            if (factions == null || factions.Length != 1)
+                throw new Exception("GetCurrentRegionFaction() did not find exactly 1 match.");
+
+            return factions[0].id;
+        }
+
         // Gets the noble court faction in current region
         int GetCourtOfCurrentRegion()
         {
             // Find court in current region
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex + 1;
+            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
                 (int)FactionFile.FactionTypes.Courts,
                 (int)FactionFile.SocialGroups.Nobility,
@@ -369,7 +523,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Should always find a single court
             if (factions == null || factions.Length != 1)
-                throw new Exception("GetCourtOfCurrentRegion() encountered did not find exactly 1 match.");
+                throw new Exception("GetCourtOfCurrentRegion() did not find exactly 1 match.");
 
             return factions[0].id;
         }
@@ -378,7 +532,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int GetPeopleOfCurrentRegion()
         {
             // Find people of current region
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex + 1;
+            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
                 (int)FactionFile.FactionTypes.People,
                 (int)FactionFile.SocialGroups.Commoners,
@@ -387,9 +541,21 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Should always find a single people of
             if (factions == null || factions.Length != 1)
-                throw new Exception("GetPeopleOfCurrentRegion() encountered did not find exactly 1 match.");
+                throw new Exception("GetPeopleOfCurrentRegion() did not find exactly 1 match.");
 
             return factions[0].id;
+        }
+
+        int GetRandomFactionOfType(int factionType)
+        {
+            // Find all factions of type
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(factionType);
+
+            // Should always find at least one
+            if (factions == null || factions.Length == 0)
+                throw new Exception("GetRandomFactionOfType() found 0 matches.");
+
+            return factions[UnityEngine.Random.Range(0, factions.Length)].id;
         }
 
         #endregion

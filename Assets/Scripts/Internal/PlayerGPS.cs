@@ -85,6 +85,15 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets one-based region index for faction data based on player world position.
+        /// Equivalent to CurrentRegionIndex + 1.
+        /// </summary>
+        public int CurrentOneBasedRegionIndex
+        {
+            get { return currentPoliticIndex - 127; }
+        }
+
+        /// <summary>
         /// Gets current location index.
         /// Returns -1 when HasCurrentLocation=false
         /// </summary>

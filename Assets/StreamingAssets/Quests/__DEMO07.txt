@@ -14,7 +14,8 @@ QBN:
 
 Place _dirtypit_ local tavern
 
-Person _villager_ face 8 group Noble male
+Person _villager_ factionType Magic_User male
+-Person _villager_ face 8 group Noble male
 -Person _villager_ named King_Gothryd
 
 
