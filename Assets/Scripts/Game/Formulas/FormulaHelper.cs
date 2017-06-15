@@ -87,16 +87,24 @@ namespace DaggerfallWorkshop.Game.Formulas
             short medical = player.Skills.Medical;
             int endurance = player.Stats.Endurance;
             int maxHealth = player.MaxHealth;
+            PlayerEnterExit playerEnterExit;
+            playerEnterExit = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>();
             DaggerfallConnect.DFCareer.RapidHealingFlags rapidHealingFlags = player.Career.RapidHealing;
-            if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.None)
-                medical += 60;
-            else if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.Always)
-                medical += 100;
-            else if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.IsDay)
+
+            short addToMedical = 60;
+
+            if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.Always)
+                addToMedical = 100;
+            else if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.IsDay && !playerEnterExit.IsPlayerInside)
+            {
                 if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.InLight)
-                    medical += 100;
+                    addToMedical = 100;
+            }
             else if (rapidHealingFlags == DaggerfallConnect.DFCareer.RapidHealingFlags.InDarkness)
-                medical += 100;
+                addToMedical = 100;
+
+            medical += addToMedical;
+
             return Mathf.Max((int)Mathf.Floor(HealingRateModifier(endurance) + medical * maxHealth / 1000), 1);
         }
 
