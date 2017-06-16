@@ -157,8 +157,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowStatus();
             if (currentRestMode != RestModes.Selection)
             {
-                if (((currentRestMode != RestModes.FullRest) && hoursRemaining < 1)
-                    || TickRest())
+                if ((currentRestMode == RestModes.FullRest) && IsPlayerFullyHealed())
+                    EndRest();
+                else if ((currentRestMode != RestModes.FullRest) && hoursRemaining < 1)
+                    EndRest();
+                else if (TickRest())
                     EndRest();
             }
         }
@@ -312,6 +315,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             playerEntity.TallySkill((short)Skills.Medical, 1);
 
+            return IsPlayerFullyHealed();
+        }
+
+        bool IsPlayerFullyHealed()
+        {
             // Check if player fully healed
             // Will eventually need to tailor check for character
             // For example, sorcerers cannot recover magicka from resting
