@@ -64,6 +64,8 @@ namespace DaggerfallWorkshop.Game
             // Fire ray into scene
             if (InputManager.Instance.ActionStarted(InputManager.Actions.ActivateCenterObject))
             {
+                // TODO: Clean all this up and support mobile enemy info-clicks
+
                 // Using RaycastAll as hits can be blocked by decorations or other models
                 // When this happens activation feels unresponsive to player
                 // Also processing hit detection in order of priority
@@ -448,26 +450,33 @@ namespace DaggerfallWorkshop.Game
         // Output NPC info to HUD
         private void PresentNPCInfo(DaggerfallBillboard npc)
         {
-            // Get player entity
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (playerEntity == null)
-                return;
+            DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", GetNPCName(npc)));
+        }
 
-            // Check for a quest NPC using click handler
+        // Get NPC name from quest or locally available information
+        private string GetNPCName(DaggerfallBillboard npc)
+        {
+            // Check for a NPC linked to quest system
             QuestNPCClickHandler npcClickHandler = npc.gameObject.GetComponent<QuestNPCClickHandler>();
             if (npcClickHandler)
             {
+                // Possible for NPC to have click handler but not yet linked to active Quest or Person resource
                 Quest quest = QuestMachine.Instance.GetActiveQuest(npcClickHandler.QuestUID);
-                Person person = quest.GetPerson(npcClickHandler.QuestPersonSymbol);
-                name = person.DisplayName;
-            }
-            else
-            {
-                name = npc.GetNPCName();
+                if (quest != null)
+                {
+                    Person person = quest.GetPerson(npcClickHandler.QuestPersonSymbol);
+                    if (person != null)
+                        return person.DisplayName;
+                }
             }
 
-            // Output to HUD
-            DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", name));
+            // Otherwise just get individual or random NPC name from local data
+            FactionFile.FactionData factionData;
+            bool foundFaction = GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Summary.FactionOrMobileID, out factionData);
+            if (foundFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
+                return factionData.name;
+            else
+                return npc.GetRandomNPCName();
         }
 
         void NPCClickCheck(DaggerfallBillboard npc)

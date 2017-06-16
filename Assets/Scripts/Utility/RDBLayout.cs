@@ -1096,6 +1096,19 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
             dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
 
+            // Special handling for individual NPCs found in layout data
+            if (QuestMachine.Instance.IsIndividualNPC(dfBillboard.Summary.FactionOrMobileID))
+            {
+                // Always assign click handler to individual NPCs
+                // This NPC may be used in 0 or several active quests, allow the click handler to deal with it at click time
+                QuestNPCClickHandler clickHandler = go.AddComponent<QuestNPCClickHandler>();
+                clickHandler.IndividualFactionID = dfBillboard.Summary.FactionOrMobileID;
+
+                // Disable individual NPC if placed elsewhere by quest system
+                if (QuestMachine.Instance.IsIndividualQuestNPCAtSiteLink(dfBillboard.Summary.FactionOrMobileID))
+                    go.SetActive(false);
+            }
+
             // Set transform
             go.transform.position = billboardPosition;
 

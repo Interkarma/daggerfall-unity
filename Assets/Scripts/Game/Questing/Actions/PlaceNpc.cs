@@ -21,10 +21,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     /// Fixed NPCs always starts in their home location but quests can move them around as needed.
     /// Random NPCs are instantiated to target location only as they don't otherwise exist in world.
     /// Site must be reserved before moving NPC to that location.
-    /// 
-    /// Notes:
-    ///  * TODO: Layout methods need to exclude NPCs from their home location and only inject where they belong for quest.
-    ///  * TODO: If no quest is operating on an NPC or atHome specified, they should be injected at usual spot.
     /// </summary>
     public class PlaceNpc : ActionTemplate
     {
@@ -71,6 +67,17 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             Place place = ParentQuest.GetPlace(placeSymbol);
             if (place == null)
                 throw new Exception(string.Format("Could not find Place resource symbol {0}", placeSymbol));
+
+            // Is target an individual NPC that is supposed to be at home
+            // Daggerfall never seems to use "create npc at" or "place npc" for "athome" NPCs
+            // Treating this as an error and logging as such, but don't throw an exception
+            // Just log, terminate action, and get out of dodge
+            if (person.IsIndividualNPC && person.IsIndividualAtHome)
+            {
+                Debug.LogErrorFormat("Quest tried to place Person {0} [_{1}_] at Place _{2}_ but they are supposed to be atHome", person.DisplayName, person.Symbol.Name, place.Symbol.Name);
+                SetComplete();
+                return;
+            }
 
             // Assign NPC to Place
             place.AssignQuestResource(person.Symbol);

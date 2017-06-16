@@ -12,7 +12,6 @@
 using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
-using System.Collections;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
@@ -113,10 +112,10 @@ namespace DaggerfallWorkshop.Game.Questing
             string optionsMatchStr = @"named (?<individualNPCName>[a-zA-Z0-9_.-]+)|" +
                                      @"face (?<faceIndex>\d+)|" +
                                      @"factionType (?<factionType>\w+)|" +
-                                     @"faction (?<factionAlliance>\w+)|" +
+                                     @"faction (?<factionAlliance>[a-zA-Z0-9_.-]+)|" +
                                      @"group (?<careerAlliance>\w+)|" +
                                      @"(?<gender>female|male)|" +
-                                     @"(?<atHome>atHome)";
+                                     @"(?<atHome>(atHome|athome))";
 
             // Try to match source line with pattern
             Match match = Regex.Match(line, declMatchStr);
@@ -150,7 +149,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     // Faction alliance
                     Group factionAllianceGroup = option.Groups["factionAlliance"];
                     if (factionAllianceGroup.Success)
-                        factionAllianceName = faceGroup.Value;
+                        factionAllianceName = factionAllianceGroup.Value;
 
                     // Group
                     Group careerAllianceGroup = option.Groups["careerAlliance"];
@@ -170,16 +169,33 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Setup NPC based on input parameters
                 if (!string.IsNullOrEmpty(individualNPCName))
                 {
-                    SetupIndividualNPC(individualNPCName, atHome);
+                    SetupIndividualNPC(individualNPCName);
                 }
                 else if (!string.IsNullOrEmpty(careerAllianceName))
                 {
-                    SetupCareerAllianceNPC(careerAllianceName, genderName);
+                    SetupCareerAllianceNPC(careerAllianceName);
                 }
                 else if (!string.IsNullOrEmpty(factionTypeName))
                 {
-                    SetupFactionTypeNPC(factionTypeName, genderName);
+                    SetupFactionTypeNPC(factionTypeName);
                 }
+                else if (!string.IsNullOrEmpty(factionAllianceName))
+                {
+                    SetupFactionAllianceNPC(factionAllianceName);
+                }
+                else
+                {
+                    throw new Exception(string.Format("Person resource could not identify NPC from line {0}", line));
+                }
+
+                // Set gender and display name
+                AssignDisplayName(genderName);
+
+                // Is NPC at home?
+                isIndividualAtHome = atHome;
+
+                // Done
+                Debug.LogFormat("Created NPC {0} with FactionID #{1}.", displayName, factionData.id);
             }
         }
 
@@ -208,7 +224,7 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Private Methods
 
         // Creates an individual NPC like King Gothryd or Brisienna
-        void SetupIndividualNPC(string individualNPCName, bool atHome)
+        void SetupIndividualNPC(string individualNPCName)
         {
             // Get faction data
             int factionID = GetIndividualFactionID(individualNPCName);
@@ -222,8 +238,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Setup Person resource
                 isIndividualNPC = true;
-                displayName = factionData.name;
-                isIndividualAtHome = atHome;
                 this.factionData = factionData;
             }
             else
@@ -232,8 +246,27 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        // Create an NPC aligned to a specific faction
+        void SetupFactionAllianceNPC(string factionAllianceName)
+        {
+            // Get faction data
+            // This also comes from a specific factionID
+            int factionID = GetIndividualFactionID(factionAllianceName);
+            if (factionID != -1)
+            {
+                FactionFile.FactionData factionData = GetFactionData(factionID);
+
+                // Setup Person resource
+                this.factionData = factionData;
+            }
+            else
+            {
+                Debug.LogErrorFormat("SetupFactionAllianceNPC() failed to setup {0}", factionAllianceName);
+            }
+        }
+
         // Creates a career-based NPC like a Shopkeeper or Banker
-        void SetupCareerAllianceNPC(string careerAllianceName, string genderName)
+        void SetupCareerAllianceNPC(string careerAllianceName)
         {
             // Get faction data
             int factionID = GetCareerFactionID(careerAllianceName);
@@ -241,10 +274,8 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 FactionFile.FactionData factionData = GetFactionData(factionID);
 
-                // Setup Person resource with a random display name
+                // Setup Person resource
                 DFRandom.srand(Time.frameCount);
-                npcGender = GetGender(genderName);
-                displayName = DaggerfallUnity.Instance.NameHelper.FullName(Utility.NameHelper.BankTypes.Breton, npcGender);
                 this.factionData = factionData;
             }
             else
@@ -258,7 +289,7 @@ namespace DaggerfallWorkshop.Game.Questing
         // Some guesses have been made and blanks filled in as not all faction types even exist in game
         // For example, faction types 11, 12, 13 have no matching faction type and are never used in quests
         // Redirecting these to known and similar factions to ensure an NPC is created over crashing the game
-        void SetupFactionTypeNPC(string factionTypeName, string genderName)
+        void SetupFactionTypeNPC(string factionTypeName)
         {
             // Get faction data
             int factionID = GetFactionTypeFactionID(factionTypeName);
@@ -267,22 +298,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 FactionFile.FactionData factionData = GetFactionData(factionID);
 
                 // Setup Person resource
-                // Note: Some faction types have a single gender only (e.g. Witches always have female flat)
-                // Gender oconfiguration should take this into account at some point
-                DFRandom.srand(Time.frameCount);
-                npcGender = GetGender(genderName);
                 this.factionData = factionData;
-
-                // Assign name - some types have their own proper name to use
-                if (factionData.type == (int)FactionFile.FactionTypes.Individual ||
-                    factionData.type == (int)FactionFile.FactionTypes.Daedra)
-                {
-                    displayName = factionData.name;
-                }
-                else
-                {
-                    displayName = DaggerfallUnity.Instance.NameHelper.FullName(Utility.NameHelper.BankTypes.Breton, npcGender);
-                }
             }
             else
             {
@@ -298,6 +314,30 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception(string.Format("Could not find faction data for FactionID {0}", factionID));
 
             return factionData;
+        }
+
+        // Sets gender and display name
+        // Has some logic to handle individual faction objects and certain flat limitations
+        void AssignDisplayName(string genderName)
+        {
+            // Set gender
+            npcGender = GetGender(genderName);
+
+            // Witches only have female flats
+            if (factionData.type == (int)FactionFile.FactionTypes.WitchesCoven)
+                npcGender = Genders.Female;
+
+            // Assign name - some types have their own individual name to use
+            if (factionData.type == (int)FactionFile.FactionTypes.Individual ||
+                factionData.type == (int)FactionFile.FactionTypes.Daedra)
+            {
+                displayName = factionData.name;
+            }
+            else
+            {
+                DFRandom.srand(Time.frameCount);
+                displayName = DaggerfallUnity.Instance.NameHelper.FullName(Utility.NameHelper.BankTypes.Breton, npcGender);
+            }
         }
 
         Genders GetGender(string genderName)
@@ -346,6 +386,15 @@ namespace DaggerfallWorkshop.Game.Questing
         // Gets factionID of a faction type NPC
         int GetFactionTypeFactionID(string factionTypeName)
         {
+            // Only allowing a small range of random faction types for now
+            FactionFile.FactionTypes[] randomFactionTypes = new FactionFile.FactionTypes[]
+            {
+                FactionFile.FactionTypes.Courts,
+                FactionFile.FactionTypes.Province,
+                FactionFile.FactionTypes.People,
+                FactionFile.FactionTypes.Temple,
+            };
+
             // P3 is faction type
             int factionType;
             Table factionsTable = QuestMachine.Instance.FactionsTable;
@@ -359,10 +408,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 return -1;
             }
 
-            // TODO: Handle random faction type
-            // This should only select from a sensible pool - no random Daedra spawning in taverns
+            // Handle random faction type
+            // This selects from a restricted pool to ensure vital NPCs don't get randomly selected
             if (factionType == -1)
-                throw new NotImplementedException("Random faction type not implemented yet");
+            {
+                factionType = (int)UnityEngine.Random.Range(0, randomFactionTypes.Length);
+            }
 
             // Assign factionID based on factionType
             // This value is 0-15 and maps to "type:" in faction.txt

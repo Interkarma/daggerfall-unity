@@ -1,4 +1,5 @@
----- Example quest used to test person resource
+---- Example quest used to test Person resource
+---- Send player on a hunt to click both the King and Queen of Daggerfall
 
 Quest: __DEMO07
 
@@ -7,19 +8,42 @@ QRC:
 
 QuestLogEntry:  [1010]
 %qdt
-    You are to meet _villager_
- at an inn, _dirtypit_ in __dirtypit_. 
+    You are to meet _king_
+ at an inn, _dirtypit_ in __dirtypit_
+ and visit _queen_ at home in Daggerfall.
+
+Message: 1030
+Hey %pcn, you just clicked on _king_!
+
+Message: 1035
+Hey %pcn, you just clicked on _queen_
+
+Message: 1040
+Well done, %pcn. You have clicked on the
+King and Queen of Daggerfall.
 
 QBN:
 
 Place _dirtypit_ local tavern
 
-Person _villager_ factionType Magic_User male
--Person _villager_ face 8 group Noble male
--Person _villager_ named King_Gothryd
+Person _king_ named King_Gothryd
+Person _queen_ named Queen_Aubk-i atHome
 
 
 ---- Quest startup
 log 1010 step 0
-create npc at _dirtypit_ 
-place npc _villager_ at _dirtypit_ 
+create npc at _dirtypit_
+place npc _king_ at _dirtypit_
+
+_clickedKing_ task:
+clicked npc _king_
+say 1030
+
+_clickedQueen_ task:
+clicked npc _queen_
+say 1035
+
+_clickedBoth_ task:
+when _clickedKing_ and _clickedQueen_
+say 1040
+end quest

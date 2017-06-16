@@ -45,6 +45,8 @@ namespace DaggerfallWorkshop.Game.Questing
         string displayName;
         DaggerfallDateTime questStartTime;
 
+        bool questBreak = false;
+
         #endregion
 
         #region Structures
@@ -119,6 +121,17 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return questStartTime; }
         }
 
+        /// <summary>
+        /// Allows other classes working on this quest to break execution.
+        /// This allows for "say" messages and other popups to happen in correct order.
+        /// Flag will be lowered automatically.
+        /// </summary>
+        public bool QuestBreak
+        {
+            get { return questBreak; }
+            set { questBreak = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -155,6 +168,13 @@ namespace DaggerfallWorkshop.Game.Questing
             // Update tasks
             foreach(Task task in tasks.Values)
             {
+                // Handle quest break
+                if (questBreak)
+                {
+                    questBreak = false;
+                    return;
+                }
+
                 task.Update();
             }
         }
@@ -251,30 +271,30 @@ namespace DaggerfallWorkshop.Game.Questing
             return logs;
         }
 
-        /// <summary>
-        /// Quick test of grabbing log message before UI is ready.
-        /// To be removed.
-        /// </summary>
-        public void TestLogMessages()
-        {
-            LogEntry[] logs = GetLogMessages();
-            for (int i = 0; i < logs.Length; i++)
-            {
-                Message message = GetMessage(logs[i].messageID);
-                if (message != null)
-                {
-                    // Get message tokens
-                    DaggerfallConnect.Arena2.TextFile.Token[] tokens = message.GetTextTokens();
+        ///// <summary>
+        ///// Quick test of grabbing log message before UI is ready.
+        ///// To be removed.
+        ///// </summary>
+        //public void TestLogMessages()
+        //{
+        //    LogEntry[] logs = GetLogMessages();
+        //    for (int i = 0; i < logs.Length; i++)
+        //    {
+        //        Message message = GetMessage(logs[i].messageID);
+        //        if (message != null)
+        //        {
+        //            // Get message tokens
+        //            DaggerfallConnect.Arena2.TextFile.Token[] tokens = message.GetTextTokens();
 
-                    UserInterfaceWindows.DaggerfallMessageBox messageBox = new UserInterfaceWindows.DaggerfallMessageBox(DaggerfallUI.UIManager);
-                    messageBox.SetTextTokens(tokens);
-                    messageBox.ClickAnywhereToClose = true;
-                    messageBox.AllowCancel = true;
-                    messageBox.ParentPanel.BackgroundColor = Color.clear;
-                    messageBox.Show();
-                }
-            }
-        }
+        //            UserInterfaceWindows.DaggerfallMessageBox messageBox = new UserInterfaceWindows.DaggerfallMessageBox(DaggerfallUI.UIManager);
+        //            messageBox.SetTextTokens(tokens);
+        //            messageBox.ClickAnywhereToClose = true;
+        //            messageBox.AllowCancel = true;
+        //            messageBox.ParentPanel.BackgroundColor = Color.clear;
+        //            messageBox.Show();
+        //        }
+        //    }
+        //}
 
         #endregion
 
@@ -369,6 +389,9 @@ namespace DaggerfallWorkshop.Game.Questing
             messageBox.AllowCancel = true;
             messageBox.ParentPanel.BackgroundColor = Color.clear;
             messageBox.Show();
+
+            // Set a quest break so popup will display immediately
+            questBreak = true;
         }
 
         #endregion

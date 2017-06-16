@@ -388,7 +388,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Gets name of NPC from stored name seed.
         /// </summary>
-        public string GetNPCName()
+        public string GetRandomNPCName()
         {
             // This is a randomly named NPC from seed values
             // TEMP: The correct name seed is not currently known
