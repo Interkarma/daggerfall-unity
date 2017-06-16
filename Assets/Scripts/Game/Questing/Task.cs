@@ -210,13 +210,10 @@ namespace DaggerfallWorkshop.Game.Questing
                         action.InitialiseOnSet();
                     }
 
-                    // Update action
+                    // Update action and handle quest break
                     action.Update(this);
-                    if (action.TaskReturn)
-                    {
-                        action.TaskReturn = false;
+                    if (ParentQuest.QuestBreak)
                         return;
-                    }
                 }
             }
 

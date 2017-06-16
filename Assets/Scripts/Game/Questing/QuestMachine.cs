@@ -610,6 +610,75 @@ namespace DaggerfallWorkshop.Game.Questing
             return foundSiteLinks.ToArray();
         }
 
+        /// <summary>
+        /// Checks if NPC is a special individual NPC.
+        /// These NPCs can exist in world even if not currently part of any active quests.
+        /// </summary>
+        /// <param name="factionID">Faction ID of individual NPC.</param>
+        /// <returns>True if this is an individual NPC.</returns>
+        public bool IsIndividualNPC(int factionID)
+        {
+            FactionFile.FactionData factionData;
+            bool foundFaction = GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData);
+            if (foundFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Walks SiteLink > Quest > Place > QuestMarkers > Target to see if an individual NPC has been placed elsewhere.
+        /// Used only to determine if an individual NPC should be disabled at home location by layout builders.
+        /// Ignores non-individual NPCs.
+        /// </summary>
+        /// <param name="factionID">Faction ID of individual NPC.</param>
+        /// <returns>True if individual has been placed elsewhere, otherwise false.</returns>
+        public bool IsIndividualQuestNPCAtSiteLink(int factionID)
+        {
+            // Check this is a valid individual
+            if (!IsIndividualNPC(factionID))
+                return false;
+
+            // Iterate site links
+            foreach (SiteLink link in siteLinks)
+            {
+                // Attempt to get Quest target
+                Quest quest = GetActiveQuest(link.questUID);
+                if (quest == null)
+                    continue;
+
+                // Attempt to get Place target
+                Place place = quest.GetPlace(link.placeSymbol);
+                if (place == null)
+                    continue;
+
+                // Check quest markers for this site
+                SiteDetails siteDetails = place.SiteDetails;
+                foreach(var marker in siteDetails.questMarkers)
+                {
+                    // Must be an NPC marker
+                    if (marker.markerType != MarkerTypes.NPC)
+                        continue;
+
+                    // Get target Person resource
+                    Person person = quest.GetPerson(marker.targetSymbol);
+                    if (person == null)
+                        continue;
+
+                    // Person must be an individual and not at home
+                    if (!person.IsIndividualNPC || person.IsIndividualAtHome)
+                        continue;
+
+                    // Check if factionID match to placed NPC
+                    // This means we found an individual placed at site who is not supposed to be at their home location
+                    if (person.FactionData.id == factionID)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region Singleton
