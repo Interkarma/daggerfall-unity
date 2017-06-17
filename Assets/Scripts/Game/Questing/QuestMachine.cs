@@ -590,8 +590,7 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (SiteLink link in siteLinks)
             {
                 // Match site type
-                if (link.siteType == siteType &&
-                    link.mapId == mapId)
+                if (link.siteType == siteType && link.mapId == mapId)
                 {
                     if (buildingKey != 0)
                     {

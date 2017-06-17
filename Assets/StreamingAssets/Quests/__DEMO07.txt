@@ -24,7 +24,8 @@ King and Queen of Daggerfall.
 
 QBN:
 
-Place _dirtypit_ local tavern
+-Place _dirtypit_ local tavern
+Place _dirtypit_ remote dungeon
 
 Person _king_ named King_Gothryd
 Person _queen_ named Queen_Aubk-i atHome

@@ -257,34 +257,6 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Public Methods
 
         /// <summary>
-        /// Validate quest marker array to ensure both are non-null and have at least 1 marker each.
-        /// </summary>
-        /// <returns>True if spawn and item marker arrays both valid.</returns>
-        bool ValidateQuestMarkers(QuestMarker[] questSpawnMarkers, QuestMarker[] questItemMarkers)
-        {
-            if (questSpawnMarkers == null || questItemMarkers == null ||
-                questSpawnMarkers.Length == 0 || questItemMarkers.Length == 0)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Adds a quest resource Symbol to list of target resources maintained by that marker.
-        /// </summary>
-        void AssignResourceToMarker(Symbol symbol, ref QuestMarker marker)
-        {
-            // Create new list if null
-            if (marker.targetResources == null)
-                marker.targetResources = new List<Symbol>();
-
-            // Add resource Symbol to quest marker
-            marker.targetResources.Add(symbol);
-        }
-
-        /// <summary>
         /// Assigns a quest resource to this Place site.
         /// Supports Persons, Foes, Items from within same quest as Place.
         /// Quest must have previously created SiteLink for layout builders to discover this assigned resources.
@@ -343,7 +315,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (siteDetails.siteType == SiteTypes.Dungeon)
                 {
                     if (requiredMarkerType == MarkerTypes.QuestSpawn)
-                        Debug.LogFormat("Assigned NOC {0} to Dungeon {1}", (resource as Person).DisplayName, SiteDetails.locationName);
+                        Debug.LogFormat("Assigned NPC {0} to Dungeon {1}", (resource as Person).DisplayName, SiteDetails.locationName);
                 }
             }
         }
@@ -836,6 +808,34 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Validate quest marker array to ensure both are non-null and have at least 1 marker each.
+        /// </summary>
+        /// <returns>True if spawn and item marker arrays both valid.</returns>
+        bool ValidateQuestMarkers(QuestMarker[] questSpawnMarkers, QuestMarker[] questItemMarkers)
+        {
+            if (questSpawnMarkers == null || questItemMarkers == null ||
+                questSpawnMarkers.Length == 0 || questItemMarkers.Length == 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Adds a quest resource Symbol to list of target resources maintained by that marker.
+        /// </summary>
+        void AssignResourceToMarker(Symbol symbol, ref QuestMarker marker)
+        {
+            // Create new list if null
+            if (marker.targetResources == null)
+                marker.targetResources = new List<Symbol>();
+
+            // Add resource Symbol to quest marker
+            marker.targetResources.Add(symbol);
+        }
+
+        /// <summary>
         /// Collect all quest markers inside a building.
         /// </summary>
         void EnumerateBuildingQuestMarkers(DFBlock blockData, int recordIndex, out QuestMarker[] questSpawnMarkers, out QuestMarker[] questItemMarkers)
@@ -887,6 +887,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Get block data
                 DFBlock blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(db.BlockName);
 
+                Vector3 blockPosition =  new Vector3(db.X * RDBLayout.RDBSide, 0, db.Z * RDBLayout.RDBSide);
+
                 // Iterate all groups
                 foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
                 {
@@ -906,10 +908,10 @@ namespace DaggerfallWorkshop.Game.Questing
                                 switch (obj.Resources.FlatResource.TextureRecord)
                                 {
                                     case spawnMarkerFlatIndex:
-                                        questSpawnMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestSpawn, position));
+                                        questSpawnMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestSpawn, blockPosition + position));
                                         break;
                                     case itemMarkerFlatIndex:
-                                        questItemMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestItem, position));
+                                        questItemMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestItem, blockPosition + position));
                                         break;
                                 }
                             }

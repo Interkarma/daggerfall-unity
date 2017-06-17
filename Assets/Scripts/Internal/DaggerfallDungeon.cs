@@ -254,6 +254,9 @@ namespace DaggerfallWorkshop
                     FindMarkers(daggerfallBlock);
             }
 
+            // Add quest resources
+            GameObjectHelper.AddQuestResourceObjects(SiteTypes.Dungeon);
+
 #if SHOW_LAYOUT_TIMES
             // Show timer
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
@@ -286,6 +289,9 @@ namespace DaggerfallWorkshop
                 if (block.IsStartingBlock)
                     FindMarkers(daggerfallBlock);
             }
+
+            // Add quest resources
+            GameObjectHelper.AddQuestResourceObjects(SiteTypes.Dungeon);
         }
 
         // Finds start and enter markers, should only be called for starting block
