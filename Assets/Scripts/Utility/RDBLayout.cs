@@ -561,7 +561,7 @@ namespace DaggerfallWorkshop.Utility
 
                         // Get GameObject
                         Transform parent = (hasAction) ? actionModelsParent : modelsParent;
-                        GameObject standaloneObject = MeshReplacement.ImportCustomGameobject(modelId, modelMatrix.GetColumn(3), parent, GameObjectHelper.QuaternionFromMatrix(modelMatrix));
+                        GameObject standaloneObject = MeshReplacement.ImportCustomGameobject(modelId, parent, modelMatrix);
                         if (standaloneObject == null)
                         {
                             // Special handling for tapestries and banners
