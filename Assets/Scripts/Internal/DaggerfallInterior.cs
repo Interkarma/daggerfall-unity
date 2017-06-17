@@ -641,26 +641,18 @@ namespace DaggerfallWorkshop
                 if (place == null)
                     throw new Exception(string.Format("Could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID));
 
-                // Get the QuestMarkers in this Place
-                QuestMarker[] questMarkers = place.SiteDetails.questMarkers;
-                if (questMarkers == null || questMarkers.Length == 0)
-                    throw new Exception(string.Format("Quest markers array empty for Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID));
-
-                // Iterate quest markers and inject into scene
-                foreach(QuestMarker marker in questMarkers)
+                // Get selected spawn QuestMarker for this Place
+                QuestMarker marker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
+                foreach(Symbol target in marker.targetResources)
                 {
-                    // Marker quest UID should always match link
-                    if (marker.questUID != link.questUID)
-                        throw new Exception(string.Format("QuestMarker quest UID {0} does not match SiteLink quest UID {1}", marker.questUID, link.questUID));
+                    // Get target resource
+                    QuestResource resource = quest.GetResource(target);
+                    if (resource == null)
+                        continue;
 
-                    // Marker must have a target symbol
-                    Symbol targetSymbol = marker.targetSymbol;
-                    if (targetSymbol != null)
-                    {
-                        // Place QuestInjector for target and type
-                        if (marker.markerType == MarkerTypes.NPC)
-                            AddQuestNPC(quest, marker);
-                    }
+                    // Inject to scene based on resource type
+                    if (resource is Person)
+                        AddQuestNPC(quest, marker, (Person)resource);
                 }
             }
         }
@@ -668,13 +660,8 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Add a quest NPC to marker position.
         /// </summary>
-        void AddQuestNPC(Quest quest, QuestMarker marker)
+        void AddQuestNPC(Quest quest, QuestMarker marker, Person person)
         {
-            // Get the Person resource
-            Person person = quest.GetPerson(marker.targetSymbol);
-            if (person == null)
-                throw new Exception(string.Format("Could not find Person symbol {0} in quest UID {1}", marker.targetSymbol, marker.questUID));
-
             // Get billboard texture data
             FactionFile.FlatData flatData;
             if (person.IsIndividualNPC)
@@ -695,7 +682,7 @@ namespace DaggerfallWorkshop
 
             // Create target GameObject
             GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(flatData.archive, flatData.record, transform);
-            go.name = string.Format("Injected NPC [{0}]", person.DisplayName);
+            go.name = string.Format("Quest NPC [{0}]", person.DisplayName);
 
             // Set position
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
@@ -709,41 +696,6 @@ namespace DaggerfallWorkshop
             QuestNPCClickHandler clickHandler = go.AddComponent<QuestNPCClickHandler>();
             clickHandler.QuestUID = quest.UID;
             clickHandler.QuestPersonSymbol = person.Symbol;
-
-            //// Handle permanent NPC
-            //// Will need more work soon for completely random NPCs
-            //if (person.IsIndividualNPC)
-            //{
-            //    // Get faction details
-            //    FactionFile.FactionData factionData;
-            //    if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(person.FactionIndex, out factionData))
-            //    {
-            //        // Get billboard texture data
-            //        // Permanent flats only have one set of texture indices that are not gender based
-            //        FactionFile.FlatData flatData = FactionFile.GetFlatData(factionData.flat1);
-
-            //        // Create target GameObject
-            //        GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(flatData.archive, flatData.record, transform);
-            //        go.name = string.Format("Injected NPC [{0}]", person.DisplayName);
-
-            //        // Set position
-            //        DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-            //        go.transform.position = marker.flatPosition;
-            //        go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
-
-            //        // Add people data to billboard
-            //        dfBillboard.SetRMBPeopleData(person.FactionIndex, factionData.flags);
-
-            //        // Add click handler to billboard
-            //        QuestNPCClickHandler clickHandler = go.AddComponent<QuestNPCClickHandler>();
-            //        clickHandler.QuestUID = quest.UID;
-            //        clickHandler.QuestPersonSymbol = person.Symbol;
-            //    }
-            //}
-            //else
-            //{
-            //    Debug.Log("Random NPC injection not implemented yet.");
-            //}
         }
 
         #endregion

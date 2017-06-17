@@ -652,20 +652,22 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (place == null)
                     continue;
 
-                // Check quest markers for this site
+                // Check spawn marker at this site for target NPC resource
                 SiteDetails siteDetails = place.SiteDetails;
-                foreach(var marker in siteDetails.questMarkers)
+                QuestMarker marker = siteDetails.questSpawnMarkers[siteDetails.selectedQuestItemMarker];
+                foreach(Symbol target in marker.targetResources)
                 {
-                    // Must be an NPC marker
-                    if (marker.markerType != MarkerTypes.NPC)
+                    // Get target resource
+                    QuestResource resource = quest.GetResource(target);
+                    if (resource == null)
                         continue;
 
-                    // Get target Person resource
-                    Person person = quest.GetPerson(marker.targetSymbol);
-                    if (person == null)
+                    // Must be a Person resource
+                    if (!(resource is Person))
                         continue;
 
                     // Person must be an individual and not at home
+                    Person person = (Person)resource;
                     if (!person.IsIndividualNPC || person.IsIndividualAtHome)
                         continue;
 
