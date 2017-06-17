@@ -410,7 +410,7 @@ namespace DaggerfallWorkshop
             uint[] equippedItems = characterRecord.ParsedData.equippedItems;
             for (int i = 0; i < equippedItems.Length; i++)
             {
-                if (equippedItems[i] == (record.RecordRoot.RecordID >> 8))
+                if (equippedItems[i] == record.RecordRoot.RecordID)
                     return i;
             }
 
