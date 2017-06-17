@@ -222,7 +222,7 @@ namespace DaggerfallWorkshop
                     doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
 
                 // Get GameObject
-                if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, modelMatrix.GetColumn(3), node.transform, GameObjectHelper.QuaternionFromMatrix(modelMatrix)) == null)
+                if (MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, node.transform, modelMatrix) == null)
                 {
                     // Use Daggerfall Mesh: Combine or add
                     if (dfUnity.Option_CombineRMB)
@@ -274,8 +274,11 @@ namespace DaggerfallWorkshop
             markers.Clear();
             foreach (DFBlock.RmbBlockFlatObjectRecord obj in recordData.Interior.BlockFlatObjectRecords)
             {
+                // Calculate position
+                Vector3 billboardPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+
                 // Import custom 3d gameobject instead of flat
-                if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, node.transform) != null)
+                if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, node.transform) != null)
                     continue;
 
                 // Spawn billboard gameobject
@@ -283,7 +286,7 @@ namespace DaggerfallWorkshop
 
                 // Set position
                 DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+                go.transform.position = billboardPosition;
                 go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
                 // Add to enter marker list, which is TEXTURE.199, index 8.
@@ -544,9 +547,11 @@ namespace DaggerfallWorkshop
             // Add block flats
             foreach (DFBlock.RmbBlockPeopleRecord obj in recordData.Interior.BlockPeopleRecords)
             {
+                // Calculate position
+                Vector3 billboardPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+
                 // Import 3D character instead of billboard
-                if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, 
-                    new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, node.transform) != null)
+                if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, node.transform) != null)
                     continue;
 
                 // Spawn billboard gameobject
@@ -554,7 +559,7 @@ namespace DaggerfallWorkshop
 
                 // Set position
                 DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                go.transform.position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+                go.transform.position = billboardPosition;
                 go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
                 // Add RMB data to billboard
