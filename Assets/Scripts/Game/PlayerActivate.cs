@@ -332,18 +332,16 @@ namespace DaggerfallWorkshop.Game
                 return null;
 
             // Set quality level text ID from quality value 01-20
-            // UESP states this is building quality / 4 but Daggerfall appears to use manual thresholds
-            // Below is best effort based on a small sample size (shops in Daggerall and Gothway Garden)
-            // TODO: Research and confirm thresholds
+            // UESP states this is building quality / 4 but Daggerfall uses manual thresholds
             int qualityTextId;
-            if (buildingSummary.Quality <= 4)
-                qualityTextId = qualityLevel5TextId;        // 01 - 04
+            if (buildingSummary.Quality <= 3)
+                qualityTextId = qualityLevel5TextId;        // 01 - 03
             else if (buildingSummary.Quality <= 7)
-                qualityTextId = qualityLevel4TextId;        // 05 - 07
-            else if (buildingSummary.Quality <= 14)
-                qualityTextId = qualityLevel3TextId;        // 08 - 14
+                qualityTextId = qualityLevel4TextId;        // 04 - 07
+            else if (buildingSummary.Quality <= 13)
+                qualityTextId = qualityLevel3TextId;        // 08 - 13
             else if (buildingSummary.Quality <= 17)
-                qualityTextId = qualityLevel2TextId;        // 15 - 17
+                qualityTextId = qualityLevel2TextId;        // 14 - 17
             else
                 qualityTextId = qualityLevel1TextId;        // 18 - 20
 
