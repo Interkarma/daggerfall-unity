@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception(string.Format("create foe could not find Foe with symbol name {0}", Symbol.Name));
 
             // Get game objects
-            GameObject[] gameObjects = foe.CreateFoeGameObjects();
+            GameObject[] gameObjects = foe.CreateFoeGameObjects(Vector3.zero);
             if (gameObjects == null || gameObjects.Length != foe.SpawnCount)
                 throw new Exception(string.Format("create foe attempted to spawn {0}x{1} and failed.", foe.SpawnCount, Symbol.Name));
 

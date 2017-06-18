@@ -38,7 +38,12 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        const float startupDelay = 1.0f;        // How long quest machine will wait before running active quests
+        // Public constants
+        public const string questPersonTag = "QuestPerson";
+        public const string questFoeTag = "QuestFoe";
+        public const string questItemTag = "QuestItem";
+
+        const float startupDelay = 0f;          // How long quest machine will wait before running active quests
         const float ticksPerSecond = 8;         // How often quest machine will tick quest logic per second
 
         // Folder names constants
@@ -283,6 +288,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new StartStopTimer(null));
             RegisterAction(new DailyFrom(null));
             RegisterAction(new CreateFoe(null));
+            RegisterAction(new PlaceFoe(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)
@@ -590,8 +596,7 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (SiteLink link in siteLinks)
             {
                 // Match site type
-                if (link.siteType == siteType &&
-                    link.mapId == mapId)
+                if (link.siteType == siteType && link.mapId == mapId)
                 {
                     if (buildingKey != 0)
                     {
@@ -652,20 +657,22 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (place == null)
                     continue;
 
-                // Check quest markers for this site
+                // Check spawn marker at this site for target NPC resource
                 SiteDetails siteDetails = place.SiteDetails;
-                foreach(var marker in siteDetails.questMarkers)
+                QuestMarker marker = siteDetails.questSpawnMarkers[siteDetails.selectedQuestItemMarker];
+                foreach(Symbol target in marker.targetResources)
                 {
-                    // Must be an NPC marker
-                    if (marker.markerType != MarkerTypes.NPC)
+                    // Get target resource
+                    QuestResource resource = quest.GetResource(target);
+                    if (resource == null)
                         continue;
 
-                    // Get target Person resource
-                    Person person = quest.GetPerson(marker.targetSymbol);
-                    if (person == null)
+                    // Must be a Person resource
+                    if (!(resource is Person))
                         continue;
 
                     // Person must be an individual and not at home
+                    Person person = (Person)resource;
                     if (!person.IsIndividualNPC || person.IsIndividualAtHome)
                         continue;
 
@@ -677,6 +684,59 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        #endregion
+
+        #region Static Helper Methods
+
+        /// <summary>
+        /// Checks if a Place has a SiteLink available.
+        /// </summary>
+        public static bool HasSiteLink(Quest parentQuest, Symbol placeSymbol)
+        {
+            // Attempt to get Place resource
+            Place place = parentQuest.GetPlace(placeSymbol);
+            if (place == null)
+                throw new Exception(string.Format("HasSiteLink() could not find Place symbol {0}", placeSymbol.Name));
+
+            // Collect any SiteLinks associdated with this site
+            SiteLink[] siteLinks = Instance.GetSiteLinks(place.SiteDetails.siteType, place.SiteDetails.mapId, place.SiteDetails.buildingKey);
+            if (siteLinks == null || siteLinks.Length == 0)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Creates a new SiteLink at Place.
+        /// </summary>
+        public static void CreateSiteLink(Quest parentQuest, Symbol placeSymbol)
+        {
+            // Attempt to get Place resource
+            Place place = parentQuest.GetPlace(placeSymbol);
+            if (place == null)
+                throw new Exception(string.Format("Attempted to add SiteLink for invalid Place symbol {0}", placeSymbol.Name));
+
+            // Create SiteLink in QuestMachine
+            SiteLink siteLink = new SiteLink();
+            siteLink.questUID = parentQuest.UID;
+            siteLink.placeSymbol = placeSymbol;
+            siteLink.siteType = place.SiteDetails.siteType;
+            siteLink.mapId = place.SiteDetails.mapId;
+            siteLink.buildingKey = place.SiteDetails.buildingKey;
+            Instance.AddSiteLink(siteLink);
+
+            // Output debug information
+            switch (siteLink.siteType)
+            {
+                case SiteTypes.Building:
+                    Debug.LogFormat("Created Building SiteLink to {0} in {1}/{2}", place.SiteDetails.buildingName, place.SiteDetails.regionName, place.SiteDetails.locationName);
+                    break;
+                case SiteTypes.Dungeon:
+                    Debug.LogFormat("Created Dungeon SiteLink to {0}/{1}", place.SiteDetails.regionName, place.SiteDetails.locationName);
+                    break;
+            }
         }
 
         #endregion

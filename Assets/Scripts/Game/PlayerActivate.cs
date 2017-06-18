@@ -196,7 +196,7 @@ namespace DaggerfallWorkshop.Game
                                     break;
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
-                                    NPCClickCheck(npc);
+                                    TriggerQuestResourceClick(npc);
                                     QuestorCheck(npc);
                                     break;
                             }
@@ -457,14 +457,14 @@ namespace DaggerfallWorkshop.Game
         private string GetNPCName(DaggerfallBillboard npc)
         {
             // Check for a NPC linked to quest system
-            QuestNPCClickHandler npcClickHandler = npc.gameObject.GetComponent<QuestNPCClickHandler>();
-            if (npcClickHandler)
+            QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
+            if (questResourceBehaviour)
             {
-                // Possible for NPC to have click handler but not yet linked to active Quest or Person resource
-                Quest quest = QuestMachine.Instance.GetActiveQuest(npcClickHandler.QuestUID);
+                // Possible for NPC to have resource behaviour but not yet linked to active Quest or Person resource
+                Quest quest = QuestMachine.Instance.GetActiveQuest(questResourceBehaviour.QuestUID);
                 if (quest != null)
                 {
-                    Person person = quest.GetPerson(npcClickHandler.QuestPersonSymbol);
+                    Person person = quest.GetPerson(questResourceBehaviour.TargetSymbol);
                     if (person != null)
                         return person.DisplayName;
                 }
@@ -479,11 +479,11 @@ namespace DaggerfallWorkshop.Game
                 return npc.GetRandomNPCName();
         }
 
-        void NPCClickCheck(DaggerfallBillboard npc)
+        void TriggerQuestResourceClick(DaggerfallBillboard npc)
         {
-            QuestNPCClickHandler npcClickHandler = npc.gameObject.GetComponent<QuestNPCClickHandler>();
-            if (npcClickHandler)
-                npcClickHandler.DoClick();
+            QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
+            if (questResourceBehaviour)
+                questResourceBehaviour.DoClick();
         }
 
         void QuestorCheck(DaggerfallBillboard npc)

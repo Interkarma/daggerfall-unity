@@ -92,19 +92,22 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="reaction">Foe is hostile by default but can optionally set to passive.</param>
         /// <returns>GameObject[] array of 1-N foes. Array can be null or empty if create fails.</returns>
-        public GameObject[] CreateFoeGameObjects(MobileReactions reaction = MobileReactions.Hostile)
+        public GameObject[] CreateFoeGameObjects(Vector3 position, int spawnOverride = -1, MobileReactions reaction = MobileReactions.Hostile)
         {
             List<GameObject> gameObjects = new List<GameObject>();
 
             // Seed random
-            UnityEngine.Random.InitState(Time.frameCount);
+            //UnityEngine.Random.InitState(Time.frameCount);
+
+            // Get spawn count allowing for caller to override
+            int totalSpawns = (spawnOverride >= 1) ? spawnOverride : spawnCount;
 
             // Generate GameObjects
-            for (int i = 0; i < spawnCount; i++)
+            for (int i = 0; i < totalSpawns; i++)
             {
                 // Generate enemy
                 string name = string.Format("DaggerfallEnemy [{0}]", foeType.ToString());
-                GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, null, Vector3.zero);
+                GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, null, position);
                 SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
                 if (setupEnemy != null)
                 {

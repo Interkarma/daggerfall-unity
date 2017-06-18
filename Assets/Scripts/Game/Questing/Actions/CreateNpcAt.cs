@@ -58,30 +58,18 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             base.Update(caller);
 
-            // Attempt to get Place resource
-            Place place = ParentQuest.GetPlace(placeSymbol);
-            if (place == null)
-                throw new Exception(string.Format("Attempted to add SiteLink for invalid Place symbol {0}", placeSymbol.Name));
+            // Reserve SiteLink for Place resource
+            // This will also be done automatically by "place npc", "place foe", etc.
+            if (!QuestMachine.HasSiteLink(ParentQuest, placeSymbol))
+                QuestMachine.CreateSiteLink(ParentQuest, placeSymbol);
 
-            // Create SiteLink in QuestMachine
-            SiteLink siteLink = new SiteLink();
-            siteLink.questUID = ParentQuest.UID;
-            siteLink.placeSymbol = placeSymbol;
-            siteLink.siteType = place.SiteDetails.siteType;
-            siteLink.mapId = place.SiteDetails.mapId;
-            siteLink.buildingKey = place.SiteDetails.buildingKey;
-            QuestMachine.Instance.AddSiteLink(siteLink);
-
-            // Output debug information
-            switch (siteLink.siteType)
-            {
-                case SiteTypes.Building:
-                    Debug.LogFormat("Created Building SiteLink to {0} in {1}/{2}", place.SiteDetails.buildingName, place.SiteDetails.regionName, place.SiteDetails.locationName);
-                    break;
-                case SiteTypes.Dungeon:
-                    Debug.LogFormat("Created Dungeon SiteLink to {0}/{1}", place.SiteDetails.regionName, place.SiteDetails.locationName);
-                    break;
-            }
+            // Possible historical note:
+            //  Many quests are very strict about first reserving a site using "create npc at"
+            //  before placing a quest resource like an NPC, Foe, Item at that site.
+            //  More developed quests (e.g. guild quests) don't seem to have this requirement.
+            //  One likely reason is that quest writers would commonly forget to reserve the site first,
+            //  leading to developers making this a more automated process down the track.
+            //  Daggerfall Unity will create a SiteLink either way to support both formats.
 
             SetComplete();
         }

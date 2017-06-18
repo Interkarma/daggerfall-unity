@@ -13,13 +13,12 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
-using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -506,6 +505,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Link action nodes
             RDBLayout.LinkActionNodes(actionLinkDict);
+
             return go;
         }
 
@@ -709,6 +709,126 @@ namespace DaggerfallWorkshop.Utility
                 GameObject.Destroy(loot.gameObject);
             else
                 loot.gameObject.SetActive(false);
+        }
+
+        #endregion
+
+        #region Quest Resource Helpers
+
+        /// <summary>
+        /// Finds SiteLinks matching this interior and walks Place markers to inject quest resources.
+        /// Some of this handling will be split and relocated for other builders.
+        /// Just working through the steps in buildings interiors for now.
+        /// This will be moved to a different setup class later.
+        /// </summary>
+        public static void AddQuestResourceObjects(SiteTypes siteType, Transform parent, int buildingKey = 0)
+        {
+            // Collect any SiteLinks associdated with this site
+            SiteLink[] siteLinks = QuestMachine.Instance.GetSiteLinks(siteType, GameManager.Instance.PlayerGPS.CurrentMapID, buildingKey);
+            if (siteLinks == null || siteLinks.Length == 0)
+                return;
+
+            // Walk through all found SiteLinks
+            foreach (SiteLink link in siteLinks)
+            {
+                // Get the Quest object referenced by this link
+                Quest quest = QuestMachine.Instance.GetActiveQuest(link.questUID);
+                if (quest == null)
+                    throw new Exception(string.Format("Could not find active quest for UID {0}", link.questUID));
+
+                // Get the Place resource referenced by this link
+                Place place = quest.GetPlace(link.placeSymbol);
+                if (place == null)
+                    throw new Exception(string.Format("Could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID));
+
+                // Get selected spawn QuestMarker for this Place
+                QuestMarker marker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
+                foreach (Symbol target in marker.targetResources)
+                {
+                    // Get target resource
+                    QuestResource resource = quest.GetResource(target);
+                    if (resource == null)
+                        continue;
+
+                    // Inject to scene based on resource type
+                    if (resource is Person)
+                        AddQuestNPC(siteType, quest, marker, (Person)resource, parent);
+                    else if (resource is Foe)
+                        AddQuestFoe(siteType, quest, marker, (Foe)resource, parent);
+                    else if (resource is Item)
+                        AddQuestItem(siteType, quest, marker, (Item)resource, parent);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add a quest NPC to marker position.
+        /// </summary>
+        static void AddQuestNPC(SiteTypes siteType, Quest quest, QuestMarker marker, Person person, Transform parent)
+        {
+            // Get billboard texture data
+            FactionFile.FlatData flatData;
+            if (person.IsIndividualNPC)
+            {
+                // Individuals are always flat1 no matter gender
+                flatData = FactionFile.GetFlatData(person.FactionData.flat1);
+            }
+            if (person.Gender == Genders.Male)
+            {
+                // Male has flat1
+                flatData = FactionFile.GetFlatData(person.FactionData.flat1);
+            }
+            else
+            {
+                // Female has flat2
+                flatData = FactionFile.GetFlatData(person.FactionData.flat2);
+            }
+
+            // Create target GameObject
+            GameObject go = CreateDaggerfallBillboardGameObject(flatData.archive, flatData.record, parent);
+            go.name = string.Format("Quest NPC [{0}]", person.DisplayName);
+
+            // Set position and adjust up by half height if not inside a dungeon
+            go.transform.localPosition = marker.flatPosition;
+            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            if (siteType != SiteTypes.Dungeon)
+                go.transform.localPosition += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+
+            // Add people data to billboard
+            dfBillboard.SetRMBPeopleData(person.FactionIndex, person.FactionData.flags);
+
+            // Add resource behaviour to GameObject
+            QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
+            questResourceBehaviour.AssignResource(person);
+
+            // Set tag
+            go.tag = QuestMachine.questPersonTag;
+        }
+
+        /// <summary>
+        /// Adds quest foe(s) to marker position.
+        /// These foes are placed on quest marker in game world as part of PlaceFoe action, e.g. "place aFoe at aPlace".
+        /// For now limiting to one spawn to test behaviour, ignoring whatever spawn count is on Foe resource itself.
+        /// Note: This method is not used by the CreateFoe action.
+        /// </summary>
+        static void AddQuestFoe(SiteTypes siteType, Quest quest, QuestMarker marker, Foe foe, Transform parent = null)
+        {
+            // Create target GameObjects
+            GameObject[] gameObjects = foe.CreateFoeGameObjects(marker.flatPosition, 1);
+            if (gameObjects == null || gameObjects.Length != foe.SpawnCount)
+                throw new Exception(string.Format("create foe attempted to spawn {0}x{1} and failed.", foe.SpawnCount, foe.Symbol.Name));
+
+            // Setup GameObjects
+            foreach (GameObject go in gameObjects)
+            {
+                go.transform.parent = parent;
+                go.tag = QuestMachine.questFoeTag;
+            }
+        }
+
+        static void AddQuestItem(SiteTypes siteType, Quest quest, QuestMarker marker, Item item, Transform parent = null)
+        {
+            // TODO: Place target quest item loot container on marker
         }
 
         #endregion

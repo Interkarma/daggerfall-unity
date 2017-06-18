@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -21,21 +21,29 @@ using DaggerfallWorkshop.Game.Utility.ModSupport;
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
-    /// Handles import and injection of custom meshes and materials
-    /// with the purpose of providing modding support.
+    /// Handles import and injection of custom meshes and materials with the purpose of providing modding support.
+    /// This is done in the shape of a model->model replacement as wall as a 2d billboard->model replacement.
     /// </summary>
     static public class MeshReplacement
     {
-        // Winter tag
+        /// <summary>
+        /// Winter tag added after id for winter models.
+        /// </summary>
         const string winterTag = "_winter";
 
         #region Public Methods
 
         /// <summary>
-        /// Import the custom GameObject if available
+        /// Import the custom GameObject if available.
         /// </summary>
+        /// <remarks>
+        /// A GameObject which corresponds to <paramref name="modelID"/>
+        /// is searched inside mods and eventually imported and returned. 
+        /// On Development builds is also imported from Resources for easier tests.
+        /// </remarks>
+        /// <param name="matrix">Matrix with position and rotation of GameObject.</param>
         /// <returns>Returns the imported model or null.</returns>
-        static public GameObject ImportCustomGameobject (uint modelID, Vector3 position, Transform parent, Quaternion rotation)
+        static public GameObject ImportCustomGameobject (uint modelID, Transform parent, Matrix4x4 matrix)
         {
             // Check user settings
             if (!DaggerfallUnity.Settings.MeshAndTextureReplacement)
@@ -44,8 +52,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Get name
             string modelName = modelID.ToString();
 
+#if DEVELOPMENT_BUILD
+
             // Import Gameobject from Resources
-            // This is useful to test models
             string path = "Models/" + modelName + "/";
             if (Resources.Load(path + modelName) != null)
             {
@@ -58,9 +67,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
                 // Import GameObject
                 GameObject go = GameObject.Instantiate(Resources.Load(path + modelName) as GameObject);
-                InstantiateCustomModel(go, ref position, parent, ref rotation, modelName);
+                InstantiateCustomModel(go, parent, matrix, modelName);
                 return go;
             }
+
+#endif
 
             // Get model from mods using load order
             Mod[] mods = ModManager.Instance.GetAllMods(true);
@@ -78,7 +89,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     GameObject go = mods[i].GetAsset<GameObject>(modelName, true);
                     if (go != null)
                     {
-                        InstantiateCustomModel(go, ref position, parent, ref rotation, modelName);
+                        InstantiateCustomModel(go, parent, matrix, modelName);
                         return go;
                     }
 
@@ -90,8 +101,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Import the custom GameObject for billboard if available
+        /// Import the custom GameObject for billboard if available.
         /// </summary>
+        /// <remarks>
+        /// A GameObject which corresponds to <paramref name="archive"/> and <paramref name="record"/>
+        /// is searched inside mods and eventually imported and returned. 
+        /// On Development builds is also imported from Resources for easier tests.
+        /// </remarks>
         /// <param name="inDungeon">Fix position for dungeon models.</param>
         /// <returns>Returns the imported model or null.</returns>
         static public GameObject ImportCustomFlatGameobject (int archive, int record, Vector3 position, Transform parent, bool inDungeon = false)
@@ -103,8 +119,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Get name
             string modelName = archive.ToString("D3") + "_" + record.ToString();
 
+#if DEVELOPMENT_BUILD
+
             // Import Gameobject from Resources
-            // This is useful to test models
             string path = "Flats/" + modelName + "/";
             if (Resources.Load(path + modelName) != null)
             {
@@ -112,6 +129,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 InstantiateCustomFlat(go, ref position, parent, archive, record, inDungeon);
                 return go;
             }
+
+#endif
 
             // Get model from mods using load order
             Mod[] mods = ModManager.Instance.GetAllMods(true);
@@ -173,15 +192,18 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Assign parent, position, rotation and texture filtermode.
         /// </summary>
-        static private void InstantiateCustomModel(GameObject go, ref Vector3 position, Transform parent, ref Quaternion rotation, string modelName)
+        static private void InstantiateCustomModel(GameObject go, Transform parent, Matrix4x4 matrix, string modelName)
         {
-            // Update Position
+            // Assign transform properties
             go.transform.parent = parent;
-            go.transform.position = position;
-            go.transform.rotation = rotation;
+            go.transform.position = matrix.GetColumn(3);
+            go.transform.rotation = GameObjectHelper.QuaternionFromMatrix(matrix);
+
+            // Assign name
+            go.name = string.Format("DaggerfallMesh[Replacement][ID ={0}]", modelName);
 
             // Finalise gameobject
-            FinaliseMaterials(go, modelName);
+            FinaliseMaterials(go);
         }
 
         /// <summary>
@@ -199,7 +221,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 position.y -= height / 2 * MeshReader.GlobalScale;
             }
 
-            // Update Position
+            // Assign transform properties
             go.transform.parent = parent;
             go.transform.localPosition = position;
 
@@ -212,8 +234,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 go.transform.Rotate(0, UnityEngine.Random.Range(0f, 360f), 0);
             }
 
+            // Assign name
+            go.name = string.Format("DaggerfallBillboard [Replacement] [TEXTURE.{0:000}, Index={1}]", archive, record);
+
             // Finalise gameobject material
-            FinaliseMaterials(go, archive.ToString("D3") + "_" + record.ToString());
+            FinaliseMaterials(go);
         }
 
         /// <summary>
@@ -222,8 +247,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// use vanilla textures (or improved versions of them) and the user has installed a texture pack.
         /// </summary>
         /// <param name="object3D">Custom prefab</param>
-        /// <param name="ModelName">ID of model or sprite to be replaced. Used for debugging</param>
-        static private void FinaliseMaterials(GameObject object3D, string ModelName)
+        static private void FinaliseMaterials(GameObject object3D)
         {
             // Get MaterialReader
             MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
@@ -270,7 +294,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         materials[i].GetTexture("_MetallicGlossMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                 }
                 else
-                    Debug.LogError("Custom model " + ModelName + " is missing a material or a texture");
+                    Debug.LogError(string.Format("{0} is missing a material or a texture.", object3D.name));
             }
 
             // Confirm finalised materials

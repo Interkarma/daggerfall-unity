@@ -595,7 +595,7 @@ namespace DaggerfallWorkshop
     public enum MarkerTypes
     {
         None = -1,
-        NPC = 11,               // Quest NPC marker
-        Item = 18,              // Quest Item marker
+        QuestSpawn = 11,        // Quest spawn marker (Foe/Person resources)
+        QuestItem = 18,         // Quest item marker (Item resource)
     }
 }

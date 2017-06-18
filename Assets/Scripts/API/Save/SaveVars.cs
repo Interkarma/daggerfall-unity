@@ -29,19 +29,34 @@ namespace DaggerfallConnect.Save
         const string filename = "SAVEVARS.DAT";
         const int weaponDrawnOffset = 0x3BF;
         const int gameTimeOffset = 0x3C9;
-        const int godModeOffset = 0x173B;
+        const int cheatsOffset = 0x173B;
         const int lastSkillCheckTimeOffset = 0x179A;
         const int factionDataOffset = 0x17D0;
         const int factionDataLength = 92;
 
         bool weaponDrawn = false;
         uint gameTime = 0;
+        //bool allMapLocationsRevealed = false; Commented out to silence warning until DF Unity supports hidden map locations
         bool godMode = false;
         uint lastSkillCheckTime = 0;
 
         // Private fields
         FileProxy saveVarsFile = new FileProxy();
         List<FactionFile.FactionData> factions = new List<FactionFile.FactionData>();
+
+        #endregion
+
+        #region Structures and Enumerations
+
+        /// <summary>
+        /// Cheat flags.
+        /// </summary>
+        [Flags]
+        public enum CheatFlags
+        {
+            AllMapLocationsRevealed = 0x08,
+            GodMode = 0x40,
+        }
 
         #endregion
 
@@ -160,10 +175,20 @@ namespace DaggerfallConnect.Save
             gameTime = reader.ReadUInt32();
         }
 
+        /* Commented out to silence warning until DF Unity supports hidden map locations
+        void ReadAllMapLocationsRevealed(BinaryReader reader)
+        {
+            reader.BaseStream.Position = cheatsOffset;
+            byte flags = reader.ReadByte();
+            if ((flags & (byte)CheatFlags.AllMapLocationsRevealed) != 0)
+                allMapLocationsRevealed = true;
+        }*/
+
         void ReadGodMode(BinaryReader reader)
         {
-            reader.BaseStream.Position = godModeOffset;
-            if (reader.ReadByte() == 0x40)
+            reader.BaseStream.Position = cheatsOffset;
+            byte flags = reader.ReadByte();
+            if ((flags & (byte)CheatFlags.GodMode) != 0)
                 godMode = true;
         }
 
