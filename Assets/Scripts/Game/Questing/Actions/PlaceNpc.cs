@@ -58,6 +58,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             base.Update(caller);
 
+            // Create SiteLink if not already present
+            if (!QuestMachine.HasSiteLink(ParentQuest, placeSymbol))
+                QuestMachine.CreateSiteLink(ParentQuest, placeSymbol);
+
             // Attempt to get Person resource
             Person person = ParentQuest.GetPerson(npcSymbol);
             if (person == null)

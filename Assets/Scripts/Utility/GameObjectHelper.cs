@@ -723,7 +723,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public static void AddQuestResourceObjects(SiteTypes siteType, Transform parent = null, int buildingKey = 0)
         {
-            // Collect all SiteLinks for this building interior
+            // Collect any SiteLinks associdated with this site
             SiteLink[] siteLinks = QuestMachine.Instance.GetSiteLinks(siteType, GameManager.Instance.PlayerGPS.CurrentMapID, buildingKey);
             if (siteLinks == null || siteLinks.Length == 0)
                 return;
@@ -806,8 +806,23 @@ namespace DaggerfallWorkshop.Utility
             clickHandler.QuestPersonSymbol = person.Symbol;
         }
 
-        static void AddQuestFoe(SiteTypes siteType, Quest quest, QuestMarker marker, Foe fie, Transform parent = null)
+        /// <summary>
+        /// Adds quest foe(s) to marker position.
+        /// These foes are placed on quest marker in game world as part of PlaceFoe action, e.g. "place aFoe at aPlace".
+        /// For now limiting to one spawn to test behaviour, ignoring whatever spawn count is on Foe resource itself.
+        /// Note: This is not used by the CreateFoe action, only scene layout builders.
+        /// </summary>
+        static void AddQuestFoe(SiteTypes siteType, Quest quest, QuestMarker marker, Foe foe, Transform parent = null)
         {
+            // Create target GameObjects
+            GameObject[] gameObjects = foe.CreateFoeGameObjects(marker.flatPosition, 1);
+            if (gameObjects == null || gameObjects.Length != foe.SpawnCount)
+                throw new Exception(string.Format("create foe attempted to spawn {0}x{1} and failed.", foe.SpawnCount, foe.Symbol.Name));
+
+            // Setup each GameObject
+            foreach (GameObject go in gameObjects)
+            {
+            }
         }
 
         static void AddQuestItem(SiteTypes siteType, Quest quest, QuestMarker marker, Item item, Transform parent = null)

@@ -1226,7 +1226,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             loadInProgress = false;
 
             // Fade out from black
-            DaggerfallUI.Instance.FadeHUDFromBlack(1.5f);
+            DaggerfallUI.Instance.FadeHUDFromBlack(1.0f);
 
             // Raise OnLoad event
             RaiseOnLoadEvent(saveData);

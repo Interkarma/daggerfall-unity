@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (match.Success)
             {
                 // Seed random
-                UnityEngine.Random.InitState(Time.frameCount);
+                //UnityEngine.Random.InitState(Time.frameCount);
 
                 // Store symbol for quest system
                 Symbol = new Symbol(match.Groups["symbol"].Value);
@@ -316,6 +316,19 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     if (requiredMarkerType == MarkerTypes.QuestSpawn)
                         Debug.LogFormat("Assigned NPC {0} to Dungeon {1}", (resource as Person).DisplayName, SiteDetails.locationName);
+                }
+            }
+            else if (resource is Foe)
+            {
+                if (siteDetails.siteType == SiteTypes.Building)
+                {
+                    if (requiredMarkerType == MarkerTypes.QuestSpawn)
+                        Debug.LogFormat("Assigned Foe _{0}_ to Building {1}", resource.Symbol.Name, SiteDetails.buildingName);
+                }
+                else if (siteDetails.siteType == SiteTypes.Dungeon)
+                {
+                    if (requiredMarkerType == MarkerTypes.QuestSpawn)
+                        Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
                 }
             }
         }

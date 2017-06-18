@@ -283,6 +283,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new StartStopTimer(null));
             RegisterAction(new DailyFrom(null));
             RegisterAction(new CreateFoe(null));
+            RegisterAction(new PlaceFoe(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)
@@ -678,6 +679,59 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        #endregion
+
+        #region Static Helper Methods
+
+        /// <summary>
+        /// Checks if a Place has a SiteLink available.
+        /// </summary>
+        public static bool HasSiteLink(Quest parentQuest, Symbol placeSymbol)
+        {
+            // Attempt to get Place resource
+            Place place = parentQuest.GetPlace(placeSymbol);
+            if (place == null)
+                throw new Exception(string.Format("HasSiteLink() could not find Place symbol {0}", placeSymbol.Name));
+
+            // Collect any SiteLinks associdated with this site
+            SiteLink[] siteLinks = Instance.GetSiteLinks(place.SiteDetails.siteType, place.SiteDetails.mapId, place.SiteDetails.buildingKey);
+            if (siteLinks == null || siteLinks.Length == 0)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Creates a new SiteLink at Place.
+        /// </summary>
+        public static void CreateSiteLink(Quest parentQuest, Symbol placeSymbol)
+        {
+            // Attempt to get Place resource
+            Place place = parentQuest.GetPlace(placeSymbol);
+            if (place == null)
+                throw new Exception(string.Format("Attempted to add SiteLink for invalid Place symbol {0}", placeSymbol.Name));
+
+            // Create SiteLink in QuestMachine
+            SiteLink siteLink = new SiteLink();
+            siteLink.questUID = parentQuest.UID;
+            siteLink.placeSymbol = placeSymbol;
+            siteLink.siteType = place.SiteDetails.siteType;
+            siteLink.mapId = place.SiteDetails.mapId;
+            siteLink.buildingKey = place.SiteDetails.buildingKey;
+            Instance.AddSiteLink(siteLink);
+
+            // Output debug information
+            switch (siteLink.siteType)
+            {
+                case SiteTypes.Building:
+                    Debug.LogFormat("Created Building SiteLink to {0} in {1}/{2}", place.SiteDetails.buildingName, place.SiteDetails.regionName, place.SiteDetails.locationName);
+                    break;
+                case SiteTypes.Dungeon:
+                    Debug.LogFormat("Created Dungeon SiteLink to {0}/{1}", place.SiteDetails.regionName, place.SiteDetails.locationName);
+                    break;
+            }
         }
 
         #endregion
