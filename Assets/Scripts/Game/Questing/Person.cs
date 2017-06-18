@@ -30,7 +30,6 @@ namespace DaggerfallWorkshop.Game.Questing
         bool isIndividualNPC = false;
         bool isIndividualAtHome = false;
         string displayName = string.Empty;
-        bool hasPlayerClicked = false;
         FactionFile.FactionData factionData;
 
         #endregion
@@ -65,11 +64,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public string DisplayName
         {
             get { return displayName; }
-        }
-
-        public bool HasPlayerClicked
-        {
-            get { return hasPlayerClicked; }
         }
 
         public FactionFile.FactionData FactionData
@@ -607,15 +601,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception("GetRandomFactionOfType() found 0 matches.");
 
             return factions[UnityEngine.Random.Range(0, factions.Length)].id;
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public void SetPlayerClicked()
-        {
-            hasPlayerClicked = true;
         }
 
         #endregion

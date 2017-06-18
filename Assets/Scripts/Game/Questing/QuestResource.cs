@@ -15,6 +15,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int infoMessageID = -1;
         int usedMessageID = -1;
         int rumorsMessageID = -1;
+        bool hasPlayerClicked = false;
 
         /// <summary>
         /// Symbol of this quest resource (if any).
@@ -61,6 +62,11 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return rumorsMessageID; }
             set { rumorsMessageID = value; }
+        }
+
+        public bool HasPlayerClicked
+        {
+            get { return hasPlayerClicked; }
         }
 
         /// <summary>
@@ -135,6 +141,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (rumors.Success)
                     rumorsMessageID = Parser.ParseInt(rumors.Value);
             }
+        }
+
+        public void SetPlayerClicked()
+        {
+            hasPlayerClicked = true;
         }
     }
 }

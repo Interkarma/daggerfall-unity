@@ -100,7 +100,6 @@ namespace DaggerfallWorkshop
             AddFlats();
             AddPeople();
             AddActionDoors();
-            GameObjectHelper.AddQuestResourceObjects(SiteTypes.Building, transform, entryDoor.buildingKey);
 
             return true;
         }

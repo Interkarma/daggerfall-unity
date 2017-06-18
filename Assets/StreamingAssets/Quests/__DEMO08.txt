@@ -118,7 +118,7 @@ Message:  1080
 QBN:
 Item _gold_ gold
 
-Person _villager_ face 8 group Shopkeeper male
+Person _villager_ face 8 group Shopkeeper
 
 Place _mondung_ permanent PirateerHold1
 Place _store_ remote generalstore

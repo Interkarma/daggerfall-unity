@@ -721,7 +721,7 @@ namespace DaggerfallWorkshop.Utility
         /// Just working through the steps in buildings interiors for now.
         /// This will be moved to a different setup class later.
         /// </summary>
-        public static void AddQuestResourceObjects(SiteTypes siteType, Transform parent = null, int buildingKey = 0)
+        public static void AddQuestResourceObjects(SiteTypes siteType, Transform parent, int buildingKey = 0)
         {
             // Collect any SiteLinks associdated with this site
             SiteLink[] siteLinks = QuestMachine.Instance.GetSiteLinks(siteType, GameManager.Instance.PlayerGPS.CurrentMapID, buildingKey);
@@ -788,29 +788,28 @@ namespace DaggerfallWorkshop.Utility
             GameObject go = CreateDaggerfallBillboardGameObject(flatData.archive, flatData.record, parent);
             go.name = string.Format("Quest NPC [{0}]", person.DisplayName);
 
-            // Set position
+            // Set position and adjust up by half height if not inside a dungeon
+            go.transform.localPosition = marker.flatPosition;
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-            go.transform.position = marker.flatPosition;
-
-            // Adjust up by half height if not in a dungeon
-            // Dungeon flats have a different origin point to other flats (because Daggerfall)
             if (siteType != SiteTypes.Dungeon)
-                go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+                go.transform.localPosition += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
             // Add people data to billboard
             dfBillboard.SetRMBPeopleData(person.FactionIndex, person.FactionData.flags);
 
-            // Add click handler to billboard
-            QuestNPCClickHandler clickHandler = go.AddComponent<QuestNPCClickHandler>();
-            clickHandler.QuestUID = quest.UID;
-            clickHandler.QuestPersonSymbol = person.Symbol;
+            // Add resource behaviour to GameObject
+            QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
+            questResourceBehaviour.AssignResource(person);
+
+            // Set tag
+            go.tag = QuestMachine.questPersonTag;
         }
 
         /// <summary>
         /// Adds quest foe(s) to marker position.
         /// These foes are placed on quest marker in game world as part of PlaceFoe action, e.g. "place aFoe at aPlace".
         /// For now limiting to one spawn to test behaviour, ignoring whatever spawn count is on Foe resource itself.
-        /// Note: This is not used by the CreateFoe action, only scene layout builders.
+        /// Note: This method is not used by the CreateFoe action.
         /// </summary>
         static void AddQuestFoe(SiteTypes siteType, Quest quest, QuestMarker marker, Foe foe, Transform parent = null)
         {
@@ -819,14 +818,17 @@ namespace DaggerfallWorkshop.Utility
             if (gameObjects == null || gameObjects.Length != foe.SpawnCount)
                 throw new Exception(string.Format("create foe attempted to spawn {0}x{1} and failed.", foe.SpawnCount, foe.Symbol.Name));
 
-            // Setup each GameObject
+            // Setup GameObjects
             foreach (GameObject go in gameObjects)
             {
+                go.transform.parent = parent;
+                go.tag = QuestMachine.questFoeTag;
             }
         }
 
         static void AddQuestItem(SiteTypes siteType, Quest quest, QuestMarker marker, Item item, Transform parent = null)
         {
+            // TODO: Place target quest item loot container on marker
         }
 
         #endregion

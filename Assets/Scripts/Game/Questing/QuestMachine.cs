@@ -38,7 +38,12 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        const float startupDelay = 1.0f;        // How long quest machine will wait before running active quests
+        // Public constants
+        public const string questPersonTag = "QuestPerson";
+        public const string questFoeTag = "QuestFoe";
+        public const string questItemTag = "QuestItem";
+
+        const float startupDelay = 0f;          // How long quest machine will wait before running active quests
         const float ticksPerSecond = 8;         // How often quest machine will tick quest logic per second
 
         // Folder names constants

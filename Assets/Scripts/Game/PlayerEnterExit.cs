@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -31,7 +31,6 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallUnity dfUnity;
         CharacterController controller;
-        //PlayerMouseLook playerMouseLook;
         bool isPlayerInside = false;
         bool isPlayerInsideDungeon = false;
         bool isPlayerInsideDungeonCastle = false;
@@ -338,7 +337,7 @@ namespace DaggerfallWorkshop.Game
             }
             catch
             {
-                DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.thisHouseHasNothingOfValue);
+                DaggerfallUI.AddHUDText(HardStrings.thisHouseHasNothingOfValue);
                 Destroy(newInterior);
                 return;
             }
@@ -388,6 +387,9 @@ namespace DaggerfallWorkshop.Game
             SetStanding();
 
             EnableInteriorParent();
+
+            // Add quest resources
+            GameObjectHelper.AddQuestResourceObjects(SiteTypes.Building, interior.transform, interior.EntryDoor.buildingKey);
 
             // Raise event
             RaiseOnTransitionInteriorEvent(door, interior);
@@ -495,6 +497,9 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
+
+            // Add quest resources
+            GameObjectHelper.AddQuestResourceObjects(SiteTypes.Dungeon, dungeon.transform);
 
             // Raise event
             RaiseOnTransitionDungeonInteriorEvent(door, dungeon);
