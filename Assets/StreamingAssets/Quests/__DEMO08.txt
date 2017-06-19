@@ -154,7 +154,7 @@ _no_ task:
 
 _S.13_ task:
 	say 1044 
-	-drop _villager_ face 
+	drop _villager_ face 
 	-change repute with _villager_ by +15 
 	place npc _villager_ at _store_ 
 

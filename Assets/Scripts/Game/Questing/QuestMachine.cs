@@ -292,6 +292,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new HideNpc(null));
             RegisterAction(new RestoreNpc(null));
             RegisterAction(new AddFace(null));
+            RegisterAction(new DropFace(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)
