@@ -1099,14 +1099,20 @@ namespace DaggerfallWorkshop.Utility
             // Special handling for individual NPCs found in layout data
             if (QuestMachine.Instance.IsIndividualNPC(dfBillboard.Summary.FactionOrMobileID))
             {
-                // Always assign QuestResourceBehaviour to individual NPCs
-                // This NPC may be used in 0 or several active quests, allow the behaviour to deal with it at click time
-                QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
-                questResourceBehaviour.AssignIndividualNPC(dfBillboard.Summary.FactionOrMobileID);
-
-                // Disable individual NPC if placed elsewhere by quest system
+                // Check if NPC has been placed elsewhere on a quest
                 if (QuestMachine.Instance.IsIndividualQuestNPCAtSiteLink(dfBillboard.Summary.FactionOrMobileID))
+                {
+                    // Disable individual NPC if placed elsewhere
                     go.SetActive(false);
+                }
+                else
+                {
+                    // Assign SpecialNPCClickHandler to individual NPCs
+                    // This NPC may be used in 0 or several active quests at home
+                    // When not at home the usual QuestResourceBehaviour will be applied
+                    SpecialNPCClickHandler specialNPCClickHandler = go.AddComponent<SpecialNPCClickHandler>();
+                    specialNPCClickHandler.IndividualFactionID = dfBillboard.Summary.FactionOrMobileID;
+                }
             }
 
             // Set transform

@@ -135,7 +135,7 @@ _victim_ task:
 	place npc _villager_ at _mondung_ 
 
 _S.09_ task:
-	-hide npc _villager_ 
+	hide npc _villager_ 
 
 _S.10_ task:
 	clicked npc _villager_ 
@@ -144,9 +144,9 @@ _S.10_ task:
 yes task:
 	pc at _store_ set _S.13_ 
 	log 1021 step 1 
-	-hide npc _villager_ 
+	hide npc _villager_ 
 	say 1041 
-	-add _villager_ face 
+	add _villager_ face 
 
 _no_ task:
 	say 1043 

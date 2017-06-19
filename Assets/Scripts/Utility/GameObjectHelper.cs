@@ -797,9 +797,12 @@ namespace DaggerfallWorkshop.Utility
             // Add people data to billboard
             dfBillboard.SetRMBPeopleData(person.FactionIndex, person.FactionData.flags);
 
-            // Add resource behaviour to GameObject
+            // Add QuestResourceBehaviour to GameObject
             QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
             questResourceBehaviour.AssignResource(person);
+
+            // Set QuestResourceBehaviour in Person object
+            person.QuestResourceBehaviour = questResourceBehaviour;
 
             // Set tag
             go.tag = QuestMachine.questPersonTag;
@@ -823,6 +826,8 @@ namespace DaggerfallWorkshop.Utility
             {
                 go.transform.parent = parent;
                 go.tag = QuestMachine.questFoeTag;
+
+                // TODO: Assign QuestResourceBehaviour GameObject and set two-way referencesB
             }
         }
 

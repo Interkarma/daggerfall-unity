@@ -8,7 +8,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// All quest resources hosted by a quest must inherit from this base class.
     /// Symbol will be set by inheriting class after parsing source text.
     /// </summary>
-    public abstract class QuestResource
+    public abstract class QuestResource : IDisposable
     {
         Quest parentQuest = null;
         Symbol symbol;
@@ -16,6 +16,10 @@ namespace DaggerfallWorkshop.Game.Questing
         int usedMessageID = -1;
         int rumorsMessageID = -1;
         bool hasPlayerClicked = false;
+        bool isHidden = false;
+
+        [NonSerialized]
+        QuestResourceBehaviour questResourceBehaviour = null;
 
         /// <summary>
         /// Symbol of this quest resource (if any).
@@ -64,9 +68,33 @@ namespace DaggerfallWorkshop.Game.Questing
             set { rumorsMessageID = value; }
         }
 
+        /// <summary>
+        /// Gets flag stating if player has clicked on this Person resource in world.
+        /// If consuming click rearm using RearmPlayerClick().
+        /// </summary>
         public bool HasPlayerClicked
         {
             get { return hasPlayerClicked; }
+        }
+
+        /// <summary>
+        /// Gets or sets flag to hide this quest resource in world.
+        /// Has no effect on quest resources not active inside scene.
+        /// </summary>
+        public bool IsHidden
+        {
+            get { return isHidden; }
+            set { isHidden = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets reference to QuestResourceBehaviour in scene.
+        /// This property is not serialized - it should be set at time of injection or deserialization.
+        /// </summary>
+        public QuestResourceBehaviour QuestResourceBehaviour
+        {
+            get { return questResourceBehaviour; }
+            set { questResourceBehaviour = value; }
         }
 
         /// <summary>
@@ -143,9 +171,41 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        /// <summary>
+        /// Called when quest ends so resource can clean up.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            RaiseOnDisposeEvent();
+        }
+
+        /// <summary>
+        /// Check if player click has been triggered.
+        /// </summary>
         public void SetPlayerClicked()
         {
             hasPlayerClicked = true;
         }
+
+        /// <summary>
+        /// Rearm click so player can click again if quest allows it.
+        /// </summary>
+        public void RearmPlayerClick()
+        {
+            hasPlayerClicked = false;
+        }
+
+        #region Events
+
+        // OnDispose
+        public delegate void OnDisposeEventHandler();
+        public event OnDisposeEventHandler OnDispose;
+        protected virtual void RaiseOnDisposeEvent()
+        {
+            if (OnDispose != null)
+                OnDispose();
+        }
+
+        #endregion
     }
 }

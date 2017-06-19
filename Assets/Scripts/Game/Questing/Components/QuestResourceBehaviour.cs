@@ -26,8 +26,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
         ulong questUID;
         Symbol targetSymbol;
-        int individualFactionID;
         Quest targetQuest;
+
+        [NonSerialized]
         QuestResource targetResource;
 
         #endregion
@@ -48,14 +49,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public Symbol TargetSymbol
         {
             get { return targetSymbol; }
-        }
-
-        /// <summary>
-        /// Gets individual FactionID when this is a unique named individual.
-        /// </summary>
-        public int IndividualFactionID
-        {
-            get { return individualFactionID; }
         }
 
         /// <summary>
@@ -80,35 +73,37 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Assign this behaviour a QuestResource object.
-        /// Mutually exclusive with AssignIndividualNPC().
         /// </summary>
         public void AssignResource(QuestResource questResource)
         {
+            UnsubscribeEvents();
             if (questResource != null)
             {
                 questUID = questResource.ParentQuest.UID;
                 targetSymbol = questResource.Symbol;
-                individualFactionID = 0;
             }
+            SubscribeEvents();
         }
 
         /// <summary>
-        /// Assign this behaviour an individual NPC.
-        /// Mutually exclusive with AssignResource().
+        /// Called by PlayerActivate when clicking on this GameObject.
         /// </summary>
-        /// <param name="factionID"></param>
-        public void AssignIndividualNPC(int factionID)
+        public void DoClick()
         {
-            questUID = 0;
-            targetSymbol = null;
-            individualFactionID = factionID;
+            // Set click on resource
+            if (CheckTarget())
+                targetResource.SetPlayerClicked();
         }
+
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
         /// Check target quest and resource can be resolved.
         /// If true then TargetQuest and TargetResource objects are cached and available.
         /// </summary>
-        public bool CheckTarget()
+        bool CheckTarget()
         {
             if (targetQuest != null && targetResource != null)
                 return true;
@@ -131,58 +126,21 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Called by PlayerActivate when clicking on this GameObject.
+        /// Subscribe to events raised by the target resource.
         /// </summary>
-        public void DoClick()
+        void SubscribeEvents()
         {
-            // Special individual NPCs can exist in world even if not actively part of a quest
-            // This is different to random NPCs which are created as part of a single quest only
-            // Check all active quests on this individual NPC
-            if (individualFactionID != 0)
-            {
-                DoIndividualClick();
+            if (!CheckTarget())
                 return;
-            }
-
-            // Set click on resource
-            if (CheckTarget())
-                targetResource.SetPlayerClicked();
         }
 
-        #endregion
-
-        #region Private Methods
-
         /// <summary>
-        /// Checks all active quests for references to this special person and triggers player click across all quests.
-        /// These special people may be involved in multiple quests, which is different to singleton NPCs created
-        /// specifically for a single quest.
+        /// Unsubscribe from events raised by the target resource.
         /// </summary>
-        void DoIndividualClick()
+        void UnsubscribeEvents()
         {
-            // Check active quests to see if anyone has reserved this NPC
-            ulong[] questIDs = QuestMachine.Instance.GetAllActiveQuests();
-            foreach (ulong questID in questIDs)
-            {
-                // Get quest object
-                Quest quest = QuestMachine.Instance.GetActiveQuest(questID);
-                if (quest == null)
-                    continue;
-
-                // Get all the Person resources in this quest
-                QuestResource[] personResources = quest.GetAllResources(typeof(Person));
-                if (personResources == null || personResources.Length == 0)
-                    continue;
-
-                // Check each Person for a match
-                foreach (QuestResource resource in personResources)
-                {
-                    // Set click if individual matches Person factionID
-                    Person person = (Person)resource;
-                    if (person.IsIndividualNPC && person.FactionData.id == individualFactionID)
-                        person.SetPlayerClicked();
-                }
-            }
+            if (!CheckTarget())
+                return;
         }
 
         #endregion

@@ -239,7 +239,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Remove completed quests after update completed
             foreach (Quest quest in questsToRemove)
             {
-                //RemoveReservedSites(quest);
+                quest.Dispose();
                 quests.Remove(quest.UID);
                 RemoveQuestSiteLinks(quest.UID);
                 RaiseOnQuestEndedEvent(quest);
@@ -289,6 +289,8 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new DailyFrom(null));
             RegisterAction(new CreateFoe(null));
             RegisterAction(new PlaceFoe(null));
+            RegisterAction(new HideNpc(null));
+            RegisterAction(new RestoreNpc(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)

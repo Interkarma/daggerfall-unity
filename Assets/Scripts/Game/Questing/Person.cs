@@ -193,16 +193,44 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        public override void Tick(Quest caller)
+        {
+            // Show or hide GameObject for this Person
+            if (QuestResourceBehaviour)
+                QuestResourceBehaviour.gameObject.SetActive(!IsHidden);
+        }
+
         public override bool ExpandMacro(MacroTypes macro, out string textOut)
         {
+            // TODO:
+            //  * Support for home town/building (believe this is just random unless NPC moved from a Place)
+            //  * Support for %god (TEXT.RSC 4077-4084)
+            //  * Support for pronoun (%g1, %g2, %g2, %g2self, %g3)
+            //  * Support for class (not sure what NPCs have a class, need to see this used in a quest)
+            //  * Support for faction (believe this is just the name of faction they belong to, e.g. The Merchants)
+
             textOut = string.Empty;
             bool result = true;
             switch (macro)
             {
-                // TODO: Just stubbing out for testing right now as Person class not complete enough to return real values
-
-                case MacroTypes.NameMacro1:             // Testing name
+                case MacroTypes.NameMacro1:             // Display name
                     textOut = displayName;
+                    break;
+
+                case MacroTypes.NameMacro2:             // Person residence name
+                    result = false;
+                    break;
+
+                case MacroTypes.NameMacro3:             // Home town name
+                    result = false;
+                    break;
+
+                case MacroTypes.DetailsMacro:           // Class name
+                    result = false;
+                    break;
+
+                case MacroTypes.FactionMacro:           // Faction macro
+                    result = false;
                     break;
 
                 default:                                // Macro not supported

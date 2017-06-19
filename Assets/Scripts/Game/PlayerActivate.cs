@@ -481,9 +481,15 @@ namespace DaggerfallWorkshop.Game
 
         void TriggerQuestResourceClick(DaggerfallBillboard npc)
         {
+            // Handle typical quest resource click
             QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
             if (questResourceBehaviour)
                 questResourceBehaviour.DoClick();
+
+            // Handle special NPC in home location click
+            SpecialNPCClickHandler specialNPCClickHandler = npc.gameObject.GetComponent<SpecialNPCClickHandler>();
+            if (specialNPCClickHandler)
+                specialNPCClickHandler.DoClick();
         }
 
         void QuestorCheck(DaggerfallBillboard npc)

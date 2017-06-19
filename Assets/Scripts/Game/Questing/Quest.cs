@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// such as a basic fetch quest to two different dungeons. The name of quest cannot not be used for unique identification.
     /// Child resources generally will not care about quest UID, but this is used by quest machine.
     /// </summary>
-    public class Quest
+    public class Quest : IDisposable
     {
         #region Fields
 
@@ -211,6 +211,15 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return states.ToArray();
+        }
+
+        public void Dispose()
+        {
+            // Dispose of quest resources
+            foreach(QuestResource resource in resources.Values)
+            {
+                resource.Dispose();
+            }
         }
 
         #endregion

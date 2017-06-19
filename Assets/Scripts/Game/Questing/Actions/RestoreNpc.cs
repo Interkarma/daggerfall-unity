@@ -11,29 +11,26 @@
 
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System;
 
-namespace DaggerfallWorkshop.Game.Questing
+namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Handles player clicking on NPC.
+    /// Restore NPC previously hidden from world.
     /// </summary>
-    public class ClickedNpc : ActionTemplate
+    public class RestoreNpc : ActionTemplate
     {
         Symbol npcSymbol;
 
         public override string Pattern
         {
-            // Initial match only looks for opening "when not task"|"when task"
-            get { return @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+)"; }
+            get { return @"restore npc (?<anNPC>[a-zA-Z0-9_.-]+)"; }
         }
 
-        public ClickedNpc(Quest parentQuest)
+        public RestoreNpc(Quest parentQuest)
             : base(parentQuest)
         {
-            IsTriggerCondition = true;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
@@ -46,33 +43,25 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             // Factory new action
-            ClickedNpc action = new ClickedNpc(parentQuest);
+            RestoreNpc action = new RestoreNpc(parentQuest);
             action.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
 
             return action;
         }
 
-        public override bool CheckTrigger(Task caller)
+        public override void Update(Task caller)
         {
-            // Always return true once owning Task is triggered
-            // Another action will need to rearm/unset this task if another click is required
-            // This seems to fit how classic works based on current observation
-            if (caller.IsSet)
-                return true;
+            base.Update(caller);
 
             // Get related Person resource
             Person person = ParentQuest.GetPerson(npcSymbol);
             if (person == null)
-                return false;
+                return;
 
-            // Check player clicked flag
-            if (person.HasPlayerClicked)
-            {
-                person.RearmPlayerClick();
-                return true;
-            }
+            // Restore this Person
+            person.IsHidden = false;
 
-            return false;
+            SetComplete();
         }
     }
 }
