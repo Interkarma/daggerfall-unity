@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             // Flag quest over so quest machine can remove it
             //Debug.LogFormat("Ending quest {0}", ParentQuest.UID);
+            ParentQuest.QuestBreak = true;
             ParentQuest.EndQuest();
             SetComplete();
         }

@@ -275,6 +275,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void QuestMachine_OnQuestEnded(Quest quest)
         {
+            if (quest == null || currentQuest == null || processLabel == null)
+                return;
+
             if (quest.UID == currentQuest.UID)
             {
                 // Show quest finished text

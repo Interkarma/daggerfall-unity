@@ -116,6 +116,28 @@ namespace DaggerfallConnect.Arena2
             Orsinium = 24,
         }
 
+        /// <summary>
+        /// Faction race value does not map to usual race ID.
+        /// Instead it selects from a smaller pool as below.
+        /// For example:
+        ///  * "Daggerfall", and most others, have a race of 3 (Breton)
+        ///  * "Sentinel" has a race of 2 (Redguard)
+        ///  * This is likely involved in how Daggerfall assigns the race of wandering NPCs in towns
+        ///  * When selecting a random face for escorts, it is assigned by the dominant race of region
+        ///  * Not all races found in FACTION.TXT are present here - unsure if these are even used in game
+        /// </summary>
+        public enum FactionRaces
+        {
+            None = -1,
+            Redguard = 2,
+            Breton = 3,
+            DarkElf = 7,
+            Skakmat = 11,       // Only used on #304 "Skakmat"
+            Orc = 17,           // Only used on #358 "Orsinium"
+            Vampire = 18,
+            Fey = 19,           // Only used on #513 "The Fey"
+        }
+
         #endregion
 
         #region Structures

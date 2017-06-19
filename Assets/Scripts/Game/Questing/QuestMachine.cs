@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public const string questItemTag = "QuestItem";
 
         const float startupDelay = 0f;          // How long quest machine will wait before running active quests
-        const float ticksPerSecond = 8;         // How often quest machine will tick quest logic per second
+        const float ticksPerSecond = 10;        // How often quest machine will tick quest logic per second
 
         // Folder names constants
         const string questSourceFolderName = "Quests";
@@ -240,8 +240,8 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (Quest quest in questsToRemove)
             {
                 quest.Dispose();
+                RemoveAllQuestSiteLinks(quest.UID);
                 quests.Remove(quest.UID);
-                RemoveQuestSiteLinks(quest.UID);
                 RaiseOnQuestEndedEvent(quest);
             }
 
@@ -291,6 +291,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new PlaceFoe(null));
             RegisterAction(new HideNpc(null));
             RegisterAction(new RestoreNpc(null));
+            RegisterAction(new AddFace(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)
@@ -565,21 +566,9 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Typically done when quest has completed.
         /// </summary>
         /// <param name="questUID">UID of quest to remove site links to.</param>
-        public void RemoveQuestSiteLinks(ulong questUID)
+        public void RemoveAllQuestSiteLinks(ulong questUID)
         {
-            // Collect indices of links using this quest
-            List<int> linksToRemove = new List<int>();
-            for (int i = 0; i < siteLinks.Count; i++)
-            {
-                if (siteLinks[i].questUID == questUID)
-                    linksToRemove.Add(i);
-            }
-
-            // Remove site links of that quest
-            foreach (int index in linksToRemove)
-            {
-                siteLinks.RemoveAt(index);
-            }
+            while (RemoveQuestSiteLink(questUID)) { }
         }
 
         /// <summary>
@@ -682,6 +671,29 @@ namespace DaggerfallWorkshop.Game.Questing
                     // This means we found an individual placed at site who is not supposed to be at their home location
                     if (person.FactionData.id == factionID)
                         return true;
+                }
+            }
+
+            return false;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Removes the first SiteLink found matching quest UID.
+        /// </summary>
+        /// <returns>True if link removed, false if no matching links found.</returns>
+        bool RemoveQuestSiteLink(ulong questUID)
+        {
+            // Look for a site link matching this questID to remove
+            for (int i = 0; i < siteLinks.Count; i++)
+            {
+                if (siteLinks[i].questUID == questUID)
+                {
+                    siteLinks.RemoveAt(i);
+                    return true;
                 }
             }
 

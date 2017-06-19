@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDVitals vitals = new HUDVitals();
         HUDCompass compass = new HUDCompass();
         HUDPlaceMarker placeMarker = new HUDPlaceMarker();
+        EscortingNPCFacePanel escortingFaces = new EscortingNPCFacePanel();
         HUDQuestDebugger questDebugger = new HUDQuestDebugger();
         GameObject player;
         DaggerfallEntityBehaviour playerEntity;
@@ -47,6 +48,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public bool ShowVitals { get; set; }
         public bool ShowCompass { get; set; }
         public bool ShowLocalQuestPlaces { get; set; }
+        public bool ShowEscortingFaces { get; set; }
         public bool ShowQuestDebugger { get; set; }
 
         public PopupText PopupText
@@ -65,6 +67,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return vitals; }
         }
 
+        public EscortingNPCFacePanel EscortingFaces
+        {
+            get { return escortingFaces; }
+        }
+
         public DaggerfallHUD(IUserInterfaceManager uiManager)
             :base(uiManager)
         {
@@ -75,6 +82,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowVitals = true;
             ShowCompass = true;
             ShowLocalQuestPlaces = true;
+            ShowEscortingFaces = true;
             ShowQuestDebugger = true;
 
             // Get references
@@ -99,6 +107,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             placeMarker.AutoSize = AutoSizeModes.ScaleToFit;
             ParentPanel.Components.Add(placeMarker);
 
+            escortingFaces.Size = NativePanel.Size;
+            escortingFaces.AutoSize = AutoSizeModes.ScaleToFit;
+            ParentPanel.Components.Add(escortingFaces);
+
             questDebugger.Size = new Vector2(640, 400);
             questDebugger.AutoSize = AutoSizeModes.ScaleToFit;
             ParentPanel.Components.Add(questDebugger);
@@ -113,6 +125,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             vitals.Enabled = ShowVitals;
             compass.Enabled = ShowCompass;
             placeMarker.Enabled = ShowLocalQuestPlaces;
+            escortingFaces.EnableBorder = ShowEscortingFaces;
             questDebugger.Enabled = ShowQuestDebugger;
 
             // Scale HUD elements

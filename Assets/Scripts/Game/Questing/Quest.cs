@@ -168,8 +168,8 @@ namespace DaggerfallWorkshop.Game.Questing
             // Update tasks
             foreach(Task task in tasks.Values)
             {
-                // Handle quest break
-                if (questBreak)
+                // Handle quest break or completion
+                if (questBreak || questComplete)
                 {
                     questBreak = false;
                     return;

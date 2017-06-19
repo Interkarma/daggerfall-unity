@@ -58,7 +58,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (person == null)
                 return;
 
-            // TODO: Add face
+            // Add face to HUD
+            DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.AddFace(person);
 
             SetComplete();
         }

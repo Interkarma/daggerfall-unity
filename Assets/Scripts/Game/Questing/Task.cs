@@ -184,6 +184,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Iterate conditions and actions for this task
             foreach (IQuestAction action in actions)
             {
+                // Do nothing if quest break active or quest has ended
+                if (ParentQuest.QuestBreak)
+                    return;
+
                 // Completed actions are never executed again
                 // The action itself should decide if/when to be complete
                 // At a higher level, turning off the task will also disable actions
@@ -212,8 +216,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
                     // Update action and handle quest break
                     action.Update(this);
-                    if (ParentQuest.QuestBreak)
-                        return;
                 }
             }
 
