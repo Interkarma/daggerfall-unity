@@ -278,7 +278,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new StartTask(null));
             RegisterAction(new ClearTask(null));
             RegisterAction(new LogMessage(null));
-            RegisterAction(new PickRandomTask(null));
+            RegisterAction(new PickOneOf(null));
             RegisterAction(new RemoveLogMessage(null));
             RegisterAction(new PlayVideo(null));
             RegisterAction(new PcAt(null));

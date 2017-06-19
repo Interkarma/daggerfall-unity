@@ -789,7 +789,8 @@ namespace DaggerfallWorkshop.Utility
             go.name = string.Format("Quest NPC [{0}]", person.DisplayName);
 
             // Set position and adjust up by half height if not inside a dungeon
-            go.transform.localPosition = marker.flatPosition;
+            Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
+            go.transform.localPosition = dungeonBlockPosition + marker.flatPosition;
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
             if (siteType != SiteTypes.Dungeon)
                 go.transform.localPosition += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
@@ -809,26 +810,40 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Adds quest foe(s) to marker position.
-        /// These foes are placed on quest marker in game world as part of PlaceFoe action, e.g. "place aFoe at aPlace".
-        /// For now limiting to one spawn to test behaviour, ignoring whatever spawn count is on Foe resource itself.
-        /// Note: This method is not used by the CreateFoe action.
+        /// Adds quest foe to marker position.
         /// </summary>
-        static void AddQuestFoe(SiteTypes siteType, Quest quest, QuestMarker marker, Foe foe, Transform parent = null)
+        static void AddQuestFoe(SiteTypes siteType, Quest quest, QuestMarker marker, Foe foe, Transform parent)
         {
-            // Create target GameObjects
-            GameObject[] gameObjects = foe.CreateFoeGameObjects(marker.flatPosition, 1);
-            if (gameObjects == null || gameObjects.Length != foe.SpawnCount)
-                throw new Exception(string.Format("create foe attempted to spawn {0}x{1} and failed.", foe.SpawnCount, foe.Symbol.Name));
+            // Create target GameObject
+            string name = string.Format("Quest Foe [{0}]", foe.FoeType.ToString());
+            GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, parent, Vector3.zero);
+            SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
 
-            // Setup GameObjects
-            foreach (GameObject go in gameObjects)
-            {
-                go.transform.parent = parent;
-                go.tag = QuestMachine.questFoeTag;
+            // Set position
+            Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
+            go.transform.localPosition = dungeonBlockPosition + marker.flatPosition;
 
-                // TODO: Assign QuestResourceBehaviour GameObject and set two-way referencesB
-            }
+            // Assign gender randomly
+            MobileGender gender;
+            if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
+                gender = MobileGender.Male;
+            else
+                gender = MobileGender.Female;
+
+            // Configure enemy
+            setupEnemy.ApplyEnemySettings(foe.FoeType, MobileReactions.Hostile, gender);
+
+            // Align non-flying units with ground
+            DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
+            if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
+                AlignControllerToGround(go.GetComponent<CharacterController>());
+
+            // Add QuestResourceBehaviour to GameObject
+            QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
+            questResourceBehaviour.AssignResource(foe);
+
+            // Set QuestResourceBehaviour in Foe object
+            foe.QuestResourceBehaviour = questResourceBehaviour;
         }
 
         static void AddQuestItem(SiteTypes siteType, Quest quest, QuestMarker marker, Item item, Transform parent = null)

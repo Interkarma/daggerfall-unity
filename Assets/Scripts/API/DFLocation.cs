@@ -117,6 +117,7 @@ namespace DaggerfallConnect
             Special2 = 0xdf,
             Special3 = 0xf9,
             Special4 = 0xfa,
+            AllValid = 0xffff,      // DaggerfallUnity: all valid types
         }
 
         #endregion

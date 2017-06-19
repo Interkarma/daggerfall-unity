@@ -411,6 +411,8 @@ namespace DaggerfallWorkshop
         public List<Symbol> targetResources;        // Resources assigned to this marker, can be null or empty
         public MarkerTypes markerType;              // Type of marker this represents
         public Vector3 flatPosition;                // Position of marker flat in block layout
+        public int dungeonX;                        // Dungeon block X position in location
+        public int dungeonZ;                        // Dungeon block Z position in location
         public int buildingKey;                     // Building key if a building site
     }
 

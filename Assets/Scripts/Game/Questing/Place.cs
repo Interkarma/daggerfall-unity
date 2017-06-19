@@ -259,7 +259,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Assigns a quest resource to this Place site.
         /// Supports Persons, Foes, Items from within same quest as Place.
-        /// Quest must have previously created SiteLink for layout builders to discover this assigned resources.
+        /// Quest must have previously created SiteLink for layout builders to discover assigned resources.
         /// </summary>
         /// <param name="targetSymbol">Resource symbol of Person, Item, or Foe to assign.</param>
         public void AssignQuestResource(Symbol targetSymbol)
@@ -283,26 +283,18 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception(string.Format("Tried to assign incompatible resource symbol {0} to Place", targetSymbol.Name));
 
             // Assign target resource to marker selected for this quest
-            bool assignedMarker = false;
             if (requiredMarkerType == MarkerTypes.QuestSpawn)
             {
                 AssignResourceToMarker(targetSymbol, ref siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker]);
-                assignedMarker = true;
             }
             else if (requiredMarkerType == MarkerTypes.QuestItem)
             {
                 AssignResourceToMarker(targetSymbol, ref siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker]);
-                assignedMarker = true;
             }
             else
             {
-                assignedMarker = false;
+                throw new Exception(string.Format("Tried to assign resource symbol _{0}_ to Place {1} but it has an unknown MarkerType {2}", targetSymbol.Name, Symbol.Name, requiredMarkerType.ToString()));
             }
-
-            // Make sure we found a marker
-            // This 
-            if (!assignedMarker)
-                throw new Exception(string.Format("Tried to assign resource symbol {0} to Place {1} but there are free markers for this resource type", targetSymbol.Name, Symbol.Name));
 
             // Output NPC debug info
             if (resource is Person)
@@ -357,7 +349,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get list of valid sites
             SiteDetails[] foundSites = null;
             if (p2 == -1)
-                foundSites = CollectRandomQuestSites(location);
+                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid);
             else
                 foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2);
 
@@ -493,7 +485,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (p2 == -1)
                 {
                     // Collect random building sites
-                    foundSites = CollectRandomQuestSites(location);
+                    foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid);
                 }
                 else
                 {
@@ -631,54 +623,15 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Gets random building type from set of valid types.
-        /// </summary>
-        DFLocation.BuildingTypes GetRandomBuildingType()
-        {
-            // Includes house0-4 multiple times to increase chance of roll landing on a residence
-            // Residences make up almost all buildings but only a small number of overall building types
-            // Which results in shops being selected about 2/3 more often than residences for random quests
-            // Including residences multiple times evens this out to include them more often
-            int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20, 17, 18, 19, 20, 17, 18, 19, 20 };
-            int index = UnityEngine.Random.Range(0, validBuildingTypes.Length);
-
-            return (DFLocation.BuildingTypes)validBuildingTypes[index];
-        }
-
-        /// <summary>
-        /// Generate a list of potential sites based on a random building type.
-        /// Will try a few times to find a valid building type before giving up.
-        /// Caller must handle this outcome by throwing exception or trying again.
-        /// </summary>
-        SiteDetails[] CollectRandomQuestSites(DFLocation location)
-        {
-            const int maxAttempts = 3;
-
-            int attempts = 0;
-            while (true)
-            {
-                // Bail after maximum attempts
-                if (attempts++ > maxAttempts)
-                    break;
-
-                // Get valid quest sites of a random building type
-                SiteDetails[] foundSites = CollectQuestSitesOfBuildingType(location, GetRandomBuildingType());
-                if (foundSites == null || foundSites.Length == 0)
-                    continue;
-
-                return foundSites;
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// Generate a list of potential sites based on building type.
         /// This uses actual map layout and block data rather than the (often inaccurate) list of building in map data.
-        /// Likely to need refinement over time to exclude buildings without proper quest markers, etc.
+        /// Specify BuildingTypes.AllValid to find all valid building types
         /// </summary>
         SiteDetails[] CollectQuestSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType)
         {
+            // Valid building types for valid search
+            int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
+
             List<SiteDetails> foundSites = new List<SiteDetails>();
 
             // Iterate through all blocks
@@ -695,8 +648,22 @@ namespace DaggerfallWorkshop.Game.Questing
                     BuildingSummary[] buildingSummary = RMBLayout.GetBuildingData(blocks[index], x, y);
                     for (int i = 0; i < buildingSummary.Length; i++)
                     {
+                        // When enumAllValid is specified accept all valid building types
+                        bool forceAccept = false;
+                        if (buildingType == DFLocation.BuildingTypes.AllValid)
+                        {
+                            for(int j = 0; j < validBuildingTypes.Length; j++)
+                            {
+                                if (validBuildingTypes[j] == (int)buildingSummary[i].BuildingType)
+                                {
+                                    forceAccept = true;
+                                    break;
+                                }
+                            }
+                        }
+
                         // Match building against required type
-                        if (buildingSummary[i].BuildingType == buildingType)
+                        if (buildingSummary[i].BuildingType == buildingType || forceAccept)
                         {
                             // Building must be a valid quest site
                             QuestMarker[] questSpawnMarkers, questItemMarkers;
@@ -809,13 +776,15 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Creates a new QuestMarker.
         /// </summary>
-        QuestMarker CreateQuestMarker(MarkerTypes markerType, Vector3 flatPosition)
+        QuestMarker CreateQuestMarker(MarkerTypes markerType, Vector3 flatPosition, int dungeonX = 0, int dungeonZ = 0)
         {
             QuestMarker questMarker = new QuestMarker();
             questMarker.questUID = ParentQuest.UID;
             questMarker.placeSymbol = Symbol;
             questMarker.markerType = markerType;
             questMarker.flatPosition = flatPosition;
+            questMarker.dungeonX = dungeonX;
+            questMarker.dungeonZ = dungeonZ;
 
             return questMarker;
         }
@@ -895,12 +864,10 @@ namespace DaggerfallWorkshop.Game.Questing
             List<QuestMarker> questItemMarkerList = new List<QuestMarker>();
 
             // Step through dungeon layout to find all blocks with markers
-            foreach (var db in location.Dungeon.Blocks)
+            foreach (var dungeonBlock in location.Dungeon.Blocks)
             {
                 // Get block data
-                DFBlock blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(db.BlockName);
-
-                Vector3 blockPosition =  new Vector3(db.X * RDBLayout.RDBSide, 0, db.Z * RDBLayout.RDBSide);
+                DFBlock blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(dungeonBlock.BlockName);
 
                 // Iterate all groups
                 foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
@@ -921,10 +888,10 @@ namespace DaggerfallWorkshop.Game.Questing
                                 switch (obj.Resources.FlatResource.TextureRecord)
                                 {
                                     case spawnMarkerFlatIndex:
-                                        questSpawnMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestSpawn, blockPosition + position));
+                                        questSpawnMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestSpawn, position, dungeonBlock.X, dungeonBlock.Z));
                                         break;
                                     case itemMarkerFlatIndex:
-                                        questItemMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestItem, blockPosition + position));
+                                        questItemMarkerList.Add(CreateQuestMarker(MarkerTypes.QuestItem, position, dungeonBlock.X, dungeonBlock.Z));
                                         break;
                                 }
                             }

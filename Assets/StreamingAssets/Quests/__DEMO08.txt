@@ -120,7 +120,7 @@ Item _gold_ gold
 
 Person _villager_ face 8 group Shopkeeper
 
-Place _mondung_ permanent PirateerHold1
+Place _mondung_ remote dungeon
 Place _store_ remote generalstore
 
 Foe _giant_ is Giant
