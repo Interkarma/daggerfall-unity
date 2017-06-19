@@ -846,7 +846,7 @@ namespace DaggerfallWorkshop.Utility
         {
             // Create target GameObject
             string displayName = string.Format("{0} [{1}]", name, mobileType.ToString());
-            GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, parent, Vector3.zero);
+            GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, displayName, parent, Vector3.zero);
             SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
 
             // Set position
