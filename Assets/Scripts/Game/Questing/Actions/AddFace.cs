@@ -16,14 +16,19 @@ using System;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
-    public class EndQuest : ActionTemplate
+    /// <summary>
+    /// Adds an NPC portrait to HUD which indicates player is escorting this NPC.
+    /// </summary>
+    public class AddFace : ActionTemplate
     {
+        Symbol personSymbol;
+
         public override string Pattern
         {
-            get { return "end quest"; }
+            get { return @"add (?<anNPC>[a-zA-Z0-9_.-]+) face"; }
         }
 
-        public EndQuest(Quest parentQuest)
+        public AddFace(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -38,17 +43,24 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return null;
 
             // Factory new action
-            EndQuest action = new EndQuest(parentQuest);
+            AddFace action = new AddFace(parentQuest);
+            action.personSymbol = new Symbol(match.Groups["anNPC"].Value);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            // Flag quest over so quest machine can remove it
-            //Debug.LogFormat("Ending quest {0}", ParentQuest.UID);
-            ParentQuest.QuestBreak = true;
-            ParentQuest.EndQuest();
+            base.Update(caller);
+
+            // Get related Person resource
+            Person person = ParentQuest.GetPerson(personSymbol);
+            if (person == null)
+                return;
+
+            // Add face to HUD
+            DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.AddFace(person);
+
             SetComplete();
         }
     }

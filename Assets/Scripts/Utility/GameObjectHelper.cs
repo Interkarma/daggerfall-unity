@@ -664,7 +664,7 @@ namespace DaggerfallWorkshop.Utility
             int archive, record;
             EnemyBasics.ReverseCorpseTexture(corpseTexture, out archive, out record);
 
-            // Find ground position below player
+            // Find ground position below enemy
             Vector3 position = enemyMotor.FindGroundPosition();
 
             // Create loot container
@@ -789,7 +789,8 @@ namespace DaggerfallWorkshop.Utility
             go.name = string.Format("Quest NPC [{0}]", person.DisplayName);
 
             // Set position and adjust up by half height if not inside a dungeon
-            go.transform.localPosition = marker.flatPosition;
+            Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
+            go.transform.localPosition = dungeonBlockPosition + marker.flatPosition;
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
             if (siteType != SiteTypes.Dungeon)
                 go.transform.localPosition += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
@@ -797,38 +798,77 @@ namespace DaggerfallWorkshop.Utility
             // Add people data to billboard
             dfBillboard.SetRMBPeopleData(person.FactionIndex, person.FactionData.flags);
 
-            // Add resource behaviour to GameObject
+            // Add QuestResourceBehaviour to GameObject
             QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
             questResourceBehaviour.AssignResource(person);
+
+            // Set QuestResourceBehaviour in Person object
+            person.QuestResourceBehaviour = questResourceBehaviour;
 
             // Set tag
             go.tag = QuestMachine.questPersonTag;
         }
 
         /// <summary>
-        /// Adds quest foe(s) to marker position.
-        /// These foes are placed on quest marker in game world as part of PlaceFoe action, e.g. "place aFoe at aPlace".
-        /// For now limiting to one spawn to test behaviour, ignoring whatever spawn count is on Foe resource itself.
-        /// Note: This method is not used by the CreateFoe action.
+        /// Adds a single quest foe to marker position.
+        /// TEMP: Not handling multiple spawns at this time. Just setting up conditions right now.
         /// </summary>
-        static void AddQuestFoe(SiteTypes siteType, Quest quest, QuestMarker marker, Foe foe, Transform parent = null)
+        static void AddQuestFoe(SiteTypes siteType, Quest quest, QuestMarker marker, Foe foe, Transform parent)
         {
-            // Create target GameObjects
-            GameObject[] gameObjects = foe.CreateFoeGameObjects(marker.flatPosition, 1);
-            if (gameObjects == null || gameObjects.Length != foe.SpawnCount)
-                throw new Exception(string.Format("create foe attempted to spawn {0}x{1} and failed.", foe.SpawnCount, foe.Symbol.Name));
+            // Create enemy GameObject
+            Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
+            GameObject go = CreateEnemy("Quest Foe", foe.FoeType, dungeonBlockPosition + marker.flatPosition, parent);
 
-            // Setup GameObjects
-            foreach (GameObject go in gameObjects)
-            {
-                go.transform.parent = parent;
-                go.tag = QuestMachine.questFoeTag;
-            }
+            // Add QuestResourceBehaviour to GameObject
+            QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
+            questResourceBehaviour.AssignResource(foe);
+
+            // Rearm injured trigger at time of placement
+            // Notes for later:
+            //  * This should be rearmed at the beginning of each wave
+            //  * Only first wounding of a wave will trigger "injured aFoe" until rearmed on next wave
+            foe.RearmInjured();
         }
 
         static void AddQuestItem(SiteTypes siteType, Quest quest, QuestMarker marker, Item item, Transform parent = null)
         {
             // TODO: Place target quest item loot container on marker
+        }
+
+        #endregion
+
+        #region Enemy Helpers
+
+        /// <summary>
+        /// Create an enemy in the world and perform common setup tasks.
+        /// </summary>
+        public static GameObject CreateEnemy(string name, MobileTypes mobileType, Vector3 localPosition, Transform parent = null, MobileReactions mobileReaction = MobileReactions.Hostile)
+        {
+            // Create target GameObject
+            string displayName = string.Format("{0} [{1}]", name, mobileType.ToString());
+            GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, name, parent, Vector3.zero);
+            SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
+
+            // Set position
+            go.transform.localPosition = localPosition;
+
+            // Assign humanoid gender randomly
+            // This does not affect monsters like rats, bats, etc
+            MobileGender gender;
+            if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
+                gender = MobileGender.Male;
+            else
+                gender = MobileGender.Female;
+
+            // Configure enemy
+            setupEnemy.ApplyEnemySettings(mobileType, mobileReaction, gender);
+
+            // Align non-flying units with ground
+            DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
+            if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
+                AlignControllerToGround(go.GetComponent<CharacterController>());
+
+            return go;
         }
 
         #endregion

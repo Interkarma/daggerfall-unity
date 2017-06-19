@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     /// <summary>
     /// This action triggers a random task
     /// </summary>
-    public class PickRandomTask : ActionTemplate
+    public class PickOneOf : ActionTemplate
     {
         public Symbol[] taskSymbols;
 
@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             get { return @"pick one of [a-zA-Z0-9_.]+"; }
         }
 
-        public PickRandomTask(Quest parentQuest)
+        public PickOneOf(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return null;
 
             // Factory new action
-            PickRandomTask action = new PickRandomTask(parentQuest);
+            PickOneOf action = new PickOneOf(parentQuest);
             try
             {
                 var splits = source.Split();
@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             bool success = false;
             if(ParentQuest != null)
             {
-                UnityEngine.Random.InitState(System.Environment.TickCount);
+                //UnityEngine.Random.InitState(System.Environment.TickCount);
                 Symbol selected = taskSymbols[UnityEngine.Random.Range(0, taskSymbols.Length)];
                 Task task = ParentQuest.GetTask(selected);
 
@@ -98,7 +98,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             if(!success)
             {
-                Debug.LogError(string.Format("PickRandomTask failed to activate task.  Quest: {0} Task: {1}", ParentQuest.UID, caller.Symbol.Name));
+                Debug.LogError(string.Format("PickOneOf failed to activate task.  Quest: {0} Task: {1}", ParentQuest.UID, caller.Symbol.Name));
             }
 
             SetComplete();

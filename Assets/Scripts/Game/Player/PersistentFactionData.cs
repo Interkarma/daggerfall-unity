@@ -59,6 +59,11 @@ namespace DaggerfallWorkshop.Game.Player
         /// <returns>True if successful.</returns>
         public bool GetFactionData(int factionID, out FactionFile.FactionData factionDataOut)
         {
+            // Reset if no faction data available
+            if (factionDict.Count == 0)
+                Reset();
+
+            // Try to get requested faction
             factionDataOut = new FactionFile.FactionData();
             if (factionDict.ContainsKey(factionID))
             {

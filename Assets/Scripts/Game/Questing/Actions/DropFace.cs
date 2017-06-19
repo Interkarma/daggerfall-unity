@@ -16,14 +16,16 @@ using System;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
-    public class EndQuest : ActionTemplate
+    public class DropFace : ActionTemplate
     {
+        Symbol personSymbol;
+
         public override string Pattern
         {
-            get { return "end quest"; }
+            get { return @"drop (?<anNPC>[a-zA-Z0-9_.-]+) face"; }
         }
 
-        public EndQuest(Quest parentQuest)
+        public DropFace(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -38,17 +40,24 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return null;
 
             // Factory new action
-            EndQuest action = new EndQuest(parentQuest);
+            DropFace action = new DropFace(parentQuest);
+            action.personSymbol = new Symbol(match.Groups["anNPC"].Value);
 
             return action;
         }
 
         public override void Update(Task caller)
         {
-            // Flag quest over so quest machine can remove it
-            //Debug.LogFormat("Ending quest {0}", ParentQuest.UID);
-            ParentQuest.QuestBreak = true;
-            ParentQuest.EndQuest();
+            base.Update(caller);
+
+            // Get related Person resource
+            Person person = ParentQuest.GetPerson(personSymbol);
+            if (person == null)
+                return;
+
+            // Drop face from HUD
+            DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.DropFace(person);
+
             SetComplete();
         }
     }

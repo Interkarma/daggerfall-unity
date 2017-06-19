@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Docs use form "pc at aPlace do aTask"
             // But observed quests actually seem to use "pc at aPlace set aTask"
             // Probably a change between writing of docs and Template v1.11.
-            // Docs also missing ""pc at aPlace set aTask saying nnnn"
+            // Docs also missing "pc at aPlace set aTask saying nnnn"
             get { return @"pc at (?<aPlace>\w+) set (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)|pc at (?<aPlace>\w+) set (?<aTask>[a-zA-Z0-9_.]+)"; }
         }
 

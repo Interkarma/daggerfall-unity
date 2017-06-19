@@ -13,12 +13,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Helper component to pass information between GameObjects and Quest system.
-    /// Used to trigger resource events in quest systems like ClickedNpc.
+    /// Helper behaviour to pass information between GameObjects and Quest system.
+    /// Used to trigger resource events in quest systems like ClickedNpc, InjuredFoe, KilledFoe, etc.
     /// </summary>
     public class QuestResourceBehaviour : MonoBehaviour
     {
@@ -26,9 +27,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
         ulong questUID;
         Symbol targetSymbol;
-        int individualFactionID;
         Quest targetQuest;
-        QuestResource targetResource;
+
+        [NonSerialized] QuestResource targetResource = null;
+        [NonSerialized] DaggerfallEntityBehaviour enemyEntityBehaviour = null;
 
         #endregion
 
@@ -51,19 +53,11 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Gets individual FactionID when this is a unique named individual.
-        /// </summary>
-        public int IndividualFactionID
-        {
-            get { return individualFactionID; }
-        }
-
-        /// <summary>
         /// Gets target Quest object. Can return null.
         /// </summary>
         public Quest TargetQuest
         {
-            get { return (CheckTarget()) ? targetQuest : null; }
+            get { return targetQuest; }
         }
 
         /// <summary>
@@ -71,7 +65,40 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public QuestResource TargetResource
         {
-            get { return (CheckTarget()) ? targetResource : null; }
+            get { return targetResource; }
+        }
+
+        #endregion
+
+        #region Unity
+
+        private void Start()
+        {
+            // Cache target resource
+            // This will fail if targetQuest and targetSymbol are not set before Start()
+            if (!CacheTarget())
+                return;
+
+            // Cache local EnemyEntity behaviour if resource is a Foe
+            if (targetResource != null && targetResource is Foe)
+            {
+                enemyEntityBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
+                enemyEntityBehaviour.Entity.OnDeath += Enemy_OnDeath;
+            }
+        }
+
+        private void Update()
+        {
+            // Handle enemy checks
+            if (enemyEntityBehaviour)
+            {
+                Foe foe = (Foe)targetResource;
+                if (enemyEntityBehaviour.Entity.CurrentHealth < enemyEntityBehaviour.Entity.MaxHealth && !foe.InjuredTrigger)
+                {
+                    foe.SetInjured();
+                    Debug.Log("Enemy injured");
+                }
+            }
         }
 
         #endregion
@@ -80,36 +107,39 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Assign this behaviour a QuestResource object.
-        /// Mutually exclusive with AssignIndividualNPC().
         /// </summary>
         public void AssignResource(QuestResource questResource)
         {
+            UnsubscribeEvents();
             if (questResource != null)
             {
                 questUID = questResource.ParentQuest.UID;
                 targetSymbol = questResource.Symbol;
-                individualFactionID = 0;
             }
+            SubscribeEvents();
         }
 
         /// <summary>
-        /// Assign this behaviour an individual NPC.
-        /// Mutually exclusive with AssignResource().
+        /// Called by PlayerActivate when clicking on this GameObject.
         /// </summary>
-        /// <param name="factionID"></param>
-        public void AssignIndividualNPC(int factionID)
+        public void DoClick()
         {
-            questUID = 0;
-            targetSymbol = null;
-            individualFactionID = factionID;
+            // Set click on resource
+            if (targetResource != null)
+                targetResource.SetPlayerClicked();
         }
 
+        #endregion
+
+        #region Private Methods
+
         /// <summary>
-        /// Check target quest and resource can be resolved.
+        /// Cache target quest and resource objects.
         /// If true then TargetQuest and TargetResource objects are cached and available.
         /// </summary>
-        public bool CheckTarget()
+        bool CacheTarget()
         {
+            // Check already cached
             if (targetQuest != null && targetResource != null)
                 return true;
 
@@ -131,57 +161,30 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Called by PlayerActivate when clicking on this GameObject.
+        /// Subscribe to events raised by the target resource.
         /// </summary>
-        public void DoClick()
+        void SubscribeEvents()
         {
-            // Special individual NPCs can exist in world even if not actively part of a quest
-            // This is different to random NPCs which are created as part of a single quest only
-            // Check all active quests on this individual NPC
-            if (individualFactionID != 0)
-            {
-                DoIndividualClick();
-                return;
-            }
+        }
 
-            // Set click on resource
-            if (CheckTarget())
-                targetResource.SetPlayerClicked();
+        /// <summary>
+        /// Unsubscribe from events raised by the target resource.
+        /// </summary>
+        void UnsubscribeEvents()
+        {
         }
 
         #endregion
 
-        #region Private Methods
+        #region Event Handlers
 
-        /// <summary>
-        /// Checks all active quests for references to this special person and triggers player click across all quests.
-        /// These special people may be involved in multiple quests, which is different to singleton NPCs created
-        /// specifically for a single quest.
-        /// </summary>
-        void DoIndividualClick()
+        private void Enemy_OnDeath(DaggerfallEntity entity)
         {
-            // Check active quests to see if anyone has reserved this NPC
-            ulong[] questIDs = QuestMachine.Instance.GetAllActiveQuests();
-            foreach (ulong questID in questIDs)
+            if (targetResource != null)
             {
-                // Get quest object
-                Quest quest = QuestMachine.Instance.GetActiveQuest(questID);
-                if (quest == null)
-                    continue;
-
-                // Get all the Person resources in this quest
-                QuestResource[] personResources = quest.GetAllResources(typeof(Person));
-                if (personResources == null || personResources.Length == 0)
-                    continue;
-
-                // Check each Person for a match
-                foreach (QuestResource resource in personResources)
-                {
-                    // Set click if individual matches Person factionID
-                    Person person = (Person)resource;
-                    if (person.IsIndividualNPC && person.FactionData.id == individualFactionID)
-                        person.SetPlayerClicked();
-                }
+                Foe foe = (Foe)targetResource;
+                foe.IncrementKills();
+                Debug.Log("Enemy killed");
             }
         }
 
