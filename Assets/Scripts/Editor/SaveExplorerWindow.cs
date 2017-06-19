@@ -163,11 +163,10 @@ namespace DaggerfallWorkshop
             });
             GUILayoutHelper.Horizontal(() =>
             {
-                string positionText = string.Format("X={0}, Y={1}, Z={2}, Base={3}",
+                string positionText = string.Format("X={0}, Y={1}, Z={2}",
                     positionRecord.RecordRoot.Position.WorldX,
-                    positionRecord.RecordRoot.Position.YOffset,
-                    positionRecord.RecordRoot.Position.WorldZ,
-                    positionRecord.RecordRoot.Position.YBase);
+                    positionRecord.RecordRoot.Position.WorldY,
+                    positionRecord.RecordRoot.Position.WorldZ);
 
                 EditorGUILayout.LabelField(new GUIContent("Player Position", "Position of player in the world."), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
                 EditorGUILayout.SelectableLabel(positionText, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
@@ -190,8 +189,8 @@ namespace DaggerfallWorkshop
             });
             GUILayoutHelper.Horizontal(() =>
             {
-                EditorGUILayout.LabelField(new GUIContent("LocationDetail records"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
-                EditorGUILayout.SelectableLabel(currentSaveTree.LocationDetail.RecordCount.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                EditorGUILayout.LabelField(new GUIContent("Player Environment"), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
+                EditorGUILayout.SelectableLabel(((Environments)currentSaveTree.Header.Environment).ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             });
             GUILayoutHelper.Horizontal(() =>
             {
