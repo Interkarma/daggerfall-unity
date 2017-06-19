@@ -13,12 +13,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Helper component to pass information between GameObjects and Quest system.
-    /// Used to trigger resource events in quest systems like ClickedNpc.
+    /// Helper behaviour to pass information between GameObjects and Quest system.
+    /// Used to trigger resource events in quest systems like ClickedNpc, InjuredFoe, KilledFoe, etc.
     /// </summary>
     public class QuestResourceBehaviour : MonoBehaviour
     {
@@ -28,8 +29,8 @@ namespace DaggerfallWorkshop.Game.Questing
         Symbol targetSymbol;
         Quest targetQuest;
 
-        [NonSerialized]
-        QuestResource targetResource;
+        [NonSerialized] QuestResource targetResource = null;
+        [NonSerialized] DaggerfallEntityBehaviour enemyEntityBehaviour = null;
 
         #endregion
 
@@ -56,7 +57,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public Quest TargetQuest
         {
-            get { return (CheckTarget()) ? targetQuest : null; }
+            get { return targetQuest; }
         }
 
         /// <summary>
@@ -64,7 +65,40 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public QuestResource TargetResource
         {
-            get { return (CheckTarget()) ? targetResource : null; }
+            get { return targetResource; }
+        }
+
+        #endregion
+
+        #region Unity
+
+        private void Start()
+        {
+            // Cache target resource
+            // This will fail if targetQuest and targetSymbol are not set before Start()
+            if (!CacheTarget())
+                return;
+
+            // Cache local EnemyEntity behaviour if resource is a Foe
+            if (targetResource != null && targetResource is Foe)
+            {
+                enemyEntityBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
+                enemyEntityBehaviour.Entity.OnDeath += Enemy_OnDeath;
+            }
+        }
+
+        private void Update()
+        {
+            // Handle enemy checks
+            if (enemyEntityBehaviour)
+            {
+                Foe foe = (Foe)targetResource;
+                if (enemyEntityBehaviour.Entity.CurrentHealth < enemyEntityBehaviour.Entity.MaxHealth && !foe.InjuredTrigger)
+                {
+                    foe.SetInjured();
+                    Debug.Log("Enemy injured");
+                }
+            }
         }
 
         #endregion
@@ -91,7 +125,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public void DoClick()
         {
             // Set click on resource
-            if (CheckTarget())
+            if (targetResource != null)
                 targetResource.SetPlayerClicked();
         }
 
@@ -100,11 +134,12 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Private Methods
 
         /// <summary>
-        /// Check target quest and resource can be resolved.
+        /// Cache target quest and resource objects.
         /// If true then TargetQuest and TargetResource objects are cached and available.
         /// </summary>
-        bool CheckTarget()
+        bool CacheTarget()
         {
+            // Check already cached
             if (targetQuest != null && targetResource != null)
                 return true;
 
@@ -130,8 +165,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         void SubscribeEvents()
         {
-            if (!CheckTarget())
-                return;
         }
 
         /// <summary>
@@ -139,8 +172,20 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         void UnsubscribeEvents()
         {
-            if (!CheckTarget())
-                return;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void Enemy_OnDeath(DaggerfallEntity entity)
+        {
+            if (targetResource != null)
+            {
+                Foe foe = (Foe)targetResource;
+                foe.IncrementKills();
+                Debug.Log("Enemy killed");
+            }
         }
 
         #endregion
