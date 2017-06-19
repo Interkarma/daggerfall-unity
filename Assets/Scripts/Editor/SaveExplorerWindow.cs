@@ -153,6 +153,8 @@ namespace DaggerfallWorkshop
             if (currentSaveTree == null)
                 return;
 
+            SaveTreeBaseRecord positionRecord = currentSaveTree.FindRecord(RecordTypes.CharacterPositionRecord);
+
             EditorGUILayout.Space();
             GUILayoutHelper.Horizontal(() =>
             {
@@ -162,17 +164,17 @@ namespace DaggerfallWorkshop
             GUILayoutHelper.Horizontal(() =>
             {
                 string positionText = string.Format("X={0}, Y={1}, Z={2}, Base={3}",
-                    currentSaveTree.Header.CharacterPosition.Position.WorldX,
-                    currentSaveTree.Header.CharacterPosition.Position.YOffset,
-                    currentSaveTree.Header.CharacterPosition.Position.WorldZ,
-                    currentSaveTree.Header.CharacterPosition.Position.YBase);
+                    positionRecord.RecordRoot.Position.WorldX,
+                    positionRecord.RecordRoot.Position.YOffset,
+                    positionRecord.RecordRoot.Position.WorldZ,
+                    positionRecord.RecordRoot.Position.YBase);
 
                 EditorGUILayout.LabelField(new GUIContent("Player Position", "Position of player in the world."), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
                 EditorGUILayout.SelectableLabel(positionText, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
             });
             GUILayoutHelper.Horizontal(() =>
             {
-                DFPosition mapPixel = MapsFile.WorldCoordToMapPixel(currentSaveTree.Header.CharacterPosition.Position.WorldX, currentSaveTree.Header.CharacterPosition.Position.WorldZ);
+                DFPosition mapPixel = MapsFile.WorldCoordToMapPixel(positionRecord.RecordRoot.Position.WorldX, positionRecord.RecordRoot.Position.WorldZ);
                 string mapPixelText = string.Format("X={0}, Y={1}", mapPixel.X, mapPixel.Y);
 
                 EditorGUILayout.LabelField(new GUIContent("Player Map Pixel", "Position of player on small map."), GUILayout.Width(EditorGUIUtility.labelWidth - 4));
@@ -410,7 +412,7 @@ namespace DaggerfallWorkshop
             uint[] equippedItems = characterRecord.ParsedData.equippedItems;
             for (int i = 0; i < equippedItems.Length; i++)
             {
-                if (equippedItems[i] == (record.RecordRoot.RecordID >> 8))
+                if (equippedItems[i] == record.RecordRoot.RecordID)
                     return i;
             }
 

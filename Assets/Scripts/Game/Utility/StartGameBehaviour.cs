@@ -434,6 +434,8 @@ namespace DaggerfallWorkshop.Game.Utility
             SaveTree saveTree = saveGames.SaveTree;
             SaveVars saveVars = saveGames.SaveVars;
 
+            SaveTreeBaseRecord positionRecord = saveTree.FindRecord(RecordTypes.CharacterPositionRecord);
+
             if (NoWorld)
             {
                 playerEnterExit.DisableAllParents();
@@ -443,8 +445,8 @@ namespace DaggerfallWorkshop.Game.Utility
                 // Set player to world position
                 playerEnterExit.EnableExteriorParent();
                 StreamingWorld streamingWorld = FindStreamingWorld();
-                int worldX = saveTree.Header.CharacterPosition.Position.WorldX;
-                int worldZ = saveTree.Header.CharacterPosition.Position.WorldZ;
+                int worldX = positionRecord.RecordRoot.Position.WorldX;
+                int worldZ = positionRecord.RecordRoot.Position.WorldZ;
                 streamingWorld.TeleportToWorldCoordinates(worldX, worldZ);
                 streamingWorld.suppressWorld = false;
             }
@@ -455,12 +457,12 @@ namespace DaggerfallWorkshop.Game.Utility
             {
                 // Classic save value ranges from -256 (looking up) to 256 (looking down).
                 // The maximum up and down range of view in classic is similar to 45 degrees up and down in DF Unity.
-                float pitch = saveTree.DirectionRecord.Pitch;
+                float pitch = positionRecord.RecordRoot.Pitch;
                 if (pitch != 0)
                     pitch = (pitch * 45 / 256);
                 mouseLook.Pitch = pitch;
 
-                float yaw = saveTree.DirectionRecord.Yaw;
+                float yaw = positionRecord.RecordRoot.Yaw;
                 // In classic saves 2048 units of yaw is 360 degrees.
                 if (yaw != 0)
                     yaw = (yaw * 360 / 2048);
