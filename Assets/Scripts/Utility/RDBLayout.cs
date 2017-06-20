@@ -1096,7 +1096,15 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
             dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
 
+            // Add StaticNPC behaviour
+            if (dfBillboard.Summary.FlatType == FlatTypes.NPC)
+            {
+                StaticNPC npc = go.AddComponent<StaticNPC>();
+                npc.SetLayoutData(obj);
+            }
+
             // Special handling for individual NPCs found in layout data
+            // TODO: Move this handling to StaticNPC behaviour
             if (QuestMachine.Instance.IsIndividualNPC(dfBillboard.Summary.FactionOrMobileID))
             {
                 // Check if NPC has been placed elsewhere on a quest

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
@@ -561,6 +562,10 @@ namespace DaggerfallWorkshop
 
                 // Add RMB data to billboard
                 dfBillboard.SetRMBPeopleData(obj);
+
+                // Add StaticNPC behaviour
+                StaticNPC npc = go.AddComponent<StaticNPC>();
+                npc.SetLayoutData(obj);
             }
         }
 
