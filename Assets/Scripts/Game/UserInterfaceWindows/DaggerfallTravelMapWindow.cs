@@ -1231,9 +1231,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
             name = name.ToLower();
 
+            // bug-fix in find location functionality (see http://forums.dfworkshop.net/viewtopic.php?f=24&p=5362#p5362)          
+            // first search for location with exact name as the search string
             for (int i = 0; i < locations.Count(); i++)
             {
-                if (locations[i].ToLower().Contains(name))                        // Valid location found
+                if (locations[i].ToLower() == name) // Valid location found with exact name
+                {
+                    if (!currentDFRegion.MapNameLookup.ContainsKey(locations[i]))
+                    {
+                        DaggerfallUnity.LogMessage("Error: location name key not found in Region MapNameLookup dictionary");
+                        return false;
+                    }
+                    int index = currentDFRegion.MapNameLookup[locations[i]];
+                    locationInfo = currentDFRegion.MapTable[index];
+                    DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
+                    if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out locationSummary))
+                        return true;
+                }
+            }
+
+            // location with exact name was not found, search for substring containing the search string
+            for (int i = 0; i < locations.Count(); i++)
+            {                
+                if (locations[i].ToLower().Contains(name)) // Valid location found with substring
                 {
                     if (!currentDFRegion.MapNameLookup.ContainsKey(locations[i]))
                     {
@@ -1247,7 +1267,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         return true;
                     else
                         return false;
-
                 }
                 else if (locations[i][0] > name[0])
                     return false;
