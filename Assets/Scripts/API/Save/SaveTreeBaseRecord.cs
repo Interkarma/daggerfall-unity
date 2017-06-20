@@ -226,9 +226,9 @@ namespace DaggerfallConnect.Save
             reader.BaseStream.Position = 1;
             recordRoot.Pitch = reader.ReadInt16();
             recordRoot.Yaw = reader.ReadInt16();
+            recordRoot.Roll = reader.ReadInt16();
 
             // Position
-            reader.BaseStream.Position = 7;
             recordRoot.Position = SaveTree.ReadPosition(reader);
 
             // 3d View Picture
