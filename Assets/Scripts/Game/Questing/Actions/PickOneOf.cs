@@ -42,6 +42,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (!match.Success)
                 return null;
 
+            // Trim source end or trailing white space will be split to an empty symbol at end of array
+            source = source.TrimEnd();
+
             // Factory new action
             PickOneOf action = new PickOneOf(parentQuest);
             try
@@ -60,7 +63,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             }
             catch (System.Exception ex)
             {
-                DaggerfallUnity.LogMessage("PickRandomTask.Create() failed with exception: " + ex.Message, true);
+                DaggerfallUnity.LogMessage("PickOneOf.Create() failed with exception: " + ex.Message, true);
                 action = null;
             }
 
@@ -82,11 +85,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override void Update(Task caller)
         {
+            Symbol selected = new Symbol();
             bool success = false;
             if(ParentQuest != null)
             {
                 //UnityEngine.Random.InitState(System.Environment.TickCount);
-                Symbol selected = taskSymbols[UnityEngine.Random.Range(0, taskSymbols.Length)];
+                selected = taskSymbols[UnityEngine.Random.Range(0, taskSymbols.Length)];
                 Task task = ParentQuest.GetTask(selected);
 
                 if (task != null)
@@ -98,7 +102,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             if(!success)
             {
-                Debug.LogError(string.Format("PickOneOf failed to activate task.  Quest: {0} Task: {1}", ParentQuest.UID, caller.Symbol.Name));
+                Debug.LogError(string.Format("PickOneOf failed to activate task.  Quest: {0} Task: {1} Selected: {2}", ParentQuest.UID, caller.Symbol.Name, selected.Name));
             }
 
             SetComplete();

@@ -120,7 +120,7 @@ Item _gold_ gold
 
 Person _villager_ face 8 group Shopkeeper
 
-Place _mondung_ remote dungeon
+Place _mondung_ permanent PirateerHold1
 Place _store_ remote generalstore
 
 Foe _giant_ is Giant
@@ -146,7 +146,7 @@ yes task:
 	log 1021 step 1 
 	hide npc _villager_ 
 	say 1041 
-	add _villager_ face 
+	add _villager_ face
 
 _no_ task:
 	say 1043 

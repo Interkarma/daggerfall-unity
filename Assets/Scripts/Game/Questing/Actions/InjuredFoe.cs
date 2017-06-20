@@ -17,21 +17,22 @@ using System;
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Adds an NPC portrait to HUD which indicates player is escorting this NPC.
+    /// Triggers when a Foe has been injured.
+    /// Will not fire if Foe dies immediately (e.g. player one-shots enemy).
     /// </summary>
-    public class AddFace : ActionTemplate
+    public class InjuredFoe : ActionTemplate
     {
-        Symbol personSymbol;
-        int sayingID;
+        Symbol foeSymbol;
 
         public override string Pattern
         {
-            get { return @"add (?<anNPC>[a-zA-Z0-9_.-]+) face saying (?<sayingID>\d+)|add (?<anNPC>[a-zA-Z0-9_.-]+) face"; }
+            get { return @"injured (?<aFoe>[a-zA-Z0-9_.-]+)"; }
         }
 
-        public AddFace(Quest parentQuest)
+        public InjuredFoe(Quest parentQuest)
             : base(parentQuest)
         {
+            IsTriggerCondition = true;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
@@ -44,30 +45,26 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 return null;
 
             // Factory new action
-            AddFace action = new AddFace(parentQuest);
-            action.personSymbol = new Symbol(match.Groups["anNPC"].Value);
-            action.sayingID = Parser.ParseInt(match.Groups["sayingID"].Value);
+            InjuredFoe action = new InjuredFoe(parentQuest);
+            action.foeSymbol = new Symbol(match.Groups["aFoe"].Value);
 
             return action;
         }
 
-        public override void Update(Task caller)
+        public override bool CheckTrigger(Task caller)
         {
-            base.Update(caller);
+            // Get related Foe resource
+            Foe foe = ParentQuest.GetFoe(foeSymbol);
+            if (foe == null)
+                return false;
 
-            // Get related Person resource
-            Person person = ParentQuest.GetPerson(personSymbol);
-            if (person == null)
-                return;
+            // Check injured flag
+            if (foe.InjuredTrigger)
+            {
+                return true;
+            }
 
-            // Add face to HUD
-            DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.AddFace(person);
-
-            // Popup saying message
-            if (sayingID != 0)
-                ParentQuest.ShowMessagePopup(sayingID);
-
-            SetComplete();
+            return false;
         }
     }
 }

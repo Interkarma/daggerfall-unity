@@ -22,14 +22,24 @@ namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
     /// A quest Foe defines an enemy for player to fight as part of a quest.
+    /// Foes are a 1-to-many resource (1 Foe resource to many entities).
+    /// For example, a quest might send waves of giants at the player.
     /// </summary>
     public class Foe : QuestResource
     {
-        // Testing shows classic can spawn at least 50 of the same enemy at a time, and probably many more
-        const int maxSpawnCount = 50;
+        #region Fields
 
-        int spawnCount;
-        MobileTypes foeType;
+        // Highest spawn value across all canonical quests is 6, setting to 20 as maximum
+        const int maxSpawnCount = 20;
+
+        int spawnCount;                     // How many foes to spawn
+        MobileTypes foeType;                // MobileType to spawn
+        bool injuredTrigger;                // True once enemy injured, rearmed each wave
+        int killCount;                      // How many of this enemy spawn player has killed, does not rearm
+
+        #endregion
+
+        #region Properties
 
         public MobileTypes FoeType
         {
@@ -41,6 +51,20 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return spawnCount; }
         }
 
+        public bool InjuredTrigger
+        {
+            get { return injuredTrigger; }
+        }
+
+        public int KillCount
+        {
+            get { return killCount; }
+        }
+
+        #endregion
+
+        #region Constructors
+
         public Foe(Quest parentQuest)
             : base(parentQuest)
         {
@@ -51,6 +75,10 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             SetResource(line);
         }
+
+        #endregion
+
+        #region Overrides
 
         public override void SetResource(string line)
         {
@@ -82,6 +110,35 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Setup spawn count
                 spawnCount = Mathf.Clamp(count, 1, maxSpawnCount);
             }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Triggers injured pickup.
+        /// </summary>
+        public void SetInjured()
+        {
+            injuredTrigger = true;
+        }
+
+        /// <summary>
+        /// Rearms injured pickup.
+        /// </summary>
+        public void RearmInjured()
+        {
+            injuredTrigger = false;
+        }
+
+        /// <summary>
+        /// Increments count of this Foe killed by player.
+        /// </summary>
+        /// <param name="amount">Amount to raise by, usually 1.</param>
+        public void IncrementKills(int amount = 1)
+        {
+            killCount += amount;
         }
 
         /// <summary>
@@ -140,5 +197,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             return gameObjects.ToArray();
         }
+
+        #endregion
     }
 }

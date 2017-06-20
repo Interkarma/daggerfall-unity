@@ -81,6 +81,11 @@ namespace DaggerfallWorkshop.Game
             // Generate items
             loot.GenerateItems();
 
+            // Transfer any items owned by entity to loot container
+            // Many quests will stash a reward in enemy inventory for player to find
+            // This will be in addition to normal random loot table generation
+            loot.Items.TransferAll(entity.Items);
+
             // Raise static event
             if (OnEnemyDeath != null)
                 OnEnemyDeath(this, null);

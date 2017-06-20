@@ -21,6 +21,13 @@ namespace DaggerfallWorkshop.Game.Questing
     /// Clock must be started and stopped by quest actions.
     /// Clock runs down in game-time (default is 12x real-time).
     /// This also means timer is paused when game is paused.
+    /// 
+    /// Notes:
+    ///  * Range values are unknown
+    ///  * Flag value is unknown.
+    ///  * Flag 1 is most commone. Have observed 1, 2, 9, 12, 17, 18 in canonical quests.
+    ///  * Suspect (flag & 16) = "set by distance". e.g. "Clock _qtime_ 00:00 0 flag 17 range 0 2".
+    ///  * In classic, this sort of clock definition is used when player must travel long distances.
     /// </summary>
     public class Clock : QuestResource
     {

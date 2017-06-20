@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Equip to player if equipped in save
                 for (int i = 0; i < characterRecord.ParsedData.equippedItems.Length; i++)
                 {
-                    if (characterRecord.ParsedData.equippedItems[i] == (record.RecordRoot.RecordID >> 8))
+                    if (characterRecord.ParsedData.equippedItems[i] == record.RecordRoot.RecordID)
                         equipTable.EquipItem(newItem, true, false);
                 }
             }
