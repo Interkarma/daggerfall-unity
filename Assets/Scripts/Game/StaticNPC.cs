@@ -12,7 +12,9 @@
 using System;
 using UnityEngine;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -22,6 +24,7 @@ namespace DaggerfallWorkshop.Game
     ///  2. From instantiation context (in a dungeon, a building, etc.)
     /// This behaviour helps solve the problem of layout classes not knowing
     /// (or needing to know) about runtime quest state, and vice versa.
+    /// It also decouples NPC information from Billboards.
     /// Other uses include Questor injection, hiding relocated NPCs, and disabling
     /// NPCs that have been permanently removed by quest system.
     /// 
@@ -49,6 +52,14 @@ namespace DaggerfallWorkshop.Game
             get { return npcData; }
         }
 
+        /// <summary>
+        /// Gets display name of NPC from individual faction data or random seed.
+        /// </summary>
+        public string DisplayName
+        {
+            get { return GetDisplayName(); }
+        }
+
         #endregion
 
         #region Structs & Enums
@@ -71,6 +82,7 @@ namespace DaggerfallWorkshop.Game
             public int mapID;
             public int locationID;
             public int buildingKey;
+            public NameHelper.BankTypes nameBank;
         }
 
         /// <summary>
@@ -78,9 +90,9 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public enum Context
         {
-            None,
-            Dungeon,
-            Building,
+            Custom,         // Can be found anywhere, usually created by quest system
+            Dungeon,        // Home is inside a dungeon
+            Building,       // Home is inside a building
         }
 
         #endregion
@@ -125,6 +137,21 @@ namespace DaggerfallWorkshop.Game
             npcData.context = Context.Building;
         }
 
+
+        /// <summary>
+        /// Sets layout time data directly.
+        /// </summary>
+        public void SetLayoutData(int x, int y, int z, Genders gender, int factionID = 0, int nameSeed = -1)
+        {
+            // Store common layout data
+            npcData.hash = GetPositionHash(x, y, z);
+            npcData.flags = (gender == Genders.Male) ? 0 : 32;
+            npcData.factionID = factionID;
+            npcData.nameSeed = (nameSeed == -1) ? npcData.hash : nameSeed;
+            npcData.gender = gender;
+            npcData.context = Context.Custom;
+        }
+
         #endregion
 
         #region Private Methods
@@ -153,6 +180,27 @@ namespace DaggerfallWorkshop.Game
             {
                 if (playerEnterExit.ExteriorDoors != null && playerEnterExit.ExteriorDoors.Length > 0)
                     npcData.buildingKey = playerEnterExit.ExteriorDoors[0].buildingKey;
+            }
+
+            // Store name bank
+            npcData.nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
+        }
+
+        /// <summary>
+        /// Gets display name of NPC as fixed individual or from random seed.
+        /// </summary>
+        string GetDisplayName()
+        {
+            FactionFile.FactionData factionData;
+            bool foundFaction = GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npcData.factionID, out factionData);
+            if (foundFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
+            {
+                return factionData.name;
+            }
+            else
+            {
+                DFRandom.srand(npcData.nameSeed);
+                return DaggerfallUnity.Instance.NameHelper.FullName(npcData.nameBank, npcData.gender);
             }
         }
 

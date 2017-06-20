@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.Questing
         Races hudRace = Races.Breton;
         Genders npcGender = Genders.Male;
         int faceIndex = 0;
+        int nameSeed = -1;
         bool isIndividualNPC = false;
         bool isIndividualAtHome = false;
         string displayName = string.Empty;
@@ -48,6 +49,12 @@ namespace DaggerfallWorkshop.Game.Questing
         public int FaceIndex
         {
             get { return faceIndex; }
+        }
+
+        public int NameSeed
+        {
+            get { return nameSeed; }
+            set { nameSeed = value; }
         }
 
         public Races HUDRace
@@ -209,7 +216,7 @@ namespace DaggerfallWorkshop.Game.Questing
         void AssignHUDFace(int faceIndex)
         {
             // Set display race
-            hudRace = GetRaceOfCurrentRegion();
+            hudRace = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
 
             // Set face index
             if (faceIndex != -1)
@@ -374,19 +381,8 @@ namespace DaggerfallWorkshop.Game.Questing
             if (factionData.type == (int)FactionFile.FactionTypes.WitchesCoven)
                 npcGender = Genders.Female;
 
-            // Get name bank - either Redgaurd or Breton at this time
-            NameHelper.BankTypes bankType;
-            switch (GetRaceOfCurrentRegion())
-            {
-                case Races.Redguard:
-                    bankType = NameHelper.BankTypes.Redguard;
-                    break;
-
-                default:
-                case Races.Breton:
-                    bankType = NameHelper.BankTypes.Breton;
-                    break;
-            }
+            // Get name bank
+            NameHelper.BankTypes bankType = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
 
             // Assign name - some types have their own individual name to use
             if (factionData.type == (int)FactionFile.FactionTypes.Individual ||
@@ -397,8 +393,14 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             else
             {
+                // Set a name seed if not configured
+                if (nameSeed != -1)
+                    DFRandom.srand(nameSeed);
+                else
+                    nameSeed = Time.frameCount;
+
                 // Generate a random name based on gender and race name bank
-                DFRandom.srand(Time.frameCount);
+                DFRandom.srand(nameSeed);
                 displayName = DaggerfallUnity.Instance.NameHelper.FullName(bankType, npcGender);
             }
         }
@@ -549,7 +551,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Get "people of" current region
                 case FactionFile.FactionTypes.People:
-                    return GetPeopleOfCurrentRegion();
+                    return GameManager.Instance.PlayerGPS.GetPeopleOfCurrentRegion();
 
                 // Give up
                 default:
@@ -605,7 +607,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 case 18:
                 case 19:
                 case 20:
-                    return GetPeopleOfCurrentRegion();      // Not sure if "Resident1-4" career map to regional "people of" in classic
+                    return GameManager.Instance.PlayerGPS.GetPeopleOfCurrentRegion();      // Not sure if "Resident1-4" career map to regional "people of" in classic
                 default:
                     return -1;
             }
@@ -640,51 +642,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception("GetCourtOfCurrentRegion() did not find exactly 1 match.");
 
             return factions[0].id;
-        }
-
-        // Gets the people of faction in current region
-        int GetPeopleOfCurrentRegion()
-        {
-            // Find people of current region
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
-            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.People,
-                (int)FactionFile.SocialGroups.Commoners,
-                (int)FactionFile.GuildGroups.GeneralPopulace,
-                oneBasedPlayerRegion);
-
-            // Should always find a single people of
-            if (factions == null || factions.Length != 1)
-                throw new Exception("GetPeopleOfCurrentRegion() did not find exactly 1 match.");
-
-            return factions[0].id;
-        }
-
-        Races GetRaceOfCurrentRegion()
-        {
-            // Get faction of current region
-            int oneBasedPlayerRegion = GameManager.Instance.PlayerGPS.CurrentOneBasedRegionIndex;
-            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province,
-                -1,
-                -1,
-                oneBasedPlayerRegion);
-
-            // Should always find a single province faction
-            if (factions == null || factions.Length != 1)
-                throw new Exception("GetRaceOfCurrentRegion() did not find exactly 1 match.");
-
-            // Convert faction race to a race template ID
-            switch ((FactionFile.FactionRaces)factions[0].race)
-            {
-                case FactionFile.FactionRaces.Redguard:
-                    return Races.Redguard;
-                
-                // All other factions are Breton for now
-                default:
-                case FactionFile.FactionRaces.Breton:
-                    return Races.Breton;
-            }
         }
 
         int GetRandomFactionOfType(int factionType)

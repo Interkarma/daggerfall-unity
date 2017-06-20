@@ -805,6 +805,10 @@ namespace DaggerfallWorkshop.Utility
             // Set QuestResourceBehaviour in Person object
             person.QuestResourceBehaviour = questResourceBehaviour;
 
+            // Add StaticNPC behaviour
+            StaticNPC npc = go.AddComponent<StaticNPC>();
+            npc.SetLayoutData((int)marker.flatPosition.x, (int)marker.flatPosition.y, (int)marker.flatPosition.z, person.Gender, person.FactionIndex, person.NameSeed);
+
             // Set tag
             go.tag = QuestMachine.questPersonTag;
         }

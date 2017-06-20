@@ -185,8 +185,7 @@ namespace DaggerfallWorkshop.Game
                         }
 
                         // Check for static NPC hit
-                        // Will expand this later for a wider range of billboard hits
-                        DaggerfallBillboard npc;
+                        StaticNPC npc;
                         if (NPCCheck(hits[i], out npc))
                         {
                             switch(currentMode)
@@ -291,21 +290,14 @@ namespace DaggerfallWorkshop.Game
                 return true;
         }
 
-        // Check if raycast hit a static NPC billboard
-        private bool NPCCheck(RaycastHit hitInfo, out DaggerfallBillboard billboard)
+        // Check if raycast hit a StaticNPC
+        private bool NPCCheck(RaycastHit hitInfo, out StaticNPC staticNPC)
         {
-            billboard = hitInfo.transform.GetComponent<DaggerfallBillboard>();
-            if (billboard == null)
-                return false;
+            staticNPC = hitInfo.transform.GetComponent<StaticNPC>();
+            if (staticNPC != null)
+                return true;
             else
-            {
-                if (billboard.Summary.FlatType == FlatTypes.NPC)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+                return false;
         }
 
         // Display a shop quality level
@@ -448,38 +440,38 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Output NPC info to HUD
-        private void PresentNPCInfo(DaggerfallBillboard npc)
+        private void PresentNPCInfo(StaticNPC npc)
         {
-            DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", GetNPCName(npc)));
+            DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", npc.DisplayName));
         }
 
-        // Get NPC name from quest or locally available information
-        private string GetNPCName(DaggerfallBillboard npc)
-        {
-            // Check for a NPC linked to quest system
-            QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
-            if (questResourceBehaviour)
-            {
-                // Possible for NPC to have resource behaviour but not yet linked to active Quest or Person resource
-                Quest quest = QuestMachine.Instance.GetActiveQuest(questResourceBehaviour.QuestUID);
-                if (quest != null)
-                {
-                    Person person = quest.GetPerson(questResourceBehaviour.TargetSymbol);
-                    if (person != null)
-                        return person.DisplayName;
-                }
-            }
+        //// Get NPC name from quest or locally available information
+        //private string GetNPCName(DaggerfallBillboard npc)
+        //{
+        //    // Check for a NPC linked to quest system
+        //    QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
+        //    if (questResourceBehaviour)
+        //    {
+        //        // Possible for NPC to have resource behaviour but not yet linked to active Quest or Person resource
+        //        Quest quest = QuestMachine.Instance.GetActiveQuest(questResourceBehaviour.QuestUID);
+        //        if (quest != null)
+        //        {
+        //            Person person = quest.GetPerson(questResourceBehaviour.TargetSymbol);
+        //            if (person != null)
+        //                return person.DisplayName;
+        //        }
+        //    }
 
-            // Otherwise just get individual or random NPC name from local data
-            FactionFile.FactionData factionData;
-            bool foundFaction = GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Summary.FactionOrMobileID, out factionData);
-            if (foundFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
-                return factionData.name;
-            else
-                return npc.GetRandomNPCName();
-        }
+        //    // Otherwise just get individual or random NPC name from local data
+        //    FactionFile.FactionData factionData;
+        //    bool foundFaction = GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Summary.FactionOrMobileID, out factionData);
+        //    if (foundFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
+        //        return factionData.name;
+        //    else
+        //        return npc.GetRandomNPCName();
+        //}
 
-        void TriggerQuestResourceClick(DaggerfallBillboard npc)
+        void TriggerQuestResourceClick(StaticNPC npc)
         {
             // Handle typical quest resource click
             QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
@@ -492,17 +484,17 @@ namespace DaggerfallWorkshop.Game
                 specialNPCClickHandler.DoClick();
         }
 
-        void QuestorCheck(DaggerfallBillboard npc)
+        void QuestorCheck(StaticNPC npc)
         {
             // Detect Fighter's Guild Questors
-            if (npc.Summary.FactionOrMobileID == 851)
+            if (npc.Data.factionID == 851)
             {
                 // Temp guild quest pump UI
-                DaggerfallGuildPopupWindow questor = new DaggerfallGuildPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
-                questor.CurrentGuild = DaggerfallGuildPopupWindow.TempGuilds.Fighter;
-                questor.CurrentRole = DaggerfallGuildPopupWindow.TempGuildRoles.Questor;
-                questor.QuestorNPC = npc;
-                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(questor);
+                DaggerfallGuildPopupWindow questorWindow = new DaggerfallGuildPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                questorWindow.CurrentGuild = DaggerfallGuildPopupWindow.TempGuilds.Fighter;
+                questorWindow.CurrentRole = DaggerfallGuildPopupWindow.TempGuildRoles.Questor;
+                //questorWindow.QuestorNPC = npc;
+                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(questorWindow);
             }
         }
     }

@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -10,12 +10,16 @@
 //
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -224,6 +228,78 @@ namespace DaggerfallWorkshop
         {
             DFPosition pos = CurrentMapPixel;
             UpdateWorldInfo(pos.X, pos.Y);
+        }
+
+        /// <summary>
+        /// Gets NameHelper.BankType in player's current region.
+        /// Due to limited use of races in FACTION.TXT this is either Redguard or Breton.
+        /// </summary>
+        public NameHelper.BankTypes GetNameBankOfCurrentRegion()
+        {
+            NameHelper.BankTypes bankType;
+            switch (GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion())
+            {
+                case Races.Redguard:
+                    bankType = NameHelper.BankTypes.Redguard;
+                    break;
+
+                default:
+                case Races.Breton:
+                    bankType = NameHelper.BankTypes.Breton;
+                    break;
+            }
+
+            return bankType;
+        }
+
+        /// <summary>
+        /// Gets dominant race in player's current region.
+        /// </summary>
+        /// <returns></returns>
+        public Races GetRaceOfCurrentRegion()
+        {
+            // Get faction of current region
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.Province,
+                -1,
+                -1,
+                CurrentOneBasedRegionIndex);
+
+            // Should always find a single province faction
+            if (factions == null || factions.Length != 1)
+                throw new Exception("GetRaceOfCurrentRegion() did not find exactly 1 match.");
+
+            // Convert faction race to a race template ID
+            switch ((FactionFile.FactionRaces)factions[0].race)
+            {
+                case FactionFile.FactionRaces.Redguard:
+                    return Races.Redguard;
+
+                // All other factions are Breton for now
+                default:
+                case FactionFile.FactionRaces.Breton:
+                    return Races.Breton;
+            }
+        }
+
+        /// <summary>
+        /// Gets the "people of" race in player's current region.
+        /// </summary>
+        /// <returns></returns>
+        public int GetPeopleOfCurrentRegion()
+        {
+            // Find people of current region
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.People,
+                (int)FactionFile.SocialGroups.Commoners,
+                (int)FactionFile.GuildGroups.GeneralPopulace,
+                CurrentOneBasedRegionIndex);
+
+            // Should always find a single people of
+            if (factions == null || factions.Length != 1)
+                throw new Exception("GetPeopleOfCurrentRegion() did not find exactly 1 match.");
+
+            return factions[0].id;
         }
 
         #endregion
