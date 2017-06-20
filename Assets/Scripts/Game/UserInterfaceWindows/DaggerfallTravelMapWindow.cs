@@ -1231,11 +1231,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
             name = name.ToLower();
 
-            // this next code block addresses a bug reported by user "electrorobobody" on forums 
-            // the bug prevented one to find locations with their names being a substring of
-            // a different location, e.g. in province Daggerfall "Kingsly Manor" could not be
-            // found via search because there exists a "Buckingsly Manor" that was returned instead
-            
+            // bug-fix in find location functionality (see http://forums.dfworkshop.net/viewtopic.php?f=24&p=5362#p5362)          
             // first search for location with exact name as the search string
             for (int i = 0; i < locations.Count(); i++)
             {
