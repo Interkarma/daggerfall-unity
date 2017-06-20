@@ -22,10 +22,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     public class AddFace : ActionTemplate
     {
         Symbol personSymbol;
+        int sayingID;
 
         public override string Pattern
         {
-            get { return @"add (?<anNPC>[a-zA-Z0-9_.-]+) face"; }
+            get { return @"add (?<anNPC>[a-zA-Z0-9_.-]+) face saying (?<sayingID>\d+)|add (?<anNPC>[a-zA-Z0-9_.-]+) face"; }
         }
 
         public AddFace(Quest parentQuest)
@@ -45,6 +46,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Factory new action
             AddFace action = new AddFace(parentQuest);
             action.personSymbol = new Symbol(match.Groups["anNPC"].Value);
+            action.sayingID = Parser.ParseInt(match.Groups["sayingID"].Value);
 
             return action;
         }
@@ -60,6 +62,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Add face to HUD
             DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.AddFace(person);
+
+            // Popup saying message
+            if (sayingID != 0)
+                ParentQuest.ShowMessagePopup(sayingID);
 
             SetComplete();
         }
