@@ -64,18 +64,15 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         #region Player
 
-        // Generates player health based on level, endurance, and career hit points per level
-        public static int RollMaxHealth(int level, int endurance, int hitPointsPerLevel)
+        // Generates player health based on level and career hit points per level
+        public static int RollMaxHealth(int level, int hitPointsPerLevel)
         {
             const int baseHealth = 25;
 
             int maxHealth = baseHealth;
-            int bonusHealth = HitPointsModifier(endurance);
-            int minRoll = hitPointsPerLevel / 2;
-            int maxRoll = hitPointsPerLevel + 1;    // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
             for (int i = 0; i < level; i++)
             {
-                maxHealth += UnityEngine.Random.Range(minRoll, maxRoll) + bonusHealth;
+                maxHealth += hitPointsPerLevel;
             }
 
             return maxHealth;
@@ -159,7 +156,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateHitPointsPerLevelUp(Entity.PlayerEntity player)
         {
             int minRoll = player.Career.HitPointsPerLevelOrMonsterLevel / 2;
-            int maxRoll = player.Career.HitPointsPerLevelOrMonsterLevel + 1;
+            int maxRoll = player.Career.HitPointsPerLevelOrMonsterLevel + 1; // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
             int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll);
             addHitPoints += HitPointsModifier(player.Stats.Endurance);
             if (addHitPoints < 1)

@@ -140,7 +140,7 @@ namespace DaggerfallWorkshop.Game.Entity
             }
 
             if (maxHealth <= 0)
-                this.maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
+                this.maxHealth = FormulaHelper.RollMaxHealth(level, career.HitPointsPerLevelOrMonsterLevel);
             else
                 this.maxHealth = maxHealth;
 
@@ -205,7 +205,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 gender = Genders.Male;
                 stats.SetFromCareer(career);
                 level = testPlayerLevel;
-                maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
+                maxHealth = FormulaHelper.RollMaxHealth(level, career.HitPointsPerLevelOrMonsterLevel);
                 name = testPlayerName;
                 stats.SetDefaults();
                 skills.SetDefaults();
