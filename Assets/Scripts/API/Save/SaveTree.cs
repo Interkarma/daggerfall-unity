@@ -74,6 +74,11 @@ namespace DaggerfallConnect.Save
             Header.Read(reader);
 
             // Read location detail
+            // Note: SaveTreeLocationDetail below doesn't seem to be what this data actually is. The value for
+            // recordlength at 18 is actually the player environment. (1 = outside, 2 = building, 3 = dungeon)
+            // For now, resetting the stream to 18 and reading the value as recordlength to keep saves opening
+            // correctly until this record is better understood.
+            reader.BaseStream.Position = 18;
             LocationDetail = new SaveTreeLocationDetail(reader);
 
             // Read remaining records
@@ -173,8 +178,7 @@ namespace DaggerfallConnect.Save
         {
             RecordPosition position = new RecordPosition();
             position.WorldX = reader.ReadInt32();
-            position.YOffset = reader.ReadUInt16();
-            position.YBase = reader.ReadUInt16();
+            position.WorldY = reader.ReadInt32();
             position.WorldZ = reader.ReadInt32();
 
             return position;
@@ -188,8 +192,7 @@ namespace DaggerfallConnect.Save
         public static void WritePosition(BinaryWriter writer, RecordPosition position)
         {
             writer.Write(position.WorldX);
-            writer.Write(position.YOffset);
-            writer.Write(position.YBase);
+            writer.Write(position.WorldY);
             writer.Write(position.WorldZ);
         }
 
@@ -321,8 +324,6 @@ namespace DaggerfallConnect.Save
     /// </summary>
     public struct HeaderCharacterPositionRecord
     {
-        public Byte RecordType;                 // Must always be 0x01
-        public UInt16 Unknown;
         public RecordPosition Position;
     }
 
@@ -332,8 +333,7 @@ namespace DaggerfallConnect.Save
     public struct RecordPosition
     {
         public Int32 WorldX;                    // WorldX coordinate
-        public UInt16 YOffset;                  // Altitude offset?
-        public UInt16 YBase;                    // Altitude base?
+        public Int32 WorldY;                    // WorldY coordinate
         public Int32 WorldZ;                    // WorldZ coordinate
     }
 
@@ -365,13 +365,22 @@ namespace DaggerfallConnect.Save
     }
 
     /// <summary>
+    /// Player environment types.
+    /// </summary>
+    public enum Environments
+    {
+        Outside = 1,
+        Building = 2,
+        Dungeon = 3,
+    }
+
+    /// <summary>
     /// Types of SaveTree records encountered.
     /// Save viewer program "chunktcl" used to identify some.
     /// </summary>
     public enum RecordTypes
     {
         Null = 0x00,
-        CharacterPosition = 0x01,
         Item = 0x02,
         Character = 0x03,
         CharacterPositionRecord = 0x04,             // This record, not the position record in the header, determines where player is when game loads.

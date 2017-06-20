@@ -25,15 +25,16 @@ namespace DaggerfallConnect.Save
     public class SaveTreeHeader
     {
         // Consts
-        public const int HeaderLength = 18;
-        public const int VersionNumber = 0x26;
+        public const int HeaderLength = 19;
+        public const int VersionNumber = 0x126;
 
         // Public fields
         public long StreamPosition;                             // Starting position in file stream
         public byte[] RawData;                                  // Raw byte data read from stream
-        public Byte Version;                                    // Version - must be 0x26
+        public int Version;                                     // Version - must be 0x126
         public HeaderCharacterPositionRecord CharacterPosition; // Character position
-        public UInt16 Unknown;                                  // Unknown
+        public UInt16 MapID;                                    // ID of current map. 0xFFFF if not in a location.
+        public Byte Environment;                                // Player environment. 1 = outside, 2 = building, 3 = dungeon
 
         /// <summary>
         /// Reads header from file.
@@ -64,25 +65,20 @@ namespace DaggerfallConnect.Save
             MemoryStream stream = new MemoryStream(RawData);
             BinaryReader reader = new BinaryReader(stream, Encoding.UTF8);
 
-            // Read Version - must be 0x26
-            Version = reader.ReadByte();
+            // Read Version - must be 0x126
+            Version = reader.ReadInt32();
             if (Version != VersionNumber)
-                throw new Exception("SaveTree file has an invalid version number, must be 0x26.");
-
-            // Read CharacterPosition.RecordType - must be 0x01
-            CharacterPosition = new HeaderCharacterPositionRecord();
-            CharacterPosition.RecordType = reader.ReadByte();
-            if (CharacterPosition.RecordType != (int)RecordTypes.CharacterPosition)
-                throw new Exception("Expected CharacterPosition in SaveTreeHeader has an invalid record type, must be 0x01.");
-
-            // Read CharacterPosition.Unknown
-            CharacterPosition.Unknown = reader.ReadUInt16();
+                throw new Exception("SaveTree file has an invalid version number, must be 0x126.");
 
             // Read CharacterPosition.Position
+            CharacterPosition = new HeaderCharacterPositionRecord();
             CharacterPosition.Position = SaveTree.ReadPosition(reader);
 
-            // Read Unknown
-            Unknown = reader.ReadUInt16();
+            // Read MapID
+            MapID = reader.ReadUInt16();
+
+            // Read Environment
+            Environment = reader.ReadByte();
 
             reader.Close();
         }
@@ -95,17 +91,14 @@ namespace DaggerfallConnect.Save
             // Write Version
             writer.Write(Version);
 
-            // Write CharacterPosition.RecordType
-            writer.Write(CharacterPosition.RecordType);
-
-            // Write CharacterPosition.Unknown
-            writer.Write(CharacterPosition.Unknown);
-
             // Write CharacterPosition.Position
             SaveTree.WritePosition(writer, CharacterPosition.Position);
 
-            // Write Unknown
-            writer.Write(Unknown);
+            // Write MapID
+            writer.Write(MapID);
+
+            // Write Environment
+            writer.Write(Environment);
 
             writer.Close();
         }
