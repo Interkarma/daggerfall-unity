@@ -297,7 +297,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 leveling = true;
                 PlayerEntity.Level++;
-                PlayerEntity.MaxHealth += PlayerEntity.Career.HitPointsPerLevelOrMonsterLevel;
+                PlayerEntity.MaxHealth += FormulaHelper.CalculateHitPointsPerLevelUp(PlayerEntity);
                 DaggerfallUI.Instance.PlayOneShot(levelUpSound);
 
                 // Roll bonus pool for player to distribute

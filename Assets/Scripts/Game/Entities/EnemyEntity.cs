@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
                 // Enemy class is levelled to player and uses same health rules
                 level = GameManager.Instance.PlayerEntity.Level;
-                maxHealth = FormulaHelper.RollMaxHealth(level, stats.Endurance, career.HitPointsPerLevelOrMonsterLevel);
+                maxHealth = FormulaHelper.RollMaxHealth(level, career.HitPointsPerLevelOrMonsterLevel);
 
                 // Enemy class damage is temporarily set by a fudged level multiplier
                 // This will change once full entity setup and items are available
