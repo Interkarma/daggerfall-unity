@@ -155,6 +155,18 @@ namespace DaggerfallWorkshop.Game.Formulas
             return (int)Mathf.Floor((currentLevelUpSkillsSum - startingLevelUpSkillsSum + 28) / 15);
         }
 
+        // Calculate hit points player gains per level.
+        public static int CalculateHitPointsPerLevelUp(Entity.PlayerEntity player)
+        {
+            int minRoll = player.Career.HitPointsPerLevelOrMonsterLevel / 2;
+            int maxRoll = player.Career.HitPointsPerLevelOrMonsterLevel + 1;
+            int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll);
+            addHitPoints += HitPointsModifier(player.Stats.Endurance);
+            if (addHitPoints < 1)
+                addHitPoints = 1;
+            return addHitPoints;
+        }
+
         #endregion
 
         #region Damage
