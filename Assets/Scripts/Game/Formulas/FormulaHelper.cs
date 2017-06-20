@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         // Calculate how much health the player should recover per hour of rest
-        public static int CalculateHealthRecoveryRate(DaggerfallWorkshop.Game.Entity.PlayerEntity player)
+        public static int CalculateHealthRecoveryRate(Entity.PlayerEntity player)
         {
             short medical = player.Skills.Medical;
             int endurance = player.Stats.Endurance;
