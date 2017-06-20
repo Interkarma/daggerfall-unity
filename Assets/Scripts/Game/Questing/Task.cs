@@ -192,8 +192,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     continue;
 
                 // Always check trigger conditions
-                // These can turn task on and off
-                if (action.IsTriggerCondition)
+                // These can turn task on when any trigger evaluates true
+                // They are no longer checked once task is triggered
+                // But can fire again if task is unset/rearmed later
+                if (action.IsTriggerCondition && !triggered)
                 {
                     if (action.CheckTrigger(this))
                         triggered = true;
@@ -201,8 +203,8 @@ namespace DaggerfallWorkshop.Game.Questing
                         triggered = false;
                 }
 
-                // Tick other actions when active
-                if (triggered)
+                // Tick other actions only when active
+                if (triggered && !action.IsTriggerCondition)
                 {
                     // Initialise action if task was previously untriggered
                     if (!prevTriggered)

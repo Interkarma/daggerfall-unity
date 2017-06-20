@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game.Questing
         private int rangeHigh   = -1;
         private bool isArtifact = false;
 
+        bool isGold = false;
         int goldAmount = 0;
 
         public DaggerfallUnityItem DaggerfallUnityItem
@@ -91,7 +92,17 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return (rangeLow >= 0 && rangeHigh >= 1) && (rangeHigh > rangeLow); }
         }
 
-        #region constructors
+        public bool IsGold
+        {
+            get { return isGold; }
+        }
+
+        public int GoldAmount
+        {
+            get { return goldAmount; }
+        }
+
+        #region Constructors
 
         public Item(Quest parentQuest, string line) : base(parentQuest) 
         {
@@ -144,7 +155,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (item.Success)
                     this.itemString = item.Value;
                 if (info.Success)
-                    this.infoID       = Parser.ParseInt(info.Value);
+                    this.infoID     = Parser.ParseInt(info.Value);
                 if (used.Success)
                     this.useID      = Parser.ParseInt(used.Value);
                 if (r1.Success)
@@ -156,9 +167,22 @@ namespace DaggerfallWorkshop.Game.Questing
             // Handle item by type
             if (itemString == "gold")
             {
-                // Gold given is in the range of 100 gold per player level
-                int goldMultiplier = UnityEngine.Random.Range(91, 109);
-                goldAmount = goldMultiplier * GameManager.Instance.PlayerEntity.Level;
+                // Generate gold amount
+                int amount = 0;
+                if (rangeLow != -1 && rangeHigh != -1)
+                {
+                    // Gold given is between range values (inclusive)
+                    amount = Random.Range(rangeLow, rangeHigh + 1);
+                }
+                else
+                {
+                    // Gold given is roughly in the range of 100 gold per player level
+                    int goldMultiplier = Random.Range(90, 110);
+                    amount = goldMultiplier * GameManager.Instance.PlayerEntity.Level;
+                }
+
+                isGold = true;
+                goldAmount = amount;
             }
             else
             {
@@ -189,10 +213,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     item.LinkQuestItem(ParentQuest.UID, Symbol);
                 }
                 else
+                {
                     Debug.LogWarning("item not found in table: " + itemString);
+                }
             }
-
-            return;
         }
 
         #endregion

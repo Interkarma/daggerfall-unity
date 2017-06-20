@@ -96,7 +96,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (enemyEntityBehaviour.Entity.CurrentHealth < enemyEntityBehaviour.Entity.MaxHealth && !foe.InjuredTrigger)
                 {
                     foe.SetInjured();
-                    Debug.Log("Enemy injured");
                 }
             }
         }
@@ -184,7 +183,6 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 Foe foe = (Foe)targetResource;
                 foe.IncrementKills();
-                Debug.Log("Enemy killed");
             }
         }
 
