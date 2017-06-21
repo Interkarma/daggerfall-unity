@@ -131,12 +131,12 @@ namespace DaggerfallWorkshop.Game.Questing
             base.SetResource(line);
 
             // Match strings
-            string declMatchStr = @"(Person|person) (?<symbol>[a-zA-Z0-9_.-]+)";
-            string optionsMatchStr = @"named (?<individualNPCName>[a-zA-Z0-9_.-]+)|" +
+            string declMatchStr = @"(Person|person) (?<symbol>[a-zA-Z0-9'_.-]+)";
+            string optionsMatchStr = @"named (?<individualNPCName>[a-zA-Z0-9'_.-]+)|" +
                                      @"face (?<faceIndex>\d+)|" +
-                                     @"factionType (?<factionType>\w+)|" +
-                                     @"faction (?<factionAlliance>[a-zA-Z0-9_.-]+)|" +
-                                     @"group (?<careerAlliance>\w+)|" +
+                                     @"(factionType|factiontype) (?<factionType>[a-zA-Z0-9'_.-]+)|" +
+                                     @"faction (?<factionAlliance>[a-zA-Z0-9'_.-]+)|" +
+                                     @"group (?<careerAlliance>[a-zA-Z0-9'_.-]+)|" +
                                      @"(?<gender>female|male)|" +
                                      @"(?<atHome>(atHome|athome))";
 
@@ -644,9 +644,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 case 18:
                 case 19:
                 case 20:
-                    return GameManager.Instance.PlayerGPS.GetPeopleOfCurrentRegion();      // Not sure if "Resident1-4" career map to regional "people of" in classic
-                default:
-                    return -1;
+                                                            // Default for everything else will just be fairly generic "people of" faction
+                                                            // This at least ensures the object will compile to something valid
+                default:                                    // Not sure if "Resident1-4" career really maps to regional "people of" in classic
+                    return GameManager.Instance.PlayerGPS.GetPeopleOfCurrentRegion();
             }
         }
 
