@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class Item : QuestResource
     {
-        public const string matchString = @"Item (?<symbol>\w+)( artifact)? (?<type>\w+)| range (?<r1>\d+) to (?<r2>\d+)| anyInfo (?<info>\d+)| used (?<used>\d+)";
+        public const string matchString = @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+)( artifact)? (?<type>\w+)| range (?<r1>\d+) to (?<r2>\d+)| anyInfo (?<info>\d+)| used (?<used>\d+)";
 
         private DaggerfallUnityItem item;
         private string itemString;
@@ -106,7 +106,14 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public Item(Quest parentQuest, string line) : base(parentQuest) 
         {
-            SetItem(line);
+            try
+            {
+                SetItem(line);
+            }
+            catch
+            {
+                Debug.LogErrorFormat("Could not SetItem() from line: {0}", line);
+            }
         }
 
         #endregion

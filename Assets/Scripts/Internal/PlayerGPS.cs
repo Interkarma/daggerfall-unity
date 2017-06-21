@@ -253,9 +253,9 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets dominant race in player's current region.
+        /// Gets the dominant race in player's current region.
+        /// Due to limited use of races in FACTION.TXT this is either Redguard or Breton.
         /// </summary>
-        /// <returns></returns>
         public Races GetRaceOfCurrentRegion()
         {
             // Get faction of current region
@@ -283,9 +283,8 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets the "people of" race in player's current region.
+        /// Gets the factionID for "people of region" in player's current region.
         /// </summary>
-        /// <returns></returns>
         public int GetPeopleOfCurrentRegion()
         {
             // Find people of current region
@@ -298,6 +297,40 @@ namespace DaggerfallWorkshop
             // Should always find a single people of
             if (factions == null || factions.Length != 1)
                 throw new Exception("GetPeopleOfCurrentRegion() did not find exactly 1 match.");
+
+            return factions[0].id;
+        }
+
+        /// <summary>
+        /// Gets the factionID of player's current region.
+        /// </summary>
+        int GetCurrentRegionFaction()
+        {
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.Province, -1, -1, CurrentOneBasedRegionIndex);
+
+            // Should always find a single region
+            if (factions == null || factions.Length != 1)
+                throw new Exception("GetCurrentRegionFaction() did not find exactly 1 match.");
+
+            return factions[0].id;
+        }
+
+        /// <summary>
+        /// Gets the factionID of noble court in player's current region 
+        /// </summary>
+        int GetCourtOfCurrentRegion()
+        {
+            // Find court in current region
+            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
+                (int)FactionFile.FactionTypes.Courts,
+                (int)FactionFile.SocialGroups.Nobility,
+                (int)FactionFile.GuildGroups.Region,
+                CurrentOneBasedRegionIndex);
+
+            // Should always find a single court
+            if (factions == null || factions.Length != 1)
+                throw new Exception("GetCourtOfCurrentRegion() did not find exactly 1 match.");
 
             return factions[0].id;
         }

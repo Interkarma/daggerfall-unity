@@ -15,6 +15,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -110,7 +111,7 @@ namespace DaggerfallWorkshop.Game
         #region Public Methods
 
         /// <summary>
-        /// Sets layout time data from RDB.
+        /// Sets NPC data from RDB layout.
         /// </summary>
         public void SetLayoutData(DFBlock.RdbObject obj)
         {
@@ -124,7 +125,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Sets layout time data from RMB.
+        /// Sets NPC data from RMB layout.
         /// </summary>
         public void SetLayoutData(DFBlock.RmbBlockPeopleRecord obj)
         {
@@ -137,9 +138,17 @@ namespace DaggerfallWorkshop.Game
             npcData.context = Context.Building;
         }
 
+        /// <summary>
+        /// Sets NPC data from quest Person resource.
+        /// </summary>
+        /// <param name="person"></param>
+        public void SetLayoutData(int x, int y, int z, Person person)
+        {
+            SetLayoutData(x, y, z, person.Gender, person.FactionIndex, person.NameSeed);
+        }
 
         /// <summary>
-        /// Sets layout time data directly.
+        /// Sets NPC data directly.
         /// </summary>
         public void SetLayoutData(int x, int y, int z, Genders gender, int factionID = 0, int nameSeed = -1)
         {

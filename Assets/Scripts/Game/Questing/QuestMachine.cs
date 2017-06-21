@@ -389,26 +389,30 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Quest will attempt to load from QuestSourceFolder property path.
         /// </summary>
         /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
+        /// <param name="questorNPC">Questor NPC in world offering quest.</param>
         /// <returns>Quest object if successfully parsed, otherwise null.</returns>
-        public Quest ParseQuest(string questName)
+        public Quest ParseQuest(string questName, StaticNPC questorNPC = null)
         {
+            Debug.LogFormat("Parsing quest {0}", questName);
+
             string[] source = GetQuestSourceText(questName);
             if (source == null || source.Length == 0)
                 return null;
 
-            return ParseQuest(source);
+            return ParseQuest(source, questorNPC);
         }
 
         /// <summary>
         /// Instantiate a new quest from source text array.
         /// </summary>
         /// <param name="questSource">Array of lines from quuest source file.</param>
+        /// <param name="questorNPC">Questor NPC in world offering quest.</param>
         /// <returns>Quest.</returns>
-        public Quest ParseQuest(string[] questSource)
+        public Quest ParseQuest(string[] questSource, StaticNPC questorNPC = null)
         {
             // Parse quest
             Parser parser = new Parser();
-            Quest quest = parser.Parse(questSource);
+            Quest quest = parser.Parse(questSource, questorNPC);
 
             return quest;
         }
@@ -417,10 +421,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Parse and instantiate a quest from quest name.
         /// </summary>
         /// <param name="questName">Quest name.</param>
+        /// <param name="questorNPC">Questor NPC in world offering quest.</param>
         /// <returns>Quest.</returns>
-        public Quest InstantiateQuest(string questName)
+        public Quest InstantiateQuest(string questName, StaticNPC questorNPC = null)
         {
-            Quest quest = ParseQuest(questName);
+            Quest quest = ParseQuest(questName, questorNPC);
             if (quest != null)
             {
                 InstantiateQuest(quest);

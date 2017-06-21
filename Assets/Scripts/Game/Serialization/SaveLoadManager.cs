@@ -1127,6 +1127,19 @@ namespace DaggerfallWorkshop.Game.Serialization
             else
                 hasExteriorDoors = true;
 
+            // Restore faction data to player entity
+            // This is done early as later objects may require faction information on restore
+            if (!string.IsNullOrEmpty(factionDataJson))
+            {
+                FactionData_v1 factionData = Deserialize(typeof(FactionData_v1), factionDataJson) as FactionData_v1;
+                RestoreFactionData(factionData);
+                Debug.Log("LoadGame() restored faction state from save.");
+            }
+            else
+            {
+                Debug.Log("LoadGame() did not find saved faction data. Player will resume with default faction state.");
+            }
+
             // Raise reposition flag if terrain sampler changed
             // This is required as changing terrain samplers will invalidate serialized player coordinates
             bool repositionPlayer = false;
@@ -1191,18 +1204,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore save data to objects in newly spawned world
             RestoreSaveData(saveData);
-
-            // Restore faction data to player entity
-            if (!string.IsNullOrEmpty(factionDataJson))
-            {
-                FactionData_v1 factionData = Deserialize(typeof(FactionData_v1), factionDataJson) as FactionData_v1;
-                RestoreFactionData(factionData);
-                Debug.Log("LoadGame() restored faction state from save.");
-            }
-            else
-            {
-                Debug.Log("LoadGame() did not find saved faction data. Player will resume with default faction state.");
-            }
 
             // Load automap state
             try

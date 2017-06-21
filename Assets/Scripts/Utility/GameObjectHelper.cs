@@ -807,7 +807,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Add StaticNPC behaviour
             StaticNPC npc = go.AddComponent<StaticNPC>();
-            npc.SetLayoutData((int)marker.flatPosition.x, (int)marker.flatPosition.y, (int)marker.flatPosition.z, person.Gender, person.FactionIndex, person.NameSeed);
+            npc.SetLayoutData((int)marker.flatPosition.x, (int)marker.flatPosition.y, (int)marker.flatPosition.z, person);
 
             // Set tag
             go.tag = QuestMachine.questPersonTag;

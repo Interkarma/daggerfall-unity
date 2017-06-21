@@ -443,32 +443,6 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", npc.DisplayName));
         }
 
-        //// Get NPC name from quest or locally available information
-        //private string GetNPCName(DaggerfallBillboard npc)
-        //{
-        //    // Check for a NPC linked to quest system
-        //    QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
-        //    if (questResourceBehaviour)
-        //    {
-        //        // Possible for NPC to have resource behaviour but not yet linked to active Quest or Person resource
-        //        Quest quest = QuestMachine.Instance.GetActiveQuest(questResourceBehaviour.QuestUID);
-        //        if (quest != null)
-        //        {
-        //            Person person = quest.GetPerson(questResourceBehaviour.TargetSymbol);
-        //            if (person != null)
-        //                return person.DisplayName;
-        //        }
-        //    }
-
-        //    // Otherwise just get individual or random NPC name from local data
-        //    FactionFile.FactionData factionData;
-        //    bool foundFaction = GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Summary.FactionOrMobileID, out factionData);
-        //    if (foundFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
-        //        return factionData.name;
-        //    else
-        //        return npc.GetRandomNPCName();
-        //}
-
         void TriggerQuestResourceClick(StaticNPC npc)
         {
             // Handle typical quest resource click
@@ -491,7 +465,7 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallGuildPopupWindow questorWindow = new DaggerfallGuildPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
                 questorWindow.CurrentGuild = DaggerfallGuildPopupWindow.TempGuilds.Fighter;
                 questorWindow.CurrentRole = DaggerfallGuildPopupWindow.TempGuildRoles.Questor;
-                //questorWindow.QuestorNPC = npc;
+                questorWindow.QuestorNPC = npc;
                 DaggerfallUI.Instance.UserInterfaceManager.PushWindow(questorWindow);
             }
         }

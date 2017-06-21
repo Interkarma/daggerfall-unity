@@ -32,10 +32,12 @@ namespace DaggerfallWorkshop.Game.Questing
         Genders npcGender = Genders.Male;
         int faceIndex = 0;
         int nameSeed = -1;
+        bool isQuestor = false;
         bool isIndividualNPC = false;
         bool isIndividualAtHome = false;
         string displayName = string.Empty;
         FactionFile.FactionData factionData;
+        StaticNPC.NPCData questorData;
 
         #endregion
 
@@ -67,6 +69,11 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return npcGender; }
         }
 
+        public bool IsQuestor
+        {
+            get { return isQuestor; }
+        }
+
         public bool IsIndividualNPC
         {
             get { return isIndividualNPC; }
@@ -85,6 +92,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public FactionFile.FactionData FactionData
         {
             get { return factionData; }
+        }
+
+        public StaticNPC.NPCData QuestorData
+        {
+            get { return questorData; }
         }
 
         #endregion
@@ -322,6 +334,14 @@ namespace DaggerfallWorkshop.Game.Questing
         // Creates a career-based NPC like a Shopkeeper or Banker
         void SetupCareerAllianceNPC(string careerAllianceName)
         {
+            // Special handling for Questor class
+            // Will revisit this later when guilds are more integrated
+            if (careerAllianceName.Equals("Questor", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (SetupQuestorNPC())
+                    return;
+            }
+
             // Get faction data
             int factionID = GetCareerFactionID(careerAllianceName);
             if (factionID != -1)
@@ -360,6 +380,26 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        // Creates NPC as Questor, a special Person resource mapped to an NPC who exists full-time in world
+        // The QuestorData pack should have enough information for quest system to identify NPC in world
+        bool SetupQuestorNPC()
+        {
+            // Must have a questor set
+            if (ParentQuest.QuestorNPC == null)
+                return false;
+
+            // Set questor data
+            questorData = ParentQuest.QuestorNPC.Data;
+            isQuestor = true;
+
+            // Setup Person resource
+            FactionFile.FactionData factionData = GetFactionData(questorData.factionID);
+            this.factionData = factionData;
+            nameSeed = questorData.nameSeed;
+
+            return true;
+        }
+
         // Gets live faction data from player entity for faction ID
         FactionFile.FactionData GetFactionData(int factionID)
         {
@@ -394,10 +434,8 @@ namespace DaggerfallWorkshop.Game.Questing
             else
             {
                 // Set a name seed if not configured
-                if (nameSeed != -1)
-                    DFRandom.srand(nameSeed);
-                else
-                    nameSeed = Time.frameCount;
+                if (nameSeed == -1)
+                    nameSeed = DateTime.Now.Millisecond;
 
                 // Generate a random name based on gender and race name bank
                 DFRandom.srand(nameSeed);
@@ -582,7 +620,6 @@ namespace DaggerfallWorkshop.Game.Questing
             // Assign factionID based on careerID
             // How Daggerfall links these is not 100% confirmed, some guesses below
             // Most of these NPC careers seem to be aligned with faction #510 Merchants
-            // TODO: Questor to be handled elsewhere
             switch (careerID)
             {
                 case 0:

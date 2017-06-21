@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const string baseTextureName = "GILD00I0.IMG";      // Join guild / Talk / Custom
 
-        DaggerfallBillboard questorNPC;
+        StaticNPC questorNPC;
         TempGuilds currentGuild = TempGuilds.Fighter;
         TempGuildRoles currentRole = TempGuildRoles.Questor;
         Quest offeredQuest = null;
@@ -66,7 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Properties
 
-        public DaggerfallBillboard QuestorNPC
+        public StaticNPC QuestorNPC
         {
             get { return questorNPC; }
             set { questorNPC = value; }
@@ -200,13 +200,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             string questName = Path.GetFileName(files[index]);
 
             // Parse quest
-            offeredQuest = QuestMachine.Instance.ParseQuest(questName);
-
-            // Link questor NPC if set
-            if (questorNPC != null)
-            {
-                // TODO: Link questor to quest data
-            }
+            offeredQuest = QuestMachine.Instance.ParseQuest(questName, questorNPC);
+            if (offeredQuest == null)
+                return;
 
             // Offer the quest to player
             DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);
