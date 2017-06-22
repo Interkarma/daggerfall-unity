@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.Questing
     /// Notes:
     ///  * Range values are unknown
     ///  * Flag value is unknown.
-    ///  * Flag 1 is most commone. Have observed 1, 2, 9, 12, 17, 18 in canonical quests.
+    ///  * Flag 1 is most common. Have observed 1, 2, 9, 12, 17, 18 in canonical quests.
     ///  * Suspect (flag & 16) = "set by distance". e.g. "Clock _qtime_ 00:00 0 flag 17 range 0 2".
     ///  * In classic, this sort of clock definition is used when player must travel long distances.
     /// </summary>
