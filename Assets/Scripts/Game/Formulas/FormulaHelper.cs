@@ -181,26 +181,41 @@ namespace DaggerfallWorkshop.Game.Formulas
             return (handToHandSkill / 5) + 1;
         }
 
-        public static int CalculateWeaponDamage(FPSWeapon weapon, DaggerfallWorkshop.Game.Entity.PlayerEntity player)
+        public static int CalculateWeaponDamage(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target)
         {
-            int damage_low = 1; // Temp value
-            if (weapon.WeaponType == WeaponTypes.Melee)
-                damage_low = CalculateHandToHandMinDamage(player.Skills.HandToHand);
+            int damage_low = 0;
+            int damage_high = 0;
+            int damage_result = 0;
 
-            int damage_high = 24; // Temp value
-            if (weapon.WeaponType == WeaponTypes.Melee)
-                damage_high = CalculateHandToHandMaxDamage(player.Skills.HandToHand);
-
-            int damage = UnityEngine.Random.Range(damage_low, damage_high + 1);
-
-            // Apply the strength modifier. Testing in classic Daggerfall shows hand-to-hand ignores it.
-            if (weapon.WeaponType != WeaponTypes.Melee)
+            // TODO: Damage from AI characters.
+            if (attacker == GameManager.Instance.PlayerEntity)
             {
-                // Weapons can do 0 damage. Plays no hit sound or blood splash.
-                damage = Mathf.Max(0, damage + DamageModifier(player.Stats.Strength));
+                Items.DaggerfallUnityItem weapon;
+                if (GameManager.Instance.WeaponManager.UsingRightHand)
+                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
+                else
+                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
+                if (weapon == null)
+                {
+                    damage_low = CalculateHandToHandMinDamage(attacker.Skills.HandToHand);
+                    damage_high = CalculateHandToHandMaxDamage(attacker.Skills.HandToHand);
+                }
+                else
+                {
+                    damage_low = weapon.GetBaseDamageMin();
+                    damage_high = weapon.GetBaseDamageMax();
+                }
+                damage_result = UnityEngine.Random.Range(damage_low, damage_high + 1);
+
+                // Apply the strength modifier and the material modifier for weapons.
+                if (weapon != null)
+                {
+                    // 0 damage is possible. Plays no hit sound or blood splash.
+                    damage_result = Mathf.Max(0, damage_result + DamageModifier(attacker.Stats.Strength) + weapon.GetMaterialDamageModifier());
+                }
             }
 
-            return damage;
+            return damage_result;
         }
 
         #endregion

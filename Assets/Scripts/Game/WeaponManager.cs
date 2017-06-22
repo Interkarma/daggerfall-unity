@@ -57,6 +57,12 @@ namespace DaggerfallWorkshop.Game
         DaggerfallUnityItem currentRightHandWeapon = null;
         DaggerfallUnityItem currentLeftHandWeapon = null;
 
+        #region Properties
+
+        public bool UsingRightHand { get { return usingRightHand; } set { usingRightHand = value; } }
+
+        #endregion
+
         /// <summary>
         /// Tracks mouse gestures. Auto trims the list of mouse x/ys based on time.
         /// </summary>
@@ -604,48 +610,26 @@ namespace DaggerfallWorkshop.Game
                     return;
                 }
 
-                // TODO: Use correct damage based on weapon and swing type
-                // Just using fudge values during development
-
-                // Calculate damage
-                int damage = FormulaHelper.CalculateWeaponDamage(weapon, playerEntity);
-
-                //// Check if hit has an EnemyHealth
-                //// This is part of the old Demo code and will eventually be removed
-                //// For now enemies should either use EnemyHealth (deprecated) or EnemyEntity (current) to track enemy health
-                //// Never use both components on same enemy
-                //EnemyHealth enemyHealth = hit.transform.gameObject.GetComponent<EnemyHealth>();
-                //if (enemyHealth)
-                //{
-                //    // Example: Play sound based on fake parry mechanics
-                //    if (Random.value < ChanceToBeParried)
-                //    {
-                //        // Parried
-                //        weapon.PlayParrySound();
-                //        return;
-                //    }
-                //    else
-                //    {
-                //        // Connected
-                //        weapon.PlayHitSound();
-                //        enemyHealth.RemoveHealth(player, damage, hit.point);
-                //    }
-                //}
-
                 // Check if hit an entity and remove health
                 DaggerfallEntityBehaviour entityBehaviour = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-                if (entityBehaviour && damage > 0)
+                if (entityBehaviour)
                 {
                     if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
                     {
                         EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
 
+                        // Calculate damage
+                        int damage = FormulaHelper.CalculateWeaponDamage(playerEntity, enemyEntity);
+
                         // Play hit sound and trigger blood splash at hit point
-                        weapon.PlayHitSound();
-                        EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
-                        if (blood)
+                        if (damage > 0)
                         {
-                            blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);
+                            weapon.PlayHitSound();
+                            EnemyBlood blood = hit.transform.GetComponent<EnemyBlood>();
+                            if (blood)
+                            {
+                                blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);
+                            }
                         }
 
                         // Remove health
