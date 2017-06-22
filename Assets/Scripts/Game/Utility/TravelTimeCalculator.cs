@@ -92,6 +92,7 @@ namespace DaggerfallWorkshop.Game.Utility
         /// Creates an overland path from player's current location to destination.
         /// This must be called before calculating distance.
         /// </summary>
+        /// <param name="endPos">Endpoint in map pixel coordinates.</param>
         public void GeneratePath(DFPosition endPos)
         {
             Vector2[] directions = new Vector2[] { new Vector2(0, 1), new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0), new Vector2(1, 1), new Vector2(-1, 1), new Vector2(1, -1), new Vector2(-1, -1) };

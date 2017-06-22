@@ -386,7 +386,10 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Must have a questor set
             if (ParentQuest.QuestorNPC == null)
+            {
+                Debug.LogErrorFormat("Quest Person _{0}_ is expecting a Questor NPC, but one is not set. Proceeding with a random NPC so quest will compile.", Symbol.Name);
                 return false;
+            }
 
             // Set questor data
             questorData = ParentQuest.QuestorNPC.Data;

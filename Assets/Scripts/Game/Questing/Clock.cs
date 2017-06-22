@@ -12,7 +12,11 @@
 using System;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -31,6 +35,8 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class Clock : QuestResource
     {
+        const float returnTripMultiplier = 2.5f;
+
         DaggerfallDateTime lastWorldTimeSample;
         int startingTimeInSeconds;
         int remainingTimeInSeconds;
@@ -212,6 +218,14 @@ namespace DaggerfallWorkshop.Game.Questing
                         clockTimeInSeconds = timeValue0;
                 }
 
+                // Flag & 16 with a 0.0:0 clock seems to indicate clock should be
+                // set to 2.5x cautious travel time of first Place resource specificed in quest script
+                // Quests using this configuration will usually end once timer elapsed
+                if ((flag & 16) == 16 && timeValue0 == 0)
+                {
+                    clockTimeInSeconds = GetTravelTimeInSeconds();
+                }
+
                 // Set timer value in seconds
                 InitialiseTimer(clockTimeInSeconds);
             }
@@ -326,6 +340,52 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 Debug.LogFormat("Clock timer {0} completed but could not find a task with same name.", Symbol.Name);
             }
+        }
+
+        int GetTravelTimeInSeconds()
+        {
+            // First Place resource should be main location of quest
+            // This seems to hold true in all quests looked at in detail so far
+            QuestResource[] placeResources = ParentQuest.GetAllResources(typeof(Place));
+            if (placeResources == null || placeResources.Length == 0)
+            {
+                Debug.LogError("Clock wants a travel time but quest has no Place resources.");
+                return 0;
+            }
+
+            // Get location from place resource
+            DFLocation location;
+            Place place = (Place)placeResources[0];
+            if (!DaggerfallUnity.Instance.ContentReader.GetLocation(place.SiteDetails.regionName, place.SiteDetails.locationName, out location))
+            {
+                Debug.LogErrorFormat("Could not find Quest Place {0}/{1}", place.SiteDetails.regionName, place.SiteDetails.locationName);
+                return 0;
+            }
+
+            // Get end position in map pixel coordinates
+            DFPosition endPos = MapsFile.WorldCoordToMapPixel(location.Exterior.RecordElement.Header.X, location.Exterior.RecordElement.Header.Y);
+
+            // Create a path to location
+            // Use the most cautious time possible allowing for player to camp out or stop at inns along the way
+            TravelTimeCalculator travelTimeCalculator = new TravelTimeCalculator();
+            travelTimeCalculator.GeneratePath(endPos);
+            travelTimeCalculator.CalculateTravelTimeTotal(true, false, false, true, false);
+
+            // Get travel time in total days across land and water
+            // Allow for return trip travel time plus some fudge for side goals and quest process itself
+            // How Daggerfall actually calcutes travel time is currently unknown
+            // This should be fair and realistic in most circumstances while still creating time pressures
+            // Modify "returnTripMultiplier" to make calcualted quest time harder/easier
+            int travelTimeDaysLand = 0;
+            int travelTimeDaysWater = 0;
+            int travelTimeDaysTotal = 0;
+            if (travelTimeCalculator.TravelTimeTotalLand > 0)
+                travelTimeDaysLand = (int)((travelTimeCalculator.TravelTimeTotalLand / 60 / 24) + 0.5);
+            if (travelTimeCalculator.TravelTimeTotalWater > 0)
+                travelTimeDaysWater = (int)((travelTimeCalculator.TravelTimeTotalWater / 60 / 24) + 0.5);
+            travelTimeDaysTotal = (int)((travelTimeDaysLand + travelTimeDaysWater) * returnTripMultiplier);
+
+            return GetTimeInSeconds(travelTimeDaysTotal, 0, 0);
         }
 
         #endregion
