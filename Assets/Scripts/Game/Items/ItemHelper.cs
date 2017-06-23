@@ -643,8 +643,8 @@ namespace DaggerfallWorkshop.Game.Items
                     return Enum.GetValues(typeof(MensClothing));
                 case ItemGroups.Books:
                     return Enum.GetValues(typeof(Books));
-                case ItemGroups.Error:
-                    return Enum.GetValues(typeof(ERROR));
+                case ItemGroups.Furniture:
+                    return Enum.GetValues(typeof(Furniture));
                 case ItemGroups.UselessItems2:
                     return Enum.GetValues(typeof(UselessItems2));
                 case ItemGroups.ReligiousItems:

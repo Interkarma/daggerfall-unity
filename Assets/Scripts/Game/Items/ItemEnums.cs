@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.Items
         Artifacts,
         MensClothing,
         Books,
-        Error,                                      // Not sure what this is for - from Dagged
+        Furniture, // According to Daghex
         UselessItems2,
         ReligiousItems,
         Maps,
@@ -283,9 +283,37 @@ namespace DaggerfallWorkshop.Game.Items
         Book = 279,
     }
 
-    public enum ERROR                               // ?
+    public enum Furniture // Index numbers are from ItemTemplates.txt
     {
-        ERROR,
+        Plain_single_bed = 217,
+        Fancy_single_bed = 218,
+        Plain_double_bed = 219,
+        Fancy_double_bed = 220,
+        Large_oak_table = 221,
+        Large_cherry_table = 222,
+        Large_mahogany_table = 223,
+        Large_teak_table = 224,
+        Small_oak_table = 225,
+        Small_cherry_table = 226,
+        Small_mahogany_table = 227,
+        Small_teak_table = 228,
+        Oak_chair = 229,
+        Cherry_chair = 230,
+        Mahogany_chair = 231,
+        Teak_chair = 232,
+        Curtains = 233,
+        Fancy_curtains = 234,
+        Large_pillow = 235,
+        Small_pillow = 236,
+        Small_plain_rug = 237,
+        Large_plain_rug = 238,
+        Small_fine_rug = 239,
+        Large_fine_rug = 240,
+        Large_tapestry = 241,
+        Medium_tapestry = 242,
+        Small_tapestry = 243,
+        Large_skins = 244,
+        Small_skins = 245,
     }
 
     public enum UselessItems2 //checked
