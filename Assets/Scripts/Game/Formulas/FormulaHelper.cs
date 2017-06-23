@@ -195,6 +195,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
                 else
                     weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
+
                 if (weapon == null)
                 {
                     damage_low = CalculateHandToHandMinDamage(attacker.Skills.HandToHand);
@@ -206,6 +207,22 @@ namespace DaggerfallWorkshop.Game.Formulas
                     damage_high = weapon.GetBaseDamageMax();
                 }
                 damage_result = UnityEngine.Random.Range(damage_low, damage_high + 1);
+
+                // Apply weapon expertise modifier
+                if (weapon != null)
+                {
+                    if (((int)attacker.Career.ExpertProficiencies & (weapon.GetWeaponSkillUsed())) != 0)
+                    {
+                        damage_result += ((attacker.Level / 3) + 1);
+                    }
+                }
+                else // Apply hand-to-hand expertise modifier
+                {
+                    if (((int)attacker.Career.ExpertProficiencies & (int)(DaggerfallConnect.DFCareer.ProficiencyFlags.HandToHand)) != 0)
+                    {
+                        damage_result += ((attacker.Level / 3) + 1);
+                    }
+                }
 
                 // Apply the strength modifier and the material modifier for weapons.
                 if (weapon != null)

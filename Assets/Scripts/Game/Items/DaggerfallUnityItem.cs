@@ -363,8 +363,8 @@ namespace DaggerfallWorkshop.Game.Items
         {
             // Only certain items support user-initiated variants
             bool canChangeVariant = false;
-            switch(TemplateIndex)
-            {        
+            switch (TemplateIndex)
+            {
                 case (int)MensClothing.Casual_cloak:
                 case (int)MensClothing.Formal_cloak:
                 case (int)MensClothing.Reversible_tunic:
@@ -388,7 +388,7 @@ namespace DaggerfallWorkshop.Game.Items
                 case (int)WomensClothing.Short_shirt_closed:
                 case (int)WomensClothing.Short_shirt_closed_belt:
                 case (int)WomensClothing.Long_shirt_closed:
-                case (int)WomensClothing.Long_shirt_closed_belt:               
+                case (int)WomensClothing.Long_shirt_closed_belt:
                     canChangeVariant = true;
                     break;
             }
@@ -514,7 +514,7 @@ namespace DaggerfallWorkshop.Game.Items
                 case (int)Weapons.Staff:
                     return SoundClips.SwingMediumPitch;
                 case (int)Weapons.Dagger:
-                case (int)Weapons.Tanto:                
+                case (int)Weapons.Tanto:
                 case (int)Weapons.Shortsword:
                     return SoundClips.SwingHighPitch;
 
@@ -523,7 +523,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public short GetWeaponSkillUsed()
+        public int GetWeaponSkillUsed()
         {
             switch (TemplateIndex)
             {
@@ -531,24 +531,45 @@ namespace DaggerfallWorkshop.Game.Items
                 case (int)Weapons.Tanto:
                 case (int)Weapons.Wakazashi:
                 case (int)Weapons.Shortsword:
-                    return (int)Skills.ShortBlade;
+                    return (int)DaggerfallConnect.DFCareer.ProficiencyFlags.ShortBlades;
                 case (int)Weapons.Broadsword:
                 case (int)Weapons.Longsword:
                 case (int)Weapons.Saber:
                 case (int)Weapons.Katana:
                 case (int)Weapons.Claymore:
                 case (int)Weapons.Dai_Katana:
-                    return (int)Skills.LongBlade;
+                    return (int)DaggerfallConnect.DFCareer.ProficiencyFlags.LongBlades;
                 case (int)Weapons.Battle_Axe:
                 case (int)Weapons.War_Axe:
-                    return (int)Skills.Axe;
+                    return (int)DaggerfallConnect.DFCareer.ProficiencyFlags.Axes;
                 case (int)Weapons.Flail:
                 case (int)Weapons.Mace:
                 case (int)Weapons.Warhammer:
                 case (int)Weapons.Staff:
-                    return (int)Skills.BluntWeapon;
+                    return (int)DaggerfallConnect.DFCareer.ProficiencyFlags.BluntWeapons;
                 case (int)Weapons.Short_Bow:
                 case (int)Weapons.Long_Bow:
+                    return (int)DaggerfallConnect.DFCareer.ProficiencyFlags.MissileWeapons;
+
+                default:
+                    return (int)Skills.None;
+            }
+        }
+
+        public short GetWeaponSkillID()
+        {
+            int skill = GetWeaponSkillUsed();
+            switch (skill)
+            {
+                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.ShortBlades:
+                    return (int)Skills.ShortBlade;
+                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.LongBlades:
+                    return (int)Skills.LongBlade;
+                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.Axes:
+                    return (int)Skills.Axe;
+                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.BluntWeapons:
+                    return (int)Skills.BluntWeapon;
+                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.MissileWeapons:
                     return (int)Skills.Archery;
 
                 default:

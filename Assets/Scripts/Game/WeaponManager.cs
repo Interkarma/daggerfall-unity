@@ -272,9 +272,9 @@ namespace DaggerfallWorkshop.Game
                     if (weapon.WeaponType == WeaponTypes.Melee || weapon.WeaponType == WeaponTypes.Werecreature)
                         playerEntity.TallySkill((short)Skills.HandToHand, 1);
                     else if (usingRightHand && (currentRightHandWeapon != null))
-                        playerEntity.TallySkill(currentRightHandWeapon.GetWeaponSkillUsed(), 1);
+                        playerEntity.TallySkill(currentRightHandWeapon.GetWeaponSkillID(), 1);
                     else if (currentLeftHandWeapon != null)
-                        playerEntity.TallySkill(currentLeftHandWeapon.GetWeaponSkillUsed(), 1);
+                        playerEntity.TallySkill(currentLeftHandWeapon.GetWeaponSkillID(), 1);
                 }
 
                 // Damage transfer is done. The attack now plays through the remainder of its animation frames.
