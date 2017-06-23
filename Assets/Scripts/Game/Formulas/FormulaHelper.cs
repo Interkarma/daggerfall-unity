@@ -176,13 +176,17 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateHandToHandMaxDamage(int handToHandSkill)
         {
             // Daggerfall Chronicles table lists hand-to-hand skills of 80 and above (45 through 79 are omitted)
-            // as if they are (handToHandSkill / 5) + 2, but the hand-to-hand damage display in the character sheet
-            // in classic Daggerfall shows the damage as continuing to be (handToHandSkill / 5) + 1
+            // as if they give max damage of (handToHandSkill / 5) + 2, but the hand-to-hand damage display in the character sheet
+            // in classic Daggerfall shows it as continuing to be (handToHandSkill / 5) + 1
             return (handToHandSkill / 5) + 1;
         }
 
         public static int CalculateWeaponDamage(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, FPSWeapon onScreenWeapon)
         {
+            // In classic, hand-to-hand damage is not affected by the strength modifier, by the type of swing or by hand-to-hand proficiency.
+            // Both the game manual and strength attribute description say that the strength modifier applies to hand-to-hand damage,
+            // and hand-to-hand proficiency would have no effect if it didn't do something for damage and chance to hit.
+
             int damage_low = 0;
             int damage_high = 0;
             int damage_result = 0;
@@ -206,11 +210,12 @@ namespace DaggerfallWorkshop.Game.Formulas
                     damage_low = weapon.GetBaseDamageMin();
                     damage_high = weapon.GetBaseDamageMax();
                 }
+
                 damage_result = UnityEngine.Random.Range(damage_low, damage_high + 1);
 
-                if (weapon != null && onScreenWeapon != null)
+                if (onScreenWeapon != null)
                 {
-                    // Apply weapon swing modifier.
+                    // Apply swing modifier.
                     if (onScreenWeapon.WeaponState == WeaponStates.StrikeUp)
                         damage_result += -2;
                     if (onScreenWeapon.WeaponState == WeaponStates.StrikeDownLeft
@@ -220,25 +225,29 @@ namespace DaggerfallWorkshop.Game.Formulas
                         damage_result += 3;
 
                     // Apply weapon expertise modifier
-                    if (((int)attacker.Career.ExpertProficiencies & (weapon.GetWeaponSkillUsed())) != 0)
+                    if (weapon != null && ((int)attacker.Career.ExpertProficiencies & weapon.GetWeaponSkillUsed()) != 0)
                     {
                         damage_result += ((attacker.Level / 3) + 1);
                     }
-                }
-                else // Apply hand-to-hand expertise modifier
-                {
-                    if (((int)attacker.Career.ExpertProficiencies & (int)(DaggerfallConnect.DFCareer.ProficiencyFlags.HandToHand)) != 0)
+
+                    // Apply hand-to-hand expertise modifier
+                    else if (weapon == null && ((int)attacker.Career.ExpertProficiencies & (int)(DaggerfallConnect.DFCareer.ProficiencyFlags.HandToHand)) != 0)
                     {
                         damage_result += ((attacker.Level / 3) + 1);
                     }
                 }
 
-                // Apply the strength modifier and the material modifier for weapons.
+                // Apply the strength modifier.
+                damage_result += DamageModifier(attacker.Stats.Strength);
+
+                // Apply the material modifier
                 if (weapon != null)
                 {
-                    // 0 damage is possible. Plays no hit sound or blood splash.
-                    damage_result = Mathf.Max(0, damage_result + DamageModifier(attacker.Stats.Strength) + weapon.GetMaterialDamageModifier());
+                    damage_result += weapon.GetMaterialDamageModifier();
                 }
+
+                // 0 damage is possible. Plays no hit sound or blood splash.
+                damage_result = Mathf.Max(0, damage_result);
             }
 
             return damage_result;
