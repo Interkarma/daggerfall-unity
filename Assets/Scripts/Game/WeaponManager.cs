@@ -268,13 +268,15 @@ namespace DaggerfallWorkshop.Game
                     weapon.PlaySwingSound();
                 else
                 {
-                    // Tally skill for weapon used
+                    // Tally skills
                     if (weapon.WeaponType == WeaponTypes.Melee || weapon.WeaponType == WeaponTypes.Werecreature)
                         playerEntity.TallySkill((short)Skills.HandToHand, 1);
                     else if (usingRightHand && (currentRightHandWeapon != null))
                         playerEntity.TallySkill(currentRightHandWeapon.GetWeaponSkillID(), 1);
                     else if (currentLeftHandWeapon != null)
                         playerEntity.TallySkill(currentLeftHandWeapon.GetWeaponSkillID(), 1);
+
+                    playerEntity.TallySkill((short)Skills.CriticalStrike, 1);
                 }
 
                 // Damage transfer is done. The attack now plays through the remainder of its animation frames.
