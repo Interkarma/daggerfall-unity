@@ -187,11 +187,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Both the game manual and strength attribute description say that the strength modifier applies to hand-to-hand damage,
             // and hand-to-hand proficiency would have no effect if it didn't do something for damage and chance to hit.
 
-            int damage_low = 0;
-            int damage_high = 0;
-            int damage_result = 0;
+            int damageLow = 0;
+            int damageHigh = 0;
+            int damageResult = 0;
+            int chanceToHitMod = 0;
 
-            // TODO: Damage from AI characters.
+            // TODO: Calculations for AI characters.
             if (attacker == GameManager.Instance.PlayerEntity)
             {
                 Items.DaggerfallUnityItem weapon;
@@ -202,40 +203,57 @@ namespace DaggerfallWorkshop.Game.Formulas
 
                 if (weapon == null)
                 {
-                    damage_low = CalculateHandToHandMinDamage(attacker.Skills.HandToHand);
-                    damage_high = CalculateHandToHandMaxDamage(attacker.Skills.HandToHand);
+                    damageLow = CalculateHandToHandMinDamage(attacker.Skills.HandToHand);
+                    damageHigh = CalculateHandToHandMaxDamage(attacker.Skills.HandToHand);
+                    chanceToHitMod += attacker.Skills.GetSkillValue(attacker.Skills.HandToHand);
                 }
                 else
                 {
-                    damage_low = weapon.GetBaseDamageMin();
-                    damage_high = weapon.GetBaseDamageMax();
+                    damageLow = weapon.GetBaseDamageMin();
+                    damageHigh = weapon.GetBaseDamageMax();
+                    short skill = weapon.GetWeaponSkillID();
+                    chanceToHitMod += attacker.Skills.GetSkillValue((DaggerfallConnect.DFCareer.Skills)skill);
                 }
 
-                damage_result = UnityEngine.Random.Range(damage_low, damage_high + 1);
+                damageResult = UnityEngine.Random.Range(damageLow, damageHigh + 1);
 
                 if (onScreenWeapon != null)
                 {
                     // Apply swing modifier.
                     // The Daggerfall manual groups diagonal slashes to the left and right as if they are the same, but they are different.
                     if (onScreenWeapon.WeaponState == WeaponStates.StrikeUp)
-                        damage_result += -4;
+                    {
+                        damageResult += -4;
+                        chanceToHitMod += 10;
+                    }
                     if (onScreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
-                        damage_result += -2;
+                    {
+                        damageResult += -2;
+                        chanceToHitMod += 5;
+                    }
                     if (onScreenWeapon.WeaponState == WeaponStates.StrikeDownLeft)
-                        damage_result += 2;
+                    {
+                        damageResult += 2;
+                        chanceToHitMod -= 5;
+                    }
                     if (onScreenWeapon.WeaponState == WeaponStates.StrikeDown)
-                        damage_result += 4;
+                    {
+                        damageResult += 4;
+                        chanceToHitMod -= 10;
+                    }
                 }
 
-                // Apply weapon expertise modifier
+                // Apply weapon expertise modifier.
                 if (weapon != null && ((int)attacker.Career.ExpertProficiencies & weapon.GetWeaponSkillUsed()) != 0)
                 {
-                    damage_result += ((attacker.Level / 3) + 1);
+                    damageResult += ((attacker.Level / 3) + 1);
+                    chanceToHitMod += attacker.Level;
                 }
-                // Apply hand-to-hand expertise modifier
+                // Apply hand-to-hand expertise modifier.
                 else if (weapon == null && ((int)attacker.Career.ExpertProficiencies & (int)(DaggerfallConnect.DFCareer.ProficiencyFlags.HandToHand)) != 0)
                 {
-                    damage_result += ((attacker.Level / 3) + 1);
+                    damageResult += ((attacker.Level / 3) + 1);
+                    chanceToHitMod += attacker.Level;
                 }
 
                 // Apply bonus or penalty from opponent type.
@@ -245,44 +263,44 @@ namespace DaggerfallWorkshop.Game.Formulas
                 {
                     if (((int)attacker.Career.UndeadAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
                     {
-                        damage_result += attacker.Level;
+                        damageResult += attacker.Level;
                     }
                     if (((int)attacker.Career.UndeadAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
                     {
-                        damage_result -= attacker.Level;
+                        damageResult -= attacker.Level;
                     }
                 }
                 else if (enemyEntity.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Daedra)
                 {
                     if (((int)attacker.Career.DaedraAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
                     {
-                        damage_result += attacker.Level;
+                        damageResult += attacker.Level;
                     }
                     if (((int)attacker.Career.DaedraAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
                     {
-                        damage_result -= attacker.Level;
+                        damageResult -= attacker.Level;
                     }
                 }
                 else if (enemyEntity.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Humanoid)
                 {
                     if (((int)attacker.Career.HumanoidAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
                     {
-                        damage_result += attacker.Level;
+                        damageResult += attacker.Level;
                     }
                     if (((int)attacker.Career.HumanoidAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
                     {
-                        damage_result -= attacker.Level;
+                        damageResult -= attacker.Level;
                     }
                 }
                 else if (enemyEntity.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Animals)
                 {
                     if (((int)attacker.Career.AnimalsAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
                     {
-                        damage_result += attacker.Level;
+                        damageResult += attacker.Level;
                     }
                     if (((int)attacker.Career.AnimalsAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
                     {
-                        damage_result -= attacker.Level;
+                        damageResult -= attacker.Level;
                     }
                 }
 
@@ -292,46 +310,123 @@ namespace DaggerfallWorkshop.Game.Formulas
                 {
                     if (playerEntity.RaceTemplate.ID == (int)Entity.Races.DarkElf)
                     {
-                        damage_result += (attacker.Level / 4);
+                        damageResult += (attacker.Level / 4);
+                        chanceToHitMod += (attacker.Level / 4);
                     }
                     else if (weapon.GetWeaponSkillUsed() == (int)DaggerfallConnect.DFCareer.ProficiencyFlags.MissileWeapons)
                     {
                         if (playerEntity.RaceTemplate.ID == (int)Entity.Races.WoodElf)
                         {
-                            damage_result += (attacker.Level / 3);
+                            damageResult += (attacker.Level / 3);
+                            chanceToHitMod += (attacker.Level / 3);
                         }
                     }
                     else if (playerEntity.RaceTemplate.ID == (int)Entity.Races.Redguard)
                     {
-                        damage_result += (attacker.Level / 3);
+                        damageResult += (attacker.Level / 3);
+                        chanceToHitMod += (attacker.Level / 3);
                     }
                 }
+
+                // At this point we have everything we need to calculate a hit or miss,
+                // so check for a successful hit before continuing damage calculations.
+                if (CalculateSuccessfulHit(attacker, target, chanceToHitMod, weapon) == false)
+                    return 0;
 
                 // Apply modifiers for Skeletal Warrior.
                 if (weapon != null && enemyEntity.CareerIndex == (int)Entity.MonsterCareers.SkeletalWarrior)
                 {
                     if (weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
-                        damage_result *= 2;
+                        damageResult *= 2;
                     if (weapon.GetWeaponSkillUsed() != (int)DaggerfallConnect.DFCareer.ProficiencyFlags.BluntWeapons)
-                        damage_result /= 2;
+                        damageResult /= 2;
                 }
 
                 // Apply strength modifier.
                 // The in-game display of the strength modifier in Daggerfall is incorrect. It is actually ((STR - 50) / 5).
-                damage_result += DamageModifier(attacker.Stats.Strength);
+                damageResult += DamageModifier(attacker.Stats.Strength);
 
                 // Apply material modifier.
                 // The in-game display in Daggerfall of weapon damages with material modifiers is incorrect. The material modifier is half of what the display suggests.
                 if (weapon != null)
                 {
-                    damage_result += weapon.GetMaterialDamageModifier();
+                    damageResult += weapon.GetMaterialModifier();
                 }
 
                 // 0 damage is possible. Creates no blood splash.
-                damage_result = Mathf.Max(0, damage_result);
+                damageResult = Mathf.Max(0, damageResult);
             }
 
-            return damage_result;
+            return damageResult;
+        }
+
+        public static bool CalculateSuccessfulHit(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, int chanceToHitMod, Items.DaggerfallUnityItem weapon)
+        {
+            int chanceToHit = chanceToHitMod;
+
+            // Apply random modifier
+            int[] randomMods = { 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
+            int randomMod = randomMods[(UnityEngine.Random.Range(0, 19 + 1))];
+
+            chanceToHit += randomMod;
+
+            // Apply armor value modifier.
+            Entity.EnemyEntity enemyEntity = target as Entity.EnemyEntity;
+            int armorValue = (enemyEntity.MobileEnemy.ArmorValue * 5);
+
+            // TODO: Add enemy classes' equipment armor values. For now using fudged value of 60.
+            if (enemyEntity.EntityType == EntityTypes.EnemyClass)
+                armorValue = 60;
+
+            chanceToHit += armorValue;
+
+            // Apply adrenaline rush modifiers.
+            if (attacker.Career.AdrenalineRush && attacker.CurrentHealth < (attacker.MaxHealth / 8))
+                chanceToHit += 5;
+            if (target.Career.AdrenalineRush && target.CurrentHealth < (target.MaxHealth / 8))
+                chanceToHit -= 5;
+
+            // Apply luck modifier.
+            chanceToHit += ((attacker.Stats.Luck - target.Stats.Luck) / 10);
+
+            // Apply agility modifier.
+            chanceToHit += ((attacker.Stats.Agility - target.Stats.Agility) / 10);
+
+            // Apply weapon material modifier.
+            if (weapon != null)
+            {
+                chanceToHit += (weapon.GetMaterialModifier() * 10);
+            }
+
+            // Apply dodging modifier.
+            // This modifier is bugged in classic and the attacker's dodging skill is used rather than the target's.
+            // DF Chronicles says the dodging calculation is (dodging / 10), but it actually seems to be (dodging / 4).
+            chanceToHit -= (target.Skills.Dodging / 4);
+
+            // Apply critical strike modifier.
+            if (UnityEngine.Random.Range(0, 100 + 1) < attacker.Skills.CriticalStrike)
+            {
+                chanceToHit += (attacker.Skills.CriticalStrike / 10);
+            }
+
+            // Apply monster modifier.
+            if (enemyEntity.EntityType == EntityTypes.EnemyMonster)
+                chanceToHit += 40;
+
+            // DF Chronicles says -60 is applied at the end, but it actually seems to be -50.
+            chanceToHit -= 50;
+
+            if (chanceToHit > 97)
+                chanceToHit = 97;
+            if (chanceToHit < 3)
+                chanceToHit = 3;
+
+            int roll = UnityEngine.Random.Range(0, 100 + 1);
+
+            if (roll <= chanceToHit)
+                return true;
+            else
+                return false;
         }
 
         #endregion

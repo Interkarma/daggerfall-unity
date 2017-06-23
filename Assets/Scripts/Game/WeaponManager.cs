@@ -631,6 +631,14 @@ namespace DaggerfallWorkshop.Game
                                 blood.ShowBloodSplash(enemyEntity.MobileEnemy.BloodIndex, hit.point);
                             }
                         }
+                        else
+                        {
+                            // TODO: Figure out what determines what type of sound plays.
+                            if (enemyEntity.EntityType == EntityTypes.EnemyMonster || weapon.WeaponType == WeaponTypes.Melee)
+                                weapon.PlaySwingSound();
+                            else
+                                weapon.PlayParrySound();
+                        }
 
                         // Remove health
                         enemyEntity.DecreaseHealth(damage);

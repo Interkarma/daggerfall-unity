@@ -744,7 +744,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public int GetMaterialDamageModifier()
+        public int GetMaterialModifier()
         {
             switch (nativeMaterialValue)
             {
