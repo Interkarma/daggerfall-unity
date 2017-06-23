@@ -742,21 +742,39 @@ namespace DaggerfallWorkshop.Utility
                     throw new Exception(string.Format("Could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID));
 
                 // Get selected spawn QuestMarker for this Place
-                QuestMarker marker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
-                foreach (Symbol target in marker.targetResources)
+                QuestMarker spawnMarker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
+                if (spawnMarker.targetResources != null)
                 {
-                    // Get target resource
-                    QuestResource resource = quest.GetResource(target);
-                    if (resource == null)
-                        continue;
+                    foreach (Symbol target in spawnMarker.targetResources)
+                    {
+                        // Get target resource
+                        QuestResource resource = quest.GetResource(target);
+                        if (resource == null)
+                            continue;
 
-                    // Inject to scene based on resource type
-                    if (resource is Person)
-                        AddQuestNPC(siteType, quest, marker, (Person)resource, parent);
-                    else if (resource is Foe)
-                        AddQuestFoe(siteType, quest, marker, (Foe)resource, parent);
-                    else if (resource is Item)
-                        AddQuestItem(siteType, quest, marker, (Item)resource, parent);
+                        // Inject to scene based on resource type
+                        if (resource is Person)
+                            AddQuestNPC(siteType, quest, spawnMarker, (Person)resource, parent);
+                        else if (resource is Foe)
+                            AddQuestFoe(siteType, quest, spawnMarker, (Foe)resource, parent);
+                    }
+                }
+
+                // Get selected item QuestMarker for this Place
+                QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
+                if (itemMarker.targetResources != null)
+                {
+                    foreach (Symbol target in itemMarker.targetResources)
+                    {
+                        // Get target resource
+                        QuestResource resource = quest.GetResource(target);
+                        if (resource == null)
+                            continue;
+
+                        // Inject into scene
+                        if (resource is Item)
+                            AddQuestItem(siteType, quest, itemMarker, (Item)resource, parent);
+                    }
                 }
             }
         }
@@ -834,9 +852,38 @@ namespace DaggerfallWorkshop.Utility
             foe.RearmInjured();
         }
 
+        /// <summary>
+        /// Adds a quest item to marker position.
+        /// TEMP: Just working through issues for now.
+        /// </summary>
         static void AddQuestItem(SiteTypes siteType, Quest quest, QuestMarker marker, Item item, Transform parent = null)
         {
-            // TODO: Place target quest item loot container on marker
+            // Convert marker space it lands in the right spot
+            Vector3 position = marker.flatPosition;
+            if (parent != null)
+                position = parent.transform.TransformPoint(position);
+
+            // Create test random loot container on marker
+            // TODO: Use correct loot container image
+            DaggerfallLoot loot = CreateLootContainer(
+                LootContainerTypes.RandomTreasure,
+                InventoryContainerImages.Chest,
+                position,
+                parent,
+                DaggerfallLoot.randomTreasureArchive,
+                0);
+
+            // Assign the item to container
+            loot.Items.AddItem(item.DaggerfallUnityItem);
+
+            // TODO: Set an event when container is looted
+            // This will be used to purge Item from QuestMarker in this SiteLink
+            // Otherwise player will be able to infinitely spawn and collect item by entering/exiting site
+            //loot.OnInventoryClose += 
+            
+            //// TEST: Set random treasure key
+            //loot.LootTableKey = "O";
+            //loot.GenerateItems();
         }
 
         #endregion

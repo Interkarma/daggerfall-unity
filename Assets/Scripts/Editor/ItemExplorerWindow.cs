@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop
         const string windowTitle = "Item Explorer";
         const string menuPath = "Daggerfall Tools/Item Explorer [Test]";
         const string itemsFilename = "ItemTemplates.txt";
+        const string magicItemsFilename = "MagicItemTemplates.txt";
 
         DaggerfallUnity dfUnity;
 
@@ -53,6 +54,13 @@ namespace DaggerfallWorkshop
                 string fallExePath = Path.Combine(Path.GetDirectoryName(dfUnity.Arena2Path), "FALL.EXE");
                 string outputPath = Path.Combine(Application.dataPath, itemsFilename);
                 ItemDataToJSON.CreateJSON(fallExePath, outputPath);
+            }
+
+            if (GUILayout.Button("Generate Magic Item JSON"))
+            {
+                string magicDefPath = Path.Combine(dfUnity.Arena2Path, "MAGIC.DEF");
+                string outputPath = Path.Combine(Application.dataPath, magicItemsFilename);
+                ItemDataToJSON.CreateMagicItemJSON(magicDefPath, outputPath);
             }
         }
 

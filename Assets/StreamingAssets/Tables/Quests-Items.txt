@@ -1,4 +1,6 @@
-schema: *name,t1,t2
+-- NOTE: Contents adapted from Template 1.11 by Donald Tipton
+
+schema: *name,p1,p2
 
 --	Item classes for the Items section of a Qbn file.
 

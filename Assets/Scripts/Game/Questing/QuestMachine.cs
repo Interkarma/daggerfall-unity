@@ -284,6 +284,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new PcAt(null));
             RegisterAction(new CreateNpcAt(null));
             RegisterAction(new PlaceNpc(null));
+            RegisterAction(new PlaceItem(null));
             RegisterAction(new GivePc(null));
             RegisterAction(new StartStopTimer(null));
             RegisterAction(new DailyFrom(null));

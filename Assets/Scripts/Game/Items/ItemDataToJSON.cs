@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using DaggerfallConnect.FallExe;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -39,6 +40,14 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             string json = SaveLoadManager.Serialize(itemDescriptions.GetType(), itemDescriptions);
+            File.WriteAllText(outputPath, json);
+        }
+
+        public static void CreateMagicItemJSON(string magicDefPath, string outputPath)
+        {
+            MagicItemsFile magicItemsFile = new MagicItemsFile(magicDefPath);
+            List<MagicItemsFile.DFMagicItem> magicItems = magicItemsFile.MagicItemsList;
+            string json = SaveLoadManager.Serialize(magicItems.GetType(), magicItems);
             File.WriteAllText(outputPath, json);
         }
     }

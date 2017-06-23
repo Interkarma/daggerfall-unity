@@ -296,18 +296,18 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception(string.Format("Tried to assign resource symbol _{0}_ to Place {1} but it has an unknown MarkerType {2}", targetSymbol.Name, Symbol.Name, requiredMarkerType.ToString()));
             }
 
-            // Output NPC debug info
+            // Output debug information
             if (resource is Person)
             {
                 if (siteDetails.siteType == SiteTypes.Building)
                 {
                     if (requiredMarkerType == MarkerTypes.QuestSpawn)
-                        Debug.LogFormat("Assigned NPC {0} to Building {1}", (resource as Person).DisplayName, SiteDetails.buildingName);
+                        Debug.LogFormat("Assigned Person {0} to Building {1}", (resource as Person).DisplayName, SiteDetails.buildingName);
                 }
                 else if (siteDetails.siteType == SiteTypes.Dungeon)
                 {
                     if (requiredMarkerType == MarkerTypes.QuestSpawn)
-                        Debug.LogFormat("Assigned NPC {0} to Dungeon {1}", (resource as Person).DisplayName, SiteDetails.locationName);
+                        Debug.LogFormat("Assigned Person {0} to Dungeon {1}", (resource as Person).DisplayName, SiteDetails.locationName);
                 }
             }
             else if (resource is Foe)
@@ -321,6 +321,19 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     if (requiredMarkerType == MarkerTypes.QuestSpawn)
                         Debug.LogFormat("Assigned Foe _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
+                }
+            }
+            else if (resource is Item)
+            {
+                if (siteDetails.siteType == SiteTypes.Building)
+                {
+                    if (requiredMarkerType == MarkerTypes.QuestItem)
+                        Debug.LogFormat("Assigned Item _{0}_ to Building {1}", resource.Symbol.Name, SiteDetails.buildingName);
+                }
+                else if (siteDetails.siteType == SiteTypes.Dungeon)
+                {
+                    if (requiredMarkerType == MarkerTypes.QuestItem)
+                        Debug.LogFormat("Assigned Item _{0}_ to Dungeon {1}", resource.Symbol.Name, SiteDetails.locationName);
                 }
             }
         }

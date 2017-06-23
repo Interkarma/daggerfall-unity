@@ -581,6 +581,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 localItemsStackLabels[i].Text = string.Empty;
                 localItemsButtons[i].ToolTipText = string.Empty;
                 localItemsIconPanels[i].BackgroundTexture = null;
+                localItemsButtons[i].BackgroundColor = Color.clear;
             }
             localItemsUpButton.BackgroundTexture = redUpArrow;
             localItemsDownButton.BackgroundTexture = redDownArrow;
@@ -594,6 +595,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItemsStackLabels[i].Text = string.Empty;
                 remoteItemsButtons[i].ToolTipText = string.Empty;
                 remoteItemsIconPanels[i].BackgroundTexture = null;
+                remoteItemsButtons[i].BackgroundColor = Color.clear;
             }
             remoteItemsUpButton.BackgroundTexture = redUpArrow;
             remoteItemsDownButton.BackgroundTexture = redDownArrow;
@@ -933,6 +935,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Get item and image
                 DaggerfallUnityItem item = remoteItemsFiltered[scrollIndex + i];
                 ImageData image = GetInventoryImage(item);
+
+                // TEST: Set green background for remote quest items
+                if (item.IsQuestItem)
+                    remoteItemsButtons[i].BackgroundColor = questItemBackgroundColor;
+                else
+                    remoteItemsButtons[i].BackgroundColor = Color.clear;
 
                 // Set image to button icon
                 remoteItemsIconPanels[i].BackgroundTexture = image.texture;
@@ -1334,10 +1342,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Item questItem = quest.GetItem(item.QuestItemSymbol);
 
                 // Check for an on use value
-                if (questItem.UseID != 0)
+                if (questItem.UsedMessageID != 0)
                 {
                     // Display the message popup
-                    quest.ShowMessagePopup(questItem.UseID);
+                    quest.ShowMessagePopup(questItem.UsedMessageID);
                 }
             }
 
