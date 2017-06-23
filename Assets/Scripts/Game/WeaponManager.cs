@@ -619,7 +619,7 @@ namespace DaggerfallWorkshop.Game
                         EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
 
                         // Calculate damage
-                        int damage = FormulaHelper.CalculateWeaponDamage(playerEntity, enemyEntity);
+                        int damage = FormulaHelper.CalculateWeaponDamage(playerEntity, enemyEntity, weapon);
 
                         // Play hit sound and trigger blood splash at hit point
                         if (damage > 0)

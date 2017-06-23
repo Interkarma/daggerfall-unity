@@ -181,7 +181,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             return (handToHandSkill / 5) + 1;
         }
 
-        public static int CalculateWeaponDamage(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target)
+        public static int CalculateWeaponDamage(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, FPSWeapon onScreenWeapon)
         {
             int damage_low = 0;
             int damage_high = 0;
@@ -208,9 +208,18 @@ namespace DaggerfallWorkshop.Game.Formulas
                 }
                 damage_result = UnityEngine.Random.Range(damage_low, damage_high + 1);
 
-                // Apply weapon expertise modifier
-                if (weapon != null)
+                if (weapon != null && onScreenWeapon != null)
                 {
+                    // Apply weapon swing modifier.
+                    if (onScreenWeapon.WeaponState == WeaponStates.StrikeUp)
+                        damage_result += -2;
+                    if (onScreenWeapon.WeaponState == WeaponStates.StrikeDownLeft
+                        || onScreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
+                        damage_result += 1;
+                    if (onScreenWeapon.WeaponState == WeaponStates.StrikeDown)
+                        damage_result += 3;
+
+                    // Apply weapon expertise modifier
                     if (((int)attacker.Career.ExpertProficiencies & (weapon.GetWeaponSkillUsed())) != 0)
                     {
                         damage_result += ((attacker.Level / 3) + 1);

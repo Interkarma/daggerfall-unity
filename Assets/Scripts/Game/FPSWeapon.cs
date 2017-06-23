@@ -62,6 +62,12 @@ namespace DaggerfallWorkshop.Game
         int currentFrame = 0;
         Rect curAnimRect;
 
+        #region Properties
+
+        public WeaponStates WeaponState { get { return weaponState; } }
+
+        #endregion
+
         void Start()
         {
             dfUnity = DaggerfallUnity.Instance;
