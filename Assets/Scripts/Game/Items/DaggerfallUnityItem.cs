@@ -363,8 +363,8 @@ namespace DaggerfallWorkshop.Game.Items
         {
             // Only certain items support user-initiated variants
             bool canChangeVariant = false;
-            switch(TemplateIndex)
-            {        
+            switch (TemplateIndex)
+            {
                 case (int)MensClothing.Casual_cloak:
                 case (int)MensClothing.Formal_cloak:
                 case (int)MensClothing.Reversible_tunic:
@@ -388,7 +388,7 @@ namespace DaggerfallWorkshop.Game.Items
                 case (int)WomensClothing.Short_shirt_closed:
                 case (int)WomensClothing.Short_shirt_closed_belt:
                 case (int)WomensClothing.Long_shirt_closed:
-                case (int)WomensClothing.Long_shirt_closed_belt:               
+                case (int)WomensClothing.Long_shirt_closed_belt:
                     canChangeVariant = true;
                     break;
             }
@@ -514,7 +514,7 @@ namespace DaggerfallWorkshop.Game.Items
                 case (int)Weapons.Staff:
                     return SoundClips.SwingMediumPitch;
                 case (int)Weapons.Dagger:
-                case (int)Weapons.Tanto:                
+                case (int)Weapons.Tanto:
                 case (int)Weapons.Shortsword:
                     return SoundClips.SwingHighPitch;
 
@@ -523,7 +523,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public short GetWeaponSkillUsed()
+        public int GetWeaponSkillUsed()
         {
             switch (TemplateIndex)
             {
@@ -531,28 +531,145 @@ namespace DaggerfallWorkshop.Game.Items
                 case (int)Weapons.Tanto:
                 case (int)Weapons.Wakazashi:
                 case (int)Weapons.Shortsword:
-                    return (int)Skills.ShortBlade;
+                    return (int)DaggerfallConnect.DFCareer.ProficiencyFlags.ShortBlades;
                 case (int)Weapons.Broadsword:
                 case (int)Weapons.Longsword:
                 case (int)Weapons.Saber:
                 case (int)Weapons.Katana:
                 case (int)Weapons.Claymore:
                 case (int)Weapons.Dai_Katana:
-                    return (int)Skills.LongBlade;
+                    return (int)DaggerfallConnect.DFCareer.ProficiencyFlags.LongBlades;
                 case (int)Weapons.Battle_Axe:
                 case (int)Weapons.War_Axe:
-                    return (int)Skills.Axe;
+                    return (int)DaggerfallConnect.DFCareer.ProficiencyFlags.Axes;
                 case (int)Weapons.Flail:
                 case (int)Weapons.Mace:
                 case (int)Weapons.Warhammer:
                 case (int)Weapons.Staff:
-                    return (int)Skills.BluntWeapon;
+                    return (int)DaggerfallConnect.DFCareer.ProficiencyFlags.BluntWeapons;
                 case (int)Weapons.Short_Bow:
                 case (int)Weapons.Long_Bow:
+                    return (int)DaggerfallConnect.DFCareer.ProficiencyFlags.MissileWeapons;
+
+                default:
+                    return (int)Skills.None;
+            }
+        }
+
+        public short GetWeaponSkillID()
+        {
+            int skill = GetWeaponSkillUsed();
+            switch (skill)
+            {
+                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.ShortBlades:
+                    return (int)Skills.ShortBlade;
+                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.LongBlades:
+                    return (int)Skills.LongBlade;
+                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.Axes:
+                    return (int)Skills.Axe;
+                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.BluntWeapons:
+                    return (int)Skills.BluntWeapon;
+                case (int)DaggerfallConnect.DFCareer.ProficiencyFlags.MissileWeapons:
                     return (int)Skills.Archery;
 
                 default:
                     return (int)Skills.None;
+            }
+        }
+
+        public int GetBaseDamageMin()
+        {
+            switch (TemplateIndex)
+            {
+                case (int)Weapons.Dagger:
+                case (int)Weapons.Tanto:
+                case (int)Weapons.Wakazashi:
+                case (int)Weapons.Shortsword:
+                case (int)Weapons.Broadsword:
+                case (int)Weapons.Staff:
+                case (int)Weapons.Mace:
+                    return 1;
+                case (int)Weapons.Longsword:
+                case (int)Weapons.Claymore:
+                case (int)Weapons.Battle_Axe:
+                case (int)Weapons.War_Axe:
+                case (int)Weapons.Flail:
+                    return 2;
+                case (int)Weapons.Saber:
+                case (int)Weapons.Katana:
+                case (int)Weapons.Dai_Katana:
+                case (int)Weapons.Warhammer:
+                    return 3;
+                case (int)Weapons.Short_Bow:
+                case (int)Weapons.Long_Bow:
+                    return 4;
+
+                default:
+                    return 0;
+            }
+        }
+
+        public int GetBaseDamageMax()
+        {
+            switch (TemplateIndex)
+            {
+                case (int)Weapons.Dagger:
+                    return 6;
+                case (int)Weapons.Tanto:
+                case (int)Weapons.Shortsword:
+                case (int)Weapons.Staff:
+                    return 8;
+                case (int)Weapons.Wakazashi:
+                    return 10;
+                case (int)Weapons.Broadsword:
+                case (int)Weapons.Saber:
+                case (int)Weapons.Battle_Axe:
+                case (int)Weapons.Mace:
+                    return 12;
+                case (int)Weapons.Flail:
+                    return 14;
+                case (int)Weapons.Longsword:
+                case (int)Weapons.Katana:
+                case (int)Weapons.War_Axe:
+                case (int)Weapons.Short_Bow:
+                    return 16;
+                case (int)Weapons.Claymore:
+                case (int)Weapons.Warhammer:
+                case (int)Weapons.Long_Bow:
+                    return 18;
+                case (int)Weapons.Dai_Katana:
+                    return 21;
+
+                default:
+                    return 0;
+            }
+        }
+
+        public int GetMaterialDamageModifier()
+        {
+            switch (nativeMaterialValue)
+            {
+                case (int)WeaponMaterialTypes.Iron:
+                    return -2;
+                case (int)WeaponMaterialTypes.Steel:
+                case (int)WeaponMaterialTypes.Silver:
+                    return 0;
+                case (int)WeaponMaterialTypes.Elven:
+                    return 2;
+                case (int)WeaponMaterialTypes.Dwarven:
+                    return 4;
+                case (int)WeaponMaterialTypes.Mithril:
+                case (int)WeaponMaterialTypes.Adamantium:
+                    return 6;
+                case (int)WeaponMaterialTypes.Ebony:
+                    return 8;
+                case (int)WeaponMaterialTypes.Orcish:
+                    return 10;
+                case (int)WeaponMaterialTypes.Daedric:
+                    return 12;
+
+                default:
+                    return 0;
             }
         }
 

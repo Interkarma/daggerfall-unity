@@ -176,31 +176,81 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateHandToHandMaxDamage(int handToHandSkill)
         {
             // Daggerfall Chronicles table lists hand-to-hand skills of 80 and above (45 through 79 are omitted)
-            // as if they are (handToHandSkill / 5) + 2, but the hand-to-hand damage display in the character sheet
-            // in classic Daggerfall shows the damage as continuing to be (handToHandSkill / 5) + 1
+            // as if they give max damage of (handToHandSkill / 5) + 2, but the hand-to-hand damage display in the character sheet
+            // in classic Daggerfall shows it as continuing to be (handToHandSkill / 5) + 1
             return (handToHandSkill / 5) + 1;
         }
 
-        public static int CalculateWeaponDamage(FPSWeapon weapon, DaggerfallWorkshop.Game.Entity.PlayerEntity player)
+        public static int CalculateWeaponDamage(Entity.DaggerfallEntity attacker, Entity.DaggerfallEntity target, FPSWeapon onScreenWeapon)
         {
-            int damage_low = 1; // Temp value
-            if (weapon.WeaponType == WeaponTypes.Melee)
-                damage_low = CalculateHandToHandMinDamage(player.Skills.HandToHand);
+            // In classic, hand-to-hand damage is not affected by the strength modifier, by the type of swing or by hand-to-hand proficiency.
+            // Both the game manual and strength attribute description say that the strength modifier applies to hand-to-hand damage,
+            // and hand-to-hand proficiency would have no effect if it didn't do something for damage and chance to hit.
 
-            int damage_high = 24; // Temp value
-            if (weapon.WeaponType == WeaponTypes.Melee)
-                damage_high = CalculateHandToHandMaxDamage(player.Skills.HandToHand);
+            int damage_low = 0;
+            int damage_high = 0;
+            int damage_result = 0;
 
-            int damage = UnityEngine.Random.Range(damage_low, damage_high + 1);
-
-            // Apply the strength modifier. Testing in classic Daggerfall shows hand-to-hand ignores it.
-            if (weapon.WeaponType != WeaponTypes.Melee)
+            // TODO: Damage from AI characters.
+            if (attacker == GameManager.Instance.PlayerEntity)
             {
-                // Weapons can do 0 damage. Plays no hit sound or blood splash.
-                damage = Mathf.Max(0, damage + DamageModifier(player.Stats.Strength));
+                Items.DaggerfallUnityItem weapon;
+                if (GameManager.Instance.WeaponManager.UsingRightHand)
+                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.RightHand);
+                else
+                    weapon = attacker.ItemEquipTable.GetItem(Items.EquipSlots.LeftHand);
+
+                if (weapon == null)
+                {
+                    damage_low = CalculateHandToHandMinDamage(attacker.Skills.HandToHand);
+                    damage_high = CalculateHandToHandMaxDamage(attacker.Skills.HandToHand);
+                }
+                else
+                {
+                    damage_low = weapon.GetBaseDamageMin();
+                    damage_high = weapon.GetBaseDamageMax();
+                }
+
+                damage_result = UnityEngine.Random.Range(damage_low, damage_high + 1);
+
+                if (onScreenWeapon != null)
+                {
+                    // Apply swing modifier.
+                    if (onScreenWeapon.WeaponState == WeaponStates.StrikeUp)
+                        damage_result += -2;
+                    if (onScreenWeapon.WeaponState == WeaponStates.StrikeDownLeft
+                        || onScreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
+                        damage_result += 1;
+                    if (onScreenWeapon.WeaponState == WeaponStates.StrikeDown)
+                        damage_result += 3;
+
+                    // Apply weapon expertise modifier
+                    if (weapon != null && ((int)attacker.Career.ExpertProficiencies & weapon.GetWeaponSkillUsed()) != 0)
+                    {
+                        damage_result += ((attacker.Level / 3) + 1);
+                    }
+
+                    // Apply hand-to-hand expertise modifier
+                    else if (weapon == null && ((int)attacker.Career.ExpertProficiencies & (int)(DaggerfallConnect.DFCareer.ProficiencyFlags.HandToHand)) != 0)
+                    {
+                        damage_result += ((attacker.Level / 3) + 1);
+                    }
+                }
+
+                // Apply the strength modifier.
+                damage_result += DamageModifier(attacker.Stats.Strength);
+
+                // Apply the material modifier
+                if (weapon != null)
+                {
+                    damage_result += weapon.GetMaterialDamageModifier();
+                }
+
+                // 0 damage is possible. Plays no hit sound or blood splash.
+                damage_result = Mathf.Max(0, damage_result);
             }
 
-            return damage;
+            return damage_result;
         }
 
         #endregion
