@@ -78,7 +78,7 @@ namespace DaggerfallConnect.FallExe
         public MagicItemTypes type;                 // Type of magic item
         public byte group;                          // Group in item templates
         public byte groupIndex;                     // Group index (subgroup) in item templates
-        public short[] enchantments;                // Array of legacy enchantments on this item
+        public int[] enchantments;                  // Array of legacy enchantments on this item
         public short uses;                          // Number of uses
         public ushort unknown1;                     // Unknown
         public byte material;                       // Material?

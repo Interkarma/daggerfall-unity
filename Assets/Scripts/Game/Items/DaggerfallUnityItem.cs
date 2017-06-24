@@ -393,6 +393,20 @@ namespace DaggerfallWorkshop.Game.Items
             stackCount = 1;
             isArtifact = true;
             artifactType = (ArtifactsSubTypes)groupIndex;
+
+            // All artifacts have magical effects
+            bool foundEnchantment = false;
+            legacyMagic = new int[magicItemTemplate.enchantments.Length];
+            for (int i = 0; i < magicItemTemplate.enchantments.Length; i++)
+            {
+                legacyMagic[i] = (ushort)magicItemTemplate.enchantments[i];
+                if (legacyMagic[i] != 0xffff)
+                    foundEnchantment = true;
+            }
+
+            // Discard list if no enchantment found
+            if (!foundEnchantment)
+                legacyMagic = null;
         }
 
         /// <summary>

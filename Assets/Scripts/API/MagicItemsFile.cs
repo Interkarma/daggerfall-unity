@@ -90,7 +90,7 @@ namespace DaggerfallConnect.Arena2
             magicItem.groupIndex = reader.ReadByte();
 
             // Read enchantments
-            magicItem.enchantments = new short[10];
+            magicItem.enchantments = new int[10];
             for (int i = 0; i < 10; i++)
             {
                 magicItem.enchantments[i] = reader.ReadInt16();
