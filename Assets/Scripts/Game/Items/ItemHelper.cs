@@ -28,12 +28,23 @@ namespace DaggerfallWorkshop.Game.Items
     {
         #region Fields
 
+        // This array is in order of ItemEnums.ArtifactsSubTypes
+        // Each element in array is the texture record index to use for that artifact in TEXTURE.432, TEXTURE.433
+        // The actual equip placement and whether a left and right hand image exist is derived from item group/groupIndex from usual template data
+        int[] artifactTextureIndexMappings = new int[] { 12, 13, 10, 8, 19, 16, 25, 18, 21, 2, 24, 26, 0, 15, 3, 9, 23, 17, 7, 1, 22, 20, 5 };
+
         const string itemTemplatesFilename = "ItemTemplates";
+        const string magicItemTemplatesFilename = "MagicItemTemplates";
         const string containerIconsFilename = "INVE16I0.CIF";
         const string bookMappingFilename = "books";
         const string recipeMappingFilename = "PotionRecipes";
 
+        const int artifactMaleTextureArchive = 432;
+        const int artifactFemaleTextureArchive = 433;
+
         List<ItemTemplate> itemTemplates = new List<ItemTemplate>();
+        List<MagicItemTemplate> allMagicItemTemplates = new List<MagicItemTemplate>();
+        List<MagicItemTemplate> artifactItemTemplates = new List<MagicItemTemplate>();
         Dictionary<int, ImageData> itemImages = new Dictionary<int, ImageData>();
         Dictionary<InventoryContainerImages, ImageData> containerImages = new Dictionary<InventoryContainerImages, ImageData>();
         Dictionary<int, String> bookIDNameMapping = new Dictionary<int, String>();
@@ -46,6 +57,7 @@ namespace DaggerfallWorkshop.Game.Items
         public ItemHelper()
         {
             LoadItemTemplates();
+            LoadMagicItemTemplates();
             LoadBookIDNameMapping();
             LoadPotionRecipeIDMapping();
         }
@@ -88,6 +100,21 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Gets artifact template from magic item template data.
+        /// </summary>
+        public MagicItemTemplate GetArtifactTemplate(int artifactIndex)
+        {
+            if (artifactIndex < 0 || artifactIndex >= artifactItemTemplates.Count)
+            {
+                string message = string.Format("Artifact template index out of range: ArtifactIndex={0}", artifactIndex);
+                Debug.Log(message);
+                return new MagicItemTemplate();
+            }
+
+            return artifactItemTemplates[artifactIndex];
+        }
+
+        /// <summary>
         /// Gets item group index from group and template index.
         /// </summary>
         /// <returns>Item group index, or -1 if not found.</returns>
@@ -109,6 +136,10 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public string ResolveItemName(DaggerfallUnityItem item)
         {
+            // Hand off for artifacts
+            if (item.IsArtifact)
+                return ResolveArtifactName(item);
+
             // Start with base name
             string result = item.shortName;
 
@@ -138,6 +169,17 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Resolves full name for artifact items.
+        /// </summary>
+        public string ResolveArtifactName(DaggerfallUnityItem item)
+        {
+            if (!item.IsArtifact)
+                throw new Exception("An attempt was made to get artifact name from a non-artifact item.");
+
+            return artifactItemTemplates[(int)item.ArtifactType].name;
+        }
+
+        /// <summary>
         /// Gets inventory/equip image for specified item.
         /// Image will be cached based on material and hand for faster subsequent fetches.
         /// </summary>
@@ -147,6 +189,10 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>ImageData.</returns>
         public ImageData GetItemImage(DaggerfallUnityItem item, bool removeMask = false, bool forPaperDoll = false)
         {
+            // Hand off for artifacts
+            if (item.IsArtifact)
+                return GetArtifactItemImage(item, forPaperDoll);
+
             // Get colour
             int color = (int)item.dyeColor;
 
@@ -227,11 +273,71 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>ImageData.</returns>
         public ImageData GetItemImage(DaggerfallUnityItem item, Color maskColor, bool forPaperDoll = false)
         {
+            // Hand off for artifacts
+            if (item.IsArtifact)
+                return GetArtifactItemImage(item, forPaperDoll);
+
             // Get base item with mask intact
             ImageData result = GetItemImage(item, false, forPaperDoll);
             ImageReader.UpdateTexture(ref result, maskColor);
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets item image for artifact.
+        /// </summary>
+        public ImageData GetArtifactItemImage(DaggerfallUnityItem item, bool forPaperDoll = false)
+        {
+            if (!item.IsArtifact)
+                throw new Exception("An attempt was made to get artifact item image from a non-artifact item.");
+
+            // Get colour
+            // Not by artifacts but is used for generating key
+            int color = (int)item.dyeColor;
+
+            // Get archive and record indices
+            MagicItemTemplate magicItemTemplate = artifactItemTemplates[(int)item.ArtifactType];
+            int archive = (GameManager.Instance.PlayerEntity.Gender == Genders.Male) ? artifactMaleTextureArchive : artifactFemaleTextureArchive;
+            int record = artifactTextureIndexMappings[(int)item.ArtifactType];
+
+            // Paper doll handling
+            if (forPaperDoll)
+            {
+                // 1H Weapons in right hand need record + 1
+                if (item.ItemGroup == ItemGroups.Weapons && item.EquipSlot == EquipSlots.RightHand)
+                {
+                    if (ItemEquipTable.GetItemHands(item) == ItemHands.Either)
+                        record += 1;
+                }
+            }
+            else
+            {
+                // Katanas need +1 for inventory image as they use right-hand image instead of left
+                if (item.IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Katana))
+                    record += 1;
+            }
+
+            // Get unique key
+            int key = MakeImageKey(color, archive, record, false);
+
+            // Get existing icon if in cache
+            if (itemImages.ContainsKey(key))
+                return itemImages[key];
+
+            // Load image data
+            string filename = TextureFile.IndexToFileName(archive);
+            ImageData data = ImageReader.GetImageData(filename, record, 0, true, false);
+            if (data.type == ImageTypes.None)
+                throw new Exception("GetArtifactItemImage() could not load image data.");
+
+            // Update texture
+            ImageReader.UpdateTexture(ref data);
+
+            // Add to cache
+            itemImages.Add(key, data);
+
+            return data;
         }
 
         /// <summary>
@@ -773,6 +879,31 @@ namespace DaggerfallWorkshop.Game.Items
             catch
             {
                 Debug.Log("Could not load ItemTemplates database from Resources. Check file exists and is in correct format.");
+            }
+        }
+
+        void LoadMagicItemTemplates()
+        {
+            try
+            {
+                // Get full list of magic items
+                TextAsset templates = Resources.Load<TextAsset>(magicItemTemplatesFilename) as TextAsset;
+                allMagicItemTemplates = SaveLoadManager.Deserialize(typeof(List<MagicItemTemplate>), templates.text) as List<MagicItemTemplate>;
+
+                // Create list of just artifact item
+                artifactItemTemplates = new List<MagicItemTemplate>();
+                for(int i = 0; i < allMagicItemTemplates.Count; i++)
+                {
+                    if (allMagicItemTemplates[i].type == MagicItemTypes.ArtifactClass1 ||
+                        allMagicItemTemplates[i].type == MagicItemTypes.ArtifactClass2)
+                    {
+                        artifactItemTemplates.Add(allMagicItemTemplates[i]);
+                    }
+                }
+            }
+            catch
+            {
+                Debug.Log("Could not load MagicItemTemplates database from Resources. Check file exists and is in correct format.");
             }
         }
 

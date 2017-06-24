@@ -67,6 +67,34 @@ namespace DaggerfallConnect.FallExe
         public int playerTextureRecord;             // Player inventory texture record index
     }
 
+    /// <summary>
+    /// Stores template data for magic items and artifacts.
+    /// </summary>
+    [Serializable]
+    public struct MagicItemTemplate
+    {
+        public long index;                          // Index of this item in lit
+        public string name;                         // Display name
+        public MagicItemTypes type;                 // Type of magic item
+        public byte group;                          // Group in item templates
+        public byte groupIndex;                     // Group index (subgroup) in item templates
+        public short[] enchantments;                // Array of legacy enchantments on this item
+        public short uses;                          // Number of uses
+        public ushort unknown1;                     // Unknown
+        public byte material;                       // Material?
+        public short unknown2;                      // Unknown
+    }
+
+    /// <summary>
+    /// Magic item types.
+    /// </summary>
+    public enum MagicItemTypes
+    {
+        RegularMagicItem,
+        ArtifactClass1,
+        ArtifactClass2,
+    }
+
     public struct BookMappingTemplate
     {
         public int id;

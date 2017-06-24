@@ -94,7 +94,6 @@ namespace DaggerfallWorkshop.Game.Questing
             bool isGold = false;
             int rangeLow = -1;
             int rangeHigh = -1;
-            string artifactName = string.Empty;
             Match match = Regex.Match(line, declMatchStr);
             if (match.Success)
             {

@@ -10,13 +10,10 @@ QuestLogEntry:  [1010]
  I need to find the item
  at _tavern_ in __tavern_.
 
-Message: 1030
- You found the thing!
-
 
 QBN:
 
-Item _item_ artifact Ring_of_Khajiit
+Item _item_ artifact Chrysamere
 
 Place _tavern_ local tavern
 

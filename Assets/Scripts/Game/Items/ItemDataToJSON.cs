@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop.Game.Items
         public static void CreateMagicItemJSON(string magicDefPath, string outputPath)
         {
             MagicItemsFile magicItemsFile = new MagicItemsFile(magicDefPath);
-            List<MagicItemsFile.DFMagicItem> magicItems = magicItemsFile.MagicItemsList;
+            List<MagicItemTemplate> magicItems = magicItemsFile.MagicItemsList;
             string json = SaveLoadManager.Serialize(magicItems.GetType(), magicItems);
             File.WriteAllText(outputPath, json);
         }

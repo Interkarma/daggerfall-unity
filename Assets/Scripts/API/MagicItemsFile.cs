@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
+using DaggerfallConnect.FallExe;
 
 namespace DaggerfallConnect.Arena2
 {
@@ -26,40 +27,15 @@ namespace DaggerfallConnect.Arena2
         const int nameLength = 32;
 
         FileProxy magicItemsFile = new FileProxy();
-        List<DFMagicItem> magicItems = new List<DFMagicItem>();
+        List<MagicItemTemplate> magicItems = new List<MagicItemTemplate>();
 
         #endregion
 
         #region Properties
 
-        public List<DFMagicItem> MagicItemsList
+        public List<MagicItemTemplate> MagicItemsList
         {
             get { return magicItems; }
-        }
-
-        #endregion
-
-        #region Structs & Enums
-
-        public struct DFMagicItem
-        {
-            public long position;
-            public string name;
-            public MagicItemTypes type;
-            public byte group;
-            public byte groupIndex;
-            public short[] enchantments;
-            public short uses;
-            public ushort unknown1;
-            public byte material;
-            public short unknown2;
-        }
-
-        public enum MagicItemTypes
-        {
-            RegularMagicItem,
-            ArtifactClass1,
-            ArtifactClass2,
         }
 
         #endregion
@@ -100,14 +76,14 @@ namespace DaggerfallConnect.Arena2
             int recordCount = reader.ReadInt32();
             for (int i = 0; i < recordCount; i++)
             {
-                magicItems.Add(ReadNextMagicItem(reader));
+                magicItems.Add(ReadNextMagicItem(reader, i));
             }
         }
 
-        DFMagicItem ReadNextMagicItem(BinaryReader reader)
+        MagicItemTemplate ReadNextMagicItem(BinaryReader reader, int index)
         {
-            DFMagicItem magicItem = new DFMagicItem();
-            magicItem.position = reader.BaseStream.Position;
+            MagicItemTemplate magicItem = new MagicItemTemplate();
+            magicItem.index = reader.BaseStream.Position;
             magicItem.name = FileProxy.ReadCString(reader, nameLength);
             magicItem.type = (MagicItemTypes)reader.ReadByte();
             magicItem.group = reader.ReadByte();

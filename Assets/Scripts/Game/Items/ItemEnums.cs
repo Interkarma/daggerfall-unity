@@ -212,7 +212,7 @@ namespace DaggerfallWorkshop.Game.Items
         Oghma_Infinium = 5,
         Wabbajack = 6,
         Ring_of_Namira = 7,
-        Skull_of_Curroption = 8,
+        Skull_of_Corruption = 8,
         Azuras_Star = 9,
         Volendrung = 10,
         Warlocks_Ring = 11,
@@ -227,7 +227,6 @@ namespace DaggerfallWorkshop.Game.Items
         Spell_Breaker = 20,
         Skeleton_Key = 21,
         Ebony_Blade = 22,
-        Daves_Blade = 23,
     }
 
     public enum MensClothing  //check

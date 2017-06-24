@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using System;
 using DaggerfallConnect.Save;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
@@ -48,6 +49,8 @@ namespace DaggerfallWorkshop.Game.Items
         ItemGroups itemGroup;
         int groupIndex;
         int currentVariant = 0;
+        bool isArtifact = false;
+        ArtifactsSubTypes artifactType;
         ulong uid;
 
         // Quest-related fields
@@ -205,6 +208,22 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Check is this item is an artifact.
+        /// </summary>
+        public bool IsArtifact
+        {
+            get { return isArtifact; }
+        }
+
+        /// <summary>
+        /// Gets artifact type - only valid when IsArtifact=true.
+        /// </summary>
+        public ArtifactsSubTypes ArtifactType
+        {
+            get { return artifactType; }
+        }
+
+        /// <summary>
         /// Check if this is a quest item.
         /// </summary>
         public bool IsQuestItem
@@ -303,6 +322,13 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="groupIndex">Item group index.</param>
         public void SetItem(ItemGroups itemGroup, int groupIndex)
         {
+            // Hand off for artifacts
+            if (itemGroup == ItemGroups.Artifacts)
+            {
+                SetArtifact(itemGroup, groupIndex);
+                return;
+            }
+
             // Get template data
             ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, groupIndex);
 
@@ -330,6 +356,43 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Fix leather helms
             ItemBuilder.FixLeatherHelm(this);
+        }
+        
+        /// <summary>
+        /// Sets item by merging item template and artifact template data.
+        /// </summary>
+        /// <param name="groupIndex">Artifact group index.</param>
+        public void SetArtifact(ItemGroups itemGroup, int groupIndex)
+        {
+            // Must be an artifact type
+            if (itemGroup != ItemGroups.Artifacts)
+                throw new Exception("An attempt was made to SetArtifact() with non-artifact ItemGroups value.");
+
+            // Get artifact template
+            MagicItemTemplate magicItemTemplate = DaggerfallUnity.Instance.ItemHelper.GetArtifactTemplate(groupIndex);
+
+            // Get base item template data, this is the fundamental item type being expanded
+            ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate((ItemGroups)magicItemTemplate.group, magicItemTemplate.groupIndex);
+
+            // Assign new data
+            shortName = itemTemplate.name;
+            this.itemGroup = (ItemGroups)magicItemTemplate.group;
+            this.groupIndex = magicItemTemplate.groupIndex;
+            nativeMaterialValue = 0;
+            dyeColor = DyeColors.Unchanged;
+            weightInKg = itemTemplate.baseWeight;
+            drawOrder = itemTemplate.drawOrderOrEffect;
+            currentVariant = 0;
+            value1 = itemTemplate.basePrice;
+            value2 = itemTemplate.basePrice;
+            hits1 = itemTemplate.hitPoints;
+            hits2 = itemTemplate.hitPoints;
+            hits3 = itemTemplate.hitPoints;
+            enchantmentPoints = 0;
+            message = 0;
+            stackCount = 1;
+            isArtifact = true;
+            artifactType = (ArtifactsSubTypes)groupIndex;
         }
 
         /// <summary>
