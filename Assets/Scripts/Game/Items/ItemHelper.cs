@@ -136,10 +136,6 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public string ResolveItemName(DaggerfallUnityItem item)
         {
-            // Hand off for artifacts
-            if (item.IsArtifact)
-                return ResolveArtifactName(item);
-
             // Start with base name
             string result = item.shortName;
 
@@ -169,17 +165,6 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Resolves full name for artifact items.
-        /// </summary>
-        public string ResolveArtifactName(DaggerfallUnityItem item)
-        {
-            if (!item.IsArtifact)
-                throw new Exception("An attempt was made to get artifact name from a non-artifact item.");
-
-            return artifactItemTemplates[(int)item.ArtifactType].name;
-        }
-
-        /// <summary>
         /// Gets inventory/equip image for specified item.
         /// Image will be cached based on material and hand for faster subsequent fetches.
         /// </summary>
@@ -189,10 +174,6 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>ImageData.</returns>
         public ImageData GetItemImage(DaggerfallUnityItem item, bool removeMask = false, bool forPaperDoll = false)
         {
-            // Hand off for artifacts
-            if (item.IsArtifact)
-                return GetArtifactItemImage(item, forPaperDoll);
-
             // Get colour
             int color = (int)item.dyeColor;
 
@@ -273,10 +254,6 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>ImageData.</returns>
         public ImageData GetItemImage(DaggerfallUnityItem item, Color maskColor, bool forPaperDoll = false)
         {
-            // Hand off for artifacts
-            if (item.IsArtifact)
-                return GetArtifactItemImage(item, forPaperDoll);
-
             // Get base item with mask intact
             ImageData result = GetItemImage(item, false, forPaperDoll);
             ImageReader.UpdateTexture(ref result, maskColor);
@@ -285,59 +262,25 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets item image for artifact.
+        /// Gets name of artifact.
         /// </summary>
-        public ImageData GetArtifactItemImage(DaggerfallUnityItem item, bool forPaperDoll = false)
+        /// <param name="type">Artifact subtype.</param>
+        /// <returns>Artifact name.</returns>
+        public string GetArtifactName(ArtifactsSubTypes type)
         {
-            if (!item.IsArtifact)
-                throw new Exception("An attempt was made to get artifact item image from a non-artifact item.");
+            return artifactItemTemplates[(int)type].name;
+        }
 
-            // Get colour
-            // Not by artifacts but is used for generating key
-            int color = (int)item.dyeColor;
-
-            // Get archive and record indices
-            MagicItemTemplate magicItemTemplate = artifactItemTemplates[(int)item.ArtifactType];
-            int archive = (GameManager.Instance.PlayerEntity.Gender == Genders.Male) ? artifactMaleTextureArchive : artifactFemaleTextureArchive;
-            int record = artifactTextureIndexMappings[(int)item.ArtifactType];
-
-            // Paper doll handling
-            if (forPaperDoll)
-            {
-                // 1H Weapons in right hand need record + 1
-                if (item.ItemGroup == ItemGroups.Weapons && item.EquipSlot == EquipSlots.RightHand)
-                {
-                    if (ItemEquipTable.GetItemHands(item) == ItemHands.Either)
-                        record += 1;
-                }
-            }
-            else
-            {
-                // Katanas need +1 for inventory image as they use right-hand image instead of left
-                if (item.IsOfTemplate(ItemGroups.Weapons, (int)Weapons.Katana))
-                    record += 1;
-            }
-
-            // Get unique key
-            int key = MakeImageKey(color, archive, record, false);
-
-            // Get existing icon if in cache
-            if (itemImages.ContainsKey(key))
-                return itemImages[key];
-
-            // Load image data
-            string filename = TextureFile.IndexToFileName(archive);
-            ImageData data = ImageReader.GetImageData(filename, record, 0, true, false);
-            if (data.type == ImageTypes.None)
-                throw new Exception("GetArtifactItemImage() could not load image data.");
-
-            // Update texture
-            ImageReader.UpdateTexture(ref data);
-
-            // Add to cache
-            itemImages.Add(key, data);
-
-            return data;
+        /// <summary>
+        /// Gets artifact texture indices
+        /// </summary>
+        /// <param name="type">Artifact subtype.</param>
+        /// <param name="textureArchiveOut">Texture archive out.</param>
+        /// <param name="textureRecordOut">Texture record out.</param>
+        public void GetArtifactTextureIndices(ArtifactsSubTypes type, out int textureArchiveOut, out int textureRecordOut)
+        {
+            textureArchiveOut = (GameManager.Instance.PlayerEntity.Gender == Genders.Male) ? artifactMaleTextureArchive : artifactFemaleTextureArchive;
+            textureRecordOut = artifactTextureIndexMappings[(int)type];
         }
 
         /// <summary>

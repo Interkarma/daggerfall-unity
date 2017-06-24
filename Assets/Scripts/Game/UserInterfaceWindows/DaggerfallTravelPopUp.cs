@@ -273,19 +273,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime((travelTimeCalculator.TravelTimeTotalLand + travelTimeCalculator.TravelTimeTotalWater) * 60);
 
+            // Raise arrival time to just after 7am if cautious travel would otherwise arrive at night
+            // Increasing this from 6am to 7am as game is quite dark on at 6am (in Daggerfall Unity, Daggerfall is lighter)
+            // Will consider retuning lighting so this can be like classic, although +1 hours to travel time isn't likely to be a problem for now
             if (speedCautious)
             {
-                if ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour < 6)
-                    || ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour == 6) && (DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute < 10)))
+                if ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour < 7)
+                    || ((DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour == 7) && (DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute < 10)))
                 {
-                    float raiseTime = (((6 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
+                    float raiseTime = (((7 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
                                         + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
                                         - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
                     DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
                 }
                 else if (DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour > 17)
                 {
-                    float raiseTime = (((30 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
+                    float raiseTime = (((31 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Hour) * 3600)
                     + ((10 - DaggerfallUnity.WorldTime.DaggerfallDateTime.Minute) * 60)
                     - DaggerfallUnity.WorldTime.DaggerfallDateTime.Second);
                     DaggerfallUnity.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);

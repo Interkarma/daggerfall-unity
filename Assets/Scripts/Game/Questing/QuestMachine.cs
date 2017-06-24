@@ -686,6 +686,79 @@ namespace DaggerfallWorkshop.Game.Questing
             return false;
         }
 
+        /// <summary>
+        /// Gets the quest spawn marker in player's current location.
+        /// </summary>
+        /// <param name="markerType">Get quest spawn or item marker.</param>
+        /// <param name="questMarkerOut">QuestMarker out.</param>
+        /// <returns>True if successful.</returns>
+        public bool GetCurrentLocationQuestMarker(MarkerTypes markerType, out QuestMarker questMarkerOut)
+        {
+            questMarkerOut = new QuestMarker();
+
+            // Get PlayerEnterExit for world context
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            if (!playerEnterExit)
+                return false;
+
+            // Get SiteLinks for player's current location
+            SiteLink[] siteLinks = null;
+            if (playerEnterExit.IsPlayerInsideBuilding)
+            {
+                StaticDoor[] exteriorDoors = playerEnterExit.ExteriorDoors;
+                if (exteriorDoors == null || exteriorDoors.Length < 1)
+                    return false;
+
+                siteLinks = GetSiteLinks(SiteTypes.Building, GameManager.Instance.PlayerGPS.CurrentMapID, exteriorDoors[0].buildingKey);
+                if (siteLinks == null || siteLinks.Length == 0)
+                    return false;
+            }
+            else if (playerEnterExit.IsPlayerInsideDungeon)
+            {
+                siteLinks = GetSiteLinks(SiteTypes.Dungeon, GameManager.Instance.PlayerGPS.CurrentMapID);
+            }
+            else
+            {
+                return false;
+            }
+
+            // Exit if no links found
+            if (siteLinks == null || siteLinks.Length == 0)
+                return false;
+
+            // Walk through all found SiteLinks
+            foreach (SiteLink link in siteLinks)
+            {
+                // Get the Quest object referenced by this link
+                Quest quest = GetActiveQuest(link.questUID);
+                if (quest == null)
+                    return false;
+
+                // Get the Place resource referenced by this link
+                Place place = quest.GetPlace(link.placeSymbol);
+                if (place == null)
+                    return false;
+
+                // Get spawn marker
+                QuestMarker spawnMarker = place.SiteDetails.questSpawnMarkers[place.SiteDetails.selectedQuestSpawnMarker];
+                if (markerType == MarkerTypes.QuestSpawn && spawnMarker.targetResources != null)
+                {
+                    questMarkerOut = spawnMarker;
+                    return true;
+                }
+
+                // Get item marker
+                QuestMarker itemMarker = place.SiteDetails.questItemMarkers[place.SiteDetails.selectedQuestItemMarker];
+                if (markerType == MarkerTypes.QuestItem && itemMarker.targetResources != null)
+                {
+                    questMarkerOut = itemMarker;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region Private Methods

@@ -858,32 +858,35 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         static void AddQuestItem(SiteTypes siteType, Quest quest, QuestMarker marker, Item item, Transform parent = null)
         {
-            // Convert marker space it lands in the right spot
-            Vector3 position = marker.flatPosition;
-            if (parent != null)
-                position = parent.transform.TransformPoint(position);
+            // Texture indices for quest items are from world texture record
+            int textureArchive = item.DaggerfallUnityItem.WorldTextureArchive;
+            int textureRecord = item.DaggerfallUnityItem.WorldTextureRecord;
 
-            // Create test random loot container on marker
-            // TODO: Use correct loot container image
-            DaggerfallLoot loot = CreateLootContainer(
-                LootContainerTypes.RandomTreasure,
-                InventoryContainerImages.Chest,
-                position,
-                parent,
-                DaggerfallLoot.randomTreasureArchive,
-                0);
+            // Create billboard
+            GameObject go = CreateDaggerfallBillboardGameObject(textureArchive, textureRecord, parent);
+            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
 
-            // Assign the item to container
-            loot.Items.AddItem(item.DaggerfallUnityItem);
+            // Setup custom material if available
+            if (AssetInjection.TextureReplacement.CustomTextureExist(textureArchive, textureRecord))
+                AssetInjection.TextureReplacement.SetBillboardCustomMaterial(go, textureArchive, textureRecord);
 
-            // TODO: Set an event when container is looted
-            // This will be used to purge Item from QuestMarker in this SiteLink
-            // Otherwise player will be able to infinitely spawn and collect item by entering/exiting site
-            //loot.OnInventoryClose += 
-            
-            //// TEST: Set random treasure key
-            //loot.LootTableKey = "O";
-            //loot.GenerateItems();
+            // Marker position
+            Vector3 position;
+            Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
+            position = dungeonBlockPosition + marker.flatPosition;
+
+            // Dungeon flats have a different origin (centre point) than elsewhere (base point)
+            // Find bottom of marker in world space as it should be aligned to placement surface (e.g. ground, table, shelf, etc.)
+            if (siteType == SiteTypes.Dungeon)
+            {
+                position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
+            }
+
+            // Now move up item icon by half own size so bottom is aligned with marker origin
+            position.y += (dfBillboard.Summary.Size.y / 2f);
+
+            // Assign position
+            go.transform.localPosition = position;
         }
 
         #endregion

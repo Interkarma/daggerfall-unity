@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Entity;
 using System.IO;
+using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Weather;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace Wenzil.Console
 {
@@ -29,6 +31,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(SetWeather.name, SetWeather.description, SetWeather.usage, SetWeather.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToMapPixel.name, TeleportToMapPixel.description, TeleportToMapPixel.usage, TeleportToMapPixel.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToDungeonDoor.name, TeleportToDungeonDoor.description, TeleportToDungeonDoor.usage, TeleportToDungeonDoor.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestSpawnMarker.name, TeleportToQuestSpawnMarker.description, TeleportToQuestSpawnMarker.usage, TeleportToQuestSpawnMarker.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestItemMarker.name, TeleportToQuestItemMarker.description, TeleportToQuestItemMarker.usage, TeleportToQuestItemMarker.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenDoor.name, OpenDoor.description, OpenDoor.usage, OpenDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ActivateAction.name, ActivateAction.description, ActivateAction.usage, ActivateAction.Execute);
@@ -724,6 +728,49 @@ namespace Wenzil.Console
                     }
 
                 }
+            }
+        }
+
+
+        private static class TeleportToQuestSpawnMarker
+        {
+            public static readonly string name = "tele2qspawn";
+            public static readonly string error = "Could not find quest spawn marker at current location";
+            public static readonly string description = "Teleport player to quest spawn marker (monster, NPC placement)";
+            public static readonly string usage = "tele2qspawn";
+
+            public static string Execute(params string[] args)
+            {
+                QuestMarker spawnMarker;
+                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestSpawn, out spawnMarker);
+                if (!result)
+                    return error;
+
+                Vector3 dungeonBlockPosition = new Vector3(spawnMarker.dungeonX * RDBLayout.RDBSide, 0, spawnMarker.dungeonZ * RDBLayout.RDBSide);
+                GameManager.Instance.PlayerEnterExit.transform.localPosition = dungeonBlockPosition + spawnMarker.flatPosition;
+
+                return "Finished";
+            }
+        }
+
+        private static class TeleportToQuestItemMarker
+        {
+            public static readonly string name = "tele2qitem";
+            public static readonly string error = "Could not find quest item marker at current location";
+            public static readonly string description = "Teleport player to quest item marker";
+            public static readonly string usage = "tele2qitem";
+
+            public static string Execute(params string[] args)
+            {
+                QuestMarker itemMarker;
+                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestItem, out itemMarker);
+                if (!result)
+                    return error;
+
+                Vector3 dungeonBlockPosition = new Vector3(itemMarker.dungeonX * RDBLayout.RDBSide, 0, itemMarker.dungeonZ * RDBLayout.RDBSide);
+                GameManager.Instance.PlayerEnterExit.transform.localPosition = dungeonBlockPosition + itemMarker.flatPosition;
+
+                return "Finished";
             }
         }
 

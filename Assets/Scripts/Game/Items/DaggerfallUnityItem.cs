@@ -49,8 +49,6 @@ namespace DaggerfallWorkshop.Game.Items
         ItemGroups itemGroup;
         int groupIndex;
         int currentVariant = 0;
-        bool isArtifact = false;
-        ArtifactsSubTypes artifactType;
         ulong uid;
 
         // Quest-related fields
@@ -87,6 +85,26 @@ namespace DaggerfallWorkshop.Game.Items
         {
             get { return playerTextureArchive; }
             set { playerTextureArchive = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets world texture archive.
+        /// This is the generic texture shown when item is used in world by itself, typically for quests.
+        /// </summary>
+        public int WorldTextureArchive
+        {
+            get { return worldTextureArchive; }
+            set { worldTextureArchive = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets world texture record.
+        /// This is the generic texture shown when item is used in world by itself, typically for quests.
+        /// </summary>
+        public int WorldTextureRecord
+        {
+            get { return worldTextureRecord; }
+            set { worldTextureRecord = value; }
         }
 
         /// <summary>
@@ -205,22 +223,6 @@ namespace DaggerfallWorkshop.Game.Items
         public bool IsShield
         {
             get { return GetIsShield(); }
-        }
-
-        /// <summary>
-        /// Check is this item is an artifact.
-        /// </summary>
-        public bool IsArtifact
-        {
-            get { return isArtifact; }
-        }
-
-        /// <summary>
-        /// Gets artifact type - only valid when IsArtifact=true.
-        /// </summary>
-        public ArtifactsSubTypes ArtifactType
-        {
-            get { return artifactType; }
         }
 
         /// <summary>
@@ -360,6 +362,7 @@ namespace DaggerfallWorkshop.Game.Items
         
         /// <summary>
         /// Sets item by merging item template and artifact template data.
+        /// Result is a normal DaggerfallUnityItem with properties of both base template and magic item template.
         /// </summary>
         /// <param name="groupIndex">Artifact group index.</param>
         public void SetArtifact(ItemGroups itemGroup, int groupIndex)
@@ -374,10 +377,18 @@ namespace DaggerfallWorkshop.Game.Items
             // Get base item template data, this is the fundamental item type being expanded
             ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate((ItemGroups)magicItemTemplate.group, magicItemTemplate.groupIndex);
 
+            // Get artifact texture indices
+            int archive, record;
+            DaggerfallUnity.Instance.ItemHelper.GetArtifactTextureIndices((ArtifactsSubTypes)groupIndex, out archive, out record);
+
             // Assign new data
-            shortName = itemTemplate.name;
+            shortName = magicItemTemplate.name;
             this.itemGroup = (ItemGroups)magicItemTemplate.group;
             this.groupIndex = magicItemTemplate.groupIndex;
+            playerTextureArchive = archive;
+            playerTextureRecord = record;
+            worldTextureArchive = archive;                  // Not sure about artifact world textures, just using player texture for now
+            worldTextureRecord = record;
             nativeMaterialValue = 0;
             dyeColor = DyeColors.Unchanged;
             weightInKg = itemTemplate.baseWeight;
@@ -391,8 +402,6 @@ namespace DaggerfallWorkshop.Game.Items
             enchantmentPoints = 0;
             message = 0;
             stackCount = 1;
-            isArtifact = true;
-            artifactType = (ArtifactsSubTypes)groupIndex;
 
             // All artifacts have magical effects
             bool foundEnchantment = false;
@@ -510,8 +519,6 @@ namespace DaggerfallWorkshop.Game.Items
             data.itemGroup = itemGroup;
             data.groupIndex = groupIndex;
             data.currentVariant = currentVariant;
-            data.isArtifact = isArtifact;
-            data.artifactType = artifactType;
 
             // Not using quest data yet
             //data.isQuestItem = isQuestItem;
@@ -933,8 +940,6 @@ namespace DaggerfallWorkshop.Game.Items
             itemGroup = data.itemGroup;
             groupIndex = data.groupIndex;
             currentVariant = data.currentVariant;
-            isArtifact = data.isArtifact;
-            artifactType = data.artifactType;
 
             // Not using quest data yet
             //isQuestItem = data.isQuestItem;

@@ -176,8 +176,6 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ItemGroups itemGroup;
         public int groupIndex;
         public int currentVariant;
-        public bool isArtifact;
-        public ArtifactsSubTypes artifactType;
         public bool isQuestItem;
         public ulong questUID;
         public Symbol questItemSymbol;
