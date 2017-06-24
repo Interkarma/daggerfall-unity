@@ -16,6 +16,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Weather;
+using DaggerfallWorkshop.Game.Questing;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Serialization
@@ -175,6 +176,11 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ItemGroups itemGroup;
         public int groupIndex;
         public int currentVariant;
+        public bool isArtifact;
+        public ArtifactsSubTypes artifactType;
+        public bool isQuestItem;
+        public ulong questUID;
+        public Symbol questItemSymbol;
     }
 
     #endregion

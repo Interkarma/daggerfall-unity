@@ -496,6 +496,13 @@ namespace DaggerfallWorkshop.Game.Items
             data.itemGroup = itemGroup;
             data.groupIndex = groupIndex;
             data.currentVariant = currentVariant;
+            data.isArtifact = isArtifact;
+            data.artifactType = artifactType;
+
+            // Not using quest data yet
+            //data.isQuestItem = isQuestItem;
+            //data.questUID = questUID;
+            //data.questItemSymbol = questItemSymbol;
 
             return data;
         }
@@ -912,6 +919,13 @@ namespace DaggerfallWorkshop.Game.Items
             itemGroup = data.itemGroup;
             groupIndex = data.groupIndex;
             currentVariant = data.currentVariant;
+            isArtifact = data.isArtifact;
+            artifactType = data.artifactType;
+
+            // Not using quest data yet
+            //isQuestItem = data.isQuestItem;
+            //questUID = data.questUID;
+            //questItemSymbol = data.questItemSymbol;
         }
 
         /// <summary>
