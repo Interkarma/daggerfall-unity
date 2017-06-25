@@ -112,6 +112,11 @@ namespace DaggerfallWorkshop.Utility
                             // Get current region
                             words[word] = words[word].Replace(macro.token, GetRegionName());
                         }
+                        else if (macro.token == "%god")
+                        {
+                            // Get god of last NPC
+                            words[word] = words[word].Replace(macro.token, GetGod(parentQuest));
+                        }
                     }
                     else
                     {
@@ -174,6 +179,15 @@ namespace DaggerfallWorkshop.Utility
         string GetRegionName()
         {
             return GameManager.Instance.PlayerGPS.CurrentRegionName;
+        }
+
+        string GetGod(Quest quest)
+        {
+            // Get god of current NPC or fallback
+            if (quest.LastPersonReferenced != null)
+                return quest.LastPersonReferenced.GodName;
+            else
+                return "Arkay";
         }
 
         #endregion

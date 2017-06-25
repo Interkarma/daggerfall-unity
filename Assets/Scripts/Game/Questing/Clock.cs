@@ -231,6 +231,20 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        public override bool ExpandMacro(MacroTypes macro, out string textOut)
+        {
+            textOut = string.Empty;
+            switch(macro)
+            {
+                case MacroTypes.DetailsMacro:
+                    textOut = GetDaysRemainingString();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
         public override void Tick(Quest caller)
         {
             // Exit if not enabled or finished
@@ -282,6 +296,13 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 clockEnabled = false;
             }
+        }
+
+        public string GetDaysRemainingString()
+        {
+            TimeSpan time = TimeSpan.FromSeconds(remainingTimeInSeconds);
+
+            return time.Days.ToString();
         }
 
         public string GetRemainingTimeString()

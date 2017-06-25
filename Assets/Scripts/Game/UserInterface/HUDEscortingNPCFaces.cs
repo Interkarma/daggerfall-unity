@@ -119,7 +119,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             FaceDetails face = new FaceDetails();
             face.questUID = person.ParentQuest.UID;
             face.targetPerson = person.Symbol;
-            face.targetRace = person.HUDRace;
+            face.targetRace = person.Race;
             face.gender = person.Gender;
             face.faceIndex = person.FaceIndex;
 

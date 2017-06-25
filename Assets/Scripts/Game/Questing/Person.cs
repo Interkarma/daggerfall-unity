@@ -12,6 +12,7 @@
 using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
+using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
@@ -28,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         const int faceCount = 10;
 
-        Races hudRace = Races.Breton;
+        Races race = Races.Breton;
         Genders npcGender = Genders.Male;
         int faceIndex = 0;
         int nameSeed = -1;
@@ -36,6 +37,8 @@ namespace DaggerfallWorkshop.Game.Questing
         bool isIndividualNPC = false;
         bool isIndividualAtHome = false;
         string displayName = string.Empty;
+        string godName = string.Empty;
+        string homeTownName = string.Empty;
         FactionFile.FactionData factionData;
         StaticNPC.NPCData questorData;
 
@@ -59,9 +62,9 @@ namespace DaggerfallWorkshop.Game.Questing
             set { nameSeed = value; }
         }
 
-        public Races HUDRace
+        public Races Race
         {
-            get { return hudRace; }
+            get { return race; }
         }
 
         public Genders Gender
@@ -87,6 +90,16 @@ namespace DaggerfallWorkshop.Game.Questing
         public string DisplayName
         {
             get { return displayName; }
+        }
+
+        public string GodName
+        {
+            get { return godName; }
+        }
+
+        public string HomeTownName
+        {
+            get { return HomeTownName; }
         }
 
         public FactionFile.FactionData FactionData
@@ -144,9 +157,6 @@ namespace DaggerfallWorkshop.Game.Questing
             Match match = Regex.Match(line, declMatchStr);
             if (match.Success)
             {
-                // Seed random
-                //UnityEngine.Random.InitState(Time.renderedFrameCount);
-
                 // Store symbol for quest system
                 Symbol = new Symbol(match.Groups["symbol"].Value);
 
@@ -211,11 +221,13 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception(string.Format("Person resource could not identify NPC from line {0}", line));
                 }
 
-                // Set gender and display name
-                AssignDisplayName(genderName);
-
-                // Assign HUD face
+                // Assign NPC details
+                AssignRace();
+                AssignGender(genderName);
                 AssignHUDFace(faceIndex);
+                AssignDisplayName();
+                AssignHomeTown();
+                AssignGod();
 
                 // Is NPC at home?
                 isIndividualAtHome = atHome;
@@ -223,18 +235,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Done
                 Debug.LogFormat("Created NPC {0} with FactionID #{1}.", displayName, factionData.id);
             }
-        }
-
-        void AssignHUDFace(int faceIndex)
-        {
-            // Set display race
-            hudRace = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
-
-            // Set face index
-            if (faceIndex != -1)
-                this.faceIndex = faceIndex;
-            else
-                this.faceIndex = UnityEngine.Random.Range(0, faceCount);
         }
 
         public override bool ExpandMacro(MacroTypes macro, out string textOut)
@@ -245,6 +245,10 @@ namespace DaggerfallWorkshop.Game.Questing
             //  * Support for pronoun (%g1, %g2, %g2, %g2self, %g3)
             //  * Support for class (not sure what NPCs have a class, need to see this used in a quest)
             //  * Support for faction (believe this is just the name of faction they belong to, e.g. The Merchants)
+
+            // Store this person in quest as last Person encountered
+            // This will be used for subsequent pronoun macros, etc.
+            ParentQuest.LastPersonReferenced = this;
 
             textOut = string.Empty;
             bool result = true;
@@ -259,7 +263,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 case MacroTypes.NameMacro3:             // Home town name
-                    result = false;
+                    textOut = homeTownName;
                     break;
 
                 case MacroTypes.DetailsMacro:           // Class name
@@ -281,6 +285,165 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Private Methods
+
+        void AssignRace()
+        {
+            // Get faction race
+            // Supports Breton and Redguard for now
+            FactionFile.FactionRaces factionRace = (FactionFile.FactionRaces)factionData.race;
+            if (factionRace != FactionFile.FactionRaces.None)
+            {
+                switch (factionRace)
+                {
+                    case FactionFile.FactionRaces.Redguard:
+                        race = Races.Redguard;
+                        return;
+                    default:
+                        race = Races.Breton;
+                        return;
+                }
+            }
+
+            // If no race set then use race of current region
+            race = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
+        }
+
+        void AssignGender(string genderName)
+        {
+            // Set gender
+            npcGender = GetGender(genderName);
+        }
+
+        void AssignHUDFace(int faceIndex = -1)
+        {
+            // Set face index
+            if (faceIndex != -1)
+                this.faceIndex = faceIndex;
+            else
+                this.faceIndex = UnityEngine.Random.Range(0, faceCount);
+        }
+
+        // Sets gender and display name
+        // Has some logic to handle individual faction objects and certain flat limitations
+        void AssignDisplayName()
+        {
+            // Witches only have female flats
+            if (factionData.type == (int)FactionFile.FactionTypes.WitchesCoven)
+                npcGender = Genders.Female;
+
+            // Get name bank - supports more races than are found in FACTION.TXT
+            NameHelper.BankTypes bankType;
+            switch (race)
+            {
+                case Races.Redguard:
+                    bankType = NameHelper.BankTypes.Redguard;
+                    break;
+                case Races.Nord:
+                    bankType = NameHelper.BankTypes.Nord;
+                    break;
+                case Races.DarkElf:
+                    bankType = NameHelper.BankTypes.DarkElf;
+                    break;
+                case Races.HighElf:
+                    bankType = NameHelper.BankTypes.HighElf;
+                    break;
+                case Races.WoodElf:
+                    bankType = NameHelper.BankTypes.WoodElf;
+                    break;
+                case Races.Breton:
+                default:
+                    bankType = NameHelper.BankTypes.Breton;
+                    break;
+            }
+
+            // Assign name - some types have their own individual name to use
+            if (factionData.type == (int)FactionFile.FactionTypes.Individual ||
+                factionData.type == (int)FactionFile.FactionTypes.Daedra)
+            {
+                // Use individual name
+                displayName = factionData.name;
+            }
+            else
+            {
+                // Set a name seed if not configured
+                if (nameSeed == -1)
+                    nameSeed = DateTime.Now.Millisecond;
+
+                // Generate a random name based on gender and race name bank
+                DFRandom.srand(nameSeed);
+                displayName = DaggerfallUnity.Instance.NameHelper.FullName(bankType, npcGender);
+            }
+        }
+
+        void AssignHomeTown()
+        {
+            // If this is a Questor or individual NPC then use current location name
+            // Person is being instantiated where player currently is
+            if (isQuestor || (IsIndividualNPC && isIndividualAtHome))
+            {
+                if (GameManager.Instance.PlayerGPS.HasCurrentLocation)
+                {
+                    homeTownName = GameManager.Instance.PlayerGPS.CurrentLocation.Name;
+                    return;
+                }
+            }
+
+            // Find a random location name from town types
+            // This might take a few attempts but will very quickly find a random town name
+            int index;
+            bool found = false;
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
+            while (!found)
+            {
+                index = UnityEngine.Random.Range(0, regionData.MapTable.Length);
+                DFRegion.LocationTypes locationType = regionData.MapTable[index].LocationType;
+                if (locationType == DFRegion.LocationTypes.TownCity ||
+                    locationType == DFRegion.LocationTypes.TownHamlet ||
+                    locationType == DFRegion.LocationTypes.TownVillage)
+                {
+                    homeTownName = regionData.MapNames[index];
+                    found = true;
+                }
+            }
+        }
+
+        void AssignGod()
+        {
+            const int minGodID = 4077;
+            const int maxGodID = 4084;
+
+            // Select a random god for this NPC
+            int godID = UnityEngine.Random.Range(minGodID, maxGodID + 1);
+            godName = DaggerfallUnity.Instance.TextProvider.GetRandomText(godID);
+        }
+
+        Genders GetGender(string genderName)
+        {
+            Genders gender;
+            switch (genderName)
+            {
+                case "female":
+                    gender = Genders.Female;
+                    break;
+                case "male":
+                    gender = Genders.Male;
+                    break;
+                default:
+                    // Random gender
+                    if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f)
+                        gender = Genders.Male;
+                    else
+                        gender = Genders.Female;
+                    break;
+            }
+
+            return gender;
+        }
+
+        #endregion
+
+        #region NPC Setup Methods
 
         // Creates an individual NPC like King Gothryd or Brisienna
         void SetupIndividualNPC(string individualNPCName)
@@ -342,7 +505,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 FactionFile.FactionData factionData = GetFactionData(factionID);
 
                 // Setup Person resource
-                DFRandom.srand(Time.frameCount);
                 this.factionData = factionData;
             }
             else
@@ -404,62 +566,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception(string.Format("Could not find faction data for FactionID {0}", factionID));
 
             return factionData;
-        }
-
-        // Sets gender and display name
-        // Has some logic to handle individual faction objects and certain flat limitations
-        void AssignDisplayName(string genderName)
-        {
-            // Set gender
-            npcGender = GetGender(genderName);
-
-            // Witches only have female flats
-            if (factionData.type == (int)FactionFile.FactionTypes.WitchesCoven)
-                npcGender = Genders.Female;
-
-            // Get name bank
-            NameHelper.BankTypes bankType = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
-
-            // Assign name - some types have their own individual name to use
-            if (factionData.type == (int)FactionFile.FactionTypes.Individual ||
-                factionData.type == (int)FactionFile.FactionTypes.Daedra)
-            {
-                // Use individual name
-                displayName = factionData.name;
-            }
-            else
-            {
-                // Set a name seed if not configured
-                if (nameSeed == -1)
-                    nameSeed = DateTime.Now.Millisecond;
-
-                // Generate a random name based on gender and race name bank
-                DFRandom.srand(nameSeed);
-                displayName = DaggerfallUnity.Instance.NameHelper.FullName(bankType, npcGender);
-            }
-        }
-
-        Genders GetGender(string genderName)
-        {
-            Genders gender;
-            switch (genderName)
-            {
-                case "female":
-                    gender = Genders.Female;
-                    break;
-                case "male":
-                    gender = Genders.Male;
-                    break;
-                default:
-                    // Random gender
-                    if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f)
-                        gender = Genders.Male;
-                    else
-                        gender = Genders.Female;
-                    break;
-            }
-
-            return gender;
         }
 
         #endregion

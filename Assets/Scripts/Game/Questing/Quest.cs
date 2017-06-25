@@ -44,8 +44,9 @@ namespace DaggerfallWorkshop.Game.Questing
         string questName;
         string displayName;
         DaggerfallDateTime questStartTime;
-        StaticNPC questorNPC;
+        StaticNPC questorNPC;                   // Only used during quest setup, not to be serialized
 
+        Person lastPersonReferenced = null;
         bool questBreak = false;
 
         #endregion
@@ -123,6 +124,17 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Gets or sets last Person resource encountered during macro expand.
+        /// This will be used to resolve pronoun, god, oath, etc.
+        /// Can return null so caller should have a fail-over plan.
+        /// </summary>
+        public Person LastPersonReferenced
+        {
+            get { return lastPersonReferenced; }
+            set { lastPersonReferenced = value; }
+        }
+
+        /// <summary>
         /// Allows other classes working on this quest to break execution.
         /// This allows for "say" messages and other popups to happen in correct order.
         /// Flag will be lowered automatically.
@@ -136,7 +148,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Gets or sets Questor NPC at time of quest creation.
         /// This special NPC is captured by runtime only if it requires a Questor (e.g. a guild quest-giver).
-        /// The Questor NPC is mapped to a Person resource for future use and reference back to world.
+        /// The Questor NPC is mapped to a Person resource for future use and referenced back to world.
         /// This property only used at instantiation time, it is not serialized or used again once quest is live.
         /// </summary>
         public StaticNPC QuestorNPC

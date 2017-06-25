@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop
             int[] textureTable = new int[TableLength];
             for (int i = 0; i < TableLength; i++)
             {
-                textureTable[i] = valids[Random.Range(0, valids.Length + 1)];
+                textureTable[i] = valids[Random.Range(0, valids.Length)];
             }
 
             return textureTable;

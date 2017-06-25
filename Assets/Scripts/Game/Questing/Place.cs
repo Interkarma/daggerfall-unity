@@ -144,9 +144,6 @@ namespace DaggerfallWorkshop.Game.Questing
             Match match = Regex.Match(line, matchStr);
             if (match.Success)
             {
-                // Seed random
-                //UnityEngine.Random.InitState(Time.frameCount);
-
                 // Store symbol for quest system
                 Symbol = new Symbol(match.Groups["symbol"].Value);
 
