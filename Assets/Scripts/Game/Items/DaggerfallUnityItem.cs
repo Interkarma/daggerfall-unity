@@ -741,23 +741,23 @@ namespace DaggerfallWorkshop.Game.Items
             switch (nativeMaterialValue)
             {
                 case (int)WeaponMaterialTypes.Iron:
-                    return -2;
+                    return -1;
                 case (int)WeaponMaterialTypes.Steel:
                 case (int)WeaponMaterialTypes.Silver:
                     return 0;
                 case (int)WeaponMaterialTypes.Elven:
-                    return 2;
+                    return 1;
                 case (int)WeaponMaterialTypes.Dwarven:
-                    return 4;
+                    return 2;
                 case (int)WeaponMaterialTypes.Mithril:
                 case (int)WeaponMaterialTypes.Adamantium:
-                    return 6;
+                    return 3;
                 case (int)WeaponMaterialTypes.Ebony:
-                    return 8;
+                    return 4;
                 case (int)WeaponMaterialTypes.Orcish:
-                    return 10;
+                    return 5;
                 case (int)WeaponMaterialTypes.Daedric:
-                    return 12;
+                    return 6;
 
                 default:
                     return 0;
