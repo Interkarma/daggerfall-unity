@@ -47,9 +47,9 @@ namespace DaggerfallWorkshop.Game.Utility
             DarkElf,
             HighElf,
             WoodElf,
-            Location1,      // Location banks not well understood, treat as unknown
+            Location1,      // These banks not fully understood yet
             Location2,
-            Location3,
+            MonsterName,    // Have observed this used as a monster name for quests (e.g. mummy name in N0B00Y06)
         }
 
         /// <summary>
@@ -167,6 +167,18 @@ namespace DaggerfallWorkshop.Game.Utility
             return lastName;
         }
 
+        /// <summary>
+        /// Gets random monster name for quests.
+        /// </summary>
+        public string MonsterName(Genders gender = Genders.Male)
+        {
+            // Bank dictionary must be ready
+            if (bankDict == null)
+                return string.Empty;
+
+            return GetRandomMonsterName(gender);
+        }
+
         #endregion
 
         #region Name Generation
@@ -221,8 +233,8 @@ namespace DaggerfallWorkshop.Game.Utility
         //  FullName                : Sets 0 + 1 + 2
         //
         // Location3:
-        //  Masculine FullName      : Sets 0 + 1 + 2
-        //  Feminine FullName       : Sets 0 + 1 + 2 + 3
+        //  Masculine FullName      : Sets 0 + (random 1 or 2)
+        //  Feminine FullName       : Sets 0 + (random 1 or 2) + 3
         //
         // -= END =-
         //
@@ -292,6 +304,31 @@ namespace DaggerfallWorkshop.Game.Utility
             string stringD = partsD[DFRandom.random_range(partsD.Length)];
 
             return stringA + stringB + stringC + stringD;
+        }
+
+        // Get random monster name which follows 0+(random 1 or 2) + 3 (if feminine)
+        string GetRandomMonsterName(Genders gender)
+        {
+            NameBank nameBank = bankDict[BankTypes.MonsterName];
+
+            // Get set parts
+            string[] partsA, partsB;
+            partsA = nameBank.sets[0].parts;
+            partsB = (UnityEngine.Random.Range(0f, 1f) < 0.5f) ? nameBank.sets[1].parts : nameBank.sets[2].parts;
+
+            // Generate strings
+            string stringA = partsA[DFRandom.random_range(partsA.Length)];
+            string stringB = partsB[DFRandom.random_range(partsB.Length)];
+
+            // Attach femimine suffix
+            string stringC = string.Empty;
+            if (gender == Genders.Female)
+            {
+                string[] partsC = nameBank.sets[3].parts;
+                stringC = partsC[DFRandom.random_range(partsC.Length)];
+            }
+
+            return stringA + stringB + stringC;
         }
 
         #endregion

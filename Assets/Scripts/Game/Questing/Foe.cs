@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Questing
         MobileTypes foeType;                // MobileType to spawn
         bool injuredTrigger;                // True once enemy injured, rearmed each wave
         int killCount;                      // How many of this enemy spawn player has killed, does not rearm
+        string displayName;                 // Foe display name for quest system macros
 
         #endregion
 
@@ -109,7 +110,32 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Setup spawn count
                 spawnCount = Mathf.Clamp(count, 1, maxSpawnCount);
+
+                // Assign name
+                SetFoeName();
             }
+        }
+
+        public override bool ExpandMacro(MacroTypes macro, out string textOut)
+        {
+            textOut = string.Empty;
+            bool result = true;
+            switch (macro)
+            {
+                case MacroTypes.NameMacro1:             // Display name
+                    textOut = foeType.ToString();
+                    break;
+
+                case MacroTypes.DetailsMacro:           // =symbol_ name
+                    textOut = displayName;
+                    break;
+
+                default:                                // Macro not supported
+                    result = false;
+                    break;
+            }
+
+            return result;
         }
 
         #endregion
@@ -196,6 +222,25 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return gameObjects.ToArray();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        void SetFoeName()
+        {
+            // Monster types get a random monster name
+            // Always treating monsters as male for now as they don't have any gender in game files
+            if ((int)foeType < 128)
+            {
+                displayName = DaggerfallUnity.Instance.NameHelper.MonsterName();
+                return;
+            }
+
+            // TODO: Create a random humanoid foe name
+            // Will get to this testing quests that assign player to defeat and return a class-based NPC Foe
+            // Have more problems to solve before getting to name
         }
 
         #endregion

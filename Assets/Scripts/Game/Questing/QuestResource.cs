@@ -79,12 +79,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Gets or sets flag to hide this quest resource in world.
-        /// Has no effect on quest resources not active inside scene.
+        /// Has no effect on Foes or quest resources not active inside scene.
         /// </summary>
         public bool IsHidden
         {
             get { return isHidden; }
-            set { isHidden = value; }
+            set { SetHidden(value); }
         }
 
         /// <summary>
@@ -94,7 +94,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public QuestResourceBehaviour QuestResourceBehaviour
         {
             get { return questResourceBehaviour; }
-            set { questResourceBehaviour = value; }
+            set
+            {
+                questResourceBehaviour = value;
+                questResourceBehaviour.OnGameObjectDestroy += QuestResourceBehaviour_OnGameObjectDestroy;
+            }
         }
 
         /// <summary>
@@ -131,11 +135,22 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Called every Quest tick.
-        /// Allows quest resources like Clock to perform some action.
+        /// Allows quest resources to perform some action.
         /// Quest will not call Tick() on ActionTemplate items, they should override Update() instead.
         /// </summary>
         public virtual void Tick(Quest caller)
         {
+            // Show or hide GameObject for related QuestResourceBehaviour
+            if (questResourceBehaviour)
+            {
+                // Ignore for Foes
+                if (this is Foe)
+                    return;
+
+                // Show hide GameObject mapped to this QuestResource based on hidden flag
+                // This can conflict with other code that has disabled GameObject for other reasons
+                questResourceBehaviour.gameObject.SetActive(!IsHidden);
+            }
         }
 
         /// <summary>
@@ -195,6 +210,21 @@ namespace DaggerfallWorkshop.Game.Questing
             hasPlayerClicked = false;
         }
 
+        #region Private Methods
+
+        void SetHidden(bool value)
+        {
+            // Do not allow this for Foes
+            // They are a one-to-many virtual resource unlike Items and NPCs which are one-to-one once instantiated in world
+            if (this is Foe)
+                return;
+
+            // Set hidden flag for other resources
+            isHidden = true;
+        }
+
+        #endregion
+
         #region Events
 
         // OnDispose
@@ -204,6 +234,17 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             if (OnDispose != null)
                 OnDispose();
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void QuestResourceBehaviour_OnGameObjectDestroy(QuestResourceBehaviour questResourceBehaviour)
+        {
+            // Clean up when target GameObject being destroyed
+            questResourceBehaviour.OnGameObjectDestroy -= QuestResourceBehaviour_OnGameObjectDestroy;
+            questResourceBehaviour = null;
         }
 
         #endregion

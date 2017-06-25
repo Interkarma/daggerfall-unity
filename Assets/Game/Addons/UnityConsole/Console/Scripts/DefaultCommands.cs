@@ -742,12 +742,14 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 QuestMarker spawnMarker;
-                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestSpawn, out spawnMarker);
+                Vector3 buildingOrigin;
+                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestSpawn, out spawnMarker, out buildingOrigin);
                 if (!result)
                     return error;
 
                 Vector3 dungeonBlockPosition = new Vector3(spawnMarker.dungeonX * RDBLayout.RDBSide, 0, spawnMarker.dungeonZ * RDBLayout.RDBSide);
-                GameManager.Instance.PlayerEnterExit.transform.localPosition = dungeonBlockPosition + spawnMarker.flatPosition;
+                GameManager.Instance.PlayerEnterExit.transform.localPosition = dungeonBlockPosition + spawnMarker.flatPosition + buildingOrigin;
+                GameManager.Instance.PlayerMotor.FixStanding();
 
                 return "Finished";
             }
@@ -763,12 +765,14 @@ namespace Wenzil.Console
             public static string Execute(params string[] args)
             {
                 QuestMarker itemMarker;
-                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestItem, out itemMarker);
+                Vector3 buildingOrigin;
+                bool result = QuestMachine.Instance.GetCurrentLocationQuestMarker(MarkerTypes.QuestItem, out itemMarker, out buildingOrigin);
                 if (!result)
                     return error;
 
                 Vector3 dungeonBlockPosition = new Vector3(itemMarker.dungeonX * RDBLayout.RDBSide, 0, itemMarker.dungeonZ * RDBLayout.RDBSide);
-                GameManager.Instance.PlayerEnterExit.transform.localPosition = dungeonBlockPosition + itemMarker.flatPosition;
+                GameManager.Instance.PlayerEnterExit.transform.localPosition = dungeonBlockPosition + itemMarker.flatPosition + buildingOrigin;
+                GameManager.Instance.PlayerMotor.FixStanding();
 
                 return "Finished";
             }

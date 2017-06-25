@@ -29,6 +29,8 @@ namespace DaggerfallWorkshop.Game.Questing
         Symbol targetSymbol;
         Quest targetQuest;
 
+        bool isFoeDead = false;
+
         [NonSerialized] QuestResource targetResource = null;
         [NonSerialized] DaggerfallEntityBehaviour enemyEntityBehaviour = null;
 
@@ -68,6 +70,14 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return targetResource; }
         }
 
+        /// <summary>
+        /// Flag stating if this Foe is dead and quest system is done with any jobs it needs to perform.
+        /// </summary>
+        public bool IsDead
+        {
+            get { return isFoeDead; }
+        }
+
         #endregion
 
         #region Unity
@@ -81,10 +91,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Cache local EnemyEntity behaviour if resource is a Foe
             if (targetResource != null && targetResource is Foe)
-            {
                 enemyEntityBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
-                enemyEntityBehaviour.Entity.OnDeath += Enemy_OnDeath;
-            }
         }
 
         private void Update()
@@ -92,12 +99,27 @@ namespace DaggerfallWorkshop.Game.Questing
             // Handle enemy checks
             if (enemyEntityBehaviour)
             {
+                // Handle injured check
+                // This has to happen before death or script actions attached to injured event will not trigger
                 Foe foe = (Foe)targetResource;
                 if (enemyEntityBehaviour.Entity.CurrentHealth < enemyEntityBehaviour.Entity.MaxHealth && !foe.InjuredTrigger)
                 {
                     foe.SetInjured();
+                    return;
+                }
+
+                // Handle death check
+                if (enemyEntityBehaviour.Entity.CurrentHealth <= 0 && !isFoeDead)
+                {
+                    foe.IncrementKills();
+                    isFoeDead = true;
                 }
             }
+        }
+
+        private void OnDestroy()
+        {
+            RaiseOnGameObjectDestroyEvent();
         }
 
         #endregion
@@ -109,13 +131,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public void AssignResource(QuestResource questResource)
         {
-            UnsubscribeEvents();
             if (questResource != null)
             {
                 questUID = questResource.ParentQuest.UID;
                 targetSymbol = questResource.Symbol;
             }
-            SubscribeEvents();
         }
 
         /// <summary>
@@ -125,7 +145,14 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Set click on resource
             if (targetResource != null)
+            {
+                // Set the click on resource
                 targetResource.SetPlayerClicked();
+
+                // Give item to player and hide resource
+                if (targetResource is Item)
+                    TransferWorldItemToPlayer();
+            }
         }
 
         #endregion
@@ -159,31 +186,27 @@ namespace DaggerfallWorkshop.Game.Questing
             return true;
         }
 
-        /// <summary>
-        /// Subscribe to events raised by the target resource.
-        /// </summary>
-        void SubscribeEvents()
+        void TransferWorldItemToPlayer()
         {
-        }
+            // Give item to player
+            Item item = (Item)targetResource;
+            GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem);
 
-        /// <summary>
-        /// Unsubscribe from events raised by the target resource.
-        /// </summary>
-        void UnsubscribeEvents()
-        {
+            // Hide item so player cannot pickup again
+            // This will cause it not to display in world again despite being placed by SiteLink
+            item.IsHidden = true;
         }
 
         #endregion
 
-        #region Event Handlers
+        #region Events
 
-        private void Enemy_OnDeath(DaggerfallEntity entity)
+        public delegate void OnGameObjectDestroyHandler(QuestResourceBehaviour questResourceBehaviour);
+        public event OnGameObjectDestroyHandler OnGameObjectDestroy;
+        protected void RaiseOnGameObjectDestroyEvent()
         {
-            if (targetResource != null)
-            {
-                Foe foe = (Foe)targetResource;
-                foe.IncrementKills();
-            }
+            if (OnGameObjectDestroy != null)
+                OnGameObjectDestroy(this);
         }
 
         #endregion

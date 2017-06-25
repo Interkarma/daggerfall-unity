@@ -79,6 +79,8 @@ namespace DaggerfallWorkshop.Game
                     StaticBuilding building = new StaticBuilding();
                     for (int i = 0; i < hits.Length; i++)
                     {
+                        #region Hit Checks
+
                         // Check for a static building hit
                         Transform buildingOwner;
                         DaggerfallStaticBuildings buildings = GetBuildings(hits[i].transform, out buildingOwner);
@@ -188,18 +190,28 @@ namespace DaggerfallWorkshop.Game
                         StaticNPC npc;
                         if (NPCCheck(hits[i], out npc))
                         {
-                            switch(currentMode)
+                            switch (currentMode)
                             {
                                 case PlayerActivateModes.Info:
                                     PresentNPCInfo(npc);
                                     break;
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
-                                    TriggerQuestResourceClick(npc);
+                                    SpecialNPCClick(npc);
                                     QuestorCheck(npc);
                                     break;
                             }
                         }
+
+                        // Trigger general quest resource behaviour click
+                        // Note: This will cause a second click on special NPCs, look into a way to unify this handling
+                        QuestResourceBehaviour questResourceBehaviour;
+                        if (QuestResourceBehaviourCheck(hits[i], out questResourceBehaviour))
+                        {
+                            TriggerQuestResourceBehaviourClick(questResourceBehaviour);
+                        }
+
+                        #endregion
                     }
                 }
             }
@@ -295,6 +307,16 @@ namespace DaggerfallWorkshop.Game
         {
             staticNPC = hitInfo.transform.GetComponent<StaticNPC>();
             if (staticNPC != null)
+                return true;
+            else
+                return false;
+        }
+
+        // Check if raycast hit a QuestResource
+        private bool QuestResourceBehaviourCheck(RaycastHit hitInfo, out QuestResourceBehaviour questResourceBehaviour)
+        {
+            questResourceBehaviour = hitInfo.transform.GetComponent<QuestResourceBehaviour>();
+            if (questResourceBehaviour != null)
                 return true;
             else
                 return false;
@@ -443,23 +465,30 @@ namespace DaggerfallWorkshop.Game
             DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", npc.DisplayName));
         }
 
-        void TriggerQuestResourceClick(StaticNPC npc)
+        // Player has clicked a GameObject with a QuestResourceBehaviour attached
+        void TriggerQuestResourceBehaviourClick(QuestResourceBehaviour questResourceBehaviour)
         {
             // Handle typical quest resource click
-            QuestResourceBehaviour questResourceBehaviour = npc.gameObject.GetComponent<QuestResourceBehaviour>();
             if (questResourceBehaviour)
                 questResourceBehaviour.DoClick();
+        }
 
+        // Player has clicked on a special NPC
+        void SpecialNPCClick(StaticNPC npc)
+        {
             // Handle special NPC in home location click
             SpecialNPCClickHandler specialNPCClickHandler = npc.gameObject.GetComponent<SpecialNPCClickHandler>();
             if (specialNPCClickHandler)
                 specialNPCClickHandler.DoClick();
         }
 
+        // Check if NPC is a Questor
         void QuestorCheck(StaticNPC npc)
         {
+            const int fighterGuildFactionID = 851;
+
             // Detect Fighter's Guild Questors
-            if (npc.Data.factionID == 851)
+            if (npc.Data.factionID == fighterGuildFactionID)
             {
                 // Temp guild quest pump UI
                 DaggerfallGuildPopupWindow questorWindow = new DaggerfallGuildPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);

@@ -1492,6 +1492,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item == null)
                 return;
 
+            // Send click to quest system
+            if (item.IsQuestItem)
+            {
+                Quest quest = QuestMachine.Instance.GetActiveQuest(item.QuestUID);
+                if (quest != null)
+                {
+                    Item questItem = quest.GetItem(item.QuestItemSymbol);
+                    if (quest != null)
+                        questItem.SetPlayerClicked();
+                }
+            }
+
             // Handle click based on action
             if (selectedActionMode == ActionModes.Equip)
             {

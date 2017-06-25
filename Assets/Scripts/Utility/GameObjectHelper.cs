@@ -833,7 +833,6 @@ namespace DaggerfallWorkshop.Utility
 
         /// <summary>
         /// Adds a single quest foe to marker position.
-        /// TEMP: Not handling multiple spawns at this time. Just setting up conditions right now.
         /// </summary>
         static void AddQuestFoe(SiteTypes siteType, Quest quest, QuestMarker marker, Foe foe, Transform parent)
         {
@@ -845,6 +844,11 @@ namespace DaggerfallWorkshop.Utility
             QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
             questResourceBehaviour.AssignResource(foe);
 
+            // Set QuestResourceBehaviour in this particular instantiated Foe object
+            // Each GameObject placed in world for this Foe will reference same Foe quest resource
+            // Keep this one-to-many relationship in mind for Foe handling
+            foe.QuestResourceBehaviour = questResourceBehaviour;
+
             // Rearm injured trigger at time of placement
             // Notes for later:
             //  * This should be rearmed at the beginning of each wave
@@ -854,7 +858,6 @@ namespace DaggerfallWorkshop.Utility
 
         /// <summary>
         /// Adds a quest item to marker position.
-        /// TEMP: Just working through issues for now.
         /// </summary>
         static void AddQuestItem(SiteTypes siteType, Quest quest, QuestMarker marker, Item item, Transform parent = null)
         {
@@ -865,6 +868,9 @@ namespace DaggerfallWorkshop.Utility
             // Create billboard
             GameObject go = CreateDaggerfallBillboardGameObject(textureArchive, textureRecord, parent);
             DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+
+            // Set name
+            go.name = string.Format("Quest Item [{0} | {1}]", item.Symbol.Original, item.DaggerfallUnityItem.LongName);
 
             // Setup custom material if available
             if (AssetInjection.TextureReplacement.CustomTextureExist(textureArchive, textureRecord))
@@ -882,11 +888,20 @@ namespace DaggerfallWorkshop.Utility
                 position.y += (-DaggerfallLoot.randomTreasureMarkerDim / 2 * MeshReader.GlobalScale);
             }
 
-            // Now move up item icon by half own size so bottom is aligned with marker origin
+            // Now move up item icon by half own size and assign position
             position.y += (dfBillboard.Summary.Size.y / 2f);
-
-            // Assign position
             go.transform.localPosition = position;
+
+            // Add QuestResourceBehaviour to GameObject
+            QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
+            questResourceBehaviour.AssignResource(item);
+
+            // Set QuestResourceBehaviour in Item object
+            item.QuestResourceBehaviour = questResourceBehaviour;
+
+            // Assign a trigger collider for clicks
+            SphereCollider collider = go.AddComponent<SphereCollider>();
+            collider.isTrigger = true;
         }
 
         #endregion

@@ -237,13 +237,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 this.faceIndex = UnityEngine.Random.Range(0, faceCount);
         }
 
-        public override void Tick(Quest caller)
-        {
-            // Show or hide GameObject for this Person
-            if (QuestResourceBehaviour)
-                QuestResourceBehaviour.gameObject.SetActive(!IsHidden);
-        }
-
         public override bool ExpandMacro(MacroTypes macro, out string textOut)
         {
             // TODO:

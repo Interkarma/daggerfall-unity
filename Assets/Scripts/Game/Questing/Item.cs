@@ -148,6 +148,24 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        public override bool ExpandMacro(MacroTypes macro, out string textOut)
+        {
+            textOut = string.Empty;
+            bool result = true;
+            switch (macro)
+            {
+                case MacroTypes.NameMacro1:             // Display name
+                    textOut = item.LongName;
+                    break;
+
+                default:                                // Macro not supported
+                    result = false;
+                    break;
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region Private Methods

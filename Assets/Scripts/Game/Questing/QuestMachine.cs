@@ -269,6 +269,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Register trigger conditions
             RegisterAction(new WhenTask(null));
             RegisterAction(new ClickedNpc(null));
+            RegisterAction(new ClickedItem(null));
 
             // Register default actions
             RegisterAction(new EndQuest(null));
@@ -286,6 +287,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new PlaceNpc(null));
             RegisterAction(new PlaceItem(null));
             RegisterAction(new GivePc(null));
+            RegisterAction(new GiveItem(null));
             RegisterAction(new StartStopTimer(null));
             RegisterAction(new DailyFrom(null));
             RegisterAction(new CreateFoe(null));
@@ -691,10 +693,12 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="markerType">Get quest spawn or item marker.</param>
         /// <param name="questMarkerOut">QuestMarker out.</param>
+        /// <param name="buildingOriginOut">Building origin in scene, or Vector3.zero if not inside a building.</param>
         /// <returns>True if successful.</returns>
-        public bool GetCurrentLocationQuestMarker(MarkerTypes markerType, out QuestMarker questMarkerOut)
+        public bool GetCurrentLocationQuestMarker(MarkerTypes markerType, out QuestMarker questMarkerOut, out Vector3 buildingOriginOut)
         {
             questMarkerOut = new QuestMarker();
+            buildingOriginOut = Vector3.zero;
 
             // Get PlayerEnterExit for world context
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
@@ -712,6 +716,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 siteLinks = GetSiteLinks(SiteTypes.Building, GameManager.Instance.PlayerGPS.CurrentMapID, exteriorDoors[0].buildingKey);
                 if (siteLinks == null || siteLinks.Length == 0)
                     return false;
+
+                Vector3 buildingPosition = exteriorDoors[0].buildingMatrix.GetColumn(3);
+                buildingOriginOut = exteriorDoors[0].ownerPosition + buildingPosition;
             }
             else if (playerEnterExit.IsPlayerInsideDungeon)
             {

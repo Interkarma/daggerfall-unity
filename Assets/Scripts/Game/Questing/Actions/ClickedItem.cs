@@ -17,19 +17,16 @@ using System;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
-    /// <summary>
-    /// Handles player clicking on NPC.
-    /// </summary>
-    public class ClickedNpc : ActionTemplate
+    public class ClickedItem : ActionTemplate
     {
-        Symbol npcSymbol;
+        Symbol itemSymbol;
 
         public override string Pattern
         {
-            get { return @"clicked npc (?<anNPC>[a-zA-Z0-9_.-]+)"; }
+            get { return @"clicked item (?<anItem>[a-zA-Z0-9_.-]+)"; }
         }
 
-        public ClickedNpc(Quest parentQuest)
+        public ClickedItem(Quest parentQuest)
             : base(parentQuest)
         {
             IsTriggerCondition = true;
@@ -45,8 +42,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             // Factory new action
-            ClickedNpc action = new ClickedNpc(parentQuest);
-            action.npcSymbol = new Symbol(match.Groups["anNPC"].Value);
+            ClickedItem action = new ClickedItem(parentQuest);
+            action.itemSymbol = new Symbol(match.Groups["anItem"].Value);
 
             return action;
         }
@@ -59,15 +56,15 @@ namespace DaggerfallWorkshop.Game.Questing
             if (caller.IsSet)
                 return true;
 
-            // Get related Person resource
-            Person person = ParentQuest.GetPerson(npcSymbol);
-            if (person == null)
+            // Get related Item resource
+            Item item = ParentQuest.GetItem(itemSymbol);
+            if (item == null)
                 return false;
 
-            // Check player clicked flag
-            if (person.HasPlayerClicked)
+            // Check item clicked flag
+            if (item.HasPlayerClicked)
             {
-                person.RearmPlayerClick();
+                item.RearmPlayerClick();
                 return true;
             }
 
