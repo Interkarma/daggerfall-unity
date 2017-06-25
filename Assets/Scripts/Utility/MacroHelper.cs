@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -94,6 +95,23 @@ namespace DaggerfallWorkshop.Utility
                             // Race
                             words[word] = words[word].Replace(macro.token, GameManager.Instance.PlayerEntity.RaceTemplate.Name);
                         }
+                        else if (macro.token == "%pct")
+                        {
+                            // Just use "Apprentice" for all %pct guild titles for now
+                            // Guilds are not implemented yet
+                            words[word] = words[word].Replace(macro.token, "Apprentice");
+                        }
+                        else if (macro.token == "%oth")
+                        {
+                            // Generate an oath
+                            // TODO: Need a way of passing NPC race to oath generator
+                            words[word] = words[word].Replace(macro.token, GetOath());
+                        }
+                        else if (macro.token == "%reg")
+                        {
+                            // Get current region
+                            words[word] = words[word].Replace(macro.token, GetRegionName());
+                        }
                     }
                     else
                     {
@@ -124,6 +142,38 @@ namespace DaggerfallWorkshop.Utility
                 // Store result back into token
                 tokens[token].text = final;
             }
+        }
+
+        /// <summary>
+        /// Oaths by race.
+        /// </summary>
+        enum RacialOaths
+        {
+            None = 0,
+            Nord = 201,
+            Khajiit = 202,
+            Redguard = 203,
+            Breton = 204,
+            Argonian = 205,
+            Bosmer = 206,
+            Altmer = 207,
+            Dunmer = 208,
+        }
+
+        // Oaths seem to be declared by NPC race
+        // Daggerfall NPCs have a limited range of races (usually Breton or Redguard).
+        // Have seen Nord oaths used in Daggerfall (e.g. Mages guild questor in Gothway Garden)
+        // Suspect NPCs with race: -1 (e.g. #63) get a random humanoid race within reason
+        // Just returning Nord oaths for now until ready to build this out properly
+        // https://www.imperial-library.info/content/daggerfall-oaths-and-expletives
+        string GetOath()
+        {
+            return DaggerfallUnity.Instance.TextProvider.GetRandomText((int)RacialOaths.Nord);
+        }
+
+        string GetRegionName()
+        {
+            return GameManager.Instance.PlayerGPS.CurrentRegionName;
         }
 
         #endregion

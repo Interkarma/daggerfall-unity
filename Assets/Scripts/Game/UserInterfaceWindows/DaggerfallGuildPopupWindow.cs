@@ -14,6 +14,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Questing;
@@ -32,7 +33,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect joinGuildButtonRect = new Rect(5, 5, 120, 7);
         Rect talkButtonRect = new Rect(5, 14, 120, 7);
         Rect exitButtonRect = new Rect(44, 33, 43, 15);
-        Rect customButtonRect = new Rect(5, 23, 120, 7);
+        Rect serviceButtonRect = new Rect(5, 23, 120, 7);
+
+        #endregion
+
+        #region Curated Quests
+
+        // These curated quests are considered "mostly working" under quest system in current state
+        // This pool of quests will be made available to player for testing quest system within intended scope
+        // Quests might be added or removed as development progresses
+
+        string[] fightersQuests = new string[]
+        {
+            "M0B00Y16",
+        };
+
+        string[] magesQuests = new string[]
+        {
+            "N0B00Y06",
+        };
 
         #endregion
 
@@ -42,8 +61,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button joinGuildButton = new Button();
         Button talkButton = new Button();
         Button exitButton = new Button();
-        Button customButton = new Button();
-        TextLabel customText = new TextLabel();
+        Button serviceButton = new Button();
+        TextLabel serviceText = new TextLabel();
 
         #endregion
 
@@ -58,8 +77,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string baseTextureName = "GILD00I0.IMG";      // Join guild / Talk / Custom
 
         StaticNPC questorNPC;
-        TempGuilds currentGuild = TempGuilds.Fighter;
-        TempGuildRoles currentRole = TempGuildRoles.Questor;
+        TempGuilds currentGuild = TempGuilds.None;
+        TempGuildServices currentService = TempGuildServices.None;
         Quest offeredQuest = null;
 
         #endregion
@@ -78,10 +97,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { currentGuild = value; }
         }
 
-        public TempGuildRoles CurrentRole
+        public TempGuildServices CurrentService
         {
-            get { return currentRole; }
-            set { currentRole = TempGuildRoles.Questor; }
+            get { return currentService; }
+            set { currentService = value; }
         }
 
         #endregion
@@ -93,14 +112,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         public enum TempGuilds
         {
+            None,
             Fighter,
+            Mage,
         }
 
         /// <summary>
-        /// Temporary supported guild roles.
+        /// Temporary supported guild services.
         /// </summary>
-        public enum TempGuildRoles
+        public enum TempGuildServices
         {
+            None,
             Questor,
         }
 
@@ -146,14 +168,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
 
             // Custom button
-            customButton = DaggerfallUI.AddButton(customButtonRect, mainPanel);
-            customButton.OnMouseClick += CustomButton_OnMouseClick;
+            serviceButton = DaggerfallUI.AddButton(serviceButtonRect, mainPanel);
+            serviceButton.OnMouseClick += ServiceButton_OnMouseClick;
 
             // Custom text
-            customText.Position = new Vector2(0, 1);
-            customText.ShadowPosition = Vector2.zero;
-            customText.HorizontalAlignment = HorizontalAlignment.Center;
-            customButton.Components.Add(customText);
+            serviceText.Position = new Vector2(0, 1);
+            serviceText.ShadowPosition = Vector2.zero;
+            serviceText.HorizontalAlignment = HorizontalAlignment.Center;
+            serviceButton.Components.Add(serviceText);
 
             NativePanel.Components.Add(mainPanel);
         }
@@ -167,7 +189,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.OnPush();
 
             // Set custom text based on role
-            SetCustomText();
+            SetServiceText();
         }
 
         #endregion
@@ -179,30 +201,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             baseTexture = ImageReader.GetTexture(baseTextureName);
         }
 
-        void SetCustomText()
+        void SetServiceText()
         {
-            if (currentRole == TempGuildRoles.Questor)
-                customText.Text = HardStrings.getQuest;
+            if (currentService == TempGuildServices.Questor)
+                serviceText.Text = HardStrings.getQuest;
         }
 
-        void AssignRandomGuildQuest()
+        void OfferCuratedGuildQuest()
         {
-            // TODO: Full support for filename pattern
-            // Here we just want to pull all available quests for pump
-            string pattern = string.Format("{0}*.TXT", GetCurrentGuildPrefix());
-
-            // Get all quests matching pattern
-            string[] files = Directory.GetFiles(QuestMachine.Instance.QuestSourceFolder, pattern);
-
-            // Get a random quest index
-            // Not interested in membership, rank, etc. just handing out quests to testers
-            int index = UnityEngine.Random.Range(0, files.Length);
-            string questName = Path.GetFileName(files[index]);
+            // Select a quest from curated pool
+            string questName;
+            if (currentGuild == TempGuilds.Fighter)
+                questName = fightersQuests[UnityEngine.Random.Range(0, fightersQuests.Length)];
+            else if (currentGuild == TempGuilds.Mage)
+                questName = magesQuests[UnityEngine.Random.Range(0, magesQuests.Length)];
+            else
+                return;
 
             // Parse quest
             offeredQuest = QuestMachine.Instance.ParseQuest(questName, questorNPC);
             if (offeredQuest == null)
+            {
+                // TODO: Show flavour text when quest cannor be compiled
                 return;
+            }
 
             // Offer the quest to player
             DaggerfallMessageBox messageBox = QuestMachine.Instance.CreateMessagePrompt(offeredQuest, (int)QuestMachine.QuestMessages.QuestorOffer);
@@ -213,15 +235,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        string GetCurrentGuildPrefix()
+        void ShowQuestPopupMessage(Quest quest, int id)
         {
-            switch (currentGuild)
-            {
-                case TempGuilds.Fighter:
-                    return "M";
-                default:
-                    throw new Exception("Not a supported guild");
-            }
+            // Get message resource
+            Message message = quest.GetMessage(id);
+            if (message == null)
+                return;
+
+            // Get message tokens
+            TextFile.Token[] tokens = message.GetTextTokens();
+
+            // Present popup message
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+            messageBox.SetTextTokens(tokens);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.AllowCancel = true;
+            messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.Show();
         }
 
         #endregion
@@ -233,23 +263,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             CloseWindow();
         }
 
-        private void CustomButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            AssignRandomGuildQuest();
+            if (currentService == TempGuildServices.Questor)
+                OfferCuratedGuildQuest();
         }
 
         private void OfferQuest_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
-                // TODO: Show accept message, add quest
+                // Show accept message, add quest
+                sender.CloseWindow();
+                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.AcceptQuest);
+                QuestMachine.Instance.InstantiateQuest(offeredQuest);
             }
             else
             {
-                // TODO: Show refuse message
+                // Show refuse message
+                sender.CloseWindow();
+                ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.RefuseQuest);
+                return;
             }
-
-            sender.CloseWindow();
         }
 
         #endregion

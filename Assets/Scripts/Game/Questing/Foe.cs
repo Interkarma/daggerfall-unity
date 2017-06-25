@@ -234,6 +234,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Always treating monsters as male for now as they don't have any gender in game files
             if ((int)foeType < 128)
             {
+                DFRandom.srand(DateTime.Now.Millisecond);
                 displayName = DaggerfallUnity.Instance.NameHelper.MonsterName();
                 return;
             }

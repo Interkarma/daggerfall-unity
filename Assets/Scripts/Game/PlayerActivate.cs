@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -485,17 +486,23 @@ namespace DaggerfallWorkshop.Game
         // Check if NPC is a Questor
         void QuestorCheck(StaticNPC npc)
         {
-            const int fighterGuildFactionID = 851;
+            // Check if player clicked on supported guild questor
+            DaggerfallGuildPopupWindow.TempGuilds guild;
+            if (npc.Data.factionID == PersistentFactionData.fightersGuildQuestorFactionID)
+                guild = DaggerfallGuildPopupWindow.TempGuilds.Fighter;
+            else if (npc.Data.factionID == PersistentFactionData.magesGuildQuestorFactionID)
+                guild = DaggerfallGuildPopupWindow.TempGuilds.Mage;
+            else
+                guild = DaggerfallGuildPopupWindow.TempGuilds.None;
 
-            // Detect Fighter's Guild Questors
-            if (npc.Data.factionID == fighterGuildFactionID)
+            // Open guild service window
+            if (guild != DaggerfallGuildPopupWindow.TempGuilds.None)
             {
-                // Temp guild quest pump UI
-                DaggerfallGuildPopupWindow questorWindow = new DaggerfallGuildPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
-                questorWindow.CurrentGuild = DaggerfallGuildPopupWindow.TempGuilds.Fighter;
-                questorWindow.CurrentRole = DaggerfallGuildPopupWindow.TempGuildRoles.Questor;
-                questorWindow.QuestorNPC = npc;
-                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(questorWindow);
+                DaggerfallGuildPopupWindow guildWindow = new DaggerfallGuildPopupWindow(DaggerfallUI.Instance.UserInterfaceManager);
+                guildWindow.CurrentGuild = guild;
+                guildWindow.CurrentService = DaggerfallGuildPopupWindow.TempGuildServices.Questor;
+                guildWindow.QuestorNPC = npc;
+                DaggerfallUI.Instance.UserInterfaceManager.PushWindow(guildWindow);
             }
         }
     }

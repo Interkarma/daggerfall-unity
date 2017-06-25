@@ -232,9 +232,8 @@ namespace DaggerfallWorkshop.Game.Utility
         // Location2:
         //  FullName                : Sets 0 + 1 + 2
         //
-        // Location3:
-        //  Masculine FullName      : Sets 0 + (random 1 or 2)
-        //  Feminine FullName       : Sets 0 + (random 1 or 2) + 3
+        // MonsterName:
+        //  Masculine FullName      : Sets 0 + 1 + (50% +2)
         //
         // -= END =-
         //
@@ -306,27 +305,21 @@ namespace DaggerfallWorkshop.Game.Utility
             return stringA + stringB + stringC + stringD;
         }
 
-        // Get random monster name which follows 0+(random 1 or 2) + 3 (if feminine)
+        // Get random monster name which follows 0+1 (50% +2)
         string GetRandomMonsterName(Genders gender)
         {
             NameBank nameBank = bankDict[BankTypes.MonsterName];
 
             // Get set parts
-            string[] partsA, partsB;
+            string[] partsA, partsB, partsC;
             partsA = nameBank.sets[0].parts;
-            partsB = (UnityEngine.Random.Range(0f, 1f) < 0.5f) ? nameBank.sets[1].parts : nameBank.sets[2].parts;
+            partsB = nameBank.sets[1].parts;
+            partsC = nameBank.sets[2].parts;
 
             // Generate strings
             string stringA = partsA[DFRandom.random_range(partsA.Length)];
             string stringB = partsB[DFRandom.random_range(partsB.Length)];
-
-            // Attach femimine suffix
-            string stringC = string.Empty;
-            if (gender == Genders.Female)
-            {
-                string[] partsC = nameBank.sets[3].parts;
-                stringC = partsC[DFRandom.random_range(partsC.Length)];
-            }
+            string stringC = (UnityEngine.Random.Range(0f, 1f) < 0.5f) ? partsC[DFRandom.random_range(partsC.Length)] : string.Empty;
 
             return stringA + stringB + stringC;
         }

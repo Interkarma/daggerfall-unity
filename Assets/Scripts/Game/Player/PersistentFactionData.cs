@@ -28,6 +28,10 @@ namespace DaggerfallWorkshop.Game.Player
     {
         #region Fields
 
+        // TEMP: Faction IDs for curated quest givers
+        public const int fightersGuildQuestorFactionID = 851;
+        public const int magesGuildQuestorFactionID = 63;
+
         Dictionary<int, FactionFile.FactionData> factionDict = new Dictionary<int, FactionFile.FactionData>();
         Dictionary<string, int> factionNameToIDDict = new Dictionary<string, int>();
 
