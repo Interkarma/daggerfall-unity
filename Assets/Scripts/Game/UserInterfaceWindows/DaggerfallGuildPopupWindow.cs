@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         string[] fightersQuests = new string[]
         {
-            "M0B00Y16",
+            "M0B00Y16", "M0B00Y00", "M0B00Y06", "M0B00Y07", "M0B00Y15",
         };
 
         string[] magesQuests = new string[]
