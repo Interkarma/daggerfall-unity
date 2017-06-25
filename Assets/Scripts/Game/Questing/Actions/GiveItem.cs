@@ -65,13 +65,26 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (!target.QuestResourceBehaviour)
                 return;
 
-            // If inside world, must have an Entity to receive item
+            // Must have an Entity to receive item
             DaggerfallEntityBehaviour entityBehaviour = target.QuestResourceBehaviour.GetComponent<DaggerfallEntityBehaviour>();
             if (!entityBehaviour)
                 throw new Exception(string.Format("GiveItem target {0} is not an Entity with DaggerfallEntityBehaviour", targetSymbol));
 
-            // Add quest Item to Entity item collection
-            entityBehaviour.Entity.Items.AddItem(item.DaggerfallUnityItem);
+            // Assign item for player to find
+            //  * Some quests assign item to Foe at create time, others on injured event
+            //  * It's possible for target enemy to be one-shot or to be killed by other means (such as "killall")
+            //  * This assignment will direct quest loot item either to live enemy or corpse loot container
+            if (entityBehaviour.CorpseLootContainer)
+            {
+                // If enemy is already dead then place item in corpse loot container
+                entityBehaviour.CorpseLootContainer.Items.AddItem(item.DaggerfallUnityItem);
+            }
+            else
+            {
+                // Otherwise add quest Item to Entity item collection
+                // It will be transferred to corpse marker loot container when dropped
+                entityBehaviour.Entity.Items.AddItem(item.DaggerfallUnityItem);
+            }
 
             SetComplete();
         }

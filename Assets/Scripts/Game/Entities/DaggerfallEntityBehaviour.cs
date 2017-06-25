@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -17,6 +17,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -43,8 +44,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         private int JumpingFatigueLoss = 11;        // According to DF Chronicles and verified in classic
         private bool CheckedCurrentJump = false;
-
         private bool gameStarted = false;
+
+        DaggerfallLoot corpseLootContainer = null;
 
         #endregion
 
@@ -57,6 +59,15 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return entity; }
             set { SetEntityValue(value); }
+        }
+
+        /// <summary>
+        /// Gets or sets reference to loot container spawned at time of entity death.
+        /// </summary>
+        public DaggerfallLoot CorpseLootContainer
+        {
+            get { return corpseLootContainer; }
+            set { corpseLootContainer = value; }
         }
 
         #endregion

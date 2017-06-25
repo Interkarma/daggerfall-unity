@@ -71,9 +71,9 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Flag stating if this Foe is dead and quest system is done with any jobs it needs to perform.
+        /// Flag stating if this Foe is dead .
         /// </summary>
-        public bool IsDead
+        public bool IsFoeDead
         {
             get { return isFoeDead; }
         }

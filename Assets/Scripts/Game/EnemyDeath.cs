@@ -60,11 +60,11 @@ namespace DaggerfallWorkshop.Game
             if (!entityBehaviour)
                 return;
 
-            // If enemy belongs to quest system make sure quest system is done with it first
+            // If enemy associated with quest system, make sure quest system is done with it first
             QuestResourceBehaviour questResourceBehaviour = GetComponent<QuestResourceBehaviour>();
             if (questResourceBehaviour)
             {
-                if (!questResourceBehaviour.IsDead)
+                if (!questResourceBehaviour.IsFoeDead)
                     return;
             }
 
@@ -87,6 +87,7 @@ namespace DaggerfallWorkshop.Game
 
             // Generate items
             loot.GenerateItems();
+            entityBehaviour.CorpseLootContainer = loot;
 
             // Transfer any items owned by entity to loot container
             // Many quests will stash a reward in enemy inventory for player to find
