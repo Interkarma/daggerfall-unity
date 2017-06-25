@@ -225,17 +225,64 @@ namespace DaggerfallWorkshop.Game.Formulas
                         damage_result += 2;
                     if (onScreenWeapon.WeaponState == WeaponStates.StrikeDown)
                         damage_result += 4;
+                }
 
-                    // Apply weapon expertise modifier
-                    if (weapon != null && ((int)attacker.Career.ExpertProficiencies & weapon.GetWeaponSkillUsed()) != 0)
+                // Apply weapon expertise modifier
+                if (weapon != null && ((int)attacker.Career.ExpertProficiencies & weapon.GetWeaponSkillUsed()) != 0)
+                {
+                    damage_result += ((attacker.Level / 3) + 1);
+                }
+                // Apply hand-to-hand expertise modifier
+                else if (weapon == null && ((int)attacker.Career.ExpertProficiencies & (int)(DaggerfallConnect.DFCareer.ProficiencyFlags.HandToHand)) != 0)
+                {
+                    damage_result += ((attacker.Level / 3) + 1);
+                }
+
+                // Apply bonus or penalty from opponent type.
+                // In classic this is broken and only works if the attack is done with a weapon that has the maximum number of enchantments.
+                Entity.EnemyEntity enemyEntity = target as Entity.EnemyEntity;
+                if (enemyEntity.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Undead)
+                {
+                    if (((int)attacker.Career.UndeadAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
                     {
-                        damage_result += ((attacker.Level / 3) + 1);
+                        damage_result += attacker.Level;
                     }
-
-                    // Apply hand-to-hand expertise modifier
-                    else if (weapon == null && ((int)attacker.Career.ExpertProficiencies & (int)(DaggerfallConnect.DFCareer.ProficiencyFlags.HandToHand)) != 0)
+                    if (((int)attacker.Career.UndeadAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
                     {
-                        damage_result += ((attacker.Level / 3) + 1);
+                        damage_result -= attacker.Level;
+                    }
+                }
+                else if (enemyEntity.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Daedra)
+                {
+                    if (((int)attacker.Career.DaedraAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
+                    {
+                        damage_result += attacker.Level;
+                    }
+                    if (((int)attacker.Career.DaedraAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
+                    {
+                        damage_result -= attacker.Level;
+                    }
+                }
+                else if (enemyEntity.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Humanoid)
+                {
+                    if (((int)attacker.Career.HumanoidAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
+                    {
+                        damage_result += attacker.Level;
+                    }
+                    if (((int)attacker.Career.HumanoidAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
+                    {
+                        damage_result -= attacker.Level;
+                    }
+                }
+                else if (enemyEntity.GetEnemyGroup() == DaggerfallConnect.DFCareer.EnemyGroups.Animals)
+                {
+                    if (((int)attacker.Career.AnimalsAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Bonus) != 0)
+                    {
+                        damage_result += attacker.Level;
+                    }
+                    if (((int)attacker.Career.AnimalsAttackModifier & (int)DaggerfallConnect.DFCareer.AttackModifier.Phobia) != 0)
+                    {
+                        damage_result -= attacker.Level;
                     }
                 }
 
