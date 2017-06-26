@@ -286,11 +286,32 @@ namespace DaggerfallWorkshop.Game.Formulas
                     }
                 }
 
-                // Apply the strength modifier.
+                // Apply racial modifier.
+                Entity.PlayerEntity playerEntity = attacker as Entity.PlayerEntity;
+                if (weapon != null)
+                {
+                    if (playerEntity.RaceTemplate.ID == (int)Entity.Races.DarkElf)
+                    {
+                        damage_result += (attacker.Level / 4);
+                    }
+                    else if (weapon.GetWeaponSkillUsed() == (int)DaggerfallConnect.DFCareer.ProficiencyFlags.MissileWeapons)
+                    {
+                        if (playerEntity.RaceTemplate.ID == (int)Entity.Races.WoodElf)
+                        {
+                            damage_result += (attacker.Level / 3);
+                        }
+                    }
+                    else if (playerEntity.RaceTemplate.ID == (int)Entity.Races.Redguard)
+                    {
+                        damage_result += (attacker.Level / 3);
+                    }
+                }
+
+                // Apply strength modifier.
                 // The in-game display of the strength modifier in Daggerfall is incorrect. It is actually ((STR - 50) / 5).
                 damage_result += DamageModifier(attacker.Stats.Strength);
 
-                // Apply the material modifier.
+                // Apply material modifier.
                 // The in-game display in Daggerfall of weapon damages with material modifiers is incorrect. The material modifier is half of what the display suggests.
                 if (weapon != null)
                 {
