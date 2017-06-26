@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -705,22 +705,48 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
-        /// Resolve block name for exterior block.
+        /// Lookup block name for exterior block from location data provided.
         /// </summary>
-        /// <param name="dfLocation">DFLocation to resolve block name.</param>
+        /// <param name="dfLocation">DFLocation to read block name.</param>
         /// <param name="x">Block X coordinate.</param>
         /// <param name="y">Block Y coordinate.</param>
         /// <returns>Block name.</returns>
         public string GetRmbBlockName(ref DFLocation dfLocation, int x, int y)
         {
-            string letters = string.Empty;
-            string numbers = string.Empty;
+            int index = y * dfLocation.Exterior.ExteriorData.Width + x;
+            return dfLocation.Exterior.ExteriorData.BlockNames[index];
+        }
 
+        /// <summary>
+        /// Resolve block name for exterior block from X, Y coordinates.
+        /// </summary>
+        /// <param name="dfLocation">DFLocation to resolve block name.</param>
+        /// <param name="x">Block X coordinate.</param>
+        /// <param name="y">Block Y coordinate.</param>
+        /// <returns>Block name.</returns>
+        public string ResolveRmbBlockName(ref DFLocation dfLocation, int x, int y)
+        {
             // Get indices
             int offset = y * dfLocation.Exterior.ExteriorData.Width + x;
             byte blockIndex = dfLocation.Exterior.ExteriorData.BlockIndex[offset];
             byte blockNumber = dfLocation.Exterior.ExteriorData.BlockNumber[offset];
             byte blockCharacter = dfLocation.Exterior.ExteriorData.BlockCharacter[offset];
+
+            return ResolveRmbBlockName(ref dfLocation, blockIndex, blockNumber, blockCharacter);
+        }
+
+        /// <summary>
+        /// Resolve block name from raw components.
+        /// </summary>
+        /// <param name="dfLocation">DFLocation to resolve block name.</param>
+        /// <param name="blockIndex">Block index.</param>
+        /// <param name="blockNumber">Block number.</param>
+        /// <param name="blockCharacter">Block character.</param>
+        /// <returns>Block name.</returns>
+        public string ResolveRmbBlockName(ref DFLocation dfLocation, byte blockIndex, byte blockNumber, byte blockCharacter)
+        {
+            string letters = string.Empty;
+            string numbers = string.Empty;
 
             // Get prefix
             string prefix = rmbBlockPrefixes[blockIndex];
@@ -1021,6 +1047,23 @@ namespace DaggerfallConnect.Arena2
             for (int i = 0; i < 22; i++) dfLocation.Exterior.ExteriorData.Unknown4[i] = reader.ReadUInt32();
             dfLocation.Exterior.ExteriorData.NullValue3 = reader.ReadBytes(40);
             dfLocation.Exterior.ExteriorData.Unknown5 = reader.ReadUInt32();
+
+            // Get block names
+            int total = dfLocation.Exterior.ExteriorData.Width * dfLocation.Exterior.ExteriorData.Height;
+            dfLocation.Exterior.ExteriorData.BlockNames = new string[64];
+            for (int i = 0; i < 64; i++)
+            {
+                // Only first width*height blocks are valid
+                if (i > total)
+                    break;
+
+                // Construct block name
+                dfLocation.Exterior.ExteriorData.BlockNames[i] = ResolveRmbBlockName(
+                    ref dfLocation,
+                    dfLocation.Exterior.ExteriorData.BlockIndex[i],
+                    dfLocation.Exterior.ExteriorData.BlockNumber[i],
+                    dfLocation.Exterior.ExteriorData.BlockCharacter[i]);
+            }
         }
 
         /// <summary>

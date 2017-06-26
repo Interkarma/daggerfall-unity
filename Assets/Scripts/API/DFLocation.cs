@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -471,6 +471,9 @@ namespace DaggerfallConnect
 
             /// <summary>Only first Width*Height elements will have any meaning.</summary>
             public Byte[] BlockCharacter;
+
+            /// <summary>Resolved block names.</summary>
+            public string[] BlockNames;
             
             /// <summary>Unknown.</summary>
             public Byte[] Unknown3;
