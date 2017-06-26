@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int DamageModifier(int strength)
         {
-            return (int)Mathf.Floor((float)strength / 10f) - 5;
+            return (int)Mathf.Floor((float)(strength - 50) / 5f);
         }
 
         public static int MaxEncumbrance(int strength)
@@ -216,13 +216,15 @@ namespace DaggerfallWorkshop.Game.Formulas
                 if (onScreenWeapon != null)
                 {
                     // Apply swing modifier.
+                    // The Daggerfall manual groups diagonal slashes to the left and right as if they are the same, but they are different.
                     if (onScreenWeapon.WeaponState == WeaponStates.StrikeUp)
+                        damage_result += -4;
+                    if (onScreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
                         damage_result += -2;
-                    if (onScreenWeapon.WeaponState == WeaponStates.StrikeDownLeft
-                        || onScreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
-                        damage_result += 1;
+                    if (onScreenWeapon.WeaponState == WeaponStates.StrikeDownLeft)
+                        damage_result += 2;
                     if (onScreenWeapon.WeaponState == WeaponStates.StrikeDown)
-                        damage_result += 3;
+                        damage_result += 4;
 
                     // Apply weapon expertise modifier
                     if (weapon != null && ((int)attacker.Career.ExpertProficiencies & weapon.GetWeaponSkillUsed()) != 0)
@@ -238,15 +240,17 @@ namespace DaggerfallWorkshop.Game.Formulas
                 }
 
                 // Apply the strength modifier.
+                // The in-game display of the strength modifier in Daggerfall is incorrect. It is actually ((STR - 50) / 5).
                 damage_result += DamageModifier(attacker.Stats.Strength);
 
-                // Apply the material modifier
+                // Apply the material modifier.
+                // The in-game display in Daggerfall of weapon damages with material modifiers is incorrect. The material modifier is half of what the display suggests.
                 if (weapon != null)
                 {
                     damage_result += weapon.GetMaterialDamageModifier();
                 }
 
-                // 0 damage is possible. Plays no hit sound or blood splash.
+                // 0 damage is possible. Creates no blood splash.
                 damage_result = Mathf.Max(0, damage_result);
             }
 
