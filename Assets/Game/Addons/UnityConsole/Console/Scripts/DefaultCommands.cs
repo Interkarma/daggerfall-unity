@@ -33,6 +33,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(TeleportToDungeonDoor.name, TeleportToDungeonDoor.description, TeleportToDungeonDoor.usage, TeleportToDungeonDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestSpawnMarker.name, TeleportToQuestSpawnMarker.description, TeleportToQuestSpawnMarker.usage, TeleportToQuestSpawnMarker.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestItemMarker.name, TeleportToQuestItemMarker.description, TeleportToQuestItemMarker.usage, TeleportToQuestItemMarker.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(GetAllQuestItems.name, GetAllQuestItems.description, GetAllQuestItems.usage, GetAllQuestItems.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenDoor.name, OpenDoor.description, OpenDoor.usage, OpenDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ActivateAction.name, ActivateAction.description, ActivateAction.usage, ActivateAction.Execute);
@@ -778,6 +779,38 @@ namespace Wenzil.Console
             }
         }
 
+
+        private static class GetAllQuestItems
+        {
+            public static readonly string name = "getallquestitems";
+            public static readonly string error = "Could not find any active quests with Item resources.";
+            public static readonly string description = "Immediately give player a copy of any items referenced by active quests (including rewards). This can break quest execution flow.";
+            public static readonly string usage = "getallquestitems";
+
+            public static string Execute(params string[] args)
+            {
+                int itemsFound = 0;
+                ulong[] uids = QuestMachine.Instance.GetAllActiveQuests();
+                foreach(ulong questUID in uids)
+                {
+                    Quest quest = QuestMachine.Instance.GetActiveQuest(questUID);
+                    if (quest != null)
+                    {
+                        QuestResource[] itemResources = quest.GetAllResources(typeof(Item));
+                        foreach(Item item in itemResources)
+                        {
+                            GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, ItemCollection.AddPosition.Front);
+                            itemsFound++;
+                        }
+                    }
+                }
+
+                if (itemsFound > 0)
+                    return string.Format("Transferred {0} items into player inventory", itemsFound);
+                else
+                    return error;
+            }
+        }
 
         private static class OpenAllDoors
         {

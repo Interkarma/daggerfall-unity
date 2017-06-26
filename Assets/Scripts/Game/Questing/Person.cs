@@ -537,17 +537,19 @@ namespace DaggerfallWorkshop.Game.Questing
 
         // Creates NPC as Questor, a special Person resource mapped to an NPC who exists full-time in world
         // The QuestorData pack should have enough information for quest system to identify NPC in world
+        // Questor NPC data is derived from last NPC player clicked, this seems to fit Daggerfall which
+        // can offer quests from certain types of NPC at random in addition to usual guild questors.
         bool SetupQuestorNPC()
         {
             // Must have a questor set
-            if (ParentQuest.QuestorNPC == null)
+            if (QuestMachine.Instance.LastNPCClicked == null)
             {
-                Debug.LogErrorFormat("Quest Person _{0}_ is expecting a Questor NPC, but one is not set. Proceeding with a random NPC so quest will compile.", Symbol.Name);
+                Debug.LogErrorFormat("Quest Person _{0}_ is expecting a Questor NPC, but one has not been clicked. Proceeding with a virtual NPC so quest will compile.", Symbol.Name);
                 return false;
             }
 
             // Set questor data
-            questorData = ParentQuest.QuestorNPC.Data;
+            questorData = QuestMachine.Instance.LastNPCClicked.Data;
             isQuestor = true;
 
             // Setup Person resource

@@ -198,8 +198,7 @@ namespace DaggerfallWorkshop.Game
                                     break;
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
-                                    SpecialNPCClick(npc);
-                                    QuestorCheck(npc);
+                                    StaticNPCClick(npc);
                                     break;
                             }
                         }
@@ -474,9 +473,15 @@ namespace DaggerfallWorkshop.Game
                 questResourceBehaviour.DoClick();
         }
 
-        // Player has clicked on a special NPC
-        void SpecialNPCClick(StaticNPC npc)
+        // Player has clicked on a static NPC
+        void StaticNPCClick(StaticNPC npc)
         {
+            // Store the NPC just clicked in quest engine
+            QuestMachine.Instance.LastNPCClicked = npc;
+
+            // Check if this NPC is a quest giver and show temp guild quest popup
+            QuestorCheck(npc);
+
             // Handle special NPC in home location click
             SpecialNPCClickHandler specialNPCClickHandler = npc.gameObject.GetComponent<SpecialNPCClickHandler>();
             if (specialNPCClickHandler)

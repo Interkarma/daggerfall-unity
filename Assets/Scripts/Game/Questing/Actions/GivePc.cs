@@ -9,22 +9,27 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
-using System.Text.RegularExpressions;
 using System;
-using DaggerfallConnect;
+using System.Text.RegularExpressions;
+using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
+
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// Give items to player.
+    /// Give a quest Item to player. This has three formats:
+    ///  * "give pc anItem" - Displays QuestComplete success message and opens loot window with reward. Could probably be called "give quest reward anItem".
+    ///  * "give pc nothing" - Also displays QuestComplete success message but does not open loot window as no reward.
+    ///  * "give pc anItem notify nnnn" - Places item directly into player's inventory and says message ID nnnn.
     /// </summary>
     public class GivePc : ActionTemplate
     {
         Symbol itemSymbol;
         int textId;
         bool isNothing;
+
+        DaggerfallLoot rewardLoot = null;
 
         public override string Pattern
         {
@@ -61,9 +66,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             base.Update(caller);
 
-            // Do nothing if isNothing
+            // Handle giving player nothing
+            // This also shows QuestComplete message but does not give player loot
             if (isNothing)
             {
+                OfferToPlayerWithQuestComplete(null);
                 SetComplete();
                 return;
             }
@@ -73,16 +80,47 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (item == null)
                 throw new Exception(string.Format("Could not find Item resource symbol {0}", itemSymbol));
 
-            // Add quest item to player
-            GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, Items.ItemCollection.AddPosition.Front);
-
-            // Show the popup message
+            // Give quest item to player based on command format
             if (textId != 0)
-            {
-                ParentQuest.ShowMessagePopup(textId);
-            }
-
+                DirectToPlayerWithNotify(item);
+            else
+                OfferToPlayerWithQuestComplete(item);
+            
             SetComplete();
+        }
+
+        void OfferToPlayerWithQuestComplete(Item item)
+        {
+            // Show quest complete message
+            DaggerfallMessageBox messageBox = ParentQuest.ShowMessagePopup((int)QuestMachine.QuestMessages.QuestComplete);
+
+            // If no item for reward then we are done
+            if (item == null)
+                return;
+
+            // Create a dropped loot container window for player to loot their reward
+            rewardLoot = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID);
+            rewardLoot.Items.AddItem(item.DaggerfallUnityItem);
+
+            // Schedule loot window to open when player dismisses message
+            messageBox.OnClose += QuestCompleteMessage_OnClose;
+        }
+
+        void DirectToPlayerWithNotify(Item item)
+        {
+            // Give player item and show notify message
+            GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, Items.ItemCollection.AddPosition.Front);
+            ParentQuest.ShowMessagePopup(textId);
+        }
+
+        private void QuestCompleteMessage_OnClose()
+        {
+            // Open loot reward container once QuestComplete dismissed
+            if (rewardLoot != null)
+            {
+                DaggerfallUI.Instance.InventoryWindow.LootTarget = rewardLoot;
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+            }
         }
     }
 }

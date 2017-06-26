@@ -37,6 +37,13 @@ namespace DaggerfallWorkshop.Utility
         TextFile.Token[] GetRSCTokens(int id);
 
         /// <summary>
+        /// Gets tokens from a randomly selected subrecord.
+        /// </summary>
+        /// <param name="id">Text resource ID.</param>
+        /// <returns>Text resource tokens.</returns>
+        TextFile.Token[] GetRandomTokens(int id);
+
+        /// <summary>
         /// Gets random string from separated token array.
         /// Example would be flavour text variants when finding dungeon exterior.
         /// </summary>
@@ -231,6 +238,36 @@ namespace DaggerfallWorkshop.Utility
                 return null;
 
             return TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
+        }
+
+        public virtual TextFile.Token[] GetRandomTokens(int id)
+        {
+            TextFile.Token[] sourceTokens = GetRSCTokens(id);
+
+            // Build a list of token subrecords
+            List<TextFile.Token> currentStream = new List<TextFile.Token>();
+            List<TextFile.Token[]> tokenStreams = new List<TextFile.Token[]>();
+            for (int i = 0; i < sourceTokens.Length; i++)
+            {
+                // If we're at end of subrecord then start a new stream
+                if (sourceTokens[i].formatting == TextFile.Formatting.SubrecordSeparator)
+                {
+                    tokenStreams.Add(currentStream.ToArray());
+                    currentStream.Clear();
+                    continue;
+                }
+
+                // Otherwise keep adding to current stream
+                currentStream.Add(sourceTokens[i]);
+            }
+
+            // Complete final stream
+            tokenStreams.Add(currentStream.ToArray());
+
+            // Select a random token stream
+            int index = UnityEngine.Random.Range(0, tokenStreams.Count);
+
+            return tokenStreams[index];
         }
 
         public virtual string GetRandomText(int id)

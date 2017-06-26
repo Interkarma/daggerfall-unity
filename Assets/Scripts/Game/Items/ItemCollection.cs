@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -20,8 +21,6 @@ namespace DaggerfallWorkshop.Game.Items
     /// Collection of items.
     /// Items are stored in an ordered dictionary keyed to a unique identifier.
     /// This collection may represent an inventory, a loot pile, harvestable items, etc.
-    /// This class is under active development and may change several times before completed.
-    /// TODO: Implement enumerator
     /// </summary>
     [Serializable]
     public class ItemCollection
@@ -81,6 +80,26 @@ namespace DaggerfallWorkshop.Game.Items
         public bool Contains(ulong uid)
         {
             return items.Contains(uid);
+        }
+
+        /// <summary>
+        /// Check if quest item held by player.
+        /// </summary>
+        /// <param name="questItem">Quest Item resource.</param>
+        /// <returns>True if player holding this quest item.</returns>
+        public bool Contains(Item questItem)
+        {
+            foreach(DaggerfallUnityItem item in items.Values)
+            {
+                if (item.IsQuestItem)
+                {
+                    if (item.QuestUID == questItem.ParentQuest.UID &&
+                        item.QuestItemSymbol == questItem.Symbol)
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

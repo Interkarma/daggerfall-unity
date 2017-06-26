@@ -77,6 +77,8 @@ namespace DaggerfallWorkshop.Game.Questing
         float startupTimer = 0;
         float updateTimer = 0;
 
+        StaticNPC lastNPCClicked;
+
         #endregion
 
         #region Properties
@@ -160,6 +162,15 @@ namespace DaggerfallWorkshop.Game.Questing
         public Table FoesTable
         {
             get { return foesTable; }
+        }
+
+        /// <summary>
+        /// Gets or sets StaticNPC last clicked by player.
+        /// </summary>
+        public StaticNPC LastNPCClicked
+        {
+            get { return lastNPCClicked; }
+            set { SetLastNPCClicked(value); }
         }
 
         #endregion
@@ -298,6 +309,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new DropFace(null));
             RegisterAction(new InjuredFoe(null));
             RegisterAction(new KilledFoe(null));
+            RegisterAction(new TotingItemAndClickedNpc(null));
         }
 
         void RegisterAction(IQuestAction actionTemplate)
@@ -392,7 +404,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Quest will attempt to load from QuestSourceFolder property path.
         /// </summary>
         /// <param name="questName">Name of quest filename. Extensions .txt is optional.</param>
-        /// <param name="questorNPC">Questor NPC in world offering quest.</param>
         /// <returns>Quest object if successfully parsed, otherwise null.</returns>
         public Quest ParseQuest(string questName, StaticNPC questorNPC = null)
         {
@@ -402,20 +413,19 @@ namespace DaggerfallWorkshop.Game.Questing
             if (source == null || source.Length == 0)
                 return null;
 
-            return ParseQuest(source, questorNPC);
+            return ParseQuest(source);
         }
 
         /// <summary>
         /// Instantiate a new quest from source text array.
         /// </summary>
         /// <param name="questSource">Array of lines from quuest source file.</param>
-        /// <param name="questorNPC">Questor NPC in world offering quest.</param>
         /// <returns>Quest.</returns>
-        public Quest ParseQuest(string[] questSource, StaticNPC questorNPC = null)
+        public Quest ParseQuest(string[] questSource)
         {
             // Parse quest
             Parser parser = new Parser();
-            Quest quest = parser.Parse(questSource, questorNPC);
+            Quest quest = parser.Parse(questSource);
 
             return quest;
         }
@@ -424,11 +434,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Parse and instantiate a quest from quest name.
         /// </summary>
         /// <param name="questName">Quest name.</param>
-        /// <param name="questorNPC">Questor NPC in world offering quest.</param>
         /// <returns>Quest.</returns>
-        public Quest InstantiateQuest(string questName, StaticNPC questorNPC = null)
+        public Quest InstantiateQuest(string questName)
         {
-            Quest quest = ParseQuest(questName, questorNPC);
+            Quest quest = ParseQuest(questName);
             if (quest != null)
             {
                 InstantiateQuest(quest);
@@ -555,6 +564,75 @@ namespace DaggerfallWorkshop.Game.Questing
             messageBox.ParentPanel.BackgroundColor = Color.clear;
 
             return messageBox;
+        }
+
+        /// <summary>
+        /// Checks if last NPC clicked is questor for any quests.
+        /// This is used for quest turn-in and reward process.
+        /// </summary>
+        /// <returns>True if this NPC is a questor in any quest.</returns>
+        public bool IsLastNPCClickedQuestor()
+        {
+            foreach(Quest quest in quests.Values)
+            {
+                QuestResource[] questPeople = quest.GetAllResources(typeof(Person));
+                foreach (Person person in questPeople)
+                {
+                    if (person.IsQuestor)
+                    {
+                        if (IsNPCDataEqual(person.QuestorData, lastNPCClicked.Data))
+                        {
+                            Debug.LogFormat("This person is used in quest {0} as Person {1}", person.ParentQuest.UID, person.Symbol.Original);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Sets the last StaticNPC clicked by player.
+        /// Always called by PlayerActivate when player clicks on GameObject holding StaticNPC behaviour.
+        /// </summary>
+        public void SetLastNPCClicked(StaticNPC npc)
+        {
+            // Store the NPC clicked
+            lastNPCClicked = npc;
+
+            // Find Person resource if this NPC is involved in any quests
+            foreach (Quest quest in quests.Values)
+            {
+                QuestResource[] questPeople = quest.GetAllResources(typeof(Person));
+                foreach (Person person in questPeople)
+                {
+                    // Set player click in Person resource
+                    if (IsNPCDataEqual(person.QuestorData, lastNPCClicked.Data))
+                        person.SetPlayerClicked();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if two sets of StaticNPC data reference the same NPC.
+        /// Notes:
+        ///  * Still working through some issues here.
+        ///  * Possible for Questor NPC to be moved.
+        ///  * This will likely become more robust and conditional as quest system progresses.
+        /// </summary>
+        /// <returns>True if person1 and person2 are considered the same.</returns>
+        public bool IsNPCDataEqual(StaticNPC.NPCData person1, StaticNPC.NPCData person2)
+        {
+            if (person1.hash == person2.hash &&
+                person1.mapID == person2.mapID &&
+                person1.nameSeed == person2.nameSeed &&
+                person1.buildingKey == person2.buildingKey)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

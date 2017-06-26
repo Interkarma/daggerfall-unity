@@ -50,14 +50,11 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="source">Array of text lines from quest source.</param>
         /// <param name="questorNPC">Questor NPC in world offering quest.</param>
-        public Quest Parse(string[] source, StaticNPC questorNPC = null)
+        public Quest Parse(string[] source)
         {
             const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
 
             Quest quest = new Quest();
-            if (questorNPC != null)
-                quest.QuestorNPC = questorNPC;
-
             string questName = string.Empty;
             bool inQRC = false;
             bool inQBN = false;

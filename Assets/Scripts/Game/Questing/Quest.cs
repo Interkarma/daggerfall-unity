@@ -44,7 +44,6 @@ namespace DaggerfallWorkshop.Game.Questing
         string questName;
         string displayName;
         DaggerfallDateTime questStartTime;
-        StaticNPC questorNPC;                   // Only used during quest setup, not to be serialized
 
         Person lastPersonReferenced = null;
         bool questBreak = false;
@@ -143,18 +142,6 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return questBreak; }
             set { questBreak = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets Questor NPC at time of quest creation.
-        /// This special NPC is captured by runtime only if it requires a Questor (e.g. a guild quest-giver).
-        /// The Questor NPC is mapped to a Person resource for future use and referenced back to world.
-        /// This property only used at instantiation time, it is not serialized or used again once quest is live.
-        /// </summary>
-        public StaticNPC QuestorNPC
-        {
-            get { return questorNPC; }
-            set { questorNPC = value; }
         }
 
         #endregion
@@ -406,12 +393,12 @@ namespace DaggerfallWorkshop.Game.Questing
             return foundResources.ToArray();
         }
 
-        public void ShowMessagePopup(int id)
+        public DaggerfallMessageBox ShowMessagePopup(int id)
         {
             // Get message resource
             Message message = GetMessage(id);
             if (message == null)
-                return;
+                return null;
 
             // Get message tokens
             TextFile.Token[] tokens = message.GetTextTokens();
@@ -426,6 +413,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Set a quest break so popup will display immediately
             questBreak = true;
+
+            return messageBox;
         }
 
         #endregion

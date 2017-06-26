@@ -150,12 +150,17 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override bool ExpandMacro(MacroTypes macro, out string textOut)
         {
+            // Check if this item is gold pieces
+            bool isGoldPieces = false;
+            if (item.ItemGroup == ItemGroups.Currency && item.GroupIndex == 0)
+                isGoldPieces = true;
+
             textOut = string.Empty;
             bool result = true;
             switch (macro)
             {
                 case MacroTypes.NameMacro1:             // Display name
-                    textOut = item.LongName;
+                    textOut = (isGoldPieces) ? item.stackCount.ToString() : item.LongName;
                     break;
 
                 default:                                // Macro not supported
@@ -215,9 +220,9 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get amount
             int amount = 0;
             if (rangeLow == -1 || rangeHigh == -1)
-                amount = UnityEngine.Random.Range(rangeLow, rangeHigh + 1);
-            else
                 amount = GameManager.Instance.PlayerEntity.Level * UnityEngine.Random.Range(90, 110);
+            else
+                amount = UnityEngine.Random.Range(rangeLow, rangeHigh + 1);
 
             // Create item
             DaggerfallUnityItem result = new DaggerfallUnityItem(ItemGroups.Currency, 0);
