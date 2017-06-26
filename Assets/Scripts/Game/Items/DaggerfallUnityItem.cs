@@ -249,6 +249,14 @@ namespace DaggerfallWorkshop.Game.Items
             get { return questItemSymbol; }
         }
 
+        /// <summary>
+        /// Gets native material value.
+        /// </summary>
+        public int NativeMaterialValue
+        {
+            get { return nativeMaterialValue; }
+        }
+
         #endregion
 
         #region Constructors

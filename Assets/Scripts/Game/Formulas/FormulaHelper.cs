@@ -307,6 +307,15 @@ namespace DaggerfallWorkshop.Game.Formulas
                     }
                 }
 
+                // Apply modifiers for Skeletal Warrior.
+                if (weapon != null && enemyEntity.CareerIndex == (int)Entity.MonsterCareers.SkeletalWarrior)
+                {
+                    if (weapon.NativeMaterialValue == (int)Items.WeaponMaterialTypes.Silver)
+                        damage_result *= 2;
+                    if (weapon.GetWeaponSkillUsed() != (int)DaggerfallConnect.DFCareer.ProficiencyFlags.BluntWeapons)
+                        damage_result /= 2;
+                }
+
                 // Apply strength modifier.
                 // The in-game display of the strength modifier in Daggerfall is incorrect. It is actually ((STR - 50) / 5).
                 damage_result += DamageModifier(attacker.Stats.Strength);
