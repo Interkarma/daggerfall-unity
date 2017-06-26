@@ -326,21 +326,8 @@ namespace DaggerfallWorkshop.Utility
                 {
                     if (obj.Type == DFBlock.RdbResourceTypes.Flat)
                     {
-                        GameObject flatObject;
-
-                        // Import custom 3d gameobject instead of flat
-                        flatObject = MeshReplacement.ImportCustomFlatGameobject(obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord,
-                            new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale, flatsNode.transform, true);
-                        if (flatObject != null)
-                        {
-                            // Add torch burning sound
-                            if (MeshReplacement.HasTorchSound (obj.Resources.FlatResource.TextureArchive, obj.Resources.FlatResource.TextureRecord))
-                                AddTorchAudioSource(flatObject);
-                            continue;
-                        }
-
                         // Add flat
-                        flatObject = AddFlat(obj, flatsNode.transform);
+                        GameObject flatObject = AddFlat(obj, flatsNode.transform);
 
                         // Store editor objects and start markers
                         int archive = obj.Resources.FlatResource.TextureArchive;
@@ -1089,42 +1076,46 @@ namespace DaggerfallWorkshop.Utility
                 record = obj.Resources.FlatResource.TextureRecord;
 
             // Spawn billboard gameobject
-            GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent);
             Vector3 billboardPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-
-            // Add RDB data to billboard
-            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-            dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
-
-            // Add StaticNPC behaviour
-            if (dfBillboard.Summary.FlatType == FlatTypes.NPC)
+            GameObject go = MeshReplacement.ImportCustomFlatGameobject(archive, record, billboardPosition, parent, true);
+            if (!go)
             {
-                StaticNPC npc = go.AddComponent<StaticNPC>();
-                npc.SetLayoutData(obj);
-            }
+                go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent);
 
-            // Special handling for individual NPCs found in layout data
-            // TODO: Move this handling to StaticNPC behaviour
-            if (QuestMachine.Instance.IsIndividualNPC(dfBillboard.Summary.FactionOrMobileID))
-            {
-                // Check if NPC has been placed elsewhere on a quest
-                if (QuestMachine.Instance.IsIndividualQuestNPCAtSiteLink(dfBillboard.Summary.FactionOrMobileID))
+                // Set transform
+                go.transform.position = billboardPosition;
+
+                // Add RDB data to billboard
+                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
+
+                // Add StaticNPC behaviour
+                if (dfBillboard.Summary.FlatType == FlatTypes.NPC)
                 {
-                    // Disable individual NPC if placed elsewhere
-                    go.SetActive(false);
+                    StaticNPC npc = go.AddComponent<StaticNPC>();
+                    npc.SetLayoutData(obj);
                 }
-                else
+
+                // Special handling for individual NPCs found in layout data
+                // TODO: Move this handling to StaticNPC behaviour
+                if (QuestMachine.Instance.IsIndividualNPC(dfBillboard.Summary.FactionOrMobileID))
                 {
-                    // Assign SpecialNPCClickHandler to individual NPCs
-                    // This NPC may be used in 0 or several active quests at home
-                    // When not at home the usual QuestResourceBehaviour will be applied
-                    SpecialNPCClickHandler specialNPCClickHandler = go.AddComponent<SpecialNPCClickHandler>();
-                    specialNPCClickHandler.IndividualFactionID = dfBillboard.Summary.FactionOrMobileID;
+                    // Check if NPC has been placed elsewhere on a quest
+                    if (QuestMachine.Instance.IsIndividualQuestNPCAtSiteLink(dfBillboard.Summary.FactionOrMobileID))
+                    {
+                        // Disable individual NPC if placed elsewhere
+                        go.SetActive(false);
+                    }
+                    else
+                    {
+                        // Assign SpecialNPCClickHandler to individual NPCs
+                        // This NPC may be used in 0 or several active quests at home
+                        // When not at home the usual QuestResourceBehaviour will be applied
+                        SpecialNPCClickHandler specialNPCClickHandler = go.AddComponent<SpecialNPCClickHandler>();
+                        specialNPCClickHandler.IndividualFactionID = dfBillboard.Summary.FactionOrMobileID;
+                    }
                 }
             }
-
-            // Set transform
-            go.transform.position = billboardPosition;
 
             // Disable enemy editor flats
             if (archive == TextureReader.EditorFlatsTextureArchive && (record == 15 || record == 16))

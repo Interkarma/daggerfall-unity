@@ -151,30 +151,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             return null;
         }
-        
-        /// <summary>
-        /// Checks if dungeon flat should have a torch sound.
-        /// </summary>
-        static public bool HasTorchSound (int archive, int record)
-        {  
-            if (archive == TextureReader.LightsTextureArchive)
-            {
-                switch (record)
-                {
-                    case 0:
-                    case 1:
-                    case 6:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                        return true;
-                }
-            }
-
-            return false;
-        }
 
         #endregion
 
