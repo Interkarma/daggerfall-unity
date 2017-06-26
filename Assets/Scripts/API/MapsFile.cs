@@ -1049,14 +1049,10 @@ namespace DaggerfallConnect.Arena2
             dfLocation.Exterior.ExteriorData.Unknown5 = reader.ReadUInt32();
 
             // Get block names
-            int total = dfLocation.Exterior.ExteriorData.Width * dfLocation.Exterior.ExteriorData.Height;
-            dfLocation.Exterior.ExteriorData.BlockNames = new string[64];
-            for (int i = 0; i < 64; i++)
+            int totalBlocks = dfLocation.Exterior.ExteriorData.Width * dfLocation.Exterior.ExteriorData.Height;
+            dfLocation.Exterior.ExteriorData.BlockNames = new string[totalBlocks];
+            for (int i = 0; i < totalBlocks; i++)
             {
-                // Only first width*height blocks are valid
-                if (i > total)
-                    break;
-
                 // Construct block name
                 dfLocation.Exterior.ExteriorData.BlockNames[i] = ResolveRmbBlockName(
                     ref dfLocation,
