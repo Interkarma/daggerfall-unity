@@ -68,11 +68,11 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int RollMaxHealth(int level, int hitPointsPerLevel)
         {
             const int baseHealth = 25;
+            int maxHealth = baseHealth + hitPointsPerLevel;
 
-            int maxHealth = baseHealth;
-            for (int i = 0; i < level; i++)
+            for (int i = 1; i < level; i++)
             {
-                maxHealth += hitPointsPerLevel;
+                maxHealth += UnityEngine.Random.Range(1, hitPointsPerLevel + 1);
             }
 
             return maxHealth;
@@ -332,6 +332,24 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             return damage_result;
+        }
+
+        #endregion
+
+        #region Enemies
+
+        // Generates health for enemy classes based on level and class
+        public static int RollEnemyClassMaxHealth(int level, int hitPointsPerLevel)
+        {
+            const int baseHealth = 10;
+            int maxHealth = baseHealth;
+
+            for (int i = 0; i < level; i++)
+            {
+                maxHealth += UnityEngine.Random.Range(1, hitPointsPerLevel + 1);
+            }
+
+            return maxHealth;
         }
 
         #endregion

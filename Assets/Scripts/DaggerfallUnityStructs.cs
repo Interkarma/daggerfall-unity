@@ -188,10 +188,16 @@ namespace DaggerfallWorkshop
         public int SightModifier;                   // +/- range of vision for acute/impaired sight
         public int HearingModifier;                 // +/- range of hearing for acute/impaired hearing
         public MetalTypes MinMetalToHit;            // Minimum metal type required to hit enemy
-        public int MinDamage;                       // Minimum damage per hit
-        public int MaxDamage;                       // Maximum damage per hit
+        public int MinDamage;                       // Minimum damage per first hit of attack
+        public int MaxDamage;                       // Maximum damage per first hit of attack
+        public int MinDamage2;                      // Minimum damage per second hit of attack
+        public int MaxDamage2;                      // Maximum damage per second hit of attack
+        public int MinDamage3;                      // Minimum damage per third hit of attack
+        public int MaxDamage3;                      // Maximum damage per third hit of attack
         public int MinHealth;                       // Minimum health
         public int MaxHealth;                       // Maximum health
+        public int Level;                           // Level
+        public int ArmorValue;                      // Armor value
         public string LootTableKey;                 // Key to use when generating loot
     }
 
