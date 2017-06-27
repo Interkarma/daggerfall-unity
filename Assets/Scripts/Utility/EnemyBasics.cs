@@ -140,6 +140,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 4,
                 MinHealth = 9,
                 MaxHealth = 16,
+                Level = 1,
+                ArmorValue = 6,
             },
 
             // Imp
@@ -164,6 +166,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 11,
                 MaxHealth = 18,
+                Level = 2,
+                ArmorValue = 3,
                 LootTableKey = "D",
             },
 
@@ -185,9 +189,15 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemySprigganAttack,
                 MinMetalToHit = MetalTypes.None,
                 MinDamage = 1,
-                MaxDamage = 10,
+                MaxDamage = 8,
+                MinDamage2 = 1,
+                MaxDamage2 = 8,
+                MinDamage3 = 1,
+                MaxDamage3 = 10,
                 MinHealth = 12,
                 MaxHealth = 26,
+                Level = 3,
+                ArmorValue = -4,
                 LootTableKey = "B",
             },
 
@@ -212,6 +222,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 12,
                 MinHealth = 12,
                 MaxHealth = 26,
+                Level = 3,
+                ArmorValue = 6,
             },
 
             // Grizzly Bear
@@ -232,9 +244,15 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyBearAttack,
                 MinMetalToHit = MetalTypes.None,
                 MinDamage = 1,
-                MaxDamage = 10,
+                MaxDamage = 8,
+                MinDamage2 = 1,
+                MaxDamage2 = 8,
+                MinDamage3 = 1,
+                MaxDamage3 = 10,
                 MinHealth = 13,
                 MaxHealth = 34,
+                Level = 4,
+                ArmorValue = 6,
             },
 
             // Sabertooth Tiger
@@ -256,8 +274,14 @@ namespace DaggerfallWorkshop.Utility
                 MinMetalToHit = MetalTypes.None,
                 MinDamage = 1,
                 MaxDamage = 10,
+                MinDamage2 = 1,
+                MaxDamage2 = 10,
+                MinDamage3 = 3,
+                MaxDamage3 = 15,
                 MinHealth = 13,
                 MaxHealth = 34,
+                Level = 4,
+                ArmorValue = 6,
             },
 
             // Spider
@@ -281,6 +305,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 13,
                 MaxHealth = 34,
+                Level = 4,
+                ArmorValue = 5,
             },
 
             // Orc
@@ -305,6 +331,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 6,
                 MinHealth = 13,
                 MaxHealth = 34,
+                Level = 5,
+                ArmorValue = 7,
                 LootTableKey = "A",
             },
 
@@ -330,6 +358,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 14,
                 MaxHealth = 46,
+                Level = 5,
+                ArmorValue = 6,
                 LootTableKey = "C",
             },
 
@@ -351,10 +381,16 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyWerewolfBark,
                 AttackSound = (int)SoundClips.EnemyWerewolfAttack,
                 MinMetalToHit = MetalTypes.Silver,
-                MinDamage = 2,
-                MaxDamage = 12,
+                MinDamage = 1,
+                MaxDamage = 10,
+                MinDamage2 = 1,
+                MaxDamage2 = 10,
+                MinDamage3 = 2,
+                MaxDamage3 = 12,
                 MinHealth = 17,
                 MaxHealth = 66,
+                Level = 6,
+                ArmorValue = 5,
             },
 
             // Nymph
@@ -379,6 +415,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 5,
                 MinHealth = 15,
                 MaxHealth = 50,
+                Level = 6,
+                ArmorValue = 0,
                 LootTableKey = "C",
             },
 
@@ -403,6 +441,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 12,
                 MinHealth = 15,
                 MaxHealth = 50,
+                Level = 7,
+                ArmorValue = 6,
             },
 
             // Orc Sergeant
@@ -427,6 +467,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 15,
                 MaxHealth = 50,
+                Level = 7,
+                ArmorValue = 5,
                 LootTableKey = "A",
             },
 
@@ -451,6 +493,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 16,
                 MaxHealth = 85,
+                Level = 8,
+                ArmorValue = 2,
                 LootTableKey = "D",
             },
 
@@ -472,10 +516,16 @@ namespace DaggerfallWorkshop.Utility
                 BarkSound = (int)SoundClips.EnemyWereboarBark,
                 AttackSound = (int)SoundClips.EnemyWereboarAttack,
                 MinMetalToHit = MetalTypes.Silver,
-                MinDamage = 5,
-                MaxDamage = 15,
+                MinDamage = 2,
+                MaxDamage = 12,
+                MinDamage2 = 2,
+                MaxDamage2 = 12,
+                MinDamage3 = 5,
+                MaxDamage3 = 15,
                 MinHealth = 17,
                 MaxHealth = 66,
+                Level = 8,
+                ArmorValue = 3,
             },
 
             // Skeletal Warrior
@@ -501,6 +551,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 17,
                 MaxHealth = 66,
+                Level = 9,
+                ArmorValue = 2,
                 LootTableKey = "H",
             },
 
@@ -526,6 +578,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 30,
                 MinHealth = 18,
                 MaxHealth = 74,
+                Level = 10,
+                ArmorValue = 3,
                 LootTableKey = "F",
             },
 
@@ -550,6 +604,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 52,
                 MaxHealth = 66,
+                Level = 10,
+                ArmorValue = 0,
                 LootTableKey = "E",     // TODO: Not in Chronicles, check
             },
 
@@ -575,6 +631,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 35,
                 MinHealth = 17,
                 MaxHealth = 66,
+                Level = 11,
+                ArmorValue = 0,
                 LootTableKey = "I",
             },
 
@@ -600,6 +658,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 17,
                 MaxHealth = 66,
+                Level = 11,
+                ArmorValue = 2,
                 LootTableKey = "E",
             },
 
@@ -624,6 +684,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 25,
                 MinHealth = 18,
                 MaxHealth = 74,
+                Level = 12,
+                ArmorValue = 0,
             },
 
             // Orc Shaman
@@ -648,6 +710,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 20,
                 MinHealth = 18,
                 MaxHealth = 74,
+                Level = 13,
+                ArmorValue = 7,
                 LootTableKey = "U",
             },
 
@@ -673,6 +737,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 19,
                 MaxHealth = 82,
+                Level = 14,
+                ArmorValue = 0,
             },
 
             // Wraith
@@ -697,6 +763,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 45,
                 MinHealth = 30,
                 MaxHealth = 90,
+                Level = 15,
+                ArmorValue = 0,
                 LootTableKey = "I",
             },
 
@@ -722,6 +790,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 20,
                 MaxHealth = 90,
+                Level = 16,
+                ArmorValue = 0,
                 LootTableKey = "T",
             },
 
@@ -747,6 +817,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 100,
                 MinHealth = 25,
                 MaxHealth = 130,
+                Level = 17,
+                ArmorValue = -5,
                 LootTableKey = "J",
             },
 
@@ -772,6 +844,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 26,
                 MaxHealth = 138,
+                Level = 17,
+                ArmorValue = 1,
                 LootTableKey = "J",
             },
 
@@ -796,6 +870,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 27,
                 MaxHealth = 146,
+                Level = 18,
+                ArmorValue = 1,
                 LootTableKey = "E",
             },
 
@@ -821,6 +897,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 28,
                 MaxHealth = 154,
+                Level = 19,
+                ArmorValue = -2,
                 LootTableKey = "Q",
             },
 
@@ -846,6 +924,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 27,
                 MaxHealth = 146,
+                Level = 19,
+                ArmorValue = 1,
                 LootTableKey = "Q",
             },
 
@@ -871,6 +951,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 60,
                 MinHealth = 30,
                 MaxHealth = 170,
+                Level = 20,
+                ArmorValue = -5,
                 LootTableKey = "Q",
             },
 
@@ -896,6 +978,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 50,
                 MinHealth = 35,
                 MaxHealth = 210,
+                Level = 20,
+                ArmorValue = -10,
                 LootTableKey = "T",
             },
 
@@ -922,6 +1006,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 100,
                 MinHealth = 30,
                 MaxHealth = 170,
+                Level = 20,
+                ArmorValue = -10,
                 LootTableKey = "T",
             },
 
@@ -948,6 +1034,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 100,
                 MinHealth = 30,
                 MaxHealth = 170,
+                Level = 21,
+                ArmorValue = -12,
                 LootTableKey = "T",
             },
 
@@ -972,6 +1060,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 14,
                 MaxHealth = 42,
+                Level = 16,
+                ArmorValue = 6,
             },
 
             // Fire Atronach
@@ -995,6 +1085,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 25,
                 MaxHealth = 130,
+                Level = 16,
+                ArmorValue = 6,
             },
 
             // Iron Atronach
@@ -1018,6 +1110,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 25,
                 MaxHealth = 130,
+                Level = 16,
+                ArmorValue = 6,
             },
 
             // Flesh Atronach
@@ -1041,6 +1135,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 25,
                 MaxHealth = 130,
+                Level = 16,
+                ArmorValue = 6,
             },
 
             // Ice Atronach
@@ -1064,6 +1160,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 25,
                 MaxHealth = 130,
+                Level = 16,
+                ArmorValue = 6,
             },
 
             // Dragonling
@@ -1087,6 +1185,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 14,
                 MaxHealth = 42,
+                Level = 16,
+                ArmorValue = 6,
             },
 
             // Dreugh
@@ -1111,6 +1211,8 @@ namespace DaggerfallWorkshop.Utility
                 MinHealth = 13,
                 MaxHealth = 34,
                 LootTableKey = "S",
+                Level = 16,
+                ArmorValue = 6,
             },
 
             // Lamia
@@ -1134,6 +1236,8 @@ namespace DaggerfallWorkshop.Utility
                 MaxDamage = 15,
                 MinHealth = 16,
                 MaxHealth = 58,
+                Level = 16,
+                ArmorValue = 6,
                 LootTableKey = "S",
             },
 

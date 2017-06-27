@@ -272,13 +272,37 @@ namespace DaggerfallWorkshop
                             GUILayoutHelper.Horizontal(() =>
                             {
                                 string monsterDamage = string.Format("{0}-{1}", enemy.MinDamage, enemy.MaxDamage);
-                                EditorGUILayout.LabelField("Monster Damage");
+                                EditorGUILayout.LabelField("Monster Damage 1");
                                 EditorGUILayout.SelectableLabel(monsterDamage, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                            });
+                            GUILayoutHelper.Horizontal(() =>
+                            {
+                                string monsterDamage2 = string.Format("{0}-{1}", enemy.MinDamage2, enemy.MaxDamage2);
+                                EditorGUILayout.LabelField("Monster Damage 2");
+                                EditorGUILayout.SelectableLabel(monsterDamage2, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                            });
+                            GUILayoutHelper.Horizontal(() =>
+                            {
+                                string monsterDamage3 = string.Format("{0}-{1}", enemy.MinDamage3, enemy.MaxDamage3);
+                                EditorGUILayout.LabelField("Monster Damage 3");
+                                EditorGUILayout.SelectableLabel(monsterDamage3, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                             });
                             GUILayoutHelper.Horizontal(() =>
                             {
                                 EditorGUILayout.LabelField("Required Metal");
                                 EditorGUILayout.SelectableLabel(enemy.MinMetalToHit.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                            });
+                            GUILayoutHelper.Horizontal(() =>
+                            {
+                                string level = string.Format("{0}", enemy.Level);
+                                EditorGUILayout.LabelField("Level");
+                                EditorGUILayout.SelectableLabel(level, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                            });
+                            GUILayoutHelper.Horizontal(() =>
+                            {
+                                string armorValue = string.Format("{0}", enemy.ArmorValue);
+                                EditorGUILayout.LabelField("Armor Value");
+                                EditorGUILayout.SelectableLabel(armorValue, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                             });
                         }
                     }
