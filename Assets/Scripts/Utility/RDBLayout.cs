@@ -1128,9 +1128,7 @@ namespace DaggerfallWorkshop.Utility
 
         public static bool IsNPCFlat(int archive)
         {
-            // Set NPC flat type based on archive
-            // This is just a hack for now while performing
-            // more research into NPC names
+            // These texture archives are NPCs
             if (archive == 334 ||                               // Daggerfall people
                 archive == 346 ||                               // Wayrest people
                 archive == 357 ||                               // Sentinel people
