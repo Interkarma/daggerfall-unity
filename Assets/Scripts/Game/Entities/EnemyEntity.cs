@@ -108,6 +108,64 @@ namespace DaggerfallWorkshop.Game.Entity
             FillVitalSigns();
         }
 
+        public DFCareer.EnemyGroups GetEnemyGroup()
+        {
+            switch (careerIndex)
+            {
+                case (int)MonsterCareers.Rat:
+                case (int)MonsterCareers.GiantBat:
+                case (int)MonsterCareers.GrizzlyBear:
+                case (int)MonsterCareers.SabertoothTiger:
+                case (int)MonsterCareers.Spider:
+                case (int)MonsterCareers.Slaughterfish:
+                case (int)MonsterCareers.GiantScorpion:
+                case (int)MonsterCareers.Dragonling:
+                case (int)MonsterCareers.Horse_Invalid:             // (grouped as undead in classic)
+                case (int)MonsterCareers.Dragonling_Alternate:      // (grouped as undead in classic)
+                    return DFCareer.EnemyGroups.Animals;
+                case (int)MonsterCareers.Imp:
+                case (int)MonsterCareers.Spriggan:
+                case (int)MonsterCareers.Orc:
+                case (int)MonsterCareers.Centaur:
+                case (int)MonsterCareers.Werewolf:
+                case (int)MonsterCareers.Nymph:
+                case (int)MonsterCareers.OrcSergeant:
+                case (int)MonsterCareers.Harpy:
+                case (int)MonsterCareers.Wereboar:
+                case (int)MonsterCareers.Giant:
+                case (int)MonsterCareers.OrcShaman:
+                case (int)MonsterCareers.Gargoyle:
+                case (int)MonsterCareers.OrcWarlord:
+                case (int)MonsterCareers.Dreugh:                    // (grouped as undead in classic)
+                case (int)MonsterCareers.Lamia:                     // (grouped as undead in classic)
+                    return DFCareer.EnemyGroups.Humanoid;
+                case (int)MonsterCareers.SkeletalWarrior:
+                case (int)MonsterCareers.Zombie:                    // (grouped as animal in classic)
+                case (int)MonsterCareers.Ghost:
+                case (int)MonsterCareers.Mummy:
+                case (int)MonsterCareers.Wraith:
+                case (int)MonsterCareers.Vampire:
+                case (int)MonsterCareers.VampireAncient:
+                case (int)MonsterCareers.Lich:
+                case (int)MonsterCareers.AncientLich:
+                    return DFCareer.EnemyGroups.Undead;
+                case (int)MonsterCareers.FrostDaedra:
+                case (int)MonsterCareers.FireDaedra:
+                case (int)MonsterCareers.Daedroth:
+                case (int)MonsterCareers.DaedraSeducer:
+                case (int)MonsterCareers.DaedraLord:
+                    return DFCareer.EnemyGroups.Daedra;
+                case (int)MonsterCareers.FireAtronach:
+                case (int)MonsterCareers.IronAtronach:
+                case (int)MonsterCareers.FleshAtronach:
+                case (int)MonsterCareers.IceAtronach:
+                    return DFCareer.EnemyGroups.None;
+
+                default:
+                    return DFCareer.EnemyGroups.None;
+            }
+        }
+
         #endregion
     }
 }

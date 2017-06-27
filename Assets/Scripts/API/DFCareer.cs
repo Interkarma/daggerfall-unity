@@ -311,10 +311,11 @@ namespace DaggerfallConnect
         /// </summary>
         public enum EnemyGroups
         {
-            Undead,
-            Daedra,
-            Humanoid,
-            Animals,
+            None = -1,
+            Undead = 0,
+            Daedra = 1,
+            Humanoid = 2,
+            Animals = 3,
         }
 
         /// <summary>
