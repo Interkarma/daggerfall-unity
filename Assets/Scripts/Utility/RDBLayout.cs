@@ -1075,67 +1075,75 @@ namespace DaggerfallWorkshop.Utility
             if (record == -1)
                 record = obj.Resources.FlatResource.TextureRecord;
 
-            // Get target position
-            GameObject targetGameObject = null;
+            // Add GameObject to scene
             Vector3 targetPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-
-            // Setup billboard and assign RDB data - this is required to get some information about the resource
-            // We will turn this GameObject off again if it's being replaced later
-            // Can rework this later so not necessary to create billboard at all
-            GameObject billboardGameObject = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent);
-            billboardGameObject.transform.position = targetPosition;
-            DaggerfallBillboard dfBillboard = billboardGameObject.GetComponent<DaggerfallBillboard>();
-            dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
-
-            // Get some NPC details
-            bool isNPC = (dfBillboard.Summary.FlatType == FlatTypes.NPC);
-            int factionID = dfBillboard.Summary.FactionOrMobileID;
-
-            // Is there a replacement GameObject to inject?
-            GameObject replacementGameObject = MeshReplacement.ImportCustomFlatGameobject(archive, record, targetPosition, parent, true);
-            if (replacementGameObject)
+            GameObject go = MeshReplacement.ImportCustomFlatGameobject(archive, record, targetPosition, parent, true);
+            if (!go)
             {
-                // Disable billboard GameObject and use replacement as target
-                billboardGameObject.SetActive(false);
-                targetGameObject = replacementGameObject;
-            }
-            else
-            {
-                // Otherwise use standard billboard as target
-                targetGameObject = billboardGameObject;
+                // Setup standard billboard and assign RDB data
+                go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent);
+                go.transform.position = targetPosition;
+                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
             }
 
             // Add StaticNPC behaviour - required for quest system
-            if (isNPC)
+            if (IsNPCFlat(archive))
             {
-                StaticNPC npc = targetGameObject.AddComponent<StaticNPC>();
+                StaticNPC npc = go.AddComponent<StaticNPC>();
                 npc.SetLayoutData(obj);
             }
 
             // Special handling for individual NPCs found in layout data
             // TODO: Move this handling to StaticNPC behaviour
+            int factionID = obj.Resources.FlatResource.FactionOrMobileId;
             if (QuestMachine.Instance.IsIndividualNPC(factionID))
             {
                 // Check if NPC has been placed elsewhere on a quest
                 if (QuestMachine.Instance.IsIndividualQuestNPCAtSiteLink(factionID))
                 {
                     // Disable individual NPC if placed elsewhere
-                    targetGameObject.SetActive(false);
+                    go.SetActive(false);
                 }
                 else
                 {
                     // Assign SpecialNPCClickHandler to individual NPCs
                     // This NPC may be used in 0 or several active quests at home
                     // When not at home the usual QuestResourceBehaviour will be applied
-                    SpecialNPCClickHandler specialNPCClickHandler = targetGameObject.AddComponent<SpecialNPCClickHandler>();
-                    specialNPCClickHandler.IndividualFactionID = dfBillboard.Summary.FactionOrMobileID;
+                    SpecialNPCClickHandler specialNPCClickHandler = go.AddComponent<SpecialNPCClickHandler>();
+                    specialNPCClickHandler.IndividualFactionID = factionID;
                 }
             }
 
             // Disable enemy editor flats
             if (archive == TextureReader.EditorFlatsTextureArchive && (record == 15 || record == 16))
-                targetGameObject.SetActive(false);
+                go.SetActive(false);
 
+            // Add torch burning sound
+            if(IsTorchFlat(archive, record))
+                AddTorchAudioSource(go);
+
+            return go;
+        }
+
+        public static bool IsNPCFlat(int archive)
+        {
+            // Set NPC flat type based on archive
+            // This is just a hack for now while performing
+            // more research into NPC names
+            if (archive == 334 ||                               // Daggerfall people
+                archive == 346 ||                               // Wayrest people
+                archive == 357 ||                               // Sentinel people
+                archive >= 175 && archive <= 184)               // Other people
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsTorchFlat(int archive, int record)
+        {
             // Add torch burning sound
             if (archive == TextureReader.LightsTextureArchive)
             {
@@ -1149,12 +1157,11 @@ namespace DaggerfallWorkshop.Utility
                     case 18:
                     case 19:
                     case 20:
-                        AddTorchAudioSource(targetGameObject);
-                        break;
+                        return true;
                 }
             }
 
-            return targetGameObject;
+            return false;
         }
 
         private static void AddTorchAudioSource(GameObject go)

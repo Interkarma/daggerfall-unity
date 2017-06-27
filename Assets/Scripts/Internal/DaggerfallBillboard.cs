@@ -23,8 +23,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -307,15 +306,8 @@ namespace DaggerfallWorkshop
                 summary.EditorFlatType = MaterialReader.GetEditorFlatType(summary.Record);
 
             // Set NPC flat type based on archive
-            // This is just a hack for now while performing
-            // more research into NPC names
-            if (summary.Archive == 334 ||                               // Daggerfall people
-                summary.Archive == 346 ||                               // Wayrest people
-                summary.Archive == 357 ||                               // Sentinel people
-                summary.Archive >= 175 && summary.Archive <= 184)       // Other people
-            {
+            if (RDBLayout.IsNPCFlat(summary.Archive))
                 summary.FlatType = FlatTypes.NPC;
-            }
 
             // Assign mesh and material
             MeshFilter meshFilter = GetComponent<MeshFilter>();
