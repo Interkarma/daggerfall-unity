@@ -1075,51 +1075,66 @@ namespace DaggerfallWorkshop.Utility
             if (record == -1)
                 record = obj.Resources.FlatResource.TextureRecord;
 
-            // Spawn billboard gameobject
-            Vector3 billboardPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
-            GameObject go = MeshReplacement.ImportCustomFlatGameobject(archive, record, billboardPosition, parent, true);
-            if (!go)
+            // Get target position
+            GameObject targetGameObject = null;
+            Vector3 targetPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+
+            // Setup billboard and assign RDB data - this is required to get some information about the resource
+            // We will turn this GameObject off again if it's being replaced later
+            // Can rework this later so not necessary to create billboard at all
+            GameObject billboardGameObject = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent);
+            billboardGameObject.transform.position = targetPosition;
+            DaggerfallBillboard dfBillboard = billboardGameObject.GetComponent<DaggerfallBillboard>();
+            dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
+
+            // Get some NPC details
+            bool isNPC = (dfBillboard.Summary.FlatType == FlatTypes.NPC);
+            int factionID = dfBillboard.Summary.FactionOrMobileID;
+
+            // Is there a replacement GameObject to inject?
+            GameObject replacementGameObject = MeshReplacement.ImportCustomFlatGameobject(archive, record, targetPosition, parent, true);
+            if (replacementGameObject)
             {
-                go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent);
+                // Disable billboard GameObject and use replacement as target
+                billboardGameObject.SetActive(false);
+                targetGameObject = replacementGameObject;
+            }
+            else
+            {
+                // Otherwise use standard billboard as target
+                targetGameObject = billboardGameObject;
+            }
 
-                // Set transform
-                go.transform.position = billboardPosition;
+            // Add StaticNPC behaviour - required for quest system
+            if (isNPC)
+            {
+                StaticNPC npc = targetGameObject.AddComponent<StaticNPC>();
+                npc.SetLayoutData(obj);
+            }
 
-                // Add RDB data to billboard
-                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
-
-                // Add StaticNPC behaviour
-                if (dfBillboard.Summary.FlatType == FlatTypes.NPC)
+            // Special handling for individual NPCs found in layout data
+            // TODO: Move this handling to StaticNPC behaviour
+            if (QuestMachine.Instance.IsIndividualNPC(factionID))
+            {
+                // Check if NPC has been placed elsewhere on a quest
+                if (QuestMachine.Instance.IsIndividualQuestNPCAtSiteLink(factionID))
                 {
-                    StaticNPC npc = go.AddComponent<StaticNPC>();
-                    npc.SetLayoutData(obj);
+                    // Disable individual NPC if placed elsewhere
+                    targetGameObject.SetActive(false);
                 }
-
-                // Special handling for individual NPCs found in layout data
-                // TODO: Move this handling to StaticNPC behaviour
-                if (QuestMachine.Instance.IsIndividualNPC(dfBillboard.Summary.FactionOrMobileID))
+                else
                 {
-                    // Check if NPC has been placed elsewhere on a quest
-                    if (QuestMachine.Instance.IsIndividualQuestNPCAtSiteLink(dfBillboard.Summary.FactionOrMobileID))
-                    {
-                        // Disable individual NPC if placed elsewhere
-                        go.SetActive(false);
-                    }
-                    else
-                    {
-                        // Assign SpecialNPCClickHandler to individual NPCs
-                        // This NPC may be used in 0 or several active quests at home
-                        // When not at home the usual QuestResourceBehaviour will be applied
-                        SpecialNPCClickHandler specialNPCClickHandler = go.AddComponent<SpecialNPCClickHandler>();
-                        specialNPCClickHandler.IndividualFactionID = dfBillboard.Summary.FactionOrMobileID;
-                    }
+                    // Assign SpecialNPCClickHandler to individual NPCs
+                    // This NPC may be used in 0 or several active quests at home
+                    // When not at home the usual QuestResourceBehaviour will be applied
+                    SpecialNPCClickHandler specialNPCClickHandler = targetGameObject.AddComponent<SpecialNPCClickHandler>();
+                    specialNPCClickHandler.IndividualFactionID = dfBillboard.Summary.FactionOrMobileID;
                 }
             }
 
             // Disable enemy editor flats
             if (archive == TextureReader.EditorFlatsTextureArchive && (record == 15 || record == 16))
-                go.SetActive(false);
+                targetGameObject.SetActive(false);
 
             // Add torch burning sound
             if (archive == TextureReader.LightsTextureArchive)
@@ -1134,12 +1149,12 @@ namespace DaggerfallWorkshop.Utility
                     case 18:
                     case 19:
                     case 20:
-                        AddTorchAudioSource(go);
+                        AddTorchAudioSource(targetGameObject);
                         break;
                 }
             }
 
-            return go;
+            return targetGameObject;
         }
 
         private static void AddTorchAudioSource(GameObject go)
