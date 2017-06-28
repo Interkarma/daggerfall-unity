@@ -404,6 +404,19 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets terrain transform at mapPixelX, mapPixelY.
+        /// </summary>
+        /// <returns>DaggerfallTerrain Transform if found, or null if not currently in world.</returns>
+        public Transform GetTerrainTransform(int mapPixelX, int mapPixelY)
+        {
+            int key = TerrainHelper.MakeTerrainKey(mapPixelX, mapPixelY);
+            if (!terrainIndexDict.ContainsKey(key))
+                return null;
+
+            return terrainArray[terrainIndexDict[key]].terrainObject.transform;
+        }
+
+        /// <summary>
         /// Gets the DaggerfallLocation component for current player position.
         /// </summary>
         /// <returns>DaggerfallLocation component if player inside location map pixel, otherwise null.</returns>
@@ -630,12 +643,14 @@ namespace DaggerfallWorkshop
                             animalsBillboardBatch.BlockOrigin = blockOrigin;
                             miscBillboardBatch.BlockOrigin = blockOrigin;
 
-                            // Get block name
+                            // Get block name and data
+                            DFBlock blockData;
                             string blockName = contentReader.BlockFileReader.CheckName(contentReader.MapFileReader.GetRmbBlockName(ref location, x, y));
+                            RMBLayout.GetBlockData(blockName, out blockData);
 
                             // Add block
                             GameObject go = GameObjectHelper.CreateRMBBlockGameObject(
-                                blockName,
+                                blockData,
                                 x,
                                 y,
                                 false,
@@ -645,6 +660,7 @@ namespace DaggerfallWorkshop
                                 animalsBillboardBatch,
                                 miscBillboardAtlas,
                                 miscBillboardBatch);
+
 
                             // Set game object properties
                             go.hideFlags = defaultHideFlags;
@@ -666,6 +682,7 @@ namespace DaggerfallWorkshop
                 }
             }
         }
+
 
         // Place a single terrain and mark it for update
         private void PlaceTerrain(int mapPixelX, int mapPixelY)
