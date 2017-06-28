@@ -611,11 +611,15 @@ namespace DaggerfallWorkshop.Game.Items
                 case (int)Weapons.Wakazashi:
                 case (int)Weapons.War_Axe:
                 case (int)Weapons.Staff:
+                case (int)Weapons.Mace:
                     return SoundClips.SwingMediumPitch;
                 case (int)Weapons.Dagger:
                 case (int)Weapons.Tanto:
                 case (int)Weapons.Shortsword:
                     return SoundClips.SwingHighPitch;
+                case (int)Weapons.Short_Bow:
+                case (int)Weapons.Long_Bow:
+                    return SoundClips.ArrowShoot;
 
                 default:
                     return SoundClips.None;
