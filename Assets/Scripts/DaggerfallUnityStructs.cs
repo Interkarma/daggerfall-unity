@@ -198,6 +198,7 @@ namespace DaggerfallWorkshop
         public int MaxHealth;                       // Maximum health
         public int Level;                           // Level
         public int ArmorValue;                      // Armor value
+        public bool ParrySounds;                    // Plays parry sounds when attacks against this enemy miss
         public string LootTableKey;                 // Key to use when generating loot
     }
 

@@ -635,8 +635,7 @@ namespace DaggerfallWorkshop.Game
                         }
                         else
                         {
-                            // TODO: Figure out what determines what type of sound plays.
-                            if (enemyEntity.EntityType == EntityTypes.EnemyMonster || weapon.WeaponType == WeaponTypes.Melee)
+                            if (!enemyEntity.MobileEnemy.ParrySounds || weapon.WeaponType == WeaponTypes.Melee)
                                 weapon.PlaySwingSound();
                             else
                                 weapon.PlayParrySound();
