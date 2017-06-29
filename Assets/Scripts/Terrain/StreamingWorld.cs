@@ -21,6 +21,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -629,6 +630,10 @@ namespace DaggerfallWorkshop
                     // Get location component
                     DaggerfallLocation dfLocation = locationObject.GetComponent<DaggerfallLocation>();
 
+                    // Create city navigation component
+                    CityNavigation cityNavigation = dfLocation.gameObject.AddComponent<CityNavigation>();
+                    cityNavigation.FormatNavigation(location.RegionName, location.Name, width, height);
+
                     // Perform layout and yield after each block is placed
                     ContentReader contentReader = DaggerfallUnity.Instance.ContentReader;
                     for (int y = 0; y < height; y++)
@@ -661,12 +666,14 @@ namespace DaggerfallWorkshop
                                 miscBillboardAtlas,
                                 miscBillboardBatch);
 
-
                             // Set game object properties
                             go.hideFlags = defaultHideFlags;
                             go.transform.parent = locationObject.transform;
                             go.transform.localPosition = blockOrigin;
                             dfLocation.ApplyClimateSettings();
+
+                            // Set navigation info for this block
+                            cityNavigation.SetRMBData(ref blockData, x, y);
 
                             // Optionally yield after placing block
                             if (allowYield)
@@ -679,6 +686,10 @@ namespace DaggerfallWorkshop
                     lightsBillboardBatch.Apply();
                     animalsBillboardBatch.Apply();
                     miscBillboardBatch.Apply();
+
+                    //// TEST: Store a RAW image of navgrid
+                    //string filename = string.Format("{0} [{1}x{2}].raw", location.Name, cityNavigation.CityWidth * 64, cityNavigation.CityHeight * 64);
+                    //cityNavigation.SaveTestRawImage(Path.Combine(@"d:\test\navgrids\", filename));
                 }
             }
         }
