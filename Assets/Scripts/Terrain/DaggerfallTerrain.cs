@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -115,10 +115,10 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Updates climate material based on current map pixel data.
         /// </summary>
-        public void UpdateClimateMaterial()
+        public void UpdateClimateMaterial(bool init = false)
         {
             // Update atlas texture if world climate changed
-            if (currentWorldClimate != MapData.worldClimate || dfUnity.WorldTime.Now.SeasonValue != season)
+            if (currentWorldClimate != MapData.worldClimate || dfUnity.WorldTime.Now.SeasonValue != season || init)
             {
                 // Get current climate and ground archive
                 DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(MapData.worldClimate);

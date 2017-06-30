@@ -1045,7 +1045,7 @@ namespace DaggerfallWorkshop
             dfTerrain.UpdateTileMapData();
 
             // Promote data to live terrain
-            dfTerrain.UpdateClimateMaterial();
+            dfTerrain.UpdateClimateMaterial(init);
             dfTerrain.PromoteTerrainData();
 
             // Only set active again once complete
