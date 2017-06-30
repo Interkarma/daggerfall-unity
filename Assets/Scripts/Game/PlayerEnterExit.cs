@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game
         DFLocation.DungeonBlock playerDungeonBlockData = new DFLocation.DungeonBlock();
 
         DFLocation.BuildingTypes buildingType;
+        ushort factionID = 0;
 
         /// <summary>
         /// True when player is inside any structure.
@@ -129,7 +130,15 @@ namespace DaggerfallWorkshop.Game
         {
             get { return buildingType; }
         }
-        
+
+        /// <summary>
+        /// Gets current building's faction ID.
+        /// </summary>
+        public uint FactionID
+        {
+            get { return factionID; }
+        }
+
         /// <summary>
         /// Gets or sets exterior doors of current interior.
         /// Returns empty array if player not inside.
@@ -380,6 +389,7 @@ namespace DaggerfallWorkshop.Game
 
             // Cache some information about this interior
             buildingType = interior.BuildingData.BuildingType;
+            factionID = interior.BuildingData.FactionId;
 
             // Set player to marker position
             // TODO: Find closest door for player facing
