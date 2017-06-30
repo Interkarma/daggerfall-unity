@@ -93,28 +93,24 @@ namespace DaggerfallWorkshop.Game
 
         private void MeleeDamage()
         {
-            int minDamage = 0, maxDamage = 0;
-            int minDamage2 = 0, maxDamage2 = 0;
-            int minDamage3 = 0, maxDamage3 = 0;
             if (entityBehaviour)
             {
                 EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
                 MobileEnemy enemy = entity.MobileEnemy;
-                minDamage = enemy.MinDamage;
-                maxDamage = enemy.MaxDamage;
-                minDamage2 = enemy.MinDamage2;
-                maxDamage2 = enemy.MinDamage2;
-                minDamage3 = enemy.MinDamage3;
-                maxDamage3 = enemy.MaxDamage3;
-            }
 
-            // Are we still in range and facing player? Then apply melee damage.
-            if (senses.DistanceToPlayer < MeleeDistance && senses.PlayerInSight)
-            {
-                int damage = Random.Range(minDamage, maxDamage + 1);
-                damage += Random.Range(minDamage2, maxDamage2 + 1);
-                damage += Random.Range(minDamage3, maxDamage3 + 1);
-                senses.Player.SendMessage("RemoveHealth", damage);
+                // Are we still in range and facing player? Then apply melee damage.
+                if (senses.DistanceToPlayer < MeleeDistance && senses.PlayerInSight)
+                {
+                    // Calculate damage
+                    // TODO: Implement enemy use of weapons. Play hit or miss sounds.
+                    int damage = Game.Formulas.FormulaHelper.CalculateWeaponDamage(entity, GameManager.Instance.PlayerEntity, null);
+                    if (damage > 0)
+                    {
+                        senses.Player.SendMessage("RemoveHealth", damage);
+                    }
+                    // Tally player's dodging skill
+                    GameManager.Instance.PlayerEntity.TallySkill((short)Skills.Dodging, 1);
+                }
             }
         }
 

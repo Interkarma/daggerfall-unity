@@ -104,7 +104,18 @@ namespace DaggerfallWorkshop.Game.Entity
             this.mobileEnemy = mobileEnemy;
             this.entityType = entityType;
             name = career.Name;
-            
+
+            short skillsLevel = (short)((level * 5) + 30);
+            if (skillsLevel > 100)
+            {
+                skillsLevel = 100;
+            }
+
+            for (int i = 0; i <= DaggerfallSkills.Count; i++)
+            {
+                skills.SetSkillValue(i, skillsLevel);
+            }
+
             FillVitalSigns();
         }
 
