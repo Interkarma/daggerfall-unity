@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop
             public int WorldCoordZ;
             public string RegionName;
             public string LocationName;
-            public int WorldClimate;
+            public MapsFile.Climates WorldClimate;
             public DFRegion.LocationTypes LocationType;
             public DFRegion.DungeonTypes DungeonType;
             public bool HasDungeon;
@@ -161,7 +161,7 @@ namespace DaggerfallWorkshop
             summary.WorldCoordZ = worldCoord.Y;
             summary.RegionName = location.RegionName;
             summary.LocationName = location.Name;
-            summary.WorldClimate = location.Climate.WorldClimate;
+            summary.WorldClimate = (MapsFile.Climates)location.Climate.WorldClimate;
             summary.LocationType = location.MapTableData.LocationType;
             summary.DungeonType = location.MapTableData.DungeonType;
             summary.HasDungeon = location.HasDungeon;

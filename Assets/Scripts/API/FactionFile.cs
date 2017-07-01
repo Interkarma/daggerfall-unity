@@ -131,6 +131,8 @@ namespace DaggerfallConnect.Arena2
             None = -1,
             Redguard = 2,
             Breton = 3,
+            Nord = 4,           // Guess - not found in faction.txt
+            WoodElf = 5,        // Guess - based on #378 "Sylch Greenwood"
             DarkElf = 7,
             Skakmat = 11,       // Only used on #304 "Skakmat"
             Orc = 17,           // Only used on #358 "Orsinium"

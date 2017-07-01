@@ -91,6 +91,11 @@ namespace DaggerfallWorkshop.Game
             get { return (speed == runSpeed); }
         }
 
+        public bool IsStandingStill
+        {
+            get { return (new Vector2(moveDirection.x, moveDirection.z).magnitude == 0 && IsGrounded); }
+        }
+
         public bool IsJumping
         {
             get { return jumping; }

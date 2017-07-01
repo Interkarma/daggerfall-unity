@@ -288,23 +288,35 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void AssignRace()
         {
-            // Get faction race
-            // Supports Breton and Redguard for now
-            FactionFile.FactionRaces factionRace = (FactionFile.FactionRaces)factionData.race;
-            if (factionRace != FactionFile.FactionRaces.None)
+            // Use faction race only for individuals
+            if (isIndividualNPC)
             {
-                switch (factionRace)
+                FactionFile.FactionRaces factionRace = (FactionFile.FactionRaces)factionData.race;
+                if (factionRace != FactionFile.FactionRaces.None)
                 {
-                    case FactionFile.FactionRaces.Redguard:
-                        race = Races.Redguard;
-                        return;
-                    default:
-                        race = Races.Breton;
-                        return;
+                    switch (factionRace)
+                    {
+                        case FactionFile.FactionRaces.Redguard:
+                            race = Races.Redguard;
+                            return;
+                        case FactionFile.FactionRaces.Nord:
+                            race = Races.Nord;
+                            return;
+                        case FactionFile.FactionRaces.DarkElf:
+                            race = Races.DarkElf;
+                            return;
+                        case FactionFile.FactionRaces.WoodElf:
+                            race = Races.WoodElf;
+                            return;
+                        case FactionFile.FactionRaces.Breton:
+                        default:
+                            race = Races.Breton;
+                            return;
+                    }
                 }
             }
 
-            // If no race set then use race of current region
+            // Otherwise use race of current region
             race = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
         }
 

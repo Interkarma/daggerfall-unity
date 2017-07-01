@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DaggerfallConnect.Arena2;
 #endregion
 
 namespace DaggerfallConnect
@@ -282,6 +283,9 @@ namespace DaggerfallConnect
 
             /// <summary>Texture archive index for base sky set.</summary>
             public int SkyBase;
+
+            /// <summary>The race of wandering NPCs in this subclimate.</summary>
+            public FactionFile.FactionRaces People;
         }
 
         #endregion

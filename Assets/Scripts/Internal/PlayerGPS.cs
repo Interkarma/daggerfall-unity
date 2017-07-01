@@ -232,7 +232,8 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Gets NameHelper.BankType in player's current region.
-        /// Due to limited use of races in FACTION.TXT this is either Redguard or Breton.
+        /// In practice this will always be Redguard/Breton/Nord.
+        /// Supporting a few other name banks for possible diversity later.
         /// </summary>
         public NameHelper.BankTypes GetNameBankOfCurrentRegion()
         {
@@ -242,7 +243,15 @@ namespace DaggerfallWorkshop
                 case Races.Redguard:
                     bankType = NameHelper.BankTypes.Redguard;
                     break;
-
+                case Races.Nord:
+                    bankType = NameHelper.BankTypes.Nord;
+                    break;
+                case Races.DarkElf:
+                    bankType = NameHelper.BankTypes.DarkElf;
+                    break;
+                case Races.WoodElf:
+                    bankType = NameHelper.BankTypes.WoodElf;
+                    break;
                 default:
                 case Races.Breton:
                     bankType = NameHelper.BankTypes.Breton;
@@ -254,30 +263,25 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Gets the dominant race in player's current region.
-        /// Due to limited use of races in FACTION.TXT this is either Redguard or Breton.
+        /// This seems to be based on subclimate rather than FACTION.TXT.
+        /// The faction data has very little diversity and does not match observed race in many regions.
         /// </summary>
         public Races GetRaceOfCurrentRegion()
         {
-            // Get faction of current region
-            FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province,
-                -1,
-                -1,
-                CurrentOneBasedRegionIndex);
+            // Racial distribution in Daggerfall:
+            //  * Desert, Desert2, Rainforest = Redguard
+            //  * Mountain, MountainWoods = Nord
+            //  * Swamp, Subtropical, Woodlands, Default = Breton
 
-            // Should always find a single province faction
-            if (factions == null || factions.Length != 1)
-                throw new Exception("GetRaceOfCurrentRegion() did not find exactly 1 match.");
-
-            // Convert faction race to a race template ID
-            switch ((FactionFile.FactionRaces)factions[0].race)
+            DFLocation.ClimateSettings settings = MapsFile.GetWorldClimateSettings(climateSettings.WorldClimate);
+            switch(settings.People)
             {
                 case FactionFile.FactionRaces.Redguard:
                     return Races.Redguard;
-
-                // All other factions are Breton for now
-                default:
+                case FactionFile.FactionRaces.Nord:
+                    return Races.Nord;
                 case FactionFile.FactionRaces.Breton:
+                default:
                     return Races.Breton;
             }
         }
