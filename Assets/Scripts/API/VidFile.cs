@@ -86,7 +86,10 @@ namespace DaggerfallConnect.Arena2
         {
             // Open file proxy
             if (!vidFile.Load(filename, FileUsage.UseMemory, true))
+            {
+                endOfFileReached = true;
                 return false;
+            }
 
             // Close existing reader
             if (reader != null)
