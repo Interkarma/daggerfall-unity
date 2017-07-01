@@ -60,8 +60,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public void Open(string name)
         {
             string path = Path.Combine(DaggerfallUnity.Instance.Arena2Path, name);
-            if (!vidFile.Open(path))
+            if (!vidFile.Open(path)) 
+            {
+                Debug.LogError(string.Format("Failed to open video file: {0}", name));
                 return;
+            }
 
             vidTexture = TextureReader.CreateFromSolidColor(vidFile.FrameWidth, vidFile.FrameHeight, Color.black, false, false);
             vidTexture.wrapMode = TextureWrapMode.Clamp;

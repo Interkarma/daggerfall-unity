@@ -117,7 +117,7 @@ namespace DaggerfallConnect.Arena2
 
         int ReadBlock()
         {
-            if (endOfFileReached)
+            if (endOfFileReached || reader == null || reader.BaseStream == null)
                 return 0;
 
             reader.BaseStream.Position = streamPosition;
