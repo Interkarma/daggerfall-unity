@@ -446,16 +446,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mouseSmoothing = AddOption(x, "Mouse Smoothing", "Smooth mouse-look sampling", DaggerfallUnity.Settings.MouseLookSmoothing);
             leftHandWeapons = AddOption(x, "Left Hand Weapons", "Draw weapons on left side of screen", GetLeftHandWeapons());
             playerNudity = AddOption(x, "Player Nudity", "Allow nudity on paper doll", DaggerfallUnity.Settings.PlayerNudity);
-            meshAndTextureReplacement = AddOption(x, "Support for Graphical Mods", "Enable replacement of textures and models", DaggerfallUnity.Settings.MeshAndTextureReplacement);
 
             // Setup mods checkboxes
+            // TODO: Might rework this, but could still be useful for certain core mods later
             x = 165;
-            optionPos = 20;            
-            flyingBirds = AddOption(x, "Flying Birds (Uncanny Valley)", "Animated flying birds", DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall);
+            optionPos = 20;
+            meshAndTextureReplacement = AddOption(x, "Support for Graphical Mods", "Enable replacement of textures and models", DaggerfallUnity.Settings.MeshAndTextureReplacement);
+            //bool exampleModCheckbox = AddOption(x, "Example", "Example built-in mod", DaggerfallUnity.Settings.ExampleModOption);
 
             // Add mod note
             string modNote = "Note: Enabling mods can increase performance requirements";
-            TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 115), modNote, optionsPanel);
+            TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 125), modNote, optionsPanel);
             modNoteLabel.HorizontalAlignment = HorizontalAlignment.Center;
             modNoteLabel.ShadowPosition = Vector2.zero;
 
@@ -487,8 +488,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Button ShowModsButton = new Button();
                 ShowModsButton.Label.Text = "Mods";
-                ShowModsButton.Position = new Vector2(0, optionsConfirmButton.Position.y);
-                ShowModsButton.HorizontalAlignment = HorizontalAlignment.Left;
+                ShowModsButton.Position = new Vector2(3, optionsConfirmButton.Position.y);
                 ShowModsButton.Size = optionsConfirmButton.Size;
                 ShowModsButton.BackgroundColor = optionsConfirmButton.BackgroundColor;
                 ShowModsButton.Label.TextColor = optionsConfirmButton.Label.TextColor;
@@ -500,9 +500,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Advanced Settings
             Button AdvancedSettingsButton = new Button();
             AdvancedSettingsButton.Label.Text = "Advanced";
-            AdvancedSettingsButton.Position = new Vector2(0, optionsConfirmButton.Position.y);
-            AdvancedSettingsButton.HorizontalAlignment = HorizontalAlignment.Right;
             AdvancedSettingsButton.Size = new Vector2(45, 12);
+            AdvancedSettingsButton.Position = new Vector2(optionsPanel.InteriorWidth - AdvancedSettingsButton.Size.x - 3, optionsConfirmButton.Position.y);
             AdvancedSettingsButton.BackgroundColor = optionsConfirmButton.BackgroundColor;
             AdvancedSettingsButton.Label.TextColor = optionsConfirmButton.Label.TextColor;
             AdvancedSettingsButton.Outline.Enabled = true;
@@ -707,7 +706,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
 
-            DaggerfallUnity.Settings.UncannyValley_BirdsInDaggerfall = flyingBirds.IsChecked;
             DaggerfallUnity.Settings.MeshAndTextureReplacement = meshAndTextureReplacement.IsChecked;
 
             DaggerfallUnity.Settings.SaveSettings();

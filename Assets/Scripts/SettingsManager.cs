@@ -114,7 +114,6 @@ namespace DaggerfallWorkshop
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
         public bool LypyL_ModSystem { get; set; }
-        public bool UncannyValley_BirdsInDaggerfall { get; set; }
         public bool MeshAndTextureReplacement { get; set; }
 
         #endregion
@@ -172,7 +171,6 @@ namespace DaggerfallWorkshop
             TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
-            UncannyValley_BirdsInDaggerfall = GetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall");
             MeshAndTextureReplacement = GetBool(sectionEnhancements, "MeshAndTextureReplacement");
         }
 
@@ -224,7 +222,6 @@ namespace DaggerfallWorkshop
             SetInt(sectionExperimental, "TerrainDistance", TerrainDistance);
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);
-            SetBool(sectionEnhancements, "UncannyValley_BirdsInDaggerfall", UncannyValley_BirdsInDaggerfall);
             SetBool(sectionEnhancements, "MeshAndTextureReplacement", MeshAndTextureReplacement);
 
             // Write settings to persistent file

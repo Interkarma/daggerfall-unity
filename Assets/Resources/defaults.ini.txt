@@ -57,7 +57,3 @@ DebugWeaponSwings=False
 LypyL_GameConsole=True
 LypyL_ModSystem=True
 MeshAndTextureReplacement=False
-LypyL_EnhancedSky=False
-UncannyValley_RealGrass=False
-TheLacus_GrassAndPlants=False
-UncannyValley_BirdsInDaggerfall=False
