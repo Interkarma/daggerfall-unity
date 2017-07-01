@@ -28,7 +28,7 @@ namespace DaggerfallConnect.Save
 
         // Public fields
         public SaveTreeHeader Header;
-        public SaveTreeLocationDetail LocationDetail;
+        public SaveTreeBuildingRecords BuildingRecords;
         public SaveTreeBaseRecord RootRecord = new SaveTreeBaseRecord();
         public Dictionary<uint, SaveTreeBaseRecord> RecordDictionary = new Dictionary<uint, SaveTreeBaseRecord>();
 
@@ -73,13 +73,8 @@ namespace DaggerfallConnect.Save
             Header = new SaveTreeHeader();
             Header.Read(reader);
 
-            // Read location detail
-            // Note: SaveTreeLocationDetail below doesn't seem to be what this data actually is. The value for
-            // recordlength at 18 is actually the player environment. (1 = outside, 2 = building, 3 = dungeon)
-            // For now, resetting the stream to 18 and reading the value as recordlength to keep saves opening
-            // correctly until this record is better understood.
-            reader.BaseStream.Position = 18;
-            LocationDetail = new SaveTreeLocationDetail(reader);
+            // Read building records
+            BuildingRecords = new SaveTreeBuildingRecords(reader);
 
             // Read remaining records
             ReadRecords(reader);
