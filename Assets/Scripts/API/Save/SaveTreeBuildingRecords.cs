@@ -75,8 +75,11 @@ namespace DaggerfallConnect.Save
             for (int i = 0; i < numberOfBuildings; i++)
             {
                 recordData[i].NameSeed = reader.ReadUInt16();
-                recordData[i].NullValue1 = reader.ReadUInt64();
-                recordData[i].NullValue2 = reader.ReadUInt64();
+                recordData[i].ServiceTimeLimit = reader.ReadUInt32();
+                recordData[i].Unknown = reader.ReadUInt16();
+                recordData[i].Unknown2 = reader.ReadUInt16();
+                recordData[i].Unknown3 = reader.ReadUInt32();
+                recordData[i].Unknown4 = reader.ReadUInt32();
                 recordData[i].FactionId = reader.ReadUInt16();
                 recordData[i].Sector = reader.ReadInt16();
                 recordData[i].LocationId = reader.ReadUInt16();

@@ -1032,8 +1032,11 @@ namespace DaggerfallConnect.Arena2
             for (int building = 0; building < dfLocation.Exterior.BuildingCount; building++)
             {
                 dfLocation.Exterior.Buildings[building].NameSeed = reader.ReadUInt16();
-                dfLocation.Exterior.Buildings[building].NullValue1 = reader.ReadUInt64();
-                dfLocation.Exterior.Buildings[building].NullValue2 = reader.ReadUInt64();
+                dfLocation.Exterior.Buildings[building].ServiceTimeLimit = reader.ReadUInt32();
+                dfLocation.Exterior.Buildings[building].Unknown = reader.ReadUInt16();
+                dfLocation.Exterior.Buildings[building].Unknown2 = reader.ReadUInt16();
+                dfLocation.Exterior.Buildings[building].Unknown3 = reader.ReadUInt32();
+                dfLocation.Exterior.Buildings[building].Unknown4 = reader.ReadUInt32();
                 dfLocation.Exterior.Buildings[building].FactionId = reader.ReadUInt16();
                 dfLocation.Exterior.Buildings[building].Sector = reader.ReadInt16();
                 dfLocation.Exterior.Buildings[building].LocationId = reader.ReadUInt16();

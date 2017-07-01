@@ -422,11 +422,20 @@ namespace DaggerfallConnect
             /// <summary>Used to generate building name.</summary>
             public UInt16 NameSeed;
 
-            /// <summary>Always 0.</summary>
-            public UInt64 NullValue1;
+            /// <summary>For taverns this is the time in game minutes when room rental will end.</summary>
+            public UInt32 ServiceTimeLimit;
 
-            /// <summary>Always 0.</summary>
-            public UInt64 NullValue2;
+            /// <summary>Unknown. Set to 1 after renting a tavern room</summary>
+            public UInt16 Unknown;
+
+            /// <summary>Unknown.</summary>
+            public UInt16 Unknown2;
+
+            /// <summary>Unknown.</summary>
+            public UInt32 Unknown3;
+
+            /// <summary>Unknown.</summary>
+            public UInt32 Unknown4;
 
             /// <summary>FactionId associated with building, or 0 if no faction.</summary>
             public UInt16 FactionId;
