@@ -86,7 +86,10 @@ namespace DaggerfallConnect.Arena2
         {
             // Open file proxy
             if (!vidFile.Load(filename, FileUsage.UseMemory, true))
+            {
+                endOfFileReached = true;
                 return false;
+            }
 
             // Close existing reader
             if (reader != null)
@@ -117,7 +120,7 @@ namespace DaggerfallConnect.Arena2
 
         int ReadBlock()
         {
-            if (endOfFileReached || reader == null || reader.BaseStream == null)
+            if (endOfFileReached)
                 return 0;
 
             reader.BaseStream.Position = streamPosition;
