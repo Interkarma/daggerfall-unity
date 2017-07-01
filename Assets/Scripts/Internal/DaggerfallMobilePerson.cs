@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop
     {
         #region Fields
 
-        const float idleDistance = 4;
+        const float idleDistance = 2;
 
         public Races race = Races.Breton;
         public Genders gender = Genders.Male;
@@ -144,7 +144,7 @@ namespace DaggerfallWorkshop
                     animSpeed = stateAnims[0].FramePerSecond;
                 }
                 else if (playerStandingStill && currentAnimState == AnimStates.Move &&
-                    Vector3.Distance(GameManager.Instance.PlayerObject.transform.position, transform.position) < idleDistance)
+                    GameManager.Instance.PlayerMotor.DistanceToPlayer(transform.position) < idleDistance)
                 {
                     // Switch animation state to idle
                     currentAnimState = AnimStates.Idle;
@@ -220,6 +220,18 @@ namespace DaggerfallWorkshop
             currentAnimState = AnimStates.Move;
             lastOrientation = -1;
             UpdateOrientation();
+        }
+
+        /// <summary>
+        /// Gets billboard size.
+        /// </summary>
+        /// <returns>Vector2 of billboard width and height.</returns>
+        public Vector2 GetBillboardSize()
+        {
+            if (recordSizes == null || recordSizes.Length == 0)
+                return Vector2.zero;
+
+            return recordSizes[0];
         }
 
         #endregion

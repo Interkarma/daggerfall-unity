@@ -78,6 +78,7 @@ namespace DaggerfallWorkshop.Game
         private bool playerControl = false;
         private int jumpTimer;
         private bool jumping = false;
+        private bool standingStill = false;
 
         private bool cancelMovement = false;
 
@@ -93,7 +94,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsStandingStill
         {
-            get { return (new Vector2(moveDirection.x, moveDirection.z).magnitude == 0 && IsGrounded); }
+            get { return standingStill; }
         }
 
         public bool IsJumping
@@ -157,8 +158,15 @@ namespace DaggerfallWorkshop.Game
             // If both horizontal and vertical are used simultaneously, limit speed (if allowed), so the total doesn't exceed normal move speed
             float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && limitDiagonalSpeed) ? .7071f : 1.0f;
 
+            // Player assumed to be in movement for now
+            standingStill = false;
+
             if (grounded)
             {
+                // Set standing still while grounded flag
+                // Casting moveDirection to a Vector2 so constant downward force of gravity not included in magnitude
+                standingStill = (new Vector2(moveDirection.x, moveDirection.z).magnitude == 0);
+
                 if (jumping)
                     jumping = false;
                 bool sliding = false;
@@ -359,6 +367,12 @@ namespace DaggerfallWorkshop.Game
             }
 
             return false;
+        }
+
+        // Gets distance between position and player
+        public float DistanceToPlayer(Vector3 position)
+        {
+            return Vector3.Distance(transform.position, position);
         }
 
         void Update()

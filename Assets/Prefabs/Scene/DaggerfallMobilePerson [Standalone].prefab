@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4190189795145318}
   - component: {fileID: 114102110313281098}
-  - component: {fileID: 143269452569227772}
   m_Layer: 0
   m_Name: DaggerfallMobilePerson [Standalone]
   m_TagString: Untagged
@@ -137,21 +136,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   race: 1
   gender: 0
-  textureArchive: -1
---- !u!143 &143269452569227772
-CharacterController:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1534471568425466}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.4
-  m_SlopeLimit: 60
-  m_StepOffset: 0.4
-  m_SkinWidth: 0.05
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  personVariant: -1
