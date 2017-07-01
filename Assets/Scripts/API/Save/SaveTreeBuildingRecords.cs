@@ -19,13 +19,14 @@ using DaggerfallConnect.Utility;
 namespace DaggerfallConnect.Save
 {
     /// <summary>
-    /// Location detail records do not follow the usual RecordBase structure.
+    /// Building data following header.
     /// </summary>
-    public class SaveTreeLocationDetailRecord
+    public class SaveTreeBuildingRecords
     {
         long streamPosition;
         int recordLength;
-        byte[] recordData;
+        int numberOfBuildings;
+        DFLocation.BuildingData[] recordData;
 
         public long StreamPosition
         {
@@ -37,7 +38,12 @@ namespace DaggerfallConnect.Save
             get { return recordLength; }
         }
 
-        public byte[] RecordData
+        public int NumberOfBuildings
+        {
+            get { return numberOfBuildings; }
+        }
+
+        public DFLocation.BuildingData[] RecordData
         {
             get { return recordData; }
         }
@@ -46,7 +52,7 @@ namespace DaggerfallConnect.Save
         /// Constructor.
         /// </summary>
         /// <param name="reader">Reader positioned at start of binary data.</param>
-        public SaveTreeLocationDetailRecord(BinaryReader reader)
+        public SaveTreeBuildingRecords(BinaryReader reader)
         {
             Open(reader);
         }
@@ -55,8 +61,28 @@ namespace DaggerfallConnect.Save
         {
             streamPosition = reader.BaseStream.Position;
             recordLength = reader.ReadInt32();
+
             if (recordLength > 0)
-                recordData = reader.ReadBytes(recordLength);
+            {
+                numberOfBuildings = (recordLength / 26);
+            }
+            else
+            {
+                numberOfBuildings = 0;
+            }
+
+            recordData = new DFLocation.BuildingData[numberOfBuildings];
+            for (int i = 0; i < numberOfBuildings; i++)
+            {
+                recordData[i].NameSeed = reader.ReadUInt16();
+                recordData[i].NullValue1 = reader.ReadUInt64();
+                recordData[i].NullValue2 = reader.ReadUInt64();
+                recordData[i].FactionId = reader.ReadUInt16();
+                recordData[i].Sector = reader.ReadInt16();
+                recordData[i].LocationId = reader.ReadUInt16();
+                recordData[i].BuildingType = (DFLocation.BuildingTypes)reader.ReadByte();
+                recordData[i].Quality = reader.ReadByte();
+            }
         }
     }
 }
