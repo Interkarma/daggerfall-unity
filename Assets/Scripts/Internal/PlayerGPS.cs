@@ -24,7 +24,8 @@ using DaggerfallWorkshop.Game.Utility;
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// Tracks player position in world space.
+    /// Tracks player position in virtual world space.
+    /// Provides information about world around the player.
     /// </summary>
     public class PlayerGPS : MonoBehaviour
     {

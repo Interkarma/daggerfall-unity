@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -51,6 +51,12 @@ namespace DaggerfallWorkshop
         [SerializeField]
         List<GameObject> startMarkers = new List<GameObject>();
 
+        // Location area in world units
+        int locationWorldRectMinX;
+        int locationWorldRectMaxX;
+        int locationWorldRectMinZ;
+        int locationWorldRectMaxZ;
+
         public LocationSummary Summary
         {
             get { return summary; }
@@ -68,6 +74,11 @@ namespace DaggerfallWorkshop
         public DaggerfallStaticDoors[] StaticDoorCollections
         {
             get { return EnumerateStaticDoorCollections(); }
+        }
+
+        public RectOffset LocationRect
+        {
+            get { return new RectOffset(locationWorldRectMinX, locationWorldRectMaxX, locationWorldRectMinZ, locationWorldRectMaxZ); }
         }
 
         [Serializable]
@@ -184,6 +195,9 @@ namespace DaggerfallWorkshop
                 ApplyClimateSettings();
             }
 
+            // Set location rect
+            SetLocationRect();
+
             // Seal location
             isSet = true;
         }
@@ -280,7 +294,7 @@ namespace DaggerfallWorkshop
                     startMarkers.Add(db.gameObject);
                 }
             }
-        }
+        }        
 
         // Enumerates all static doors in child blocks
         DaggerfallStaticDoors[] EnumerateStaticDoorCollections()
@@ -289,6 +303,32 @@ namespace DaggerfallWorkshop
         }
 
         #region Private Methods
+
+        void SetLocationRect()
+        {
+            // Convert world coords to map pixel coords then back again
+            // This finds the absolute SW origin of this map pixel in world coords
+            DFPosition mapPixel = new DFPosition(Summary.MapPixelX, Summary.MapPixelY);
+            DFPosition worldOrigin = MapsFile.MapPixelToWorldCoord(mapPixel.X, mapPixel.Y);
+
+            // Find tile offset point using same logic as terrain helper
+            DFLocation currentLocation = Summary.LegacyLocation;
+            DFPosition tileOrigin = TerrainHelper.GetLocationTerrainTileOrigin(currentLocation);
+
+            // Adjust world origin by tileorigin*2 in world units
+            worldOrigin.X += (tileOrigin.X * 2) * MapsFile.WorldMapTileDim;
+            worldOrigin.Y += (tileOrigin.Y * 2) * MapsFile.WorldMapTileDim;
+
+            // Get width and height of location in world units
+            int width = currentLocation.Exterior.ExteriorData.Width * MapsFile.WorldMapRMBDim;
+            int height = currentLocation.Exterior.ExteriorData.Height * MapsFile.WorldMapRMBDim;
+
+            // Set location rect in world coordinates
+            locationWorldRectMinX = worldOrigin.X;
+            locationWorldRectMaxX = worldOrigin.X + width;
+            locationWorldRectMinZ = worldOrigin.Y;
+            locationWorldRectMaxZ = worldOrigin.Y + height;
+        }
 
         private int GetNatureArchive()
         {

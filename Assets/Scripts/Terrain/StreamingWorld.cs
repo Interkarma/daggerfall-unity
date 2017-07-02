@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// This value is the amount of scene player movement equivalent to 1 native world map unit.
         /// </summary>
-        public float SceneMapRatio { get { return 1f / MeshReader.GlobalScale; } }
+        public static float SceneMapRatio { get { return 1f / MeshReader.GlobalScale; } }
 
         // Streaming world objects are ultimately parented to this object
         // If left null, world objects will be parented to this transform
@@ -630,7 +630,7 @@ namespace DaggerfallWorkshop
                     // Get location component
                     DaggerfallLocation dfLocation = locationObject.GetComponent<DaggerfallLocation>();
 
-                    // Create city navigation component
+                    // Create CityNavigation component on same GameObject as DaggerfallLocation
                     CityNavigation cityNavigation = dfLocation.gameObject.AddComponent<CityNavigation>();
                     cityNavigation.FormatNavigation(location.RegionName, location.Name, width, height);
 
