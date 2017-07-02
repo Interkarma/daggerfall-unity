@@ -509,7 +509,7 @@ namespace DaggerfallWorkshop.Game
 
         public static bool FindSingleton(out InputManager singletonOut)
         {
-            singletonOut = GameObject.FindObjectOfType(typeof(InputManager)) as InputManager;
+            singletonOut = GameObject.FindObjectOfType<InputManager>();
             if (singletonOut == null)
             {
                 DaggerfallUnity.LogMessage("Could not locate InputManager GameObject instance in scene!", true);

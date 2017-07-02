@@ -952,7 +952,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public static bool FindQuestMachine(out QuestMachine questMachineOut)
         {
-            questMachineOut = GameObject.FindObjectOfType(typeof(QuestMachine)) as QuestMachine;
+            questMachineOut = GameObject.FindObjectOfType<QuestMachine>();
             if (questMachineOut == null)
             {
                 DaggerfallUnity.LogMessage("Could not locate QuestMachine GameObject instance in scene!", true);

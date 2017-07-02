@@ -411,7 +411,7 @@ namespace DaggerfallWorkshop
 
         public static bool FindDaggerfallUnity(out DaggerfallUnity dfUnityOut)
         {
-            dfUnityOut = GameObject.FindObjectOfType(typeof(DaggerfallUnity)) as DaggerfallUnity;
+            dfUnityOut = GameObject.FindObjectOfType<DaggerfallUnity>();
             if (dfUnityOut == null)
             {
                 LogMessage("Could not locate DaggerfallUnity GameObject instance in scene!", true);

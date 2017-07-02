@@ -472,7 +472,7 @@ namespace DaggerfallWorkshop.Game
 
         public static bool FindSingleton(out GameManager singletonOut)
         {
-            singletonOut = GameObject.FindObjectOfType(typeof(GameManager)) as GameManager;
+            singletonOut = GameObject.FindObjectOfType<GameManager>();
             if (singletonOut == null)
             {
                 DaggerfallUnity.LogMessage("Could not locate GameManager GameObject instance in scene!", true);

@@ -417,7 +417,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public static bool FindSingleton(out SaveLoadManager singletonOut)
         {
-            singletonOut = FindObjectOfType(typeof(SaveLoadManager)) as SaveLoadManager;
+            singletonOut = FindObjectOfType<SaveLoadManager>();
             return singletonOut != null;
         }
 
