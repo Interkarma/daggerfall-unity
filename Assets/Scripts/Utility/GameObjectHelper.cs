@@ -270,7 +270,7 @@ namespace DaggerfallWorkshop.Utility
         {
             // Cast ray down to find ground below
             RaycastHit hit;
-            Ray ray = new Ray(go.transform.position, Vector3.down);
+            Ray ray = new Ray(go.transform.position + new Vector3(0, 0.2f, 0), Vector3.down);
             if (!Physics.Raycast(ray, out hit, distance))
                 return;
 

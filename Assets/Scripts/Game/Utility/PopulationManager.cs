@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game.Utility
         public bool AllowVisibleSpawn = false;              // Allow NPC to spawn while player is looking
         public bool AllowVisibleDespawn = false;            // Allow NPC to despawn while player is looking
 
-        int nextAvailableItem = -1;
+        //int nextAvailableItem = -1;
         List<MobileNPCPoolItem> populationPool = new List<MobileNPCPoolItem>();
 
         #endregion

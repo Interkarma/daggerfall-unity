@@ -29,8 +29,11 @@ namespace DaggerfallWorkshop.Game.Utility
     {
         #region Fields
 
+        public const int DaggerfallUnitsPerTile = 64;
+
         const int blockDimension = 64;
         const int blockSize = blockDimension * blockDimension;
+        const string noLocationError = "CityNavigation is not peered to a DaggerfallLocation GameObject or no location is set.";
 
         string regionName;
         string locationName;
@@ -43,6 +46,22 @@ namespace DaggerfallWorkshop.Game.Utility
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets region name of this navgrid.
+        /// </summary>
+        public string RegionName
+        {
+            get { return regionName; }
+        }
+
+        /// <summary>
+        /// Gets location name of this navgrid.
+        /// </summary>
+        public string LocationName
+        {
+            get { return locationName; }
+        }
 
         /// <summary>
         /// Gets RMB width of city from format time.
@@ -118,8 +137,8 @@ namespace DaggerfallWorkshop.Game.Utility
             //        DFPosition worldPosition = SceneToWorldPosition(playerMotor.transform.position);
             //        Vector3 scenePosition = WorldToScenePosition(worldPosition);
             //        Vector2 uvPosition = GetNavGridUV(worldPosition);
-            //        DFPosition navPosition = GetNavGridPosition(worldPosition);
-            //        int navWeight = GetNavGridWeight(worldPosition);
+            //        DFPosition navPosition = WorldToNavGridPosition(worldPosition);
+            //        int navWeight = GetNavGridWeightWorld(worldPosition);
             //        Debug.LogFormat("Player world position  : X={0}, Z={1}", worldPosition.X, worldPosition.Y);
             //        Debug.LogFormat("Player scene position  : X={0}, Y={1}, Z={2}", scenePosition.x, scenePosition.y, scenePosition.z);
             //        Debug.LogFormat("Player navgrid UV      : U={0}, V={1}", uvPosition.x, uvPosition.y);
@@ -209,17 +228,21 @@ namespace DaggerfallWorkshop.Game.Utility
         /// Convert a scene position back into virtual world space.
         /// This is specific to the peered location due to floating origin.
         /// </summary>
-        /// <param name="position">Scene position to convert to nearest point in world space.</param>
-        /// <returns>DFPosition.</returns>
-        public DFPosition SceneToWorldPosition(Vector3 position)
+        /// <param name="scenePosition">Scene position to convert to nearest point in world space.</param>
+        /// <returns>World DFPosition.</returns>
+        public DFPosition SceneToWorldPosition(Vector3 scenePosition)
         {
+            // Validate DaggerfallLocation
+            if (!dfLocation || dfLocation.Summary.MapID == 0)
+                throw new Exception(noLocationError);
+
             // Get location origin in both scene and world
             // The SW origin of location in scene spaces aligns with SW terrain tile origin in world space
             Vector3 locationOrigin = dfLocation.transform.position;
             DFPosition worldOrigin = MapsFile.MapPixelToWorldCoord(dfLocation.Summary.MapPixelX, dfLocation.Summary.MapPixelY);
 
             // Get difference between origin and target position in scene space
-            Vector3 difference = position - locationOrigin;
+            Vector3 difference = scenePosition - locationOrigin;
 
             // Convert difference into Daggerfall units and apply to origin in world space
             DFPosition result = new DFPosition(
@@ -234,11 +257,15 @@ namespace DaggerfallWorkshop.Game.Utility
         /// This is specific to the peered location due to floating origin.
         /// Some precision loss is expected converting back to scene space.
         /// </summary>
-        /// <param name="position">World location to convert to nearest point in scene space.</param>
+        /// <param name="worldPosition">World location to convert to nearest point in scene space.</param>
         /// <param name="refineY">Attempt to refine Y position to actual terrain data.</param>
-        /// <returns>Vector3.</returns>
-        public Vector3 WorldToScenePosition(DFPosition position, bool refineY = true)
+        /// <returns>Scene Vector3 position.</returns>
+        public Vector3 WorldToScenePosition(DFPosition worldPosition, bool refineY = true)
         {
+            // Validate DaggerfallLocation
+            if (!dfLocation || dfLocation.Summary.MapID == 0)
+                throw new Exception(noLocationError);
+
             // Get location origin in both scene and world
             // The SW origin of location in scene spaces aligns with SW terrain tile origin in world space
             Vector3 locationOrigin = dfLocation.transform.position;
@@ -246,9 +273,9 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Get difference between origin and target position in scene space
             Vector3 offset = new Vector3(
-                (position.X - worldOrigin.X) / StreamingWorld.SceneMapRatio,
+                (worldPosition.X - worldOrigin.X) / StreamingWorld.SceneMapRatio,
                 0,
-                (position.Y - worldOrigin.Y) / StreamingWorld.SceneMapRatio);
+                (worldPosition.Y - worldOrigin.Y) / StreamingWorld.SceneMapRatio);
 
             // Calculate X-Z position and use Y from location origin
             Vector3 result = locationOrigin + offset;
@@ -270,32 +297,15 @@ namespace DaggerfallWorkshop.Game.Utility
         }
 
         /// <summary>
-        /// Gets UV coordinates of world position inside navgrid.
+        /// Convert world position to local navgrid position.
+        /// Precision loss expected converting between world and navgrid.
         /// </summary>
-        /// <param name="position">World coordinates to test.</param>
-        /// <returns>UV coordinates inside navgrid - will be clamped to 0-1 range.</returns>
-        public Vector2 GetNavGridUV(DFPosition position)
-        {
-            RectOffset locationRect = dfLocation.LocationRect;
-
-            int width = locationRect.right - locationRect.left;
-            int height = locationRect.top - locationRect.bottom;
-
-            float u = Mathf.Clamp01((float)(position.X - locationRect.left) / width);
-            float v = Mathf.Clamp01((float)(position.Y - locationRect.bottom) / height);
-
-            return new Vector2(u, v);
-        }
-
-        /// <summary>
-        /// Gets X,Y coordinates of world position inside navgrid.
-        /// </summary>
-        /// <param name="position">World coordinates to test.</param>
-        /// <returns>X, Y coordinates inside navgrid - will be clamped to valid range.</returns>
-        public DFPosition GetNavGridPosition(DFPosition position)
+        /// <param name="worldPosition">World position - will be clamped inside location area.</param>
+        /// <returns>Local navgrid DFPosition.</returns>
+        public DFPosition WorldToNavGridPosition(DFPosition worldPosition)
         {
             // Get navgrid coordinates
-            Vector2 uv = GetNavGridUV(position);
+            Vector2 uv = GetNavGridUV(worldPosition);
             int x = (int)(NavGridWidth * uv.x);
             int y = (int)(NavGridHeight * uv.y);
 
@@ -303,15 +313,82 @@ namespace DaggerfallWorkshop.Game.Utility
         }
 
         /// <summary>
+        /// Convert local navgrid position into a world position.
+        /// Precision loss expected converting between world and navgrid.
+        /// </summary>
+        /// <param name="localPosition">Local position inside navgrid.</param>
+        /// <returns>World DFPosition.</returns>
+        public DFPosition NavGridToWorldPosition(DFPosition localPosition)
+        {
+            // Validate DaggerfallLocation
+            if (!dfLocation || dfLocation.Summary.MapID == 0)
+                throw new Exception(noLocationError);
+
+            // Get world origin
+            DFPosition worldOrigin = MapsFile.MapPixelToWorldCoord(dfLocation.Summary.MapPixelX, dfLocation.Summary.MapPixelY);
+
+            // Get local positions - need to invert Y as classic origin is bottom-left and navgrid is top-right
+            int xPos = localPosition.X;
+            int yPos = NavGridHeight - 1 - localPosition.Y;
+
+            return new DFPosition(worldOrigin.X + xPos * DaggerfallUnitsPerTile, worldOrigin.Y + yPos * DaggerfallUnitsPerTile);
+        }
+
+        /// <summary>
+        /// Gets UV coordinates of world position inside navgrid.
+        /// </summary>
+        /// <param name="worldPosition">World coordinates to test.</param>
+        /// <returns>UV coordinates inside navgrid - will be clamped to 0-1 range.</returns>
+        public Vector2 GetNavGridUV(DFPosition worldPosition)
+        {
+            RectOffset locationRect = dfLocation.LocationRect;
+
+            int width = locationRect.right - locationRect.left;
+            int height = locationRect.top - locationRect.bottom;
+
+            float u = Mathf.Clamp01((float)(worldPosition.X - locationRect.left) / width);
+            float v = Mathf.Clamp01((float)(worldPosition.Y - locationRect.bottom) / height);
+
+            return new Vector2(u, v);
+        }
+
+        /// <summary>
         /// Gets weight of tile at world position inside navgrid.
         /// </summary>
-        /// <param name="position">World position to test.</param>
+        /// <param name="worldPosition">World position to test.</param>
         /// <returns>Weight of tile inside navgrid - will be clamped to valid range.</returns>
-        public int GetNavGridWeight(DFPosition position)
+        public int GetNavGridWeightWorld(DFPosition worldPosition)
         {
-            DFPosition pos = GetNavGridPosition(position);
+            DFPosition pos = WorldToNavGridPosition(worldPosition);
 
             return navGrid[pos.X, pos.Y] >> 4;
+        }
+
+        /// <summary>
+        /// Gets weight of tile at local DFPosition inside navgrid array.
+        /// Safe to query outside navgrid area, will just return 0.
+        /// </summary>
+        /// <param name="localPosition">Local navgrid position.</param>
+        /// <returns>Weight of position or 0.</returns>
+        public int GetNavGridWeightLocal(DFPosition localPosition)
+        {
+            return GetNavGridWeightLocal(localPosition.X, localPosition.Y);
+        }
+
+        /// <summary>
+        /// Gets weight of tile at local X, Y position inside navgrid array.
+        /// Safe to query outside navgrid area, will just return 0.
+        /// </summary>
+        /// <param name="x">X position inside navgrid.</param>
+        /// <param name="y">Y position inside navgrid.</param>
+        /// <returns>Weight of position or 0.</returns>
+        public int GetNavGridWeightLocal(int x, int y)
+        {
+            // Return 0 if accessing outside of array
+            if (x < 0 || x >= NavGridWidth || y < 0 || y >= NavGridHeight)
+                return 0;
+
+            return navGrid[x, y] >> 4;
         }
 
         /// <summary>

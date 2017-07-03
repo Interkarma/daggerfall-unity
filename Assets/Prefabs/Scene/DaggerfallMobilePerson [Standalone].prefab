@@ -20,6 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4190189795145318}
   - component: {fileID: 114102110313281098}
+  - component: {fileID: 114040605119886728}
+  - component: {fileID: 136715391349249406}
   m_Layer: 0
   m_Name: DaggerfallMobilePerson [Standalone]
   m_TagString: Untagged
@@ -110,6 +112,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1779995961696246}
   m_Mesh: {fileID: 0}
+--- !u!114 &114040605119886728
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1534471568425466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7514ad2ae8a1298438597332199d19b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cityNavigation: {fileID: 0}
 --- !u!114 &114102110313281098
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -137,3 +151,16 @@ MonoBehaviour:
   race: 1
   gender: 0
   personVariant: -1
+--- !u!136 &136715391349249406
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1534471568425466}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.4
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
