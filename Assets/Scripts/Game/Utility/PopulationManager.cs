@@ -242,10 +242,10 @@ namespace DaggerfallWorkshop.Game.Utility
                 if (!poolItem.active || !poolItem.motor)
                     continue;
 
-                // Immediately recycle pool item if scene target is zero and is still searching for a tile
-                // This indicates mobile was not placed properly on grid and cannot find a target position
+                // Immediately recycle pool item if still seeking after too many attempts
+                // This indicates mobile was not placed properly on grid or just can't find a target position
                 // Mobile will be recycled to a new position later
-                if (poolItem.motor.TargetScenePosition == Vector3.zero && poolItem.motor.SeekCount > 3)
+                if (poolItem.motor.SeekCount > 10)
                     ImmediatelyRecyclePoolItem(ref poolItem);
 
                 //// Disable pool item when too far from player

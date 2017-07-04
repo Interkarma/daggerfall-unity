@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System.Linq;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
@@ -30,18 +31,20 @@ namespace DaggerfallWorkshop.Game
         const float movementSpeed = 1.3f;
         const float halfMobileHeight = 1.0f;
         const float halfTile = (CityNavigation.DaggerfallUnitsPerTile * 0.5f) * MeshReader.GlobalScale;
+        const float tileDowngradeChance = 0.20f;
 
         // Mobile states
         MobileStates currentMobileState = MobileStates.SeekingTile;
         MobileStates lastMobileState = MobileStates.SeekingTile;
 
         // Navigation settings
+        int[] localWeights = new int[4];
         bool triedPlayerLocation = false;
         MobileDirection currentDirection = MobileDirection.Random;
         DFPosition currentNavPosition = new DFPosition(-1, -1);
-        DFPosition targetNavPosition;
-        DFPosition targetWorldPosition;
-        Vector3 targetScenePosition;
+        DFPosition targetNavPosition = new DFPosition(-1, -1);
+        DFPosition targetWorldPosition = new DFPosition(-1, -1);
+        Vector3 targetScenePosition = Vector3.zero;
         float distanceToTarget;
         float distanceToPlayer;
         int seekCount;
@@ -98,7 +101,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Gets the number of times this mobile has searched for a new tile.
+        /// Gets consecutive number of times this mobile has searched for a new tile.
         /// </summary>
         public int SeekCount
         {
@@ -223,18 +226,80 @@ namespace DaggerfallWorkshop.Game
         {
             seekCount++;
 
-            // Ensure navgrid position is set
+            // Ensure mobile is on grid
             InitNavPosition(currentNavPosition);
 
-            // Try to keep moving in a straight line if possible
-            if (GetNextNavPositionWeight(currentDirection) > 0)
+            // Get current and target weights
+            int currentWeight = GetCurrentNavPositionWeight();
+            int targetWeight = GetNextNavPositionWeight(currentDirection);
+
+            // Always change direction if next tile is non-navigable and next tile weight doesn't matter
+            if (targetWeight == 0)
             {
+                // Get surrounding weights
+                localWeights[(int)MobileDirection.North] = GetNextNavPositionWeight(MobileDirection.North);
+                localWeights[(int)MobileDirection.South] = GetNextNavPositionWeight(MobileDirection.South);
+                localWeights[(int)MobileDirection.East] = GetNextNavPositionWeight(MobileDirection.East);
+                localWeights[(int)MobileDirection.West] = GetNextNavPositionWeight(MobileDirection.West);
+
+                // Try to move in any valid random direction
+                int randomDirection = Random.Range(0, localWeights.Length);
+                if (localWeights[randomDirection] == 0)
+                {
+                    // Keep seeking a tile
+                    // Population manager might recycle this mobile if it doesn't find a tile after a few attempts
+                    return;
+                }
+
+                SetFacing((MobileDirection)randomDirection);
                 SetTargetPosition();
                 return;
             }
 
-            // Turn in a random direction
-            SetFacing(MobileDirection.Random);
+            // High chance to change direction if target weight lower than current weight
+            // This will cause mobiles to generally follow roads and other nice surfaces
+            if (targetWeight < currentWeight && Random.Range(0f, 1f) > tileDowngradeChance)
+            {
+                // Get surrounding weights
+                localWeights[(int)MobileDirection.North] = GetNextNavPositionWeight(MobileDirection.North);
+                localWeights[(int)MobileDirection.South] = GetNextNavPositionWeight(MobileDirection.South);
+                localWeights[(int)MobileDirection.East] = GetNextNavPositionWeight(MobileDirection.East);
+                localWeights[(int)MobileDirection.West] = GetNextNavPositionWeight(MobileDirection.West);
+
+                // Evaluate in random order so if multiple equal "bests" are found we go a random direction
+                int bestWeight = targetWeight;
+                MobileDirection bestDirection = currentDirection;
+                System.Random rand = new System.Random();
+                foreach (int i in Enumerable.Range(0, 3).OrderBy(x => rand.Next()))
+                {
+                    if (localWeights[i] > bestWeight)
+                    {
+                        bestWeight = localWeights[i];
+                        bestDirection = (MobileDirection)i;
+                    }
+                }
+
+                // Start heading in new best direction
+                SetFacing(bestDirection);
+                currentDirection = bestDirection;
+                SetTargetPosition();
+                return;
+            }
+
+            // Otherwise keep marching in current direction
+            SetTargetPosition();
+
+            //// Original
+
+            //// Try to keep moving in a straight line if possible
+            //if (GetNextNavPositionWeight(currentDirection) > 0)
+            //{
+            //    SetTargetPosition();
+            //    return;
+            //}
+
+            //// Turn in a random direction
+            //SetFacing(MobileDirection.Random);
         }
 
         void MovingForward()
@@ -276,8 +341,13 @@ namespace DaggerfallWorkshop.Game
             // Target point will be at ground level (roughly waist-level for mobile), so adjust up by half mobile height
             targetScenePosition.y += halfMobileHeight;
 
+            // Mobile now owns target tile and can release current tile
+            cityNavigation.ClearFlags(currentNavPosition, CityNavigation.TileFlags.Occupied);
+            cityNavigation.SetFlags(targetNavPosition, CityNavigation.TileFlags.Occupied);
+
             // Change state to moving forwards
             ChangeState(MobileStates.MovingForward);
+            seekCount = 0;
         }
 
         void SetFacing(MobileDirection facing)
@@ -345,13 +415,27 @@ namespace DaggerfallWorkshop.Game
             return nextPosition;
         }
 
+        int GetCurrentNavPositionWeight()
+        {
+            // Must have a current position on navgrid
+            if (!cityNavigation || currentNavPosition.X == -1 || currentNavPosition.Y == -1)
+                return 0;
+
+            return cityNavigation.GetNavGridWeightLocal(currentNavPosition);
+        }
+
         int GetNextNavPositionWeight(MobileDirection direction)
         {
             // Must have a current position on navgrid
             if (!cityNavigation || currentNavPosition.X == -1 || currentNavPosition.Y == -1)
                 return 0;
 
-            return cityNavigation.GetNavGridWeightLocal(GetNextNavPosition(direction));
+            // Get next nav position and regard occupied tiles as weight 0
+            DFPosition nextPosition = GetNextNavPosition(direction);
+            if (cityNavigation.HasFlags(nextPosition, CityNavigation.TileFlags.Occupied))
+                return 0;
+
+            return cityNavigation.GetNavGridWeightLocal(nextPosition);
         }
 
         #endregion
