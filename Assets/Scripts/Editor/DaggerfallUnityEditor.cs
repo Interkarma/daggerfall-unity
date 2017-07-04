@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.InternalTypes;
 using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop
@@ -240,12 +241,14 @@ namespace DaggerfallWorkshop
                 // Optional
                 var propCityBlockPrefab = Prop("Option_CityBlockPrefab");
                 var propDungeonBlockPrefab = Prop("Option_DungeonBlockPrefab");
+                var propMobileNPCPrefab = Prop("Option_MobileNPCPrefab");
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Optional");
                 GUILayoutHelper.Indent(() =>
                 {
                     propCityBlockPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("City Blocks", "Prefab for city blocks."), propCityBlockPrefab.objectReferenceValue, typeof(DaggerfallRMBBlock), false);
                     propDungeonBlockPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Dungeon Blocks", "Prefab for dungeon blocks."), propDungeonBlockPrefab.objectReferenceValue, typeof(DaggerfallRDBBlock), false);
+                    propMobileNPCPrefab.objectReferenceValue = EditorGUILayout.ObjectField(new GUIContent("Mobile NPCs", "Prefab for mobile NPCs in locations."), propMobileNPCPrefab.objectReferenceValue, typeof(MobilePersonMotor), false);
                 });
             });
 

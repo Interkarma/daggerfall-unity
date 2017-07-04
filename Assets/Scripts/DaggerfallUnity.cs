@@ -21,6 +21,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
 
@@ -90,6 +91,7 @@ namespace DaggerfallWorkshop
         public DaggerfallActionDoor Option_InteriorDoorPrefab = null;
         public DaggerfallRMBBlock Option_CityBlockPrefab = null;
         public DaggerfallRDBBlock Option_DungeonBlockPrefab = null;
+        public MobilePersonMotor Option_MobileNPCPrefab = null;
         public bool Option_ImportEnemyPrefabs = true;
         public DaggerfallEnemy Option_EnemyPrefab = null;
         public bool Option_ImportRandomTreasure = true;

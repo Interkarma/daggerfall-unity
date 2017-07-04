@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game
         public CityNavigation cityNavigation;
 
         // Constants
+        const float idleDistance = 2.5f;
         const float movementSpeed = 1.3f;
         const float halfMobileHeight = 1.0f;
         const float halfTile = (CityNavigation.DaggerfallUnitsPerTile * 0.5f) * MeshReader.GlobalScale;
@@ -35,14 +36,17 @@ namespace DaggerfallWorkshop.Game
         MobileStates lastMobileState = MobileStates.SeekingTile;
 
         // Navigation settings
+        bool triedPlayerLocation = false;
         MobileDirection currentDirection = MobileDirection.Random;
         DFPosition currentNavPosition = new DFPosition(-1, -1);
         DFPosition targetNavPosition;
         DFPosition targetWorldPosition;
         Vector3 targetScenePosition;
         float distanceToTarget;
+        float distanceToPlayer;
 
-        bool triedPlayerLocation = false;
+        // References
+        DaggerfallMobilePerson mobileBillboard;
 
         #endregion
 
@@ -113,6 +117,9 @@ namespace DaggerfallWorkshop.Game
 
         private void Start()
         {
+            // Cache references
+            mobileBillboard = GetComponentInChildren<DaggerfallMobilePerson>();
+
             // Need to repath if floating origin ticks while in range
             FloatingOrigin.OnPositionUpdate += FloatingOrigin_OnPositionUpdate;
 
@@ -147,6 +154,22 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
+            // Go idle if near player
+            distanceToPlayer = GameManager.Instance.PlayerMotor.DistanceToPlayer(transform.position);
+            //bool playerStandingStill = GameManager.Instance.PlayerMotor.IsStandingStill;
+            //if (!playerStandingStill && mobileBillboard.IsIdle)
+            //{
+            //    // Switch animation state back to moving
+            //    mobileBillboard.IsIdle = false;
+            //    currentMobileState = MobileStates.MovingForward;
+            //}
+            //else if (playerStandingStill && !mobileBillboard.IsIdle && distanceToPlayer < idleDistance)
+            //{
+            //    // Switch animation state to idle
+            //    mobileBillboard.IsIdle = true;
+            //    currentMobileState = MobileStates.Idle;
+            //}
+
             // Update based on current state
             switch (currentMobileState)
             {
@@ -157,6 +180,7 @@ namespace DaggerfallWorkshop.Game
                     MovingForward();
                     break;
                 case MobileStates.Idle:
+                    // Do nothing for now
                     break;
             }
         }

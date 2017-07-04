@@ -630,9 +630,12 @@ namespace DaggerfallWorkshop
                     // Get location component
                     DaggerfallLocation dfLocation = locationObject.GetComponent<DaggerfallLocation>();
 
-                    // Create CityNavigation component on same GameObject as DaggerfallLocation
+                    // Create CityNavigation component
                     CityNavigation cityNavigation = dfLocation.gameObject.AddComponent<CityNavigation>();
                     cityNavigation.FormatNavigation(location.RegionName, location.Name, width, height);
+
+                    // Create PopulationManager component
+                    PopulationManager populationManager = dfLocation.gameObject.AddComponent<PopulationManager>();
 
                     // Perform layout and yield after each block is placed
                     ContentReader contentReader = DaggerfallUnity.Instance.ContentReader;

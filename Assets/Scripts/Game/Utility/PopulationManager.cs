@@ -10,9 +10,9 @@
 //
 
 using UnityEngine;
-using System;
 using System.Collections.Generic;
-using DaggerfallConnect;
+using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -20,30 +20,66 @@ namespace DaggerfallWorkshop.Game.Utility
     /// Manages a pool of civilian mobiles (wandering NPCs) for the local town environment.
     /// Attached to the same GameObject as DaggerfallLocation and CityNavigation by environment layout process in StreamingWorld.
     /// </summary>
+    [RequireComponent(typeof(DaggerfallLocation))]
+    [RequireComponent(typeof(CityNavigation))]
     public class PopulationManager : MonoBehaviour
     {
         #region Fields
 
-        public int MaxPoolSize = 50;                        // Maximum number of NPCs allowed in pool
-        public float MaxSpawnDistance = 50;                 // Maximum distance from player NPCs will spawn
-        public float MaxDistanceFromPlayer = 1000;          // Maximum distance from player before NPC is recycled
-        public bool AllowVisibleSpawn = false;              // Allow NPC to spawn while player is looking
-        public bool AllowVisibleDespawn = false;            // Allow NPC to despawn while player is looking
+        const string mobileNPCName = "MobileNPC";               // Name displayed in scene view
+        const int maxPlayerDistanceOutsideRect = 2500;          // Max world units beyond location rect where all NPCs are despawned
+        const int populationIndexPer16Blocks = 12;              // This many NPCs will be spawned around player per 16 RMB blocks in location
+
+        bool playerInRange = false;
+        bool playerWasInRange = false;
+        int maxPopulation = 0;
+
+        //public int MaxPoolSize = 50;                        // Maximum number of NPCs allowed in pool
+        //public float MaxSpawnDistance = 50;                 // Maximum distance from player NPCs will spawn
+        //public float MaxDistanceFromPlayer = 1000;          // Maximum distance from player before NPC is recycled
+        //public bool AllowVisibleSpawn = false;              // Allow NPCs to spawn while player can see them
+        //public bool AllowVisibleDespawn = false;            // Allow NPCs to despawn while player can see them
 
         //int nextAvailableItem = -1;
-        List<MobileNPCPoolItem> populationPool = new List<MobileNPCPoolItem>();
+
+        PlayerGPS playerGPS;
+        DaggerfallLocation dfLocation;
+        CityNavigation cityNavigation;
+
+        List<PoolItem> populationPool = new List<PoolItem>();
 
         #endregion
 
         #region Structs & Enums
 
-        struct MobileNPCPoolItem
+        struct PoolItem
         {
-            public bool active;                             // NPC is currently active 
-            public bool scheduleRecycle;                    // Schedule NPC to become inactive and recycled
+            public bool active;                             // NPC is currently active/inactive
+            public bool scheduleEnable;                     // NPC is active and waiting to be made visible
+            public bool scheduleRecycle;                    // NPC is active and waiting to be recycled
             public int nameSeed;                            // Current nameseed of NPC
-            public GameObject gameObject;                   // GameObject for NPC
+            public MobilePersonMotor motor;                 // NPC motor
             public float distanceToPlayer;                  // Last measured distance to player
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets max population calculated for this location.
+        /// </summary>
+        public int MaxPopulation
+        {
+            get { return maxPopulation; }
+        }
+
+        /// <summary>
+        /// Checks if player inside valid population spawn range for this location.
+        /// </summary>
+        public bool PlayerInRange
+        {
+            get { return playerInRange; }
         }
 
         #endregion
@@ -52,41 +88,165 @@ namespace DaggerfallWorkshop.Game.Utility
 
         private void Start()
         {
-            populationPool.Capacity = MaxPoolSize;
+            // Cache references
+            playerGPS = GameManager.Instance.PlayerGPS;
+            dfLocation = GetComponent<DaggerfallLocation>();
+            cityNavigation = GetComponent<CityNavigation>();
         }
 
         private void Update()
         {
-            UpdatePoolItems();
+            // 1. Drop NPCs around closest navgrid position to player
+            // 2. When player moves far enough away, NPCs should be recycled and placed near player's current position
+            // 3. NPCs need to start spawning after 6am and vanish after 6pm
+
+            // Check if player inside max world range for population to exist
+            playerInRange = false;
+            RectOffset locationRect = dfLocation.LocationRect;
+            if (playerGPS.WorldX >= locationRect.left - maxPlayerDistanceOutsideRect &&
+                playerGPS.WorldX <= locationRect.right + maxPlayerDistanceOutsideRect &&
+                playerGPS.WorldZ >= locationRect.top - maxPlayerDistanceOutsideRect &&
+                playerGPS.WorldZ <= locationRect.bottom + maxPlayerDistanceOutsideRect)
+            {
+                playerInRange = true;
+            }
+
+            // Spawn or despawn population when player enters/exits hard range limits
+            if (playerInRange && !playerWasInRange)
+            {
+                // TODO: Spawn new population
+                CreateNewPopulation();
+
+                //Debug.LogFormat("Player entered location range for {0}", dfLocation.name);
+                playerWasInRange = true;
+            }
+            else if (!playerInRange && playerWasInRange)
+            {
+                // TODO: Despawn old population
+
+                //Debug.LogFormat("Player exited location range for {0}", dfLocation.name);
+                playerWasInRange = false;
+            }
         }
 
         #endregion
 
         #region Private Methods
 
-        // Updates population pool and mark NPCs for recycling
-        void UpdatePoolItems()
+        void CreateNewPopulation()
         {
-            GameObject player = GameManager.Instance.PlayerObject;
+            // Get closest point on navgrid to player position in world
+            DFPosition playerWorldPos = new DFPosition(playerGPS.WorldX, playerGPS.WorldZ);
+            Vector2 uv = cityNavigation.GetNavGridUV(playerWorldPos);
+            //Debug.LogFormat("Closest on-grid position U={0}, V={1}", uv.x, uv.y);
 
-            for (int i = 0; i < populationPool.Count; i++)
+            // Calculate maximum population for this location
+            // This is determined to be total RMB blocks in location / 16 clamped to 1-64
+            // So a large 8x8 city like Daggerfall will have 64/16 = 4 * populationIndexPer16Blocks max people around player
+            // A small 1x1 town will have 1/16 = 1 * populationIndexPer16Blocks max people around player
+            // This should lead to larger cities feeling more bustling than smaller towns
+            // Very likely to be tuned or changed completely over time
+            int totalBlocks = dfLocation.Summary.BlockWidth * dfLocation.Summary.BlockHeight;
+            int populationBlocks = Mathf.Clamp(totalBlocks / 16, 1, 64);
+            maxPopulation = populationBlocks * populationIndexPer16Blocks;
+
+            // Place all NPCs on the navgrid when player first enters range
+            // Due to long draw distances, this could lead to some pop-in
+            // Something that can be refined later
+            for (int i = 0; i < maxPopulation; i++)
             {
-                // Get poolItem and skip if not active or not setup
-                MobileNPCPoolItem poolItem = populationPool[i];
-                if (!poolItem.active || poolItem.gameObject == null)
-                    continue;
+                int item = GetNextFreePoolItem();
+                if (item == -1)
+                    break;
 
-                // Disable poolItem when too far from player
-                poolItem.distanceToPlayer = Vector3.Distance(poolItem.gameObject.transform.position, player.transform.position);
-                if (poolItem.distanceToPlayer > MaxDistanceFromPlayer)
-                    poolItem.scheduleRecycle = true;
-                else
-                    poolItem.scheduleRecycle = false;
+                // Set item as active and schedule to become enabled
+                // TODO: Assign to spawn position on navgrid
+                PoolItem poolItem = populationPool[item];
+                poolItem.active = true;
+                poolItem.scheduleEnable = true;
 
-                // Update poolItem data
-                populationPool[i] = poolItem;
+                // TEMP: Place them all on tile 0,0 and force GameObject active for now
+                // This will be removed
+                DFPosition worldPosition = cityNavigation.NavGridToWorldPosition(new DFPosition(0, 0));
+                Vector3 scenePosition = cityNavigation.WorldToScenePosition(worldPosition);
+                poolItem.motor.transform.position = scenePosition;
+                GameObjectHelper.AlignBillboardToGround(poolItem.motor.gameObject, new Vector2(0, 2f));
+                poolItem.motor.gameObject.SetActive(true);
+                poolItem.scheduleEnable = false;
+
+                // Update pool item
+                populationPool[item] = poolItem;
             }
         }
+
+        // Gets next free pool item
+        // Will attempt to create new item if none could be found - up to max population
+        // Returns -1 if no free item could be found or created
+        int GetNextFreePoolItem()
+        {
+            // Look for an available inactive pool item
+            for (int i = 0; i < populationPool.Count; i++)
+            {
+                if (!populationPool[i].active)
+                    return i;
+            }
+
+            // Create a new item if population not at maximum
+            if (populationPool.Count < maxPopulation)
+                return CreateNewPoolItem();
+
+            return -1;
+        }
+
+        // Creates a new pool item with NPC prefab - returns -1 if could not be created
+        int CreateNewPoolItem()
+        {
+            // Must have an NPC prefab set
+            if (!DaggerfallUnity.Instance.Option_MobileNPCPrefab)
+                return -1;
+
+            // Instantiate NPC prefab
+            GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_MobileNPCPrefab.gameObject, mobileNPCName, dfLocation.transform, Vector3.zero);
+            go.SetActive(false);
+
+            // Get motor and set reference to navgrid
+            MobilePersonMotor motor = go.GetComponent<MobilePersonMotor>();
+            motor.cityNavigation = cityNavigation;
+
+            // Create the pool item and assign new GameObject
+            // This pool item starts inactive and can be used later
+            PoolItem poolItem = new PoolItem();
+            poolItem.motor = motor;
+
+            // Add to pool
+            populationPool.Add(poolItem);
+
+            return populationPool.Count - 1;
+        }
+
+        //// Updates population pool and mark NPCs for recycling
+        //void UpdatePoolItems()
+        //{
+        //    GameObject player = GameManager.Instance.PlayerObject;
+
+        //    for (int i = 0; i < populationPool.Count; i++)
+        //    {
+        //        // Get poolItem and skip if not active or not setup
+        //        MobileNPCPoolItem poolItem = populationPool[i];
+        //        if (!poolItem.active || poolItem.gameObject == null)
+        //            continue;
+
+        //        // Disable poolItem when too far from player
+        //        poolItem.distanceToPlayer = Vector3.Distance(poolItem.gameObject.transform.position, player.transform.position);
+        //        if (poolItem.distanceToPlayer > MaxDistanceFromPlayer)
+        //            poolItem.scheduleRecycle = true;
+        //        else
+        //            poolItem.scheduleRecycle = false;
+
+        //        // Update poolItem data
+        //        populationPool[i] = poolItem;
+        //    }
+        //}
 
         #endregion
     }

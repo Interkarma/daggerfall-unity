@@ -113,6 +113,16 @@ namespace DaggerfallWorkshop.Game.Utility
             RoadCornerGrass = 55,
         }
 
+        /// <summary>
+        /// Tile flags.
+        /// </summary>
+        [Flags]
+        public enum TileFlags
+        {
+            None = 0,
+            Occupied = 1,
+        }
+
         #endregion
 
         #region Unity
@@ -139,11 +149,13 @@ namespace DaggerfallWorkshop.Game.Utility
             //        Vector2 uvPosition = GetNavGridUV(worldPosition);
             //        DFPosition navPosition = WorldToNavGridPosition(worldPosition);
             //        int navWeight = GetNavGridWeightWorld(worldPosition);
+            //        int navRaw = GetRawNavGridValueLocal(navPosition);
             //        Debug.LogFormat("Player world position  : X={0}, Z={1}", worldPosition.X, worldPosition.Y);
             //        Debug.LogFormat("Player scene position  : X={0}, Y={1}, Z={2}", scenePosition.x, scenePosition.y, scenePosition.z);
             //        Debug.LogFormat("Player navgrid UV      : U={0}, V={1}", uvPosition.x, uvPosition.y);
             //        Debug.LogFormat("Player navgrid position: X={0}, Y={1}", navPosition.X, navPosition.Y);
             //        Debug.LogFormat("Player navgrid weight  : W={0}", navWeight);
+            //        Debug.LogFormat("Player navgrid value   : W={0}", navRaw);
             //        updatePlayerPos = false;
             //    }
             //    else
@@ -304,10 +316,10 @@ namespace DaggerfallWorkshop.Game.Utility
         /// <returns>Local navgrid DFPosition.</returns>
         public DFPosition WorldToNavGridPosition(DFPosition worldPosition)
         {
-            // Get navgrid coordinates
+            // Get navgrid coordinates inside valid navgrid range
             Vector2 uv = GetNavGridUV(worldPosition);
-            int x = (int)(NavGridWidth * uv.x);
-            int y = (int)(NavGridHeight * uv.y);
+            int x = (int)((NavGridWidth - 1) * uv.x);
+            int y = (int)((NavGridHeight - 1) * uv.y);
 
             return new DFPosition(x, y);
         }
@@ -324,14 +336,15 @@ namespace DaggerfallWorkshop.Game.Utility
             if (!dfLocation || dfLocation.Summary.MapID == 0)
                 throw new Exception(noLocationError);
 
-            // Get world origin
-            DFPosition worldOrigin = MapsFile.MapPixelToWorldCoord(dfLocation.Summary.MapPixelX, dfLocation.Summary.MapPixelY);
+            // Get location rect in world space
+            RectOffset rect = dfLocation.LocationRect;
 
-            // Get local positions - need to invert Y as classic origin is bottom-left and navgrid is top-right
-            int xPos = localPosition.X;
-            int yPos = NavGridHeight - 1 - localPosition.Y;
+            // Navgrid fits 1:1 inside location rect but navgrid origin is top-left and world origin is bottom-left
+            DFPosition worldPosition = new DFPosition(
+                rect.left + localPosition.X * DaggerfallUnitsPerTile,
+                rect.bottom - localPosition.Y * DaggerfallUnitsPerTile);
 
-            return new DFPosition(worldOrigin.X + xPos * DaggerfallUnitsPerTile, worldOrigin.Y + yPos * DaggerfallUnitsPerTile);
+            return worldPosition;
         }
 
         /// <summary>
@@ -389,6 +402,103 @@ namespace DaggerfallWorkshop.Game.Utility
                 return 0;
 
             return navGrid[x, y] >> 4;
+        }
+
+        /// <summary>
+        /// Sets navgrid tile flags.
+        /// Does nothing if outside navgrid area.
+        /// </summary>
+        /// <param name="localPosition">Local navgrid position.</param>
+        /// <param name="flags">Flags to set.</param>
+        public void SetFlags(DFPosition localPosition, TileFlags flags)
+        {
+            SetFlags(localPosition.X, localPosition.Y, flags);
+        }
+
+        /// <summary>
+        /// Sets navgrid tile flags.
+        /// Does nothing if outside navgrid area.
+        /// </summary>
+        /// <param name="x">X position inside navgrid.</param>
+        /// <param name="y">Y position inside navgrid.</param>
+        /// <param name="flags">Flags to set.</param>
+        public void SetFlags(int x, int y, TileFlags flags)
+        {
+            // Exit if accessing outside of array
+            if (x < 0 || x >= NavGridWidth || y < 0 || y >= NavGridHeight)
+                return;
+
+            byte bits = (byte)flags;
+            navGrid[x, y] |= bits;
+        }
+
+        /// <summary>
+        /// Clear navgrid tile flags.
+        /// Does nothing if outside navgrid area.
+        /// </summary>
+        /// <param name="localPosition">Local navgrid position.</param>
+        /// <param name="flags">Flags to unset.</param>
+        public void ClearFlags(DFPosition localPosition, TileFlags flags)
+        {
+            ClearFlags(localPosition.X, localPosition.Y, flags);
+        }
+
+        /// <summary>
+        /// Clears navgrid tile flags.
+        /// Does nothing if outside navgrid area.
+        /// </summary>
+        /// <param name="x">X position inside navgrid.</param>
+        /// <param name="y">Y position inside navgrid.</param>
+        /// <param name="flags">Flags to unset.</param>
+        public void ClearFlags(int x, int y, TileFlags flags)
+        {
+            // Exit if accessing outside of array
+            if (x < 0 || x >= NavGridWidth || y < 0 || y >= NavGridHeight)
+                return;
+
+            byte bits = (byte)flags;
+            navGrid[x, y] &= (byte)~bits;
+        }
+
+        /// <summary>
+        /// Checks navgrid tile flags.
+        /// Returns false is outside navgrid area.
+        /// </summary>
+        /// <param name="localPosition">Local navgrid position.</param>
+        /// <param name="flags">Flags to check.</param>
+        /// <returns>True if flags set, otherwise false.</returns>
+        public bool HasFlags(DFPosition localPosition, TileFlags flags)
+        {
+            return HasFlags(localPosition.X, localPosition.Y, flags);
+        }
+
+        /// <summary>
+        /// Checks navgrid tile flags.
+        /// Returns false is outside navgrid area.
+        /// </summary>
+        /// <param name="x">X position inside navgrid.</param>
+        /// <param name="y">Y position inside navgrid.</param>
+        /// <param name="flag">Flags to check.</param>
+        /// <returns>True if flags set, otherwise false.</returns>
+        public bool HasFlags(int x, int y, TileFlags flags)
+        {
+            // False if accessing outside of array
+            if (x < 0 || x >= NavGridWidth || y < 0 || y >= NavGridHeight)
+                return false;
+
+            byte bits = (byte)flags;
+            return ((navGrid[x, y] & bits) == bits);
+        }
+
+        /// <summary>
+        /// Gets raw unclamped tile value at navgrid position.
+        /// Position must be inside valid range or will throw exception.
+        /// </summary>
+        /// <param name="localPosition">Local navgrid position.</param>
+        /// <returns>Raw value from navgrid array.</returns>
+        public int GetRawNavGridValueLocal(DFPosition localPosition)
+        {
+            return navGrid[localPosition.X, localPosition.Y];
         }
 
         /// <summary>

@@ -37,8 +37,6 @@ namespace DaggerfallWorkshop
     {
         #region Fields
 
-        const float idleDistance = 2;
-
         public Races race = Races.Breton;
         public Genders gender = Genders.Male;
         public int personVariant = -1;
@@ -107,6 +105,21 @@ namespace DaggerfallWorkshop
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets idle state.
+        /// Daggerfall NPCs are either in or motion or idle facing player.
+        /// This only controls anim state, actual motion is handled by MobilePersonMotor.
+        /// </summary>
+        public bool IsIdle
+        {
+            get { return (currentAnimState == AnimStates.Idle); }
+            set { SetIdle(value); }
+        }
+
+        #endregion
+
         #region Unity
 
         private void Start()
@@ -131,29 +144,6 @@ namespace DaggerfallWorkshop
                 cameraPosition = mainCamera.transform.position;
                 Vector3 viewDirection = -new Vector3(mainCamera.transform.forward.x, 0, mainCamera.transform.forward.z);
                 transform.LookAt(transform.position + viewDirection);
-
-                bool playerStandingStill = GameManager.Instance.PlayerMotor.IsStandingStill;
-                if (!playerStandingStill && currentAnimState == AnimStates.Idle)
-                {
-                    // Switch animation state to move
-                    currentAnimState = AnimStates.Move;
-                    stateAnims = moveAnims;
-                    currentFrame = 0;
-                    lastOrientation = -1;
-                    animTimer = 1;
-                    animSpeed = stateAnims[0].FramePerSecond;
-                }
-                else if (playerStandingStill && currentAnimState == AnimStates.Move &&
-                    GameManager.Instance.PlayerMotor.DistanceToPlayer(transform.position) < idleDistance)
-                {
-                    // Switch animation state to idle
-                    currentAnimState = AnimStates.Idle;
-                    stateAnims = idleAnims;
-                    currentFrame = 0;
-                    lastOrientation = -1;
-                    animTimer = 1;
-                    animSpeed = stateAnims[0].FramePerSecond;
-                }
 
                 // Orient based on camera position
                 UpdateOrientation();
@@ -237,6 +227,30 @@ namespace DaggerfallWorkshop
         #endregion
 
         #region Private Methods
+
+        void SetIdle(bool idle)
+        {
+            if (idle)
+            {
+                // Switch animation state to idle
+                currentAnimState = AnimStates.Idle;
+                stateAnims = idleAnims;
+                currentFrame = 0;
+                lastOrientation = -1;
+                animTimer = 1;
+                animSpeed = stateAnims[0].FramePerSecond;
+            }
+            else
+            {
+                // Switch animation state to move
+                currentAnimState = AnimStates.Move;
+                stateAnims = moveAnims;
+                currentFrame = 0;
+                lastOrientation = -1;
+                animTimer = 1;
+                animSpeed = stateAnims[0].FramePerSecond;
+            }
+        }
 
         private void CacheRecordSizesAndFrames(int textureArchive)
         {
