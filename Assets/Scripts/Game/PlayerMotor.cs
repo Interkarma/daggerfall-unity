@@ -62,6 +62,12 @@ namespace DaggerfallWorkshop.Game
         // Player must be grounded for at least this many physics frames before being able to jump again; set to 0 to allow bunny hopping
         public int antiBunnyHopFactor = 1;
 
+        // FixedUpdate is too choppy to give smooth camera movement. This handles a smooth following child transform.
+        public Transform smoothFollower;                // The Transform that follows; will lerp to this Transform's position.
+        public float smoothFollowerLerpSpeed = 25.0f;   // Multiplied by dt.
+        Vector3 smoothFollowerPrevWorldPos;
+        bool smoothFollowerReset = true;
+
         [HideInInspector, NonSerialized]
         public CharacterController controller;
 
@@ -411,6 +417,28 @@ namespace DaggerfallWorkshop.Game
                 pos.y += (standingHeight - crouchingHeight) / 2.0f;
                 controller.transform.position = pos;
                 wasCrouching = isCrouching;
+            }
+
+            if(smoothFollower != null)
+            {
+                float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
+                float maxPossibleDistanceByMotorVelocity = controller.velocity.magnitude * 2.0f * Time.deltaTime;   // Theoretically the max distance the motor can carry the player with a generous margin.
+                float speedThreshold = runSpeed * Time.deltaTime;                                                   // Without question any distance travelled less than the running speed is legal.
+
+                // NOTE: Maybe the min distance should also include the height different between crouching / standing.
+                if(distanceMoved > speedThreshold && distanceMoved > maxPossibleDistanceByMotorVelocity)
+                {
+                    smoothFollowerReset = true;
+                }
+            
+                if(smoothFollowerReset) 
+                {
+                    smoothFollowerPrevWorldPos = transform.position;
+                    smoothFollowerReset = false;
+                }
+
+                smoothFollower.position = Vector3.Lerp(smoothFollowerPrevWorldPos, transform.position, smoothFollowerLerpSpeed * Time.smoothDeltaTime);
+                smoothFollowerPrevWorldPos = smoothFollower.position;
             }
         }
 
