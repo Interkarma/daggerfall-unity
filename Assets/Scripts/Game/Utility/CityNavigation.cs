@@ -491,6 +491,39 @@ namespace DaggerfallWorkshop.Game.Utility
         }
 
         /// <summary>
+        /// Gets a random navgrid spawn point up to radius tiles around origin.
+        /// </summary>
+        /// <param name="origin">Origin point for spawn. Will be clamped inside navgrid area.</param>
+        /// <param name="radius">Radius of spawn range around origin.</param>
+        /// <param name="maxAttempts">Maximum attempts to find a valid random spawn point.</param>
+        /// <param name="positionOut">Found position. Will be -1,-1 if no position found.</param>
+        /// <returns>True if position found.</returns>
+        public bool GetRandomSpawnPosition(DFPosition origin, out DFPosition positionOut, int radius=64, int maxAttempts = 10)
+        {
+            positionOut = new DFPosition(-1, -1);
+
+            bool found = false;
+            int totalAttempts = 0;
+            DFPosition testPosition = new DFPosition();
+            while (!found)
+            {
+                testPosition.X = origin.X + UnityEngine.Random.Range(-radius, radius);
+                testPosition.Y = origin.Y + UnityEngine.Random.Range(-radius, radius);
+
+                if (GetNavGridWeightLocal(testPosition) > 0)
+                {
+                    positionOut = testPosition;
+                    return true;
+                }
+
+                if (++totalAttempts > maxAttempts)
+                    break;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Gets raw unclamped tile value at navgrid position.
         /// Position must be inside valid range or will throw exception.
         /// </summary>

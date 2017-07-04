@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 targetScenePosition;
         float distanceToTarget;
         float distanceToPlayer;
+        int seekCount;
 
         // References
         DaggerfallMobilePerson mobileBillboard;
@@ -85,6 +86,23 @@ namespace DaggerfallWorkshop.Game
         public MobileDirection CurrentDirection
         {
             get { return currentDirection; }
+        }
+
+        /// <summary>
+        /// Gets target scene position.
+        /// If this is Vector3.zero then mobile is not properly on grid.
+        /// </summary>
+        public Vector3 TargetScenePosition
+        {
+            get { return targetScenePosition; }
+        }
+
+        /// <summary>
+        /// Gets the number of times this mobile has searched for a new tile.
+        /// </summary>
+        public int SeekCount
+        {
+            get { return seekCount; }
         }
 
         /// <summary>
@@ -203,6 +221,8 @@ namespace DaggerfallWorkshop.Game
 
         void SeekingTile()
         {
+            seekCount++;
+
             // Ensure navgrid position is set
             InitNavPosition(currentNavPosition);
 
