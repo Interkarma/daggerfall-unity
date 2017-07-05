@@ -30,6 +30,7 @@ namespace DaggerfallWorkshop.Game.Utility
         #region Fields
 
         public const int DaggerfallUnitsPerTile = 64;
+        public const float HalfTile = (DaggerfallUnitsPerTile * 0.5f) * MeshReader.GlobalScale;
 
         const int blockDimension = 64;
         const int blockSize = blockDimension * blockDimension;

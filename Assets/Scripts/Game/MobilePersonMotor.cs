@@ -31,7 +31,6 @@ namespace DaggerfallWorkshop.Game
         const float idleDistance = 2.5f;
         const float movementSpeed = 1.3f;
         const float halfMobileHeight = 1.0f;
-        const float halfTile = (CityNavigation.DaggerfallUnitsPerTile * 0.5f) * MeshReader.GlobalScale;
         const float tileDowngradeChance = 0.20f;
         const float randomChangeChance = 0.025f;
 
@@ -204,19 +203,19 @@ namespace DaggerfallWorkshop.Game
 
             // Go idle if near player
             distanceToPlayer = GameManager.Instance.PlayerMotor.DistanceToPlayer(transform.position);
-            //bool playerStandingStill = GameManager.Instance.PlayerMotor.IsStandingStill;
-            //if (!playerStandingStill && mobileBillboard.IsIdle)
-            //{
-            //    // Switch animation state back to moving
-            //    mobileBillboard.IsIdle = false;
-            //    currentMobileState = MobileStates.MovingForward;
-            //}
-            //else if (playerStandingStill && !mobileBillboard.IsIdle && distanceToPlayer < idleDistance)
-            //{
-            //    // Switch animation state to idle
-            //    mobileBillboard.IsIdle = true;
-            //    currentMobileState = MobileStates.Idle;
-            //}
+            bool playerStandingStill = GameManager.Instance.PlayerMotor.IsStandingStill;
+            if (!playerStandingStill && mobileBillboard.IsIdle)
+            {
+                // Switch animation state back to moving
+                mobileBillboard.IsIdle = false;
+                currentMobileState = MobileStates.MovingForward;
+            }
+            else if (playerStandingStill && !mobileBillboard.IsIdle && distanceToPlayer < idleDistance)
+            {
+                // Switch animation state to idle
+                mobileBillboard.IsIdle = true;
+                currentMobileState = MobileStates.Idle;
+            }
 
             // Update based on current state
             switch (currentMobileState)
@@ -387,8 +386,8 @@ namespace DaggerfallWorkshop.Game
 
             // Navgrid > world > scene conversion results in mobile being aligned exactly on edge of tile in scene
             // Move the mobile transform a half-tile into centre so it appears to be properly aligned
-            targetScenePosition.x += halfTile;
-            targetScenePosition.z += halfTile;
+            targetScenePosition.x += CityNavigation.HalfTile;
+            targetScenePosition.z += CityNavigation.HalfTile;
 
             // Target point will be at ground level (roughly waist-level for mobile), so adjust up by half mobile height
             targetScenePosition.y += halfMobileHeight;
