@@ -14,6 +14,7 @@ using System.Linq;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -32,6 +33,7 @@ namespace DaggerfallWorkshop.Game
         const float halfMobileHeight = 1.0f;
         const float halfTile = (CityNavigation.DaggerfallUnitsPerTile * 0.5f) * MeshReader.GlobalScale;
         const float tileDowngradeChance = 0.20f;
+        const float randomChangeChance = 0.025f;
 
         // Mobile states
         MobileStates currentMobileState = MobileStates.SeekingTile;
@@ -48,6 +50,9 @@ namespace DaggerfallWorkshop.Game
         float distanceToTarget;
         float distanceToPlayer;
         int seekCount;
+
+        // TEMP: NPC settings
+        Races race = Races.Breton;
 
         // References
         DaggerfallMobilePerson mobileBillboard;
@@ -82,6 +87,16 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets mobile race.
+        /// Only accepts Redguard, Nord, Breton.
+        /// </summary>
+        public Races Race
+        {
+            get { return race; }
+            set { SetRace(value); }
+        }
 
         /// <summary>
         /// Gets current mobile facing and direction of movement.
@@ -132,20 +147,32 @@ namespace DaggerfallWorkshop.Game
             get { return distanceToTarget; }
         }
 
+        /// <summary>
+        /// Gets last observed distance between this mobile and player.
+        /// </summary>
+        public float DistanceToPlayer
+        {
+            get { return distanceToPlayer; }
+        }
+
         #endregion
 
         #region Unity
 
-        private void Start()
+        private void Awake()
         {
             // Cache references
             mobileBillboard = GetComponentInChildren<DaggerfallMobilePerson>();
 
             // Need to repath if floating origin ticks while in range
             FloatingOrigin.OnPositionUpdate += FloatingOrigin_OnPositionUpdate;
+        }
 
+        private void Start()
+        {
             // Init mobile
             SetFacing(currentDirection);
+            RandomiseNPC();
         }
 
         private void Update()
@@ -208,8 +235,50 @@ namespace DaggerfallWorkshop.Game
 
         private void OnDestroy()
         {
-            // Unsubscribe event on destroy
+            // Clean up
+            ClearMotor();
             FloatingOrigin.OnPositionUpdate -= FloatingOrigin_OnPositionUpdate;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Initialise motor when activating.
+        /// </summary>
+        public void InitMotor()
+        {
+            seekCount = 0;
+            SetFacing(MobileDirection.Random);
+            currentNavPosition = new DFPosition(-1, -1);
+            targetNavPosition = new DFPosition(-1, -1);
+            targetScenePosition = Vector3.zero;
+            currentMobileState = MobileStates.SeekingTile;
+        }
+
+        /// <summary>
+        /// Clear motor when deactivating.
+        /// </summary>
+        public void ClearMotor()
+        {
+            cityNavigation.ClearFlags(targetNavPosition, CityNavigation.TileFlags.Occupied);
+        }
+
+        /// <summary>
+        /// Setup a new random NPC inside this motor.
+        /// </summary>
+        /// <param name="race">Entity race of NPC in current location.</param>
+        public void RandomiseNPC()
+        {
+            if (!mobileBillboard)
+                return;
+
+            Genders gender = (Random.Range(0f, 1f) > 0.5f) ? gender = Genders.Female : gender = Genders.Male;
+            mobileBillboard.SetPerson(race, gender);
+
+            // TODO: Split NPC setup and data to own component - motor should just drive mobile around scene
+            // Proper NPC setup is scheduled for a later date, this work is intended only to deploy populations
         }
 
         #endregion
@@ -224,32 +293,33 @@ namespace DaggerfallWorkshop.Game
 
         void SeekingTile()
         {
+            // Population manager will recycle this mobile if it can't find a target after several attempts
             seekCount++;
 
             // Ensure mobile is on grid
             InitNavPosition(currentNavPosition);
 
+            // Get surrounding weights
+            localWeights[(int)MobileDirection.North] = GetNextNavPositionWeight(MobileDirection.North);
+            localWeights[(int)MobileDirection.South] = GetNextNavPositionWeight(MobileDirection.South);
+            localWeights[(int)MobileDirection.East] = GetNextNavPositionWeight(MobileDirection.East);
+            localWeights[(int)MobileDirection.West] = GetNextNavPositionWeight(MobileDirection.West);
+
             // Get current and target weights
             int currentWeight = GetCurrentNavPositionWeight();
-            int targetWeight = GetNextNavPositionWeight(currentDirection);
+            int targetWeight = localWeights[(int)currentDirection];
 
-            // Always change direction if next tile is non-navigable and next tile weight doesn't matter
+            // A small chance to randomly change direction - this keeps the movement shuffled
+            if (Random.Range(0f, 1f) < randomChangeChance)
+                targetWeight = 0;
+
+            // Always change direction if target weight is zero - weight of target doesn't matter
             if (targetWeight == 0)
             {
-                // Get surrounding weights
-                localWeights[(int)MobileDirection.North] = GetNextNavPositionWeight(MobileDirection.North);
-                localWeights[(int)MobileDirection.South] = GetNextNavPositionWeight(MobileDirection.South);
-                localWeights[(int)MobileDirection.East] = GetNextNavPositionWeight(MobileDirection.East);
-                localWeights[(int)MobileDirection.West] = GetNextNavPositionWeight(MobileDirection.West);
-
                 // Try to move in any valid random direction
                 int randomDirection = Random.Range(0, localWeights.Length);
                 if (localWeights[randomDirection] == 0)
-                {
-                    // Keep seeking a tile
-                    // Population manager might recycle this mobile if it doesn't find a tile after a few attempts
                     return;
-                }
 
                 SetFacing((MobileDirection)randomDirection);
                 SetTargetPosition();
@@ -260,17 +330,11 @@ namespace DaggerfallWorkshop.Game
             // This will cause mobiles to generally follow roads and other nice surfaces
             if (targetWeight < currentWeight && Random.Range(0f, 1f) > tileDowngradeChance)
             {
-                // Get surrounding weights
-                localWeights[(int)MobileDirection.North] = GetNextNavPositionWeight(MobileDirection.North);
-                localWeights[(int)MobileDirection.South] = GetNextNavPositionWeight(MobileDirection.South);
-                localWeights[(int)MobileDirection.East] = GetNextNavPositionWeight(MobileDirection.East);
-                localWeights[(int)MobileDirection.West] = GetNextNavPositionWeight(MobileDirection.West);
-
                 // Evaluate in random order so if multiple equal "bests" are found we go a random direction
                 int bestWeight = targetWeight;
                 MobileDirection bestDirection = currentDirection;
                 System.Random rand = new System.Random();
-                foreach (int i in Enumerable.Range(0, 3).OrderBy(x => rand.Next()))
+                foreach (int i in Enumerable.Range(0, 3).OrderBy(x => rand.Next(3)))
                 {
                     if (localWeights[i] > bestWeight)
                     {
@@ -288,18 +352,6 @@ namespace DaggerfallWorkshop.Game
 
             // Otherwise keep marching in current direction
             SetTargetPosition();
-
-            //// Original
-
-            //// Try to keep moving in a straight line if possible
-            //if (GetNextNavPositionWeight(currentDirection) > 0)
-            //{
-            //    SetTargetPosition();
-            //    return;
-            //}
-
-            //// Turn in a random direction
-            //SetFacing(MobileDirection.Random);
         }
 
         void MovingForward()
@@ -438,6 +490,14 @@ namespace DaggerfallWorkshop.Game
             return cityNavigation.GetNavGridWeightLocal(nextPosition);
         }
 
+        void SetRace(Races race)
+        {
+            if (race == Races.Redguard || race == Races.Nord || race == Races.Breton)
+                this.race = race;
+            else
+                this.race = Races.Breton;
+        }
+
         #endregion
 
         #region Event Handlers
@@ -446,6 +506,8 @@ namespace DaggerfallWorkshop.Game
         // Mobiles will need to repath their next scene position
         private void FloatingOrigin_OnPositionUpdate(Vector3 offset)
         {
+            // Update target position after floating origin change
+            SetTargetPosition();
         }
 
         #endregion

@@ -634,8 +634,16 @@ namespace DaggerfallWorkshop
                     CityNavigation cityNavigation = dfLocation.gameObject.AddComponent<CityNavigation>();
                     cityNavigation.FormatNavigation(location.RegionName, location.Name, width, height);
 
-                    // Create PopulationManager component
-                    PopulationManager populationManager = dfLocation.gameObject.AddComponent<PopulationManager>();
+                    // Create PopulationManager component for locations with wandering NPCs
+                    if (location.MapTableData.LocationType == DFRegion.LocationTypes.TownCity ||
+                        location.MapTableData.LocationType == DFRegion.LocationTypes.TownHamlet ||
+                        location.MapTableData.LocationType == DFRegion.LocationTypes.TownVillage ||
+                        location.MapTableData.LocationType == DFRegion.LocationTypes.HomeFarms ||
+                        location.MapTableData.LocationType == DFRegion.LocationTypes.HomeWealthy ||
+                        location.MapTableData.LocationType == DFRegion.LocationTypes.Tavern)
+                    {
+                        dfLocation.gameObject.AddComponent<PopulationManager>();
+                    }
 
                     // Perform layout and yield after each block is placed
                     ContentReader contentReader = DaggerfallUnity.Instance.ContentReader;

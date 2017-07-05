@@ -168,11 +168,15 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Setup this person based on race and gender.
         /// </summary>
-        public void SetPerson(Races race, Genders gender)
+        public void SetPerson(Races race, Genders gender, bool newVariant = false)
         {
             // Must specify a race
             if (race == Races.None)
                 return;
+
+            // Allow for new random variant if specified
+            if (newVariant)
+                personVariant = -1;
 
             // Get texture range for this race and gender
             int[] textures = null;

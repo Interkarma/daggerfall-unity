@@ -11,8 +11,10 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -26,14 +28,20 @@ namespace DaggerfallWorkshop.Game.Utility
     {
         #region Fields
 
+        const float ticksPerSecond = 10;                        // How often population manager will tick per second
+
         const string mobileNPCName = "MobileNPC";               // Name displayed in scene view
         const int maxPlayerDistanceOutsideRect = 2500;          // Max world units beyond location rect where all NPCs are despawned
-        const int populationIndexPer16Blocks = 12;              // This many NPCs will be spawned around player per 16 RMB blocks in location
+        const int populationIndexPer16Blocks = 20;              // This many NPCs will be spawned around player per 16 RMB blocks in location
         const int navGridSpawnRadius = 64;                      // Radius of spawn distance around player or target point
+        const float minPopinDistance = 200f;                    // The minimum distance before visible popin is allowed
 
         bool playerInRange = false;
         bool playerWasInRange = false;
         int maxPopulation = 0;
+        float updateTimer = 0;
+
+        FactionFile.FactionRaces populationRace;
 
         //public int MaxPoolSize = 50;                        // Maximum number of NPCs allowed in pool
         //public float MaxSpawnDistance = 50;                 // Maximum distance from player NPCs will spawn
@@ -93,6 +101,9 @@ namespace DaggerfallWorkshop.Game.Utility
             playerGPS = GameManager.Instance.PlayerGPS;
             dfLocation = GetComponent<DaggerfallLocation>();
             cityNavigation = GetComponent<CityNavigation>();
+
+            // Get dominant race in locations climate zone
+            populationRace = playerGPS.ClimateSettings.People;
         }
 
         private void Update()
@@ -100,6 +111,13 @@ namespace DaggerfallWorkshop.Game.Utility
             // 1. Drop NPCs around closest navgrid position to player
             // 2. When player moves far enough away, NPCs should be recycled and placed near player's current position
             // 3. NPCs need to start spawning after 6am and vanish after 6pm
+
+            // Increment update timer
+            updateTimer += Time.deltaTime;
+            if (updateTimer < (1f / ticksPerSecond))
+                return;
+            else
+                updateTimer = 0;
 
             // Check if player inside max world range for population to exist
             playerInRange = false;
@@ -121,11 +139,12 @@ namespace DaggerfallWorkshop.Game.Utility
             }
             else if (!playerInRange && playerWasInRange)
             {
-                // TODO: Despawn old population
+                // Recycle old population
+                RecyclePopulation();
                 playerWasInRange = false;
             }
 
-            // Collect mobiles for recycling
+            // Collect any mobiles for recycling
             CollectPoolItems();
         }
 
@@ -133,13 +152,15 @@ namespace DaggerfallWorkshop.Game.Utility
 
         #region Private Methods
 
+        // Create a complete new population when player first enters an area (e.g. after fast travel or running into a location from wilderness)
+        // When running into large towns, this can cause frame rate to skip, but isn't too bad with sensible population sizes
         void CreateNewPopulation()
         {
             // Get closest point on navgrid to player position in world
             DFPosition playerWorldPos = new DFPosition(playerGPS.WorldX, playerGPS.WorldZ);
             DFPosition playerGridPos = cityNavigation.WorldToNavGridPosition(playerWorldPos);
 
-            Debug.LogFormat("Closest player grid position {0}, {1}", playerGridPos.X, playerGridPos.Y);
+            //Debug.LogFormat("Closest player grid position {0}, {1}", playerGridPos.X, playerGridPos.Y);
 
             // Calculate maximum population for this location
             // This is determined to be total RMB blocks in location / 16 clamped to 1-4
@@ -151,9 +172,7 @@ namespace DaggerfallWorkshop.Game.Utility
             int populationBlocks = Mathf.Clamp(totalBlocks / 16, 1, 4);
             maxPopulation = populationBlocks * populationIndexPer16Blocks;
 
-            // Place all NPCs on the navgrid when player first enters range
-            // Due to long draw distances, this could lead to some pop-in
-            // Something that can be refined later
+            // Place all NPCs on the navgrid
             for (int i = 0; i < maxPopulation; i++)
             {
                 int item = GetNextFreePoolItem();
@@ -178,11 +197,29 @@ namespace DaggerfallWorkshop.Game.Utility
                     GameObjectHelper.AlignBillboardToGround(poolItem.motor.gameObject, new Vector2(0, 2f));
                     poolItem.motor.gameObject.SetActive(true);
                     poolItem.scheduleEnable = false;
+                    poolItem.motor.InitMotor();
+                    poolItem.motor.Race = GetEntityRace();
+                    poolItem.motor.RandomiseNPC();
                 }
 
                 // Update pool item
                 populationPool[item] = poolItem;
             }
+        }
+
+        // Mark whole population for recycling at once
+        // This is done when leaving allowable town range
+        void RecyclePopulation()
+        {
+            for(int i = 0; i < populationPool.Count; i++)
+            {
+                PoolItem poolItem = populationPool[i];
+                ImmediatelyRecyclePoolItem(ref poolItem);
+                poolItem.motor.ClearMotor();
+                populationPool[i] = poolItem;
+            }
+
+            Debug.Log("Player out of range, recycled entire population.");
         }
 
         // Gets next free pool item
@@ -266,6 +303,24 @@ namespace DaggerfallWorkshop.Game.Utility
             poolItem.active = false;
             poolItem.scheduleEnable = false;
             poolItem.scheduleRecycle = false;
+        }
+
+        Races GetEntityRace()
+        {
+            // Convert factionfile race to entity race
+            // DFTFU is mostly isolated from game classes and does not know entity races
+            // Need to convert this into something the billboard can use
+            // Only Redguard, Nord, Breton have mobile NPC assets
+            switch(populationRace)
+            {
+                case FactionFile.FactionRaces.Redguard:
+                    return Races.Redguard;
+                case FactionFile.FactionRaces.Nord:
+                    return Races.Nord;
+                default:
+                case FactionFile.FactionRaces.Breton:
+                    return Races.Breton;
+            }
         }
 
         #endregion
