@@ -16,10 +16,14 @@ using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop
 {
-    [CustomEditor(typeof(SetupMobilePerson))]
+    /// <summary>
+    /// Editor class to remix MobilePersonNPC from editor.
+    /// May not be required past initial stages of mobile NPC development.
+    /// </summary>
+    [CustomEditor(typeof(MobilePersonNPC))]
     public class SetupMobilePersonEditor : Editor
     {
-        private SetupMobilePerson setupMobilePerson { get { return target as SetupMobilePerson; } }
+        private MobilePersonNPC setupMobilePerson { get { return target as MobilePersonNPC; } }
 
         SerializedProperty Prop(string name)
         {
@@ -38,7 +42,7 @@ namespace DaggerfallWorkshop
             }
             if (GUILayout.Button("Align To Ground"))
             {
-                DaggerfallMobilePerson mobilePerson = setupMobilePerson.GetComponentInChildren<DaggerfallMobilePerson>();
+                MobilePersonBillboard mobilePerson = setupMobilePerson.GetComponentInChildren<MobilePersonBillboard>();
                 if (mobilePerson)
                 {
                     Vector3 billboardSize = mobilePerson.GetBillboardSize();

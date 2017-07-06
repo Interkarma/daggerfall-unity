@@ -34,8 +34,8 @@ namespace DaggerfallWorkshop.Game.Utility
         const int maxPlayerDistanceOutsideRect = 2500;          // Max world units beyond location rect where no mobiles are spawned
         const int populationIndexPer16Blocks = 24;              // This many NPCs will be spawned around player per 16 RMB blocks in location
         const int navGridSpawnRadius = 96;                      // Radius of spawn distance around player or target point
-        const float recycleDistance = 150f;                     // Distance at which NPCs are recycled in world units
-        const float allowVisiblePopRange = 200f;                // Distance at which visible popin/popout is allowed
+        const float recycleDistance = 150f;                     // Distance in world units after which NPCs are recycled
+        const float allowVisiblePopRange = 120f;                // Distance in world units after which visible popin/popout is allowed
 
         bool playerInLocationRange = false;
         int maxPopulation = 0;
@@ -179,9 +179,9 @@ namespace DaggerfallWorkshop.Game.Utility
                 {
                     poolItem.motor.gameObject.SetActive(true);
                     poolItem.scheduleEnable = false;
-                    poolItem.motor.InitMotor();
                     poolItem.motor.Race = GetEntityRace();
                     poolItem.motor.RandomiseNPC();
+                    poolItem.motor.InitMotor();
                 }
 
                 // Get distance to player
@@ -255,7 +255,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         bool AllowMobileActivationChange(ref PoolItem poolItem)
         {
-            const float fieldOfView = 140f;
+            const float fieldOfView = 180f;
 
             // Allow visible popin/popout beyond control range
             if (poolItem.distanceToPlayer > allowVisiblePopRange)

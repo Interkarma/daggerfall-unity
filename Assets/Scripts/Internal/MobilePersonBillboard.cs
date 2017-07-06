@@ -25,15 +25,13 @@ namespace DaggerfallWorkshop
 {
     /// <summary>
     /// Billboard class for classic wandering NPCs found in town environments.
-    /// These have slightly different requirements to enemies so have their own behaviour for now.
-    /// Also wanted to make this more self-contained to experiment with better setup later without breaking enemies.
     /// </summary>
 #if UNITY_EDITOR
     [ExecuteInEditMode]
 #endif
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
-    public class DaggerfallMobilePerson : MonoBehaviour
+    public class MobilePersonBillboard : MonoBehaviour
     {
         #region Fields
 

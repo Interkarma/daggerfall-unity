@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game
         Races race = Races.Breton;
 
         // References
-        DaggerfallMobilePerson mobileBillboard;
+        MobilePersonBillboard mobileBillboard;
 
         #endregion
 
@@ -161,7 +161,7 @@ namespace DaggerfallWorkshop.Game
         private void Awake()
         {
             // Cache references
-            mobileBillboard = GetComponentInChildren<DaggerfallMobilePerson>();
+            mobileBillboard = GetComponentInChildren<MobilePersonBillboard>();
 
             // Need to repath if floating origin ticks while in range
             FloatingOrigin.OnPositionUpdate += FloatingOrigin_OnPositionUpdate;
@@ -252,7 +252,7 @@ namespace DaggerfallWorkshop.Game
             SetFacing(MobileDirection.Random);
             currentNavPosition = new DFPosition(-1, -1);
             targetNavPosition = new DFPosition(-1, -1);
-            targetScenePosition = Vector3.zero;
+            targetScenePosition = transform.position;
             currentMobileState = MobileStates.SeekingTile;
         }
 
@@ -383,11 +383,6 @@ namespace DaggerfallWorkshop.Game
             // Get the target position in scene
             targetScenePosition = cityNavigation.WorldToScenePosition(targetWorldPosition);
             distanceToTarget = 0;
-
-            // Navgrid > world > scene conversion results in mobile being aligned exactly on edge of tile in scene
-            // Move the mobile transform a half-tile into centre so it appears to be properly aligned
-            targetScenePosition.x += CityNavigation.HalfTile;
-            targetScenePosition.z += CityNavigation.HalfTile;
 
             // Target point will be at ground level (roughly waist-level for mobile), so adjust up by half mobile height
             targetScenePosition.y += halfMobileHeight;

@@ -488,7 +488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dabc17f4241c40241806071e34afbd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MinWaitTime: 4
+  MinWaitTime: 5
   MaxWaitTime: 25
   Presets: 0
   doNotPlayInCastle: 1
@@ -1017,7 +1017,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dabc17f4241c40241806071e34afbd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MinWaitTime: 4
+  MinWaitTime: 5
   MaxWaitTime: 28
   Presets: 1
   doNotPlayInCastle: 1
@@ -1094,7 +1094,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -1118,7 +1118,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
 --- !u!224 &1168575604 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 22400006, guid: 312abd0527754e047a6bfbc424f09ace,
@@ -2044,7 +2044,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400016, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400006, guid: 312abd0527754e047a6bfbc424f09ace, type: 2}
       propertyPath: m_Value

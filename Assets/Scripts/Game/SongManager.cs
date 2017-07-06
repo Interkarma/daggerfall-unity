@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -131,6 +131,9 @@ namespace DaggerfallWorkshop.Game
                 playerEnterExit = LocalPlayerGPS.GetComponent<PlayerEnterExit>();
                 playerWeather = LocalPlayerGPS.GetComponent<PlayerWeather>();
             }
+
+            // Shuffle song on load or fast travel
+            StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
         }
 
         void Update()
@@ -175,8 +178,9 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Play song if no song was playing or if playlist changed
+            // Switch to another random song to prevent fatigue of hearing same song repeatedly
             if (!songPlayer.IsPlaying || overrideSong)
-                PlayCurrentSong();
+                PlayRandomSong();
         }
 
         #endregion
@@ -249,6 +253,15 @@ namespace DaggerfallWorkshop.Game
         {
             SelectCurrentSong();
             PlayCurrentSong();
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void StreamingWorld_OnInitWorld()
+        {
+            PlayRandomSong();
         }
 
         #endregion
@@ -757,6 +770,7 @@ namespace DaggerfallWorkshop.Game
         {
             SongFiles.song_gpalac,
         };
+
         #endregion
     }
 }

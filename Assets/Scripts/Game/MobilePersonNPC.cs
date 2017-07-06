@@ -15,9 +15,10 @@ using DaggerfallWorkshop.Game.Entity;
 namespace DaggerfallWorkshop
 {
     /// <summary>
-    /// Configure an NPC from script or from editor.
+    /// This will contain the actual NPC data for mobile NPCs.
+    /// Not fully implemented at this time.
     /// </summary>
-    public class SetupMobilePerson : MonoBehaviour
+    public class MobilePersonNPC : MonoBehaviour
     {
         public DisplayRaces race = DisplayRaces.Breton;
         public Genders gender = Genders.Male;
@@ -31,16 +32,16 @@ namespace DaggerfallWorkshop
 
         public void ApplyPersonSettings()
         {
-            DaggerfallMobilePerson mobilePerson = GetMobilePersonChildScript();
+            MobilePersonBillboard mobilePerson = GetMobilePersonChildScript();
             if (mobilePerson)
             {
                 mobilePerson.SetPerson((Races)race, gender);
             }
         }
 
-        public DaggerfallMobilePerson GetMobilePersonChildScript()
+        public MobilePersonBillboard GetMobilePersonChildScript()
         {
-            return GetComponentInChildren<DaggerfallMobilePerson>();
+            return GetComponentInChildren<MobilePersonBillboard>();
         }
     }
 }
