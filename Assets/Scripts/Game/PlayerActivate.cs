@@ -211,6 +211,13 @@ namespace DaggerfallWorkshop.Game
                             TriggerQuestResourceBehaviourClick(questResourceBehaviour);
                         }
 
+                        // Trigger ladder hit
+                        DaggerfallLadder ladder = hits[i].transform.GetComponent<DaggerfallLadder>();
+                        if (ladder)
+                        {
+                            ladder.ClimbLadder();
+                        }
+
                         #endregion
                     }
                 }
