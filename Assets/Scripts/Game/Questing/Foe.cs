@@ -179,9 +179,6 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             List<GameObject> gameObjects = new List<GameObject>();
 
-            // Seed random
-            //UnityEngine.Random.InitState(Time.frameCount);
-
             // Get spawn count allowing for caller to override
             int totalSpawns = (spawnOverride >= 1) ? spawnOverride : spawnCount;
 
@@ -208,6 +205,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
                     if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
                         GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
+
+                    // Add QuestResourceBehaviour to GameObject
+                    QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
+                    questResourceBehaviour.AssignResource(this);
                 }
 
                 // Assign load id
@@ -216,6 +217,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     enemy.LoadID = DaggerfallUnity.NextUID;
                 }
+
+                // Disable GameObject, caller must set active when ready
+                go.SetActive(false);
 
                 // Add to list
                 gameObjects.Add(go);

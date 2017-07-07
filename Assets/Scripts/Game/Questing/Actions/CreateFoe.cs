@@ -81,7 +81,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (spawnCounter >= spawnMaxTimes && spawnMaxTimes != -1)
                 return;
 
-            // Check for a spawn
+            // Check for a spawn event
             ulong gameSeconds = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
             if (gameSeconds > lastSpawnTime + spawnInterval)
             {
@@ -90,9 +90,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Update last spawn time and timer
                 lastSpawnTime = gameSeconds;
-
-                // Increment counter
-                spawnCounter++;
             }
         }
 
@@ -100,7 +97,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Roll for spawn chance
             float chance = spawnChance / 100f;
-            if (UnityEngine.Random.Range(0f, 1f) < chance)
+            if (UnityEngine.Random.Range(0f, 1f) > chance)
                 return;
 
             // Get the Foe resource
@@ -108,21 +105,66 @@ namespace DaggerfallWorkshop.Game.Questing
             if (foe == null)
                 throw new Exception(string.Format("create foe could not find Foe with symbol name {0}", Symbol.Name));
 
-            // Get game objects
+            // Get foe objects
             GameObject[] gameObjects = foe.CreateFoeGameObjects(Vector3.zero);
             if (gameObjects == null || gameObjects.Length != foe.SpawnCount)
                 throw new Exception(string.Format("create foe attempted to spawn {0}x{1} and failed.", foe.SpawnCount, Symbol.Name));
 
-            // For simple initial testing just place enemies 2m behind player
-            // Will eventually need to spawn enemy within a certain radius of player
-            // and ensure not dropped into the void for dungeons and building interiors
-            GameObject player = GameManager.Instance.PlayerObject;
-            Vector3 position = player.transform.position + (-player.transform.forward * 2);
-            for (int i = 0; i < gameObjects.Length; i++)
+            // Place in world near player depending on local area
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            if (playerEnterExit.IsPlayerInsideBuilding)
             {
-                gameObjects[i].transform.position = position;
-                gameObjects[i].SetActive(true);
+                PlaceFoeBuildingInterior(gameObjects, playerEnterExit.Interior);
             }
+
+            // Increment counter
+            spawnCounter++;
+        }
+
+        // Place foe somewhere near player when inside a building
+        // Building interiors have spawn nodes for this placement
+        void PlaceFoeBuildingInterior(GameObject[] gameObjects, DaggerfallInterior interiorParent)
+        {
+            foreach(GameObject go in gameObjects)
+            {
+                go.transform.parent = interiorParent.transform;
+                go.transform.localPosition = interiorParent.GetRandomSpawnPoint();
+
+                DaggerfallMobileUnit mobileUnit = go.GetComponentInChildren<DaggerfallMobileUnit>();
+                if (mobileUnit)
+                {
+                    if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
+                        GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
+                }
+                else
+                {
+                    GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
+                }
+
+                go.SetActive(true);
+            }
+        }
+
+        // Place foe somewhere near player when outside a location navgrid is available
+        // Navgrid placement helps foe avoid getting tangled in geometry like buildings
+        void PlaceFoeExteriorLocation(GameObject[] gameObjects)
+        {
+            Debug.LogFormat("Attempt was made to place {0} foes to Exterior Location, but this has not been implemented yet.", gameObjects.Length);
+        }
+
+        // Place foe somewhere near player when inside a dungeon
+        // Dungeons interiors are complex 3D environments with no navgrid/navmesh or (known) spawn nodes
+        // This solution will use the nearest "random flat" editor marker for now
+        void PlaceFoeDungeonInterior(GameObject[] gameObjects)
+        {
+            Debug.LogFormat("Attempt was made to place {0} foes to Dungeon Interior, but this has not been implemented yet.", gameObjects.Length);
+        }
+
+        // Place foe somewhere near player when outside and no navgrid available
+        // Wilderness environments are currently open so can be placed on ground anywhere within range
+        void PlaceFoeWilderness(GameObject[] gameObjects)
+        {
+            Debug.LogFormat("Attempt was made to place {0} foes to Wilderness, but this has not been implemented yet.", gameObjects.Length);
         }
     }
 }

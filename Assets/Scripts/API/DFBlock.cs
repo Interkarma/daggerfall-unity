@@ -306,7 +306,7 @@ namespace DaggerfallConnect
             public RmbBlockFlatObjectRecord[] BlockFlatObjectRecords;
 
             /// <summary>Unknown data.</summary>
-            internal RmbBlockSection3Record[] BlockSection3Records;
+            public RmbBlockSection3Record[] BlockSection3Records;
 
             /// <summary>People (NPCs) to position around the block.</summary>
             public RmbBlockPeopleRecord[] BlockPeopleRecords;
@@ -461,7 +461,7 @@ namespace DaggerfallConnect
         /// Only appears in interiors and forms a grid-like pattern over floor.
         /// Most likely path-finding waypoints.
         /// </summary>
-        internal struct RmbBlockSection3Record
+        public struct RmbBlockSection3Record
         {
             /// <summary>X position in 3D space.</summary>
             public Int32 XPos;

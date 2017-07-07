@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop
         ClimateBases climateBase = ClimateBases.Temperate;
         ClimateSeason climateSeason = ClimateSeason.Summer;
         List<InteriorEditorMarker> markers = new List<InteriorEditorMarker>();
+        List<Vector3> spawnPoints = new List<Vector3>();
         StaticDoor entryDoor;
         Transform doorOwner;
 
@@ -87,6 +88,14 @@ namespace DaggerfallWorkshop
             get { return markers.ToArray(); }
         }
 
+        /// <summary>
+        /// Gets array of spawn points in this building interior.
+        /// </summary>
+        public Vector3[] SpawnPoints
+        {
+            get { return spawnPoints.ToArray(); }
+        }
+
         void Start()
         {
             dfUnity = DaggerfallUnity.Instance;
@@ -125,6 +134,7 @@ namespace DaggerfallWorkshop
             AddFlats();
             AddPeople();
             AddActionDoors();
+            AddSpawnPoints();
 
             return true;
         }
@@ -374,6 +384,18 @@ namespace DaggerfallWorkshop
                 {
                     AddLight(obj, go.transform);
                 }
+            }
+        }
+
+        /// <summary>
+        /// This data appears to be spawn/waypoint data for placing interior enemies.
+        /// </summary>
+        private void AddSpawnPoints()
+        {
+            foreach(DFBlock.RmbBlockSection3Record obj in recordData.Interior.BlockSection3Records)
+            {
+                Vector3 spawnPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+                spawnPoints.Add(spawnPosition);
             }
         }
 
@@ -685,6 +707,19 @@ namespace DaggerfallWorkshop
                 if (actionDoor)
                     actionDoor.LoadID = loadID;
             }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        /// <summary>
+        /// Helper to get a random spawn point from interior list.
+        /// </summary>
+        /// <returns>Vector3.</returns>
+        public Vector3 GetRandomSpawnPoint()
+        {
+            return spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
         }
 
         #endregion
