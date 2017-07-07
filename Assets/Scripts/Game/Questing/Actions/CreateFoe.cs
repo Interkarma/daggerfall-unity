@@ -127,21 +127,9 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             foreach(GameObject go in gameObjects)
             {
-                go.transform.parent = interiorParent.transform;
-                go.transform.localPosition = interiorParent.GetRandomSpawnPoint();
-
-                DaggerfallMobileUnit mobileUnit = go.GetComponentInChildren<DaggerfallMobileUnit>();
-                if (mobileUnit)
-                {
-                    if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
-                        GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
-                }
-                else
-                {
-                    GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
-                }
-
-                go.SetActive(true);
+                Vector3 spawnPosition;
+                bool spawnPositionFound = interiorParent.GetRandomSpawnPoint(out spawnPosition);
+                AlignFoe(go, interiorParent.transform, spawnPosition, !spawnPositionFound);
             }
         }
 
@@ -165,6 +153,41 @@ namespace DaggerfallWorkshop.Game.Questing
         void PlaceFoeWilderness(GameObject[] gameObjects)
         {
             Debug.LogFormat("Attempt was made to place {0} foes to Wilderness, but this has not been implemented yet.", gameObjects.Length);
+        }
+
+        // Align foe in world after spawn with handling for fallback placement
+        // Will set foe GameObject active when complete
+        void AlignFoe(GameObject go, Transform parent, Vector3 localPosition, bool fallbackPlacement = false)
+        {
+            go.transform.parent = parent;
+
+            if (!fallbackPlacement)
+            {
+                go.transform.localPosition = localPosition;
+            }
+            else
+            {
+                //Debug.Log("No spawn points in this interior - placing behind player");
+                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
+                go.transform.position = playerMotor.transform.position + -playerMotor.transform.forward;
+            }
+
+            DaggerfallMobileUnit mobileUnit = go.GetComponentInChildren<DaggerfallMobileUnit>();
+            if (mobileUnit)
+            {
+                // Align ground creatures on surface, raise flying creatures slightly into air
+                if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
+                    GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
+                else
+                    go.transform.localPosition += Vector3.up * 1.5f;
+            }
+            else
+            {
+                // Just align to ground
+                GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
+            }
+
+            go.SetActive(true);
         }
     }
 }

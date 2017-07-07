@@ -714,12 +714,21 @@ namespace DaggerfallWorkshop
         #region Helpers
 
         /// <summary>
-        /// Helper to get a random spawn point from interior list.
+        /// Helper to get a random spawn point from interior list (if present).
         /// </summary>
-        /// <returns>Vector3.</returns>
-        public Vector3 GetRandomSpawnPoint()
+        /// <returns>True if spawn point found.</returns>
+        public bool GetRandomSpawnPoint(out Vector3 positionOut)
         {
-            return spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
+            if (spawnPoints.Count == 0)
+            {
+                positionOut = Vector3.zero;
+                return false;
+            }
+            else
+            {
+                positionOut = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
+                return true;
+            }
         }
 
         #endregion
