@@ -873,7 +873,7 @@ namespace DaggerfallConnect
             /// <summary>Index of this object in the objects array.</summary>
             public Int32 Index;
 
-            /// <summary>Offset to unknown data from start of RDB record. Not required unless you are extending the block reader.</summary>
+            /// <summary>Offset to 23 bytes of unknown data from start of RDB record. Not required unless you are extending the block reader.</summary>
             public UInt32 UnknownOffset;
         }
 
