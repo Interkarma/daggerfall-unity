@@ -659,21 +659,23 @@ namespace DaggerfallWorkshop.Game.Questing
                     for (int i = 0; i < buildingSummary.Length; i++)
                     {
                         // When enumAllValid is specified accept all valid building types
-                        bool forceAccept = false;
+                        bool wildcardFound = false;
+                        DFLocation.BuildingTypes wildcardType = DFLocation.BuildingTypes.AllValid;
                         if (buildingType == DFLocation.BuildingTypes.AllValid)
                         {
                             for(int j = 0; j < validBuildingTypes.Length; j++)
                             {
                                 if (validBuildingTypes[j] == (int)buildingSummary[i].BuildingType)
                                 {
-                                    forceAccept = true;
+                                    wildcardFound = true;
+                                    wildcardType = (DFLocation.BuildingTypes)validBuildingTypes[j];
                                     break;
                                 }
                             }
                         }
 
                         // Match building against required type
-                        if (buildingSummary[i].BuildingType == buildingType || forceAccept)
+                        if (buildingSummary[i].BuildingType == buildingType || wildcardFound)
                         {
                             // Building must be a valid quest site
                             QuestMarker[] questSpawnMarkers, questItemMarkers;
@@ -683,7 +685,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                             // Get building name based on type
                             string buildingName;
-                            if (RMBLayout.IsResidence(buildingType))
+                            if (RMBLayout.IsResidence(buildingType) || RMBLayout.IsResidence(wildcardType))
                             {
                                 // Generate a random surname for this residence
                                 DFRandom.srand(Time.renderedFrameCount);
