@@ -1,0 +1,6 @@
+-- These Mage's Guild quests are considered "mostly working" under quest system in current state
+-- Please use the Quest Hub forums for bug reports: http://forums.dfworkshop.net/viewforum.php?f=25
+
+schema: *name,notes
+
+N0B00Y06, 

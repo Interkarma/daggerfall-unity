@@ -28,32 +28,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallGuildPopupWindow : DaggerfallPopupWindow
     {
+        #region Tables
+
+        // Table constants
+        const string tempFightersQuestsFilename = "Temp-FightersQuests";
+        const string tempMagesQuestsFilename = "Temp-MagesGuild";
+
+        #endregion
+
         #region UI Rects
 
         Rect joinGuildButtonRect = new Rect(5, 5, 120, 7);
         Rect talkButtonRect = new Rect(5, 14, 120, 7);
         Rect exitButtonRect = new Rect(44, 33, 43, 15);
         Rect serviceButtonRect = new Rect(5, 23, 120, 7);
-
-        #endregion
-
-        #region Curated Quests
-
-        // These curated quests are considered "mostly working" under quest system in current state
-        // This pool of quests will be made available to player for testing quest system within intended scope
-        // Quests might be added or removed as development progresses
-
-        string[] fightersQuests = new string[]
-        {
-            "M0B00Y15",   // "Hunt for Giant Rodents"
-            //"M0B21Y19",   // "Standard Protection"
-            //"M0B00Y00", "M0B00Y06", "M0B00Y07", "M0B00Y15", "M0B00Y16",
-        };
-
-        string[] magesQuests = new string[]
-        {
-            "N0B00Y06",
-        };
 
         #endregion
 
@@ -212,20 +200,52 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void OfferCuratedGuildQuest()
         {
-            // Select a quest from curated pool
-            string questName;
-            if (currentGuild == TempGuilds.Fighter)
-                questName = fightersQuests[UnityEngine.Random.Range(0, fightersQuests.Length)];
-            else if (currentGuild == TempGuilds.Mage)
-                questName = magesQuests[UnityEngine.Random.Range(0, magesQuests.Length)];
-            else
+            // Load quests table each time so player can edit their local file at runtime
+            Table table = null;
+            string questName = string.Empty;
+            try
+            {
+                if (currentGuild == TempGuilds.Fighter)
+                {
+                    table = new Table(QuestMachine.Instance.GetTableSourceText(tempFightersQuestsFilename));
+                }
+                else if (currentGuild == TempGuilds.Mage)
+                {
+                    table = new Table(QuestMachine.Instance.GetTableSourceText(tempFightersQuestsFilename));
+                }
+                else
+                {
+                    throw new Exception("Could not load quests table for this guild.");
+                }
+            }
+            catch(Exception ex)
+            {
+                DaggerfallUI.Instance.PopupMessage(ex.Message);
                 return;
+            }
+
+            // Select a quest name at random from table
+            try
+            {
+                if (table == null || table.RowCount == 0)
+                    throw new Exception("Quests table is empty.");
+
+                questName = table.GetRow(UnityEngine.Random.Range(0, table.RowCount))[0];
+            }
+            catch (Exception ex)
+            {
+                DaggerfallUI.Instance.PopupMessage(ex.Message);
+                return;
+            }
+
+            // Log offered quest
+            Debug.LogFormat("Offering quest {0} from TempGuild {1}", questName, currentGuild.ToString());
 
             // Parse quest
             offeredQuest = QuestMachine.Instance.ParseQuest(questName, questorNPC);
             if (offeredQuest == null)
             {
-                // TODO: Show flavour text when quest cannor be compiled
+                // TODO: Show flavour text when quest cannot be compiled
                 return;
             }
 
