@@ -8,12 +8,12 @@ QRC:
 
 Message:  1015
 <ce>                 King Eadwyre has sent us kill you and
-<ce>                  deliver the Totem to him. Prepare to
-<ce>                               die, %pcn.
+<ce>                 deliver the Totem to him. Prepare to
+<ce>                              die, %pcn.
                                      <--->
 <ce>                   We want the Totem. Actually to be
-<ce>                   precise, Queen Barenziah wants the
-<ce>                  Totem. She's willing to pay you with
+<ce>                  precise, Queen Barenziah wants the
+<ce>                 Totem. She's willing to pay you with
 <ce>                 a quick death rather than a slow one.
                                      <--->
 <ce>                  You must have had bad dealings with
@@ -48,3 +48,20 @@ _S.01_ task:
 
 _S.02_ task:
 	end quest 
+
+GothrydGotTotem _S.03_
+KingOfWormsGotTotem _S.04_
+GortwogGotTotem _S.05_
+AkorithiGotTotem _S.06_
+UnderkingGotTotem _S.07_
+EadwyreGotTotem _S.08_
+BrisiennaGotTotem _S.09_
+_S.10_ task:
+	when _S.03_ or _S.04_ or _S.05_ or _S.06_ 
+
+_S.11_ task:
+	when _S.07_ or _S.08_ or _S.09_ 
+
+_S.12_ task:
+	when _S.10_ or _S.11_ 
+	start task _S.02_ 

@@ -1,5 +1,3 @@
---+ DisplayName: Lady Brisienna's Letter
-
 -- Quest: C:\QUESTS\WORKING\_BRISIEN.Qbn.
 -- StartsBy: letter
 -- Questee: anyone
@@ -37,7 +35,7 @@ Lady Brisienna has left _dirtypit_. She must've found who she was looking for.
 QuestorPostsuccess:  [1008]
 <ce>        I hope your investigations are going well so far, %pcf.
 <ce>                                    
-<ce>                               -- Lady B.
+<ce>                              -- Lady B.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -78,45 +76,45 @@ I heard Lady Magnessen was accused of spying. Nobody knows where she is now.
 
 Message:  1015
 <ce>              Ah, thank you for responding to my letter,
-<ce>                     %pcf. I am Lady Brisienna. Let
-<ce>              me bring you to date on affairs. The spectre
-<ce>                 of King Lysandus haunts the streets of
-<ce>               Daggerfall at night. Trying to communicate
-<ce>                with him is futile. He will occasionally
-<ce>               moan the word "Vengeance," but that is the
-<ce>                only coherent word I have ever heard him
-<ce>              utter. If you are ever in Daggerfall, do not
-<ce>              wander the city at night. You are certain to
-<ce>                  be attacked by his legion of ghosts.
+<ce>                    %pcf. I am Lady Brisienna. Let
+<ce>             me bring you to date on affairs. The spectre
+<ce>                of King Lysandus haunts the streets of
+<ce>              Daggerfall at night. Trying to communicate
+<ce>               with him is futile. He will occasionally
+<ce>              moan the word "Vengeance", but that is the
+<ce>               only coherent word I have ever heard him
+<ce>             utter. If you are ever in Daggerfall, do not
+<ce>             wander the city at night. You are certain to
+<ce>                 be attacked by his legion of ghosts.
 <ce>                                    
-<ce>                  It would be probably more gainful to
-<ce>                investigate those who might have wronged
-<ce>             Lysandus to find the cause behind his torment.
+<ce>                 It would be probably more gainful to
+<ce>               investigate those who might have wronged
+<ce>            Lysandus to find the cause behind his torment.
 <ce>            I do not know if the royal family of Daggerfall
 <ce>                or another person or persons merit more
 <ce>                suspicion. The major powers of the Bay,
-<ce>                Sentinel, Wayrest, and Daggerfall may be
+<ce>               Sentinel, Wayrest, and Daggerfall may be
 <ce>                         good places to start.
-<ce>                             (continued...)
+<ce>                            (continued...)
 
 Message:  1016
 <ce>              In the matter of the letter, the Emperor's
 <ce>             agent says that he was unable to hand-deliver
-<ce>             it to the Queen because of the war. He hired a
+<ce>            it to the Queen because of the war. He hired a
 <ce>              courier who supposedly delivered the letter
 <ce>             in his stead. We do not even know the name of
-<ce>                this courier. Obviously, there is little
-<ce>             information of use, but it would be worthwhile
+<ce>               this courier. Obviously, there is little
+<ce>            information of use, but it would be worthwhile
 <ce>              to see whether the letter arrived at Castle
-<ce>              Daggerfall at all. How you decide to do this
+<ce>             Daggerfall at all. How you decide to do this
 <ce>             is entirely your decision. I will contact you
-<ce>                 if any new information should surface.
+<ce>                if any new information should surface.
 <ce>                                    
-<ce>             I am leaving Daggerfall soon. My position has
-<ce>              here has been compromised and my life is in
-<ce>              danger. Do not mention my name in court. It
-<ce>              is more likely to hurt than help. Good luck,
-<ce>                       and watch your back, %pcf.
+<ce>            I am leaving Daggerfall soon. My position here
+<ce>            has been compromised and my life is in danger.
+<ce>              Do not mention my name in court. It is more
+<ce>               likely to hurt than help. Good luck, and
+<ce>                        watch your back, %pcf.
 
 Message:  1020
 Dear %pcn,
@@ -138,7 +136,7 @@ Dear %pcn,
  of Daggerfall, for a month. After that, I will no longer
  be available. I will expect you as soon as possible.
  
-<ce>                            Yours sincerely,
+<ce>                           Yours sincerely,
  
 <ce>                       Brisienna, Lady Magnessen
 
@@ -160,7 +158,7 @@ Message:  1021
  fail to arrive, I will be forced to assume you are
  a traitor to his Imperial Majesty, Uriel Septim VII.
  
-<ce>                            Yours sincerely,
+<ce>                           Yours sincerely,
  
 <ce>                       Brisienna, Lady Magnessen
 
@@ -171,50 +169,50 @@ Message:  1022
  this to the Emperor. If I have my way, you will
  be barred from service.
  
-<ce>                             Lady Magnessen
+<ce>                            Lady Magnessen
 
 Message:  1026
 <ce>             You approached by a young page who smiles in
 <ce>             recognition and does not ask your name before
-<ce>               he hands you a letter addressed to you. To
+<ce>              he hands you a letter addressed to you. To
 <ce>               all of your questions, he merely responds
-<ce>                     with a blank look and a smile.
+<ce>                    with a blank look and a smile.
                                      <--->
 <ce>             A letter is pressed into your hand. You spin
-<ce>             to see who gave it to you. You catch a glimpse
+<ce>            to see who gave it to you. You catch a glimpse
 <ce>                of livery that vanishes into the crowd.
                                      <--->
 <ce>              A page steps forward saying "Letter for you
-<ce>                      %pcn," and hands you a note.
+<ce>                     %pcn," and hands you a note.
                                      <--->
 <ce>              A courier steps up to you with a letter in
-<ce>                hand. "I was told to give this letter to
+<ce>               hand. "I was told to give this letter to
 <ce>                someone fitting your description," says
-<ce>                the courier. As you take it, the courier
+<ce>               the courier. As you take it, the courier
 <ce>                     turns and walks quickly away.
                                      <--->
-<ce>                Reaching into you pack for something to
-<ce>              eat, you spy a note. It wasn't there before.
+<ce>               Reaching into your pack for something to
+<ce>             eat, you spy a note. It wasn't there before.
                                      <--->
 <ce>             A redfaced courier startles you with a cry of
-<ce>                   "Letter for %pcn! Hey that must be
+<ce>                  "Letter for %pcn! Hey that must be
 <ce>                 you. Here, take this. Gotta go. Other
-<ce>                         deliveries to be made.
+<ce>                        deliveries to be made.
 
 Message:  1025
 <ce>             You wake and look around the room. Some hours
-<ce>            ago, you were in a boat, en route to Daggerfall,
-<ce>              when a storm of supernatural strength boiled
-<ce>            over the Iliac Bay like a malefic creature. Your
+<ce>           ago, you were in a boat, en route to Daggerfall,
+<ce>             when a storm of supernatural strength boiled
+<ce>           over the Iliac Bay like a malefic creature. Your
 <ce>              boat was destroyed, but you managed to swim
-<ce>            through the churning water to a promontory rock.
-<ce>           There you found a cave and escaped the fury of the
-<ce>            storm. You had only just lit a small fire when a
-<ce>             mudslide sealed you within. Your fear of being
+<ce>           through the churning water to a promontory rock.
+<ce>          There you found a cave and escaped the fury of the
+<ce>           storm. You had only just lit a small fire when a
+<ce>            mudslide sealed you within. Your fear of being
 <ce>             buried alive calmed when you saw the corridor
 <ce>           leading out of the cavern. Perhaps there is a way
-<ce>           out of this cave after all. Once free of the cave,
-<ce>                   you can begin the Emperor's quest.
+<ce>          out of this cave after all. Once free of the cave,
+<ce>                  you can begin the Emperor's quest.
 
 
 -- Symbols used in the QRC file:
@@ -222,7 +220,7 @@ Message:  1025
 --              %pcf occurs 10 times.
 --              %pcn occurs 6 times.
 --              %qdt occurs 2 times.
---       __dirtypit_ occurs 12 times.
+--       __dirtypit_ occurs 16 times.
 
 QBN:
 Item _letter1_ letter used 1020
@@ -238,15 +236,16 @@ Clock _invitepc_ 7.00:00 14.00:00
 Clock _remindpc_ 30.00:00 0 flag 1 range 0 1
 Clock _pcfailed_ 14.00:00 0 flag 1 range 0 1
 Clock _oneday_ 1.00:00 0 flag 1 range 0 1
-Clock _nowwhat_ 29.09:00 0 flag 1 range 0 1
 
 
 --	Quest start-up:
+	dialog link for person ladyBrisienna 
 	log 1010 step 0 
 	pc at PiratesHold set _exitstarter_ 
 	say 1025 
 
 _invitepc_ task:
+	add dialog for person ladyBrisienna 
 	start timer _remindpc_ 
 	give pc _letter1_ notify 1026 
 	create npc at _dirtypit_ 
@@ -257,7 +256,7 @@ _remindpc_ task:
 	give pc _letter2_ notify 1026 
 
 _pcfailed_ task:
-	start timer _nowwhat_ 
+	start timer _oneday_ 
 	change repute with ladyBrisienna by -15 
 	give pc stopMainQuest notify 1026 
 
@@ -278,10 +277,7 @@ _oneday_ task:
 variable _exitstarter_
 until _exitstarter_ performed:
 	start quest 999 999 
-	start quest 977 977 
 	start timer _invitepc_ 
 	remove log step 0 
 
 MetLadyBrisienna _S.06_
-_nowwhat_ task:
-	end quest 

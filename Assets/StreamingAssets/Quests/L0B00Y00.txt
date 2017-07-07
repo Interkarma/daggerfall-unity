@@ -12,11 +12,11 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                There is a traitor in the Brotherhood.
 <ce>               You will perform the necessary accounting
-<ce>                    on this liability, will you not?
+<ce>                   on this liability, will you not?
                                      <--->
 <ce>                 From time to time, the Brotherhood is
 <ce>                 forced to do an accounting in our own
-<ce>                 books. A traitor has been found within
+<ce>                books. A traitor has been found within
 <ce>                our order who must be settled. You have
 <ce>                    been selected to do the honors.
 
@@ -25,8 +25,8 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                   Very good. The traitor has taken
-<ce>                          refuge in ___mondun_
-<ce>                  to the %di. If you have not returned
+<ce>                         refuge in ___mondun_
+<ce>                 to the %di. If you have not returned
 <ce>                 in =queston_ days, your honor will be
 <ce>               forfeit and another will take your place.
 <ce>                     Do not fail us in this, %pcf.
@@ -64,26 +64,26 @@ QuestorPostfailure:  [1009]
 
 QuestLogEntry:  [1010]
 %qdt:
- The Dark Brotherhood has sent me to find and
- slay a traitor to the guild. The rogue assassin is
- hiding out in ___mondun_. I have
- =queston_ days to accomplish this.
+ The Dark Brotherhood in ___qgiver_ has
+ sent me to find and slay a traitor to the guild.
+ The rogue assassin is hiding out in ___mondun_.
+ I have =queston_ days to accomplish this.
 
 Message:  1021
 <ce>                        "I am not...the traitor
-<ce>                      you...think I am. The...real
+<ce>                     you...think I am. The...real
 <ce>            traitor is..." The contract has been fulfilled.
 
 
 -- Symbols used in the QRC file:
 --
 --               %di occurs 1 time.
---                %g occurs 1 time.
+--                %g occurs 2 times.
 --              %pcf occurs 2 times.
 --              %qdt occurs 1 time.
---         =queston_ occurs 2 times.
+--         =queston_ occurs 3 times.
 --        ___mondun_ occurs 3 times.
---          _qgiver_ occurs 2 times.
+--        ___qgiver_ occurs 3 times.
 
 QBN:
 

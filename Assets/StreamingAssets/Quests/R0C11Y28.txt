@@ -4,181 +4,506 @@
 -- Questor: royalty
 -- Repute: 11
 -- QuestId: 28
-Messages: 13
+Messages: 51
 Quest: R0C11Y28
 -- Message panels
 QRC:
 
 QuestorOffer:  [1000]
-<ce>                 I was wondering if you might do me a
-<ce>                 small favor. You see, I have a friend
-<ce>                  who requires a certain shipment of a
-<ce>                 certain substance brought by a certain
-<ce>                 time. I trust I'm making myself clear.
-<ce>               Are you available for such an assignment,
-<ce>             given a payment of, say, _reward_ gold pieces?
+<ce>               There's a nightmare stalking the streets
+<ce>                    of %cn. They're calling him the
+<ce>                       %cn Slayer, and so far no
+<ce>               one can tell me if he's a man or a beast.
+<ce>                  One of my finest sages, _contact_,
+<ce>               is examing the bodies of the victims, but
+<ce>                %g has begun getting disturbing letters
+<ce>                and frankly fears for %g3 life. I need
+<ce>              someone to investigate %g3 findings to see
+<ce>               if %g3 fears are justified. Will you help
+<ce>                    me in this, %pcf? I will offer
+<ce>              you _reward_ gold pieces in return for the
+<ce>                     retirement of the %cn Slayer.
 
 RefuseQuest:  [1001]
-<ce>                   Well, I'm certainly disappointed.
-<ce>                  I would've expected more enthusiasm.
-<ce>                     Ah well, it's these times that
-<ce>                 breed sloth and indolence, I suppose.
+<ce>                 Not an uncommon response. Then I have
+<ce>                 little choice, but to call on some of
+<ce>                 my less savoury contacts for help --
+<ce>                   an option I was hoping to avoid.
 
 AcceptQuest:  [1002]
-<ce>                  So, you are available. Well, that's
-<ce>                 grand, I must say. Now then, here's a
-<ce>                       whatsamajig, a _item1_. It
-<ce>                 needs to be brought to an alchemist I
-<ce>                      know by the name of _npc1_.
-<ce>                       You'll find %g2 at __npc1_
-<ce>                       in ___npc1_. With luck, %g
-<ce>                will have something for you to bring to
-<ce>                        my friend, _npc2_. Well,
-<ce>                        you best be off. _npc1_
-<ce>                     told me %g needed the _item1_
-<ce>                      in =1stparton_ days or less.
-<ce>                   Thank you and have a good journey.
+<ce>                      Thank %god for that anyway.
+<ce>                    The people of %reg are becoming
+<ce>               anxious about the lack of progress in the
+<ce>                official investigations. I fear that we
+<ce>                will have a mob situation soon, perhaps
+<ce>                  in =total_ days or less. _contact_
+<ce>                       works out of _bookstore_,
+<ce>                 and I told %g2 I'd be sending someone
+<ce>                  there soon. Watch out for yourself,
+<ce>                     %pcf. Until this situation is
+<ce>                    resolved, remember that the %cn
+<ce>                          night has a knife.
 
 QuestFail:  [1003]
-<ce>                We'll have plenty of time to chat more
-<ce>                 once you've completed your assignment.
+<ce>                        The %cn Slayer is still
+<ce>                at large. I have no time for chatting,
+<ce>                            nor should you.
 
 QuestComplete:  [1004]
-<ce>                   %oth, I was wondering when you'd
-<ce>                        get here. You are %pcf?
-<ce>                            I'm _npc2_, and
-<ce>                    that, I believe, is my _item2_.
-<ce>                  If you haven't tried it before, you
-<ce>                 really should. The effect is heavenly.
-<ce>               Anyway, here's your _reward_ gold pieces.
-<ce>                          Thanks a lot, %pcf.
-<ce>                          You're a life saver.
+<ce>                     %reg is at peace again, %pcf,
+<ce>          thanks to you. Here is the _reward_ gold I promised
+<ce>             -- gladly will I give it for the end of that
+<ce>              maniac and your discretion in this matter.
+<ce>                    %god truly blessed us when you
+<ce>                             came to %reg.
 
 RumorsDuringQuest:  [1005]
-I've heard that _npc2_ is a _item2_ addict, but I haven't seen any proof.
+It isn't safe to walk the streets of %cn anymore. Not with the %cn Slayer.
 <--->
-They say it's tough to concoct a good dose of _item2_, takes years of study.
+I hear the Slayer isn't a man at all, but a daedra come to punish us all.
+<--->
+The last victim of the %cn Slayer was found scattered in pieces over %cn.
+<--->
+Some folks are wondering if the Slayer might be a vampire or a werewolf.
 
 RumorsPostfailure:  [1006]
-It turns out _npc2_ was a _item2_ addict after all. They caught %g2 buying it.
+The killings stopped without us needing a mob. Guess the Slayer moved on.
 <--->
-I wonder who was supplying that _npc1_ with the ingredients %g needed.
+_qgiver_'s just lucky the %cn Slayer decided to move on. Panic was setting in.
+<--->
+_qgiver_ is still anxious. You'd think the Slayer's absence would relieve %g2.
+<--->
+The %cn Slayer disappeared just as suddenly as he came to %cn.
+<--->
+Some say the Slayer's still here, waiting for the stars to be right again.
 
 RumorsPostsuccess:  [1007]
-_npc2_ finally got that shipment %g was waiting for. He's happy as a harpy.
+I'm still afraid to be out in %cn alone, even with the Slayer supposedly dead.
 <--->
-_questgiver_ seems pretty pleased with a %ra mercenary, but won't say why.
+Guess the %cn Slayer was just some poor lunatic. Nothing romantic to him at all.
+<--->
+The newest rumor is that the %cn Slayer wasn't a vampire, but thought he was.
 
 QuestorPostsuccess:  [1008]
-You did a fine job on that delivery, my friend. What can I do for you?
-<--->
-%oth, good to see you again, %pcf. You did a good job on that ... little job.
+I still remember you, %pcf, and the discretion you showed with the %cn Slayer.
 
 QuestorPostfailure:  [1009]
-<ce>                      As I recall, you failed the
-<ce>                      last assignment I gave you.
-<ce>                     I see little point in talking
-<ce>                             with you now.
+<ce>                    You failed me in the %cn Slayer
+<ce>                         affair, %pcf. I don't
+<ce>                  see any reason to believe you won't
+<ce>                            fail me again.
 
 QuestLogEntry:  [1010]
-%qdt: I am bringing
- _npc1_ of __npc1_,
- ___npc1_ a _item1_ in
- exchange for some item that
- _questgiver_ wants to be
- delivered to a third party.
- I have =1stparton_ days to accomplish
- the first part of this delivery.
+<ce>                        Ah, %pcf, my dear %ra,
+<ce>                I am very glad you've arrived. You have
+<ce>              doubtless been told that I've become a bit
+<ce>               of a hermit ever since I began receiving
+<ce>                those letters threatening my life if I
+<ce>              did not abandoned my investigations. Well,
+<ce>               now I have an old colleague in town with
+<ce>                whose assistance I may be able to solve
+<ce>               these murders. I would like you to bring
+<ce>                       these notes to a _vamp_,
+<ce>                       a =vamp_ you will find at
+<ce>                      _hookerhouse_. If anything
+<ce>               should happen to me, I want somone to be
+<ce>              able to continue on in the investigations.
+<ce>                        That will be _vamp_ and
+<ce>                   you, %pcf. So don't get yourself
+<ce>                           killed out there.
 
 Message:  1011
-%qdt: _npc1_ sent
- me on to _npc2_, the third
- party in ___npc2_, with some
- _item2_. I will recognize
- _npc2_ as the =npc2_
- in __npc2_, provided I get it to
- %g2 in =2ndparton_ days.
+_contact_,
+ 
+ Terminate your investigations of the %reg Slayer's
+ victims if you value your life. You are moving
+ blindly into an inferno.
+ 
+ If you continue, you will die before your
+ studies are finished. Consider this this a
+ serious warning.
+ 
+<ce>                             A Well-Wisher
 
 Message:  1012
-<ce>                      Lovely, %pcf, lovely. Now,
-<ce>                        here's the _item2_ that
-<ce>                      needs to be given to _npc2_
-<ce>                      over in __npc2_ in ___npc2_.
-<ce>                          Don't dawdle, %pct.
-<ce>                     _npc2_ needs it in =2ndparton_
-<ce>                             days or less.
+Dear _contact_,
+ 
+ Even if you lock all your doors and extinguish
+ all light from _bookstore_, we
+ will know that you are still indulging in your
+ forbidden autopsies. Do not ask for us to
+ demonstrate our power to stop you, for we will
+ act but once.
+ 
+<ce>                             A Well-Wisher
+
+Message:  1013
+_contact_,
+ 
+ I would very much like to meet with you
+ about your fascinating mortuary studies of
+ the Slayer victims. As you know, I have
+ done similiar investigations and would be
+ happy to share my knowledge and experience
+ with a distinguished colleague.
+ 
+ Let me know by courier how it would be
+ most convenient for us to meet. I am
+ staying at _hookerhouse_,
+ but perhaps you would rather meet at
+ _bookstore_ so I might
+ see the corpses in question. In either,
+ case I look forward to receiving your
+ courier and note.
+ 
+<ce>                         Yours in admiration,
+ 
+<ce>                                _vamp_
+
+Message:  1014
+Autopsy report for %fn:
+ 
+ Throat torn out, apparently
+ with violent force (Slayer a
+ madman? Check into Lobornus'
+ work with criminally insane in Agryn
+ Prison). Death instantaneous,
+ no sign of struggle (Slayer knew
+ victim? Did not appear a threat?)
+ Carotid artery completely severed,
+ loss of blood extensive by time of
+ examination (remember to ask
+ _qgiver_ to send over guards
+ who found body for interview).
+ 
+ Autopsy report for %mn:
+ 
+ Subject shows similar pathology to
+ female victim. Throat torn out violently,
+ bruises on upper arms as if gripped by
+ extremely strong man (Slayer's insanity
+ produces superhuman strength? Note to self:
+ write to Lobornus for research notes from
+ interesting case he reported at last year's
+ Conclave). Bruising indicates some time
+ between attack and death? (Could be unrelated
+ to attack? Check on background of victim)
+
+Message:  1015
+<ce>                    So, for all the days _contact_
+<ce>                has spent with those flyblown cadavers
+<ce>                       and all %g comes up with
+<ce>                     is this. %god, with this as a
+<ce>                      start, _contact_ won't get
+<ce>                an intimation of the Slayer's identity
+<ce>                     for weeks yet. Listen, %pcf,
+<ce>                     if you want to help _qgiver_,
+<ce>                   take this flower over to _widow_
+<ce>                        in _widowhouse_ -- %g3
+<ce>                        brother was %mn, one of
+<ce>                  the Slayer's victims. This may seem
+<ce>                 like a trivial sentimentality, but it
+<ce>                 will bring you closer to finding the
+<ce>                        %cn Slayer than any of
+<ce>                        _contact_'s scientific
+<ce>                      catalyses. Trust me, %pcf.
+
+Message:  1016
+_vamp_ is the =vamp_ I met over at _hookerhouse_. Nice enough, but spooky.
+<--->
+_vamp_ is the name of the =vamp_ staying over at _hookerhouse_.
+
+Message:  1017
+_vamp_ is one of the %vcn, sent to %cn to eliminate the mad Slayer.
+<--->
+_vamp_ is a %vcn vampire here to stop the risk to %g3 security, the Slayer.
+
+Message:  1018
+Poor _widow_ stays at _widowhouse_ every since the Slayer got %g3 brother.
+<--->
+The %reg Slayer killed _widow_'s brother, and now %g never leaves _widowhouse_.
+
+Message:  1019
+<ce>               A red poppy? Oh, you must be my brother's
+<ce>                    friend, _rippername_, yes? I do
+<ce>             appreciate the comforting note you sent after
+<ce>             his death. He didn't have very many friends,
+<ce>            and, to tell the truth, he had never mentioned
+<ce>             your name. But I certainly thank you for the
+<ce>              lovely flowers and the invitation to visit
+<ce>                         you at _ripperhouse_.
+<ce>              I've always admired that place, and I would
+<ce>                     like to see the inside of it.
+<ce>                                    
+<ce>                  What, you're not _rippername_? Oh,
+<ce>              I'm so sorry. Please forgive me, I haven't
+<ce>              been myself since my brother... No, I don't
+<ce>             think I have information that might help you
+<ce>              find that murdering devil. You know I would
+<ce>              help you if I could. But you will find the
+<ce>               fiend that killed my brother, won't you?
+
+Message:  1020
+%qdat:
+ I am on the trail of the Slayer
+ of %cn. %rt _qgiver_ wants
+ the %cn Slayer caught in =total_ days
+ before the murders inflame the populace
+ to riot. _qgiver_ has a scientist
+ who has been examining the bodies of the
+ Slayer's victims and has recently
+ begun getting death threats, apparently
+ from the Slayer. _contact_ is
+ the name of this scientist, and %g
+ works out of _bookstore_.
+
+Message:  1021
+%qdat:
+ _contact_ has sent me
+ to _hookerhouse_ to meet with
+ an old colleague named _vamp_,
+ who might be able to help with the research.
+
+Message:  1022
+%qdat:
+ I got to _bookstore_ too late.
+ Apparently _contact_'s death
+ threats were very real. Among the letters
+ I found was one from a colleague interested in
+ meeting with _contact_, someone
+ named _vamp_ staying at
+ _hookerhouse_.
+
+Message:  1023
+%qdat:
+ I met with _vamp_ who seems
+ less than impressed with %g3
+ colleague _contact_'s work
+ on the %reg Slayer victims.
+ _vamp_ told me to bring
+ a red poppy to someone named
+ _widow_ whose brother
+ was killed by the Slayer. I have some
+ suspicions, but I won't know for sure
+ until I go to _widowhouse_
+ where _widow_ lives.
+
+Message:  1024
+%qdat:
+ The late _contact_'s colleague
+ and murderer are one and the same person.
+ _vamp_ is a vampire, but professes
+ not to be the Slayer. If I kill the person
+ %g says is the %reg Slayer, _rippername_
+ of _ripperhouse_, _vamp_
+ has promised me a reward, apparently
+ in addition to the reward I'd get
+ from _qgiver_.
+
+Message:  1025
+%qdat:
+ _widow_, the =widow_
+ _vamp_ sent me to, believed
+ that I was someone named _rippername_.
+ This _rippername_ apparently sent
+ _widow_ a bouquet of red poppies
+ and invited %g2 to a place called
+ _ripperhouse_. Sounds like a Slayer
+ trap if there ever was one.
+
+Message:  1026
+<ce>                 Which letter brought you to me, %pcn?
+<ce>             You are probably aware that I wrote them all.
+<ce>                      After _contact_ refused to
+<ce>           listen to my polite warnings about investigating
+<ce>            matters beyond mortal understanding, I invited
+<ce>             %g2 here as %g3 friend. I knew %g2, you see,
+<ce>             years ago, before I became a vampire. We met,
+<ce>                      went back to _bookstore_ to
+<ce>              see the bodies, and there I slew %g2. Quite
+<ce>             painlessly. I could tell %g would never have
+<ce>              halted his studies. More than that I cannot
+<ce>               say, except that the Slayer is a vampire
+<ce>               like myself, but mad from the blessing of
+<ce>                      immortality. _rippername_,
+<ce>             that's the Slayer's real name and %g lives at
+<ce>                    _ripperhouse_. If you go there
+<ce>            and slay %g2, I will reward you. If you intend
+<ce>                     to continue with _contact_'s
+<ce>              studies, I will have no choice but to kill
+<ce>                 you as well. That is my simple offer.
+
+Message:  1027
+_contact_ is quite a learned scientist over in _bookstore_, %di of here.
+<--->
+_contact_ is a =contact_ who works out of _bookstore_.
+
+Message:  1028
+_contact_ is dissecting the Slayer's victims and someone doesn't like that.
+<--->
+_contact_'s a scientist at _bookstore_, who has been getting threat letters.
+
+Message:  1050
+<ce>                   By killing _rippername_, you have
+<ce>                 aided both %reg and myself. For this,
+<ce>                  I give you a _reward2_. Perhaps we
+<ce>                     may meet again one day, %pcn.
+<ce>                  You have intrigued me in our brief
+<ce>              acquaintance. May the night keep you safe.
 
 
 -- Symbols used in the QRC file:
 --
---                %g occurs 4 times.
---               %g2 occurs 3 times.
---              %oth occurs 2 times.
---              %pcf occurs 6 times.
---              %pct occurs 1 time.
---              %qdt occurs 2 times.
+--               %cn occurs 141 times.
+--               %di occurs 3 times.
+--               %fn occurs 2 times.
+--                %g occurs 117 times.
+--               %g2 occurs 8 times.
+--               %g3 occurs 9 times.
+--              %god occurs 3 times.
+--               %mn occurs 3 times.
+--              %pcf occurs 11 times.
+--              %pcn occurs 2 times.
+--             %qdat occurs 6 times.
 --               %ra occurs 1 time.
---       =1stparton_ occurs 2 times.
---       =2ndparton_ occurs 6 times.
---            =npc2_ occurs 1 time.
---          ___npc1_ occurs 2 times.
---          ___npc2_ occurs 2 times.
---           __npc1_ occurs 2 times.
---           __npc2_ occurs 2 times.
---           _item1_ occurs 3 times.
---           _item2_ occurs 6 times.
---            _npc1_ occurs 5 times.
---            _npc2_ occurs 9 times.
---      _questgiver_ occurs 2 times.
---          _reward_ occurs 3 times.
+--              %reg occurs 10 times.
+--               %rt occurs 1 time.
+--              %vcn occurs 3 times.
+--         =contact_ occurs 2 times.
+--           =total_ occurs 2 times.
+--            =vamp_ occurs 4 times.
+--           =widow_ occurs 1 time.
+--       _bookstore_ occurs 13 times.
+--         _contact_ occurs 21 times.
+--     _hookerhouse_ occurs 7 times.
+--          _qgiver_ occurs 8 times.
+--         _reward2_ occurs 1 time.
+--          _reward_ occurs 2 times.
+--     _ripperhouse_ occurs 4 times.
+--      _rippername_ occurs 8 times.
+--            _vamp_ occurs 14 times.
+--           _widow_ occurs 11 times.
+--      _widowhouse_ occurs 107 times.
 
 QBN:
+Item _I.00_ letter used 1011
+Item _I.01_ letter used 1012
+Item letter31 letter used 1013
+Item _I.03_ letter used 1014
+Item _I.04_ dead_body
 Item _reward_ gold
-Item _item1_ misc
-Item _item2_ drug
+Item _reward2_ trinket
+Item _I.08_ item class 26 subclass 3
+Item _I.09_ item class 15 subclass 13
 
-Person _questgiver_ face 136 group Questor
-Person _npc1_ group Chemist female
-Person _npc2_ face 248 group Local_3.0
+Person _qgiver_ group Questor male
+Person _contact_ face 1 group Librarian anyInfo 1027 rumors 1028
+Person _vamp_ face 1 factiontype Vampire_Clan anyInfo 1016 rumors 1017
+Person _widow_ face 82 group Resident2 anyInfo 1018
+Person _rippername_ face 5 group Group_6.0
 
+Place _bookstore_ local house2
+Place _hookerhouse_ local tavern
+Place _ripperhouse_ local house1
+Place _widowhouse_ local temple
 
-Clock _1stparton_ 00:00 0 flag 1 range 1 4
-Clock _2ndparton_ 00:00 0 flag 1 range 1 4
-Clock _delay_ 00:10 00:30
+Clock _1stparton_ 00:30 03:00
+Clock _2ndparton_ 00:30 06:00
+Clock _total_ 3.00:00 0 flag 1 range 0 1
 
+Foe _murder_ is Vampire
 
 --	Quest start-up:
+	place item _I.08_ at _bookstore_ 
+	dialog link for location _ripperhouse_ person _rippername_ 
+	dialog link for person _widow_ 
+	dialog link for person _vamp_ 
+	start timer _total_ 
 	start timer _1stparton_ 
-	log 1010 step 0 
-	get item _item1_ 
+	log 1020 step 0 
+	create npc at _ripperhouse_ 
+	place npc _contact_ at _bookstore_ 
+	place npc _vamp_ at _hookerhouse_ 
+	place npc _widow_ at _widowhouse_ 
+
+_S.00_ task:
+	killed 1 _murder_ 
+
+_1stparton_ task:
+	start timer _2ndparton_ 
+
+variable _2ndparton_
+_S.03_ task:
+	when _2ndparton_ and not _S.13_ 
+	letter31 used do _S.11_ 
+	place item _I.01_ at _bookstore_ 
+	place item _I.00_ at _bookstore_ 
+	place item letter31 at _bookstore_ 
+	place item _I.04_ at _bookstore_ 
+	hide npc _contact_ 
+
+_vampclicked_ task:
+	clicked npc _vamp_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
 
 _pcgetsgold_ task:
-	toting _item2_ and _npc2_ clicked 
+	when _S.00_ and _qgclicked_ 
 	give pc _reward_ 
-	start timer _delay_ 
-
-variable _pchasitem1_
-variable _pchasitem2_
-_S.03_ task:
-	toting _item1_ and _npc1_ clicked 
-	start timer _2ndparton_ 
-	log 1011 step 1 
-	get item _item2_ 
-	say 1012 
-	create npc _npc2_ 
-
-variable _S.04_
-_queston_ task:
-	when _1stparton_ and not _S.03_ 
-	make _item1_ permanent 
-	change repute with _questgiver_ by -20 
+	unset _qgclicked_ 
 	end quest 
 
-variable _1stparton_
-_2ndparton_ task:
-	make _item2_ permanent 
-	change repute with _questgiver_ by -2 
-	end quest 
+_S.07_ task:
+	when _S.17_ and not _S.00_ 
+	place foe _murder_ at _ripperhouse_ 
 
-_delay_ task:
+_S.08_ task:
+	when _vampclicked_ and _S.11_ 
+	add dialog for location _ripperhouse_ 
+	log 1024 step 4 
+	say 1026 
+
+_S.09_ task:
+	toting _I.03_ and _vamp_ clicked 
+	add dialog for person _widow_ 
+	log 1023 step 3 
+	get item _I.09_ 
+	say 1015 
+
+_S.10_ task:
+	clicked npc _contact_ 
+	add dialog for person _vamp_ 
+	log 1021 step 1 
+	get item _I.03_ from _vamp_ 
+	say 1010 
+
+_S.11_ task:
+	add dialog for person _vamp_ 
+	log 1022 step 2 
+
+variable _S.12_
+_S.13_ task:
+	daily from 06:00 to 18:00 
+
+_S.14_ task:
+	when not _S.13_ and not _S.00_ 
+	create foe _murder_ every 15 minutes 1 times with 15% success 
+
+_S.15_ task:
+	toting _I.09_ and _widow_ clicked 
+	add dialog for location _ripperhouse_ 
+	log 1025 step 5 
+	say 1019 
+
+_S.16_ task:
+	when _vampclicked_ and _S.00_ 
+	get item _reward2_ saying 1050 
+	make _reward2_ permanent 
+	unset _vampclicked_ 
+
+_S.17_ task:
+	when _S.15_ or _S.08_ 
+
+_total_ task:
 	end quest 

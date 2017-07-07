@@ -12,21 +12,21 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                 We have an interesting job available
 <ce>                      %pcn. A high ranking member
-<ce>                   of the Thieves Guild. This will be
-<ce>                      a tough one. Do you want it?
+<ce>                  of the Thieves Guild. This will be
+<ce>                     a tough one. Do you want it?
 
 RefuseQuest:  [1001]
 <ce>                    Its not for the faint of heart.
                                      <--->
 <ce>                  Understood. Come back when you are
-<ce>                        interested in real work.
+<ce>                       interested in real work.
 
 AcceptQuest:  [1002]
 <ce>                   You are a sharp one. The target's
-<ce>                       name is _marknpc_, here in
-<ce>                        ___questgiver_. %g moves
+<ce>                      name is _marknpc_, here in
+<ce>                       ___questgiver_. %g moves
 <ce>                      around a lot and is usually
-<ce>                  protected by bodyguards. Be careful.
+<ce>                 protected by bodyguards. Be careful.
 <ce>                 You have seven days. When it is done,
 <ce>                 return here and I will pay you _gold_
 <ce>                      gold. Ask for _questgiver_.
@@ -54,7 +54,7 @@ I haven't forgotten what you did to _marknpc_, %pcf. Don't worry about that.
 
 QuestorPostfailure:  [1009]
 <ce>                     _marknpc_ still lives, %pcf.
-<ce>                 'Tis not an honorable situation in any
+<ce>                'Tis not an honorable situation in any
 <ce>                way, and I am not the least bit amused.
 
 QuestLogEntry:  [1010]
@@ -69,10 +69,10 @@ QuestLogEntry:  [1010]
 Message:  1015
 <ce>                       _marknpc_ is still alive.
 <ce>                        Don't toy with me %pcn.
-<ce>                   The Dark Brotherhood does not have
+<ce>                  The Dark Brotherhood does not have
 <ce>                   a sense of humor. I did just hear
 <ce>                      that _fakeplace_ is a false
-<ce>                   address. Don't bother going there.
+<ce>                  address. Don't bother going there.
 <ce>                   See if you can dig up other clues
 <ce>                      about where %g spends time.
 
@@ -84,7 +84,7 @@ Message:  1020
 
 Message:  1021
 <ce>                       Help! _marknpc_! There is
-<ce>                       an assassin in the house!.
+<ce>                      an assassin in the house!.
 
 Message:  1022
 <ce>                      You killed _marknpc_! Just
@@ -94,17 +94,17 @@ Message:  1022
 Message:  1023
 <ce>                     _marknpc_ comes here everday
 <ce>                   at around 6 o'clock. %g sends %g3
-<ce>                    bodyguards away. %g is only here
-<ce>                           for an hour or so.
+<ce>                   bodyguards away. %g is only here
+<ce>                          for an hour or so.
 
 Message:  1030
 <ce>                 _marknpc_ is a thief and a scoundrel.
                                      <--->
 <ce>  Everyone thinks _marknpc_ hangs out at _fakeplace_, but %g doesn't.
                                      <--->
-<ce>            _marknpc_ usually spends %g2 evenings at _inn_.
+<ce>            _marknpc_ usually spends %g3 evenings at _inn_.
                                      <--->
-<ce>            _marknpc_ spends %g2 mornings sleeping at home.
+<ce>            _marknpc_ spends %g3 mornings sleeping at home.
                                      <--->
 <ce>   _marknpc_ lives at _house_, but %g doesn't spend much time there.
                                      <--->
@@ -118,7 +118,7 @@ Message:  1030
                                      <--->
 <ce>                  _marknpc_ has a lot of bodyguards.
                                      <--->
-<ce>   When _marknpc_ visits %g2 mistress, %g sends %g2 bodyguards away.
+<ce>   When _marknpc_ visits %g3 mistress, %g sends %g3 bodyguards away.
                                      <--->
 <ce>            I wouldn't tangle with _marknpc_'s bodyguards.
                                      <--->
@@ -126,25 +126,25 @@ Message:  1030
 
 Message:  1031
 <ce>                 _marknpc_ falls to the ground, dead.
-<ce>                     The Brotherhood will be proud.
+<ce>                    The Brotherhood will be proud.
 
 
 -- Symbols used in the QRC file:
 --
---                %g occurs 21 times.
---               %g2 occurs 14 times.
---               %g3 occurs 2 times.
---              %pcf occurs 42 times.
+--                %g occurs 23 times.
+--               %g2 occurs 6 times.
+--               %g3 occurs 10 times.
+--              %pcf occurs 43 times.
 --              %pcn occurs 3 times.
 --              %qdt occurs 1 time.
---              %reg occurs 1 time.
+--              %reg occurs 2 times.
 --    ___questgiver_ occurs 2 times.
 --       _fakeplace_ occurs 3 times.
 --            _gold_ occurs 4 times.
 --       _guildhall_ occurs 4 times.
 --           _house_ occurs 2 times.
 --             _inn_ occurs 2 times.
---         _marknpc_ occurs 33 times.
+--         _marknpc_ occurs 35 times.
 --    _mistresshome_ occurs 2 times.
 --      _questgiver_ occurs 3 times.
 
@@ -152,7 +152,7 @@ QBN:
 Item _gold_ gold
 Item bribe3 gold range 50 to 50
 
-Person _mistress_ face 3 group Group_7.2
+Person _mistress_ face 3 named Whitka
 Person _questgiver_ face 1 group Questor
 Person _marknpc_ face 5 faction The_Thieves_Guild anyInfo 1030
 
@@ -162,7 +162,7 @@ Place _guildhall_ local random
 Place _mistresshome_ local house2
 Place _fakeplace_ local random
 
-Clock _S.00_ 7.00:00 4.00:00
+Clock _S.00_ 7.00:00 0 flag 1 range 0 1
 
 Foe _home_ is Thief
 Foe _F.01_ is Sorceror
@@ -170,7 +170,10 @@ Foe _F.02_ is Knight
 Foe _F.03_ is Rogue
 
 --	Quest start-up:
-	dialog link for person _mistress_ 
+	dialog link for location _mistresshome_ person _mistress_ 
+	dialog link for location _house_ 
+	dialog link for location _guildhall_ 
+	dialog link for location _fakeplace_ 
 	start timer _S.00_ 
 	log 1010 step 0 
 	pc at _fakeplace_ set _S.11_ 
@@ -216,12 +219,12 @@ _S.08_ task:
 	clicked npc _mistress_ 
 
 _clearclick_ task:
-	when not _S.07_ and _S.22_ 
+	when not _S.07_ and _S.21_ 
 	say 1015 
-	clear _S.22_ _clearclick_ 
+	clear _S.21_ _clearclick_ 
 
 _vamp3_ task:
-	when _S.07_ and _S.22_ 
+	when _S.07_ and _S.21_ 
 	give pc _gold_ 
 	end quest 
 
@@ -258,6 +261,5 @@ _S.20_ task:
 	say 1023 
 	unset _S.08_ 
 
-variable _S.21_
-_S.22_ task:
+_S.21_ task:
 	clicked npc _questgiver_ 

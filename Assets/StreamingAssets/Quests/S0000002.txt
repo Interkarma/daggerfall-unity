@@ -8,25 +8,25 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                    I need a courier, %pcf, but no
-<ce>           common, jelly-armed, gas-headed pox of a mercenary
-<ce>            will do. I have a letter of utmost importance to
-<ce>              be delivered to a high dignitary who will be
+<ce>          common, jelly-armed, gas-headed pox of a mercenary
+<ce>           will do. I have a letter of utmost importance to
+<ce>             be delivered to a high dignitary who will be
 <ce>            defended against unwelcome intrusion. In return
 <ce>              for this, I will not only reward you with a
 <ce>                _magicitem_, but also put in a positive
-<ce>            word for you with the king and queen of Wayrest,
-<ce>           but I will give you some information on the affair
-<ce>          with Daggerfall I doubt you would receive elsewhere.
-<ce>             Does this sound like an agreeable arrangement?
+<ce>           word for you with the king and queen of Wayrest,
+<ce>          but I will give you some information on the affair
+<ce>         with Daggerfall I doubt you would receive elsewhere.
+<ce>            Does this sound like an agreeable arrangement?
 
 RefuseQuest:  [1001]
 <ce>               Dullard. Why did you let me waste my time
-<ce>                         with the likes of you?
+<ce>                        with the likes of you?
 
 AcceptQuest:  [1002]
 <ce>            Excellent. Meet me here this time tomorrow and
 <ce>              I will give you the letter and the name and
-<ce>                       location of the recipient.
+<ce>                      location of the recipient.
 
 QuestFail:  [1003]
 <ce>                The letter needs to be delivered, %pcf.
@@ -34,24 +34,24 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>                   Anyway, here is the _magicitem_ I
-<ce>               promised. Never let it be said that Prince
+<ce>              promised. Never let it be said that Prince
 <ce>                   Helseth is not a man of his bond.
 <ce>                                    
 <ce>              Oh yes, I promised to tell you something of
 <ce>               the situation in Daggerfall. I suspect my
-<ce>             family has more to do with it than is commonly
+<ce>            family has more to do with it than is commonly
 <ce>             known. We sent advisors to urge King Lysandus
 <ce>             and King Camaron to mend their differences on
 <ce>               the eve of the Battle of Cryngaine Field.
-<ce>             Lysandus was digustingly loyal to the emperor,
+<ce>            Lysandus was digustingly loyal to the emperor,
 <ce>             where Camaron was fighting for more autonomy.
 <ce>            According to the advisor's report, they arrived
-<ce>             too late because they were waylaid by the orcs
-<ce>               of Gortwog en route. However, I have heard
+<ce>            too late because they were waylaid by the orcs
+<ce>              of Gortwog en route. However, I have heard
 <ce>              stories that, at least some of our advisors
-<ce>               arrived at Lysandus' tent and spoke to him
-<ce>              briefly. At this time, I cannot say more. If
-<ce>             I receive more information or if the situation
+<ce>              arrived at Lysandus' tent and spoke to him
+<ce>             briefly. At this time, I cannot say more. If
+<ce>            I receive more information or if the situation
 <ce>              progresses, I will certainly send you word.
 
 RumorsDuringQuest:  [1005]
@@ -74,11 +74,11 @@ Yes, %pcf? Our stars seem to be rising in syndesis. What would you need?
 
 QuestorPostfailure:  [1009]
 <ce>                I had an important assignment for you,
-<ce>                     %pcf, if you recall. Having to
-<ce>                do with Lord Castellian? Well, now it is
+<ce>                    %pcf, if you recall. Having to
+<ce>               do with Lord Castellian? Well, now it is
 <ce>                too late, and I am not the most patient
-<ce>                     man in Tamriel. Pray, leave me
-<ce>                        before I become brusque.
+<ce>                    man in Tamriel. Pray, leave me
+<ce>                       before I become brusque.
 
 QuestLogEntry:  [1010]
 My Dear Lord Castellian,
@@ -112,7 +112,7 @@ My Dear Lord Castellian,
  your response at the soonest possible opportunity.
  I will await you at Castle Wayrest.
  
-<ce>                                Helseth,
+<ce>                               Helseth,
 <ce>                           Prince of Wayrest
 
 Message:  1011
@@ -124,42 +124,25 @@ Message:  1012
 <ce>             It is really too bad that you were not a bit
 <ce>                   faster %pcf. My sister Elysana is
 <ce>             betrothed. Without her opposition, it was not
-<ce>             truly necessary to deliver that letter to Lord
+<ce>            truly necessary to deliver that letter to Lord
 <ce>             Castellian. However, I'm sure I can turn this
-<ce>                        to my advantage somehow.
+<ce>                       to my advantage somehow.
 
 Message:  1014
 <ce>               Why that conniving, manipulative weasel.
 <ce>                  You did well by bringing this to my
 <ce>                      attention, %pcf. Thank you.
 
-Message:  1016
-                                  Castle Wayrest
- 
- Dear %pcn,
- 
-      My beloved son has brought your name to my
- attention, and suggested that we might have some
- business to discuss. I understand that we have a
- mutual interest.
-      Please visit me at Castle Wayrest at your
- earliest possible convenience.
- 
- Yours,
- 
-<ce>                               Barenziah
-<ce>                    Queen of the Kingdom of Wayrest
-
 Message:  1017
 <ce>               A page wearing the colors and pale yellow
-<ce>             rose of Wayrest appears silently at your side.
+<ce>            rose of Wayrest appears silently at your side.
 <ce>                He hands you a letter and disappears as
-<ce>                         quietly as he arrived.
+<ce>                        quietly as he arrived.
 
 Message:  1018
 <ce>              A breathless courier shoves a leather pouch
 <ce>            into your hands. A cautious examination reveals
- a letter and a sum of gold.
+<ce>                      a letter and a sum of gold.
 
 Message:  1019
 %qdt:
@@ -239,36 +222,36 @@ My Dear Lord Castellian,
 Message:  1027
 <ce>                  Ah, hello again, %pcf. Here is the
 <ce>           letter. It is to be given to Lord Castellian, the
-<ce>             head of the elder council, who is currently at
-<ce>                  his house _castfort_ in __castfort_.
+<ce>            head of the elder council, who is currently at
+<ce>                 his house _castfort_ in __castfort_.
 <ce>             I need the letter delivered and you back here
-<ce>              in no later than =1stparton_ days -- that is
-<ce>                essential. Like I mentioned before, Lord
+<ce>             in no later than =1stparton_ days -- that is
+<ce>               essential. Like I mentioned before, Lord
 <ce>              Castellian values his privacy to an excess.
 <ce>                Be prepared for some resistance at your
-<ce>                   arrival in _castfort_. I would ask
+<ce>                  arrival in _castfort_. I would ask
 <ce>             that you not read the letter as it is private
-<ce>              correspondence. If word of its contents gets
-<ce>                         out, I will blame you.
+<ce>             correspondence. If word of its contents gets
+<ce>                        out, I will blame you.
 
 Message:  1028
-<ce>                 You wait while Lord Castellian reads
-<ce>                letter. His skin grows pale and his hand
-<ce>                            begins to shake.
+<ce>               You wait while Lord Castellian reads the
+<ce>               letter. His skin grows pale and his hand
+<ce>                           begins to shake.
 <ce>                                    
 <ce>                   "I see. Please wait while I pen a
-<ce>                     response to Prince Helseth." 
+<ce>                     response to Prince Helseth."
 <ce>                  It only takes him a minute to write
-<ce>                 the response, which he then hands you.
+<ce>                the response, which he then hands you.
 
 Message:  1030
 <ce>                     This letter has been opened.
-<ce>                       You exceed the bounds of a
-<ce>                             courier, %pcn.
+<ce>                      You exceed the bounds of a
+<ce>                            courier, %pcn.
 
 Message:  1031
 <ce>                   So you like to read the missives
-<ce>                    of your betters. Don't expect me
+<ce>                   of your betters. Don't expect me
 <ce>                     trust you again anytime soon.
 
 Message:  1040
@@ -292,8 +275,8 @@ I hear that Lord Castellian has the backing to block Prince Helseth's war plans.
 
 -- Symbols used in the QRC file:
 --
---              %pcf occurs 10 times.
---              %pcn occurs 7 times.
+--              %pcf occurs 11 times.
+--              %pcn occurs 5 times.
 --              %qdt occurs 2 times.
 --       =1stparton_ occurs 2 times.
 --       __castfort_ occurs 6 times.
@@ -302,7 +285,6 @@ I hear that Lord Castellian has the backing to block Prince Helseth's war plans.
 QBN:
 Item letter39 letter used 1010
 Item _magicitem_ magic_item
-Item letter40 letter used 1016
 Item letter41 letter used 1024
 Item letter42 letter used 1026
 Item letter43 letter used 1040
@@ -314,7 +296,7 @@ Person Eadwyre face 80 named King_Eadwyre atHome
 
 Place _castfort_ remote house1
 
-Clock _S.00_ 16:40 0 flag 1 range 0 1
+Clock _S.00_ 1.00:00 0 flag 1 range 0 1
 Clock _1stparton_ 00:00 0 flag 17 range 0 2
 Clock _S.15_ 3.00:00 7.00:00
 
@@ -325,6 +307,7 @@ Foe _battlemage_ is Battle_mage
 	start timer _S.00_ 
 	log 1019 step 0 
 	prompt QuestorOffer yes yes no _no_ 
+	pick one of _S.13_ _S.24_ 
 
 _S.00_ task:
 	create npc at _castfort_ 
@@ -336,14 +319,10 @@ _S.01_ task:
 _S.02_ task:
 	toting letter42 and Castellian clicked 
 	toting letter39 and Castellian clicked 
-	letter41 used do _S.20_ 
-	get item letter41 
-	say 1028 
 
 _S.03_ task:
 	when _S.01_ and _S.00_ 
-	letter39 used do _S.07_ 
-	letter42 used do _S.07_ 
+	add dialog for person Castellian 
 	start timer _1stparton_ 
 	log 1020 step 1 
 	remove log step 0 
@@ -352,14 +331,9 @@ _S.03_ task:
 _S.04_ task:
 	toting letter41 and _helseth_ clicked 
 	give pc _magicitem_ 
-	stop timer _S.15_ 
-	stop timer _1stparton_ 
-	remove log step 1 
 	change repute with _helseth_ by +10 
-	mute npc _helseth_ 
-	mute npc Eadwyre 
-	drop _helseth_ as questor 
 	drop Eadwyre as questor 
+	drop _helseth_ as questor 
 
 _S.05_ task:
 	toting letter42 and Eadwyre clicked 
@@ -380,6 +354,7 @@ _clearclick_ task:
 	clear _S.01_ _clearclick_ 
 
 yes task:
+	dialog link for person Castellian 
 	say AcceptQuest 
 	add _helseth_ as questor 
 	add Eadwyre as questor 
@@ -389,18 +364,22 @@ _no_ task:
 	end quest 
 
 _S.12_ task:
-	when _S.03_ and not _S.13_ 
+	when _S.03_ and _S.13_ 
+	letter39 used do _S.07_ 
 	get item letter39 
 
-UnknownHelseth _S.13_
+variable _S.13_
 _S.14_ task:
-	when _S.03_ and _S.13_ 
+	when _S.03_ and _S.24_ 
+	letter42 used do _S.07_ 
 	get item letter42 
 
 _S.15_ task:
 	get item letter43 
 	get item _I.06_ 
 	say 1018 
+	make letter43 permanent 
+	make _I.06_ permanent 
 	drop Eadwyre as questor 
 	drop _helseth_ as questor 
 	end quest 
@@ -426,16 +405,22 @@ _S.19_ task:
 	change repute with Castellian by -10 
 
 _S.20_ task:
+	when _S.02_ and not _S.07_ 
+	letter41 used do _S.21_ 
+	get item letter41 
+	say 1028 
+
+variable _S.21_
+_S.22_ task:
+	when _S.04_ and _S.21_ 
 	say 1031 
 	change repute with _helseth_ by -25 
 
-_S.21_ task:
-	when repute with Queen_Barenziah is at least 15 
-
-_S.22_ task:
-	level 9 completed 
-
 _S.23_ task:
-	when _S.21_ and _S.22_ and _S.04_ 
+	when _S.04_ and not _S.21_ 
 	start quest 11 11 
+
+variable _S.24_
+_S.25_ task:
+	when _S.22_ or _S.23_ 
 	end quest 

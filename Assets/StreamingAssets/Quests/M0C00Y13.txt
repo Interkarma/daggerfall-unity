@@ -11,38 +11,38 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                            I am _qgiver_.
-<ce>                  The Fighter's Guild doesn't hand out
+<ce>                 The Fighter's Guild doesn't hand out
 <ce>                  charity work. If I weren't short on
 <ce>                 fighter's right now, I'd have to send
 <ce>                 you away %pcn. I do need a fighter to
-<ce>                   chase off some barbarians that are
+<ce>                  chase off some barbarians that are
 <ce>                  running wild. Do it for me and I'll
 <ce>                    make sure everyone knows you're
 <ce>                     a stand up %ra. Is it a deal?
 
 RefuseQuest:  [1001]
 <ce>                    You've just make a big mistake
-<ce>                      %pcn. Don't come looking for
-<ce>                         work here for a while.
+<ce>                     %pcn. Don't come looking for
+<ce>                        work here for a while.
 
 AcceptQuest:  [1002]
 <ce>                    Get your sorry carcass over to
-<ce>                          _house_. Run off the
+<ce>                         _house_. Run off the
 <ce>                        barbarians by this time
-<ce>                       tomorrow and you'll be OK.
+<ce>                      tomorrow and you'll be OK.
 
 QuestComplete:  [1004]
 <ce>                        Did you get cut up bad?
-<ce>                      A couple more jobs like this
-<ce>                       and you can write your own
-<ce>                    ticket into the Fighter's Guild.
+<ce>                     A couple more jobs like this
+<ce>                      and you can write your own
+<ce>                   ticket into the Fighter's Guild.
 
 RumorsDuringQuest:  [1005]
 <ce>                Barbarians are raiding the farms again.
 
 RumorsPostfailure:  [1006]
 <ce>                 The barbarians looted four farmsteads
-<ce>                 before the Fighter's Guild stepped in.
+<ce>                before the Fighter's Guild stepped in.
 
 RumorsPostsuccess:  [1007]
 <ce>                  Aren't you the %ra that chased off
@@ -54,8 +54,8 @@ QuestorPostsuccess:  [1008]
 
 QuestorPostfailure:  [1009]
 <ce>                  I trusted you to take care of those
-<ce>                barbarians. You failed, so I had to send
-<ce>                         someone else to do it.
+<ce>               barbarians. You failed, so I had to send
+<ce>                        someone else to do it.
 
 QuestLogEntry:  [1010]
 %qdt: The Fighters
@@ -95,6 +95,7 @@ Foe _monster_ is Barbarian
 	reveal _house_ 
 	log 1010 step 0 
 	place foe _monster_ at _house_ 
+	create npc at _house_ 
 
 _2dung_ task:
 	end quest 

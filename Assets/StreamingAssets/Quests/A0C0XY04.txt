@@ -11,30 +11,30 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                         My name is _agent_. I
-<ce>                     represent a someone that needs
+<ce>                    represent a someone that needs
 <ce>                   to ... acquire something. Whoever
-<ce>                      delivers it will be rewarded
-<ce>                           with _artifact_. I
-<ce>                     don't know what that is, but I
+<ce>                     delivers it will be rewarded
+<ce>                          with _artifact_. I
+<ce>                    don't know what that is, but I
 <ce>                    am told it is an item of power.
-<ce>                            Are you willing?
+<ce>                           Are you willing?
 
 RefuseQuest:  [1001]
 <ce>                    Forget you ever saw me. I have
-<ce>                     powerful friends. If you cause
-<ce>                     me any trouble, they will hunt
-<ce>                      you down like a rogue thief.
+<ce>                    powerful friends. If you cause
+<ce>                    me any trouble, they will hunt
+<ce>                     you down like a rogue thief.
 
 AcceptQuest:  [1002]
 <ce>                       You must get the daedric
-<ce>                     _ingredient_ from ___dungeon_.
+<ce>                    _ingredient_ from ___dungeon_.
 <ce>                    I don't know where that is, but
 <ce>                       I'm sure you can find it.
 <ce>                       When you have the daedric
-<ce>                        _ingredient_ bring it to
-<ce>                      _meetingplace_ here in town.
+<ce>                       _ingredient_ bring it to
+<ce>                     _meetingplace_ here in town.
 <ce>                     There you will meet _qgiver_,
-<ce>                  and %g will give you the _artifact_.
+<ce>                 and %g will give you the _artifact_.
 
 RumorsDuringQuest:  [1005]
 <ce>                     I hear the king is making an
@@ -46,7 +46,7 @@ RumorsPostfailure:  [1006]
 
 RumorsPostsuccess:  [1007]
 <ce>                      Stay away from _qgiver_. I
-<ce>                     hear %g is a liar and a cheat.
+<ce>                    hear %g is a liar and a cheat.
 
 QuestorPostsuccess:  [1008]
 <ce>                Sorry about the incident with _qgiver_.
@@ -55,8 +55,8 @@ QuestorPostsuccess:  [1008]
 
 QuestorPostfailure:  [1009]
 <ce>                  That business with _qgiver_ wasn't
-<ce>                  my fault. I'm not about to get mixed
-<ce>                up with you now, so just leave me alone.
+<ce>                 my fault. I'm not about to get mixed
+<ce>               up with you now, so just leave me alone.
 
 QuestLogEntry:  [1010]
 On %qdt,
@@ -81,17 +81,17 @@ On %qdt,
 
 Message:  1012
 <ce>               I will fight you to the death to protect
-<ce>                  the daedric _ingredient_. You should
+<ce>                 the daedric _ingredient_. You should
 <ce>                   know that _qgiver_ is not what %g
-<ce>                  seems. The _artifact_ is a long lost
+<ce>                 seems. The _artifact_ is a long lost
 <ce>                 item of great power that %g has never
 <ce>                  owned. %g means to kill you once %g
 <ce>                     has possession of the daedric
 <ce>                    _ingredient_. Cease this futile
-<ce>                  attack and I will give you a magical
-<ce>                     token that can render _qgiver_
-<ce>                  helpless. If you kill %g2, I can see
-<ce>                    to it that the Mages Guild looks
+<ce>                 attack and I will give you a magical
+<ce>                    token that can render _qgiver_
+<ce>                 helpless. If you kill %g2, I can see
+<ce>                   to it that the Mages Guild looks
 <ce>                   favorably upon you for quite some
 <ce>                     time. Do you accept my offer?
 
@@ -99,40 +99,40 @@ Message:  1013
 <ce>                      Fool! Did you really think
 <ce>                       that I would give you the
 <ce>                          _artifact_ for this
-<ce>                     daedric _ingredient_? The only
-<ce>                        reward I have for you is
+<ce>                    daedric _ingredient_? The only
+<ce>                       reward I have for you is
 <ce>                       death! See me as I really
 <ce>                       am and tremble in fear. I
-<ce>                          am =orc_. Kill him!
+<ce>                        am =monster_. Kill him!
 
 Message:  1014
 <ce>                     Wha ... I have been betrayed!
-<ce>                      You have broken the illusion
+<ce>                     You have broken the illusion
 <ce>                      and cast a spell of silence
 <ce>                     on me. That cursed _guardian_
-<ce>                     =guardian_ put you up to this,
+<ce>                    =guardian_ put you up to this,
 <ce>                     didn't %g? To arms!  Help me!
-<ce>                                To arms!
+<ce>                               To arms!
 
 Message:  1015
 <ce>                      In your mind, you hear the
-<ce>                        soft whisper of an alien
-<ce>                           voice, "Well done,
+<ce>                       soft whisper of an alien
+<ce>                          voice, "Well done,
 <ce>                             %pcn. Slaying
-<ce>                         _qgiver_, or =monster_
+<ce>                        _qgiver_, or =monster_
 <ce>                       as %g is known to %g3 own
-<ce>                        people, has earned you a
-<ce>                         reward. Members of the
-<ce>                       Mage's Guild now trust you
-<ce>                         far more than before."
+<ce>                       people, has earned you a
+<ce>                        reward. Members of the
+<ce>                      Mage's Guild now trust you
+<ce>                        far more than before."
 
 Message:  1020
 <ce>                       You have a truly devious
-<ce>                        mind. I admire that. But
+<ce>                       mind. I admire that. But
 <ce>                       you should know that I am
 <ce>                        not to be trifled with.
-<ce>                        I take back my token and
-<ce>                       curse you to be mistrusted
+<ce>                       I take back my token and
+<ce>                      curse you to be mistrusted
 <ce>                         by my closest allies.
 
 Message:  1025
@@ -155,8 +155,7 @@ Prepare to die!
 --              %pcn occurs 1 time.
 --              %qdt occurs 2 times.
 --        =guardian_ occurs 1 time.
---         =monster_ occurs 1 time.
---             =orc_ occurs 2 times.
+--         =monster_ occurs 3 times.
 --         ___agent_ occurs 1 time.
 --       ___dungeon_ occurs 3 times.
 --   __meetingplace_ occurs 3 times.
@@ -200,8 +199,8 @@ Foe _daedras_ is Daedroth
 _giveingredient_ task:
 	toting _ingredient_ and _qgiver_ clicked saying 1013 
 	give item _ingredient_ to _monster_ 
-	cast Spell_Reflection spell on _monster_ 
 	cast Shield spell on _monster_ 
+	cast Spell_Reflection spell on _monster_ 
 
 _hitguardian_ task:
 	injured _guardian_ 
@@ -244,8 +243,11 @@ _revealmonsters_ task:
 	hide npc _qgiver_ 
 	place foe _monster_ at _meetingplace_ 
 
-_betrayguardian_ task:
+_S.11_ task:
 	killed 1 _guardian_ 
+
+_betrayguardian_ task:
+	when yes and _S.11_ 
 	create foe _daedras_ every 1 minutes 3 times with 100% success 
 	take _token_ from pc saying 1020 
 	change repute with _dummydarkb_ by -75 

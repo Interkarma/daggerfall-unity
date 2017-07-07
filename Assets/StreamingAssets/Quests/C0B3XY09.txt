@@ -11,25 +11,25 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                           %pcn, my name is
-<ce>                           _qgiver_. %god has
+<ce>                          _qgiver_. %god has
 <ce>                        prophesied a great evil
 <ce>                        growing in the heart of
-<ce>                          a nearby dungeon. We
-<ce>                         need you to go destroy
-<ce>                          this thing. Will you
-<ce>                                 do it?
+<ce>                         a nearby dungeon. We
+<ce>                        need you to go destroy
+<ce>                         this thing. Will you
+<ce>                                do it?
 
 RefuseQuest:  [1001]
 <ce>                       I have no time to spare.
-<ce>                         I must find someone to
+<ce>                        I must find someone to
 <ce>                          take up this quest.
 
 AcceptQuest:  [1002]
 <ce>                      There is no time to waste.
-<ce>                       Travel to the ___dungeon_.
+<ce>                      Travel to the ___dungeon_.
 <ce>                        There you will find the
 <ce>                        _evilfocus_. Destroy it
-<ce>                    within =traveltime_ days and all
+<ce>                   within =traveltime_ days and all
 <ce>                         will be well again. A
 <ce>                        sign will appear in the
 <ce>                       temple when this is done.
@@ -39,8 +39,8 @@ AcceptQuest:  [1002]
 QuestComplete:  [1004]
 <ce>                          %pcn, you have the
 <ce>                       thanks of all our clergy.
-<ce>                              The evil has
-<ce>                          been destroyed. As I
+<ce>                             The evil has
+<ce>                         been destroyed. As I
 <ce>                     promised, here is _gold_ gold
 <ce>                        pieces for your reward.
 
@@ -76,17 +76,17 @@ Message:  1011
 <ce>                   As you reach for the _evilfocus_
 <ce>                 it transforms into a beautiful woman.
 <ce>                                    
-<ce>                       What a tasty young mortal!
+<ce>                      What a tasty young mortal!
 <ce>                       I see you came to destroy
 <ce>                        the _evilfocus_. I have
-<ce>                        a better idea. If I give
+<ce>                       a better idea. If I give
 <ce>                      you this magic _magicitem_,
 <ce>                       you go back to the temple
-<ce>                         and tell them that you
-<ce>                     couldn't find the _evilfocus_.
-<ce>                       They can hardly blame you,
+<ce>                        and tell them that you
+<ce>                    couldn't find the _evilfocus_.
+<ce>                      They can hardly blame you,
 <ce>                        and you get to keep the
-<ce>                              _magicitem_.
+<ce>                             _magicitem_.
 
 Message:  1012
 <ce>                        Then die like the pious
@@ -99,9 +99,9 @@ Message:  1012
 --              %pcn occurs 2 times.
 --              %qdt occurs 1 time.
 --      =traveltime_ occurs 2 times.
---       ___dungeon_ occurs 5 times.
+--       ___dungeon_ occurs 8 times.
 --        ___qgiver_ occurs 4 times.
---       _evilfocus_ occurs 7 times.
+--       _evilfocus_ occurs 9 times.
 --            _gold_ occurs 1 time.
 --       _magicitem_ occurs 2 times.
 --          _qgiver_ occurs 2 times.
@@ -143,7 +143,7 @@ yes task:
 	get item _magicitem_ 
 	make _magicitem_ permanent 
 	change repute with _qgiver_ by -10 
-	restrain foe _guardian_ 
+	end quest 
 
 until yes performed:
 	injured _guardian_ 
@@ -156,11 +156,7 @@ _no_ task:
 	create foe _F.03_ every 3 minutes 1 times with 100% success 
 	say 1012 
 
-variable _gem1_
-variable _bear_
-variable _gem3_
-variable _gem4_
-_S.08_ task:
+_S.04_ task:
 	killed 1 _guardian_ 
 
 _questdone_ task:
@@ -169,5 +165,5 @@ _questdone_ task:
 	end quest 
 
 _clearclick_ task:
-	when _questdone_ and not _S.08_ 
+	when _questdone_ and not _S.04_ 
 	clear _questdone_ 

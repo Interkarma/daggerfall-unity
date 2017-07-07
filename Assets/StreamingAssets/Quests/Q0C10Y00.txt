@@ -151,10 +151,9 @@ Foe _skeleton_ is Skeletal_warrior
 	reveal _dungeon2_ 
 	reveal _dungeon1_ 
 	log 1015 step 0 
-	pc at _dungeon1_ set _S.14_ 
-	pc at _dungeon2_ set _S.18_ 
+	pc at _dungeon1_ set _S.10_ 
+	pc at _dungeon2_ set _S.14_ 
 
-variable _pcgetsgold_
 _pchasitem1_ task:
 	toting _item1_ and _qgiver_ clicked 
 
@@ -164,15 +163,8 @@ _pchasitem2_ task:
 _pchasitem3_ task:
 	toting _item3_ and _qgiver_ clicked 
 
-_S.04_ task:
-	when _batty_ and _S.16_ and _S.17_ 
-
-variable _qgclicked_
 _queston_ task:
 	end quest 
-
-_clearclick_ task:
-	clear _qgclicked_ _clearclick_ 
 
 _a1_ task:
 	create foe _zombie_ every 15 minutes 5 times with 5% success 
@@ -186,38 +178,34 @@ _a3_ task:
 	create foe _skeleton_ every 12 minutes 5 times with 5% success 
 	place foe _skeleton_ at _dungeon1_ 
 
-_a3_ task:
+_a4_ task:
 	create foe _F.00_ every 10 minutes 5 times with 5% success 
 	place foe _F.00_ at _dungeon2_ 
 
-_a4_ task:
+_a5_ task:
 	create foe _spriggan_ every 15 minutes 5 times with 5% success 
 	place foe _spriggan_ at _dungeon2_ 
 
-_a5_ task:
+_a6_ task:
 	create foe _wereboar_ every 12 minutes 5 times with 5% success 
 	place foe _wereboar_ at _dungeon2_ 
 
-_S.14_ task:
+_S.10_ task:
 	pick one of _a1_ _a2_ _a3_ _a1_ 
 
 _batty_ task:
 	clicked item _item1_ say 1021 
 
-_S.16_ task:
+_S.12_ task:
 	clicked item _item2_ say 1022 
 
-_S.17_ task:
+_S.13_ task:
 	clicked item _item3_ say 1023 
 
-_S.18_ task:
-	pick one of _a3_ _a4_ _a5_ _a3_ 
+_S.14_ task:
+	pick one of _a4_ _a5_ _a6_ _a4_ 
 
-variable _S.19_
-variable _S.20_
-_S.21_ task:
+_S.15_ task:
 	when _pchasitem1_ and _pchasitem2_ and _pchasitem3_ 
 	give pc _reward1_ and _reward2_ and _reward3_ 
 	end quest 
-
-variable _S.22_

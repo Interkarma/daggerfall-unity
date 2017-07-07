@@ -12,37 +12,37 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                   Something's come up. I don't know
 <ce>                   who else could handle it but you,
-<ce>                           %pcf. There's this
+<ce>                          %pcf. There's this
 <ce>                      bad critter in ___mondung_,
 <ce>                   a Daedroth. Now, I ain't lying --
-<ce>                    no one knows why it's there, but
-<ce>                  everyone wants it gone. For _reward_
-<ce>                    gold, you think you could handle
+<ce>                   no one knows why it's there, but
+<ce>                 everyone wants it gone. For _reward_
+<ce>                   gold, you think you could handle
 <ce>                               it, %pcf?
 
 RefuseQuest:  [1001]
 <ce>                       I don't blame you, %pcf.
-<ce>                       I wouldn't wanna take on a
-<ce>                            Daedroth either.
+<ce>                      I wouldn't wanna take on a
+<ce>                           Daedroth either.
 
 AcceptQuest:  [1002]
 <ce>                   Hey, alright, your funeral, %pcf.
 <ce>                  Listen, knock off that Daedroth and
 <ce>                 get back here in =1stparton_ days for
-<ce>                   your reward. I don't know how long
+<ce>                  your reward. I don't know how long
 <ce>                that thing's gonna be around, so you're
-<ce>                    gonna want to move your ass. And
-<ce>                       listen to me on this, %pcf
+<ce>                   gonna want to move your ass. And
+<ce>                      listen to me on this, %pcf
 <ce>                 -- go prepared for a hell of a fight.
 
 QuestFail:  [1003]
 <ce>                   Are you waiting for that Daedroth
-<ce>                        to die of old age, %pcf?
+<ce>                       to die of old age, %pcf?
 
 QuestComplete:  [1004]
 <ce>                       Hey, you're a better %ra
 <ce>                    than me, %pcf. Daedroth-killer.
-<ce>                      I like it. Here's your gold.
+<ce>                     I like it. Here's your gold.
 
 RumorsDuringQuest:  [1005]
 I don't know what that big lizard thing is in ___mondung_, but I don't like it.
@@ -61,15 +61,15 @@ I wonder what that big nasty lizard thing was anyway.
 
 QuestorPostsuccess:  [1008]
 <ce>                 You're the %ra that slew the Daedroth
-<ce>                         in ___mondung_ for me.
+<ce>                        in ___mondung_ for me.
 <ce>                        Let me shake your hand.
 
 QuestorPostfailure:  [1009]
 <ce>                  Failure is not taken lightly in the
 <ce>                Fighter's Guild. If you couldn't handle
-<ce>                  a Daedroth, you shouldn't have taken
+<ce>                 a Daedroth, you shouldn't have taken
 <ce>                 the job. I've got better things to do
-<ce>                   than waste my time talking to you.
+<ce>                  than waste my time talking to you.
 
 Message:  1020
 <ce>                         The Daedroth is dead.
@@ -83,7 +83,7 @@ Message:  1030
 Message:  1080
 <ce>                 Since you didn't even blink at offing
 <ce>               a Daedroth, take this map to ___newdung_.
-<ce>                   Plenty of fun for a %pct like you.
+<ce>                  Plenty of fun for a %pct like you.
 
 
 -- Symbols used in the QRC file:
@@ -94,7 +94,7 @@ Message:  1080
 --              %qdt occurs 1 time.
 --               %ra occurs 2 times.
 --       =1stparton_ occurs 2 times.
---       ___mondung_ occurs 5 times.
+--       ___mondung_ occurs 6 times.
 --       ___newdung_ occurs 1 time.
 --    ___questgiver_ occurs 1 time.
 --          _reward_ occurs 2 times.
@@ -121,11 +121,9 @@ Foe _monster_ is Daedroth
 _pcgetsgold_ task:
 	when _qgclicked_ and _mondead_ 
 	give pc _reward_ 
-	end quest 
 
 _mondead_ task:
 	killed 1 _monster_ saying 1020 
-	say 1020 
 
 _qgclicked_ task:
 	clicked npc _questgiver_ 
@@ -142,3 +140,10 @@ variable _nomap_
 _S.07_ task:
 	when _map_ and _pcgetsgold_ 
 	reveal _newdung_ saying 1080 
+
+_S.08_ task:
+	when _nomap_ and _pcgetsgold_ 
+
+_S.09_ task:
+	when _S.07_ or _S.08_ 
+	end quest 

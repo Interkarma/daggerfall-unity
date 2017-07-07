@@ -1,5 +1,3 @@
---+ DisplayName: Tutorial
-
 -- Quest: C:\QUESTS\WORKING\_TUTOR__.Qbn.
 -- StartsBy: letter
 -- Questee: anyone
@@ -12,13 +10,13 @@ QRC:
 
 RumorsDuringQuest:  [1005]
 <ce>                       I'll give you a hint %ra.
-<ce>                    If you want to succeed in magic,
+<ce>                   If you want to succeed in magic,
 <ce>                         join the mages guild.
                                      <--->
 <ce>                  A small tip for you. Put your money
 <ce>                  in the bank of %reg. Have them give
-<ce>                   you letters of credit. They hardly
-<ce>                             weigh a thing.
+<ce>                  you letters of credit. They hardly
+<ce>                            weigh a thing.
                                      <--->
 <ce>                  Specialty shops are the best place
 <ce>                         to find unsual items.
@@ -34,19 +32,19 @@ RumorsDuringQuest:  [1005]
 
 RumorsPostfailure:  [1006]
 <ce>                    Things are really heating up in
-<ce>                   the city of Daggerfall. You should
+<ce>                  the city of Daggerfall. You should
 <ce>                    go there if you want adventure.
                                      <--->
 <ce>                    I've heard that the royalty of
-<ce>                   Wayrest is stirring things up. Its
-<ce>                     a great opportunity for anyone
+<ce>                  Wayrest is stirring things up. Its
+<ce>                    a great opportunity for anyone
 <ce>                   with the guts to actually ask the
 <ce>                        king or queen for work.
                                      <--->
 <ce>                     I've heard that Sentinel is a
 <ce>                   good place to earn quick gold and
-<ce>                      the opportunity for a bit of
-<ce>                     adventure. The royal family is
+<ce>                     the opportunity for a bit of
+<ce>                    adventure. The royal family is
 <ce>                   hiring heroes for dangerous work.
 
 QuestLogEntry:  [1010]
@@ -60,45 +58,45 @@ Message:  1012
 <ce>                           Tutorial Lesson 1
 <ce>                                    
 <ce>           The very first thing you want to do is experiment
-<ce>             with moving your character around. Don't worry
-<ce>           about monsters, there are none in this first room.
+<ce>            with moving your character around. Don't worry
+<ce>          about monsters, there are none in this first room.
 <ce>                                    
-<ce>            When this text clears, move the cursor around on
+<ce>           When this text clears, move the cursor around on
 <ce>           the screen. You'll see it change shape. Hold down
-<ce>            the left mouse button and watch what happens. If
+<ce>           the left mouse button and watch what happens. If
 <ce>            you are using the view based interface, it will
 <ce>                     change where you are looking.
 <ce>                                    
-<ce>            Hint: The closer the arrow is to the edge of the
+<ce>           Hint: The closer the arrow is to the edge of the
 <ce>                   screen, the faster you will move.
 <ce>                                    
-<ce>           I'll be back in about one minute to tell you about
-<ce>                 arming yourself and fighting monsters.
+<ce>          I'll be back in about one minute to tell you about
+<ce>                arming yourself and fighting monsters.
 
 Message:  1013
 <ce>                           Tutorial Lesson 2
 <ce>                                    
-<ce>            Before you brave the depths of Privateer's Hold,
-<ce>           you will want to arm yourself. Either click on the
-<ce>               bag icon (inventory), or press the F6 key.
+<ce>           Before you brave the depths of Privateer's Hold,
+<ce>          you will want to arm yourself. Either click on the
+<ce>              bag icon (inventory), or press the F6 key.
 <ce>                                    
-<ce>           Clicking on the weapon puts it into your hand. Now
+<ce>          Clicking on the weapon puts it into your hand. Now
 <ce>          you are able to draw your weapon. Click on the EXIT
-<ce>                     button to go back to the game.
+<ce>                    button to go back to the game.
 <ce>                                    
-<ce>          Hint: You can have two weapons equipped. Press the H
-<ce>               key to switch back and forth between them.
+<ce>         Hint: You can have two weapons equipped. Press the H
+<ce>              key to switch back and forth between them.
 <ce>                                    
 <ce>           Click YES to continue, NO to cancel the tutorial.
 
 Message:  1015
 <ce>                           Tutorial Lesson 3
 <ce>                                    
-<ce>         To draw your weapon, click on the crossed blades icon,
+<ce>        To draw your weapon, click on the crossed blades icon,
 <ce>        or just press A. There is a short delay after equipping
-<ce>         a weapon, so don't panic if it doesn't draw instantly.
+<ce>        a weapon, so don't panic if it doesn't draw instantly.
 <ce>                                    
-<ce>          Take a few practice swings by holding down the right
+<ce>         Take a few practice swings by holding down the right
 <ce>         mouse button and moving the mouse around. This is how
 <ce>                        you fight the monsters.
 <ce>                                    
@@ -106,30 +104,30 @@ Message:  1015
 <ce>        the sword swing differently. Each type of swing affects
 <ce>      your chances to hit the monster and how much damage you do.
 <ce>                                    
-<ce>         I'll give you a minute to practice swinging the sword.
+<ce>        I'll give you a minute to practice swinging the sword.
 <ce>                                    
 <ce>           Click YES to continue, NO to cancel the tutorial.
 
 Message:  1020
 <ce>                           Tutorial Lesson 4
 <ce>                                    
-<ce>           Down the hall and through the door is a giant rat.
+<ce>          Down the hall and through the door is a giant rat.
 <ce>                           Let's go kill it!
 <ce>                                    
 <ce>           When you get to the door, get the X shaped cursor
-<ce>          on it and press the left mouse button. The door will
-<ce>          swing open. This is how you activate things, such as
+<ce>         on it and press the left mouse button. The door will
+<ce>         swing open. This is how you activate things, such as
 <ce>          doors, levers, wheels, treasure piles, even people.
 <ce>                                    
 <ce>          If you are using the view based interface, just get
-<ce>           the door in the center of the screen and press the
-<ce>                        mouse button to open it.
+<ce>          the door in the center of the screen and press the
+<ce>                       mouse button to open it.
 <ce>                                    
-<ce>          Hint: This door is a secret door. After you kill the
-<ce>          rat, go back to it and click it. The door will shut.
-<ce>               Not all secret doors are this easy to see.
+<ce>         Hint: This door is a secret door. After you kill the
+<ce>         rat, go back to it and click it. The door will shut.
+<ce>              Not all secret doors are this easy to see.
 <ce>                                    
-<ce>        I'll be back in a couple of minutes for the next lesson.
+<ce>       I'll be back in a couple of minutes for the next lesson.
 <ce>           Click YES to continue, NO to cancel the tutorial.
 
 Message:  1025
@@ -137,26 +135,26 @@ Message:  1025
 <ce>                                    
 <ce>         There is a pile of treasure on the black altar in the
 <ce>          room with the rat. Get close to it and click on it.
-<ce>          This automatically puts you into your inventory. All
+<ce>         This automatically puts you into your inventory. All
 <ce>          the stuff in the treasure pile is in the right hand
 <ce>                       column of your inventory.
 <ce>                                    
-<ce>          You have two modes to choose from, EQUIP and REMOVE.
+<ce>         You have two modes to choose from, EQUIP and REMOVE.
 <ce>          Click one of them. Now when you click on an item in
 <ce>         the right column, it goes into your inventory (REMOVE
 <ce>          mode) or directly onto your character (EQUIP mode).
 <ce>                                    
-<ce>             Hint: You can get information on your items by
+<ce>            Hint: You can get information on your items by
 <ce>            using the INFO mode and then clicking the item.
 <ce>                                    
-<ce>           I'll be back in one minute for a save game lesson.
+<ce>          I'll be back in one minute for a save game lesson.
 <ce>           Click YES to continue, NO to cancel the tutorial.
 
 Message:  1030
 <ce>                           Tutorial Lesson 6
 <ce>                                    
-<ce>          This would be a good time to save the game (assuming
-<ce>          you are not in the middle of a fight). Press the ESC
+<ce>         This would be a good time to save the game (assuming
+<ce>         you are not in the middle of a fight). Press the ESC
 <ce>          key and click on SAVE GAME. Double click one of the
 <ce>             empty boxes and it will save your game there.
 <ce>                                    
@@ -164,114 +162,114 @@ Message:  1030
 <ce>       that saved game without having to create a new character.
 <ce>                                    
 <ce>        Hint: You can sometimes get treasure off of dead bodies
-<ce>             by clicking on them, just like treasure piles.
+<ce>            by clicking on them, just like treasure piles.
 <ce>                                    
-<ce>          I'll leave you for several minutes now. Go ahead and
+<ce>         I'll leave you for several minutes now. Go ahead and
 <ce>           explore the dungeon. Click YES to continue, NO to
-<ce>                          cancel the tutorial.
+<ce>                         cancel the tutorial.
 
 Message:  1035
 <ce>                           Tutorial Lesson 7
 <ce>                                    
-<ce>           If you have a spell casting character, try using a
+<ce>          If you have a spell casting character, try using a
 <ce>                    spell against the next monster.
 <ce>                                    
 <ce>          Press the BACKSPACE key to pull up the spells menu.
-<ce>         select SHOCK by double clicking on it. This spell will
-<ce>         only work if you are close enough to touch the monster
-<ce>             To cast the spell, press the left mouse button
+<ce>        select SHOCK by double clicking on it. This spell will
+<ce>        only work if you are close enough to touch the monster
+<ce>            To cast the spell, press the left mouse button
 <ce>          anytime it is an X shape. In view based mode spells
 <ce>             are always fired at the center of the screen.
 <ce>                                    
 <ce>         Hint: You can fire spells or activate objects even if
 <ce>       the cursor is not an X if you use the right mouse button.
-<ce>                                   
+<ce>                                    
 <ce>           I'll wait until you have escaped from the dungeon
-<ce>                     for your next tutorial lesson.
+<ce>                    for your next tutorial lesson.
 
 Message:  1040
 <ce>                           Tutorial Lesson 8
 <ce>                                    
-<ce>          Congratulations! You have made it out of the starter
-<ce>                      dungeon, Privateer's Hold. 
+<ce>         Congratulations! You have made it out of the starter
+<ce>                      dungeon, Privateer's Hold.
 <ce>         I bet you are wondering what to do now? What you need
-<ce>            is a town. Towns have the services you will need
+<ce>           is a town. Towns have the services you will need
 <ce>             throughout the game. Lets fast travel to one.
 <ce>                                    
-<ce>                             (continued...)
+<ce>                            (continued...)
 
 Message:  1041
 <ce>         Fast travel is done by pressing the W key. The region
 <ce>          that you are (Daggerfall) in is highlighted in red.
 <ce>         Click on that region and you get a blow up map. There
-<ce>         are a lot of places on this map! Lets find the city of
-<ce>             Daggerfall. Click FIND and type in DAGGERFALL.
-<ce>            The most convenient way to travel is by clicking
-<ce>           CAUTIOUSLY and INNS, both of which are the default
-<ce>           settings. Otherwise you risk arriving at night and
+<ce>        are a lot of places on this map! Lets find the city of
+<ce>            Daggerfall. Click FIND and type in DAGGERFALL.
+<ce>           The most convenient way to travel is by clicking
+<ce>          CAUTIOUSLY and INNS, both of which are the default
+<ce>          settings. Otherwise you risk arriving at night and
 <ce>              having to climb the walls to get into town.
 <ce>                                    
 <ce>           For this tutorial to continue, you should go to a
 <ce>           large city, such as the city of Daggerfall. We'll
 <ce>           pick up the lessons again in =2dagger_ days. This
-<ce>              should give you plenty of time to get there.
+<ce>             should give you plenty of time to get there.
 
 QuestTimeLapse:  [1045]
 <ce>                           Tutorial Lesson 9
 <ce>                                    
 <ce>         Ah, the sights and sounds of the city! Did you arrive
 <ce>        at night or try to rest? If so, the guards will not let
-<ce>          anyone sleep in the streets or even too close to the
-<ce>            walls. You can only rest in Taverns, if you have
+<ce>         anyone sleep in the streets or even too close to the
+<ce>           walls. You can only rest in Taverns, if you have
 <ce>                        purchased a room there.
 <ce>                                    
-<ce>           The first thing you want to do is set your mode to
-<ce>          DIALOGUE. Click on the hand icon until it changes to
-<ce>         a word balloon, or just press F4. Now get close to one
+<ce>          The first thing you want to do is set your mode to
+<ce>         DIALOGUE. Click on the hand icon until it changes to
+<ce>        a word balloon, or just press F4. Now get close to one
 <ce>        of the townsfolk. They won't stop to talk to you unless
-<ce>          you are not moving. Click on the person and you will
+<ce>         you are not moving. Click on the person and you will
 <ce>                  be placed into the Dialogue screen.
 <ce>                                    
-<ce>                             (continued...)
+<ce>                            (continued...)
 
 Message:  1046
 <ce>        You want to find a general store or weaponsmith. It is
-<ce>          one of the places you can sell your excess gear. The
+<ce>         one of the places you can sell your excess gear. The
 <ce>          person will probably give you directions. Travel in
 <ce>       that direction for a while and then ask another passerby.
-<ce>      Continue this until somebody marks the location on your map.
+<ce>     Continue this until somebody marks the location on your map.
 <ce>                                    
 <ce>        Press M to view the map of the city. You should be able
 <ce>        to tell where the building is from that. All shops have
-<ce>        signs out front. Learn the signs and you will be able to
+<ce>       signs out front. Learn the signs and you will be able to
 <ce>        get around much easier. You will need a tavern to rest.
 <ce>                     look for the mug of ale sign.
 <ce>                                    
 <ce>       Hint: Pressing F3 switchs you to INFO mode. You can click
-<ce>       on buildings to learn what they are. Some shops don't open
+<ce>      on buildings to learn what they are. Some shops don't open
 <ce>      until late in the day. You can loiter (a REST option) until
-<ce>               the shopkeeper decides to unlock the door.
+<ce>              the shopkeeper decides to unlock the door.
 <ce>                                    
-<ce>        Don't leave town! I'll check in with you again tomorrow.
+<ce>       Don't leave town! I'll check in with you again tomorrow.
 
 Message:  1050
 <ce>                          Tutorial Lesson 10
 <ce>                                    
-<ce>       Today's lesson is about guilds. A guild is an organization
+<ce>      Today's lesson is about guilds. A guild is an organization
 <ce>       that offers benefits for its members. As you rise in rank
 <ce>        in a guild, you get more benefits. To rise in rank, you
 <ce>        must improve skills that guild cares about, and perform
 <ce>       quests on a regular basis to improve your reputation with
-<ce>              them. You can belong to more than one guild.
+<ce>             them. You can belong to more than one guild.
 <ce>                                    
-<ce>         All spellcasters should join the Mages Guild. Everyone
-<ce>         should pick a temple to join. However, pick carefully.
-<ce>          You can only be a member of one temple. Fighter type
-<ce>         characters should join either the fighter's guild or a
+<ce>        All spellcasters should join the Mages Guild. Everyone
+<ce>        should pick a temple to join. However, pick carefully.
+<ce>         You can only be a member of one temple. Fighter type
+<ce>        characters should join either the fighter's guild or a
 <ce>                            knightly order.
 <ce>                                    
-<ce>          Hint: Thieves and murderers, just do your thing. The
-<ce>               underworld will contact you after a while.
+<ce>         Hint: Thieves and murderers, just do your thing. The
+<ce>              underworld will contact you after a while.
 <ce>                                    
 <ce>              I'll be back tomorrow with the next lesson.
 
@@ -279,24 +277,24 @@ Message:  1055
 <ce>                          Tutorial Lesson 11
 <ce>                                    
 <ce>        Today we want a quest. A quest is an adventure given by
-<ce>       someone in town. Its amazing how many people in Daggerfall
+<ce>      someone in town. Its amazing how many people in Daggerfall
 <ce>             need the services of a brave hero or heroine.
 <ce>                                    
-<ce>       Go to someone in a tavern or on the street. Ask them about
-<ce>        work. Odds are that they will direct you to someone else
+<ce>      Go to someone in a tavern or on the street. Ask them about
+<ce>       work. Odds are that they will direct you to someone else
 <ce>      in town. That person will offer you a quest. You don't have
-<ce>      to take every quest that is offered. Successfully completing
+<ce>     to take every quest that is offered. Successfully completing
 <ce>       a quest means that person, and his friends, will like you
 <ce>       a little better. It can also be profitable. Last, but not
- least, it is the best way to locate dungeons!
+<ce>             least, it is the best way to locate dungeons!
 
 Message:  1056
 <ce>        This is the last of the tutorial lessons. There is much
-<ce>        more to learn about Tamriel and about the game. However,
-<ce>         you now have the basics to be able to expore and learn
+<ce>       more to learn about Tamriel and about the game. However,
+<ce>        you now have the basics to be able to expore and learn
 <ce>                       these things on your own.
 <ce>                                    
-<ce>                        Good luck, and have fun!
+<ce>                       Good luck, and have fun!
 
 
 -- Symbols used in the QRC file:
@@ -309,17 +307,18 @@ QBN:
 
 
 Place pirateerHold permanent PirateerHold2
-Place cityOfDaggerfall permanent DaggerfallCity2
+Place cityOfDaggerfall permanent DaggerfallCity1
 
 Clock _S.03_ 00:06 0 flag 1 range 0 1
 Clock _S.04_ 00:08 0 flag 1 range 0 1
 Clock _S.05_ 00:24 0 flag 1 range 0 1
 Clock _S.06_ 00:12 0 flag 1 range 0 1
 Clock _S.07_ 00:06 0 flag 1 range 0 1
+Clock _S.08_ 00:08 0 flag 1 range 0 1
 Clock _S.10_ 14.00:00 0 flag 1 range 0 1
 Clock _day1_ 1.00:00 0 flag 1 range 0 1
 Clock _day2_ 1.00:00 0 flag 1 range 0 1
-Clock _2dagger_ 6.22:40 0 flag 1 range 0 1
+Clock _2dagger_ 13.22:40 0 flag 1 range 0 1
 
 
 --	Quest start-up:
@@ -332,6 +331,7 @@ yes task:
 	say 1012 
 
 _no_ task:
+	start quest 977 977 
 	end quest 
 
 _S.03_ task:
@@ -349,7 +349,9 @@ _S.06_ task:
 _S.07_ task:
 	prompt 1030 yes _ring_ no _no_ 
 
-variable _S.08_
+_S.08_ task:
+	prompt 1035 yes _S.09_ no _no_ 
+
 variable _S.09_
 variable _S.10_
 variable _used_
@@ -357,11 +359,13 @@ _day1_ task:
 	prompt 1050 yes _poet_ no _no_ 
 
 _day2_ task:
+	start quest 977 977 
 	say 1055 
 	say 1056 
 	end quest 
 
 _2dagger_ task:
+	start quest 977 977 
 	end quest 
 
 _S.15_ task:
@@ -382,7 +386,9 @@ _yes3_ task:
 _yes4_ task:
 	start timer _S.07_ 
 
-variable _ring_
+_ring_ task:
+	start timer _S.08_ 
+
 _yes6_ task:
 	start timer _2dagger_ 
 

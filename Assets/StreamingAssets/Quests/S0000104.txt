@@ -16,7 +16,7 @@ Message:  1015
                                      <--->
 <ce>                  I have come for the Totem of Tiber
 <ce>                    Septim. You will join the ranks
-<ce>                              of the dead.
+<ce>                             of the dead.
 
 
 -- Symbols used in the QRC file:
@@ -27,7 +27,7 @@ QBN:
 
 
 Clock _S.01_ 01:15 0 flag 1 range 0 1
-Clock _S.02_ 44.10:40 0 flag 1 range 0 1
+Clock _S.02_ 444.10:40 0 flag 1 range 0 1
 
 Foe _F.00_ is 3 Frost_daedra
 Foe _F.01_ is 3 Fire_daedra
@@ -48,3 +48,20 @@ _S.01_ task:
 
 _S.02_ task:
 	end quest 
+
+GothrydGotTotem _S.03_
+KingOfWormsGotTotem _S.04_
+GortwogGotTotem _S.05_
+AkorithiGotTotem _S.06_
+UnderkingGotTotem _S.07_
+EadwyreGotTotem _S.08_
+BrisiennaGotTotem _S.09_
+_S.10_ task:
+	when _S.03_ or _S.04_ or _S.05_ or _S.06_ 
+
+_S.11_ task:
+	when _S.07_ or _S.08_ or _S.09_ 
+
+_S.12_ task:
+	when _S.10_ or _S.11_ 
+	start task _S.02_ 

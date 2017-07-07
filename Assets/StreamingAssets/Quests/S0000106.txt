@@ -60,10 +60,14 @@ Person _zen_ face 1 faction The_Resolution_of_Z'en
 Person _P.15_ face 1 faction The_Merchants
 
 
+Clock _delay_ 00:01 0 flag 1 range 0 1
 
 
 --	Quest start-up:
-	change repute with _P.15_ by +100 
+	start timer _delay_ 
+
+_delay_ task:
+	change repute with _P.12_ by +100 
 	change repute with _akorithi_ by +100 
 	change repute with _P.13_ by +100 
 	change repute with _P.06_ by +100 
@@ -75,7 +79,7 @@ Person _P.15_ face 1 faction The_Merchants
 	change repute with _P.07_ by +100 
 	change repute with _magesguild_ by +100 
 	change repute with _gogo_ by +100 
-	change repute with _P.12_ by +100 
+	change repute with _P.15_ by +100 
 	change repute with _queston2_ by +100 
 	change repute with _thievesguild_ by +100 
 	change repute with _zen_ by +100 

@@ -9,14 +9,14 @@ QRC:
 Message:  1015
 <ce>                 Queen Akorithi has sent us to relieve
 <ce>                 you of a heavy burden. The Totem must
-<ce>                   be such a weight on your mind. Its
+<ce>                  be such a weight on your mind. Its
 <ce>                 too bad you didn't try harder to stay
 <ce>                 on her good side. She also ordered us
-<ce>                  to kill you. No witnesses of course.
+<ce>                 to kill you. No witnesses of course.
                                      <--->
 <ce>                     We're here to kill you %pcn.
-<ce>                   No hard feelings. We just want the
-<ce>                      Totem and you're in the way.
+<ce>                  No hard feelings. We just want the
+<ce>                     Totem and you're in the way.
 
 
 -- Symbols used in the QRC file:
@@ -46,3 +46,20 @@ _S.01_ task:
 
 _S.02_ task:
 	end quest 
+
+GothrydGotTotem _S.03_
+KingOfWormsGotTotem _S.04_
+GortwogGotTotem _S.05_
+AkorithiGotTotem _S.06_
+UnderkingGotTotem _S.07_
+EadwyreGotTotem _S.08_
+BrisiennaGotTotem _S.09_
+_S.10_ task:
+	when _S.03_ or _S.04_ or _S.05_ or _S.06_ 
+
+_S.11_ task:
+	when _S.07_ or _S.08_ or _S.09_ 
+
+_S.12_ task:
+	when _S.10_ or _S.11_ 
+	start task _S.02_ 

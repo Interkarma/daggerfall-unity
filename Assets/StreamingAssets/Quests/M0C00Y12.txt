@@ -11,14 +11,14 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                         My name is _qgiver_.
-<ce>               I don't like handing out jobs to non-guild
+<ce>              I don't like handing out jobs to non-guild
 <ce>              members. You seem like the trustworthy sort
 <ce>              though. Some poor soul brought home a giant
 <ce>             spider's egg that hatched. Seems they mistook
 <ce>             it for a silkworm cocoon. The poor slob can't
 <ce>              afford to pay us to get rid of it. However,
 <ce>               if you take care of it for free the guild
-<ce>              looks good and I'll make sure you look good.
+<ce>             looks good and I'll make sure you look good.
 <ce>                          Are you interested?
 
 RefuseQuest:  [1001]
@@ -29,7 +29,7 @@ AcceptQuest:  [1002]
 <ce>                     This is your shot at the big
 <ce>                      time. The spider is trapped
 <ce>                     in _house_. Kill it today and
-<ce>                    I'll put in a good word for you.
+<ce>                   I'll put in a good word for you.
 
 QuestComplete:  [1004]
 <ce>                          You got spunk %pcf.
@@ -94,6 +94,7 @@ Foe _monster_ is Spider
 	start timer _2dung_ 
 	reveal _house_ 
 	log 1010 step 0 
+	create npc at _house_ 
 	place foe _monster_ at _house_ 
 
 _2dung_ task:

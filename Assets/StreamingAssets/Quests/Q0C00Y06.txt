@@ -11,17 +11,17 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                  We have a potential problem I fear.
-<ce>                  A vampire ancient hateful of witches
+<ce>                 A vampire ancient hateful of witches
 <ce>                  hath moved into an abandoned castle
 <ce>                  in our territory. Obviously this is
-<ce>                    a situation we must remedy, doth
+<ce>                   a situation we must remedy, doth
 <ce>                           thou agree, %pcf?
 
 RefuseQuest:  [1001]
 <ce>                    I can understand thy fear. Only
 <ce>                   the very able or the very foolish
-<ce>                     would agree to slay a vampiric
-<ce>                                ancient.
+<ce>                    would agree to slay a vampiric
+<ce>                               ancient.
 
 AcceptQuest:  [1002]
 <ce>                   Wouldst thou? And yet, a vampiric
@@ -30,18 +30,18 @@ AcceptQuest:  [1002]
 <ce>                     preparation. This creature is
 <ce>                          called =vamprival_,
 <ce>                    and its new sanctuary is called
-<ce>                     ___mondung_. Thou wilt find it
-<ce>                            in ____mondung_.
+<ce>                    ___mondung_. Thou wilt find it
+<ce>                           in ____mondung_.
 <ce>                     I will expect ye back here in
-<ce>                       =1stparton_ nights. Do not
+<ce>                      =1stparton_ nights. Do not
 <ce>                       get thyself killed, %pcf.
 
 QuestFail:  [1003]
 <ce>                      Perhaps you were hoping for
-<ce>                             =vamprival_ to
+<ce>                            =vamprival_ to
 <ce>                       commit suicide? Unlikely.
-<ce>                        You must be the agent of
-<ce>                               %g3 death.
+<ce>                       You must be the agent of
+<ce>                              %g3 death.
 
 QuestComplete:  [1004]
 <ce>                  We could almost hear the screams of
@@ -68,10 +68,10 @@ We have not forgot =vamprival_, %pcf. What may we do for thee?
 
 QuestorPostfailure:  [1009]
 <ce>                        =vamprival_ still walks
-<ce>                   the night, feeding on our sisters.
+<ce>                  the night, feeding on our sisters.
 <ce>                    Thou should have said that thou
 <ce>                    could not defeat it. Go from us
-<ce>                    now. We would not speak further.
+<ce>                   now. We would not speak further.
 
 Message:  1011
 _witch_ is a very nice and intelligent =witch_ at __witch_.
@@ -89,8 +89,8 @@ Message:  1015
  a vampire ancient bent on the destruction
  of the witches of %reg. I
  have promised to have the undead creature
- permanently dead in =1stparton_ days
- and be back in ___witch_.
+ in ___mondung_ permanently dead in
+ =1stparton_ days and be back in ___witch_.
 
 Message:  1020
 <ce>                      You have slain =vamprival_.
@@ -98,19 +98,19 @@ Message:  1020
 
 -- Symbols used in the QRC file:
 --
---               %di occurs 14 times.
---                %g occurs 2 times.
+--               %di occurs 16 times.
+--                %g occurs 4 times.
 --               %g3 occurs 1 time.
---              %god occurs 1 time.
---              %pcf occurs 7 times.
+--              %god occurs 2 times.
+--              %pcf occurs 8 times.
 --              %qdt occurs 1 time.
---               %ra occurs 1 time.
---              %reg occurs 2 times.
+--               %ra occurs 2 times.
+--              %reg occurs 3 times.
 --       =1stparton_ occurs 2 times.
---       =vamprival_ occurs 11 times.
---           =witch_ occurs 5 times.
---      ____mondung_ occurs 7 times.
---         ___witch_ occurs 25 times.
+--       =vamprival_ occurs 14 times.
+--           =witch_ occurs 7 times.
+--      ____mondung_ occurs 11 times.
+--         ___witch_ occurs 26 times.
 
 QBN:
 Item _reward_ magic_item

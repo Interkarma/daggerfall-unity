@@ -13,7 +13,7 @@ QuestorOffer:  [1000]
 <ce>                            %pcn, isn't it?
 <ce>                      Just who I was looking for.
 <ce>                   We have a rather interesting job,
-<ce>                    requiring a bit of brains rather
+<ce>                   requiring a bit of brains rather
 <ce>                    than brawn. Are you interested?
 
 RefuseQuest:  [1001]
@@ -21,37 +21,37 @@ RefuseQuest:  [1001]
 <ce>                      job needed brains didn't I?
 
 AcceptQuest:  [1002]
-<ce>                 Here's the situation.  Seems _dummy_
-<ce>                 has this pet sabertooth tiger -- don't
+<ce>                  Here's the situation. Seems _dummy_
+<ce>                has this pet sabertooth tiger -- don't
 <ce>                 ask -- and it ran off a few days ago.
 <ce>                   %g had it tracked to ___mondung_,
-<ce>                 but now we need someone to go in there
-<ce>                  and bring it out.  Alive.  The trick
-<ce>                  is that it's been trained to respond
-<ce>                 to this bell.  The tiger should become
-<ce>                docile if you ring the bell in its face.
+<ce>                but now we need someone to go in there
+<ce>                  and bring it out. Alive. The trick
+<ce>                 is that it's been trained to respond
+<ce>                 to this bell. The tiger should become
+<ce>               docile if you ring the bell in its face.
 <ce>                  Of course, _dummy_ did say it isn't
 <ce>               trained too well -- are you surprised? --
-<ce>                 so you may have to smack it upside the
-<ce>                head once or twice to get its attention.
-<ce>                 Just don't kill it, OK?  Bring it back
+<ce>                so you may have to smack it upside the
+<ce>               head once or twice to get its attention.
+<ce>                Just don't kill it, OK?  Bring it back
 <ce>                  to _dummy_ at __dummy_ in one piece
-<ce>                   within =qtime_ days, and %g'll pay
-<ce>                      you _gold_ gold.  Good luck.
+<ce>                  within =qtime_ days, and %g'll pay
+<ce>                      you _gold_ gold. Good luck.
 
 QuestFail:  [1003]
-<ce>                    Don't look at me.  The tiger is
-<ce>                       in ___mondung_.  Take your
-<ce>                       little bell and get going.
+<ce>                    Don't look at me. The tiger is
+<ce>                       in ___mondung_. Take your
+<ce>                      little bell and get going.
 
 QuestComplete:  [1004]
 <ce>                  Oh, =tiger_, darling, you're safe!
 <ce>                   Thank you so much for bringing my
-<ce>                    baby back home to me.  I'm sure
+<ce>                    baby back home to me. I'm sure
 <ce>                    he didn't give you any trouble,
-<ce>                   did he?  He's just a big kitty cat
-<ce>                     at heart, wouldn't hurt a fly.
-<ce>                   Here's your _gold_ gold, just like
+<ce>                   did he? He's just a big kitty cat
+<ce>                    at heart, wouldn't hurt a fly.
+<ce>                  Here's your _gold_ gold, just like
 <ce>                   I promised that nice _questgiver_
 <ce>                        at the Fighter's Guild.
 
@@ -60,28 +60,28 @@ RumorsDuringQuest:  [1005]
 <ce>                      ate three people this time.
 
 RumorsPostfailure:  [1006]
-<ce>   _dummy_'s tiger seems to have disappeared for good.  Thank %god!
+<ce>    _dummy_'s tiger seems to have disappeared for good. Thank %god!
 
 RumorsPostsuccess:  [1007]
 <ce>     _dummy_ actually hired someone from the Fighter's Guild to go
-<ce> fetch %g3 pet tiger for %g2.  What sap would take a silly job like that?
+<ce>fetch %g3 pet tiger for %g2. What sap would take a silly job like that?
 
 QuestorPostsuccess:  [1008]
 <ce>                Howdy, %pcf, you old tiger-lover, you!
 
 QuestorPostfailure:  [1009]
 <ce>  I can't really think of an easier job than finding a pet tiger, but
-<ce>           you managed to screw it up.  What do you want now?
+<ce>           you managed to screw it up. What do you want now?
 
 Message:  1020
 %qdt:
- I have been hired by ___dummy_'s
+ I have been hired by ___questgiver_'s
  Fighters Guild to find a pet sabertooth
  tiger that has run off into ___mondung_.
  Supposedly the tiger is trained to respond
  to a bell I was given, but _questgiver_
  warned me that it may not really be trained
- very well.  I am to bring the tiger back
+ very well. I am to bring the tiger back
  to its owner, _dummy_, at __dummy_
  of ___dummy_ within =qtime_ days.
  %g'll pay me _gold_ gold.
@@ -89,13 +89,13 @@ Message:  1020
 Message:  1021
 %qdt:
  I found the tiger in ___mondung_,
- and now it seems to like me.  It has
- started following me, at least.  Now
+ and now it seems to like me. It has
+ started following me, at least. Now
  I just have to get it back to _dummy_
  in ___dummy_.
 
 Message:  1030
-<ce>                     Oops.  You killed the tiger.
+<ce>                      Oops. You killed the tiger.
 <ce>                    I wonder what _dummy_ will say?
 
 Message:  1040
@@ -105,11 +105,11 @@ Message:  1040
 
 Message:  1041
 <ce>                      The tiger's ears perk up at
-<ce>                       the sound of the bell.  It
+<ce>                       the sound of the bell. It
 <ce>                    shakes its great head from side
-<ce>                      to side, and begins emitting
-<ce>                      a low growling sound.  Is it
-<ce>                     purring?  The tiger pads over
+<ce>                     to side, and begins emitting
+<ce>                      a low growling sound. Is it
+<ce>                     purring? The tiger pads over
 <ce>                      and rubs against your legs,
 <ce>                       nearly knocking you over.
 <ce>                                    
@@ -118,12 +118,12 @@ Message:  1041
 Message:  1050
 <ce>                      You horrible horrible %ra!
 <ce>                     I can't believe you killed my
-<ce>                      poor innocent =tiger_.  Just
+<ce>                      poor innocent =tiger_. Just
 <ce>                      a sweet lost kitty, and you
 <ce>                       just had to slaughter it.
-<ce>                        Get out of here at once,
-<ce>                       before I have you arrested
-<ce>                         for murder.  Get out!
+<ce>                       Get out of here at once,
+<ce>                      before I have you arrested
+<ce>                         for murder. Get out!
 
 Message:  1060
 Dear _love_,
@@ -134,33 +134,33 @@ Dear _love_,
  in my thoughts as always, my sweet.
  I am sitting here under a tree, on a
  beautiful afternoon that reminds me
- of you.  Everything reminds me of you,
+ of you. Everything reminds me of you,
  my darling, the shining sun in the sky,
  the chirping birds in the trees, even
  the pretty pet tiger walking with its
- owner over there.  Ha ha!  The tiger has
- gotten loose, the scamp.  It is bounding
- over my way.  See how its coat gleams in
+ owner over there. Ha ha! The tiger has
+ gotten loose, the scamp. It is bounding
+ over my way. See how its coat gleams in
  the sun, like your hair in the firelight.
  Its owner is shouting something and ringing
- a little bell, but it doesn't listen.  Such
- a high spirited beast!  It seems friendly
+ a little bell, but it doesn't listen. Such
+ a high spirited beast! It seems friendly
  enough, here it comes to say hello...
 
 Message:  1061
 <ce>                   Yes, what do you want?  Oh...good
 <ce>                   gracious, a letter from _victim_!
 <ce>                     Why is it stained with blood?
-<ce>                    %g's dead?  Dear me.  %g always
-<ce>                     was so sweet to me, I'm afraid
-<ce>                    %g had the delusion that we were
-<ce>                   in love.  Poor soul, what a tragic
-<ce>                    end.  I certainly appreciate you
-<ce>                    telling me what happened.  I'll
-<ce>                   make sure %g3 family knows.  Here,
+<ce>                    %g's dead?  Dear me. %g always
+<ce>                    was so sweet to me, I'm afraid
+<ce>                   %g had the delusion that we were
+<ce>                   in love. Poor soul, what a tragic
+<ce>                    end. I certainly appreciate you
+<ce>                    telling me what happened. I'll
+<ce>                   make sure %g3 family knows. Here,
 <ce>                    why don't you take this _magic_
-<ce>                     %g gave me.  I certainly don't
-<ce>                          have any use for it.
+<ce>                     %g gave me. I certainly don't
+<ce>                         have any use for it.
 
 
 -- Symbols used in the QRC file:
@@ -175,8 +175,9 @@ Message:  1061
 --               %ra occurs 1 time.
 --           =qtime_ occurs 2 times.
 --           =tiger_ occurs 2 times.
---         ___dummy_ occurs 4 times.
+--         ___dummy_ occurs 3 times.
 --       ___mondung_ occurs 4 times.
+--    ___questgiver_ occurs 1 time.
 --          __dummy_ occurs 2 times.
 --      __lovehouse_ occurs 1 time.
 --           _dummy_ occurs 13 times.
@@ -195,7 +196,7 @@ Item _magic_ magic_item
 
 Person _questgiver_ group Questor male
 Person _victim_ face 1 group Group_6.0
-Person _love_ face 1 group Group_7.1
+Person _love_ face 1 group Group_7.0
 Person _dummy_ group Noble male
 
 Place _mondung_ remote dungeon6
@@ -203,17 +204,18 @@ Place _newdung_ remote dungeon
 Place _lovehouse_ local house2
 
 Clock _qtime_ 00:00 0 flag 17 range 0 2
-Clock _delay_ 00:00 0 flag 1 range 0 2
+Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _tiger_ is Sabretooth_tiger
 
 --	Quest start-up:
 	place item _I.01_ at _mondung_ 
+	dialog link for location _lovehouse_ person _love_ 
 	start timer _qtime_ 
 	reveal _mondung_ 
 	log 1020 step 0 
 	get item _I.00_ 
-	pick one of _victim_ _victim_ _S.11_ _S.11_ 
+	pick one of _S.10_ _S.10_ _S.11_ _S.11_ 
 	place foe _tiger_ at _mondung_ 
 	create npc _dummy_ 
 
@@ -256,10 +258,9 @@ _S.08_ task:
 	unset _S.06_ 
 
 variable _duelist_
-_victim_ task:
+_S.10_ task:
 	_letter_ used do _readletter_ 
 	place item _letter_ at _mondung_ 
-	dialog link for location _lovehouse_ person _love_ 
 	create npc at _lovehouse_ 
 	place npc _love_ at _lovehouse_ 
 

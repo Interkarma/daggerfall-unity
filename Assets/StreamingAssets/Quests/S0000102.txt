@@ -8,17 +8,17 @@ QRC:
 
 Message:  1015
 <ce>                   Gortwog says you must die. We can
-<ce>                   keep all of your stuff, except the
+<ce>                  keep all of your stuff, except the
 <ce>                      Totem, which is his bounty.
                                      <--->
 <ce>                     You %ra have never given orcs
-<ce>                    the proper respect. It will be a
+<ce>                   the proper respect. It will be a
 <ce>                     pleasure to kill you for King
-<ce>                    Gortwog and bring him the Totem.
+<ce>                   Gortwog and bring him the Totem.
                                      <--->
 <ce>                     King Gortwog says you are an
-<ce>                       untrustworthy %ra. I am to
-<ce>                    kill you and take him the Totem.
+<ce>                      untrustworthy %ra. I am to
+<ce>                   kill you and take him the Totem.
 
 
 -- Symbols used in the QRC file:
@@ -51,3 +51,20 @@ _S.01_ task:
 
 _S.02_ task:
 	end quest 
+
+GothrydGotTotem _S.03_
+KingOfWormsGotTotem _S.04_
+GortwogGotTotem _S.05_
+AkorithiGotTotem _S.06_
+UnderkingGotTotem _S.07_
+EadwyreGotTotem _S.08_
+BrisiennaGotTotem _S.09_
+_S.10_ task:
+	when _S.03_ or _S.04_ or _S.05_ or _S.06_ 
+
+_S.11_ task:
+	when _S.07_ or _S.08_ or _S.09_ 
+
+_S.12_ task:
+	when _S.10_ or _S.11_ 
+	start task _S.02_ 

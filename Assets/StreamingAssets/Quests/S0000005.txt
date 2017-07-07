@@ -8,17 +8,17 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                My husband's poor grandmother, Nulfaga,
-<ce>                 is rumored to be in very frail health,
-<ce>                 her once brilliant mind almost utterly
-<ce>                  destroyed. She has locked herself in
+<ce>                is rumored to be in very frail health,
+<ce>                her once brilliant mind almost utterly
+<ce>                 destroyed. She has locked herself in
 <ce>                her castle in the Wrothgarian Mountains
 <ce>                and experiments in magical studies with
 <ce>                 no regard for her own safety. I would
-<ce>               know of her condition, but few possess the
+<ce>              know of her condition, but few possess the
 <ce>               bravery to face the horrors of her castle
-<ce>               and speak with her. My reward for a report
+<ce>              and speak with her. My reward for a report
 <ce>                    on her health is a _magicitem_.
-<ce>                    Will you be my champion in this?
+<ce>                   Will you be my champion in this?
 
 RefuseQuest:  [1001]
 <ce>                  A common enough response. But very
@@ -27,19 +27,19 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                    %oth, I am glad to have found a
 <ce>                  champion. The name of her castle is
-<ce>                 Shedungent, and it should not take you
+<ce>                Shedungent, and it should not take you
 <ce>              longer than =2shedungent_ days to go there.
-<ce>               If she is insane, Shedungent may be a very
-<ce>                dangerous place indeed. Be very careful.
-<ce>                   May Kynareth and Mara protect you.
+<ce>              If she is insane, Shedungent may be a very
+<ce>               dangerous place indeed. Be very careful.
+<ce>                  May Kynareth and Mara protect you.
 
 QuestFail:  [1003]
 <ce>                  Until you have spoken with Nulfaga,
-<ce>                  I am not interested in conversation.
+<ce>                 I am not interested in conversation.
 
 QuestComplete:  [1004]
 <ce>               I confess I doubted I would ever see you
-<ce>                 again. Your news that Nulfaga is still
+<ce>                again. Your news that Nulfaga is still
 <ce>               among the living does my heart much good.
 <ce>                       Here is your _magicitem_.
 
@@ -62,7 +62,7 @@ QuestorPostsuccess:  [1008]
 Ah, %pcn. The %ra that refused visit my dead husband's grandmother.
 
 QuestorPostfailure:  [1009]
-Thank you once again for taking that dangerous trip to Shedungent to look in on Nulfaga forme.
+Thank you once again for taking that dangerous trip to Shedungent to look in on Nulfaga for me.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -76,42 +76,42 @@ QuestLogEntry:  [1010]
 
 Message:  1011
 <ce>               United thoughts and counsels, equal hope
-<ce>               and hazard in the once glorious enterprise
+<ce>              and hazard in the once glorious enterprise
 <ce>              joined with me once, now misery hath joined
-<ce>                in equal ruin! Eternal, eternal, eternal
-<ce>                ruin. I tell the door to my soul to shut
-<ce>                 up. Oh, my child, why wouldst thou not
-<ce>               listen, thy ear, thy glorious mortal face,
+<ce>               in equal ruin! Eternal, eternal, eternal
+<ce>               ruin. I tell the door to my soul to shut
+<ce>                up. Oh, my child, why wouldst thou not
+<ce>              listen, thy ear, thy glorious mortal face,
 <ce>                 thy throat, and the arrow. Oh misery.
                                      <--->
 <ce>                 Choosing out few words most horrible,
-<ce>                let none them read! Verses, verses frame
+<ce>               let none them read! Verses, verses frame
 <ce>               which with and other spells like terrible
-<ce>                 curses Heaven! Curse Oblivion! My boy!
-<ce>                 My boy is dead and let Tamriel tremble
-<ce>                  until he and I findeth peace denied.
+<ce>                curses Heaven! Curse Oblivion! My boy!
+<ce>                My boy is dead and let Tamriel tremble
+<ce>                 until he and I findeth peace denied.
 <ce>               Shut up the door to his tomb and my home.
                                      <--->
 <ce>            Say, what strange motive, Goddess! could compel
 <ce>             an arrow to my beloved Lysandus' bare throat?
 <ce>              Did he die there mourned and blessed or are
-<ce>               my pretty birdies all turned to graywings?
+<ce>              my pretty birdies all turned to graywings?
 <ce>             Oh doorway to my heart, shut up lest I sunder
-<ce>             thee. I search the afterworld, the underworld,
-<ce>              and the world-between and no where do I find
+<ce>            thee. I search the afterworld, the underworld,
+<ce>             and the world-between and no where do I find
 <ce>              the lightness of my son. Oh, madness to thy
-<ce>                        breast I cling suckling!
+<ce>                       breast I cling suckling!
                                      <--->
 <ce>                We are only like dead walls or vaulted
-<ce>                graves, that, ruined, yield no echo. Oh,
-<ce>                 this gloomy world, in what a shadow or
+<ce>               graves, that, ruined, yield no echo. Oh,
+<ce>                this gloomy world, in what a shadow or
 <ce>                deep pit of darkness doth, womanish and
-<ce>                fearful, mankind live. How came Lysandus
-<ce>                by his death? In a mist, I know not how.
-<ce>              Oblivion not come yet? Shut up mine door and
-<ce>              keep out its gray skies. I'll move it nearer
-<ce>              by a perspective, or make a glass that shall
-<ce>               set all the world on fire upon an instant.
+<ce>               fearful, mankind live. How came Lysandus
+<ce>               by his death? In a mist, I know not how.
+<ce>             Oblivion not come yet? Shut up mine door and
+<ce>             keep out its gray skies. I'll move it nearer
+<ce>             by a perspective, or make a glass that shall
+<ce>              set all the world on fire upon an instant.
 <ce>               I cannot sleep; my pillow is stuffed with
 <ce>                        a litter of porcupines.
 
@@ -119,9 +119,9 @@ Message:  1011
 -- Symbols used in the QRC file:
 --
 --              %oth occurs 1 time.
---              %pcn occurs 1 time.
+--              %pcn occurs 2 times.
 --              %qdt occurs 1 time.
---               %ra occurs 3 times.
+--               %ra occurs 5 times.
 --     =2shedungent_ occurs 2 times.
 --       _magicitem_ occurs 3 times.
 
@@ -132,19 +132,19 @@ Person _nulfaga_ named Nulfaga atHome
 Person _aubki_ named Queen_Aubk-i atHome
 
 Place _huntstart_ permanent Shedungent2
-Place castle permanent DaggerfallCastle1
 
 Clock _2shedungent_ 150.00:00 0 flag 1 range 0 1
-Clock _2letter_ 2.18:40 5.13:20
 
 
 --	Quest start-up:
 	start timer _2shedungent_ 
 	log 1010 step 0 
-	reveal _huntstart_ in province 16 at 50966 
 	prompt QuestorOffer yes yes no _no_ 
 
-variable _2shedungent_
+_2shedungent_ task:
+	drop _aubki_ as questor 
+	end quest 
+
 _S.01_ task:
 	clicked npc _nulfaga_ 
 	say 1011 
@@ -152,9 +152,9 @@ _S.01_ task:
 _pcgetsgold_ task:
 	when _S.03_ and _S.01_ 
 	give pc _magicitem_ 
-	start quest 13 13 
 	start quest 107 107 
-	repute with _aubki_ exceeds 15 do _S.12_ 
+	stop timer _2shedungent_ 
+	repute with _aubki_ exceeds 15 do _S.11_ 
 	change repute with _aubki_ by +10 
 	mute npc _aubki_ 
 	drop _aubki_ as questor 
@@ -167,6 +167,7 @@ variable _S.05_
 variable _S.06_
 variable _S.07_
 yes task:
+	reveal _huntstart_ in province 16 at 50966 
 	say AcceptQuest 
 	add _aubki_ as questor 
 
@@ -179,12 +180,8 @@ _clearclick_ task:
 	when _S.03_ and not _S.01_ 
 	clear _S.03_ _clearclick_ 
 
-_S.11_ task:
-	drop _aubki_ as questor 
-	end quest 
-
-variable _S.12_
-_S.13_ task:
-	when _S.12_ and _pcgetsgold_ 
-	drop _aubki_ as questor 
+variable _S.11_
+_S.12_ task:
+	when _S.11_ and _pcgetsgold_ 
+	start quest 13 13 
 	end quest 

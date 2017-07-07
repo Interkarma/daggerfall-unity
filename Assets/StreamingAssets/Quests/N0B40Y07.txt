@@ -11,23 +11,23 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                 I don't know if you can assist me at
-<ce>                         all, %pcf. I'm looking
-<ce>                   for a mage powerful enough to cast
+<ce>                        all, %pcf. I'm looking
+<ce>                  for a mage powerful enough to cast
 <ce>                  the spell Banish Daedra with little
 <ce>                     chance of failure. Could you?
                                      <--->
 <ce>                   Banish Daedra is one of the most
 <ce>                  difficult of the standard circinate
-<ce>                   spells to cast. Few spells require
-<ce>                   more innate magicka and skill. You
-<ce>                   wouldn't happen to be able to cast
+<ce>                  spells to cast. Few spells require
+<ce>                  more innate magicka and skill. You
+<ce>                  wouldn't happen to be able to cast
 <ce>                       Banish Daedra, would you?
                                      <--->
 <ce>                  It is a great irony that summoning
 <ce>                    a daedra is a relatively simple
 <ce>                  matter, but banishing them, not so.
 <ce>                    You wouldn't happen to have the
-<ce>                  power to cast the standard circinate
+<ce>                 power to cast the standard circinate
 <ce>                    spell Banish Daedra, would you?
 
 RefuseQuest:  [1001]
@@ -36,21 +36,21 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                   I sincerely hope you're not lying
 <ce>                     about this. I don't want this
-<ce>                     particular daedra slain, for I
-<ce>                    may need its services later, but
+<ce>                    particular daedra slain, for I
+<ce>                   may need its services later, but
 <ce>                    it's a vexatious presence right
-<ce>                     now. And don't make up a spell
+<ce>                    now. And don't make up a spell
 <ce>                    like Banish Daedra in the Spell
 <ce>                   Maker. It has to be the standard,
 <ce>                  basic circinate spell. Now, because
 <ce>                    I was the one who summoned this
-<ce>                  daedra, I can make your job somewhat
-<ce>                     easier, but you must follow my
-<ce>                instructions exactly.  Take this scroll,
+<ce>                 daedra, I can make your job somewhat
+<ce>                    easier, but you must follow my
+<ce>               instructions exactly.  Take this scroll,
 <ce>                 which contains a spell to momentarily
-<ce>                   imprison the daedra using its true
-<ce>                  name.  Before using it, however, you
-<ce>                  must be sure to draw blood from your
+<ce>                  imprison the daedra using its true
+<ce>                 name.  Before using it, however, you
+<ce>                 must be sure to draw blood from your
 <ce>                  target, or it may backfire with un-
 <ce>                 predictable results.  Once the daedra
 <ce>                 is imprisoned, Banish Daedra has very
@@ -62,8 +62,8 @@ AcceptQuest:  [1002]
 QuestComplete:  [1004]
 <ce>                        Well done, %pct. Now, I
 <ce>                   don't have any gold to offer you,
-<ce>                    but here's a book I particularly
-<ce>                                enjoyed.
+<ce>                   but here's a book I particularly
+<ce>                               enjoyed.
 
 RumorsDuringQuest:  [1005]
 Daedras seem to be attracted to ___mondung_. Must be some spiritual about it.
@@ -85,7 +85,7 @@ Are you enjoying that book, %pcf? I found it rather illuminating, myself.
 QuestorPostfailure:  [1009]
 <ce>                     If you didn't have the spell
 <ce>                   Banish Daedra, you shouldn't have
-<ce>                     taken the quest. Now leave me.
+<ce>                    taken the quest. Now leave me.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -107,10 +107,10 @@ Zanoth na' =daedra_.
 
 Message:  1040
 <ce>                  You blundering fool, I specifically
-<ce>                 instructed you to banish =daedra_, not
-<ce>                   kill it.  Now I will have to go to
+<ce>                instructed you to banish =daedra_, not
+<ce>                  kill it.  Now I will have to go to
 <ce>                    the trouble of learning another
-<ce>                   daedra's true name.  Your presence
+<ce>                  daedra's true name.  Your presence
 <ce>                   here has become oppressive, %pcf.
 <ce>                         Please leave at once.
 
@@ -121,7 +121,7 @@ Message:  1050
 Message:  1051
 <ce>                          I am =firedaedra_.
 <ce>                           Who calls me from
-<ce>                          my home in Oblivion?
+<ce>                         my home in Oblivion?
 
 Message:  1060
 <ce>                        The daedra =daedra_ has
@@ -130,10 +130,11 @@ Message:  1060
                                      <--->
    
 
+
 -- Symbols used in the QRC file:
 --
 --               %g2 occurs 3 times.
---              %pcf occurs 5 times.
+--              %pcf occurs 6 times.
 --              %pct occurs 3 times.
 --              %qdt occurs 1 time.
 --    ==dummydaedra_ occurs 1 time.
@@ -151,7 +152,7 @@ Person _qgiver_ group Questor male
 Person _dummydaedra_ face 249 factiontype Daedra
 
 Place _mondung_ remote dungeon9
-Place aide local dungeon
+Place aide remote dungeon
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 

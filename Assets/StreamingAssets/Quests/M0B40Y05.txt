@@ -12,10 +12,10 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                     Some woodsmen have hired the
 <ce>                       guild to kill a spriggan.
-<ce>                     Seems the monster is attacking
+<ce>                    Seems the monster is attacking
 <ce>                     them when they are out in the
 <ce>                     woods logging. Want to take a
-<ce>                            hack at it %pcn?
+<ce>                           hack at it %pcn?
 
 RefuseQuest:  [1001]
 <ce>                     Fair enough. Run along. I've
@@ -24,25 +24,25 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                      Two attempted ambushes have
-<ce>                      failed. The spriggan is just
-<ce>                      too smart. You'll have to go
-<ce>                      to its lair, in ___dungeon_.
+<ce>                     failed. The spriggan is just
+<ce>                     too smart. You'll have to go
+<ce>                     to its lair, in ___dungeon_.
 <ce>                     Get back to me within =2dung_
-<ce>                     days and I'll have _gold_ gold
-<ce>                            waiting for you.
+<ce>                    days and I'll have _gold_ gold
+<ce>                           waiting for you.
 
 QuestFail:  [1003]
 <ce>                       The spriggan is kindling?
 <ce>                      You are proving yourself to
-<ce>                        be quite reliable, %pct.
+<ce>                       be quite reliable, %pct.
 
 QuestComplete:  [1004]
 <ce>                       Here is your _gold_ gold
-<ce>                              as promised.
+<ce>                             as promised.
 
 RumorsDuringQuest:  [1005]
 <ce>                     I hear _woodsman_ is stirring
-<ce>                 up the woodsmen against the spriggans.
+<ce>                up the woodsmen against the spriggans.
 <ce>                 Funny. I've never known the spriggans
 <ce>                      to cause us trouble before.
 
@@ -53,7 +53,7 @@ RumorsPostfailure:  [1006]
 
 RumorsPostsuccess:  [1007]
 <ce>                  I haven't heard about that spriggan
-<ce>                    lately. Must have left the area.
+<ce>                   lately. Must have left the area.
 
 QuestorPostsuccess:  [1008]
 <ce>                  Well done work with that spriggan.
@@ -78,10 +78,10 @@ Message:  1011
 
 Message:  1020
 <ce>                     You attack me without cause,
-<ce>                          %ra. Yes I did wreak
-<ce>                      vengence upon the slayers of
+<ce>                         %ra. Yes I did wreak
+<ce>                     vengence upon the slayers of
 <ce>                     wood. Know that they did slay
-<ce>                      seedlings of mine. Would you
+<ce>                     seedlings of mine. Would you
 <ce>                    stand rooted while someone slew
 <ce>                   your seedlings? I have no quarrel
 <ce>                    with you. Convince the woodsmen
@@ -91,38 +91,38 @@ Message:  1020
 
 Message:  1021
 <ce>                    The main culprit is _woodsman_,
-<ce>                   who hacks down trees without care.
-<ce>                   Go to ___woodsman_ and secure his
+<ce>                  who hacks down trees without care.
+<ce>                    Go to ___house_ and secure his
 <ce>                   promise. Do not visit me again. I
 <ce>                 shall know of your success or failure
-<ce>                   by how the woodsman do their work.
+<ce>                  by how the woodsman do their work.
 
 Message:  1022
 <ce>                  I should have known better than to
-<ce>                    trust a creature of flesh. Now I
-<ce>                       shall give you no quarter.
+<ce>                   trust a creature of flesh. Now I
+<ce>                      shall give you no quarter.
 
 Message:  1023
 <ce>                   So the tree creature wants to cut
-<ce>                    a deal, eh? Well I suppose I can
+<ce>                   a deal, eh? Well I suppose I can
 <ce>                   convince the boys to only log the
 <ce>                   big trees. But if his kind attack
-<ce>                   us again, we'll burn every sapling
-<ce>                   we can find! You've got yourself a
+<ce>                  us again, we'll burn every sapling
+<ce>                  we can find! You've got yourself a
 <ce>                              deal, %pcn.
 
 Message:  1025
 <ce>                   You worked it so the woodsmen and
 <ce>                   the spriggan ain't fightin'? Very
 <ce>                   clever %pcn. You'll go far if you
-<ce>                         keep those wits sharp.
+<ce>                        keep those wits sharp.
 
 Message:  1030
 %qdt:
  The spriggan has convinced me that
  it is not the villian. Apparently a
  woodsman named _woodsman_
- in ___woodsman_ has been
+ in ___house_ has been
  cutting down its trees. If I can get
  _woodsman_ to agree to log
  the forest more carefully, this whole
@@ -130,9 +130,9 @@ Message:  1030
 
 Message:  1080
 <ce>               By the way, since I'm feelin' charitable,
-<ce>               here's a map to a hole called ___newdung_.
-<ce>               Full of monsters needin' killing, treasure
-<ce>                     to loot, the works.  Have fun.
+<ce>              here's a map to a hole called ___newdung_.
+<ce>              Full of monsters needin' killing, treasure
+<ce>                    to loot, the works.  Have fun.
 
 
 -- Symbols used in the QRC file:
@@ -143,9 +143,9 @@ Message:  1080
 --               %ra occurs 1 time.
 --           =2dung_ occurs 2 times.
 --       ___dungeon_ occurs 2 times.
+--         ___house_ occurs 2 times.
 --       ___newdung_ occurs 1 time.
 --        ___qgiver_ occurs 1 time.
---      ___woodsman_ occurs 2 times.
 --            _gold_ occurs 4 times.
 --        _woodsman_ occurs 5 times.
 
@@ -157,13 +157,14 @@ Person _woodsman_ face 168 group Resident2
 
 Place _dungeon_ remote dungeon
 Place _newdung_ remote dungeon
+Place _house_ remote house1
 
 Clock _2dung_ 00:00 0 flag 17 range 0 2
 
 Foe _monster_ is Spriggan
 
 --	Quest start-up:
-	dialog link for person _woodsman_ 
+	dialog link for location _house_ person _woodsman_ 
 	start timer _2dung_ 
 	reveal _dungeon_ 
 	log 1010 step 0 
@@ -195,6 +196,8 @@ yes task:
 	log 1030 step 1 
 	say 1021 
 	restrain foe _monster_ 
+	create npc at _house_ 
+	place npc _woodsman_ at _house_ 
 
 _no_ task:
 	say 1022 

@@ -12,8 +12,8 @@ QRC:
 QuestorOffer:  [1000]
 <ce>               %pcf, old friend, am I glad you're here.
 <ce>             I am in trouble with a group of daedra and am
-<ce>                  looking for someone to purvey a rare
-<ce>                    manuscript to an acquaintance of
+<ce>                 looking for someone to purvey a rare
+<ce>                   manuscript to an acquaintance of
 <ce>              mine. The reward will be extremely liberal,
 <ce>              but the possibility of daedric intervention
 <ce>                  is quite high.  Are you interested?
@@ -25,21 +25,21 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                  Excellent. Here's the book, _item_.
 <ce>                    Now, _contact_ needs to have it
-<ce>                    in __contact_ in =queston_ days.
+<ce>                   in __contact_ in =queston_ days.
 <ce>                    You can still make it, I think.
-<ce>                  Just be on guard against the daedra.
-<ce>                               Good luck.
+<ce>                 Just be on guard against the daedra.
+<ce>                              Good luck.
 
 QuestFail:  [1003]
 <ce>              Unless you have already delivered the book,
-<ce>                     we have nothing to talk about.
+<ce>                    we have nothing to talk about.
 
 QuestComplete:  [1004]
 <ce>                     Ah, good to see you %pcf. And
-<ce>                   _item_ too. Excellent.  I hope the
-<ce>                    daedra didn't cause you too much
-<ce>                   difficulty.  Ha!  If they actually
-<ce>                  knew what I can use this little book
+<ce>                  _item_ too. Excellent.  I hope the
+<ce>                   daedra didn't cause you too much
+<ce>                  difficulty.  Ha!  If they actually
+<ce>                 knew what I can use this little book
 <ce>                  for, they would have sent twice the
 <ce>                   number to stop you!  Here is your
 <ce>                      reward for a job well done.
@@ -68,7 +68,7 @@ Hail to thee, circumventer of daedra. What can your friend do for you?
 QuestorPostfailure:  [1009]
 <ce>                 The daedra proved to be too much, eh,
 <ce>                     %pcf? I'm disappointed. I had
-<ce>                     expected much better from you.
+<ce>                    expected much better from you.
 
 QuestLogEntry:  [1010]
 %qdt: _questgiver_ has
@@ -81,11 +81,11 @@ QuestLogEntry:  [1010]
 Message:  1011
 <ce>             Greetings, %pcn.  I have been expecting you.
 <ce>             I am _oblivion_, at your service.  My friends
-<ce>               in Oblivion tell me that you have involved
-<ce>           yourself in their affairs.  I may still be able to
+<ce>              in Oblivion tell me that you have involved
+<ce>          yourself in their affairs.  I may still be able to
 <ce>           placate them, but I must have the book you carry.
 <ce>             I should warn you, daedra have long memories.
-<ce>               Now, give it to me, before it is too late!
+<ce>              Now, give it to me, before it is too late!
 
 Message:  1012
 <ce>               As you hand over the book, a shadowy form
@@ -95,8 +95,8 @@ Message:  1012
  We have been watching you. It would seem that our
  interest has been justifiable."
 <ce>                                    
-<ce>                    You feel the book disappear from
-<ce>                your grasp as the figure vanishes again.
+<ce>                   You feel the book disappear from
+<ce>               your grasp as the figure vanishes again.
 
 Message:  1013
 _oblivion_ is a powerful mage living in ___oblivion_.
@@ -111,9 +111,9 @@ _oblivion_ is some kind of sorceror, I think.  Try __oblivion_ in ___oblivion_.
 
 Message:  1020
 <ce>                You deal the daedra a fearful blow, but
-<ce>              it remains upright for a moment, eyes locked
+<ce>             it remains upright for a moment, eyes locked
 <ce>             with yours, and a harsh voice issues from its
-<ce>                             bloody throat:
+<ce>                            bloody throat:
 <ce>                                    
  "You may slay my mortal form, %pcn,
  but my brethren will harry you mercilessly
@@ -127,32 +127,32 @@ Message:  1020
 
 Message:  1025
 <ce>             Insolent puppy!  You come here asking for my
-<ce>          help, then refuse my advice?  May Oblivion take you!
+<ce>         help, then refuse my advice?  May Oblivion take you!
 
 Message:  1030
 <ce>                This parchment reveals the location of
 <ce>                 Skeffington Coven in Ykalon, whatever
-<ce>                              that may be.
+<ce>                             that may be.
 
 
 -- Symbols used in the QRC file:
 --
---                %g occurs 2 times.
---               %g2 occurs 5 times.
+--                %g occurs 3 times.
+--               %g2 occurs 6 times.
 --              %pcf occurs 7 times.
 --              %pcn occurs 2 times.
 --              %qdt occurs 1 time.
---               %ra occurs 3 times.
+--               %ra occurs 4 times.
 --         =contact_ occurs 1 time.
 --         =queston_ occurs 2 times.
 --       ___contact_ occurs 2 times.
---      ___oblivion_ occurs 4 times.
+--      ___oblivion_ occurs 5 times.
 --        __contact_ occurs 1 time.
 --       __oblivion_ occurs 3 times.
 --         _contact_ occurs 2 times.
 --            _item_ occurs 3 times.
 --        _oblivion_ occurs 24 times.
---      _questgiver_ occurs 3 times.
+--      _questgiver_ occurs 5 times.
 
 QBN:
 Item _reward_ ruby
@@ -160,7 +160,9 @@ Item _item_ book2
 Item _map_ letter used 1030
 
 Person _questgiver_ group Questor male
-Person _contact_ group Local_3.0 female
+Person faction absent from data base!
+-- Person:    1 0 -1 0 13278 0 0.
+
 Person _oblivion_ factiontype Daedra female anyInfo 1013 rumors 1014
 
 Place _skeffingcoven_ permanent SkeffingtonCoven
@@ -178,8 +180,9 @@ Foe _lesserdaedra_ is Daedroth
 	log 1010 step 0 
 	get item _item_ 
 	pick one of _yesmap_ _nomap_ _nomap_ _nomap_ 
-	create npc _contact_ 
+	_map_ used do _readmap_ 
 	create npc _oblivion_ 
+	create npc _contact_ 
 
 variable _pcgetsgold_
 variable _pchasitem_
@@ -198,10 +201,10 @@ _thankyou_ task:
 	change repute with _oblivion_ by +20 
 
 until _thankyou_ performed:
-	create foe _frostdaedra_ every 4 minutes 7 times with 17% success 
-	create foe _lesserdaedra_ every 3 minutes 7 times with 12% success 
-	create foe _seducer_ every 12 minutes 7 times with 50% success 
 	create foe _firedaedra_ every 6 minutes 7 times with 25% success 
+	create foe _seducer_ every 12 minutes 7 times with 50% success 
+	create foe _lesserdaedra_ every 3 minutes 7 times with 12% success 
+	create foe _frostdaedra_ every 4 minutes 7 times with 17% success 
 
 _clickoblivion_ task:
 	toting _item_ and _oblivion_ clicked 
@@ -221,11 +224,10 @@ _hitseducer_ task:
 	injured _seducer_ 
 
 _readmap_ task:
-	reveal _skeffingcoven_ in province 40 at 5531 
+	reveal _skeffingcoven_ in province 38 at 5531 
 
 variable _yesmap_
 variable _nomap_
 _placemap_ task:
 	when _yesmap_ and _hitseducer_ 
-	_map_ used do _readmap_ 
 	give item _map_ to _seducer_ 

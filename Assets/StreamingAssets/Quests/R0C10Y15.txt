@@ -11,34 +11,34 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>              I have a somewhat complicated mission that
-<ce>               needs a fourth man involved. It might take
-<ce>                 a couple of days to accomplish, but it
-<ce>            will mean an extra _reward_ gold in your pocket.
+<ce>              needs a fourth man involved. It might take
+<ce>                a couple of days to accomplish, but it
+<ce>           will mean an extra _reward_ gold in your pocket.
 <ce>                           Sound intriguing?
 
 RefuseQuest:  [1001]
 <ce>                       That is a disappointment.
-<ce>                                Ah well.
+<ce>                               Ah well.
 
 AcceptQuest:  [1002]
 <ce>                   I have a contact in ___npc1_ who
-<ce>             has a certain item needed by another associate
+<ce>            has a certain item needed by another associate
 <ce>                        of mine in ___npc2_. Of
 <ce>                     course, _npc1_, my contact in
 <ce>                       ___npc1_ needs to be paid
 <ce>                for %g3 item. That is why I need you to
-<ce>                    bring this diamond as payment to
+<ce>                   bring this diamond as payment to
 <ce>                       _npc1_. The diamond needs
 <ce>                        to be in %g3 possession
 <ce>             in =1stparton_ days. Once you have made it to
 <ce>                       __npc1_, _npc1_ will give
-<ce>                  you further instructions. Thank you,
+<ce>                 you further instructions. Thank you,
 <ce>                      %pcf, and %god be with you.
 
 QuestFail:  [1003]
 <ce>                   I know it was complicated, %pcf,
-<ce>                 but I assumed you had at least a small
-<ce>                  brain encased in that thick skull of
+<ce>                but I assumed you had at least a small
+<ce>                 brain encased in that thick skull of
 <ce>                 yours.  I hope you were taking notes,
 <ce>               because I'm not in the habit of repeating
 <ce>                                myself.
@@ -47,8 +47,8 @@ QuestComplete:  [1004]
 <ce>                           Ah, the _item2_.
 <ce>                  I was afraid it would never arrive.
 <ce>             Well, here's your _reward_ gold, as promised.
-<ce>                        Tell _npc2_ I am in %g3
-<ce>                      debt. And thank you as well.
+<ce>                        Tell _npc1_ I am in %g3
+<ce>                     debt. And thank you as well.
 
 RumorsDuringQuest:  [1005]
 _npc2_ in __npc2_ is still screeching about %g3 _item2_.
@@ -79,11 +79,11 @@ QuestorPostfailure:  [1009]
 
 QuestLogEntry:  [1010]
 <ce>                   Thank %god you've arrived, %pcf.
-<ce>                Give me the diamond quick. Now take this
+<ce>               Give me the diamond quick. Now take this
 <ce>                        _item2_ and bring it to
 <ce>                       _npc2_ over in __npc2_ --
-<ce>                        that's in ___npc2_. Once
-<ce>                     you're there, %g will pay you.
+<ce>                       that's in ___npc2_. Once
+<ce>                    you're there, %g will pay you.
 
 Message:  1015
 %qdt:
@@ -108,10 +108,10 @@ Message:  1016
 --
 --                %g occurs 3 times.
 --               %g2 occurs 2 times.
---               %g3 occurs 9 times.
+--               %g3 occurs 12 times.
 --              %god occurs 3 times.
 --              %oth occurs 1 time.
---              %pcf occurs 12 times.
+--              %pcf occurs 13 times.
 --              %pcn occurs 1 time.
 --              %qdt occurs 2 times.
 --               %ra occurs 1 time.
@@ -121,11 +121,11 @@ Message:  1016
 --          ___npc2_ occurs 3 times.
 --    ___questgiver_ occurs 1 time.
 --           __npc1_ occurs 2 times.
---           __npc2_ occurs 4 times.
+--           __npc2_ occurs 5 times.
 --           _item1_ occurs 1 time.
---           _item2_ occurs 7 times.
---            _npc1_ occurs 7 times.
---            _npc2_ occurs 6 times.
+--           _item2_ occurs 8 times.
+--            _npc1_ occurs 10 times.
+--            _npc2_ occurs 5 times.
 --      _questgiver_ occurs 3 times.
 --          _reward_ occurs 4 times.
 

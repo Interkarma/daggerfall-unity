@@ -15,11 +15,11 @@ QuestorOffer:  [1000]
 <ce>                    for us already, I wouldn't even
 <ce>                    suggest this, but there's a job
 <ce>                     I don't even want to tell you
-<ce>                    about. It sounds like crying for
+<ce>                   about. It sounds like crying for
 <ce>               the moon, and more dangerous. It's offing
-<ce>                   a lich in ___mondung_. And it only
-<ce>               pays _reward_ gold. You're not interested,
-<ce>                                are you?
+<ce>                  a lich in ___mondung_. And it only
+<ce>              pays _reward_ gold. You're not interested,
+<ce>                               are you?
 
 RefuseQuest:  [1001]
 <ce>                         Thank %god you got a
@@ -31,23 +31,23 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                 Aw, I knew I shouldn't have mentioned
 <ce>                 it. Listen, if you're really gonna do
-<ce>                    this, get the best stuff you can
-<ce>                  get, magic stuff, ebony blades, what
+<ce>                   this, get the best stuff you can
+<ce>                 get, magic stuff, ebony blades, what
 <ce>                  have you. This lich has to cross to
 <ce>                 Oblivion in =1stparton_ days, and you
 <ce>                  gotta be back here within that time
-<ce>                to get your reward. You're unbelievable,
+<ce>               to get your reward. You're unbelievable,
 <ce>                     %pcf. Good luck. You're gonna
-<ce>                                need it.
+<ce>                               need it.
 
 QuestFail:  [1003]
 <ce>                   Takin' a little break before the
-<ce>                            lich-hunt, %pcf?
+<ce>                           lich-hunt, %pcf?
 <ce>                       Just don't wait too long.
 
 QuestComplete:  [1004]
 <ce>                   I didn't expect to see you again,
-<ce>                         %pcf, no foolin'. %god
+<ce>                        %pcf, no foolin'. %god
 <ce>                 must be lookin' out after you. Here's
 <ce>                     your _reward_ gold. Enjoy it.
 
@@ -73,8 +73,8 @@ QuestorPostsuccess:  [1008]
 QuestorPostfailure:  [1009]
 <ce>                 I wouldn't have taken a job to face a
 <ce>                  lich. Never understood why you did.
-<ce>                  Now you just look stupid because you
-<ce>                        weren't able to kill it.
+<ce>                 Now you just look stupid because you
+<ce>                       weren't able to kill it.
 
 Message:  1020
 <ce>                      Puny mortal! You should not
@@ -82,7 +82,7 @@ Message:  1020
 <ce>                    with the affairs of the undead.
 <ce>                       Now I shall add you to my
 <ce>                          collection of slain
-<ce>                            %ra mercenaries.
+<ce>                           %ra mercenaries.
 
 Message:  1030
 %qdt:
@@ -103,9 +103,9 @@ Message:  1080
 --              %god occurs 2 times.
 --              %pcf occurs 4 times.
 --              %qdt occurs 1 time.
---               %ra occurs 4 times.
+--               %ra occurs 6 times.
 --       =1stparton_ occurs 2 times.
---       ___mondung_ occurs 4 times.
+--       ___mondung_ occurs 5 times.
 --       ___newdung_ occurs 1 time.
 --    ___questgiver_ occurs 1 time.
 --          _reward_ occurs 3 times.
@@ -126,12 +126,17 @@ Foe _monster_ is Lich
 	start timer _1stparton_ 
 	reveal _mondung_ 
 	log 1030 step 0 
+	pick one of _map_ _nomap_ _nomap_ _map_ 
 	place foe _monster_ at _mondung_ 
 
 _pcgetsgold_ task:
 	when _qgclicked_ and _mondead_ 
 	give pc _reward_ 
 	end quest 
+
+_S.01_ task:
+	injured _monster_ 
+	say 1020 
 
 _mondead_ task:
 	killed 1 _monster_ 
@@ -148,4 +153,6 @@ _clearclick_ task:
 
 variable _map_
 variable _nomap_
-variable _S.07_
+_S.07_ task:
+	when _map_ and _pcgetsgold_ 
+	reveal _newdung_ saying 1080 

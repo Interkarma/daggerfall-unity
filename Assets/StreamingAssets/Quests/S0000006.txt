@@ -9,34 +9,34 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                      Hello, %pcf. I am Elysana,
 <ce>               King Eadwyre's child and heir apparent to
-<ce>                 Wayrest. Perhaps you could help me out
-<ce>                of a bit of an embarrassing predicament.
+<ce>                Wayrest. Perhaps you could help me out
+<ce>               of a bit of an embarrassing predicament.
 <ce>                The senior member of the elder council,
-<ce>                my father's good friend Lord Castellian,
-<ce>                 has left court on holiday and I forgot
-<ce>                 to return a cloak I borrowed from him.
-<ce>                 If it isn't too much of a bore to you,
-<ce>                  would you mind bringing it to him in
-<ce>                     ___casfort_? I could offer you
-<ce>                     a lovely _jewelry_ as payment.
+<ce>               my father's good friend Lord Castellian,
+<ce>                has left court on holiday and I forgot
+<ce>                to return a cloak I borrowed from him.
+<ce>                If it isn't too much of a bore to you,
+<ce>                 would you mind bringing it to him in
+<ce>                    ___casfort_? I could offer you
+<ce>                    a lovely _jewelry_ as payment.
 
 RefuseQuest:  [1001]
 <ce>                             No? Oh, %oth.
 
 AcceptQuest:  [1002]
 <ce>                 How frightfully nice of you to help a
-<ce>                silly girl like myself. Here's the robe.
-<ce>                  Now, it's very important that milord
-<ce>                 Castellian has the robe soon. He is at
-<ce>                      one of his houses, _casfort_
+<ce>               silly girl like myself. Here's the robe.
+<ce>                 Now, it's very important that milord
+<ce>                Castellian has the robe soon. He is at
+<ce>                     one of his houses, _casfort_
 <ce>               in ___casfort_. Lord Castellian shouldn't
-<ce>                be too hard to find, just ask around for
+<ce>               be too hard to find, just ask around for
 <ce>                   him or for _casfort_ and give him
-<ce>                 the robe. I do really appreciate this,
+<ce>                the robe. I do really appreciate this,
 <ce>                       %pcf. It really shouldn't
-<ce>               take you longer than =queston_ days to get
+<ce>              take you longer than =queston_ days to get
 <ce>                      to ___casfort_ and back, so
-<ce>                           I'll see you then.
+<ce>                          I'll see you then.
 
 QuestFail:  [1003]
 <ce>                I know Lord Castellian doesn't have his
@@ -44,18 +44,18 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>             Oh, how marvelous you are. Here, let me give
-<ce>                you the _jewelry_ I promised you. I hope
-<ce>              Lord Castellian appreciates the extra work I
+<ce>               you the _jewelry_ I promised you. I hope
+<ce>             Lord Castellian appreciates the extra work I
 <ce>               put into the robe. It is a real attention
-<ce>               getter now. Let me give you something more
+<ce>              getter now. Let me give you something more
 <ce>                  than the _jewelry_, %pcf. My father
 <ce>             is very interested in a certain ancient relic
-<ce>                called the Totem of Tiber Septim. He has
+<ce>               called the Totem of Tiber Septim. He has
 <ce>             spies all over the place looking for it. When
-<ce>              they find it, my father will need someone to
+<ce>             they find it, my father will need someone to
 <ce>             secure it. Obviously, whoever he chooses will
-<ce>               be fabulously well rewarded. I'll give him
-<ce>                 your name. That is the least I can do.
+<ce>              be fabulously well rewarded. I'll give him
+<ce>                your name. That is the least I can do.
 
 RumorsDuringQuest:  [1005]
 Lord Castellian is backing legislation which will make Helseth heir apparent.
@@ -94,34 +94,34 @@ QuestLogEntry:  [1010]
 Message:  1020
 <ce>                     Fool! Some enterprising soul
 <ce>                       has given you a robe that
-<ce>                        summoned me to slay you.
-<ce>                             How delicious!
+<ce>                       summoned me to slay you.
+<ce>                            How delicious!
 
 Message:  1021
 <ce>                       Death to the traitor that
-<ce>                      assasinated Lord Castellian!
+<ce>                     assasinated Lord Castellian!
                                      <--->
 <ce>                       You shall pay for killing
-<ce>                             my liege lord.
+<ce>                            my liege lord.
                                      <--->
 <ce>                     Assassin! Lord Castellian was
-<ce>                     the best of men. You shall die
+<ce>                    the best of men. You shall die
 <ce>                           for what you did.
 
 Message:  1022
 <ce>                   "A gift from Lady Elysana. Thank
 <ce>                         you, %pcn. It fits me
-<ce>                             like a glove."
+<ce>                            like a glove."
 <ce>                                    
 <ce>                    You feel a tearing sound, as if
-<ce>                    the fabric of reality were being
-<ce>                              ripped open.
+<ce>                   the fabric of reality were being
+<ce>                             ripped open.
 
 Message:  1023
 <ce>                      Leave this place litte %ra.
-<ce>                       We have come to claim Lord
-<ce>                     Castellian. You have done your
-<ce>                     part by delivering his funeral
+<ce>                      We have come to claim Lord
+<ce>                    Castellian. You have done your
+<ce>                    part by delivering his funeral
 <ce>                       shroud which summoned us.
 
 Message:  1030
@@ -146,6 +146,7 @@ Lord Castellian makes no secret of his desire to wed Princess Elysana.
 QBN:
 Item _I.00_ Formal_cloak anyInfo QuestorPostsuccess used QuestorPostfailure
 Item _jewelry_ trinket
+Item _I.04_ dead_body
 
 Person _elysana_ named Princess_Elysana atHome
 Person Castellian face 1 named Lord_Castellian anyInfo 1030
@@ -180,7 +181,9 @@ variable _S.02_
 _S.03_ task:
 	toting _I.00_ and Castellian clicked saying 1022 
 	pc at _casfort_ set _S.12_ 
+	place item _I.04_ at _casfort_ 
 	start timer _S.04_ 
+	hide npc Castellian 
 
 _S.04_ task:
 	create foe _F.02_ every 53 minutes 20 times with 15% success 
@@ -201,6 +204,7 @@ yes task:
 	get item _I.00_ 
 	say AcceptQuest 
 	add _elysana_ as questor 
+	create npc at _casfort_ 
 	place npc Castellian at _casfort_ 
 
 _no_ task:

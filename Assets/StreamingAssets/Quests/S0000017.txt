@@ -8,13 +8,13 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                      %pcn! Welcome to Sentinel.
-<ce>                   I trust you have had a comfortable
-<ce>                  stay so far. Let me get right to the
-<ce>                   point. My son, Prince Lhotun, says
-<ce>                  you are a well respected and trusted
-<ce>                     %ra. I have need of your sort.
+<ce>                  I trust you have had a comfortable
+<ce>                 stay so far. Let me get right to the
+<ce>                  point. My son, Prince Lhotun, says
+<ce>                 you are a well respected and trusted
+<ce>                    %ra. I have need of your sort.
 <ce>                  I am willing to pay you _gold_ gold
-<ce>                    to infiltrate Castle Wayrest and
+<ce>                   to infiltrate Castle Wayrest and
 <ce>                    recover an heirloom of the late
 <ce>                 King Lysandus for me. Will you do it?
 
@@ -24,11 +24,11 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                   What Bounty! There is an item, a
-<ce>                   painting, that is hidden somewhere
+<ce>                  painting, that is hidden somewhere
 <ce>                    within Castle Wayrest. I desire
-<ce>                   this item for reasons you need not
+<ce>                  this item for reasons you need not
 <ce>                   worry about. Bring it to me and I
-<ce>                       will pay your _gold_ gold.
+<ce>                      will pay your _gold_ gold.
 
 QuestComplete:  [1004]
 <ce>                    Here is your _gold_ gold %pcf.
@@ -49,13 +49,13 @@ Dear %pcn,
  Prince Lhotun has recommended you with
  high praise. I await your arrival.
  
-<ce>                                Akorithi
+<ce>                               Akorithi
 <ce>                           Queen of Sentinel
 
 Message:  1012
 <ce>               A page girl bearing the crest of Sentinel
-<ce>                 stiffly presents you a crisply pressed
-<ce>               envelope. Ignoring your queries, she turns
+<ce>                stiffly presents you a crisply pressed
+<ce>              envelope. Ignoring your queries, she turns
 <ce>                            and walks away.
 
 Message:  1013
@@ -66,13 +66,13 @@ Message:  1013
 
 Message:  1015
 <ce>                 The scene in the painting shifts and
-<ce>                 twists. You can clearly see the inside
+<ce>                twists. You can clearly see the inside
 <ce>                of a tent. Several men in the livery of
 <ce>                 Wayrest are intensely debating with a
 <ce>              man bearing the coat of arms of Daggerfall.
 <ce>                One of the Wayrest men slips behind the
-<ce>                   Daggerfall man, draws a dagger and
-<ce>                  casually slides it between his ribs.
+<ce>                  Daggerfall man, draws a dagger and
+<ce>                 casually slides it between his ribs.
 <ce>                 The image fades as the life ebbs from
 <ce>                               his body.
 
@@ -81,16 +81,16 @@ Message:  1020
 
 Message:  1021
 <ce>                     Excellent. Its properties are
-<ce>                  inappropriate for those not of royal
-<ce>                  blood. You have shown yourself to be
-<ce>                   not only loyal, but also obedient.
+<ce>                 inappropriate for those not of royal
+<ce>                 blood. You have shown yourself to be
+<ce>                  not only loyal, but also obedient.
 
 Message:  1022
 <ce>                        You presume much %pcn.
-<ce>                   What you saw is not for the prying
+<ce>                  What you saw is not for the prying
 <ce>                    eyes of the masses. It concerns
-<ce>                  matters of royalty and will be dealt
-<ce>                            with by royalty.
+<ce>                 matters of royalty and will be dealt
+<ce>                           with by royalty.
 
 
 -- Symbols used in the QRC file:
@@ -114,6 +114,7 @@ Clock _2letter_ 7.00:00 14.00:00
 
 
 --	Quest start-up:
+	dialog link for item _item_ 
 	start timer _2letter_ 
 	add _Akorithi_ as questor 
 
@@ -123,11 +124,14 @@ _2letter_ task:
 yes task:
 	_item_ used do _S.05_ 
 	place item _item_ at _wayrest_ 
+	add dialog for item _item_ 
 	log 1010 step 0 
 	say AcceptQuest 
 
 _no_ task:
 	say RefuseQuest 
+	drop _Akorithi_ as questor 
+	end quest 
 
 _S.03_ task:
 	clicked npc _Akorithi_ 

@@ -11,26 +11,26 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                 ==questgiver_ must once again call on
-<ce>                  thy kindness and might. We require a
-<ce>                  heart of a daedra for our spellcraft
-<ce>                     but the heart must be recently
-<ce>                     plucked and by thou. Wilt thou
-<ce>                      find and murder a daedra for
-<ce>                            your dear aunts?
+<ce>                 thy kindness and might. We require a
+<ce>                 heart of a daedra for our spellcraft
+<ce>                    but the heart must be recently
+<ce>                    plucked and by thou. Wilt thou
+<ce>                     find and murder a daedra for
+<ce>                           your dear aunts?
 
 RefuseQuest:  [1001]
 <ce>                       No? Oh, sorrowful night.
 
 AcceptQuest:  [1002]
 <ce>                    The Goddess smiles on us, %pcn,
-<ce>                  for there is a dungeon near that has
+<ce>                 for there is a dungeon near that has
 <ce>                   a daedric infestation. Any daedra
 <ce>                   heart will do but that of a Lord,
-<ce>                    for theirs is putrid with worms.
+<ce>                   for theirs is putrid with worms.
 <ce>                        Go thou to ___mondung_,
 <ce>                           %pcn, slay for us
-<ce>                    a daedra and bring it before the
-<ce>                       sun sets =1stparton_ days.
+<ce>                   a daedra and bring it before the
+<ce>                      sun sets =1stparton_ days.
 
 QuestFail:  [1003]
 <ce>                           The heart, %pcn,
@@ -42,8 +42,8 @@ QuestComplete:  [1004]
 <ce>                   Look, see how it still steams and
 <ce>                            beats in %pcn's
 <ce>                  bloody hand! Into the brackish soup
-<ce>                   it goes, before it loses heat. Ah,
-<ce>                          %pcn, take thee this
+<ce>                  it goes, before it loses heat. Ah,
+<ce>                         %pcn, take thee this
 <ce>                       _reward_ for thy trouble.
 <ce>                   Thou art good to us poor witches.
 
@@ -67,9 +67,9 @@ Friend to the ==questgiver_, how goes it with thee and thy _reward_?
 
 QuestorPostfailure:  [1009]
 <ce>                   We had hoped for a heart for our
-<ce>                        stew, %pcf. If thou wert
+<ce>                       stew, %pcf. If thou wert
 <ce>                  too busy, thou should have told us.
-<ce>                     Plans were made that had to be
+<ce>                    Plans were made that had to be
 <ce>                    destroyed. Thou art our friend,
 <ce>                       but still ... sad are we.
 
@@ -108,12 +108,12 @@ Message:  1040
 --              %pcf occurs 1 time.
 --              %pcn occurs 5 times.
 --              %qdt occurs 1 time.
---              %reg occurs 2 times.
+--              %reg occurs 3 times.
 --       =1stparton_ occurs 4 times.
---     ==questgiver_ occurs 5 times.
---       ___mondung_ occurs 13 times.
+--     ==questgiver_ occurs 6 times.
+--       ___mondung_ occurs 16 times.
 --    ___questgiver_ occurs 3 times.
---          _reward_ occurs 12 times.
+--          _reward_ occurs 14 times.
 
 QBN:
 Item _reward_ malachite
@@ -175,5 +175,6 @@ _S.10_ task:
 
 _S.11_ task:
 	when _S.06_ or _S.07_ or _S.09_ or _S.08_ 
+	clear _S.10_ 
 
 variable _exitstarter_

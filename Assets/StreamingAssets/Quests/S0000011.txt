@@ -1,30 +1,30 @@
 -- Quest: C:\QUESTS\WORKING\S0000011.Qbn.
 -- Main story quest.
 -- QuestId: 11
-Messages: 1012
+Messages: 62
 Quest: S0000011
 -- Message panels
 QRC:
 
 QuestorOffer:  [1000]
 <ce>                Thank you for responding to my letter,
-<ce>                       %pcf. It is very difficult
+<ce>                      %pcf. It is very difficult
 <ce>                for a queen of a powerful nation, and a
-<ce>                 queen whose home is far away, to trust
+<ce>                queen whose home is far away, to trust
 <ce>                any mercenary. That is why when my dear
-<ce>                 child Helseth told me about you, I was
-<ce>                  so quick to write. There is a rather
+<ce>                child Helseth told me about you, I was
+<ce>                 so quick to write. There is a rather
 <ce>                sensitive situation brewing, and I need
 <ce>                  someone I can trust to correct some
-<ce>               wayward revolutionaries. For _reward_ gold
+<ce>              wayward revolutionaries. For _reward_ gold
 <ce>                pieces, will you perform such a service
-<ce>                  for me? I am also prepared to reward
-<ce>                 you with information as well as gold.
+<ce>                 for me? I am also prepared to reward
+<ce>            you with information as well as _reward_ gold.
 
 RefuseQuest:  [1001]
 <ce>                 That is a pity indeed. Prince Helseth
 <ce>                is usually correct in his assessment of
-<ce>                 people, but it would appear that he is
+<ce>                people, but it would appear that he is
 <ce>                         wrong in this matter.
 
 AcceptQuest:  [1002]
@@ -35,22 +35,20 @@ AcceptQuest:  [1002]
 <ce>             excessively critical of the Empire and Septim
 <ce>           Imperial family, it was wisely suppressed and its
 <ce>            author executed. Unfortunately, chapters of the
-<ce>           book resurface from time to time. I have reason to
-<ce>           believe one chapter of the book has been purchased
-<ce>             by the orcs of Orsinium, who are attempting to
-<ce>          publish it. I need it removed from their stronghold,
-<ce>            also named Orsinium. Time is of the essence. I'm
-<ce>          sure Gortwog will not wait long. Once the chapter is
-<ce>            safe, we will talk further about your ambitions.
+<ce>          book resurface from time to time. I have reason to
+<ce>          believe one chapter of the book has been purchased
+<ce>            by the orcs of Orsinium, who are attempting to
+<ce>         publish it. I need it removed from their stronghold,
+<ce>           also named Orsinium. Time is of the essence. I'm
+<ce>         sure Gortwog will not wait long. Once the chapter is
+<ce>           safe, we will talk further about your ambitions.
 
 QuestFail:  [1003]
 <ce>                  I need that book chapter before we
 <ce>                          talk, my dear %pcf.
 
 QuestComplete:  [1004]
-<ce>                Very well done. Prince Helseth did not
-<ce>                  exaggerate your virtues. Here is the
- _reward_ gold pieces I promised.
+<ce>                         Very well done, %pcf.
 
 RumorsDuringQuest:  [1005]
 Queen Barenziah is supposedly in a bad mood. You can never tell though.
@@ -68,17 +66,26 @@ That book about Queen Barenziah apparently never made it as far as the presses.
 Queen Barenziah has been singing the praises of some %ra adventurer she hired.
 
 QuestorPostsuccess:  [1008]
-%qdt: Queen Barenziah has hired
+
+
+QuestorPostfailure:  [1009]
+
+
+QuestLogEntry:  [1010]
+%qdt:
+ Queen Barenziah has hired
  me to find a chapter of a libelous book about her
  that has been circulating around the Bay. She
  believes it to be in the dungeons of Orsinium,
  home of the orc warlord Gortwog.
 
-QuestorPostfailure:  [1009]
-<ce>           Very interesting. Thank you for bringing this to
-<ce>                          my attention, %pcf.
+Message:  1014
+<ce>                        Prince Helseth did not
+<ce>                 exaggerate your virtues. Here is the
+<ce>                   _reward_ gold pieces I promised.
+<ce>                                    
 
-QuestLogEntry:  [1010]
+Message:  1015
 Chapter 6
  
  "You dance on the edge of a volcano, child," Drelliane
@@ -214,11 +221,11 @@ Message:  1016
  
  Dear %pcn,
  
-      My beloved son has brought your name to my
+ My beloved son has brought your name to my
  attention, and suggested that we might have some
  business to discuss. I understand that we have a
  mutual interest.
-      Please visit me at Castle Wayrest at your
+ Please visit me at Castle Wayrest at your
  earliest possible convenience.
  
  Yours,
@@ -228,71 +235,55 @@ Message:  1016
 
 Message:  1017
 <ce>               A page wearing the colors and pale yellow
-<ce>             rose of Wayrest appears silently at your side.
+<ce>            rose of Wayrest appears silently at your side.
 <ce>                He hands you a letter and disappears as
-<ce>                         quietly as he arrived.
+<ce>                        quietly as he arrived.
 
-Message:  2000
-<ce>                      Hello, %pcn. It would seem
-<ce>              that we have a mutual antagonist in the King
-<ce>              of Worms. I am Gortwog, King of the Orcs and
-<ce>              Lord of Orsinium. I am willing to give you a
-<ce>                  _jewelry_ if you would retrieve the
-<ce>             chapter of Barenziah's book from Scourg Barrow
-<ce>            in the Dragontail Mountains, where the King and
-<ce>                his Necromancers have taken it. Agreed?
-
-Message:  2001
-<ce>             What a shame. Ah well, we'll hire some other
-<ce>                            mercenary then.
-
-Message:  2002
-<ce>                     Very good. Off with you then.
-
-Message:  2003
-<ce>                  The chapter, %pcf, or no _jewelry_.
-
-Message:  2004
-<ce>             Very well done, %pcf. Here is your _jewelry_.
-<ce>              Nevermind what I will do with this chapter.
-<ce>            However, I would steer clear of Queen Barenziah
-<ce>                       for a while if I were you.
-
-Message:  2005
-Queen Barenziah is said to be frantically trying to keep that book unpublished.
-<--->
-The King of Worms has repelled several agents sent against him by Wayrest.
-
-Message:  2006
-Now you can find the scandalous, unauthorized biography of Queen Barenziah.
-<--->
-Queen Barenziah's scandalous biography was finally published, to her horror.
-
-Message:  2007
-I bet that biography of Queen Barenziah doesn't even exist at all.
-<--->
-The King of Worms is supposedly sending the Necromancers after a %ra mercenary.
-
-
-Message:  2008
-<ce>                 Thank Boethiah you found it before those
-<ce>                horrible orcs could retrieve it again. I
+Message:  1020
+<ce>               Thank Boethiah you found it before those
+<ce>               horrible orcs could retrieve it again. I
 <ce>                heard all about them losing the chapter
-<ce>                   to the King of Worms. %god, what a
+<ce>                  to the King of Worms. %god, what a
 <ce>                 crisis it would have been if they had
 <ce>                published it. Here is _reward_ gold for
-<ce>              your services.    You may not know this, but
-<ce>                 not only is Gortwog the holder of that
-<ce>                letter the Emperor lost some months ago,
-<ce>                but he is also contending for an ancient
+<ce>                            your services.
+
+Message:  1030
+<ce>                      You may not know this, but
+<ce>                not only is Gortwog the holder of that
+<ce>               letter the Emperor lost some months ago,
+<ce>               but he is also contending for an ancient
 <ce>                relic called the Totem of Tiber Septim.
-<ce>                 If that cannibal gets his warted hands
-<ce>                 on the Totem, it could mean the end of
-<ce>                 Wayrest, and possibly all civilization
+<ce>                If that cannibal gets his warted hands
+<ce>                on the Totem, it could mean the end of
+<ce>                Wayrest, and possibly all civilization
 <ce>                on the Iliac Bay. We may need your able
 <ce>                         services again, %pcf.
 
-Message:  2009
+Message:  1050
+<ce>                      Hello, %pcn. It would seem
+<ce>             that we have a mutual antagonist in the King
+<ce>             of Worms. I am Gortwog, King of the Orcs and
+<ce>             Lord of Orsinium. I am willing to give you a
+<ce>                  _jewelry_ if you would retrieve the
+<ce>            chapter of Barenziah's book from Scourg Barrow
+<ce>            in the Dragontail Mountains, where the King and
+<ce>                his Necromancers have taken it. Agreed?
+
+Message:  1051
+<ce>             What a shame. Ah well, we'll hire some other
+<ce>                            mercenary then.
+
+Message:  1052
+<ce>                     Very good. Off with you then.
+
+Message:  1054
+<ce>                        Here is your _jewelry_.
+<ce>              Nevermind what I will do with this chapter.
+<ce>            However, I would steer clear of Queen Barenziah
+<ce>                      for a while if I were you.
+
+Message:  1060
 %qdt:
  The orcish warlord, Gortwog of Orsinium,
  has hired me to continue the quest that
@@ -302,7 +293,7 @@ Message:  2009
  stronghold, Scourg Barrow, in the
  Dragontail Mountains.
 
-Message:  2011
+Message:  1061
 <ce>           A misty shape forms in your mind. An orc shaman!
 <ce>             It gives way to a regal orc, wearing a crown.
  
@@ -313,24 +304,24 @@ Message:  2011
  Please do not be so foolish as to assume that the
  orcs are your enemy, simply because we are orcs.
  If you are interested, come to me at Orsinium Hall
- in Orsinium.
+ in Orsinium."
  
-<ce>           The face vanishes, leaving you with only a memory.
+<ce>          The face vanishes, leaving you with only a memory.
 
 
 -- Symbols used in the QRC file:
 --
 --              %god occurs 1 time.
---              %pcf occurs 13 times.
+--              %pcf occurs 7 times.
 --              %pcn occurs 3 times.
 --              %qdt occurs 2 times.
---               %ra occurs 55 times.
---         _jewelry_ occurs 4 times.
---          _reward_ occurs 3 times.
+--               %ra occurs 18 times.
+--         _jewelry_ occurs 2 times.
+--          _reward_ occurs 7 times.
 
 QBN:
 Item _reward_ gold
-Item Chapter6 letter used 1010
+Item Chapter6 letter used 1015
 Item letter40 letter used 1016
 Item _jewelry_ trinket
 
@@ -343,12 +334,10 @@ Place _scourgbarrow_ permanent ScourgBarrow2
 
 Clock _S.01_ 6.00:01 0 flag 1 range 0 1
 Clock _S.11_ 7.00:00 10.00:00
-Clock _S.14_ 00:00 0 flag 17 range 0 2
 Clock _S.18_ 150.00:00 0 flag 1 range 0 1
 
 
 --	Quest start-up:
-	start timer _S.11_ 
 	add Barenziah as questor 
 	add _gortwog_ as questor 
 
@@ -356,23 +345,25 @@ _S.00_ task:
 	clicked npc Barenziah 
 
 variable _S.01_
-variable _S.02_
+_S.02_ task:
+	when repute with Queen_Barenziah is at least 15 
+
 _S.03_ task:
 	when _S.01_ and not _S.04_ 
 	place item Chapter6 at _scourgbarrow_ 
-	say 2011 
+	say 1061 
 
 _S.04_ task:
 	clicked item Chapter6 
 	stop timer _S.01_ 
 
 _S.05_ task:
-	when _S.15_ or _S.08_ 
+	when _S.08_ or _S.15_ 
 
 yes task:
 	place item Chapter6 at _orsinium_ 
 	start timer _S.01_ 
-	log 1008 step 0 
+	log 1010 step 0 
 	reveal _orsinium_ in province 26 at 146892 
 	say AcceptQuest 
 
@@ -384,16 +375,16 @@ _S.08_ task:
 	toting Chapter6 and Barenziah clicked 
 	give pc _reward_ 
 	start task _S.19_ 
+	say 1014 
 	change repute with Barenziah by +10 
-	end quest 
 
 _S.09_ task:
-	log 2009 step 1 
+	log 1060 step 1 
 	reveal _scourgbarrow_ in province 1 at 450958 
-	say 2002 
+	say 1052 
 
 _S.10_ task:
-	say 2001 
+	say 1051 
 
 _S.11_ task:
 	start timer _S.18_ 
@@ -408,16 +399,18 @@ until _S.12_ performed:
 
 _S.13_ task:
 	clicked npc _gortwog_ 
-	prompt 2000 yes _S.09_ no _S.10_ 
 
-variable _S.14_
+_S.14_ task:
+	when _S.03_ and _S.13_ 
+	prompt 1050 yes _S.09_ no _S.10_ 
+
 _S.15_ task:
 	toting Chapter6 and _gortwog_ clicked 
 	get item _jewelry_ 
-	say 2004 
+	say 1054 
+	make _jewelry_ permanent 
 	change repute with Barenziah by -20 
 	change repute with _gortwog_ by +15 
-	end quest 
 
 _clearclick_ task:
 	when _S.13_ and not _S.03_ 
@@ -432,6 +425,26 @@ _S.18_ task:
 
 BarenziahSatisfied _S.19_
 _S.20_ task:
-	when _S.18_ or _S.08_ or _S.15_ 
+	when _S.08_ or _S.15_ or _S.18_ 
 	drop _gortwog_ as questor 
 	drop Barenziah as questor 
+
+_S.21_ task:
+	when _S.08_ and _S.03_ 
+	say 1020 
+	say 1030 
+
+_S.22_ task:
+	when _S.08_ and not _S.03_ 
+	say 1030 
+
+_S.23_ task:
+	level 9 completed 
+
+_S.24_ task:
+	when _S.02_ and _S.23_ 
+	start timer _S.11_ 
+
+_S.25_ task:
+	when _S.15_ or _S.21_ or _S.22_ 
+	end quest 

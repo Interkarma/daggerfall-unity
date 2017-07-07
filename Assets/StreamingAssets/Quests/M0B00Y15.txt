@@ -11,20 +11,20 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                            I am _qgiver_.
-<ce>                 I have a relatively menial job, if you
-<ce>                 are willing to take it. Actually, some
-<ce>                 members prefer these jobs because they
-<ce>                 pay just as well as the more difficult
+<ce>                I have a relatively menial job, if you
+<ce>                are willing to take it. Actually, some
+<ce>                members prefer these jobs because they
+<ce>                pay just as well as the more difficult
 <ce>                ones. A house here in town has infested
-<ce>                 by giant rodents. The wife claims they
+<ce>                by giant rodents. The wife claims they
 <ce>                 are rats, the husband claims they are
-<ce>                 bats. Either way, they want them gone.
+<ce>                bats. Either way, they want them gone.
 <ce>                          Are you interested?
 
 RefuseQuest:  [1001]
 <ce>                  Obviously you have no love for the
-<ce>                  Fighter's Guild. I will make sure to
-<ce>                    tell them what you really think.
+<ce>                 Fighter's Guild. I will make sure to
+<ce>                   tell them what you really think.
 
 AcceptQuest:  [1002]
 <ce>                    The bats have infested _house_.
@@ -35,35 +35,35 @@ AcceptQuest:  [1002]
 QuestComplete:  [1004]
 <ce>                    Killing bats, even giant ones,
 <ce>                    doesn't take much skill, but it
-<ce>                           pays the same, eh?
+<ce>                          pays the same, eh?
 
 RumorsDuringQuest:  [1005]
 <ce>                   Some idiot didn't repair his roof
 <ce>                   for a couple of months. Now she's
-<ce>                      got giant bats in her house.
+<ce>                     got giant bats in her house.
 
 RumorsPostfailure:  [1006]
 <ce>                   Did you hear about the woman that
 <ce>                    had to abandon her home? It was
 <ce>                    overrun with giant bats and she
-<ce>                   didn't have enough gold to pay the
-<ce>                      Fighters Guild to kill them.
+<ce>                  didn't have enough gold to pay the
+<ce>                     Fighters Guild to kill them.
 
 RumorsPostsuccess:  [1007]
 <ce>                 I heard the Fighters Guild sent some
 <ce>                   %ra over to kill the bats in that
-<ce>                  woman's home. Cost her a bundle, but
-<ce>                  I suppose its better than abandoning
+<ce>                 woman's home. Cost her a bundle, but
+<ce>                 I suppose its better than abandoning
 <ce>                               her home.
 
 QuestorPostsuccess:  [1008]
 <ce>                  So you killed the giant bats. Don't
 <ce>                  get too full of yourself. They were
-<ce>                            only giant bats.
+<ce>                           only giant bats.
 
 QuestorPostfailure:  [1009]
 <ce>                 You couldn't even take care of giant
-<ce>                      bats. You are hopeless %pcn.
+<ce>                     bats. You are hopeless %pcn.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -74,7 +74,7 @@ QuestLogEntry:  [1010]
 
 Message:  1020
 <ce>                Thats most of them. The Fighters Guild
-<ce>                      won't quibble over the rest.
+<ce>                     won't quibble over the rest.
 
 
 -- Symbols used in the QRC file:
@@ -87,6 +87,7 @@ Message:  1020
 --          _qgiver_ occurs 1 time.
 
 QBN:
+Item _reward_ gold
 
 Person _qgiver_ group Questor male
 
@@ -110,10 +111,11 @@ _2dung_ task:
 _S.01_ task:
 	killed 4 _rats_ 
 	killed 4 _monster_ 
+	say 1020 
 
 _S.02_ task:
 	clicked npc _qgiver_ 
-	give pc nothing 
+	give pc _reward_ 
 	end quest 
 
 _clearclick_ task:

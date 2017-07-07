@@ -11,8 +11,8 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                  This could be a tough one, even for
-<ce>                     you %pcf. It's one of the best
-<ce>                      fighters in all of %reg. Are
+<ce>                    you %pcf. It's one of the best
+<ce>                     fighters in all of %reg. Are
 <ce>                      you sure you want this job?
 
 RefuseQuest:  [1001]
@@ -22,25 +22,25 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                  Somehow I thought you might try for
 <ce>     this one. Its your funereal. This mark is no arena gladiator.
-<ce>                    We're talking about a veteran of
-<ce>                  the Betony war. Killed 9 men, if the
-<ce>                   stories are right. Go to _mondung_
+<ce>                   We're talking about a veteran of
+<ce>                 the Betony war. Killed 9 men, if the
+<ce>                  stories are right. Go to _mondung_
 <ce>                     in __mondung_. You'll be able
 <ce>                  to identify the mark easily because
-<ce>                    of the limp. A spear in the knee
-<ce>                   during the war caused it. Get back
+<ce>                   of the limp. A spear in the knee
+<ce>                  during the war caused it. Get back
 <ce>                       here in =1stparton_ days.
 
 QuestFail:  [1003]
 <ce>                   I don't know who you think you've
 <ce>                   killed, but it wasn't the target.
-<ce>                       Get back to __mondung_ and
+<ce>                      Get back to __mondung_ and
 <ce>                  finish what we were contracted for.
 
 QuestComplete:  [1004]
 <ce>                    What a battle! I heard about it
 <ce>                 already. Street gossip is faster than
-<ce>               a horse you know. Here's the _reward_ gold
+<ce>              a horse you know. Here's the _reward_ gold
 <ce>                       pieces for the job, %pcf.
 
 RumorsDuringQuest:  [1005]
@@ -61,15 +61,15 @@ You failed in your contract to kill the war hero. The brotherhood never forgets 
 Message:  1020
 %qdt:
  My contract for the Dark Brotherhood
- is a war hero at _mondung_,
+ in ___questgiver_ is a war hero at _mondung_,
  in __mondung_. The deed must be
  done in =1stparton_ days.
 
 Message:  1021
 <ce>                 "You have succeeded...where all...the
-<ce>                soldiers in the...war of Betony failed."
+<ce>               soldiers in the...war of Betony failed."
 <ce>                                    
-<ce>                    The contract has been fulfilled.
+<ce>                   The contract has been fulfilled.
 
 Message:  1022
 <ce>                   "Do not think me a cripple, just
@@ -83,11 +83,12 @@ Message:  1023
 -- Symbols used in the QRC file:
 --
 --              %pcf occurs 3 times.
---              %pcn occurs 1 time.
+--              %pcn occurs 2 times.
 --              %qdt occurs 1 time.
 --              %reg occurs 1 time.
 --       =1stparton_ occurs 4 times.
---        __mondung_ occurs 5 times.
+--    ___questgiver_ occurs 1 time.
+--        __mondung_ occurs 8 times.
 --          _reward_ occurs 3 times.
 
 QBN:

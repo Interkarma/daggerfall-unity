@@ -11,13 +11,13 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                     Thou wouldst help ==qgiver_,
-<ce>                     %pcf? Many come to us for aid,
-<ce>                    and then turn from us once their
+<ce>                    %pcf? Many come to us for aid,
+<ce>                   and then turn from us once their
 <ce>                   wishes have been met, their oaths
-<ce>                     are curses, their promises are
+<ce>                    are curses, their promises are
 <ce>                    abominations. For the gratitude
 <ce>                         of ==qgiver_, wouldst
-<ce>                      thou punish one transgressor
+<ce>                     thou punish one transgressor
 <ce>                          for the sisterhood?
 
 RefuseQuest:  [1001]
@@ -31,17 +31,17 @@ AcceptQuest:  [1002]
 <ce>                 Wilt thou truly? If thou wilt, a fine
 <ce>                        _mitem_ will be crafted
 <ce>                for thee. Now, journey thou to farthest
-<ce>                     __tavern_ and seek he who has
+<ce>                     __tavern_ and seek %g who has
 <ce>                    betrayed us, a villianous =man_
-<ce>                        who calls himself _man_.
-<ce>                Give to him this _jewelry_, tell him it
-<ce>                 is a gift from his old lover, and then
-<ce>                  come back to us. Thou must to hurry,
-<ce>                  for the _jewelry_ will transform his
-<ce>                 outerself to a semblance of his inner
-<ce>                         beauty. ==qgiver_ wilt
-<ce>                   expect thee in =queston_ days. May
-<ce>                         ==daedra_ smile on thy
+<ce>                       who calls %g2-self _man_.
+<ce>                Give to %g2 this _jewelry_, tell %g2 it
+<ce>                is a gift from %g3 old lover, and then
+<ce>                 come back to us. Thou must to hurry,
+<ce>                 for the _jewelry_ will transform %g3
+<ce>                 outerself to a semblance of %g3 inner
+<ce>                        beauty. ==qgiver_ wilt
+<ce>                  expect thee in =queston_ days. May
+<ce>                        ==daedra_ smile on thy
 <ce>                             sacred quest.
 
 QuestComplete:  [1004]
@@ -49,8 +49,8 @@ QuestComplete:  [1004]
 <ce>                      the ==qgiver_ is fulfilled.
 <ce>                         Here is the _mitem_ I
 <ce>                         promised. Poor _man_.
-<ce>                I hope they allow him to suffer deeply,
-<ce>                       before he is put to death.
+<ce>                I hope they allow %g2 to suffer deeply,
+<ce>                      before %g is put to death.
 
 RumorsDuringQuest:  [1005]
 _man_ is a true example of self-made man. A marvel to behold.
@@ -72,24 +72,24 @@ Truly, I hope thou art enjoying thy _mitem_, %pcf.
 
 QuestorPostfailure:  [1009]
 <ce>                      Our vengeance against _man_
-<ce>                  is not complete! Get thee from here,
-<ce>                  or %g3 deserved fate wilt be visited
-<ce>                            upon thou, %pcf.
+<ce>                 is not complete! Get thee from here,
+<ce>                 or %g3 deserved fate wilt be visited
+<ce>                           upon thou, %pcf.
 
 Message:  1011
 <ce>                         _man_ thanks you for
-<ce>                    the _jewelry_. He tries it on as
-<ce>                  you are telling him who sent it. His
+<ce>                   the _jewelry_. %g tries it on as
+<ce>                 you are telling %g2 who sent it. %g3
 <ce>                   eyes light up in fear at the name
-<ce>                       of ==qgiver_, and then the
+<ce>                      of ==qgiver_, and then the
 <ce>                          fear turns to pain.
 
 Message:  1012
-<ce>                    Thou wert not to kill the man,
-<ce>                   merely give to him the _jewelry_!
-<ce>                          Oaf! Assassin! _man_
-<ce>                was to suffer deeply for his insolence,
-<ce>                        not be painlessly slain.
+<ce>                     Thou wert not to kill _man_,
+<ce>                   merely give to %g2 the _jewelry_!
+<ce>                         Oaf! Assassin! _man_
+<ce>                was to suffer deeply for %g3 insolence,
+<ce>                       not be painlessly slain.
 <ce>                            ==daedra_ curse
 <ce>                              thee, %pcf.
 
@@ -97,22 +97,23 @@ Message:  1020
 %qdt:
  ==qgiver_ of
  %reg has sent me to bring a
- _jewelry_ to a man by the name of
+ _jewelry_ to a =man_ by the name of
  _man_ in __tavern_.
  I was told to move hastily for the
- _jewelry_ would "transform his
- outerself to a semblance of his
+ _jewelry_ would "transform %g3
+ outerself to a semblance of %g3
  inner beauty." I must have the
- _jewelry_ in his hands and
+ _jewelry_ in %g3 hands and
  get back with ==qgiver_ in
  no more than =queston_ days.
 
 
 -- Symbols used in the QRC file:
 --
---                %g occurs 2 times.
---               %g3 occurs 1 time.
---              %oth occurs 2 times.
+--                %g occurs 7 times.
+--               %g2 occurs 6 times.
+--               %g3 occurs 10 times.
+--              %oth occurs 3 times.
 --              %pcf occurs 42 times.
 --              %qdt occurs 1 time.
 --              %reg occurs 1 time.
@@ -120,10 +121,10 @@ Message:  1020
 --         ==qgiver_ occurs 9 times.
 --             =man_ occurs 2 times.
 --         =queston_ occurs 4 times.
---         __tavern_ occurs 3 times.
+--         __tavern_ occurs 4 times.
 --         _jewelry_ occurs 8 times.
---             _man_ occurs 11 times.
---           _mitem_ occurs 4 times.
+--             _man_ occurs 12 times.
+--           _mitem_ occurs 5 times.
 --          _tavern_ occurs 1 time.
 
 QBN:
@@ -155,20 +156,20 @@ _queston_ task:
 
 _S.01_ task:
 	toting _jewelry_ and _man_ clicked 
-	pick one of _daedroth_ _giant_ _harpy_ _zombie_ 
+	pick one of _S.04_ _S.02_ _S.03_ _S.05_ 
 	hide npc _man_ 
 	say 1011 
 
-_giant_ task:
+_S.02_ task:
 	place foe _giant_ at _tavern_ 
 
-_harpy_ task:
+_S.03_ task:
 	place foe _harpy_ at _tavern_ 
 
-_daedroth_ task:
+_S.04_ task:
 	place foe _daedroth_ at _tavern_ 
 
-_zombie_ task:
+_S.05_ task:
 	place foe _zombie_ at _tavern_ 
 
 _S.06_ task:
@@ -182,7 +183,7 @@ _qgclicked_ task:
 
 _S.08_ task:
 	when _qgclicked_ and _S.06_ 
-	say nothing 
+	say 1020 
 	change repute with _man_ by -15 
 	make pc ill with Witches'_Pox 
 	end quest 

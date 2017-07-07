@@ -11,23 +11,23 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                          Noble _warrior_ has
-<ce>                   sponsored the Guild in many of our
-<ce>                    enterprises, and as we have made
-<ce>                    enemies, so has %g. We have word
+<ce>                  sponsored the Guild in many of our
+<ce>                   enterprises, and as we have made
+<ce>                   enemies, so has %g. We have word
 <ce>                   from %g3 courier that a witch has
-<ce>                   cursed %g2 with unending insomnia.
+<ce>                  cursed %g2 with unending insomnia.
 <ce>                    A simple Sleep spell would cure
-<ce>                     %g2 -- perhaps you are willing
-<ce>                      and able to cast it? I would
-<ce>                     willingly pay you _gold_ gold.
+<ce>                    %g2 -- perhaps you are willing
+<ce>                     and able to cast it? I would
+<ce>                    willingly pay you _gold_ gold.
                                      <--->
 <ce>                   If you are capable of casting the
 <ce>                   standard circinate spell Sleep, a
 <ce>                    friend of the Guild is in need.
-<ce>                           _warrior_ has been
+<ce>                          _warrior_ has been
 <ce>                     cursed and is in need of that
-<ce>                        somniferous spell. I can
-<ce>                      offer you _gold_ gold pieces
+<ce>                       somniferous spell. I can
+<ce>                     offer you _gold_ gold pieces
 <ce>                     in exchange for this service.
 
 RefuseQuest:  [1001]
@@ -37,25 +37,25 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                  Very good. Now, I told the courier
-<ce>                   that we wouldn't use any spell but
+<ce>                  that we wouldn't use any spell but
 <ce>                          Sleep on _warrior_.
-<ce>                   Given %g3 previous experience with
+<ce>                  Given %g3 previous experience with
 <ce>                  cursed spells, you can hardly blame
 <ce>                   %g2 for this anxiety. You'll find
 <ce>                         _warrior_ in _castle_
 <ce>                        in __castle_. _warrior_
-<ce>                    will be the well-armored one. Be
+<ce>                   will be the well-armored one. Be
 <ce>                 certain to be back in =queston_ days,
 <ce>                    with our friend in sound sopor.
 
 QuestComplete:  [1004]
 <ce>                         I hear that _warrior_
-<ce>                    dropped into sublime torpescence
+<ce>                   dropped into sublime torpescence
 <ce>                    right on %g3 feet. I do hope %g
-<ce>                   wakes before next New Life. As for
+<ce>                  wakes before next New Life. As for
 <ce>                         you, my fine %ra, you
 <ce>                   have certainly earned your _gold_
-<ce>                              gold pieces.
+<ce>                             gold pieces.
 
 RumorsDuringQuest:  [1005]
 Poor _warrior_ has been awake for days. I think %g3 sanity is going.
@@ -77,8 +77,8 @@ You helped us maintain good relations with _warrior_. What may I do for you?
 
 QuestorPostfailure:  [1009]
 <ce>               You failed the Guild when you failed our
-<ce>                          friend _warrior_. Go
-<ce>                from here. Perhaps in time I may forgive
+<ce>                         friend _warrior_. Go
+<ce>               from here. Perhaps in time I may forgive
 <ce>                              thee, %pcn.
 
 QuestLogEntry:  [1010]
@@ -96,17 +96,17 @@ QuestLogEntry:  [1010]
 
 Message:  1011
 <ce>                            _warrior_ falls
-<ce>                      into a profound sleep, still
-<ce>                              on %g3 feet.
+<ce>                     into a profound sleep, still
+<ce>                             on %g3 feet.
 
 
 -- Symbols used in the QRC file:
 --
 --                %g occurs 3 times.
---               %g2 occurs 7 times.
+--               %g2 occurs 9 times.
 --               %g3 occurs 7 times.
 --              %oth occurs 1 time.
---              %pcn occurs 3 times.
+--              %pcn occurs 2 times.
 --              %qdt occurs 1 time.
 --               %ra occurs 1 time.
 --         =queston_ occurs 2 times.
@@ -114,7 +114,7 @@ Message:  1011
 --         __castle_ occurs 4 times.
 --            _gold_ occurs 6 times.
 --          _qgiver_ occurs 1 time.
---         _warrior_ occurs 39 times.
+--         _warrior_ occurs 42 times.
 
 QBN:
 Item _gold_ gold
@@ -134,6 +134,7 @@ Foe _F.00_ is Warrior
 	log 1010 step 0 
 	pc at _castle_ set _S.05_ 
 	restrain foe _F.00_ 
+	create npc at _castle_ 
 	place foe _F.00_ at _castle_ 
 
 _queston_ task:

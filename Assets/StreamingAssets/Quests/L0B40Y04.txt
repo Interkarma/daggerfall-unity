@@ -11,44 +11,44 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                 This little excursion is not for just
-<ce>                   anyone, but I feel you'd enjoy the
-<ce>                  challenge of the experience. We have
-<ce>                 a client who wants to call accounts on
+<ce>                  anyone, but I feel you'd enjoy the
+<ce>                 challenge of the experience. We have
+<ce>                a client who wants to call accounts on
 <ce>                    a member of the royal family of
-<ce>                        __mondung_. When I heard
+<ce>                       __mondung_. When I heard
 <ce>                  that, I thought of you. Interested?
 
 RefuseQuest:  [1001]
 <ce>                    Oh, well. Probably wise, but it
-<ce>                       does smack a little of ...
-<ce>                         dare I say, cowardice?
+<ce>                      does smack a little of ...
+<ce>                        dare I say, cowardice?
 
 AcceptQuest:  [1002]
 <ce>                 I just knew you could not resist this
 <ce>                    one. Fair warning, your target,
 <ce>                  =knight_ is no pampered princeling.
 <ce>                  The client is also one of the royal
-<ce>                 family, worried that =knight_ is going
+<ce>                family, worried that =knight_ is going
 <ce>                 to worm a way to the throne. And from
-<ce>                  what I've heard, %g has the power to
-<ce>                   do just that. Our client wants %g2
+<ce>                 what I've heard, %g has the power to
+<ce>                  do just that. Our client wants %g2
 <ce>               extinct in =1stparton_ days. We will give
-<ce>                      you that time to account and
+<ce>                     you that time to account and
 <ce>                      return to make your report.
-<ce>                    May Mephala walk with you, %pcf.
+<ce>                   May Mephala walk with you, %pcf.
 
 QuestFail:  [1003]
 <ce>                   I don't know who you think you've
 <ce>                    killed, but it wasn't =knight_.
-<ce>                  Get your butt over to the palace and
+<ce>                 Get your butt over to the palace and
 <ce>                    do what we were contracted for.
 
 QuestComplete:  [1004]
 <ce>                    Beautiful, %pcf, truly. Brings
-<ce>                  tears to these weary eyes. As lovely
-<ce>                   an accounting as I've ever seen. I
+<ce>                 tears to these weary eyes. As lovely
+<ce>                  an accounting as I've ever seen. I
 <ce>                  feel like writing a poem. Why don't
-<ce>                 you take your _reward_ gold pieces and
+<ce>                you take your _reward_ gold pieces and
 <ce>                   get the hell out of here so I can
 <ce>                  write a ballad about it? Seriously,
 <ce>                         I'm very proud, %pcf.
@@ -74,32 +74,33 @@ I'm still thinking about that knight's accounting. It was truly sublime, %pcf.
 QuestorPostfailure:  [1009]
 <ce>                 I know it was a difficult assignment.
 <ce>                Nigh impossible. But still, you failed,
-<ce>                  and I have no tolerance for failure.
+<ce>                 and I have no tolerance for failure.
 
 Message:  1020
 %qdt:
  My latest contract for the Dark Brotherhood
- is a noble at _mondung_,
+ in ___questgiver_ is a noble at _mondung_,
  in __mondung_, by the name of
  =knight_. The deed must be
  done in =1stparton_ days.
 
 Message:  1021
 <ce>                     "I could...have been your...
-<ce>                     next...ruler," moans =knight_.
-<ce>                    The contract has been fulfilled.
+<ce>                    next...ruler," moans =knight_.
+<ce>                   The contract has been fulfilled.
 
 
 -- Symbols used in the QRC file:
 --
 --                %g occurs 2 times.
 --               %g2 occurs 1 time.
---              %pcf occurs 22 times.
+--              %pcf occurs 23 times.
 --              %qdt occurs 1 time.
 --              %reg occurs 1 time.
 --       =1stparton_ occurs 3 times.
---          =knight_ occurs 11 times.
---        __mondung_ occurs 3 times.
+--          =knight_ occurs 14 times.
+--    ___questgiver_ occurs 1 time.
+--        __mondung_ occurs 9 times.
 --          _reward_ occurs 1 time.
 
 QBN:

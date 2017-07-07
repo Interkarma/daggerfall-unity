@@ -6,41 +6,29 @@ Quest: S0000500
 -- Message panels
 QRC:
 
-QuestorOffer:  [1000]
-
-
-RefuseQuest:  [1001]
-
-
-AcceptQuest:  [1002]
-
-
-QuestFail:  [1003]
-
-
 QuestComplete:  [1004]
 <ce>                   %pcf, you saved my life when most
-<ce>                  of my supposed friends abandoned me.
-<ce>                  I am in your debt.  My resources are
-<ce>                not what they once were, but accept this
+<ce>                 of my supposed friends abandoned me.
+<ce>                  I am in your debt. My resources are
+<ce>               not what they once were, but accept this
 <ce>             _gold_ gold as a small token of my gratitude.
 
 RumorsDuringQuest:  [1005]
-<ce>  One of _queen_'s high lords was arrested for treason.  His friends
+<ce>   One of _queen_'s high lords was arrested for treason. His friends
 <ce>    are pleading for mercy, but the Queen has already scheduled his
 <ce>                            execution date.
 
 RumorsPostsuccess:  [1007]
 <ce> They say that _traitor_ escaped from the dungeon of Castle Sentinel,
-<ce> right from under the noses of _queen_'s guards.  She must be furious!
+<ce> right from under the noses of _queen_'s guards. She must be furious!
 
 Message:  1020
 %qdt:
  I have received a letter from one
  _contact1_, asking me to meet %g2
  at _tavern_ in __tavern_,
- on some matter having to do with
- _traitor_ of Sentinel.
+ ____tavern_, on some matter having
+ do with _traitor_ of Sentinel.
 
 Message:  1021
 %qdt:
@@ -48,7 +36,7 @@ Message:  1021
  me that _traitor_ languishes
  in the dungeons of Sentinel, with
  his execution scheduled in =executiondelay_
- days.  _contact1_ begged me to
+ days. _contact1_ begged me to
  rescue _traitor_ before it was
  too late.
 
@@ -56,76 +44,77 @@ Message:  1022
 %qdt:
  I have rescued _traitor_ from
  Castle Sentinel's dungeon, and
- am taking %g2 to __safehouse_
- in _safehouse_ where we will
- meet an ally of _traitor_.
+ am taking %g2 to _safehouse_
+ in __safehouse_, ____safehouse_,
+ where we will meet an ally of
+ _traitor_.
 
 Message:  1030
 Dear %pcn:
  
  If you are a friend of _traitor_,
  please meet me at _tavern_ in
- __tavern_ as soon as possible.
- This is a matter of life or death!
+ __tavern_, ____tavern_, as soon as
+ possible. This is a matter of life or death!
  
-<ce>                               _contact1_
+<ce>                              _contact1_
 
 Message:  1040
-<ce>                     %pcn?  You were my last hope!
-<ce>                     _traitor_'s friends and allies
+<ce>                     %pcn? You were my last hope!
+<ce>                    _traitor_'s friends and allies
 <ce>                    have all proven faithless after
 <ce>                     he was arrested by the tyrant
 <ce>                     _queen_ on trumped up charges
-<ce>                     of treason.  He is now locked
+<ce>                     of treason. He is now locked
 <ce>                       in the dungeons of Castle
 <ce>                     Sentinel, awaiting execution.
-<ce>                     Please, if you have any regard
-<ce>                  for the man, rescue him from certain
-<ce>                  death.  He often spoke of your skill
-<ce>                 and bravery.  I know you will help us.
+<ce>                    Please, if you have any regard
+<ce>                 for the man, rescue him from certain
+<ce>                  death. He often spoke of your skill
+<ce>                 and bravery. I know you will help us.
 
 Message:  1041
-<ce>                    %oth, am I glad to see you.  We
+<ce>                    %oth, am I glad to see you. We
 <ce>                    must get out of here before the
-<ce>                 alarm is raised.  I was just plotting
-<ce>                  my escape when you showed up, but no
-<ce>                   need for that now, eh?  My strong
-<ce>                   right arm, that's what I've always
-<ce>                   called you.  I promise, when I am
+<ce>                 alarm is raised. I was just plotting
+<ce>                 my escape when you showed up, but no
+<ce>                   need for that now, eh? My strong
+<ce>                  right arm, that's what I've always
+<ce>                   called you. I promise, when I am
 <ce>                  King of Sentinel, you will be there
 <ce>                  at my side, the richest lord of the
-<ce>                    kingdom!  Sounds good, eh?  Once
-<ce>                   we're clear of pursuit, take me to
-<ce>                     __safehouse_.  I have a friend
-<ce>                     there at _safehouse_ who will
-<ce>                     help me organize the conquest
-<ce>                      of Sentinel anew.  Lead on,
-<ce>                        good %pcn, let us away!
+<ce>                    kingdom! Sounds good, eh? Once
+<ce>                  we're clear of pursuit, take me to
+<ce>                    __safehouse_ in ____safehouse_.
+<ce>                       I have a friend there at
+<ce>                     _safehouse_ who will help me
+<ce>                organize the conquest of Sentinel anew.
+<ce>                   Lead on, good %pcn, let us away!
 
 Message:  1050
-<ce>                      Raise the alarm!  _traitor_
-<ce>                  is escaping!  =guards_, come quick!
+<ce>                      Raise the alarm! _traitor_
+<ce>                  is escaping! =guards_, come quick!
 
 Message:  1051
 <ce>                      _traitor_ clasps your hand,
 <ce>                          and says earnestly:
 <ce>                                    
 <ce>                   "I thank you for rescuing me from
-<ce>                     that black pit of despair, but
-<ce>                I will have to part ways with you here."
+<ce>                    that black pit of despair, but
+<ce>               I will have to part ways with you here."
 
 Message:  1060
 <ce>   Did you hear that _traitor_ of Sentinel was executed for treason?
-<ce> Apparently it was quite a spectacle -- they hanged him in the public square
+<ce>Apparently it was quite a spectacle -- they hanged him in the public square
 <ce>                     in front of _queen_'s Castle.
                                      <--->
-<ce>  _traitor_ of Sentinel was hanged for treason.  They say he pleaded
+<ce>   _traitor_ of Sentinel was hanged for treason. They say he pleaded
 <ce>             for his life quite shamefully before he died.
 
 Message:  1070
 <ce>                   A courier shouts at you to wait.
-<ce>                       "%pcn, right?  This letter
-<ce>                         is for you.  Gotta go."
+<ce>                       "%pcn, right? This letter
+<ce>                        is for you. Gotta go."
 
 
 -- Symbols used in the QRC file:
@@ -137,6 +126,8 @@ Message:  1070
 --              %qdt occurs 3 times.
 --  =executiondelay_ occurs 1 time.
 --          =guards_ occurs 2 times.
+--    ____safehouse_ occurs 2 times.
+--       ____tavern_ occurs 2 times.
 --      __safehouse_ occurs 2 times.
 --         __tavern_ occurs 2 times.
 --        _contact1_ occurs 4 times.
@@ -144,7 +135,7 @@ Message:  1070
 --           _queen_ occurs 7 times.
 --       _safehouse_ occurs 2 times.
 --          _tavern_ occurs 2 times.
---         _traitor_ occurs 15 times.
+--         _traitor_ occurs 14 times.
 
 QBN:
 Item _letter_ letter used 1030
@@ -153,30 +144,30 @@ Item _gold_ gold
 Person _traitor_ face 1 named Lord_K'avar
 Person _contact1_ face 15 group Banker
 Person _queen_ named Queen_Akorithi atHome
-Person _contact2_ face 1 group Local_3.1
+Person _contact2_ face 1 group Local_3.0
 
 Place _tavern_ remote tavern
 Place _sentinel_ permanent SentinelCastle4
 Place _safehouse_ remote house4
 
 Clock _S.00_ 31.06:00 93.18:00
-Clock _executiondelay_ 00:00 0 flag 1 range 0 2
+Clock _executiondelay_ 30.00:00 0 flag 1 range 0 1
 Clock _delay_ 01:00 0 flag 1 range 0 1
-Clock _escapetime_ 00:00 0 flag 1 range 0 2
+Clock _escapetime_ 30.00:00 0 flag 1 range 0 1
 
 Foe _guards_ is Spellsword
 Foe _F.01_ is Spellsword
 
 --	Quest start-up:
 	start timer _S.00_ 
-	place foe _guards_ at _sentinel_ 
-	place npc _traitor_ at _sentinel_ 
 
 _S.00_ task:
 	_letter_ used do _readletter_ 
 	start timer _executiondelay_ 
 	give pc _letter_ notify 1070 
+	place foe _guards_ at _sentinel_ 
 	place npc _contact1_ at _tavern_ 
+	place npc _traitor_ at _sentinel_ 
 
 variable _executiondelay_
 _S.02_ task:

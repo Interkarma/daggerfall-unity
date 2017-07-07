@@ -11,27 +11,27 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                        %god be with you, %pct.
-<ce>                    You may have heard of _prophet_.
+<ce>                   You may have heard of _prophet_.
 <ce>                 If you have not yet, you will. We are
 <ce>                  investigating %g3 claims that %g is
 <ce>                    a prophet. We are not, I think,
 <ce>                   censorious by nature, but we must
 <ce>                     ever be alert to the presence
-<ce>                   of heretical influences. Would you
-<ce>                     be available to assist in this
-<ce>                        important investigation?
+<ce>                  of heretical influences. Would you
+<ce>                    be available to assist in this
+<ce>                       important investigation?
                                      <--->
 <ce>                  It falls upon us to investigate the
-<ce>                        claims of _prophet_ that
-<ce>                   %g has seen the face and heard the
-<ce>                       words of %god. Perhaps you
+<ce>                       claims of _prophet_ that
+<ce>                  %g has seen the face and heard the
+<ce>                      words of %god. Perhaps you
 <ce>                      have time to assist in this
-<ce>                                inquiry?
+<ce>                               inquiry?
 
 RefuseQuest:  [1001]
 <ce>                         That's a pity, %pct.
 <ce>                   I hope you will find time in your
-<ce>                      busy schedule for the temple
+<ce>                     busy schedule for the temple
 <ce>                          in the near future.
 
 AcceptQuest:  [1002]
@@ -39,28 +39,28 @@ AcceptQuest:  [1002]
 <ce>                        Temple, _priest_ to the
 <ce>                    desacrilized ___mondung_, where
 <ce>                    _prophet_ asserts that %g first
-<ce>                         witnessed the miracle.
+<ce>                        witnessed the miracle.
 <ce>                     If _priest_ needs assistance,
-<ce>                 I will send for you. In the meanwhile,
-<ce>                  I want you to find some more secular
+<ce>                I will send for you. In the meanwhile,
+<ce>                 I want you to find some more secular
 <ce>                       information on _prophet_,
 <ce>                   by asking around in %g3 hometown,
-<ce>                           __tavern_. A loyal
+<ce>                          __tavern_. A loyal
 <ce>                       cleric of ours, _contact_
-<ce>                       will meet you in _tavern_.
-<ce>                   I want to see evidence of the true
+<ce>                      will meet you in _tavern_.
+<ce>                  I want to see evidence of the true
 <ce>                          nature of _prophet_
 <ce>                   in no more than =queston_ days. I
-<ce>                   would leave immediately. May Great
+<ce>                  would leave immediately. May Great
 <ce>                   %god bless your enterprise, %pct.
 
 QuestComplete:  [1004]
 <ce>                     Well done, %pct. I tremble to
 <ce>                    think what _prophet_ might have
-<ce>                    done to our temple had %g spread
-<ce>                         %g3 profane word. %god
-<ce>                     bless you and keep you, goodly
-<ce>                        %ra. Here, a small token
+<ce>                   done to our temple had %g spread
+<ce>                        %g3 profane word. %god
+<ce>                    bless you and keep you, goodly
+<ce>                       %ra. Here, a small token
 <ce>                    of the esteem of your brethren.
 
 RumorsDuringQuest:  [1005]
@@ -141,29 +141,29 @@ Message:  1012
  to me. All other assignments and investigations
  take lower priority.
  
-<ce>                                _qgiver_
+<ce>                               _qgiver_
 
 Message:  1013
 <ce>                 Ah hello, %pcf. Welcome to __tavern_.
 <ce>              The whole town's in a buzz about that young
-<ce>                      _prophet_. But %g isn't even
+<ce>                     _prophet_. But %g isn't even
 <ce>                   here -- %g's in __prophouse_ at a
-<ce>                   tavern called _prophouse_, working
+<ce>                  tavern called _prophouse_, working
 <ce>               on a new tract about what this mysterious
-<ce>                      spirit of ___mondung_ had to
+<ce>                     spirit of ___mondung_ had to
 <ce>                 say about the moral disintegration of
 <ce>                      __qgiver_. Here's a copy of
 <ce>                the original tractate, so you know what
 <ce>                      this _prophet_'s all about.
-<ce>               Dangerous character from what I've seen so
-<ce>                  far. I'm communicating with _lover_,
-<ce>                    a =lover_ in ___lover_ with whom
-<ce>                       _prophet_ had some kind of
+<ce>              Dangerous character from what I've seen so
+<ce>                 far. I'm communicating with _lover_,
+<ce>                   a =lover_ in ___lover_ with whom
+<ce>                      _prophet_ had some kind of
 <ce>                relationship. It wouldn't be a bad idea
-<ce>                       for you to go to ___lover_
+<ce>                      for you to go to ___lover_
 <ce>                   and see if you can't persuade %g2
 <ce>                to talk to us. Hope all this is helpful
-<ce>                           information, %pcf.
+<ce>                          information, %pcf.
 
 Message:  1014
                    _tavern_
@@ -185,19 +185,19 @@ Message:  1014
 
 Message:  1015
 <ce>                        A young lad hands you a
-<ce>                        letter and scurries off.
+<ce>                       letter and scurries off.
 
 Message:  1016
 <ce>                     %oth, %pcf, it was dreadful.
-<ce>                     The tavernkeep found _contact_
+<ce>                    The tavernkeep found _contact_
 <ce>                     in one of the rooms, %g3 body
-<ce>                     defiled in the most horrifying
+<ce>                    defiled in the most horrifying
 <ce>                     way, a grim parody of the old
 <ce>                       __qgiver_ mortuary rites.
-<ce>                          It was _prophet_, no
-<ce>                     doubt. This relic was found in
+<ce>                         It was _prophet_, no
+<ce>                    doubt. This relic was found in
 <ce>                       _contact_'s chest cavity.
-<ce>                             See if _lover_
+<ce>                            See if _lover_
 <ce>                        in ___lover_ recognizes
 <ce>                                  it.
 
@@ -220,20 +220,20 @@ Message:  1019
 <ce>                   %g knew I was talking to you. But
 <ce>                  I know that you couldn't be working
 <ce>                   for %g2. Here's a letter %g wrote
-<ce>                    to me about a month ago. I think
+<ce>                   to me about a month ago. I think
 <ce>                        it explains everything.
 
 Message:  1020
 <ce>                      _relartifact_! %oth, that's
-<ce>                       poor _prophet_'s property.
+<ce>                      poor _prophet_'s property.
 <ce>                     %oth, I knew %g was unstable,
-<ce>                 but I never thought %g'd really do it.
-<ce>                       %oth, poor _contact_. If I
+<ce>                but I never thought %g'd really do it.
+<ce>                      %oth, poor _contact_. If I
 <ce>                  had helped %g2, %g'd still be alive
-<ce>                   today. This won't make up for what
-<ce>                  I've done by failing to act, but you
-<ce>                 will know what to do with this letter.
-<ce>                          May %god forgive me.
+<ce>                  today. This won't make up for what
+<ce>                 I've done by failing to act, but you
+<ce>                will know what to do with this letter.
+<ce>                         May %god forgive me.
 
 Message:  1021
 _lover_, My Love,
@@ -278,31 +278,31 @@ _replace_ was an old friend of _contact_ before the ... accident.
 Message:  1024
 <ce>                        Oh! That's _prophet_'s
 <ce>                       _relartifact_! %oth, poor
-<ce>                        _contact_. Why don't you
+<ce>                       _contact_. Why don't you
 <ce>                    bring that letter I gave you to
 <ce>                         someone at __qgiver_?
 <ce>                  Surely, that is enough to discredit
-<ce>                          _prophet_, isn't it?
+<ce>                         _prophet_, isn't it?
 
 Message:  1025
 <ce>                       %pcf, I thought that you
 <ce>                   were supposed to be investigating
 <ce>                      the situation in __tavern_.
 <ce>                     Well, as long as you're here,
-<ce>                     I have something different for
+<ce>                    I have something different for
 <ce>                    you to do. I've found some torn
-<ce>                    up letters, scraps really, about
+<ce>                   up letters, scraps really, about
 <ce>                          a =lover_ somewhere
 <ce>                          in ___lover_ by the
 <ce>                        name of _lover_. See if
-<ce>                    you can't find something on %g2.
+<ce>                   you can't find something on %g2.
 <ce>                    I don't know if %g'll talk, but
 <ce>                           it's worth a try.
 
 Message:  1026
 <ce>                     You pick up a scrap of flesh,
-<ce>                carefully, even ritually ritualistically
-<ce>                       stripped from a =priest_'s
+<ce>               carefully, even ritually ritualistically
+<ce>                      stripped from a =priest_'s
 <ce>                    hand. This was once a finger of
 <ce>                               _priest_.
 
@@ -328,24 +328,24 @@ Message:  1028
 <ce>                  to give me a hand, don't you think?
                                      <--->
 <ce>                   %oth, what was I supposed to do?
-<ce>                         _priest_ threatened to
+<ce>                        _priest_ threatened to
 <ce>                         finger me, after all.
                                      <--->
 <ce>                  What an amusing plaything you have,
-<ce>                        %pcf. See how it points.
+<ce>                       %pcf. See how it points.
 
 Message:  1029
 <ce>                    How they come to persecute me.
 <ce>                  Abandon your unholy abuse, hound of
 <ce>                         __qgiver_. I am under
-<ce>                    protection of my god ... and the
+<ce>                   protection of my god ... and the
 <ce>                              %t of %reg.
 
 Message:  1030
 <ce>                       _lover_! False creature,
-<ce>                       deceiver! How %g will pay!
+<ce>                      deceiver! How %g will pay!
 <ce>                            =fighter_, deal
-<ce>                             with this %ra!
+<ce>                            with this %ra!
 
 Message:  1031
 <ce>                       Thank %god, I was afraid
@@ -414,11 +414,12 @@ Message:  1037
 <--->
  
 
+
 -- Symbols used in the QRC file:
 --
 --                %g occurs 19 times.
 --               %g2 occurs 16 times.
---               %g3 occurs 75 times.
+--               %g3 occurs 79 times.
 --              %god occurs 7 times.
 --              %oth occurs 6 times.
 --              %pcf occurs 6 times.
@@ -435,17 +436,17 @@ Message:  1037
 --         =queston_ occurs 1 time.
 --         =replace_ occurs 1 time.
 --                 _ occurs 1 time.
---         ___lover_ occurs 9 times.
+--         ___lover_ occurs 10 times.
 --       ___mondung_ occurs 7 times.
 --        ___qgiver_ occurs 5 times.
 --          __lover_ occurs 1 time.
 --      __prophouse_ occurs 2 times.
---         __qgiver_ occurs 28 times.
---         __tavern_ occurs 12 times.
---         _contact_ occurs 15 times.
+--         __qgiver_ occurs 30 times.
+--         __tavern_ occurs 13 times.
+--         _contact_ occurs 16 times.
 --           _lover_ occurs 13 times.
 --          _priest_ occurs 10 times.
---         _prophet_ occurs 112 times.
+--         _prophet_ occurs 117 times.
 --       _prophouse_ occurs 3 times.
 --          _qgiver_ occurs 3 times.
 --     _relartifact_ occurs 3 times.
@@ -456,9 +457,9 @@ QBN:
 Item letter7 letter used 1011
 Item _letter_ letter used 1012
 Item letter8 letter used 1014
-Item _relartifact_ religious
+Item _relartifact_ religious anyInfo 1022
 Item letter9 letter used 1021
-Item _finger_ finger
+Item _finger_ finger anyInfo 1027
 Item _reward_ gem
 
 Person _qgiver_ group Questor
@@ -466,7 +467,7 @@ Person _contact_ face 105 group Local_3.0
 Person _priest_ face 49 group Group_5.0
 Person _prophet_ face 1 group Local_4.0 anyInfo QuestorPostfailure
 Person _replace_ face 3 factiontype Temple anyInfo 1023
-Person _lover_ face 104 group Group_7.3 anyInfo 1017
+Person _lover_ face 104 group Group_7.0 anyInfo 1017
 
 Place _mondung_ remote dungeon4
 Place _tavern_ remote tavern
@@ -541,12 +542,17 @@ _S.09_ task:
 
 _S.10_ task:
 	toting _relartifact_ and _lover_ clicked 
+
+_S.11_ task:
+	when _S.10_ and not _S.09_ 
 	get item letter9 
 	say 1020 
 	clear _S.08_ 
 
-variable _clearclick_
-variable _S.12_
+_S.12_ task:
+	when _S.10_ and _S.09_ 
+	say 1024 
+
 _S.13_ task:
 	when _S.08_ and not _S.09_ 
 	say 1018 
@@ -590,7 +596,5 @@ _S.21_ task:
 	toting _relartifact_ and _prophet_ clicked 
 	say 1031 
 
-variable _qgclicked_
-variable _ringdung_
 _readletter_ task:
 	log 1035 step 4 

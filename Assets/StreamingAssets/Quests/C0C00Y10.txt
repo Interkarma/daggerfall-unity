@@ -11,33 +11,33 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                   The best way to get in good with
-<ce>                    the temple is to heal someone. I
-<ce>                    know of a case that might do the
-<ce>                          trick for you, %pcn.
-<ce>                            Are you willing?
+<ce>                   the temple is to heal someone. I
+<ce>                   know of a case that might do the
+<ce>                         trick for you, %pcn.
+<ce>                           Are you willing?
                                      <--->
 <ce>                           I am _giver_. You
-<ce>                      aren't high in the hierarchy
-<ce>                              of __giver_.
-<ce>                        I might be able to speak
+<ce>                     aren't high in the hierarchy
+<ce>                             of __giver_.
+<ce>                       I might be able to speak
 <ce>                    favorably of you if you were to
-<ce>                   find a way to cure someone I know.
+<ce>                  find a way to cure someone I know.
 
 RefuseQuest:  [1001]
 <ce>                     If you aren't even willing or
-<ce>                     able to do a simple healing, I
+<ce>                    able to do a simple healing, I
 <ce>                     surely can't recommend you to
 <ce>                            temple leaders.
 
 AcceptQuest:  [1002]
 <ce>                        _cousin_ in ___cousin_
-<ce>                   suffering from an unusual disease.
-<ce>                    I was about to dispatch a cleric
+<ce>                  suffering from an unusual disease.
+<ce>                   I was about to dispatch a cleric
 <ce>                   to treat %g2. I will delay them a
 <ce>                   day or so. If you can find a cure
 <ce>                   it would increase your favor with
-<ce>                          __giver_. I can only
-<ce>                       give you =questtime_ days.
+<ce>                         __giver_. I can only
+<ce>                      give you =questtime_ days.
 
 QuestFail:  [1003]
 %qdt:
@@ -51,7 +51,7 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>                            _cousin_ looks
-<ce>                         much healthier to you.
+<ce>                        much healthier to you.
 <ce>                        Obviously, %g is cured.
 
 RumorsDuringQuest:  [1005]
@@ -71,21 +71,20 @@ _cousin_ has died, and I blame thee, %pcf.
 
 Message:  1025
 <ce>                  I'll be watching you. Remember, the
-<ce>                     patient's name is _cousin_ and
+<ce>                    patient's name is _cousin_ and
 <ce>                     %g is in ___cousin_. You have
 <ce>                  =questtime_ days to prove yourself.
 
 RumorsPostfailure:  [1006]
 <ce>                     Too bad for you. I have to go
-<ce>                    and round up a temple cleric for
-<ce>                  the job, so I must ask you to leave.
-
+<ce>                   and round up a temple cleric for
+<ce>                 the job, so I must ask you to leave.
 
 QuestLogEntry:  [1010]
 <ce>                     I feel so weak. I don't know
-<ce>                  what is wrong with me. Have you come
+<ce>                 what is wrong with me. Have you come
 <ce>             to help me? Yes? Do you have the cure? If so,
-<ce>                please use it on me, so that I may heal.
+<ce>               please use it on me, so that I may heal.
 
 Message:  1011
 <ce>                          Wilt thou do this?
@@ -97,13 +96,13 @@ I did hear something of %g2. Something about a disease and someone named _healer
 
 Message:  1013
 <ce>                   Hello there. Yes, I have heard of
-<ce>                     _cousin_ of ___cousin_ and %g3
-<ce>                      problem. Lunar Chills it is.
-<ce>                     Often mistaken for Gray Fever.
+<ce>                    _cousin_ of ___cousin_ and %g3
+<ce>                    problem. Caliron's Curse it is.
+<ce>                    Often mistaken for Gray Fever.
 <ce>                     Anyway, I do have a some Hoar
 <ce>                     Frost Root that will cure it.
-<ce>                    It can only be used once though.
-<ce>                    I'll sell it to you for 20 gold.
+<ce>                   It can only be used once though.
+<ce>                   I'll sell it to you for 20 gold.
 
 Message:  1014
 <ce>                Do you wish to buy the Hoar Frost Root?
@@ -116,50 +115,48 @@ Message:  1015
 Message:  1016
 <ce>           Thank you, %pcn. I will use the Hoar Frost Root.
 <ce>                I really can't thank you enough. I hope
-<ce>               the rest of your travels are safe for you.
+<ce>              the rest of your travels are safe for you.
 
 Message:  1017
 %qdt:
  I have bought some Hoar Frost Root
  from _healer_ of ___healer_
- that cures Lunar Chills, the
+ that cures Caliron's Curse, the
  disease that is inflicting _cousin_.
 
 Message:  1018
 %qdt:
  I have given Hoar Frost Root to _cousin_
- and cured %g2 of the Lunar Chills.
+ and cured %g2 of the Caliron's Curse.
  Maybe now __giver_ will think
  more highly of me.
 
 Message:  1019
 <ce>                 The Hoar Frost Root dissolves quickly
-<ce>                             as you use it.
+<ce>                            as you use it.
 
 
 -- Symbols used in the QRC file:
 --
 --                %g occurs 3 times.
---               %g2 occurs 4 times.
+--               %g2 occurs 5 times.
 --               %g3 occurs 2 times.
---              %god occurs 1 time.
---              %pcf occurs 23 times.
+--              %god occurs 2 times.
+--              %pcf occurs 29 times.
 --              %pcn occurs 2 times.
 --              %qdt occurs 3 times.
---               %ra occurs 1 time.
---          =cousin_ occurs 1 time.
+--               %ra occurs 2 times.
+--          =cousin_ occurs 2 times.
 --       =questtime_ occurs 5 times.
 --        ___cousin_ occurs 4 times.
 --         ___giver_ occurs 1 time.
---        ___healer_ occurs 37 times.
---          __giver_ occurs 6 times.
---          _cousin_ occurs 13 times.
---           _giver_ occurs 4 times.
---          _healer_ occurs 37 times.
+--        ___healer_ occurs 39 times.
+--          __giver_ occurs 8 times.
+--          _cousin_ occurs 16 times.
+--           _giver_ occurs 5 times.
+--          _healer_ occurs 39 times.
 
 QBN:
-Item _gold1_ gold range 5 to 25
-Item _gold2_ gold range 10 to 50
 Item talisman root_tendrils
 
 Person _giver_ group Questor male
@@ -194,14 +191,14 @@ _S.03_ task:
 
 _S.04_ task:
 	when _S.03_ and _S.06_ 
-	make pc ill with Wizard_Fever 
+	make pc ill with Swamp_Rot 
 
 variable _S.05_
 variable _S.06_
 variable _S.07_
 _S.08_ task:
 	take talisman from pc saying 1019 
-	cure Wizard_Fever 
+	cure Swamp_Rot 
 
 _S.09_ task:
 	toting talisman and _cousin_ clicked 
@@ -212,7 +209,10 @@ _S.09_ task:
 
 _S.10_ task:
 	clicked npc _healer_ say 1013 
-	promptForYorN _S.11_ not _S.11_ 1014
+	prompt 1014 yes _S.11_ no _no_ 
+
+_no_ task:
+	clear _S.10_ 
 
 _S.11_ task:
 	clicked _healer_ and at least 20 gold otherwise do _S.12_ 

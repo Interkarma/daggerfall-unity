@@ -6,18 +6,6 @@ Quest: S0000501
 -- Message panels
 QRC:
 
-QuestorOffer:  [1000]
-
-
-RefuseQuest:  [1001]
-
-
-AcceptQuest:  [1002]
-
-
-QuestFail:  [1003]
-
-
 QuestComplete:  [1004]
 <ce>                  %pcn, I knew I could count on you.
 <ce>                The friendship of the Queen of Sentinel
@@ -26,12 +14,12 @@ QuestComplete:  [1004]
 
 RumorsDuringQuest:  [1005]
 <ce>    _traitor_ escaped from the dungeons of Castle Sentinel, I hear.
-<ce>           He was about to be executed for treason, you know.
+<ce>          He was about to be executed for treason, you know.
 
 RumorsPostsuccess:  [1007]
 <ce>      _traitor_ was trying to get Wayrest to support his claim to
-<ce>      the throne of Sentinel, but the _queen_'s agents got to him.
-<ce>       No one knows what happened to him, but I assume he's dead.
+<ce>     the throne of Sentinel, but the _queen_'s agents got to him.
+<ce>      No one knows what happened to him, but I assume he's dead.
 
 Message:  1020
 %qdt:
@@ -69,7 +57,7 @@ Dear %pcn,
  in putting this matter to rest once and for all.
  Please come and see me at your earliest convenience.
  
-<ce>                              Your friend,
+<ce>                             Your friend,
 <ce>                                    
 <ce>                          _queen_ of Sentinel
 
@@ -77,39 +65,39 @@ Message:  1031
 <ce>               A stocky knight in the livery of Sentinel
 <ce>                     stops before you and salutes.
 <ce>                                    
-<ce>                   "%pcn?  A letter for you, personal
-<ce>                     message from _queen_ herself."
+<ce>                   "%pcn? A letter for you, personal
+<ce>                    message from _queen_ herself."
 
 Message:  1040
 <ce>                Ah, %pcn, I was hoping you would come.
-<ce>              My spies have located the elusive _traitor_.
+<ce>             My spies have located the elusive _traitor_.
 <ce>               He has turned up at the court of Wayrest,
-<ce>               of all places, apparently trying to obtain
-<ce>              support for his pathetic claim to my throne.
+<ce>              of all places, apparently trying to obtain
+<ce>             support for his pathetic claim to my throne.
 <ce>               Wayrest would not be so rash as to openly
 <ce>            give refuge to a convicted traitor to Sentinel,
 <ce>             but he is hiding somewhere in Castle Wayrest,
-<ce>             and I want you to find him and bring him back.
+<ce>            and I want you to find him and bring him back.
 <ce>             Alive if possible, but kill him if necessary.
-<ce>                      Do not let him escape again.
+<ce>                     Do not let him escape again.
 
 Message:  1041
-<ce>                    You again!  %oth, will you give
-<ce>                me no peace?  I'll settle you this time!
+<ce>                    You again! %oth, will you give
+<ce>                me no peace? I'll settle you this time!
 
 Message:  1042
-<ce>                 "Stop!  Don't kill me!  I surrender!"
+<ce>                  "Stop! Don't kill me! I surrender!"
 <ce>                                    
-<ce>                  Do you accept _traitor_'s surrender?
+<ce>                 Do you accept _traitor_'s surrender?
 
 Message:  1043
 <ce>                    The traitor _traitor_ is dead.
 
 Message:  1044
 <ce>                      _traitor_ drops his weapon,
-<ce>                     and you quickly bind his hands
-<ce>                      and blindfold him to prevent
-<ce>                   any further trickery.  Now to make
+<ce>                    and you quickly bind his hands
+<ce>                     and blindfold him to prevent
+<ce>                  any further trickery.  Now to make
 <ce>                      your escape from Wayrest...
 
 QuestTimeLapse:  [1045]
@@ -117,25 +105,25 @@ QuestTimeLapse:  [1045]
 
 Message:  1050
 <ce>              Well, well, if it isn't my loyal _traitor_,
-<ce>              come back to me.  Did you really believe you
-<ce>                could escape my wrath?  Guards, take him
+<ce>             come back to me.  Did you really believe you
+<ce>                could escape my wrath? Guards, take him
 <ce>                downstairs and execute him immediately.
 
 Message:  1051
 <ce>                _traitor_ deserved death.  I would have
 <ce>                 preferred to execute him publicly, as
 <ce>               an example to others of his ilk, but I am
-<ce>           pleased that this sordid matter is finally closed.
+<ce>          pleased that this sordid matter is finally closed.
 
 Message:  1060
 <ce>                 Did you think that you could dispose
-<ce>                   of _traitor_ so easily?  A Lord of
-<ce>                  Sentinel is no one to cross lightly!
+<ce>                   of _traitor_ so easily? A Lord of
+<ce>                 Sentinel is no one to cross lightly!
 
 Message:  1061
 <ce>                A knight in Sentinel livery approaches.
-<ce>                    "I'll take this traitorous swine
-<ce>                     _traitor_ off your hands now."
+<ce>                   "I'll take this traitorous swine
+<ce>                    _traitor_ off your hands now."
 
 
 -- Symbols used in the QRC file:
@@ -146,7 +134,7 @@ Message:  1061
 --              %pcn occurs 4 times.
 --              %qdt occurs 3 times.
 --           _queen_ occurs 10 times.
---         _traitor_ occurs 18 times.
+--         _traitor_ occurs 16 times.
 
 QBN:
 Item _letter_ letter used 1030
@@ -160,11 +148,10 @@ Place _wayrest_ permanent WayrestCastle2
 Place aide remote dungeon
 
 Clock _S.00_ 31.06:00 93.18:00
-Clock _patsy_ 00:00 0 flag 1 range 1 2
-Clock _time2_ 00:00 0 flag 17 range 0 2
+Clock _patsy_ 30.00:00 0 flag 1 range 0 1
+Clock _time2_ 30.00:00 0 flag 1 range 0 1
 
 Foe _F.00_ is 3 Archer
-Foe _guards_ is Knight
 Foe _mtraitor_ is Ranger
 
 --	Quest start-up:
@@ -204,21 +191,21 @@ _S.08_ task:
 	when _hittraitor_ and not _S.07_ 
 	prompt 1042 yes yes no _no_ 
 
-_traitordead_ task:
-	when _S.07_ and _S.04_ 
-	say 1051 
-	unset _S.04_ 
-
-_S.10_ task:
-	when _S.08_ and _S.04_ 
-	say 1050 
-	drop _traitor_ face 
-
-_S.11_ task:
+_S.09_ task:
 	when _S.04_ and _S.00_ 
 	start timer _time2_ 
 	log 1021 step 1 
 	say 1040 
+
+_S.10_ task:
+	when yes and _S.04_ 
+	say 1050 
+	drop _traitor_ face 
+
+_traitordead_ task:
+	when _S.07_ and _S.04_ 
+	say 1051 
+	unset _S.04_ 
 
 yes task:
 	log 1022 step 2 
@@ -235,7 +222,7 @@ _S.14_ task:
 	end quest 
 
 _S.15_ task:
-	when _patsy_ and not _S.11_ 
+	when _patsy_ and not _S.09_ 
 	end quest 
 
 _S.16_ task:

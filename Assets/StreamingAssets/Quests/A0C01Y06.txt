@@ -11,14 +11,14 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                         My name is _qgiver_.
-<ce>                 My master has asked me to find a brave
+<ce>                My master has asked me to find a brave
 <ce>                 adventurer for a dangerous mission. I
 <ce>                cannot tell you more, other than to say
-<ce>                 that it is worth _gold_ gold pieces to
+<ce>                that it is worth _gold_ gold pieces to
 <ce>                 whoever succeeds. Are you interested?
                                      <--->
 <ce>                   Call me _qgiver_. I know someone
-<ce>                  that may have some work of interest.
+<ce>                 that may have some work of interest.
 <ce>                 There's _gold_ gold in it for whoever
 <ce>                            can do the job.
 
@@ -28,15 +28,15 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                    Go to _meetingplace_. There you
-<ce>                     will find my master, _master_.
+<ce>                    will find my master, _master_.
                                      <--->
 <ce>                  Ask for _master_ in _meetingplace_
 <ce>                    and %g will have a job for you.
 
 QuestComplete:  [1004]
 <ce>                 =mmaster_ is dead.  Your enemies will
-<ce>                   think twice before attempting such
-<ce>                            treachery again.
+<ce>                  think twice before attempting such
+<ce>                           treachery again.
 
 RumorsDuringQuest:  [1005]
 <ce>                I heard that an orc was spotted in town
@@ -44,23 +44,23 @@ RumorsDuringQuest:  [1005]
 
 RumorsPostfailure:  [1006]
 <ce>                  Did you hear the one about the %ra
-<ce>                  that got teleported to the bottom of
+<ce>                 that got teleported to the bottom of
 <ce>                a dungeon? Its really funny! Oh. Sorry.
 
 RumorsPostsuccess:  [1007]
 <ce>                   Hey! You're that %ra that killed
-<ce>                    the orc witch doctor! Good work!
+<ce>                   the orc witch doctor! Good work!
 
 QuestorPostsuccess:  [1008]
 <ce>                Ok, Ok. I guess I owe you one for that
-<ce>             incident with the orc shaman.  He was magicked
+<ce>            incident with the orc shaman.  He was magicked
 <ce>                      to look like a regular guy.
 
 QuestorPostfailure:  [1009]
 <ce>                 Just stay away! I didn't mean to get
-<ce>               anyone hurt. That orc was magicked to look
+<ce>              anyone hurt. That orc was magicked to look
 <ce>                like a regular guy. Its not my fault he
-<ce>                     teleported you into a dungeon.
+<ce>                    teleported you into a dungeon.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -80,16 +80,16 @@ Message:  1011
 
 Message:  1012
 <ce>                Know me for who I really am. I am your
-<ce>                    mortal enemy =mmaster_! I have a
-<ce>                     special fate in store for you.
+<ce>                   mortal enemy =mmaster_! I have a
+<ce>                    special fate in store for you.
 
 Message:  1013
 <ce>                    Don't hurt me, %pcn!  I didn't
 <ce>               know what _master_ was planning.  I ain't
-<ce>                got no beef with you, honest.  %g didn't
+<ce>               got no beef with you, honest.  %g didn't
 <ce>                   tell me nothin', I swear, %g just
 <ce>                 paid me to send you to %g2.  It's %g2
-<ce>                    you want, not me, right?  I hear
+<ce>                   you want, not me, right?  I hear
 <ce>                     %g's moved to __hidingplace_.
 <ce>                          Look for %g2 there.
 
@@ -109,9 +109,9 @@ Message:  1021
 <ce>                 _master_ has been asking around about
 <ce>                               some %ra.
                                      <--->
-<ce>               _master_ is staying at __master_.  I hear
+<ce>               _master_ is staying here in town.  I hear
 <ce>               %g's been asking a lot of questions about
-<ce>                a %ra.  You're a %ra, aren't you?  Maybe
+<ce>               a %ra.  You're a %ra, aren't you?  Maybe
 <ce>                        %g was looking for you?
 
 Message:  1030
@@ -122,10 +122,11 @@ Message:  1030
 Message:  1035
 The orc shaman's chanting rises 
 
+
 -- Symbols used in the QRC file:
 --
 --                %g occurs 14 times.
---               %g2 occurs 9 times.
+--               %g2 occurs 8 times.
 --               %g3 occurs 1 time.
 --              %pcf occurs 1 time.
 --              %pcn occurs 1 time.
@@ -135,7 +136,6 @@ The orc shaman's chanting rises
 --       ___dungeon_ occurs 2 times.
 --        ___qgiver_ occurs 1 time.
 --    __hidingplace_ occurs 3 times.
---         __master_ occurs 1 time.
 --   __meetingplace_ occurs 3 times.
 --            _gold_ occurs 3 times.
 --          _master_ occurs 10 times.
@@ -159,8 +159,7 @@ Clock _S.13_ 1.00:00 0 flag 1 range 0 1
 Foe _mmaster_ is Orc_shaman
 
 --	Quest start-up:
-	dialog link for location _dungeon_ 
-	dialog link for location _hidingplace_ person _master_ 
+	dialog link for location _hidingplace_ 
 	start timer _escapetime_ 
 	log 1010 step 0 
 	place npc _master_ at _meetingplace_ 
@@ -186,10 +185,10 @@ _traitordead_ task:
 _teleportpc_ task:
 	pc at _hidingplace_ set _S.12_ 
 	when not _traitordead_ and _shortdelay_ 
-	add dialog for person _master_ 
 	reveal _dungeon_ 
 	log 1011 step 1 
 	say 1035 
+	place foe _mmaster_ at _hidingplace_ 
 	place npc _master_ at _hidingplace_ 
 	teleport pc to _dungeon_ 
 
@@ -198,7 +197,7 @@ _hittraitor_ task:
 
 variable _revenge_
 _foundme_ task:
-	when _hittraitor_ and _teleportpc_ 
+	when _S.12_ and _hittraitor_ and _teleportpc_ 
 	say 1014 
 
 variable _questdone_
@@ -217,7 +216,6 @@ _clearclick_ task:
 
 _S.12_ task:
 	hide npc _master_ 
-	place foe _mmaster_ at _hidingplace_ 
 
 _S.13_ task:
 	end quest 

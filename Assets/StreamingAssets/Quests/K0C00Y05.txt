@@ -11,8 +11,8 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                 I've appealed to The Fighters Guild,
-<ce>                but they apparently have their hands too
-<ce>                full rescuing high-born damsels and lads
+<ce>               but they apparently have their hands too
+<ce>               full rescuing high-born damsels and lads
 <ce>                in distress to bother themselves with a
 <ce>                  low-born child's disappearance. But
 <ce>                       my _child_ is all I have.
@@ -21,35 +21,35 @@ QuestorOffer:  [1000]
                                      <--->
 <ce>                  Those infernal orcs have stolen my
 <ce>              little cousin and our so-called protectors,
-<ce>                   The Fighters Guild, refuse to take
-<ce>                        me seriously. _child_ is
+<ce>                  The Fighters Guild, refuse to take
+<ce>                       me seriously. _child_ is
 <ce>                     just a =child_, not worthy of
 <ce>                 their attention, but %g's all I have.
 <ce>                  Please, good %ra, will you help me?
 
 RefuseQuest:  [1001]
 <ce>                    A heart of stone, just like The
-<ce>                       Fighters Guild. What is an
+<ce>                      Fighters Guild. What is an
 <ce>                  innocent child's life worth anyhow?
 
 AcceptQuest:  [1002]
 <ce>                   Thank you, thank you. I can give
-<ce>                   you _gold_ gold pieces if you find
+<ce>                  you _gold_ gold pieces if you find
 <ce>                        _child_ -- that's all I
 <ce>                  have. Now, these orcs that took %g2
 <ce>                  are the ones camped out in stinking
 <ce>                      ___mondung_. I need to know
-<ce>                         whether _child_ is all
-<ce>                  right in =queston_ days or I'll send
-<ce>                  someone else. Please don't reduce me
-<ce>                       to that. %god go with you,
-<ce>                               good %pcn.
+<ce>                        whether _child_ is all
+<ce>                 right in =queston_ days or I'll send
+<ce>                 someone else. Please don't reduce me
+<ce>                      to that. %god go with you,
+<ce>                              good %pcn.
 
 QuestComplete:  [1004]
 <ce>                        _child_, oh thank %god!
 <ce>                       %oth, my good, good %pcn,
 <ce>                    you are my savior. Here, here's
-<ce>                        your _gold_ gold pieces.
+<ce>                       your _gold_ gold pieces.
 
 RumorsDuringQuest:  [1005]
 _qgiver_ is quite distraught over the disappearance of _child_.
@@ -65,10 +65,10 @@ You brought _child_ back to me, %pcf. What can I help you with in return?
 
 QuestorPostfailure:  [1009]
 <ce>                     Don't you remember me, %pcf?
-<ce>                           _qgiver_? You said
-<ce>                         you'd get _child_ back
+<ce>                          _qgiver_? You said
+<ce>                        you'd get _child_ back
 <ce>                     for me, but failed to. I have
-<ce>                         nothing to say to you.
+<ce>                        nothing to say to you.
 <ce>                            Go to Oblivion.
 
 QuestLogEntry:  [1010]
@@ -103,9 +103,9 @@ Message:  1011
 
 Message:  1012
 <ce>                   A courier bearing the heraldry of
-<ce>                   The Fighters Guild appears at your
+<ce>                  The Fighters Guild appears at your
 <ce>                      side. He hands you a letter
-<ce>                            and hurries off.
+<ce>                           and hurries off.
 
 Message:  1013
 %qdt:
@@ -123,48 +123,48 @@ Message:  1013
 
 Message:  1014
 <ce>                 I guess you received my letter, %pcf.
-<ce>              That's good. I'd hate it if you, for all the
+<ce>             That's good. I'd hate it if you, for all the
 <ce>               best intentions, got involved in a pretty
-<ce>                        nasty situation. _child_
-<ce>                    is _qgiver_'s cousin, all right,
+<ce>                       nasty situation. _child_
+<ce>                   is _qgiver_'s cousin, all right,
 <ce>                   but more importantly, the =child_
 <ce>              is heir to their grandparents' fortune. For
 <ce>                %g3 safety's sake, we've moved %g2 to a
-<ce>                   place in __childlocale_. I suppose
-<ce>                    I can tell you -- _childlocale_.
+<ce>                  place in __childlocale_. I suppose
+<ce>                   I can tell you -- _childlocale_.
 <ce>              You'll improve your already good reputation
 <ce>               with The Fighters Guild if you just leave
 <ce>                         little _child_ alone.
 
 Message:  1015
 <ce>                           Hi, I'm _child_.
-<ce>                          I'm seven years old.
+<ce>                         I'm seven years old.
                                      <--->
 <ce>                        Hi. My name is _child_.
-<ce>                Want to hear a joke? Okay, here it goes.
+<ce>               Want to hear a joke? Okay, here it goes.
 <ce>                                 %jok.
                                      <--->
 <ce>                    My gramdaddy's richer than you.
                                      <--->
 <ce>                    Hello, I'm not supposed to talk
-<ce>                  to strangers. But if I don't talk to
+<ce>                 to strangers. But if I don't talk to
 <ce>                   strangers, then there's no one to
 <ce>                          talk to. My name is
-<ce>                                _child_.
+<ce>                               _child_.
                                      <--->
 <ce>                      Hello, are you a %ra? I am
-<ce>                      too, and my name is _child_.
+<ce>                     too, and my name is _child_.
 
 Message:  1016
 <ce>                           _child_ runs away
-<ce>                      when you turn away from %g2.
+<ce>                     when you turn away from %g2.
 
 Message:  1017
 <ce>                         Do you take _child_?
 
 Message:  1018
 <ce>                    The warrior bears the heraldry
-<ce>                         of The Fighters Guild.
+<ce>                        of The Fighters Guild.
 
 Message:  1019
 %qdt:
@@ -172,6 +172,7 @@ Message:  1019
  The Fighters Guild. %g told me that
  _child_ is being kept in safety at
  _childlocale_ in __childlocale_.
+
 
 -- Symbols used in the QRC file:
 --
@@ -181,27 +182,26 @@ Message:  1019
 --              %god occurs 2 times.
 --              %jok occurs 1 time.
 --              %oth occurs 1 time.
---              %pcf occurs 16 times.
+--              %pcf occurs 17 times.
 --              %pcn occurs 5 times.
 --              %qdt occurs 3 times.
---               %ra occurs 4 times.
+--               %ra occurs 5 times.
 --           =child_ occurs 2 times.
 --          =qgiver_ occurs 1 time.
 --         =queston_ occurs 3 times.
 --        ___knight_ occurs 7 times.
 --       ___mondung_ occurs 3 times.
 --        ___qgiver_ occurs 1 time.
---    __childlocale_ occurs 3 times.
+--    __childlocale_ occurs 4 times.
 --         __knight_ occurs 4 times.
 --         __qgiver_ occurs 1 time.
---           _child_ occurs 27 times.
+--           _child_ occurs 32 times.
 --     _childlocale_ occurs 2 times.
 --            _gold_ occurs 3 times.
 --          _knight_ occurs 7 times.
 --          _qgiver_ occurs 8 times.
 
 QBN:
-Item _item_ drug
 Item letter11 letter used 1011
 Item _gold_ gold
 
@@ -214,20 +214,20 @@ Place _childlocale_ local house2
 
 Clock _queston_ 00:00 0 flag 17 range 0 5
 Clock _S.04_ 01:40 06:40
+Clock _delay_ 00:05 0 flag 1 range 0 1
 
 Foe _warrior_ is Knight
 
 --	Quest start-up:
-	dialog link for person _child_ 
+	dialog link for location _childlocale_ person _child_ 
 	start timer _queston_ 
-	reveal _childlocale_ 
 	reveal _mondung_ 
 	injured _warrior_ saying 1018 
 	log 1010 step 0 
 	pick one of _metal_ _S.01_ 
 
 _queston_ task:
-	end quest 
+	start timer _delay_ 
 
 _S.01_ task:
 	place npc _child_ at _mondung_ 
@@ -249,6 +249,7 @@ _S.05_ task:
 
 _S.06_ task:
 	clicked npc _knight_ 
+	add dialog for location _childlocale_ 
 	log 1019 step 2 
 	say 1014 
 
@@ -272,9 +273,11 @@ _qgclicked_ task:
 _reward_ task:
 	when _qgclicked_ and _S.09_ 
 	give pc _gold_ 
+	start timer _delay_ 
+
+_delay_ task:
 	end quest 
 
-variable _S.12_
 _S.13_ task:
 	when _S.01_ and _reward_ 
 	change repute with _knight_ by +5 

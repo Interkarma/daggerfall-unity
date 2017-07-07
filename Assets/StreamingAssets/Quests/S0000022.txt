@@ -1,7 +1,7 @@
 -- Quest: C:\QUESTS\WORKING\S0000022.Qbn.
 -- Main story quest.
 -- QuestId: 22
-Messages: 11
+Messages: 12
 Quest: S0000022
 -- Message panels
 QRC:
@@ -14,21 +14,28 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                   The powder is ready. All you need
 <ce>                    to do is spinkle it on his true
-<ce>                    corpse. I must warn you. It will
+<ce>                   corpse. I must warn you. It will
 <ce>                  not put his shade to rest, but will
 <ce>                  soothe it sufficiently to allow you
 <ce>                 a chance to speak with him. The final
 <ce>                  exorcism is for Lysandus to choose.
 <ce>                                    
-<ce>                   I do not know where he was buried.
+<ce>                  I do not know where he was buried.
 <ce>                 I do know that it is not on the field
-<ce>                  of Cryngaine where they erected that
+<ce>                 of Cryngaine where they erected that
 <ce>                  monument to him. If you do speak to
-<ce>                    him...could you tell him I still
+<ce>                   him...could you tell him I still
 <ce>                     love him. Death will not be a
 <ce>                        barrier to us for long.
 
 QuestLogEntry:  [1010]
+%qdt:
+ Medora has told me, it would take her
+ a month to prepare the Dust. When this
+ time has passed, I should visit her
+ again at her home in the Direnni Tower.
+
+Message:  1011
 %qdt:
  Medora has given me a powder that will
  soothe the spirit of Lysandus. However,
@@ -39,20 +46,20 @@ QuestLogEntry:  [1010]
 
 -- Symbols used in the QRC file:
 --
---              %qdt occurs 1 time.
+--              %qdt occurs 2 times.
 
 QBN:
 Item _spider_ lich_dust
 
 Person _medora_ named Medora atHome
 
-Place _lysandustomb_ permanent LysandusTomb1
 
-Clock _S.00_ 20.20:00 0 flag 1 range 0 1
+Clock _S.00_ 30.00:00 0 flag 1 range 0 1
 
 
 --	Quest start-up:
 	start timer _S.00_ 
+	log 1010 step 0 
 
 variable _S.00_
 _S.01_ task:
@@ -60,7 +67,7 @@ _S.01_ task:
 
 _S.02_ task:
 	when _S.01_ and _S.00_ 
-	log 1010 step 0 
+	log 1011 step 1 
 	get item _spider_ 
 	say AcceptQuest 
 
@@ -69,16 +76,15 @@ _S.03_ task:
 	say RefuseQuest 
 	clear _S.01_ _S.03_ 
 
-variable _ranger_
-LysandusSatisfied _S.05_
-	have _spider_ set _S.06_ 
+LysandusSatisfied _S.04_
+	have _spider_ set _S.05_ 
 
-_S.06_ task:
+_S.05_ task:
 	start quest 15 15 
 	take _spider_ from pc 
 	play video 5 
 	end quest 
 
-_S.07_ task:
-	when _S.05_ and not _S.06_ 
-	clear _S.05_ _S.07_ 
+_S.06_ task:
+	when _S.04_ and not _S.05_ 
+	clear _S.04_ _S.06_ 

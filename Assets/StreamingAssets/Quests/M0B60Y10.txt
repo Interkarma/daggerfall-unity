@@ -11,58 +11,58 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                We have a new client who wants someone
-<ce>                 to hunt down an atronach, an elemental
+<ce>                to hunt down an atronach, an elemental
 <ce>              golem type critter. The pay is _gold_ gold.
 <ce>                          Are you interested?
 
 RefuseQuest:  [1001]
 <ce>                     You must prefer the low risk
-<ce>                        jobs, like hunting rats.
+<ce>                       jobs, like hunting rats.
 
 AcceptQuest:  [1002]
 <ce>                  A young dandy what I have sworn to
 <ce>                   keep unnamed, was screwing around
-<ce>                with magic, illegally. Like a melonhead,
+<ce>               with magic, illegally. Like a melonhead,
 <ce>                  he up and conjures an atronach. The
 <ce>                thing's gotta be destroyed before those
-<ce>                 Mages Guild blokes find out. The thing
-<ce>                  fled into the depths of ___dungeon_.
+<ce>                Mages Guild blokes find out. The thing
+<ce>                 fled into the depths of ___dungeon_.
 <ce>                      If you can do this quest in
-<ce>                     =2dung_ days, you'll get paid.
+<ce>                    =2dung_ days, you'll get paid.
 
 QuestComplete:  [1004]
 <ce>                          Bang-up job, %pct.
 <ce>                    Those Mages Guild bananas ain't
 <ce>                   wise to our client's shenanigans.
-<ce>                      He'll be happy to pay up the
+<ce>                     He'll be happy to pay up the
 <ce>                          _gold_ gold pieces.
 
 RumorsDuringQuest:  [1005]
 <ce>                The Viscount's son has not been himself
-<ce>                 lately. That's what he gets for trying
-<ce>                 to learn magic. Ought to stick to what
-<ce>                             he knows best.
+<ce>                lately. That's what he gets for trying
+<ce>                to learn magic. Ought to stick to what
+<ce>                            he knows best.
 
 RumorsPostfailure:  [1006]
 <ce>                  The Mages Guild has requested that
-<ce>                          %t %rn give them the
+<ce>                         %t %rn give them the
 <ce>                  right to punish the Viscount's son.
-<ce>                    It seems he summoned an atronach
+<ce>                   It seems he summoned an atronach
 <ce>                           which went rogue.
 
 RumorsPostsuccess:  [1007]
 <ce>                  The Viscount's son joined the Mages
 <ce>                 Guild recently. Wonder why he changed
-<ce>                          his mind about them?
+<ce>                         his mind about them?
 
 QuestorPostsuccess:  [1008]
 <ce>                       Atronachs zero, %pcf one.
-<ce>                You'll go far in the guild at this rate.
+<ce>               You'll go far in the guild at this rate.
 
 QuestorPostfailure:  [1009]
 <ce>                  You shouldn't have taken the job to
-<ce>                kill the atronach if you couldn't handle
-<ce>      it. Now the Viscount's son faces charges of illegal sorcery.
+<ce>               kill the atronach if you couldn't handle
+<ce>     it. Now the Viscount's son faces charges of illegal sorcery.
 
 QuestLogEntry:  [1010]
 On %qdt,
@@ -74,15 +74,15 @@ On %qdt,
 Message:  1011
 <ce>                         The atronach is dead.
 <ce>                       Hopefully the Mages Guild
-<ce>                        won't find out about it.
+<ce>                       won't find out about it.
 
 Message:  1080
 <ce>                       And, since you was such a
-<ce>                      sport about it, here's a map
+<ce>                     sport about it, here's a map
 <ce>                     to a place called ___newdung_
 <ce>                      that's supposed to be chock
-<ce>                      full o' loot.  Knock yerself
-<ce>                               out, %pcf.
+<ce>                     full o' loot.  Knock yerself
+<ce>                              out, %pcf.
 
 
 -- Symbols used in the QRC file:
@@ -124,15 +124,14 @@ _2dung_ task:
 	end quest 
 
 _S.01_ task:
-	killed 1 _ice_ 
+	killed 1 _ice_ saying 1011 
 	killed 1 _fire_ saying 1011 
-	killed 1 _flesh_ 
-	killed 1 _iron_ 
+	killed 1 _flesh_ saying 1011 
+	killed 1 _iron_ saying 1011 
 
 _S.02_ task:
 	clicked npc _qgiver_ 
 	give pc _gold_ 
-	end quest 
 
 _clearclick_ task:
 	when _S.02_ and not _S.01_ 
@@ -155,3 +154,10 @@ variable _nomap_
 _S.10_ task:
 	when _map_ and _S.02_ 
 	reveal _newdung_ saying 1080 
+
+_S.11_ task:
+	when _nomap_ and _S.02_ 
+
+_S.12_ task:
+	when _S.10_ or _S.11_ 
+	end quest 

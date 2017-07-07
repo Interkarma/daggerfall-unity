@@ -6,26 +6,11 @@ Quest: S0000503
 -- Message panels
 QRC:
 
-QuestorOffer:  [1000]
-
-
-RefuseQuest:  [1001]
-
-
-AcceptQuest:  [1002]
-
-
-QuestFail:  [1003]
-
-
-QuestComplete:  [1004]
-
-
 Message:  1020
 %qdt:
  I have received a mysterious summons
- to _tavern_ in __tavern_,
- I believe by my friend _rebel_.
+ to _tavern_ in __tavern_
+ in ____tavern_, I believe by my friend _rebel_.
 
 Message:  1021
 %qdt:
@@ -54,10 +39,10 @@ Message:  1030
 
 Message:  1040
 <ce>               It was good of you to come.  I have a new
-<ce>              project that I think you might be interested
+<ce>             project that I think you might be interested
 <ce>               in.  It will involve a little raid on our
-<ce>                  friends at the Mages Guild, however.
-<ce>                            What do you say?
+<ce>                 friends at the Mages Guild, however.
+<ce>                           What do you say?
 
 Message:  1041
 <ce>                Have it your way.  I thought you and I
@@ -65,19 +50,19 @@ Message:  1041
 
 Message:  1042
 <ce>             I knew you couldn't resist!  Here's the plan.
-<ce>              For some time now, I have been searching for
+<ce>             For some time now, I have been searching for
 <ce>                the location of ___itemdung_, reputedly
-<ce>            the resting place of a hoard of magical objects,
+<ce>           the resting place of a hoard of magical objects,
 <ce>              including one _item_ that I need for my own
 <ce>              purposes -- another story for another time.
 <ce>             The issue at hand is that I have learned that
 <ce>               the Mages Guild of __magesguild_ has come
 <ce>               into possession of a map to ___itemdung_.
-<ce>            I still have a few friends in the Guild, despite
-<ce>              the official ban against me... The Guild has
-<ce>              no idea what they have, so it is up to us to
-<ce>               liberate the map so that it can be used to
-<ce>                         its full potential.  
+<ce>           I still have a few friends in the Guild, despite
+<ce>             the official ban against me... The Guild has
+<ce>             no idea what they have, so it is up to us to
+<ce>              liberate the map so that it can be used to
+<ce>                          its full potential.
 
 Message:  1043
 <ce>                         Yes, this is the map!
@@ -85,8 +70,8 @@ Message:  1043
 Message:  1044
 <ce>                       _rebel_ raises %g3 staff.
 <ce>           "Ladies, gentlemen, we really must be going now."
-<ce>                A sphere of light bursts from the staff,
-<ce>                      blinding you for an instant.
+<ce>               A sphere of light bursts from the staff,
+<ce>                     blinding you for an instant.
 
 QuestTimeLapse:  [1045]
 <ce>           I think it would be best to separate for the time
@@ -97,13 +82,13 @@ QuestTimeLapse:  [1045]
 
 Message:  1046
 <ce>          Very well.  ___itemdung_ cannot be entered without
-<ce>           the key, a _key_ which I have learned is somewhere
-<ce>            in ___keydung_.  Once you get the _key_, meet me
+<ce>          the key, a _key_ which I have learned is somewhere
+<ce>           in ___keydung_.  Once you get the _key_, meet me
 <ce>           in _tavern_ in __tavern_, say, in =keytime_ days.
 
 Message:  1047
 <ce>            No matter.  I will need, say, =keytime_ days to
-<ce>              take care of this business.  I will meet you
+<ce>             take care of this business.  I will meet you
 <ce>                    back in __tavern_, at _tavern_,
 <ce>                    when I have acquired the key to
 <ce>                       ___itemdung_.  Good luck!
@@ -113,7 +98,7 @@ Message:  1050
 
 Message:  1051
 <ce>          With this _key_ in our possession, we are ready to
-<ce>                brave ___itemdung_.  Lead on, my friend!
+<ce>               brave ___itemdung_.  Lead on, my friend!
 
 Message:  1052
 <ce>                         A hollow voice booms,
@@ -121,15 +106,15 @@ Message:  1052
 
 Message:  1053
 <ce>              You are too late, _rebel_!  It was a simple
-<ce>               matter to follow you to ___itemdung_, once
+<ce>              matter to follow you to ___itemdung_, once
 <ce>              you had found the _key_ for me.  The _item_
-<ce>                      is now mine, and mine alone!
+<ce>                     is now mine, and mine alone!
 
 Message:  1054
 <ce>             "Well, friend %pcf, an enjoyable little jaunt
-<ce>              eh?  I'll take the _item_ and be on my way."
+<ce>             eh?  I'll take the _item_ and be on my way."
 <ce>                                    
-<ce>                   Do you give the _item_ to _rebel_?
+<ce>                  Do you give the _item_ to _rebel_?
 
 Message:  1055
 <ce>                           Until next time!
@@ -138,20 +123,21 @@ Message:  1056
 <ce>                     So, your true colors at last.
 <ce>                   I only asked for one small thing,
 <ce>                       yet your greed apparently
-<ce>                            knows no bounds.
+<ce>                           knows no bounds.
 
 Message:  1070
 <ce>                   A shadow flits overhead.  A raven
-<ce>                   circles, cawing out harshly before
+<ce>                  circles, cawing out harshly before
 <ce>                      disappearing into the west:
 <ce>                                    
 <ce>                          "No time!  No time!
 <ce>                               _tavern_,
-<ce>                              __tavern_!"
+<ce>                               __tavern_
+<ce>                             ____tavern_!"
 
 Message:  1071
 <ce>                          %pcf, are you lost?
-<ce>                          I'm afraid I'll have
+<ce>                         I'm afraid I'll have
 <ce>                           to leave you now.
 
 
@@ -161,13 +147,14 @@ Message:  1071
 --              %pcf occurs 2 times.
 --              %qdt occurs 4 times.
 --         =keytime_ occurs 7 times.
+--       ____tavern_ occurs 3 times.
 --      ___itemdung_ occurs 14 times.
 --       ___keydung_ occurs 2 times.
 --     __magesguild_ occurs 4 times.
 --         __tavern_ occurs 5 times.
 --            _item_ occurs 8 times.
 --             _key_ occurs 7 times.
---           _rebel_ occurs 12 times.
+--           _rebel_ occurs 14 times.
 --          _tavern_ occurs 10 times.
 
 QBN:
@@ -190,14 +177,13 @@ Place _keydung_ remote dungeon
 Place _L.05_ remote dungeon
 
 Clock _S.00_ 62.12:00 97.05:20
-Clock _S.02_ 00:00 0 flag 1 range 0 2
+Clock _S.02_ 30.00:00 0 flag 1 range 0 1
 Clock _S.10_ 00:00 0 flag 1 range 0 2
 Clock _S.11_ 00:04 0 flag 1 range 0 1
 Clock _keytime_ 00:00 0 flag 1 range 0 5
 Clock _S.21_ 6.22:40 0 flag 1 range 0 1
 Clock _S.31_ 00:00 0 flag 17 range 0 2
 
-Foe _atronach_ is Iron_atronach
 Foe _guards_ is 3 Mage
 Foe _guardian_ is Battle_mage
 Foe _F.03_ is Mage
@@ -208,6 +194,7 @@ Foe _F.03_ is Mage
 	give item _I.04_ to _guardian_ 
 	give item _I.03_ to _guardian_ 
 	give item _item_ to _guardian_ 
+	pc at _magesguild_ set _S.04_ 
 	pc at _itemdung_ set _S.16_ 
 	_map_ used do _readmap_ 
 	place foe _guardian_ at _itemdung_ 
@@ -235,10 +222,10 @@ _S.05_ task:
 _S.06_ task:
 	when _S.21_ and not _S.19_ 
 	when _S.02_ and not _S.08_ 
-	end quest 
 
 variable _S.07_
 _S.08_ task:
+	start timer _S.10_ 
 	log 1021 step 1 
 	say 1042 
 	add _rebel_ face 
@@ -298,14 +285,15 @@ _S.22_ task:
 	when _S.31_ and not _S.30_ 
 	when _S.10_ and not _S.12_ 
 	say 1071 
-	end quest 
 
 _readmap_ task:
 	reveal _itemdung_ 
 
 _S.24_ task:
 	when _S.16_ and not _S.25_ 
-	placeNpc -1 _L.05_ msg 1052
+	reveal _L.05_ 
+	say 1052 
+	teleport pc to _L.05_ 
 	unset _S.24_ 
 
 variable _S.25_
@@ -319,7 +307,6 @@ _S.27_ task:
 _S.28_ task:
 	take _item_ from pc 
 	say 1055 
-	end quest 
 
 _S.29_ task:
 	create foe _F.03_ every 1 minutes 1 times with 100% success 
@@ -331,12 +318,9 @@ _S.30_ task:
 	prompt 1054 yes _S.28_ no _S.29_ 
 	drop _rebel_ face 
 
-_S.31_ task:
-	end quest 
-
+variable _S.31_
 _S.32_ task:
 	clicked item _map_ 
-	pc at _magesguild_ set _S.04_ 
 	create foe _guards_ every 2 minutes 1 times with 100% success 
 	start timer _S.11_ 
 	say 1043 
@@ -346,6 +330,7 @@ _S.33_ task:
 	make _I.05_ permanent 
 	make _I.04_ permanent 
 	make _I.03_ permanent 
+	end quest 
 
 _S.34_ task:
 	when _S.19_ and _S.14_ 

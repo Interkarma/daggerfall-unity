@@ -16,13 +16,13 @@ QuestLogEntry:  [1010]
 Message:  1012
 <ce>              Only Crowned Heads will hold the Totem True
 <ce>           First is One Who Killed, But Did Not Kill Another
-<ce>             Second is One Who Is Two Devoured By Its Young
+<ce>            Second is One Who Is Two Devoured By Its Young
 <ce>             Third is One Who Made One Slave and Many Free
-<ce>              Fourth and Fifth are Two Who Compete for Mud
-<ce>             Sixth is One Who Brings a Home to the Homeless
-<ce>         Seventh is One Who Lords All, But Does Not Lord At All
+<ce>             Fourth and Fifth are Two Who Compete for Mud
+<ce>            Sixth is One Who Brings a Home to the Homeless
+<ce>        Seventh is One Who Lords All, But Does Not Lord At All
 <ce>                                    
-<ce>           I do not know who of these seven is most worthy of
+<ce>          I do not know who of these seven is most worthy of
 <ce>          the Power, for too long have I let my passions make
 <ce>           me mad. Sometimes the fate of a world hang on the
 <ce>           decision of one person. You have choosen who will
@@ -38,15 +38,15 @@ Message:  1020
 <ce>                   Your work is done %pcn. The world
 <ce>            is no longer as it once was. Such is the way of
 <ce>             things. Oh, and if you tell my lich statue to
-<ce>               shut up, the door to my chamber will open.
+<ce>              shut up, the door to my chamber will open.
 
 Message:  1050
 <ce>                  Nulfaga cackles, "Not so fast %pcn.
 <ce>          Don't you want to see the result of your handiwork?
 <ce>           Look now into the Book of the Time. Read upon its
 <ce>            pages the history of what shall pass within the
-<ce>            next few days. Read fate as it shall be recorded
-<ce>                        upon the Elder Scrolls."
+<ce>           next few days. Read fate as it shall be recorded
+<ce>                       upon the Elder Scrolls."
 
 
 -- Symbols used in the QRC file:
@@ -56,7 +56,6 @@ Message:  1050
 
 QBN:
 
-Person _nulfaga_ named Nulfaga atHome
 
 Place _L.00_ permanent Mantellan_Crux
 Place _shedungent_ permanent Shedungent1
@@ -70,12 +69,17 @@ Clock _delay_ 00:01 0 flag 1 range 0 1
 	say 1012 
 	transfer pc inside _L.00_ 31 1001 
 
-variable _S.00_
+_delay_ task:
+	play video 3 
+	say 1050 
+
 FinishedMantellanCrux _S.01_
 	start timer _delay_ 
 	transfer pc inside _shedungent_ 16 50966 
 
 GothrydGotTotem _S.02_
+	when _S.20_ and _S.21_ 
+
 BrisiennaGotTotem _S.03_
 KingOfWormsGotTotem _S.04_
 GortwogGotTotem _S.05_
@@ -115,12 +119,14 @@ _S.16_ task:
 	say 1020 
 	end quest 
 
-_delay_ task:
-	play video 3 
-	say 1050 
-
 _S.18_ task:
 	when _S.09_ or _S.10_ or _S.11_ or _S.12_ 
 
 _S.19_ task:
 	when _S.13_ or _S.14_ or _S.15_ 
+
+_S.20_ task:
+	when not _S.03_ and not _S.04_ and not _S.05_ 
+
+_S.21_ task:
+	when not _S.06_ and not _S.07_ and not _S.08_ 

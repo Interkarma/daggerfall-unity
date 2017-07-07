@@ -12,14 +12,14 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                            I am _qgiver_.
 <ce>                We have a request from a local citizen.
-<ce>                 It seems a wild animal has gotten into
+<ce>                It seems a wild animal has gotten into
 <ce>                 his place. We need someone to go kill
-<ce>               the thing. The guild will pay _gold_ gold.
-<ce>                          Do you want it %pcn?
+<ce>              the thing. The guild will pay _gold_ gold.
+<ce>                         Do you want it %pcn?
 
 RefuseQuest:  [1001]
 <ce>                      I'm sure someone else will
-<ce>                       be willing to take care of
+<ce>                      be willing to take care of
 <ce>                          this nuisance bear.
 
 AcceptQuest:  [1002]
@@ -27,7 +27,7 @@ AcceptQuest:  [1002]
 <ce>                 here in town. Get it done in one day.
 <ce>               Nobody wants a animal left roaming around
 <ce>                in their place. Come back here when the
-<ce>                  beast is dead and I'll have your pay
+<ce>                 beast is dead and I'll have your pay
 <ce>                           waiting for you."
 <ce>                                    
 <ce>                  _qgiver_ calls out, "Hey, what kind
@@ -35,7 +35,7 @@ AcceptQuest:  [1002]
 
 QuestComplete:  [1004]
 <ce>                           Well done, %pcf.
-<ce>                        Here's your _gold_ gold.
+<ce>                       Here's your _gold_ gold.
 
 RumorsDuringQuest:  [1005]
 <ce>                   Did you hear? An animal got into
@@ -49,16 +49,16 @@ RumorsPostfailure:  [1006]
 
 RumorsPostsuccess:  [1007]
 <ce>                That creature mauled some woman before
-<ce>                 being chased out of town. What a pity.
+<ce>                being chased out of town. What a pity.
 
 QuestorPostsuccess:  [1008]
 <ce>                     Good job killin' that beast.
-<ce>                         What can I do for you?
+<ce>                        What can I do for you?
 
 QuestorPostfailure:  [1009]
 <ce>                   I hear that a critter ate the guy
 <ce>                    that owned the house. Gave us a
-<ce>                  bad rep. Try to do better next time.
+<ce>                 bad rep. Try to do better next time.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -81,7 +81,7 @@ Message:  1014
 
 Message:  1021
 <ce>                   You hear a voice call out from an
-<ce>                       upper floor, "Its a bear."
+<ce>                      upper floor, "Its a bear."
 
 Message:  1022
 <ce>                   You hear a voice call out from an
@@ -89,7 +89,7 @@ Message:  1022
 
 Message:  1023
 <ce>                   You hear a voice call out from an
-<ce>                      upper floor, "Its a spider."
+<ce>                     upper floor, "Its a spider."
 
 Message:  1024
 <ce>                   You hear a voice call out from an
@@ -98,7 +98,7 @@ Message:  1024
 Message:  1080
 <ce>                 By the way, since you seemed to have
 <ce>                  so much fun with that beast, here's
-<ce>               a map to ___newdung_.  Knock yourself out.
+<ce>              a map to ___newdung_.  Knock yourself out.
 
 
 -- Symbols used in the QRC file:
@@ -109,7 +109,7 @@ Message:  1080
 --       ___newdung_ occurs 3 times.
 --        ___qgiver_ occurs 1 time.
 --            _gold_ occurs 9 times.
---           _house_ occurs 5 times.
+--           _house_ occurs 6 times.
 --          _qgiver_ occurs 2 times.
 
 QBN:
@@ -133,6 +133,7 @@ Foe _spider_ is Spider
 	log 1010 step 0 
 	pick one of _map_ _nomap_ _nomap_ _nomap_ 
 	pick one of _monster1_ _monster2_ _monster3_ _monster4_ 
+	create npc at _house_ 
 
 _2dung_ task:
 	end quest 

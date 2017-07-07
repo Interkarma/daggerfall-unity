@@ -8,30 +8,30 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                      Good day, %pcf. My name is
-<ce>                      _agentuk_. I must admit that
-<ce>               I am surprised to see you. Are you perhaps
+<ce>                     _agentuk_. I must admit that
+<ce>              I am surprised to see you. Are you perhaps
 <ce>               able to help the Underking in an endeavor
-<ce>                against the Necromancers? We will reward
+<ce>               against the Necromancers? We will reward
 <ce>              you liberally for this service, and provide
 <ce>               information you will probably not be able
-<ce>                           to find elsewhere.
+<ce>                          to find elsewhere.
 
 RefuseQuest:  [1001]
 <ce>                         No. I see. Very well.
 
 AcceptQuest:  [1002]
 <ce>              You will. Hmm. Remarkable. The Necromancers
-<ce>                 have taken an item of ours, a _reward_
-<ce>                of some value. The value is of secondary
+<ce>                have taken an item of ours, a _reward_
+<ce>               of some value. The value is of secondary
 <ce>             concern. The true problem is that they cursed
 <ce>              this item and gave it to the Blades. If you
 <ce>              are unaware, the Blades were once the honor
-<ce>              guard for Tiber Septim. Today they are loyal
+<ce>             guard for Tiber Septim. Today they are loyal
 <ce>                to the empire and Tiber's code, but not
-<ce>              always to the current emperor. The Underking
-<ce>              has reason to not wish harm upon the Blades.
+<ce>             always to the current emperor. The Underking
+<ce>             has reason to not wish harm upon the Blades.
 <ce>               We want you to infiltrate Castle Llugwych
-<ce>                   in Ykalon and remove the _reward_.
+<ce>                  in Ykalon and remove the _reward_.
 <ce>             Please have this done in =itemindung_ days if
 <ce>                 you want your information and reward.
 
@@ -41,22 +41,22 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>                     Well done, %pcf. Let me cast
-<ce>                      this spell upon the _reward_
-<ce>                     ... there. The _reward_ is now
+<ce>                     this spell upon the _reward_
+<ce>                    ... there. The _reward_ is now
 <ce>                        safe and yours to keep.
 <ce>                                    
 <ce>               Not even death can hide a true descendant
-<ce>                of Tiber Septim from the Underking. King
+<ce>               of Tiber Septim from the Underking. King
 <ce>                 Lysandus did not die in the battle of
 <ce>              Cryngaine. He was slain by treachery before
 <ce>              it. The monument to him in Hammerfell is an
 <ce>                 empty tomb. His remains were secretly
-<ce>               taken to an ancient tomb in Menevia, which
+<ce>              taken to an ancient tomb in Menevia, which
 <ce>                I will now reveal to you. I do not know
 <ce>               who betrayed Lysandus, nor why his spirit
 <ce>               haunts the city of Daggerfall and not the
-<ce>                battlefield of Cryngaine. I have kept my
-<ce>                part of the bargain, and you have earned
+<ce>               battlefield of Cryngaine. I have kept my
+<ce>               part of the bargain, and you have earned
 <ce>                    the gratitude of the Underking.
 
 RumorsDuringQuest:  [1005]
@@ -77,25 +77,25 @@ Necromancers are supposedly scouring the countryside looking for a _reward_.
 QuestorPostsuccess:  [1008]
 %qdt:
  An agent of the Underking has sent me to
- Castle Llugwych to find a certain
+ Castle Llugwych in Ykalon to find a certain
  _reward_ the Necromancers stole from
  the Underking. I have =itemindung_ days to find
  and return the _reward_.
 
 QuestLogEntry:  [1010]
 <ce>               You interfere with the plans of The King
-<ce>                  of Worms. Fear for your mortal life!
+<ce>                 of Worms. Fear for your mortal life!
                                      <--->
 <ce>                The King of Worms demands vengence. You
-<ce>                 stole what was rightfully his. Now you
-<ce>                   must join the kingdom of the dead.
+<ce>                stole what was rightfully his. Now you
+<ce>                  must join the kingdom of the dead.
                                      <--->
 <ce>                 Foolish flesh and blood. Do not defy
 <ce>                the Lord of the Dead. The King of Worms
 <ce>                        will have his vengence.
                                      <--->
 <ce>                  You should never have touched that
-<ce>                      _reward_. It is a gateway to
+<ce>                     _reward_. It is a gateway to
 <ce>                the land of the dead. Now you must join
 <ce>                       us there. Prepare to die!
 
@@ -114,12 +114,12 @@ Dear %pcn,
  of __agentplace_ in Sentinel. I will wait one month.
  
  
-<ce>                              -- _agentuk_
+<ce>                             -- _agentuk_
 
 Message:  1022
 <ce>                   A young courier drily hands you a
-<ce>                   letter and then stalks off without
-<ce>                             saying a word.
+<ce>                  letter and then stalks off without
+<ce>                            saying a word.
 
 
 -- Symbols used in the QRC file:
@@ -127,11 +127,11 @@ Message:  1022
 --              %pcf occurs 4 times.
 --              %pcn occurs 2 times.
 --              %qdt occurs 1 time.
---               %ra occurs 3 times.
+--               %ra occurs 4 times.
 --      =itemindung_ occurs 2 times.
 --     __agentplace_ occurs 4 times.
 --         _agentuk_ occurs 3 times.
---          _reward_ occurs 54 times.
+--          _reward_ occurs 55 times.
 
 QBN:
 Item _reward_ magic_item
@@ -180,6 +180,7 @@ _S.04_ task:
 	add dialog for location _agentplace_ person _agentuk_ 
 	start timer _S.10_ 
 	give pc letter14 notify 1022 
+	create npc at _agentplace_ 
 	place npc _agentuk_ at _agentplace_ 
 
 _S.05_ task:
@@ -188,7 +189,7 @@ _S.05_ task:
 	prompt QuestorOffer yes yes no _no_ 
 
 _S.06_ task:
-	send _F.00_ every 50 minutes 10 times with 5% success 
+	send _F.00_ every minutes times with success 
 
 variable _S.07_
 _S.08_ task:

@@ -30,7 +30,7 @@ Dear %pcf,
  Septim's Battlemage. Until his heart is found,
  the Totem is useless.
  
-<ce>                                A Friend
+<ce>                               A Friend
 
 Message:  1011
 Dear %pcf,
@@ -64,8 +64,7 @@ Dear %pcf,
  Numidium return, he or she who holds the Totem will
  control Tamriel's fate.
  
-<ce>                                A Friend
-
+<ce>                               A Friend
 
 Message:  1012
 Dear %pcf,
@@ -84,7 +83,7 @@ Dear %pcf,
  with the rest of Numidium, was lost during the epic battle
  between the Imperial Battlemage and his own creation.
  
-<ce>                                A Friend
+<ce>                               A Friend
 
 Message:  1020
 <ce>       You approached by a young page who smiles in recognition
@@ -93,25 +92,25 @@ Message:  1020
 <ce>                responds with a blank look and a smile.
                                      <--->
 <ce>             A letter is pressed into your hand. You spin
-<ce>             to see who gave it to you. You catch a glimpse
+<ce>            to see who gave it to you. You catch a glimpse
 <ce>                of livery that vanishes into the crowd.
                                      <--->
 <ce>              A page steps forward saying "Letter for you
-<ce>                      %pcn," and hands you a note.
+<ce>                     %pcn," and hands you a note.
                                      <--->
 <ce>              A courier steps up to you with a letter in
-<ce>                hand. "I was told to give this letter to
+<ce>               hand. "I was told to give this letter to
 <ce>                someone fitting your description," says
-<ce>                the courier. As you take it, the courier
+<ce>               the courier. As you take it, the courier
 <ce>                     turns and walks quickly away.
                                      <--->
 <ce>                Reaching into you pack for something to
-<ce>              eat, you spy a note. It wasn't there before.
+<ce>             eat, you spy a note. It wasn't there before.
                                      <--->
 <ce>             A redfaced courier startles you with a cry of
-<ce>                   "Letter for %pcn! Hey that must be
+<ce>                  "Letter for %pcn! Hey that must be
 <ce>                 you. Here, take this. Gotta go. Other
-<ce>                         deliveries to be made.
+<ce>                        deliveries to be made.
 
 
 -- Symbols used in the QRC file:
@@ -124,52 +123,32 @@ Item _letter1_ letter used 1010
 Item _letter2_ letter used 1011
 Item _letter3_ letter used 1012
 
-Person _darkb_ face 1 faction Dark_Plotters
-Person _lhotun_ named Prince_Lhotun atHome
-Person _vampires_ face 113 factiontype Vampire_Clan
-Person _gortwog_ face 144 named Gortwog atHome
-Person _underking_ named The_Underking
-Person _aubk-i_ named Queen_Aubk-i atHome
+Person _gortwog_ named Gortwog atHome
 Person _thievesguild_ face 1 faction The_Thieves_Guild
-Person _P.07_ named King_of_Worms atHome
-Person _elysana_ named Princess_Elysana atHome
-Person _P.09_ face 1 factiontype Witches_Coven
 Person _magesguild_ face 13 faction The_Mages_Guild
+Person _P.03_ face 1 faction The_Merchants
 
 
 Clock _delay_ 1.00:00 0 flag 1 range 0 1
 
 
 --	Quest start-up:
-	dialog link for person _darkb_ 
-	dialog link for person _gortwog_ 
-	dialog link for person _P.07_ 
 	dialog link for person _magesguild_ 
 	dialog link for person _thievesguild_ 
-	dialog link for person _vampires_ 
-	dialog link for person _P.09_ 
-	dialog link for person _underking_ 
-	repute with _vampires_ exceeds 10 do _S.01_ 
-	repute with _lhotun_ exceeds 25 do _S.00_ 
-	repute with _vampires_ exceeds 10 do _S.00_ 
+	dialog link for person _P.03_ 
 	repute with _gortwog_ exceeds 25 do _S.00_ 
-	repute with _P.09_ exceeds 25 do _S.02_ 
-	repute with _underking_ exceeds 5 do _S.01_ 
-	repute with _darkb_ exceeds 50 do _S.00_ 
-	repute with _aubk-i_ exceeds 25 do _S.01_ 
 	repute with _thievesguild_ exceeds 50 do _S.01_ 
+	repute with _P.03_ exceeds 50 do _S.00_ 
 	repute with _magesguild_ exceeds 50 do _S.02_ 
-	repute with _P.07_ exceeds 15 do _S.02_ 
-	repute with _elysana_ exceeds 25 do _S.02_ 
 
 _S.00_ task:
-	give pc _letter1_ notify 1010 
+	give pc _letter1_ notify 1020 
 
 _S.01_ task:
-	give pc _letter2_ notify 1010 
+	give pc _letter2_ notify 1020 
 
 _S.02_ task:
-	give pc _letter3_ notify 1010 
+	give pc _letter3_ notify 1020 
 
 _S.03_ task:
 	when _S.00_ or _S.01_ or _S.02_ 

@@ -1,0 +1,42 @@
+-- Quest: C:\QUESTS\WORKING\N0C00Y01.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 1
+
+QBN:
+Item _book_ book
+
+Person _qgiver_ group Questor male
+
+Place _mondung_ local random
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _daedra_ is Frost_daedra
+
+--	Quest start-up:
+	start timer _queston_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	cast Banish_Daedra spell do _out_ 
+	place foe _daedra_ at _mondung_ 
+
+_queston_ task:
+	end quest 
+
+_reward_ task:
+	when _qgclicked_ and _out_ 
+	give pc _book_ 
+	end quest 
+
+_out_ task:
+	say 1011 
+
+_S.03_ task:
+	when _qgclicked_ and not _out_ 
+	clear _qgclicked_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 

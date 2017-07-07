@@ -153,7 +153,7 @@ Message:  1020
 QBN:
 Item _gold_ gold
 
-Person _betrothed_ face 1 group Group_7.1
+Person _betrothed_ face 1 group Group_7.0
 Person _qgiver_ group Questor male
 Person _priest_ face 201 factiontype Temple
 Person _ruler_ factiontype Province female
@@ -174,10 +174,11 @@ Foe _F.01_ is 2 Warrior
 	pc at _betrothedhome_ set _S.02_ saying 1014 
 	hide npc _qgiver_ 
 	add _qgiver_ face 
-	place npc _priest_ at _temple_ 
 	place npc _betrothed_ at _betrothedhome_ 
+	place npc _priest_ at _temple_ 
 
 _traveltime_ task:
+	restore _qgiver_ 
 	say 1020 
 	drop _betrothed_ face 
 	drop _qgiver_ face 
@@ -211,7 +212,7 @@ _clearclick_ task:
 	when not _S.01_ and _S.05_ 
 	clear _S.05_ _clearclick_ 
 
-variable _delay_
 _questdone_ task:
 	when _S.05_ and not _S.03_ 
+	restore _qgiver_ 
 	end quest 

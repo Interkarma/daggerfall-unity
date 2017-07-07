@@ -16,7 +16,7 @@ QuestorOffer:  [1000]
 <ce>                      _artifact_. I have a child,
 <ce>                   apparently miserable with all the
 <ce>                    blessings I have given him, who
-<ce>                    needs ... what is the euphemism?
+<ce>                   needs ... what is the euphemism?
 <ce>                     To be taught a lesson? A very
 <ce>                    serious lesson. Does this sound
 <ce>                   like an agreeable contract, %pct?
@@ -26,30 +26,30 @@ RefuseQuest:  [1001]
                                      <--->
 <ce>                 Seldom am I summoned, even rarer are
 <ce>                    the occasions when I am free to
-<ce>                  answer a summonings. To be perfectly
-<ce>                   blunt, this was a waste of my very
-<ce>                             precious time.
+<ce>                 answer a summonings. To be perfectly
+<ce>                  blunt, this was a waste of my very
+<ce>                            precious time.
 
 AcceptQuest:  [1002]
 <ce>                   Ah, good. This child of mine is a
-<ce>                   wereboar who has made his den in a
+<ce>                  wereboar who has made his den in a
 <ce>                       place called ___mondung_.
-<ce>                 You should have no trouble finding it.
+<ce>                You should have no trouble finding it.
 <ce>                   After you have put him out of his
 <ce>                 obvious misery, which should not take
 <ce>                  more than =1stparton_ days, go to a
-<ce>                 place called __contact_ in ___contact_
-<ce>                 and look for a person named _contact_.
-<ce>            If you arrive there within =1stparton_ days from
+<ce>                place called __contact_ in ___contact_
+<ce>                and look for a person named _contact_.
+<ce>           If you arrive there within =1stparton_ days from
 <ce>                  now with the wereboar dead, %g will
-<ce>                          give you _artifact_.
+<ce>                         give you _artifact_.
 <ce>                  A pleasure doing business with you,
 <ce>                     %pct. Good luck and farewell.
 
 QuestFail:  [1003]
 <ce>                           Listen, %pcf, you
 <ce>                    and I both know that wereboar's
-<ce>                     still breathing. A contract is
+<ce>                    still breathing. A contract is
 <ce>                              a contract.
 
 QuestComplete:  [1004]
@@ -100,35 +100,35 @@ Message:  1013
 <ce>                 I have no idea what _artifact_ does.
 
 Message:  1020
-%qdt: In return for _artifact_
+%qdt:
+ In return for _artifact_
  I have been asked by the Daedra
  Prince Hircine to slay a wereboar
- in ___mondung_. The
- wereboar must be dead in =1stparton_ days,
-<ce>                      and I must be in __contact_
-<ce>                   in ___contact_ in =1stparton_ days
- to meet with _contact_,
+ in ___mondung_.
+ The wereboar must be dead in =1stparton_ days,
+ and I must be in __contact_ in ___contact_
+ in =1stparton_ days to meet with _contact_,
  a =contact_, about _artifact_.
 
 Message:  1030
 <ce>                         The wereboar is dead,
-<ce>                         as you promised Daedra
+<ce>                        as you promised Daedra
 <ce>                            Prince Hircine.
 
 
 -- Symbols used in the QRC file:
 --
---               %di occurs 10 times.
+--               %di occurs 13 times.
 --                %g occurs 2 times.
 --              %pcf occurs 2 times.
 --              %pct occurs 5 times.
 --              %qdt occurs 1 time.
 --       =1stparton_ occurs 4 times.
---         =contact_ occurs 6 times.
---       ___mondung_ occurs 5 times.
---        __contact_ occurs 4 times.
---        _artifact_ occurs 8 times.
---         _contact_ occurs 2 times.
+--         =contact_ occurs 7 times.
+--       ___mondung_ occurs 6 times.
+--        __contact_ occurs 5 times.
+--        _artifact_ occurs 9 times.
+--         _contact_ occurs 9 times.
 
 QBN:
 Item _artifact_ artifact Hircine_Ring anyInfo 1013

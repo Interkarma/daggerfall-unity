@@ -8,10 +8,10 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                  Welcome to Sentinel, %pcf. I guess
-<ce>          you must have received my letter. I know some things
+<ce>         you must have received my letter. I know some things
 <ce>        about Lysandus and why he might be haunting Daggerfall,
-<ce>            but before I tell you, you have to promise to do
-<ce>               something for me first. Is that all right?
+<ce>           but before I tell you, you have to promise to do
+<ce>              something for me first. Is that all right?
 
 RefuseQuest:  [1001]
 <ce>                         %oth, %pcf, I thought
@@ -20,11 +20,11 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>               You will? Thank %god. You see, I used to
 <ce>          to have an older brother, ten or eleven years older
-<ce>         than me, named _brother_. Whenever I ask what happened
+<ce>        than me, named _brother_. Whenever I ask what happened
 <ce>          to him, I'm told a different story. Some say he got
 <ce>            sick and died, some say he was kidnapped by the
-<ce>          Underking. I want to know the truth. If you can find
-<ce>          some proof of what really happened to him, I'll tell
+<ce>         Underking. I want to know the truth. If you can find
+<ce>         some proof of what really happened to him, I'll tell
 <ce>                  you all I know about King Lysandus.
 
 QuestFail:  [1003]
@@ -32,27 +32,27 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>             This what I most feared. Poor _brother_. As I
-<ce>                 promised, here's what I've heard about
-<ce>               Lysandus. I don't know how much of this is
+<ce>                promised, here's what I've heard about
+<ce>              Lysandus. I don't know how much of this is
 <ce>             secret, but I trust you. Lysandus was in love
-<ce>              with his court sorceress, a noblewoman named
+<ce>             with his court sorceress, a noblewoman named
 <ce>              Medora Direnni, and during the war with us,
-<ce>              his queen found out. They say that while her
+<ce>             his queen found out. They say that while her
 <ce>               husband was gone, Queen Mynisera banished
-<ce>               Medora from the court. My sister Aubk-i is
-<ce>             queen now, part of the treaty to insure peace,
+<ce>              Medora from the court. My sister Aubk-i is
+<ce>            queen now, part of the treaty to insure peace,
 <ce>            but Mynisera still resides at Castle Daggerfall
-<ce>                      as the dowager Queen mother.
+<ce>                     as the dowager Queen mother.
 <ce>                                    
-<ce>               I don't know where Medora went, but I know
+<ce>              I don't know where Medora went, but I know
 <ce>              she has an enormous castle somewhere on the
 <ce>              Isle of Balfiera. But I also heard there is
-<ce>              some kind of curse on her, and she can never
-<ce>               leave. I don't know if that helps you, but
+<ce>             some kind of curse on her, and she can never
+<ce>              leave. I don't know if that helps you, but
 <ce>                that's all I know. Again, thank you for
-<ce>             _brother_'s letter. Just knowing what happened
+<ce>            _brother_'s letter. Just knowing what happened
 <ce>             will ease my heart somewhat. Please take this
-<ce>               _magicitem_ as a token of my appreciation.
+<ce>              _magicitem_ as a token of my appreciation.
 
 RumorsDuringQuest:  [1005]
 Poor Prince Lhotun is in one of his moods. He's so different from Greklith.
@@ -76,7 +76,7 @@ QuestorPostfailure:  [1009]
 <ce>                    So you haven't any information
 <ce>                  for me? I must say, it seems highly
 <ce>                  suspicious that there is nothing to
-<ce>                   report. Perhaps you're working for
+<ce>                  report. Perhaps you're working for
 <ce>                   my mother or one of the nobles. I
 <ce>                      think you should leave now.
 
@@ -159,8 +159,8 @@ QuestLogEntry:  [1010]
 
 Message:  1011
 <ce>            A thin, rail of a woman steps forward and hands
-<ce>             you a note. She turns aside all your questions
-<ce>                   with a gaunt, expressionless face.
+<ce>            you a note. She turns aside all your questions
+<ce>                  with a gaunt, expressionless face.
 
 Message:  1012
 The Underking used to have a crypt around here -- ___ukcrypt_, just %di of here.
@@ -203,10 +203,10 @@ Message:  1014
  Sentinel. I hope that we can meet soon.
  
  
-<ce>                              Yours truly,
+<ce>                             Yours truly,
  
 <ce>                                Lhotun,
-<ce>                           Prince of Sentinel
+<ce>                          Prince of Sentinel
 
 Message:  1015
 ___ukcrypt_ used to be the Underking's crypt, but now it's a Sentilian prison.
@@ -220,9 +220,9 @@ ___ukcrypt_ isn't used as a prison anymore, let alone a crypt of the Underking.
 
 Message:  1018
 <ce>            What is the meaning of this? Blackmail? Why you
-<ce>            contemptible scoundrel. You ought to be thrashed
-<ce>             for attempting to pass this cheap counterfeit.
-<ce>            Poor Prince _brother_ died of a fever many, many
+<ce>           contemptible scoundrel. You ought to be thrashed
+<ce>            for attempting to pass this cheap counterfeit.
+<ce>           Poor Prince _brother_ died of a fever many, many
 <ce>            years ago. Why can't you let him rest in peace?
 
 Message:  1019
@@ -233,7 +233,7 @@ Message:  1019
 
 Message:  1020
 <ce>                             You pick up a
-<ce>                           Death Certificate.
+<ce>                          Death Certificate.
 
 Message:  1030
 _brother_ was a prince of Sentinel. He died years ago.
@@ -265,18 +265,18 @@ Dear %pcf,
  about prince _brother_, meet me at
  _agentplace_ in __agentplace_ of Sentinel.
  
-<ce>                               (unsigned)
+<ce>                              (unsigned)
 
 Message:  1035
 <ce>                    %pcn? Shhh. I would prefer that
-<ce>              nobody sees me talking with you. It has come
-<ce>              to our attention that the Underking is being
+<ce>             nobody sees me talking with you. It has come
+<ce>             to our attention that the Underking is being
 <ce>                  wrongly accused of abducting prince
 <ce>                _brother_. Before you judge, check into
 <ce>                   ___ukcrypt_. I'll mark it on your
 <ce>                  map. Who am I? Just call me a loyal
-<ce>                  servant. Now move away before anyone
-<ce>                     gets suspicious. Go on, scram.
+<ce>                 servant. Now move away before anyone
+<ce>                    gets suspicious. Go on, scram.
 
 Message:  1040
 %qdt:
@@ -288,16 +288,16 @@ Message:  1040
 
 -- Symbols used in the QRC file:
 --
---               %di occurs 3 times.
+--               %di occurs 4 times.
 --              %god occurs 1 time.
 --              %oth occurs 1 time.
 --              %pcf occurs 6 times.
 --              %pcn occurs 3 times.
---              %pct occurs 1 time.
+--              %pct occurs 2 times.
 --              %qdt occurs 2 times.
---       ___ukcrypt_ occurs 13 times.
+--       ___ukcrypt_ occurs 14 times.
 --     __agentplace_ occurs 5 times.
---         _brother_ occurs 23 times.
+--         _brother_ occurs 24 times.
 --       _magicitem_ occurs 1 time.
 
 QBN:
@@ -379,6 +379,7 @@ _S.14_ task:
 	clicked npc _agentuk_ 
 	add dialog for location _ukcrypt_ 
 	reveal _ukcrypt_ 
+	log 1040 step 1 
 	say 1035 
 
 _S.15_ task:

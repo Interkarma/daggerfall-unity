@@ -14,26 +14,26 @@ QuestorOffer:  [1000]
 <ce>                     knightly order. I have a most
 <ce>                       dangerous quest %pcf. You
 <ce>                     are one of the few that could
-<ce>                     possibly take it on. A lich is
+<ce>                    possibly take it on. A lich is
 <ce>                     raising an army of undead. We
 <ce>                     need someone to go in and put
 <ce>                             a stop to it.
 
 RefuseQuest:  [1001]
 <ce>                          I understand, %pcn.
-<ce>                     This is too dangerous even for
+<ce>                    This is too dangerous even for
 <ce>                    you. There are one or two other
-<ce>                      heroes that might be able to
-<ce>                     pull this one off. I'll go ask
+<ce>                     heroes that might be able to
+<ce>                    pull this one off. I'll go ask
 <ce>                                 them.
 
 AcceptQuest:  [1002]
 <ce>                    You are brave indeed. The lich
 <ce>                       has made ___dungeon_ into
-<ce>                     its lair. Go there and destroy
+<ce>                    its lair. Go there and destroy
 <ce>                    the foul thing. In =2dung_ days
-<ce>                     we will send out someone else,
-<ce>                         should you not return.
+<ce>                    we will send out someone else,
+<ce>                        should you not return.
 
 QuestComplete:  [1004]
 <ce>                        Hail to the hero, %pcn!
@@ -74,8 +74,8 @@ QuestLogEntry:  [1010]
 
 Message:  1011
 <ce>                       The lich is dead. Without
-<ce>                        his magical support, the
-<ce>                       army of undead will return
+<ce>                       his magical support, the
+<ce>                      army of undead will return
 <ce>                             to the grave.
 
 Message:  1020
@@ -92,87 +92,86 @@ Message:  1020
 Message:  1028
 <ce>                        Sorry, %pcn. You didn't
 <ce>                     come back for so long that we
-<ce>                     thought you were dead. Another
+<ce>                    thought you were dead. Another
 <ce>                    guild member took up the quest.
 
 Message:  1030
 <ce>                   You trudged all the way down here
-<ce>                    to speak to me and now you don't
-<ce>                    want to continue? Inconceivable!
-<ce>                          Get out of my sight!
+<ce>                   to speak to me and now you don't
+<ce>                   want to continue? Inconceivable!
+<ce>                         Get out of my sight!
 
 Message:  1031
 <ce>                     A pox upon you for disturbing
-<ce>                        me %pcn. %oth, of course
-<ce>                 I know your name, and no I'm not going
-<ce>                    to tell you mine. What's the use
-<ce>                     in bein' a wizard if you can't
+<ce>                       me %pcn. %oth, of course
+<ce>                I know your name, and no I'm not going
+<ce>                   to tell you mine. What's the use
+<ce>                    in bein' a wizard if you can't
 <ce>                    know things normal folks don't.
-<ce>                     I also know why your here. You
+<ce>                    I also know why your here. You
 <ce>                      want Chrysamere, except you
-<ce>                    didn't know it by name, did you?
+<ce>                   didn't know it by name, did you?
 <ce>                     The only way you're gonna get
 <ce>                   it is if you do me a favor first.
 
 Message:  1032
 <ce>                     A pox upon you for disturbing
-<ce>                        me %pcn. %oth, of course
+<ce>                       me %pcn. %oth, of course
 <ce>                  I know your name. What's the use in
-<ce>                    bein' a wizard if you can't know
-<ce>                      things normal folks don't. I
-<ce>                      also know why your here. You
-<ce>                     want The Necromancer's Amulet,
-<ce>                      except you didn't know it by
+<ce>                   bein' a wizard if you can't know
+<ce>                     things normal folks don't. I
+<ce>                     also know why your here. You
+<ce>                    want The Necromancer's Amulet,
+<ce>                     except you didn't know it by
 <ce>                      name, did you? The only way
 <ce>                     you're gonna get it is if you
-<ce>                          do me a favor first.
+<ce>                         do me a favor first.
 
 Message:  1033
 <ce>                     A pox upon you for disturbing
-<ce>                        me %pcn. %oth, of course
+<ce>                       me %pcn. %oth, of course
 <ce>                  I know your name. What's the use in
-<ce>                    bein' a wizard if you can't know
-<ce>                      things normal folks don't. I
-<ce>                      also know why your here. You
-<ce>                    want The Staff of Magnus, except
+<ce>                   bein' a wizard if you can't know
+<ce>                     things normal folks don't. I
+<ce>                     also know why your here. You
+<ce>                   want The Staff of Magnus, except
 <ce>                    you didn't know it by name, did
-<ce>                   you? The only way you're gonna get
+<ce>                  you? The only way you're gonna get
 <ce>                   it is if you do me a favor first.
 
 Message:  1034
 <ce>                     A pox upon you for disturbing
-<ce>                        me %pcn. %oth, of course
+<ce>                       me %pcn. %oth, of course
 <ce>                  I know your name. What's the use in
-<ce>                    bein' a wizard if you can't know
-<ce>                      things normal folks don't. I
-<ce>                      also know why your here. You
+<ce>                   bein' a wizard if you can't know
+<ce>                     things normal folks don't. I
+<ce>                     also know why your here. You
 <ce>                    want The Warlock's Ring, except
 <ce>                    you didn't know it by name, did
-<ce>                   you? The only way you're gonna get
+<ce>                  you? The only way you're gonna get
 <ce>                   it is if you do me a favor first.
 
 Message:  1035
 <ce>                    You see, I don't actually know
-<ce>                    where your artifact is. My great
+<ce>                   where your artifact is. My great
 <ce>                    grandfather once sought for it.
 <ce>                   According to family history, when
-<ce>                    he found it the Mages Guild took
+<ce>                   he found it the Mages Guild took
 <ce>                   it from him and hid it somewhere.
-<ce>                    His spirit has never rested easy
+<ce>                   His spirit has never rested easy
 <ce>                    since. If you have this lock of
-<ce>                    my hair with you when his spirit
+<ce>                   my hair with you when his spirit
 <ce>                    is put to rest, he may tell you
-<ce>                      where to find what you seek.
+<ce>                     where to find what you seek.
 <ce>                        He haunts ___dungeon3_.
-
 
 Message:  1040
 <ce>                    You hold a token of my lineage,
-<ce>                      a bit of hair from one of my
+<ce>                     a bit of hair from one of my
 <ce>                    decendants. Know ye that I have
 <ce>                     wandered these halls for long
-<ce>                     decades waiting for this sign.
-<ce>                        Go to the _mageguild_ in
+<ce>                    decades waiting for this sign.
+<ce>                       Go to the _mageguild_ in
 <ce>                        __mageguild_. There you
 <ce>                      will find what I once lost.
 
@@ -201,20 +200,19 @@ Message:  1042
 --              %pcf occurs 2 times.
 --              %pcn occurs 7 times.
 --              %qdt occurs 3 times.
---               %ra occurs 1 time.
---              %reg occurs 6 times.
+--               %ra occurs 2 times.
+--              %reg occurs 8 times.
 --           =2dung_ occurs 2 times.
---         ==qgiver_ occurs 4 times.
+--         ==qgiver_ occurs 6 times.
 --      ___dungeon2_ occurs 2 times.
---      ___dungeon3_ occurs 4 times.
---       ___dungeon_ occurs 4 times.
+--      ___dungeon3_ occurs 3 times.
+--       ___dungeon_ occurs 5 times.
 --        ___qgiver_ occurs 1 time.
 --      __mageguild_ occurs 9 times.
 --          _qgiver_ occurs 2 times.
 --          _wizard_ occurs 3 times.
 
 QBN:
-Item _gold_ gold
 Item _I.01_ artifact Warlocks_Ring
 Item _I.02_ artifact Necromancers_Amulet
 Item _I.03_ artifact Chrysamere
@@ -243,7 +241,7 @@ Foe _battlemage_ is Battle_mage
 	reveal _dungeon_ 
 	log 1010 step 0 
 	pick one of _ancientlich_ _lich_ _lich_ 
-	start task _artifact1_ 
+	pick one of _artifact1_ _artifact2_ _artifact3_ _artifact4_ 
 
 variable _2dung_
 _S.01_ task:
@@ -311,7 +309,6 @@ _S.18_ task:
 	clicked item _I.03_ 
 	clicked item _I.01_ 
 	clicked item _I.04_ 
-	end quest 
 
 _S.19_ task:
 	when _S.13_ and _S.20_ 
@@ -366,7 +363,6 @@ _S.32_ task:
 	when _S.03_ and _2dung_ 
 	say 1028 
 
-variable _S.33_
-variable _S.34_
-variable _S.35_
-variable _S.36_
+_S.33_ task:
+	when _S.26_ or _S.27_ or _S.28_ or _S.29_ 
+	end quest 

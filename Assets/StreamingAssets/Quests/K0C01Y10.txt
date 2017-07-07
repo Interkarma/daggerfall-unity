@@ -11,41 +11,41 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                           You're %pcn, yes?
-<ce>                      The one who was shipwrecked?
+<ce>                     The one who was shipwrecked?
 
 RefuseQuest:  [1001]
 <ce>                      That's funny. You look just
-<ce>                          like %pcn. Oh, well.
+<ce>                         like %pcn. Oh, well.
 
 AcceptQuest:  [1002]
 <ce>             I thought so. That storm that destroyed your
-<ce>             boat was no natural winter squall, but I guess
+<ce>            boat was no natural winter squall, but I guess
 <ce>             you suspected as much. I will gladly tell you
-<ce>                what I know about it, if you will find a
-<ce>               particular rare scroll for me. This is not
-<ce>              the type of job I could give to the Fighters
-<ce>               Guild, for the scroll is protected by some
+<ce>               what I know about it, if you will find a
+<ce>              particular rare scroll for me. This is not
+<ce>             the type of job I could give to the Fighters
+<ce>              Guild, for the scroll is protected by some
 <ce>               powerful daedra spirits and has the power
-<ce>                  to summon creatures from the pale of
-<ce>                      Oblivion. Go to ___mondung_,
-<ce>                find the scroll, and bring it back to me
+<ce>                 to summon creatures from the plane of
+<ce>                     Oblivion. Go to ___mondung_,
+<ce>               find the scroll, and bring it back to me
 <ce>                before =queston_ days have passed and I
 <ce>                  will tell you what I know about the
-<ce>                   tempest that nearly destroyed you.
+<ce>                  tempest that nearly destroyed you.
 
 QuestComplete:  [1004]
 <ce>                 Ah, the Bothdorji Scroll. Very good.
 <ce>                 Now, let me tell you about the storm.
-<ce>                  You sailed an unmarked ship from the
-<ce>                 Imperial City, but your identity, your
+<ce>                 You sailed an unmarked ship from the
+<ce>                Imperial City, but your identity, your
 <ce>                 mission, and your patron are known to
-<ce>                    the perceptive. An unknown agent
-<ce>                     convinced the Mad Witch of the
-<ce>                 Wrothgarian Mountains, the grandmother
+<ce>                   the perceptive. An unknown agent
+<ce>                    convinced the Mad Witch of the
+<ce>                Wrothgarian Mountains, the grandmother
 <ce>                of the present king of Daggerfall, that
 <ce>                 your ship carried the murderer of her
-<ce>                  son, the late King Lysandus. That is
-<ce>                        all that I can tell you.
+<ce>                 son, the late King Lysandus. That is
+<ce>                       all that I can tell you.
 
 RumorsDuringQuest:  [1005]
 I got a boil the other day ... but it healed.
@@ -156,16 +156,16 @@ Message:  1012
 Message:  1013
 <ce>                   You smell a brief puff of rancid
 <ce>                   smoke and realize that the scroll
-<ce>                          that _qgiver_ wanted
-<ce>                            has disappeared.
+<ce>                         that _qgiver_ wanted
+<ce>                           has disappeared.
 
 Message:  1014
 <ce>                        You summoned me, %pcf.
-<ce>                     And now you reject my embrace?
+<ce>                    And now you reject my embrace?
 
 Message:  1015
 <ce>                A burst of fire flies from the scroll,
-<ce>                      creating a burning creature.
+<ce>                     creating a burning creature.
 
 
 -- Symbols used in the QRC file:
@@ -174,10 +174,10 @@ Message:  1015
 --                %g occurs 1 time.
 --              %jok occurs 6 times.
 --              %oth occurs 10 times.
---              %pcf occurs 5 times.
+--              %pcf occurs 6 times.
 --              %pcn occurs 3 times.
 --              %qdt occurs 1 time.
---              %reg occurs 2 times.
+--              %reg occurs 4 times.
 --         =queston_ occurs 2 times.
 --       ___mondung_ occurs 2 times.
 --        ___qgiver_ occurs 5 times.

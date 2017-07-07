@@ -9,9 +9,9 @@ QRC:
 Message:  1015
 <ce>                  None may defy the King of Worms and
 <ce>                  live to tell of it. You have denied
-<ce>                     him the Totem of Tiber Septim.
+<ce>                    him the Totem of Tiber Septim.
 <ce>                  Therefore I will slay you and bring
-<ce>                               it to him.
+<ce>                              it to him.
                                      <--->
 <ce>                 I will take the Totem and drink from
 <ce>                you veins on this night. Just surrender
@@ -31,7 +31,7 @@ QBN:
 
 
 Clock _S.01_ 01:15 0 flag 1 range 0 1
-Clock _S.02_ 444.10:40 0 flag 1 range 0 1
+Clock _S.02_ 44.10:40 0 flag 1 range 0 1
 
 Foe _F.00_ is 3 Vampire
 Foe _F.01_ is 2 Ancient_vampire
@@ -60,3 +60,20 @@ until _S.03_ performed:
 _S.04_ task:
 	create foe _F.00_ every 1440 minutes 20 times with 5% success 
 	create foe _F.01_ every 1440 minutes 10 times with 3% success 
+
+GothrydGotTotem _S.05_
+KingOfWormsGotTotem _S.06_
+GortwogGotTotem _S.07_
+AkorithiGotTotem _S.08_
+UnderkingGotTotem _S.09_
+EadwyreGotTotem _S.10_
+BrisiennaGotTotem _S.11_
+_S.12_ task:
+	when _S.05_ or _S.06_ or _S.07_ or _S.08_ 
+
+_S.13_ task:
+	when _S.09_ or _S.10_ or _S.11_ 
+
+_S.14_ task:
+	when _S.12_ or _S.13_ 
+	start task _S.02_ 
