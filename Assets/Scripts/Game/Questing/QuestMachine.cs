@@ -703,10 +703,13 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <returns>True if this is an individual NPC.</returns>
         public bool IsIndividualNPC(int factionID)
         {
-            FactionFile.FactionData factionData;
-            bool foundFaction = GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData);
-            if (foundFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
-                return true;
+            if (GameManager.Instance.PlayerEntity != null)
+            {
+                FactionFile.FactionData factionData;
+                bool foundFaction = GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData);
+                if (foundFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
+                    return true;
+            }
 
             return false;
         }
