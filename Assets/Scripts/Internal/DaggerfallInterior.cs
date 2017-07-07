@@ -716,19 +716,31 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Helper to get a random spawn point from interior list (if present).
         /// </summary>
+        /// <param name="localPositionOut">Local position of spawn point.</param>
         /// <returns>True if spawn point found.</returns>
-        public bool GetRandomSpawnPoint(out Vector3 positionOut)
+        public bool GetRandomSpawnPoint(out Vector3 localPositionOut)
         {
+            // Handle no spawn points
             if (spawnPoints.Count == 0)
             {
-                positionOut = Vector3.zero;
-                return false;
+                // Try a random marker
+                if (markers.Count > 0)
+                {
+                    Debug.Log("Interior has no spawn points - using a random marker");
+                    localPositionOut = markers[UnityEngine.Random.Range(0, markers.Count)].gameObject.transform.localPosition;
+                    return true;
+                }
+                else
+                {
+                    // Inform caller to use a fallback
+                    localPositionOut = Vector3.zero;
+                    return false;
+                }
             }
-            else
-            {
-                positionOut = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
-                return true;
-            }
+
+            // Return a random spawn point
+            localPositionOut = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
+            return true;
         }
 
         #endregion

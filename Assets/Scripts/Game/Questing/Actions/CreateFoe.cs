@@ -167,7 +167,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             else
             {
-                //Debug.Log("No spawn points in this interior - placing behind player");
+                Debug.Log("Fallback placing behind player");
                 PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
                 go.transform.position = playerMotor.transform.position + -playerMotor.transform.forward;
             }
