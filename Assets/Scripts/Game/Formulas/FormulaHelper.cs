@@ -380,7 +380,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             // The in-game display in Daggerfall of weapon damages with material modifiers is incorrect. The material modifier is half of what the display suggests.
             if (weapon != null)
             {
-                damageModifiers += weapon.GetMaterialModifier();
+                damageModifiers += weapon.GetWeaponMaterialModifier();
             }
 
             // Check for a successful hit.
@@ -421,25 +421,44 @@ namespace DaggerfallWorkshop.Game.Formulas
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
             Entity.EnemyEntity AITarget = null;
 
-            // Apply random modifier
-            int[] randomMods = { 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
-            int randomMod = randomMods[(UnityEngine.Random.Range(0, 19 + 1))];
-
-            chanceToHit += randomMod;
-
-            // Apply armor value modifier.
             int armorValue = 0;
 
-            if (target != player)
+            if (target == player)
+            {
+                // Choose struck body part
+                int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
+                int struckBodyPart = bodyParts[(UnityEngine.Random.Range(0, 19 + 1))];
+
+                // Get armor for struck body part
+                Items.EquipSlots[] equipSlots = { Items.EquipSlots.Head, Items.EquipSlots.RightArm, Items.EquipSlots.LeftArm,
+                                                Items.EquipSlots.ChestArmor, Items.EquipSlots.Gloves, Items.EquipSlots.LegsArmor,
+                                                Items.EquipSlots.Feet };
+
+                Items.EquipSlots equipSlot = equipSlots[struckBodyPart];
+                Items.DaggerfallUnityItem armor = target.ItemEquipTable.GetItem(equipSlot);
+
+                // Use armor value of armor on struck body part
+                // Armor value is 100 when no armor is equipped. For every point of armor as shown on the inventory screen, 5 is subtracted.
+                armorValue = 100;
+                if (armor != null)
+                {
+                    armorValue -= (armor.GetMaterialArmorValue() * 5);
+                }
+            }
+            else
             {
                 AITarget = target as Entity.EnemyEntity;
-                armorValue = (AITarget.MobileEnemy.ArmorValue * 5);
-            }
 
-            // TODO: Add player and enemy classes' equipment armor values. For now using fudged value of 60.
-            if (target == player || AITarget.EntityType == EntityTypes.EnemyClass)
-            {
-                armorValue = 60;
+                // If target is a monster, all body parts have the same armor value
+                if (AITarget.EntityType == EntityTypes.EnemyMonster)
+                {
+                    armorValue = (AITarget.MobileEnemy.ArmorValue * 5);
+                }
+                // TODO: Enemy classes' armor values. For now using fudged value of 60.
+                else
+                {
+                    armorValue = 60;
+                }
             }
 
             chanceToHit += armorValue;
@@ -464,7 +483,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Apply weapon material modifier.
             if (weapon != null)
             {
-                chanceToHit += (weapon.GetMaterialModifier() * 10);
+                chanceToHit += (weapon.GetWeaponMaterialModifier() * 10);
             }
 
             // Apply dodging modifier.
