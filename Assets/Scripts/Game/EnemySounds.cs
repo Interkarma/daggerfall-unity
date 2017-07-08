@@ -108,6 +108,21 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public void PlayMissSound()
+        {
+            if (IsReady())
+            {
+                if (mobile.Summary.Enemy.ID > 127)
+                {
+                    dfAudioSource.PlayOneShot(SoundClips.SwingMediumPitch);
+                }
+                else
+                {
+                    dfAudioSource.PlayOneShot(SoundClips.SwingHighPitch);
+                }
+            }
+        }
+
         #region Private Methods
 
         private bool IsReady()
