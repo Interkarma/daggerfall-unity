@@ -238,6 +238,7 @@ namespace DaggerfallWorkshop
         public int[] Indices;                       // Index array describing the triangles of this mesh
         public SubMeshData[] SubMeshes;             // Data for each SubMesh, grouped by texture
         public ModelDoor[] Doors;                   // Doors found in this model
+        //public DFMesh.DFPlane[] DungeonFloors;      // Dungeon floor planes in this model
 
         /// <summary>
         /// Defines submesh data.
