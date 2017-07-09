@@ -108,6 +108,11 @@ namespace DaggerfallWorkshop.Game
                     {
                         senses.Player.SendMessage("RemoveHealth", damage);
                     }
+                    else if (sounds)
+                    {
+                        sounds.PlayMissSound();
+                    }
+
                     // Tally player's dodging skill
                     GameManager.Instance.PlayerEntity.TallySkill((short)Skills.Dodging, 1);
                 }

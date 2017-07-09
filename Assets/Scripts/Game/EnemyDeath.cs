@@ -68,6 +68,13 @@ namespace DaggerfallWorkshop.Game
                     return;
             }
 
+            // Play body collapse sound
+            if (DaggerfallUI.Instance.DaggerfallAudioSource)
+            {
+                AudioClip collapseSound = DaggerfallUI.Instance.DaggerfallAudioSource.GetAudioClip((int)SoundClips.BodyFall);
+                AudioSource.PlayClipAtPoint(collapseSound, entityBehaviour.transform.position);
+            }
+
             // Disable enemy gameobject
             // Do not destroy as we must still save enemy state when dead
             gameObject.SetActive(false);

@@ -748,7 +748,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
         }
 
-        public int GetMaterialModifier()
+        public int GetWeaponMaterialModifier()
         {
             switch (nativeMaterialValue)
             {
@@ -770,6 +770,39 @@ namespace DaggerfallWorkshop.Game.Items
                     return 5;
                 case (int)WeaponMaterialTypes.Daedric:
                     return 6;
+
+                default:
+                    return 0;
+            }
+        }
+
+        public int GetMaterialArmorValue()
+        {
+            switch (nativeMaterialValue)
+            {
+                case (int)ArmorMaterialTypes.Leather:
+                    return 3;
+                case (int)ArmorMaterialTypes.Chain:
+                case (int)ArmorMaterialTypes.Chain2:
+                    return 6;
+                case (int)ArmorMaterialTypes.Iron:
+                    return 7;
+                case (int)ArmorMaterialTypes.Steel:
+                case (int)ArmorMaterialTypes.Silver:
+                    return 9;
+                case (int)ArmorMaterialTypes.Elven:
+                    return 11;
+                case (int)ArmorMaterialTypes.Dwarven:
+                    return 13;
+                case (int)ArmorMaterialTypes.Mithril:
+                case (int)ArmorMaterialTypes.Adamantium:
+                    return 15;
+                case (int)ArmorMaterialTypes.Ebony:
+                    return 17;
+                case (int)ArmorMaterialTypes.Orcish:
+                    return 19;
+                case (int)ArmorMaterialTypes.Daedric:
+                    return 21;
 
                 default:
                     return 0;
