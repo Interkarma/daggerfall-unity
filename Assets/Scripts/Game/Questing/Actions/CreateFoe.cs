@@ -169,11 +169,11 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         // Place foe somewhere near player when inside a dungeon
-        // Dungeons interiors are complex 3D environments with no navgrid/navmesh or (known) spawn nodes
-        // This solution uses raycasts to find a spawn position
+        // Dungeons interiors are complex 3D environments with no navgrid/navmesh or known spawn nodes
+        // This solution uses raycasts to find next spawn position
         void PlaceFoeDungeonInterior(GameObject[] gameObjects, DaggerfallDungeon dungeonParent)
         {
-            const float overlapSphereRadius = 0.45f;
+            const float overlapSphereRadius = 0.65f;
             const float separationDistance = 1.25f;
             const float maxFloorDistance = 4f;
             const float minDistance = 4f;
@@ -182,7 +182,8 @@ namespace DaggerfallWorkshop.Game.Questing
             // Select a left or right direction outside of camera FOV
             Quaternion rotation;
             float directionAngle = GameManager.Instance.MainCamera.fieldOfView;
-            if (UnityEngine.Random.Range(0f, 1f) > 1000.5f)
+            directionAngle += UnityEngine.Random.Range(0f, 4f);
+            if (UnityEngine.Random.Range(0f, 1f) > 0.5f)
                 rotation = Quaternion.Euler(0, -directionAngle, 0);
             else
                 rotation = Quaternion.Euler(0, directionAngle, 0);
@@ -202,7 +203,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             // Separate out from hit point
-            Vector3 currentPoint = initialHit.point + initialHit.normal.normalized * separationDistance;
+            float extraDistance = UnityEngine.Random.Range(0f, 2f);
+            Vector3 currentPoint = initialHit.point + initialHit.normal.normalized * (separationDistance + extraDistance);
 
             // Must be able to find a surface below
             RaycastHit floorHit;
