@@ -29,8 +29,8 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
-        // Highest spawn value across all canonical quests is 6, setting to 20 as maximum
-        const int maxSpawnCount = 20;
+        // Highest spawn value across all canonical quests is 6, setting to 8 as maximum in Daggerfall Unity
+        const int maxSpawnCount = 8;
 
         int spawnCount;                     // How many foes to spawn
         MobileTypes foeType;                // MobileType to spawn
