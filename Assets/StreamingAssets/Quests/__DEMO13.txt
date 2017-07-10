@@ -1,0 +1,36 @@
+---- Example quest to freely spawn multiple foes inside a dungeon environment
+
+Quest: __DEMO13
+
+
+QRC:
+
+Message:  1020
+<ce>                   Thats five. That should be enough
+<ce>                         to hold _questgiver_.
+
+Message:  1030
+%qdt: The Fighter Guild
+ of ___questgiver_ has hired me
+ to exterminate a nest of harpies
+ that has infested ___mondung_
+ I need to have at least five of them dead and
+ be back in =1stparton_ days if I want to
+ collect my reward.
+
+
+QBN:
+
+Place _mondung_ permanent PirateerHold1
+Foe _monster_ is Harpy
+
+--	Quest start-up:
+	log 1030 step 0
+	pc at _mondung_ set _S.04_
+
+_S.04_ task:
+	create foe _monster_ every 2 minutes 20 times with 100% success 
+
+_mondead_ task:
+	killed 5 _monster_ saying 1020
+	remove log step 0
