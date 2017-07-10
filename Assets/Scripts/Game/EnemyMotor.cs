@@ -177,7 +177,7 @@ namespace DaggerfallWorkshop.Game
                 // Ground enemies target at their own height
                 // This avoids short enemies from stepping on each other as they approach the player
                 // Otherwise, their target vector aims up towards the player
-                var playerController = senses.Player.GetComponent<CharacterController>();
+                var playerController = GameManager.Instance.PlayerController;
                 var deltaHeight = (playerController.height - controller.height) / 2;
                 targetPos.y -= deltaHeight;
             }
