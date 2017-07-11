@@ -32,6 +32,7 @@ namespace DaggerfallConnect.Save
         const int isDayOffset = 0x391;
         const int inDungeonWaterOffset = 0x3A6;
         const int weaponDrawnOffset = 0x3BF;
+        const int lastSpellCostOffset = 0x38F;
         const int gameTimeOffset = 0x3C9;
         const int usingLeftHandWeaponOffset = 0x3D9;
         const int cheatFlagsOffset = 0x173B;
@@ -46,6 +47,7 @@ namespace DaggerfallConnect.Save
         bool isDay = false;
         bool inDungeonWater = false;
         bool weaponDrawn = false;
+        short lastSpellCost = 0; // The cost of the last spell that was cast. If the spell is aborted, these spell points are returned.
         uint gameTime = 0;
         bool usingLeftHandWeapon = false;
         bool allMapLocationsRevealedMode = false;
@@ -164,6 +166,14 @@ namespace DaggerfallConnect.Save
         }
 
         /// <summary>
+        /// Gets the cost of the last spell cast from savevars.
+        /// </summary>
+        public short LastSpellCost
+        {
+            get { return lastSpellCost; }
+        }
+
+        /// <summary>
         /// Gets game time read from savevars.
         /// </summary>
         public uint GameTime
@@ -258,6 +268,7 @@ namespace DaggerfallConnect.Save
             ReadIsDay(reader);
             ReadInDungeonWater(reader);
             ReadWeaponDrawn(reader);
+            ReadLastSpellCost(reader);
             ReadGameTime(reader);
             ReadUsingLeftHandWeapon(reader);
             ReadCheatFlags(reader);
@@ -309,6 +320,12 @@ namespace DaggerfallConnect.Save
             byte flags = reader.ReadByte();
             if ((flags & (byte)WeaponStatusFlags.WeaponDrawn) != 0)
                 weaponDrawn = true;
+        }
+
+        void ReadLastSpellCost(BinaryReader reader)
+        {
+            reader.BaseStream.Position = lastSpellCostOffset;
+            lastSpellCost = reader.ReadInt16();
         }
 
         void ReadGameTime(BinaryReader reader)

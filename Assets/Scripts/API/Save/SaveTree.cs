@@ -338,6 +338,7 @@ namespace DaggerfallConnect.Save
 
         public Int16 Pitch;                     // Pitch of object
         public Int16 Yaw;                       // Yaw of object
+        public Int16 Roll;                      // Roll of object
         public RecordPosition Position;         // Position of the object in world (if applicable)
         public UInt16 Picture1;                 // chunktcl's description: 3d view picture
         public UInt16 Picture2;                 // chunktcl's description: Inventory picture
@@ -379,10 +380,10 @@ namespace DaggerfallConnect.Save
         Item = 0x02,
         Character = 0x03,
         CharacterPositionRecord = 0x04,             // This record, not the position record in the header, determines where player is when game loads.
-        CharacterParentUnknown2 = 0x05,             // chunktcl calls this "Person"
-        Unknown1 = 0x06,
+        CharacterCamera = 0x05,                     // Guessing that this is the player camera. Has the same position as CharacterPositionRecord, and changing the roll value with a hex editor will cause the screen to be rotated on game load.
+        InteractableObject = 0x06,                  // Levers, switches, movable platforms, etc.
         DungeonInformation = 0x07,                  // Length MUST be multiplied by 39 (0x27)
-        Unknown2 = 0x08,
+        Unknown1 = 0x08,
         Spell = 0x09,
         GuildMembership = 0x0a,
         QBNData = 0x0e,
@@ -395,7 +396,7 @@ namespace DaggerfallConnect.Save
         PotionMix = 0x1f,
         UnknownTownLink = 0x20,                     // chunktcl calls this "Door"
         Treasure = 0x21,
-        Creature1 = 0x22,                           // From the 3d picture this seems to be for random monster markers
+        Marker = 0x22,                              // Includes random and non-random spawn markers and quest markers
         UnknownItemRecord = 0x24,                   // Possibly items on store shelves
         MysteryRecord1 = 0x27,                      // Referenced but does not exist in file
         LocationName2 = 0x28,                       // Possibly for quests. chunktcl calls this "Quest site"
@@ -407,8 +408,8 @@ namespace DaggerfallConnect.Save
         DungeonData = 0x33,                         // Huge but mostly zero filled
         Container = 0x34,
         ItemLeftForRepair = 0x36,
-        Unknown3 = 0x40,                            // All are part of a 'container'
-        Unknown4 = 0x41,                            // Possibly quest information
+        Unknown2 = 0x40,                            // All are part of a 'container'
+        Unknown3 = 0x41,                            // Possibly quest information
     }
 
     #endregion
