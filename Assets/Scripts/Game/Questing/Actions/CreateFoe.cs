@@ -11,8 +11,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Utility;
 
@@ -149,6 +147,14 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 PlaceFoeDungeonInterior(pendingFoeGameObjects, playerEnterExit.Dungeon);
             }
+            else if (!playerEnterExit.IsPlayerInside && GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+            {
+                PlaceFoeExteriorLocation(pendingFoeGameObjects, GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject);
+            }
+            else
+            {
+                // TODO: Just place somewhere around player no matter where they are (probably in wilderness)
+            }
         }
 
         #endregion
@@ -159,25 +165,65 @@ namespace DaggerfallWorkshop.Game.Questing
         // Building interiors have spawn nodes for this placement so we can roll out foes all at once
         void PlaceFoeBuildingInterior(GameObject[] gameObjects, DaggerfallInterior interiorParent)
         {
-            foreach(GameObject go in gameObjects)
+            // Must have a DaggerfallLocation parent
+            if (interiorParent == null)
+                throw new Exception("PlaceFoeFreely() must have a DaggerfallLocation parent object.");
+
+            foreach (GameObject go in gameObjects)
             {
                 Vector3 spawnPosition;
                 bool spawnPositionFound = interiorParent.GetRandomSpawnPoint(out spawnPosition);
-                AlignFoe(go, interiorParent.transform, spawnPosition, !spawnPositionFound);
+                go.transform.parent = interiorParent.transform;
+
+                if (spawnPositionFound)
+                {
+                    go.transform.localPosition = spawnPosition;
+                }
+                else
+                {
+                    Debug.Log("Fallback placing behind player");
+                    PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
+                    go.transform.position = playerMotor.transform.position + -playerMotor.transform.forward;
+                }
+
+                FinalizeFoe(go);
                 pendingFoesSpawned++;
             }
         }
 
         // Place foe somewhere near player when inside a dungeon
         // Dungeons interiors are complex 3D environments with no navgrid/navmesh or known spawn nodes
-        // This solution uses raycasts to find next spawn position
         void PlaceFoeDungeonInterior(GameObject[] gameObjects, DaggerfallDungeon dungeonParent)
+        {
+            PlaceFoeFreely(gameObjects, dungeonParent.transform);
+        }
+
+        // Place foe somewhere near player when outside a location navgrid is available
+        // Navgrid placement helps foe avoid getting tangled in geometry like buildings
+        void PlaceFoeExteriorLocation(GameObject[] gameObjects, DaggerfallLocation locationParent)
+        {
+            PlaceFoeFreely(gameObjects, locationParent.transform);
+        }
+
+        // Place foe somewhere near player when outside and no navgrid available
+        // Wilderness environments are currently open so can be placed on ground anywhere within range
+        void PlaceFoeWilderness(GameObject[] gameObjects)
+        {
+            Debug.LogFormat("Attempt was made to place {0} foes to Wilderness, but this has not been implemented yet.", gameObjects.Length);
+        }
+
+        // Uses raycasts to find next spawn position just outside of player's field of view
+        void PlaceFoeFreely(GameObject[] gameObjects, Transform parent, float minDistance = 5f, float maxDistance = 20f)
         {
             const float overlapSphereRadius = 0.65f;
             const float separationDistance = 1.25f;
             const float maxFloorDistance = 4f;
-            const float minDistance = 4f;
-            const float maxDistance = 20f;
+
+            // Must have a disposable parent (e.g. DaggerfallDungeon, DaggerfallLocation)
+            if (parent == null)
+                throw new Exception("PlaceFoeFreely() must have a disposable parent object.");
+            else
+                gameObjects[pendingFoesSpawned].transform.parent = parent;
 
             // Select a left or right direction outside of camera FOV
             Quaternion rotation;
@@ -190,21 +236,27 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Get direction vector and create a new ray
             Vector3 angle = (rotation * Vector3.forward).normalized;
-            Vector3 spawnDirection = GameManager.Instance.PlayerObject.transform.TransformDirection(angle);
+            Vector3 spawnDirection = GameManager.Instance.PlayerObject.transform.TransformDirection(angle).normalized;
             Ray ray = new Ray(GameManager.Instance.PlayerObject.transform.position, spawnDirection);
 
             // Check for a hit
+            Vector3 currentPoint;
             RaycastHit initialHit;
-            if (!Physics.Raycast(ray, out initialHit, maxDistance))
-                return;
+            if (Physics.Raycast(ray, out initialHit, maxDistance))
+            {
+                // Separate out from hit point
+                float extraDistance = UnityEngine.Random.Range(0f, 2f);
+                currentPoint = initialHit.point + initialHit.normal.normalized * (separationDistance + extraDistance);
 
-            // Must be greater than minDistance
-            if (initialHit.distance < minDistance)
-                return;
-
-            // Separate out from hit point
-            float extraDistance = UnityEngine.Random.Range(0f, 2f);
-            Vector3 currentPoint = initialHit.point + initialHit.normal.normalized * (separationDistance + extraDistance);
+                // Must be greater than minDistance
+                if (initialHit.distance < minDistance)
+                    return;
+            }
+            else
+            {
+                // Player might be in an open area (e.g. outdoors) pick a random point along spawn direction
+                currentPoint = GameManager.Instance.PlayerObject.transform.position + spawnDirection * UnityEngine.Random.Range(minDistance, maxDistance);
+            }
 
             // Must be able to find a surface below
             RaycastHit floorHit;
@@ -219,44 +271,17 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             // This looks like a good spawn position
-            AlignFoe(pendingFoeGameObjects[pendingFoesSpawned], dungeonParent.transform, testPoint);
+            pendingFoeGameObjects[pendingFoesSpawned].transform.position = testPoint;
+            FinalizeFoe(pendingFoeGameObjects[pendingFoesSpawned]);
             gameObjects[pendingFoesSpawned].transform.LookAt(GameManager.Instance.PlayerObject.transform.position);
 
             // Increment count
             pendingFoesSpawned++;
         }
 
-        // Place foe somewhere near player when outside a location navgrid is available
-        // Navgrid placement helps foe avoid getting tangled in geometry like buildings
-        void PlaceFoeExteriorLocation(GameObject[] gameObjects, DaggerfallLocation locationParent)
+        // Fine tunes foe position slightly based on mobility and enables GameObject
+        void FinalizeFoe(GameObject go)
         {
-            Debug.LogFormat("Attempt was made to place {0} foes to Exterior Location, but this has not been implemented yet.", gameObjects.Length);
-        }
-
-        // Place foe somewhere near player when outside and no navgrid available
-        // Wilderness environments are currently open so can be placed on ground anywhere within range
-        void PlaceFoeWilderness(GameObject[] gameObjects)
-        {
-            Debug.LogFormat("Attempt was made to place {0} foes to Wilderness, but this has not been implemented yet.", gameObjects.Length);
-        }
-
-        // Align foe in world after spawn with handling for fallback placement
-        // Will set foe GameObject active when complete
-        void AlignFoe(GameObject go, Transform parent, Vector3 localPosition, bool fallbackPlacement = false)
-        {
-            go.transform.parent = parent;
-
-            if (!fallbackPlacement)
-            {
-                go.transform.localPosition = localPosition;
-            }
-            else
-            {
-                Debug.Log("Fallback placing behind player");
-                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
-                go.transform.position = playerMotor.transform.position + -playerMotor.transform.forward;
-            }
-
             DaggerfallMobileUnit mobileUnit = go.GetComponentInChildren<DaggerfallMobileUnit>();
             if (mobileUnit)
             {
