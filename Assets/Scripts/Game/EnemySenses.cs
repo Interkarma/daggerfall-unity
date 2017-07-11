@@ -19,13 +19,12 @@ namespace DaggerfallWorkshop.Game
     /// </summary>
     public class EnemySenses : MonoBehaviour
     {
-        public static Vector3 ResetPlayerPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+        public static readonly Vector3 ResetPlayerPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
         public float SightRadius = 18f;         // Range of enemy sight
         public float HearingRadius = 10f;       // Range of enemy hearing
         public float FieldOfView = 140f;        // Enemy field of view
 
-        GameObject player;
         DaggerfallMobileUnit mobile;
         bool playerInSight;
         bool playerInEarshot;
@@ -36,9 +35,9 @@ namespace DaggerfallWorkshop.Game
         float distanceToActionDoor;
         bool hasEncounteredPlayer = false;
 
-        public GameObject Player
+        GameObject Player
         {
-            get { return player; }
+            get { return GameManager.Instance.PlayerObject; }
         }
 
         public bool PlayerInSight
@@ -85,19 +84,23 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            player = GameObject.FindGameObjectWithTag("Player");
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
             lastKnownPlayerPos = ResetPlayerPos;
         }
 
         void FixedUpdate()
         {
-            if (player != null)
+            if (Player != null)
             {
-                directionToPlayer = player.transform.position - transform.position;
-                distanceToPlayer = directionToPlayer.magnitude;
+                Vector3 toPlayer = Player.transform.position - transform.position;
+                directionToPlayer = toPlayer.normalized;
+                distanceToPlayer = toPlayer.magnitude;
+
                 playerInSight = CanSeePlayer();
                 playerInEarshot = CanHearPlayer();
+
+                if((playerInEarshot || playerInSight) && !hasEncounteredPlayer)
+                    hasEncounteredPlayer = true;
             }
         }
 
@@ -107,7 +110,6 @@ namespace DaggerfallWorkshop.Game
         {
             bool seen = false;
             actionDoor = null;
-            distanceToActionDoor = float.MaxValue;
 
             if (distanceToPlayer < SightRadius + mobile.Summary.Enemy.SightModifier)
             {
@@ -121,10 +123,10 @@ namespace DaggerfallWorkshop.Game
                     if (Physics.Raycast(ray, out hit, SightRadius))
                     {
                         // Check if hit was player
-                        if (hit.transform.gameObject == player)
+                        if (hit.transform.gameObject == Player)
                         {
                             seen = true;
-                            lastKnownPlayerPos = player.transform.position;
+                            lastKnownPlayerPos = Player.transform.position;
                         }
 
                         // Check if hit was an action door
@@ -141,10 +143,6 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // Raise flag on first encounter
-            if (!hasEncounteredPlayer && seen)
-                hasEncounteredPlayer = true;
-
             return seen;
         }
 
@@ -159,7 +157,7 @@ namespace DaggerfallWorkshop.Game
             Ray ray = new Ray(transform.position, directionToPlayer);
             if (Physics.Raycast(ray, out hit))
             {
-                if (hit.transform.gameObject != player && hit.transform.gameObject.isStatic)
+                if (hit.transform.gameObject != Player && hit.transform.gameObject.isStatic)
                     hearingScale = 0.5f;
             }
 
@@ -167,12 +165,8 @@ namespace DaggerfallWorkshop.Game
             if (distanceToPlayer < (HearingRadius * hearingScale) + mobile.Summary.Enemy.HearingModifier)
             {
                 heard = true;
-                lastKnownPlayerPos = player.transform.position;
+                lastKnownPlayerPos = Player.transform.position;
             }
-
-            // Raise flag on first encounter
-            if (!hasEncounteredPlayer && heard)
-                hasEncounteredPlayer = true;
 
             return heard;
         }

@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game
                     int damage = Game.Formulas.FormulaHelper.CalculateWeaponDamage(entity, GameManager.Instance.PlayerEntity, null);
                     if (damage > 0)
                     {
-                        senses.Player.SendMessage("RemoveHealth", damage);
+                        GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", damage);
                     }
                     else if (sounds)
                     {
