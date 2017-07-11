@@ -138,7 +138,8 @@ namespace DaggerfallWorkshop.Game.Questing
             base.SetResource(line);
 
             // Match string for Place variants
-            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+)";
+            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+) (?<useExterior>exterior)|
+                                (Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+)";
 
             // Try to match source line with pattern
             Match match = Regex.Match(line, matchStr);
@@ -190,6 +191,12 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception(string.Format("Could not find place name in data table: '{0};", name));
                 }
 
+                // Use dungeon exterior
+                bool useExterior = false;
+                string exteriorFlag = match.Groups["useExterior"].Value;
+                if (string.Compare(exteriorFlag, "exterior", true) == 0)
+                    useExterior = true;
+
                 // Handle place by scope
                 if (scope == Scopes.Local)
                 {
@@ -199,7 +206,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (scope == Scopes.Remote)
                 {
                     // Get a remote site in same region quest was issued
-                    SetupRemoteSite();
+                    SetupRemoteSite(useExterior);
                 }
                 else if (scope == Scopes.Fixed && p1 > 0xc300)
                 {
@@ -379,11 +386,13 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Get a remote site in the same region as player.
         /// </summary>
-        void SetupRemoteSite()
+        void SetupRemoteSite(bool useDungeonExterior)
         {
             // Select remote dungeon or building of building type
-            if (p1 == 1)
+            if (p1 == 1 && !useDungeonExterior)
                 SelectRemoteDungeonSite(p2);
+            else if (p1 == 1 && useDungeonExterior)
+                SelectRemoteDungeonExteriorSite(p2);
             else
                 SelectRemoteTownSite((DFLocation.BuildingTypes)p2);
         }
@@ -448,6 +457,53 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.questItemMarkers = questItemMarkers;
             siteDetails.selectedQuestSpawnMarker = UnityEngine.Random.Range(0, questSpawnMarkers.Length);
             siteDetails.selectedQuestItemMarker = UnityEngine.Random.Range(0, questItemMarkers.Length);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Find a random dungeon exterior. This will create a SiteTypes.Town exterior site for that dungeon instead of the usual dungeon interior.
+        /// Dungeon exteriors do not contain quest or item markers so cannot be used to PlaceItem or PlaceFoe.
+        /// But they can still be used for quest logic and CreateFoe actions.
+        /// </summary>
+        /// <param name="typeIndex">Type of location exterior.</param>
+        bool SelectRemoteDungeonExteriorSite(int dungeonTypeIndex)
+        {
+            // Get player region
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
+
+            // Cannot use a region with no locations
+            // This should not happen in normal play
+            if (regionData.LocationCount == 0)
+                return false;
+
+            // Get indices for all dungeons of this type
+            int[] foundIndices = CollectDungeonIndicesOfType(regionData, dungeonTypeIndex, true);
+            if (foundIndices == null || foundIndices.Length == 0)
+            {
+                Debug.LogFormat("Could not find any random dungeon exteriors of type {0} in {1}", dungeonTypeIndex, regionData.Name);
+                return false;
+            }
+
+            // Select a random exterior location index from available list
+            int index = UnityEngine.Random.Range(0, foundIndices.Length);
+
+            // Get location data for selected exterior
+            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, foundIndices[index]);
+            if (!location.Loaded)
+                return false;
+
+            // Configure new site details
+            siteDetails = new SiteDetails();
+            siteDetails.questUID = ParentQuest.UID;
+            siteDetails.siteType = SiteTypes.Town;
+            siteDetails.mapId = location.MapTableData.MapId;
+            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionName = location.RegionName;
+            siteDetails.locationName = location.Name;
+            siteDetails.questSpawnMarkers = null;
+            siteDetails.questItemMarkers = null;
 
             return true;
         }
@@ -748,10 +804,15 @@ namespace DaggerfallWorkshop.Game.Questing
 
         /// <summary>
         /// Gets location indices for all dungeons of type.
-        /// dungeonTypeIndex == -1 will select all available dungeon
+        /// dungeonTypeIndex == -1 will select all available dungeons.
         /// </summary>
-        int[] CollectDungeonIndicesOfType(DFRegion regionData, int dungeonTypeIndex)
+        int[] CollectDungeonIndicesOfType(DFRegion regionData, int dungeonTypeIndex, bool allowFullRange = false)
         {
+            // Selectively allow full range of dungeons
+            // Only dungeons 0-16 contain quest and item markers
+            // 17-18 are available for exterior questing only
+            int upperLimit = (allowFullRange) ? 18 : 16;
+            
             // Collect all dungeon types
             List<int> foundLocationIndices = new List<int>();
             for (int i = 0; i < regionData.LocationCount; i++)
@@ -765,9 +826,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Collect dungeons
                 if (dungeonTypeIndex == -1)
                 {
-                    // Limit range to indices 0-16
+                    // Limit range to indices 0-upperLimit
                     int testIndex = ((int)regionData.MapTable[i].DungeonType >> 8);
-                    if (testIndex >= 0 && testIndex <= 16)
+                    if (testIndex >= 0 && testIndex <= upperLimit)
                         foundLocationIndices.Add(i);
                 }
                 else
@@ -776,6 +837,24 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (((int)regionData.MapTable[i].DungeonType >> 8) == dungeonTypeIndex)
                         foundLocationIndices.Add(i);
                 }
+            }
+
+            return foundLocationIndices.ToArray();
+        }
+
+        /// <summary>
+        /// Gets location indices for all exteriors of type.
+        /// typeIndex == -1 will select all available exteriors.
+        /// </summary>
+        int[] CollectExteriorIndicesOfType(DFRegion regionData, int typeIndex)
+        {
+            List<int> foundLocationIndices = new List<int>();
+            for (int i = 0; i < regionData.LocationCount; i++)
+            {
+                if (typeIndex == -1 || regionData.MapTable[i].LocationType == (DFRegion.LocationTypes)typeIndex)
+                    foundLocationIndices.Add(i);
+                else
+                    continue;
             }
 
             return foundLocationIndices.ToArray();
