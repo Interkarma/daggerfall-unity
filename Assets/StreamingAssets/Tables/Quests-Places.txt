@@ -70,6 +70,7 @@ WoodbourneHall4,    0xc363, 0xfa04, -1
 WrothCoven,         0xc35c, 0x0001, -1
 --
 --	Building detail for local/random towns
+-- 	NOTE: Not all location/building types are present in all regions!
 --
 apothecary,         0, 0 , 0
 town1,              0, 1 , 0
@@ -114,6 +115,10 @@ dungeon13,          1, 13, 0
 dungeon14,          1, 14, 0
 dungeon15,          1, 15, 0
 dungeon16,          1, 16, 0
+--	Dungeons17-18 contain no quest or item markers
+--	Can only be used with "remote dungeon exterior"
+dungeon17,          1, 17, 0
+dungeon18,          1, 18, 0
 --
 --	Shrines to Mephala
 --
