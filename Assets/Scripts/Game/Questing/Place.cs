@@ -138,8 +138,7 @@ namespace DaggerfallWorkshop.Game.Questing
             base.SetResource(line);
 
             // Match string for Place variants
-            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+) (?<useExterior>exterior)|
-                                (Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+)";
+            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+)";
 
             // Try to match source line with pattern
             Match match = Regex.Match(line, matchStr);
@@ -193,8 +192,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Use dungeon exterior
                 bool useExterior = false;
-                string exteriorFlag = match.Groups["useExterior"].Value;
-                if (string.Compare(exteriorFlag, "exterior", true) == 0)
+                if (line.Contains("exterior"))
                     useExterior = true;
 
                 // Handle place by scope
