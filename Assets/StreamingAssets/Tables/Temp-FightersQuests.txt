@@ -1,25 +1,43 @@
 -- These Fighter's Guild quests are considered "mostly working" under quest system in current state
 -- Please use the Quest Hub forums for bug reports: http://forums.dfworkshop.net/viewforum.php?f=25
 
+-- SCRIPT BUGS --
+-- * Various script bugs are present - these are not bugs in Daggerfall Unity's quest engine.
+
+-- "Reward Bug"
+--  * Several quests allow player to click again on quest giver to immediately receive reward.
+
+-- "Clear Bug"
+--  * A similar issue is some quests fail to clear quest giver clicks at all prior to target completion.
+
+-- "Spawn Rate"
+--  * Some spawn rates are very low - e.g. M0B1XY01 & M0B20Y02 spawn every 30 minutes with 30% success rate.
+--  * The target monsters do spawn, but player might need to rest 1 hour at a time to help trigger them faster
+
+
+-- ENGINE BUGS --
+-- * Discovered engine bugs will be noted below.
+
+
 schema: *name,notes
 
-M0B00Y00, 
-M0B00Y06, 
-M0B00Y07, 
-M0B00Y15, 
-M0B00Y16, 
-M0B00Y17, 
-M0B1XY01, 
-M0B11Y18, 
-M0B20Y02, 
-M0B21Y19, 
-M0B30Y03, 
-M0B30Y04, 
-M0B30Y08, 
-M0B40Y05, 
-M0B50Y09, 
-M0B60Y10, 
-M0C00Y11, 
-M0C00Y12, 
-M0C00Y13, 
-M0C00Y14, 
+M0B00Y00, Passed
+M0B00Y06, Passed with reward bug
+M0B00Y07, Passed with reward bug
+M0B00Y15, Passed with reward bug
+M0B00Y16, Passed with clear bug
+-M0B00Y17, FAILED needs more action support
+M0B1XY01, Passed
+-M0B11Y18, Failed needs more action support
+M0B20Y02, Passed with engine bugs ("injured _monster_ saying 1020" does not work)
+-M0B21Y19, FAILED needs more action support
+M0B30Y03, Passed
+M0B30Y04, Passed
+-M0B30Y08, 
+-M0B40Y05, 
+-M0B50Y09, 
+-M0B60Y10, 
+-M0C00Y11, 
+-M0C00Y12, 
+-M0C00Y13, 
+-M0C00Y14, 
