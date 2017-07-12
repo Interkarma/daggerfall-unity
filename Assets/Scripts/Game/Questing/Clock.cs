@@ -218,10 +218,10 @@ namespace DaggerfallWorkshop.Game.Questing
                         clockTimeInSeconds = timeValue0;
                 }
 
-                // Flag & 16 with a 0.0:0 clock seems to indicate clock should be
+                // Flag & 16 seems to indicate clock should be
                 // set to 2.5x cautious travel time of first Place resource specificed in quest script
                 // Quests using this configuration will usually end once timer elapsed
-                if ((flag & 16) == 16 && timeValue0 == 0)
+                if ((flag & 16) == 16)
                 {
                     clockTimeInSeconds = GetTravelTimeInSeconds();
                 }
