@@ -242,10 +242,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Debug.LogFormat("Offering quest {0} from TempGuild {1}", questName, currentGuild.ToString());
 
             // Parse quest
-            offeredQuest = QuestMachine.Instance.ParseQuest(questName, questorNPC);
-            if (offeredQuest == null)
+            try
             {
-                // TODO: Show flavour text when quest cannot be compiled
+                offeredQuest = QuestMachine.Instance.ParseQuest(questName, questorNPC);
+            }
+            catch (Exception ex)
+            {
+                // Log exception, show random flavour text, and exit
+                Debug.LogErrorFormat("Exception during quest compile: {0}", ex.Message);
+                ShowFailCompileMessage();
                 return;
             }
 
@@ -256,6 +261,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.OnButtonClick += OfferQuest_OnButtonClick;
                 messageBox.Show();
             }
+        }
+
+        void ShowFailCompileMessage()
+        {
+            const int flavourMessageID = 600;
+
+            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(flavourMessageID);
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
+            messageBox.SetTextTokens(tokens);
+            messageBox.ClickAnywhereToClose = true;
+            messageBox.AllowCancel = true;
+            messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.Show();
         }
 
         // Show a popup such as accept/reject message close guild window

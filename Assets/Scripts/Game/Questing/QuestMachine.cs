@@ -411,7 +411,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             string[] source = GetQuestSourceText(questName);
             if (source == null || source.Length == 0)
-                return null;
+                throw new Exception(string.Format("Could not load quest '{0}' or source file is empty/invalid.", questName));
 
             return ParseQuest(source);
         }
