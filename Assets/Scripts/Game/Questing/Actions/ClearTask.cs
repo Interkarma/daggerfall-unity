@@ -76,14 +76,16 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override void Update(Task caller)
         {
+            // Set complete right away as we could be clearing our own task
+            // If we set complete at end it just overwrites the rearm
+            SetComplete();
+
             foreach (Symbol taskSymbol in taskSymbols)
             {
                 Task task = ParentQuest.GetTask(taskSymbol);
                 if (task != null)
                     task.Unset();
             }
-
-            SetComplete();
         }
     }
 }

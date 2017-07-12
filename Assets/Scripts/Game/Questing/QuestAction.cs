@@ -82,6 +82,12 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Used for one-and-done actions.
         /// </summary>
         void SetComplete();
+
+        /// <summary>
+        /// Clears action complete flag.
+        /// Implementor should override this is if special handling needed on rearm.
+        /// </summary>
+        void RearmAction();
     }
 
     /// <summary>
@@ -152,6 +158,11 @@ namespace DaggerfallWorkshop.Game.Questing
         public virtual void SetComplete()
         {
             complete = true;
+        }
+
+        public virtual void RearmAction()
+        {
+            complete = false;
         }
     }
 }

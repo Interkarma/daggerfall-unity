@@ -386,6 +386,15 @@ namespace DaggerfallWorkshop.Game.Questing
                 GameManager.Instance.PlayerEntity.GlobalVars.SetGlobalVar(globalVarLink, value);
             else
                 triggered = value;
+
+            // If clearing a task then need to rearm actions
+            if (value == false)
+            {
+                foreach (IQuestAction action in actions)
+                {
+                    action.RearmAction();
+                }
+            }
         }
 
         #endregion
