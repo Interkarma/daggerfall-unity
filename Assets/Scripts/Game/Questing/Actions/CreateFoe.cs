@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             else
             {
-                // TODO: Just place somewhere around player no matter where they are (probably in wilderness)
+                PlaceFoeWilderness(pendingFoeGameObjects);
             }
         }
 
@@ -209,7 +209,8 @@ namespace DaggerfallWorkshop.Game.Questing
         // Wilderness environments are currently open so can be placed on ground anywhere within range
         void PlaceFoeWilderness(GameObject[] gameObjects)
         {
-            Debug.LogFormat("Attempt was made to place {0} foes to Wilderness, but this has not been implemented yet.", gameObjects.Length);
+            GameManager.Instance.StreamingWorld.TrackLooseObject(gameObjects[pendingFoesSpawned], -1, -1, true);
+            PlaceFoeFreely(gameObjects, null, 8f, 25f);
         }
 
         // Uses raycasts to find next spawn position just outside of player's field of view
@@ -219,10 +220,8 @@ namespace DaggerfallWorkshop.Game.Questing
             const float separationDistance = 1.25f;
             const float maxFloorDistance = 4f;
 
-            // Must have a disposable parent (e.g. DaggerfallDungeon, DaggerfallLocation)
-            if (parent == null)
-                throw new Exception("PlaceFoeFreely() must have a disposable parent object.");
-            else
+            // Set parent - otherwise caller must set a parent
+            if (parent)
                 gameObjects[pendingFoesSpawned].transform.parent = parent;
 
             // Select a left or right direction outside of camera FOV
