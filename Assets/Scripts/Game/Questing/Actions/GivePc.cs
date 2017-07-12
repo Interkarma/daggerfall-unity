@@ -10,6 +10,7 @@
 //
 
 using System;
+using UnityEngine;
 using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -78,7 +79,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Attempt to get Item resource
             Item item = ParentQuest.GetItem(itemSymbol);
             if (item == null)
-                throw new Exception(string.Format("Could not find Item resource symbol {0}", itemSymbol));
+            {
+                Debug.LogErrorFormat("Could not find Item resource symbol {0}", itemSymbol);
+                return;
+            }
 
             // Give quest item to player based on command format
             if (textId != 0)
