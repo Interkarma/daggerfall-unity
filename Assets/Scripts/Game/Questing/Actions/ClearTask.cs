@@ -42,6 +42,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (!match.Success)
                 return null;
 
+            // Trim source end or trailing white space will be split to an empty symbol at end of array
+            source = source.TrimEnd();
+
             ClearTask action = new ClearTask(parentQuest);
 
             try
