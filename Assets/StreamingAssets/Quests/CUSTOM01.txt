@@ -62,7 +62,7 @@ Item _reward_ gold
 
 Person _questgiver_ group Questor male
 
-Place _graveyard_ remote dungeon18 exterior
+Place _graveyard_ remote ancientgraveyard
 
 Clock _timeLimit_ 00:00 0 flag 17 range 0 2
 

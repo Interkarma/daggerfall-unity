@@ -119,6 +119,25 @@ dungeon16,          1, 16, 0
 --	Can only be used with "remote dungeon exterior"
 dungeon17,          1, 17, 0
 dungeon18,          1, 18, 0
+---
+---	Exterior location types
+---
+labyrinth,          2, 132, 0
+keep,               2, 135, 0
+ruin,               2, 138, 0
+graveyard,          2, 172, 0
+ancientgraveyard,   2, 140, 0
+coven,              2, 141, 0
+farmhome,           2, 163, 0
+wealthyhome,        2, 168, 0
+poorhome,           2, 171, 0
+tavernhome,         2, 166, 0
+templehome,         2, 165, 0
+cult,               2, 169, 0
+city,               2, 160, 0
+hamlet,             2, 161, 0
+village,            2, 162, 0
+anywhere,           2,  -1, 0
 --
 --	Shrines to Mephala
 --

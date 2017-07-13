@@ -190,11 +190,6 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception(string.Format("Could not find place name in data table: '{0};", name));
                 }
 
-                // Use dungeon exterior
-                bool useExterior = false;
-                if (line.Contains("exterior"))
-                    useExterior = true;
-
                 // Handle place by scope
                 if (scope == Scopes.Local)
                 {
@@ -204,7 +199,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 else if (scope == Scopes.Remote)
                 {
                     // Get a remote site in same region quest was issued
-                    SetupRemoteSite(useExterior);
+                    SetupRemoteSite();
                 }
                 else if (scope == Scopes.Fixed && p1 > 0xc300)
                 {
@@ -384,126 +379,22 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Get a remote site in the same region as player.
         /// </summary>
-        void SetupRemoteSite(bool useDungeonExterior)
+        void SetupRemoteSite()
         {
-            // Select remote dungeon or building of building type
-            if (p1 == 1 && !useDungeonExterior)
-                SelectRemoteDungeonSite(p2);
-            else if (p1 == 1 && useDungeonExterior)
-                SelectRemoteDungeonExteriorSite(p2);
-            else
-                SelectRemoteTownSite((DFLocation.BuildingTypes)p2);
-        }
-
-        /// <summary>
-        /// Find a random dungeon site in player region.
-        /// dungeonTypeIndex == -1 will select from all dungeons of type 0 through 16
-        /// dungeonTypeIndex == 0 through 16 will select from all available dungeons of that specific type
-        /// Note: Template only maps dungeon types 0-16 to p2 types dungeon0 through dungeon16.
-        /// This is probably because types 17-18 don't seem to contain quest markers.
-        /// Warning: Not all dungeon types are available in all regions. http://en.uesp.net/wiki/Daggerfall:Dungeons#Overview_of_Dungeon_Locations
-        /// </summary>
-        bool SelectRemoteDungeonSite(int dungeonTypeIndex)
-        {
-            // Get player region
-            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
-
-            // Cannot use a region with no locations
-            // This should not happen in normal play
-            if (regionData.LocationCount == 0)
-                return false;
-
-            //Debug.LogFormat("Selecting for random dungeon of type {0} in {1}", dungeonTypeIndex, regionData.Name);
-
-            // Get indices for all dungeons of this type
-            int[] foundIndices = CollectDungeonIndicesOfType(regionData, dungeonTypeIndex);
-            if (foundIndices == null || foundIndices.Length == 0)
+            switch(p1)
             {
-                Debug.LogFormat("Could not find any random dungeons of type {0} in {1}", dungeonTypeIndex, regionData.Name);
-                return false;
+                case 0:
+                    SelectRemoteTownSite((DFLocation.BuildingTypes)p2);
+                    break;
+                case 1:
+                    SelectRemoteDungeonSite(p2);
+                    break;
+                case 2:
+                    SelectRemoteLocationExteriorSite(p2);
+                    break;
+                default:
+                    throw new Exception(string.Format("An unknown P1 value of {0} was encountered for Place {1}", p1, Symbol.Original));
             }
-
-            //Debug.LogFormat("Found a total of {0} possible dungeons of type {1} in {2}", foundIndices.Length, dungeonTypeIndex, regionData.Name);
-
-            // Select a random dungeon location index from available list
-            int index = UnityEngine.Random.Range(0, foundIndices.Length);
-
-            // Get location data for selected dungeon
-            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, foundIndices[index]);
-            if (!location.Loaded)
-                return false;
-
-            // Dungeon must be a valid quest site
-            QuestMarker[] questSpawnMarkers, questItemMarkers;
-            EnumerateDungeonQuestMarkers(location, out questSpawnMarkers, out questItemMarkers);
-            if (!ValidateQuestMarkers(questSpawnMarkers, questItemMarkers))
-            {
-                Debug.LogFormat("Could not find any quest markers in random dungeon {0}", location.Name);
-                return false;
-            }
-
-            // Configure new site details
-            siteDetails = new SiteDetails();
-            siteDetails.questUID = ParentQuest.UID;
-            siteDetails.siteType = SiteTypes.Dungeon;
-            siteDetails.mapId = location.MapTableData.MapId;
-            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
-            siteDetails.regionName = location.RegionName;
-            siteDetails.locationName = location.Name;
-            siteDetails.questSpawnMarkers = questSpawnMarkers;
-            siteDetails.questItemMarkers = questItemMarkers;
-            siteDetails.selectedQuestSpawnMarker = UnityEngine.Random.Range(0, questSpawnMarkers.Length);
-            siteDetails.selectedQuestItemMarker = UnityEngine.Random.Range(0, questItemMarkers.Length);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Find a random dungeon exterior. This will create a SiteTypes.Town exterior site for that dungeon instead of the usual dungeon interior.
-        /// Dungeon exteriors do not contain quest or item markers so cannot be used to PlaceItem or PlaceFoe.
-        /// But they can still be used for quest logic and CreateFoe actions.
-        /// </summary>
-        /// <param name="typeIndex">Type of location exterior.</param>
-        bool SelectRemoteDungeonExteriorSite(int dungeonTypeIndex)
-        {
-            // Get player region
-            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
-            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
-
-            // Cannot use a region with no locations
-            // This should not happen in normal play
-            if (regionData.LocationCount == 0)
-                return false;
-
-            // Get indices for all dungeons of this type
-            int[] foundIndices = CollectDungeonIndicesOfType(regionData, dungeonTypeIndex, true);
-            if (foundIndices == null || foundIndices.Length == 0)
-            {
-                Debug.LogFormat("Could not find any random dungeon exteriors of type {0} in {1}", dungeonTypeIndex, regionData.Name);
-                return false;
-            }
-
-            // Select a random exterior location index from available list
-            int index = UnityEngine.Random.Range(0, foundIndices.Length);
-
-            // Get location data for selected exterior
-            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, foundIndices[index]);
-            if (!location.Loaded)
-                return false;
-
-            // Configure new site details
-            siteDetails = new SiteDetails();
-            siteDetails.questUID = ParentQuest.UID;
-            siteDetails.siteType = SiteTypes.Town;
-            siteDetails.mapId = location.MapTableData.MapId;
-            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
-            siteDetails.regionName = location.RegionName;
-            siteDetails.locationName = location.Name;
-            siteDetails.questSpawnMarkers = null;
-            siteDetails.questItemMarkers = null;
-
-            return true;
         }
 
         /// <summary>
@@ -575,6 +466,116 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             //Debug.LogFormat("Found remote candidate site in {0} attempts", attempts);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Find a random dungeon site in player region.
+        /// dungeonTypeIndex == -1 will select from all dungeons of type 0 through 16
+        /// dungeonTypeIndex == 0 through 16 will select from all available dungeons of that specific type
+        /// Note: Template only maps dungeon types 0-16 to p2 types dungeon0 through dungeon16.
+        /// This is probably because types 17-18 don't seem to contain quest markers.
+        /// Warning: Not all dungeon types are available in all regions. http://en.uesp.net/wiki/Daggerfall:Dungeons#Overview_of_Dungeon_Locations
+        /// </summary>
+        bool SelectRemoteDungeonSite(int dungeonTypeIndex)
+        {
+            // Get player region
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
+
+            // Cannot use a region with no locations
+            // This should not happen in normal play
+            if (regionData.LocationCount == 0)
+                return false;
+
+            //Debug.LogFormat("Selecting for random dungeon of type {0} in {1}", dungeonTypeIndex, regionData.Name);
+
+            // Get indices for all dungeons of this type
+            int[] foundIndices = CollectDungeonIndicesOfType(regionData, dungeonTypeIndex);
+            if (foundIndices == null || foundIndices.Length == 0)
+            {
+                Debug.LogFormat("Could not find any random dungeons of type {0} in {1}", dungeonTypeIndex, regionData.Name);
+                return false;
+            }
+
+            //Debug.LogFormat("Found a total of {0} possible dungeons of type {1} in {2}", foundIndices.Length, dungeonTypeIndex, regionData.Name);
+
+            // Select a random dungeon location index from available list
+            int index = UnityEngine.Random.Range(0, foundIndices.Length);
+
+            // Get location data for selected dungeon
+            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, foundIndices[index]);
+            if (!location.Loaded)
+                return false;
+
+            // Dungeon must be a valid quest site
+            QuestMarker[] questSpawnMarkers, questItemMarkers;
+            EnumerateDungeonQuestMarkers(location, out questSpawnMarkers, out questItemMarkers);
+            if (!ValidateQuestMarkers(questSpawnMarkers, questItemMarkers))
+            {
+                Debug.LogFormat("Could not find any quest markers in random dungeon {0}", location.Name);
+                return false;
+            }
+
+            // Configure new site details
+            siteDetails = new SiteDetails();
+            siteDetails.questUID = ParentQuest.UID;
+            siteDetails.siteType = SiteTypes.Dungeon;
+            siteDetails.mapId = location.MapTableData.MapId;
+            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionName = location.RegionName;
+            siteDetails.locationName = location.Name;
+            siteDetails.questSpawnMarkers = questSpawnMarkers;
+            siteDetails.questItemMarkers = questItemMarkers;
+            siteDetails.selectedQuestSpawnMarker = UnityEngine.Random.Range(0, questSpawnMarkers.Length);
+            siteDetails.selectedQuestItemMarker = UnityEngine.Random.Range(0, questItemMarkers.Length);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Find a random location exterior. This will create a SiteTypes.Town exterior site.
+        /// Location exteriors do not contain quest or item markers so cannot be used to "place item", "place foe", "place npc".
+        /// </summary>
+        /// <param name="locationTypeIndex">Location type index or -1.</param>
+        bool SelectRemoteLocationExteriorSite(int locationTypeIndex)
+        {
+            // Get player region
+            int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+            DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
+
+            // Cannot use a region with no locations
+            // This should not happen in normal play
+            if (regionData.LocationCount == 0)
+                return false;
+
+            // Get indices for all locations of this type
+            int[] foundIndices = CollectExteriorIndicesOfType(regionData, locationTypeIndex);
+            if (foundIndices == null || foundIndices.Length == 0)
+            {
+                Debug.LogFormat("Could not find any random location of index {0} in {1}", locationTypeIndex, regionData.Name);
+                return false;
+            }
+
+            // Select a random exterior location index from available list
+            int index = UnityEngine.Random.Range(0, foundIndices.Length);
+
+            // Get location data for selected exterior
+            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(regionIndex, foundIndices[index]);
+            if (!location.Loaded)
+                return false;
+
+            // Configure new site details
+            siteDetails = new SiteDetails();
+            siteDetails.questUID = ParentQuest.UID;
+            siteDetails.siteType = SiteTypes.Town;
+            siteDetails.mapId = location.MapTableData.MapId;
+            siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionName = location.RegionName;
+            siteDetails.locationName = location.Name;
+            siteDetails.questSpawnMarkers = null;
+            siteDetails.questItemMarkers = null;
 
             return true;
         }
