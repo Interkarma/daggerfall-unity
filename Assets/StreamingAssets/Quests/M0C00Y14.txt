@@ -104,6 +104,7 @@ _2dung_ task:
 
 _S.01_ task:
 	killed 4 _monster_ 
+	say 1020
 
 _S.02_ task:
 	clicked npc _qgiver_ 
