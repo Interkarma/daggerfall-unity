@@ -25,7 +25,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                 You got guts %pcf, I'll give ya that.
 <ce>            Apparently this scorpion escaped from someone's
-<ce>             personal collection. Right now it's corner in
+<ce>             personal collection. Right now it's cornered in
 <ce>                   _house_ Kill the thing today and
 <ce>                        I'll speak well of you.
 
