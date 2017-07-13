@@ -83,5 +83,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string mustDistributeBonusPoints = "You must distribute all bonus points.";
 
         public const string getQuest = "Get Quest";
+
+        public const string pronounHe = "he";
+        public const string pronounShe = "she";
+        public const string pronounHim = "him";
+        public const string pronounHer = "her";
+        public const string pronounHis = "his";
+        public const string pronounHers = "hers";
+        public const string pronounHimself = "himself";
+        public const string pronounHerself = "herself";
     }
 }

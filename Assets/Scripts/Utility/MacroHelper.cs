@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -117,6 +118,26 @@ namespace DaggerfallWorkshop.Utility
                             // Get god of last NPC
                             words[word] = words[word].Replace(macro.token, GetGod(parentQuest));
                         }
+                        else if (macro.token == "%g" || macro.token == "%g1")
+                        {
+                            // He/She
+                            words[word] = words[word].Replace(macro.token, GetPronoun1(parentQuest));
+                        }
+                        else if (macro.token == "%g2")
+                        {
+                            // Him/Her
+                            words[word] = words[word].Replace(macro.token, GetPronoun2(parentQuest));
+                        }
+                        else if (macro.token == "%g2self")
+                        {
+                            // Himself/Herself
+                            words[word] = words[word].Replace(macro.token, GetPronoun2self(parentQuest));
+                        }
+                        else if (macro.token == "%g3")
+                        {
+                            // His/Hers
+                            words[word] = words[word].Replace(macro.token, GetPronoun3(parentQuest));
+                        }
                     }
                     else
                     {
@@ -188,6 +209,70 @@ namespace DaggerfallWorkshop.Utility
                 return quest.LastPersonReferenced.GodName;
             else
                 return "Arkay";
+        }
+
+        // He/She
+        string GetPronoun1(Quest quest)
+        {
+            if (quest.LastPersonReferenced == null)
+                return HardStrings.pronounHe;
+
+            switch (quest.LastPersonReferenced.Gender)
+            {
+                default:
+                case Game.Entity.Genders.Male:
+                    return HardStrings.pronounHe;
+                case Game.Entity.Genders.Female:
+                    return HardStrings.pronounShe;
+            }
+        }
+
+        // Him/Her
+        string GetPronoun2(Quest quest)
+        {
+            if (quest.LastPersonReferenced == null)
+                return HardStrings.pronounHim;
+
+            switch (quest.LastPersonReferenced.Gender)
+            {
+                default:
+                case Game.Entity.Genders.Male:
+                    return HardStrings.pronounHim;
+                case Game.Entity.Genders.Female:
+                    return HardStrings.pronounHer;
+            }
+        }
+
+        // Himself/Herself
+        string GetPronoun2self(Quest quest)
+        {
+            if (quest.LastPersonReferenced == null)
+                return HardStrings.pronounHimself;
+
+            switch (quest.LastPersonReferenced.Gender)
+            {
+                default:
+                case Game.Entity.Genders.Male:
+                    return HardStrings.pronounHimself;
+                case Game.Entity.Genders.Female:
+                    return HardStrings.pronounHerself;
+            }
+        }
+
+        // His/Hers
+        string GetPronoun3(Quest quest)
+        {
+            if (quest.LastPersonReferenced == null)
+                return HardStrings.pronounHis;
+
+            switch (quest.LastPersonReferenced.Gender)
+            {
+                default:
+                case Game.Entity.Genders.Male:
+                    return HardStrings.pronounHis;
+                case Game.Entity.Genders.Female:
+                    return HardStrings.pronounHers;
+            }
         }
 
         #endregion
