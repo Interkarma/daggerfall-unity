@@ -121,6 +121,7 @@ dungeon17,          1, 17, 0
 dungeon18,          1, 18, 0
 ---
 ---	Exterior location types
+---	NOTE: Exteriors do not contain quest or item markers so cannot be used to "place item", "place foe", "place npc"
 ---
 labyrinth,          2, 132, 0
 keep,               2, 135, 0
