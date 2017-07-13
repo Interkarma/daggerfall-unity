@@ -215,6 +215,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             // Finalise gameobject material
             FinaliseMaterials(go);
+
+            // Add NPC trigger collider
+            if (RDBLayout.IsNPCFlat(archive))
+            {
+                Collider col = go.AddComponent<BoxCollider>();
+                col.isTrigger = true;
+            }
         }
 
         /// <summary>
