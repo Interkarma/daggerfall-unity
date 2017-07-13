@@ -39,6 +39,11 @@ namespace DaggerfallWorkshop.Game.Questing
         bool IsTriggerCondition { get; }
 
         /// <summary>
+        /// Returns true if this trigger is always on and should be checked each tick.
+        /// </summary>
+        bool IsAlwaysOnTriggerCondition { get; }
+
+        /// <summary>
         /// Helper to test if source is a match for Pattern.
         /// </summary>
         Match Test(string source);
@@ -104,10 +109,12 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         bool complete = false;
         bool triggerCondition = false;
+        bool alwaysOnTriggerCondition = false;
         string debugSource;
 
         public bool IsComplete { get { return complete; } }
         public bool IsTriggerCondition { get { return triggerCondition; } protected set { triggerCondition = value; } }
+        public bool IsAlwaysOnTriggerCondition {  get { return alwaysOnTriggerCondition; } protected set { alwaysOnTriggerCondition = value; } }
 
         public abstract string Pattern { get; }
 

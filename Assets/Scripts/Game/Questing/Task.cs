@@ -193,9 +193,9 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Always check trigger conditions
                 // These can turn task on when any trigger evaluates true
-                // They are no longer checked once task is triggered
-                // But can fire again if task is unset/rearmed later
-                if (action.IsTriggerCondition && !triggered)
+                // They are no longer checked once task is triggered (unless set to always be on)
+                // But can fire again if owning task is unset/rearmed later
+                if (action.IsTriggerCondition && !triggered || action.IsAlwaysOnTriggerCondition)
                 {
                     if (action.CheckTrigger(this))
                         triggered = true;
