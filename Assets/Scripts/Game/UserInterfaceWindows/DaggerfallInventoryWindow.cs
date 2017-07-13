@@ -1334,7 +1334,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (item.IsQuestItem)
             {
                 // Get the quest this item belongs to
-                Quest quest = QuestMachine.Instance.GetActiveQuest(item.QuestUID);
+                Quest quest = QuestMachine.Instance.GetQuest(item.QuestUID);
                 if (quest == null)
                     throw new Exception("DaggerfallUnityItem references a quest that could not be found.");
 
@@ -1495,7 +1495,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Send click to quest system
             if (item.IsQuestItem)
             {
-                Quest quest = QuestMachine.Instance.GetActiveQuest(item.QuestUID);
+                Quest quest = QuestMachine.Instance.GetQuest(item.QuestUID);
                 if (quest != null)
                 {
                     Item questItem = quest.GetItem(item.QuestItemSymbol);

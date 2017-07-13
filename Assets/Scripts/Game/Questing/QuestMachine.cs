@@ -70,8 +70,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         List<IQuestAction> actionTemplates = new List<IQuestAction>();
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
-        List<Quest> questsToRemove = new List<Quest>();
         List<SiteLink> siteLinks = new List<SiteLink>();
+        List<Quest> questsToTombstone = new List<Quest>();
 
         bool waitingForStartup = true;
         float startupTimer = 0;
@@ -239,20 +239,24 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             // Update quests
-            questsToRemove.Clear();
+            questsToTombstone.Clear();
             foreach (Quest quest in quests.Values)
             {
-                quest.Update();
-                if (quest.QuestComplete)
-                    questsToRemove.Add(quest);
+                // Tick active quests
+                if (!quest.QuestComplete)
+                    quest.Update();
+
+                // Schedule completed quests for tombstoning
+                if (quest.QuestComplete && !quest.QuestTombstoned)
+                    questsToTombstone.Add(quest);
             }
 
-            // Remove completed quests after update completed
-            foreach (Quest quest in questsToRemove)
+            // Tombstone completed quests after update
+            foreach (Quest quest in questsToTombstone)
             {
                 quest.Dispose();
+                quest.TombstoneQuest();
                 RemoveAllQuestSiteLinks(quest.UID);
-                quests.Remove(quest.UID);
                 RaiseOnQuestEndedEvent(quest);
             }
 
@@ -379,14 +383,16 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Returns a list of all active log messages from all active quests
         /// </summary>
-        /// <returns>List of log messages</returns>
+        /// <returns>List of log messages.</returns>
         public List<Message> GetAllQuestLogMessages()
         {
             List<Message> questMessages = new List<Message>();
 
             foreach (var quest in quests.Values)
             {
-                var logEntries = quest.GetLogMessages();
+                Quest.LogEntry[] logEntries = quest.GetLogMessages();
+                if (logEntries == null || logEntries.Length == 0)
+                    continue;
 
                 foreach (var logEntry in logEntries)
                 {
@@ -487,10 +493,13 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (var kvp in quests)
             {
                 Quest quest = kvp.Value;
-                QuestResource[] foundResources = quest.GetAllResources(typeof(Place));
-                foreach (QuestResource resource in foundResources)
+                if (!quest.QuestComplete)
                 {
-                    sites.Add((resource as Place).SiteDetails);
+                    QuestResource[] foundResources = quest.GetAllResources(typeof(Place));
+                    foreach (QuestResource resource in foundResources)
+                    {
+                        sites.Add((resource as Place).SiteDetails);
+                    }
                 }
             }
 
@@ -498,11 +507,11 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Gets an active quest based on UID.
+        /// Gets an active or tombstoned quest based on UID.
         /// </summary>
         /// <param name="questUID">Quest UID to retrieve.</param>
         /// <returns>Quest object. Returns null if UID not found.</returns>
-        public Quest GetActiveQuest(ulong questUID)
+        public Quest GetQuest(ulong questUID)
         {
             if (!quests.ContainsKey(questUID))
                 return null;
@@ -511,28 +520,59 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Check if quest UID is still active in quest machine.
+        /// Check if quest UID has been completed in quest machine.
         /// </summary>
         /// <param name="questUID">Quest UID to check.</param>
-        /// <returns>True if quest still active.</returns>
-        public bool IsQuestActive(ulong questUID)
+        /// <returns>True if quest is complete. Also returns false if quest not found.</returns>
+        public bool IsQuestComplete(ulong questUID)
         {
-            if (quests.ContainsKey(questUID))
-                return true;
-            else
+            Quest quest = GetQuest(questUID);
+            if (quest == null)
                 return false;
+
+            return quest.QuestComplete;
         }
 
         /// <summary>
-        /// Returns an array of all active quest UIDs.
+        /// Check if quest UID has been tombstoned in quest machine.
+        /// </summary>
+        /// <param name="questUID">Quest UID to check.</param>
+        /// <returns>True if quest is tombstoned. Also returns false if quest not found.</returns>
+        public bool IsQuestTombstoned(ulong questUID)
+        {
+            Quest quest = GetQuest(questUID);
+            if (quest == null)
+                return false;
+
+            return quest.QuestTombstoned;
+        }
+
+        /// <summary>
+        /// Returns an array of all quest UIDs, even if completed or tombstoned.
         /// </summary>
         /// <returns>ulong[] array of quest UIDs.</returns>
-        public ulong[] GetAllActiveQuests()
+        public ulong[] GetAllQuests()
         {
             List<ulong> keys = new List<ulong>();
             foreach (ulong key in quests.Keys)
             {
                 keys.Add(key);
+            }
+
+            return keys.ToArray();
+        }
+
+        /// <summary>
+        /// Returns an array of all active (not completed, not tombstoned) quest UIDs.
+        /// </summary>
+        /// <returns>ulong[] array of quest UIDs.</returns>
+        public ulong[] GetAllActiveQuests()
+        {
+            List<ulong> keys = new List<ulong>();
+            foreach (Quest quest in quests.Values)
+            {
+                if (!quest.QuestComplete && !quest.QuestTombstoned)
+                    keys.Add(quest.UID);
             }
 
             return keys.ToArray();
@@ -571,10 +611,13 @@ namespace DaggerfallWorkshop.Game.Questing
         /// This is used for quest turn-in and reward process.
         /// </summary>
         /// <returns>True if this NPC is a questor in any quest.</returns>
-        public bool IsLastNPCClickedQuestor()
+        public bool IsLastNPCClickedAnActiveQuestor()
         {
             foreach(Quest quest in quests.Values)
             {
+                if (quest.QuestComplete)
+                    continue;
+
                 QuestResource[] questPeople = quest.GetAllResources(typeof(Person));
                 foreach (Person person in questPeople)
                 {
@@ -731,7 +774,7 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (SiteLink link in siteLinks)
             {
                 // Attempt to get Quest target
-                Quest quest = GetActiveQuest(link.questUID);
+                Quest quest = GetQuest(link.questUID);
                 if (quest == null)
                     continue;
 
@@ -818,7 +861,7 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (SiteLink link in siteLinks)
             {
                 // Get the Quest object referenced by this link
-                Quest quest = GetActiveQuest(link.questUID);
+                Quest quest = GetQuest(link.questUID);
                 if (quest == null)
                     return false;
 

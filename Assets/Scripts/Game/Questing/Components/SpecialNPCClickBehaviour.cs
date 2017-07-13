@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (ulong questID in questIDs)
             {
                 // Get quest object
-                Quest quest = QuestMachine.Instance.GetActiveQuest(questID);
+                Quest quest = QuestMachine.Instance.GetQuest(questID);
                 if (quest == null)
                     continue;
 

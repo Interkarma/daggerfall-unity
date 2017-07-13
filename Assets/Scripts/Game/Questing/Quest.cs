@@ -45,6 +45,9 @@ namespace DaggerfallWorkshop.Game.Questing
         string displayName;
         DaggerfallDateTime questStartTime;
 
+        bool questTombstoned = false;
+        DaggerfallDateTime questTombstoneTime;
+
         Person lastPersonReferenced = null;
         bool questBreak = false;
 
@@ -86,13 +89,12 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// True when quest has completed and will be deleted from quest machine.
+        /// True when quest has completed and will be tombstoned by quest machine.
         /// </summary>
         public bool QuestComplete
         {
             get { return questComplete; }
         }
-
 
         /// <summary>
         /// Short quest name read from source.
@@ -142,6 +144,24 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return questBreak; }
             set { questBreak = value; }
+        }
+
+        /// <summary>
+        /// True when quest has been tombstoned by QuestMachine.
+        /// Quest will persist a while after completion for post-quest rumours, failure text, etc.
+        /// </summary>
+        public bool QuestTombstoned
+        {
+            get { return questTombstoned; }
+        }
+
+        /// <summary>
+        /// The time quest was tombstoned.
+        /// Not valid if quest has not yet been tombstoned.
+        /// </summary>
+        public DaggerfallDateTime QuestTombstoneTime
+        {
+            get { return questTombstoneTime; }
         }
 
         #endregion
@@ -277,9 +297,13 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Usually only one log step is active at a time.
         /// This allows log messages to be displayed however desired (as list, verbose, sorted, etc.).
         /// </summary>
-        /// <returns>LogEntry array.</returns>
+        /// <returns>LogEntry array, or null if quest completed.</returns>
         public LogEntry[] GetLogMessages()
         {
+            // Return null if quest is finished
+            if (QuestComplete)
+                return null;
+
             // Create an array of active log messages
             LogEntry[] logs = new LogEntry[activeLogMessages.Count];
             int count = 0;
@@ -292,30 +316,14 @@ namespace DaggerfallWorkshop.Game.Questing
             return logs;
         }
 
-        ///// <summary>
-        ///// Quick test of grabbing log message before UI is ready.
-        ///// To be removed.
-        ///// </summary>
-        //public void TestLogMessages()
-        //{
-        //    LogEntry[] logs = GetLogMessages();
-        //    for (int i = 0; i < logs.Length; i++)
-        //    {
-        //        Message message = GetMessage(logs[i].messageID);
-        //        if (message != null)
-        //        {
-        //            // Get message tokens
-        //            DaggerfallConnect.Arena2.TextFile.Token[] tokens = message.GetTextTokens();
-
-        //            UserInterfaceWindows.DaggerfallMessageBox messageBox = new UserInterfaceWindows.DaggerfallMessageBox(DaggerfallUI.UIManager);
-        //            messageBox.SetTextTokens(tokens);
-        //            messageBox.ClickAnywhereToClose = true;
-        //            messageBox.AllowCancel = true;
-        //            messageBox.ParentPanel.BackgroundColor = Color.clear;
-        //            messageBox.Show();
-        //        }
-        //    }
-        //}
+        /// <summary>
+        /// Marks quest as tombstoned and schedules for eventual deletion.
+        /// </summary>
+        public void TombstoneQuest()
+        {
+            questTombstoned = true;
+            questTombstoneTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
+        }
 
         #endregion
 

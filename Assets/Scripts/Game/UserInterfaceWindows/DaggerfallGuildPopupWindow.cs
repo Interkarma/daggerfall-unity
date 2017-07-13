@@ -211,7 +211,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else if (currentGuild == TempGuilds.Mage)
                 {
-                    table = new Table(QuestMachine.Instance.GetTableSourceText(tempFightersQuestsFilename));
+                    table = new Table(QuestMachine.Instance.GetTableSourceText(tempMagesQuestsFilename));
                 }
                 else
                 {
@@ -341,9 +341,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // Just exit if this NPC already involved in a quest
+            // Just exit if this NPC already involved in an active quest
             // If quest conditions are complete the quest system should pickup ending
-            if (QuestMachine.Instance.IsLastNPCClickedQuestor())
+            if (QuestMachine.Instance.IsLastNPCClickedAnActiveQuestor())
             {
                 CloseWindow();
                 return;

@@ -27,9 +27,6 @@ namespace DaggerfallWorkshop.Game.Questing
     public class Parser
     {
         #region Fields
-
-        const string specialFieldToken = "--+";
-
         #endregion
 
         #region Constructors
@@ -56,6 +53,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             Quest quest = new Quest();
             string questName = string.Empty;
+            string displayName = string.Empty;
             bool inQRC = false;
             bool inQBN = false;
             List<string> qrcLines = new List<string>();
@@ -75,14 +73,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Trim trailing white space from either end of source line data
                 string text = line.Trim();
 
-                // Handle special tag code lines
-                // This will parse as comments to Template but have special meaning in Daggerfall Unity
-                if (text.StartsWith(specialFieldToken, comparison))
-                {
-                    ReadSpecialField(quest, line);
-                    continue;
-                }
-
                 // Skip other comment lines
                 if (text.StartsWith("-", comparison))
                     continue;
@@ -92,6 +82,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     questName = GetFieldStringValue(text);
                     quest.QuestName = questName;
+                }
+                else if (text.StartsWith("displayname:", comparison))
+                {
+                    displayName = GetFieldStringValue(text);
+                    quest.DisplayName = displayName;
                 }
                 else if (text.StartsWith("qrc:", comparison))
                 {
@@ -295,16 +290,6 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception(string.Format("Unknown line signature encounted '{0}'.", lines[i]));
                 }
             }
-        }
-
-        void ReadSpecialField(Quest quest, string line)
-        {
-            // Read field
-            line = line.Replace(specialFieldToken, "");
-            string[] field = SplitField(line, 2);
-
-            if (string.Compare(field[0], "DisplayName", true) == 0)
-                quest.DisplayName = field[1];
         }
 
         #endregion

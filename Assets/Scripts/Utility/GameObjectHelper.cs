@@ -732,7 +732,7 @@ namespace DaggerfallWorkshop.Utility
             foreach (SiteLink link in siteLinks)
             {
                 // Get the Quest object referenced by this link
-                Quest quest = QuestMachine.Instance.GetActiveQuest(link.questUID);
+                Quest quest = QuestMachine.Instance.GetQuest(link.questUID);
                 if (quest == null)
                     throw new Exception(string.Format("Could not find active quest for UID {0}", link.questUID));
 

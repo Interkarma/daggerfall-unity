@@ -174,7 +174,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return false;
 
             // Get the quest this resource belongs to
-            targetQuest = QuestMachine.Instance.GetActiveQuest(questUID);
+            targetQuest = QuestMachine.Instance.GetQuest(questUID);
             if (targetQuest == null)
                 return false;
 

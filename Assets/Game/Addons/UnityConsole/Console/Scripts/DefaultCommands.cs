@@ -793,7 +793,7 @@ namespace Wenzil.Console
                 ulong[] uids = QuestMachine.Instance.GetAllActiveQuests();
                 foreach(ulong questUID in uids)
                 {
-                    Quest quest = QuestMachine.Instance.GetActiveQuest(questUID);
+                    Quest quest = QuestMachine.Instance.GetQuest(questUID);
                     if (quest != null)
                     {
                         QuestResource[] itemResources = quest.GetAllResources(typeof(Item));

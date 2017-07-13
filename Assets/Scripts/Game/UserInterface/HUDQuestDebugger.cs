@@ -19,12 +19,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
     /// Output quest information on HUD to view state in real-time and optionally step-through execution.
-    /// Uses some non-bindable keys:
+    /// Uses some non-bindable keys (not all implemented):
     ///  * Ctrl+F10     Toggle debugger HUD open/close, closing will also resume normal quest execution
     ///  * Ctrl+F11     Toggle step-through at any time (will open debugger HUD if not open)
     ///  * Ctrl+Enter   Step execution to next task/action (only when debugger HUD open and step-through enabled)
-    ///  * Ctrl+Right   Show next quest tasks/vars/timers (only when debugger HUD open)
-    ///  * Ctrl+Left    Show previous quest tasks/vars/timers (only when debugger HUD open)
+    ///  * ]            Show next quest tasks/vars/timers (only when debugger HUD open)
+    ///  * [            Show previous quest tasks/vars/timers (only when debugger HUD open)
     /// </summary>
     public class HUDQuestDebugger : Panel
     {
@@ -39,7 +39,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int taskLabelPoolCount = 84;
         const int timerLabelPoolCount = 20;
 
+        ulong[] allQuests;
+        int currentQuestIndex;
         Quest currentQuest;
+
         TextLabel questNameLabel = new TextLabel();
         TextLabel processLabel = new TextLabel();
         TextLabel tasksHeaderLabel = new TextLabel();
@@ -50,7 +53,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public HUDQuestDebugger()
             : base()
         {
+            QuestMachine.OnQuestStarted += QuestMachine_OnQuestStarted;
             QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
+
             // Quest name label
             questNameLabel.Text = noQuestsRunning;
             questNameLabel.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
@@ -72,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Components.Add(tasksHeaderLabel);
 
             // Timers header label
-            //timersHeaderLabel.Text = "Timers";
+            timersHeaderLabel.Text = "Timers";
             timersHeaderLabel.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
             timersHeaderLabel.ShadowPosition = Vector2.zero;
             timersHeaderLabel.Position = new Vector2(0, 255);
@@ -84,20 +89,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Set starting state
             ClearCurrentQuest();
+            RefreshQuestsList();
 
             // Tick with QuestMachine
             QuestMachine.OnTick += QuestMachine_OnTick;
         }
 
+        public override void Update()
+        {
+            base.Update();
+
+            if (Input.GetKeyDown(KeyCode.LeftBracket))
+                MovePreviousQuest();
+            else if (Input.GetKeyDown(KeyCode.RightBracket))
+                MoveNextQuest();
+        }
+
         private void QuestMachine_OnTick()
         {
-            // Allow current quest to remain visible even if finished
-            // Tester will need to move to another quest or close debugger to clear
-            if (currentQuest != null && currentQuest.QuestComplete)
-            {
-                return;
-            }
-
             // Must at least one running quests
             if (QuestMachine.Instance.QuestCount == 0)
             {
@@ -112,8 +121,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // We know from previous check there is at least one quest available
             if (currentQuest == null)
             {
-                ulong[] activeQuests = QuestMachine.Instance.GetAllActiveQuests();
-                SetCurrentQuest(QuestMachine.Instance.GetActiveQuest(activeQuests[0]));
+                RefreshQuestsList();
+                SetCurrentQuest(QuestMachine.Instance.GetQuest(allQuests[0]));
             }
 
             // Update task and timer status
@@ -150,10 +159,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Set running status
             // TODO: Use this line for step-through debugging
-            processLabel.Text = questRunning;
-
-            // Set timers header
-            timersHeaderLabel.Text = string.Format("Timers [{0}]", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString());
+            if (!currentQuest.QuestComplete)
+                processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questRunning);
+            else
+                processLabel.Text = string.Format("[{0}] - {1}", DaggerfallUnity.Instance.WorldTime.Now.MinTimeString(), questFinished);
         }
 
         void SetupTaskLabels(Vector2 startPosition)
@@ -238,9 +247,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void SetCurrentQuest(Quest quest)
         {
             currentQuest = quest;
+            RefreshQuestsList();
+
+            // Set quest index
+            questNameLabel.Text = string.Format("[{0} of {1}] ", currentQuestIndex + 1, allQuests.Length);
+
+            // Set quest name
+            if (!string.IsNullOrEmpty(quest.DisplayName))
+                questNameLabel.Text += string.Format("{0} '{1}' ", quest.QuestName, quest.DisplayName);
+            else
+                questNameLabel.Text += string.Format("{0} ", quest.QuestName);
+
+            // Set quest UID
+            questNameLabel.Text += string.Format("[UID={0}]", quest.UID);
 
             // Set headers
-            questNameLabel.Text = quest.QuestName;
             tasksHeaderLabel.Enabled = true;
             processLabel.Enabled = true;
             timersHeaderLabel.Enabled = true;
@@ -269,20 +290,53 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        void RefreshQuestsList()
+        {
+            currentQuestIndex = -1;
+            allQuests = QuestMachine.Instance.GetAllQuests();
+            if (allQuests != null && allQuests.Length > 0 && currentQuest != null)
+            {
+                // Find index of current quest
+                for (int i = 0; i < allQuests.Length; i++)
+                {
+                    Quest quest = QuestMachine.Instance.GetQuest(allQuests[i]);
+                    if (quest != null && quest.UID == currentQuest.UID)
+                    {
+                        currentQuestIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        void MoveNextQuest()
+        {
+            if (++currentQuestIndex >= allQuests.Length)
+                currentQuestIndex = 0;
+
+            SetCurrentQuest(QuestMachine.Instance.GetQuest(allQuests[currentQuestIndex]));
+        }
+
+        void MovePreviousQuest()
+        {
+            if (--currentQuestIndex < 0)
+                currentQuestIndex = allQuests.Length - 1;
+
+            SetCurrentQuest(QuestMachine.Instance.GetQuest(allQuests[currentQuestIndex]));
+        }
+
         #endregion
 
         #region Event Handlers
 
+        private void QuestMachine_OnQuestStarted(Quest quest)
+        {
+            ClearCurrentQuest();
+            SetCurrentQuest(quest);
+        }
+
         private void QuestMachine_OnQuestEnded(Quest quest)
         {
-            if (quest == null || currentQuest == null || processLabel == null)
-                return;
-
-            if (quest.UID == currentQuest.UID)
-            {
-                // Show quest finished text
-                processLabel.Text = questFinished;
-            }
         }
 
         #endregion

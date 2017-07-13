@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool injuredTrigger;                // True once enemy injured, rearmed each wave
         int killCount;                      // How many of this enemy spawn player has killed, does not rearm
         string displayName;                 // Foe display name for quest system macros
+        string typeName;                    // Foe type name for quest system macros
 
         #endregion
 
@@ -122,8 +123,8 @@ namespace DaggerfallWorkshop.Game.Questing
             bool result = true;
             switch (macro)
             {
-                case MacroTypes.NameMacro1:             // Display name
-                    textOut = foeType.ToString();
+                case MacroTypes.NameMacro1:             // _symbol_ name
+                    textOut = typeName;
                     break;
 
                 case MacroTypes.DetailsMacro:           // =symbol_ name
@@ -234,6 +235,13 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void SetFoeName()
         {
+            // Set type name with fallback
+            MobileEnemy enemy;
+            if (EnemyBasics.GetEnemy(foeType, out enemy))
+                typeName = enemy.Name;
+            else
+                typeName = foeType.ToString();
+
             // Monster types get a random monster name
             // Always treating monsters as male for now as they don't have any gender in game files
             if ((int)foeType < 128)
