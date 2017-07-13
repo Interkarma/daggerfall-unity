@@ -68,8 +68,9 @@ QuestLogEntry:  [1010]
 On %qdt,
  The Fighters Guild of ___qgiver_
  hired me to discreetly off an atronach
- some non-guild mage summoned up. I have
- =2dung_ days to finish the task.
+ some non-guild mage summoned up.
+ It's holed up in __dungeon_.
+ I have =2dung_ days to finish the task.
 
 Message:  1011
 <ce>                         The atronach is dead.
