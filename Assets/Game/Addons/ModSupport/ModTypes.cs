@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     public interface Idfmod_Serializable
     {
         System.Object[] ToSerialize();
-        void Deserialized(params System.Object[] obj);
+        void Deseralized(params System.Object[] obj);
         bool Ignore { get; set; }
     }
 

@@ -66,7 +66,7 @@ namespace DaggerfallWorkshop.Game
         SunlightManager sunlightManager = null;
         ItemHelper itemHelper = null;
         StateManager stateManager = null;
-        DaggerfallAutomap automap = null;
+        DaggerfallAutomap interiorAutomap = null;
         QuestMachine questMachine = null;
 
         #endregion
@@ -253,10 +253,10 @@ namespace DaggerfallWorkshop.Game
             set { itemHelper = value; }
         }
 
-        public DaggerfallAutomap Automap
+        public DaggerfallAutomap InteriorAutomap
         {
-            get { return (automap != null) ? automap : automap = GetComponentFromObject<DaggerfallAutomap>(GetGameObjectWithName("Automap")); }
-            set { automap = value; }
+            get { return (interiorAutomap != null) ? interiorAutomap : interiorAutomap = GetComponentFromObject<DaggerfallAutomap>(GetGameObjectWithName("InteriorAutomap")); }
+            set { interiorAutomap = value; }
         }
 
         public QuestMachine QuestMachine

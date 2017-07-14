@@ -702,7 +702,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         if (sr.serializedObjects == null || sr.serializedObjects.Length < 1)
                             continue;
 
-                        isCustomSerializable.Deserialized(sr.serializedObjects);
+                        isCustomSerializable.Deseralized(sr.serializedObjects);
                     }
                 }
             }

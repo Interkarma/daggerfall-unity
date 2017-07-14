@@ -1,0 +1,1 @@
+Please copy any .dfmod packages into this folder before running the game.

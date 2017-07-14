@@ -1071,7 +1071,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Save automap state
             try
             {
-                Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = GameManager.Instance.Automap.GetState();
+                Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState> automapState = GameManager.Instance.InteriorAutomap.GetState();
                 string automapDataJson = Serialize(automapState.GetType(), automapState);
                 WriteSaveFile(Path.Combine(path, automapDataFilename), automapDataJson);
             }
@@ -1215,7 +1215,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                     automapState = Deserialize(typeof(Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>), automapDataJson) as Dictionary<string, DaggerfallAutomap.AutomapGeometryDungeonState>;
 
                 if (automapState != null)
-                    GameManager.Instance.Automap.SetState(automapState);
+                    GameManager.Instance.InteriorAutomap.SetState(automapState);
             }
             catch (Exception ex)
             {
