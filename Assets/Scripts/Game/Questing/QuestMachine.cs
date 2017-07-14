@@ -314,16 +314,23 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new InjuredFoe(null));
             RegisterAction(new KilledFoe(null));
             RegisterAction(new TotingItemAndClickedNpc(null));
-        }
 
-        void RegisterAction(IQuestAction actionTemplate)
-        {
-            actionTemplates.Add(actionTemplate);
+            // Raise event for custom actions to be registered
+            RaiseOnRegisterCustomerActionsEvent();
         }
 
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Register a new action in the quest engine.
+        /// </summary>
+        /// <param name="actionTemplate">IQuestAction template.</param>
+        public void RegisterAction(IQuestAction actionTemplate)
+        {
+            actionTemplates.Add(actionTemplate);
+        }
 
         /// <summary>
         /// Attempts to load quest source text from StreamingAssets/Quests.
@@ -1025,6 +1032,14 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Events
+
+        public delegate void OnRegisterCustomActionsEventHandler();
+        public static event OnRegisterCustomActionsEventHandler OnRegisterCustomActions;
+        protected virtual void RaiseOnRegisterCustomerActionsEvent()
+        {
+            if (OnRegisterCustomActions != null)
+                OnRegisterCustomActions();
+        }
 
         // OnTick
         public delegate void OnTickEventHandler();
