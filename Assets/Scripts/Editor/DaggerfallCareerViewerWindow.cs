@@ -151,8 +151,8 @@ namespace DaggerfallWorkshop
                 {
                     GUILayoutHelper.Horizontal(() =>
                     {
-                        EditorGUILayout.LabelField("HP Per Level / Monster Level");
-                        EditorGUILayout.SelectableLabel(selectedCareer.HitPointsPerLevelOrMonsterLevel.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                        EditorGUILayout.LabelField("Max HP Per Class Level / Number of Monster HP Die Rolls");
+                        EditorGUILayout.SelectableLabel(selectedCareer.HitPointsPerLevel.ToString(), EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                     });
                     GUILayoutHelper.Horizontal(() =>
                     {

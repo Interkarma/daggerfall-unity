@@ -74,9 +74,15 @@ namespace DaggerfallWorkshop.Game.Entity
                 career = GetMonsterCareerTemplate((MonsterCareers)careerIndex);
                 stats.SetFromCareer(career);
 
-                // Enemy monster has predefined level and health
-                level = career.HitPointsPerLevelOrMonsterLevel;
+                // Enemy monster has predefined level, health and armor values
+                level = mobileEnemy.Level;
                 maxHealth = UnityEngine.Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
+
+                // Monsters have the same armor value for all body parts
+                for (int i = 0; i < ArmorValues.Length; i++)
+                {
+                    ArmorValues[i] = (sbyte)(mobileEnemy.ArmorValue * 5);
+                }
             }
             else if (entityType == EntityTypes.EnemyClass)
             {
@@ -86,7 +92,14 @@ namespace DaggerfallWorkshop.Game.Entity
 
                 // Enemy class is levelled to player and uses similar health rules
                 level = GameManager.Instance.PlayerEntity.Level;
-                maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevelOrMonsterLevel);
+                maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
+
+                // Enemy classes may be able to equip armor. Not sure yet how classic does this.
+                // For now, using fudge value of 60.
+                for (int i = 0; i < ArmorValues.Length; i++)
+                {
+                    ArmorValues[i] = 60;
+                }
 
                 // Enemy class damage is temporarily set by a fudged level multiplier
                 // This will change once full entity setup and items are available

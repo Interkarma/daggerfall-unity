@@ -70,6 +70,7 @@ namespace DaggerfallConnect.Save
             doc.currentFatigue = parsedData.currentFatigue;
             doc.skillUses = parsedData.skillUses;
             doc.startingLevelUpSkillSum = parsedData.startingLevelUpSkillSum;
+            doc.armorValues = parsedData.armorValues;
 
             return doc;
         }
@@ -92,7 +93,13 @@ namespace DaggerfallConnect.Save
             parsedData.gender = ReadGender(reader);
             parsedData.transportationFlags = ReadTransportationFlags(reader);
             parsedData.race = ReadRace(reader);
-            parsedData.armorValues = reader.ReadBytes(7);
+
+            sbyte[] armorValues = new sbyte[7];
+            for (int i = 0; i <= 6; i++)
+            {
+                armorValues[i] = reader.ReadSByte();
+            }
+            parsedData.armorValues = armorValues;
 
             reader.BaseStream.Position = 0x58;
             parsedData.startingLevelUpSkillSum = reader.ReadInt32();
@@ -245,7 +252,7 @@ namespace DaggerfallConnect.Save
             public Genders gender;
             public UInt16 transportationFlags;
             public Races race;
-            public Byte[] armorValues;
+            public sbyte[] armorValues;
             public Int32 startingLevelUpSkillSum; // The starting total of all the primary skills, the two top major skills and the top minor skill
             public Int32 opponentUnknown;
             public Int16 baseHealth;
