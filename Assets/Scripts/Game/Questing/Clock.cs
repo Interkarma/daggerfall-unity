@@ -301,8 +301,9 @@ namespace DaggerfallWorkshop.Game.Questing
         public string GetDaysRemainingString()
         {
             TimeSpan time = TimeSpan.FromSeconds(remainingTimeInSeconds);
+            float days = (float)Math.Ceiling(time.TotalSeconds / 86400f);
 
-            return time.Days.ToString();
+            return days.ToString();
         }
 
         public string GetRemainingTimeString()
