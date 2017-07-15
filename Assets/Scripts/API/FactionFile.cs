@@ -173,6 +173,8 @@ namespace DaggerfallConnect.Arena2
             public int maxf;
             public int vam;
             public int rank;
+
+            public List<int> children;
         }
 
         public struct FlatData
@@ -230,6 +232,7 @@ namespace DaggerfallConnect.Arena2
             byte[] buffer = factionFile.Buffer;
             string txt = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
             ParseFactions(txt);
+            RelinkChildren(factionDict);
         }
 
         /// <summary>
@@ -288,6 +291,8 @@ namespace DaggerfallConnect.Arena2
                 }
             }
 
+            //RelinkChildren(dict);
+
             return dict;
         }
 
@@ -327,13 +332,32 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         /// <param name="flat"></param>
         /// <returns></returns>
-        static public FlatData GetFlatData(int flat)
+        public static FlatData GetFlatData(int flat)
         {
             FlatData flatData = new FlatData();
             flatData.archive = flat >> 7;
             flatData.record = flat & 0x7f;
 
             return flatData;
+        }
+
+        /// <summary>
+        /// Relink parent factions to their child faction.
+        /// </summary>
+        public static void RelinkChildren(Dictionary<int, FactionData> dict)
+        {
+            List<FactionData> factionValues = new List<FactionData>(dict.Values);
+            foreach (FactionData faction in factionValues)
+            {
+                if (dict.ContainsKey(faction.parent))
+                {
+                    FactionData parent = dict[faction.parent];
+                    if (parent.children == null)
+                        parent.children = new List<int>();
+                    parent.children.Add(faction.id);
+                    dict[faction.parent] = parent;
+                }
+            }
         }
 
         #endregion
