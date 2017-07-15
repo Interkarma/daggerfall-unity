@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop.Game
                 return false;
             else
             {
-                Debug.Log(string.Format("StateManager changing state...previous state: {0} new state: {1}", CurrentState, nextState));
+                //Debug.Log(string.Format("StateManager changing state...previous state: {0} new state: {1}", CurrentState, nextState));
                 lastState = CurrentState;
                 currentState = nextState;
                 TriggerStateChange(nextState);
