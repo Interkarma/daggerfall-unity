@@ -274,6 +274,25 @@ namespace DaggerfallWorkshop.Game.Serialization
         public Dictionary<string, int> factionNameToIDDict;
     }
 
+    [fsObject("v2", typeof(FactionData_v1))]
+    public class FactionData_v2
+    {
+        public Dictionary<int, FactionFile.FactionData> factionDict;
+        public Dictionary<string, int> factionNameToIDDict;
+
+        public FactionData_v2()
+        {
+        }
+
+        public FactionData_v2(FactionData_v1 v1)
+        {
+            FactionFile.RelinkChildren(v1.factionDict);
+            factionDict = v1.factionDict;
+            factionNameToIDDict = v1.factionNameToIDDict;
+            Debug.Log("Migrated FactionData_v1 to FactionData_v2 and relinked children.");
+        }
+    }
+
     #endregion
 
     #region Save Info

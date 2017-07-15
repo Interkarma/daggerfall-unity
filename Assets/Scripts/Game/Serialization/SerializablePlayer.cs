@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public object GetFactionSaveData()
         {
-            FactionData_v1 factionData = new FactionData_v1();
+            FactionData_v2 factionData = new FactionData_v2();
 
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
             factionData.factionDict = entity.FactionData.FactionDict;
@@ -154,7 +154,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             return factionData;
         }
 
-        public void RestoreFactionData(FactionData_v1 factionData)
+        public void RestoreFactionData(FactionData_v2 factionData)
         {
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
             entity.FactionData.FactionDict = factionData.factionDict;

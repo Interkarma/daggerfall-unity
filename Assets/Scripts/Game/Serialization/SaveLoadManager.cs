@@ -755,12 +755,12 @@ namespace DaggerfallWorkshop.Game.Serialization
             return (PlayerData_v1)serializablePlayer.GetSaveData();
         }
 
-        FactionData_v1 GetPlayerFactionData()
+        FactionData_v2 GetPlayerFactionData()
         {
             if (!serializablePlayer)
                 return null;
 
-            return (FactionData_v1)serializablePlayer.GetFactionSaveData();
+            return (FactionData_v2)serializablePlayer.GetFactionSaveData();
         }
 
         DateAndTime_v1 GetDateTimeData()
@@ -902,7 +902,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             RestoreBankData(saveData.bankAccounts);
         }
 
-        void RestoreFactionData(FactionData_v1 factionData)
+        void RestoreFactionData(FactionData_v2 factionData)
         {
             if (factionData == null)
                 return;
@@ -1049,7 +1049,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveInfo.dateAndTime = saveData.dateAndTime;
 
             // Build faction data
-            FactionData_v1 factionData = GetPlayerFactionData();
+            FactionData_v2 factionData = GetPlayerFactionData();
 
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
@@ -1131,7 +1131,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // This is done early as later objects may require faction information on restore
             if (!string.IsNullOrEmpty(factionDataJson))
             {
-                FactionData_v1 factionData = Deserialize(typeof(FactionData_v1), factionDataJson) as FactionData_v1;
+                FactionData_v2 factionData = Deserialize(typeof(FactionData_v2), factionDataJson) as FactionData_v2;
                 RestoreFactionData(factionData);
                 Debug.Log("LoadGame() restored faction state from save.");
             }
