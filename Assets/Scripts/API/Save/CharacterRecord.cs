@@ -92,25 +92,35 @@ namespace DaggerfallConnect.Save
             parsedData.baseStats = ReadStats(reader);
             parsedData.gender = ReadGender(reader);
             parsedData.transportationFlags = ReadTransportationFlags(reader);
+            parsedData.minMetalToHit = reader.ReadByte();
             parsedData.race = ReadRace(reader);
 
             sbyte[] armorValues = new sbyte[7];
-            for (int i = 0; i <= 6; i++)
+            for (int i = 0; i < 7; i++)
             {
                 armorValues[i] = reader.ReadSByte();
             }
             parsedData.armorValues = armorValues;
 
-            reader.BaseStream.Position = 0x58;
+            parsedData.skillUnknown1 = reader.ReadInt32();
+            parsedData.skillUnknown2 = reader.ReadInt32();
             parsedData.startingLevelUpSkillSum = reader.ReadInt32();
-            parsedData.opponentUnknown = reader.ReadInt32();
 
-            reader.BaseStream.Position = 0x5c;
             parsedData.baseHealth = reader.ReadInt16();
 
-            reader.BaseStream.Position = 0x7c;
+            reader.BaseStream.Position = 0x60;
+            parsedData.timePlayerBecameWerebeast = reader.ReadUInt32();
+
+            reader.BaseStream.Position = 0x6c;
+            parsedData.unknownLycanthropy = reader.ReadInt16();
+
+            reader.BaseStream.Position = 0x74;
+            parsedData.playerHouse = reader.ReadUInt32();
+            parsedData.playerShip = reader.ReadUInt32();
+
             parsedData.currentHealth = reader.ReadInt16();
             parsedData.maxHealth = reader.ReadInt16();
+
             parsedData.faceIndex = reader.ReadByte();
             parsedData.level = reader.ReadByte();
 
@@ -120,7 +130,11 @@ namespace DaggerfallConnect.Save
             reader.BaseStream.Position = 0x85;
             parsedData.physicalGold = reader.ReadUInt32();
 
-            reader.BaseStream.Position = 0x8d;
+            parsedData.magicEffects1 = reader.ReadByte();
+            parsedData.magicEffects2 = reader.ReadByte();
+            parsedData.magicEffects3 = reader.ReadByte();
+
+            reader.BaseStream.Position = 0x8D;
             parsedData.currentSpellPoints = reader.ReadInt16();
             parsedData.maxSpellPoints = reader.ReadInt16();
 
@@ -134,11 +148,11 @@ namespace DaggerfallConnect.Save
 
             parsedData.skills = ReadSkills(reader, out parsedData.skillUses);
 
-            reader.BaseStream.Position = 0x16f;
             parsedData.equippedItems = ReadEquippedItems(reader);
 
             reader.BaseStream.Position = 0x1f2;
             parsedData.race2 = ReadRace(reader);
+            parsedData.timeToBecomeVampireOrWerebeast = reader.ReadUInt32();
 
             reader.BaseStream.Position = 0x1fd;
             parsedData.timeStamp = reader.ReadUInt32();
@@ -179,13 +193,13 @@ namespace DaggerfallConnect.Save
                 return Genders.Male;
         }
 
-        UInt16 ReadTransportationFlags(BinaryReader reader)
+        byte ReadTransportationFlags(BinaryReader reader)
         {
             // Known values:
-            // 1 = Foot
-            // 3 = Horse
-            // 5 = Cart
-            return reader.ReadUInt16();
+            // x1 = Foot
+            // x2 = Horse
+            // x4 = Cart
+            return reader.ReadByte();
         }
 
         Races ReadRace(BinaryReader reader)
@@ -218,7 +232,7 @@ namespace DaggerfallConnect.Save
 
         UInt32[] ReadEquippedItems(BinaryReader reader)
         {
-            const int equippedCount = 27;   // May actually be 35 based on data between here and next record. Test and confirm.
+            const int equippedCount = 27;
 
             UInt32[] equippedItems = new UInt32[equippedCount];
             for (int i = 0; i < equippedCount; i++)
@@ -250,18 +264,27 @@ namespace DaggerfallConnect.Save
             public DaggerfallStats currentStats;
             public DaggerfallStats baseStats;
             public Genders gender;
-            public UInt16 transportationFlags;
+            public byte transportationFlags;
+            public byte minMetalToHit;
             public Races race;
             public sbyte[] armorValues;
+            public Int32 skillUnknown1; // Seems to be related to skills and leveling
+            public Int32 skillUnknown2; // Seems to be related to skills and leveling
             public Int32 startingLevelUpSkillSum; // The starting total of all the primary skills, the two top major skills and the top minor skill
-            public Int32 opponentUnknown;
             public Int16 baseHealth;
+            public UInt32 timePlayerBecameWerebeast; // Needs confirming
+            public Int16 unknownLycanthropy; // Lycanthropy stage? Set when inflicted with lycanthropy.
+            public UInt32 playerHouse; // Building ID of player's house. 0 if player doesn't own a house.
+            public UInt32 playerShip; // Probably same type of data as above, for player's ship. 0 if player doesn't own a ship.
             public Int16 currentHealth;
             public Int16 maxHealth;
             public Byte faceIndex;
             public Byte level;
             public PlayerReflexes reflexes;
             public UInt32 physicalGold;
+            public Byte magicEffects1; // x1 = paralyzed, x4 = invisible, x8 = levitating, x10 = chameleon, x20 = shade, x40 = open
+            public Byte magicEffects2; // x1 = silenced
+            public Byte magicEffects3; // x1 = jump, x8 = waterbreathing,, x10 = waterwalking
             public Int16 currentSpellPoints;
             public Int16 maxSpellPoints;
             public Int16 reputationCommoners;
@@ -273,8 +296,27 @@ namespace DaggerfallConnect.Save
             public DaggerfallSkills skills;
             public Int16[] skillUses;
             public UInt32[] equippedItems;
+            // For monsters these are for attack damage, but player uses hand-to-hand skill for unarmed attacks.
+            // Might also be used by the player when in werebeast form.
+            // Up to 5 attacks appear to be supported, but no monster in the game has more than 3.
+            /*public Int16 attackDamageMin1; // Set to 1 for new player character.
+            public Int16 attackDamageMax1; // Set to 2 for new player character.
+            public Int16 attackDamageMin2;
+            public Int16 attackDamageMax2;
+            public Int16 attackDamageMin3;
+            public Int16 attackDamageMax3;
+            public Int16 attackDamageMin4;
+            public Int16 attackDamageMax4;
+            public Int16 attackDamageMin5;
+            public Int16 attackDamageMax5;*/
             public Races race2; // Stores character's original race for when returning from being a vampire, werewolf or wereboar
-            public UInt32 timeStamp;
+            public UInt32 timeToBecomeVampireOrWerebeast; // Should equal three days after infection.
+            public UInt32 timeStamp; // Time of last kill by vampires and werewolves?
+            public UInt32 lastTimePlayerCastLycanthropy;
+            public UInt32 lastTimePlayerAteOrDrankAtTavern;
+            public UInt32 lastTimePlayerBoughtTraining;
+            public Byte vampireClan;
+            public Byte effectStrength; // Used for Open and Shade effects at least.
             public DFCareer career;
         }
 
