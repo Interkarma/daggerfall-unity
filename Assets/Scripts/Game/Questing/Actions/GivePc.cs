@@ -15,7 +15,6 @@ using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
-
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>

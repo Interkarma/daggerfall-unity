@@ -314,6 +314,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new InjuredFoe(null));
             RegisterAction(new KilledFoe(null));
             RegisterAction(new TotingItemAndClickedNpc(null));
+            RegisterAction(new GetItem(null));
 
             // Raise event for custom actions to be registered
             RaiseOnRegisterCustomerActionsEvent();
@@ -790,9 +791,16 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (place == null)
                     continue;
 
-                // Check spawn marker at this site for target NPC resource
+                // Must have target resources
                 SiteDetails siteDetails = place.SiteDetails;
                 QuestMarker marker = siteDetails.questSpawnMarkers[siteDetails.selectedQuestItemMarker];
+                if (marker.targetResources == null)
+                {
+                    Debug.Log("IsIndividualQuestNPCAtSiteLink() found a SiteLink with no targetResources assigned.");
+                    continue;
+                }
+
+                // Check spawn marker at this site for target NPC resource
                 foreach(Symbol target in marker.targetResources)
                 {
                     // Get target resource
