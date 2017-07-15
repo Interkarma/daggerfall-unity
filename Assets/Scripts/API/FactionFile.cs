@@ -291,7 +291,7 @@ namespace DaggerfallConnect.Arena2
                 }
             }
 
-            //RelinkChildren(dict);
+            RelinkChildren(dict);
 
             return dict;
         }
