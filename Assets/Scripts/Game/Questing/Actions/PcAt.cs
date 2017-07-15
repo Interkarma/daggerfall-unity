@@ -71,13 +71,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (place == null)
                 return;
 
-            // Check building site
-            if (place.SiteDetails.siteType == SiteTypes.Building)
-                result = CheckInsideBuilding(place);
-            else if (place.SiteDetails.siteType == SiteTypes.Town)
-                result = CheckInsideTown(place);
-            else if (place.SiteDetails.siteType == SiteTypes.Dungeon)
-                result = CheckInsideDungeon(place);
+            // Check if player at this place
+            result = place.IsPlayerHere();
 
             // Handle positive check
             if (result)
@@ -96,87 +91,5 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 ParentQuest.UnsetTask(taskSymbol);
             }
         }
-
-        #region Private Methods
-
-        bool CheckInsideDungeon(Place place)
-        {
-            // Get component handling player world status and transitions
-            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
-            if (!playerEnterExit)
-                return false;
-
-            // Player must be inside a dungeon
-            if (!playerEnterExit.IsPlayerInsideDungeon)
-                return false;
-
-            // Compare mapId of site and current location
-            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            if (location.Loaded)
-            {
-                if (location.MapTableData.MapId == place.SiteDetails.mapId)
-                    return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Check if player at specific town exterior.
-        /// This includes the exterior RMB area of dungeons in world.
-        /// </summary>
-        bool CheckInsideTown(Place place)
-        {
-            // Get component handling player world status and transitions
-            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
-            if (!playerEnterExit)
-                return false;
-
-            // Player must be outside
-            if (playerEnterExit.IsPlayerInside)
-                return false;
-
-            // Compare mapId of site and current location
-            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            if (location.Loaded && GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
-            {
-                if (location.MapTableData.MapId == place.SiteDetails.mapId)
-                    return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Check if player inside a specific target site building.
-        /// </summary>
-        bool CheckInsideBuilding(Place place)
-        {
-            // Get component handling player world status and transitions
-            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
-            if (!playerEnterExit)
-                return false;
-
-            // Check if player inside the building matching this site
-            if (playerEnterExit.IsPlayerInside && playerEnterExit.IsPlayerInsideBuilding)
-            {
-                // Must have at least one exterior door for building check
-                StaticDoor[] exteriorDoors = playerEnterExit.ExteriorDoors;
-                if (exteriorDoors == null || exteriorDoors.Length < 1)
-                {
-                    throw new Exception("CheckInsideBuilding() could not get at least 1 exterior door from playerEnterExit.ExteriorDoors.");
-                }
-
-                // Check if building IDs match both site and any exterior door of this building
-                if (exteriorDoors[0].buildingKey == place.SiteDetails.buildingKey)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        #endregion
     }
 }
