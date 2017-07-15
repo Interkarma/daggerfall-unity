@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentHealth;
         protected int currentFatigue;
         protected int currentMagicka;
+        protected sbyte[] armorValues = new sbyte[7];
 
         bool quiesce = false;
 
@@ -77,6 +78,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public int CurrentFatigue { get { return currentFatigue; } set { SetFatigue(value); } }
         public int MaxMagicka { get { return FormulaHelper.SpellPoints(stats.Intelligence, career.SpellPointMultiplierValue); } }
         public int CurrentMagicka { get { return currentMagicka; } set { SetMagicka(value); } }
+        public sbyte[] ArmorValues { get { return armorValues; } set { armorValues = value; } }
 
         #endregion
 

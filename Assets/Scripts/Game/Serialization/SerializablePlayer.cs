@@ -169,6 +169,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore player entity data
             PlayerData_v1 data = (PlayerData_v1)dataIn;
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
+            entity.Reset();
+
             entity.Gender = data.playerEntity.gender;
             entity.RaceTemplate = data.playerEntity.raceTemplate;
             entity.FaceIndex = data.playerEntity.faceIndex;
@@ -198,6 +200,17 @@ namespace DaggerfallWorkshop.Game.Serialization
                 entity.EstimateStartingLevelUpSkillSum();
             if (entity.SkillUses == null)
                 entity.SkillUses = new short[DaggerfallSkills.Count];
+
+            // Apply armor values from equipped armor
+            Items.DaggerfallUnityItem[] equipTable = entity.ItemEquipTable.EquipTable;
+
+            for (int i = 0; i < equipTable.Length; i++)
+            {
+                if (equipTable[i] != null && (equipTable[i].ItemGroup == Items.ItemGroups.Armor))
+                {
+                    entity.UpdateEquippedArmorValues(equipTable[i], true);
+                }
+            }
 
             // Flag determines if player position is restored
             bool restorePlayerPosition = true;

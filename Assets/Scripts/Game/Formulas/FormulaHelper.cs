@@ -155,8 +155,8 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate hit points player gains per level.
         public static int CalculateHitPointsPerLevelUp(Entity.PlayerEntity player)
         {
-            int minRoll = player.Career.HitPointsPerLevelOrMonsterLevel / 2;
-            int maxRoll = player.Career.HitPointsPerLevelOrMonsterLevel + 1; // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
+            int minRoll = player.Career.HitPointsPerLevel / 2;
+            int maxRoll = player.Career.HitPointsPerLevel + 1; // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
             int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll);
             addHitPoints += HitPointsModifier(player.Stats.Endurance);
             if (addHitPoints < 1)
@@ -419,46 +419,18 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             int chanceToHit = chanceToHitMod;
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-            Entity.EnemyEntity AITarget = null;
+            Entity.EnemyEntity AITarget = target as Entity.EnemyEntity;
 
             int armorValue = 0;
 
-            if (target == player)
+            // Choose struck body part
+            int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
+            int struckBodyPart = bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
+
+            // Get armor value for struck body part
+            if (struckBodyPart <= target.ArmorValues.Length)
             {
-                // Choose struck body part
-                int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
-                int struckBodyPart = bodyParts[(UnityEngine.Random.Range(0, 19 + 1))];
-
-                // Get armor for struck body part
-                Items.EquipSlots[] equipSlots = { Items.EquipSlots.Head, Items.EquipSlots.RightArm, Items.EquipSlots.LeftArm,
-                                                Items.EquipSlots.ChestArmor, Items.EquipSlots.Gloves, Items.EquipSlots.LegsArmor,
-                                                Items.EquipSlots.Feet };
-
-                Items.EquipSlots equipSlot = equipSlots[struckBodyPart];
-                Items.DaggerfallUnityItem armor = target.ItemEquipTable.GetItem(equipSlot);
-
-                // Use armor value of armor on struck body part
-                // Armor value is 100 when no armor is equipped. For every point of armor as shown on the inventory screen, 5 is subtracted.
-                armorValue = 100;
-                if (armor != null)
-                {
-                    armorValue -= (armor.GetMaterialArmorValue() * 5);
-                }
-            }
-            else
-            {
-                AITarget = target as Entity.EnemyEntity;
-
-                // If target is a monster, all body parts have the same armor value
-                if (AITarget.EntityType == EntityTypes.EnemyMonster)
-                {
-                    armorValue = (AITarget.MobileEnemy.ArmorValue * 5);
-                }
-                // TODO: Enemy classes' armor values. For now using fudged value of 60.
-                else
-                {
-                    armorValue = 60;
-                }
+                armorValue = target.ArmorValues[struckBodyPart];
             }
 
             chanceToHit += armorValue;

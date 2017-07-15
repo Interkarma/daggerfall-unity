@@ -1258,13 +1258,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void EquipItem(DaggerfallUnityItem item)
         {
-            playerEntity.ItemEquipTable.EquipItem(item);
+            if (playerEntity.ItemEquipTable.EquipItem(item) && item.ItemGroup == ItemGroups.Armor)
+            {
+                playerEntity.UpdateEquippedArmorValues(item, true);
+            }
             Refresh();
         }
 
         void UnequipItem(DaggerfallUnityItem item, bool refreshPaperDoll = true)
         {
-            playerEntity.ItemEquipTable.UnequipItem(item.EquipSlot);
+            if (playerEntity.ItemEquipTable.UnequipItem(item.EquipSlot) && item.ItemGroup == ItemGroups.Armor)
+            {
+                playerEntity.UpdateEquippedArmorValues(item, false);
+            }
             playerEntity.Items.ReorderItem(item, preferredOrder);
             Refresh(refreshPaperDoll);
         }
