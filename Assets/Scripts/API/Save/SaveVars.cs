@@ -97,7 +97,9 @@ namespace DaggerfallConnect.Save
         public enum CheatFlags
         {
             AllMapLocationsRevealedMode = 0x08,
+            NoCollision = 0x20, // If in dungeon, player falls down through the map geometry. Outside, the ground is still solid and you can move around through 3d objects.
             GodMode = 0x40,
+            EnemiesCantCastSpells = 0x80,
         }
 
         #endregion

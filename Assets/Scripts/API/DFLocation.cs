@@ -440,7 +440,8 @@ namespace DaggerfallConnect
             /// <summary>FactionId associated with building, or 0 if no faction.</summary>
             public UInt16 FactionId;
 
-            /// <summary>Generally increases with each building. Otherwise unknown.</summary>
+            /// <summary>Generally increases with each building.
+            /// Known use by classic is in identifying whether inside the player's house when trying to rest.</summary>
             public Int16 Sector;
 
             /// <summary>Should always be the same as LocationRecordElementHeader.LocationId.</summary>

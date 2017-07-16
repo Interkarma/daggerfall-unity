@@ -353,13 +353,6 @@ namespace DaggerfallConnect.Save
         public RecordTypes ParentRecordType;    // Type of parent record
     }
 
-    // Temporary struct until CharacterParentUnknown1 is understood
-    public struct PlayerDirectionRecord
-    {
-        public Int16 Pitch;
-        public Int16 Yaw;
-    }
-
     /// <summary>
     /// Player environment types.
     /// </summary>
@@ -381,9 +374,9 @@ namespace DaggerfallConnect.Save
         Character = 0x03,
         CharacterPositionRecord = 0x04,             // This record, not the position record in the header, determines where player is when game loads.
         CharacterCamera = 0x05,                     // Guessing that this is the player camera. Has the same position as CharacterPositionRecord, and changing the roll value with a hex editor will cause the screen to be rotated on game load.
-        InteractableObject = 0x06,                  // Levers, switches, movable platforms, etc.
+        Movable3dObject = 0x06,                     // Levers, switches, platforms, etc.
         DungeonInformation = 0x07,                  // Length MUST be multiplied by 39 (0x27)
-        Unknown1 = 0x08,
+        NPCFlat = 0x08,
         Spell = 0x09,
         GuildMembership = 0x0a,
         QBNData = 0x0e,
@@ -407,9 +400,10 @@ namespace DaggerfallConnect.Save
         GenericNPC = 0x2e,
         DungeonData = 0x33,                         // Huge but mostly zero filled
         Container = 0x34,
+        Townsperson = 0x35,                         // Mobile NPCs
         ItemLeftForRepair = 0x36,
-        Unknown2 = 0x40,                            // All are part of a 'container'
-        Unknown3 = 0x41,                            // Possibly quest information
+        Unknown2 = 0x40,                            // All are part of a 'container'. chunktcl calls this "Visited?"
+        Unknown3 = 0x41,                            // Possibly quest information. chunktcl calls this "Qbn questor"
     }
 
     #endregion

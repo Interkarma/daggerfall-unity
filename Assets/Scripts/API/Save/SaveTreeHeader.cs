@@ -20,7 +20,6 @@ namespace DaggerfallConnect.Save
 {
     /// <summary>
     /// Header of SAVETREE.DAT file.
-    /// This header includes the CharacterPosition record data.
     /// </summary>
     public class SaveTreeHeader
     {
@@ -70,7 +69,8 @@ namespace DaggerfallConnect.Save
             if (Version != VersionNumber)
                 throw new Exception("SaveTree file has an invalid version number, must be 0x126.");
 
-            // Read CharacterPosition.Position
+            // Read character position. A character position record later in the file (record type 0x04) is used for positioning the player, not this.
+            // Currently not clear what classic uses this one for.
             CharacterPosition = new HeaderCharacterPositionRecord();
             CharacterPosition.Position = SaveTree.ReadPosition(reader);
 
