@@ -209,7 +209,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
                     if (!toggleRun)
-                        speed = Input.GetButton("Run") ? runSpeed : walkSpeed;
+                        speed = InputManager.Instance.HasAction(InputManager.Actions.Run) ? runSpeed : walkSpeed;
                 }
                 catch
                 {
