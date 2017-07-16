@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game.Player
         public int currentFatigue;
         public short[] skillUses;
         public int startingLevelUpSkillSum;
-        public sbyte[] armorValues;
+        public sbyte[] armorValues = new sbyte[7];
 
         public CharacterDocument()
         {
