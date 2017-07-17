@@ -20,6 +20,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop
 {
@@ -36,7 +37,6 @@ namespace DaggerfallWorkshop
         public int[] DungeonTextureTable = new int[] { 119, 120, 122, 123, 124, 168 };
 
         // Random monsters
-        public float RandomMonsterPower = 0.5f;
         public int RandomMonsterVariance = 4;
 
         GameObject startMarker = null;
@@ -234,6 +234,9 @@ namespace DaggerfallWorkshop
             long startTime = stopwatch.ElapsedMilliseconds;
 #endif
 
+            // Calculate monster power - this is a clamped 0-1 value based on player's level from 1-20
+            float monsterPower = Mathf.Clamp01(GameManager.Instance.PlayerEntity.Level / 20f);
+
             // Create dungeon layout
             foreach (var block in location.Dungeon.Blocks)
             {
@@ -242,7 +245,7 @@ namespace DaggerfallWorkshop
                     DungeonTextureTable,
                     block.IsStartingBlock,
                     Summary.DungeonType,
-                    RandomMonsterPower,
+                    monsterPower,
                     RandomMonsterVariance,
                     (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
                     dfUnity.Option_DungeonBlockPrefab);
@@ -264,6 +267,9 @@ namespace DaggerfallWorkshop
         // Orsinium defines two blocks at [-1,-1]
         private void LayoutOrsinium(ref DFLocation location)
         {
+            // Calculate monster power - this is a clamped 0-1 value based on player's level from 1-20
+            float monsterPower = Mathf.Clamp01(GameManager.Instance.PlayerEntity.Level / 20f);
+
             // Create dungeon layout and handle misplaced block
             foreach (var block in location.Dungeon.Blocks)
             {
@@ -275,7 +281,7 @@ namespace DaggerfallWorkshop
                     DungeonTextureTable,
                     block.IsStartingBlock,
                     Summary.DungeonType,
-                    RandomMonsterPower,
+                    monsterPower,
                     RandomMonsterVariance,
                     (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
                     dfUnity.Option_DungeonBlockPrefab);
