@@ -35,30 +35,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         /// <summary>
-        /// Creates a new Daggerfall potion recipe reader window, which can be displayed like any other DaggerfallMesasageBox
-        /// Daggerfall stores the ID of the potion recipe in the "hits3" field, so it's critical that a real value be passed in.
-        /// The recipe lookup is later performed using a helper function (ItemHelper.getPotionRecipesByHits3)
-        /// If the incorrect value of hits3 is provided the recipe won't be found
+        /// Creates a new Daggerfall potion recipe reader window, which can be displayed like any other DaggerfallMessageBox.
+        /// Daggerfall stores the ID of the potion recipe in the "typeDependentData" field.
+        /// If an incorrect value of typeDependentData is provided the recipe won't be found.
         /// </summary>
         /// <param name="uiManager">The IUserInterfaceManager</param>
-        /// <param name="hits3">The hits3 variable that encodes the ID of the potion recipe</param>
+        /// <param name="typeDependentData">The typeDependentData variable that is the ID of the potion recipe</param>
         /// <param name="previous">The previous IUserInterfaceWindow</param>
         /// <returns>DaggerfallUnityItem.</returns>
-        public DaggerfallPotionRecipeWindow(IUserInterfaceManager uiManager, int hits3, IUserInterfaceWindow previous = null)
+        public DaggerfallPotionRecipeWindow(IUserInterfaceManager uiManager, int typeDependentData, IUserInterfaceWindow previous = null)
             :base(uiManager, previous)
         {
-            this.hits3 = hits3;
+            this.recipeID = typeDependentData;
         }
 
-        // Daggerfall stores the ID of the potion recipe in the "hits3" field. When this field is set the UI will grab the necessary
-        // info for displaying the recipe.
-        public int hits3
+        public int recipeID
         {
             set
             {
                 try
                 {
-                    KeyValuePair<string, Recipe[]> mapping = DaggerfallUnity.Instance.ItemHelper.getPotionRecipesByHits3(value);
+                    KeyValuePair<string, Recipe[]> mapping = DaggerfallUnity.Instance.ItemHelper.getPotionRecipesByID(value);
                     recipeName = HardStrings.potionRecipeFor.Replace("%po", mapping.Key); // "Recipe for %po"
                     recipes = mapping.Value;
                     doLayout();
