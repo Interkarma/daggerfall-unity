@@ -169,7 +169,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore player entity data
             PlayerData_v1 data = (PlayerData_v1)dataIn;
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
-            entity.Reset();
+            //entity.Reset();
 
             entity.Gender = data.playerEntity.gender;
             entity.RaceTemplate = data.playerEntity.raceTemplate;
