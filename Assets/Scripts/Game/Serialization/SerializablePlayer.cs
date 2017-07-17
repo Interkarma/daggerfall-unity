@@ -169,7 +169,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore player entity data
             PlayerData_v1 data = (PlayerData_v1)dataIn;
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
-            //entity.Reset();
 
             entity.Gender = data.playerEntity.gender;
             entity.RaceTemplate = data.playerEntity.raceTemplate;
@@ -201,9 +200,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (entity.SkillUses == null)
                 entity.SkillUses = new short[DaggerfallSkills.Count];
 
+            // Initialize body part armor values to 100 (no armor)
+            for (int i = 0; i < entity.ArmorValues.Length; i++)
+            {
+                entity.ArmorValues[i] = 100;
+            }
+
             // Apply armor values from equipped armor
             Items.DaggerfallUnityItem[] equipTable = entity.ItemEquipTable.EquipTable;
-
             for (int i = 0; i < equipTable.Length; i++)
             {
                 if (equipTable[i] != null && (equipTable[i].ItemGroup == Items.ItemGroups.Armor))
