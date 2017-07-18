@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             for (int i = 0; i < clocks.Length; i++)
             {
                 Clock clock = (Clock)clocks[i];
-                timerLabelPool[i].Text = string.Format("{0} [{1}]", clock.Symbol.Original, clock.GetRemainingTimeString());
+                timerLabelPool[i].Text = string.Format("{0} [{1}]", clock.Symbol.Original, clock.GetTimeString(clock.RemainingTimeInSeconds));
                 if (clock.Enabled && !clock.Finished)
                     timerLabelPool[i].TextColor = Color.green;
                 else if (!clock.Enabled && !clock.Finished)

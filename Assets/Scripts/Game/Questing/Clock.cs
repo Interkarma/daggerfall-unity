@@ -237,7 +237,7 @@ namespace DaggerfallWorkshop.Game.Questing
             switch(macro)
             {
                 case MacroTypes.DetailsMacro:
-                    textOut = GetDaysRemainingString();
+                    textOut = GetDaysString(startingTimeInSeconds);
                     return true;
 
                 default:
@@ -298,17 +298,17 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
-        public string GetDaysRemainingString()
+        public string GetDaysString(int timeInSeconds)
         {
-            TimeSpan time = TimeSpan.FromSeconds(remainingTimeInSeconds);
+            TimeSpan time = TimeSpan.FromSeconds(timeInSeconds);
             float days = (float)Math.Ceiling(time.TotalSeconds / 86400f);
 
             return days.ToString();
         }
 
-        public string GetRemainingTimeString()
+        public string GetTimeString(int timeInSeconds)
         {
-            TimeSpan time = TimeSpan.FromSeconds(remainingTimeInSeconds);
+            TimeSpan time = TimeSpan.FromSeconds(timeInSeconds);
 
             return string.Format("{0}.{1}:{2}", time.Days, time.Hours, time.Minutes);
         }
