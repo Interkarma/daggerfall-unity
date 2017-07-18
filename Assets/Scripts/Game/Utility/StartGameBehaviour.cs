@@ -1,5 +1,5 @@
 ﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2016 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2017 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -126,6 +126,10 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void InvokeStartMethod()
         {
+            // Disable parent GameObjects - the appropriate parent GameObject will be re-enabled by following startup process
+            // This mainly just prevents all SongPlayers from starting at once
+            GameManager.Instance.PlayerEnterExit.DisableAllParents();
+
             switch (StartMethod)
             {
                 case StartMethods.Void:
