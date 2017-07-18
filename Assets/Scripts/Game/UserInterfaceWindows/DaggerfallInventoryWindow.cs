@@ -1478,7 +1478,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (item.ItemGroup == ItemGroups.MiscItems && item.TemplateIndex == (int)MiscItems.Potion_recipe)
                 {
-                    DaggerfallPotionRecipeWindow readerWindow = new DaggerfallPotionRecipeWindow(uiManager, item.hits3, this);
+                    DaggerfallPotionRecipeWindow readerWindow = new DaggerfallPotionRecipeWindow(uiManager, item.typeDependentData, this);
                     uiManager.PushWindow(readerWindow);
                 }
                 else

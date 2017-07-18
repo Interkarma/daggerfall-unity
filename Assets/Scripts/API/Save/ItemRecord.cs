@@ -40,7 +40,7 @@ namespace DaggerfallConnect.Save
 
         #endregion
 
-        #region Structures
+        #region Structures and Enumerations
 
         /// <summary>
         /// Stores native item data exactly as read from save file.
@@ -48,21 +48,37 @@ namespace DaggerfallConnect.Save
         public struct ItemRecordData
         {
             public string name;
-            public UInt16 category1;
-            public UInt16 category2;
-            public UInt32 value1;
-            public UInt32 value2;
-            public UInt16 hits1;
-            public UInt16 hits2;
-            public UInt16 hits3;
-            public UInt32 image1;                   // Inventory list and equip image
-            public UInt32 image2;                   // Seems to be a generic "junk" image
+            public UInt16 group;
+            public UInt16 index;
+            public UInt32 value;
+            public UInt16 unknown;
+            public UInt16 flags;
+            public UInt16 currentCondition;
+            public UInt16 maxCondition;
+            public Byte unknown2;
+            public Byte typeDependentData;          // Stack count for arrows. Recipe ID for potion recipes and potions.
+            public UInt16 image1;                   // Inventory list and equip image
+            public UInt16 image2;                   // 3D world image. These were used in the Daggerfall demo.
             public UInt16 material;
             public Byte color;
             public UInt32 weight;
             public UInt16 enchantmentPoints;
             public UInt32 message;
             public UInt16[] magic;
+        }
+
+        /// <summary>
+        /// Item flags.
+        /// </summary>
+        [Flags]
+        public enum ItemFlags
+        {
+            None = 0x00,
+            IngredientRegular = 0x01,
+            EdgedWeapon = 0x04,
+            IngredientLiquid = 0x09,
+            BluntWeapon = 0x10,
+            Enchanted = 0x20,
         }
 
         #endregion
@@ -109,13 +125,15 @@ namespace DaggerfallConnect.Save
             // Read native item data
             parsedData = new ItemRecordData();
             parsedData.name = FileProxy.ReadCString(reader, 32);
-            parsedData.category1 = reader.ReadUInt16();
-            parsedData.category2 = reader.ReadUInt16();
-            parsedData.value1 = reader.ReadUInt32();
-            parsedData.value2 = reader.ReadUInt32();
-            parsedData.hits1 = reader.ReadUInt16();
-            parsedData.hits2 = reader.ReadUInt16();
-            parsedData.hits3 = reader.ReadUInt16();
+            parsedData.group = reader.ReadUInt16();
+            parsedData.index = reader.ReadUInt16();
+            parsedData.value = reader.ReadUInt32();
+            parsedData.unknown = reader.ReadUInt16();
+            parsedData.flags = reader.ReadUInt16();
+            parsedData.currentCondition = reader.ReadUInt16();
+            parsedData.maxCondition = reader.ReadUInt16();
+            parsedData.unknown2 = reader.ReadByte();
+            parsedData.typeDependentData = reader.ReadByte();
             parsedData.image1 = reader.ReadUInt16();
             parsedData.image2 = reader.ReadUInt16();
             parsedData.material = reader.ReadUInt16();

@@ -31,15 +31,17 @@ namespace DaggerfallWorkshop.Game.Items
         public DyeColors dyeColor;
         public float weightInKg;
         public int drawOrder;
-        public int value1;
-        public int value2;
-        public int hits1;
-        public int hits2;
-        public int hits3;
-        public int stackCount = 1;
+        public int value;
+        public ushort unknown;
+        public ushort flags;
+        public int currentCondition;
+        public int maxCondition;
+        public byte unknown2;
+        public byte typeDependentData;
         public int enchantmentPoints;
         public int message;
         public int[] legacyMagic = null;
+        public int stackCount = 1;
 
         // Private item fields
         int playerTextureArchive;
@@ -355,11 +357,13 @@ namespace DaggerfallWorkshop.Game.Items
             weightInKg = itemTemplate.baseWeight;
             drawOrder = itemTemplate.drawOrderOrEffect;
             currentVariant = 0;
-            value1 = itemTemplate.basePrice;
-            value2 = itemTemplate.basePrice;
-            hits1 = itemTemplate.hitPoints;
-            hits2 = itemTemplate.hitPoints;
-            hits3 = itemTemplate.hitPoints;
+            value = itemTemplate.basePrice;
+            unknown = 0;
+            flags = 0;
+            currentCondition = itemTemplate.hitPoints;
+            maxCondition = itemTemplate.hitPoints;
+            unknown2 = 0;
+            typeDependentData = 0;
             enchantmentPoints = itemTemplate.enchantmentPoints;
             message = 0;
             stackCount = 1;
@@ -402,11 +406,13 @@ namespace DaggerfallWorkshop.Game.Items
             weightInKg = itemTemplate.baseWeight;
             drawOrder = itemTemplate.drawOrderOrEffect;
             currentVariant = 0;
-            value1 = itemTemplate.basePrice;
-            value2 = itemTemplate.basePrice;
-            hits1 = itemTemplate.hitPoints;
-            hits2 = itemTemplate.hitPoints;
-            hits3 = itemTemplate.hitPoints;
+            value = itemTemplate.basePrice;
+            unknown = 0;
+            flags = 0;
+            currentCondition = itemTemplate.hitPoints;
+            maxCondition = itemTemplate.hitPoints;
+            unknown2 = 0;
+            typeDependentData = 0;
             enchantmentPoints = 0;
             message = 0;
             stackCount = 1;
@@ -511,12 +517,11 @@ namespace DaggerfallWorkshop.Game.Items
             data.dyeColor = dyeColor;
             data.weightInKg = weightInKg;
             data.drawOrder = drawOrder;
-            data.value1 = value1;
-            data.value2 = value2;
-            data.hits1 = hits1;
-            data.hits2 = hits2;
-            data.hits3 = hits3;
-            data.stackCount = stackCount;
+            data.value1 = value;
+            data.value2 = (unknown & 0xffff) | (flags << 16);
+            data.hits1 = currentCondition;
+            data.hits2 = maxCondition;
+            data.hits3 = (unknown2 & 0xff) | (typeDependentData << 8);
             data.enchantmentPoints = enchantmentPoints;
             data.message = message;
             data.legacyMagic = legacyMagic;
@@ -527,6 +532,7 @@ namespace DaggerfallWorkshop.Game.Items
             data.itemGroup = itemGroup;
             data.groupIndex = groupIndex;
             data.currentVariant = currentVariant;
+            data.stackCount = stackCount;
 
             // Not using quest data yet
             //data.isQuestItem = isQuestItem;
@@ -869,14 +875,15 @@ namespace DaggerfallWorkshop.Game.Items
             weightInKg = other.weightInKg;
             drawOrder = other.drawOrder;
             currentVariant = other.currentVariant;
-            value1 = other.value1;
-            value2 = other.value2;
-            hits1 = other.hits1;
-            hits2 = other.hits2;
-            hits3 = other.hits3;
+            value = other.value;
+            unknown = other.unknown;
+            flags = other.flags;
+            currentCondition = other.currentCondition;
+            maxCondition = other.maxCondition;
+            unknown2 = other.unknown2;
+            stackCount = other.stackCount;
             enchantmentPoints = other.enchantmentPoints;
             message = other.message;
-            stackCount = other.stackCount;
 
             if (other.legacyMagic != null)
                 legacyMagic = (int[])other.legacyMagic.Clone();
@@ -888,8 +895,8 @@ namespace DaggerfallWorkshop.Game.Items
         void FromItemRecord(ItemRecord itemRecord)
         {
             // Get template data
-            ItemGroups group = (ItemGroups)itemRecord.ParsedData.category1;
-            int index = itemRecord.ParsedData.category2;
+            ItemGroups group = (ItemGroups)itemRecord.ParsedData.group;
+            int index = itemRecord.ParsedData.index;
             ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(group, index);
 
             // Get player image
@@ -914,15 +921,25 @@ namespace DaggerfallWorkshop.Game.Items
             dyeColor = (DyeColors)itemRecord.ParsedData.color;
             weightInKg = (float)itemRecord.ParsedData.weight * 0.25f;
             drawOrder = itemTemplate.drawOrderOrEffect;
-            value1 = (int)itemRecord.ParsedData.value1;
-            value2 = (int)itemRecord.ParsedData.value2;
-            hits1 = itemRecord.ParsedData.hits1;
-            hits2 = itemRecord.ParsedData.hits2;
-            hits3 = itemRecord.ParsedData.hits3;
+            value = (int)itemRecord.ParsedData.value;
+            unknown = itemRecord.ParsedData.unknown;
+            flags = itemRecord.ParsedData.flags;
+            currentCondition = itemRecord.ParsedData.currentCondition;
+            maxCondition = itemRecord.ParsedData.maxCondition;
+            unknown2 = itemRecord.ParsedData.unknown2;
+            typeDependentData = itemRecord.ParsedData.typeDependentData;
+            // If item is an arrow, typeDependentData is the stack count
+            if ((itemGroup == ItemGroups.Weapons) && (groupIndex == 18)) // index 18 is for arrows
+            {
+                stackCount = itemRecord.ParsedData.typeDependentData;
+            }
+            else
+            {
+                stackCount = 1;
+            }
             currentVariant = 0;
             enchantmentPoints = itemRecord.ParsedData.enchantmentPoints;
             message = (int)itemRecord.ParsedData.message;
-            stackCount = 1;
 
             // Assign current variant
             if (itemTemplate.variants > 0)
@@ -969,12 +986,15 @@ namespace DaggerfallWorkshop.Game.Items
             dyeColor = data.dyeColor;
             weightInKg = data.weightInKg;
             drawOrder = data.drawOrder;
-            value1 = data.value1;
-            value2 = data.value2;
-            hits1 = data.hits1;
-            hits2 = data.hits2;
-            hits3 = data.hits3;
-            stackCount = data.stackCount;
+            value = data.value1;
+            // These are being saved in DF Unity saves as one int32 value but are two 16-bit values in classic
+            unknown = (ushort)(data.value2 & 0xffff);
+            flags = (ushort)(data.value2 >> 16);
+            currentCondition = data.hits1;
+            maxCondition = data.hits2;
+            // These are being saved in DF Unity saves as one int32 value but are two 8-bit values in classic
+            unknown2 = (byte)(data.hits3 & 0xff);
+            typeDependentData = (byte)(data.hits3 >> 8);
             enchantmentPoints = data.enchantmentPoints;
             message = data.message;
             legacyMagic = data.legacyMagic;
@@ -985,6 +1005,7 @@ namespace DaggerfallWorkshop.Game.Items
             itemGroup = data.itemGroup;
             groupIndex = data.groupIndex;
             currentVariant = data.currentVariant;
+            stackCount = data.stackCount;
 
             // Not using quest data yet
             //isQuestItem = data.isQuestItem;

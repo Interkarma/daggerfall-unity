@@ -300,31 +300,11 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="id">The ID of the requested potion recipe</param>
         /// <returns>A KeyValuePair<string, Recipe[]>, where the string is the name of the recipe and the Recipe array contains the different ways it can be made</returns>
-        private KeyValuePair<string, Recipe[]> getPotionRecipesByID(int id)
+        public KeyValuePair<string, Recipe[]> getPotionRecipesByID(int id)
         {
             RecipeMapping mapping;
             potionRecipeMapping.TryGetValue(id, out mapping);
             return new KeyValuePair<string, Recipe[]>(mapping.name, mapping.recipes);
-        }
-
-        /// <summary>
-        /// Gets the recipe(s) for a potion based on the recipe's "hits3" value, which encodes the ID. (hits3 >> 8)
-        /// </summary>
-        /// <param name="hits3">The ID of the requested potion recipe</param>
-        /// <returns>A KeyValuePair<string, Recipe[]>, where the string is the name of the recipe and the Recipe array contains the different ways it can be made</String></returns>
-        public KeyValuePair<string, Recipe[]> getPotionRecipesByHits3(int hits3)
-        {
-            return getPotionRecipesByID(getPotionRecipeIDByHits3(hits3));
-        }
-
-        /// <summary>
-        /// Given the "hits3" value of a potion recipe inventory item, return the actual recipe ID
-        /// </summary>
-        /// <param name="hits3">The hits3 value of the item</param>
-        /// <returns></returns>
-        private int getPotionRecipeIDByHits3(int hits3)
-        {
-            return hits3 >> 8;
         }
 
         /// <summary>
