@@ -180,7 +180,7 @@ namespace DaggerfallWorkshop.Game
             // Play song if no song was playing or if playlist changed
             // Switch to another random song to prevent fatigue of hearing same song repeatedly
             if (!songPlayer.IsPlaying || overrideSong)
-                PlayRandomSong();
+                PlayCurrentSong();
         }
 
         #endregion
