@@ -168,6 +168,21 @@ namespace DaggerfallWorkshop.Game.Questing
                             else
                                 return false;
                         }
+                        else
+                        {
+                            right = true;
+                        }
+
+                        // Exit true when right is true and next condition is an Or/OrNot
+                        if (right == true && i < evaluations.Count - 1)
+                        {
+                            if (evaluations[i + 1].op == Operator.Or ||
+                                evaluations[i + 1].op == Operator.OrNot)
+                            {
+                                return true;
+                            }
+                        }
+
                         break;
 
                     // Either side can be true to result as true
