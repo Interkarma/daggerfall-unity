@@ -45,6 +45,9 @@ namespace DaggerfallWorkshop.Game.Questing
         public CreateFoe(Quest parentQuest)
             : base(parentQuest)
         {
+            PlayerEnterExit.OnTransitionDungeonExterior += PlayerEnterExit_OnTransitionExterior;
+            PlayerEnterExit.OnTransitionExterior += PlayerEnterExit_OnTransitionExterior;
+            StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
         }
 
         public override void InitialiseOnSet()
@@ -220,6 +223,10 @@ namespace DaggerfallWorkshop.Game.Questing
             const float separationDistance = 1.25f;
             const float maxFloorDistance = 4f;
 
+            // Must have received a valid array
+            if (gameObjects == null || gameObjects.Length == 0)
+                return;
+
             // Set parent - otherwise caller must set a parent
             if (parent)
                 gameObjects[pendingFoesSpawned].transform.parent = parent;
@@ -297,6 +304,24 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             go.SetActive(true);
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void PlayerEnterExit_OnTransitionExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            // Any foes pending placement to dungeon or building interior are now invalid
+            pendingFoeGameObjects = null;
+            spawnInProgress = false;
+        }
+
+        private void StreamingWorld_OnInitWorld()
+        {
+            // Any foes pending placement to loose objects container are now invalid
+            pendingFoeGameObjects = null;
+            spawnInProgress = false;
         }
 
         #endregion
