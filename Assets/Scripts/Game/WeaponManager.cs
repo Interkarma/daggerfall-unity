@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game
         public FPSWeapon LeftHandWeapon;            // Weapon in left hand
         public FPSWeapon RightHandWeapon;           // Weapon in right hand
         public bool Sheathed;                       // Weapon (or weapons) are sheathed
-        public float SphereCastRadius = 0.4f;       // Radius of SphereCast used to target attacks
+        public float SphereCastRadius = 0.3f;       // Radius of SphereCast used to target attacks
         [Range(0, 1)]
         public float AttackThreshold = 0.05f;        // Minimum mouse gesture travel distance for an attack. % of screen
         public float ChanceToBeParried = 0.1f;      // Example: Chance for player hit to be parried

@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game
 
         PlayerActivateModes currentMode = PlayerActivateModes.Grab;
 
-        public float RayDistance = 2.0f;        // Distance of ray check, tune this to your scale and preference
+        public float RayDistance = 2.4f;        // Distance of ray check, tune this to your scale and preference
 
         void Start()
         {
