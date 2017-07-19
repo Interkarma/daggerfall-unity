@@ -161,16 +161,30 @@ namespace DaggerfallWorkshop.Game.Questing
                     case Operator.And:
                     case Operator.AndNot:
                         if (!left || !right)
-                            return false;
+                        {
+                            // Allow avaluation to continue unless at the end of chain
+                            if (i < evaluations.Count - 1)
+                                right = false;
+                            else
+                                return false;
+                        }
                         break;
 
                     // Either side can be true to result as true
                     case Operator.Or:
                     case Operator.OrNot:
                         if (!left && !right)
-                            return false;
+                        {
+                            // Allow avaluation to continue unless at the end of chain
+                            if (i < evaluations.Count - 1)
+                                right = false;
+                            else
+                                return false;
+                        }
                         else
+                        {
                             right = true;
+                        }
                         break;
 
                     default:
