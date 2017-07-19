@@ -71,8 +71,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (VideoReplacement.ImportCustomVideo(PlayOnStart, out customMovieTexture))
             {
                 // Play custom video
-                customVideo = DaggerfallUI.Instance.gameObject.AddComponent<CustomVideoPlayer>();
+                customVideo = new CustomVideoPlayer();
                 customVideo.PlayVideo(customMovieTexture);
+                NativePanel.Components.Add(customVideo);
                 useCustomVideo = true;
             }
             else
