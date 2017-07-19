@@ -103,6 +103,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Create a dropped loot container window for player to loot their reward
             rewardLoot = GameObjectHelper.CreateDroppedLootContainer(GameManager.Instance.PlayerObject, DaggerfallUnity.NextUID);
+            rewardLoot.ContainerImage = InventoryContainerImages.Merchant;
             rewardLoot.Items.AddItem(item.DaggerfallUnityItem);
 
             // Schedule loot window to open when player dismisses message
