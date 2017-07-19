@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Game
         public Color ExteriorNoonAmbientLight = new Color(0.9f, 0.9f, 0.9f);
         public Color ExteriorNightAmbientLight = new Color(0.25f, 0.25f, 0.25f);
         public Color InteriorAmbientLight = new Color(0.18f, 0.18f, 0.18f);
+        public Color InteriorNightAmbientLight = new Color(0.20f, 0.18f, 0.20f);
         public Color DungeonAmbientLight = new Color(0.12f, 0.12f, 0.12f);
         public Color CastleAmbientLight = new Color(0.58f, 0.58f, 0.58f);
         public float FadeDuration = 3f;
@@ -61,7 +62,10 @@ namespace DaggerfallWorkshop.Game
                 }
                 else if (playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
                 {
-                    targetAmbientLight = InteriorAmbientLight;
+                    if (DaggerfallUnity.Instance.WorldTime.Now.IsNight)
+                        targetAmbientLight = InteriorNightAmbientLight;
+                    else
+                        targetAmbientLight = InteriorAmbientLight;
                 }
                 else if (playerEnterExit.IsPlayerInside && playerEnterExit.IsPlayerInsideDungeon)
                 {
