@@ -10,23 +10,24 @@
 //
 
 using UnityEngine;
+using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
     /// Handles playback of custom videos.
     /// </summary>
-    public class CustomVideoPlayer : MonoBehaviour
+    public class CustomVideoPlayer : BaseScreenComponent
     {
         MovieTexture movieTexture;
+        readonly AudioSource audio;
 
         public bool Playing { get; set; }
-        
-        private void Update()
+
+        public CustomVideoPlayer() : base()
         {
-            // Get end of video
-            if ((movieTexture.isReadyToPlay) && (!movieTexture.isPlaying))
-                Playing = false;
+            this.audio = DaggerfallUI.Instance.gameObject.GetComponent<AudioSource>();
         }
 
         /// <summary>
@@ -42,12 +43,31 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             movieTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.VideoFilterMode;
 
             // Get audio
-            AudioSource audio = GetComponent<AudioSource>();
             audio.clip = movieTexture.audioClip;
 
             // Play video and audio
             movieTexture.Play();
             audio.Play();
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            // Get end of video
+            if ((movieTexture.isReadyToPlay) && (!movieTexture.isPlaying))
+                Playing = false;
+        }
+
+        /// <summary>
+        /// Draw video on screen.
+        /// </summary>
+        public override void Draw()
+        {
+            base.Draw();
+
+            if (movieTexture.isPlaying)
+                GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), movieTexture, ScaleMode.StretchToFill);
         }
 
         /// <summary>
@@ -56,21 +76,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public void StopVideo()
         {
             movieTexture.Stop();
-            GetComponent<AudioSource>().Stop();
-            Destroy(this);
+            audio.Stop();
+            Dispose();
         }
-        
-        /// <summary>
-        /// Draw video on screen.
-        /// </summary>
-        void OnGUI()
-        {
-            // Place on top of Daggerfall Unity panels.
-            GUI.depth = -1;
-
-            // Draw MovieTexture on GUI.
-            if (movieTexture.isPlaying)
-                GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), movieTexture, ScaleMode.StretchToFill);
-        } 
     }
 }
