@@ -33,6 +33,7 @@ ToolTipTextColor=E6E6C8FF
 AutomapNumberOfDungeons=5
 ShopQualityPresentation=0
 ShopQualityHUDDelay=4
+ShowQuestJournalClocksAsCountdown=False
 
 [Controls]
 InvertMouseVertical=False
@@ -51,7 +52,6 @@ StartInDungeon=True
 [Experimental]
 HQTooltips=False
 TerrainDistance=3
-DebugWeaponSwings=False
 
 [Enhancements]
 LypyL_GameConsole=True

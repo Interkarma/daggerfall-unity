@@ -92,6 +92,7 @@ namespace DaggerfallWorkshop
         public int AutomapNumberOfDungeons { get; set; }
         public int ShopQualityPresentation { get; set; }
         public int ShopQualityHUDDelay { get; set; }
+        public bool ShowQuestJournalClocksAsCountdown { get; set; }
 
         // [Controls]
         public bool InvertMouseVertical { get; set; }
@@ -157,6 +158,7 @@ namespace DaggerfallWorkshop
             AutomapNumberOfDungeons = GetInt(sectionGUI, "AutomapNumberOfDungeons", 0, 100);
             ShopQualityPresentation = GetInt(sectionGUI, "ShopQualityPresentation", 0, 2);
             ShopQualityHUDDelay = GetInt(sectionGUI, "ShopQualityHUDDelay", 1, 10);
+            ShowQuestJournalClocksAsCountdown = GetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown");
             InvertMouseVertical = GetBool(sectionControls, "InvertMouseVertical");
             MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 4.0f);
@@ -208,6 +210,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
             SetInt(sectionGUI, "ShopQualityHUDDelay", ShopQualityHUDDelay);
+            SetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown", ShowQuestJournalClocksAsCountdown);
             SetBool(sectionControls, "InvertMouseVertical", InvertMouseVertical);
             SetBool(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);

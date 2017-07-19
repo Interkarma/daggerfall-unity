@@ -237,7 +237,10 @@ namespace DaggerfallWorkshop.Game.Questing
             switch(macro)
             {
                 case MacroTypes.DetailsMacro:
-                    textOut = GetDaysString(startingTimeInSeconds);
+                    if (DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown)
+                        textOut = GetDaysString(remainingTimeInSeconds);
+                    else
+                        textOut = GetDaysString(startingTimeInSeconds);
                     return true;
 
                 default:
