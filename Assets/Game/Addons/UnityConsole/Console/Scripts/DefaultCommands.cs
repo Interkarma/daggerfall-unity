@@ -34,6 +34,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestSpawnMarker.name, TeleportToQuestSpawnMarker.description, TeleportToQuestSpawnMarker.usage, TeleportToQuestSpawnMarker.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestItemMarker.name, TeleportToQuestItemMarker.description, TeleportToQuestItemMarker.usage, TeleportToQuestItemMarker.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GetAllQuestItems.name, GetAllQuestItems.description, GetAllQuestItems.usage, GetAllQuestItems.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(PurgeAllQuests.name, PurgeAllQuests.description, PurgeAllQuests.usage, PurgeAllQuests.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenDoor.name, OpenDoor.description, OpenDoor.usage, OpenDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ActivateAction.name, ActivateAction.description, ActivateAction.usage, ActivateAction.Execute);
@@ -809,6 +810,24 @@ namespace Wenzil.Console
                     return string.Format("Transferred {0} items into player inventory", itemsFound);
                 else
                     return error;
+            }
+        }
+
+        private static class PurgeAllQuests
+        {
+            public static readonly string name = "purgeallquests";
+            public static readonly string error = "Could not find any quests.";
+            public static readonly string description = "Immediately tombstones all quests then removes from quest machine.";
+            public static readonly string usage = "purgeallquests";
+
+            public static string Execute(params string[] args)
+            {
+                if (QuestMachine.Instance.QuestCount == 0)
+                    return error;
+
+                int count = QuestMachine.Instance.PurgeAllQuests();
+
+                return string.Format("Removed {0} quests.", count);
             }
         }
 

@@ -254,10 +254,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Tombstone completed quests after update
             foreach (Quest quest in questsToTombstone)
             {
-                quest.Dispose();
-                quest.TombstoneQuest();
-                RemoveAllQuestSiteLinks(quest.UID);
-                RaiseOnQuestEndedEvent(quest);
+                TombstoneQuest(quest);
             }
 
             // Reset update timer
@@ -684,6 +681,65 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Immediately removes all quests.
+        /// </summary>
+        /// <returns>Number of quests removed.</returns>
+        public int PurgeAllQuests()
+        {
+            ulong[] uids = GetAllQuests();
+            if (uids == null || uids.Length == 0)
+                return 0;
+
+            foreach (ulong uid in uids)
+            {
+                RemoveQuest(uid);
+            }
+
+            quests.Clear();
+
+            return uids.Length;
+        }
+
+        /// <summary>
+        /// Tombstones a quest. It will remain in quest machine for "talk" links until removed.
+        /// This calls Dispose() on quest, removes all related SiteLinks, then calls OnQuestEnded event.
+        /// </summary>
+        /// <param name="quest">Quest to Tombstone.</param>
+        public void TombstoneQuest(Quest quest)
+        {
+            quest.Dispose();
+            quest.TombstoneQuest();
+            RemoveAllQuestSiteLinks(quest.UID);
+            RaiseOnQuestEndedEvent(quest);
+        }
+
+        /// <summary>
+        /// Removes a quest completely from quest machine.
+        /// Tombstones quest before removal.
+        /// </summary>
+        /// <param name="questUID">Quest UID.</param>
+        public void RemoveQuest(ulong questUID)
+        {
+            RemoveQuest(GetQuest(questUID));
+        }
+
+        /// <summary>
+        /// Removes a quest completely from quest machine.
+        /// Tombstones quest before removal.
+        /// </summary>
+        /// <param name="quest"></param>
+        public void RemoveQuest(Quest quest)
+        {
+            if (quest == null)
+                return;
+
+            if (!quest.QuestTombstoned)
+                TombstoneQuest(quest);
+
+            quests.Remove(quest.UID);
         }
 
         #endregion

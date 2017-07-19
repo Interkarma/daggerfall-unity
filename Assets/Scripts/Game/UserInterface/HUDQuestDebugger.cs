@@ -99,6 +99,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
+            if (allQuests == null || allQuests.Length != QuestMachine.Instance.QuestCount)
+                RefreshQuestsList();
+
             if (Input.GetKeyDown(KeyCode.LeftBracket))
                 MovePreviousQuest();
             else if (Input.GetKeyDown(KeyCode.RightBracket))
@@ -311,6 +314,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void MoveNextQuest()
         {
+            if (allQuests == null || allQuests.Length == 0)
+                return;
+
             if (++currentQuestIndex >= allQuests.Length)
                 currentQuestIndex = 0;
 
@@ -319,6 +325,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void MovePreviousQuest()
         {
+            if (allQuests == null || allQuests.Length == 0)
+                return;
+
             if (--currentQuestIndex < 0)
                 currentQuestIndex = allQuests.Length - 1;
 
@@ -337,6 +346,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void QuestMachine_OnQuestEnded(Quest quest)
         {
+            RefreshQuestsList();
         }
 
         #endregion
