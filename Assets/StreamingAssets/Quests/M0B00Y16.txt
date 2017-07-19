@@ -177,10 +177,13 @@ _S.03_ task:
 _clickqgiver_ task:
 	clicked npc _questgiver_ 
 
+_clearclick_ task:
+	when _clickqgiver_ and not _S.03_
+	clear _clickqgiver_ _clearclick_
+
 _success_ task:
 	when _clickqgiver_ and _S.03_ 
 	give pc _gold_ 
-	unset _clickqgiver_ 
 
 variable _qtime_
 _duelist_ task:
