@@ -172,6 +172,14 @@ namespace DaggerfallWorkshop.Game.Questing
             if (interiorParent == null)
                 throw new Exception("PlaceFoeFreely() must have a DaggerfallLocation parent object.");
 
+            // Use free spawn if no interior spawn points
+            if (interiorParent.SpawnPoints.Length == 0)
+            {
+                PlaceFoeFreely(gameObjects, interiorParent.transform);
+                return;
+            }
+
+            // Place using spawn points
             foreach (GameObject go in gameObjects)
             {
                 Vector3 spawnPosition;

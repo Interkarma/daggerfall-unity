@@ -723,19 +723,9 @@ namespace DaggerfallWorkshop
             // Handle no spawn points
             if (spawnPoints.Count == 0)
             {
-                // Try a random marker
-                if (markers.Count > 0)
-                {
-                    Debug.Log("Interior has no spawn points - using a random marker");
-                    localPositionOut = markers[UnityEngine.Random.Range(0, markers.Count)].gameObject.transform.localPosition;
-                    return true;
-                }
-                else
-                {
-                    // Inform caller to use a fallback
-                    localPositionOut = Vector3.zero;
-                    return false;
-                }
+                // Inform caller to use a fallback
+                localPositionOut = Vector3.zero;
+                return false;
             }
 
             // Return a random spawn point
