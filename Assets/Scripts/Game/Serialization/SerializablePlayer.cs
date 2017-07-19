@@ -108,7 +108,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.currentFatigue = entity.CurrentFatigue;
             data.playerEntity.currentMagicka = entity.CurrentMagicka;
             data.playerEntity.skillUses = entity.SkillUses;
-            data.playerEntity.armorValues = entity.ArmorValues;
             data.playerEntity.timeOfLastSkillIncreaseCheck = entity.TimeOfLastSkillIncreaseCheck;
             data.playerEntity.startingLevelUpSkillSum = entity.StartingLevelUpSkillSum;
             data.playerEntity.equipTable = entity.ItemEquipTable.SerializeEquipTable();
@@ -185,7 +184,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.CurrentFatigue = data.playerEntity.currentFatigue;
             entity.CurrentMagicka = data.playerEntity.currentMagicka;
             entity.SkillUses = data.playerEntity.skillUses;
-            entity.ArmorValues = data.playerEntity.armorValues;
             entity.TimeOfLastSkillIncreaseCheck = data.playerEntity.timeOfLastSkillIncreaseCheck;
             entity.StartingLevelUpSkillSum = data.playerEntity.startingLevelUpSkillSum;
             entity.Items.DeserializeItems(data.playerEntity.items);
@@ -202,15 +200,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (entity.SkillUses == null)
                 entity.SkillUses = new short[DaggerfallSkills.Count];
 
-            // Check if armor values were restored - if null or empty then initialize body part armor values to 100 (no armor)
-            // This will usually happen when loading an old save prior to armor values being included
-            if (entity.ArmorValues == null || entity.ArmorValues.Length == 0)
+            // Initialize body part armor values to 100 (no armor)
+            for (int i = 0; i < entity.ArmorValues.Length; i++)
             {
-                entity.ArmorValues = new sbyte[DaggerfallEntity.ArmorValuesArrayLength];
-                for (int i = 0; i < entity.ArmorValues.Length; i++)
-                {
-                    entity.ArmorValues[i] = 100;
-                }
+                entity.ArmorValues[i] = 100;
             }
 
             // Apply armor values from equipped armor
