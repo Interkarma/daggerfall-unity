@@ -124,6 +124,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallGuildPopupWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+            // Clear background
+            ParentPanel.BackgroundColor = Color.clear;
         }
 
         #endregion
@@ -134,9 +136,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Load all textures
             LoadTextures();
-
-            // Clear background
-            ParentPanel.BackgroundColor = Color.clear;
 
             // Create interface panel
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
