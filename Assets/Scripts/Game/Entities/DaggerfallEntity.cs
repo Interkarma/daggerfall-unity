@@ -31,6 +31,8 @@ namespace DaggerfallWorkshop.Game.Entity
     {
         #region Fields
 
+        public const int ArmorValuesArrayLength = 7;
+
         protected Genders gender;
         protected DFCareer career = new DFCareer();
         protected string name;
@@ -43,7 +45,7 @@ namespace DaggerfallWorkshop.Game.Entity
         protected int currentHealth;
         protected int currentFatigue;
         protected int currentMagicka;
-        protected sbyte[] armorValues = new sbyte[7];
+        protected sbyte[] armorValues = new sbyte[ArmorValuesArrayLength];
 
         bool quiesce = false;
 
