@@ -1299,11 +1299,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 playerEntity.GoldPieces += item.stackCount;
                 from.RemoveItem(item);
                 Refresh(false);
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
                 return;
             }
 
             to.Transfer(item, from, preferredOrder);
             Refresh(false);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         void ShowInfoPopup(DaggerfallUnityItem item)
