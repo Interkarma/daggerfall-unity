@@ -132,7 +132,6 @@ Foe _monster_ is Lich
 _pcgetsgold_ task:
 	when _qgclicked_ and _mondead_ 
 	give pc _reward_ 
-	end quest 
 
 _S.01_ task:
 	injured _monster_ 
@@ -156,3 +155,8 @@ variable _nomap_
 _S.07_ task:
 	when _map_ and _pcgetsgold_ 
 	reveal _newdung_ saying 1080 
+	end quest
+
+_S.08_ task:
+	when _nomap_ and _pcgetsgold_ 
+	end quest
