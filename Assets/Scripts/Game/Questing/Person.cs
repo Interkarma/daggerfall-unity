@@ -328,11 +328,13 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void AssignHUDFace(int faceIndex = -1)
         {
-            // Set face index
-            if (faceIndex != -1)
-                this.faceIndex = faceIndex;
-            else
-                this.faceIndex = UnityEngine.Random.Range(0, faceCount);
+            this.faceIndex = UnityEngine.Random.Range(0, faceCount);
+
+            //// Set face index
+            //if (faceIndex != -1)
+            //    this.faceIndex = faceIndex;
+            //else
+            //    this.faceIndex = UnityEngine.Random.Range(0, faceCount);
         }
 
         // Sets gender and display name
