@@ -20,10 +20,10 @@ M0B20Y02, Passed with engine bugs ("injured _monster_ saying 1020" does not work
 -M0B21Y19, FAILED needs more action support
 M0B30Y03, Passed
 M0B30Y04, Passed
-M0B30Y08, Passed with reward bug and zombie no hot-placement
+M0B30Y08, Passed with reward bug
 -M0B40Y05, FAILED needs more action support; has reward bug; possible to break if one-shotting spriggan
 M0B50Y09, Passed with reward bug
-M0B60Y10, Passed with reward bug
+M0B60Y10, Passed
 M0C00Y11, Passed with reward bug
 M0C00Y12, Passed with reward bug
 M0C00Y13, Passed with reward bug
