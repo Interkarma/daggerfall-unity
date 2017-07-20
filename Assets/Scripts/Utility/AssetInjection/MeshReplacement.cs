@@ -235,53 +235,55 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Get MaterialReader
             MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
 
-            // Get materials
-            MeshRenderer meshRenderer = object3D.GetComponent<MeshRenderer>();
-            Material[] materials = meshRenderer.materials;
-
-            // Check all materials
-            for (int i = 0; i < materials.Length; i++)
+            // Check all MeshRenderers
+            MeshRenderer[] meshRenderers = object3D.GetComponentsInChildren<MeshRenderer>();
+            foreach (var meshRenderer in meshRenderers)
             {
-                if (materials[i].mainTexture != null)
+                // Check all materials
+                Material[] materials = meshRenderer.materials;
+                for (int i = 0; i < materials.Length; i++)
                 {
-                    // Get name of texture
-                    string textureName = materials[i].mainTexture.name;
-
-                    // Textures inside StreamingAssets/Textures have the priority 
-                    // over the material included inside the assetbundle.
-                    if (TextureReplacement.CustomTextureExist(textureName))
+                    if (materials[i].mainTexture != null)
                     {
-                        // Check that is a daggerfall texture
-                        // These textures should follow the nomenclature (archive_record-frame.png) while unique
-                        // textures should have unique names (MyModelPack_WoodChair2.png) to avoid involuntary replacements.
-                        int archive, record;
-                        if (TextureReplacement.IsDaggerfallTexture(textureName, out archive, out record))
+                        // Get name of texture
+                        string textureName = materials[i].mainTexture.name;
+
+                        // Textures inside StreamingAssets/Textures have the priority 
+                        // over the material included inside the assetbundle.
+                        if (TextureReplacement.CustomTextureExist(textureName))
                         {
-                            // Use material from Daggerfall Unity cache 
-                            CachedMaterial cachedMaterialOut;
-                            if (materialReader.GetCachedMaterial(archive, record, 0, out cachedMaterialOut))
+                            // Check that is a daggerfall texture
+                            // These textures should follow the nomenclature (archive_record-frame.png) while unique
+                            // textures should have unique names (MyModelPack_WoodChair2.png) to avoid involuntary replacements.
+                            int archive, record;
+                            if (TextureReplacement.IsDaggerfallTexture(textureName, out archive, out record))
                             {
-                                materials[i] = cachedMaterialOut.material;
-                                continue;
+                                // Use material from Daggerfall Unity cache 
+                                CachedMaterial cachedMaterialOut;
+                                if (materialReader.GetCachedMaterial(archive, record, 0, out cachedMaterialOut))
+                                {
+                                    materials[i] = cachedMaterialOut.material;
+                                    continue;
+                                }
                             }
-                        } 
+                        }
+
+                        // Assign filtermode
+                        materials[i].mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                        if (materials[i].GetTexture("_BumpMap") != null)
+                            materials[i].GetTexture("_BumpMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                        if (materials[i].GetTexture("_EmissionMap") != null)
+                            materials[i].GetTexture("_EmissionMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                        if (materials[i].GetTexture("_MetallicGlossMap") != null)
+                            materials[i].GetTexture("_MetallicGlossMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                     }
-
-                    // Assign filtermode
-                    materials[i].mainTexture.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                    if (materials[i].GetTexture("_BumpMap") != null)
-                        materials[i].GetTexture("_BumpMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                    if (materials[i].GetTexture("_EmissionMap") != null)
-                        materials[i].GetTexture("_EmissionMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
-                    if (materials[i].GetTexture("_MetallicGlossMap") != null)
-                        materials[i].GetTexture("_MetallicGlossMap").filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                    else
+                        Debug.LogError(string.Format("{0} is missing a material or a texture.", object3D.name));
                 }
-                else
-                    Debug.LogError(string.Format("{0} is missing a material or a texture.", object3D.name));
-            }
 
-            // Confirm finalised materials
-            meshRenderer.materials = materials;
+                // Confirm finalised materials
+                meshRenderer.materials = materials;
+            }
         }
 
         #endregion
