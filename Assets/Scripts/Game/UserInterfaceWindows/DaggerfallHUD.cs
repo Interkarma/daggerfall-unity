@@ -72,6 +72,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return escortingFaces; }
         }
 
+        public HUDQuestDebugger QuestDebugger
+        {
+            get { return questDebugger; }
+        }
+
         public DaggerfallHUD(IUserInterfaceManager uiManager)
             :base(uiManager)
         {

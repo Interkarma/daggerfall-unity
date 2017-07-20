@@ -187,7 +187,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public void Update()
         {
             // Do nothing if complete
-            // Now waiting to be removed from quest machine
+            // Now waiting to be tombstoned in quest machine
             if (questComplete)
                 return;
 
@@ -322,6 +322,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public void TombstoneQuest()
         {
             questTombstoned = true;
+            questComplete = true;
             questTombstoneTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
         }
 

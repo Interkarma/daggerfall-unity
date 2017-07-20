@@ -34,6 +34,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestSpawnMarker.name, TeleportToQuestSpawnMarker.description, TeleportToQuestSpawnMarker.usage, TeleportToQuestSpawnMarker.Execute);
             ConsoleCommandsDatabase.RegisterCommand(TeleportToQuestItemMarker.name, TeleportToQuestItemMarker.description, TeleportToQuestItemMarker.usage, TeleportToQuestItemMarker.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GetAllQuestItems.name, GetAllQuestItems.description, GetAllQuestItems.usage, GetAllQuestItems.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(EndDebugQuest.name, EndDebugQuest.description, EndDebugQuest.usage, EndDebugQuest.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(EndQuest.name, EndQuest.description, EndQuest.usage, EndQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PurgeAllQuests.name, PurgeAllQuests.description, PurgeAllQuests.usage, PurgeAllQuests.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenDoor.name, OpenDoor.description, OpenDoor.usage, OpenDoor.Execute);
@@ -189,7 +191,7 @@ namespace Wenzil.Console
                 }
                 else if (int.TryParse(args[0], out weatherCode))
                 {
-                    var type = (WeatherType) weatherCode;
+                    var type = (WeatherType)weatherCode;
                     weatherManager.SetWeather(type);
                     return "Set weather.";
 
@@ -792,13 +794,13 @@ namespace Wenzil.Console
             {
                 int itemsFound = 0;
                 ulong[] uids = QuestMachine.Instance.GetAllActiveQuests();
-                foreach(ulong questUID in uids)
+                foreach (ulong questUID in uids)
                 {
                     Quest quest = QuestMachine.Instance.GetQuest(questUID);
                     if (quest != null)
                     {
                         QuestResource[] itemResources = quest.GetAllResources(typeof(Item));
-                        foreach(Item item in itemResources)
+                        foreach (Item item in itemResources)
                         {
                             GameManager.Instance.PlayerEntity.Items.AddItem(item.DaggerfallUnityItem, ItemCollection.AddPosition.Front);
                             itemsFound++;
@@ -813,11 +815,68 @@ namespace Wenzil.Console
             }
         }
 
+        private static class EndQuest
+        {
+            public static readonly string name = "endquest";
+            public static readonly string error = "Could not find quest.";
+            public static readonly string description = "Tombstone quest. Does not issue reward.";
+            public static readonly string usage = "endquest <questUID>";
+
+            public static string Execute(params string[] args)
+            {
+                if (QuestMachine.Instance.QuestCount == 0)
+                    return "No quests are running";
+
+                if (args == null || args.Length != 1)
+                    return HelpCommand.Execute(EndQuest.name);
+
+                int questUID;
+                if (!int.TryParse(args[0], out questUID))
+                    return HelpCommand.Execute(EndQuest.usage);
+
+                Quest quest = QuestMachine.Instance.GetQuest((ulong)questUID);
+                if (quest == null)
+                    return string.Format("Could not find quest {0}", questUID);
+
+                if (quest.QuestTombstoned)
+                    return "Quest is already tombstoned";
+
+                QuestMachine.Instance.TombstoneQuest(quest);
+
+                return string.Format("Tombstoned quest {0}", questUID);
+            }
+        }
+
+        private static class EndDebugQuest
+        {
+            public static readonly string name = "enddebugquest";
+            public static readonly string error = "Could not find debug quest.";
+            public static readonly string description = "Tombstone quest currently shown by HUD quest debugger (if any). Does not issue reward.";
+            public static readonly string usage = "enddebugquest";
+
+            public static string Execute(params string[] args)
+            {
+                if (!DaggerfallUI.Instance.DaggerfallHUD.ShowQuestDebugger)
+                    return "Quest debugger is not open.";
+
+                Quest currentQuest = DaggerfallUI.Instance.DaggerfallHUD.QuestDebugger.CurrentQuest;
+                if (currentQuest == null)
+                    return "Quest debugger has no quest selected";
+
+                if (currentQuest.QuestTombstoned)
+                    return "Quest is already tombstoned";
+
+                QuestMachine.Instance.TombstoneQuest(currentQuest);
+
+                return string.Format("Tombstoned quest {0}", currentQuest.UID);
+            }
+        }
+
         private static class PurgeAllQuests
         {
             public static readonly string name = "purgeallquests";
             public static readonly string error = "Could not find any quests.";
-            public static readonly string description = "Immediately tombstones all quests then removes from quest machine.";
+            public static readonly string description = "Immediately tombstones all quests then removes from quest machine. Does not issue rewards.";
             public static readonly string usage = "purgeallquests";
 
             public static string Execute(params string[] args)

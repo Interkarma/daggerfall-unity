@@ -721,9 +721,10 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Tombstones quest before removal.
         /// </summary>
         /// <param name="questUID">Quest UID.</param>
-        public void RemoveQuest(ulong questUID)
+        /// <returns>True if quest was removed.</returns>
+        public bool RemoveQuest(ulong questUID)
         {
-            RemoveQuest(GetQuest(questUID));
+            return RemoveQuest(GetQuest(questUID));
         }
 
         /// <summary>
@@ -731,15 +732,18 @@ namespace DaggerfallWorkshop.Game.Questing
         /// Tombstones quest before removal.
         /// </summary>
         /// <param name="quest"></param>
-        public void RemoveQuest(Quest quest)
+        /// <returns>True if quest was removed.</returns>
+        public bool RemoveQuest(Quest quest)
         {
             if (quest == null)
-                return;
+                return false;
 
             if (!quest.QuestTombstoned)
                 TombstoneQuest(quest);
 
             quests.Remove(quest.UID);
+
+            return true;
         }
 
         #endregion

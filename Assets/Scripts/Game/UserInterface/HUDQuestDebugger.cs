@@ -50,6 +50,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         TextLabel[] taskLabelPool = new TextLabel[taskLabelPoolCount];
         TextLabel[] timerLabelPool = new TextLabel[timerLabelPoolCount];
 
+        public Quest CurrentQuest
+        {
+            get { return currentQuest; }
+        }
+
         public HUDQuestDebugger()
             : base()
         {
