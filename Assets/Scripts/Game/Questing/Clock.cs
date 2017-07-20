@@ -17,6 +17,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -411,6 +412,54 @@ namespace DaggerfallWorkshop.Game.Questing
             travelTimeDaysTotal = (int)((travelTimeDaysLand + travelTimeDaysWater) * returnTripMultiplier);
 
             return GetTimeInSeconds(travelTimeDaysTotal, 0, 0);
+        }
+
+        #endregion
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public DaggerfallDateTime lastWorldTimeSample;
+            public int startingTimeInSeconds;
+            public int remainingTimeInSeconds;
+            public int flag;
+            public int minRange;
+            public int maxRange;
+            public bool clockEnabled;
+            public bool clockFinished;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.lastWorldTimeSample = lastWorldTimeSample;
+            data.startingTimeInSeconds = startingTimeInSeconds;
+            data.remainingTimeInSeconds = remainingTimeInSeconds;
+            data.flag = flag;
+            data.minRange = minRange;
+            data.maxRange = maxRange;
+            data.clockEnabled = clockEnabled;
+            data.clockFinished = clockFinished;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            lastWorldTimeSample = data.lastWorldTimeSample;
+            startingTimeInSeconds = data.startingTimeInSeconds;
+            remainingTimeInSeconds = data.remainingTimeInSeconds;
+            flag = data.flag;
+            minRange = data.minRange;
+            maxRange = data.maxRange;
+            clockEnabled = data.clockEnabled;
+            clockFinished = data.clockFinished;
         }
 
         #endregion

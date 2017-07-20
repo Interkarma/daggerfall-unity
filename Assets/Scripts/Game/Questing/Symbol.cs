@@ -22,7 +22,9 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public class Symbol : IComparable
     {
+        [SerializeField]
         string original;
+        [SerializeField]
         string name;
 
         /// <summary>
@@ -31,6 +33,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public string Original
         {
             get { return original; }
+            set { original = value; }
         }
 
         /// <summary>
@@ -60,6 +63,17 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Restore symbol constructor.
+        /// </summary>
+        /// <param name="original">Symbol original string.</param>
+        /// <param name="name">Symbol inner string.</param>
+        public Symbol(string original, string name)
+        {
+            this.original = original;
+            this.name = name;
+        }
+
+        /// <summary>
         /// Set symbol.
         /// </summary>
         /// <param name="symbol">Symbol text from source.</param>
@@ -67,6 +81,15 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             original = symbol;
             name = Parser.GetInnerSymbolName(symbol);
+        }
+
+        /// <summary>
+        /// Clone this symbol.
+        /// </summary>
+        /// <returns>New Symbol with same details as this one.</returns>
+        public Symbol Clone()
+        {
+            return new Symbol(original, name);
         }
 
         #region IComparable

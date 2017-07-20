@@ -210,6 +210,15 @@ namespace DaggerfallWorkshop.Game.Questing
             hasPlayerClicked = false;
         }
 
+        public virtual object GetSaveData()
+        {
+            return string.Empty;
+        }
+
+        public virtual void RestoreSaveData(object dataIn)
+        {
+        }
+
         #region Private Methods
 
         void SetHidden(bool value)

@@ -412,6 +412,7 @@ namespace DaggerfallWorkshop
     /// Describes a single quest marker for NPC, item, etc.
     /// These markers are used to place quest resources like Person, Foe, Item, etc.
     /// </summary>
+    [Serializable]
     public struct QuestMarker
     {
         public ulong questUID;                      // Quest who owns this marker

@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -254,6 +255,48 @@ namespace DaggerfallWorkshop.Game.Questing
             // TODO: Create a random humanoid foe name
             // Will get to this testing quests that assign player to defeat and return a class-based NPC Foe
             // Have more problems to solve before getting to name
+        }
+
+        #endregion
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public int spawnCount;
+            public MobileTypes foeType;
+            public bool injuredTrigger;
+            public int killCount;
+            public string displayName;
+            public string typeName;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.spawnCount = spawnCount;
+            data.foeType = foeType;
+            data.injuredTrigger = injuredTrigger;
+            data.killCount = killCount;
+            data.displayName = displayName;
+            data.typeName = typeName;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            spawnCount = data.spawnCount;
+            foeType = data.foeType;
+            injuredTrigger = data.injuredTrigger;
+            killCount = data.killCount;
+            displayName = data.displayName;
+            typeName = data.typeName;
         }
 
         #endregion

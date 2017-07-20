@@ -13,6 +13,8 @@ using System;
 using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Serialization;
+using FullSerializer;
 
 /*Example patterns:
  * 
@@ -230,6 +232,33 @@ namespace DaggerfallWorkshop.Game.Questing
             result.LinkQuestItem(ParentQuest.UID, Symbol);
 
             return result;
+        }
+
+        #endregion
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public ItemData_v1 item;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.item = item.GetSaveData();
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            item = new DaggerfallUnityItem(data.item);
         }
 
         #endregion

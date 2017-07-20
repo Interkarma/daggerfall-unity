@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallConnect.Arena2;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -810,6 +811,70 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception("GetRandomFactionOfType() found 0 matches.");
 
             return factions[UnityEngine.Random.Range(0, factions.Length)].id;
+        }
+
+        #endregion
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public Races race;
+            public Genders npcGender;
+            public int faceIndex;
+            public int nameSeed;
+            public bool isQuestor;
+            public bool isIndividualNPC;
+            public bool isIndividualAtHome;
+            public string displayName;
+            public string godName;
+            public string homeTownName;
+            public int factionID;
+            public StaticNPC.NPCData questorData;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.race = race;
+            data.npcGender = npcGender;
+            data.faceIndex = faceIndex;
+            data.nameSeed = nameSeed;
+            data.isQuestor = isQuestor;
+            data.isIndividualNPC = isIndividualNPC;
+            data.isIndividualAtHome = isIndividualAtHome;
+            data.displayName = displayName;
+            data.godName = godName;
+            data.homeTownName = homeTownName;
+            data.factionID = factionData.id;
+            data.questorData = questorData;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            FactionFile.FactionData dsfactionData;
+            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(data.factionID, out dsfactionData))
+                throw new Exception("Could not deserialize Person resource FactionID to FactionData");
+
+            race = data.race;
+            npcGender = data.npcGender;
+            faceIndex = data.faceIndex;
+            nameSeed = data.nameSeed;
+            isQuestor = data.isQuestor;
+            isIndividualNPC = data.isIndividualNPC;
+            isIndividualAtHome = data.isIndividualAtHome;
+            displayName = data.displayName;
+            godName = data.godName;
+            homeTownName = data.homeTownName;
+            factionData = dsfactionData;
+            questorData = data.questorData;
         }
 
         #endregion

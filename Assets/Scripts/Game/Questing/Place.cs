@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -908,7 +909,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             QuestMarker questMarker = new QuestMarker();
             questMarker.questUID = ParentQuest.UID;
-            questMarker.placeSymbol = Symbol;
+            questMarker.placeSymbol = Symbol.Clone();
             questMarker.markerType = markerType;
             questMarker.flatPosition = flatPosition;
             questMarker.dungeonX = dungeonX;
@@ -1115,6 +1116,48 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        #endregion
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public Scopes scope;
+            public string name;
+            public int p1;
+            public int p2;
+            public int p3;
+            public SiteDetails siteDetails;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.scope = scope;
+            data.name = name;
+            data.p1 = p1;
+            data.p2 = p2;
+            data.p3 = p3;
+            data.siteDetails = siteDetails;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            scope = data.scope;
+            name = data.name;
+            p1 = data.p1;
+            p2 = data.p2;
+            p3 = data.p3;
+            siteDetails = data.siteDetails;
         }
 
         #endregion

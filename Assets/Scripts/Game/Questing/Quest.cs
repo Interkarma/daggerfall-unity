@@ -479,10 +479,24 @@ namespace DaggerfallWorkshop.Game.Questing
             public DaggerfallDateTime questStartTime;
             public bool questTombstoned;
             public DaggerfallDateTime questTombstoneTime;
+            public ResourceSaveData_v1[] resources;
+
             //Dictionary<int, Message> messages;
             //Dictionary<int, LogEntry> activeLogMessages;
-            //Dictionary<string, QuestResource> resources;
             //Dictionary<string, Task> tasks;
+        }
+
+        [fsObject("v1")]
+        public struct ResourceSaveData_v1
+        {
+            public Type type;
+            public Symbol symbol;
+            public int infoMessageID;
+            public int usedMessageID;
+            public int rumorsMessageID;
+            public bool hasPlayerClicked;
+            public bool isHidden;
+            public object resourceSpecific;
         }
 
         public QuestSaveData_v1 GetSaveData()
@@ -495,6 +509,21 @@ namespace DaggerfallWorkshop.Game.Questing
             data.questStartTime = questStartTime;
             data.questTombstoned = questTombstoned;
             data.questTombstoneTime = questTombstoneTime;
+
+            List<ResourceSaveData_v1> resourceSaveDataList = new List<ResourceSaveData_v1>();
+            foreach(QuestResource resource in resources.Values)
+            {
+                ResourceSaveData_v1 resourceData = new ResourceSaveData_v1();
+                resourceData.type = resource.GetType();
+                resourceData.symbol = resource.Symbol;
+                resourceData.infoMessageID = resource.InfoMessageID;
+                resourceData.usedMessageID = resource.UsedMessageID;
+                resourceData.hasPlayerClicked = resource.HasPlayerClicked;
+                resourceData.isHidden = resource.IsHidden;
+                resourceData.resourceSpecific = resource.GetSaveData();
+                resourceSaveDataList.Add(resourceData);
+            }
+            data.resources = resourceSaveDataList.ToArray();
 
             return data;
         }
