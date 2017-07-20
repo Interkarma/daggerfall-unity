@@ -14,6 +14,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using System;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -77,5 +78,28 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Close prompt
             sender.CloseWindow();
         }
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+        }
+
+        #endregion
     }
 }

@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -57,22 +58,37 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             return action;
         }
 
-        public override object GetSaveData()
-        {
-            return this.stepID;
-        }
-
-        public override void RestoreSaveData(object dataIn)
-        {
-            if (dataIn == null)
-                return;
-            this.stepID = (int)dataIn;
-        }
-
         public override void Update(Task caller)
         {
             ParentQuest.RemoveLogStep(stepID);
             SetComplete();
         }
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public int stepID;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.stepID = stepID;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            stepID = data.stepID;
+        }
+
+        #endregion
     }
 }

@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com)
-// Contributors:    
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -64,28 +65,40 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             return action;
         }
 
-        public override object GetSaveData()
-        {
-            return new int[]
-            {
-                this.messageID,
-                this.stepID
-            };
-        }
-
-        public override void RestoreSaveData(object dataIn)
-        {
-            if (dataIn == null)
-                return;
-            var data = (int[])dataIn;
-            this.messageID = (int)data[0];
-            this.stepID = (int)data[1];
-        }
-
         public override void Update(Task caller)
         {
             ParentQuest.AddLogStep(stepID, messageID);
             SetComplete();
         }
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public int messageID;
+            public int stepID;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.messageID = messageID;
+            data.stepID = stepID;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            messageID = data.messageID;
+            stepID = data.stepID;
+        }
+
+        #endregion
     }
 }

@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -71,18 +72,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         }
 
-        public override object GetSaveData()
-        {
-            return taskSymbols;
-        }
-
-        public override void RestoreSaveData(object dataIn)
-        {
-            if (dataIn == null)
-                return;
-            taskSymbols = (Symbol[])dataIn;
-        }
-
         public override void Update(Task caller)
         {
             Symbol selected = new Symbol();
@@ -107,5 +96,32 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             SetComplete();
         }
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public Symbol[] taskSymbols;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.taskSymbols = taskSymbols;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            taskSymbols = data.taskSymbols;
+        }
+
+        #endregion
     }
 }

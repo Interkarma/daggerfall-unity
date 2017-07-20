@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -60,6 +61,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// This allows text to be linked/unlinked into log without duplication of text.
         /// Actual quest UI can decide how to present these messages to user.
         /// </summary>
+        [Serializable]
         public struct LogEntry
         {
             public int stepID;
@@ -69,6 +71,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Basic information about a single task
         /// </summary>
+        [Serializable]
         public struct TaskState
         {
             public Task.TaskType type;
@@ -464,7 +467,49 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #endregion
 
-        #region Private Methods
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct QuestSaveData_v1
+        {
+            public ulong uid;
+            public bool questComplete;
+            public string questName;
+            public string displayName;
+            public DaggerfallDateTime questStartTime;
+            public bool questTombstoned;
+            public DaggerfallDateTime questTombstoneTime;
+            //Dictionary<int, Message> messages;
+            //Dictionary<int, LogEntry> activeLogMessages;
+            //Dictionary<string, QuestResource> resources;
+            //Dictionary<string, Task> tasks;
+        }
+
+        public QuestSaveData_v1 GetSaveData()
+        {
+            QuestSaveData_v1 data = new QuestSaveData_v1();
+            data.uid = uid;
+            data.questComplete = questComplete;
+            data.questName = questName;
+            data.displayName = displayName;
+            data.questStartTime = questStartTime;
+            data.questTombstoned = questTombstoned;
+            data.questTombstoneTime = questTombstoneTime;
+
+            return data;
+        }
+
+        public void RestoreSaveData(QuestSaveData_v1 data)
+        {
+            uid = data.uid;
+            questComplete = data.questComplete;
+            questName = data.questName;
+            displayName = data.displayName;
+            questStartTime = data.questStartTime;
+            questTombstoned = data.questTombstoned;
+            questTombstoneTime = data.questTombstoneTime;
+        }
+
         #endregion
     }
 }

@@ -15,10 +15,12 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using FullSerializer;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing.Actions;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -1111,6 +1113,36 @@ namespace DaggerfallWorkshop.Game.Questing
                     Destroy(gameObject);
                 }
             }
+        }
+
+        #endregion
+
+        #region Serialization
+
+        [fsObject("v1")]
+        public class QuestMachineData_v1
+        {
+            public Quest.QuestSaveData_v1[] quests;
+        }
+
+        public QuestMachineData_v1 GetSaveData()
+        {
+            QuestMachineData_v1 data = new QuestMachineData_v1();
+
+            // Get quest save data
+            List<Quest.QuestSaveData_v1> questSaveDataList = new List<Quest.QuestSaveData_v1>();
+            foreach(Quest quest in quests.Values)
+            {
+                questSaveDataList.Add(quest.GetSaveData());
+            }
+            data.quests = questSaveDataList.ToArray();
+
+            return data;
+        }
+
+        public void RestoreSaveData(QuestMachineData_v1 data)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

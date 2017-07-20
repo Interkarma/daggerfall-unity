@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         const string saveDataFilename = "SaveData.txt";
         const string factionDataFilename = "FactionData.txt";
         const string containerDataFilename = "ContainerData.txt";
+        const string questDataFilename = "QuestData.txt";
         const string automapDataFilename = "AutomapData.txt";
         const string screenshotFilename = "Screenshot.jpg";
         const string notReadyExceptionText = "SaveLoad not ready.";
@@ -1052,10 +1053,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Build faction data
             FactionData_v2 factionData = GetPlayerFactionData();
 
+            // Build quest data
+            QuestMachine.QuestMachineData_v1 questData = QuestMachine.Instance.GetSaveData();
+
             // Serialize save data to JSON strings
             string saveDataJson = Serialize(saveData.GetType(), saveData);
             string saveInfoJson = Serialize(saveInfo.GetType(), saveInfo);
             string factionDataJson = Serialize(factionData.GetType(), factionData);
+            string questDataJson = Serialize(questData.GetType(), questData);
 
             // Create screenshot for save
             // TODO: Hide UI for screenshot or use a different method
@@ -1068,6 +1073,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             WriteSaveFile(Path.Combine(path, saveDataFilename), saveDataJson);
             WriteSaveFile(Path.Combine(path, saveInfoFilename), saveInfoJson);
             WriteSaveFile(Path.Combine(path, factionDataFilename), factionDataJson);
+            WriteSaveFile(Path.Combine(path, questDataFilename), questDataJson);
 
             // Save automap state
             try

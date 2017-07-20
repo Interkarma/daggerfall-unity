@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Utility;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -330,6 +331,45 @@ namespace DaggerfallWorkshop.Game.Questing
             // Any foes pending placement to loose objects container are now invalid
             pendingFoeGameObjects = null;
             spawnInProgress = false;
+        }
+
+        #endregion
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public Symbol foeSymbol;
+            public uint spawnInterval;
+            public int spawnMaxTimes;
+            public int spawnChance;
+            public int spawnCounter;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.foeSymbol = foeSymbol;
+            data.spawnInterval = spawnInterval;
+            data.spawnMaxTimes = spawnMaxTimes;
+            data.spawnChance = spawnChance;
+            data.spawnCounter = spawnCounter;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            foeSymbol = data.foeSymbol;
+            spawnInterval = data.spawnInterval;
+            spawnMaxTimes = data.spawnMaxTimes;
+            spawnChance = data.spawnChance;
+            spawnCounter = data.spawnCounter;
         }
 
         #endregion

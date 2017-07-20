@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com)
-// Contributors:    
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
@@ -13,7 +13,6 @@ using System.Collections;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using FullSerializer;
-
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
@@ -98,39 +97,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         }
 
         /// <summary>
-        /// Gets save data for action serialization.
-        /// </summary>
-        /// <returns>Data packet with action state to save.</returns>
-        public override object GetSaveData()
-        {
-            var saveData            = new MySaveData();
-            saveData.soundName      = this.soundName;
-            saveData.soundIndex     = this.soundIndex;
-            saveData.interval       = this.interval;
-            saveData.lastTimePlayed = this.lastTimePlayed;
-
-            return saveData;
-
-        }
-
-        /// <summary>
-        /// Restores deserialized state back to action.
-        /// </summary>
-        /// <param name="dataIn">Data packet with action state to load.</param>
-        public override void RestoreSaveData(object dataIn)
-        {
-            if(dataIn == null)
-                return;
-
-            MySaveData saveData = (MySaveData)dataIn;
-            this.soundName      = saveData.soundName;
-            this.soundIndex     = saveData.soundIndex;
-            this.interval       = saveData.interval;
-            this.lastTimePlayed = saveData.lastTimePlayed;
-        }
-
-
-        /// <summary>
         /// Update is called by owning task once per frame as part of quest machine tick.
         /// Update is only called by task if active conditions are met.
         /// Perform any updates required here.
@@ -152,5 +118,43 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Unlike message posts, the play sound command performs until task is cleared
         }
 
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public string soundName;
+            public int soundIndex;
+            public uint interval;
+            public int unknown;
+            public ulong lastTimePlayed;
+        }
+
+        public override object GetSaveData()
+        {
+            SaveData_v1 data = new SaveData_v1();
+            data.soundName = soundName;
+            data.soundIndex = soundIndex;
+            data.interval = interval;
+            data.unknown = unknown;
+            data.lastTimePlayed = lastTimePlayed;
+
+            return data;
+        }
+
+        public override void RestoreSaveData(object dataIn)
+        {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            soundName = data.soundName;
+            soundIndex = data.soundIndex;
+            interval = data.interval;
+            unknown = data.unknown;
+            lastTimePlayed = data.lastTimePlayed;
+        }
+
+        #endregion
     }
 }
