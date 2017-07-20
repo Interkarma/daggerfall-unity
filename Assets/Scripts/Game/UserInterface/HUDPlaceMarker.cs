@@ -71,6 +71,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public void ClearSiteTargets()
+        {
+            for (int i = 0; i < siteTargets.Count; i++)
+            {
+                Components.Remove(siteTargets[i].markerLabel);
+                siteTargets[i].markerLabel.Dispose();
+            }
+            siteTargets.Clear();
+        }
+
         #region Private Methods
 
         /// <summary>
@@ -147,16 +157,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 ClearSiteTargets();
                 return;
             }
-        }
-
-        void ClearSiteTargets()
-        {
-            for (int i = 0; i < siteTargets.Count; i++)
-            {
-                Components.Remove(siteTargets[i].markerLabel);
-                siteTargets[i].markerLabel.Dispose();
-            }
-            siteTargets.Clear();
         }
 
         #endregion

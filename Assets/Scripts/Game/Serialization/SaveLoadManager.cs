@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FullSerializer;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Serialization
@@ -1097,6 +1098,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             GameManager.Instance.PlayerDeath.ClearDeathAnimation();
             GameManager.Instance.PlayerMotor.CancelMovement = true;
             InputManager.Instance.ClearAllActions();
+            QuestMachine.Instance.ClearState();
 
             // Read save data from files
             string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));

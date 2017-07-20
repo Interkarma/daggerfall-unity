@@ -322,6 +322,22 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Public Methods
 
         /// <summary>
+        /// Resets operating state - clears all quests, sitelinks, debuggers, etc.
+        /// Quests will not be disposed or tombstoned they will just be dropped for garbage collector.
+        /// </summary>
+        public void ClearState()
+        {
+            // Clear state
+            quests.Clear();
+            siteLinks.Clear();
+            questsToTombstone.Clear();
+            lastNPCClicked = null;
+
+            // Clear debugger state
+            DaggerfallUI.Instance.DaggerfallHUD.PlaceMarker.ClearSiteTargets();
+        }
+
+        /// <summary>
         /// Register a new action in the quest engine.
         /// </summary>
         /// <param name="actionTemplate">IQuestAction template.</param>

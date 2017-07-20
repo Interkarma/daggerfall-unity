@@ -72,6 +72,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return escortingFaces; }
         }
 
+        public HUDPlaceMarker PlaceMarker
+        {
+            get { return placeMarker; }
+        }
+
         public HUDQuestDebugger QuestDebugger
         {
             get { return questDebugger; }
@@ -86,8 +91,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
             ShowVitals = true;
             ShowCompass = true;
-            ShowLocalQuestPlaces = true;
             ShowEscortingFaces = true;
+            ShowLocalQuestPlaces = true;
             ShowQuestDebugger = true;
 
             // Get references

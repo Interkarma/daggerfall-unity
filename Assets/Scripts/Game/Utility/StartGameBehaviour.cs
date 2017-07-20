@@ -256,6 +256,7 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
+            QuestMachine.Instance.ClearState();
             playerEnterExit.DisableAllParents();
             ResetWeaponManager();
             NoWorld = true;
@@ -266,6 +267,7 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
+            QuestMachine.Instance.ClearState();
             playerEnterExit.DisableAllParents();
             ResetWeaponManager();
 
@@ -292,6 +294,7 @@ namespace DaggerfallWorkshop.Game.Utility
             StartMethod = StartMethods.TitleMenu;
 
             DaggerfallUI.Instance.PopToHUD();
+            QuestMachine.Instance.ClearState();
             playerEnterExit.DisableAllParents();
             ResetWeaponManager();
 
@@ -310,6 +313,7 @@ namespace DaggerfallWorkshop.Game.Utility
         void StartNewCharacter()
         {
             DaggerfallUnity.ResetUID();
+            QuestMachine.Instance.ClearState();
             RaiseOnNewGameEvent();
             DaggerfallUI.Instance.PopToHUD();
             ResetWeaponManager();
@@ -412,6 +416,7 @@ namespace DaggerfallWorkshop.Game.Utility
         void StartFromClassicSave()
         {
             DaggerfallUnity.ResetUID();
+            QuestMachine.Instance.ClearState();
             RaiseOnNewGameEvent();
             ResetWeaponManager();
 
