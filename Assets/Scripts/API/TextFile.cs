@@ -124,6 +124,7 @@ namespace DaggerfallConnect.Arena2
         /// Stores a single text or formatting token.
         /// This makes it possible remix localized strings with original formatting.
         /// </summary>
+        [Serializable]
         public struct Token
         {
             public Formatting formatting;

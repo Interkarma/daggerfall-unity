@@ -112,16 +112,12 @@ namespace DaggerfallWorkshop.Game.Questing
         bool alwaysOnTriggerCondition = false;
         string debugSource;
 
-        public bool IsComplete { get { return complete; } }
-        public bool IsTriggerCondition { get { return triggerCondition; } protected set { triggerCondition = value; } }
-        public bool IsAlwaysOnTriggerCondition {  get { return alwaysOnTriggerCondition; } protected set { alwaysOnTriggerCondition = value; } }
+        public bool IsComplete { get { return complete; } set { complete = value; } }
+        public bool IsTriggerCondition { get { return triggerCondition; } set { triggerCondition = value; } }
+        public bool IsAlwaysOnTriggerCondition {  get { return alwaysOnTriggerCondition; } set { alwaysOnTriggerCondition = value; } }
+        public string DebugSource { get { return debugSource; } set { debugSource = value; } }
 
         public abstract string Pattern { get; }
-
-        public string DebugSource
-        {
-            get { return debugSource; }
-        }
 
         public ActionTemplate(Quest parentQuest)
             : base(parentQuest)
@@ -151,15 +147,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public virtual bool CheckTrigger(Task caller)
         {
             return false;
-        }
-
-        public virtual object GetSaveData()
-        {
-            return string.Empty;
-        }
-
-        public virtual void RestoreSaveData(object dataIn)
-        {
         }
 
         public virtual void SetComplete()

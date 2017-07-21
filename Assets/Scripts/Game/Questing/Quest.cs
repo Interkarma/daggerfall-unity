@@ -479,11 +479,10 @@ namespace DaggerfallWorkshop.Game.Questing
             public DaggerfallDateTime questStartTime;
             public bool questTombstoned;
             public DaggerfallDateTime questTombstoneTime;
+            public LogEntry[] activeLogMessages;
+            public Message.MessageSaveData_v1[] messages;
             public ResourceSaveData_v1[] resources;
-
-            //Dictionary<int, Message> messages;
-            //Dictionary<int, LogEntry> activeLogMessages;
-            //Dictionary<string, Task> tasks;
+            public Task.TaskSaveData_v1[] tasks;
         }
 
         [fsObject("v1")]
@@ -510,6 +509,20 @@ namespace DaggerfallWorkshop.Game.Questing
             data.questTombstoned = questTombstoned;
             data.questTombstoneTime = questTombstoneTime;
 
+            List<LogEntry> activeLogMessagesSaveDataList = new List<LogEntry>();
+            foreach(LogEntry logEntry in activeLogMessages.Values)
+            {
+                activeLogMessagesSaveDataList.Add(logEntry);
+            }
+            data.activeLogMessages = activeLogMessagesSaveDataList.ToArray();
+
+            List<Message.MessageSaveData_v1> messageSaveDataList = new List<Message.MessageSaveData_v1>();
+            foreach(Message message in messages.Values)
+            {
+                messageSaveDataList.Add(message.GetSaveData());
+            }
+            data.messages = messageSaveDataList.ToArray();
+
             List<ResourceSaveData_v1> resourceSaveDataList = new List<ResourceSaveData_v1>();
             foreach(QuestResource resource in resources.Values)
             {
@@ -524,6 +537,14 @@ namespace DaggerfallWorkshop.Game.Questing
                 resourceSaveDataList.Add(resourceData);
             }
             data.resources = resourceSaveDataList.ToArray();
+
+            List<Task.TaskSaveData_v1> taskSaveDataList = new List<Task.TaskSaveData_v1>();
+            foreach(Task task in tasks.Values)
+            {
+                Task.TaskSaveData_v1 taskData = task.GetSaveData();
+                taskSaveDataList.Add(taskData);
+            }
+            data.tasks = taskSaveDataList.ToArray();
 
             return data;
         }

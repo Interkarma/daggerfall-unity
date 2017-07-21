@@ -1122,6 +1122,7 @@ namespace DaggerfallWorkshop.Game.Questing
         [fsObject("v1")]
         public class QuestMachineData_v1
         {
+            public SiteLink[] siteLinks;
             public Quest.QuestSaveData_v1[] quests;
         }
 
@@ -1129,7 +1130,8 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             QuestMachineData_v1 data = new QuestMachineData_v1();
 
-            // Get quest save data
+            data.siteLinks = siteLinks.ToArray();
+
             List<Quest.QuestSaveData_v1> questSaveDataList = new List<Quest.QuestSaveData_v1>();
             foreach(Quest quest in quests.Values)
             {

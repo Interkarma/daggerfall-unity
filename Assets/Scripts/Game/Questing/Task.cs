@@ -14,6 +14,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -395,6 +396,69 @@ namespace DaggerfallWorkshop.Game.Questing
                     action.RearmAction();
                 }
             }
+        }
+
+        #endregion
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct TaskSaveData_v1
+        {
+            public Symbol symbol;
+            public Symbol targetSymbol;
+            public bool triggered;
+            public bool prevTriggered;
+            public TaskType type;
+            public string globalVarName;
+            public int globalVarLink;
+            public bool hasTriggerConditions;
+            public ActionSaveData_v1[] actions;
+        }
+
+        [fsObject("v1")]
+        public struct ActionSaveData_v1
+        {
+            public Type type;
+            public bool complete;
+            public bool triggerCondition;
+            public bool alwaysOnTriggerCondition;
+            public string debugSource;
+            public object actionSpecific;
+        }
+
+        public TaskSaveData_v1 GetSaveData()
+        {
+            TaskSaveData_v1 data = new TaskSaveData_v1();
+            data.symbol = symbol;
+            data.targetSymbol = targetSymbol;
+            data.triggered = triggered;
+            data.prevTriggered = prevTriggered;
+            data.type = type;
+            data.globalVarName = globalVarName;
+            data.globalVarLink = globalVarLink;
+            data.hasTriggerConditions = hasTriggerConditions;
+
+            List<ActionSaveData_v1> actionSaveDataList = new List<ActionSaveData_v1>();
+            foreach(ActionTemplate action in actions)
+            {
+                ActionSaveData_v1 actionData = new ActionSaveData_v1();
+                actionData.type = action.GetType();
+                actionData.complete = action.IsComplete;
+                actionData.triggerCondition = action.IsTriggerCondition;
+                actionData.alwaysOnTriggerCondition = action.IsAlwaysOnTriggerCondition;
+                actionData.debugSource = action.DebugSource;
+                actionData.actionSpecific = action.GetSaveData();
+                actionSaveDataList.Add(actionData);
+            }
+            data.actions = actionSaveDataList.ToArray();
+
+            return data;
+        }
+
+        public void RestoreSaveData(TaskSaveData_v1 dataIn)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

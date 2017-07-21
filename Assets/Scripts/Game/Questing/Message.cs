@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Arena2;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -163,6 +164,87 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return tokens;
+        }
+
+        #endregion
+
+        #region Seralization
+
+        [fsObject("v1")]
+        public struct MessageSaveData_v1
+        {
+            public int id;
+            public List<MessageVariantSaveData_v1> variants;
+        }
+
+        [fsObject("v1")]
+        public struct MessageVariantSaveData_v1
+        {
+            public List<string> lines;
+        }
+
+        public MessageSaveData_v1 GetSaveData()
+        {
+            const string ce = "<ce>";
+
+            MessageSaveData_v1 data = new MessageSaveData_v1();
+            data.id = id;
+            data.variants = new List<MessageVariantSaveData_v1>();
+
+            foreach (MessageVariant variant in variants)
+            {
+                MessageVariantSaveData_v1 variantSaveData = new MessageVariantSaveData_v1();
+                variantSaveData.lines = new List<string>();
+
+                bool foundText = false;
+                string currentLine = string.Empty;
+                foreach (TextFile.Token token in variant.tokens)
+                {
+                    switch (token.formatting)
+                    {
+                        case TextFile.Formatting.Text:
+                            // Found another text token without a formatting line break - need to break to a new line
+                            if (foundText)
+                            {
+                                variantSaveData.lines.Add(currentLine);
+                                currentLine = string.Empty;
+                                foundText = false;
+                                continue;
+                            }
+                            // Just add the text
+                            currentLine += token.text;
+                            foundText = true;
+                            break;
+
+                        case TextFile.Formatting.JustifyCenter:
+                            // Prepend formatting token and start new line
+                            currentLine = ce + currentLine;
+                            variantSaveData.lines.Add(currentLine);
+                            currentLine = string.Empty;
+                            foundText = false;
+                            break;
+
+                        case TextFile.Formatting.Nothing:
+                            // Probably last token in stream - add line and continue
+                            variantSaveData.lines.Add(currentLine);
+                            currentLine = string.Empty;
+                            foundText = false;
+                            continue;
+
+                        default:
+                            throw new System.Exception(string.Format("Message.GetSaveData() encountered unexpected formatting token {0}", token.formatting));
+                    }
+                }
+
+                data.variants.Add(variantSaveData);
+            }
+
+            return data;
+        }
+
+        public void RestoreSaveData(MessageSaveData_v1 dataIn)
+        {
+            throw new System.NotImplementedException();
         }
 
         #endregion
