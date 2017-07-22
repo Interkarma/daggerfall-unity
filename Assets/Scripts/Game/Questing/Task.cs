@@ -361,6 +361,9 @@ namespace DaggerfallWorkshop.Game.Questing
                     IQuestAction action = actionTemplate.CreateNew(lines[i], ParentQuest);
                     if (action != null)
                     {
+                        if (QuestMachine.Instance.IsDebugModeEnabled)
+                            action.DebugSource = lines[i].Trim();
+
                         actions.Add(action);
                         if (action.IsTriggerCondition)
                             hasTriggerConditions = true;

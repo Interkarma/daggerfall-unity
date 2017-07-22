@@ -76,8 +76,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         /// <returns>New quest action from this template or null if not created.</returns>
         public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
-            base.CreateNew(source, parentQuest);
-
             // Source must match pattern
             Match match = Test(source);
             if (!match.Success)

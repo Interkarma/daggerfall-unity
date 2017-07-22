@@ -175,6 +175,16 @@ namespace DaggerfallWorkshop.Game.Questing
             set { SetLastNPCClicked(value); }
         }
 
+        /// <summary>
+        /// Returns true if debug mode enabled.
+        /// This causes original quest source line to be stored and serialized with quests.
+        /// Always enabled at this stage of development.
+        /// </summary>
+        public bool IsDebugModeEnabled
+        {
+            get { return true; }
+        }
+
         #endregion
 
         #region Enums

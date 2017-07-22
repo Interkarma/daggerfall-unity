@@ -44,6 +44,11 @@ namespace DaggerfallWorkshop.Game.Questing
         bool IsAlwaysOnTriggerCondition { get; }
 
         /// <summary>
+        /// Gets or sets source code for debugger.
+        /// </summary>
+        string DebugSource { get; set; }
+
+        /// <summary>
         /// Helper to test if source is a match for Pattern.
         /// </summary>
         Match Test(string source);
@@ -135,8 +140,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public virtual IQuestAction CreateNew(string source, Quest parentQuest)
         {
-            debugSource = source;
-
             return this;
         }
 

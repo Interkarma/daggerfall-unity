@@ -58,8 +58,6 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
         {
-            base.CreateNew(source, parentQuest);
-
             // Full pattern to get chain of evaluations
             string fullPattern = @"when not (?<taskName>[a-zA-Z0-9_.]+)|when (?<taskName>[a-zA-Z0-9_.]+)|and not (?<taskName>[a-zA-Z0-9_.]+)|and (?<taskName>[a-zA-Z0-9_.]+)|or not (?<taskName>[a-zA-Z0-9_.]+)|or (?<taskName>[a-zA-Z0-9_.]+)";
 
