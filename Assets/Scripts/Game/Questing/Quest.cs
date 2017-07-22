@@ -521,7 +521,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             data.resources = resourceSaveDataList.ToArray();
 
-            // Save taks
+            // Save tasks
             List<Task.TaskSaveData_v1> taskSaveDataList = new List<Task.TaskSaveData_v1>();
             foreach(Task task in tasks.Values)
             {
@@ -573,7 +573,14 @@ namespace DaggerfallWorkshop.Game.Questing
                 resources.Add(resource.Symbol.Name, resource);
             }
 
-            // TODO: Restore tasks
+            // Restore tasks
+            tasks.Clear();
+            foreach(Task.TaskSaveData_v1 taskData in data.tasks)
+            {
+                Task task = new Task(this);
+                task.RestoreSaveData(taskData);
+                tasks.Add(task.Symbol.Name, task);
+            }
         }
 
         #endregion

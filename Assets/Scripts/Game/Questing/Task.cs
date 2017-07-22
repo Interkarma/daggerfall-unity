@@ -443,7 +443,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.globalVarLink = globalVarLink;
             data.hasTriggerConditions = hasTriggerConditions;
 
-            // Save action specific data
+            // Save actions
             List<ActionSaveData_v1> actionSaveDataList = new List<ActionSaveData_v1>();
             foreach(ActionTemplate action in actions)
             {
@@ -461,9 +461,19 @@ namespace DaggerfallWorkshop.Game.Questing
             return data;
         }
 
-        public void RestoreSaveData(TaskSaveData_v1 dataIn)
+        public void RestoreSaveData(TaskSaveData_v1 data)
         {
-            throw new NotImplementedException();
+            // Restore base task data
+            symbol = data.symbol;
+            targetSymbol = data.targetSymbol;
+            triggered = data.triggered;
+            prevTriggered = data.prevTriggered;
+            type = data.type;
+            globalVarName = data.globalVarName;
+            globalVarLink = data.globalVarLink;
+            hasTriggerConditions = data.hasTriggerConditions;
+
+            // TODO: Restore actions
         }
 
         #endregion
