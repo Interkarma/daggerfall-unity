@@ -245,7 +245,7 @@ namespace DaggerfallConnect.Save
                     case RecordTypes.Container:
                         record = new ContainerRecord(reader, length);
                         break;
-                    //case RecordTypes.UnknownTownLink:
+                    //case RecordTypes.Door:
                     //    record = new SaveTreeBaseRecord(reader, length);    // Read then skip these records for now
                     //    continue;
                     //case RecordTypes.DungeonData:
@@ -340,9 +340,9 @@ namespace DaggerfallConnect.Save
         public Int16 Yaw;                       // Yaw of object
         public Int16 Roll;                      // Roll of object
         public RecordPosition Position;         // Position of the object in world (if applicable)
-        public UInt16 Picture1;                 // chunktcl's description: 3d view picture
+        public UInt16 SpriteIndex;              // chunktcl's description: 3d view picture. Called "sprite index" by Fixsave.
         public UInt16 Picture2;                 // chunktcl's description: Inventory picture
-        public UInt32 RecordID;                 // Unique ID of this record
+        public UInt32 RecordID;                 // Unique ID of this record. Called "mapID" and "map identifier" by Fixsave.
         public Byte QuestID;                    // Associated quest ID of this record (0 if no quest)
         public UInt32 ParentRecordID;           // ID of parent record
         public UInt32 ItemObject;               // chunktcl's description: ItemObject. Active spell/spell book/permanent treasure container
@@ -374,36 +374,36 @@ namespace DaggerfallConnect.Save
         Character = 0x03,
         CharacterPositionRecord = 0x04,             // This record, not the position record in the header, determines where player is when game loads.
         CharacterCamera = 0x05,                     // Guessing that this is the player camera. Has the same position as CharacterPositionRecord, and changing the roll value with a hex editor will cause the screen to be rotated on game load.
-        Movable3dObject = 0x06,                     // Levers, switches, platforms, etc.
+        Interactable3dObject = 0x06,                // Levers, switches, moving platforms, etc.
         DungeonInformation = 0x07,                  // Length MUST be multiplied by 39 (0x27)
         NPCFlat = 0x08,
         Spell = 0x09,
         GuildMembership = 0x0a,
         QBNData = 0x0e,
-        QBNDataParent1 = 0x10,                      // chunktcl calls this "Quest Holder"
-        Monster = 0x12,
+        QuestTree = 0x10,                           // Fixsave calls this "quest tree".
+        EnemyMobile = 0x12,
         SpellcastingCreatureListHead = 0x16,
-        ControlSetting = 0x17,
+        UserOptions = 0x17,                         // Fixsave calls this "user options"
         LocationName1 = 0x18,                       // Possibly logbook entries. chunktcl calls this "Logbook"
         BankAccount = 0x19,
         PotionMix = 0x1f,
-        UnknownTownLink = 0x20,                     // chunktcl calls this "Door"
+        Door = 0x20,
         Treasure = 0x21,
-        Marker = 0x22,                              // Includes random and non-random spawn markers and quest markers
+        Marker = 0x22,                              // Spawn markers, quest markers, teleport markers, etc.
         UnknownItemRecord = 0x24,                   // Possibly items on store shelves
         MysteryRecord1 = 0x27,                      // Referenced but does not exist in file
         LocationName2 = 0x28,                       // Possibly for quests. chunktcl calls this "Quest site"
         LocationName3 = 0x29,                       // Possible for quests. chunktcl calls this "Quest NPC"
         MysteryRecord2 = 0x2b,                      // Referenced but does not exist in file
-        Creature2 = 0x2c,
+        Corpse = 0x2c,                              // Dead mobile
         NPC = 0x2d,
         GenericNPC = 0x2e,
         DungeonData = 0x33,                         // Huge but mostly zero filled
-        Container = 0x34,
-        Townsperson = 0x35,                         // Mobile NPCs
+        Container = 0x34,                           // Fixsave calls this "item holder"
+        NPCMobile = 0x35,                           // Mobile NPCs wandering around outside
         ItemLeftForRepair = 0x36,
         Unknown2 = 0x40,                            // All are part of a 'container'. chunktcl calls this "Visited?"
-        Unknown3 = 0x41,                            // Possibly quest information. chunktcl calls this "Qbn questor"
+        QuestNPC = 0x41,                            // Fixsave calls this "quest NPC". chunktcl calls this "Qbn questor"
     }
 
     #endregion
