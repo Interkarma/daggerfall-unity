@@ -1140,8 +1140,10 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             QuestMachineData_v1 data = new QuestMachineData_v1();
 
+            // Save SiteLinks
             data.siteLinks = siteLinks.ToArray();
 
+            // Save Questss
             List<Quest.QuestSaveData_v1> questSaveDataList = new List<Quest.QuestSaveData_v1>();
             foreach(Quest quest in quests.Values)
             {
@@ -1154,7 +1156,16 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public void RestoreSaveData(QuestMachineData_v1 data)
         {
-            throw new NotImplementedException();
+            // Restore SiteLinks
+            siteLinks = new List<SiteLink>(data.siteLinks);
+
+            // Restore Quests
+            foreach(Quest.QuestSaveData_v1 questData in data.quests)
+            {
+                Quest quest = new Quest();
+                quest.RestoreSaveData(questData);
+                quests.Add(quest.UID, quest);
+            }
         }
 
         #endregion

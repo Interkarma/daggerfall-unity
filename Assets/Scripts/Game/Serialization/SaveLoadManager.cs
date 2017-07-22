@@ -1109,6 +1109,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Read save data from files
             string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
             string factionDataJson = ReadSaveFile(Path.Combine(path, factionDataFilename));
+            string questDataJson = ReadSaveFile(Path.Combine(path, questDataFilename));
 
             // Deserialize JSON strings
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
@@ -1212,6 +1213,13 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore save data to objects in newly spawned world
             RestoreSaveData(saveData);
+
+            // Restore quest machine state
+            if (!string.IsNullOrEmpty(questDataJson))
+            {
+                QuestMachine.QuestMachineData_v1 questData = Deserialize(typeof(QuestMachine.QuestMachineData_v1), questDataJson) as QuestMachine.QuestMachineData_v1;
+                QuestMachine.Instance.RestoreSaveData(questData);
+            }
 
             // Load automap state
             try

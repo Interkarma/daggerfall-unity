@@ -481,25 +481,13 @@ namespace DaggerfallWorkshop.Game.Questing
             public DaggerfallDateTime questTombstoneTime;
             public LogEntry[] activeLogMessages;
             public Message.MessageSaveData_v1[] messages;
-            public ResourceSaveData_v1[] resources;
+            public QuestResource.ResourceSaveData_v1[] resources;
             public Task.TaskSaveData_v1[] tasks;
-        }
-
-        [fsObject("v1")]
-        public struct ResourceSaveData_v1
-        {
-            public Type type;
-            public Symbol symbol;
-            public int infoMessageID;
-            public int usedMessageID;
-            public int rumorsMessageID;
-            public bool hasPlayerClicked;
-            public bool isHidden;
-            public object resourceSpecific;
         }
 
         public QuestSaveData_v1 GetSaveData()
         {
+            // Save base state
             QuestSaveData_v1 data = new QuestSaveData_v1();
             data.uid = uid;
             data.questComplete = questComplete;
@@ -509,6 +497,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.questTombstoned = questTombstoned;
             data.questTombstoneTime = questTombstoneTime;
 
+            // Save active log messages
             List<LogEntry> activeLogMessagesSaveDataList = new List<LogEntry>();
             foreach(LogEntry logEntry in activeLogMessages.Values)
             {
@@ -516,6 +505,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             data.activeLogMessages = activeLogMessagesSaveDataList.ToArray();
 
+            // Save messages
             List<Message.MessageSaveData_v1> messageSaveDataList = new List<Message.MessageSaveData_v1>();
             foreach(Message message in messages.Values)
             {
@@ -523,21 +513,15 @@ namespace DaggerfallWorkshop.Game.Questing
             }
             data.messages = messageSaveDataList.ToArray();
 
-            List<ResourceSaveData_v1> resourceSaveDataList = new List<ResourceSaveData_v1>();
+            // Save resources
+            List<QuestResource.ResourceSaveData_v1> resourceSaveDataList = new List<QuestResource.ResourceSaveData_v1>();
             foreach(QuestResource resource in resources.Values)
             {
-                ResourceSaveData_v1 resourceData = new ResourceSaveData_v1();
-                resourceData.type = resource.GetType();
-                resourceData.symbol = resource.Symbol;
-                resourceData.infoMessageID = resource.InfoMessageID;
-                resourceData.usedMessageID = resource.UsedMessageID;
-                resourceData.hasPlayerClicked = resource.HasPlayerClicked;
-                resourceData.isHidden = resource.IsHidden;
-                resourceData.resourceSpecific = resource.GetSaveData();
-                resourceSaveDataList.Add(resourceData);
+                resourceSaveDataList.Add(resource.GetResourceSaveData());
             }
             data.resources = resourceSaveDataList.ToArray();
 
+            // Save taks
             List<Task.TaskSaveData_v1> taskSaveDataList = new List<Task.TaskSaveData_v1>();
             foreach(Task task in tasks.Values)
             {
@@ -551,6 +535,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public void RestoreSaveData(QuestSaveData_v1 data)
         {
+            // Restore base state
             uid = data.uid;
             questComplete = data.questComplete;
             questName = data.questName;
@@ -558,6 +543,37 @@ namespace DaggerfallWorkshop.Game.Questing
             questStartTime = data.questStartTime;
             questTombstoned = data.questTombstoned;
             questTombstoneTime = data.questTombstoneTime;
+
+            // Restore active log messages
+            activeLogMessages.Clear();
+            foreach(LogEntry logEntry in data.activeLogMessages)
+            {
+                activeLogMessages.Add(logEntry.stepID, logEntry);
+            }
+
+            // Restore messages
+            messages.Clear();
+            foreach(Message.MessageSaveData_v1 messageData in data.messages)
+            {
+                Message message = new Message(this);
+                message.RestoreSaveData(messageData);
+                messages.Add(message.ID, message);
+            }
+
+            // Restore resources
+            resources.Clear();
+            foreach(QuestResource.ResourceSaveData_v1 resourceData in data.resources)
+            {
+                // Construct deserialized QuestResource based on type
+                System.Reflection.ConstructorInfo ctor = resourceData.type.GetConstructor(new Type[] { typeof(Quest) });
+                QuestResource resource = (QuestResource)ctor.Invoke(new object[] { this });
+
+                // Restore state
+                resource.RestoreResourceSaveData(resourceData);
+                resources.Add(resource.Symbol.Name, resource);
+            }
+
+            // TODO: Restore tasks
         }
 
         #endregion

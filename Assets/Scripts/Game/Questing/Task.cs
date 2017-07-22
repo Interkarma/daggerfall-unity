@@ -432,6 +432,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public TaskSaveData_v1 GetSaveData()
         {
+            // Save base task data
             TaskSaveData_v1 data = new TaskSaveData_v1();
             data.symbol = symbol;
             data.targetSymbol = targetSymbol;
@@ -442,6 +443,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.globalVarLink = globalVarLink;
             data.hasTriggerConditions = hasTriggerConditions;
 
+            // Save action specific data
             List<ActionSaveData_v1> actionSaveDataList = new List<ActionSaveData_v1>();
             foreach(ActionTemplate action in actions)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using DaggerfallWorkshop.Utility;
 using System.Text.RegularExpressions;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -210,15 +211,62 @@ namespace DaggerfallWorkshop.Game.Questing
             hasPlayerClicked = false;
         }
 
-        #region Abstract Methods
+        #region Serialization
+
+        [fsObject("v1")]
+        public struct ResourceSaveData_v1
+        {
+            public Type type;
+            public Symbol symbol;
+            public int infoMessageID;
+            public int usedMessageID;
+            public int rumorsMessageID;
+            public bool hasPlayerClicked;
+            public bool isHidden;
+            public object resourceSpecific;
+        }
 
         /// <summary>
-        /// Request save data for serialization.
+        /// Get full resource save data including resource specific data.
+        /// </summary>
+        /// <returns></returns>
+        public ResourceSaveData_v1 GetResourceSaveData()
+        {
+            ResourceSaveData_v1 resourceData = new ResourceSaveData_v1();
+            resourceData.type = GetType();
+            resourceData.symbol = symbol;
+            resourceData.infoMessageID = infoMessageID;
+            resourceData.usedMessageID = usedMessageID;
+            resourceData.hasPlayerClicked = hasPlayerClicked;
+            resourceData.isHidden = isHidden;
+            resourceData.resourceSpecific = GetSaveData();
+
+            return resourceData;
+        }
+
+        /// <summary>
+        /// Restore full resource save data including resource specific data.
+        /// </summary>
+        /// <param name="data"></param>
+        public void RestoreResourceSaveData(ResourceSaveData_v1 data)
+        {
+            symbol = data.symbol;
+            infoMessageID = data.infoMessageID;
+            usedMessageID = data.usedMessageID;
+            hasPlayerClicked = data.hasPlayerClicked;
+            isHidden = data.isHidden;
+            RestoreSaveData(data.resourceSpecific);
+        }
+
+        /// <summary>
+        /// Request resource-specific save data only for serialization.
+        /// Must be handled by implementing class.
         /// </summary>
         public abstract object GetSaveData();
 
         /// <summary>
-        /// Restore deserialized data.
+        /// Restore resource-specific deserialized data only.
+        /// Must be handled by implementing class.
         /// </summary>
         public abstract void RestoreSaveData(object dataIn);
 

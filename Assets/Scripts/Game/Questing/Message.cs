@@ -24,6 +24,9 @@ namespace DaggerfallWorkshop.Game.Questing
     {
         #region Fields
 
+        const string centerToken = "<ce>";
+        const string splitToken = "<--->";
+
         int id;
         Quest parentQuest = null;
         List<MessageVariant> variants = new List<MessageVariant>();
@@ -89,9 +92,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <param name="source">Array of source lines in message.</param>
         public void LoadMessage(int id, string[] source)
         {
-            const string splitToken = "<--->";
-            const string centerToken = "<ce>";
-
             this.id = id;
 
             // Read through message lines and create a new variant on split token <--->
@@ -123,8 +123,6 @@ namespace DaggerfallWorkshop.Game.Questing
                     variant = CreateVariant();
                     continue;
                 }
-
-                // TODO: Resolve string variables
 
                 // Add tokens
                 AddToken(TextFile.Formatting.Text, line, variant.tokens);
@@ -174,31 +172,22 @@ namespace DaggerfallWorkshop.Game.Questing
         public struct MessageSaveData_v1
         {
             public int id;
-            public List<MessageVariantSaveData_v1> variants;
-        }
-
-        [fsObject("v1")]
-        public struct MessageVariantSaveData_v1
-        {
-            public List<string> lines;
+            public string[] lines;
         }
 
         public MessageSaveData_v1 GetSaveData()
         {
-            const string ce = "<ce>";
-
-            MessageSaveData_v1 data = new MessageSaveData_v1();
-            data.id = id;
-            data.variants = new List<MessageVariantSaveData_v1>();
-
-            foreach (MessageVariant variant in variants)
+            // Convert lines back to source format
+            List<string> lines = new List<string>();
+            for (int variant = 0; variant < variants.Count; variant++)
             {
-                MessageVariantSaveData_v1 variantSaveData = new MessageVariantSaveData_v1();
-                variantSaveData.lines = new List<string>();
+                // Add split token for subsequent variants
+                if (variant > 0)
+                    lines.Add(splitToken);
 
                 bool foundText = false;
                 string currentLine = string.Empty;
-                foreach (TextFile.Token token in variant.tokens)
+                foreach (TextFile.Token token in variants[variant].tokens)
                 {
                     switch (token.formatting)
                     {
@@ -206,7 +195,7 @@ namespace DaggerfallWorkshop.Game.Questing
                             // Found another text token without a formatting line break - need to break to a new line
                             if (foundText)
                             {
-                                variantSaveData.lines.Add(currentLine);
+                                lines.Add(currentLine);
                                 currentLine = string.Empty;
                                 foundText = false;
                                 continue;
@@ -218,15 +207,15 @@ namespace DaggerfallWorkshop.Game.Questing
 
                         case TextFile.Formatting.JustifyCenter:
                             // Prepend formatting token and start new line
-                            currentLine = ce + currentLine;
-                            variantSaveData.lines.Add(currentLine);
+                            currentLine = centerToken + currentLine;
+                            lines.Add(currentLine);
                             currentLine = string.Empty;
                             foundText = false;
                             break;
 
                         case TextFile.Formatting.Nothing:
                             // Probably last token in stream - add line and continue
-                            variantSaveData.lines.Add(currentLine);
+                            lines.Add(currentLine);
                             currentLine = string.Empty;
                             foundText = false;
                             continue;
@@ -235,16 +224,19 @@ namespace DaggerfallWorkshop.Game.Questing
                             throw new System.Exception(string.Format("Message.GetSaveData() encountered unexpected formatting token {0}", token.formatting));
                     }
                 }
-
-                data.variants.Add(variantSaveData);
             }
+
+            // Create save data
+            MessageSaveData_v1 data = new MessageSaveData_v1();
+            data.id = id;
+            data.lines = lines.ToArray();
 
             return data;
         }
 
-        public void RestoreSaveData(MessageSaveData_v1 dataIn)
+        public void RestoreSaveData(MessageSaveData_v1 data)
         {
-            throw new System.NotImplementedException();
+            LoadMessage(data.id, data.lines);
         }
 
         #endregion
