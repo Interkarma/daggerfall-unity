@@ -416,18 +416,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public string globalVarName;
             public int globalVarLink;
             public bool hasTriggerConditions;
-            public ActionSaveData_v1[] actions;
-        }
-
-        [fsObject("v1")]
-        public struct ActionSaveData_v1
-        {
-            public Type type;
-            public bool complete;
-            public bool triggerCondition;
-            public bool alwaysOnTriggerCondition;
-            public string debugSource;
-            public object actionSpecific;
+            public ActionTemplate.ActionSaveData_v1[] actions;
         }
 
         public TaskSaveData_v1 GetSaveData()
@@ -444,17 +433,10 @@ namespace DaggerfallWorkshop.Game.Questing
             data.hasTriggerConditions = hasTriggerConditions;
 
             // Save actions
-            List<ActionSaveData_v1> actionSaveDataList = new List<ActionSaveData_v1>();
+            List<ActionTemplate.ActionSaveData_v1> actionSaveDataList = new List<ActionTemplate.ActionSaveData_v1>();
             foreach(ActionTemplate action in actions)
             {
-                ActionSaveData_v1 actionData = new ActionSaveData_v1();
-                actionData.type = action.GetType();
-                actionData.complete = action.IsComplete;
-                actionData.triggerCondition = action.IsTriggerCondition;
-                actionData.alwaysOnTriggerCondition = action.IsAlwaysOnTriggerCondition;
-                actionData.debugSource = action.DebugSource;
-                actionData.actionSpecific = action.GetSaveData();
-                actionSaveDataList.Add(actionData);
+                actionSaveDataList.Add(action.GetActionSaveData());
             }
             data.actions = actionSaveDataList.ToArray();
 
@@ -473,7 +455,18 @@ namespace DaggerfallWorkshop.Game.Questing
             globalVarLink = data.globalVarLink;
             hasTriggerConditions = data.hasTriggerConditions;
 
-            // TODO: Restore actions
+            // Restore actions
+            actions.Clear();
+            foreach (ActionTemplate.ActionSaveData_v1 actionData in data.actions)
+            {
+                // Construct deserialized QuestAction based on type
+                System.Reflection.ConstructorInfo ctor = actionData.type.GetConstructor(new Type[] { typeof(Quest) });
+                ActionTemplate action = (ActionTemplate)ctor.Invoke(new object[] { ParentQuest });
+
+                // Restore state
+                action.RestoreActionSaveData(actionData);
+                actions.Add(action);
+            }
         }
 
         #endregion

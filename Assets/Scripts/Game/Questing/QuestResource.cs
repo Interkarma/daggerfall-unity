@@ -229,7 +229,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Get full resource save data including resource specific data.
         /// </summary>
-        /// <returns></returns>
         public ResourceSaveData_v1 GetResourceSaveData()
         {
             ResourceSaveData_v1 resourceData = new ResourceSaveData_v1();
@@ -247,7 +246,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Restore full resource save data including resource specific data.
         /// </summary>
-        /// <param name="data"></param>
         public void RestoreResourceSaveData(ResourceSaveData_v1 data)
         {
             symbol = data.symbol;

@@ -10,8 +10,10 @@
 //
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Text.RegularExpressions;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -112,14 +114,14 @@ namespace DaggerfallWorkshop.Game.Questing
     /// </summary>
     public abstract class ActionTemplate : QuestResource, IQuestAction
     {
-        bool complete = false;
-        bool triggerCondition = false;
-        bool alwaysOnTriggerCondition = false;
+        bool isComplete = false;
+        bool isTriggerCondition = false;
+        bool isAlwaysOnTriggerCondition = false;
         string debugSource;
 
-        public bool IsComplete { get { return complete; } set { complete = value; } }
-        public bool IsTriggerCondition { get { return triggerCondition; } set { triggerCondition = value; } }
-        public bool IsAlwaysOnTriggerCondition {  get { return alwaysOnTriggerCondition; } set { alwaysOnTriggerCondition = value; } }
+        public bool IsComplete { get { return isComplete; } set { isComplete = value; } }
+        public bool IsTriggerCondition { get { return isTriggerCondition; } set { isTriggerCondition = value; } }
+        public bool IsAlwaysOnTriggerCondition {  get { return isAlwaysOnTriggerCondition; } set { isAlwaysOnTriggerCondition = value; } }
         public string DebugSource { get { return debugSource; } set { debugSource = value; } }
 
         public abstract string Pattern { get; }
@@ -154,12 +156,55 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public virtual void SetComplete()
         {
-            complete = true;
+            isComplete = true;
         }
 
         public virtual void RearmAction()
         {
-            complete = false;
+            isComplete = false;
         }
+
+        #region Serialization
+
+        [fsObject("v1")]
+        public struct ActionSaveData_v1
+        {
+            public Type type;
+            public bool isComplete;
+            public bool isTriggerCondition;
+            public bool isAlwaysOnTriggerCondition;
+            public string debugSource;
+            public object actionSpecific;
+        }
+
+        /// <summary>
+        /// Get full action save data including action specific data.
+        /// </summary>
+        public ActionSaveData_v1 GetActionSaveData()
+        {
+            ActionSaveData_v1 actionData = new ActionSaveData_v1();
+            actionData.type = GetType();
+            actionData.isComplete = isComplete;
+            actionData.isTriggerCondition = isTriggerCondition;
+            actionData.isAlwaysOnTriggerCondition = isAlwaysOnTriggerCondition;
+            actionData.debugSource = debugSource;
+            actionData.actionSpecific = GetSaveData();
+
+            return actionData;
+        }
+
+        /// <summary>
+        /// Restore full action save data including action specific data.
+        /// </summary>
+        public void RestoreActionSaveData(ActionSaveData_v1 data)
+        {
+            isComplete = data.isComplete;
+            isTriggerCondition = data.isTriggerCondition;
+            isAlwaysOnTriggerCondition = data.isAlwaysOnTriggerCondition;
+            debugSource = data.debugSource;
+            RestoreSaveData(data.actionSpecific);
+        }
+
+        #endregion
     }
 }
