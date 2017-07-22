@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             return false;
         }
 
-        #region Seralization
+        #region Serialization
 
         [fsObject("v1")]
         public struct SaveData_v1

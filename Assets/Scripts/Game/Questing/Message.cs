@@ -168,7 +168,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         #endregion
 
-        #region Seralization
+        #region Serialization
 
         [fsObject("v1")]
         public struct MessageSaveData_v1

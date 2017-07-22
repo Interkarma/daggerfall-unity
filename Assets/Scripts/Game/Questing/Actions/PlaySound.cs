@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Unlike message posts, the play sound command performs until task is cleared
         }
 
-        #region Seralization
+        #region Serialization
 
         [fsObject("v1")]
         public struct SaveData_v1

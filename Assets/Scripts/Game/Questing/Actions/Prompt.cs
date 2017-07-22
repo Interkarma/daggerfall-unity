@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             sender.CloseWindow();
         }
 
-        #region Seralization
+        #region Serialization
 
         [fsObject("v1")]
         public struct SaveData_v1

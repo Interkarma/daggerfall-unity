@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Questing
             return hours * 3600 + minutes * 60;
         }
 
-        #region Seralization
+        #region Serialization
 
         [fsObject("v1")]
         public struct SaveData_v1
