@@ -133,11 +133,17 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         [fsObject("v1")]
         public struct SaveData_v1
         {
+            public Symbol itemSymbol;
+            public int textId;
+            public bool isNothing;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
+            data.itemSymbol = itemSymbol;
+            data.textId = textId;
+            data.isNothing = isNothing;
 
             return data;
         }
@@ -147,6 +153,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             SaveData_v1 data = (SaveData_v1)dataIn;
             if (dataIn == null)
                 return;
+
+            itemSymbol = data.itemSymbol;
+            textId = data.textId;
+            isNothing = data.isNothing;
         }
 
         #endregion

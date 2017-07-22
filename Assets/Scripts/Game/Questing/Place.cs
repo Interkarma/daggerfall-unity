@@ -283,11 +283,11 @@ namespace DaggerfallWorkshop.Game.Questing
             // Assign target resource to marker selected for this quest
             if (requiredMarkerType == MarkerTypes.QuestSpawn)
             {
-                AssignResourceToMarker(targetSymbol, ref siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker]);
+                AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.questSpawnMarkers[siteDetails.selectedQuestSpawnMarker]);
             }
             else if (requiredMarkerType == MarkerTypes.QuestItem)
             {
-                AssignResourceToMarker(targetSymbol, ref siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker]);
+                AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.questItemMarkers[siteDetails.selectedQuestItemMarker]);
             }
             else
             {

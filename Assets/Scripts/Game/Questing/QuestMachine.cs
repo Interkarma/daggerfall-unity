@@ -1041,7 +1041,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Create SiteLink in QuestMachine
             SiteLink siteLink = new SiteLink();
             siteLink.questUID = parentQuest.UID;
-            siteLink.placeSymbol = placeSymbol;
+            siteLink.placeSymbol = placeSymbol.Clone();
             siteLink.siteType = place.SiteDetails.siteType;
             siteLink.mapId = place.SiteDetails.mapId;
             siteLink.buildingKey = place.SiteDetails.buildingKey;

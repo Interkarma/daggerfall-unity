@@ -28,12 +28,13 @@ namespace DaggerfallWorkshop.Game.Questing
         string name;
 
         /// <summary>
-        /// Gets original symbol at time it was set.
+        /// Gets original symbol at time it was set from source.
+        /// This is used for serialization/deserialization only.
         /// </summary>
         public string Original
         {
             get { return original; }
-            set { original = value; }
+            set { SetValue(value); }
         }
 
         /// <summary>
@@ -43,7 +44,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public string Name
         {
             get { return name; }
-            set { Set(value); }
         }
 
         /// <summary>
@@ -56,31 +56,29 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Set symbol constructor.
         /// </summary>
-        /// <param name="symbol">Symbol text from source.</param>
-        public Symbol(string symbol)
+        /// <param name="original">Symbol text from source.</param>
+        public Symbol(string original)
         {
-            Set(symbol);
+            SetValue(original);
         }
 
         /// <summary>
-        /// Restore symbol constructor.
+        /// Gets original value.
         /// </summary>
-        /// <param name="original">Symbol original string.</param>
-        /// <param name="name">Symbol inner string.</param>
-        public Symbol(string original, string name)
+        /// <returns>Symbol text from source.</returns>
+        public string GetValue()
+        {
+            return original;
+        }
+
+        /// <summary>
+        /// Set symbol original value. Name value is derived from inner text.
+        /// </summary>
+        /// <param name="original">Symbol text from source.</param>
+        public void SetValue(string original)
         {
             this.original = original;
-            this.name = name;
-        }
-
-        /// <summary>
-        /// Set symbol.
-        /// </summary>
-        /// <param name="symbol">Symbol text from source.</param>
-        public void Set(string symbol)
-        {
-            original = symbol;
-            name = Parser.GetInnerSymbolName(symbol);
+            name = Parser.GetInnerSymbolName(original);
         }
 
         /// <summary>
@@ -89,15 +87,18 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <returns>New Symbol with same details as this one.</returns>
         public Symbol Clone()
         {
-            return new Symbol(original, name);
+            Symbol clone = new Symbol();
+            clone.original = original;
+            clone.name = name;
+            return clone;
         }
 
         #region IComparable
 
         /// <summary>
-        /// Compare value with other symbol.
+        /// Compare name value with other symbol.
         /// </summary>
-        /// <param name="other">Other symbol to compare. Case sensitive.</param>
+        /// <param name="other">Other symbol to compare name value. Case sensitive.</param>
         /// <returns>Compare result. 0 means equal.</returns>
         public int CompareTo(object other)
         {

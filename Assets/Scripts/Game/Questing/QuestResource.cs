@@ -210,14 +210,19 @@ namespace DaggerfallWorkshop.Game.Questing
             hasPlayerClicked = false;
         }
 
-        public virtual object GetSaveData()
-        {
-            return string.Empty;
-        }
+        #region Abstract Methods
 
-        public virtual void RestoreSaveData(object dataIn)
-        {
-        }
+        /// <summary>
+        /// Request save data for serialization.
+        /// </summary>
+        public abstract object GetSaveData();
+
+        /// <summary>
+        /// Restore deserialized data.
+        /// </summary>
+        public abstract void RestoreSaveData(object dataIn);
+
+        #endregion
 
         #region Private Methods
 
