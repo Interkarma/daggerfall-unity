@@ -16,7 +16,7 @@ namespace DaggerfallWorkshop.Game
     {
         public MobileTypes EnemyType = MobileTypes.SkeletalWarrior;
         public MobileReactions EnemyReaction = MobileReactions.Hostile;
-        public MobileGender Gender = MobileGender.Unspecified;
+        public MobileGender EnemyGender = MobileGender.Unspecified;
 
         DaggerfallEntityBehaviour entityBehaviour;
 
@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Sets up enemy based on current settings.
         /// </summary>
-        public void ApplyEnemySettings()
+        public void ApplyEnemySettings(MobileGender gender)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             Dictionary<int, MobileEnemy> enemyDict = GameObjectHelper.EnemyDict;
@@ -53,7 +53,7 @@ namespace DaggerfallWorkshop.Game
             {
                 // Setup mobile billboard
                 Vector2 size = Vector2.one;
-                mobileEnemy.Gender = Gender;
+                mobileEnemy.Gender = gender;
                 dfMobile.SetEnemy(dfUnity, mobileEnemy, EnemyReaction);
 
                 // Setup controller
@@ -120,14 +120,13 @@ namespace DaggerfallWorkshop.Game
         {
             EnemyType = enemyType;
             EnemyReaction = enemyReaction;
-            Gender = gender;
-            ApplyEnemySettings();
+            ApplyEnemySettings(gender);
         }
 
         /// <summary>
         /// Change enemy settings and configure in a single call.
         /// </summary>
-        public void ApplyEnemySettings(EntityTypes entityType, int careerIndex, bool isHostile = true)
+        public void ApplyEnemySettings(EntityTypes entityType, int careerIndex, MobileGender gender, bool isHostile = true)
         {
             // Get mobile type based on entity type and career index
             MobileTypes mobileType;
@@ -139,7 +138,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             MobileReactions enemyReaction = (isHostile) ? MobileReactions.Hostile : MobileReactions.Passive;
-            MobileGender enemyGender = MobileGender.Unspecified; // TODO: Gender should be included in and read from save file
+            MobileGender enemyGender = gender;
 
             ApplyEnemySettings(mobileType, enemyReaction, enemyGender);
         }

@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop
             DrawDefaultInspector();
             if (GUILayout.Button("Apply Enemy Type"))
             {
-                setupDemoEnemy.ApplyEnemySettings();
+                setupDemoEnemy.ApplyEnemySettings(setupDemoEnemy.EnemyGender);
                 EditorUtility.SetDirty(setupDemoEnemy);
                 EditorUtility.SetDirty(setupDemoEnemy.GetMobileBillboardChild());
             }

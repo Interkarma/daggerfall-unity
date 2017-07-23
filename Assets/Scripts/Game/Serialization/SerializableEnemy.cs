@@ -75,6 +75,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Create save data
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             EnemyMotor motor = enemy.GetComponent<EnemyMotor>();
+            DaggerfallMobileUnit mobileEnemy = enemy.GetComponentInChildren<DaggerfallMobileUnit>();
             EnemyData_v1 data = new EnemyData_v1();
             data.loadID = LoadID;
             data.gameObjectName = entityBehaviour.gameObject.name;
@@ -90,6 +91,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.isHostile = motor.IsHostile;
             data.isDead = (entity.CurrentHealth <= 0) ? true : false;
             data.questSpawn = enemy.QuestSpawn;
+            data.mobileGender = mobileEnemy.Summary.Enemy.Gender;
 
             // Add quest resource data if present
             QuestResourceBehaviour questResourceBehaviour = GetComponent<QuestResourceBehaviour>();
@@ -119,7 +121,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (entity == null || entity.EntityType != data.entityType || entity.CareerIndex != data.careerIndex)
             {
                 SetupDemoEnemy setupEnemy = enemy.GetComponent<SetupDemoEnemy>();
-                setupEnemy.ApplyEnemySettings(data.entityType, data.careerIndex, data.isHostile);
+                setupEnemy.ApplyEnemySettings(data.entityType, data.careerIndex, data.mobileGender, data.isHostile);
                 setupEnemy.AlignToGround();
 
                 if (entity == null)

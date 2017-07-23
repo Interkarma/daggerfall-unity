@@ -241,6 +241,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int careerIndex;
         public bool isHostile;
         public bool questSpawn;
+        public MobileGender mobileGender;
         public QuestResourceBehaviour.QuestResourceSaveData_v1 questResource;
     }
 
