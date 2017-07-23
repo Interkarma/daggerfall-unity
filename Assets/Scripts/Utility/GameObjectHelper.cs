@@ -874,8 +874,11 @@ namespace DaggerfallWorkshop.Utility
 
             // Assign loadID and custom spawn
             DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
-            enemy.LoadID = DaggerfallUnity.NextUID;
-            enemy.QuestSpawn = true;
+            if (enemy)
+            {
+                enemy.LoadID = DaggerfallUnity.NextUID;
+                enemy.QuestSpawn = true;
+            }
 
             // Add QuestResourceBehaviour to GameObject
             QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();

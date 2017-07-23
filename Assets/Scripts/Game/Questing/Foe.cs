@@ -218,6 +218,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (enemy)
                 {
                     enemy.LoadID = DaggerfallUnity.NextUID;
+                    enemy.QuestSpawn = true;
                 }
 
                 // Disable GameObject, caller must set active when ready
