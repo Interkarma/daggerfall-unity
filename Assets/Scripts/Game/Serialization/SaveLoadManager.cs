@@ -92,6 +92,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             get { return GetCharacterNames(); }
         }
 
+        public bool LoadInProgress
+        {
+            get { return loadInProgress; }
+        }
+
         #endregion
         
         #region Singleton
@@ -976,10 +981,29 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             for (int i = 0; i < enemies.Length; i++)
             {
+                // Apply to known enemies that are part of scene build
                 ulong key = enemies[i].loadID;
                 if (serializableEnemies.ContainsKey(key))
                 {
                     serializableEnemies[key].RestoreSaveData(enemies[i]);
+                }
+                else
+                {
+                    // Add quest spawn enemies back to scene
+                    if (enemies[i].questSpawn)
+                    {
+                        // Create target GameObject
+                        GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, enemies[i].gameObjectName, null, Vector3.zero);
+                        go.transform.parent = GameObjectHelper.GetSpawnParentTransform();
+
+                        // Set LoadID
+                        DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
+                        enemy.LoadID = enemies[i].loadID;
+
+                        // Restore save data
+                        SerializableEnemy serializableEnemy = go.GetComponent<SerializableEnemy>();
+                        serializableEnemy.RestoreSaveData(enemies[i]);
+                    }
                 }
             }
         }
@@ -1149,6 +1173,13 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Debug.Log("LoadGame() did not find saved faction data. Player will resume with default faction state.");
             }
 
+            // Restore quest machine state
+            if (!string.IsNullOrEmpty(questDataJson))
+            {
+                QuestMachine.QuestMachineData_v1 questData = Deserialize(typeof(QuestMachine.QuestMachineData_v1), questDataJson) as QuestMachine.QuestMachineData_v1;
+                QuestMachine.Instance.RestoreSaveData(questData);
+            }
+
             // Raise reposition flag if terrain sampler changed
             // This is required as changing terrain samplers will invalidate serialized player coordinates
             bool repositionPlayer = false;
@@ -1213,13 +1244,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore save data to objects in newly spawned world
             RestoreSaveData(saveData);
-
-            // Restore quest machine state
-            if (!string.IsNullOrEmpty(questDataJson))
-            {
-                QuestMachine.QuestMachineData_v1 questData = Deserialize(typeof(QuestMachine.QuestMachineData_v1), questDataJson) as QuestMachine.QuestMachineData_v1;
-                QuestMachine.Instance.RestoreSaveData(questData);
-            }
 
             // Load automap state
             try

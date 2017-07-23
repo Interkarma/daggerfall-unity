@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -716,6 +717,32 @@ namespace DaggerfallWorkshop.Utility
         #region Quest Resource Helpers
 
         /// <summary>
+        /// Gets the most appropriate parent transform based on player context for a freely spawned object.
+        /// Buildings, exteriors, and dungeons all have different parents.
+        /// </summary>
+        /// <returns>Parent transform.</returns>
+        public static Transform GetSpawnParentTransform()
+        {
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            if (playerEnterExit.IsPlayerInsideBuilding)
+            {
+                return playerEnterExit.Interior.transform;
+            }
+            else if (playerEnterExit.IsPlayerInsideDungeon)
+            {
+                return playerEnterExit.Dungeon.transform;
+            }
+            else if (!playerEnterExit.IsPlayerInside && GameManager.Instance.PlayerGPS.IsPlayerInLocationRect)
+            {
+                return GameManager.Instance.StreamingWorld.CurrentPlayerLocationObject.transform;
+            }
+            else
+            {
+                return GameManager.Instance.StreamingWorld.StreamingTarget;
+            }
+        }
+
+        /// <summary>
         /// Finds SiteLinks matching this interior and walks Place markers to inject quest resources.
         /// Some of this handling will be split and relocated for other builders.
         /// Just working through the steps in buildings interiors for now.
@@ -836,9 +863,19 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         static void AddQuestFoe(SiteTypes siteType, Quest quest, QuestMarker marker, Foe foe, Transform parent)
         {
+            // Do not add foe during load process as enemy object may no longer be in starting state
+            // Allow the load process to restore enemy state to whatever it was at time of save
+            if (SaveLoadManager.Instance.LoadInProgress)
+                return;
+
             // Create enemy GameObject
             Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
             GameObject go = CreateEnemy("Quest Foe", foe.FoeType, dungeonBlockPosition + marker.flatPosition, parent);
+
+            // Assign loadID and custom spawn
+            DaggerfallEnemy enemy = go.GetComponent<DaggerfallEnemy>();
+            enemy.LoadID = DaggerfallUnity.NextUID;
+            enemy.QuestSpawn = true;
 
             // Add QuestResourceBehaviour to GameObject
             QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();

@@ -20,11 +20,18 @@ namespace DaggerfallWorkshop
     public class DaggerfallEnemy : MonoBehaviour
     {
         ulong loadID = 0;
+        bool questSpawn = false;
 
         public ulong LoadID
         {
             get { return loadID; }
             set { loadID = value; }
+        }
+
+        public bool QuestSpawn
+        {
+            get { return questSpawn; }
+            set { questSpawn = value; }
         }
     }
 }

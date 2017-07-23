@@ -211,7 +211,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Create item
             DaggerfallUnityItem result = new DaggerfallUnityItem((ItemGroups)itemClass, itemSubClass);
-            result.LinkQuestItem(ParentQuest.UID, Symbol);
+            result.LinkQuestItem(ParentQuest.UID, Symbol.Clone());
 
             return result;
         }
@@ -229,7 +229,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Create item
             DaggerfallUnityItem result = new DaggerfallUnityItem(ItemGroups.Currency, 0);
             result.stackCount = amount;
-            result.LinkQuestItem(ParentQuest.UID, Symbol);
+            result.LinkQuestItem(ParentQuest.UID, Symbol.Clone());
 
             return result;
         }

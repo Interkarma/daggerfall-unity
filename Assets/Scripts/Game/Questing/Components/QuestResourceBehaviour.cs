@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
+using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -27,12 +28,23 @@ namespace DaggerfallWorkshop.Game.Questing
 
         ulong questUID;
         Symbol targetSymbol;
-        Quest targetQuest;
-
         bool isFoeDead = false;
 
+        [NonSerialized] Quest targetQuest;
         [NonSerialized] QuestResource targetResource = null;
         [NonSerialized] DaggerfallEntityBehaviour enemyEntityBehaviour = null;
+
+        #endregion
+
+        #region Structures
+
+        [fsObject("v1")]
+        public struct QuestResourceSaveData_v1
+        {
+            public ulong questUID;
+            public Symbol targetSymbol;
+            public bool isFoeDead;
+        }
 
         #endregion
 
@@ -55,6 +67,14 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Flag stating if this Foe is dead .
+        /// </summary>
+        public bool IsFoeDead
+        {
+            get { return isFoeDead; }
+        }
+
+        /// <summary>
         /// Gets target Quest object. Can return null.
         /// </summary>
         public Quest TargetQuest
@@ -63,7 +83,7 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Get target QuestResource object. Can return null.
+        /// Gets target QuestResource object. Can return null.
         /// </summary>
         public QuestResource TargetResource
         {
@@ -71,11 +91,12 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Flag stating if this Foe is dead .
+        /// Gets DaggerfallEntityBehaviour on enemy.
+        /// Will be null if not an enemy quest resource.
         /// </summary>
-        public bool IsFoeDead
+        DaggerfallEntityBehaviour EnemyEntityBehaviour
         {
-            get { return isFoeDead; }
+            get { return enemyEntityBehaviour; }
         }
 
         #endregion
@@ -88,10 +109,6 @@ namespace DaggerfallWorkshop.Game.Questing
             // This will fail if targetQuest and targetSymbol are not set before Start()
             if (!CacheTarget())
                 return;
-
-            // Cache local EnemyEntity behaviour if resource is a Foe
-            if (targetResource != null && targetResource is Foe)
-                enemyEntityBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
         }
 
         private void Update()
@@ -155,6 +172,32 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        /// <summary>
+        /// Gets save data for serialization.
+        /// </summary>
+        public QuestResourceSaveData_v1 GetSaveData()
+        {
+            QuestResourceSaveData_v1 data = new QuestResourceSaveData_v1();
+            data.questUID = questUID;
+            data.targetSymbol = targetSymbol;
+            data.isFoeDead = isFoeDead;
+
+            return data;
+        }
+
+
+        /// <summary>
+        /// Restores deserialized save data.
+        /// Must be called after quest system state restored.
+        /// </summary>
+        public void RestoreSaveData(QuestResourceSaveData_v1 data)
+        {
+            questUID = data.questUID;
+            targetSymbol = data.targetSymbol;
+            isFoeDead = data.isFoeDead;
+            CacheTarget();
+        }
+
         #endregion
 
         #region Private Methods
@@ -182,6 +225,10 @@ namespace DaggerfallWorkshop.Game.Questing
             targetResource = targetQuest.GetResource(targetSymbol);
             if (targetResource == null)
                 return false;
+
+            // Cache local EnemyEntity behaviour if resource is a Foe
+            if (targetResource != null && targetResource is Foe)
+                enemyEntityBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
 
             return true;
         }

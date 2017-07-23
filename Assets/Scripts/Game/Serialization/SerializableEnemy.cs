@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -76,6 +77,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             EnemyMotor motor = enemy.GetComponent<EnemyMotor>();
             EnemyData_v1 data = new EnemyData_v1();
             data.loadID = LoadID;
+            data.gameObjectName = entityBehaviour.gameObject.name;
             data.currentPosition = enemy.transform.position;
             data.currentRotation = enemy.transform.rotation;
             data.entityType = entity.EntityType;
@@ -87,6 +89,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.currentMagicka = entity.CurrentMagicka;
             data.isHostile = motor.IsHostile;
             data.isDead = (entity.CurrentHealth <= 0) ? true : false;
+            data.questSpawn = enemy.QuestSpawn;
+
+            // Add quest resource data if present
+            QuestResourceBehaviour questResourceBehaviour = GetComponent<QuestResourceBehaviour>();
+            if (questResourceBehaviour)
+            {
+                data.questResource = questResourceBehaviour.GetSaveData();
+            }
 
             return data;
         }
@@ -105,18 +115,22 @@ namespace DaggerfallWorkshop.Game.Serialization
             EnemyMotor motor = enemy.GetComponent<EnemyMotor>();
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
 
-            // Quiesce entity during state restore
-            entity.Quiesce = true;
-
             // Restore enemy career or class if different
-            if (entity.EntityType != data.entityType || entity.CareerIndex != data.careerIndex)
+            if (entity == null || entity.EntityType != data.entityType || entity.CareerIndex != data.careerIndex)
             {
                 SetupDemoEnemy setupEnemy = enemy.GetComponent<SetupDemoEnemy>();
                 setupEnemy.ApplyEnemySettings(data.entityType, data.careerIndex, data.isHostile);
                 setupEnemy.AlignToGround();
+
+                if (entity == null)
+                    entity = entityBehaviour.Entity as EnemyEntity;
             }
 
-            // Restore enemy position
+            // Quiesce entity during state restore
+            entity.Quiesce = true;
+
+            // Restore enemy data
+            entityBehaviour.gameObject.name = data.gameObjectName;
             enemy.transform.position = data.currentPosition;
             enemy.transform.rotation = data.currentRotation;
             entity.MaxHealth = data.startingHealth;
@@ -130,6 +144,15 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (data.isDead)
             {
                 entityBehaviour.gameObject.SetActive(false);
+            }
+
+            // Restore quest resource link
+            enemy.QuestSpawn = data.questSpawn;
+            if (enemy.QuestSpawn)
+            {
+                // Add QuestResourceBehaviour to GameObject
+                QuestResourceBehaviour questResourceBehaviour = entityBehaviour.gameObject.AddComponent<QuestResourceBehaviour>();
+                questResourceBehaviour.RestoreSaveData(data.questResource);
             }
 
             // Resume entity

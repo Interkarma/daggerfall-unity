@@ -228,6 +228,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     public class EnemyData_v1
     {
         public ulong loadID;
+        public string gameObjectName;
         public Vector3 currentPosition;
         public Quaternion currentRotation;
         public bool isDead;
@@ -239,6 +240,8 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string careerName;
         public int careerIndex;
         public bool isHostile;
+        public bool questSpawn;
+        public QuestResourceBehaviour.QuestResourceSaveData_v1 questResource;
     }
 
     #endregion

@@ -337,6 +337,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Hot-place item if player already at this Place at time of placement
             // This means PlayerEnterExit could not have called placement at time of assignment
+            // e.g. M0B30Y08 places zombie only when player already inside building after 7pm
             if (IsPlayerHere())
             {
                 // Get component handling player world status and transitions
