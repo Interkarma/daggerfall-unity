@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (this is Foe)
                     return;
 
-                // Show hide GameObject mapped to this QuestResource based on hidden flag
+                // Show or hide GameObject mapped to this QuestResource based on hidden flag
                 // This can conflict with other code that has disabled GameObject for other reasons
                 questResourceBehaviour.gameObject.SetActive(!IsHidden);
             }

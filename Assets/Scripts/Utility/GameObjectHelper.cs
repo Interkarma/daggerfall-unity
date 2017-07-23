@@ -781,9 +781,15 @@ namespace DaggerfallWorkshop.Utility
 
                         // Inject to scene based on resource type
                         if (resource is Person)
+                        {
                             AddQuestNPC(siteType, quest, spawnMarker, (Person)resource, parent);
+                        }
                         else if (resource is Foe)
-                            AddQuestFoe(siteType, quest, spawnMarker, (Foe)resource, parent);
+                        {
+                            Foe foe = (Foe)resource;
+                            if (foe.KillCount < foe.SpawnCount)
+                                AddQuestFoe(siteType, quest, spawnMarker, foe, parent);
+                        }
                     }
                 }
 
