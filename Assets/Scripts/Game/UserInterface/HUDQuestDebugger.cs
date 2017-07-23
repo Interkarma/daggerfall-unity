@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.UserInterface
@@ -60,6 +61,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             QuestMachine.OnQuestStarted += QuestMachine_OnQuestStarted;
             QuestMachine.OnQuestEnded += QuestMachine_OnQuestEnded;
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
 
             // Quest name label
             questNameLabel.Text = noQuestsRunning;
@@ -352,6 +354,32 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void QuestMachine_OnQuestEnded(Quest quest)
         {
             RefreshQuestsList();
+        }
+
+        private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
+        {
+            // Clear existing state
+            ClearCurrentQuest();
+            RefreshQuestsList();
+
+            // Exit if no quests at all
+            if (QuestMachine.Instance.QuestCount == 0)
+            {
+                currentQuestIndex = -1;
+                return;
+            }
+
+            // Try to get first active quest
+            ulong[] activeQuests = QuestMachine.Instance.GetAllActiveQuests();
+            if (activeQuests != null && activeQuests.Length > 0)
+            {
+                SetCurrentQuest(QuestMachine.Instance.GetQuest(activeQuests[0]));
+                return;
+            }
+
+            // Otherwise just use latest quest
+            ulong[] quests = QuestMachine.Instance.GetAllQuests();
+            SetCurrentQuest(QuestMachine.Instance.GetQuest(quests[quests.Length - 1]));
         }
 
         #endregion
