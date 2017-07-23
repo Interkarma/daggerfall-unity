@@ -168,6 +168,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!enemy)
                 return false;
 
+            // Always save enemy if a quest spawn
+            if (enemy.QuestSpawn)
+                return true;
+
+            // Get references
             DaggerfallEntityBehaviour entityBehaviour = enemy.GetComponent<DaggerfallEntityBehaviour>();
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             EnemySenses senses = enemy.GetComponent<EnemySenses>();
