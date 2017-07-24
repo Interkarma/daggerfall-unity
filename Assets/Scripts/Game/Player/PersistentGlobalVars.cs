@@ -134,5 +134,16 @@ namespace DaggerfallWorkshop.Game.Player
                 globalVarsDict[i] = globalVar;
             }
         }
+
+        /// <summary>
+        /// Set all global variables to false.
+        /// </summary>
+        public void ZeroAllGlobalVars()
+        {
+            for (int i = 0; i < totalGlobalVars; i++)
+            {
+                SetGlobalVar(i, false);
+            }
+        }
     }
 }

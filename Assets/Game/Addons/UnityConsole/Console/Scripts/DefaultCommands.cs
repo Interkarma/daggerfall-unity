@@ -38,6 +38,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(EndQuest.name, EndQuest.description, EndQuest.usage, EndQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PurgeAllQuests.name, PurgeAllQuests.description, PurgeAllQuests.usage, PurgeAllQuests.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ModNPCRep.name, ModNPCRep.description, ModNPCRep.usage, ModNPCRep.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ResetMQState.name, ResetMQState.description, ResetMQState.usage, ResetMQState.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenDoor.name, OpenDoor.description, OpenDoor.usage, OpenDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ActivateAction.name, ActivateAction.description, ActivateAction.usage, ActivateAction.Execute);
@@ -920,6 +921,24 @@ namespace Wenzil.Console
                 return "Could not raise rep - unknown error.";
             }
         }
+
+        private static class ResetMQState
+        {
+            public static readonly string name = "resetmqstate";
+            public static readonly string error = "Could not reset main quest state.";
+            public static readonly string description = "Reset all main quest state. CAUTION: Will purge all active quests, clear all reputations to 0, and reset all global variables.";
+            public static readonly string usage = "resetmqstate";
+
+            public static string Execute(params string[] args)
+            {
+                QuestMachine.Instance.PurgeAllQuests();
+                GameManager.Instance.PlayerEntity.FactionData.ZeroAllReputations();
+                GameManager.Instance.PlayerEntity.GlobalVars.ZeroAllGlobalVars();
+
+                return "Finished";
+            }
+        }
+
 
         private static class OpenAllDoors
         {

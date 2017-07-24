@@ -172,6 +172,36 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         /// <summary>
+        /// Gets reputation value.
+        /// </summary>
+        public int GetReputation(int factionID)
+        {
+            if (factionDict.ContainsKey(factionID))
+            {
+                FactionFile.FactionData factionData = factionDict[factionID];
+                return factionData.rep;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Set reputation to a specific value.
+        /// </summary>
+        public bool SetReputation(int factionID, int value)
+        {
+            if (factionDict.ContainsKey(factionID))
+            {
+                FactionFile.FactionData factionData = factionDict[factionID];
+                factionData.rep = Mathf.Clamp(value, minReputation, maxReputation);
+                factionDict[factionID] = factionData;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Change reputation value by amount.
         /// </summary>
         public bool ChangeReputation(int factionID, int amount)
@@ -185,6 +215,18 @@ namespace DaggerfallWorkshop.Game.Player
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Reset all reputations back to 0.
+        /// </summary>
+        public void ZeroAllReputations()
+        {
+            List<int> keys = new List<int>(factionDict.Keys);
+            foreach (int key in keys)
+            {
+                SetReputation(key, 0);
+            }
         }
 
         #endregion
