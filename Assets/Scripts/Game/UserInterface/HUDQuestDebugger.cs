@@ -106,8 +106,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
+            if (QuestMachine.Instance.QuestCount == 0 && currentQuest != null)
+            {
+                ClearCurrentQuest();
+                FullRefresh();
+                return;
+            }
+
             if (allQuests == null || allQuests.Length != QuestMachine.Instance.QuestCount)
-                RefreshQuestsList();
+                FullRefresh();
 
             if (Input.GetKeyDown(KeyCode.LeftBracket))
                 MovePreviousQuest();
@@ -319,6 +326,32 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        void FullRefresh()
+        {
+            // Clear existing state
+            ClearCurrentQuest();
+            RefreshQuestsList();
+
+            // Exit if no quests at all
+            if (QuestMachine.Instance.QuestCount == 0)
+            {
+                currentQuestIndex = -1;
+                return;
+            }
+
+            // Try to get first active quest
+            ulong[] activeQuests = QuestMachine.Instance.GetAllActiveQuests();
+            if (activeQuests != null && activeQuests.Length > 0)
+            {
+                SetCurrentQuest(QuestMachine.Instance.GetQuest(activeQuests[0]));
+                return;
+            }
+
+            // Otherwise just use latest quest
+            ulong[] quests = QuestMachine.Instance.GetAllQuests();
+            SetCurrentQuest(QuestMachine.Instance.GetQuest(quests[quests.Length - 1]));
+        }
+
         void MoveNextQuest()
         {
             if (allQuests == null || allQuests.Length == 0)
@@ -358,28 +391,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void SaveLoadManager_OnLoad(SaveData_v1 saveData)
         {
-            // Clear existing state
-            ClearCurrentQuest();
-            RefreshQuestsList();
-
-            // Exit if no quests at all
-            if (QuestMachine.Instance.QuestCount == 0)
-            {
-                currentQuestIndex = -1;
-                return;
-            }
-
-            // Try to get first active quest
-            ulong[] activeQuests = QuestMachine.Instance.GetAllActiveQuests();
-            if (activeQuests != null && activeQuests.Length > 0)
-            {
-                SetCurrentQuest(QuestMachine.Instance.GetQuest(activeQuests[0]));
-                return;
-            }
-
-            // Otherwise just use latest quest
-            ulong[] quests = QuestMachine.Instance.GetAllQuests();
-            SetCurrentQuest(QuestMachine.Instance.GetQuest(quests[quests.Length - 1]));
+            FullRefresh();
         }
 
         #endregion

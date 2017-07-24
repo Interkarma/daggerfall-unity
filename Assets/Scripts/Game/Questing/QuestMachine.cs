@@ -74,6 +74,7 @@ namespace DaggerfallWorkshop.Game.Questing
         Dictionary<ulong, Quest> quests = new Dictionary<ulong, Quest>();
         List<SiteLink> siteLinks = new List<SiteLink>();
         List<Quest> questsToTombstone = new List<Quest>();
+        List<Quest> questsToRemove = new List<Quest>();
 
         bool waitingForStartup = true;
         float startupTimer = 0;
@@ -252,6 +253,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Update quests
             questsToTombstone.Clear();
+            questsToRemove.Clear();
             foreach (Quest quest in quests.Values)
             {
                 // Tick active quests
@@ -261,12 +263,25 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Schedule completed quests for tombstoning
                 if (quest.QuestComplete && !quest.QuestTombstoned)
                     questsToTombstone.Add(quest);
+
+                // Expire tombstoned quests after 1 in-game week
+                if (quest.QuestTombstoned)
+                {
+                    if (DaggerfallUnity.Instance.WorldTime.Now.ToSeconds() - quest.QuestTombstoneTime.ToSeconds() > DaggerfallDateTime.SecondsPerWeek)
+                        questsToRemove.Add(quest);
+                }
             }
 
             // Tombstone completed quests after update
             foreach (Quest quest in questsToTombstone)
             {
                 TombstoneQuest(quest);
+            }
+
+            // Remove expired quests
+            foreach (Quest quest in questsToRemove)
+            {
+                RemoveQuest(quest);
             }
 
             // Reset update timer
