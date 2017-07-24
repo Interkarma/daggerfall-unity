@@ -153,12 +153,9 @@ namespace DaggerfallWorkshop.Game
                         DaggerfallActionDoor actionDoor;
                         if (ActionDoorCheck(hits[i], out actionDoor))
                         {
-                            if (currentMode == PlayerActivateModes.Steal && actionDoor.IsLocked)
+                            if (currentMode == PlayerActivateModes.Steal && actionDoor.IsLocked && !actionDoor.IsOpen)
                             {
-                                if (actionDoor.IsNoLongerPickable)
-                                    return;
-                                else
-                                    actionDoor.AttemptLockpicking();
+                                actionDoor.AttemptLockpicking();
                             }
                             else
                                 actionDoor.ToggleDoor();

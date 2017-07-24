@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop
         public bool IsTriggerWhenOpen = true;           // Collider is disabled when door opens
         public float ChanceToBash = 0.25f;              // Chance of successfully bashing open door (0=no chance, 1=first time)
         public bool PlaySounds = true;                  // Play open and close sounds if present (OpenSound > 0, CloseSound > 0)
-        public bool LockPickingAttempted = false;       // Has the player attempted to pick this door's lock (TODO: persist across save and load)
+        public short FailedSkillLevel = 0;              // Lockpicking skill of player when they failed to pick lock (TODO: persist across save and load)
 
         public SoundClips OpenSound = SoundClips.NormalDoorOpen;            // Sound clip to use when door opens
         public SoundClips CloseSound = SoundClips.NormalDoorClose;          // Sound clip to use when door closes
@@ -81,11 +81,6 @@ namespace DaggerfallWorkshop
         public bool IsMagicallyHeld
         {
             get { return CurrentLockValue >= 20; }
-        }
-
-        public bool IsNoLongerPickable
-        {
-            get { return LockPickingAttempted == true; }
         }
 
         public Quaternion ClosedRotation
@@ -160,41 +155,47 @@ namespace DaggerfallWorkshop
 
         public void AttemptLockpicking()
         {
-            int chance = 0;
-
             if (IsMoving)
-                return;
-
-            if (!IsOpen && IsLocked)
             {
-                if (!IsMagicallyHeld)
+                return;
+            }
+
+            PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
+
+            // If player fails at their current lockpicking skill level, they can't try again
+            if (FailedSkillLevel == player.Skills.Lockpicking)
+            {
+                return;
+            }
+
+            if (!IsMagicallyHeld)
+            {
+                int chance = 0;
+                player.TallySkill((short)Skills.Lockpicking, 1);
+                chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.Lockpicking);
+
+                if (Random.Range(0, 101) > chance)
                 {
-                    PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
-                    player.TallySkill((short)Skills.Lockpicking, 1);
-                    chance = FormulaHelper.CalculateInteriorLockpickingChance(player.Level, CurrentLockValue, player.Skills.Lockpicking);
-
-                    if (Random.Range(0, 101) > chance)
-                        Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
-                    else
-                    {
-                        Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingSuccess);
-                        CurrentLockValue = 0;
-
-                        if (PlaySounds && PickedLockSound > 0 && audioSource)
-                        {
-                            DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
-                            if (dfAudioSource != null)
-                                dfAudioSource.PlayOneShot(PickedLockSound);
-                        }
-
-                        ToggleDoor();
-                    }
-                    LockPickingAttempted = true;
+                    Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
+                    FailedSkillLevel = player.Skills.Lockpicking;
                 }
                 else
                 {
-                    Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
+                    Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingSuccess);
+                    CurrentLockValue = 0;
+
+                    if (PlaySounds && PickedLockSound > 0 && audioSource)
+                    {
+                        DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                        if (dfAudioSource != null)
+                            dfAudioSource.PlayOneShot(PickedLockSound);
+                    }
+                    ToggleDoor();
                 }
+            }
+            else
+            {
+                Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
             }
         }
 
