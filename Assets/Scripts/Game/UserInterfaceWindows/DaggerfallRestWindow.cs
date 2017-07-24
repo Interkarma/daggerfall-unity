@@ -69,6 +69,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int hoursRemaining = 0;
         int totalHours = 0;
         float waitTimer = 0;
+        bool enemyBrokeRest = false;
 
         PlayerEntity playerEntity;
         DaggerfallHUD hud;
@@ -185,6 +186,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hoursRemaining = 0;
             totalHours = 0;
             waitTimer = 0;
+            enemyBrokeRest = false;
 
             // Get references
             playerEntity = GameManager.Instance.PlayerEntity;
@@ -195,9 +197,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPop();
 
-            // Progress world time
-            DaggerfallUnity.WorldTime.Now.RaiseTime(totalHours * DaggerfallDateTime.SecondsPerHour);
-            Debug.Log(string.Format("Resting raised time by {0} hours", totalHours));
+            Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
+
             playerEntity.RaiseSkills();
         }
 
@@ -252,7 +253,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             bool finished = false;
             if (Time.realtimeSinceStartup > waitTimer + waitTime)
             {
+                // Progress world time by 1 hour and tick quest machine
+                // This could cause enemies to be spawned
                 totalHours++;
+                DaggerfallUnity.WorldTime.Now.RaiseTime(DaggerfallDateTime.SecondsPerHour);
+                Questing.QuestMachine.Instance.Tick();
+
+                // TODO: Random spawns appropriate to player location
+
+                // Check if enemies nearby
+                if (GameManager.Instance.AreEnemiesNearby())
+                {
+                    enemyBrokeRest = true;
+                    return true;
+                }
+
                 waitTimer = Time.realtimeSinceStartup;
                 if (currentRestMode == RestModes.TimedRest)
                 {
@@ -280,26 +295,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void EndRest()
         {
             const int youWakeUpTextId = 353;
+            const int enemiesNearby = 354;
             const int youAreHealedTextId = 350;
             const int finishedLoiteringTextId = 349;
 
-            if (currentRestMode == RestModes.TimedRest)
+            if (enemyBrokeRest)
             {
-                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youWakeUpTextId);
+                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(enemiesNearby);
                 mb.OnClose += RestFinishedPopup_OnClose;
-                currentRestMode = RestModes.Selection;
             }
-            else if (currentRestMode == RestModes.FullRest)
+            else
             {
-                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youAreHealedTextId);
-                mb.OnClose += RestFinishedPopup_OnClose;
-                currentRestMode = RestModes.Selection;
-            }
-            else if (currentRestMode == RestModes.Loiter)
-            {
-                DaggerfallMessageBox mb = DaggerfallUI.MessageBox(finishedLoiteringTextId);
-                mb.OnClose += RestFinishedPopup_OnClose;
-                currentRestMode = RestModes.Selection;
+                if (currentRestMode == RestModes.TimedRest)
+                {
+                    DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youWakeUpTextId);
+                    mb.OnClose += RestFinishedPopup_OnClose;
+                    currentRestMode = RestModes.Selection;
+                }
+                else if (currentRestMode == RestModes.FullRest)
+                {
+                    DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youAreHealedTextId);
+                    mb.OnClose += RestFinishedPopup_OnClose;
+                    currentRestMode = RestModes.Selection;
+                }
+                else if (currentRestMode == RestModes.Loiter)
+                {
+                    DaggerfallMessageBox mb = DaggerfallUI.MessageBox(finishedLoiteringTextId);
+                    mb.OnClose += RestFinishedPopup_OnClose;
+                    currentRestMode = RestModes.Selection;
+                }
             }
         }
 

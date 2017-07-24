@@ -251,44 +251,11 @@ namespace DaggerfallWorkshop.Game.Questing
             if (updateTimer < (1f / ticksPerSecond))
                 return;
 
-            // Update quests
-            questsToTombstone.Clear();
-            questsToRemove.Clear();
-            foreach (Quest quest in quests.Values)
-            {
-                // Tick active quests
-                if (!quest.QuestComplete)
-                    quest.Update();
-
-                // Schedule completed quests for tombstoning
-                if (quest.QuestComplete && !quest.QuestTombstoned)
-                    questsToTombstone.Add(quest);
-
-                // Expire tombstoned quests after 1 in-game week
-                if (quest.QuestTombstoned)
-                {
-                    if (DaggerfallUnity.Instance.WorldTime.Now.ToSeconds() - quest.QuestTombstoneTime.ToSeconds() > DaggerfallDateTime.SecondsPerWeek)
-                        questsToRemove.Add(quest);
-                }
-            }
-
-            // Tombstone completed quests after update
-            foreach (Quest quest in questsToTombstone)
-            {
-                TombstoneQuest(quest);
-            }
-
-            // Remove expired quests
-            foreach (Quest quest in questsToRemove)
-            {
-                RemoveQuest(quest);
-            }
+            // Tick quest machine
+            Tick();
 
             // Reset update timer
             updateTimer = 0;
-
-            // Fire tick event
-            RaiseOnTickEvent();
         }
 
         #endregion
@@ -347,6 +314,48 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Tick quest machine.
+        /// </summary>
+        public void Tick()
+        {
+            // Update quests
+            questsToTombstone.Clear();
+            questsToRemove.Clear();
+            foreach (Quest quest in quests.Values)
+            {
+                // Tick active quests
+                if (!quest.QuestComplete)
+                    quest.Update();
+
+                // Schedule completed quests for tombstoning
+                if (quest.QuestComplete && !quest.QuestTombstoned)
+                    questsToTombstone.Add(quest);
+
+                // Expire tombstoned quests after 1 in-game week
+                if (quest.QuestTombstoned)
+                {
+                    if (DaggerfallUnity.Instance.WorldTime.Now.ToSeconds() - quest.QuestTombstoneTime.ToSeconds() > DaggerfallDateTime.SecondsPerWeek)
+                        questsToRemove.Add(quest);
+                }
+            }
+
+            // Tombstone completed quests after update
+            foreach (Quest quest in questsToTombstone)
+            {
+                TombstoneQuest(quest);
+            }
+
+            // Remove expired quests
+            foreach (Quest quest in questsToRemove)
+            {
+                RemoveQuest(quest);
+            }
+
+            // Fire tick event
+            RaiseOnTickEvent();
+        }
 
         /// <summary>
         /// Resets operating state - clears all quests, sitelinks, debuggers, etc.
