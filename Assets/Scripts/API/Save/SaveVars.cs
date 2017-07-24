@@ -39,6 +39,8 @@ namespace DaggerfallConnect.Save
         const int lastSkillCheckTimeOffset = 0x179A;
         const int factionDataOffset = 0x17D0;
         const int factionDataLength = 92;
+        const int globalVarsCount = 64;
+        const int globalVarsOffset = 0x34f;
 
         string emperorSonName = ""; // Randomly chosen and can be used in character history, where it fills in %imp.
         bool cautiousTravel = false;
@@ -57,6 +59,7 @@ namespace DaggerfallConnect.Save
         // Private fields
         FileProxy saveVarsFile = new FileProxy();
         List<FactionFile.FactionData> factions = new List<FactionFile.FactionData>();
+        byte[] globalVars = new byte[globalVarsCount];
 
         #endregion
 
@@ -223,6 +226,14 @@ namespace DaggerfallConnect.Save
             get { return factions.ToArray(); }
         }
 
+        /// <summary>
+        /// Gets array of global variables.
+        /// </summary>
+        public byte[] GlobalVars
+        {
+            get { return globalVars; }
+        }
+
         #endregion
 
         #region Constructors
@@ -276,6 +287,7 @@ namespace DaggerfallConnect.Save
             ReadCheatFlags(reader);
             ReadLastSkillCheckTime(reader);
             ReadFactionData(reader);
+            ReadGlobalVars(reader);
 
             return true;
         }
@@ -404,6 +416,16 @@ namespace DaggerfallConnect.Save
 
                 factions.Add(faction);
             }
+        }
+
+        void ReadGlobalVars(BinaryReader reader)
+        {
+            long currentPos = reader.BaseStream.Position;
+
+            reader.BaseStream.Position = globalVarsOffset;
+            globalVars = reader.ReadBytes(globalVarsCount);
+
+            reader.BaseStream.Position = currentPos;
         }
 
         #endregion
