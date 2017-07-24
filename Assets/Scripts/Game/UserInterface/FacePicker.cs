@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void NextFaceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             faceIndex++;
-            if (faceIndex >= maxFaceIndex)
+            if (faceIndex > maxFaceIndex)
                 faceIndex = minFaceIndex;
 
             SetCurrentFace();
