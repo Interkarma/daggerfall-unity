@@ -497,6 +497,9 @@ namespace DaggerfallWorkshop.Game.Utility
             PlayerEntity playerEntity = FindPlayerEntity();
             playerEntity.AssignCharacter(characterDocument, characterRecord.ParsedData.level, characterRecord.ParsedData.maxHealth, false);
 
+            // Assign faction data
+            playerEntity.FactionData.ImportClassicReputation(saveVars);
+
             // Set time of last check for raising skills
             playerEntity.TimeOfLastSkillIncreaseCheck = saveVars.LastSkillCheckTime;
 

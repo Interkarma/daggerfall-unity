@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Save;
 
 namespace DaggerfallWorkshop.Game.Player
 {
@@ -157,6 +158,18 @@ namespace DaggerfallWorkshop.Game.Player
         #endregion
 
         #region Reputation
+
+        public void ImportClassicReputation(SaveVars saveVars)
+        {
+            // Get faction reader
+            FactionFile factionFile = DaggerfallUnity.Instance.ContentReader.FactionFileReader;
+            if (factionFile == null)
+                throw new Exception("PersistentFactionData.ImportClassicReputation() unable to load faction file reader.");
+
+            // Assign new faction dict
+            factionDict = factionFile.Merge(saveVars);
+            Debug.Log("Imported faction data from classic save.");
+        }
 
         /// <summary>
         /// Change reputation value by amount.
