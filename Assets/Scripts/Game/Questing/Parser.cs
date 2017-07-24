@@ -267,11 +267,25 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
                 else if (IsGlobalReference(lines[i]))
                 {
+                    // Check if following line is another task or a line break
+                    bool hasBody = false;
+                    if (i + 1 != lines.Count)
+                        hasBody = !IsNewTaskOrLineBreak(lines[i + 1]);
+
                     // This is a global variable link task
-                    // Could be just a link variable or have a body
+                    Task task;
                     int globalVar = GetGlobalReference(lines[i]);
-                    List<string> taskLines = ReadBlock(lines, ref i);
-                    Task task = new Task(quest, taskLines.ToArray(), globalVar);
+                    if (hasBody)
+                    {
+                        List<string> taskLines = ReadBlock(lines, ref i);
+                        task = new Task(quest, taskLines.ToArray(), globalVar);
+                    }
+                    else
+                    {
+                        string[] variableLines = new string[1];
+                        variableLines[0] = lines[i];
+                        task = new Task(quest, variableLines, globalVar);
+                    }
                     quest.AddTask(task);
                 }
                 else if (foundHeadlessTask == false)
@@ -290,6 +304,21 @@ namespace DaggerfallWorkshop.Game.Questing
                     throw new Exception(string.Format("Unknown line signature encounted '{0}'.", lines[i]));
                 }
             }
+        }
+
+        bool IsNewTaskOrLineBreak(string line)
+        {
+            // Check is this line is a new task or a line break
+            if (line.StartsWith("variable", StringComparison.InvariantCultureIgnoreCase) ||
+                line.Contains("task:") ||
+                line.StartsWith("until", StringComparison.InvariantCultureIgnoreCase) && line.Contains("performed:") ||
+                IsGlobalReference(line) ||
+                string.IsNullOrEmpty(line.Trim()))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         #endregion
