@@ -233,7 +233,7 @@ namespace DaggerfallConnect.Save
 
             // 3d View Picture
             reader.BaseStream.Position = 27;
-            recordRoot.Picture1 = reader.ReadUInt16();
+            recordRoot.SpriteIndex = reader.ReadUInt16();
 
             // Inventory Picture
             recordRoot.Picture2 = reader.ReadUInt16();

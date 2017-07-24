@@ -282,8 +282,8 @@ namespace DaggerfallConnect.Save
             public Byte level;
             public PlayerReflexes reflexes;
             public UInt32 physicalGold;
-            public Byte magicEffects1; // x1 = paralyzed, x4 = invisible, x8 = levitating, x10 = chameleon, x20 = shade, x40 = open
-            public Byte magicEffects2; // x1 = silenced
+            public Byte magicEffects1; // x1 = paralyzed, x4 = invisible, x8 = levitating, x20 = lock, x40 = open
+            public Byte magicEffects2; // x1 = silenced, x10 = chameleon, x20 = shade, x40 = slowfall
             public Byte magicEffects3; // x1 = jump, x8 = waterbreathing,, x10 = waterwalking
             public Int16 currentSpellPoints;
             public Int16 maxSpellPoints;

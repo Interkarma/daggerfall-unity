@@ -120,7 +120,7 @@ namespace DaggerfallWorkshop
                     EditorGUILayout.Space();
                     showSaveTreeFoldout = GUILayoutHelper.Foldout(showSaveTreeFoldout, new GUIContent("SaveTree"), () =>
                     {
-                        EditorGUILayout.HelpBox("Temporarily Filtering out records of type UnknownTownLink and UnknownItemRecord to keep list manageable.", MessageType.Info);
+                        EditorGUILayout.HelpBox("Temporarily Filtering out records of type Door and UnknownItemRecord to keep list manageable.", MessageType.Info);
 
                         DisplaySaveTree(currentSaveTree.RootRecord);
                     });
@@ -363,7 +363,7 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < parent.Children.Count; i++)
             {
                 RecordTypes recordType = parent.Children[i].RecordType;
-                if (recordType == RecordTypes.UnknownTownLink || recordType == RecordTypes.UnknownItemRecord)
+                if (recordType == RecordTypes.Door || recordType == RecordTypes.UnknownItemRecord)
                     continue;
 
                 string textLabel = recordType.ToString();
