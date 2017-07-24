@@ -28,6 +28,9 @@ namespace DaggerfallWorkshop.Game.Player
     {
         #region Fields
 
+        const int minReputation = -100;
+        const int maxReputation = 100;
+
         // TEMP: Faction IDs for curated quest givers
         public const int fightersGuildQuestorFactionID = 851;
         public const int magesGuildQuestorFactionID = 63;
@@ -149,6 +152,26 @@ namespace DaggerfallWorkshop.Game.Player
 
             // Log message to see when faction data reset
             Debug.Log("PersistentFactionData.Reset() loaded fresh faction data.");
+        }
+
+        #endregion
+
+        #region Reputation
+
+        /// <summary>
+        /// Change reputation value by amount.
+        /// </summary>
+        public bool ChangeReputation(int factionID, int amount)
+        {
+            if (factionDict.ContainsKey(factionID))
+            {
+                FactionFile.FactionData factionData = factionDict[factionID];
+                factionData.rep = Mathf.Clamp(factionData.rep + amount, minReputation, maxReputation);
+                factionDict[factionID] = factionData;
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

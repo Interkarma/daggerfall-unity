@@ -37,6 +37,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(EndDebugQuest.name, EndDebugQuest.description, EndDebugQuest.usage, EndDebugQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(EndQuest.name, EndQuest.description, EndQuest.usage, EndQuest.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PurgeAllQuests.name, PurgeAllQuests.description, PurgeAllQuests.usage, PurgeAllQuests.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ModNPCRep.name, ModNPCRep.description, ModNPCRep.usage, ModNPCRep.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenAllDoors.name, OpenAllDoors.description, OpenAllDoors.usage, OpenAllDoors.Execute);
             ConsoleCommandsDatabase.RegisterCommand(OpenDoor.name, OpenDoor.description, OpenDoor.usage, OpenDoor.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ActivateAction.name, ActivateAction.description, ActivateAction.usage, ActivateAction.Execute);
@@ -832,7 +833,7 @@ namespace Wenzil.Console
 
                 int questUID;
                 if (!int.TryParse(args[0], out questUID))
-                    return HelpCommand.Execute(EndQuest.usage);
+                    return HelpCommand.Execute(EndQuest.name);
 
                 Quest quest = QuestMachine.Instance.GetQuest((ulong)questUID);
                 if (quest == null)
@@ -887,6 +888,36 @@ namespace Wenzil.Console
                 int count = QuestMachine.Instance.PurgeAllQuests();
 
                 return string.Format("Removed {0} quests.", count);
+            }
+        }
+
+        private static class ModNPCRep
+        {
+            public static readonly string name = "modnpcrep";
+            public static readonly string error = "You must click an NPC before modifying your reputation with them.";
+            public static readonly string description = "Modify reputation with last NPC clicked by a positive or negative amount. Clamped at -100 through 100.";
+            public static readonly string usage = "modnpcrep <amount>";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length != 1)
+                    return HelpCommand.Execute(ModNPCRep.name);
+
+                int amount;
+                if (!int.TryParse(args[0], out amount))
+                    return HelpCommand.Execute(ModNPCRep.name);
+
+                // Get faction data of last NPC clicked
+                StaticNPC npc = QuestMachine.Instance.LastNPCClicked;
+                if (npc == null)
+                    return error;
+
+                if (GameManager.Instance.PlayerEntity.FactionData.ChangeReputation(npc.Data.factionID, amount))
+                {
+                    return string.Format("Changed NPC rep for {0} by {1}", npc.DisplayName, amount);
+                }
+
+                return "Could not raise rep - unknown error.";
             }
         }
 

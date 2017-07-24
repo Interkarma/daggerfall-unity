@@ -191,6 +191,7 @@ namespace DaggerfallWorkshop.Game
                         StaticNPC npc;
                         if (NPCCheck(hits[i], out npc))
                         {
+                            QuestMachine.Instance.LastNPCClicked = npc;
                             switch (currentMode)
                             {
                                 case PlayerActivateModes.Info:
@@ -470,6 +471,18 @@ namespace DaggerfallWorkshop.Game
         private void PresentNPCInfo(StaticNPC npc)
         {
             DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", npc.DisplayName));
+
+            // Add debug info
+            if (DaggerfallUI.Instance.DaggerfallHUD.ShowQuestDebugger)
+            {
+                // Get faction info of this NPC
+                FactionFile.FactionData factionData;
+                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
+                {
+                    string debugInfo = string.Format("Debugger: Your reputation with this NPC is {0}.", factionData.rep);
+                    DaggerfallUI.AddHUDText(debugInfo, 2);
+                }
+            }
         }
 
         // Player has clicked a GameObject with a QuestResourceBehaviour attached
