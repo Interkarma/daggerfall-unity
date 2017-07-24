@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallConnect.Save;
 
 namespace DaggerfallWorkshop.Game.Player
 {
@@ -111,6 +112,26 @@ namespace DaggerfallWorkshop.Game.Player
             foreach(GlobalVar gv in globalVarsList)
             {
                 globalVarsDict.Add(gv.index, gv);
+            }
+        }
+
+        /// <summary>
+        /// Import global variables from classic save.
+        /// </summary>
+        /// <param name="saveVars"></param>
+        public void ImportClassicGlobalVars(SaveVars saveVars)
+        {
+            byte[] globals = saveVars.GlobalVars;
+            for (int i = 0; i < globals.Length; i++)
+            {
+                GlobalVar globalVar = globalVarsDict[i];
+                if (globals[i] == 0)
+                    globalVar.value = false;
+                else if (globals[i] == 1)
+                    globalVar.value = true;
+                else
+                    throw new Exception("ImportClassicGlobalVars() Ecnountered an unexpected global variable value.");
+                globalVarsDict[i] = globalVar;
             }
         }
     }

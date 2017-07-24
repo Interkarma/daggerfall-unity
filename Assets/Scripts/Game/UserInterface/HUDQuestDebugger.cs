@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 
 namespace DaggerfallWorkshop.Game.UserInterface
@@ -21,16 +23,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// <summary>
     /// Output quest information on HUD to view state in real-time and optionally step-through execution.
     /// Uses some non-bindable keys (not all implemented):
-    ///  * Ctrl+F10     Toggle debugger HUD open/close, closing will also resume normal quest execution
-    ///  * Ctrl+F11     Toggle step-through at any time (will open debugger HUD if not open)
-    ///  * Ctrl+Enter   Step execution to next task/action (only when debugger HUD open and step-through enabled)
     ///  * ]            Show next quest tasks/vars/timers (only when debugger HUD open)
     ///  * [            Show previous quest tasks/vars/timers (only when debugger HUD open)
+    ///  * Shift+Tab    Toggle global variables display
     /// </summary>
     public class HUDQuestDebugger : Panel
     {
         const int maxTaskRows = 20;
         const int maxTimerRows = 3;
+        const int maxGlobalRows = 31;
         const int rowHeight = 10;
         const int taskColWidth = 60;
         const int timerColWidth = 100;
@@ -39,10 +40,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string questFinished = "Finished";
         const int taskLabelPoolCount = 84;
         const int timerLabelPoolCount = 20;
+        const int globalLabelPoolCount = 64;
 
         ulong[] allQuests;
         int currentQuestIndex;
         Quest currentQuest;
+
+        bool showGlobalVars = false;
 
         TextLabel questNameLabel = new TextLabel();
         TextLabel processLabel = new TextLabel();
@@ -50,10 +54,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         TextLabel timersHeaderLabel = new TextLabel();
         TextLabel[] taskLabelPool = new TextLabel[taskLabelPoolCount];
         TextLabel[] timerLabelPool = new TextLabel[timerLabelPoolCount];
+        TextLabel[] globalsLabelPool = new TextLabel[globalLabelPoolCount];
 
         public Quest CurrentQuest
         {
             get { return currentQuest; }
+        }
+
+        public bool ShowGlobalVars
+        {
+            get { return showGlobalVars; }
+            set { EnableGlobalVars(value); }
         }
 
         public HUDQuestDebugger()
@@ -93,6 +104,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Label pool setup
             SetupTaskLabels(new Vector2(0, 35));
             SetupTimerLabels(new Vector2(0, 265));
+            SetupGlobalVarLabel(new Vector2(550, 0));
+
+            // Disable global vars by default
+            ShowGlobalVars = false;
 
             // Set starting state
             ClearCurrentQuest();
@@ -116,14 +131,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (allQuests == null || allQuests.Length != QuestMachine.Instance.QuestCount)
                 FullRefresh();
 
+            bool leftShiftDown = Input.GetKey(KeyCode.LeftShift);
             if (Input.GetKeyDown(KeyCode.LeftBracket))
                 MovePreviousQuest();
             else if (Input.GetKeyDown(KeyCode.RightBracket))
                 MoveNextQuest();
+            else if (leftShiftDown && Input.GetKeyDown(KeyCode.Tab))
+                ShowGlobalVars = !ShowGlobalVars;
         }
 
         private void QuestMachine_OnTick()
         {
+            // Update global variables status
+            if (ShowGlobalVars)
+            {
+                UpdateGlobalVarsStatus();
+            }
+
             // Must at least one running quests
             if (QuestMachine.Instance.QuestCount == 0)
             {
@@ -147,6 +171,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         #region Private Methods
+
+        void UpdateGlobalVarsStatus()
+        {
+            // Set global vars status
+            PersistentGlobalVars playerGlovalVars = GameManager.Instance.PlayerEntity.GlobalVars;
+            for (int i = 0; i < globalLabelPoolCount; i++)
+            {
+                if (playerGlovalVars.GetGlobalVar(i))
+                    globalsLabelPool[i].TextColor = Color.green;
+                else
+                    globalsLabelPool[i].TextColor = Color.gray;
+            }
+        }
 
         void UpdateQuestStatus()
         {
@@ -231,6 +268,40 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 // Step row and column
                 if (++row > maxTimerRows)
+                {
+                    row = 0;
+                    col++;
+                }
+            }
+        }
+
+        void SetupGlobalVarLabel(Vector2 startPosition)
+        {
+            // Get quest global variables table
+            Table globalVarsTables = QuestMachine.Instance.GlobalVarsTable;
+
+            // Create a pool of labels for output
+            int row = 0, col = 0;
+            for (int i = 0; i < globalLabelPoolCount; i++)
+            {
+                // Get current position
+                Vector2 position = startPosition + new Vector2(col * timerColWidth, row * rowHeight);
+
+                // Get global variable name
+                string[] rowData = globalVarsTables.GetRow(i);
+
+                // Create label at current position
+                TextLabel label = new TextLabel();
+                label.Text = string.Format("{0}", rowData[1]);
+                label.Position = position;
+                label.TextColor = Color.gray;
+                label.ShadowPosition = Vector2.zero;
+                label.Enabled = true;
+                globalsLabelPool[i] = label;
+                Components.Add(label);
+
+                // Step row and column
+                if (++row > maxGlobalRows)
                 {
                     row = 0;
                     col++;
@@ -372,6 +443,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentQuestIndex = allQuests.Length - 1;
 
             SetCurrentQuest(QuestMachine.Instance.GetQuest(allQuests[currentQuestIndex]));
+        }
+
+        void EnableGlobalVars(bool value)
+        {
+            for (int i = 0; i < globalsLabelPool.Length; i++)
+            {
+                globalsLabelPool[i].Enabled = value;
+            }
+            showGlobalVars = value;
         }
 
         #endregion

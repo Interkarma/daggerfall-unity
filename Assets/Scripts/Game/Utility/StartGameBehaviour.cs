@@ -500,6 +500,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Assign faction data
             playerEntity.FactionData.ImportClassicReputation(saveVars);
 
+            // Assign global variables
+            playerEntity.GlobalVars.ImportClassicGlobalVars(saveVars);
+
             // Set time of last check for raising skills
             playerEntity.TimeOfLastSkillIncreaseCheck = saveVars.LastSkillCheckTime;
 
