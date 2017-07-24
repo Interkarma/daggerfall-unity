@@ -39,7 +39,24 @@ namespace DaggerfallWorkshop.Game.Serialization
         void Start()
         {
             if (LoadID != 0)
+            {
+                // In RDB layouts the LoadID is generated from RDB record position
+                // This is used to map save data back to an enemy injected by layout builders
+                // But this can result in collisions when an RDB block is used more than once per layout
+                // This hack fix will resolve collision by incrementing LoadID
+                // This only works because RDB resources are always laid out in the same order
+                // So subsequent layouts and collisions will resolve in same way
+                // This bug can happen for serializable enemies, doors, and action objects added by layout
+                // Does not affect dynamic objects like quest enemies and loot piles
+                // Only fixing for enemies now - will look for a better solution in the future
+                if (enemy && GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                {
+                    if (SaveLoadManager.Instance.ContainsEnemy(enemy.LoadID))
+                        enemy.LoadID++;
+                }
+
                 SaveLoadManager.RegisterSerializableGameObject(this);
+            }
         }
 
         void OnDestroy()

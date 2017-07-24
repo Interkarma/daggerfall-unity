@@ -418,6 +418,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             return key != -1;
         }
 
+        /// <summary>
+        /// Check if a LoadID is already in enemy serialization list.
+        /// </summary>
+        public bool ContainsEnemy(ulong id)
+        {
+            return (serializableEnemies.ContainsKey(id));
+        }
+
         #endregion
 
         #region Public Static Methods
