@@ -1816,6 +1816,10 @@ namespace DaggerfallWorkshop.Game
                     loadAndCreateLocationExteriorAutomap();
                 }
             }
+            else
+            {
+                gameobjectExteriorAutomap.SetActive(false);
+            }
         }
         #endregion
     }
