@@ -465,6 +465,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 daggerfallExteriorAutomap.ResetAutomapSettingsSignalForExternalScript = false; // indicate the settings were reset
             }
 
+            // focus player position on exterior automap
+            ActionFocusPlayerPosition();
+
             // and update the automap view
             updateAutomapView();
         }
