@@ -9,11 +9,9 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
 using System.Text.RegularExpressions;
-using System;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Utility;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
@@ -29,7 +27,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override string Pattern
         {
-            get { return @"prompt (?<id>\d+) yes (?<yesTaskName>[a-zA-Z0-9_.]+) no (?<noTaskName>[a-zA-Z0-9_.]+)"; }
+            get { return @"prompt (?<id>\d+) yes (?<yesTaskName>[a-zA-Z0-9_.]+) no (?<noTaskName>[a-zA-Z0-9_.]+)|" +
+                         @"prompt (?<idName>\w+) yes (?<yesTaskName>[a-zA-Z0-9_.]+) no (?<noTaskName>[a-zA-Z0-9_.]+)"; }
         }
 
         public Prompt(Quest parentQuest)
@@ -49,6 +48,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             prompt.id = Parser.ParseInt(match.Groups["id"].Value);
             prompt.yesTaskSymbol = new Symbol(match.Groups["yesTaskName"].Value);
             prompt.noTaskSymbol = new Symbol(match.Groups["noTaskName"].Value);
+
+            // Resolve static message back to ID
+            string idName = match.Groups["idName"].Value;
+            if (prompt.id == 0 && !string.IsNullOrEmpty(idName))
+            {
+                Table table = QuestMachine.Instance.StaticMessagesTable;
+                prompt.id = Parser.ParseInt(table.GetValue("id", idName));
+            }
 
             return prompt;
         }

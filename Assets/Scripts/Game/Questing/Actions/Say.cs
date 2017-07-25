@@ -9,10 +9,8 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
 using System.Text.RegularExpressions;
-using System;
+using DaggerfallWorkshop.Utility;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
@@ -26,7 +24,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override string Pattern
         {
-            get { return @"say (?<id>\d+)"; }
+            get { return @"say (?<id>\d+)|say (?<idName>\w+)"; }
         }
 
         public Say(Quest parentQuest)
@@ -44,6 +42,14 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Factory new say
             Say say = new Say(parentQuest);
             say.id = Parser.ParseInt(match.Groups["id"].Value);
+
+            // Resolve static message back to ID
+            string idName = match.Groups["idName"].Value;
+            if (say.id == 0 && !string.IsNullOrEmpty(idName))
+            {
+                Table table = QuestMachine.Instance.StaticMessagesTable;
+                say.id = Parser.ParseInt(table.GetValue("id", idName));
+            }
 
             return say;
         }
