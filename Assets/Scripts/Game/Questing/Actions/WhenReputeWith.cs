@@ -9,33 +9,34 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System;
+using DaggerfallConnect.Arena2;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
-    /// Starts task when reputation with a faction is equal to or greater than a value.
-    /// NOTE: This requires more research to build. Just stubbing out now so this action will compile.
+    /// Triggers when player reputation with a special named NPC equals or exceeds a minimum value.
+    /// This is only used in a small number of canonical quests which refer to special individuals.
+    /// Examples are King Gothryd, Queen Aubk-i, Prince Lhotun, etc.
     /// </summary>
     public class WhenReputeWith : ActionTemplate
     {
-        string factionName;
-        int value;
+        string npcName;
+        int npcFactionID;
+        int minRepValue;
 
         public override string Pattern
         {
-            get { return @"when repute with (?<aFaction>[a-zA-Z0-9_.-]+) is at least (?<value>\d+)"; }
+            get { return @"when repute with (?<individualNPCName>[a-zA-Z0-9_.-]+) is at least (?<minRepValue>\d+)"; }
         }
 
         public WhenReputeWith(Quest parentQuest)
             : base(parentQuest)
         {
             IsTriggerCondition = true;
+            IsAlwaysOnTriggerCondition = true;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
@@ -47,19 +48,64 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Factory new action
             WhenReputeWith action = new WhenReputeWith(parentQuest);
-            action.factionName = match.Groups["aFaction"].Value;
-            action.value = Parser.ParseInt(match.Groups["value"].Value);
+
+            // Confirm this is an individual NPC
+            string individualNPCName = match.Groups["individualNPCName"].Value;
+            int factionID = Person.GetIndividualFactionID(individualNPCName);
+            if (factionID != -1)
+            {
+                FactionFile.FactionData factionData = Person.GetFactionData(factionID);
+                if (factionData.type != (int)FactionFile.FactionTypes.Individual)
+                    throw new Exception(string.Format("WhenReputeWith: NPC {0} with FactionID {1} is not an individual NPC", individualNPCName, factionID));
+            }
+
+            action.npcName = individualNPCName;
+            action.npcFactionID = factionID;
+            action.minRepValue = Parser.ParseInt(match.Groups["minRepValue"].Value);
 
             return action;
         }
 
+        public override bool CheckTrigger(Task caller)
+        {
+            FactionFile.FactionData factionData;
+            if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npcFactionID, out factionData))
+                return false;
+
+            return factionData.rep >= minRepValue;
+        }
+
+        #region Serialization
+
+        [fsObject("v1")]
+        public struct SaveData_v1
+        {
+            public string npcName;
+            public int npcFactionID;
+            public int minRepValue;
+        }
+
         public override object GetSaveData()
         {
-            return string.Empty;
+            SaveData_v1 data = new SaveData_v1();
+            data.npcName = npcName;
+            data.npcFactionID = npcFactionID;
+            data.minRepValue = minRepValue;
+
+            return data;
         }
 
         public override void RestoreSaveData(object dataIn)
         {
+            SaveData_v1 data = (SaveData_v1)dataIn;
+            if (dataIn == null)
+                return;
+
+            npcName = data.npcName;
+            npcFactionID = data.npcFactionID;
+            minRepValue = data.minRepValue;
         }
+
+        #endregion
     }
 }
