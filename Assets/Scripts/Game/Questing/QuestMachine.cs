@@ -75,6 +75,7 @@ namespace DaggerfallWorkshop.Game.Questing
         List<SiteLink> siteLinks = new List<SiteLink>();
         List<Quest> questsToTombstone = new List<Quest>();
         List<Quest> questsToRemove = new List<Quest>();
+        List<Quest> questsToInvoke = new List<Quest>();
 
         bool waitingForStartup = true;
         float startupTimer = 0;
@@ -309,6 +310,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new AddFace(null));
             RegisterAction(new DropFace(null));
             RegisterAction(new GetItem(null));
+            RegisterAction(new StartQuest(null));
 
             // Raise event for custom actions to be registered
             RaiseOnRegisterCustomerActionsEvent();
@@ -323,6 +325,17 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public void Tick()
         {
+            // Invoke scheduled quests
+            foreach (Quest quest in questsToInvoke)
+            {
+                if (quest != null)
+                {
+                    InstantiateQuest(quest);
+                    RaiseOnQuestStartedEvent(quest);
+                }
+            }
+            questsToInvoke.Clear();
+
             // Update quests
             questsToTombstone.Clear();
             questsToRemove.Clear();
@@ -521,6 +534,15 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             quests.Add(quest.UID, quest);
             RaiseOnQuestStartedEvent(quest);
+        }
+
+        /// <summary>
+        /// Schedules quest to start on next tick.
+        /// </summary>
+        /// <param name="quest">Quest.</param>
+        public void ScheduleQuest(Quest quest)
+        {
+            questsToInvoke.Add(quest);
         }
 
         /// <summary>
