@@ -426,6 +426,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             return (serializableEnemies.ContainsKey(id));
         }
 
+        /// <summary>
+        /// Check if a LoadID is already in action door serialization list.
+        /// </summary>
+        public bool ContainsActionDoor(ulong id)
+        {
+            return (serializableActionDoors.ContainsKey(id));
+        }
+
         #endregion
 
         #region Public Static Methods

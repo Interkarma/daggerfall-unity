@@ -204,6 +204,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public Quaternion currentRotation;
         public ActionState currentState;
         public float actionPercentage;
+        public short lockpickFailedSkillLevel;
     }
 
     #endregion

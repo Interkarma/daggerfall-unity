@@ -40,7 +40,16 @@ namespace DaggerfallWorkshop.Game.Serialization
         void Start()
         {
             if (LoadID != 0)
+            {
+                // Using same hack ID fix as SerializableEnemy
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                {
+                    if (actionDoor && SaveLoadManager.Instance.ContainsActionDoor(actionDoor.LoadID))
+                        actionDoor.LoadID++;
+                }
+
                 SaveLoadManager.RegisterSerializableGameObject(this);
+            }
         }
 
         void OnDestroy()
@@ -66,6 +75,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.currentLockValue = actionDoor.CurrentLockValue;
             data.currentRotation = transform.rotation;
             data.currentState = actionDoor.CurrentState;
+            data.lockpickFailedSkillLevel = actionDoor.FailedSkillLevel;
 
             if (actionDoor.IsMoving)
             {
@@ -88,6 +98,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 actionDoor.transform.rotation = data.currentRotation;
                 actionDoor.CurrentState = data.currentState;
                 actionDoor.RestartTween(1 - data.actionPercentage);
+                actionDoor.FailedSkillLevel = data.lockpickFailedSkillLevel;
             }
         }
 
