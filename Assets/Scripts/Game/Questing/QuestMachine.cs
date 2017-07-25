@@ -383,6 +383,8 @@ namespace DaggerfallWorkshop.Game.Questing
             quests.Clear();
             siteLinks.Clear();
             questsToTombstone.Clear();
+            questsToRemove.Clear();
+            questsToInvoke.Clear();
             lastNPCClicked = null;
 
             // Clear debugger state
@@ -761,7 +763,7 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Immediately removes all quests.
+        /// Immediately tombstones then removes all quests.
         /// </summary>
         /// <returns>Number of quests removed.</returns>
         public int PurgeAllQuests()
@@ -779,6 +781,11 @@ namespace DaggerfallWorkshop.Game.Questing
             siteLinks.Clear();
             questsToTombstone.Clear();
             questsToRemove.Clear();
+            questsToInvoke.Clear();
+            lastNPCClicked = null;
+
+            // Clear debugger state
+            DaggerfallUI.Instance.DaggerfallHUD.PlaceMarker.ClearSiteTargets();
 
             return uids.Length;
         }
