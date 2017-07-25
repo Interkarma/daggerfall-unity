@@ -139,6 +139,19 @@ namespace DaggerfallWorkshop.Game.Formulas
             return lockpickingChance;
         }
 
+        // Calculate chance of successfully pickpocketing a target
+        public static int CalculatePickpocketingChance(Entity.PlayerEntity player, Entity.DaggerfallEntityBehaviour target)
+        {
+            int chance = player.Skills.Pickpocket;
+            // If target is an enemy mobile, apply level modifier.
+            if (target)
+            {
+                Entity.EnemyEntity enemyEntity = target.Entity as Entity.EnemyEntity;
+                chance += 5 * ((player.Level) - (enemyEntity.Level));
+            }
+            return Mathf.Clamp(chance, 5, 95);
+        }
+
         // Calculate how many uses a skill needs before its value will rise.
         public static int CalculateSkillUsesForAdvancement(int skillValue, int skillAdvancementMultiplier, float careerAdvancementMultiplier, int level)
         {
