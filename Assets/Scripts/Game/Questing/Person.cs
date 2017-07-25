@@ -576,7 +576,7 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         // Gets live faction data from player entity for faction ID
-        FactionFile.FactionData GetFactionData(int factionID)
+        static public FactionFile.FactionData GetFactionData(int factionID)
         {
             FactionFile.FactionData factionData;
             if (!GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData))
@@ -590,7 +590,7 @@ namespace DaggerfallWorkshop.Game.Questing
         #region FactionID Lookups
 
         // Gets factionID of an individual NPC
-        int GetIndividualFactionID(string individualNPCName)
+        static public int GetIndividualFactionID(string individualNPCName)
         {
             // P3 is individual factionID
             Table factionsTable = QuestMachine.Instance.FactionsTable;

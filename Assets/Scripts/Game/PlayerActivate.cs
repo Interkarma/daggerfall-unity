@@ -188,7 +188,6 @@ namespace DaggerfallWorkshop.Game
                         StaticNPC npc;
                         if (NPCCheck(hits[i], out npc))
                         {
-                            QuestMachine.Instance.LastNPCClicked = npc;
                             switch (currentMode)
                             {
                                 case PlayerActivateModes.Info:
@@ -196,6 +195,7 @@ namespace DaggerfallWorkshop.Game
                                     break;
                                 case PlayerActivateModes.Grab:
                                 case PlayerActivateModes.Talk:
+                                case PlayerActivateModes.Steal:
                                     StaticNPCClick(npc);
                                     break;
                             }
@@ -477,7 +477,7 @@ namespace DaggerfallWorkshop.Game
                 if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
                 {
                     string debugInfo = string.Format("Debugger: Your reputation with this NPC is {0}.", factionData.rep);
-                    DaggerfallUI.AddHUDText(debugInfo, 2);
+                    DaggerfallUI.AddHUDText(debugInfo);
                 }
             }
         }

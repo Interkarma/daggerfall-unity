@@ -273,7 +273,7 @@ namespace DaggerfallWorkshop.Game.Questing
             //RegisterAction(new JuggleAction(null));
 
             // Register trigger conditions
-            RegisterAction(new WhenFactionIsAvailable(null));
+            RegisterAction(new WhenNpcIsAvailable(null));
             RegisterAction(new WhenReputeWith(null));
             RegisterAction(new WhenTask(null));
             RegisterAction(new ClickedNpc(null));
@@ -753,6 +753,9 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             quests.Clear();
+            siteLinks.Clear();
+            questsToTombstone.Clear();
+            questsToRemove.Clear();
 
             return uids.Length;
         }
@@ -798,6 +801,30 @@ namespace DaggerfallWorkshop.Game.Questing
             quests.Remove(quest.UID);
 
             return true;
+        }
+
+        /// <summary>
+        /// Gets any assigned Person resources of faction ID across all quests.
+        /// </summary>
+        /// <param name="factionID">FactionID to search for.</param>
+        /// <returns>Person array.</returns>
+        public Person[] ActiveFactionPersons(int factionID)
+        {
+            List<Person> assignedFound = new List<Person>();
+            foreach (Quest quest in quests.Values)
+            {
+                QuestResource[] persons = quest.GetAllResources(typeof(Person));
+                if (persons == null || persons.Length == 0)
+                    continue;
+
+                foreach(Person person in persons)
+                {
+                    if (person.FactionData.id == factionID)
+                        assignedFound.Add(person);
+                }
+            }
+
+            return assignedFound.ToArray();
         }
 
         #endregion
