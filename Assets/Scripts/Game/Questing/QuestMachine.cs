@@ -278,6 +278,11 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new WhenTask(null));
             RegisterAction(new ClickedNpc(null));
             RegisterAction(new ClickedItem(null));
+            RegisterAction(new LevelCompleted(null));
+            RegisterAction(new InjuredFoe(null));
+            RegisterAction(new KilledFoe(null));
+            RegisterAction(new TotingItemAndClickedNpc(null));
+            RegisterAction(new DailyFrom(null));
 
             // Register default actions
             RegisterAction(new EndQuest(null));
@@ -297,16 +302,12 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new GivePc(null));
             RegisterAction(new GiveItem(null));
             RegisterAction(new StartStopTimer(null));
-            RegisterAction(new DailyFrom(null));
             RegisterAction(new CreateFoe(null));
             RegisterAction(new PlaceFoe(null));
             RegisterAction(new HideNpc(null));
             RegisterAction(new RestoreNpc(null));
             RegisterAction(new AddFace(null));
             RegisterAction(new DropFace(null));
-            RegisterAction(new InjuredFoe(null));
-            RegisterAction(new KilledFoe(null));
-            RegisterAction(new TotingItemAndClickedNpc(null));
             RegisterAction(new GetItem(null));
 
             // Raise event for custom actions to be registered
