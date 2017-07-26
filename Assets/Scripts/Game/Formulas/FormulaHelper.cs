@@ -120,23 +120,28 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Calculate chance of successfully lockpicking a door in an interior (an animating door). If this is higher than a random number between 0 and 100 (inclusive), the lockpicking succeeds.
         public static int CalculateInteriorLockpickingChance(int level, int lockvalue, int lockpickingSkill)
         {
-            int lockpickingChance = (5 * (level - lockvalue) + lockpickingSkill);
-            if (lockpickingChance > 95)
-                lockpickingChance = 95;
-            else if (lockpickingChance < 5)
-                lockpickingChance = 5;
-            return lockpickingChance;
+            int chance = (5 * (level - lockvalue) + lockpickingSkill);
+            return Mathf.Clamp(chance, 5, 95);
         }
 
         // Calculate chance of successfully lockpicking a door in an exterior (a door that leads to an interior). If this is higher than a random number between 0 and 100 (inclusive), the lockpicking succeeds.
         public static int CalculateExteriorLockpickingChance(int lockvalue, int lockpickingSkill)
         {
-            int lockpickingChance = lockpickingSkill - (5 * lockvalue);
-            if (lockpickingChance > 95)
-                lockpickingChance = 95;
-            else if (lockpickingChance < 5)
-                lockpickingChance = 5;
-            return lockpickingChance;
+            int chance = lockpickingSkill - (5 * lockvalue);
+            return Mathf.Clamp(chance, 5, 95);
+        }
+
+        // Calculate chance of successfully pickpocketing a target
+        public static int CalculatePickpocketingChance(Entity.PlayerEntity player, Entity.DaggerfallEntityBehaviour target)
+        {
+            int chance = player.Skills.Pickpocket;
+            // If target is an enemy mobile, apply level modifier.
+            if (target)
+            {
+                Entity.EnemyEntity enemyEntity = target.Entity as Entity.EnemyEntity;
+                chance += 5 * ((player.Level) - (enemyEntity.Level));
+            }
+            return Mathf.Clamp(chance, 5, 95);
         }
 
         // Calculate how many uses a skill needs before its value will rise.

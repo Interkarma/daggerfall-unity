@@ -79,6 +79,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                                                     "You see a pathetic excuse for a lock...",
                                                     "This lock is an insult to your abilities..."};
 
+        public const string youPinchedGoldPiece = "You pinched 1 gold piece."; // Not in classic.
+        public const string youPinchedGoldPieces = "You pinched %d gold pieces.";
+        public const string youAreNotSuccessful = "You are not successful...";
+
         public const string skillImprove = "Your %s skill has improved.";
         public const string mustDistributeBonusPoints = "You must distribute all bonus points.";
 

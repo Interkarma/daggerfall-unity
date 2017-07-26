@@ -201,6 +201,38 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
 
+                        // Check for mobile NPC hit
+                        MobilePersonMotor mobileNpc;
+                        if (MobilePersonMotorCheck(hits[i], out mobileNpc))
+                        {
+                            switch (currentMode)
+                            {
+                                case PlayerActivateModes.Info:
+                                case PlayerActivateModes.Grab:
+                                case PlayerActivateModes.Talk:
+                                    break;
+                                case PlayerActivateModes.Steal:
+                                    Pickpocket();
+                                    break;
+                            }
+                        }
+
+                        // Check for mobile enemy hit
+                        DaggerfallEntityBehaviour mobileEnemy;
+                        if (MobileEnemyCheck(hits[i], out mobileEnemy))
+                        {
+                            switch (currentMode)
+                            {
+                                case PlayerActivateModes.Info:
+                                case PlayerActivateModes.Grab:
+                                case PlayerActivateModes.Talk:
+                                    break;
+                                case PlayerActivateModes.Steal:
+                                    Pickpocket(mobileEnemy);
+                                    break;
+                            }
+                        }
+
                         // Trigger general quest resource behaviour click
                         // Note: This will cause a second click on special NPCs, look into a way to unify this handling
                         QuestResourceBehaviour questResourceBehaviour;
@@ -312,6 +344,26 @@ namespace DaggerfallWorkshop.Game
         {
             staticNPC = hitInfo.transform.GetComponent<StaticNPC>();
             if (staticNPC != null)
+                return true;
+            else
+                return false;
+        }
+
+        // Check if raycast hit a mobile NPC
+        private bool MobilePersonMotorCheck(RaycastHit hitInfo, out MobilePersonMotor mobileNPC)
+        {
+            mobileNPC = hitInfo.transform.GetComponent<MobilePersonMotor>();
+            if (mobileNPC != null)
+                return true;
+            else
+                return false;
+        }
+
+        // Check if raycast hit a mobile enemy
+        private bool MobileEnemyCheck(RaycastHit hitInfo, out DaggerfallEntityBehaviour mobileEnemy)
+        {
+            mobileEnemy = hitInfo.transform.GetComponent<DaggerfallEntityBehaviour>();
+            if (mobileEnemy != null)
                 return true;
             else
                 return false;
@@ -525,6 +577,55 @@ namespace DaggerfallWorkshop.Game
                 guildWindow.CurrentService = DaggerfallGuildPopupWindow.TempGuildServices.Questor;
                 guildWindow.QuestorNPC = npc;
                 DaggerfallUI.Instance.UserInterfaceManager.PushWindow(guildWindow);
+            }
+        }
+
+        // Player has clicked on a pickpocket target in steal mode
+        void Pickpocket(DaggerfallEntityBehaviour target = null)
+        {
+            // Classic allows pickpocketing of NPC mobiles and enemy mobiles.
+            // In early versions the only enemy mobiles that can be pickpocketed are classes,
+            // but patch 1.07.212 allows pickpocketing of creatures.
+            // For now, the only enemy mobiles being allowed by DF Unity are classes.
+            if (target && (target.EntityType != EntityTypes.EnemyClass))
+                return;
+
+            const int foundNothingValuableTextId = 8999;
+
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            player.TallySkill((short)Skills.Pickpocket, 1);
+
+            int chance = Formulas.FormulaHelper.CalculatePickpocketingChance(player, target);
+
+            if (UnityEngine.Random.Range(0, 101) <= chance)
+            {
+                if (UnityEngine.Random.Range(0, 101) >= 33)
+                {
+                    int pinchedGoldPieces = UnityEngine.Random.Range(0, 6) + 1;
+                    player.GoldPieces += pinchedGoldPieces;
+                    string gotGold;
+                    if (pinchedGoldPieces == 1)
+                    {
+                        // Classic doesn't have this string, it only has the plural one
+                        gotGold = HardStrings.youPinchedGoldPiece;
+                    }
+                    else
+                    {
+                        gotGold = HardStrings.youPinchedGoldPieces;
+                        gotGold = gotGold.Replace("%d", pinchedGoldPieces.ToString());
+                    }
+                    DaggerfallUI.MessageBox(gotGold);
+                }
+                else
+                {
+                    string noGoldFound = DaggerfallUnity.Instance.TextProvider.GetRandomText(foundNothingValuableTextId);
+                    DaggerfallUI.MessageBox(noGoldFound);
+                }
+            }
+            else
+            {
+                string notSuccessfulMessage = HardStrings.youAreNotSuccessful;
+                DaggerfallUI.Instance.PopupMessage(notSuccessfulMessage);
             }
         }
     }
