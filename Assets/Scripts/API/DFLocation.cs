@@ -286,6 +286,9 @@ namespace DaggerfallConnect
 
             /// <summary>The race of wandering NPCs in this subclimate.</summary>
             public FactionFile.FactionRaces People;
+
+            /// <summary>The name bank of NPCs in this subclimate.</summary>
+            public FactionFile.FactionRaces Names;
         }
 
         #endregion

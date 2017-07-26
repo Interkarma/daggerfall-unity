@@ -238,23 +238,24 @@ namespace DaggerfallWorkshop
         /// </summary>
         public NameHelper.BankTypes GetNameBankOfCurrentRegion()
         {
+            DFLocation.ClimateSettings settings = MapsFile.GetWorldClimateSettings(climateSettings.WorldClimate);
             NameHelper.BankTypes bankType;
-            switch (GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion())
+            switch (settings.Names)
             {
-                case Races.Redguard:
+                case FactionFile.FactionRaces.Redguard:
                     bankType = NameHelper.BankTypes.Redguard;
                     break;
-                case Races.Nord:
+                case FactionFile.FactionRaces.Nord:
                     bankType = NameHelper.BankTypes.Nord;
                     break;
-                case Races.DarkElf:
+                case FactionFile.FactionRaces.DarkElf:
                     bankType = NameHelper.BankTypes.DarkElf;
                     break;
-                case Races.WoodElf:
+                case FactionFile.FactionRaces.WoodElf:
                     bankType = NameHelper.BankTypes.WoodElf;
                     break;
                 default:
-                case Races.Breton:
+                case FactionFile.FactionRaces.Breton:
                     bankType = NameHelper.BankTypes.Breton;
                     break;
             }

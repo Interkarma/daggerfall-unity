@@ -412,6 +412,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 24;
                     settings.People = FactionFile.FactionRaces.Breton;
+                    settings.Names = FactionFile.FactionRaces.Breton;
                     break;
                 case (int) Climates.Desert:
                     settings.ClimateType = DFLocation.ClimateBaseType.Desert;
@@ -419,6 +420,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Desert;
                     settings.SkyBase = 8;
                     settings.People = FactionFile.FactionRaces.Redguard;
+                    settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
                 case (int) Climates.Desert2:
                     settings.ClimateType = DFLocation.ClimateBaseType.Desert;
@@ -426,6 +428,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Desert;
                     settings.SkyBase = 8;
                     settings.People = FactionFile.FactionRaces.Redguard;
+                    settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
                 case (int) Climates.Mountain:
                     settings.ClimateType = DFLocation.ClimateBaseType.Mountain;
@@ -433,6 +436,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Mountains;
                     settings.SkyBase = 0;
                     settings.People = FactionFile.FactionRaces.Nord;
+                    settings.Names = FactionFile.FactionRaces.Nord;
                     break;
                 case (int) Climates.Rainforest:
                     settings.ClimateType = DFLocation.ClimateBaseType.Swamp;
@@ -440,6 +444,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_RainForest;
                     settings.SkyBase = 24;
                     settings.People = FactionFile.FactionRaces.Redguard;
+                    settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
                 case (int) Climates.Swamp:
                     settings.ClimateType = DFLocation.ClimateBaseType.Swamp;
@@ -447,6 +452,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_Swamp;
                     settings.SkyBase = 24;
                     settings.People = FactionFile.FactionRaces.Breton;
+                    settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
                 case (int) Climates.Subtropical:
                     settings.ClimateType = DFLocation.ClimateBaseType.Desert;
@@ -454,6 +460,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_SubTropical;
                     settings.SkyBase = 24;
                     settings.People = FactionFile.FactionRaces.Breton;
+                    settings.Names = FactionFile.FactionRaces.Redguard;
                     break;
                 case (int) Climates.MountainWoods:
                     settings.ClimateType = DFLocation.ClimateBaseType.Mountain;
@@ -461,6 +468,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
                     settings.People = FactionFile.FactionRaces.Nord;
+                    settings.Names = FactionFile.FactionRaces.Nord;
                     break;
                 case (int) Climates.Woodlands:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
@@ -468,6 +476,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
                     settings.People = FactionFile.FactionRaces.Breton;
+                    settings.Names = FactionFile.FactionRaces.Breton;
                     break;
                 case (int) Climates.HauntedWoodlands:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
@@ -475,6 +484,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_HauntedWoodlands;
                     settings.SkyBase = 16;
                     settings.People = FactionFile.FactionRaces.Breton;
+                    settings.Names = FactionFile.FactionRaces.Breton;
                     break;
                 default:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
@@ -482,6 +492,7 @@ namespace DaggerfallConnect.Arena2
                     settings.NatureArchive = (int) DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
                     settings.SkyBase = 16;
                     settings.People = FactionFile.FactionRaces.Breton;
+                    settings.Names = FactionFile.FactionRaces.Breton;
                     break;
             }
 
