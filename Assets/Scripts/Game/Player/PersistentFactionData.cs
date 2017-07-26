@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Game.Player
     {
         #region Fields
 
+        const int legalReputationCount = 62;
         const int minReputation = -100;
         const int maxReputation = 100;
 
@@ -38,6 +39,7 @@ namespace DaggerfallWorkshop.Game.Player
 
         Dictionary<int, FactionFile.FactionData> factionDict = new Dictionary<int, FactionFile.FactionData>();
         Dictionary<string, int> factionNameToIDDict = new Dictionary<string, int>();
+        List<LegalReputation> legalReputationList = new List<LegalReputation>();
 
         #endregion
 
@@ -53,6 +55,20 @@ namespace DaggerfallWorkshop.Game.Player
         {
             get { return factionNameToIDDict; }
             set { factionNameToIDDict = value; }
+        }
+
+        #endregion
+
+        #region Structs & Enums
+
+        /// <summary>
+        /// Legal reputation for regions.
+        /// </summary>
+        public struct LegalReputation
+        {
+            public int index;
+            public int value;
+            public string name;
         }
 
         #endregion
@@ -80,6 +96,42 @@ namespace DaggerfallWorkshop.Game.Player
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Gets legal reputation by region index.
+        /// </summary>
+        /// <param name="regionIndex">Region index 0 to 61.</param>
+        /// <returns>Legal reputation for that region.</returns>
+        public LegalReputation GetLegalReputation(int regionIndex)
+        {
+            if (regionIndex < 0 || regionIndex >= legalReputationCount)
+                throw new IndexOutOfRangeException("GetLegalReputation regionIndex out of range");
+
+            // Reset if no legal reputation data available
+            if (legalReputationList.Count != legalReputationCount)
+                ResetLegalReputation();
+
+            return legalReputationList[regionIndex];
+        }
+
+        /// <summary>
+        /// Change legal reputation value by amount.
+        /// </summary>
+        public int ChangeLegalReputation(int regionIndex, int amount)
+        {
+            if (regionIndex < 0 || regionIndex >= legalReputationCount)
+                throw new IndexOutOfRangeException("ChangeLegalReputation regionIndex out of range");
+
+            // Reset if no legal reputation data available
+            if (legalReputationList.Count != legalReputationCount)
+                ResetLegalReputation();
+
+            LegalReputation lr = legalReputationList[regionIndex];
+            lr.value = Mathf.Clamp(lr.value + amount, minReputation, maxReputation);
+            legalReputationList[regionIndex] = lr;
+
+            return lr.value;
         }
 
         /// <summary>
@@ -155,6 +207,25 @@ namespace DaggerfallWorkshop.Game.Player
             Debug.Log("PersistentFactionData.Reset() loaded fresh faction data.");
         }
 
+        /// <summary>
+        /// Resets legal reputation for all regions back to 0.
+        /// Not fully implemented yet, still needs to be imported from SAVEVARS.DAT.
+        /// Might move to own class later, but here is a good spot for now.
+        /// </summary>
+        public void ResetLegalReputation()
+        {
+            // Clear legal reputation across all regions
+            legalReputationList.Clear();
+            for (int i = 0; i < legalReputationCount; i++)
+            {
+                LegalReputation lr = new LegalReputation();
+                lr.index = i;
+                lr.value = 0;
+                lr.name = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(i);
+                legalReputationList.Add(lr);
+            }
+        }
+
         #endregion
 
         #region Reputation
@@ -218,7 +289,7 @@ namespace DaggerfallWorkshop.Game.Player
         }
 
         /// <summary>
-        /// Reset all reputations back to 0.
+        /// Reset all reputations and legal reputations back to 0.
         /// </summary>
         public void ZeroAllReputations()
         {
@@ -227,6 +298,8 @@ namespace DaggerfallWorkshop.Game.Player
             {
                 SetReputation(key, 0);
             }
+
+            ResetLegalReputation();
         }
 
         #endregion

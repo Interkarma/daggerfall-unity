@@ -312,7 +312,19 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new GetItem(null));
             RegisterAction(new StartQuest(null));
             RegisterAction(new UnsetTask(null));
+
+            // Stubs - these actions are not complete yet
+            // Just setting up so certains quests compile for now
             RegisterAction(new ChangeReputeWith(null));
+            RegisterAction(new DialogLink(null));
+            RegisterAction(new AddDialog(null));
+            RegisterAction(new RevealLocation(null));
+            RegisterAction(new ReputeExceedsDo(null));
+            RegisterAction(new MuteNpc(null));
+            RegisterAction(new AddAsQuestor(null));
+            RegisterAction(new DropAsQuestor(null));
+            RegisterAction(new RevealLocation(null));
+            RegisterAction(new LegalRepute(null));
 
             // Raise event for custom actions to be registered
             RaiseOnRegisterCustomerActionsEvent();

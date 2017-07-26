@@ -10,23 +10,23 @@
 //
 
 using System.Text.RegularExpressions;
-using System;
-using DaggerfallConnect.Arena2;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
-    public class ChangeReputeWith : ActionTemplate
+    /// <summary>
+    /// Incomplete. Just stubbing out action for now so quest will compile.
+    /// </summary>
+    public class DropAsQuestor : ActionTemplate
     {
         Symbol target;
-        int amount;
 
         public override string Pattern
         {
-            get { return @"change repute with (?<target>[a-zA-Z0-9_.-]+) by (?<amount>\d+)"; }
+            get { return @"drop (?<target>[a-zA-Z0-9_.-]+) as questor"; }
         }
 
-        public ChangeReputeWith(Quest parentQuest)
+        public DropAsQuestor(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -39,9 +39,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 return null;
 
             // Factory new action
-            ChangeReputeWith action = new ChangeReputeWith(parentQuest);
+            DropAsQuestor action = new DropAsQuestor(parentQuest);
             action.target = new Symbol(match.Groups["target"].Value);
-            action.amount = Parser.ParseInt(match.Groups["amount"].Value);
 
             return action;
         }
@@ -59,14 +58,12 @@ namespace DaggerfallWorkshop.Game.Questing
         public struct SaveData_v1
         {
             public Symbol target;
-            public int amount;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
             data.target = target;
-            data.amount = amount;
 
             return data;
         }
@@ -78,7 +75,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 return;
 
             target = data.target;
-            amount = data.amount;
         }
 
         #endregion
