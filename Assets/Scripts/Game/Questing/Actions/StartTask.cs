@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override void Update(Task caller)
         {
-            ParentQuest.SetTask(taskSymbol);
+            ParentQuest.StartTask(taskSymbol);
             SetComplete();
         }
 

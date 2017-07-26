@@ -203,6 +203,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Update tasks
             foreach(Task task in tasks.Values)
             {
+                // Hard ignore dropped tasks
+                if (task.IsDropped)
+                    continue;
+
                 // Handle quest break or completion
                 if (questBreak || questComplete)
                 {
@@ -219,18 +223,18 @@ namespace DaggerfallWorkshop.Game.Questing
             questComplete = true;
         }
 
-        public void SetTask(Symbol symbol)
+        public void StartTask(Symbol symbol)
         {
             Task task = GetTask(symbol);
             if (task != null)
-                task.Set();
+                task.Start();
         }
 
-        public void UnsetTask(Symbol symbol)
+        public void ClearTask(Symbol symbol)
         {
             Task task = GetTask(symbol);
             if (task != null)
-                task.Unset();
+                task.Clear();
         }
 
         public TaskState[] GetTaskStates()
@@ -241,7 +245,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 TaskState state = new TaskState();
                 state.type = task.Type;
                 state.symbol = task.Symbol;
-                state.set = task.IsSet;
+                state.set = task.IsTriggered;
                 states.Add(state);
             }
 

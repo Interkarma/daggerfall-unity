@@ -226,7 +226,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 return false;
             }
 
-            return task.IsSet;
+            return task.IsTriggered;
         }
 
         #region Serialization

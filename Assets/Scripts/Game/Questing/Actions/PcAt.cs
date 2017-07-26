@@ -81,13 +81,13 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 if (textId != 0)
                     ParentQuest.ShowMessagePopup(textId);
 
-                // Enable target task
-                ParentQuest.SetTask(taskSymbol);
+                // Start target task
+                ParentQuest.StartTask(taskSymbol);
             }
             else
             {
-                // Disable target task
-                ParentQuest.UnsetTask(taskSymbol);
+                // Clear target task
+                ParentQuest.ClearTask(taskSymbol);
             }
         }
 

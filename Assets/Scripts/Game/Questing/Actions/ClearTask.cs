@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             }
             catch (System.Exception ex)
             {
-                DaggerfallUnity.LogMessage("ClearTask.Create() failed with exception: " + ex.Message, true);
+                DaggerfallUnity.LogMessage("ClearTask.CreateNew() failed with exception: " + ex.Message, true);
                 action = null;
             }
 
@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             {
                 Task task = ParentQuest.GetTask(taskSymbol);
                 if (task != null)
-                    task.Unset();
+                    task.Clear();
             }
         }
 

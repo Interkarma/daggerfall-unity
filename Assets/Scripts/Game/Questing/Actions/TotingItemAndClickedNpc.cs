@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Always return true once owning Task is triggered
             // Another action will need to rearm/unset this task if another click is required
             // This seems to fit how classic works based on current observation
-            if (caller.IsSet)
+            if (caller.IsTriggered)
                 return true;
 
             // Get related Person resource

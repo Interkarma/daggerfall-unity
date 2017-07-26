@@ -3,33 +3,31 @@
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Lypyl (lypyldf@gmail.com)
-// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
+// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
+// Contributors:    
 // 
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
 using System.Text.RegularExpressions;
-using System;
 using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
-    /// This action triggers a random task
+    /// Unsets one or more tasks.
+    /// Unlike clear, which simply rearms a task, unset will permanently disable that task.
     /// </summary>
-    public class PickOneOf : ActionTemplate
+    public class UnsetTask : ActionTemplate
     {
         public Symbol[] taskSymbols;
 
         public override string Pattern
         {
-            get { return @"pick one of [a-zA-Z0-9_.]+"; }
+            get { return @"unset [a-zA-Z0-9_.]+"; }
         }
 
-        public PickOneOf(Quest parentQuest)
+        public UnsetTask(Quest parentQuest)
             : base(parentQuest)
         {
         }
@@ -44,55 +42,38 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Trim source end or trailing white space will be split to an empty symbol at end of array
             source = source.TrimEnd();
 
-            // Factory new action
-            PickOneOf action = new PickOneOf(parentQuest);
+            UnsetTask action = new UnsetTask(parentQuest);
+
             try
             {
-                var splits = source.Split();
-                if (splits == null || splits.Length < 4)
-                    return null;
-                else
-                    action.taskSymbols = new Symbol[splits.Length - 3];
-
+                string[] tasks = source.Split();
+                action.taskSymbols = new Symbol[tasks.Length - 1];
                 for (int i = 0; i < action.taskSymbols.Length; i++)
                 {
-                    action.taskSymbols[i] = new Symbol(splits[i + 3]);
+                    action.taskSymbols[i] = new Symbol(tasks[i + 1]);
                 }
-
             }
             catch (System.Exception ex)
             {
-                DaggerfallUnity.LogMessage("PickOneOf.Create() failed with exception: " + ex.Message, true);
+                DaggerfallUnity.LogMessage("UnsetTask.CreateNew() failed with exception: " + ex.Message, true);
                 action = null;
             }
 
             return action;
-
         }
 
         public override void Update(Task caller)
         {
-            Symbol selected = new Symbol();
-            bool success = false;
-            if(ParentQuest != null)
-            {
-                //UnityEngine.Random.InitState(System.Environment.TickCount);
-                selected = taskSymbols[UnityEngine.Random.Range(0, taskSymbols.Length)];
-                Task task = ParentQuest.GetTask(selected);
-
-                if (task != null)
-                {
-                    success = true;
-                    task.Start();
-                }
-            }
-
-            if(!success)
-            {
-                Debug.LogError(string.Format("PickOneOf failed to activate task.  Quest: {0} Task: {1} Selected: {2}", ParentQuest.UID, caller.Symbol.Name, selected.Name));
-            }
-
+            // Set complete right away as we could be disabling our own task
             SetComplete();
+
+            foreach (Symbol taskSymbol in taskSymbols)
+            {
+                // Drop task
+                Task task = ParentQuest.GetTask(taskSymbol);
+                if (task != null)
+                    task.Drop();
+            }
         }
 
         #region Serialization

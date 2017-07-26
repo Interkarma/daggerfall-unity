@@ -360,7 +360,7 @@ namespace DaggerfallWorkshop.Game.Questing
             Task task = ParentQuest.GetTask(Symbol);
             if (task != null)
             {
-                task.Set();
+                task.Start();
             }
             else
             {

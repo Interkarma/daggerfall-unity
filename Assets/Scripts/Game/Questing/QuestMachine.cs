@@ -311,6 +311,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new DropFace(null));
             RegisterAction(new GetItem(null));
             RegisterAction(new StartQuest(null));
+            RegisterAction(new UnsetTask(null));
 
             // Raise event for custom actions to be registered
             RaiseOnRegisterCustomerActionsEvent();

@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game.Questing
         bool triggered;             // Is the task currently triggered/true/set?
         bool prevTriggered;         // Was the task triggered/true/set on last tick?
         TaskType type;              // Type of task
+        bool dropped;               // Tasks is permanently dropped
 
         string globalVarName;       // Name of global variable from source
         int globalVarLink = -1;     // Link to a global variable
@@ -68,10 +69,15 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return type; }
         }
 
-        public bool IsSet
+        public bool IsTriggered
         {
             get { return GetTriggerValue(); }
             set { SetTriggerValue(value); }
+        }
+
+        public bool IsDropped
+        {
+            get { return dropped; }
         }
 
         public bool HasTriggerConditions
@@ -232,8 +238,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 Task targetTask = ParentQuest.GetTask(targetSymbol);
                 if (targetTask != null)
                 {
-                    if (!targetTask.IsSet)
-                        Unset();
+                    if (!targetTask.IsTriggered)
+                        Clear();
                     // Should these tasks be able to rearm?
                     // Would need strong evidence before allowing this
                 }
@@ -244,19 +250,29 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
-        /// Another way to set/trigger task.
+        /// Another way to start/trigger task.
         /// </summary>
-        public void Set()
+        public void Start()
         {
-            IsSet = true;
+            IsTriggered = true;
         }
 
         /// <summary>
-        /// Another way to unset/rearm task.
+        /// Another way to clear/rearm task.
         /// </summary>
-        public void Unset()
+        public void Clear()
         {
-            IsSet = false;
+            IsTriggered = false;
+        }
+
+        /// <summary>
+        /// Permanently clear trigger state and drop task.
+        /// This is a one-way setting.
+        /// </summary>
+        public void Drop()
+        {
+            dropped = true;
+            IsTriggered = false;
         }
 
         /// <summary>
@@ -391,6 +407,13 @@ namespace DaggerfallWorkshop.Game.Questing
             else
                 triggered = value;
 
+            // If this task is dropped then trigger state cannot be changed
+            if (dropped)
+            {
+                triggered = false;
+                return;
+            }
+
             // If clearing a task then need to rearm actions
             if (value == false)
             {
@@ -413,6 +436,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public bool triggered;
             public bool prevTriggered;
             public TaskType type;
+            public bool dropped;
             public string globalVarName;
             public int globalVarLink;
             public bool hasTriggerConditions;
@@ -428,6 +452,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.triggered = triggered;
             data.prevTriggered = prevTriggered;
             data.type = type;
+            data.dropped = dropped;
             data.globalVarName = globalVarName;
             data.globalVarLink = globalVarLink;
             data.hasTriggerConditions = hasTriggerConditions;
@@ -451,6 +476,7 @@ namespace DaggerfallWorkshop.Game.Questing
             triggered = data.triggered;
             prevTriggered = data.prevTriggered;
             type = data.type;
+            dropped = data.dropped;
             globalVarName = data.globalVarName;
             globalVarLink = data.globalVarLink;
             hasTriggerConditions = data.hasTriggerConditions;
